@@ -1,0 +1,1048 @@
+<!--
+     General purpose build script for web applications and web services,
+     including enhanced support for deploying directly to a Tomcat 4
+     based server.
+
+     This build script assumes that the source code of your web application
+     is organized into the following subdirectories underneath the source
+     code directory from which you execute the build script:
+
+        docs                 Static documentation files to be copied to
+                             the "docs" subdirectory of your distribution.
+
+        src                  Java source code (and associated resource files)
+                             to be compiled to the "WEB-INF/classes"
+                             subdirectory of your web applicaiton.
+
+        web                  Static HTML, JSP, and other content (such as
+                             image files), including the WEB-INF subdirectory
+                             and its configuration file contents.
+
+     $Id: build.xml,v 1.1 2005-08-17 11:00:19 art Exp $
+-->
+
+
+<!-- A "project" describes a set of targets that may be requested
+     when Ant is executed.  The "default" attribute defines the
+     target which is executed if no specific target is requested,
+     and the "basedir" attribute defines the current working directory
+     from which Ant executes the requested task.  This is normally
+     set to the current working directory.
+-->
+
+<project name="GeneDB-prelim" default="most-cd" basedir=".">
+
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+
+
+
+	<!-- ===================== Property Definitions =========================== -->
+
+
+	<!--
+
+  Each of the following properties are used in the build script.
+  Values for these properties are set by the first place they are
+  defined, from the following list:
+
+  * Definitions on the "ant" command line (ant -Dfoo=bar compile).
+
+  * Definitions from a "build.properties" file in the top level
+    source directory of this application.
+
+  * Definitions from a "build.properties" file in the developer's
+    home directory.
+
+  * Default definitions in this build.xml file.
+
+  You will note below that property values can be composed based on the
+  contents of previously defined properties.  This is a powerful technique
+  that helps you minimize the number of changes required when your development
+  environment is modified.  Note that property composition is allowed within
+  "build.properties" files as well as in the "build.xml" script.
+
+-->
+
+	<property file="build.${username}.${build.role}.properties"/>
+	<property file="build.${user.name}.properties"/>
+	<property file="build.properties"/>
+
+
+
+	<!-- ==================== File and Directory Names ======================== -->
+
+
+	<!--
+
+  These properties generally define file and directory names (or paths) that
+  affect where the build process stores its outputs.
+
+  app.name             Base name of this application, used to
+                       construct filenames and directories.
+                       Defaults to "myapp".
+
+  app.path             Context path to which this application should be
+                       deployed (defaults to "/" plus the value of the
+                       "app.name" property).
+
+  app.version          Version number of this iteration of the application.
+
+  build.home           The directory into which the "prepare" and
+                       "compile" targets will generate their output.
+                       Defaults to "build".
+
+  catalina.home        The directory in which you have installed
+                       a binary distribution of Tomcat 4.  This will
+                       be used by the "deploy" target.
+
+  dist.home            The name of the base directory in which
+                       distribution files are created.
+                       Defaults to "dist".
+
+  manager.password     The login password of a user that is assigned the
+                       "manager" role (so that he or she can execute
+                       commands via the "/manager" web application)
+
+  manager.url          The URL of the "/manager" web application on the
+                       Tomcat installation to which we will deploy web
+                       applications and web services.
+
+  manager.username     The login username of a user that is assigned the
+                       "manager" role (so that he or she can execute
+                       commands via the "/manager" web application)
+
+-->
+
+
+	
+	<!-- ================== Custom Ant Task Definitions ======================= -->
+
+
+	<!--
+
+  These properties define custom tasks for the Ant build tool that interact
+  with the "/manager" web application installed with Tomcat 4.  Before they
+  can be successfully utilized, you must perform the following steps:
+
+  - Copy the file "server/lib/catalina-ant.jar" from your Tomcat 4
+    installation into the "lib" directory of your Ant installation.
+
+  - Create a "build.properties" file in your application's top-level
+    source directory (or your user login home directory) that defines
+    appropriate values for the "manager.password", "manager.url", and
+    "manager.username" properties described above.
+
+  For more information about the Manager web application, and the functionality
+  of these tasks, see <http://localhost:8080/tomcat-docs/manager-howto.html>.
+
+-->
+
+	<!-- <taskdef name="install" classname="org.apache.catalina.ant.InstallTask"/>
+  <taskdef name="list"    classname="org.apache.catalina.ant.ListTask"/>
+  <taskdef name="reload"  classname="org.apache.catalina.ant.ReloadTask"/>
+  <taskdef name="remove"  classname="org.apache.catalina.ant.RemoveTask"/>
+-->
+
+	<!--
+<taskdef name="checkstyle"
+           classname="com.puppycrawl.tools.checkstyle.CheckStyleTask">
+    <classpath>
+      <fileset dir="${pathsoft.javalib}">
+        <include name="checkstyle-all-2.4.jar" />
+      </fileset>
+    </classpath>
+  </taskdef>
+-->
+
+	<!--  ==================== Compilation Control Options ==================== -->
+
+	<!--
+
+  These properties control option settings on the Javac compiler when it
+  is invoked using the <javac> task.
+
+  compile.debug        Should compilation include the debug option?
+
+  compile.deprecation  Should compilation include the deprecation option?
+
+  compile.optimize     Should compilation include the optimize option?
+
+-->
+
+	<property name="compile.debug"       value="true"/>
+	<property name="compile.deprecation" value="false"/>
+	<property name="compile.optimize"    value="true"/>
+
+
+
+	<!-- ==================== External Dependencies =========================== -->
+
+
+	<!--
+
+  Use property values to define the locations of external JAR files on which
+  your application will depend.  In general, these values will be used for
+  two purposes:
+  * Inclusion on the classpath that is passed to the Javac compiler
+  * Being copied into the "/WEB-INF/lib" directory during execution
+    of the "deploy" target.
+
+  Because we will automatically include all of the Java classes that Tomcat 4
+  exposes to web applications, we will not need to explicitly list any of those
+  dependencies.  You only need to worry about external dependencies for JAR
+  files that you are going to include inside your "/WEB-INF/lib" directory.
+
+-->
+
+	<!-- Dummy external dependency -->
+	<!--
+  <property name="foo.jar"
+           value="/path/to/foo.jar"/>
+-->
+
+
+	<!-- ==================== Compilation Classpath =========================== -->
+
+	<!--
+
+  Rather than relying on the CLASSPATH environment variable, Ant includes
+  features that makes it easy to dynamically construct the classpath you
+  need for each compilation.  The example below constructs the compile
+  classpath to include the servlet.jar file, as well as the other components
+  that Tomcat makes available to web applications automatically, plus anything
+  that you explicitly added.
+
+-->
+
+	<path id="compile.classpath">
+
+		<!-- Include all JAR files that will be included in /WEB-INF/lib -->
+		<!-- *** CUSTOMIZE HERE AS REQUIRED BY YOUR APPLICATION *** -->
+		<!--
+    <pathelement location="${libdir.offline}"/>
+-->
+		<pathelement location="${libdir.offline}/hibernate2.jar"/>
+		<pathelement location="${libdir.offline}/servlet-api.jar"/>
+		<pathelement location="${libdir.offline}/jsp-api.jar"/>
+
+
+		<pathelement location="${libdir.online}/mail.jar"/>
+		<pathelement location="${libdir.online}/commons-lang-2.0.jar"/>
+		<pathelement location="${libdir.online}/biojava-psu-1.3-2003-11-04_200041210.jar"/>
+		<pathelement location="${libdir.online}/GifEncoder.jar"/>
+		<pathelement location="${libdir.online}/jdom-b9.jar"/>
+		<pathelement location="${libdir.online}/lucene-1.4.3.jar"/>
+		<pathelement location="${libdir.online}/jakarta-oro-2.0.5.jar"/>
+		<pathelement location="${libdir.online}/commons-digester-1.6.jar"/>
+		<pathelement location="${libdir.online}/keggapi-3.0.jar"/>
+		<pathelement location="${libdir.online}/commons-httpclient-2.0.jar"/>
+		<pathelement location="${libdir.online}/axis-1.2beta.jar"/>
+		<pathelement location="${libdir.online}/jaxrpc-1.4.1_01b1.jar"/>
+		<pathelement location="${libdir.online}/oracle.jar"/>
+		<pathelement location="${libdir.online}/PerlTools.jar"/>
+
+	</path>
+
+
+
+	<!-- ==================== All Target ====================================== -->
+
+	<!--
+
+  The "all" target is a shortcut for running the "clean" target followed
+  by the "compile" target, to force a complete recompile.
+
+-->
+
+	<target name="all" depends="clean,compile"
+   description="BROKEN Clean build and dist directories, then compile"/>
+
+
+
+
+
+
+	<!-- ==================== Compile Target ================================== -->
+
+	<!--
+
+  The "compile" target transforms source files (from your "src" directory)
+  into object files in the appropriate location in the build directory.
+  This example assumes that you will be including your classes in an
+  unpacked directory hierarchy under "/WEB-INF/classes".
+
+-->
+
+
+
+
+
+	<!-- ==================== Dist Target ===================================== -->
+
+
+	<!--
+
+  The "dist" target creates a binary distribution of your application
+  in a directory structure ready to be archived in a tar.gz or zip file.
+  Note that this target depends on two others:
+
+  * "compile" so that the entire web application (including external
+    dependencies) will have been assembled
+
+  * "javadoc" so that the application Javadocs will have been created
+
+-->
+<!--
+	<target name="dist" depends="compile,javadoc"
+   description="BROKEN Create binary distribution">
+
+		<mkdir   todir="${dist.home}/docs"/>
+		<copy    todir="${dist.home}/docs">
+			<fileset dir="${docs.home}"/>
+		</copy>
+
+		<jar jarfile="${dist.home}/${app.name}-${app.version}.war"
+         basedir="${build.home}"/>
+
+	</target>
+-->
+
+	<!-- ==================== Checkstyle Targets ================================== -->
+
+	<target name="checkstyle" depends="prepare">
+		<checkstyle properties="${config.dir}/checkstyle.slim.txt">
+			<formatter type="plain" toFile="${reports.dir}/checkstyle.txt"/>
+			<fileset dir="src/" includes="**/*.java"/>
+		</checkstyle>
+	</target>
+
+	<target name="full-checkstyle">
+		<checkstyle javadocScope="public"
+                allowTabs="true"
+                allowProtected="true"
+                requirePackageHtml="true"
+                headerFile="./header.txt">
+			<formatter type="plain" toFile="${reports.dir}/full-checkstyle.txt"/>
+			<fileset dir="src/" includes="**/*.java"/>
+		</checkstyle>
+	</target>
+
+
+
+
+	<!-- ==================== Checkstyle Targets ================================== -->
+
+	<target name="reformat-style" depends="prepare">
+		<jalopy fileformat="unix"
+            backup="yes"
+            history="none"
+            failonerror="true"
+            style="${config.dir}/jalopy.prefs.xml"
+            threads="1"
+            loglevel="WARN"
+            javadoc="no"
+            file="${basedir}/src/org/genedb/prelim/mining/BaseDataMiner.java"
+            destdir="${basedir}/testing" />
+	</target>
+
+
+
+
+	<!-- ==================== Javadoc Target ================================== -->
+
+	<!--
+
+  The "javadoc" target creates Javadoc API documentation for the Java
+  classes included in your application.  Normally, this is only required
+  when preparing a distribution release, but is available as a separate
+  target in case the developer wants to create Javadocs independently.
+
+-->
+<!--
+	<target name="javadoc" depends="compile"
+   description="Create Javadoc API documentation">
+
+		<mkdir          dir="${dist.home}/docs/api"/>
+		<javadoc sourcepath="${src.home}"
+                destdir="${dist.home}/docs/api"
+           packagenames="*">
+			<classpath refid="compile.classpath"/>
+		</javadoc>
+
+	</target>
+-->
+
+
+
+
+
+
+	<target name="backup-embl" description="Take a copy of the input files for the Artemis applet to use">
+
+		<foreach list="${allorgs}" 
+            target="backup-embl-one-org"
+            param="copy.organism"
+            delimiter=":"
+            parallel="true"
+            inheritall="true" />
+
+	</target>
+
+	<target name="backup-embl-one-org">
+
+		<!-- Copies src files -->
+		<property name="copy.finaldir" value="/nfs/pathdb/prod/data/artemis/${copy.organism}"/>
+
+		<mkdir dir="${copy.finaldir}" />
+
+		<echo message="Synching ${copy.finaldir} to /nfs/pathdb/prod/data/input/${copy.organism}"/>
+
+		<sync todir="${copy.finaldir}" includeEmptyDirs="false" verbose="false">
+			<fileset dir="/nfs/pathdb/prod/data/input/${copy.organism}" casesensitive="false" followSymLinks="false">
+				<include name="**/*.embl" />
+				<include name="**/*.art" />
+				<include name="**/*.artemis" />
+				<include name="**/*.contig" />
+				<exclude name="**/*.new/**" />
+				<exclude name="**/*.old/**" />
+				<exclude name="**/hide/**" />
+				<exclude name="**/*.keep/**" />
+			</fileset>
+		</sync>
+
+
+	</target>
+
+	<target name="cp-data-files" description="Copy output files into place for prod/dev servers">
+
+		<foreach list="${copy.orgs}" 
+            target="cp-data-one-org"
+            param="copy.organism"
+            delimiter=":"
+            parallel="false"
+            inheritall="true" />
+
+	</target>
+
+
+
+	<target name="cp-data-one-org">
+
+		<!-- Copies src files -->
+		<property name="copy.finaldir"      value="${copy.topdir}/output.${copy.organism}"/>
+
+		<mkdir dir="${copy.finaldir}" />
+
+		<echo message="Copying ${copy.organism} to ${copy.finaldir}"/>
+
+		<!-- copydir src="${src.dir}" dest="${build.src}" excludes="CVS,cvs"/ -->
+		<copy todir="${copy.finaldir}">
+			<fileset dir="/nfs/pathdb/work/pathdb/output.${copy.organism}">
+				<exclude name="**/images*.zip" />
+				<exclude name="**/dbs/" />
+				<exclude name="**/EMBL/" />
+				<exclude name="**/reports/" />
+				<!--        <exclude name="**/maps/" /> -->
+			</fileset>
+		</copy>
+
+
+	</target>
+
+	<target name="all-cd" 
+		depends="full-clean-cd-image,compile,make-cd-image,cp-cd-data"
+		description="Build CD from scratch, including copying all data" />
+
+	<target name="most-cd" 
+		depends="partial-clean-cd-image,compile,make-cd-image" 
+		description="Build CD, assuming data and lucene already in place" />
+
+
+	<target name="normal-build" 
+		depends="full-clean-image,compile,make-normal-image" 
+		description="Build normal website" />
+	
+	<!--jsp build stuff-->
+	<target name="jspc">
+		<!-- Convert the JSP files into Java code -->
+
+		<taskdef classname="org.apache.jasper.JspC" name="jasper2" >
+			<classpath id="jspc.classpath">
+				<pathelement location="${java.home}/../lib/tools.jar"/>
+				<fileset dir="${catalina.home}/server/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${catalina.home}/common/lib">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</taskdef>
+
+		<jasper2
+	             validateXml="false" 
+	             uriroot="${webapp.staging}" 
+	             webXmlFragment="${webinf.staging}/generated_web.xml" 
+	             outputDir="${jsp-src.dir}" />
+
+	</target>
+
+	<target name="jspc_compile">
+		<!-- Compile the JSP-generated java files -->
+
+		<mkdir dir="${webapp.staging}/WEB-INF/classes"/>
+		<mkdir dir="${webapp.staging}/WEB-INF/lib"/>
+
+		<javac destdir="${webinf.staging}/classes"
+	           optimize="off"
+	           debug="on" failonerror="false"
+	           srcdir="${jsp-src.dir}" 
+		   excludes="**/*.smap">
+			<classpath>
+				<pathelement location="${webapp.staging}/WEB-INF/classes"/>
+				<fileset dir="${webapp.staging}/WEB-INF/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<pathelement location="${catalina.home}/common/classes"/>
+				<fileset dir="${catalina.home}/common/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<pathelement location="${catalina.home}/shared/classes"/>
+				<fileset dir="${catalina.home}/shared/lib">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<include name="**" />
+			<exclude name="tags/**" />
+		</javac>
+
+	</target>
+	
+	<target name="jspc_cd" if="role_cd">
+		<!-- This creates a web.xml from a template and the generated fragments -->
+		<loadfile property="generated" srcFile="${webinf.staging}/generated_web.xml"/>
+		<filter token="generated_web.xml" value="${generated}"/>
+		
+		<loadfile property="cdServlets" srcFile="${webinf.staging}/cdServlets_web.xml"/>
+		<filter token="cdServlets_web.xml" value="${cdServlets}"/>
+		
+		<loadfile property="cdMappings" srcFile="${webinf.staging}/cdMappings_web.xml"/>
+		<filter token="cdMappings_web.xml" value="${cdMappings}"/>	
+
+		<filter token="webServlets_web.xml" value=""/>
+		<filter token="webMappings_web.xml" value=""/>
+		
+		<copy file="${webinf.staging}/template_web.xml"  
+	  	  toFile="${webinf.staging}/web.xml"  filtering="true" overwrite="true">
+		</copy>
+	</target>
+	
+	<target name="jspc_web" unless="role_cd">
+		<!-- This creates a web.xml from a template and the generated fragments -->
+		<loadfile property="generated" srcFile="${webinf.staging}/generated_web.xml"/>
+		<filter token="generated_web.xml" value="${generated}"/>
+		
+		<filter token="cdServlets_web.xml" value=""/>
+		<filter token="cdMappings_web.xml" value=""/>	
+
+		<loadfile property="webServlets" srcFile="${webinf.staging}/webServlets_web.xml"/>
+		<filter token="webServlets_web.xml" value="${webServlets}"/>
+		
+		<loadfile property="webMappings" srcFile="${webinf.staging}/webMappings_web.xml"/>
+		<filter token="webMappings_web.xml" value="${webMappings}"/>
+		
+		<copy file="${webinf.staging}/template_web.xml"  
+	  	  toFile="${webinf.staging}/web.xml"  filtering="true" overwrite="true">
+		</copy>
+	</target>
+		
+
+	<target name="jspc_driver" depends="jspc,jspc_compile">
+		<condition property="role_cd">
+			<equals arg1="${build.role}" arg2="cd" />
+		</condition>
+		<antcall target="jspc_cd" />
+		<antcall target="jspc_web" />
+	</target>
+
+
+	<target name="full-clean-cd-image" description="Completely clean the CD build directory" >
+		<delete dir="${cd.build.dir}" />
+	</target>
+
+
+	<target name="full-clean-image" description="Completely clean the normal build directory" >
+		<delete dir="${normal.build.dir}" />
+	</target>
+	
+	<target name="partial-clean-cd-image" 
+	  	description="Clean the CD build, leaving the data intact" >
+
+		<delete dir="${cd.web.staging.dir}" />
+		<delete dir="cd-build/full-cd/content/tomcat/bin" />
+		<delete dir="cd-build/full-cd/content/tomcat/shared" />
+		<delete dir="cd-build/full-cd/content/tomcat/server" />
+		<delete dir="cd-build/full-cd/content/tomcat/logs" />
+		<delete dir="cd-build/full-cd/content/tomcat/conf" />
+		<delete dir="cd-build/full-cd/content/tomcat/common" />
+		<delete dir="cd-build/full-cd/content/tomcat/work" />
+		<delete dir="cd-build/full-cd/content/tomcat/temp" />
+		<delete dir="cd-build/full-cd/content/tomcat/webapps/ROOT" />
+		<delete dir="cd-build/full-cd/content/tomcat/webapps/genedb/WEB-INF/lib" />
+		<delete dir="cd-build/full-cd/content/tomcat/webapps/genedb/WEB-INF/classes" />
+		<delete dir="cd-build/full-cd/content/tomcat/webapps/genedb/WEB-INF/src" />
+
+		<delete >
+			<fileset dir="cd-build/full-cd/content/tomcat/webapps/genedb/WEB-INF">
+				<include name="*.xml"/>
+				<include name="*.tld"/>
+			</fileset>
+		</delete>
+
+		<delete dir="cd-build/full-cd/content/tomcat/webapps/genedb/tryp" />
+		<delete dir="cd-build/full-cd/content/tomcat/webapps/genedb/leish" />
+		<delete dir="cd-build/full-cd/content/tomcat/webapps/genedb/tcruzi" />
+		<delete dir="cd-build/full-cd/content/tomcat/webapps/genedb/images" />
+		<delete dir="cd-build/full-cd/content/tomcat/webapps/genedb/help" />
+
+		<delete>
+			<fileset dir="cd-build/full-cd/content/tomcat/webapps/genedb/">
+				<include name="*.jsp"/>
+				<include name="*.include"/>
+				<include name="*.html" />
+			</fileset>
+		</delete>
+
+		<delete>
+			<fileset dir="cd-build/full-cd/content/tomcat/">
+				<include name="*.txt"/>
+				<include name="LICENSE"/>
+			</fileset>
+		</delete>
+
+		<delete>
+			<fileset dir="cd-build/full-cd/content/">
+				<include name="*.jar"/>
+			</fileset>
+		</delete>
+
+		<delete>
+			<fileset dir="cd-build/full-cd">
+				<include name="*.jar"/>
+				<include name="*.txt"/>
+			</fileset>
+		</delete>
+
+	</target>
+
+
+	<target name="make-cd-final">
+
+		<!-- Copy over jar files CD GUI, and tomcat control -->
+		<copy tofile="cd-build/full-cd/GeneDB.jar" file="cd-splash.jar" />
+
+		<copy todir="cd-build/full-cd/content" file="cd-gui.jar" />
+		<copy todir="cd-build/full-cd/content" file="../../genedb-tomcat4/ant-build/genedb-tomcat4.jar" />
+
+		<copy todir="cd-build/full-cd/content/tomcat/webapps/genedb">
+			<fileset dir="cd-build/website" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		<copy todir="cd-build/full-cd">
+			<fileset dir="../webSite/cd-only" casesensitive="false" followSymLinks="false" />
+		</copy>
+		
+	</target>
+
+	<target name="cp-cd-data">
+
+		<echo message="Copying data - this may take a while" />
+
+		<copy todir="cd-build/full-cd/content/tomcat/webapps/genedb/WEB-INF/data">
+			<fileset dir="../../../genedb-data/orgs/" casesensitive="false" followSymLinks="false">
+				<include name="tryp/indices/" />
+				<include name="tryp/serial/" />
+			</fileset>
+		</copy>
+
+		<copy todir="cd-build/full-cd/content/tomcat/webapps/genedb/WEB-INF/data">
+			<fileset dir="../../../genedb-data/orgs/" casesensitive="false" followSymLinks="false">
+				<include name="leish/indices/" />
+				<include name="leish/serial/" />
+			</fileset>
+		</copy>
+
+		<copy todir="cd-build/full-cd/content/tomcat/webapps/genedb/WEB-INF/data">
+			<fileset dir="../../../genedb-data/orgs/" casesensitive="false" followSymLinks="false">
+				<include name="tcruzi/indices/" />
+				<include name="tcruzi/serial/" />
+			</fileset>
+		</copy>
+
+		<copy todir="cd-build/full-cd/content/tomcat/webapps/genedb/WEB-INF/lucene">
+			<fileset dir="../../../genedb-data/lucene/" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+	</target>
+
+
+	<target name="make-cd-image" depends="make-cd-splash,make-cd-gui,make-webapp-copy,jspc_driver,make-cd-final" />
+	
+	<target name="make-normal-image" depends="make-normal-webapp-copy,jspc_driver,make-cd-final" />
+
+	<target name="make-webapp-copy">
+		<mkdir dir="cd-build"/>
+		<mkdir dir="cd-build/website"/>
+		<mkdir dir="cd-build/full-cd" />
+		<mkdir dir="cd-build/full-cd/content" />
+		<mkdir dir="cd-build/full-cd/content/tomcat" />
+
+		<copy todir="cd-build/full-cd/content/tomcat">
+			<fileset dir="${tomcat-built.dir}" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		<copy todir="cd-build/website">
+			<fileset dir="../webSite/webapps/genedb" casesensitive="false" followSymLinks="false">
+				<include name="WEB-INF/" />
+				<include name="tryp/" />
+				<include name="tcruzi/" />
+				<include name="leish/" />
+				<include name="help/" />
+				<include name="images/" />
+				<include name="*.jsp" />
+				<include name="*.include" />
+				<include name="*.html" />
+				<exclude name="**/*~" />
+			</fileset>
+		</copy>
+
+		<copy todir="cd-build/website/WEB-INF/classes">
+			<fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false">
+				<include name="**/*.class" />
+				<exclude name="**/cdsplash" />
+			</fileset>
+		</copy>
+
+		<antcall target="fix-customisations">
+			<param name="origDir" value="cd-build/website" />
+			<param name="build.role" value="cd" />
+		</antcall>
+
+		<antcall target="fix-customisations">
+			<param name="origDir" value="cd-build/website/tryp" />
+			<param name="build.role" value="cd" />
+		</antcall>
+
+		<antcall target="fix-customisations">
+			<param name="origDir" value="cd-build/website/leish" />
+			<param name="build.role" value="cd" />
+		</antcall>
+		
+		<antcall target="fix-customisations">
+			<param name="origDir" value="cd-build/website/tcruzi" />
+			<param name="build.role" value="cd" />
+		</antcall>
+		
+		<antcall target="fix-customisations">
+			<param name="origDir" value="cd-build/website/help" />
+			<param name="build.role" value="cd" />
+		</antcall>
+		<antcall target="prepare-common-files">
+			<param name="build.role" value="cd" />
+		</antcall>
+
+		<antcall target="prepare-resource-files">
+			<param name="build.role" value="cd" />
+		</antcall>
+
+		<antcall target="cd_prep_rm_jsp_files">
+			<param name="build.role" value="cd" />
+		</antcall>
+		
+		<antcall target="cp-wcm">
+	      <param name="build.role" value="cd" />
+	    </antcall>
+
+	</target>
+
+	<target name="make-normal-webapp-copy">
+			<mkdir dir="${build.home}"/>
+			<mkdir dir="${build.home}/website"/>
+			<mkdir dir="${build.home}/full" />
+
+			<copy todir="cd-build/website">
+				<fileset dir="../webSite/webapps/genedb" casesensitive="false" followSymLinks="false">
+					<include name="**/*" />
+					<exclude name="**/*~" />
+				</fileset>
+			</copy>
+
+			<copy todir="cd-build/website/WEB-INF/classes">
+				<fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false">
+					<include name="**/*.class" />
+				</fileset>
+			</copy>
+
+			<antcall target="fix-customisations">
+				<param name="origDir" value="cd-build/website" />
+			</antcall>
+
+		<!--
+			<antcall target="fix-customisations">
+				<param name="origDir" value="cd-build/website/tryp" />
+				<param name="build.role" value="cd" />
+			</antcall> -->
+			
+			<antcall target="prepare-common-files">
+				<param name="build.role" value="cd" />
+			</antcall>
+
+			<antcall target="prepare-resource-files">
+				<param name="build.role" value="cd" />
+			</antcall>
+
+			<antcall target="cd_prep_rm_jsp_files">
+				<param name="build.role" value="cd" />
+			</antcall>
+			
+			<antcall target="cp-wcm">
+		      <param name="build.role" value="cd" />
+		    </antcall>
+
+		</target>
+
+	
+	<target name="make-cd-gui">
+		<jar basedir="ant-build/classes" includes="**/cd/*" destfile="cd-gui.jar" manifest="resources.cd/cd-gui.txt"/>
+	</target>
+
+	<target name="make-cd-splash">
+		<copy file="resources.cd/splash.gif" todir="ant-build/classes/org/genedb/prelim/cdsplash" />
+		<jar basedir="ant-build/classes" includes="**/cdsplash/*" destfile="cd-splash.jar" manifest="resources.cd/cd-splash.txt"/>
+	</target>
+
+	<target name="fix-customisations">
+		<echo message="Overwriting general files with ones specific for ${build.role}" />
+		<move todir="${origDir}" includeemptydirs="false">
+			<fileset dir="${origDir}">
+				<exclude name="WEB-INF/**"/>
+			</fileset>
+			<mapper type="glob" from="role_${build.role}_*" to="*"/>
+		</move>
+	</target>
+
+
+
+	<target name="prepare-common-files">
+		<mkdir dir="cd-build/tmp-common"/>
+
+		<copy todir="cd-build/tmp-common">
+			<fileset dir="../webSite/common" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		<move todir="cd-build/tmp-common" includeemptydirs="false">
+			<fileset dir="cd-build/tmp-common" />
+			<mapper type="glob" from="role_${build.role}_*" to="*"/>
+		</move>
+
+		<copy todir="cd-build/website/tryp">
+			<fileset dir="cd-build/tmp-common" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		<copy todir="cd-build/website/tcruzi">
+			<fileset dir="cd-build/tmp-common" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		<copy todir="cd-build/website/leish">
+			<fileset dir="cd-build/tmp-common" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		<delete dir="cd-build/tmp-common" />
+
+
+	</target>
+
+
+	<target name="prepare-resource-files">
+		<mkdir dir="cd-build/tmp-resource"/>
+
+		<copy todir="cd-build/tmp-resource">
+			<fileset dir="resources" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		<move todir="cd-build/tmp-resource" includeemptydirs="false">
+			<fileset dir="cd-build/tmp-resource" />
+			<mapper type="glob" from="role_${build.role}_*" to="*"/>
+		</move>
+
+		<copy todir="cd-build/website/WEB-INF/classes/cbil/gus/servlet/util" file="cd-build/tmp-resource/boolean.properties" />
+		
+		<delete file="cd-build/tmp-resource/boolean.properties" />
+		
+		<copy todir="cd-build/website/WEB-INF/classes/org/genedb/prelim/data">
+			<fileset dir="cd-build/tmp-resource" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		
+		<delete dir="cd-build/tmp-resource" />
+
+	</target>
+
+
+	<target name="cp-wcm">
+		<copy todir="cd-build/website/tryp/maps">
+			<fileset dir="../../../genedb-data/orgs/tryp/maps" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		<copy todir="cd-build/website/tcruzi/maps">
+			<fileset dir="../../../genedb-data/orgs/tcruzi/maps" casesensitive="false" followSymLinks="false" />
+		</copy>
+
+		<copy todir="cd-build/website/leish/maps">
+			<fileset dir="../../../genedb-data/orgs/leish/maps" casesensitive="false" followSymLinks="false" />
+		</copy>
+	</target>
+	
+	<target name="cd_prep_rm_jsp_files">
+		<delete file="cd-build/website/auth.jsp" />
+		<delete file="cd-build/website/boolean.jsp" />
+		<delete file="cd-build/website/booleanOrgChoice.jsp" />
+		<delete file="cd-build/website/emowseSearch.jsp" />
+		<delete file="cd-build/website/getIntergenicSeq.jsp" />
+		<delete file="cd-build/website/helpShotBlast.jsp" />
+		<delete file="cd-build/website/helpShotBrowse.jsp" />
+		<delete file="cd-build/website/isTomcatAlive.jsp" />
+		<delete file="cd-build/website/login.jsp" />
+		<delete file="cd-build/website/motd.jsp" />
+		<delete file="cd-build/website/motifSearch.jsp" />
+		<delete file="cd-build/website/noauth.jsp" />
+		<delete file="cd-build/website/preferences.jsp" />
+		<delete file="cd-build/website/psiBlastSearch.jsp" />
+		<delete file="cd-build/website/quickArt.jsp" />
+		<delete file="cd-build/website/rangeDownload.include" />
+		<delete file="cd-build/website/searchLong.jsp" />
+		<delete file="cd-build/website/seqSearch.jsp" />
+		<delete file="cd-build/website/test.jsp" />
+		<delete file="cd-build/website/testFrame.jsp" />
+		
+		<delete file="cd-build/website/common/blast.jsp" />
+		
+		<delete file="cd-build/website/tcruzi/index2.jsp" />
+		
+		<delete file="cd-build/website/tryp/chr1.jsp" />
+		
+	</target>
+	
+	<target name="cd_comp_rm_classes">
+	</target>
+
+	
+	
+	
+	
+	
+	
+	<property name="build.home"    value="${basedir}/ant-build"/>
+	<property name="src.home"      value="${basedir}/src"/>
+	<property name="webapp.staging" value="${build.home}/webapp" />
+	<property name="html.staging" value="${build.home}/html"/>
+	<property name="classes.staging" value="${build.home}/classes"/>
+	<property name="webinf.staging" value="${webapp.staging}/WEB-INF"/>
+	<property name="cgi.staging" value="${build.home}/genedb-cgi"/>
+	<property name="cgi-offline.staging" value="${build.home}/genedb-cgi-offline"/>
+	<property name="jsp-src.dir" value="${build.home}/jsp-src" />
+	
+	<property name="config.dir"      value="${basedir}/resources"/>
+	<property name="reports.dir"      value="${basedir}/logs"/>
+	<property name="pathsoft.javalib" value="/raid0/genedb/javalib"/>
+	<property name="libdir.online" value="../webSite/webapps/genedb/WEB-INF/lib" />
+	<property name="libdir.offline" value="javalib" />
+
+	<property name="cd.build.dir" value="${basedir}/cd-build" />
+	<property name="cd.web.staging.dir" value="${cd.build.dir}/webdir" />
+	<property name="cd.dist.dir" value="${cd.build.dir}/full-cd" />
+
+	
+	<target name="prepare">
+		<!-- Create build directories as needed -->
+		<mkdir dir="${build.home}"/>
+		<mkdir dir="${webapp.staging}" />
+		<mkdir dir="${html.staging}" />
+		<mkdir dir="${classes.staging}"/>
+		<mkdir dir="${webinf.staging}"/>
+		<mkdir dir="${cgi.staging}"/>
+		<mkdir dir="${cgi-offline.staging}"/>
+	</target>
+	
+	
+	<target name="compile" depends="prepare"
+  	 description="Compile Java sources">
+
+		<!-- Compile Java classes as necessary -->
+		<javac srcdir="${src.home}"
+          destdir="${classes.staging}"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+			<classpath refid="compile.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="cp-common-webappfiles">
+		<copy todir="${webapp.staging}/${copy.organism}">
+			<fileset dir="../webSite/common">
+			    <include name="*.jsp"/>
+   				<include name="*.include"/>
+			</fileset>
+		</copy>
+	</target>
+		
+	
+	<target name="deploy_pages">
+		<copy todir="${html.staging}">
+			<fileset dir="../webSite/html" casesensitive="false" followSymLinks="false" />
+		</copy>
+		
+		
+		<copy todir="${webapp.staging}">
+			<fileset dir="../webSite/webapps/genedb" casesensitive="false" followSymLinks="false" />
+		</copy>
+		<foreach list="${allorgs}" 
+            target="cp-common-webappfiles"
+            param="copy.organism"
+            delimiter=":"
+            parallel="false"
+            inheritall="true" />
+		
+		
+		
+		<copy todir="${cgi.staging}">
+			<fileset dir="../webSite/cgi" casesensitive="false" followSymLinks="false" />
+		</copy>
+		<copy todir="${cgi-offline.staging}">
+			<fileset dir="../webSite/genedb-cgi-offline" casesensitive="false" followSymLinks="false" />
+		</copy>
+		<copy file="resources/gmp_misc_apps.properties" todir="${cgi-offline.staging}/Website/MiscProtein/DATA" />
+	</target>
+	
+	
+	<target name="deploy1" depends="compile,deploy_pages,jspc_driver">
+		<echo>want to switch over the data. You probably also want to ant 
+		deploy the hybrid. If deploying to www don't forget to 
+		switch the textindexing indices over and ant backup-embl. Then
+		gmake final_deploy, with the correct GENEDB_ROLE. 
+		As soon as you see rm -fr ${old_dest} 
+		you can kill -9 tomcat (and restart if it's not under CAA!)</echo>
+	</target>
+	
+	<!-- ==================== Clean Target ==================================== -->
+	<!-- The "clean" target deletes any previous "build" and "dist" directory,
+          so that you can be ensured the application can be built from scratch. -->
+
+	<target name="clean"
+   description="Delete build directories">
+		<delete dir="${build.home}"/>
+	</target>
+	
+	
+</project>
