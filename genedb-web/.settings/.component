@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId">
+    <wb-module deploy-name="genedb-web">
+        <wb-resource source-path="/src" deploy-path="/WEB-INF/classes"/>
+        <wb-resource source-path="/WebContent" deploy-path="/"/>
+        <property name="context-root" value="genedb-web"/>
+        <property name="java-output-path" value="/build/classes/"/>
+    </wb-module>
+</project-modules>
+
