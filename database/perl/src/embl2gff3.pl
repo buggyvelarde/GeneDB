@@ -9,7 +9,7 @@ embl2gff3 - takes an annotated embl file and converts to gff3 format
 
 Examples:
 
- embl2gff3 -e <file>
+ embl2gff3 -e <file> -d <dataset>
 
 =head1 DESCRIPTION
 
@@ -23,6 +23,8 @@ None
 =head1 AUTHOR
 
 Ellen Schofield (es2@sanger.ac.uk)
+
+Paul Mooney (pjm@sanger.ac.uk)
 
 =head1 COPYRIGHT
 
@@ -47,7 +49,7 @@ use Bio::Coordinate::GeneMapper;
 
 my $usage = "
  Usage : $0 -h (displays help)
-    or : $0 -e <EMBL file>
+    or : $0 -e <EMBL file> -s chromosome -d GeneDB_Pfalciparum
 
 Options
    -e <file> : Annotated EMBL seq file
@@ -74,42 +76,44 @@ defined $options{s} and $source_type = $options{s};
 defined $options{d} and $database = $options{d};
 
 if ( $database eq "" ) {
-	print STDERR "Which GeneDB Dataset is this [GeneDB_Tcongo]? ";
-	$database = <STDIN>;
-	chomp $database;
+    print STDERR "Which GeneDB Dataset is this [GeneDB_Tcongo]? ";
+    $database = <STDIN>;
+    chomp $database;
 }
 
 my %progs = (
-	'pfam'    => 'PFAM',
-	'tmhmm'   => 'TMHMM',
-	'prosite' => 'PROSITE',
-	'prints'  => 'PRINTS',
-	'prodom'  => 'PRODOM',
-	'tigrfam' => 'TIGRFAM',
-	'smart'   => 'SMART',
-	'sigp'    => 'SIGNALP',
-	'fatsa'   => 'FASTA'
-);
+             'pfam'    => 'PFAM',
+             'tmhmm'   => 'TMHMM',
+             'prosite' => 'PROSITE',
+             'prints'  => 'PRINTS',
+             'prodom'  => 'PRODOM',
+             'tigrfam' => 'TIGRFAM',
+             'smart'   => 'SMART',
+             'sigp'    => 'SIGNALP',
+             'fatsa'   => 'FASTA'
+             );
 
 my %allowed = (
-	'ID'            => 1,
-	'Name'          => 1,
-	'Alias'         => 1,
-	'Dbxref'        => 1,
-	'Derives_from'  => 1,
-	'Parent'        => 1,
-	'Note'          => 1,
-	'Ontology_term' => 1,
-	'product'       => 1,
-	'curation'      => 1,
-	'colour'        => 1,
-	'ortholog'      => 1,
-);
+               'ID'            => 1,
+               'Name'          => 1,
+               'Alias'         => 1,
+               'Dbxref'        => 1,
+               'Derives_from'  => 1,
+               'Parent'        => 1,
+               'Note'          => 1,
+               'Ontology_term' => 1,
+               'product'       => 1,
+               'curation'      => 1,
+               'colour'        => 1,
+               'ortholog'      => 1,
+               'chromosome'    => 1,
+               'contig'        => 1,
+               );
 
 my $seqio = new Bio::SeqIO(
-	-format => 'embl',
-	-file   => $options{e}
-);
+                           -format => 'embl',
+                           -file   => $options{e}
+                           );
 
 my %feats    = ();
 my %peps     = ();
@@ -124,450 +128,461 @@ open STOP, ">partial_stop.txt" or die "Unable to open file partial_stop.txt\n";
 open ANALYSIS, ">analysis.txt" or die "Unable to open file analysis.txt\n";
 
 my $fasta = new Bio::SeqIO(
-	-file   => ">seq.fa",
-	-format => 'fasta'
-);
+                           -file   => ">seq.fa",
+                           -format => 'fasta'
+                           );
 
 while ( my $seq = $seqio->next_seq ) {
 
-	my @non_cds = ();
+    my @non_cds = ();
 
-	# defined a default name
-	my $fname = sprintf( "%s", $seq->display_id );
+    # defined a default name
+    my $fname = sprintf( "%s", $seq->display_id );
 
-	print STDERR "Converting $fname...\n";
+    print STDERR "Converting $fname...\n";
 
-	my $gffout_hits = '';
+    my $gffout_hits = '';
 
-	#	= new Bio::Tools::GFF(
-	#		-file        => ">$fname.matches.gff",
-	#		-gff_version => 3
-	#	);
+    #	= new Bio::Tools::GFF(
+    #		-file        => ">$fname.matches.gff",
+    #		-gff_version => 3
+    #	);
 
-	$fasta->write_seq($seq);
+    $fasta->write_seq($seq);
 
-	foreach my $f ( $seq->top_SeqFeatures() ) {
-		my $pseudo = 0;
+    foreach my $f ( $seq->top_SeqFeatures() ) {
+        my $pseudo = 0;
 
-		$f->source_tag($database);
+        $f->source_tag($database);
 
-		#Feature Keys
-		foreach my $tag ( $f->get_all_tags() ) {
-			$f->add_tag_value( 'Dbxref', $f->remove_tag($tag) )
-			  if ( $tag eq 'db_xref' || $tag eq 'dbxref' );
-			$f->add_tag_value( 'Note', $f->remove_tag($tag) )
-			  if ( $tag eq 'note' );
-			$f->add_tag_value( 'ID', $f->remove_tag($tag) )
-			  if ( $tag eq 'systematic_id'
-				|| $tag eq 'temporary_systematic_id' );
-			$f->add_tag_value( 'Name', $f->remove_tag($tag) )
-			  if ( $tag eq 'primary_name' );
-			$f->add_tag_value( 'Alias', $f->remove_tag($tag) )
-			  if ( $tag eq 'synonym' );
-			$f->add_tag_value( 'ortholog', $f->remove_tag($tag) )
-			  if ( $tag eq 'orthologue' );
-			if ( $tag =~ /go/i ) {
-				foreach ( $f->remove_tag($tag) ) {
-					$f->add_tag_value( 'Ontology_term', $1 )
-					  if ( $_ =~ /GOid=(GO:\d+)/ );
-				}
-			}
-			$pseudo = 1 && $f->remove_tag($tag) if ( $tag eq 'pseudo' );
-		}
+        #Feature Keys
+        foreach my $tag ( $f->get_all_tags() ) {
+            $f->add_tag_value( 'Dbxref', $f->remove_tag($tag) )   if ( $tag eq 'db_xref' || $tag eq 'dbxref' );
+            $f->add_tag_value( 'Note', $f->remove_tag($tag) )     if ( $tag eq 'note' );
+            $f->add_tag_value( 'ID', $f->remove_tag($tag) )       if ( $tag eq 'systematic_id'
+                                                                      || $tag eq 'temporary_systematic_id' );
+            $f->add_tag_value( 'Name', $f->remove_tag($tag) )     if ( $tag eq 'primary_name' );
+            $f->add_tag_value( 'Alias', $f->remove_tag($tag) )    if ( $tag eq 'synonym' );
+            $f->add_tag_value( 'ortholog', $f->remove_tag($tag) ) if ( $tag eq 'orthologue' );
 
-		$f->add_tag_value(
-			'Dbxref',
-			writeSimilarities(
-				$gffout_hits, $f, ${ [ $f->get_tag_values('ID') ] }[0]
-			)
-		  )
-		  && $f->remove_tag('similarity')
-		  if ( $f->has_tag('similarity') );
+            if ( $tag =~ /go/i ) {
+                foreach ( $f->remove_tag($tag) ) {
+                    $f->add_tag_value( 'Ontology_term', $1 )
+                        if ( $_ =~ /GOid=(GO:\d+)/ );
+                }
+            }
+            $pseudo = 1 && $f->remove_tag($tag) if ( $tag eq 'pseudo' );
+        }
 
-		my %tagValues = &get_all_tag_values($f);
+        if ( $f->has_tag('similarity') ){
+            $f->add_tag_value(
+                              'Dbxref',
+                              writeSimilarities(
+                                                $gffout_hits, $f, ${ [ $f->get_tag_values('ID') ] }[0]
+                                                )
+                              );
+            $f->remove_tag('similarity');
+        }
 
-		unless ( $f->primary_tag eq 'CDS' ) {
-			push( @non_cds, $f );
-			next;
-		}
+        my %tagValues = &get_all_tag_values($f);
 
-		my $id = ${ [ $f->get_tag_values('ID') ] }[0];
-		$cdss{$id} = $f->location();
+        unless ( $f->primary_tag eq 'CDS' ) {
+            push( @non_cds, $f );
+            next;
+        }
 
-		my $gene = new Bio::SeqFeature::Generic(
-			-primary_tag => 'gene',
-			-source_tag  => $database,
-			-seq_id      => $fname
-		);
-		$gene->primary_tag('pseudogene') if $pseudo;
+        my $id = ${ [ $f->get_tag_values('ID') ] }[0];
+        $cdss{$id} = $f->location();
 
-		$gene->location(
+        my $gene = new Bio::SeqFeature::Generic(
+                                                -primary_tag => 'gene',
+                                                -source_tag  => $database,
+                                                -seq_id      => $fname
+                                                );
+        $gene->primary_tag('pseudogene') if $pseudo;
+
+        $gene->location(
 			Bio::Location::Simple->new(
-				-start  => $f->start,
-				-end    => $f->end,
-				-strand => $f->strand
-			)
-		);
+                                                   -start  => $f->start,
+                                                   -end    => $f->end,
+                                                   -strand => $f->strand
+                                                   )
+                        );
 
-		foreach my $t ( keys %tagValues ) {
-			$gene->add_tag_value( $t, @{ $tagValues{$t} } );
+        foreach my $t ( keys %tagValues ) {
+            $gene->add_tag_value( $t, @{ $tagValues{$t} } );
+            
+            #print "*****$t\t";
+        }
 
-			#print "*****$t\t";
-		}
+        #print "\n";
+        push( @{ $features{ $gene->primary_tag } }, $gene );
 
-		#print "\n";
-		push( @{ $features{ $gene->primary_tag } }, $gene );
+        #$gffout_genes->write_feature($gene);
+        push( @genes, $gene );
+        push( @g_ids, $id );
 
-		#$gffout_genes->write_feature($gene);
-		push( @genes, $gene );
-		push( @g_ids, $id );
+        my $mrna = new Bio::SeqFeature::Generic(
+                                                -primary_tag => 'transcript',
+                                                -source_tag  => $database,
+                                                -seq_id      => $fname
+                                                );
+        $mrna->primary_tag('pseudogenic_transcript') if $pseudo;
 
-		my $mrna = new Bio::SeqFeature::Generic(
-			-primary_tag => 'transcript',
-			-source_tag  => $database,
-			-seq_id      => $fname
-		);
-		$mrna->primary_tag('pseudogenic_transcript') if $pseudo;
-
-		$mrna->location(
+        $mrna->location(
 			Bio::Location::Simple->new(
-				-start  => $f->start,
-				-end    => $f->end,
-				-strand => $f->strand
-			)
-		);
+                                                   -start  => $f->start,
+                                                   -end    => $f->end,
+                                                   -strand => $f->strand
+                                                   )
+                        );
 
-		foreach my $t ( keys %tagValues ) {
-			$mrna->add_tag_value( $t, @{ $tagValues{$t} } );
-		}
+        foreach my $t ( keys %tagValues ) {
+            $mrna->add_tag_value( $t, @{ $tagValues{$t} } );
+        }
 
-		$mrna->remove_tag('ID') if $mrna->has_tag('ID');
-		$mrna->add_tag_value( 'Parent', "$id" );
-		$mrna->add_tag_value( 'ID',     "mrna.$id" );
+        $mrna->remove_tag('ID') if $mrna->has_tag('ID');
+        $mrna->add_tag_value( 'Parent', "$id" );
+        $mrna->add_tag_value( 'ID',     "mrna.$id" );
 
-		push( @{ $features{ $mrna->primary_tag } }, $mrna );
+        push( @{ $features{ $mrna->primary_tag } }, $mrna );
 
-		unless ($pseudo) {
-			my $cds = new Bio::SeqFeature::Generic(
-				-primary_tag => 'CDS',
-				-source_tag  => $database,
-				-seq_id      => $fname
-			);
+        unless ($pseudo) {
+            my $cds = new Bio::SeqFeature::Generic(
+                                                   -primary_tag => 'CDS',
+                                                   -source_tag  => $database,
+                                                   -seq_id      => $fname
+                                                   );
 
-			$cds->location(
-				Bio::Location::Simple->new(
-					-start  => $f->start,
-					-end    => $f->end,
-					-strand => $f->strand
-				)
-			);
+            $cds->location(
+                           Bio::Location::Simple->new(
+                                                      -start  => $f->start,
+                                                      -end    => $f->end,
+                                                      -strand => $f->strand
+                                                      )
+                           );
 
-			foreach my $t ( keys %tagValues ) {
-				$cds->add_tag_value( $t, @{ $tagValues{$t} } );
-			}
-			$cds->remove_tag('ID') if $cds->has_tag('ID');
-			$cds->add_tag_value( 'Parent', "mrna.$id" );
-			$cds->add_tag_value( 'ID',     "cds.$id" );
+            foreach my $t ( keys %tagValues ) {
+                $cds->add_tag_value( $t, @{ $tagValues{$t} } );
+            }
+            $cds->remove_tag('ID') if $cds->has_tag('ID');
+            $cds->add_tag_value( 'Parent', "mrna.$id" );
+            $cds->add_tag_value( 'ID',     "cds.$id" );
 
-			push( @{ $features{ $cds->primary_tag } }, $cds );
+            push( @{ $features{ $cds->primary_tag } }, $cds );
 
-			#$gffout_cds->write_feature($cds);
-		}
+            #$gffout_cds->write_feature($cds);
+        }
 
-		my $count  = 1;
-		my $length = 0;
-		foreach my $e ( $f->location->each_Location() ) {
+        my $count  = 1;
+        my $length = 0;
+        foreach my $e ( $f->location->each_Location() ) {
 
-			my $exon = new Bio::SeqFeature::Generic(
-				-primary_tag => 'exon',
-				-source_tag  => $database,
-				-seq_id      => $fname
-			);
-			$exon->primary_tag('pseudogenic_exon') if $pseudo;
+            my $exon = new Bio::SeqFeature::Generic(
+                                                    -primary_tag => 'exon',
+                                                    -source_tag  => $database,
+                                                    -seq_id      => $fname
+                                                    );
+            $exon->primary_tag('pseudogenic_exon') if $pseudo;
 
-			$exon->location(
-				Bio::Location::Simple->new(
-					-start  => $e->start,
-					-end    => $e->end,
-					-strand => $e->strand
-				)
-			);
+            $exon->location(
+                            Bio::Location::Simple->new(
+                                                       -start  => $e->start,
+                                                       -end    => $e->end,
+                                                       -strand => $e->strand
+                                                       )
+                            );
 
-			foreach my $t ( keys %tagValues ) {
-				$exon->add_tag_value( $t, @{ $tagValues{$t} } );
-			}
-			$exon->remove_tag('ID')     if $exon->has_tag('ID');
-			$exon->remove_tag('Parent') if $exon->has_tag('Parent');
-			$exon->add_tag_value( 'Parent', "mrna.$id" );
-			$exon->add_tag_value( 'ID',     "$id\_$count" );
+            foreach my $t ( keys %tagValues ) {
+                $exon->add_tag_value( $t, @{ $tagValues{$t} } );
+            }
+            $exon->remove_tag('ID')     if $exon->has_tag('ID');
+            $exon->remove_tag('Parent') if $exon->has_tag('Parent');
+            $exon->add_tag_value( 'Parent', "mrna.$id" );
+            $exon->add_tag_value( 'ID',     "$id\_$count" );
 
-			push( @{ $features{ $exon->primary_tag } }, $exon );
+            push( @{ $features{ $exon->primary_tag } }, $exon );
 
-			$length += $exon->length;
-			$count++;
-		}
+            $length += $exon->length;
+            $count++;
+        }
 
-		unless ($pseudo) {
+        unless ($pseudo) {
 
-			my $pep = new Bio::SeqFeature::Generic(
-				-primary_tag => 'polypeptide',
-				-source_tag  => $database,
-				-seq_id      => "pep.$id"
-			);
+            my $pep = new Bio::SeqFeature::Generic(
+                                                   -primary_tag => 'polypeptide',
+                                                   -source_tag  => $database,
+                                                   -seq_id      => "pep.$id"
+                                                   );
 
-			$pep->location(
-				Bio::Location::Simple->new(
-					-start  => 1,
-					-end    => int $length / 3,
-					-strand => 0
-				)
-			);
+            $pep->location(
+                           Bio::Location::Simple->new(
+                                                      -start  => 1,
+                                                      -end    => int $length / 3,
+                                                      -strand => 0
+                                                      )
+                           );
 
-			foreach my $t ( keys %tagValues ) {
-				$pep->add_tag_value( $t, @{ $tagValues{$t} } );
-			}
-			$pep->remove_tag('ID') if $pep->has_tag('ID');
-			$pep->add_tag_value( 'Derives_from', "cds.$id" );
-			$pep->add_tag_value( 'ID',           "pep.$id" );
-			$pep->seq_id("pep.$id");
+            foreach my $t ( keys %tagValues ) {
+                $pep->add_tag_value( $t, @{ $tagValues{$t} } );
+            }
+            $pep->remove_tag('ID') if $pep->has_tag('ID');
+            $pep->add_tag_value( 'Derives_from', "cds.$id" );
+            $pep->add_tag_value( 'ID',           "pep.$id" );
+            $pep->seq_id("pep.$id");
 
-			$peps{$id} = $pep->location();
+            $peps{$id} = $pep->location();
 
-			push( @{ $features{ $pep->primary_tag } }, $pep );
+            push( @{ $features{ $pep->primary_tag } }, $pep );
 
-			#$gffout_peps->write_feature($pep);
-		}
-	}
+            #$gffout_peps->write_feature($pep);
+        }
+    }
 
-	#NON CDS FEATURES
-	foreach my $f (@non_cds) {
-		my %tagValues = &get_all_tag_values($f);
-		if ( $f->primary_tag eq 'misc_feature' ) {
+    #NON CDS FEATURES
+    foreach my $f (@non_cds) {
+        my %tagValues = &get_all_tag_values($f);
 
-			#warn "no gene name found for feature at "
-			#  . $f->start . ".."
-			#  . $f->end
-			#  . " - guessing using coordinates\n"
-			#  unless $f->has_tag('gene');
+        # DEBUG
+        #foreach my $key (keys %tagValues) {
+        #    print STDERR "$key = ", $tagValues{$key}, "\n";
+        #}
 
-			my $id = '';
-			if ( $f->has_tag('gene') ) {
-				$id = ${ [ $f->get_tag_values('gene') ] }[0];
-			}
-			else {
-				my $c = -1;
-				foreach my $g (@genes) {
-					$c++;
-					next unless $g->contains($f);
-					$id = $g_ids[$c];
-					last;
-				}
-			}
-			if (
-				$f->has_tag('type')
-				&& grep /pfam|tmhmm|prosite|prints|prodom|tigrfam|smart/i,
-				$f->get_tag_values('type')
-			  )
-			{
-				my $type = lc ${ [ $f->get_tag_values('type') ] }[0];
-				$feats{$id}{$type}++;
+        if ( $f->primary_tag eq 'misc_feature' ) {
 
-				foreach my $e ( $f->location->each_Location(1) ) {
-					my $dom = new Bio::SeqFeature::Generic(
-						-primary_tag => 'polypeptide_domain',
-						-source_tag  => $progs{$type}
-					);
+            #warn "no gene name found for feature at "
+            #  . $f->start . ".."
+            #  . $f->end
+            #  . " - guessing using coordinates\n"
+            #  unless $f->has_tag('gene');
 
-					$dom->score( ${ [ $f->remove_tag('score') ] }[0] )
-					  if ( $f->has_tag('score') );
+            my $id = '';
+            if ( $f->has_tag('gene') ) {
+                $id = ${ [ $f->get_tag_values('gene') ] }[0];
+            }
+            else {
+                my $c = -1;
+                foreach my $g (@genes) {
+                    $c++;
+                    next unless $g->contains($f);
+                    $id = $g_ids[$c];
+                    last;
+                }
+            }
+            if (
+                $f->has_tag('type')
+                && grep /pfam|tmhmm|prosite|prints|prodom|tigrfam|smart/i,
+                $f->get_tag_values('type')
+                )
+            {
+                my $type = lc ${ [ $f->get_tag_values('type') ] }[0];
+                $feats{$id}{$type}++;
+                
+                foreach my $e ( $f->location->each_Location(1) ) {
+                    my $dom = new Bio::SeqFeature::Generic(
+                                                           -primary_tag => 'polypeptide_domain',
+                                                           -source_tag  => $progs{$type}
+                                                           );
 
-					foreach my $t ( keys %tagValues ) {
-						$dom->add_tag_value( $t, @{ $tagValues{$t} } );
-					}
-					$dom->location($e);
-					map_chr2pep( $dom, $id ) unless ( $id eq '' );
-					$dom->remove_tag('ID')   if $dom->has_tag('ID');
-					$dom->remove_tag('type') if $dom->has_tag('type');
-					$dom->add_tag_value( 'Parent', "pep.$id" );
-					$dom->add_tag_value( 'ID',
-						"$type.$id\_$feats{$id}{$type}" );
-					$dom->seq_id("pep.$id");
-					push( @{ $features{ $dom->primary_tag } }, $dom );
-					$feats{$id}{$type}++;
-				}
+                    $dom->score( ${ [ $f->remove_tag('score') ] }[0] )
+                        if ( $f->has_tag('score') );
 
-				#$gffout_misc->write_feature($dom);
-			}
-			else {
-				my $dom = new Bio::SeqFeature::Generic(
-					-primary_tag => 'remark',
-					-source_tag  => $database,
-					-seq_id      => $fname
-				);
+                    foreach my $t ( keys %tagValues ) {
+                        $dom->add_tag_value( $t, @{ $tagValues{$t} } );
+                    }
+                    $dom->location($e);
+                    map_chr2pep( $dom, $id ) unless ( $id eq '' );
+                    $dom->remove_tag('ID')   if $dom->has_tag('ID');
+                    $dom->remove_tag('type') if $dom->has_tag('type');
+                    $dom->add_tag_value( 'Parent', "pep.$id" );
+                    $dom->add_tag_value( 'ID',
+                                         "$type.$id\_$feats{$id}{$type}" );
+                    $dom->seq_id("pep.$id");
+                    push( @{ $features{ $dom->primary_tag } }, $dom );
+                    $feats{$id}{$type}++;
+                }
 
-				foreach my $t ( keys %tagValues ) {
-					$dom->add_tag_value( $t, @{ $tagValues{$t} } );
-				}
-				$dom->location(
-					Bio::Location::Simple->new(
-						-start  => $f->start,
-						-end    => $f->end,
-						-strand => $f->strand
-					)
-				);
-				push( @{ $features{ $dom->primary_tag } }, $dom );
+                #$gffout_misc->write_feature($dom);
+            }
+            else {
+                my $dom = new Bio::SeqFeature::Generic(
+                                                       -primary_tag => 'remark',
+                                                       -source_tag  => $database,
+                                                       -seq_id      => $fname
+                                                       );
 
-				#$gffout_misc->write_feature($dom);
-			}
-		}
-		elsif ( $f->primary_tag eq 'sig_peptide' ) {
-			warn "no gene name found for feature at "
-			  . $f->start . ".."
-			  . $f->end && next
-			  unless $f->has_tag('gene');
+                foreach my $t ( keys %tagValues ) {
+                    $dom->add_tag_value( $t, @{ $tagValues{$t} } );
+                }
+                $dom->location(
+                               Bio::Location::Simple->new(
+                                                          -start  => $f->start,
+                                                          -end    => $f->end,
+                                                          -strand => $f->strand
+                                                          )
+                               );
+                push( @{ $features{ $dom->primary_tag } }, $dom );
 
-			my $id = ${ [ $f->get_tag_values('gene') ] }[0];
-			$feats{$id}{'sigp'}++;
+                #$gffout_misc->write_feature($dom);
+            }
+        }
+        elsif ( $f->primary_tag eq 'sig_peptide' ) {
+            warn "no gene name found for feature at "
+                . $f->start . ".."
+                . $f->end && next
+                unless $f->has_tag('gene');
 
-			foreach my $e ( $f->location->each_Location(1) ) {
+            my $id = ${ [ $f->get_tag_values('gene') ] }[0];
+            $feats{$id}{'sigp'}++;
 
-				my $dom = new Bio::SeqFeature::Generic(
-					-primary_tag => 'signal_peptide',
-					-source_tag  => $progs{'sigp'}
-				);
+            foreach my $e ( $f->location->each_Location(1) ) {
 
-				$dom->score( ${ [ $f->remove_tag('score') ] }[0] )
-				  if ( $f->has_tag('score') );
+                my $dom = new Bio::SeqFeature::Generic(
+                                                       -primary_tag => 'signal_peptide',
+                                                       -source_tag  => $progs{'sigp'}
+                                                       );
 
-				foreach my $t ( keys %tagValues ) {
-					$dom->add_tag_value( $t, @{ $tagValues{$t} } );
-				}
+                $dom->score( ${ [ $f->remove_tag('score') ] }[0] )
+                    if ( $f->has_tag('score') );
 
-				$dom->location($e);
-				map_chr2pep( $dom, $id );
-				$dom->remove_tag('ID')   if $dom->has_tag('ID');
-				$dom->remove_tag('type') if $dom->has_tag('type');
-				$dom->add_tag_value( 'Parent', "pep.$id" );
-				$dom->add_tag_value( 'ID',     "sigp.$id\_$feats{$id}{sigp}" );
-				$dom->seq_id("pep.$id");
+                foreach my $t ( keys %tagValues ) {
+                    $dom->add_tag_value( $t, @{ $tagValues{$t} } );
+                }
 
-				push( @{ $features{ $dom->primary_tag } }, $dom );
-			}
+                $dom->location($e);
+                map_chr2pep( $dom, $id );
+                $dom->remove_tag('ID')   if $dom->has_tag('ID');
+                $dom->remove_tag('type') if $dom->has_tag('type');
+                $dom->add_tag_value( 'Parent', "pep.$id" );
+                $dom->add_tag_value( 'ID',     "sigp.$id\_$feats{$id}{sigp}" );
+                $dom->seq_id("pep.$id");
 
-			#$gffout_misc->write_feature($dom);
-		}
-		elsif ( $f->primary_tag eq 'source' ) {
-			my $source = new Bio::SeqFeature::Generic(
-				-primary_tag => 'TEST',
-				-source_tag  => $database,
-				-seq_id      => $fname
-			);
-			$source->location(
-				Bio::Location::Simple->new(
-					-start  => $f->start,
-					-end    => $f->end,
-					-strand => $f->strand
-				)
-			);
+                push( @{ $features{ $dom->primary_tag } }, $dom );
+            }
 
-			$source->seq_id($fname);
+            #$gffout_misc->write_feature($dom);
+        }
+        elsif ( $f->primary_tag eq 'source' ) {
+            my $source = new Bio::SeqFeature::Generic(
+                                                      -primary_tag => 'TEST',
+                                                      -source_tag  => $database,
+                                                      -seq_id      => $fname
+                                                      );
+            $source->location(
+                              Bio::Location::Simple->new(
+                                                         -start  => $f->start,
+                                                         -end    => $f->end,
+                                                         -strand => $f->strand
+                                                         )
+                              );
 
-			foreach my $t ( keys %tagValues ) {
-				$source->add_tag_value( $t, @{ $tagValues{$t} } );
-			}
+            $source->seq_id($fname);
 
-			if ( $source->has_tag('chromosome') ) {
-				$source->primary_tag('chromosome');
-				$source->add_tag_value( 'ID', $fname );
-			}
-			elsif ( $source->has_tag('contig') ) {
-				$source->primary_tag('contig');
+            foreach my $t ( keys %tagValues ) {
+                #print STDERR "source $t ", $tagValues{$t}, "\n";
+                $source->add_tag_value( $t, @{ $tagValues{$t} } );
+            }
 
-				my $tmp_id = ${ [ $source->remove_tag('contig') ] }[0];
-				$source->add_tag_value( 'ID', $tmp_id );
+            #print STDERR "\n";
 
-				my $tmpseq = Bio::Seq->new(
-					-display_id => $tmp_id,
-					-seq        => $f->seq->seq
-				);
-				$fasta->write_seq($tmpseq);
-			}
-			elsif ($source_type ne '' && $source->has_tag('ID')){
-				$source->primary_tag($source_type);
-			}
-			push( @{ $features{ $source->primary_tag } }, $source );
+            if ( $source->has_tag('chromosome') ) {
+                $source->primary_tag('chromosome');
+                $source->add_tag_value( 'ID', $fname );
+            }
+            elsif ( $source->has_tag('contig') ) {
+                $source->primary_tag('contig');
 
-			#$gffout_sources->write_feature($source);
-		}
-		elsif ( $f->primary_tag =~ /mrna/i ) {
-			my $mrna = new Bio::SeqFeature::Generic(
-				-primary_tag => 'mRNA',
-				-source_tag  => $database,
-				-seq_id      => $fname
-			);
-			$mrna->location( $f->location() );
+                my $tmp_id = ${ [ $source->remove_tag('contig') ] }[0];
+                $source->add_tag_value( 'ID', $tmp_id );
 
-			my $id = ${ [ $f->get_tag_values('ID') ] }[0];
+                my $tmpseq = Bio::Seq->new(
+                                           -display_id => $tmp_id,
+                                           -seq        => $f->seq->seq
+                                           );
+                $fasta->write_seq($tmpseq);
 
-			foreach my $t ( keys %tagValues ) {
-				if ( exists $allowed{$t} ) {
-					$mrna->add_tag_value( $t, @{ $tagValues{$t} } );
-				}
-				else {
-					foreach ( $f->get_tag_values($t) ) {
-						printf ANALYSIS "%s\t%s\t%s\n", $id, $t, $_;
-					}
-				}
-			}
+                print STDERR "Changed source for contig with ID = $tmp_id\n";
 
-			printf START "%s\n", $id
-			  if ( $f->location->start_pos_type eq 'BEFORE' );
-			printf STOP "%s\n", $id
-			  if ( $f->location->end_pos_type eq 'AFTER' );
+            }
+            elsif ($source_type ne '' && $source->has_tag('ID')){
+                $source->primary_tag($source_type);
+            }
 
-			push( @{ $features{ $mrna->primary_tag } }, $mrna );
-		}
-	}
+            push( @{ $features{ $source->primary_tag } }, $source );
+
+            #$gffout_sources->write_feature($source);
+        }
+        elsif ( $f->primary_tag =~ /mrna/i ) {
+            my $mrna = new Bio::SeqFeature::Generic(
+                                                    -primary_tag => 'mRNA',
+                                                    -source_tag  => $database,
+                                                    -seq_id      => $fname
+                                                    );
+            $mrna->location( $f->location() );
+
+            my $id = ${ [ $f->get_tag_values('ID') ] }[0];
+
+            foreach my $t ( keys %tagValues ) {
+                if ( exists $allowed{$t} ) {
+                    $mrna->add_tag_value( $t, @{ $tagValues{$t} } );
+                }
+                else {
+                    foreach ( $f->get_tag_values($t) ) {
+                        printf ANALYSIS "%s\t%s\t%s\n", $id, $t, $_;
+                    }
+                }
+            }
+
+            printf START "%s\n", $id
+                if ( $f->location->start_pos_type eq 'BEFORE' );
+            printf STOP "%s\n", $id
+                if ( $f->location->end_pos_type eq 'AFTER' );
+            
+            push( @{ $features{ $mrna->primary_tag } }, $mrna );
+        }
+    }
 }
+
 &gffFeatures( \%features );
 
 exit;
 
 sub gffFeatures() {
-	my $features = shift;
+    my $features = shift;
 
-	my %contigs = ();
-	my %seen    = ();
+    my %contigs = ();
+    my %seen    = ();
 
-	my @order =
-	  qw/chromosome contig gene pseudogene transcript pseudogenic_transcript mRNA exon pseudogenic_exon CDS polypeptide signal_peptide polypeptide_domain/;
+    my @order =
+        qw/chromosome contig gene pseudogene transcript pseudogenic_transcript mRNA exon pseudogenic_exon CDS polypeptide signal_peptide polypeptide_domain/;
 
-	foreach my $key (@order) {
-		$seen{$key}++;
+    foreach my $key (@order) {
+        $seen{$key}++;
 
-		if ( exists $$features{$key} ) {
-			my $gffout = new Bio::Tools::GFF(
-				-file        => ">$key.gff",
-				-gff_version => 3
-			);
+        if ( exists $$features{$key} ) {
 
-			foreach ( @{ $$features{$key} } ) {
-				$gffout->write_feature($_);
-			}
-		}
-	}
-	foreach my $key ( keys %{$features} ) {
-		next if exists $seen{$key};
+            my $gffout = new Bio::Tools::GFF(
+                                             -file        => ">$key.gff",
+                                             -gff_version => 3
+                                             );
 
-		my $gffout = new Bio::Tools::GFF(
-			-file        => ">$key.gff",
-			-gff_version => 3
-		);
+            foreach ( @{ $$features{$key} } ) {
+                $gffout->write_feature($_);
+            }
+        }
+    }
+    foreach my $key ( keys %{$features} ) {
+        next if exists $seen{$key};
 
-		foreach ( @{ $$features{$key} } ) {
-			$gffout->write_feature($_);
-		}
-	}
+        my $gffout = new Bio::Tools::GFF(
+                                         -file        => ">$key.gff",
+                                         -gff_version => 3
+                                         );
+
+        foreach ( @{ $$features{$key} } ) {
+            $gffout->write_feature($_);
+        }
+    }
 }
 
 sub map_chr2pep {
