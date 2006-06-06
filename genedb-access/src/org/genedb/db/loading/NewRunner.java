@@ -17,15 +17,9 @@
  * Boston, MA  02111-1307 USA
  */
 
-/**
- *
- *
- * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
-*/
 package org.genedb.db.loading;
 
 import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.dao.FeatureDao;
 import org.genedb.db.hibernate.Featureloc;
 import org.genedb.db.hibernate.Organism;
 
@@ -42,7 +36,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.beans.beancontext.BeanContext;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,10 +56,11 @@ import java.util.Set;
 
 
 /**
- * This class is the main entry point for GeneDB data miners. It's designed to be called from
- * the command-line, or a Makefile.
+ * This class is the main entry point for the new GeneDB data miners. It's designed to be 
+ * called from the command-line. It looks for a config. file which specifies which files 
+ * to process.
  *
- * Usage: GenericRunner organism [-show_ids] [-show_contigs]
+ * Usage: NewRunner common_nane [config_file]
  *
  *
  * @author Adrian Tivey (art)
@@ -89,6 +83,11 @@ public class NewRunner implements ApplicationContextAware {
     
     private FeatureUtils featureUtils;
     
+    /**
+     * This is called once the ApplicationContext has set up all of this 
+     * beans properties. It fetches/creates beans which can't be injected 
+     * as they depend on command-line args
+     */
     public void afterPropertiesSet() {
         //logger.warn("Skipping organism set as not connected to db");
         organism = daoFactory.getOrganismDao().findByCommonName(runnerConfig.getOrganismCommonName()).get(0);
@@ -106,6 +105,9 @@ public class NewRunner implements ApplicationContextAware {
     }
 
     
+    /**
+     * Populate maps based on InterPro result files, GO association files etc
+     */
     private void buildCaches() {
 	// TODO Auto-generated method stub
 	
@@ -114,6 +116,11 @@ public class NewRunner implements ApplicationContextAware {
 
 
 
+    /**
+     * Call a process_* type method for this feature, based on its type
+     * 
+     * @param f The feature to dispatch on
+     */
     private void despatchOnFeatureType(Feature f) {
 	Method method = null;
 	String mungedType = f.getType().replaceAll("'","_prime_");
@@ -180,6 +187,10 @@ public class NewRunner implements ApplicationContextAware {
 
 
 
+    /**
+     * The core processing loop. Read the config file to find out which EMBL files to read, 
+     * and which 'synthetic' features to create
+     */
     private void process() {
 	long start = new Date().getTime();
         
@@ -225,9 +236,7 @@ public class NewRunner implements ApplicationContextAware {
 		    }
 		    Sequence seq = sequences.get(0);
 		    this.processSequence(seq, top, fp.getOffSet());
-		    residues.append(seq.seqString());
-		    // TODO Create some kind of new sequence to cope with translation
-		    
+		    residues.append(seq.seqString());	    
 		}
 		
 	    }
@@ -255,6 +264,12 @@ public class NewRunner implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
     
+    /**
+     * Create a list of Biojava sequences from an EMBL file. It fails fatally if no sequences are found.
+     * 
+     * @param file the file to read in
+     * @return the list of sequences, >1 if an EMBL stream
+     */
     public List<Sequence> extractSequencesFromFile(File file) {
 	if (logger.isInfoEnabled()) {
 	    logger.info("Parsing file '"+file.getAbsolutePath()+"'");
