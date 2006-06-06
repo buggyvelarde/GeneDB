@@ -1,0 +1,59 @@
+Remember: Don't delete Feature before refreshing
+
+
+
+To Do
+==========
+Protein translation
+Gene /note - need to cope with multiple /note too
+Gene /curation
+new style /GO loading
+Partial genes
+Pseudogenes
+Controlled curation
+Get schisto data
+EMBL output - strict and PSU
+GFF3 output
+GO association output
+cosmid artificial feature storage
+New naming proposal
+PMID lookup needed proposal
+Gene /product 
+
+New ORM
+=========
+Read JPA spec
+Change feature so length, checksum set when sequence set (done, but need to change field access type to avoid setter?)
+Class/method name tidying (done)
+Generate interfaces
+Work out containing entities
+Feature residues to byte[]
+HiLo sequence generator - feature, featureprop (done so far)
+Something about setting timestamps automatically
+Change cvterm field name to type - Feature, featureprop (done so far)
+Change boolean fields to lose is (done) 
+Remove public schema from mapping files (done)
+Try detailed lifecycle handling of feature and feature prop (need testing)
+Print mapping files for checklists
+ant build file for Hibernate - only delete particular .java etc
+Keep comparing generated schema with original
+
+Done
+==========
+Create ORM layer for GeneDB
+Create basic loader infrastructure
+Load one top level source feature
+Load CDSs according to chado guidelines
+Create gene naming abstraction, and GeneDB-specific version
+Basic config code
+Protein name
+Protein stats
+Gene /colour - temp for Tim
+Synthetic feature construction
+Change exon naming as can be shared
+gene /product as a controlled vocab, and multiple products
+Remove all persist from indivual DAOs
+Contig offset storage
+Splicing
+Alternative transcripts
+ 
