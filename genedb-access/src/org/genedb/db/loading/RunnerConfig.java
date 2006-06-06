@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2006 Genome Research Limited.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Library General Public License as published
+ * by  the Free Software Foundation; either version 2 of the License or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this program; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307 USA
+ */
 package org.genedb.db.loading;
 
 import org.apache.commons.logging.Log;
@@ -27,6 +45,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The loading process is driven by config files, one per organism. See an annotated config example for details.
+ * 
+ * The config file parses an XML file which can set mining propeprties, which files to load etc
+ * 
+ * @author Adrian Tivey (art) 
+ */
 public class RunnerConfig {
 
     //  private static final String DEFAULT_DATA_PREFIX = "/nfs/pathdb/prod/data/input";
@@ -42,6 +67,13 @@ public class RunnerConfig {
     
     private List<String> fileNames = new ArrayList<String>(0);
 
+    /**
+     * Recurse through a directory tree, adding any files with the given extension to 
+     * the list of filenames to process.
+     * 
+     * @param directory the directory to start from
+     * @param extension the file extension to match on
+     */
     private void addFilesFromDirectory(File directory, final String extension) {
 	String[] names = directory.list(new FilenameFilter() {
 	    public boolean accept(File file, String name) {

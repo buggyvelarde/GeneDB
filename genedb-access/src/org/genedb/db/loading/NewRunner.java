@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002 Genome Research Limited.
+ * Copyright (c) 2006 Genome Research Limited.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published
