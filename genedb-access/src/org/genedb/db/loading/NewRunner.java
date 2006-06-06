@@ -83,6 +83,14 @@ public class NewRunner implements ApplicationContextAware {
     
     private FeatureUtils featureUtils;
     
+    private Organism organism;
+
+    
+    private ApplicationContext applicationContext;
+
+
+
+
     /**
      * This is called once the ApplicationContext has set up all of this 
      * beans properties. It fetches/creates beans which can't be injected 
@@ -104,7 +112,16 @@ public class NewRunner implements ApplicationContextAware {
         featureHandler.setNomenclatureHandler(nomenclatureHandler);
     }
 
-    
+    private CharSequence blankString(char c, int size) {
+	StringBuilder buf = new StringBuilder(size);
+	for (int i =0; i < size; i++) {
+	    buf.append(c);
+	}
+	return buf;
+    }
+
+
+
     /**
      * Populate maps based on InterPro result files, GO association files etc
      */
@@ -112,9 +129,6 @@ public class NewRunner implements ApplicationContextAware {
 	// TODO Auto-generated method stub
 	
     }
-
-
-
 
     /**
      * Call a process_* type method for this feature, based on its type
@@ -162,6 +176,63 @@ public class NewRunner implements ApplicationContextAware {
 	}
     }
 
+    /**
+     * Create a list of Biojava sequences from an EMBL file. It fails fatally if no sequences are found.
+     * 
+     * @param file the file to read in
+     * @return the list of sequences, >1 if an EMBL stream
+     */
+    public List<Sequence> extractSequencesFromFile(File file) {
+	if (logger.isInfoEnabled()) {
+	    logger.info("Parsing file '"+file.getAbsolutePath()+"'");
+	}
+	List<Sequence> ret = new ArrayList<Sequence>(); 
+	
+	Reader in = null;
+	//ArrayList localCache = new ArrayList();
+	try {
+	    in = new FileReader(file);
+	    //        	if (showContigs) {
+	    //        	    System.err.println("Processing contig " + contigName);
+	    //        	}
+        	
+        	
+	    SequenceIterator seqIt = SeqIOTools.readEmbl( new BufferedReader(in) ); // TODO - biojava hack
+
+	    while ( seqIt.hasNext() ) {
+		ret.add(seqIt.nextSequence());
+	    }
+        	
+        
+	} catch (FileNotFoundException exp) {
+	    System.err.println("Couldn't open input file: " + file);
+	    exp.printStackTrace();
+	    System.exit(-1);
+	} catch (BioException exp) {
+	    System.err.println("Couldn't open input file: " + file);
+	    exp.printStackTrace();
+	    System.exit(-1);
+	}
+	finally {
+	    if (in != null) {
+		try {
+		    in.close();
+		} catch (IOException e) {
+		    // Shouldn't happen!
+		    e.printStackTrace();
+		}
+	    }
+	}
+	if (ret.size() == 0) {
+	    logger.fatal("No sequences found in '"+file.getAbsolutePath()+"'");
+	    System.exit(-1);
+	}
+	if (ret.size()>1) {
+	    logger.warn("More than one ("+ret.size()+") sequence found in '"+file.getAbsolutePath()+"'. Not recommended");
+	}
+	return ret;
+    }
+
     private void postProcess() {
 	// 	           addAttribution(getBRNACache());
 	//            addUnconditionalLinks(getBRNACache());
@@ -184,9 +255,7 @@ public class NewRunner implements ApplicationContextAware {
 	//            finishUp();
 	//sessionFactory.close();
     }
-
-
-
+    
     /**
      * The core processing loop. Read the config file to find out which EMBL files to read, 
      * and which 'synthetic' features to create
@@ -200,7 +269,7 @@ public class NewRunner implements ApplicationContextAware {
         List<String> fileNames = this.runnerConfig.gatherFileNames();
         for (String fileName : fileNames) {
             for (Sequence seq : this.extractSequencesFromFile(new File(fileName))) {
-		this.processSequence(seq);
+		this.processSequence(seq, null, 0);
 	    }
 	}
         
@@ -251,88 +320,18 @@ public class NewRunner implements ApplicationContextAware {
             logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
         }
     }
-
-    private CharSequence blankString(char c, int size) {
-	StringBuilder buf = new StringBuilder(size);
-	for (int i =0; i < size; i++) {
-	    buf.append(c);
-	}
-	return buf;
-    }
-
-    private Organism organism;
-
-    private ApplicationContext applicationContext;
+    
     
     /**
-     * Create a list of Biojava sequences from an EMBL file. It fails fatally if no sequences are found.
+     * This method is called once for each sequence. First it examines the source features, 
+     * then CDSs, then other features
      * 
-     * @param file the file to read in
-     * @return the list of sequences, >1 if an EMBL stream
+     * @param seq The sequence to parse
+     * @param parent The parent object, if reparenting is taking place, or null
+     * @param offset The base offset, when reparenting is taking place
      */
-    public List<Sequence> extractSequencesFromFile(File file) {
-	if (logger.isInfoEnabled()) {
-	    logger.info("Parsing file '"+file.getAbsolutePath()+"'");
-	}
-	List<Sequence> ret = new ArrayList<Sequence>(); 
-	
-	Reader in = null;
-	//ArrayList localCache = new ArrayList();
-	try {
-	    in = new FileReader(file);
-	    //        	if (showContigs) {
-	    //        	    System.err.println("Processing contig " + contigName);
-	    //        	}
-        	
-        	
-	    SequenceIterator seqIt = SeqIOTools.readEmbl( new BufferedReader(in) ); // TODO - biojava hack
-
-	    while ( seqIt.hasNext() ) {
-		ret.add(seqIt.nextSequence());
-	    }
-
-//	    while (seqIt.hasNext()) {
-//		seq = seqIt.nextSequence();
-//		this.processSequence(seq, offSet, parent);
-//	    }
-        	
-        
-	} catch (FileNotFoundException exp) {
-	    System.err.println("Couldn't open input file: " + file);
-	    exp.printStackTrace();
-	    System.exit(-1);
-	} catch (BioException exp) {
-	    System.err.println("Couldn't open input file: " + file);
-	    exp.printStackTrace();
-	    System.exit(-1);
-	}
-	finally {
-	    if (in != null) {
-		try {
-		    in.close();
-		} catch (IOException e) {
-		    // Shouldn't happen!
-		    e.printStackTrace();
-		}
-	    }
-	}
-	if (ret.size() == 0) {
-	    logger.fatal("No sequences found in '"+file.getAbsolutePath()+"'");
-	    System.exit(-1);
-	}
-	if (ret.size()>1) {
-	    logger.warn("More than one ("+ret.size()+") sequence found in '"+file.getAbsolutePath()+"'. Not recommended");
-	}
-	return ret;
-    }
-
-    private void processSequence(Sequence seq) {
-	this.processSequence(seq, null, 0);
-    }
-    
     @SuppressWarnings("unchecked")
     private void processSequence(Sequence seq, org.genedb.db.hibernate.Feature parent, int offset) {
-	// TODO Ignores new parent
 	try {
 	    org.genedb.db.hibernate.Feature topLevel = this.featureHandler.processSources(seq);
 	    if (parent == null) {
@@ -353,14 +352,31 @@ public class NewRunner implements ApplicationContextAware {
 
     }
     
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+	this.applicationContext = applicationContext;
+    }
+    
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
         this.featureHandler.setDaoFactory(this.daoFactory);
     }
-    
+	
     public void setOrganismCommonName(String organismCommonName) {
     }
-	
+
+
+    public void setRunnerConfig(RunnerConfig runnerConfig) {
+        this.runnerConfig = runnerConfig;
+    }
+
+
+    /**
+     * Main entry point. It uses a BeanPostProcessor to apply a set of overrides
+     * based on a Properties file, based on the organism. This is passed in on 
+     * the command-line.
+     * 
+     * @param args organism_common_name, [conf file path]
+     */
     public static void main (String[] args) {
 	
         if ( args.length == 0) {
@@ -391,16 +407,6 @@ public class NewRunner implements ApplicationContextAware {
 	NewRunner runner = (NewRunner) ctx.getBean("runner", NewRunner.class);
 	runner.process();
 
-    }
-
-
-    public void setRunnerConfig(RunnerConfig runnerConfig) {
-        this.runnerConfig = runnerConfig;
-    }
-
-
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-	this.applicationContext = applicationContext;
     }
 
 }
