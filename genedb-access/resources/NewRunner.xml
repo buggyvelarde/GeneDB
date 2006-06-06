@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - DispatcherServlet application context for GeneDB's web tier.
+	-->
+<beans default-init-method="afterPropertiesSet">
+<!--  xlmns="http://www.springframework.org/schema/beans"
+	xlmns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xlmns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+	init-method="postConstruction"> -->
+
+	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+
+	<!--
+		- Message source for this context, loaded from localized "messages_xx" files.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within PetClinic's web tier.
+    -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages"/>
+	</bean>
+    
+    <bean id="standardNomenclatureHandler" class="org.genedb.db.loading.StandardNomenclatureHandler" />
+    <bean id="sPombeNomenclatureHandler" class="org.genedb.db.loading.SpombeNomenclatureHandler">
+		<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
+    </bean>
+    
+    <bean id="featureDao" class="org.genedb.db.dao.FeatureDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="cvDao" class="org.genedb.db.dao.CvDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>    
+    
+    <bean id="cvTermDao" class="org.genedb.db.dao.CvTermDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+        
+    <bean id="organismDao" class="org.genedb.db.dao.OrganismDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+                        
+    <bean id="pubDao" class="org.genedb.db.dao.PubDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+    <bean id="daoFactory" class="org.genedb.db.dao.DaoFactory">
+  	  	<property name="sessionFactory" ref="sessionFactory" />
+    	<property name="featureDao" ref="featureDao" />
+    	<property name="cvDao" ref="cvDao" />
+    	<property name="cvTermDao" ref="cvTermDao" />
+    	<property name="organismDao" ref="organismDao" />
+    	<property name="pubDao" ref="pubDao" />
+    </bean>
+    
+    
+    <bean id="beanFactoryPostProcessor" class="org.genedb.db.loading.PropertyOverrideConfigurerByCoding">
+		<property name="key" value="dataSourceMunging"/>
+    </bean>
+    
+    <bean id="runner" class="org.genedb.db.loading.NewRunner">
+    	<property name="daoFactory" ref="daoFactory" />
+    	<property name="runnerConfig" ref="runnerConfig" />
+    </bean>
+    
+    <bean id="runnerConfig" class="org.genedb.db.loading.RunnerConfig" />
+    
+    <!-- DataSource Property -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		 <property name="driverClassName" value="org.postgresql.Driver" />
+<!--	 	 <property name="url" value="jdbc:postgresql:ormtest" /> -->
+<!--         <property name="username" value="art" />-->
+        <property name="url" value="jdbc:postgresql://holly.internal.sanger.ac.uk:5432/chado" />
+        <!--<property name="username" value="plasmodia" />-->
+        <property name="username" value="DELIBERATELY_BOGUS_NAME"/>
+        <property name="password" value="WIBBLE" />
+	</bean> 
+
+	<!-- Database Property -->
+	<bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+ 	<property name="properties">
+  	<props>
+  		<prop key="hibernate.hbm2dll.auto">validate</prop>
+ 	    <!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
+<!--	  	<prop key="hibernate.query.substitutions">true 'T', false 'F'</prop>-->
+<!--  		<prop key="hibernate.show_sql">false</prop>-->
+<!--  		<prop key="hibernate.c3p0.minPoolSize">5</prop>-->
+<!--  		<prop key="hibernate.c3p0.maxPoolSize">20</prop>-->
+<!--  		<prop key="hibernate.c3p0.timeout">600</prop>-->
+<!--  		<prop key="hibernate.c3p0.max_statement">50</prop>-->
+<!--		<prop key="hibernate.bytecode.use_reflection_optimizer">false</prop>-->
+        <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+<!--	  	<prop key="hibernate.c3p0.testConnectionOnCheckout">false</prop> -->
+ 	 </props>
+	 </property>
+	</bean>
+
+
+
+	<!-- Hibernate SessionFactory -->
+	<bean id="sessionFactory" 
+  	 class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+	 <property name="dataSource" ref="dataSource" />
+	 <property name="hibernateProperties" ref="hibernateProperties" />
+	 <!--  OR mapping files. -->
+ 	<property name="mappingResources">
+  	  <list>
+    	<value>org/genedb/db/hibernate/Cvtermpath.hbm.xml</value>
+        <value>org/genedb/db/hibernate/CvtermRelationship.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Pubprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Cvtermprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Feature.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Cv.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeaturePub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeaturepropPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Cvtermsynonym.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Dbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Analysisprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Pubauthor.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Db.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureSynonym.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Pub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Analysisfeature.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Analysis.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Project.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureRelationshipPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Tableinfo.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureCvtermDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/CvtermDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Cvterm.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Featureloc.hbm.xml</value>
+        <value>org/genedb/db/hibernate/PubDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Organism.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Dbxrefprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureCvtermPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureRelationshipprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeaturelocPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureCvterm.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureCvtermprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/PubRelationship.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Featureprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Organismprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Synonym.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureRelationshippropPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/OrganismDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureRelationship.hbm.xml</value>
+    	   
+   	 </list>
+ 	</property>
+	</bean>
+
+
+</beans>
