@@ -17,7 +17,7 @@ public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implem
     private Pattern pattern;
     
     public BacterialNomenclatureHandler() {
-	pattern = Pattern.compile("SP(A|B|C)(P|C)(\\w+)\\.\\d+c?");
+	//pattern = Pattern.compile("SP(A|B|C)(P|C)(\\w+)\\.\\d+c?");
     }
     
     public Names findNamesInternal(Annotation an) {
@@ -42,11 +42,11 @@ public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implem
         while (nameIt.hasNext()) {
             String test = (String) nameIt.next();
             // SP(A|B|C)(P|C)$cosmid.num(c?)
-            Matcher matcher = pattern.matcher(test);
-            if (matcher.matches()) {
+            //Matcher matcher = pattern.matcher(test);
+            //if (matcher.matches()) {
                 systematics.add(test);
                 nameIt.remove();
-            }
+            //}
         }
 
         // Set the gene name if there is one
