@@ -40,9 +40,23 @@ public class Names {
     public boolean isIdTemporary() {
         return this.idTemporary;
     }
+    
+    
+    /**
+     * Get a list of obsolete names for this feature 
+     * 
+     * @return the list of obsolete names, possibly empty
+     */
     public List<String> getObsolete() {
         return this.obsolete;
     }
+    
+
+    /**
+     * 
+     * 
+     * @param obsolete
+     */
     public void setObsolete(List<String> obsolete) {
         this.obsolete = obsolete;
     }
