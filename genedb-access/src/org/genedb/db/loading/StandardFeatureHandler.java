@@ -46,6 +46,8 @@ import org.genedb.db.hibernate.Organism;
 import org.genedb.db.hibernate.Pub;
 import org.genedb.db.hibernate.Synonym;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Feature;
@@ -81,10 +83,21 @@ public class StandardFeatureHandler implements FeatureHandler {
     	private DaoFactory daoFactory;
     	private Organism organism;
 	private NomenclatureHandler nomenclatureHandler;
-
+	protected final Log logger = LogFactory.getLog(this.getClass());
 	private GeneNamingStrategy gns = new GeneDbGeneNamingStrategy();
 
 	private Pub DUMMY_PUB;
+	private Cv MISC;
+	private Cvterm cvTerm;
+	private Cvterm REL_DERIVES_FROM;
+	private Cv CV_SO;
+	
+	public void afterPropertiesSet() {
+		CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
+	    REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv("derives_from", CV_SO).get(0);
+		MISC = daoFactory.getCvDao().findByName("autocreated").get(0);
+		cvTerm = daoFactory.getCvTermDao().findByNameInCv("note", MISC).get(0);
+	}
 	
 	public void processCDS(Sequence seq, org.genedb.db.hibernate.Feature parent, int offset) {
 	    FeatureHolder fh = seq.filter(new FeatureFilter.ByType(FT_CDS));
@@ -124,8 +137,8 @@ public class StandardFeatureHandler implements FeatureHandler {
 
 	    Cv CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
 	    Cvterm REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
-	    Cv CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
-	    Cvterm REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv("derives_from", CV_SO).get(0);
+//	    Cv CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
+//	    Cvterm REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv("derives_from", CV_SO).get(0);
 
 	    Cv CV_NAMING = this.daoFactory.getCvDao().findByName("genedb_synonym_type").get(0);
 	    Cvterm SYNONYM_RESERVED = this.daoFactory.getCvTermDao().findByNameInCv("reserved", CV_NAMING).get(0);
@@ -212,14 +225,15 @@ public class StandardFeatureHandler implements FeatureHandler {
 
 
 //	    Cv MISC = daoFactory.getCvDao().findByName("local").get(0);
-	    Cv MISC = daoFactory.getCvDao().findByName("autocreated").get(0);
+//	    Cv MISC = daoFactory.getCvDao().findByName("autocreated").get(0);
 
 	    //featureProps.addAll(createProperties(polypeptide, an, "product", "product", CV_PRODUCTS));
 	    
 	    // Store feature properties based on original annotation
 	    createFeatureProp(polypeptide, an, "colour", "colour", MISC);
 	    // 
-	    createFeaturePropsFromNotes(polypeptide, an, "note", MISC);
+//	    Cvterm cvTerm = daoFactory.getCvTermDao().findByNameInCv("note", MISC).get(0);
+	    createFeaturePropsFromNotes(polypeptide, an, cvTerm);
 
 
 
@@ -327,10 +341,11 @@ public class StandardFeatureHandler implements FeatureHandler {
 	    return ret;
 	}
 	
-	private void createFeaturePropsFromNotes(org.genedb.db.hibernate.Feature f, Annotation an, String key, Cv cv) {
-	    Cvterm cvTerm = daoFactory.getCvTermDao().findByNameInCv(key, cv).get(0);
+	private void createFeaturePropsFromNotes(org.genedb.db.hibernate.Feature f, Annotation an, Cvterm cvTerm) {
+		logger.info("About to set notes for feature '"+f.getUniquename()+"'");
+		//Cvterm cvTerm = daoFactory.getCvTermDao().findByNameInCv(key, cv).get(0);
     		
-	    String value = MiningUtils.getProperty(key, an, null);
+	    String value = MiningUtils.getProperty("note", an, null);
 	    if (value == null || value.length() == 0) {
 		return;
 	    }
