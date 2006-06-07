@@ -25,6 +25,7 @@
 	</bean>
     
     <bean id="standardNomenclatureHandler" class="org.genedb.db.loading.StandardNomenclatureHandler" />
+    <bean id="bacterialNomenclatureHandler" class="org.genedb.db.loading.BacterialNomenclatureHandler" />
     <bean id="sPombeNomenclatureHandler" class="org.genedb.db.loading.SpombeNomenclatureHandler">
 		<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
     </bean>
