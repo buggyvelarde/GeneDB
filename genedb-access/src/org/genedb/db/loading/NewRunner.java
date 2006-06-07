@@ -113,6 +113,7 @@ public class NewRunner implements ApplicationContextAware {
         NomenclatureHandler nomenclatureHandler = (NomenclatureHandler)
             this.applicationContext.getBean(nomenclatureHandlerName, NomenclatureHandler.class);
         featureHandler.setNomenclatureHandler(nomenclatureHandler);
+        featureHandler.afterPropertiesSet();
     }
 
     private CharSequence blankString(char c, int size) {
