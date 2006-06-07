@@ -4,12 +4,20 @@ import org.biojava.bio.Annotation;
 
 /**
  * Interface to define classes that can parse naming
- *  information from a CDS's annotation.
+ *  information (systematic id, synonyms etc) from a CDS's annotation.
  * 
  * @author art
  */
 public interface NomenclatureHandler {
 
+    /**
+     * Interface for an object which looks through the annotation to 
+     * work out the names.
+     * 
+     * @param an The biojava annotation from a feature
+     *
+     * @return the filled out Names object
+     */
     Names findNames(Annotation an);
 
 }

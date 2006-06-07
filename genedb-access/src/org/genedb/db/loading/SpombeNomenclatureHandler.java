@@ -13,21 +13,15 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SpombeNomenclatureHandler implements NomenclatureHandler {
+public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implements NomenclatureHandler {
 
-    private NomenclatureHandler standardNomenclatureHandler;
     private Pattern pattern;
     
     public SpombeNomenclatureHandler() {
 	pattern = Pattern.compile("SP(A|B|C)(P|C)(\\w+)\\.\\d+c?");
     }
     
-    public Names findNames(Annotation an) {
-	
-        String schemeTest = MiningUtils.getProperty("systematic_id", an, null);
-        if (schemeTest != null) {
-            return this.standardNomenclatureHandler.findNames(an);
-        }
+    public Names findNamesInternal(Annotation an) {
 	
 	Names ret = new Names();
 
@@ -120,9 +114,5 @@ public class SpombeNomenclatureHandler implements NomenclatureHandler {
 
         return ret;
     }
-
-    public void setStandardNomenclatureHandler(NomenclatureHandler standardNomenclatureHandler) {
-        this.standardNomenclatureHandler = standardNomenclatureHandler;
-    }
-
+    
 }

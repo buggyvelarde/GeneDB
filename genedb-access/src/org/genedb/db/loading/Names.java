@@ -13,12 +13,30 @@ public class Names {
     private String reserved; // A future primary name for this feature
     private List<String> previousSystematicIds; // a list of old systematic ids
     
+    /**
+     * Get the protein name, which is often different from the gene name eg in case
+     * 
+     * @return the protein name, or null if not set
+     */
     public String getProtein() {
         return this.protein;
     }
+    
+    /**
+     * Set the protein name, which is often different from the gene name eg in case
+     * 
+     * @param protein the protein name
+     */
     public void setProtein(String protein) {
         this.protein = protein;
     }
+    
+    
+    /**
+     * Is the systematic id for this feature temporary
+     * 
+     * @return true if it is temporary ie likely to change
+     */
     public boolean isIdTemporary() {
         return this.idTemporary;
     }
@@ -28,6 +46,12 @@ public class Names {
     public void setObsolete(List<String> obsolete) {
         this.obsolete = obsolete;
     }
+    
+    /**
+     * The human readable name eg the genes the gene name
+     * 
+     * @return the primary name
+     */
     public String getPrimary() {
         return this.primary;
     }
@@ -43,12 +67,24 @@ public class Names {
     public List<String> getSynonyms() {
         return this.synonyms;
     }
+    /**
+     * Set the list of synonyms, which are other names which have no special meaning 
+     * now or previously.
+     * 
+     * @param synonyms
+     */
     public void setSynonyms(List<String> synonyms) {
         this.synonyms = synonyms;
     }
     public String getSystematicId() {
         return this.systematicId;
     }
+    /**
+     * Store the feature's systematic id, and wether it's temporary
+     * 
+     * @param systematicId the systematic id
+     * @param idTemporary true if the id is likely to change in the future
+     */
     public void setSystematicIdAndTemp(String systematicId, boolean idTemporary) {
         this.systematicId = systematicId;
         this.idTemporary = idTemporary;
@@ -56,6 +92,12 @@ public class Names {
     public List<String> getPreviousSystematicIds() {
         return this.previousSystematicIds;
     }
+    /**
+     * Set a List of ids which have previously been used as systematic ids for 
+     * this feature.
+     * 
+     * @param previousSystematicIds
+     */
     public void setPreviousSystematicIds(List<String> previousSystematicIds) {
         this.previousSystematicIds = previousSystematicIds;
     }
