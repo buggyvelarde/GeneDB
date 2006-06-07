@@ -77,6 +77,8 @@ public class NewRunner implements ApplicationContextAware {
     
     private RunnerConfig runnerConfig;
     
+    private RunnerConfigParser runnerConfigParser;
+    
     private Map<String, Method> methodMap = new HashMap<String, Method>();
     
     private Set<String> noMethod = new HashSet<String>();
@@ -98,6 +100,7 @@ public class NewRunner implements ApplicationContextAware {
      */
     public void afterPropertiesSet() {
         //logger.warn("Skipping organism set as not connected to db");
+	runnerConfig = runnerConfigParser.getConfig();
         organism = daoFactory.getOrganismDao().findByCommonName(runnerConfig.getOrganismCommonName()).get(0);
         featureHandler.setOrganism(organism);
         featureUtils = new FeatureUtils();
@@ -266,7 +269,7 @@ public class NewRunner implements ApplicationContextAware {
         this.buildCaches();
 
         // First process simple files ie simple EMBL files
-        List<String> fileNames = this.runnerConfig.gatherFileNames();
+        List<String> fileNames = this.runnerConfig.getFileNames();
         for (String fileName : fileNames) {
             for (Sequence seq : this.extractSequencesFromFile(new File(fileName))) {
 		this.processSequence(seq, null, 0);
@@ -365,8 +368,8 @@ public class NewRunner implements ApplicationContextAware {
     }
 
 
-    public void setRunnerConfig(RunnerConfig runnerConfig) {
-        this.runnerConfig = runnerConfig;
+    public void setRunnerConfigParser(RunnerConfigParser runnerConfigParser) {
+        this.runnerConfigParser = runnerConfigParser;
     }
 
 
@@ -394,9 +397,9 @@ public class NewRunner implements ApplicationContextAware {
 	Properties overrideProps = new Properties();
 	overrideProps.setProperty("dataSource.username", organismCommonName);
 	overrideProps.setProperty("runner.organismCommonName", organismCommonName);
-	overrideProps.setProperty("runnerConfig.organismCommonName", organismCommonName);
+	overrideProps.setProperty("runnerConfigParser.organismCommonName", organismCommonName);
 	if (args.length > 1) {
-	    overrideProps.setProperty("runnerConfig.configFilePath", args[1]);
+	    overrideProps.setProperty("runnerConfigParser.configFilePath", args[1]);
 	}      
 	PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
 	

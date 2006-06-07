@@ -69,10 +69,10 @@
     
     <bean id="runner" class="org.genedb.db.loading.NewRunner">
     	<property name="daoFactory" ref="daoFactory" />
-    	<property name="runnerConfig" ref="runnerConfig" />
+    	<property name="runnerConfigParser" ref="runnerConfigParser" />
     </bean>
     
-    <bean id="runnerConfig" class="org.genedb.db.loading.RunnerConfig" />
+    <bean id="runnerConfigParser" class="org.genedb.db.loading.RunnerConfigParser" />
     
     <!-- DataSource Property -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
