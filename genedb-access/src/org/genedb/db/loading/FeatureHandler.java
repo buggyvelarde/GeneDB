@@ -22,5 +22,7 @@ public interface FeatureHandler {
     public void setFeatureUtils(FeatureUtils utils);
 
     public void setNomenclatureHandler(NomenclatureHandler handler);
+    
+    public void afterPropertiesSet();
 
 }
