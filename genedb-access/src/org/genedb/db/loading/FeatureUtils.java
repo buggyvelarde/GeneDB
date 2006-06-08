@@ -118,23 +118,37 @@ public class FeatureUtils {
 	@SuppressWarnings("unchecked")
 	public void createSynonym(Cvterm type, String name, 
 		org.genedb.db.hibernate.Feature gene, boolean isCurrent) {
-	    Synonym synonym = new Synonym();
-	    synonym.setCvterm(type);
-	    synonym.setName(name);
-	    synonym.setSynonymSgml(name);
-	    List<Synonym> matches = daoFactory.getHibernateTemplate().findByExample(synonym);
+	    Synonym synonym = null;
+	    List<Synonym> matches = daoFactory.getHibernateTemplate().findByNamedParam(
+		    "from Synonym s where s.name=:name and s.cvterm=:cvterm",
+		    new String[] {"name", "cvterm"},
+		    new Object[] {name, type});
 	    if (matches.size()==0) {
+		synonym = new Synonym();
+		synonym.setCvterm(type);
+		synonym.setName(name);
+		synonym.setSynonymSgml(name);
 		daoFactory.persist(synonym);
 	    } else {
 		synonym = matches.get(0);
 	    }
 	    
-	    FeatureSynonym fs = new FeatureSynonym();
-	    fs.setFeature(gene);
-	    fs.setIsCurrent(isCurrent);
-	    fs.setIsInternal(false);
-	    fs.setSynonym(synonym);
-	    fs.setPub(this.DUMMY_PUB);
+	    FeatureSynonym fs = null;
+	    List<FeatureSynonym> matches2 = daoFactory.getHibernateTemplate().findByNamedParam(
+		    "from FeatureSynonym fs where fs.feature=:feature and fs.synonym=:synonym",
+		    new String[] {"feature", "synonym"},
+		    new Object[] {gene, synonym});
+	    if (matches2.size()==0) {
+		fs = new FeatureSynonym();
+		fs.setFeature(gene);
+		fs.setIsCurrent(isCurrent);
+		fs.setIsInternal(false);
+		fs.setSynonym(synonym);
+		fs.setPub(this.DUMMY_PUB);
+		daoFactory.persist(fs);
+	    } else {
+		fs = matches2.get(0);
+	    }
 	    //daoFactory.persist(fs);
 	    gene.getFeatureSynonyms().add(fs);
 	}

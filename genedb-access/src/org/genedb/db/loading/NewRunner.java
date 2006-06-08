@@ -106,13 +106,19 @@ public class NewRunner implements ApplicationContextAware {
         featureUtils = new FeatureUtils();
         featureUtils.setDaoFactory(daoFactory);
         featureHandler.setFeatureUtils(featureUtils);
-        String nomenclatureHandlerName = runnerConfig.getNomenclatureHandlerName();
+        
+        Map<String, String> nomenclatureOptions = runnerConfig.getNomenclatureOptions();
+        String nomenclatureHandlerName = nomenclatureOptions.get("beanName");
         if (nomenclatureHandlerName == null) {
             nomenclatureHandlerName = "standardNomenclatureHandler";
         }
         NomenclatureHandler nomenclatureHandler = (NomenclatureHandler)
             this.applicationContext.getBean(nomenclatureHandlerName, NomenclatureHandler.class);
+        nomenclatureHandler.setOptions(nomenclatureOptions);
+        
         featureHandler.setNomenclatureHandler(nomenclatureHandler);
+        
+        
         featureHandler.afterPropertiesSet();
     }
 
