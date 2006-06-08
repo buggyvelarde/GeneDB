@@ -3,6 +3,8 @@ package org.genedb.db.loading;
 
 import org.biojava.bio.Annotation;
 
+import java.util.Map;
+
 
 /**
  * Helper base class for writing NomenclatureHandlers. It first checks if the feature 
@@ -14,6 +16,7 @@ import org.biojava.bio.Annotation;
 public abstract class BaseNomenclatureHandler implements NomenclatureHandler {
 
     private StandardNomenclatureHandler standardNomenclatureHandler;
+    private Map<String, String> options;
     
     public Names findNames(Annotation an) {
 	
@@ -37,6 +40,14 @@ public abstract class BaseNomenclatureHandler implements NomenclatureHandler {
 
     public void setStandardNomenclatureHandler(StandardNomenclatureHandler standardNomenclatureHandler) {
         this.standardNomenclatureHandler = standardNomenclatureHandler;
+    }
+
+    protected Map<String, String> getOptions() {
+        return this.options;
+    }
+
+    public void setOptions(Map<String, String> options) {
+        this.options = options;
     }
 
 }

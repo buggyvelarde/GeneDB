@@ -11,6 +11,7 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_TEMP_SYS_ID;
 import org.biojava.bio.Annotation;
 
 import java.util.List;
+import java.util.Map;
 
 public class StandardNomenclatureHandler implements NomenclatureHandler {
     
@@ -77,6 +78,14 @@ public class StandardNomenclatureHandler implements NomenclatureHandler {
         }
 
 	return names;
+    }
+
+    /**
+     * NOOP as StandardNomenclatureHandler doesn't accept options
+     * @see org.genedb.db.loading.NomenclatureHandler#setOptions(java.util.Map)
+     */
+    public void setOptions(Map<String, String> nomenclatureOptions) {
+	// Deliberately empty
     }
 
 }

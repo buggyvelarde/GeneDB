@@ -21,26 +21,7 @@ package org.genedb.db.loading;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.om.Axis;
-import net.sf.saxon.om.AxisIterator;
-import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.xom.DocumentWrapper;
-import net.sf.saxon.xpath.XPathEvaluator;
-import net.sf.saxon.xpath.XPathException;
-
-import nu.xom.Builder;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Elements;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,15 +42,11 @@ public class RunnerConfig {
     private List<String> fileNames = new ArrayList<String>(0);
 
     private List<Synthetic> synthetics = new ArrayList<Synthetic>();
-
-    private String nomenclatureHandlerName = null;
+    
+    private Map<String, String> nomenclatureOptions = new HashMap<String, String>(0);
 
     public List<String> getFileNames() {
 	return this.fileNames;
-    }
-
-    public String getNomenclatureHandlerName() {
-	return nomenclatureHandlerName ;
     }
 
     public String getOrganismCommonName() {
@@ -84,8 +61,12 @@ public class RunnerConfig {
 	this.organismCommonName = commonOrganismName;
     }
 
-    public void setNomenclatureHandlerName(String nomenclatureHandlerName) {
-        this.nomenclatureHandlerName = nomenclatureHandlerName;
+    public Map<String, String> getNomenclatureOptions() {
+        return this.nomenclatureOptions;
+    }
+
+    public void setNomenclatureOptions(Map<String, String> nomenclatureOptions) {
+        this.nomenclatureOptions = nomenclatureOptions;
     }
 
 

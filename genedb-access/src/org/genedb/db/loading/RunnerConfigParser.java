@@ -39,7 +39,6 @@ import nu.xom.ValidityException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -104,6 +103,10 @@ public class RunnerConfigParser {
 	} catch (XPathException exp) {
 	    System.err.println(exp);
 	}
+	catch (NullPointerException exp) {
+	    System.err.println("NPE- Is the config file valid?");
+	    System.exit(-1);
+	}
 	return Collections.EMPTY_LIST;
     }
 
@@ -147,15 +150,15 @@ public class RunnerConfigParser {
 	}
 	
 	// Process code
-	List<Element> nomenclatureHandlers = this.elementListFromXPath("code/nomenclature-handler");
-	if (nomenclatureHandlers.size() > 1) {
-	    this.logger.fatal("More than one value specified for nomenclature handler name '"+nomenclatureHandlers.size()+"'");
-	    throw new RuntimeException("More than one value specified for nomenclature handler name");
-	}
-	if (nomenclatureHandlers.size() == 1) {
-	    ret.setNomenclatureHandlerName(nomenclatureHandlers.get(0).getValue());
-	}  
 	
+	List<Element> nomenclatureOptions = this.elementListFromXPath("code/nomenclature-handler-options/*");
+	if (nomenclatureOptions.size() > 0) {
+	    Map<String, String> map = new HashMap<String, String>(0);
+	    for (Element element : nomenclatureOptions) {
+		map.put(element.getAttribute("key").getValue(), element.getAttribute("value").getValue());
+	    }
+	    ret.setNomenclatureOptions(map);
+	}
 	
 	List<Element> files = this.elementListFromXPath("inputs/file");
 	for (Element element : files) {

@@ -92,6 +92,8 @@ public class StandardFeatureHandler implements FeatureHandler {
 	private Cvterm REL_DERIVES_FROM;
 	private Cv CV_SO;
 	
+	private List<FeatureListener> listeners = new ArrayList<FeatureListener>(0);
+	
 	public void afterPropertiesSet() {
 		CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
 	    REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv("derives_from", CV_SO).get(0);
@@ -165,13 +167,14 @@ public class StandardFeatureHandler implements FeatureHandler {
 	    if (gene == null) {
 		if (altSplicing) {
 		    gene = this.featureUtils.createFeature("gene", sharedId, this.organism);
+		    this.daoFactory.persist(gene);
 		    featureUtils.createSynonym(SYNONYM_SYS_ID, sharedId, gene, true);
 		} else {
 		    gene = this.featureUtils.createFeature("gene", this.gns.getGene(sysId), this.organism);
-		    
+		    this.daoFactory.persist(gene);
 		    storeNames(names, SYNONYM_RESERVED, SYNONYM_SYNONYM, SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS, gene);
 		}
-		features.add(gene);
+		//features.add(gene);
 		//this.daoFactory.persist(gene);
 
 		Featureloc geneFl = featureUtils.createLocation(parent, gene, loc.getMin(), loc.getMax(), strand);
@@ -186,12 +189,13 @@ public class StandardFeatureHandler implements FeatureHandler {
 		baseName = mRnaName;
 	    }
 	    org.genedb.db.hibernate.Feature mRNA = this.featureUtils.createFeature("mRNA", mRnaName, this.organism);
+	    this.daoFactory.persist(mRNA);
 	    if (altSplicing) {
 		storeNames(names, SYNONYM_RESERVED, SYNONYM_SYNONYM, SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS, mRNA);
 	    }
 	    Featureloc mRNAFl = featureUtils.createLocation(parent, mRNA, loc.getMin(), loc.getMax(), strand);
 	    FeatureRelationship mRNAFr = featureUtils.createRelationship(mRNA, gene, REL_PART_OF);
-	    features.add(mRNA);
+	    //features.add(mRNA);
 	    featureLocs.add(mRNAFl);
 	    featureRelationships.add(mRNAFr);
 
@@ -342,7 +346,7 @@ public class StandardFeatureHandler implements FeatureHandler {
 	}
 	
 	private void createFeaturePropsFromNotes(org.genedb.db.hibernate.Feature f, Annotation an, Cvterm cvTerm) {
-		logger.info("About to set notes for feature '"+f.getUniquename()+"'");
+		logger.debug("About to set notes for feature '"+f.getUniquename()+"'");
 		//Cvterm cvTerm = daoFactory.getCvTermDao().findByNameInCv(key, cv).get(0);
     		
 	    String value = MiningUtils.getProperty("note", an, null);
@@ -536,6 +540,20 @@ public class StandardFeatureHandler implements FeatureHandler {
 
 	public void setNomenclatureHandler(NomenclatureHandler nomenclatureHandler) {
 	    this.nomenclatureHandler = nomenclatureHandler;
+	}
+	
+	public void addFeatureListener(FeatureListener fl) {
+	    listeners.add(fl);
+	}
+	
+	public void removeFeatureListener(FeatureListener fl) {
+	    listeners.remove(fl);
+	}
+	
+	private void fireEvent(FeatureEvent fe) {
+	    for (FeatureListener fl : listeners) {
+		// TODO
+	    }
 	}
 	
 }

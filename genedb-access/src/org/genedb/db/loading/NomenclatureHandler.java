@@ -2,6 +2,8 @@ package org.genedb.db.loading;
 
 import org.biojava.bio.Annotation;
 
+import java.util.Map;
+
 /**
  * Interface to define classes that can parse naming
  *  information (systematic id, synonyms etc) from a CDS's annotation.
@@ -19,5 +21,7 @@ public interface NomenclatureHandler {
      * @return the filled out Names object
      */
     Names findNames(Annotation an);
+
+    void setOptions(Map<String, String> nomenclatureOptions);
 
 }
