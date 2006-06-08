@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<project name="genedb-access" default="genedb-loading.jar" basedir=".">
+
+	<target name="genedb-loading.jar" depends="" description="Create JAR file with DAOs">
+
+		<delete file="genedb-loading.jar"/>
+
+		<copy todir="ant-build/jar">
+			<fileset dir="ant-build/classes" />
+			<fileset dir="resources" />
+		</copy>
+		
+		<jar jarfile="genedb-loading.jar">
+			
+			<fileset dir="ant-build/jar" />
+			<manifest>
+				<attribute name="Implementation-Title" value="GeneDB Loading"/>
+				<attribute name="Implementation-Version" value="0.1"/>
+				<attribute name="Main-class" value="org.genedb.db.loading.NewRunner" />
+			</manifest>
+		</jar>
+
+	</target>
+	
+</project>
