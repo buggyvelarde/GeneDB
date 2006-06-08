@@ -1,6 +1,7 @@
 #! /bin/csh -f
 
-set LIBS=../genedb-access.jar:../lib/spring-2.0-m5.jar:../lib/biojava-1.4.jar:../lib/hibernate3.jar:../lib/genedb-hibernate.jar:../lib/commons-logging.jar:../lib/xom-1.0.jar:../lib/saxon8.jar:../lib/saxon8-xom.jar 
+set LIBS=../genedb-access.jar:../lib/biojava-1.4.jar:../lib/hibernate3.jar:../lib/genedb-hibernate.jar:../lib/commons-logging.jar:../lib/xom-1.0.jar:../lib/saxon8.jar:../lib/saxon8-xom.jar 
+set LIBS=${LIBS}:../lib/spring-2.0-m5.jar
 set LIBS=${LIBS}:../lib/commons-dbcp.jar
 set LIBS=${LIBS}:../lib/commons-pool.jar
 set LIBS=${LIBS}:../lib/dom4j-1.6.1.jar
@@ -11,5 +12,7 @@ set LIBS=${LIBS}:../lib/ehcache-1.1.jar
 set LIBS=${LIBS}:../lib/asm.jar
 set LIBS=${LIBS}:../lib/antlr-2.7.6rc1.jar
 set LIBS=${LIBS}:../lib/postgresql-8.2dev-501.jdbc3.jar
+set LIBS=${LIBS}:../lib/bytecode-0.91.jar
+
 
 java -cp $LIBS org.genedb.db.loading.NewRunner $*
