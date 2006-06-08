@@ -23,14 +23,39 @@ public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implem
     public Names findNamesInternal(Annotation an) {
 	
 	Names ret = new Names();
+	//String geneId = null;
+	String temp = null;
 
         List<String> names = MiningUtils.getProperties("gene", an);
         if (names == null) {
-            throw new RuntimeException("SpombeNomenclatureHandler: No 'gene' keys to work with");
+            throw new RuntimeException("BacterialNomenclatureHandler: No 'gene' keys to work with");
         }
 
+        if(names.size() > 1)
+        {
+        	for(int i=0;i<names.size();i++)
+        	{
+        		temp = names.get(i);
+        		if(temp.charAt(0)== 'T' && temp.charAt(1) == 'W')
+        		{
+        			//geneId = temp;
+        			names.remove(i);
+        			ret.setSystematicIdAndTemp(temp, false);
+        			 		
+        		}
+        	}
+        	ret.setSynonyms(names);
+        }
+        else
+        {
+        	//geneId = names.get(0);
+        	ret.setSystematicIdAndTemp(names.get(0), false);
+        }
+        
+        
         // Remove duplicates, maintaining order
         //      Set tmp = new LinkedHashSet();
+        /*
         Set<String> tmp = new InsertionOrderedSet<String>();
         tmp.addAll(names);
         names.clear();
@@ -68,51 +93,13 @@ public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implem
             Collections.sort(systematics);
             geneId = systematics.get(0);
             systematics.remove(0);
-        }
-
-        ret.setSystematicIdAndTemp(geneId, false);
-
-        names.addAll(systematics);
-        ret.setSynonyms(names);
-        
-        /* not needed for twhipplei
-        
-        List<String> obsolete = new ArrayList<String>();
-        List<String> obsolete1 = MiningUtils.getProperties("obsolete_gene_name", an);
-        if (obsolete1 != null) {
-            obsolete.addAll(obsolete1);
-        }
-        obsolete1 = MiningUtils.getProperties("obsolete_name", an);
-        if ( obsolete1 != null) {
-            obsolete.addAll(obsolete1);
-        }
-        if (obsolete.size() > 0) {
-            ret.setObsolete(obsolete);
-        }
-        
-
-        List<String> synonyms = MiningUtils.getProperties("synonym", an);
-        if ( synonyms != null) {
-           Set<String> syn = new HashSet<String>();
-           syn.addAll(ret.getSynonyms());
-           syn.addAll(synonyms);
-           ret.setSynonyms(new ArrayList<String>(syn));
-        }
-
-        for (String ob : obsolete) {
-            if (ret.getSynonyms().contains(ob)) {
-        	ret.getSynonyms().remove(ob);
-            }
-        }
-        
-        List<String> reserved = MiningUtils.getProperties("reserved_name", an);
-        if (reserved != null) {
-            if ( reserved.size() > 1 ) {
-                throw new RuntimeException("SpombeNomenclatureHandler: gene has more than 1 reserved name: "+ret.getSystematicId());
-            }
-            ret.setReserved(reserved.get(0));
         }*/
 
+        
+
+        //names.addAll(systematics);
+        
+                
         return ret;
     }
     
