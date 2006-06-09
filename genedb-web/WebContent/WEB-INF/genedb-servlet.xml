@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - DispatcherServlet application context for GeneDB's web tier.
+	-->
+<beans>
+<!--  xlmns="http://www.springframework.org/schema/beans"
+	xlmns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xlmns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+	init-method="postConstruction"> -->
+
+	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+
+	<!--
+		- Message source for this context, loaded from localized "messages_xx" files.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within PetClinic's web tier.
+    -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages"/>
+	</bean>
+	
+	<!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+	<!--
+	  - This bean provides explicit View mappings in a resource bundle instead of the
+	  - default InternalResourceViewResolver. It fetches the view mappings from
+	  - localized "views_xx" classpath files, i.e. "/WEB-INF/classes/views.properties"
+	  - or "/WEB-INF/classes/views_de.properties".
+	  -
+	  - Symbolic view names returned by Controllers will be resolved by this bean
+	  - using the respective properties file, which defines arbitrary mappings between
+	  - view names and resources.
+	  -->
+<!--	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">-->
+<!--		<property name="basename" value="views"/>-->
+<!--		<property name="order" value="5" />-->
+<!--	</bean>-->
+
+	<bean id="checkingViewResolver" class="org.genedb.web.mvc.controller.FileCheckingInternalResourceViewResolver" init-method="postConstruction">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+		<property name="order" value="3" />
+	</bean>
+
+	<!--
+	  - This bean resolves specific types of exception to corresponding error views.
+		- The default behaviour of DispatcherServlet is to propagate all exceptions to the
+		- servlet container: This will happen here with all other types of exception.
+		-->
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.springframework.dao.DataAccessException">dataAccessFailure</prop>
+				<prop key="org.springframework.transaction.TransactionException">dataAccessFailure</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!--
+	 - This bean is an explicit URL mapper that is used by the GeneDB DispatcherServlet
+	 - It is used instead of the default BeanNameUrlHandlerMapping. It builds paths 
+	 - based upon the Controller's name 
+	 -->
+	<bean id="urlMapping" class="org.genedb.web.mvc.controller.CaseSensitiveControllerClassNameHandlerMapping">
+		<property name="alwaysUseFullPath" value="true" />
+		 <property name="interceptors">
+      <list>
+        <ref bean="openSessionInView"/>
+      </list>
+    </property>
+	</bean>
+<!--  	<property name="mappings">
+			<props>
+				<prop key="/index.html">genedbController</prop>
+                 <prop key="/Homepage">genedbController</prop>
+                 <prop key="/feature.html">genedbController</prop>
+                 <prop key="/dropDown.html">genedbController</prop>
+                 <prop key="pfam.html">genedbController</prop>
+				<prop key="/genome**">commonURLController</prop>
+                 <prop key="/examples">genedbController</prop>
+                 <prop key="/example-working">queryController</prop>
+      			<prop key="/findOwners.html">findOwnersForm</prop>
+				<prop key="/owner.html">genedbController</prop>
+				<prop key="/addOwner.html">addOwnerForm</prop>
+				<prop key="/editOwner.html">editOwnerForm</prop>
+				<prop key="/addPet.html">addPetForm</prop>
+				<prop key="/editPet.html">editPetForm</prop>
+				<prop key="/addVisit.html">addVisitForm</prop>
+			</props>
+		</property>
+	</bean> -->
+
+
+	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
+
+	<!--
+	  - This bean is a MultiActionController that manages general View rendering.
+	  - It uses the "clinicControllerResolver" bean below for method name resolution.
+	  -->
+<!--	<bean id="genedbController" class="org.genedb.web.mvc.controller.NonFormController">-->
+<!--		<property name="methodNameResolver" ref="genedbControllerResolver"/>-->
+<!-- 		 <property name="clinic" ref="clinic"/> -->
+<!--	</bean>-->
+<!--    -->
+<!---->
+    <bean id="commonURLController" class="org.genedb.web.mvc.controller.GenomeController">
+         <!-- <property name="methodNameResolver" ref="genedbControllerResolver"/> -->
+         <property name="root" ref="org-Root" />
+    </bean>
+
+	<!--
+	  - This bean is a MethodNameResolver definition for a MultiActionController.
+	  - It maps URLs to methods for the "clinicController" bean.
+	  -->
+<!--	<bean id="genedbControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">-->
+<!--		<property name="mappings">-->
+<!--		<props>-->
+<!--			<prop key="/index.html">homepageHandler</prop>-->
+<!--             <prop key="/Homepage">homepageHandler</prop>-->
+<!--			<prop key="/feature.html">featureHandler</prop>-->
+<!--             <prop key="/dropDown.html">dropDownHandler</prop>-->
+<!--             <prop key="/common">commonURLHandler</prop>-->
+<!--             <prop key="/examples">examplesHandler</prop>-->
+<!--			<prop key="/pfam.html">pfamHandler</prop>-->
+<!--		</props>-->
+<!--		</property>-->
+<!--	</bean>-->
+
+
+    <!--
+      - This bean is a MultiActionController that manages general View rendering.
+      - It uses the "clinicControllerResolver" bean below for method name resolution.
+      -->
+    <bean id="SearchController" class="org.genedb.web.mvc.controller.SearchController">
+        <property name="methodNameResolver" ref="searchControllerResolver"/>
+        <property name="viewChecker" ref="checkingViewResolver"/>
+        <property name="featureDao" ref="featureDao"/>
+        <property name="cvDao" ref="cvDao"/>
+        <property name="cvTermDao" ref="cvTermDao"/>
+<!--        <property name="pubHome" ref="pubHome" />-->
+    </bean>
+    
+        <bean id="AdminController" class="org.genedb.web.mvc.controller.AdminController">
+        <property name="methodNameResolver" ref="searchControllerResolver"/>
+        <!-- <property name="viewChecker" ref="checkingViewResolver"/> -->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <bean id="featureDao" class="org.genedb.db.dao.FeatureDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="cvDao" class="org.genedb.db.dao.CvDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>    
+    
+    <bean id="cvTermDao" class="org.genedb.db.dao.CvTermDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="daoFactory" class="org.genedb.db.dao.DaoFactory">
+	    <property name="sessionFactory" ref="sessionFactory" />
+    	<property name="featureDao" ref="featureDao" />
+    	<property name="cvDao" ref="cvDao" />
+    	<property name="cvTermDao" ref="cvTermDao" />
+    </bean>
+    
+  <bean id="openSessionInView" class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+    <property name="sessionFactory"><ref bean="sessionFactory"/></property>
+  </bean>
+    
+    
+    
+    
+    <!-- DataSource Property -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		 <property name="driverClassName" value="org.postgresql.Driver" />
+<!--	 	 <property name="url" value="jdbc:postgresql:ormtest" /> -->
+<!--         <property name="username" value="art" />-->
+        <property name="url" value="jdbc:postgresql://holly.internal.sanger.ac.uk:5432/chado" />
+        <!--<property name="username" value="plasmodia" />-->
+<!--        <property name="username" value="pfalciparum"/>-->
+        <!-- <property name="username" value="tbrucei"/> -->
+        <!-- <property name="username" value="spombe" /> -->
+        <property name="username" value="twhipplei" />
+        <property name="password" value="WIBBLE" />
+	</bean> 
+
+	<!-- Database Property -->
+	<bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+ 	<property name="properties">
+  	<props>
+  		<prop key="hibernate.hbm2dll.auto">validate</prop>
+ 	    <!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
+<!--	  	<prop key="hibernate.query.substitutions">true 'T', false 'F'</prop>-->
+<!--  		<prop key="hibernate.show_sql">false</prop>-->
+<!--  		<prop key="hibernate.c3p0.minPoolSize">5</prop>-->
+<!--  		<prop key="hibernate.c3p0.maxPoolSize">20</prop>-->
+<!--  		<prop key="hibernate.c3p0.timeout">600</prop>-->
+<!--  		<prop key="hibernate.c3p0.max_statement">50</prop>-->
+<!--		<prop key="hibernate.bytecode.use_reflection_optimizer">false</prop>-->
+        <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+<!--	  	<prop key="hibernate.c3p0.testConnectionOnCheckout">false</prop> -->
+ 	 </props>
+	 </property>
+	</bean>
+
+
+
+	<!-- Hibernate SessionFactory -->
+	<bean id="sessionFactory" 
+  	 class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+	 <property name="dataSource" ref="dataSource" />
+	 <property name="hibernateProperties" ref="hibernateProperties" />
+	 <!--  OR mapping files. -->
+ 	<property name="mappingResources">
+  	  <list>
+    	<value>org/genedb/db/hibernate/Cvtermpath.hbm.xml</value>
+        <value>org/genedb/db/hibernate/CvtermRelationship.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Pubprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Cvtermprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Feature.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Cv.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeaturePub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeaturepropPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Cvtermsynonym.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Dbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Analysisprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Pubauthor.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Db.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureSynonym.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Pub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Analysisfeature.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Analysis.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Project.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureRelationshipPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Tableinfo.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureCvtermDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/CvtermDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Cvterm.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Featureloc.hbm.xml</value>
+        <value>org/genedb/db/hibernate/PubDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Organism.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Dbxrefprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureCvtermPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureRelationshipprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeaturelocPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureCvterm.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureCvtermprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/PubRelationship.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Featureprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Organismprop.hbm.xml</value>
+        <value>org/genedb/db/hibernate/Synonym.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureRelationshippropPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate/OrganismDbxref.hbm.xml</value>
+        <value>org/genedb/db/hibernate/FeatureRelationship.hbm.xml</value>
+    	   
+   	 </list>
+ 	</property>
+	</bean>
+    
+	<!-- <bean id="pubHome" class="org.genedb.db.hibernate.PubHome" /> -->
+    
+	<bean id="HomepageController" class="org.genedb.web.mvc.controller.HomepageController" />
+    
+	<bean id="OrganismController" class="org.genedb.web.mvc.controller.OrganismController">
+		<property name="root" ref="org-Root" />
+    </bean>
+    
+    <!--
+      - This bean is a MethodNameResolver definition for a MultiActionController.
+      - It maps URLs to methods for the "clinicController" bean.
+      -->
+      <bean id="searchControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver" />
+
+
+	<!--
+	  - This bean is a SimpleFormController that manages the editOwner use case.
+	  - It uses the "ownerValidator" and "clinic" beans.
+	  --><!--
+	<bean id="editOwnerForm" class="org.springframework.samples.petclinic.web.EditOwnerForm">
+		<property name="formView" value="ownerForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="ownerValidator"/>
+		 <property name="clinic" ref="clinic"/> 
+	</bean>
+
+	-->
+	<!--
+		- Validator for owner forms, implementing Spring's Validator interface.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within PetClinic's web tier.
+	  --><!--
+	<bean id="ownerValidator" class="org.springframework.samples.petclinic.validation.OwnerValidator"/>
+
+	--><!--
+	  - This bean is a SimpleFormController that manages the addPet use case.
+	  - It uses the "petValidator" and "clinic" beans.
+	  --><!--
+	<bean id="addPetForm" class="org.springframework.samples.petclinic.web.AddPetForm">
+		<property name="formView" value="petForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="petValidator"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	--><!--
+	  - This bean is a SimpleFormController that manages the editPet use case.
+	  - It uses the "petValidator" and "clinic" beans.
+	  --><!--
+	<bean id="editPetForm" class="org.springframework.samples.petclinic.web.EditPetForm">
+		<property name="formView" value="petForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="petValidator"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	--><!--
+		- Validator for pet forms, implementing Spring's Validator interface.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within PetClinic's web tier.
+ 		--><!--
+	<bean id="petValidator" class="org.springframework.samples.petclinic.validation.PetValidator"/>
+
+	--><!--
+	  - This bean is a SimpleFormController that manages the addVisit use case.
+	  - It uses the "visitValidator" and "clinic" beans.
+	  --><!--
+	<bean id="addVisitForm" class="org.springframework.samples.petclinic.web.AddVisitForm">
+		<property name="formView" value="visitForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="visitValidator"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	--><!--
+		- Validator for visit forms, implementing Spring's Validator interface.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within PetClinic's web tier.
+ 		--><!--
+	<bean id="visitValidator" class="org.springframework.samples.petclinic.validation.VisitValidator"/>
+
+--></beans>

@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
  *
- * @author Ken Krebs
+ * @author Adrian Tivey
  */
 public class SearchController extends MultiActionController implements InitializingBean {
     

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN" 
+    "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
+
+<dwr>
+
+<!--
+  <init>
+
+    <converter id="testbean" class="uk.ltd.getahead.testdwr.TestBean2Converter"/>
+
+  </init>
+-->
+
+  <allow>
+    <create creator="spring" javascript="PfamLookup">
+      <param name="beanName" value="pfamLookup"/>
+    </create>
+
+<!--     <convert converter="object" match="uk.ltd.getahead.testdwr.ObjA">
+
+      <param name="force" value="true"/>
+
+    </convert> -->
+
+
+
+  </allow>
+
+</dwr>
+

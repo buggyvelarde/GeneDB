@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<project name="genedb-web" default="get-latest-jars" basedir=".">
+
+	<target name="get-latest-jars" depends="" description="Copy over JAR files from other projects">
+
+		<copy file="../genedb-access/genedb-access.jar" todir="WebContent/WEB-INF/lib" />
+
+	</target>
+	
+</project>
