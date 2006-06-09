@@ -21,31 +21,36 @@ public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implem
     
     public Names findNamesInternal(Annotation an) {
 	
-	Names ret = new Names();
-	
-	String temp = null;
-
+    	Names ret = new Names();
+	   	String prefix = null;
+		String name	=	null;
+		int count = 0;
+		
+		/* get the prefix from the config file and find the gene names accordingly
+		 * if more than one gene found with the same prefix give an error message
+		 * all the other gene names go as synonyms
+		 */
+		prefix = getOptions().get("prefix");
         List<String> names = MiningUtils.getProperties("gene", an);
         if (names == null) {
             throw new RuntimeException("BacterialNomenclatureHandler: No 'gene' keys to work with");
         }
 
-        if(names.size() > 1)
-        {
-        	for(int i=0;i<names.size();i++)
-        	{
-        		temp = names.get(i);
-        		if(temp.charAt(0)== 'T' && temp.charAt(1) == 'W')
-        		{
-        			names.remove(i);
-        			ret.setSystematicIdAndTemp(temp, false);
-        			 		
-        		}
+        if(names.size() > 1) {
+        	for (int i=0;i<names.size();i++) {
+        		name = names.get(i);
+				if(name.startsWith(prefix)) {
+					count++;
+					names.remove(i);
+        			ret.setSystematicIdAndTemp(name, false);
+				}
+			}
+        	if(count>1) {
+        		throw new RuntimeException("BacterialNomenclatureHandler: More than one gene with same prefix");
         	}
         	ret.setSynonyms(names);
         }
-        else
-        {
+        else {
         	ret.setSystematicIdAndTemp(names.get(0), false);
         }
                     
