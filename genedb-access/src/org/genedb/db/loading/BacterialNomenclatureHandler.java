@@ -37,17 +37,19 @@ public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implem
         }
 
         if(names.size() > 1) {
+        	count = 0;
         	for (int i=0;i<names.size();i++) {
         		name = names.get(i);
 				if(name.startsWith(prefix)) {
 					count++;
+					if(count>1) {
+		        		throw new RuntimeException("BacterialNomenclatureHandler: More than one gene with same name " + name);
+		        	}
 					names.remove(i);
         			ret.setSystematicIdAndTemp(name, false);
 				}
 			}
-        	if(count>1) {
-        		throw new RuntimeException("BacterialNomenclatureHandler: More than one gene with same prefix");
-        	}
+        	
         	ret.setSynonyms(names);
         }
         else {
