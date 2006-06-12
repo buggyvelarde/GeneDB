@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -162,7 +163,7 @@ public class NewRunner implements ApplicationContextAware {
 		}
 		catch (NoSuchMethodException exp) {
 		    this.noMethod.add(mungedType);
-		    System.err.println("NOTE: No processor for qualifier "+f.getType());
+		    logger.warn("No processor for qualifier of type '"+f.getType()+"'");
 		    return;
 		}
 	    }
@@ -171,7 +172,7 @@ public class NewRunner implements ApplicationContextAware {
 	if (method != null) {
 	    try {
 		// Now use method
-		//System.err.println("Trying to dispatch for "+method);
+		logger.debug("Trying to dispatch for '"+method+"'");
 		method.invoke(this, new Object[] {f});
 	    } catch (IllegalArgumentException e) {
 		e.printStackTrace();
@@ -291,7 +292,7 @@ public class NewRunner implements ApplicationContextAware {
             StringBuilder residues = new StringBuilder();
             
             for (Part part : synthetic.getParts()) {
-        	System.err.println("Synthetic Part='"+synthetic+"'");
+        	//System.err.println("Synthetic Part='"+synthetic+"'");
 		if (part instanceof FeaturePart) {
 		    FeaturePart fp = (FeaturePart) part;
 		    org.genedb.db.hibernate.Feature f = 
@@ -325,10 +326,8 @@ public class NewRunner implements ApplicationContextAware {
         
         this.postProcess();
 
-        if (logger.isInfoEnabled()) {
-            long duration = (new Date().getTime()-start)/1000;
-            logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
-        }
+        long duration = (new Date().getTime()-start)/1000;
+        logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
     }
     
     
@@ -349,7 +348,12 @@ public class NewRunner implements ApplicationContextAware {
 	    }
 	    this.featureHandler.processCDS(seq, parent, offset);
 		
+	    Iterator featureIterator = seq.features();
+	    while (featureIterator.hasNext()) {
+		Feature feature = (Feature) featureIterator.next();
+		this.despatchOnFeatureType(feature);
 	    //parseFeature(seq);
+	    }
 		
 	} catch (ChangeVetoException exp) {
 	    // TODO Auto-generated catch block
