@@ -92,6 +92,16 @@ public class FeatureUtils {
 	    }
 	}
 	
+	/**
+     * Create a simple FeatureLocation object, tying an object to one parent, with rank 0, no fuzzy ends
+     * 
+	 * @param parent The feature this is located to
+	 * @param child The feature to locate
+	 * @param min The minimum position on the parent
+	 * @param max The maximum position on the parent
+	 * @param strand The strand-edness of the feature relative to the parent
+	 * @return the newly constructed FeatureLocation, not persisted
+	 */
 	public Featureloc createLocation(org.genedb.db.hibernate.Feature parent, org.genedb.db.hibernate.Feature child, int min, int max, short strand) {
 	    Featureloc fl = new Featureloc();
 	    fl.setRank(0);
