@@ -146,26 +146,27 @@ public class NewRunner implements ApplicationContextAware {
      * 
      * @param f The feature to dispatch on
      */
-    private void despatchOnFeatureType(Feature f) {
+    private void despatchOnFeatureType(Feature f, org.genedb.db.hibernate.Feature parent) {
 	Method method = null;
-	String mungedType = f.getType().replaceAll("'","_prime_");
+	String mungedType = f.getType().replaceAll("'","_PRIME_");
 	if (this.methodMap.containsKey(mungedType)) {
 	    method = this.methodMap.get(mungedType);
 	} else {
 	    if (!this.noMethod.contains(mungedType)) {
 		// Try and find a method
-		try {
-		    method = this.featureHandler.getClass().getMethod("process_"+mungedType, 
-			    new Class[]{Feature.class});
-		    if (!this.methodMap.containsKey(mungedType)) {
-			this.methodMap.put(mungedType, method);
-		    }
-		}
-		catch (NoSuchMethodException exp) {
-		    this.noMethod.add(mungedType);
-		    logger.warn("No processor for qualifier of type '"+f.getType()+"'");
-		    return;
-		}
+            String methodName = "process_"+mungedType;
+	        try {
+	            method = this.featureHandler.getClass().getMethod(methodName, 
+	                    new Class[]{org.genedb.db.hibernate.Feature.class, Feature.class});
+	            if (!this.methodMap.containsKey(mungedType)) {
+	                this.methodMap.put(mungedType, method);
+	            }
+	        }
+	        catch (NoSuchMethodException exp) {
+	            this.noMethod.add(mungedType);
+	            logger.warn("No processor for qualifier of type '"+f.getType()+"' (Looked for '"+methodName+"')");
+	            return;
+	        }
 	    }
 	}
  
@@ -173,7 +174,7 @@ public class NewRunner implements ApplicationContextAware {
 	    try {
 		// Now use method
 		logger.debug("Trying to dispatch for '"+method+"'");
-		method.invoke(this.featureHandler, new Object[] {f});
+		method.invoke(this.featureHandler, new Object[] {parent, f});
 	    } catch (IllegalArgumentException e) {
 		e.printStackTrace();
 		System.exit(-1);
@@ -351,7 +352,7 @@ public class NewRunner implements ApplicationContextAware {
 	    Iterator featureIterator = seq.features();
 	    while (featureIterator.hasNext()) {
 		Feature feature = (Feature) featureIterator.next();
-		this.despatchOnFeatureType(feature);
+		this.despatchOnFeatureType(feature, parent);
 	    //parseFeature(seq);
 	    }
 		
