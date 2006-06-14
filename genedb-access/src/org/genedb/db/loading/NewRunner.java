@@ -173,7 +173,7 @@ public class NewRunner implements ApplicationContextAware {
 	    try {
 		// Now use method
 		logger.debug("Trying to dispatch for '"+method+"'");
-		method.invoke(this, new Object[] {f});
+		method.invoke(this.featureHandler, new Object[] {f});
 	    } catch (IllegalArgumentException e) {
 		e.printStackTrace();
 		System.exit(-1);
