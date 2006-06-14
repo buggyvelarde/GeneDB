@@ -89,6 +89,10 @@ public class StandardFeatureHandler implements FeatureHandler {
 
     private Cv CV_MISC;
 
+    private Cv CV_RELATION;
+    
+    private Cvterm REL_PART_OF;
+    
     private Cvterm MISC_NOTE;
 
     private Cvterm REL_DERIVES_FROM;
@@ -98,7 +102,9 @@ public class StandardFeatureHandler implements FeatureHandler {
     public void afterPropertiesSet() {
         CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
         CV_MISC = daoFactory.getCvDao().findByName("autocreated").get(0);
-
+        CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
+        
+        REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
         REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv(
                 "derives_from", CV_SO).get(0);
         MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv("note", CV_MISC)
@@ -188,10 +194,6 @@ public class StandardFeatureHandler implements FeatureHandler {
             List<Featureloc> featureLocs = new ArrayList<Featureloc>();
             List<FeatureRelationship> featureRelationships = new ArrayList<FeatureRelationship>();
 
-            Cv CV_RELATION = this.daoFactory.getCvDao().findByName(
-                    "relationship").get(0);
-            Cvterm REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv(
-                    "part_of", CV_RELATION).get(0);
             // Cv CV_SO =
             // this.daoFactory.getCvDao().findByName("sequence").get(0);
             // Cvterm REL_DERIVES_FROM =
@@ -443,6 +445,65 @@ public class StandardFeatureHandler implements FeatureHandler {
         return ret;
     }
 
+    
+    public void process_5_PRIME_UTR(org.genedb.db.hibernate.Feature parent, Feature feat) {
+        processUTR("five_prime_UTR", parent, feat);
+    }
+
+    public void process_3_PRIME_UTR(org.genedb.db.hibernate.Feature parent, Feature feat) {
+        processUTR("three_prime_UTR", parent, feat);
+    }
+    
+    private void processUTR(String type, org.genedb.db.hibernate.Feature parent, Feature feat) {
+        // TODO Doesn't cope with splicing
+        Annotation an = feat.getAnnotation();
+        Location loc = feat.getLocation();
+        if (an.containsProperty("systematic_id")) {
+            // Hopefully the systematic name of a gene
+            String sysId = (String) an.getProperty("systematic_id");
+            org.genedb.db.hibernate.Feature gene = daoFactory.getFeatureDao().findByUniqueName(sysId);
+            if (gene != null) {
+                org.genedb.db.hibernate.Feature utr = this.featureUtils
+                .createFeature(type, this.gns.get5pUtr(sysId, 0), this.organism);
+                FeatureRelationship utrFr = featureUtils.createRelationship(
+                        utr, gene, REL_PART_OF);
+                Featureloc utrFl = featureUtils.createLocation(parent, utr, 
+                        loc.getMin(), loc.getMax(), (short)((StrandedFeature)feat).getStrand().getValue());
+                daoFactory.persist(utr);
+                daoFactory.persist(utrFr);
+                daoFactory.persist(utrFl);
+            } else {
+                // TODO Complain bitterly
+            }
+        } else {
+            if (an.containsProperty("gene")) {
+                logger.debug("No systematic id found for "+type+", but found /gene");
+                //TODO check if only one result else complain bitterly
+                String name = MiningUtils.getProperty("gene", an, null);
+                List<org.genedb.db.hibernate.Feature> genes = daoFactory.getFeatureDao().findByAnyCurrentName(name);
+                if (genes != null && genes.size()==1) {
+                    Object o = genes.get(0);
+                    logger.warn("Class cast problem with "+o.getClass()+"  : "+o);
+                    org.genedb.db.hibernate.Feature gene = genes.get(0);
+                    // FIXME - Always generating 5' name
+                    String utrName = this.gns.get5pUtr(gene.getUniquename(), 0);
+                    if ("three_prime_UTR".equals(type)) {
+                        utrName = this.gns.get3pUtr(gene.getUniquename(), 0);
+                    }
+                    org.genedb.db.hibernate.Feature utr = this.featureUtils
+                    .createFeature(type, utrName, this.organism);
+                    FeatureRelationship utrFr = featureUtils.createRelationship(
+                            utr, gene, REL_PART_OF);
+                    Featureloc utrFl = featureUtils.createLocation(parent, utr, 
+                            loc.getMin(), loc.getMax(), (short)((StrandedFeature)feat).getStrand().getValue());
+                    daoFactory.persist(utr);
+                    daoFactory.persist(utrFr);
+                    daoFactory.persist(utrFl);
+                }
+            }
+        }
+    }
+    
     private void createFeaturePropsFromNotes(org.genedb.db.hibernate.Feature f,
             Annotation an, Cvterm cvTerm) {
         logger.debug("About to set notes for feature '" + f.getUniquename()
@@ -450,16 +511,22 @@ public class StandardFeatureHandler implements FeatureHandler {
         // Cvterm cvTerm = daoFactory.getCvTermDao().findByNameInCv(key,
         // cv).get(0);
 
-        String value = MiningUtils.getProperty("note", an, null);
-        if (value == null || value.length() == 0) {
+        List<String> values = MiningUtils.getProperties("note", an);
+        if (values == null || values.size() == 0) {
             return;
         }
-        String[] notes = value.split(";");
+        List<String> notes = new ArrayList<String>();
+        for (String note : values) {
+            String[] notesArray = note.split(";");
+            for (int i = 0; i < notesArray.length; i++) {
+                notes.add(notesArray[i]);   
+            }
+        }
 
-        for (int i = 0; i < notes.length; i++) {
-            String note = notes[i];
+        int count = 0;
+        for (String note : notes) {
             Featureprop fp = new Featureprop();
-            fp.setRank(i);
+            fp.setRank(count);
             fp.setCvterm(cvTerm);
             fp.setFeature(f);
             // TODO Parse info from (PMID:...) if present
@@ -478,6 +545,7 @@ public class StandardFeatureHandler implements FeatureHandler {
             // } while (ps.isSplit());
             fp.setFeaturepropPubs(fpubs);
             fp.setValue(note);
+            count++;
         }
     }
 
