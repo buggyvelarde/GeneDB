@@ -104,7 +104,32 @@ public class StandardFeatureHandler implements FeatureHandler {
         MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv("note", CV_MISC)
                 .get(0);
     }
-
+    
+    public void process_tRNA(org.genedb.db.hibernate.Feature parent,Feature ft) {
+    	logger.info("in process_tRNA");
+    	StrandedFeature f = (StrandedFeature)ft;
+    	String systematicId = null;
+    	Location loc;
+    	short strand;
+    	Annotation an = f.getAnnotation();
+    	strand = (short)f.getStrand().getValue();
+    	systematicId = (String) an.getProperty("systematic_id");
+    	loc = f.getLocation();
+    	org.genedb.db.hibernate.Feature trna = this.featureUtils.createFeature("tRNA", systematicId, this.organism);
+    	this.daoFactory.persist(trna);
+    	//FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
+        Featureloc trnaFl = featureUtils.createLocation(parent,trna,loc.getMin(),loc.getMax(),
+        												strand);
+        this.daoFactory.persist(trnaFl);
+        //featureLocs.add(pepFl);
+        //featureRelationships.add(pepFr);
+    	
+    	Featureprop fp = createFeatureProp(trna, an, "colour", "colour", CV_MISC);
+    	this.daoFactory.persist(fp);
+    	createFeaturePropsFromNotes(trna, an, MISC_NOTE);
+    	
+    }
+    
     public void processCDS(Sequence seq,
             org.genedb.db.hibernate.Feature parent, int offset) {
         FeatureHolder fh = seq.filter(new FeatureFilter.ByType(FT_CDS));
