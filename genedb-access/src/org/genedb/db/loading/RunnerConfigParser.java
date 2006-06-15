@@ -53,8 +53,8 @@ import java.util.Map;
  */
 public class RunnerConfigParser {
 
-    //  private static final String DEFAULT_DATA_PREFIX = "/nfs/pathdb/prod/data/input";
-    private static final String DEFAULT_DATA_PREFIX = "/Users/art/Documents/Data/chadoloading";
+    private static final String DEFAULT_DATA_PREFIX = "/nfs/pathdb/prod/data/input";
+    //private static final String DEFAULT_DATA_PREFIX = "/Users/art/Documents/Data/chadoloading";
 
     protected final Log logger = LogFactory.getLog(this.getClass());
 
