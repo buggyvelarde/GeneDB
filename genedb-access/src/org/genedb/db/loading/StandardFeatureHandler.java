@@ -184,7 +184,7 @@ public class StandardFeatureHandler implements FeatureHandler {
         }
         for (Feature feature : toRemove) {
             try {
-                fh.removeFeature(feature);
+                seq.removeFeature(feature);
             } catch (ChangeVetoException exp) {
                 exp.printStackTrace();
             } catch (BioException exp) {
@@ -498,8 +498,6 @@ public class StandardFeatureHandler implements FeatureHandler {
                 String name = MiningUtils.getProperty("gene", an, null);
                 List<org.genedb.db.hibernate.Feature> genes = daoFactory.getFeatureDao().findByAnyCurrentName(name);
                 if (genes != null && genes.size()==1) {
-                    Object o = genes.get(0);
-                    logger.warn("Class cast problem with "+o.getClass()+"  : "+o);
                     org.genedb.db.hibernate.Feature gene = genes.get(0);
                     // FIXME - Always generating 5' name
                     String utrName = this.gns.get5pUtr(gene.getUniquename(), 0);
