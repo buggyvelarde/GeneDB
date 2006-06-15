@@ -58,6 +58,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -119,7 +120,22 @@ public class StandardFeatureHandler implements FeatureHandler {
     	short strand;
     	Annotation an = f.getAnnotation();
     	strand = (short)f.getStrand().getValue();
-    	systematicId = (String) an.getProperty("systematic_id");
+    	try {
+    		systematicId = (String) an.getProperty("systematic_id");
+    	}
+    	catch (NoSuchElementException s) {
+    		try {
+    			systematicId = (String) an.getProperty("gene");
+    		}
+    		catch (NoSuchElementException g) {
+    			try {
+    				systematicId = (String) an.getProperty("temporary_systematic_id");
+    			}
+    			catch (NoSuchElementException t) {
+    				throw new RuntimeException("No systematic id found for tRNA entry");
+    			}
+    		}
+    	}
     	loc = f.getLocation();
     	org.genedb.db.hibernate.Feature trna = this.featureUtils.createFeature("tRNA", systematicId, this.organism);
     	this.daoFactory.persist(trna);
