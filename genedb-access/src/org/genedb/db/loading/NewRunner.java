@@ -394,25 +394,45 @@ public class NewRunner implements ApplicationContextAware {
      */
     public static void main (String[] args) {
 	
-        if ( args.length == 0) {
-            System.err.println("No organism common name specified\n"+usage);
+        String organismCommonName = null;
+        String loginName = null;
+        String configFilePath = null; 
+            
+        switch (args.length) {
+            case 0:
+                System.err.println("No organism common name specified\n"+usage);
+                System.exit(0);
+            case 1:
+                organismCommonName = args[0];
+                loginName = organismCommonName;
+                break;
+            case 2:
+                organismCommonName = args[0];
+                loginName = organismCommonName;
+                configFilePath = args[1];
+                break;
+            case 3:
+                organismCommonName = args[0];
+                configFilePath = args[1];
+                loginName = args[2];
+                break;
+            default:
+                System.err.println("Too many arguments\n"+usage);
             System.exit(0);
         }
-        if (args.length > 2) {
-            System.err.println("Too many arguments\n"+usage);
-            System.exit(0);
-        }
-	String organismCommonName = args[0];
         
 	// Override properties in Spring config file (using a 
 	// BeanFactoryPostProcessor) based on command-line args
 	Properties overrideProps = new Properties();
-	overrideProps.setProperty("dataSource.username", organismCommonName);
+	overrideProps.setProperty("dataSource.username", loginName);
 	overrideProps.setProperty("runner.organismCommonName", organismCommonName);
 	overrideProps.setProperty("runnerConfigParser.organismCommonName", organismCommonName);
-	if (args.length > 1) {
-	    overrideProps.setProperty("runnerConfigParser.configFilePath", args[1]);
-	}      
+    
+    if (configFilePath != null) {
+        overrideProps.setProperty("runnerConfigParser.configFilePath", configFilePath);
+    }
+    
+    
 	PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
 	
 	
