@@ -14,15 +14,13 @@ import java.util.regex.Pattern;
 
 public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implements NomenclatureHandler {
 
-       
-    public BacterialNomenclatureHandler() {
-	
-    }
+    private String[] prefixes; 
     
     public Names findNamesInternal(Annotation an) {
-	
+
     	Names ret = new Names();
-	   	String prefix = null;
+		String tmpPrefix = getOptions().get("prefix");
+		prefixes = tmpPrefix.split(";");
 		String name	=	null;
 		int count = 0;
 		
@@ -30,7 +28,6 @@ public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implem
 		 * if more than one gene found with the same prefix give an error message
 		 * all the other gene names go as synonyms
 		 */
-		prefix = getOptions().get("prefix");
         List<String> names = MiningUtils.getProperties("gene", an);
         if (names == null) {
             throw new RuntimeException("BacterialNomenclatureHandler: No 'gene' keys to work with");
@@ -40,14 +37,17 @@ public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implem
         	count = 0;
         	for (int i=0;i<names.size();i++) {
         		name = names.get(i);
-				if(name.startsWith(prefix)) {
-					count++;
-					if(count>1) {
-		        		throw new RuntimeException("BacterialNomenclatureHandler: More than one gene with same name " + name);
-		        	}
-					names.remove(i);
-        			ret.setSystematicIdAndTemp(name, false);
-				}
+        		for (int j = 0; j < prefixes.length; j++) {
+					String prefix = prefixes[j];
+					if(name.startsWith(prefix)) {
+						count++;
+						if(count>1) {
+							throw new RuntimeException("BacterialNomenclatureHandler: More than one gene with same name " + name);
+						}
+						names.remove(i);
+						ret.setSystematicIdAndTemp(name, false);
+					}
+        		}
 			}
         	
         	ret.setSynonyms(names);
