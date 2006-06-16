@@ -125,11 +125,12 @@ public class StandardFeatureHandler implements FeatureHandler {
     	}
     	catch (NoSuchElementException s) {
     		try {
-    			systematicId = (String) an.getProperty("gene");
+                systematicId = (String) an.getProperty("temporary_systematic_id");
+
     		}
     		catch (NoSuchElementException g) {
     			try {
-    				systematicId = (String) an.getProperty("temporary_systematic_id");
+                    systematicId = (String) an.getProperty("gene");
     			}
     			catch (NoSuchElementException t) {
     				throw new RuntimeException("No systematic id found for tRNA entry");
