@@ -200,27 +200,64 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static boolean checkRequiredSingle(Feature f, String[] requiredSingle, boolean fatal, SmallAnnotation copy) {
-	for (int i = 0; i < requiredSingle.length; i++) {
-	    String check = requiredSingle[i];
-	    List matches = getProperties(check, copy);
-	    if (matches == null) {
-		problem(f, check, "No value", fatal);
-		return false;
-	    }
-	    if (matches.size()==0 || matches.size() >1) {
-		problem(f, check, "Wrong number of values", fatal);
-		return false;
-	    }
-	    try {
-		copy.removeProperty(check);
-	    } catch (ChangeVetoException e) {
-		e.printStackTrace();
-	    } catch (NoSuchElementException e) {
-		e.printStackTrace();
-	    }
+    private static boolean checkRequiredSingle(Feature f, String[] requiredSingle, boolean fatal, Annotation copy) {
+    	for (int i = 0; i < requiredSingle.length; i++) {
+    		String check = requiredSingle[i];
+    		List matches = getProperties(check, copy);
+    		if (matches == null) {
+    			problem(f, check, "No value", fatal	)	;
+    			return false;
+    		}
+    		if (matches.size()==0 || matches.size() >1) {
+    			problem(f, check, "Wrong number of values", fatal);
+    			return false;
+    		}
+    		copy = getAnnotationCopyWithoutKey("check", copy);
+    	}
+    	return true;
+    }
+
+    @SuppressWarnings("unchecked")
+	private static Annotation getAnnotationCopyWithoutKey(String without, Annotation an) {
+		Annotation ret = new SmallAnnotation();
+		for (String key : ((Set<String>) an.asMap().keySet())) {
+			if (!key.equals(without)) {
+				try {
+					ret.setProperty(key, an.getProperty(key));
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (NoSuchElementException e) {
+					e.printStackTrace();
+				} catch (ChangeVetoException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return ret;
 	}
-	return true;
+
+	/**
+     * @param f
+     * @param requiredSingle
+     * @param fatal
+     * @param copy
+     * @return
+     */
+    private static boolean checkRequiredMultiple(Feature f, String[] requiredMultiple, boolean fatal, Annotation copy) {
+    	for (int i = 0; i < requiredMultiple.length; i++) {
+    		String check = requiredMultiple[i];
+    		List matches = getProperties(check, copy);
+    		if (matches == null) {
+    			problem(f, check, "No value", fatal);
+    			return false;
+    		}
+    		if (matches.size()==0) {
+    			problem(f, check, "Wrong number of values", fatal);
+    			return false;
+    		}
+    		copy = getAnnotationCopyWithoutKey(check, copy);
+    	}
+    	return true;
     }
 
     /**
@@ -230,27 +267,16 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static boolean checkRequiredMultiple(Feature f, String[] requiredMultiple, boolean fatal, SmallAnnotation copy) {
-	for (int i = 0; i < requiredMultiple.length; i++) {
-	    String check = requiredMultiple[i];
-	    List matches = getProperties(check, copy);
-	    if (matches == null) {
-		problem(f, check, "No value", fatal);
-		return false;
-	    }
-	    if (matches.size()==0) {
-		problem(f, check, "Wrong number of values", fatal);
-		return false;
-	    }
-	    try {
-		copy.removeProperty(check);
-	    } catch (ChangeVetoException e) {
-		e.printStackTrace();
-	    } catch (NoSuchElementException e) {
-		e.printStackTrace();
-	    }
-	}
-	return true;
+    private static boolean checkOptionalMultiple(Feature f, String[] optionalMultiple, boolean fatal, Annotation copy) {
+    	for (int i = 0; i < optionalMultiple.length; i++) {
+    		String check = optionalMultiple[i];
+    		List matches = getProperties(check, copy);
+    		if (matches == null) {
+    			return true;
+    		}
+    		copy = getAnnotationCopyWithoutKey(check, copy);
+    	}
+    	return true;
     }
 
     /**
@@ -260,32 +286,7 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static boolean checkOptionalMultiple(Feature f, String[] optionalMultiple, boolean fatal, SmallAnnotation copy) {
-	for (int i = 0; i < optionalMultiple.length; i++) {
-	    String check = optionalMultiple[i];
-	    List matches = getProperties(check, copy);
-	    if (matches == null) {
-		return true;
-	    }
-	    try {
-		copy.removeProperty(check);
-	    } catch (ChangeVetoException e) {
-		e.printStackTrace();
-	    } catch (NoSuchElementException e) {
-		e.printStackTrace();
-	    }
-	}
-	return true;
-    }
-
-    /**
-     * @param f
-     * @param requiredSingle
-     * @param fatal
-     * @param copy
-     * @return
-     */
-    private static boolean checkOptionalSingle(Feature f, String[] optionalSingle, boolean fatal, SmallAnnotation copy) {
+    private static boolean checkOptionalSingle(Feature f, String[] optionalSingle, boolean fatal, Annotation copy) {
 	for (int i = 0; i < optionalSingle.length; i++) {
 	    String check = optionalSingle[i];
 	    List matches = getProperties(check, copy);
@@ -293,13 +294,7 @@ public class MiningUtils {
 		problem(f, check, "Wrong number of values", fatal);
 		return false;
 	    }
-	    try {
-		copy.removeProperty(check);
-	    } catch (ChangeVetoException e) {
-		e.printStackTrace();
-	    } catch (NoSuchElementException e) {
-		e.printStackTrace();
-	    }
+	    copy = getAnnotationCopyWithoutKey(check, copy);
 	}
 	return true;
     }
