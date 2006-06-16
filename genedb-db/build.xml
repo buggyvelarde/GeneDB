@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<project name="hibernateTry2" default="fulljar" basedir=".">
+
+	<path id="toolslib">
+	 <path location="lib/hibernate-tools.jar" />
+	 <path location="lib/hibernate3.jar" />
+	 <path location="lib/freemarker.jar" />
+	<path location="lib/commons-logging-1.0.4.jar" />
+		<path location="lib/dom4j-1.6.1.jar" />
+		<path location="lib/cglib-2.1.3.jar" />
+	 <path location="lib/postgresql-8.2dev-501.jdbc3.jar" />
+		<path location="lib/commons-collections-2.1.1.jar" />
+	</path>
+	   
+	
+	<target name="cleanGenerated" >
+		<delete>
+			<fileset dir="out">
+				<include name="org/genedb/**/*.java"/>
+				<exclude name="**/Feature.java"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<taskdef name="hibernatetool" 
+	         classname="org.hibernate.tool.ant.HibernateToolTask" 
+	         classpathref="toolslib" />
+	
+	<hibernatetool destdir="out">
+	 <classpath>
+	  <path location="input"/>
+	 	<path location="input/org/genedb/db/hibernate3gen" />
+	 </classpath>
+
+	 <configuration configurationfile="input/org/genedb/db/hibernate3gen/hibernate.cfg.xml"/>
+	 <hbm2ddl export="false" outputfilename="sql.dll" />
+	 <hbm2java jdk5="true" ejb3="true" />
+	</hibernatetool>
+	
+	<target name="fulljar" depends="" description="Create full JAR file with all Hibernate classes">
+
+		<delete file="genedb-hibernate.jar"/>
+
+		<jar jarfile="genedb-hibernate.jar">
+			<fileset dir="bin" />
+			<manifest>
+				<attribute name="Implementation-Title" value="GeneDB Hibernate"/>
+				<attribute name="Implementation-Version" value="0.1"/>
+			</manifest>
+		</jar>
+
+	</target>
+
+</project>
