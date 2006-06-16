@@ -129,7 +129,9 @@ public class SearchController extends MultiActionController implements Initializ
 	    // TODO
 	    // Check if features/type is known about
 	    // otherwise go to features/generic
-	    viewName = "features/generic";
+        if (type != null && !type.equals("gene")) {
+            viewName = "features/generic";
+        }
 	    return new ModelAndView(viewName, model);
 	}
 	
