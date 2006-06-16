@@ -146,6 +146,11 @@
 <!--        <property name="pubHome" ref="pubHome" />-->
     </bean>
     
+	<bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
+<!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
+<!--        <property name="featureDao" ref="featureDao"/>-->
+    </bean>
+    
         <bean id="AdminController" class="org.genedb.web.mvc.controller.AdminController">
         <property name="methodNameResolver" ref="searchControllerResolver"/>
         <!-- <property name="viewChecker" ref="checkingViewResolver"/> -->
@@ -188,7 +193,7 @@
 <!--        <property name="username" value="pfalciparum"/>-->
         <!-- <property name="username" value="tbrucei"/> -->
         <!-- <property name="username" value="spombe" /> -->
-        <property name="username" value="twhipplei" />
+        <property name="username" value="web" />
         <property name="password" value="WIBBLE" />
 	</bean> 
 
