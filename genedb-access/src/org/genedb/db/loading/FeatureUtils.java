@@ -3,15 +3,15 @@ package org.genedb.db.loading;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.CvTermDao;
 import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.hibernate.Cv;
-import org.genedb.db.hibernate.Cvterm;
-import org.genedb.db.hibernate.Feature;
-import org.genedb.db.hibernate.FeatureRelationship;
-import org.genedb.db.hibernate.FeatureSynonym;
-import org.genedb.db.hibernate.Featureloc;
-import org.genedb.db.hibernate.Organism;
-import org.genedb.db.hibernate.Pub;
-import org.genedb.db.hibernate.Synonym;
+import org.genedb.db.hibernate3gen.Cv;
+import org.genedb.db.hibernate3gen.CvTerm;
+import org.genedb.db.hibernate3gen.FeatureLoc;
+import org.genedb.db.hibernate3gen.FeatureRelationship;
+import org.genedb.db.hibernate3gen.FeatureSynonym;
+import org.genedb.db.hibernate3gen.Organism;
+import org.genedb.db.hibernate3gen.Pub;
+import org.genedb.db.hibernate3gen.Synonym;
+import org.genedb.db.jpa.Feature;
 
 import org.biojava.bio.seq.StrandedFeature;
 
@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class FeatureUtils {
     
@@ -34,17 +33,17 @@ public class FeatureUtils {
 	    CvTermDao cvtermDao = daoFactory.getCvTermDao();
             CvDao cvDao = daoFactory.getCvDao();
             Cv so = cvDao.findByName("sequence").get(0);
-            Cvterm type = cvtermDao.findByNameInCv(typeName, so).get(0);
+            CvTerm type = cvtermDao.findByNameInCv(typeName, so).get(0);
             //System.err.println("Got cvterm type:"+type);
             Date now = new Date();
-            org.genedb.db.hibernate.Feature feature = new org.genedb.db.hibernate.Feature();
+            org.genedb.db.jpa.Feature feature = new org.genedb.db.jpa.Feature();
             feature.setOrganism(organism);
-            feature.setCvterm(type);
+            feature.setCvTerm(type);
             feature.setUniquename(uniqueName);
-            feature.setIsAnalysis(false);
-            feature.setIsObsolete(false);
-            feature.setTimeaccessioned(now);
-            feature.setTimelastmodified(now);
+            feature.setAnalysis(false);
+            feature.setObsolete(false);
+            feature.setTimeAccessioned(now);
+            feature.setTimeLastModified(now);
             //System.err.println("Returning "+feature);
             return feature;
 	}
@@ -102,20 +101,20 @@ public class FeatureUtils {
 	 * @param strand The strand-edness of the feature relative to the parent
 	 * @return the newly constructed FeatureLocation, not persisted
 	 */
-	public Featureloc createLocation(org.genedb.db.hibernate.Feature parent, org.genedb.db.hibernate.Feature child, int min, int max, short strand) {
-	    Featureloc fl = new Featureloc();
+	public FeatureLoc createLocation(org.genedb.db.jpa.Feature parent, org.genedb.db.jpa.Feature child, int min, int max, short strand) {
+	    FeatureLoc fl = new FeatureLoc();
 	    fl.setRank(0);
 	    fl.setFeatureBySrcfeatureId(parent);
 	    fl.setFeatureByFeatureId(child);
 	    fl.setFmin(min);
 	    fl.setFmax(max);
-	    fl.setIsFminPartial(false);
-	    fl.setIsFmaxPartial(false);
+	    fl.setFminPartial(false);
+	    fl.setFmaxPartial(false);
 	    fl.setStrand(strand);
 	    return fl;
 	}
 
-	public FeatureRelationship createRelationship(org.genedb.db.hibernate.Feature subject, org.genedb.db.hibernate.Feature object, Cvterm relType) {
+	public FeatureRelationship createRelationship(org.genedb.db.jpa.Feature subject, org.genedb.db.jpa.Feature object, CvTerm relType) {
 	    FeatureRelationship fr = new FeatureRelationship();
 	    fr.setCvterm(relType);
 	    fr.setFeatureBySubjectId(subject);
@@ -126,8 +125,8 @@ public class FeatureUtils {
 
 	
 	@SuppressWarnings("unchecked")
-	public void createSynonym(Cvterm type, String name, 
-		org.genedb.db.hibernate.Feature gene, boolean isCurrent) {
+	public void createSynonym(CvTerm type, String name, 
+		org.genedb.db.jpa.Feature gene, boolean isCurrent) {
 	    Synonym synonym = null;
 	    List<Synonym> matches = daoFactory.getHibernateTemplate().findByNamedParam(
 		    "from Synonym s where s.name=:name and s.cvterm=:cvterm",
@@ -151,8 +150,8 @@ public class FeatureUtils {
 	    if (matches2.size()==0) {
 		fs = new FeatureSynonym();
 		fs.setFeature(gene);
-		fs.setIsCurrent(isCurrent);
-		fs.setIsInternal(false);
+		fs.setCurrent(isCurrent);
+		fs.setInternal(false);
 		fs.setSynonym(synonym);
 		fs.setPub(this.DUMMY_PUB);
 		daoFactory.persist(fs);
@@ -163,8 +162,8 @@ public class FeatureUtils {
 	    gene.getFeatureSynonyms().add(fs);
 	}
 
-	public void createSynonyms(Cvterm type, List<String> names, 
-		org.genedb.db.hibernate.Feature feature, boolean isCurrent) {
+	public void createSynonyms(CvTerm type, List<String> names, 
+		org.genedb.db.jpa.Feature feature, boolean isCurrent) {
 	    
 	    for (String name : names) {
 		this.createSynonym(type, name, feature, isCurrent);

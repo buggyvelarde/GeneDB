@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class GoInstance {
 
-    private List qualifiers = new ArrayList();
+    private List<String> qualifiers = new ArrayList<String>(0);
     private String id;
     private String ref;
     private String with;
@@ -120,9 +120,9 @@ public class GoInstance {
      *
      * @return Value of qualifier.
      */
-    public List getQualifierList() {
+    public List<String> getQualifierList() {
         if (qualifiers==null) {
-            return Collections.EMPTY_LIST;
+            return Collections.unmodifiableList(new ArrayList<String>(0));
         }
         return qualifiers;
     }
@@ -156,15 +156,15 @@ public class GoInstance {
     
     public String getQualifierDisplay(boolean officialOnly, String def, String seperator, boolean replaceUnderscore) {
         StringBuffer ret = new StringBuffer();
-        List allQualifier = getQualifierList();
+        List<String> allQualifier = getQualifierList();
         if (allQualifier == null || allQualifier.size()==0) {
             return def;
         }
-        List filteredList = null;
+        List<String> filteredList = null;
         if (!officialOnly) {
             filteredList = allQualifier;
         } else {
-            filteredList = new ArrayList();
+            filteredList = new ArrayList<String>();
             for (Iterator it = allQualifier.iterator(); it.hasNext();) {
                 String qualifier = (String) it.next();
                 if (qualifierDictionary.isQualifierGOValid(qualifier)) {

@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/saxon8.jar"/>
 	<classpathentry kind="lib" path="lib/xom-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/genedb-hibernate.jar"/>
 	<classpathentry kind="lib" path="lib/saxon8-xom.jar"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="lib/commons-dbcp.jar"/>
@@ -22,5 +21,8 @@
 	<classpathentry kind="lib" path="lib/postgresql-8.2dev-501.jdbc3.jar"/>
 	<classpathentry kind="lib" path="lib/asm.jar"/>
 	<classpathentry kind="lib" path="lib/bytecode-0.91.jar"/>
+	<classpathentry kind="lib" path="lib/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/genedb-hibernate.jar"/>
 	<classpathentry kind="output" path="ant-build/classes"/>
 </classpath>

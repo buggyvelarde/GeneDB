@@ -1,6 +1,6 @@
 package org.genedb.db.dao;
 
-import org.genedb.db.hibernate.Feature;
+import org.genedb.db.jpa.Feature;
 
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 

@@ -1,8 +1,8 @@
 package org.genedb.db.loading;
 
 import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.hibernate.Feature;
-import org.genedb.db.hibernate.Organism;
+import org.genedb.db.hibernate3gen.Organism;
+import org.genedb.db.jpa.Feature;
 
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Sequence;

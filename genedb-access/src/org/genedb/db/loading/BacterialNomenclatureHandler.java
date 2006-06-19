@@ -3,19 +3,13 @@ package org.genedb.db.loading;
 
 import org.biojava.bio.Annotation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implements NomenclatureHandler {
 
     private String[] prefixes; 
     
+    @Override
     public Names findNamesInternal(Annotation an) {
 
     	Names ret = new Names();

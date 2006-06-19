@@ -221,12 +221,12 @@ import java.util.Set;
     			throws BeansException {
 
     		for (Enumeration names = props.propertyNames(); names.hasMoreElements();) {
-    			String key = (String) names.nextElement();
+    			String localKey = (String) names.nextElement();
     			try {
-    				processKey(beanFactory, key, props.getProperty(key));
+    				processKey(beanFactory, localKey, props.getProperty(localKey));
     			}
     			catch (BeansException ex) {
-    				String msg = "Could not process key '" + key + "' in PropertyOverrideConfigurer";
+    				String msg = "Could not process key '" + localKey + "' in PropertyOverrideConfigurer";
     				if (!this.ignoreInvalidKeys) {
     					throw new BeanInitializationException(msg, ex);
     				}
@@ -240,20 +240,20 @@ import java.util.Set;
     	/**
     	 * Process the given key as 'beanName.property' entry.
     	 */
-    	protected void processKey(ConfigurableListableBeanFactory factory, String key, String value)
+    	protected void processKey(ConfigurableListableBeanFactory factory, String localKey, String value)
     			throws BeansException {
 
-    		int separatorIndex = key.indexOf(this.beanNameSeparator);
+    		int separatorIndex = localKey.indexOf(this.beanNameSeparator);
     		if (separatorIndex == -1) {
-    			throw new BeanInitializationException("Invalid key '" + key +
+    			throw new BeanInitializationException("Invalid key '" + localKey +
     					"': expected 'beanName" + this.beanNameSeparator + "property'");
     		}
-    		String beanName = key.substring(0, separatorIndex);
-    		String beanProperty = key.substring(separatorIndex+1);
+    		String beanName = localKey.substring(0, separatorIndex);
+    		String beanProperty = localKey.substring(separatorIndex+1);
     		this.beanNames.add(beanName);
     		applyPropertyValue(factory, beanName, beanProperty, value);
     		if (logger.isDebugEnabled()) {
-    			logger.debug("Property '" + key + "' set to value [" + value + "]");
+    			logger.debug("Property '" + localKey + "' set to value [" + value + "]");
     		}
     	}
 

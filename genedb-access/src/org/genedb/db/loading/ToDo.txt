@@ -1,7 +1,6 @@
 Remember: Don't delete Feature before refreshing
 
 
-
 To Do
 ==========
 Protein translation
@@ -18,7 +17,10 @@ GO association output
 cosmid artificial feature storage
 New naming proposal
 PMID lookup needed proposal
-Gene /product 
+Gene /product as controlled curation
+Store RILEY
+Chase GMOD group re exon sharing or not
+Write BacterialNomenclatureHandler (cp2)
 
 New ORM
 =========
@@ -56,4 +58,4 @@ Remove all persist from indivual DAOs
 Contig offset storage
 Splicing
 Alternative transcripts
- 
+Split config and it's parser into seperate parts

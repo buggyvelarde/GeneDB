@@ -32,6 +32,7 @@ import java.util.Set;
  */
 public class InsertionOrderedSet<T> extends ArrayList<T> implements Set<T> {
 
+    @Override
     public boolean add(T t) {
         if (this.contains(t)) {
             return false;
@@ -39,6 +40,7 @@ public class InsertionOrderedSet<T> extends ArrayList<T> implements Set<T> {
         return super.add(t);
     }
 
+    @Override
     public boolean addAll(Collection<? extends T> c) {
         boolean ret = false;
         Iterator<? extends T> it = c.iterator();

@@ -20,8 +20,8 @@
 package org.genedb.db.loading;
 
 import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.hibernate.Featureloc;
-import org.genedb.db.hibernate.Organism;
+import org.genedb.db.hibernate3gen.FeatureLoc;
+import org.genedb.db.hibernate3gen.Organism;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,8 +42,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -80,9 +78,9 @@ public class NewRunner implements ApplicationContextAware {
     
     private RunnerConfigParser runnerConfigParser;
     
-    private Map<String, Method> methodMap = new HashMap<String, Method>();
+    private Map<String, FeatureProcessor> instanceMap = new HashMap<String, FeatureProcessor>();
     
-    private Set<String> noMethod = new HashSet<String>();
+    private Set<String> noInstance = new HashSet<String>();
     
     private FeatureUtils featureUtils;
     
@@ -146,46 +144,29 @@ public class NewRunner implements ApplicationContextAware {
      * 
      * @param f The feature to dispatch on
      */
-    private void despatchOnFeatureType(Feature f, org.genedb.db.hibernate.Feature parent) {
-	Method method = null;
-	String mungedType = f.getType().replaceAll("'","_PRIME_");
-	if (this.methodMap.containsKey(mungedType)) {
-	    method = this.methodMap.get(mungedType);
-	} else {
-	    if (!this.noMethod.contains(mungedType)) {
-		// Try and find a method
-            String methodName = "process_"+mungedType;
-	        try {
-	            method = this.featureHandler.getClass().getMethod(methodName, 
-	                    new Class[]{org.genedb.db.hibernate.Feature.class, Feature.class});
-	            if (!this.methodMap.containsKey(mungedType)) {
-	                this.methodMap.put(mungedType, method);
-	            }
-	        }
-	        catch (NoSuchMethodException exp) {
-	            this.noMethod.add(mungedType);
-	            logger.warn("No processor for qualifier of type '"+f.getType()+"' (Looked for '"+methodName+"')");
-	            return;
-	        }
-	    }
-	}
- 
-	if (method != null) {
-	    try {
-		// Now use method
-		logger.debug("Trying to dispatch for '"+method+"'");
-		method.invoke(this.featureHandler, new Object[] {parent, f});
-	    } catch (IllegalArgumentException e) {
-		e.printStackTrace();
-		System.exit(-1);
-	    } catch (IllegalAccessException e) {
-		e.printStackTrace();
-		System.exit(-1);
-	    } catch (InvocationTargetException e) {
-		e.printStackTrace();
-		System.exit(-1);
-	    }
-	}
+    private void despatchOnFeatureType(Feature f, org.genedb.db.jpa.Feature parent) {
+        FeatureProcessor instance = null;
+        String mungedType = f.getType().replaceAll("'","_PRIME_");
+        mungedType = mungedType.replaceAll("3", "Three");
+        mungedType = mungedType.replaceAll("5", "Five");
+        // TODO Make 1st letter upper case
+        if (this.instanceMap.containsKey(mungedType)) {
+            instance = this.instanceMap.get(mungedType);
+        } else {
+            if (!this.noInstance.contains(mungedType)) {
+                // Try and find a class
+                String className = "org.genedb.db.loading."+mungedType+"_Processor";
+                try {
+                    instance = (FeatureProcessor) Class.forName(className).newInstance();
+                }
+                catch (Exception exp) {
+                    this.noInstance.add(mungedType);
+                    logger.warn("No processor for qualifier of type '"+f.getType()+"' (Looked for '"+className+"') Reason '"+exp.getClass().getSimpleName()+"'");
+                    return;
+                }
+            }
+        }
+        instance.process(parent, f);
     }
 
     /**
@@ -288,7 +269,7 @@ public class NewRunner implements ApplicationContextAware {
         // Now process synthetics ie config is a mixture of real embl files and synthetic features
         List<Synthetic> synthetics = this.runnerConfig.getSynthetics();
         for (Synthetic synthetic : synthetics) {          
-            org.genedb.db.hibernate.Feature top = featureUtils.createFeature(synthetic.getSoType(), synthetic.getName(), organism);
+            org.genedb.db.jpa.Feature top = featureUtils.createFeature(synthetic.getSoType(), synthetic.getName(), organism);
             daoFactory.persist(top);
             StringBuilder residues = new StringBuilder();
             
@@ -296,9 +277,9 @@ public class NewRunner implements ApplicationContextAware {
         	//System.err.println("Synthetic Part='"+synthetic+"'");
 		if (part instanceof FeaturePart) {
 		    FeaturePart fp = (FeaturePart) part;
-		    org.genedb.db.hibernate.Feature f = 
+		    org.genedb.db.jpa.Feature f = 
 			featureUtils.createFeature(fp.getSoType(), fp.getName(), organism);
-		    Featureloc fl = featureUtils.createLocation(top, f, fp.getOffSet(), fp.getOffSet()+fp.getSize(), fp.getStrand());
+		    FeatureLoc fl = featureUtils.createLocation(top, f, fp.getOffSet(), fp.getOffSet()+fp.getSize(), fp.getStrand());
 		    daoFactory.persist(f);
 		    daoFactory.persist(fl);
 		    residues.append(blankString('N', fp.getSize()));
@@ -341,9 +322,9 @@ public class NewRunner implements ApplicationContextAware {
      * @param offset The base offset, when reparenting is taking place
      */
     @SuppressWarnings("unchecked")
-    private void processSequence(Sequence seq, org.genedb.db.hibernate.Feature parent, int offset) {
+    private void processSequence(Sequence seq, org.genedb.db.jpa.Feature parent, int offset) {
 	try {
-	    org.genedb.db.hibernate.Feature topLevel = this.featureHandler.processSources(seq);
+	    org.genedb.db.jpa.Feature topLevel = this.featureHandler.processSources(seq);
 	    if (parent == null) {
 		parent = topLevel;
 	    }
@@ -402,6 +383,7 @@ public class NewRunner implements ApplicationContextAware {
             case 0:
                 System.err.println("No organism common name specified\n"+usage);
                 System.exit(0);
+                break; // To prevent fall-through warning
             case 1:
                 organismCommonName = args[0];
                 loginName = organismCommonName;

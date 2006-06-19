@@ -34,7 +34,7 @@ import org.biojava.bio.symbol.TranslationTable;
 
 public class SeqTrans {
 
-    private static SeqTrans instance = new SeqTrans();
+//    private static SeqTrans instance = new SeqTrans();
 
 
     public String translate(String sequence, int transTable, int codonStart, String codon, String exception) {
@@ -83,12 +83,12 @@ public class SeqTrans {
     public String translate(byte[] bytes, int translTable, int codonStart) {
 
         String in = new String(bytes);
-        String startCodon = in.substring(0,3);
-
-        if (codonStart != 1) {
-            in = in.substring(codonStart-1);
-            startCodon = "";
-        }
+//        String startCodon = in.substring(0,3);
+//
+//        if (codonStart != 1) {
+//            in = in.substring(codonStart-1);
+//            startCodon = "";
+//        }
         TranslationTable tt = RNATools.getGeneticCode(Integer.toString(translTable));
 //        Set altStartCodons = GeneticCodes.getAltStartCodons(Integer.toString(translTable));
 //        if (altStartCodons.contains(startCodon)) {

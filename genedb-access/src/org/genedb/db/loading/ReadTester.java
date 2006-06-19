@@ -1,22 +1,17 @@
 package org.genedb.db.loading;
 
-import org.genedb.db.hibernate.Dbxref;
-import org.genedb.db.hibernate.Feature;
-import org.genedb.db.hibernate.FeatureDbxref;
-import org.genedb.db.hibernate.FeatureSynonym;
-import org.genedb.db.hibernate.Featureprop;
-import org.genedb.db.hibernate.Organism;
-import org.genedb.db.hibernate.Pub;
+import org.genedb.db.hibernate3gen.DbXRef;
+import org.genedb.db.hibernate3gen.FeatureDbXRef;
+import org.genedb.db.hibernate3gen.FeatureProp;
+import org.genedb.db.hibernate3gen.FeatureSynonym;
+import org.genedb.db.hibernate3gen.Organism;
+import org.genedb.db.hibernate3gen.Pub;
+import org.genedb.db.jpa.Feature;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +33,7 @@ public class ReadTester {
 
 
 
+    @SuppressWarnings("unchecked")
     private void displayDetails(String uniqueName) {
 
     	SessionFactory sf = HibernateUtil.getSessionFactory();
@@ -50,21 +46,21 @@ public class ReadTester {
         Query q = session.createQuery("select feature from Feature as feature where feature.uniquename= :uniqueName");
         q.setString("uniqueName", uniqueName);
         q.setMaxResults(20);
-        List<Feature> features = (List<Feature>) q.list();
+        List<Feature> features = q.list();
         for (Feature feature: features) {
         	System.err.println("=== "+feature.getName()+" ===");
         	
         	// Type
-        	System.err.println("Type: "+feature.getCvterm().getName());
+        	System.err.println("Type: "+feature.getCvTerm().getName());
         	
         	// Analysis
-        	System.err.println("Analysis Feature: "+feature.isIsAnalysis());
+        	System.err.println("Analysis Feature: "+feature.isAnalysis());
         	
         	// Obsolete
-        	System.err.println("Obsolete?: "+feature.isIsObsolete());
+        	System.err.println("Obsolete?: "+feature.isObsolete());
         	
         	// Timestamps
-        	System.err.println("Date created: "+feature.getTimeaccessioned()+"     Date last modified:"+feature.getTimelastmodified());
+        	System.err.println("Date created: "+feature.getTimeAccessioned()+"     Date last modified:"+feature.getTimeLastModified());
         	
         	// Organism
         	Organism org = feature.getOrganism();
@@ -75,24 +71,24 @@ public class ReadTester {
 			System.err.println("Synonyms:");
 			Set<FeatureSynonym> synonyms = feature.getFeatureSynonyms();
 			for (FeatureSynonym featSyn : synonyms) {
-				System.err.println("\t"+featSyn.getSynonym().getCvterm().getName()+"="+featSyn.getSynonym().getName()+"   pub="+showPublication(featSyn.getPub())+"  isCurrent="+featSyn.isIsCurrent()+" isInternal="+featSyn.isIsInternal());
+				System.err.println("\t"+featSyn.getSynonym().getCvterm().getName()+"="+featSyn.getSynonym().getName()+"   pub="+showPublication(featSyn.getPub())+"  isCurrent="+featSyn.isCurrent()+" isInternal="+featSyn.isInternal());
 			}
         	
 			// Properties
 			System.err.println("Feature properties:");
-			Set<Featureprop> props = feature.getFeatureprops();
-			for (Featureprop prop : props) {
+			Set<FeatureProp> props = feature.getFeatureProps();
+			for (FeatureProp prop : props) {
 				System.err.println("\t"+prop.getRank()+"   "+prop.getCvterm().getName()+"="+prop.getValue());
 			}
 			
-			Dbxref oneXref = feature.getDbxref();
+			DbXRef oneXref = feature.getDbxref();
 			if (oneXref != null) {
 				System.err.println("Xref: "+oneXref.getDb().getName()+":"+oneXref.getAccession()+" : "+oneXref.getDescription());
 			}
 			
 			System.err.println("Db xrefs:");
-			for (FeatureDbxref fdx : feature.getFeatureDbxrefs()) {
-				System.err.println("\t"+fdx.getDbxref().getDb().getName()+":"+fdx.getDbxref().getAccession()+" : "+fdx.getDbxref().getDescription()+"  : isCurrent:"+fdx.isIsCurrent());
+			for (FeatureDbXRef fdx : feature.getFeatureDbxrefs()) {
+				System.err.println("\t"+fdx.getDbxref().getDb().getName()+":"+fdx.getDbxref().getAccession()+" : "+fdx.getDbxref().getDescription()+"  : isCurrent:"+fdx.isCurrent());
 			}
 			
 			
@@ -114,34 +110,34 @@ public class ReadTester {
     	return ret.toString();
     }
     
-	private static void testJdbcConnection() {
-		Connection connection = null;
-        try {
-            // Load the JDBC driver
-            String driverName = "org.postgresql.Driver";
-            Class.forName(driverName);
-        
-            // Create a connection to the database
-            String serverName = "holly.internal.sanger.ac.uk";
-            String portNumber = "5432";
-            String sid = "chado";
-            String url = "jdbc:postgresql://" + serverName + ":" + portNumber + "/" + sid;
-            String username = "tgambiense";
-            String password = "";
-            connection = DriverManager.getConnection(url, username, password);
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cv");
-            while (rs.next()) {
-            	System.err.println(rs.getString("name"));
-            }
-            rs.close();
-            stmt.close();
-            connection.close();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-	}
+//	private static void testJdbcConnection() {
+//		Connection connection = null;
+//        try {
+//            // Load the JDBC driver
+//            String driverName = "org.postgresql.Driver";
+//            Class.forName(driverName);
+//        
+//            // Create a connection to the database
+//            String serverName = "holly.internal.sanger.ac.uk";
+//            String portNumber = "5432";
+//            String sid = "chado";
+//            String url = "jdbc:postgresql://" + serverName + ":" + portNumber + "/" + sid;
+//            String username = "tgambiense";
+//            String password = "";
+//            connection = DriverManager.getConnection(url, username, password);
+//            Statement stmt = connection.createStatement();
+//            ResultSet rs = stmt.executeQuery("SELECT * FROM cv");
+//            while (rs.next()) {
+//            	System.err.println(rs.getString("name"));
+//            }
+//            rs.close();
+//            stmt.close();
+//            connection.close();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//	}
     
 }

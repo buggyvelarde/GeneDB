@@ -20,6 +20,7 @@ public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implement
 	pattern = Pattern.compile("SP(A|B|C)(P|C)(\\w+)\\.\\d+c?");
     }
     
+    @Override
     public Names findNamesInternal(Annotation an) {
 	
 	Names ret = new Names();

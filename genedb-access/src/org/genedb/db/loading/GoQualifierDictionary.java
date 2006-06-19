@@ -61,7 +61,7 @@ public class GoQualifierDictionary {
 	try {
 	    r = new FileReader(GO_QUALIFIER_FILENAME);
 	    GoQualifierParser gqp = new GoQualifierParser(r);
-	    gqp.go(psuQualifiers);
+	    gqp.go();
 	} catch (FileNotFoundException e) {
 	    System.err.println("ERROR: Can't load Val's qualifier file: '"+GO_QUALIFIER_FILENAME+"'");
 	}
@@ -124,30 +124,34 @@ public class GoQualifierDictionary {
 	// this method, which accumulates them in a string buffer.
 	// Note that this method may be called multiple times, even with no
 	// intervening elements.
-	public void characters(char[] buffer, int start, int length) {
+	@Override
+    public void characters(char[] buffer, int start, int length) {
 	    accumulator.append(buffer, start, length);
 	}
 
 
-	public void warning(SAXParseException exception) {
+	@Override
+    public void warning(SAXParseException exception) {
 	    System.err.println("WARN: GOParser line " + exception.getLineNumber() + ": " +
 		    exception.getMessage());
 	}
 
 
-	public void error(SAXParseException exception) {
+	@Override
+    public void error(SAXParseException exception) {
 	    System.err.println("ERROR: GOParser line " + exception.getLineNumber() + ": " +
 		    exception.getMessage());
 	}
 
 	// Report a non-recoverable error and exit
-	public void fatalError(SAXParseException exception) throws SAXException {
+	@Override
+    public void fatalError(SAXParseException exception) throws SAXException {
 	    System.err.println("FATAL: GOParser line " + exception.getLineNumber() + ": " +
 		    exception.getMessage());
 	    throw(exception);
 	}
 
-	public void go(Set<String> psuQualifiers) {
+	public void go() {
 
 	    try {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -167,14 +171,16 @@ public class GoQualifierDictionary {
 
 
 	// At the beginning of each new element, erase any accumulated text.
-	public void startElement(String namespaceURL, String localName,
+	@Override
+    public void startElement(String namespaceURL, String localName,
 		String qname, Attributes attributes) {
 	    accumulator.setLength(0);
 	}
 
 
 	// Take special action when we reach the end of selected elements.
-	public void endElement(String namespaceURL, String localName, String qname) {
+	@Override
+    public void endElement(String namespaceURL, String localName, String qname) {
 	    if ( localName.trim().equals("name")) {
 		String field = accumulator.toString().trim();
 		psuQualifiers.add( field );

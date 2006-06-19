@@ -1,6 +1,7 @@
 package org.genedb.db.dao;
 
-import org.genedb.db.hibernate.Cv;
+
+import org.genedb.db.hibernate3gen.Cv;
 
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 

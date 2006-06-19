@@ -25,7 +25,7 @@
 package org.genedb.db.loading;
 
 import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.hibernate.Cvterm;
+import org.genedb.db.hibernate3gen.CvTerm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -206,7 +206,7 @@ public class GoParser {
 
     @SuppressWarnings("unchecked")
     private String lookUpGoName(String value) {
-	Cvterm go = this.daoFactory.getCvTermDao().findGoCvTermByAcc(value);
+	CvTerm go = this.daoFactory.getCvTermDao().findGoCvTermByAcc(value);
 	return go.getName();
     }
 
