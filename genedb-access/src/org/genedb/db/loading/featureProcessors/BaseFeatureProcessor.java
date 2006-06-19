@@ -30,6 +30,7 @@ import org.genedb.db.hibernate3gen.CvTerm;
 import org.genedb.db.hibernate3gen.FeatureProp;
 import org.genedb.db.hibernate3gen.FeaturePropPub;
 import org.genedb.db.hibernate3gen.Organism;
+import org.genedb.db.hibernate3gen.Pub;
 import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.FeatureUtils;
 import org.genedb.db.loading.GeneDbGeneNamingStrategy;
@@ -84,6 +85,12 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     private String[] optionalSingle = {};
 
+    protected Pub DUMMY_PUB;
+
+    private Cv CV_SO;
+
+    protected CvTerm REL_DERIVES_FROM;
+
     public BaseFeatureProcessor() {
         // Deliberately empty
     }
@@ -98,15 +105,16 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     public void afterPropertiesSet() {
         CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
+        System.err.println("CV_RELATION is '"+CV_RELATION+"'");
        
         REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
-//      CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
+        CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
         CV_MISC = daoFactory.getCvDao().findByName("autocreated").get(0);
-//        CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
-//        
-//        REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
-//        REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv(
-//                "derives_from", CV_SO).get(0);
+        CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
+        
+        REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
+        REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv(
+                "derives_from", CV_SO).get(0);
         MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv("note", CV_MISC)
                 .get(0);
     }
@@ -135,8 +143,9 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     
 
     protected FeatureProp createFeatureProp(org.genedb.db.jpa.Feature f, Annotation an, String annotationKey, String dbKey, Cv cv) {
-        CvTerm cvTerm = daoFactory.getCvTermDao().findByNameInCv(annotationKey,
-                cv).get(0);
+        System.err.println("annotationKey is '"+annotationKey+"'");
+        System.err.println("cv is '"+cv+"'");
+        CvTerm cvTerm = daoFactory.getCvTermDao().findByNameInCv(annotationKey,cv).get(0);
     
         String value = MiningUtils.getProperty(annotationKey, an, null);
     

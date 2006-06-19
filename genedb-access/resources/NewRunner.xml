@@ -111,7 +111,7 @@
 	<bean id="sessionFactory" 
   	 class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
 	 <property name="dataSource" ref="dataSource" />
-	 <property name="hibernateProperties" ref="hibernateProperties" />
+	 <!--  <property name="hibernateProperties" ref="hibernateProperties" /> -->
 	 <!--  OR mapping files. -->
  	<property name="mappingResources">
   	  <list>

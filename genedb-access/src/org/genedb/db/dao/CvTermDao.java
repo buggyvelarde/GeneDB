@@ -16,7 +16,7 @@ public class CvTermDao extends HibernateDaoSupport {
     @SuppressWarnings("unchecked")
     public List<CvTerm> findByNameInCv(String cvTermName, Cv cv) {
 	return getHibernateTemplate().findByNamedParam(
-		"from Cvterm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv = :cv",
+		"from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv = :cv",
 		new String[]{"cvTermName", "cv"}, new Object[]{cvTermName, cv});
     }
 
@@ -24,7 +24,7 @@ public class CvTermDao extends HibernateDaoSupport {
     @SuppressWarnings("unchecked")
     public CvTerm findGoCvTermByAcc(String value) {
 	List<CvTerm> terms = getHibernateTemplate().findByNamedParam(
-		"from Cvterm cvTerm where cvTerm.dbxref.db.name='GO' and cvTerm.dbxref.accession=:acc", 
+		"from CvTerm cvTerm where cvTerm.dbxref.db.name='GO' and cvTerm.dbxref.accession=:acc", 
 		"acc", value);
 	return terms.get(0);
     }

@@ -146,24 +146,26 @@ public class NewRunner implements ApplicationContextAware {
      */
     private void despatchOnFeatureType(Feature f, org.genedb.db.jpa.Feature parent) {
         FeatureProcessor instance = null;
-        String mungedType = f.getType().replaceAll("'","_PRIME_");
+        String mungedType = f.getType().replaceAll("'","_Prime_");
         mungedType = mungedType.replaceAll("3", "Three");
         mungedType = mungedType.replaceAll("5", "Five");
         // TODO Make 1st letter upper case
+        mungedType = mungedType.substring(0,1).toUpperCase()+mungedType.substring(1);
         if (this.instanceMap.containsKey(mungedType)) {
             instance = this.instanceMap.get(mungedType);
         } else {
-            if (!this.noInstance.contains(mungedType)) {
-                // Try and find a class
-                String className = "org.genedb.db.loading."+mungedType+"_Processor";
-                try {
-                    instance = (FeatureProcessor) Class.forName(className).newInstance();
-                }
-                catch (Exception exp) {
-                    this.noInstance.add(mungedType);
-                    logger.warn("No processor for qualifier of type '"+f.getType()+"' (Looked for '"+className+"') Reason '"+exp.getClass().getSimpleName()+"'");
-                    return;
-                }
+            if (this.noInstance.contains(mungedType)) {
+                return;
+            }
+            // Try and find a class
+            String className = "org.genedb.db.loading.featureProcessors."+mungedType+"_Processor";
+            try {
+                instance = (FeatureProcessor) Class.forName(className).newInstance();
+            }
+            catch (Exception exp) {
+                this.noInstance.add(mungedType);
+                logger.warn("No processor for qualifier of type '"+f.getType()+"' (Looked for '"+className+"') Reason '"+exp.getClass().getSimpleName()+"'");
+                return;
             }
         }
         instance.process(parent, f);

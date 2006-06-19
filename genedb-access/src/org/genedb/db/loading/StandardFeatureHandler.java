@@ -36,7 +36,6 @@ import org.genedb.db.hibernate3gen.Cv;
 import org.genedb.db.hibernate3gen.CvTerm;
 import org.genedb.db.hibernate3gen.FeatureLoc;
 import org.genedb.db.hibernate3gen.FeatureRelationship;
-import org.genedb.db.hibernate3gen.Pub;
 import org.genedb.db.loading.featureProcessors.BaseFeatureProcessor;
 
 import org.biojava.bio.Annotation;
@@ -67,16 +66,10 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
 
     private NomenclatureHandler nomenclatureHandler;
 
-    private Pub DUMMY_PUB;
-
-    private Cv CV_SO;
-
-    private CvTerm REL_DERIVES_FROM;
-
     private List<FeatureListener> listeners = new ArrayList<FeatureListener>(0);
     
     
-    public void afterPropertiesSet() {
+ //   public void afterPropertiesSet() {
 //        CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
 //        CV_MISC = daoFactory.getCvDao().findByName("autocreated").get(0);
 //        CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
@@ -86,7 +79,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
 //                "derives_from", CV_SO).get(0);
 //        MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv("note", CV_MISC)
 //                .get(0);
-    }
+ //   }
     
     public void processCDS(Sequence seq,
             org.genedb.db.jpa.Feature parent, int offset) {
