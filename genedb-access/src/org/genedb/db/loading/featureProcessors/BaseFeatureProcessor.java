@@ -113,6 +113,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
         
         REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
+        System.err.println("REL_PART_OF is '"+REL_PART_OF+"'");
         REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv(
                 "derives_from", CV_SO).get(0);
         MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv("note", CV_MISC)
@@ -143,8 +144,6 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     
 
     protected FeatureProp createFeatureProp(org.genedb.db.jpa.Feature f, Annotation an, String annotationKey, String dbKey, Cv cv) {
-        System.err.println("annotationKey is '"+annotationKey+"'");
-        System.err.println("cv is '"+cv+"'");
         CvTerm cvTerm = daoFactory.getCvTermDao().findByNameInCv(annotationKey,cv).get(0);
     
         String value = MiningUtils.getProperty(annotationKey, an, null);

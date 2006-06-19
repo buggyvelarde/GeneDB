@@ -24,7 +24,7 @@ public class FeatureDao extends HibernateDaoSupport {
     @SuppressWarnings({ "unchecked", "cast" })
     public List<Feature> findByAnyCurrentName(String name) {
         List<Feature> features = (List<Feature>) getHibernateTemplate().findByNamedParam(
-                "select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.isCurrent=true and s.name=:name",
+                "select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.current=true and s.name=:name",
                 "name", name);
         return features;
     }

@@ -44,6 +44,11 @@ import org.biojava.bio.symbol.Location;
  * @author Chinmay Patel (cp2)
  */
 public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
+    
+    
+    public BaseRnaProcessor() {
+        super(new String[]{QUAL_SYS_ID}, new String[]{}, new String[]{}, new String[] {"controlled_curation","db_xref","product","gene","note"});
+    }
 
     protected void processRna(org.genedb.db.jpa.Feature parent, StrandedFeature f, String type) {
 

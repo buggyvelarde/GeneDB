@@ -19,9 +19,21 @@
 
 package org.genedb.db.loading;
 
+import org.genedb.db.dao.DaoFactory;
+import org.genedb.db.hibernate3gen.Organism;
+
 import org.biojava.bio.seq.Feature;
 
 public interface FeatureProcessor {
 
-    void process(org.genedb.db.jpa.Feature parent, Feature feat);
+    public void process(org.genedb.db.jpa.Feature parent, Feature feat);
+    
+    public void setDaoFactory(DaoFactory daoFactory);
+    
+    public void setFeatureUtils(FeatureUtils featureUtils);
+    
+    public void setOrganism(Organism organism);
+    
+    public void afterPropertiesSet();
+    
 }

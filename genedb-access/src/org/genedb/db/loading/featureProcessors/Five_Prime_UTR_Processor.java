@@ -37,13 +37,6 @@ import org.biojava.bio.seq.StrandedFeature;
  * @author Adrian Tivey (art)
  */
 public class Five_Prime_UTR_Processor extends BaseUtrProcessor {
-    
-    public Five_Prime_UTR_Processor() {
-        super(new String[]{""},
-                new String[]{""},
-                new String[]{""},
-                new String[]{""});
-    }
 
     @Override
     public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature feat) {

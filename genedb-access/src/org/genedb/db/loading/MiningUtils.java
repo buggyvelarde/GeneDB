@@ -166,27 +166,31 @@ public class MiningUtils {
 	    String[] optionalSingle, String[] optionalMultiple, boolean fatal,
 	    boolean reportExtra) {
 
-	SmallAnnotation copy = new SmallAnnotation(f.getAnnotation());
+	Annotation copy = new SmallAnnotation(f.getAnnotation());
 
-	if (!checkRequiredSingle(f, requiredSingle, fatal, copy)) {
+	if ((copy = checkRequiredSingle(f, requiredSingle, fatal, copy)) == null) {
 	    return false;
 	}
-	if (!checkRequiredMultiple(f, requiredMultiple, fatal, copy)) {
+    //System.err.println("AfterRequiredSingle: "+copy);
+	if ((copy = checkRequiredMultiple(f, requiredMultiple, fatal, copy)) == null) {
 	    return false;
 	}
-	if (!checkOptionalSingle(f, optionalSingle, fatal, copy)) {
+    //System.err.println("AfterRequiredMultiple: "+copy);
+	if ((copy =checkOptionalSingle(f, optionalSingle, fatal, copy)) == null) {
 	    return false;
 	}
-	if (!checkOptionalMultiple(f, optionalMultiple, fatal, copy)) {
+    //System.err.println("AfterOptionalSingle: "+copy);
+	if ((copy = checkOptionalMultiple(f, optionalMultiple, fatal, copy)) == null) {
 	    return false;
 	}
+    //System.err.println("AfterOptionalMultiple: "+copy);
 	if (reportExtra && !copy.keys().isEmpty()) {
 	    StringBuffer keys = new StringBuffer();
 	    for (Iterator it = copy.keys().iterator(); it.hasNext();) {
 		keys.append(it.next());
 		keys.append("|");
 	    }
-	    problem(f, keys.toString(), "Unexpected annotation", fatal);
+	    problem(f, keys.toString(), "Unexpected annotation", fatal, copy);
 	    return false;
 	}
 
@@ -200,25 +204,26 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static boolean checkRequiredSingle(Feature f, String[] requiredSingle, boolean fatal, Annotation copy) {
+    private static Annotation checkRequiredSingle(Feature f, String[] requiredSingle, boolean fatal, Annotation copy) {
     	for (int i = 0; i < requiredSingle.length; i++) {
     		String check = requiredSingle[i];
     		List matches = getProperties(check, copy);
     		if (matches == null) {
-    			problem(f, check, "No value", fatal	)	;
-    			return false;
+    			problem(f, check, "No value (required single)", fatal, copy)	;
+    			return null;
     		}
     		if (matches.size()==0 || matches.size() >1) {
-    			problem(f, check, "Wrong number of values", fatal);
-    			return false;
+    			problem(f, check, "Wrong number of values (required multiple)", fatal, copy);
+    			return null;
     		}
-    		copy = getAnnotationCopyWithoutKey("check", copy);
+    		copy = makeAnnotationCopyWithoutKey(check, copy);
     	}
-    	return true;
+    	return copy;
     }
 
     @SuppressWarnings("unchecked")
-	private static Annotation getAnnotationCopyWithoutKey(String without, Annotation an) {
+	private static Annotation makeAnnotationCopyWithoutKey(String without, Annotation an) {
+        //System.err.println("Want to remove '"+without+"' from annotation '"+an+"'");
 		Annotation ret = new SmallAnnotation();
 		for (String key : ((Set<String>) an.asMap().keySet())) {
 			if (!key.equals(without)) {
@@ -243,21 +248,21 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static boolean checkRequiredMultiple(Feature f, String[] requiredMultiple, boolean fatal, Annotation copy) {
+    private static Annotation checkRequiredMultiple(Feature f, String[] requiredMultiple, boolean fatal, Annotation copy) {
     	for (int i = 0; i < requiredMultiple.length; i++) {
     		String check = requiredMultiple[i];
     		List matches = getProperties(check, copy);
     		if (matches == null) {
-    			problem(f, check, "No value", fatal);
-    			return false;
+    			problem(f, check, "No value (required multiple)", fatal, copy);
+    			return null;
     		}
     		if (matches.size()==0) {
-    			problem(f, check, "Wrong number of values", fatal);
-    			return false;
+    			problem(f, check, "Wrong number of values (required multiple)", fatal, copy);
+    			return null;
     		}
-    		copy = getAnnotationCopyWithoutKey(check, copy);
+    		copy = makeAnnotationCopyWithoutKey(check, copy);
     	}
-    	return true;
+    	return copy;
     }
 
     /**
@@ -267,16 +272,16 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static boolean checkOptionalMultiple(Feature f, String[] optionalMultiple, boolean fatal, Annotation copy) {
+    private static Annotation checkOptionalMultiple(Feature f, String[] optionalMultiple, boolean fatal, Annotation copy) {
     	for (int i = 0; i < optionalMultiple.length; i++) {
     		String check = optionalMultiple[i];
+            //System.err.println("checkOptionalMultiple for '"+check+"'");
     		List matches = getProperties(check, copy);
-    		if (matches == null) {
-    			return true;
-    		}
-    		copy = getAnnotationCopyWithoutKey(check, copy);
+    		if (matches != null && matches.size()>0) {
+    		    copy = makeAnnotationCopyWithoutKey(check, copy);
+            }
     	}
-    	return true;
+    	return copy;
     }
 
     /**
@@ -286,21 +291,22 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static boolean checkOptionalSingle(Feature f, String[] optionalSingle, boolean fatal, Annotation copy) {
+    private static Annotation checkOptionalSingle(Feature f, String[] optionalSingle, boolean fatal, Annotation copy) {
 	for (int i = 0; i < optionalSingle.length; i++) {
 	    String check = optionalSingle[i];
 	    List matches = getProperties(check, copy);
 	    if (matches != null && matches.size() >1) {
-		problem(f, check, "Wrong number of values", fatal);
-		return false;
+		problem(f, check, "Wrong number of values (optional single)", fatal, copy);
+		return null;
 	    }
-	    copy = getAnnotationCopyWithoutKey(check, copy);
+	    copy = makeAnnotationCopyWithoutKey(check, copy);
 	}
-	return true;
+	return copy;
     }
 
-    private static void problem(Feature f, String check, String msg, boolean fatal) {
+    private static void problem(Feature f, String check, String msg, boolean fatal, Annotation copy) {
 	System.err.println(msg+" for '"+check+"' in '"+f.getType()+"' at '"+f.getLocation()+"'");
+    System.err.println(copy);
 	if (fatal) {
 	    System.exit(-1);
 	}

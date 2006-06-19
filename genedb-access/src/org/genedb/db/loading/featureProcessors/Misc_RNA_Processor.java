@@ -24,8 +24,13 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
+import static org.genedb.db.loading.EmblQualifiers.*;
+import org.genedb.db.hibernate3gen.FeatureLoc;
+import org.genedb.db.hibernate3gen.FeatureProp;
 
+import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
+import org.biojava.bio.symbol.Location;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -36,11 +41,13 @@ import org.biojava.bio.seq.StrandedFeature;
  * 
  * @author Adrian Tivey (art)
  */
-public class Three_Prime_UTR_Processor extends BaseUtrProcessor {
+public class Misc_RNA_Processor extends BaseRnaProcessor {
 
+    // TODO Is misc_rna a SO type?
+    
     @Override
-    public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature feat) {
-        processUTR("three_prime_UTR", parent, feat);
+    public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature ft) {
+        //processRna(parent, ft, "misc_RNA"); 
     }
 
 }

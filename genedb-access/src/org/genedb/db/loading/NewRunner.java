@@ -161,6 +161,10 @@ public class NewRunner implements ApplicationContextAware {
             String className = "org.genedb.db.loading.featureProcessors."+mungedType+"_Processor";
             try {
                 instance = (FeatureProcessor) Class.forName(className).newInstance();
+                instance.setDaoFactory(daoFactory);
+                instance.setFeatureUtils(featureUtils);
+                instance.setOrganism(organism);
+                instance.afterPropertiesSet();
             }
             catch (Exception exp) {
                 this.noInstance.add(mungedType);

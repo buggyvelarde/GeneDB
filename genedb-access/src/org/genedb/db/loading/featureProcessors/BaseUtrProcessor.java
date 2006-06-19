@@ -46,9 +46,8 @@ import java.util.List;
  */
 public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
     
-    public BaseUtrProcessor(String[] requiredSingle, String[] requiredMultiple, 
-            String[] optionalSingle, String[] optionalMultiple) {
-        super(requiredSingle, requiredMultiple, optionalSingle, optionalMultiple);
+    public BaseUtrProcessor() {
+        super(new String[]{}, new String[]{}, new String[]{"db_xref"}, new String[] {"gene", "note"});
     }
 
     protected void processUTR(String type, org.genedb.db.jpa.Feature parent, StrandedFeature feat) {
@@ -64,6 +63,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
                 .createFeature(type, this.gns.get5pUtr(sysId, 0), this.organism);
                 FeatureRelationship utrFr = featureUtils.createRelationship(
                         utr, gene, REL_PART_OF);
+                System.err.println("REL_PART_OF is '"+REL_PART_OF+"'");
                 FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
                         loc.getMin(), loc.getMax(), (short)feat.getStrand().getValue());
                 daoFactory.persist(utr);
@@ -89,6 +89,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
                     .createFeature(type, utrName, this.organism);
                     FeatureRelationship utrFr = featureUtils.createRelationship(
                             utr, gene, REL_PART_OF);
+                    System.err.println("REL_PART_OF is '"+REL_PART_OF+"'");
                     FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
                             loc.getMin(), loc.getMax(), (short)((StrandedFeature)feat).getStrand().getValue());
                     daoFactory.persist(utr);
