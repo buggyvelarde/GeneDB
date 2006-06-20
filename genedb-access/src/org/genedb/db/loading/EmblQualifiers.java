@@ -38,7 +38,7 @@ public class EmblQualifiers {
     public static final String QUAL_SO_TYPE     = "so_type";
     public static final String QUAL_PRIVATE     = "private";
     public static final String QUAL_PSEUDO      = "pseudo";
-    public static final String QUAL_TEMP_SYS_ID = "temp_systematic_id";
+    public static final String QUAL_TEMP_SYS_ID = "temporary_systematic_id";
     public static final String QUAL_PRIMARY     = "primary";
     public static final String QUAL_SYNONYM     = "synonym";
     public static final String QUAL_OBSOLETE    = "obsolete";
