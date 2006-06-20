@@ -186,11 +186,18 @@ public class MiningUtils {
     //System.err.println("AfterOptionalMultiple: "+copy);
 	if (reportExtra && !copy.keys().isEmpty()) {
 	    StringBuffer keys = new StringBuffer();
+        boolean problem = false;
 	    for (Iterator it = copy.keys().iterator(); it.hasNext();) {
-		keys.append(it.next());
-		keys.append("|");
+            String tmpKey = (String) it.next();
+            if (!"internal_data".equals(tmpKey)) {
+                keys.append(tmpKey);
+                keys.append("|");
+                problem = true;
+            }
 	    }
-	    problem(f, keys.toString(), "Unexpected annotation", fatal, copy);
+        if (problem) {
+            problem(f, keys.toString(), "Unexpected annotation", fatal, copy);
+        }
 	    return false;
 	}
 
