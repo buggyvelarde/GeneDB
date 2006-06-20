@@ -47,16 +47,22 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
     
     
     public BaseRnaProcessor() {
-        super(new String[]{QUAL_SYS_ID}, new String[]{}, new String[]{}, new String[] {"controlled_curation","db_xref","product","gene","note"});
+        super(new String[]{}, 
+                new String[]{}, 
+                new String[]{QUAL_SYS_ID, QUAL_TEMP_SYS_ID, "primary_name","colour,pseudo"},
+                new String[]{"evidence","controlled_curation","db_xref","product","gene","note","synonym","GO","curation",QUAL_OBSOLETE});
     }
 
     protected void processRna(org.genedb.db.jpa.Feature parent, StrandedFeature f, String type) {
-
         logger.debug("Entering processing for "+type);
         Location loc = f.getLocation();
         Annotation an = f.getAnnotation();
         short strand = (short)f.getStrand().getValue();
         String systematicId = findName(an, type);
+        if (systematicId == null) {
+            System.err.println("Skipping '"+type+"' as no id found");
+            return;
+        }
         
         org.genedb.db.jpa.Feature rna = this.featureUtils.createFeature(type, systematicId, this.organism);
         this.daoFactory.persist(rna);
@@ -79,7 +85,8 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
                 return MiningUtils.getProperty(key, an, null);
             }
         }
-        throw new RuntimeException("No systematic id found for "+type+" entry");
+        //throw new RuntimeException("No systematic id found for "+type+" entry");
+        return null;
     }
 
 }

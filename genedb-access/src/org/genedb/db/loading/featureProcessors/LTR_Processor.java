@@ -44,7 +44,7 @@ import org.biojava.bio.symbol.Location;
 public class LTR_Processor extends BaseFeatureProcessor {
 
     public LTR_Processor() {
-        super(new String[]{}, new String[]{}, new String[]{"note"}, new String[]{});
+        super(new String[]{}, new String[]{}, new String[]{"colour"}, new String[]{"note"});
     }
 
     @Override

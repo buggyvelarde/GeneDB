@@ -44,7 +44,10 @@ import org.biojava.bio.symbol.Location;
 public class Misc_feature_Processor extends BaseFeatureProcessor {
 
     public Misc_feature_Processor() {
-        super(new String[]{}, new String[]{}, new String[]{"colour"}, new String[]{"note"});
+        super(new String[]{}, 
+                new String[]{}, 
+                new String[]{"colour","algorithm","cleavage","type","fasta_file","partial",QUAL_SYS_ID,QUAL_PRIMARY,"label"}, 
+                new String[]{"note","gene","product","coord","id","psu_db_xref","db_xref","GO","mutation","citation"});
     }
 
     @Override

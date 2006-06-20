@@ -41,36 +41,33 @@ import org.biojava.bio.symbol.Location;
  * 
  * @author Adrian Tivey (art)
  */
-public class Conflict_Processor extends BaseFeatureProcessor {
+public class Rep_origin_Processor extends BaseFeatureProcessor {
 
-    public Conflict_Processor() {
-        super(new String[]{}, new String[]{}, new String[]{"citation","colour"}, new String[]{"note"});
+    public Rep_origin_Processor() {
+        super(new String[]{QUAL_SYS_ID}, new String[]{}, new String[]{"note"}, new String[]{});
     }
 
     @Override
     public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature f) {
+        logger.debug("Entering processing for repeat");
+        Location loc = f.getLocation();
+        Annotation an = f.getAnnotation();
+        short strand = (short)f.getStrand().getValue();
+        String systematicId = "repeat"+loc.getMin()+"-"+loc.getMax(); 
         
-        // TODO - How to store these
+        org.genedb.db.jpa.Feature repeat = this.featureUtils.createFeature("repeat", systematicId,
+                this.organism);
+        this.daoFactory.persist(repeat);
+        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
+        FeatureLoc trnaFl = featureUtils.createLocation(parent,repeat,loc.getMin(),loc.getMax(),
+                                                        strand);
+        this.daoFactory.persist(trnaFl);
+        //featureLocs.add(pepFl);
+        //featureRelationships.add(pepFr);
         
-//        logger.debug("Entering processing for repeat");
-//        Location loc = f.getLocation();
-//        Annotation an = f.getAnnotation();
-//        short strand = (short)f.getStrand().getValue();
-//        String systematicId = "repeat"+loc.getMin()+"-"+loc.getMax(); 
-//        
-//        org.genedb.db.jpa.Feature repeat = this.featureUtils.createFeature("repeat", systematicId,
-//                this.organism);
-//        this.daoFactory.persist(repeat);
-//        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-//        FeatureLoc trnaFl = featureUtils.createLocation(parent,repeat,loc.getMin(),loc.getMax(),
-//                                                        strand);
-//        this.daoFactory.persist(trnaFl);
-//        //featureLocs.add(pepFl);
-//        //featureRelationships.add(pepFr);
-//        
-//        FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
-//        this.daoFactory.persist(fp);
-//        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
+        FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
+        this.daoFactory.persist(fp);
+        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
 
     }
 

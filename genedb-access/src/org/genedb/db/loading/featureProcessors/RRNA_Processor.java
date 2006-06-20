@@ -35,7 +35,7 @@ import org.biojava.bio.seq.StrandedFeature;
  * 
  * @author Adrian Tivey (art)
  */
-public class RRna_Processor extends BaseRnaProcessor {
+public class RRNA_Processor extends BaseRnaProcessor {
     
     @Override
     public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature ft) {

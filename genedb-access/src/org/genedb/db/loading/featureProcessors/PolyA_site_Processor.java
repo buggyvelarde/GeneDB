@@ -41,9 +41,9 @@ import org.biojava.bio.symbol.Location;
  * 
  * @author Adrian Tivey (art)
  */
-public class RepeatProcessor extends BaseFeatureProcessor {
+public class PolyA_site_Processor extends BaseFeatureProcessor {
 
-    public RepeatProcessor() {
+    public PolyA_site_Processor() {
         super(new String[]{QUAL_SYS_ID}, new String[]{}, new String[]{"note"}, new String[]{});
     }
 

@@ -24,12 +24,12 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
+import static org.genedb.db.loading.EmblQualifiers.*;
 import org.genedb.db.hibernate3gen.FeatureLoc;
 import org.genedb.db.hibernate3gen.FeatureRelationship;
 import org.genedb.db.loading.MiningUtils;
 
 import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Feature;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
 
@@ -47,7 +47,7 @@ import java.util.List;
 public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
     
     public BaseUtrProcessor() {
-        super(new String[]{}, new String[]{}, new String[]{"db_xref"}, new String[] {"gene", "note"});
+        super(new String[]{}, new String[]{}, new String[]{QUAL_SYS_ID,"db_xref","psu_db_xref"}, new String[] {"gene", "note"});
     }
 
     protected void processUTR(String type, org.genedb.db.jpa.Feature parent, StrandedFeature feat) {
@@ -63,7 +63,6 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
                 .createFeature(type, this.gns.get5pUtr(sysId, 0), this.organism);
                 FeatureRelationship utrFr = featureUtils.createRelationship(
                         utr, gene, REL_PART_OF);
-                System.err.println("REL_PART_OF is '"+REL_PART_OF+"'");
                 FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
                         loc.getMin(), loc.getMax(), (short)feat.getStrand().getValue());
                 daoFactory.persist(utr);
@@ -89,7 +88,6 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
                     .createFeature(type, utrName, this.organism);
                     FeatureRelationship utrFr = featureUtils.createRelationship(
                             utr, gene, REL_PART_OF);
-                    System.err.println("REL_PART_OF is '"+REL_PART_OF+"'");
                     FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
                             loc.getMin(), loc.getMax(), (short)((StrandedFeature)feat).getStrand().getValue());
                     daoFactory.persist(utr);
