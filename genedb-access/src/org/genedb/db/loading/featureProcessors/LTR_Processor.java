@@ -24,9 +24,12 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import static org.genedb.db.loading.EmblQualifiers.*;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_COLOUR;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
+
 import org.genedb.db.hibernate3gen.FeatureLoc;
 import org.genedb.db.hibernate3gen.FeatureProp;
+import org.genedb.db.loading.EmblQualifiers;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
@@ -44,32 +47,33 @@ import org.biojava.bio.symbol.Location;
 public class LTR_Processor extends BaseFeatureProcessor {
 
     public LTR_Processor() {
-        super(new String[]{}, new String[]{}, new String[]{"colour"}, new String[]{"note"});
+        super(new String[]{},
+                new String[]{},
+                new String[]{QUAL_D_COLOUR},
+                new String[]{QUAL_NOTE},
+                new String[]{});
     }
 
     @Override
     public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature f) {
         // TODO is LTR a SO feature?
-//        logger.debug("Entering processing for repeat");
-//        Location loc = f.getLocation();
-//        Annotation an = f.getAnnotation();
-//        short strand = (short)f.getStrand().getValue();
-//        String systematicId = "repeat"+loc.getMin()+"-"+loc.getMax(); 
-//        
-//        org.genedb.db.jpa.Feature repeat = this.featureUtils.createFeature("repeat", systematicId,
-//                this.organism);
-//        this.daoFactory.persist(repeat);
-//        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-//        FeatureLoc trnaFl = featureUtils.createLocation(parent,repeat,loc.getMin(),loc.getMax(),
-//                                                        strand);
-//        this.daoFactory.persist(trnaFl);
-//        //featureLocs.add(pepFl);
-//        //featureRelationships.add(pepFr);
-//        
-//        FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
-//        this.daoFactory.persist(fp);
-//        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
+        logger.debug("Entering processing for long_terminal_repeat (LTR)");
+        Location loc = f.getLocation();
+        Annotation an = f.getAnnotation();
+        short strand = (short)f.getStrand().getValue();
+        String systematicId = "LTR"+loc.getMin()+"-"+loc.getMax(); 
+        
+        org.genedb.db.jpa.Feature ltr = this.featureUtils.createFeature("long_terminal_repeat", systematicId,
+                this.organism);
+        this.daoFactory.persist(ltr);
 
+        FeatureLoc ltrFl = featureUtils.createLocation(parent,ltr,loc.getMin(),loc.getMax(),
+                                                        strand);
+        this.daoFactory.persist(ltrFl);
+      
+        FeatureProp fp = createFeatureProp(ltr, an, "colour", "colour", CV_MISC);
+        this.daoFactory.persist(fp);
+        createFeaturePropsFromNotes(ltr, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE);
     }
 
 }

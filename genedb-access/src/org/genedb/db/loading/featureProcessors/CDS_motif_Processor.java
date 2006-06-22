@@ -41,13 +41,13 @@ import org.biojava.bio.symbol.Location;
  * 
  * @author Adrian Tivey (art)
  */
-public class BLASTN_HIT_Processor extends BaseFeatureProcessor {
+public class CDS_motif_Processor extends BaseFeatureProcessor {
 
-    public BLASTN_HIT_Processor() {
-        super(new String[]{},
+    public CDS_motif_Processor() {
+        super(new String[]{}, 
+                new String[]{}, 
+                new String[]{}, 
                 new String[]{},
-                new String[]{},
-                new String[]{QUAL_NOTE},
                 new String[]{});
     }
 

@@ -24,13 +24,10 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import static org.genedb.db.loading.EmblQualifiers.*;
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.FeatureProp;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_COLOUR;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 
-import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -44,7 +41,11 @@ import org.biojava.bio.symbol.Location;
 public class Conflict_Processor extends BaseFeatureProcessor {
 
     public Conflict_Processor() {
-        super(new String[]{}, new String[]{}, new String[]{"citation","colour"}, new String[]{"note"});
+        super(new String[]{}, 
+                new String[]{}, 
+                new String[]{"citation",QUAL_D_COLOUR}, 
+                new String[]{QUAL_NOTE}, 
+                new String[]{});
     }
 
     @Override

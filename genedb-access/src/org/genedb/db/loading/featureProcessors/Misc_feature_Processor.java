@@ -24,13 +24,18 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import static org.genedb.db.loading.EmblQualifiers.*;
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.FeatureProp;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_DB_XREF;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_COLOUR;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_FASTA_FILE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_GENE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_PSU_DB_XREF;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_GO;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIMARY;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_PRODUCT;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 
-import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -46,8 +51,11 @@ public class Misc_feature_Processor extends BaseFeatureProcessor {
     public Misc_feature_Processor() {
         super(new String[]{}, 
                 new String[]{}, 
-                new String[]{"colour","algorithm","cleavage","type","fasta_file","partial",QUAL_SYS_ID,QUAL_PRIMARY,"label"}, 
-                new String[]{"note","gene","product","coord","id","psu_db_xref","db_xref","GO","mutation","citation"});
+                new String[]{QUAL_D_COLOUR, "algorithm", "cleavage", "type", "partial",
+                QUAL_PRIMARY, QUAL_SYS_ID,QUAL_PRIMARY, "label"}, 
+                new String[]{QUAL_NOTE, QUAL_D_GENE, QUAL_PRODUCT, "coord", "id", 
+                QUAL_D_PSU_DB_XREF, QUAL_DB_XREF, QUAL_GO, "mutation", "citation"},
+                new String[]{QUAL_D_FASTA_FILE});
     }
 
     @Override

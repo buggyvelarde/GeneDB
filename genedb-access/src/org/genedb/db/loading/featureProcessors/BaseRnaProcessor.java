@@ -31,7 +31,6 @@ import org.genedb.db.hibernate3gen.FeatureProp;
 import org.genedb.db.loading.MiningUtils;
 
 import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Feature;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
 
@@ -49,8 +48,12 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
     public BaseRnaProcessor() {
         super(new String[]{}, 
                 new String[]{}, 
-                new String[]{QUAL_SYS_ID, QUAL_TEMP_SYS_ID, "primary_name","colour,pseudo"},
-                new String[]{"evidence","controlled_curation","db_xref","product","gene","note","synonym","GO","curation",QUAL_OBSOLETE});
+                new String[]{QUAL_SYS_ID, QUAL_TEMP_SYS_ID, QUAL_PRIMARY, QUAL_D_COLOUR, 
+                QUAL_PSEUDO, QUAL_D_FASTA_FILE},
+                new String[]{QUAL_EVIDENCE, QUAL_C_CURATION, QUAL_OBSOLETE, QUAL_DB_XREF,
+                QUAL_D_PSU_DB_XREF, QUAL_PRODUCT, QUAL_D_GENE,QUAL_NOTE,QUAL_SYNONYM, QUAL_GO, 
+                QUAL_CURATION, QUAL_OBSOLETE},
+                new String[]{QUAL_D_FASTA_FILE});
     }
 
     protected void processRna(org.genedb.db.jpa.Feature parent, StrandedFeature f, String type) {
@@ -75,7 +78,9 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
         
         FeatureProp fp = createFeatureProp(rna, an, "colour", "colour", CV_MISC);
         this.daoFactory.persist(fp);
-        createFeaturePropsFromNotes(rna, an, MISC_NOTE);
+        createFeaturePropsFromNotes(rna, an, QUAL_NOTE, MISC_NOTE);
+        createFeaturePropsFromNotes(rna, an, QUAL_CURATION, MISC_CURATION);
+        createFeaturePropsFromNotes(rna, an, QUAL_PRIVATE, MISC_PRIVATE);
     }
     
     protected String findName(Annotation an, String type) {

@@ -47,7 +47,11 @@ import java.util.List;
 public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
     
     public BaseUtrProcessor() {
-        super(new String[]{}, new String[]{}, new String[]{QUAL_SYS_ID,"db_xref","psu_db_xref"}, new String[] {"gene", "note"});
+        super(new String[]{},
+                new String[]{},
+                new String[]{QUAL_SYS_ID, QUAL_DB_XREF, QUAL_D_PSU_DB_XREF},
+                new String[]{QUAL_D_GENE, QUAL_NOTE},
+                new String[]{});
     }
 
     protected void processUTR(String type, org.genedb.db.jpa.Feature parent, StrandedFeature feat) {
@@ -89,7 +93,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
                     FeatureRelationship utrFr = featureUtils.createRelationship(
                             utr, gene, REL_PART_OF);
                     FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
-                            loc.getMin(), loc.getMax(), (short)((StrandedFeature)feat).getStrand().getValue());
+                            loc.getMin(), loc.getMax(), (short)feat.getStrand().getValue());
                     daoFactory.persist(utr);
                     daoFactory.persist(utrFr);
                     daoFactory.persist(utrFl);
