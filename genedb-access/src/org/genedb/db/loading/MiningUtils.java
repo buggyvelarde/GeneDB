@@ -25,15 +25,15 @@
 package org.genedb.db.loading;
 
 import org.biojava.bio.Annotation;
-import org.biojava.bio.SmallAnnotation;
 import org.biojava.bio.seq.Feature;
 import org.biojava.utils.ChangeVetoException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 import java.util.Set;
 
 public class MiningUtils {
@@ -99,24 +99,42 @@ public class MiningUtils {
 
     @SuppressWarnings("unchecked")
     public static List<String> getProperties(String key, Annotation an) {
-	if ( !an.containsProperty(key) ) {
-	    return null;
-	}
-	Object o = an.getProperty(key);
+        if ( !an.containsProperty(key) ) {
+            return null;
+        }
+        Object o = an.getProperty(key);
 
-	if ( o instanceof List ) {
-	    return (List<String>) o;
-	}
+        if ( o instanceof List ) {
+            return (List<String>) o;
+        }
 
-	if ( o instanceof String ) {
-	    List<String> tmp = new ArrayList<String>();
-	    tmp.add((String)o);
-	    return tmp;
-	}
-	return null;
+        if ( o instanceof String ) {
+            List<String> tmp = new ArrayList<String>();
+            tmp.add((String)o);
+            return tmp;
+        }
+        return null;
     }
 
+    @SuppressWarnings("unchecked")
+    public static List<String> getProperties(String key, Map map) {
+        if ( !map.containsKey(key) ) {
+            return null;
+        }
+        Object o = map.get(key);
 
+        if ( o instanceof List ) {
+            return (List<String>) o;
+        }
+
+        if ( o instanceof String ) {
+            List<String> tmp = new ArrayList<String>();
+            tmp.add((String)o);
+            return tmp;
+        }
+        return null;
+    }
+    
     public static void setProperty(Annotation an, String key, String value) {
 	List<String> current = getProperties(key, an);
 	if (current == null || current.size() == 0) {
@@ -161,47 +179,50 @@ public class MiningUtils {
      * @param reportExtra Report any keys not in above lists?
      * @return true if all conditions met, and no keys left over
      */
-    public static boolean sanityCheckAnnotation(Feature f,
-	    String[] requiredSingle, String[] requiredMultiple,
-	    String[] optionalSingle, String[] optionalMultiple, boolean fatal,
-	    boolean reportExtra) {
+    @SuppressWarnings("unchecked")
+    public static boolean sanityCheckAnnotation(Feature f, String[] requiredSingle, 
+            String[] requiredMultiple, String[] optionalSingle, String[] optionalMultiple, 
+            String[] discard, boolean fatal, boolean reportExtra) {
 
-	Annotation copy = new SmallAnnotation(f.getAnnotation());
+        Map temp = f.getAnnotation().asMap();
+        Map<String, Object> map = new HashMap<String, Object>(temp);
 
-	if ((copy = checkRequiredSingle(f, requiredSingle, fatal, copy)) == null) {
-	    return false;
-	}
-    //System.err.println("AfterRequiredSingle: "+copy);
-	if ((copy = checkRequiredMultiple(f, requiredMultiple, fatal, copy)) == null) {
-	    return false;
-	}
-    //System.err.println("AfterRequiredMultiple: "+copy);
-	if ((copy =checkOptionalSingle(f, optionalSingle, fatal, copy)) == null) {
-	    return false;
-	}
-    //System.err.println("AfterOptionalSingle: "+copy);
-	if ((copy = checkOptionalMultiple(f, optionalMultiple, fatal, copy)) == null) {
-	    return false;
-	}
-    //System.err.println("AfterOptionalMultiple: "+copy);
-	if (reportExtra && !copy.keys().isEmpty()) {
-	    StringBuffer keys = new StringBuffer();
-        boolean problem = false;
-	    for (Iterator it = copy.keys().iterator(); it.hasNext();) {
-            String tmpKey = (String) it.next();
-            if (!"internal_data".equals(tmpKey)) {
-                keys.append(tmpKey);
-                keys.append("|");
-                problem = true;
-            }
-	    }
-        if (problem) {
-            problem(f, keys.toString(), "Unexpected annotation", fatal, copy);
+        for (String discardKey : discard) {
+            map.remove(discardKey);
         }
-	    return false;
-	}
+        map.remove("internal_data");
 
-	return true;
+        if (checkRequiredSingle(f, requiredSingle, fatal, map)) {
+            return false;
+        }
+        //System.err.println("AfterRequiredSingle: "+copy);
+        if (checkRequiredMultiple(f, requiredMultiple, fatal, map)) {
+            return false;
+        }
+        //System.err.println("AfterRequiredMultiple: "+copy);
+        if (checkOptionalSingle(f, optionalSingle, fatal, map)) {
+            return false;
+        }
+        //System.err.println("AfterOptionalSingle: "+copy);
+        if (checkOptionalMultiple(f, optionalMultiple, fatal, map)) {
+            return false;
+        }
+        //System.err.println("AfterOptionalMultiple: "+copy);
+        if (reportExtra && !map.isEmpty()) {
+            StringBuffer keys = new StringBuffer();
+            int i = 0;
+            for (Iterator it = map.keySet().iterator(); it.hasNext();) {
+                if (i>0) {
+                    keys.append("|");                  
+                }
+                keys.append(it.next());
+                i++;
+            }
+            problem(f, keys.toString(), "Unexpected annotation", fatal, map);
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -211,42 +232,23 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static Annotation checkRequiredSingle(Feature f, String[] requiredSingle, boolean fatal, Annotation copy) {
+    private static boolean checkRequiredSingle(Feature f, String[] requiredSingle, boolean fatal, Map map) {
+        boolean result = true;
     	for (int i = 0; i < requiredSingle.length; i++) {
     		String check = requiredSingle[i];
-    		List matches = getProperties(check, copy);
+    		List matches = getProperties(check, map);
     		if (matches == null) {
-    			problem(f, check, "No value (required single)", fatal, copy)	;
-    			return null;
+    			problem(f, check, "No value (required single)", fatal, map)	;
+    			result = false;
     		}
     		if (matches.size()==0 || matches.size() >1) {
-    			problem(f, check, "Wrong number of values (required multiple)", fatal, copy);
-    			return null;
+    			problem(f, check, "Wrong number of values (required multiple)", fatal, map);
+    			result = false;
     		}
-    		copy = makeAnnotationCopyWithoutKey(check, copy);
+    		map.remove(check);
     	}
-    	return copy;
+    	return result;
     }
-
-    @SuppressWarnings("unchecked")
-	private static Annotation makeAnnotationCopyWithoutKey(String without, Annotation an) {
-        //System.err.println("Want to remove '"+without+"' from annotation '"+an+"'");
-		Annotation ret = new SmallAnnotation();
-		for (String key : ((Set<String>) an.asMap().keySet())) {
-			if (!key.equals(without)) {
-				try {
-					ret.setProperty(key, an.getProperty(key));
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (NoSuchElementException e) {
-					e.printStackTrace();
-				} catch (ChangeVetoException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return ret;
-	}
 
 	/**
      * @param f
@@ -255,21 +257,22 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static Annotation checkRequiredMultiple(Feature f, String[] requiredMultiple, boolean fatal, Annotation copy) {
-    	for (int i = 0; i < requiredMultiple.length; i++) {
+    private static boolean checkRequiredMultiple(Feature f, String[] requiredMultiple, boolean fatal, Map map) {
+        boolean result = true;
+        for (int i = 0; i < requiredMultiple.length; i++) {
     		String check = requiredMultiple[i];
-    		List matches = getProperties(check, copy);
+    		List matches = getProperties(check, map);
     		if (matches == null) {
-    			problem(f, check, "No value (required multiple)", fatal, copy);
-    			return null;
+    			problem(f, check, "No value (required multiple)", fatal, map);
+    			result = false;
     		}
     		if (matches.size()==0) {
-    			problem(f, check, "Wrong number of values (required multiple)", fatal, copy);
-    			return null;
+    			problem(f, check, "Wrong number of values (required multiple)", fatal, map);
+    			result = false;
     		}
-    		copy = makeAnnotationCopyWithoutKey(check, copy);
+    		map.remove(check);
     	}
-    	return copy;
+    	return result;
     }
 
     /**
@@ -279,16 +282,16 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static Annotation checkOptionalMultiple(Feature f, String[] optionalMultiple, boolean fatal, Annotation copy) {
+    private static boolean checkOptionalMultiple(Feature f, String[] optionalMultiple, boolean fatal, Map map) {
     	for (int i = 0; i < optionalMultiple.length; i++) {
     		String check = optionalMultiple[i];
             //System.err.println("checkOptionalMultiple for '"+check+"'");
-    		List matches = getProperties(check, copy);
+    		List matches = getProperties(check, map);
     		if (matches != null && matches.size()>0) {
-    		    copy = makeAnnotationCopyWithoutKey(check, copy);
+    		    map.remove(check);
             }
     	}
-    	return copy;
+    	return true;
     }
 
     /**
@@ -298,25 +301,26 @@ public class MiningUtils {
      * @param copy
      * @return
      */
-    private static Annotation checkOptionalSingle(Feature f, String[] optionalSingle, boolean fatal, Annotation copy) {
-	for (int i = 0; i < optionalSingle.length; i++) {
-	    String check = optionalSingle[i];
-	    List matches = getProperties(check, copy);
-	    if (matches != null && matches.size() >1) {
-		problem(f, check, "Wrong number of values (optional single)", fatal, copy);
-		return null;
-	    }
-	    copy = makeAnnotationCopyWithoutKey(check, copy);
-	}
-	return copy;
+    private static boolean checkOptionalSingle(Feature f, String[] optionalSingle, boolean fatal, Map map) {
+        boolean result = true;
+        for (int i = 0; i < optionalSingle.length; i++) {
+            String check = optionalSingle[i];
+            List matches = getProperties(check, map);
+            if (matches != null && matches.size() >1) {
+                problem(f, check, "Wrong number of values (optional single)", fatal, map);
+                result = false;
+            }
+            map.remove(check);
+        }
+        return result;
     }
 
-    private static void problem(Feature f, String check, String msg, boolean fatal, Annotation copy) {
-	System.err.println(msg+" for '"+check+"' in '"+f.getType()+"' at '"+f.getLocation()+"'");
-    System.err.println(copy);
-	if (fatal) {
-	    System.exit(-1);
-	}
+    private static void problem(Feature f, String check, String msg, boolean fatal, Map map) {
+        System.err.println(msg+" for '"+check+"' in '"+f.getType()+"' at '"+f.getLocation()+"'");
+        System.err.println(map);
+        if (fatal) {
+            System.exit(-1);
+        }
     }
 
 }
