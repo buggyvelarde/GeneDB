@@ -136,7 +136,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     public void process(org.genedb.db.jpa.Feature parent, Feature feat) {
         MiningUtils.sanityCheckAnnotation(feat, requiredSingle, requiredMultiple, 
-                optionalSingle , optionalMultiple, true, true);
+                optionalSingle , optionalMultiple, false, true);
         processStrandedFeature(parent, (StrandedFeature) feat);
     }
     

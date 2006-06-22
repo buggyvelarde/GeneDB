@@ -67,9 +67,9 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
         org.genedb.db.jpa.Feature rna = this.featureUtils.createFeature(type, systematicId, this.organism);
         this.daoFactory.persist(rna);
         //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-        FeatureLoc trnaFl = featureUtils.createLocation(parent,rna,loc.getMin(),loc.getMax(),
+        FeatureLoc rnaFl = featureUtils.createLocation(parent,rna,loc.getMin(),loc.getMax(),
                                                         strand);
-        this.daoFactory.persist(trnaFl);
+        this.daoFactory.persist(rnaFl);
         //featureLocs.add(pepFl);
         //featureRelationships.add(pepFr);
         

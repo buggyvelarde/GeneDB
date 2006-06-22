@@ -52,9 +52,12 @@
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>
     
-    
+    <bean id="myTxManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    	<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
     
     <bean id="daoFactory" class="org.genedb.db.dao.DaoFactory">
+  	  	<property name="transactionManager" ref="myTxManager" />
   	  	<property name="sessionFactory" ref="sessionFactory" />
     	<property name="featureDao" ref="featureDao" />
     	<property name="cvDao" ref="cvDao" />
