@@ -36,6 +36,7 @@ import org.genedb.db.loading.FeatureUtils;
 import org.genedb.db.loading.GeneDbGeneNamingStrategy;
 import org.genedb.db.loading.GeneNamingStrategy;
 import org.genedb.db.loading.MiningUtils;
+import static org.genedb.db.loading.EmblQualifiers.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,7 +77,11 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected Cv CV_MISC;
 
     protected CvTerm MISC_NOTE;
+    protected CvTerm MISC_CURATION;
+    protected CvTerm MISC_PRIVATE;
 
+    private String[] discard = {};
+    
     private String[] requiredMultiple = {};
 
     private String[] requiredSingle = {};
@@ -95,17 +100,18 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         // Deliberately empty
     }
     
-    public BaseFeatureProcessor(String[] requiredSingle, String[] requiredMultiple, String[] optionalSingle, String[] optionalMultiple) {
+    public BaseFeatureProcessor(String[] requiredSingle, String[] requiredMultiple, 
+            String[] optionalSingle, String[] optionalMultiple, String[] discard) {
         super();
         this.requiredSingle = requiredSingle;
         this.requiredMultiple = requiredMultiple;
         this.optionalSingle = optionalSingle;
         this.optionalMultiple = optionalMultiple;
+        this.discard = discard;
     }
 
     public void afterPropertiesSet() {
         CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
-        System.err.println("CV_RELATION is '"+CV_RELATION+"'");
        
         REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
         CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
@@ -113,11 +119,11 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
         
         REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
-        System.err.println("REL_PART_OF is '"+REL_PART_OF+"'");
         REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv(
                 "derives_from", CV_SO).get(0);
-        MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv("note", CV_MISC)
-                .get(0);
+        MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv(QUAL_NOTE, CV_MISC).get(0);
+        MISC_CURATION = daoFactory.getCvTermDao().findByNameInCv(QUAL_CURATION, CV_MISC).get(0);
+        MISC_PRIVATE = daoFactory.getCvTermDao().findByNameInCv(QUAL_PRIVATE, CV_MISC).get(0);
     }
 
     public void setDaoFactory(DaoFactory daoFactory) {
@@ -136,7 +142,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     public void process(org.genedb.db.jpa.Feature parent, Feature feat) {
         MiningUtils.sanityCheckAnnotation(feat, requiredSingle, requiredMultiple, 
-                optionalSingle , optionalMultiple, false, true);
+                optionalSingle , optionalMultiple, discard, false, true);
         processStrandedFeature(parent, (StrandedFeature) feat);
     }
     
@@ -159,13 +165,13 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         return fp;
     }
 
-    protected void createFeaturePropsFromNotes(org.genedb.db.jpa.Feature f, Annotation an, CvTerm cvTerm) {
-        logger.debug("About to set notes for feature '" + f.getUniquename()
+    protected void createFeaturePropsFromNotes(org.genedb.db.jpa.Feature f, Annotation an, String key, CvTerm cvTerm) {
+        logger.debug("About to set '"+key+"' for feature '" + f.getUniquename()
                 + "'");
         // Cvterm cvTerm = daoFactory.getCvTermDao().findByNameInCv(key,
         // cv).get(0);
     
-        List<String> values = MiningUtils.getProperties("note", an);
+        List<String> values = MiningUtils.getProperties(key, an);
         if (values == null || values.size() == 0) {
             return;
         }
@@ -199,8 +205,10 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
             // } while (ps.isSplit());
             fp.setFeaturepropPubs(fpubs);
             fp.setValue(note);
+            daoFactory.persist(fp);
             count++;
         }
+        
     }
 
 //    private ParsedString parseDbXref(String in, String prefix) {
