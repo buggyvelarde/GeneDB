@@ -26,11 +26,7 @@ package org.genedb.db.loading;
 
 import static org.genedb.db.loading.EmblFeatureKeys.FT_CDS;
 import static org.genedb.db.loading.EmblFeatureKeys.FT_SOURCE;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_CHROMOSOME;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIVATE;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_PSEUDO;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_SO_TYPE;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
+import static org.genedb.db.loading.EmblQualifiers.*;
 
 import org.genedb.db.hibernate3gen.Cv;
 import org.genedb.db.hibernate3gen.CvTerm;
@@ -131,7 +127,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
             Location loc = cds.getLocation().translate(offset);
             Names names = this.nomenclatureHandler.findNames(an);
             sysId = names.getSystematicId();
-            logger.info("Systematic Id : " + sysId);
+            logger.debug("Looking at systematic id '" + sysId+"'");
             int transcriptNum = 1;
 
             short strand = (short) cds.getStrand().getValue();
@@ -252,13 +248,14 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
             }
             FeatureRelationship pepFr = featureUtils.createRelationship(
                     polypeptide, mRNA, REL_DERIVES_FROM);
-            features.add(polypeptide);
+            //features.add(polypeptide);
             FeatureLoc pepFl = featureUtils.createLocation(parent, polypeptide,
                     loc.getMin(), loc.getMax(), strand);
             featureLocs.add(pepFl);
             featureRelationships.add(pepFr);
             // TODO store protein translation
             // TODO protein props - store here or just in query version
+            daoFactory.persist(polypeptide);
 
             // Cv MISC = daoFactory.getCvDao().findByName("local").get(0);
             // Cv MISC =
@@ -273,7 +270,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
             // Cvterm cvTerm =
             // daoFactory.getCvTermDao().findByNameInCv("note",
             // MISC).get(0);
-            createFeaturePropsFromNotes(polypeptide, an, MISC_NOTE);
+            createFeaturePropsFromNotes(polypeptide, an, QUAL_NOTE, MISC_NOTE);
 
             // String nucleic = parent.getResidues().substring(loc.getMin(),
             // loc.getMax());
@@ -479,7 +476,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
         MiningUtils.sanityCheckAnnotation(fullLengthSource, new String[] {
                 QUAL_SYS_ID, QUAL_SO_TYPE }, new String[] {},
                 new String[] { QUAL_CHROMOSOME },
-                new String[] { QUAL_PRIVATE }, false, true);
+                new String[] { QUAL_PRIVATE }, new String[]{}, false, true);
 
         Annotation an = fullLengthSource.getAnnotation();
         String foundType = MiningUtils.getProperty(QUAL_SO_TYPE, an, null);
