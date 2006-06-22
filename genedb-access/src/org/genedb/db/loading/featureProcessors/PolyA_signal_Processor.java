@@ -41,10 +41,10 @@ import org.biojava.bio.symbol.Location;
  * 
  * @author Adrian Tivey (art)
  */
-public class PolyA_site_Processor extends BaseFeatureProcessor {
+public class PolyA_signal_Processor extends BaseFeatureProcessor {
 
-    public PolyA_site_Processor() {
-        super(new String[]{}, new String[]{}, new String[]{}, new String[]{}, new String[]{});
+    public PolyA_signal_Processor() {
+        super(new String[]{}, new String[]{}, new String[]{}, new String[]{QUAL_NOTE}, new String[]{});
     }
 
     @Override

@@ -24,13 +24,11 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import static org.genedb.db.loading.EmblQualifiers.*;
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.FeatureProp;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_COLOUR;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_GENE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 
-import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -44,30 +42,34 @@ import org.biojava.bio.symbol.Location;
 public class Promoter_Processor extends BaseFeatureProcessor {
 
     public Promoter_Processor() {
-        super(new String[]{QUAL_SYS_ID}, new String[]{}, new String[]{"note"}, new String[]{});
+        super(new String[]{}, 
+                new String[]{}, 
+                new String[]{QUAL_D_COLOUR},
+                new String[]{QUAL_NOTE, QUAL_D_GENE}, 
+                new String[]{});
     }
 
     @Override
     public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature f) {
-        logger.debug("Entering processing for repeat");
-        Location loc = f.getLocation();
-        Annotation an = f.getAnnotation();
-        short strand = (short)f.getStrand().getValue();
-        String systematicId = "repeat"+loc.getMin()+"-"+loc.getMax(); 
-        
-        org.genedb.db.jpa.Feature repeat = this.featureUtils.createFeature("repeat", systematicId,
-                this.organism);
-        this.daoFactory.persist(repeat);
-        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-        FeatureLoc trnaFl = featureUtils.createLocation(parent,repeat,loc.getMin(),loc.getMax(),
-                                                        strand);
-        this.daoFactory.persist(trnaFl);
-        //featureLocs.add(pepFl);
-        //featureRelationships.add(pepFr);
-        
-        FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
-        this.daoFactory.persist(fp);
-        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
+//        logger.debug("Entering processing for repeat");
+//        Location loc = f.getLocation();
+//        Annotation an = f.getAnnotation();
+//        short strand = (short)f.getStrand().getValue();
+//        String systematicId = "repeat"+loc.getMin()+"-"+loc.getMax(); 
+//        
+//        org.genedb.db.jpa.Feature repeat = this.featureUtils.createFeature("repeat", systematicId,
+//                this.organism);
+//        this.daoFactory.persist(repeat);
+//        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
+//        FeatureLoc trnaFl = featureUtils.createLocation(parent,repeat,loc.getMin(),loc.getMax(),
+//                                                        strand);
+//        this.daoFactory.persist(trnaFl);
+//        //featureLocs.add(pepFl);
+//        //featureRelationships.add(pepFr);
+//        
+//        FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
+//        this.daoFactory.persist(fp);
+//        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
 
     }
 
