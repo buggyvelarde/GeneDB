@@ -131,6 +131,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
             Location loc = cds.getLocation().translate(offset);
             Names names = this.nomenclatureHandler.findNames(an);
             sysId = names.getSystematicId();
+            logger.info("Systematic Id : " + sysId);
             int transcriptNum = 1;
 
             short strand = (short) cds.getStrand().getValue();

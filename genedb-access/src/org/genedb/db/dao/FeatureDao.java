@@ -1,5 +1,6 @@
 package org.genedb.db.dao;
 
+import org.biojava.bio.symbol.Location;
 import org.genedb.db.jpa.Feature;
 
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -27,6 +28,19 @@ public class FeatureDao extends HibernateDaoSupport {
                 "select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.current=true and s.name=:name",
                 "name", name);
         return features;
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<Feature> findByRange(int min,int max,String name) {
+    	List<Feature> features;
+    	 //int min = loc.getMin();
+    	//int max = loc.getMax();
+    	//String name = "mRNA";
+    	features = (List<Feature>)getHibernateTemplate().findByNamedParam("select f " +
+    			"from Feature f, FeatureLoc loc, CvTerm cvt where " +
+    			"f.featureId=loc.featureByFeatureId and f.cvTerm=cvt.cvTermId and cvt.name='" + name + "' and (" +
+    			" loc.fmin<=:min and loc.fmax>=:max)",new String[]{"min","max"},new Object[]{min,max});
+     	return features;
     }
 
 }

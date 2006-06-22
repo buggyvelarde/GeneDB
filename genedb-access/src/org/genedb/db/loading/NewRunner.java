@@ -19,7 +19,9 @@
 
 package org.genedb.db.loading;
 
+import org.genedb.db.dao.BaseDao;
 import org.genedb.db.dao.DaoFactory;
+import org.genedb.db.dao.FeatureDao;
 import org.genedb.db.hibernate3gen.FeatureLoc;
 import org.genedb.db.hibernate3gen.Organism;
 
@@ -35,6 +37,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -89,7 +95,7 @@ public class NewRunner implements ApplicationContextAware {
     
     private ApplicationContext applicationContext;
 
-
+    
 
 
     /**
@@ -144,7 +150,7 @@ public class NewRunner implements ApplicationContextAware {
      * 
      * @param f The feature to dispatch on
      */
-    private void despatchOnFeatureType(Feature f, org.genedb.db.jpa.Feature parent) {
+    private void despatchOnFeatureType(final Feature f, final org.genedb.db.jpa.Feature parent) {
         FeatureProcessor instance = null;
         String mungedType = f.getType().replaceAll("'","_Prime_");
         mungedType = mungedType.replaceAll("3", "Three");
@@ -172,7 +178,15 @@ public class NewRunner implements ApplicationContextAware {
                 return;
             }
         }
-        instance.process(parent, f);
+        final FeatureProcessor fp = instance;
+        TransactionTemplate tt = new TransactionTemplate(daoFactory.getTransactionManager());
+    	tt.execute(
+    			new TransactionCallbackWithoutResult() {
+    				public void doInTransactionWithoutResult(TransactionStatus status) {
+    					fp.process(parent, f);
+    				}
+    			});
+        
     }
 
     /**

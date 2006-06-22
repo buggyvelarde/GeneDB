@@ -1,6 +1,7 @@
 package org.genedb.db.dao;
 
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.transaction.PlatformTransactionManager;
 
 
 public class DaoFactory extends HibernateDaoSupport {
@@ -10,8 +11,17 @@ public class DaoFactory extends HibernateDaoSupport {
     private CvDao cvDao;
     private OrganismDao organismDao;
     private PubDao pubDao;
+    private PlatformTransactionManager transactionManager;
     
-    public void persist(Object transientInstance) {
+    public PlatformTransactionManager getTransactionManager() {
+		return transactionManager;
+	}
+
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
+
+	public void persist(Object transientInstance) {
 	getHibernateTemplate().persist(transientInstance);
     }
     
