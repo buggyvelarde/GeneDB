@@ -1,6 +1,17 @@
 package org.genedb.db.loading.featureProcessors;
 
+import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
+
+import org.genedb.db.hibernate3gen.FeatureLoc;
+import org.genedb.db.hibernate3gen.FeatureProp;
+import org.genedb.db.hibernate3gen.FeatureRelationship;
+import org.genedb.db.jpa.Feature;
+import org.genedb.db.loading.MiningUtils;
+
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.StrandedFeature;
+import org.biojava.bio.symbol.Location;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,30 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
-import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.FeatureProp;
-import org.genedb.db.hibernate3gen.FeatureRelationship;
-import org.genedb.db.jpa.Feature;
-import org.genedb.db.loading.MiningUtils;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import org.springframework.orm.hibernate3.SessionHolder;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.transaction.support.TransactionTemplate;
-
 public class Intron_Processor extends BaseFeatureProcessor {
 	
 	private Map<String,Integer> intr = new HashMap<String,Integer>();
 	public Intron_Processor() {
-        super(new String[]{}, new String[]{}, new String[]{"note","citation"}, new String[]{});
+        super(new String[]{}, new String[]{}, new String[]{"note","citation"}, new String[]{}, new String[]{});
     }
 	
 	@Override
@@ -88,7 +80,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
 	        
 	        FeatureProp fp = createFeatureProp(intron, an, "colour", "colour", CV_MISC);
 	        this.daoFactory.persist(fp);
-	        createFeaturePropsFromNotes(intron, an, MISC_NOTE); 
+	        createFeaturePropsFromNotes(intron, an, QUAL_NOTE, MISC_NOTE); 
         }
     }
     
