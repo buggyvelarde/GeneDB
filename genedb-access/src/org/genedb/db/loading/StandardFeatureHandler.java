@@ -145,17 +145,17 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
             Cv CV_NAMING = this.daoFactory.getCvDao().findByName(
                     "genedb_synonym_type").get(0);
             CvTerm SYNONYM_RESERVED = this.daoFactory.getCvTermDao()
-                    .findByNameInCv("reserved", CV_NAMING).get(0);
+                    .findByNameInCv(QUAL_RESERVED, CV_NAMING).get(0);
             CvTerm SYNONYM_SYNONYM = this.daoFactory.getCvTermDao()
-                    .findByNameInCv("synonym", CV_NAMING).get(0);
+                    .findByNameInCv(QUAL_SYNONYM, CV_NAMING).get(0);
             CvTerm SYNONYM_PRIMARY = this.daoFactory.getCvTermDao()
-                    .findByNameInCv("primary", CV_NAMING).get(0);
+                    .findByNameInCv(QUAL_PRIMARY, CV_NAMING).get(0);
             CvTerm SYNONYM_SYS_ID = this.daoFactory.getCvTermDao()
-                    .findByNameInCv("systematic_id", CV_NAMING).get(0);
+                    .findByNameInCv(QUAL_SYS_ID, CV_NAMING).get(0);
             CvTerm SYNONYM_TMP_SYS = this.daoFactory.getCvTermDao()
-                    .findByNameInCv("tmp_systematic_id", CV_NAMING).get(0);
+                    .findByNameInCv(QUAL_TEMP_SYS_ID, CV_NAMING).get(0);
             CvTerm SYNONYM_PROTEIN = this.daoFactory.getCvTermDao()
-                    .findByNameInCv("protein", CV_NAMING).get(0);
+                    .findByNameInCv("protein_name", CV_NAMING).get(0);
             this.DUMMY_PUB = this.daoFactory.getPubDao().findByUniqueName(
                     "null").get(0);
             featureUtils.setDummyPub(this.DUMMY_PUB);

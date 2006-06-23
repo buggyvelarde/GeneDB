@@ -44,12 +44,13 @@ import org.biojava.bio.symbol.Location;
 public class Repeat_region_Processor extends BaseFeatureProcessor {
 
     public Repeat_region_Processor() {
-        super(new String[]{QUAL_SYS_ID}, new String[]{}, new String[]{"note"}, new String[]{});
+        //super(new String[]{QUAL_SYS_ID}, new String[]{}, new String[]{"note"}, new String[]{}, new String[]{});
     }
 
     @Override
     public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature f) {
-        logger.debug("Entering processing for repeat");
+        /*
+    	logger.debug("Entering processing for repeat");
         Location loc = f.getLocation();
         Annotation an = f.getAnnotation();
         short strand = (short)f.getStrand().getValue();
@@ -67,8 +68,8 @@ public class Repeat_region_Processor extends BaseFeatureProcessor {
         
         FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
         this.daoFactory.persist(fp);
-        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
-
+        createFeaturePropsFromNotes(repeat, an, systematicId, MISC_NOTE);
+		*/
     }
 
 }

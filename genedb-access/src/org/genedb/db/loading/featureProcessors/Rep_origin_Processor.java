@@ -44,7 +44,7 @@ import org.biojava.bio.symbol.Location;
 public class Rep_origin_Processor extends BaseFeatureProcessor {
 
     public Rep_origin_Processor() {
-        super(new String[]{QUAL_SYS_ID}, new String[]{}, new String[]{"note"}, new String[]{});
+        super(new String[]{QUAL_SYS_ID}, new String[]{}, new String[]{"note"}, new String[]{}, new String[]{});
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Rep_origin_Processor extends BaseFeatureProcessor {
         
         FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
         this.daoFactory.persist(fp);
-        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
+        createFeaturePropsFromNotes(repeat, an, systematicId, MISC_NOTE);
 
     }
 

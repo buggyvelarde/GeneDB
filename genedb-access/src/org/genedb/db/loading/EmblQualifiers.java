@@ -52,7 +52,7 @@ public class EmblQualifiers {
     public static final String QUAL_PRIMARY      = "primary_name";
     public static final String QUAL_SYNONYM      = "synonym";
     public static final String QUAL_OBSOLETE     = "obsolete_name";
-    public static final String QUAL_RESERVED     = "reserved";
+    public static final String QUAL_RESERVED     = "reserved_name";
     public static final String QUAL_PREV_SYS_ID  = "prev_systematic_id";
     
     // Deprecated ie not output but will be read

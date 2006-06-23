@@ -23,7 +23,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
 	
 	private Map<String,Integer> intr = new HashMap<String,Integer>();
 	public Intron_Processor() {
-        super(new String[]{}, new String[]{}, new String[]{"note","citation"}, new String[]{}, new String[]{});
+        super(new String[]{}, new String[]{}, new String[]{"note","citation"}, new String[]{},new String[]{});
     }
 	
 	@Override
@@ -44,7 +44,10 @@ public class Intron_Processor extends BaseFeatureProcessor {
         
         if(l.size()>0) {
         	mrna = l.get(0);
-        	
+        	for (FeatureLoc fl : mrna.getFeaturelocsForFeatureId()) {
+        		
+        	}
+        		
         	featureRelations = mrna.getFeatureRelationshipsForObjectId();
             for (FeatureRelationship featureRelation : featureRelations) {
             	Feature feature = featureRelation.getFeatureBySubjectId();   
