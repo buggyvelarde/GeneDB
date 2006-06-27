@@ -3,12 +3,10 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.CvTermDao;
 import org.genedb.db.dao.FeatureDao;
-import org.genedb.db.hibernate.Cv;
-import org.genedb.db.hibernate.CvHome;
-import org.genedb.db.hibernate.Cvterm;
-import org.genedb.db.hibernate.Feature;
-import org.genedb.db.hibernate.Pub;
-import org.genedb.db.hibernate.PubHome;
+import org.genedb.db.hibernate3gen.Cv;
+import org.genedb.db.hibernate3gen.CvTerm;
+import org.genedb.db.hibernate3gen.FeatureRelationship;
+import org.genedb.db.jpa.Feature;
 import org.genedb.query.BasicQueryI;
 import org.genedb.query.NumberedQueryI;
 import org.genedb.query.QueryPlaceHolder;
@@ -25,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 public class SearchController extends MultiActionController implements InitializingBean {
     
     	private FeatureDao featureDao;
-    	private PubHome pubHome;
     	private FileCheckingInternalResourceViewResolver viewChecker;
 	
 	public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
@@ -93,7 +91,7 @@ public class SearchController extends MultiActionController implements Initializ
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
-	    String type = feat.getCvterm().getName();
+	    String type = feat.getCvTerm().getName();
 	    // TODO
 	    // Check if features/type is known about
 	    // otherwise go to features/generic
@@ -107,9 +105,9 @@ public class SearchController extends MultiActionController implements Initializ
 	    Feature feat = new Feature();
 	    feat.setName("dummy_name");
 	    feat.setUniquename("dummy_id");
-	    Cvterm cvTerm = new Cvterm();
+	    CvTerm cvTerm = new CvTerm();
 	    cvTerm.setName("gene");
-	    feat.setCvterm(cvTerm);
+	    feat.setCvTerm(cvTerm);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
@@ -124,13 +122,29 @@ public class SearchController extends MultiActionController implements Initializ
 	    Feature feat = featureDao.findByUniqueName(name);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
-	    String viewName = "features/gene";
-	    String type = feat.getCvterm().getName();
+	    String viewName = "features/generic";
+	    String type = feat.getCvTerm().getName();
 	    // TODO
 	    // Check if features/type is known about
 	    // otherwise go to features/generic
-        if (type != null && !type.equals("gene")) {
-            viewName = "features/generic";
+        if (type != null && type.equals("gene")) {
+            viewName = "features/gene";
+            Feature mRNA = null;
+            Set<FeatureRelationship> frs = feat.getFeatureRelationshipsForObjectId(); 
+            for (FeatureRelationship fr : frs) {
+                mRNA = fr.getFeatureBySubjectId();
+                break;
+            }
+            Feature polypeptide = null;
+            Set<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
+            for (FeatureRelationship fr : frs2) {
+                Feature f = fr.getFeatureBySubjectId();
+                if ("polypeptide".equals(f.getCvTerm().getName())) {
+                    polypeptide = f;
+                }
+            }
+            model.put("polypeptide", polypeptide);
+            //System.err.println("The value of pp is '"+polypeptide+"'");
         }
 	    return new ModelAndView(viewName, model);
 	}
@@ -183,16 +197,16 @@ public class SearchController extends MultiActionController implements Initializ
 	    return new ModelAndView(viewName, model);
 	}
 	
-	public ModelAndView PublicationById(HttpServletRequest request, HttpServletResponse response) {
-	    int id = ServletRequestUtils.getIntParameter(request, "id", -1);
-	    if (id == -1) {
-		    
-	    }
-	    Pub pub = pubHome.findById(id);
-	    Map model = new HashMap(3);
-	    model.put("pub", pub);
-	    return new ModelAndView("db/pub", model);
-	}
+//	public ModelAndView PublicationById(HttpServletRequest request, HttpServletResponse response) {
+//	    int id = ServletRequestUtils.getIntParameter(request, "id", -1);
+//	    if (id == -1) {
+//		    
+//	    }
+//	    Pub pub = pubHome.findById(id);
+//	    Map model = new HashMap(3);
+//	    model.put("pub", pub);
+//	    return new ModelAndView("db/pub", model);
+//	}
 	
 	
 	/**
@@ -332,8 +346,8 @@ public class SearchController extends MultiActionController implements Initializ
 	    this.featureDao = featureDao;
 	}
 
-	public void setPubHome(PubHome pubHome) {
-	    this.pubHome = pubHome;
-	}
+//	public void setPubHome(PubHome pubHome) {
+//	    this.pubHome = pubHome;
+//	}
 
 }
