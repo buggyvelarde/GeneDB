@@ -24,8 +24,8 @@ td.false {color: red}
 	<c:forEach items="${rows}" var="row">
 		<tr>
 			<td class="${row['granted']}">${row['procpid']}</td>
-		    <td class="${row["granted"]}">${row["usename"]}</td>
-		    <td class="${row["granted"]}">${row["current_query"]}</td>
+		    <td class="${row['granted']}">${row['usename']}</td>
+		    <td class="${row['granted']}">${row["current_query"]}</td>
 			<td class="${row["granted"]}">${row["backend_start"]}</td>
 			<td class="${row["granted"]}">${row["relation"]}</td>
 			<td class="${row["granted"]}">${row["relname"]}</td>
