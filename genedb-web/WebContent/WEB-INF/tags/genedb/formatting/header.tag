@@ -20,7 +20,7 @@
       <a href="<c:url value="/"/>"><IMG alt="GeneDB Homepage" border="0" src="<c:url value="/includes/images/genedb.gif"/>"></a>
     </TD>
     <TD align="center" width="90%">
-      <p class="pagehead">${name}</p>
+      <h1>${name}</h1>
   </TD>
   <TD align="right" width="178px">
     <a href="<c:url value="/search.jsp"/>"><img alt="PSU logo" border="0" src="<c:url value="/includes/images/psu.gif"/>"></a>
