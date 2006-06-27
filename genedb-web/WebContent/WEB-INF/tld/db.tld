@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.0" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee web-jsptaglibrary_2_0.xsd">
+ 
+<tlib-version>1.0</tlib-version>
+ <short-name>db</short-name>
+ <uri>db</uri>
+
+ <tag>
+   <name>propByName</name>
+   <tag-class>org.genedb.web.tags.db.PropertyFilterTag</tag-class>
+   <body-content>scriptless</body-content>
+   <attribute>
+       <name>var</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>name</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>collection</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute> 
+ </tag>
+
+ <tag>
+   <name>synonym</name>
+   <tag-class>org.genedb.web.tags.db.SynonymTag</tag-class>
+   <body-content>scriptless</body-content>
+   <attribute>
+       <name>var</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+       <attribute>
+       <name>tmpSysId</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+    <attribute>
+       <name>name</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>collection</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute> 
+ </tag>
+
+ <tag>
+   <name>list-string</name>
+   <tag-class>org.genedb.web.tags.db.ListStringTag</tag-class>
+   <body-content>empty</body-content>
+    <attribute>
+       <name>seperator</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+    <attribute>
+       <name>collection</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute> 
+ </tag>
+ 
+ <tag>
+   <name>highlight</name>
+   <tag-class>org.genedb.web.tags.db.DbXRefHighlightTag</tag-class>
+   <body-content>scriptless</body-content>
+ </tag>
+
+</taglib>
