@@ -19,7 +19,7 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.hibernate.Feature;
+import org.genedb.db.jpa.Feature;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.orm.hibernate3.HibernateInterceptor;

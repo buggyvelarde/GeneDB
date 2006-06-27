@@ -19,7 +19,7 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.hibernate.Feature;
+import org.genedb.db.jpa.Feature;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.orm.hibernate3.HibernateInterceptor;
@@ -70,7 +70,7 @@ public class Gff3Utils {
         int phase = -4;
         String attributes = null;
         // TODO dummy values above 
-        writeGFFLine(w, seqId, source, feat.getCvterm().getName(), start, end, score, strand, phase, attributes);
+        writeGFFLine(w, seqId, source, feat.getCvTerm().getName(), start, end, score, strand, phase, attributes);
         // Get immediate children of feature
         // Loop over children, call this but with top not true
         // If top, write FASTA sequence

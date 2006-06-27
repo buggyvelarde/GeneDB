@@ -19,9 +19,7 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.hibernate.Feature;
-
-import org.springframework.orm.hibernate3.HibernateInterceptor;
+import org.genedb.db.jpa.Feature;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -29,7 +27,7 @@ import java.io.Writer;
 public class FastaUtils {
 
     public static void exportFeatureFasta(Writer w, boolean spaces, Feature feat) throws IOException {
-        exportFasta(w, feat.getCvterm().getName()+":"+feat.getUniquename(), feat.getResidues(), spaces);
+        exportFasta(w, feat.getCvTerm().getName()+":"+feat.getUniquename(), feat.getResidues(), spaces);
     }
     
     public static void exportFastaRegion(Writer w, String header, boolean spaces, 
