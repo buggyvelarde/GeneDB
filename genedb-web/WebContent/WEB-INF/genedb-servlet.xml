@@ -75,26 +75,6 @@
       </list>
     </property>
 	</bean>
-<!--  	<property name="mappings">
-			<props>
-				<prop key="/index.html">genedbController</prop>
-                 <prop key="/Homepage">genedbController</prop>
-                 <prop key="/feature.html">genedbController</prop>
-                 <prop key="/dropDown.html">genedbController</prop>
-                 <prop key="pfam.html">genedbController</prop>
-				<prop key="/genome**">commonURLController</prop>
-                 <prop key="/examples">genedbController</prop>
-                 <prop key="/example-working">queryController</prop>
-      			<prop key="/findOwners.html">findOwnersForm</prop>
-				<prop key="/owner.html">genedbController</prop>
-				<prop key="/addOwner.html">addOwnerForm</prop>
-				<prop key="/editOwner.html">editOwnerForm</prop>
-				<prop key="/addPet.html">addPetForm</prop>
-				<prop key="/editPet.html">editPetForm</prop>
-				<prop key="/addVisit.html">addVisitForm</prop>
-			</props>
-		</property>
-	</bean> -->
 
 
 	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
@@ -144,6 +124,13 @@
         <property name="cvDao" ref="cvDao"/>
         <property name="cvTermDao" ref="cvTermDao"/>
 <!--        <property name="pubHome" ref="pubHome" />-->
+    </bean>
+    
+    <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
+<!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
+        <property name="daoFactory" ref="daoFactory"/>
+        <property name="listResultsView" value="list/features" />
+        <property name="commandClass" value="org.genedb.db.dao.NameLookup" />
     </bean>
     
 	<bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
@@ -215,58 +202,55 @@
  	 </props>
 	 </property>
 	</bean>
-
-
-
+    
 	<!-- Hibernate SessionFactory -->
 	<bean id="sessionFactory" 
   	 class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
 	 <property name="dataSource" ref="dataSource" />
-	 <property name="hibernateProperties" ref="hibernateProperties" />
+	 <!--  <property name="hibernateProperties" ref="hibernateProperties" /> -->
 	 <!--  OR mapping files. -->
  	<property name="mappingResources">
   	  <list>
-    	<value>org/genedb/db/hibernate/Cvtermpath.hbm.xml</value>
-        <value>org/genedb/db/hibernate/CvtermRelationship.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Pubprop.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Cvtermprop.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Feature.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Cv.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeaturePub.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeaturepropPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Cvtermsynonym.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Dbxref.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Analysisprop.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Pubauthor.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Db.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureDbxref.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureSynonym.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Pub.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Analysisfeature.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Analysis.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Project.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureRelationshipPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Tableinfo.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureCvtermDbxref.hbm.xml</value>
-        <value>org/genedb/db/hibernate/CvtermDbxref.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Cvterm.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Featureloc.hbm.xml</value>
-        <value>org/genedb/db/hibernate/PubDbxref.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Organism.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Dbxrefprop.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureCvtermPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureRelationshipprop.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeaturelocPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureCvterm.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureCvtermprop.hbm.xml</value>
-        <value>org/genedb/db/hibernate/PubRelationship.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Featureprop.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Organismprop.hbm.xml</value>
-        <value>org/genedb/db/hibernate/Synonym.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureRelationshippropPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate/OrganismDbxref.hbm.xml</value>
-        <value>org/genedb/db/hibernate/FeatureRelationship.hbm.xml</value>
-    	   
+    	<value>org/genedb/db/hibernate3gen/CvTermPath.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/CvTermRelationship.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/PubProp.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/CvTermProp.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/Feature.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/Cv.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeaturePub.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeaturePropPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/CvTermSynonym.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/DbXRef.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/AnalysisProp.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/PubAuthor.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/Db.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureDbXRef.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureSynonym.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/Pub.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/AnalysisFeature.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/Analysis.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/Project.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureRelationshipPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/Tableinfo.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureCvTermDbXRef.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/CvTermDbXRef.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/CvTerm.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureLoc.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/PubDbXRef.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/Organism.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/DbXRefProp.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureCvTermPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureRelationshipProp.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureLocPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureCvTerm.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureCvTermProp.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/PubRelationship.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureProp.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/OrganismProp.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/Synonym.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureRelationshipPropPub.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/OrganismDbXRef.hbm.xml</value>
+        <value>org/genedb/db/hibernate3gen/FeatureRelationship.hbm.xml</value>
    	 </list>
  	</property>
 	</bean>
