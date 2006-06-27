@@ -5,7 +5,7 @@
 
 <h3>Naming</h3>
 			<c:forEach items="${feature.featureSynonyms}" var="featSyn">
-     			  <p><b>${featSyn.synonym.cvterm.name}</b> ${featSyn.synonym.name} <c:if test="!${featSyn.isCurrent}">{Obsolete}</c:if></p>
+     			  <p><b>${featSyn.synonym.cvterm.name}</b> ${featSyn.synonym.name} <c:if test="!${featSyn.current}">{Obsolete}</c:if></p>
 			</c:forEach>
         	
         	<dl>
@@ -16,19 +16,19 @@
         	<dd>${feature.uniquename}</dd>
         	
 			<dt><b>Type:</b></dt>
-			<dd>${feature.cvterm.name}</dd>
+			<dd>${feature.cvTerm.name}</dd>
         	
         	<dt><b>Analysis Feature:</b></dt>
-        	<dd>${feature.isAnalysis}</dd>
+        	<dd>${feature.analysis}</dd>
         	
         	<dt><b>Obsolete?:</b></dt>
-        	<dd>${feature.isObsolete}</dd>
+        	<dd>${feature.obsolete}</dd>
         	
         	<dt><b>Date created:</b></dt>
-        	<dd>${feature.timeaccessioned}</dd>
+        	<dd>${feature.timeAccessioned}</dd>
         	
         	<dt><b>Date last modified:</b></dt>
-        	<dd>${feature.timelastmodified}</dd>
+        	<dd>${feature.timeLastModified}</dd>
         	
 			<dt><b>Organism:</b></dt>
 			<dd>${feature.organism.genus} ${feature.organism.species}</dd>
@@ -37,7 +37,7 @@
 <h3>Feature Properties</h3>
         	
         	<table>
-           <c:forEach items="${feature.featureprops}" var="featProp">
+           <c:forEach items="${feature.featureProps}" var="featProp">
      		  <tr><td>[${featProp.rank}]</td><td>&nbsp;&nbsp;&nbsp;&nbsp;${featProp.cvterm.name}</td><td>&nbsp;&nbsp;&nbsp;&nbsp;${featProp.value}</td></tr>
 		   </c:forEach>
 </table>
@@ -76,18 +76,10 @@
 			</c:if>
 <p>---</p>
 		   <c:forEach items="${feature.featureDbxrefs}" var="fdx">
-     		  <p>[${fdx.isCurrent}]&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbxref.db.name}:${fdx.dbxref.accession}&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbxref.description}</p>
+     		  <p>[${fdx.current}]&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbxref.db.name}:${fdx.dbxref.accession}&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbxref.description}</p>
 		   </c:forEach>		
 		   
 <h3>Feature Locations</h3>
-
-        	
-           <c:forEach items="${feature.featurelocsForFeatureId}" var="featLoc">
-     		  <p>[${featLoc.rank}]&nbsp;&nbsp;${featLoc.strand}&nbsp;&nbsp;${featLoc.fmin}...${featLoc.fmax} on ${featLoc.featureBySrcfeatureId.uniquename}</p>
-		   </c:forEach>	
-        	
-           <c:forEach items="${feature.featurelocsForSrcfeatureId}" var="featLoc">
-               		  <p>[${featLoc.rank}]&nbsp;&nbsp;${featLoc.strand}&nbsp;&nbsp;${featLoc.fmin}...${featLoc.fmax} on ${featLoc.featureByFeatureId.uniquename}</p>
-		   </c:forEach>		   
+ 
 
 <format:footer />
