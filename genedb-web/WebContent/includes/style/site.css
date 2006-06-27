@@ -1,1 +1,26 @@
 @CHARSET "UTF-8";
+
+body {
+ margin: 0;
+ padding: 0;
+}
+
+P.section {
+	text-align: center;
+	font-weight: bold;
+	background-color: #E2E2FF;
+	border-top: 1px solid lightgray;
+}
+
+div.section-body {
+ padding-left: 3px;
+ padding-right: 3px;
+}
+
+h1 {
+	font-family: Arial,Helvetica,Geneva,sans-serif;
+}
+
+.warning {
+	color: red;
+}
