@@ -9,7 +9,6 @@
 </format:header>
 <sp:form commandName="ResultBean">
 <sp:select path="results" id="result">
-<sp:options items="${result.organism.abbreviation}"/>
 </sp:select>
 </sp:form>
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
