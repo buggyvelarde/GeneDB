@@ -1,26 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.CvTermDao;
-import org.genedb.db.dao.FeatureDao;
-import org.genedb.db.hibernate.Cv;
-import org.genedb.db.hibernate.CvHome;
-import org.genedb.db.hibernate.Cvterm;
-import org.genedb.db.hibernate.Feature;
-import org.genedb.db.hibernate.Pub;
-import org.genedb.db.hibernate.PubHome;
-import org.genedb.query.BasicQueryI;
-import org.genedb.query.NumberedQueryI;
-import org.genedb.query.QueryPlaceHolder;
-import org.genedb.query.bool.BooleanOp;
-import org.genedb.query.bool.BooleanQuery;
-import org.genedb.web.tags.bool.QueryTreeWalker;
-
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -30,6 +9,25 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.CvTermDao;
+import org.genedb.db.dao.FeatureDao;
+import org.genedb.db.hibernate3gen.Cv;
+import org.genedb.db.hibernate3gen.CvTerm;
+import org.genedb.db.hibernate3gen.Pub;
+import org.genedb.query.BasicQueryI;
+import org.genedb.query.NumberedQueryI;
+import org.genedb.query.QueryPlaceHolder;
+import org.genedb.query.bool.BooleanOp;
+import org.genedb.query.bool.BooleanQuery;
+import org.genedb.web.tags.bool.QueryTreeWalker;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+
+import ca.ualberta.stothard.cgview.Feature;
 
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
@@ -91,11 +89,11 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    if (id == -1) {
 		    
 	    }
-	    Feature feat = featureDao.findById(id);
+	    org.genedb.db.jpa.Feature feat = featureDao.findById(id);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
-	    String type = feat.getCvterm().getName();
+	    String type = feat.getCvTerm().getName();
 	    // TODO
 	    // Check if features/type is known about
 	    // otherwise go to features/generic
@@ -106,12 +104,12 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	private static final String NO_VALUE_SUPPLIED = "_NO_VALUE_SUPPLIED";
 	
 	public ModelAndView DummyGeneFeature(HttpServletRequest request, HttpServletResponse response) {
-	    Feature feat = new Feature();
+		org.genedb.db.jpa.Feature feat = new org.genedb.db.jpa.Feature();
 	    feat.setName("dummy_name");
 	    feat.setUniquename("dummy_id");
-	    Cvterm cvTerm = new Cvterm();
+	    CvTerm cvTerm = new CvTerm();
 	    cvTerm.setName("gene");
-	    feat.setCvterm(cvTerm);
+	    feat.setCvTerm(cvTerm);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
@@ -131,11 +129,11 @@ public class SimpleReport extends MultiActionController implements InitializingB
             exp.printStackTrace();
         }
         // Check sequence is valid in org
-	    Feature feat = featureDao.findByUniqueName(bean.getName());
+	    org.genedb.db.jpa.Feature feat = featureDao.findByUniqueName(bean.getName());
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
-	    String type = feat.getCvterm().getName();
+	    String type = feat.getCvTerm().getName();
         
         Writer w = null; // TODO
         EmblUtils.exportEmbl(w, feat, bean.getMin(), bean.getMax(), false, true, bean.isTruncateEndFeatures());

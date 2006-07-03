@@ -18,6 +18,7 @@
   <TR>
     <TD align="left" width="187px">
       <a href="<c:url value="/"/>"><IMG alt="GeneDB Homepage" border="0" src="<c:url value="/includes/images/genedb.gif"/>"></a>
+    
     </TD>
     <TD align="center" width="90%">
       <h1>${name}</h1>

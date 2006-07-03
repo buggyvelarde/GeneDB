@@ -57,12 +57,14 @@ public class NamedFeatureController extends SimpleFormController {
     protected ModelAndView onSubmit(Object command) throws Exception {
         NameLookup nl = (NameLookup) command;
         FeatureDao featureDao = this.daoFactory.getFeatureDao();
+        ResultBean rb = new ResultBean();
         List<Feature> results = featureDao.findByAnyName(nl);
+        
         if (results == null || results.size() == 0) {
-            
+            logger.info("result is null");
             // TODO Fail page
         }
-        
+        rb.setResults(results);
         Map<String, Object> model = new HashMap<String, Object>(3);
         
         String viewName = null;
@@ -70,7 +72,7 @@ public class NamedFeatureController extends SimpleFormController {
         if (results.size() > 1) {
             // Go to list results page
             viewName = listResultsView;
-            model.put("results", results);
+            model.put("results", rb);
         } else {
             Feature feature = results.get(0);
             model.put("feature", feature);
