@@ -1,6 +1,5 @@
 package org.genedb.db.dao;
 
-import org.biojava.bio.symbol.Location;
 import org.genedb.db.jpa.Feature;
 
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -44,4 +43,31 @@ public class FeatureDao extends HibernateDaoSupport {
      	return features;
     }
 
+    @SuppressWarnings({ "unchecked", "cast" })
+    public List<Feature> findByAnyName(NameLookup nl) {
+
+        // Add wildcards if needed
+        if (nl.isNeedWildcards()) {
+            String lookup = nl.getLookup();
+            if (!lookup.startsWith("*")) {
+                lookup = "*" + lookup;
+            }
+            if (!lookup.endsWith("*")) {
+                lookup += "*";
+            }
+            nl.setLookup(lookup);
+            nl.setNeedWildcards(false);
+        }
+        
+        String lookup = nl.getLookup().replaceAll("\\*", "%");
+        
+        // TODO Start for paging
+        getHibernateTemplate().setMaxResults(nl.getPageSize()); // TODO Check
+       
+        // TODO Taxon and filter
+        List<Feature> features = (List<Feature>)
+        							getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.current=true and s.name like :name",
+        							"name", lookup);
+        return features;
+    }
 }
