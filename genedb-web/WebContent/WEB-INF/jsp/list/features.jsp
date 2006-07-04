@@ -6,10 +6,29 @@
 <format:header name="Gene Results List">
 	<st:init />
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
+	<script type="text/javascript">
+		function forward() {
+			var myList = document.getElementById("tmp")
+			document.location.href="../" + myList.options[myList.selectedIndex].text
+		}
+	</script>
 </format:header>
-<sp:form commandName="ResultBean">
-<sp:select path="results" id="result">
-</sp:select>
+<sp:form commandName="rb" name="lst">
+	<table align="center" border="0" cellspacing="0" cellpadding="0" width="100%">
+	<tr>
+		<td colspan="3"><img src="<c:url value="/" />/includes/images/blank.gif" width="100%" height="1" alt="--------"/>
+	</tr>
+	<tr>
+		<td width="40%" bgcolor="#E2E2FF" align="center">
+			<input type="submit" value="Go To" name="pages">
+			<sp:select id="tmp" path="result" items="${rb.results}" onchange="forward()">
+			</sp:select>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3"><img src="<c:url value="/" />/includes/blank.gif" width="100%" height="1" alt="--------"/>
+	</tr>
+	</table>
 </sp:form>
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
 <p>Results</p>
