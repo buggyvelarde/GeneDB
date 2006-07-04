@@ -22,6 +22,7 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.DaoFactory;
 import org.genedb.db.dao.FeatureDao;
 import org.genedb.db.dao.NameLookup;
+import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.hibernate3gen.FeatureRelationship;
 import org.genedb.db.jpa.Feature;
 
@@ -57,22 +58,29 @@ public class NamedFeatureController extends SimpleFormController {
     protected ModelAndView onSubmit(Object command) throws Exception {
         NameLookup nl = (NameLookup) command;
         FeatureDao featureDao = this.daoFactory.getFeatureDao();
-        ResultBean rb = new ResultBean();
+        
         List<Feature> results = featureDao.findByAnyName(nl);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
             // TODO Fail page
         }
-        rb.setResults(results);
         Map<String, Object> model = new HashMap<String, Object>(3);
         
         String viewName = null;
         
         if (results.size() > 1) {
             // Go to list results page
-            viewName = listResultsView;
-            model.put("results", rb);
+        	ResultBean rb = new ResultBean();
+        	OrganismDao organismDao = this.daoFactory.getOrganismDao();
+        	List<String> organisms = organismDao.findAll();
+        	for (String string : organisms) {
+				logger.info(string);
+			}
+        	rb.setResults(organisms);
+        	viewName = listResultsView;
+            model.put("rb", rb);
+            model.put("results", results);
         } else {
             Feature feature = results.get(0);
             model.put("feature", feature);
