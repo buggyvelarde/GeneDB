@@ -25,6 +25,7 @@
 package org.genedb.db.loading.featureProcessors;
 
 import org.genedb.db.dao.DaoFactory;
+import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.hibernate3gen.Cv;
 import org.genedb.db.hibernate3gen.CvTerm;
 import org.genedb.db.hibernate3gen.FeatureProp;
