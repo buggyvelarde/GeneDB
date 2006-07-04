@@ -28,6 +28,7 @@ import static org.genedb.db.loading.EmblFeatureKeys.FT_CDS;
 import static org.genedb.db.loading.EmblFeatureKeys.FT_SOURCE;
 import static org.genedb.db.loading.EmblQualifiers.*;
 
+import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.hibernate3gen.Cv;
 import org.genedb.db.hibernate3gen.CvTerm;
 import org.genedb.db.hibernate3gen.FeatureLoc;
@@ -80,7 +81,6 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
     public void processCDS(Sequence seq,
             org.genedb.db.jpa.Feature parent, int offset) {
         FeatureHolder fh = seq.filter(new FeatureFilter.ByType(FT_CDS));
-
         int count = 0;
         Iterator fit = fh.features();
         while (fit.hasNext()) {
