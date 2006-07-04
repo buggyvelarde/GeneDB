@@ -148,6 +148,10 @@
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>
     
+    <bean id="organismDao" class="org.genedb.db.dao.OrganismDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
     <bean id="cvDao" class="org.genedb.db.dao.CvDao">
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>    
@@ -161,6 +165,7 @@
     	<property name="featureDao" ref="featureDao" />
     	<property name="cvDao" ref="cvDao" />
     	<property name="cvTermDao" ref="cvTermDao" />
+    	<property name="organismDao" ref="organismDao" />    	
     </bean>
     
   <bean id="openSessionInView" class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
@@ -180,7 +185,7 @@
 <!--        <property name="username" value="pfalciparum"/>-->
         <!-- <property name="username" value="tbrucei"/> -->
         <!-- <property name="username" value="spombe" /> -->
-        <property name="username" value="web" />
+        <property name="username" value="rleguminosarum" />
         <property name="password" value="WIBBLE" />
 	</bean> 
 
