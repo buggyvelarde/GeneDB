@@ -31,14 +31,15 @@ public class FeatureDao extends HibernateDaoSupport {
     }
     
     @SuppressWarnings("unchecked")
-	public List<Feature> findByRange(int min,int max,String name) {
+	public List<Feature> findByRange(int min,int max,int strand,int fid,String name) {
     	List<Feature> features;
     	 //int min = loc.getMin();
     	//int max = loc.getMax();
     	//String name = "mRNA";
     	features = (List<Feature>)getHibernateTemplate().findByNamedParam("select f " +
     			"from Feature f, FeatureLoc loc, CvTerm cvt where " +
-    			"f.featureId=loc.featureByFeatureId and f.cvTerm=cvt.cvTermId and cvt.name='" + name + "' and (" +
+    			"f.featureId=loc.featureByFeatureId and f.cvTerm=cvt.cvTermId and cvt.name='" + name + "' and loc.strand=" + strand + " and" +
+    			" loc.featureBySrcfeatureId=" + fid + " and (" +
     			" loc.fmin<=:min and loc.fmax>=:max)",new String[]{"min","max"},new Object[]{min,max});
      	return features;
     }
