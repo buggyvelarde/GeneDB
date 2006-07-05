@@ -11,7 +11,9 @@ public class DaoFactory extends HibernateDaoSupport {
     private CvDao cvDao;
     private OrganismDao organismDao;
     private PubDao pubDao;
+    private DbDao dbDao;
     private PlatformTransactionManager transactionManager;
+    private DbXRefDao dbXRefDao;
     
     public PlatformTransactionManager getTransactionManager() {
 		return transactionManager;
@@ -54,6 +56,22 @@ public class DaoFactory extends HibernateDaoSupport {
     }
     public void setOrganismDao(OrganismDao organismDao) {
         this.organismDao = organismDao;
+    }
+
+    public DbDao getDbDao() {
+        return this.dbDao;
+    }
+
+    public void setDbDao(DbDao dbDao) {
+        this.dbDao = dbDao;
+    }
+
+    public DbXRefDao getDbXRefDao() {
+        return this.dbXRefDao;
+    }
+
+    public void setDbXRefDao(DbXRefDao dbXRefDao) {
+        this.dbXRefDao = dbXRefDao;
     }
     
 }
