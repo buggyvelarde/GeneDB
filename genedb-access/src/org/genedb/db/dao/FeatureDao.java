@@ -1,7 +1,10 @@
 package org.genedb.db.dao;
 
+import org.genedb.db.hibernate3gen.CvTerm;
+import org.genedb.db.hibernate3gen.FeatureCvTerm;
 import org.genedb.db.jpa.Feature;
 
+import org.hibernate.Query;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.util.List;
@@ -65,9 +68,23 @@ public class FeatureDao extends HibernateDaoSupport {
         getHibernateTemplate().setMaxResults(nl.getPageSize()); // TODO Check
        
         // TODO Taxon and filter
-        List<Feature> features = (List<Feature>)
-        							getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.current=true and s.name like :name",
-        							"name", lookup);
+        List<Feature> features = (List<Feature>) getHibernateTemplate().findByNamedParam(
+                "select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.current=true and s.name like :name",
+                "name", lookup);
         return features;
     }
+
+    public FeatureCvTerm findFeatureCvTermByFeatureAndCvTerm(Feature feature, CvTerm cvTerm, boolean not) {
+        List<FeatureCvTerm> list = getHibernateTemplate().findByNamedParam("from FeatureCvTerm fct where fct.feature=:feature and fct.cvterm=:cvTerm and fct.not=:not", 
+                new String[]{"feature", "cvTerm", "not"}, 
+                new Object[]{feature, cvTerm, not});
+        if (list == null || list.size() == 0) {
+            return null;
+        }
+        if (list.size() > 1) {
+            logger.warn("More than the expected 1 result for findFeatureCvTermByFeatureAndCvTerm. feature='"+feature.getUniquename()+"' cvTerm='"+cvTerm.getCvTermId()+"' not='"+not+"'");
+        }
+        return list.get(0);
+    }
+    
 }
