@@ -81,6 +81,7 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
         createFeaturePropsFromNotes(rna, an, QUAL_NOTE, MISC_NOTE);
         createFeaturePropsFromNotes(rna, an, QUAL_CURATION, MISC_CURATION);
         createFeaturePropsFromNotes(rna, an, QUAL_PRIVATE, MISC_PRIVATE);
+        createDbXRefs(rna, an);
     }
     
     protected String findName(Annotation an, String type) {
