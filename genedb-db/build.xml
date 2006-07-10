@@ -3,13 +3,13 @@
 <project name="hibernateTry2" default="fulljar" basedir=".">
 
 	<path id="toolslib">
-	 <path location="lib/hibernate-tools.jar" />
-	 <path location="lib/hibernate3.jar" />
-	 <path location="lib/freemarker.jar" />
-	<path location="lib/commons-logging-1.0.4.jar" />
+		<path location="lib/hibernate-tools.jar" />
+		<path location="lib/hibernate3.jar" />
+		<path location="lib/freemarker.jar" />
+		<path location="lib/commons-logging-1.0.4.jar" />
 		<path location="lib/dom4j-1.6.1.jar" />
 		<path location="lib/cglib-2.1.3.jar" />
-	 <path location="lib/postgresql-8.2dev-501.jdbc3.jar" />
+		<path location="lib/postgresql-8.2dev-501.jdbc3.jar" />
 		<path location="lib/commons-collections-2.1.1.jar" />
 	</path>
 	   
@@ -26,7 +26,7 @@
 	<taskdef name="hibernatetool" 
 	         classname="org.hibernate.tool.ant.HibernateToolTask" 
 	         classpathref="toolslib" />
-	
+	<target name="generate-classes">
 	<hibernatetool destdir="out">
 	 <classpath>
 	  <path location="input"/>
@@ -37,8 +37,9 @@
 	 <hbm2ddl export="false" outputfilename="sql.dll" />
 	 <hbm2java jdk5="true" ejb3="true" />
 	</hibernatetool>
+		</target>
 	
-	<target name="fulljar" depends="" description="Create full JAR file with all Hibernate classes">
+	<target name="fulljar" depends="cleanGenerated,generate-classes" description="Create full JAR file with all Hibernate classes">
 
 		<delete file="genedb-hibernate.jar"/>
 
