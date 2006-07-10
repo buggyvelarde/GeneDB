@@ -128,9 +128,13 @@
     
     <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
+        <property name="sessionForm" value="true"/>
+        <property name="commandName" value="nameLookup"/>
+		<property name="commandClass" value="org.genedb.db.dao.NameLookup" />
         <property name="daoFactory" ref="daoFactory"/>
         <property name="listResultsView" value="list/features" />
-        <property name="commandClass" value="org.genedb.db.dao.NameLookup" />
+        <property name="formInputView" value="err/lookup" />
+        <property name="bindOnNewForm" value="true" />
     </bean>
     
 	<bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
@@ -185,7 +189,7 @@
 <!--        <property name="username" value="pfalciparum"/>-->
         <!-- <property name="username" value="tbrucei"/> -->
         <!-- <property name="username" value="spombe" /> -->
-        <property name="username" value="rleguminosarum" />
+        <property name="username" value="web" />
         <property name="password" value="WIBBLE" />
 	</bean> 
 
