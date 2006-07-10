@@ -29,6 +29,7 @@ import org.genedb.db.jpa.Feature;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +49,10 @@ public class NamedFeatureController extends SimpleFormController {
 
     private DaoFactory daoFactory;
     private String listResultsView;
+    private String formInputView;
 
-    @Override
+  	
+	@Override
     protected boolean isFormSubmission(HttpServletRequest request) {
         return true;
     }
@@ -57,6 +60,18 @@ public class NamedFeatureController extends SimpleFormController {
     @Override
     protected ModelAndView onSubmit(Object command) throws Exception {
         NameLookup nl = (NameLookup) command;
+        Map<String, Object> model = new HashMap<String, Object>(3);
+        String viewName = null;
+        if(nl.getLookup() == "" || nl.getLookup() == null) {
+        	List <String> err = new ArrayList <String> ();
+        	logger.info("Look up is null");
+        	err.add("No search String found");
+        	err.add("please use the form below to search again");
+        	model.put("status", err);
+        	model.put("nameLookup", nl);
+        	viewName = formInputView;
+        	return new ModelAndView(viewName,model);
+        }
         FeatureDao featureDao = this.daoFactory.getFeatureDao();
         
         List<Feature> results = featureDao.findByAnyName(nl);
@@ -65,10 +80,6 @@ public class NamedFeatureController extends SimpleFormController {
             logger.info("result is null");
             // TODO Fail page
         }
-        Map<String, Object> model = new HashMap<String, Object>(3);
-        
-        String viewName = null;
-        
         if (results.size() > 1) {
             // Go to list results page
         	ResultBean rb = new ResultBean();
@@ -116,9 +127,8 @@ public class NamedFeatureController extends SimpleFormController {
     public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;
     }
-    
-    
-    
-    
 
+	public void setFormInputView(String formInputView) {
+		this.formInputView = formInputView;
+	}
 }
