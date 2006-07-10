@@ -14,10 +14,15 @@ public class Feature extends BaseFeature {
             //	super.setMd5checksum(FeatureUtils.calcMD5(residues));
         }
     }
-    
+
     public void addFeatureProp(FeatureProp fp) {
-	fp.setFeature(this);
-	super.getFeatureProps().add(fp);
+        fp.setFeature(this);
+        super.getFeatureProps().add(fp);
+    }
+
+    public String getDisplayName() {
+        System.err.println("getName is returning '"+getName()+"'");
+        return (getName() != null) ? getName() : getUniquename(); 
     }
 
 }
