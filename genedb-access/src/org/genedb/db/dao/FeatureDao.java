@@ -1,10 +1,7 @@
 package org.genedb.db.dao;
 
-import org.genedb.db.hibernate3gen.CvTerm;
-import org.genedb.db.hibernate3gen.FeatureCvTerm;
 import org.genedb.db.jpa.Feature;
 
-import org.hibernate.Query;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.util.List;
@@ -47,7 +44,7 @@ public class FeatureDao extends HibernateDaoSupport {
     }
 
     @SuppressWarnings({ "unchecked", "cast" })
-    public List<Feature> findByAnyName(NameLookup nl) {
+    public List<Feature> findByAnyName(NameLookup nl,String featureType) {
 
         // Add wildcards if needed
         if (nl.isNeedWildcards()) {
@@ -68,9 +65,9 @@ public class FeatureDao extends HibernateDaoSupport {
         getHibernateTemplate().setMaxResults(nl.getPageSize()); // TODO Check
        
         // TODO Taxon and filter
-        List<Feature> features = (List<Feature>) getHibernateTemplate().findByNamedParam(
-                "select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.current=true and s.name like :name",
-                "name", lookup);
+        List<Feature> features = (List<Feature>)
+        							getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureSynonym fs, Synonym s, CvTerm cvt where f=fs.feature and fs.synonym=s and fs.current=true and f.cvTerm=cvt.cvTermId and cvt.name='" + featureType + "' and s.name like :name",
+        							"name", lookup);
         return features;
     }
 
