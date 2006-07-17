@@ -39,7 +39,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
         short strand = (short)f.getStrand().getValue();
         List<org.genedb.db.jpa.Feature> l;
         List<org.genedb.db.jpa.Feature> ex = new ArrayList<org.genedb.db.jpa.Feature>();
-        int intronMin = loc.getMin();
+        int intronMin = loc.getMin()-1;
         int intronMax = loc.getMax();
         l = this.daoFactory.getFeatureDao().findByRange(intronMin,intronMax,
         						f.getStrand().getValue(),
@@ -74,7 +74,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
 	        this.daoFactory.persist(intron);
 	        FeatureRelationship intronFr = featureUtils.createRelationship(intron,l.get(0), REL_PART_OF);
 	        this.daoFactory.persist(intronFr);
-	        FeatureLoc intronFl = featureUtils.createLocation(parent,intron,loc.getMin(),loc.getMax(),
+	        FeatureLoc intronFl = featureUtils.createLocation(parent,intron,loc.getMin()-1,loc.getMax(),
 	                                                        strand);
 	        this.daoFactory.persist(intronFl);
 	        //featureLocs.add(pepFl);
