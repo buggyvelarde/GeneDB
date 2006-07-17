@@ -114,6 +114,20 @@
 </st:section>
 
 <st:section name="Gene Ontology Annotation" id="gene_go" collapsed="false" collapsible="true" hideIfEmpty="true">
+    <table>
+      <c:forEach items="${polypeptide.featureCvterms}" var="featCvTerm" varStatus="status">
+        <tr>
+          <td>${status.count}</td><td>${featCvTerm.cvterm.name}</td>
+          <td>qualifier</td>
+          <td>evidence</td>
+          <td>others</td>
+        </tr>
+      </c:forEach>
+    </table>
+  
+
+
+
 </st:section>
 
 <st:section name="Catalytic Activity" id="gene_catalytic" collapsed="false" collapsible="true" hideIfEmpty="true">
