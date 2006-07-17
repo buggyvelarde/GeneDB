@@ -28,10 +28,14 @@ import static org.genedb.db.loading.EmblFeatureKeys.FT_CDS;
 import static org.genedb.db.loading.EmblFeatureKeys.FT_SOURCE;
 import static org.genedb.db.loading.EmblQualifiers.*;
 
-import org.genedb.db.dao.OrganismDao;
+import org.genedb.db.dao.DaoFactory;
 import org.genedb.db.hibernate3gen.Cv;
 import org.genedb.db.hibernate3gen.CvTerm;
+import org.genedb.db.hibernate3gen.CvTermDbXRef;
+import org.genedb.db.hibernate3gen.DbXRef;
+import org.genedb.db.hibernate3gen.FeatureCvTerm;
 import org.genedb.db.hibernate3gen.FeatureLoc;
+import org.genedb.db.hibernate3gen.FeatureProp;
 import org.genedb.db.hibernate3gen.FeatureRelationship;
 import org.genedb.db.loading.featureProcessors.BaseFeatureProcessor;
 
@@ -82,6 +86,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
     public void processCDS(Sequence seq,
             org.genedb.db.jpa.Feature parent, int offset) {
         FeatureHolder fh = seq.filter(new FeatureFilter.ByType(FT_CDS));
+
         int count = 0;
         Iterator fit = fh.features();
         while (fit.hasNext()) {
@@ -137,12 +142,6 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
             List<FeatureLoc> featureLocs = new ArrayList<FeatureLoc>();
             List<FeatureRelationship> featureRelationships = new ArrayList<FeatureRelationship>();
 
-            // Cv CV_SO =
-            // this.daoFactory.getCvDao().findByName("sequence").get(0);
-            // Cvterm REL_DERIVES_FROM =
-            // this.daoFactory.getCvTermDao().findByNameInCv("derives_from",
-            // CV_SO).get(0);
-
             Cv CV_NAMING = this.daoFactory.getCvDao().findByName(
                     "genedb_synonym_type").get(0);
             CvTerm SYNONYM_RESERVED = this.daoFactory.getCvTermDao()
@@ -161,8 +160,8 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
                     "null").get(0);
             featureUtils.setDummyPub(this.DUMMY_PUB);
 
-            Cv CV_PRODUCTS = this.daoFactory.getCvDao().findByName(
-                    "genedb_products").get(0);
+            Cv CV_PRODUCTS = this.daoFactory.getCvDao().findByName("genedb_products").get(0);
+            //Db DB_PRODUCTS = this.daoFactory.getDbDao().findByName("genedb_products_db");
 
             // Is this a multiply spliced gene?
             org.genedb.db.jpa.Feature gene = null;
@@ -184,6 +183,9 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
                 } else {
                     gene = this.featureUtils.createFeature("gene", this.gns
                             .getGene(sysId), this.organism);
+                    if (names.getPrimary()!= null) {
+                        gene.setName(names.getPrimary());
+                    }
                     this.daoFactory.persist(gene);
                     storeNames(names, SYNONYM_RESERVED, SYNONYM_SYNONYM,
                             SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS,
@@ -193,10 +195,30 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
                 // this.daoFactory.persist(gene);
 
                 FeatureLoc geneFl = featureUtils.createLocation(parent, gene,
-                        loc.getMin(), loc.getMax(), strand);
+                        loc.getMin()-1, loc.getMax(), strand);
+                gene.getFeaturelocsForFeatureId().add(geneFl);
                 featureLocs.add(geneFl);
-
+            } else {
+                if (altSplicing) {
+                    // Gene already exists and it's alternately spliced. 
+                    // It may not have the right coords - may need extending
+                    int newMin = loc.getMin()-1;
+                    int newMax = loc.getMax();
+                    Set<FeatureLoc> locs = gene.getFeaturelocsForFeatureId();
+                    FeatureLoc currentLoc = locs.iterator().next();  // FIXME - Assumes that only 1 feature loc.  
+                    int currentMin = currentLoc.getFmin();
+                    int currentMax = currentLoc.getFmax();
+                    if (currentMin > newMin) {
+                        currentLoc.setFmin(newMin);
+                        logger.debug("Would like to change min to '"+newMin+"' from '"+currentMin+"' for '"+sysId+"'");
+                    }
+                    if (currentMax < newMax) {
+                        currentLoc.setFmax(newMax);
+                        logger.debug("Would like to change max to '"+newMax+"' from '"+currentMax+"' for '"+sysId+"'");
+                    }
+                }
             }
+
             String mRnaName = this.gns.getTranscript(sysId, transcriptNum);
             String baseName = sysId;
             if (altSplicing) {
@@ -211,7 +233,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
                         SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS, mRNA);
             }
             FeatureLoc mRNAFl = featureUtils.createLocation(parent, mRNA, loc
-                    .getMin(), loc.getMax(), strand);
+                    .getMin()-1, loc.getMax(), strand);
             FeatureRelationship mRNAFr = featureUtils.createRelationship(mRNA,
                     gene, REL_PART_OF);
             // features.add(mRNA);
@@ -229,7 +251,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
                 FeatureRelationship exonFr = featureUtils.createRelationship(
                         exon, mRNA, REL_PART_OF);
                 FeatureLoc exonFl = featureUtils.createLocation(parent, exon, l
-                        .getMin(), l.getMax(), strand);
+                        .getMin()-1, l.getMax(), strand);
                 features.add(exon);
                 featureLocs.add(exonFl);
                 featureRelationships.add(exonFr);
@@ -250,19 +272,14 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
                     polypeptide, mRNA, REL_DERIVES_FROM);
             //features.add(polypeptide);
             FeatureLoc pepFl = featureUtils.createLocation(parent, polypeptide,
-                    loc.getMin(), loc.getMax(), strand);
+                    loc.getMin()-1, loc.getMax(), strand);
             featureLocs.add(pepFl);
             featureRelationships.add(pepFr);
             // TODO store protein translation
             // TODO protein props - store here or just in query version
             daoFactory.persist(polypeptide);
 
-            // Cv MISC = daoFactory.getCvDao().findByName("local").get(0);
-            // Cv MISC =
-            // daoFactory.getCvDao().findByName("autocreated").get(0);
-
-            // featureProps.addAll(createProperties(polypeptide, an,
-            // "product", "product", CV_PRODUCTS));
+            createProducts(polypeptide, an, "product", "product", CV_PRODUCTS);
 
             // Store feature properties based on original annotation
             createFeatureProp(polypeptide, an, "colour", "colour", CV_MISC);
@@ -271,6 +288,10 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
             // daoFactory.getCvTermDao().findByNameInCv("note",
             // MISC).get(0);
             createFeaturePropsFromNotes(polypeptide, an, QUAL_NOTE, MISC_NOTE);
+            
+            createDbXRefs(polypeptide, an);
+            
+            createGoEntries(polypeptide, an);
 
             // String nucleic = parent.getResidues().substring(loc.getMin(),
             // loc.getMax());
@@ -295,6 +316,50 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
             System.err.println("\n\nWas looking at '" + sysId + "'");
             throw exp;
         }
+    }
+
+    private GoParser goParser;
+    
+    public void setGoParser(GoParser goParser) {
+        this.goParser = goParser;
+    }
+
+    private void createGoEntries(org.genedb.db.jpa.Feature polypeptide, Annotation an) {
+//        List<GoInstance> gos = this.goParser.getNewStyleGoTerm(an);
+//        if (gos == null || gos.size() == 0) {
+//            return;
+//        }
+//        
+//        for (GoInstance go : gos) {
+//            // Find db_xref for go id
+//            String id = go.getId();
+//            //logger.debug("Investigating storing GO '"+id+"' on '"+polypeptide.getUniquename()+"'");
+//            
+//            CvTerm cvTerm = daoFactory.getCvTermDao().findGoCvTermByAccViaDb(id, daoFactory);
+//            if (cvTerm == null) {
+//                logger.warn("Unable to find a CvTerm for the GO id of '"+id+"'. Skipping");
+//                continue;
+//            }
+//            
+//            // Find or create feature_cvterm
+//            Pub pub = daoFactory.getPubDao().findByUniqueName(id);
+//            
+//            
+//            boolean not = false; // TODO - Should get from GO object
+//            FeatureCvTerm fct = daoFactory.getFeatureDao().findFeatureCvTermByFeatureAndCvTerm(polypeptide, cvTerm, pub, not);
+//            if (fct == null) {
+//                fct = new FeatureCvTerm();
+//                fct.setFeature(polypeptide);
+//                fct.setCvterm(cvTerm);
+//                fct.setNot(not);
+//                fct.setPub(pub);
+//                daoFactory.persist(fct);
+//                logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
+//            } else {
+//                logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
+//            }
+//        }
+        
     }
 
     private void storeNames(Names names, CvTerm SYNONYM_RESERVED,
@@ -335,17 +400,32 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
         return;
     }
 
-//    private List<Featureprop> createProperties(
-//            org.genedb.db.hibernate.Feature f, Annotation an,
-//            String annotationKey, String dbKey, Cv cv) {
-//        List<Featureprop> ret = new ArrayList<Featureprop>(3);
+    private void createProducts(
+            org.genedb.db.jpa.Feature f, Annotation an,
+            String annotationKey, String dbKey, Cv cv) {
+        
+//        List<String> products = MiningUtils.getProperties(annotationKey, an);
+//        int i = 0;
+//        for (String product : products) {
+//            FeatureProp fp = new FeatureProp();
+//            fp.setRank(i);
+//            fp.setCvterm(cvTerm);
+//            fp.setFeature(f);
+//            // fp.setFeaturepropPubs(arg0);
+//            fp.setValue(value);
 //
-//        List<Cvterm> cvTerms = daoFactory.getCvTermDao().findByNameInCv(
+//            f.getFeatureProps().add(fp);
+//            ret.add(fp);
+//        }
+//        
+//        List<FeatureProp> ret = new ArrayList<FeatureProp>(3);
+//
+//        List<CvTerm> cvTerms = daoFactory.getCvTermDao().findByNameInCv(
 //                annotationKey, cv);
 //
-//        Cvterm cvTerm;
+//        CvTerm cvTerm;
 //        if (cvTerms == null || cvTerms.size() == 0) {
-//            cvTerm = new Cvterm();
+//            cvTerm = new CvTerm();
 //            cvTerm.setCv(cv);
 //            cvTerm.setName(annotationKey);
 //            cvTerm.setDefinition(annotationKey);
@@ -353,22 +433,8 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
 //            cvTerm = cvTerms.get(0);
 //        }
 //
-//        List<String> values = MiningUtils.getProperties(annotationKey, an);
-//
-//        int i = 0;
-//        for (String value : values) {
-//            Featureprop fp = new Featureprop();
-//            fp.setRank(i);
-//            fp.setCvterm(cvTerm);
-//            fp.setFeature(f);
-//            // fp.setFeaturepropPubs(arg0);
-//            fp.setValue(value);
-//
-//            f.getFeatureprops().add(fp);
-//            ret.add(fp);
-//        }
-//        return ret;
-//    }
+// 
+    }
 
 //    private ParsedString parseDbXref(String in, String prefix) {
 //        ParsedString ret;
