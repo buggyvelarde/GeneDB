@@ -90,6 +90,10 @@
     </servlet-mapping>
         <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/History/*</url-pattern>
+    </servlet-mapping>
+        <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/NamedFeature</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
