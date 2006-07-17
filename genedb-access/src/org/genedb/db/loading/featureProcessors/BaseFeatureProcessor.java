@@ -25,9 +25,11 @@
 package org.genedb.db.loading.featureProcessors;
 
 import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.hibernate3gen.Cv;
 import org.genedb.db.hibernate3gen.CvTerm;
+import org.genedb.db.hibernate3gen.Db;
+import org.genedb.db.hibernate3gen.DbXRef;
+import org.genedb.db.hibernate3gen.FeatureDbXRef;
 import org.genedb.db.hibernate3gen.FeatureProp;
 import org.genedb.db.hibernate3gen.FeaturePropPub;
 import org.genedb.db.hibernate3gen.Organism;
@@ -44,6 +46,9 @@ import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Feature;
 import org.biojava.bio.seq.StrandedFeature;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -94,8 +99,12 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected Pub DUMMY_PUB;
 
     private Cv CV_SO;
+    
+    protected Db DB_GO;
 
     protected CvTerm REL_DERIVES_FROM;
+
+    public Set warnedDbs = new HashSet();
 
     public BaseFeatureProcessor() {
         // Deliberately empty
@@ -125,6 +134,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv(QUAL_NOTE, CV_MISC).get(0);
         MISC_CURATION = daoFactory.getCvTermDao().findByNameInCv(QUAL_CURATION, CV_MISC).get(0);
         MISC_PRIVATE = daoFactory.getCvTermDao().findByNameInCv(QUAL_PRIVATE, CV_MISC).get(0);
+        DB_GO = daoFactory.getDbDao().findByName("GO");
     }
 
     public void setDaoFactory(DaoFactory daoFactory) {
@@ -211,6 +221,87 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         }
         
     }
+    
+    private void createDbXrefs(org.genedb.db.jpa.Feature polypeptide, Annotation an) {
+        List<String> xrefs = MiningUtils.getProperties(QUAL_DB_XREF, an);
+        if (xrefs == null) {
+            xrefs = new ArrayList<String>();
+        }
+            
+        List <String> tmp = MiningUtils.getProperties(QUAL_D_PSU_DB_XREF, an);
+        if (tmp != null) {
+            xrefs.addAll(tmp);
+        }
+            
+            // TODO EC numbers and literature aren't simple dbxrefs
+    //        tmp = MiningUtils.getProperties(QUAL_D_LITERATURE, an);
+    //        xrefs.addAll(tmp);
+    
+    //        tmp = MiningUtils.getProperties(QUAL_D_EC_NUMBER, an);
+    //        for (String ecNum : tmp) {
+    //            if (ecNum.startsWith("EC:")) {
+    //                xrefs.add(ecNum);
+    //            } else {
+    //                xrefs.add("EC:" + ecNum);
+    //            }
+    //        }
+            
+        if (xrefs.size() == 0) {
+                return;
+            }
+            
+            for (String xref : xrefs) {
+                if (xref.indexOf(":") == -1 ) {
+                    logger.warn("Can't parse dbxref into db and acc '"+xref+"'. Skipping");
+                    continue;
+                }
+                String[] parts = xref.split(":");
+                String dbName = parts[0];
+                String acc = parts[1];
+                String description = null;
+                if (acc.indexOf(";") != -1) {
+                    parts = acc.split(";");
+                    if (parts.length>0) {
+                        acc = parts[0];
+                    } else {
+                        logger.warn("Can't parse dbxref properly '"+xref+"'. Skipping");
+                        continue;
+                    }
+                    if (parts.length>1) {
+                        description = parts[1];
+                    }
+                }
+                Db db = this.daoFactory.getDbDao().findByName(dbName);
+                if (db == null) {
+                    if (!warnedDbs.contains(db)) {
+                        logger.warn("Can't find a db entry for the name of '"+dbName+"'. Skipping");
+                        warnedDbs.add(db);
+                    }
+                    continue;
+                }
+                logger.info("Trying to store '"+xref+"'. Got a db");
+                 DbXRef dbXRef = this.daoFactory.getDbXRefDao().findByDbAndAcc(db, acc);
+                if (dbXRef == null) {
+                    dbXRef = new DbXRef();
+                    dbXRef.setDb(db);
+                    dbXRef.setAccession(acc);
+                    dbXRef.setVersion("1"); // TODO - a bit arbitary
+                    // TODO - Mark as needing looking up for description
+                    daoFactory.persist(dbXRef);
+                    logger.info("Creating DbXref for db '"+db+"' and acc '"+acc+"'");
+                } else {
+                    logger.info("Using an existing dbXRef from the db");
+                }
+                logger.info("dbXRef just before storage is '"+dbXRef+"'");
+                FeatureDbXRef fdr = new FeatureDbXRef();
+                fdr.setDbxref(dbXRef);
+                fdr.setFeature(polypeptide);
+                logger.info("Persisting new FeatureDbXRef");
+                daoFactory.persist(fdr);
+                // TODO Store any user supplied notes
+            }
+            
+        }
 
 //    private ParsedString parseDbXref(String in, String prefix) {
 //            ParsedString ret;
