@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -196,7 +197,6 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
                 featureLocs.add(geneFl);
 
             }
-
             String mRnaName = this.gns.getTranscript(sysId, transcriptNum);
             String baseName = sysId;
             if (altSplicing) {
