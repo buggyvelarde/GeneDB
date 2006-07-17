@@ -19,9 +19,7 @@
 
 package org.genedb.db.loading;
 
-import org.genedb.db.dao.BaseDao;
 import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.dao.FeatureDao;
 import org.genedb.db.hibernate3gen.FeatureLoc;
 import org.genedb.db.hibernate3gen.Organism;
 
@@ -37,7 +35,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -105,12 +102,15 @@ public class NewRunner implements ApplicationContextAware {
      */
     public void afterPropertiesSet() {
         //logger.warn("Skipping organism set as not connected to db");
-	runnerConfig = runnerConfigParser.getConfig();
+        runnerConfig = runnerConfigParser.getConfig();
         organism = daoFactory.getOrganismDao().findByCommonName(runnerConfig.getOrganismCommonName()).get(0);
         featureHandler.setOrganism(organism);
         featureUtils = new FeatureUtils();
         featureUtils.setDaoFactory(daoFactory);
         featureHandler.setFeatureUtils(featureUtils);
+        GoParser gp = new GoParser();
+        gp.setDaoFactory(daoFactory);
+        featureHandler.setGoParser(gp);
         
         Map<String, String> nomenclatureOptions = runnerConfig.getNomenclatureOptions();
         String nomenclatureHandlerName = nomenclatureOptions.get("beanName");
@@ -178,15 +178,7 @@ public class NewRunner implements ApplicationContextAware {
                 return;
             }
         }
-        final FeatureProcessor fp = instance;
-        TransactionTemplate tt = new TransactionTemplate(daoFactory.getTransactionManager());
-    	tt.execute(
-    			new TransactionCallbackWithoutResult() {
-    				public void doInTransactionWithoutResult(TransactionStatus status) {
-    					fp.process(parent, f);
-    				}
-    			});
-        
+        instance.process(parent, f);
     }
 
     /**
@@ -281,8 +273,17 @@ public class NewRunner implements ApplicationContextAware {
         // First process simple files ie simple EMBL files
         List<String> fileNames = this.runnerConfig.getFileNames();
         for (String fileName : fileNames) {
-            for (Sequence seq : this.extractSequencesFromFile(new File(fileName))) {
-		this.processSequence(seq, null, 0);
+            for (final Sequence seq : this.extractSequencesFromFile(new File(fileName))) {
+                
+                TransactionTemplate tt = new TransactionTemplate(daoFactory.getTransactionManager());
+                tt.execute(
+                        new TransactionCallbackWithoutResult() {
+                            @Override
+                            public void doInTransactionWithoutResult(TransactionStatus status) {
+                                processSequence(seq, null, 0);
+                            }
+                        });
+
 	    }
 	}
         
