@@ -20,6 +20,8 @@ public interface FeatureHandler {
     public abstract void processCDS(Sequence seq, Feature topLevel, int offset);
 
     public void setFeatureUtils(FeatureUtils utils);
+    
+    public void setGoParser(GoParser goParser);
 
     public void setNomenclatureHandler(NomenclatureHandler handler);
     
