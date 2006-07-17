@@ -75,26 +75,26 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
     private Matcher m;
 
     private int cgviewLength;
-    private int imageWidth;
-    private int imageHeight;
+//    private int imageWidth;
+//    private int imageHeight;
 
     //set to true if combining data
-    private boolean ignoreCgviewTag = false;
-    private boolean ignoreLegendTag = false;
-    private boolean ignoreLegendItemTag = false;
+//    private boolean ignoreCgviewTag = false;
+//    private boolean ignoreLegendTag = false;
+//    private boolean ignoreLegendItemTag = false;
 
     private Cgview currentCgview;
     private FeatureSlot currentFeatureSlot;
     private Feature currentFeature;
     private FeatureRange currentFeatureRange;
     private Legend currentLegend;
-    private LegendItem currentLegendItem;
+//    private LegendItem currentLegendItem;
 
     private int labelFontSize = -1;
-    private int rulerFontSize = -1;
+//    private int rulerFontSize = -1;
     private int legendFontSize = -1;
 
-    private StringBuffer content = new StringBuffer();
+//    private StringBuffer content = new StringBuffer();
     private Locator locator;
     private Stack context = new Stack();
 
