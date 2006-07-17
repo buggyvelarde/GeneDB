@@ -68,7 +68,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
                 FeatureRelationship utrFr = featureUtils.createRelationship(
                         utr, gene, REL_PART_OF);
                 FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
-                        loc.getMin(), loc.getMax(), (short)feat.getStrand().getValue());
+                        loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());
                 daoFactory.persist(utr);
                 daoFactory.persist(utrFr);
                 daoFactory.persist(utrFl);
@@ -93,7 +93,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
                     FeatureRelationship utrFr = featureUtils.createRelationship(
                             utr, gene, REL_PART_OF);
                     FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
-                            loc.getMin(), loc.getMax(), (short)feat.getStrand().getValue());
+                            loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());
                     daoFactory.persist(utr);
                     daoFactory.persist(utrFr);
                     daoFactory.persist(utrFl);

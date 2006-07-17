@@ -67,7 +67,7 @@ public class LTR_Processor extends BaseFeatureProcessor {
                 this.organism);
         this.daoFactory.persist(ltr);
 
-        FeatureLoc ltrFl = featureUtils.createLocation(parent,ltr,loc.getMin(),loc.getMax(),
+        FeatureLoc ltrFl = featureUtils.createLocation(parent,ltr,loc.getMin()-1,loc.getMax(),
                                                         strand);
         this.daoFactory.persist(ltrFl);
       
