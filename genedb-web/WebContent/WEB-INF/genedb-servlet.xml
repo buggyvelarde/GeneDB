@@ -126,6 +126,10 @@
 <!--        <property name="pubHome" ref="pubHome" />-->
     </bean>
     
+    <bean id="HistoryController" class="org.genedb.web.mvc.controller.HistoryController">
+        <property name="methodNameResolver" ref="historyControllerResolver"/>
+    </bean>
+    
     <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
@@ -277,6 +281,7 @@
       - It maps URLs to methods for the "clinicController" bean.
       -->
       <bean id="searchControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver" />
+      <bean id="historyControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver" />
 
 
 	<!--
