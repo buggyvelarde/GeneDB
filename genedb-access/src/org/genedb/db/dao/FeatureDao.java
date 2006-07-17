@@ -1,5 +1,7 @@
 package org.genedb.db.dao;
 
+import org.genedb.db.hibernate3gen.CvTerm;
+import org.genedb.db.hibernate3gen.FeatureCvTerm;
 import org.genedb.db.jpa.Feature;
 
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
