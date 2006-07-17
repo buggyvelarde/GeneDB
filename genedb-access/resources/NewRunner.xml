@@ -41,7 +41,15 @@
     <bean id="cvTermDao" class="org.genedb.db.dao.CvTermDao">
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>
+        
+    <bean id="dbDao" class="org.genedb.db.dao.DbDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
     
+        
+    <bean id="dbXRefDao" class="org.genedb.db.dao.DbXRefDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
         
     <bean id="organismDao" class="org.genedb.db.dao.OrganismDao">
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -65,6 +73,8 @@
     	<property name="cvTermDao" ref="cvTermDao" />
     	<property name="organismDao" ref="organismDao" />
     	<property name="pubDao" ref="pubDao" />
+    	<property name="dbDao" ref="dbDao" />
+    	<property name="dbXRefDao" ref="dbXRefDao" />
     </bean>
     
     
