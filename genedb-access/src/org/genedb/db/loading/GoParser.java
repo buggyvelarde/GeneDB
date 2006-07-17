@@ -26,6 +26,9 @@ package org.genedb.db.loading;
 
 import org.genedb.db.dao.DaoFactory;
 import org.genedb.db.hibernate3gen.CvTerm;
+import org.genedb.db.hibernate3gen.CvTermDbXRef;
+import org.genedb.db.hibernate3gen.Db;
+import org.genedb.db.hibernate3gen.DbXRef;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -97,20 +101,24 @@ public class GoParser {
 		    }
 
 		    if ("aspect".equals(key)) {
-			switch(Character.toUpperCase(value.charAt(0))) {
-			case 'F':
-			    go.setSubtype( "function" );
-			    break;
-			case 'C':
-			    go.setSubtype( "component" );
-			    break;
-			case 'P':
-			    go.setSubtype( "process" );
-			    break;
-			default:
-			    logger.fatal("Got an invalid aspect in '"+term+"'");
-			throw new ParsingException();
-			}
+                if (value.length() > 1) {
+                    switch(Character.toUpperCase(value.charAt(0))) {
+                        case 'F':
+                            go.setSubtype( "function" );
+                            break;
+                        case 'C':
+                            go.setSubtype( "component" );
+                            break;
+                        case 'P':
+                            go.setSubtype( "process" );
+                            break;
+                        default:
+                            logger.fatal("Got an invalid aspect in '"+term+"'");
+                        throw new ParsingException();
+                    }
+		        } else {
+		            System.err.println("WARN: Aspect key found but no value");
+                }
 		    }
 
 		    if ("GOid".equals(key)) {
@@ -118,12 +126,16 @@ public class GoParser {
 			if ( bracket != -1) {
 			    value = value.substring(0,index).trim();
 			}
-			if ( value.length()!=10) {
+			if ( value.length()==10) {
+                value = value.substring(3);
+            }
+            if (value.length() != 7) {
 			    System.err.println("WARN: GO id looks wrong: "+value);
 			    continue;
-			}
-			go.setId( value.substring(3) );
-			String name = lookUpGoName( value );
+			} else {
+			    go.setId(value);
+            }
+			String name = lookUpGoName( value);
 			go.setName( name );
 			realName = name;
 			if ( curatorName != null) {
@@ -197,17 +209,21 @@ public class GoParser {
 	    if (valid!=7 && !(valid==3 && GoEvidenceCode.ND.equals(evidence))) {
 		logger.fatal("WARN:GO: Ignoring incomplete or invalid field: (count "
 			+valid+") "+term+"'");
-		throw new ParsingException();
+		//throw new ParsingException();
+        continue;
 	    }
+        ret.add(go);
 	}
 	return ret;
     }
 
 
-    @SuppressWarnings("unchecked")
-    private String lookUpGoName(String value) {
-	CvTerm go = this.daoFactory.getCvTermDao().findGoCvTermByAcc(value);
-	return go.getName();
+    private String lookUpGoName(String id) {
+        CvTerm cvTerm = daoFactory.getCvTermDao().findGoCvTermByAccViaDb(id, daoFactory);
+        if (cvTerm == null) {
+            return null;
+        }
+        return cvTerm.getName();
     }
 
 
@@ -255,7 +271,7 @@ public class GoParser {
 		    }
 		    id = id.trim();
 		    go.setId( id );
-		    String name = lookUpGoName( id );
+		    String name = lookUpGoName( id);
 		    go.setName(name);
 		    go.setWith("none");
 		    go.setFrom("none");
@@ -341,7 +357,7 @@ public class GoParser {
         }
         go.setId( terms[4].substring(3) );
 
-        String name = lookUpGoName( go.getId() );
+        String name = lookUpGoName( go.getId());
         if ( name != null ) {
             go.setName( name );
         }
