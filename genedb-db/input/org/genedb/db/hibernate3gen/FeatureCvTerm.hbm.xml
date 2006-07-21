@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 23, 2006 11:00:32 PM by Hibernate Tools 3.1.0.beta5 -->
+<hibernate-mapping>
+    <class name="org.genedb.db.hibernate3gen.FeatureCvTerm" table="feature_cvterm">
+        <comment>Associate a term from a cv with a feature, for example, GO annotation</comment>
+        <id name="featureCvTermId" type="int">
+            <column name="feature_cvterm_id" />
+            <generator class="sequence" >
+				<param name="sequence">feature_cvterm_feature_cvterm_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="cvterm" class="org.genedb.db.hibernate3gen.CvTerm" fetch="select">
+            <column name="cvterm_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="feature" class="org.genedb.db.jpa.Feature" fetch="select">
+            <column name="feature_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="pub" class="org.genedb.db.hibernate3gen.Pub" fetch="select">
+            <column name="pub_id" not-null="true" />
+        </many-to-one>
+        <property name="not" type="boolean">
+            <column name="is_not" not-null="true" />
+        </property>
+        <set name="featureCvtermprops" inverse="true">
+            <key>
+                <column name="feature_cvterm_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeatureCvTermProp" />
+        </set>
+        <set name="featureCvtermPubs" inverse="true">
+            <key>
+                <column name="feature_cvterm_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeatureCvTermPub" />
+        </set>
+        <set name="featureCvtermDbxrefs" inverse="true">
+            <key>
+                <column name="feature_cvterm_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeatureCvTermDbXRef" />
+        </set>
+    </class>
+</hibernate-mapping>

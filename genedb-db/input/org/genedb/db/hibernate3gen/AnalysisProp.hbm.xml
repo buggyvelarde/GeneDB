@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 23, 2006 11:00:32 PM by Hibernate Tools 3.1.0.beta5 -->
+<hibernate-mapping>
+    <class name="org.genedb.db.hibernate3gen.AnalysisProp" table="analysisprop">
+        <id name="analysispropId" type="int">
+            <column name="analysisprop_id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="analysis" class="org.genedb.db.hibernate3gen.Analysis" fetch="select">
+            <column name="analysis_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="cvterm" class="org.genedb.db.hibernate3gen.CvTerm" fetch="select">
+            <column name="type_id" not-null="true" />
+        </many-to-one>
+        <property name="value" type="string">
+            <column name="value" />
+        </property>
+    </class>
+</hibernate-mapping>

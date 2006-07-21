@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 23, 2006 11:00:32 PM by Hibernate Tools 3.1.0.beta5 -->
+<hibernate-mapping>
+    <class name="org.genedb.db.hibernate3gen.Pub" table="pub">
+        <id name="pubId" type="int">
+            <column name="pub_id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="cvterm" class="org.genedb.db.hibernate3gen.CvTerm" fetch="select">
+            <column name="type_id" not-null="true" />
+        </many-to-one>
+        <property name="title" type="string">
+            <column name="title" />
+        </property>
+        <property name="volumetitle" type="string">
+            <column name="volumetitle" />
+        </property>
+        <property name="volume" type="string">
+            <column name="volume" />
+        </property>
+        <property name="seriesName" type="string">
+            <column name="series_name" />
+        </property>
+        <property name="issue" type="string">
+            <column name="issue" />
+        </property>
+        <property name="pyear" type="string">
+            <column name="pyear" />
+        </property>
+        <property name="pages" type="string">
+            <column name="pages" />
+        </property>
+        <property name="miniref" type="string">
+            <column name="miniref" />
+        </property>
+        <property name="uniquename" type="string">
+            <column name="uniquename" not-null="true" unique="true" />
+        </property>
+        <property name="isObsolete" type="java.lang.Boolean">
+            <column name="is_obsolete" />
+        </property>
+        <property name="publisher" type="string">
+            <column name="publisher" />
+        </property>
+        <property name="pubplace" type="string">
+            <column name="pubplace" />
+        </property>
+        <set name="pubauthors" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.PubAuthor" />
+        </set>
+        <set name="pubRelationshipsForObjectId" inverse="true">
+            <key>
+                <column name="object_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.PubRelationship" />
+        </set>
+        <set name="pubDbxrefs" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.PubDbXRef" />
+        </set>
+        <set name="featureCvterms" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeatureCvTerm" />
+        </set>
+        <set name="featureRelationshipPubs" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeatureRelationshipPub" />
+        </set>
+        <set name="featurePubs" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeaturePub" />
+        </set>
+        <set name="featurepropPubs" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeaturePropPub" />
+        </set>
+        <set name="featureSynonyms" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true">
+                    <comment>the pub_id link is for relating the usage of a given synonym to the publication in which it was used</comment>
+                </column>
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeatureSynonym" />
+        </set>
+        <set name="featureCvtermPubs" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeatureCvTermPub" />
+        </set>
+        <set name="featureRelationshippropPubs" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeatureRelationshipPropPub" />
+        </set>
+        <set name="pubprops" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.PubProp" />
+        </set>
+        <set name="pubRelationshipsForSubjectId" inverse="true">
+            <key>
+                <column name="subject_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.PubRelationship" />
+        </set>
+        <set name="featurelocPubs" inverse="true">
+            <key>
+                <column name="pub_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.FeatureLocPub" />
+        </set>
+    </class>
+</hibernate-mapping>

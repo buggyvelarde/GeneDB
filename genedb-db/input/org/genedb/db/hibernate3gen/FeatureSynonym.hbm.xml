@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 23, 2006 11:00:32 PM by Hibernate Tools 3.1.0.beta5 -->
+<hibernate-mapping>
+    <class name="org.genedb.db.hibernate3gen.FeatureSynonym" table="feature_synonym">
+        <comment>Linking table between feature and synonym</comment>
+        <id name="featureSynonymId" type="int">
+            <column name="feature_synonym_id" />
+            <generator class="sequence" >
+				<param name="sequence">feature_synonym_feature_synonym_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="synonym" class="org.genedb.db.hibernate3gen.Synonym" fetch="select">
+            <column name="synonym_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="feature" class="org.genedb.db.jpa.Feature" fetch="select">
+            <column name="feature_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="pub" class="org.genedb.db.hibernate3gen.Pub" fetch="select">
+            <column name="pub_id" not-null="true">
+                <comment>the pub_id link is for relating the usage of a given synonym to the publication in which it was used</comment>
+            </column>
+        </many-to-one>
+        <property name="current" type="boolean">
+            <column name="is_current" not-null="true">
+                <comment>the is_current bit indicates whether the linked synonym is the current -official- symbol for the linked feature</comment>
+            </column>
+        </property>
+        <property name="internal" type="boolean">
+            <column name="is_internal" not-null="true">
+                <comment>typically a synonym exists so that somebody querying the db with an obsolete name can find the object theyre looking for (under its current name. If the
+                synonym has been used publicly &amp; deliberately (eg in a paper), it my also be listed in reports as a synonym. If the synonym was not used deliberately (eg,
+                there was a typo which went public), then the is_internal bit may be set to -true- so that it is known that the synonym is -internal- and should be queryable but
+                should not be listed in reports as a valid synonym</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

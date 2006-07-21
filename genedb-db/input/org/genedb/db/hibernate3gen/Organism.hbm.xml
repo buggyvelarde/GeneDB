@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 23, 2006 11:00:32 PM by Hibernate Tools 3.1.0.beta5 -->
+<hibernate-mapping>
+    <class name="org.genedb.db.hibernate3gen.Organism" table="organism">
+        <id name="organismId" type="int">
+            <column name="organism_id" />
+            <generator class="assigned" />
+        </id>
+        <property name="abbreviation" type="string">
+            <column name="abbreviation" />
+        </property>
+        <property name="genus" type="string">
+            <column name="genus" not-null="true" />
+        </property>
+        <property name="species" type="string">
+            <column name="species" not-null="true">
+                <comment>A type of organism is always uniquely identified by genus+species. When mapping from the NCBI taxonomy names.dmp file, the unique-name column must be used
+                where it is present, as the name column is not always unique (eg environmental samples)</comment>
+            </column>
+        </property>
+        <property name="commonName" type="string">
+            <column name="common_name" />
+        </property>
+        <property name="comment" type="string">
+            <column name="comment" />
+        </property>
+        <set name="organismprops" inverse="true">
+            <key>
+                <column name="organism_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.OrganismProp" />
+        </set>
+        <set name="features" inverse="true">
+            <key>
+                <column name="organism_id" not-null="true">
+                    <comment>The organism to which this feature belongs. This column is mandatory</comment>
+                </column>
+            </key>
+            <one-to-many class="org.genedb.db.jpa.Feature" />
+        </set>
+        <set name="organismDbxrefs" inverse="true">
+            <key>
+                <column name="organism_id" not-null="true" />
+            </key>
+            <one-to-many class="org.genedb.db.hibernate3gen.OrganismDbXRef" />
+        </set>
+    </class>
+</hibernate-mapping>
