@@ -4,8 +4,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="input"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/art/Software/MyApps/eclipse-3.2RC2/plugins/org.hibernate.eclipse_3.1.0.beta5/lib/tools/hibernate-tools.jar"/>
-	<classpathentry kind="lib" path="/Users/art/Software/MyApps/eclipse-3.2RC2/plugins/org.hibernate.eclipse_3.1.0.beta5/lib/annotations/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="/Users/art/Software/MyApps/eclipse-3.2RC2/plugins/org.hibernate.eclipse_3.1.0.beta5/lib/annotations/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
