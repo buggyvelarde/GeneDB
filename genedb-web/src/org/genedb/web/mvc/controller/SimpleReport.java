@@ -1,5 +1,23 @@
 package org.genedb.web.mvc.controller;
 
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.CvTermDao;
+import org.genedb.db.dao.FeatureDao;
+import org.genedb.db.hibernate3gen.Cv;
+import org.genedb.db.hibernate3gen.CvTerm;
+import org.genedb.db.jpa.Feature;
+import org.genedb.query.BasicQueryI;
+import org.genedb.query.NumberedQueryI;
+import org.genedb.query.QueryPlaceHolder;
+import org.genedb.query.bool.BooleanOp;
+import org.genedb.query.bool.BooleanQuery;
+import org.genedb.web.tags.bool.QueryTreeWalker;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -10,25 +28,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.CvTermDao;
-import org.genedb.db.dao.FeatureDao;
-import org.genedb.db.hibernate3gen.Cv;
-import org.genedb.db.hibernate3gen.CvTerm;
-import org.genedb.db.hibernate3gen.Pub;
-import org.genedb.query.BasicQueryI;
-import org.genedb.query.NumberedQueryI;
-import org.genedb.query.QueryPlaceHolder;
-import org.genedb.query.bool.BooleanOp;
-import org.genedb.query.bool.BooleanQuery;
-import org.genedb.web.tags.bool.QueryTreeWalker;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-
-import ca.ualberta.stothard.cgview.Feature;
-
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
  *
@@ -37,7 +36,7 @@ import ca.ualberta.stothard.cgview.Feature;
 public class SimpleReport extends MultiActionController implements InitializingBean {
     
     	private FeatureDao featureDao;
-    	private PubHome pubHome;
+    	//private PubHome pubHome;
     	private FileCheckingInternalResourceViewResolver viewChecker;
 	
 	public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
@@ -89,7 +88,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    if (id == -1) {
 		    
 	    }
-	    org.genedb.db.jpa.Feature feat = featureDao.findById(id);
+	    Feature feat = featureDao.findById(id);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
@@ -104,7 +103,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	private static final String NO_VALUE_SUPPLIED = "_NO_VALUE_SUPPLIED";
 	
 	public ModelAndView DummyGeneFeature(HttpServletRequest request, HttpServletResponse response) {
-		org.genedb.db.jpa.Feature feat = new org.genedb.db.jpa.Feature();
+	    Feature feat = new Feature();
 	    feat.setName("dummy_name");
 	    feat.setUniquename("dummy_id");
 	    CvTerm cvTerm = new CvTerm();
@@ -129,7 +128,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
             exp.printStackTrace();
         }
         // Check sequence is valid in org
-	    org.genedb.db.jpa.Feature feat = featureDao.findByUniqueName(bean.getName());
+	    Feature feat = featureDao.findByUniqueName(bean.getName());
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
@@ -192,16 +191,16 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    return new ModelAndView(viewName, model);
 	}
 	
-	public ModelAndView PublicationById(HttpServletRequest request, HttpServletResponse response) {
-	    int id = ServletRequestUtils.getIntParameter(request, "id", -1);
-	    if (id == -1) {
-		    
-	    }
-	    Pub pub = pubHome.findById(id);
-	    Map model = new HashMap(3);
-	    model.put("pub", pub);
-	    return new ModelAndView("db/pub", model);
-	}
+//	public ModelAndView PublicationById(HttpServletRequest request, HttpServletResponse response) {
+//	    int id = ServletRequestUtils.getIntParameter(request, "id", -1);
+//	    if (id == -1) {
+//		    
+//	    }
+//	    Pub pub = pubHome.findById(id);
+//	    Map model = new HashMap(3);
+//	    model.put("pub", pub);
+//	    return new ModelAndView("db/pub", model);
+//	}
 	
 	
 	/**
@@ -341,8 +340,8 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    this.featureDao = featureDao;
 	}
 
-	public void setPubHome(PubHome pubHome) {
-	    this.pubHome = pubHome;
-	}
+//	public void setPubHome(PubHome pubHome) {
+//	    this.pubHome = pubHome;
+//	}
 
 }
