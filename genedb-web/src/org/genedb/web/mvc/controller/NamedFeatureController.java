@@ -74,7 +74,7 @@ public class NamedFeatureController extends SimpleFormController {
         }
         FeatureDao featureDao = this.daoFactory.getFeatureDao();
         
-        List<Feature> results = featureDao.findByAnyName(nl);
+        List<Feature> results = featureDao.findByAnyName(nl, "gene");
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
