@@ -35,12 +35,12 @@ public interface CvDaoI {
      */
     public abstract Cv getCvById(int id);
 
-
+    // TODO Should this return a list or just one?
     /**
+     * Retrieve a controlled vocabulary by its name
      * 
-     * 
-     * @param name
-     * @return
+     * @param name the name to lookup
+     * @return the List<Cv> of matches, or null
      */
     public abstract List<Cv> getCvByName(String name);
 
@@ -65,18 +65,19 @@ public interface CvDaoI {
 
 
     /**
+     * Retrieve a CvTerm from the Gene Ontology
      * 
-     * 
-     * @param value
-     * @return
+     * @param value the 
+     * @return the corresponding CvTerm, or null
      */
     public abstract CvTerm getGoCvTermByAcc(String value);
 
 
     /**
+     * Retrieve a CvTerm from the Gene Ontology via it's database entry
      * 
-     * @param id
-     * @return
+     * @param id the database name eg GO:123456
+     * @return the corresponding CvTerm, or null
      */
     public abstract CvTerm getGoCvTermByAccViaDb(final String id);
 
