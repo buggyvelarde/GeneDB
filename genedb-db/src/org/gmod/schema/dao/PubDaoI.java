@@ -37,7 +37,6 @@ public interface PubDaoI {
      * @param uniqueName
      * @return the publication with this unique name, or null
      */
-    @SuppressWarnings("unchecked")
     public abstract Pub getPubByUniqueName(String uniqueName);
 
 }
