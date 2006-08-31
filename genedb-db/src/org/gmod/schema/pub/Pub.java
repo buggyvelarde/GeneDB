@@ -2,6 +2,8 @@ package org.gmod.schema.pub;
 
 
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.phylogeny.PhylonodePub;
+import org.gmod.schema.phylogeny.PhylotreePub;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureLocPub;
@@ -15,6 +17,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,6 +30,28 @@ import javax.persistence.Table;
 @Entity
 @Table(name="pub")
 public class Pub implements Serializable {
+    
+    
+    private Set<PhylotreePub> phylotreePubs = new HashSet<PhylotreePub>(0);
+    private Set<PhylonodePub> phylonodePubs = new HashSet<PhylonodePub>(0);
+    
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="pub")
+    public Set<PhylotreePub> getPhylotreePubs() {
+        return this.phylotreePubs;
+    }
+    
+    public void setPhylotreePubs(Set<PhylotreePub> phylotreePubs) {
+        this.phylotreePubs = phylotreePubs;
+    }
+    
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="pub")
+    public Set<PhylonodePub> getPhylonodePubs() {
+        return this.phylonodePubs;
+    }
+    
+    public void setPhylonodePubs(Set<PhylonodePub> phylonodePubs) {
+        this.phylonodePubs = phylonodePubs;
+    }
 
     // Fields    
      @Id

@@ -6,9 +6,8 @@ import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.phylogeny.Phylonode;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -18,6 +17,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,6 +35,16 @@ import javax.persistence.Table;
 @Table(name="feature")
 public class Feature implements java.io.Serializable {
 
+    private Set<Phylonode> phylonodes = new HashSet<Phylonode>(0);
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="feature")
+    public Set<Phylonode> getPhylonodes() {
+        return this.phylonodes;
+    }
+    
+    public void setPhylonodes(Set<Phylonode> phylonodes) {
+        this.phylonodes = phylonodes;
+    }
+    
     // Fields    
     @GenericGenerator(name="generator", strategy="seqhilo", parameters = {  @Parameter(name="max_lo", value="100"), @Parameter(name="sequence", value="feature_feature_id_seq") } )
     @Id @GeneratedValue(generator="generator")
@@ -100,7 +110,7 @@ public class Feature implements java.io.Serializable {
      private Set<FeatureCvTerm> featureCvTerms = new HashSet<FeatureCvTerm>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-    @Cascade( {CascadeType.ALL, CascadeType.DELETE_ORPHAN} )
+    //@Cascade( {CascadeType.ALL, CascadeType.DELETE_ORPHAN} )
      private Set<FeatureProp> featureProps = new HashSet<FeatureProp>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")

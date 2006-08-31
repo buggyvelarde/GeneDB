@@ -8,6 +8,8 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.cv.CvTermDbXRef;
 import org.gmod.schema.cv.DbXRefProp;
 import org.gmod.schema.organism.OrganismDbXRef;
+import org.gmod.schema.phylogeny.PhylonodeDbXRef;
+import org.gmod.schema.phylogeny.Phylotree;
 import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
@@ -17,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,6 +35,28 @@ import javax.persistence.Table;
 @Entity
 @Table(name="dbxref")
 public class DbXRef implements Serializable {
+    
+    private Set<PhylonodeDbXRef> phylonodeDbxrefs = new HashSet<PhylonodeDbXRef>(0);
+    private Set<Phylotree> phylotrees = new HashSet<Phylotree>(0);
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbxref")
+    public Set<PhylonodeDbXRef> getPhylonodeDbxrefs() {
+        return this.phylonodeDbxrefs;
+    }
+    
+    public void setPhylonodeDbxrefs(Set<PhylonodeDbXRef> phylonodeDbxrefs) {
+        this.phylonodeDbxrefs = phylonodeDbxrefs;
+    }
+
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbxref")
+    public Set<Phylotree> getPhylotrees() {
+        return this.phylotrees;
+    }
+    
+    public void setPhylotrees(Set<Phylotree> phylotrees) {
+        this.phylotrees = phylotrees;
+    }
+
+
 
     // Fields    
     @SequenceGenerator(name="generator", sequenceName="dbxref_dbxref_id_seq")

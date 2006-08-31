@@ -2,12 +2,14 @@ package org.gmod.schema.organism;
 
 
 
+import org.gmod.schema.phylogeny.PhylonodeOrganism;
 import org.gmod.schema.sequence.Feature;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,6 +20,16 @@ import javax.persistence.Table;
 @Entity
 @Table(name="organism")
 public class Organism implements Serializable {
+    
+    private Set<PhylonodeOrganism> phylonodeOrganisms = new HashSet<PhylonodeOrganism>(0);
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="organism")
+    public Set<PhylonodeOrganism> getPhylonodeOrganisms() {
+        return this.phylonodeOrganisms;
+    }
+    
+    public void setPhylonodeOrganisms(Set<PhylonodeOrganism> phylonodeOrganisms) {
+        this.phylonodeOrganisms = phylonodeOrganisms;
+    }
 
     // Fields    
      @Id

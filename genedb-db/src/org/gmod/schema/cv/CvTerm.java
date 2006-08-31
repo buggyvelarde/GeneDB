@@ -4,6 +4,10 @@ package org.gmod.schema.cv;
 import org.gmod.schema.analysis.AnalysisProp;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.OrganismProp;
+import org.gmod.schema.phylogeny.Phylonode;
+import org.gmod.schema.phylogeny.PhylonodeProp;
+import org.gmod.schema.phylogeny.PhylonodeRelationship;
+import org.gmod.schema.phylogeny.Phylotree;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.pub.PubProp;
 import org.gmod.schema.pub.PubRelationship;
@@ -19,6 +23,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,6 +37,61 @@ import javax.persistence.Table;
 @Table(name="cvterm")
 public class CvTerm implements Serializable {
 
+    private Set<Phylotree> phylotrees = new HashSet<Phylotree>(0);
+    private Set<PhylonodeProp> phylonodeprops = new HashSet<PhylonodeProp>(0);
+    private Set<PhylonodeRelationship> phylonodeRelationships = new HashSet<PhylonodeRelationship>(0);
+    private Set<Phylonode> phylonodes = new HashSet<Phylonode>(0);
+   
+    
+
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    public Set<Phylotree> getPhylotrees() {
+        return this.phylotrees;
+    }
+    
+    public void setPhylotrees(Set<Phylotree> phylotrees) {
+        this.phylotrees = phylotrees;
+    }
+
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    public Set<PhylonodeProp> getPhylonodeprops() {
+        return this.phylonodeprops;
+    }
+    
+    public void setPhylonodeprops(Set<PhylonodeProp> phylonodeprops) {
+        this.phylonodeprops = phylonodeprops;
+    }
+
+
+
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    public Set<PhylonodeRelationship> getPhylonodeRelationships() {
+        return this.phylonodeRelationships;
+    }
+    
+    public void setPhylonodeRelationships(Set<PhylonodeRelationship> phylonodeRelationships) {
+        this.phylonodeRelationships = phylonodeRelationships;
+    }
+
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    public Set<Phylonode> getPhylonodes() {
+        return this.phylonodes;
+    }
+    
+    public void setPhylonodes(Set<Phylonode> phylonodes) {
+        this.phylonodes = phylonodes;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // Fields    
     @Id
     @Column(name="cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
