@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.phylogeny.PhylonodeProp" table="phylonodeprop">
+        <id name="phylonodePropId" type="int">
+            <column name="phylonodeprop_id" />
+            <generator class="sequence">
+            	<param name="sequence">phylonodeprop_phylonodeprop_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="type_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="phylonode" class="org.gmod.schema.phylogeny.Phylonode" fetch="select">
+            <column name="phylonode_id" not-null="true" />
+        </many-to-one>
+        <property name="value" type="string">
+            <column name="value" not-null="true" />
+        </property>
+        <property name="rank" type="int">
+            <column name="rank" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

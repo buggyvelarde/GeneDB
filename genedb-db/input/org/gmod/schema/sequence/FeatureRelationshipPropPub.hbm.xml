@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.sequence.FeatureRelationshipPropPub" table="feature_relationshipprop_pub">
+        <comment>Provenance for feature_relationshipprop</comment>
+        <id name="featureRelationshipPropPubId" type="int">
+            <column name="feature_relationshipprop_pub_id" />
+            <generator class="sequence">
+            	<param name="sequence">feature_relationshipprop_pub_feature_relationshipprop_pub_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="featureRelationshipProp" class="org.gmod.schema.sequence.FeatureRelationshipProp" fetch="select">
+            <column name="feature_relationshipprop_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="pub" class="org.gmod.schema.pub.Pub" fetch="select">
+            <column name="pub_id" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

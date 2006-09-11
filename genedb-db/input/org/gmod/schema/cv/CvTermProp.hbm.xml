@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.cv.CvTermProp" table="cvtermprop">
+        <comment>Additional extensible properties can be attached to a cvterm using this table. Corresponds to -AnnotationProperty- in W3C OWL format</comment>
+        <id name="cvTermPropId" type="int">
+            <column name="cvtermprop_id" />
+            <generator class="sequence">
+            	<param name="sequence">cvtermprop_cvtermprop_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="cvTermByCvTermId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="cvterm_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="cvTermByTypeId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="type_id" not-null="true">
+                <comment>The name of the property/slot is a cvterm. The meaning of the property is defined in that cvterm</comment>
+            </column>
+        </many-to-one>
+        <property name="value" type="string">
+            <column name="value" not-null="true">
+                <comment>The value of the property, represented as text. Numeric values are converted to their text representation</comment>
+            </column>
+        </property>
+        <property name="rank" type="int">
+            <column name="rank" not-null="true">
+                <comment>Property-Value ordering. Any cvterm can have multiple values for any particular property type - these are ordered in a list using rank, counting from
+                zero. For properties that are single-valued rather than multi-valued, the default 0 value should be used</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

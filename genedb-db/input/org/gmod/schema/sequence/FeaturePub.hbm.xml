@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.sequence.FeaturePub" table="feature_pub">
+        <comment>Provenance. Linking table between features and publications that mention them</comment>
+        <id name="featurePubId" type="int">
+            <column name="feature_pub_id" />
+            <generator class="sequence">
+            	<param name="sequence">feature_pub_feature_pub_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="feature" class="org.gmod.schema.sequence.Feature" fetch="select">
+            <column name="feature_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="pub" class="org.gmod.schema.pub.Pub" fetch="select">
+            <column name="pub_id" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

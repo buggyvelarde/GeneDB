@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.cv.CvTermRelationship" table="cvterm_relationship">
+        <comment>A relationship linking two cvterms. A relationship can be thought of as an edge in a graph, or as a natural language statement about two cvterms. The statement is
+        of the form SUBJECT PREDICATE OBJECT; for example "wing part_of body"</comment>
+        <id name="cvTermRelationshipId" type="int">
+            <column name="cvterm_relationship_id" />
+            <generator class="sequence">
+            	<param name="sequence">cvterm_relationship_cvterm_relationship_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="cvTermBySubjectId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="subject_id" not-null="true">
+                <comment>the subject of the subj-predicate-obj sentence. In a DAG, this corresponds to the child node</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="cvTermByObjectId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="object_id" not-null="true">
+                <comment>the object of the subj-predicate-obj sentence. In a DAG, this corresponds to the parent node</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="cvTermByTypeId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="type_id" not-null="true">
+                <comment>relationship type between subject and object. This is a cvterm, typically from the OBO relationship ontology, although other relationship types are
+                allowed</comment>
+            </column>
+        </many-to-one>
+    </class>
+</hibernate-mapping>
