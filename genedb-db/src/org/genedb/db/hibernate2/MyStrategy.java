@@ -6,22 +6,25 @@ import org.hibernate.cfg.reveng.TableIdentifier;
 
 public class MyStrategy extends DelegatingReverseEngineeringStrategy {
 
-    private static final String DEF_PKG = "org.genedb.db.hibernate3gen.";
+    private static final String DEF_PKG = "org.gmod.schema.";
     
     public MyStrategy(ReverseEngineeringStrategy delegate) {
 	super(delegate);
     }
     
+    @Override
     public String columnToPropertyName(TableIdentifier table, String column) {
 	column = munge(column);
 	return super.columnToPropertyName(table, column);
     }
     
+    @Override
     public String tableToClassName(TableIdentifier ti) {
 	return DEF_PKG+munge(ti.getName());
     }
     
-    public String munge(String in) {
+    public String munge(String input) {
+        String in = input;
 	while (in.contains("_")) {
 	    StringBuffer ret = new StringBuffer();
 	    int index = in.indexOf("_");
