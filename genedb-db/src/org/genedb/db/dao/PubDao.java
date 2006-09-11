@@ -1,19 +1,18 @@
 package org.genedb.db.dao;
 
-import org.genedb.db.hibernate3gen.Pub;
 
 import org.gmod.schema.dao.PubDaoI;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.gmod.schema.pub.Pub;
 
 import java.util.List;
 
-public class PubDao extends HibernateDaoSupport implements PubDaoI {
+public class PubDao extends BaseDao implements PubDaoI {
 
     /* (non-Javadoc)
      * @see org.genedb.db.dao.PubDaoI#getPubById(int)
      */
     public Pub getPubById(int id) {
-	return (Pub) getHibernateTemplate().load(Pub.class, id);
+        return (Pub) getHibernateTemplate().load(Pub.class, id);
     }
 
     /* (non-Javadoc)
@@ -22,11 +21,8 @@ public class PubDao extends HibernateDaoSupport implements PubDaoI {
     @SuppressWarnings("unchecked")
     public Pub getPubByUniqueName(String uniqueName) {
         List<Pub> list = getHibernateTemplate().findByNamedParam(
-                "from Pub pub where pub.uniquename like :uniqueName", "uniqueName", uniqueName);
-        if (list == null) {
-            return null;
-        }
-        return list.get(0);
+                "from Pub pub where pub.uniqueName like :uniqueName", "uniqueName", uniqueName);
+        return firstFromList(list, "uniqueName", uniqueName);
     }
 
 //    public Pub findOrCreateByPmid(String pmid) {

@@ -1,20 +1,19 @@
 package org.genedb.db.dao;
 
-import org.genedb.db.hibernate3gen.Organism;
 
 import org.gmod.schema.dao.OrganismDaoI;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.gmod.schema.organism.Organism;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrganismDao extends HibernateDaoSupport implements OrganismDaoI {
+public class OrganismDao extends BaseDao implements OrganismDaoI {
 
     /* (non-Javadoc)
      * @see org.genedb.db.dao.OrganismDaoI#getOrganismById(int)
      */
     public Organism getOrganismById(int id) {
-	return (Organism) getHibernateTemplate().load(Organism.class, id);
+        return (Organism) getHibernateTemplate().load(Organism.class, id);
     }
 
     /* (non-Javadoc)
@@ -24,10 +23,7 @@ public class OrganismDao extends HibernateDaoSupport implements OrganismDaoI {
     public Organism getOrganismByCommonName(String commonName) {
         List<Organism> list = getHibernateTemplate().findByNamedParam(
 		"from Organism org where org.commonName like :commonname", "commonname", commonName);
-        if (list == null) {
-            return null;
-        }
-        return list.get(0);
+        return firstFromList(list, "commonname", commonName);
     }
     
     /* (non-Javadoc)

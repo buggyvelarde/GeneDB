@@ -1,9 +1,11 @@
 package org.genedb.db.dao;
 
-import org.genedb.db.hibernate3gen.Db;
-import org.genedb.db.hibernate3gen.DbXRef;
+
+
 
 import org.gmod.schema.dao.GeneralDaoI;
+import org.gmod.schema.general.Db;
+import org.gmod.schema.general.DbXRef;
 
 import java.util.List;
 
@@ -16,10 +18,7 @@ public class GeneralDao extends BaseDao implements GeneralDaoI {
     public Db getDbByName(String name) {
         List<Db> results = getHibernateTemplate().findByNamedParam(
 		"from Db db where db.name=:name", "name", name);
-        if (results != null && results.size()>0) {
-            return results.get(0);
-        }
-        return null;
+        return firstFromList(results, "name", name);
     }
     
     /* (non-Javadoc)
@@ -31,10 +30,7 @@ public class GeneralDao extends BaseDao implements GeneralDaoI {
                 "from DbXRef dbXRef where dbXRef.db=:db and dbXRef.accession=:accession", 
                 new String[]{"db", "accession"},
                 new Object[]{db, accession});
-        if (xrefs != null && xrefs.size()>0) {
-            return xrefs.get(0);
-        }
-        return null;
+        return firstFromList(xrefs, "db", db, "accession", accession);
     }
 
 }
