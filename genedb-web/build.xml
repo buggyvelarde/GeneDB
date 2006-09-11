@@ -2,10 +2,11 @@
 
 <project name="genedb-web" default="get-latest-jars" basedir=".">
 
-	<target name="get-latest-jars" depends="" description="Copy over JAR files from other projects">
-
+	<target name="get-latest-jars" depends="" 
+		description="Copy over JAR files from other projects">
+		<copy file="../genedb-access/lib/genedb-hibernate.jar" todir="WebContent/WEB-INF/lib" />
+		<copy file="../genedb-access/lib/chado-interface.jar" todir="WebContent/WEB-INF/lib" />
 		<copy file="../genedb-access/genedb-access.jar" todir="WebContent/WEB-INF/lib" />
-
 	</target>
 	
 </project>
