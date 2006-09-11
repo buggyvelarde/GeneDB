@@ -24,11 +24,31 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import static org.genedb.db.loading.EmblQualifiers.*;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_CURATION;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_C_CURATION;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_DB_XREF;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_COLOUR;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_FASTA_FILE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_GENE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_PSU_DB_XREF;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_EVIDENCE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_GO;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_OBSOLETE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIMARY;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIVATE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_PRODUCT;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_PSEUDO;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_SYNONYM;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_TEMP_SYS_ID;
 
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.FeatureProp;
 import org.genedb.db.loading.MiningUtils;
+import org.genedb.db.loading.ProcessingPhase;
+
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureProp;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
@@ -56,9 +76,9 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
                 new String[]{QUAL_D_FASTA_FILE});
     }
 
-    protected void processRna(org.genedb.db.jpa.Feature parent, StrandedFeature f, String type) {
+    protected void processRna(Feature parent, StrandedFeature f, String type, int offset) {
         logger.debug("Entering processing for "+type);
-        Location loc = f.getLocation();
+        Location loc = f.getLocation().translate(offset);
         Annotation an = f.getAnnotation();
         short strand = (short)f.getStrand().getValue();
         String systematicId = findName(an, type);
@@ -67,17 +87,17 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
             return;
         }
         
-        org.genedb.db.jpa.Feature rna = this.featureUtils.createFeature(type, systematicId, this.organism);
-        this.daoFactory.persist(rna);
+        org.gmod.schema.sequence.Feature rna = this.featureUtils.createFeature(type, systematicId, this.organism);
+        sequenceDao.persist(rna);
         //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-        FeatureLoc rnaFl = featureUtils.createLocation(parent,rna,loc.getMin()-1,loc.getMax(),
+        FeatureLoc rnaFl = this.featureUtils.createLocation(parent,rna,loc.getMin()-1,loc.getMax(),
                                                         strand);
-        this.daoFactory.persist(rnaFl);
+        sequenceDao.persist(rnaFl);
         //featureLocs.add(pepFl);
         //featureRelationships.add(pepFr);
         
         FeatureProp fp = createFeatureProp(rna, an, "colour", "colour", CV_MISC);
-        this.daoFactory.persist(fp);
+        sequenceDao.persist(fp);
         createFeaturePropsFromNotes(rna, an, QUAL_NOTE, MISC_NOTE);
         createFeaturePropsFromNotes(rna, an, QUAL_CURATION, MISC_CURATION);
         createFeaturePropsFromNotes(rna, an, QUAL_PRIVATE, MISC_PRIVATE);
@@ -93,6 +113,10 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
         }
         //throw new RuntimeException("No systematic id found for "+type+" entry");
         return null;
+    }
+    
+    public ProcessingPhase getProcessingPhase() {
+        return ProcessingPhase.SECOND;
     }
 
 }

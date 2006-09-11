@@ -1,19 +1,20 @@
 package org.genedb.db.loading;
 
-import org.genedb.db.hibernate3gen.DbXRef;
-import org.genedb.db.hibernate3gen.FeatureDbXRef;
-import org.genedb.db.hibernate3gen.FeatureProp;
-import org.genedb.db.hibernate3gen.FeatureSynonym;
-import org.genedb.db.hibernate3gen.Organism;
-import org.genedb.db.hibernate3gen.Pub;
-import org.genedb.db.jpa.Feature;
+
+import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
+import org.gmod.schema.pub.Pub;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeatureSynonym;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class ReadTester {
 
@@ -69,26 +70,26 @@ public class ReadTester {
         	
         	// Synonyms
 			System.err.println("Synonyms:");
-			Set<FeatureSynonym> synonyms = feature.getFeatureSynonyms();
+			Collection<FeatureSynonym> synonyms = feature.getFeatureSynonyms();
 			for (FeatureSynonym featSyn : synonyms) {
-				System.err.println("\t"+featSyn.getSynonym().getCvterm().getName()+"="+featSyn.getSynonym().getName()+"   pub="+showPublication(featSyn.getPub())+"  isCurrent="+featSyn.isCurrent()+" isInternal="+featSyn.isInternal());
+				System.err.println("\t"+featSyn.getSynonym().getCvTerm().getName()+"="+featSyn.getSynonym().getName()+"   pub="+showPublication(featSyn.getPub())+"  isCurrent="+featSyn.isCurrent()+" isInternal="+featSyn.isInternal());
 			}
         	
 			// Properties
 			System.err.println("Feature properties:");
-			Set<FeatureProp> props = feature.getFeatureProps();
+			Collection<FeatureProp> props = feature.getFeatureProps();
 			for (FeatureProp prop : props) {
-				System.err.println("\t"+prop.getRank()+"   "+prop.getCvterm().getName()+"="+prop.getValue());
+				System.err.println("\t"+prop.getRank()+"   "+prop.getCvTerm().getName()+"="+prop.getValue());
 			}
 			
-			DbXRef oneXref = feature.getDbxref();
+			DbXRef oneXref = feature.getDbXRef();
 			if (oneXref != null) {
 				System.err.println("Xref: "+oneXref.getDb().getName()+":"+oneXref.getAccession()+" : "+oneXref.getDescription());
 			}
 			
 			System.err.println("Db xrefs:");
-			for (FeatureDbXRef fdx : feature.getFeatureDbxrefs()) {
-				System.err.println("\t"+fdx.getDbxref().getDb().getName()+":"+fdx.getDbxref().getAccession()+" : "+fdx.getDbxref().getDescription()+"  : isCurrent:"+fdx.isCurrent());
+			for (FeatureDbXRef fdx : feature.getFeatureDbXRefs()) {
+				System.err.println("\t"+fdx.getDbXRef().getDb().getName()+":"+fdx.getDbXRef().getAccession()+" : "+fdx.getDbXRef().getDescription()+"  : isCurrent:"+fdx.isCurrent());
 			}
 			
 			

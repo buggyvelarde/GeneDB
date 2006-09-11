@@ -24,13 +24,11 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import static org.genedb.db.loading.EmblQualifiers.*;
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.FeatureProp;
+import org.genedb.db.loading.ProcessingPhase;
 
-import org.biojava.bio.Annotation;
+import org.gmod.schema.sequence.Feature;
+
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -52,7 +50,7 @@ public class CDS_motif_Processor extends BaseFeatureProcessor {
     }
 
     @Override
-    public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature f) {
+    public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
 //        logger.debug("Entering processing for repeat");
 //        Location loc = f.getLocation();
 //        Annotation an = f.getAnnotation();
@@ -75,4 +73,9 @@ public class CDS_motif_Processor extends BaseFeatureProcessor {
 
     }
 
+
+    public ProcessingPhase getProcessingPhase() {
+        return ProcessingPhase.SIXTH;
+    }
+    
 }

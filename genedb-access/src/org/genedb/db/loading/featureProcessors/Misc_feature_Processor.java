@@ -35,6 +35,10 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIMARY;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_PRODUCT;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 
+import org.genedb.db.loading.ProcessingPhase;
+
+import org.gmod.schema.sequence.Feature;
+
 import org.biojava.bio.seq.StrandedFeature;
 
 /**
@@ -59,7 +63,7 @@ public class Misc_feature_Processor extends BaseFeatureProcessor {
     }
 
     @Override
-    public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature f) {
+    public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
         // TODO Write this
 //        logger.debug("Entering processing for repeat");
 //        Location loc = f.getLocation();
@@ -83,4 +87,9 @@ public class Misc_feature_Processor extends BaseFeatureProcessor {
 
     }
 
+
+    public ProcessingPhase getProcessingPhase() {
+        return ProcessingPhase.SIXTH;
+    }
+    
 }

@@ -24,11 +24,9 @@
  */
 package org.genedb.db.loading;
 
-import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.hibernate3gen.CvTerm;
-import org.genedb.db.hibernate3gen.CvTermDbXRef;
-import org.genedb.db.hibernate3gen.Db;
-import org.genedb.db.hibernate3gen.DbXRef;
+import org.genedb.db.dao.CvDao;
+
+import org.gmod.schema.cv.CvTerm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,7 +38,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -53,8 +50,7 @@ import java.util.Set;
 public class GoParser {
     
     protected static final Log logger = LogFactory.getLog(GoParser.class);
-
-    private DaoFactory daoFactory;
+    private CvDao cvDao;
     
     
     public List<GoInstance> getAllGoTermsFromAnnotation(Annotation an) {
@@ -68,7 +64,7 @@ public class GoParser {
 
 
     // FIXME - Tidy validation parsing
-    protected List<GoInstance> getNewStyleGoTerm(Annotation an) {
+    public List<GoInstance> getNewStyleGoTerm(Annotation an) {
 	List<GoInstance> ret = new ArrayList<GoInstance>();
 	List<String> terms = MiningUtils.getProperties("GO", an );
 	if ( terms ==null) {
@@ -117,7 +113,7 @@ public class GoParser {
                         throw new ParsingException();
                     }
 		        } else {
-		            System.err.println("WARN: Aspect key found but no value");
+		            //System.err.println("WARN: Aspect key found but no value");
                 }
 		    }
 
@@ -132,9 +128,8 @@ public class GoParser {
             if (value.length() != 7) {
 			    System.err.println("WARN: GO id looks wrong: "+value);
 			    continue;
-			} else {
-			    go.setId(value);
-            }
+			}
+            go.setId(value);
 			String name = lookUpGoName( value);
 			go.setName( name );
 			realName = name;
@@ -219,7 +214,7 @@ public class GoParser {
 
 
     private String lookUpGoName(String id) {
-        CvTerm cvTerm = daoFactory.getCvTermDao().findGoCvTermByAccViaDb(id, daoFactory);
+        CvTerm cvTerm = cvDao.getGoCvTermByAccViaDb(id);
         if (cvTerm == null) {
             return null;
         }
@@ -393,15 +388,9 @@ public class GoParser {
     }
 
 
-
-    public DaoFactory getDaoFactory() {
-        return this.daoFactory;
-    }
-
-
-
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+    public void setCvDao(CvDao cvDao) {
+    
+        this.cvDao = cvDao;
     }
 
 }

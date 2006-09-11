@@ -24,13 +24,9 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import static org.genedb.db.loading.EmblQualifiers.*;
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.FeatureProp;
+import org.gmod.schema.sequence.Feature;
 
-import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -46,7 +42,7 @@ public class Misc_RNA_Processor extends BaseRnaProcessor {
     // TODO Is misc_rna a SO type?
     
     @Override
-    public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature ft) {
+    public void processStrandedFeature(Feature parent, StrandedFeature ft, int offset) {
         //processRna(parent, ft, "misc_RNA"); 
     }
 

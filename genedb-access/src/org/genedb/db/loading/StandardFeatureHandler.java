@@ -24,19 +24,12 @@
  */
 package org.genedb.db.loading;
 
-import static org.genedb.db.loading.EmblFeatureKeys.FT_CDS;
 import static org.genedb.db.loading.EmblFeatureKeys.FT_SOURCE;
-import static org.genedb.db.loading.EmblQualifiers.*;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_CHROMOSOME;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIVATE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_SO_TYPE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 
-import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.hibernate3gen.Cv;
-import org.genedb.db.hibernate3gen.CvTerm;
-import org.genedb.db.hibernate3gen.CvTermDbXRef;
-import org.genedb.db.hibernate3gen.DbXRef;
-import org.genedb.db.hibernate3gen.FeatureCvTerm;
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.FeatureProp;
-import org.genedb.db.hibernate3gen.FeatureRelationship;
 import org.genedb.db.loading.featureProcessors.BaseFeatureProcessor;
 
 import org.biojava.bio.Annotation;
@@ -53,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -65,8 +57,6 @@ import java.util.Set;
  * @author Adrian Tivey (art)
  */
 public class StandardFeatureHandler extends BaseFeatureProcessor implements FeatureHandler {
-
-    private NomenclatureHandler nomenclatureHandler;
 
     private List<FeatureListener> listeners = new ArrayList<FeatureListener>(0);
     
@@ -82,374 +72,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
 //        MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv("note", CV_MISC)
 //                .get(0);
  //   }
-    
-    public void processCDS(Sequence seq,
-            org.genedb.db.jpa.Feature parent, int offset) {
-        FeatureHolder fh = seq.filter(new FeatureFilter.ByType(FT_CDS));
 
-        int count = 0;
-        Iterator fit = fh.features();
-        while (fit.hasNext()) {
-            Feature f = (Feature) fit.next();
-            count++;
-            if (!(f instanceof StrandedFeature)) {
-                System.err
-                        .println("Found unstranded feature when looking for CDSs");
-                continue;
-            }
-            StrandedFeature cds = (StrandedFeature) f;
-            Annotation an = cds.getAnnotation();
-
-            if (an.containsProperty(QUAL_PSEUDO)) {
-                this.processPseudoGene();
-            } else {
-                this.processCodingGene(cds, an, parent, offset);
-            }
-        }
-        
-        // Now remove CDSs
-        List<Feature> toRemove = new ArrayList<Feature>(count);
-        fit = fh.features();
-        while (fit.hasNext()) {
-            toRemove.add((Feature) fit.next());
-        }
-        for (Feature feature : toRemove) {
-            try {
-                seq.removeFeature(feature);
-            } catch (ChangeVetoException exp) {
-                exp.printStackTrace();
-            } catch (BioException exp) {
-                exp.printStackTrace();
-            }
-        }
-
-    }
-
-    @SuppressWarnings( { "unchecked" })
-    private void processCodingGene(StrandedFeature cds, Annotation an,
-            org.genedb.db.jpa.Feature parent, int offset) {
-        String sysId = null;
-        try {
-            Location loc = cds.getLocation().translate(offset);
-            Names names = this.nomenclatureHandler.findNames(an);
-            sysId = names.getSystematicId();
-            logger.debug("Looking at systematic id '" + sysId+"'");
-            int transcriptNum = 1;
-
-            short strand = (short) cds.getStrand().getValue();
-
-            List<org.genedb.db.jpa.Feature> features = new ArrayList<org.genedb.db.jpa.Feature>();
-            List<FeatureLoc> featureLocs = new ArrayList<FeatureLoc>();
-            List<FeatureRelationship> featureRelationships = new ArrayList<FeatureRelationship>();
-
-            Cv CV_NAMING = this.daoFactory.getCvDao().findByName(
-                    "genedb_synonym_type").get(0);
-            CvTerm SYNONYM_RESERVED = this.daoFactory.getCvTermDao()
-                    .findByNameInCv(QUAL_RESERVED, CV_NAMING).get(0);
-            CvTerm SYNONYM_SYNONYM = this.daoFactory.getCvTermDao()
-                    .findByNameInCv(QUAL_SYNONYM, CV_NAMING).get(0);
-            CvTerm SYNONYM_PRIMARY = this.daoFactory.getCvTermDao()
-                    .findByNameInCv(QUAL_PRIMARY, CV_NAMING).get(0);
-            CvTerm SYNONYM_SYS_ID = this.daoFactory.getCvTermDao()
-                    .findByNameInCv(QUAL_SYS_ID, CV_NAMING).get(0);
-            CvTerm SYNONYM_TMP_SYS = this.daoFactory.getCvTermDao()
-                    .findByNameInCv(QUAL_TEMP_SYS_ID, CV_NAMING).get(0);
-            CvTerm SYNONYM_PROTEIN = this.daoFactory.getCvTermDao()
-                    .findByNameInCv("protein_name", CV_NAMING).get(0);
-            this.DUMMY_PUB = this.daoFactory.getPubDao().findByUniqueName(
-                    "null").get(0);
-            featureUtils.setDummyPub(this.DUMMY_PUB);
-
-            Cv CV_PRODUCTS = this.daoFactory.getCvDao().findByName("genedb_products").get(0);
-            //Db DB_PRODUCTS = this.daoFactory.getDbDao().findByName("genedb_products_db");
-
-            // Is this a multiply spliced gene?
-            org.genedb.db.jpa.Feature gene = null;
-            boolean altSplicing = false;
-            String sharedId = MiningUtils.getProperty("shared_id", an, null);
-            if (sharedId != null) {
-                gene = this.daoFactory.getFeatureDao().findByUniqueName(
-                        sharedId);
-                altSplicing = true;
-            }
-
-            if (gene == null) {
-                if (altSplicing) {
-                    gene = this.featureUtils.createFeature("gene", sharedId,
-                            this.organism);
-                    this.daoFactory.persist(gene);
-                    featureUtils.createSynonym(SYNONYM_SYS_ID, sharedId, gene,
-                            true);
-                } else {
-                    gene = this.featureUtils.createFeature("gene", this.gns
-                            .getGene(sysId), this.organism);
-                    if (names.getPrimary()!= null) {
-                        gene.setName(names.getPrimary());
-                    }
-                    this.daoFactory.persist(gene);
-                    storeNames(names, SYNONYM_RESERVED, SYNONYM_SYNONYM,
-                            SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS,
-                            gene);
-                }
-                // features.add(gene);
-                // this.daoFactory.persist(gene);
-
-                FeatureLoc geneFl = featureUtils.createLocation(parent, gene,
-                        loc.getMin()-1, loc.getMax(), strand);
-                gene.getFeaturelocsForFeatureId().add(geneFl);
-                featureLocs.add(geneFl);
-            } else {
-                if (altSplicing) {
-                    // Gene already exists and it's alternately spliced. 
-                    // It may not have the right coords - may need extending
-                    int newMin = loc.getMin()-1;
-                    int newMax = loc.getMax();
-                    Set<FeatureLoc> locs = gene.getFeaturelocsForFeatureId();
-                    FeatureLoc currentLoc = locs.iterator().next();  // FIXME - Assumes that only 1 feature loc.  
-                    int currentMin = currentLoc.getFmin();
-                    int currentMax = currentLoc.getFmax();
-                    if (currentMin > newMin) {
-                        currentLoc.setFmin(newMin);
-                        logger.debug("Would like to change min to '"+newMin+"' from '"+currentMin+"' for '"+sysId+"'");
-                    }
-                    if (currentMax < newMax) {
-                        currentLoc.setFmax(newMax);
-                        logger.debug("Would like to change max to '"+newMax+"' from '"+currentMax+"' for '"+sysId+"'");
-                    }
-                }
-            }
-
-            String mRnaName = this.gns.getTranscript(sysId, transcriptNum);
-            String baseName = sysId;
-            if (altSplicing) {
-                mRnaName = this.gns.getGene(sysId);
-                baseName = mRnaName;
-            }
-            org.genedb.db.jpa.Feature mRNA = this.featureUtils
-                    .createFeature("mRNA", mRnaName, this.organism);
-            this.daoFactory.persist(mRNA);
-            if (altSplicing) {
-                storeNames(names, SYNONYM_RESERVED, SYNONYM_SYNONYM,
-                        SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS, mRNA);
-            }
-            FeatureLoc mRNAFl = featureUtils.createLocation(parent, mRNA, loc
-                    .getMin()-1, loc.getMax(), strand);
-            FeatureRelationship mRNAFr = featureUtils.createRelationship(mRNA,
-                    gene, REL_PART_OF);
-            // features.add(mRNA);
-            featureLocs.add(mRNAFl);
-            featureRelationships.add(mRNAFr);
-
-            Iterator<Location> it = loc.blockIterator();
-            int exonCount = 0;
-            while (it.hasNext()) {
-                exonCount++;
-                Location l = it.next();
-                org.genedb.db.jpa.Feature exon = this.featureUtils
-                        .createFeature("exon", this.gns.getExon(baseName,
-                                transcriptNum, exonCount), this.organism);
-                FeatureRelationship exonFr = featureUtils.createRelationship(
-                        exon, mRNA, REL_PART_OF);
-                FeatureLoc exonFl = featureUtils.createLocation(parent, exon, l
-                        .getMin()-1, l.getMax(), strand);
-                features.add(exon);
-                featureLocs.add(exonFl);
-                featureRelationships.add(exonFr);
-            }
-
-            org.genedb.db.jpa.Feature polypeptide = this.featureUtils
-                    .createFeature("polypeptide", this.gns.getPolypeptide(
-                            baseName, transcriptNum), this.organism);
-            // TODO Protein name - derived from gene name in some cases.
-            // TODO where store protein name synonym - on polypeptide or
-            // gene
-            if (names.getProtein() != null) {
-                polypeptide.setName(names.getProtein());
-                featureUtils.createSynonym(SYNONYM_PROTEIN, names.getProtein(),
-                        polypeptide, true);
-            }
-            FeatureRelationship pepFr = featureUtils.createRelationship(
-                    polypeptide, mRNA, REL_DERIVES_FROM);
-            //features.add(polypeptide);
-            FeatureLoc pepFl = featureUtils.createLocation(parent, polypeptide,
-                    loc.getMin()-1, loc.getMax(), strand);
-            featureLocs.add(pepFl);
-            featureRelationships.add(pepFr);
-            // TODO store protein translation
-            // TODO protein props - store here or just in query version
-            daoFactory.persist(polypeptide);
-
-            createProducts(polypeptide, an, "product", "product", CV_PRODUCTS);
-
-            // Store feature properties based on original annotation
-            createFeatureProp(polypeptide, an, "colour", "colour", CV_MISC);
-            // 
-            // Cvterm cvTerm =
-            // daoFactory.getCvTermDao().findByNameInCv("note",
-            // MISC).get(0);
-            createFeaturePropsFromNotes(polypeptide, an, QUAL_NOTE, MISC_NOTE);
-            
-            createDbXRefs(polypeptide, an);
-            
-            createGoEntries(polypeptide, an);
-
-            // String nucleic = parent.getResidues().substring(loc.getMin(),
-            // loc.getMax());
-            // String protein = translate(nucleic);
-            // polypeptide.setResidues(protein);
-
-            // Now persist gene heirachy
-            for (org.genedb.db.jpa.Feature feature : features) {
-                // System.err.print("Trying to persist
-                // "+feature.getUniquename());
-                this.daoFactory.persist(feature);
-                // System.err.println(" ... done");
-            }
-            for (FeatureLoc location : featureLocs) {
-                this.daoFactory.persist(location);
-            }
-            for (FeatureRelationship relationship : featureRelationships) {
-                this.daoFactory.persist(relationship);
-            }
-            System.err.print(".");
-        } catch (RuntimeException exp) {
-            System.err.println("\n\nWas looking at '" + sysId + "'");
-            throw exp;
-        }
-    }
-
-    private GoParser goParser;
-    
-    public void setGoParser(GoParser goParser) {
-        this.goParser = goParser;
-    }
-
-    private void createGoEntries(org.genedb.db.jpa.Feature polypeptide, Annotation an) {
-//        List<GoInstance> gos = this.goParser.getNewStyleGoTerm(an);
-//        if (gos == null || gos.size() == 0) {
-//            return;
-//        }
-//        
-//        for (GoInstance go : gos) {
-//            // Find db_xref for go id
-//            String id = go.getId();
-//            //logger.debug("Investigating storing GO '"+id+"' on '"+polypeptide.getUniquename()+"'");
-//            
-//            CvTerm cvTerm = daoFactory.getCvTermDao().findGoCvTermByAccViaDb(id, daoFactory);
-//            if (cvTerm == null) {
-//                logger.warn("Unable to find a CvTerm for the GO id of '"+id+"'. Skipping");
-//                continue;
-//            }
-//            
-//            // Find or create feature_cvterm
-//            Pub pub = daoFactory.getPubDao().findByUniqueName(id);
-//            
-//            
-//            boolean not = false; // TODO - Should get from GO object
-//            FeatureCvTerm fct = daoFactory.getFeatureDao().findFeatureCvTermByFeatureAndCvTerm(polypeptide, cvTerm, pub, not);
-//            if (fct == null) {
-//                fct = new FeatureCvTerm();
-//                fct.setFeature(polypeptide);
-//                fct.setCvterm(cvTerm);
-//                fct.setNot(not);
-//                fct.setPub(pub);
-//                daoFactory.persist(fct);
-//                logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
-//            } else {
-//                logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
-//            }
-//        }
-        
-    }
-
-    private void storeNames(Names names, CvTerm SYNONYM_RESERVED,
-            CvTerm SYNONYM_SYNONYM, CvTerm SYNONYM_PRIMARY,
-            CvTerm SYNONYM_SYS_ID, CvTerm SYNONYM_TMP_SYS,
-            org.genedb.db.jpa.Feature gene) {
-        if (names.isIdTemporary()) {
-            featureUtils.createSynonym(SYNONYM_TMP_SYS,
-                    names.getSystematicId(), gene, true);
-        } else {
-            featureUtils.createSynonym(SYNONYM_SYS_ID, names.getSystematicId(),
-                    gene, true);
-        }
-        if (names.getPrimary() != null) {
-            gene.setName(names.getPrimary());
-            featureUtils.createSynonym(SYNONYM_PRIMARY, names.getPrimary(),
-                    gene, true);
-        }
-        if (names.getReserved() != null) {
-            featureUtils.createSynonym(SYNONYM_RESERVED, names.getReserved(),
-                    gene, true);
-        }
-        if (names.getSynonyms() != null) {
-            featureUtils.createSynonyms(SYNONYM_SYNONYM, names.getSynonyms(),
-                    gene, true);
-        }
-        if (names.getObsolete() != null) {
-
-        }
-        if (names.getPreviousSystematicIds() != null) {
-            featureUtils.createSynonyms(SYNONYM_SYS_ID, names
-                    .getPreviousSystematicIds(), gene, false);
-        }
-    }
-
-    private void processPseudoGene() {
-        // TODO Pseudogenes
-        return;
-    }
-
-    private void createProducts(
-            org.genedb.db.jpa.Feature f, Annotation an,
-            String annotationKey, String dbKey, Cv cv) {
-        
-//        List<String> products = MiningUtils.getProperties(annotationKey, an);
-//        int i = 0;
-//        for (String product : products) {
-//            FeatureProp fp = new FeatureProp();
-//            fp.setRank(i);
-//            fp.setCvterm(cvTerm);
-//            fp.setFeature(f);
-//            // fp.setFeaturepropPubs(arg0);
-//            fp.setValue(value);
-//
-//            f.getFeatureProps().add(fp);
-//            ret.add(fp);
-//        }
-//        
-//        List<FeatureProp> ret = new ArrayList<FeatureProp>(3);
-//
-//        List<CvTerm> cvTerms = daoFactory.getCvTermDao().findByNameInCv(
-//                annotationKey, cv);
-//
-//        CvTerm cvTerm;
-//        if (cvTerms == null || cvTerms.size() == 0) {
-//            cvTerm = new CvTerm();
-//            cvTerm.setCv(cv);
-//            cvTerm.setName(annotationKey);
-//            cvTerm.setDefinition(annotationKey);
-//        } else {
-//            cvTerm = cvTerms.get(0);
-//        }
-//
-// 
-    }
-
-//    private ParsedString parseDbXref(String in, String prefix) {
-//        ParsedString ret;
-//        String lookFor = "(" + prefix;
-//        int index = in.indexOf(lookFor);
-//        if (index != -1) {
-//            int rbracket = in.indexOf(")", index);
-//            String part = in.substring(index + 1, rbracket);
-//            in = in.substring(0, index) + in.substring(rbracket + 1);
-//            ret = new ParsedString(in, part);
-//        } else {
-//            ret = new ParsedString(in, null);
-//        }
-//        return ret;
-//    }
 
     // private String translate(String nucleic) {
     // if (translation != null && translation.length() > 0 ) {
@@ -506,7 +129,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
      * @see org.genedb.db.loading.FeatureHandler#processSources(org.biojava.bio.seq.Sequence)
      */
     @SuppressWarnings("unchecked")
-    public org.genedb.db.jpa.Feature processSources(Sequence seq)
+    public org.gmod.schema.sequence.Feature processSources(Sequence seq)
             throws ChangeVetoException, BioException {
         FeatureHolder fh = seq.filter(new FeatureFilter.ByType(FT_SOURCE));
 
@@ -550,20 +173,13 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
         // System.err.println("Would like to create a '"+foundType+"' with name
         // '"+uniqueName+"'");
 
-        org.genedb.db.jpa.Feature topLevel = this.featureUtils
+        org.gmod.schema.sequence.Feature topLevel = this.featureUtils
                 .createFeature(foundType, uniqueName, this.organism);
         // System.err.println("Got a feature to persist");
 
         topLevel.setResidues(seq.seqString());
-        topLevel.setMd5Checksum(FeatureUtils.calcMD5(seq.seqString())); // FIXME
-        // -
-        // should
-        // be
-        // set
-        // by
-        // setResidues
 
-        this.daoFactory.persist(topLevel);
+        sequenceDao.persist(topLevel);
         // System.err.println("Have persisted feature");
 
         sources.remove(fullLengthSource);
@@ -576,10 +192,6 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
         return topLevel;
     }
 
-
-    public void setNomenclatureHandler(NomenclatureHandler nomenclatureHandler) {
-        this.nomenclatureHandler = nomenclatureHandler;
-    }
 
     public void addFeatureListener(FeatureListener fl) {
         listeners.add(fl);
@@ -596,8 +208,13 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
     }
 
     @Override
-    public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature feat) {
+    public void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature feat, int offset) {
         // Dummy method
+    }
+
+
+    public ProcessingPhase getProcessingPhase() {
+        return ProcessingPhase.FIRST;
     }
 
 }

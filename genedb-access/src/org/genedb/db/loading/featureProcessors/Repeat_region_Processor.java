@@ -25,14 +25,13 @@
 package org.genedb.db.loading.featureProcessors;
 
 import static org.genedb.db.loading.EmblQualifiers.QUAL_D_COLOUR;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_GENE;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 
-import org.genedb.db.loading.EmblQualifiers;
 import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
@@ -47,41 +46,60 @@ import org.biojava.bio.symbol.Location;
  * 
  * @author Adrian Tivey (art)
  */
-public class LTR_Processor extends BaseFeatureProcessor {
+public class Repeat_region_Processor extends BaseFeatureProcessor {
 
-    public LTR_Processor() {
-        super(new String[]{},
-                new String[]{},
+    private static int numProcessed = 0;
+    
+    public Repeat_region_Processor() {
+        super(new String[]{}, 
+                new String[]{}, 
                 new String[]{QUAL_D_COLOUR},
-                new String[]{QUAL_NOTE},
+                new String[]{QUAL_NOTE, QUAL_D_GENE}, 
                 new String[]{});
     }
 
     @Override
     public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
-        // TODO is LTR a SO feature?
-        logger.debug("Entering processing for long_terminal_repeat (LTR)");
+        numProcessed++;
+        logger.info("Entering processing for repeat '"+numProcessed+"'");
         Location loc = f.getLocation();
         Annotation an = f.getAnnotation();
         short strand = (short)f.getStrand().getValue();
-        String systematicId = "LTR"+loc.getMin()+"-"+loc.getMax(); 
         
-        org.gmod.schema.sequence.Feature ltr = this.featureUtils.createFeature("long_terminal_repeat", systematicId,
+        if (!an.containsProperty("rpt_type")) {
+            return;
+        }
+        
+        String repeatType = (String) an.getProperty("rpt_type");
+        String soType = repeatType;
+        
+        if (repeatType.equals("direct")) {
+            soType = "direct_repeat";
+        }
+        
+        String systematicId = "repeat"+(loc.getMin()-1)+"-"+loc.getMax();
+        if (an.containsProperty("systematic_id")) {
+            systematicId = (String) an.getProperty("systematic_id");
+        }
+        
+        org.gmod.schema.sequence.Feature repeat = this.featureUtils.createFeature(soType, systematicId,
                 this.organism);
-        sequenceDao.persist(ltr);
-
-        FeatureLoc ltrFl = featureUtils.createLocation(parent,ltr,loc.getMin()-1,loc.getMax(),
+        sequenceDao.persist(repeat);
+        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
+        FeatureLoc repeatFl = featureUtils.createLocation(parent,repeat,loc.getMin()-1,loc.getMax(),
                                                         strand);
-        sequenceDao.persist(ltrFl);
-      
-        FeatureProp fp = createFeatureProp(ltr, an, "colour", "colour", CV_MISC);
-        sequenceDao.persist(fp);
-        createFeaturePropsFromNotes(ltr, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE);
-    }
+        sequenceDao.persist(repeatFl);
+        //featureLocs.add(pepFl);
+        //featureRelationships.add(pepFr);
+        
+        //FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
+        //this.daoFactory.persist(fp);
+        //createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
 
+    }
 
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SIXTH;
     }
-    
+
 }

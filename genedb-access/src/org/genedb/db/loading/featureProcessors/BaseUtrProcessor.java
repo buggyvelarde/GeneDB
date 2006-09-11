@@ -24,15 +24,26 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import static org.genedb.db.loading.EmblQualifiers.*;
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.FeatureRelationship;
-import org.genedb.db.loading.MiningUtils;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_DB_XREF;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_GENE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_PSU_DB_XREF;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
+
+import org.genedb.db.loading.ProcessingPhase;
+
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureRelationship;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
+import org.biojava.bio.seq.StrandedFeature.Strand;
 import org.biojava.bio.symbol.Location;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -54,52 +65,163 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
                 new String[]{});
     }
 
-    protected void processUTR(String type, org.genedb.db.jpa.Feature parent, StrandedFeature feat) {
-        // TODO Doesn't cope with splicing
+    protected void processUTR(String type, Feature parent, StrandedFeature feat, int offset) {
+        
+        //logger.warn("Trying to process "+type);
+        
         Annotation an = feat.getAnnotation();
-        Location loc = feat.getLocation();
-        if (an.containsProperty("systematic_id")) {
-            // Hopefully the systematic name of a gene
-            String sysId = (String) an.getProperty("systematic_id");
-            org.genedb.db.jpa.Feature gene = daoFactory.getFeatureDao().findByUniqueName(sysId);
-            if (gene != null) {
-                org.genedb.db.jpa.Feature utr = this.featureUtils
-                .createFeature(type, this.gns.get5pUtr(sysId, 0), this.organism);
-                FeatureRelationship utrFr = featureUtils.createRelationship(
-                        utr, gene, REL_PART_OF);
-                FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
-                        loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());
-                daoFactory.persist(utr);
-                daoFactory.persist(utrFr);
-                daoFactory.persist(utrFl);
+        Location loc = feat.getLocation().translate(offset);
+        Feature above = null;
+        above = tieFeatureByNameInQualifier("systematic_id", parent, feat, an, loc);
+        if (above == null) {
+            above = tieFeatureByNameInQualifier("temporary_systematic_id", parent, feat, an, loc);
+        }
+        if (above == null) {
+            above = tieFeatureByNameInQualifier("gene", parent, feat, an, loc);
+        }
+        if (above == null) {
+            above = tieToGeneByLocation(type, parent, feat, loc);
+            
+        }
+        if (above == null) {
+            logger.warn("Got all the way through and not handled");
+            return;
+        }
+        storeUtr(type, above, parent, feat, loc);
+        
+        // TODO Other properties/db_xrefs etc
+        
+    }
+
+    private Feature tieToGeneByLocation(String type, Feature parent, StrandedFeature feat, Location loc) {
+
+        // Try and store via location
+
+        Strand strand = feat.getStrand();
+        int leftMost = loc.getMin()-1;
+        int rightMost = loc.getMax();
+        //logger.warn("Trying to tie UTR via location min='"+leftMost+"' max='"+rightMost+"' strand='"+strand.getToken()+"'");
+        
+        boolean reverse = false;
+        if (strand.equals(StrandedFeature.NEGATIVE)) {
+            reverse = true;
+        }
+        List<Feature> features = new ArrayList<Feature>(0);
+            
+        if ("three_prime_UTR".equals(type)) {
+            if (reverse) {
+                // On the left on reverse strand
+                features = sequenceDao.getFeaturesByRange(rightMost, rightMost, strand.getValue(), parent, "gene");
             } else {
-                // TODO Complain bitterly
+                // On the right on positive strand
+                features = sequenceDao.getFeaturesByRange(leftMost, leftMost, strand.getValue(), parent, "gene");
             }
         } else {
-            if (an.containsProperty("gene")) {
-                logger.debug("No systematic id found for "+type+", but found /gene");
-                //TODO check if only one result else complain bitterly
-                String name = MiningUtils.getProperty("gene", an, null);
-                List<org.genedb.db.jpa.Feature> genes = daoFactory.getFeatureDao().findByAnyCurrentName(name);
-                if (genes != null && genes.size()==1) {
-                    org.genedb.db.jpa.Feature gene = genes.get(0);
-                    // FIXME - Always generating 5' name
-                    String utrName = this.gns.get5pUtr(gene.getUniquename(), 0);
-                    if ("three_prime_UTR".equals(type)) {
-                        utrName = this.gns.get3pUtr(gene.getUniquename(), 0);
-                    }
-                    org.genedb.db.jpa.Feature utr = this.featureUtils
-                    .createFeature(type, utrName, this.organism);
-                    FeatureRelationship utrFr = featureUtils.createRelationship(
-                            utr, gene, REL_PART_OF);
-                    FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
-                            loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());
-                    daoFactory.persist(utr);
-                    daoFactory.persist(utrFr);
-                    daoFactory.persist(utrFl);
-                }
+            // 5'UTR
+            if (reverse) {
+                // On the right on reverse strand
+                features = sequenceDao.getFeaturesByRange(leftMost, leftMost, strand.getValue(), parent, "gene");
+            } else {
+                // On the left on forward strand
+                features = sequenceDao.getFeaturesByRange(rightMost, rightMost, strand.getValue(), parent, "gene");
             }
         }
+        if (features.size() == 0) {
+            logger.warn("Looking to place UTR by location but can't find gene");
+            return null;
+        }
+        if (features.size() > 1) {
+            logger.warn("Looking to place UTR by location but can't find unique gene ('"+features.size()+"' found)");
+            return null;
+        }
+        return features.get(0);
+
     }
+
+    
+    private void storeUtr(String type, Feature above, Feature parent, StrandedFeature feat, Location loc) {
+        // FIXME Doesn't cope with splicing
+
+       Feature gene = null;
+       Feature transcript = null;
+       
+       if (above.getCvTerm().getName().equals("gene")) {
+           //logger.info("Trying to store '"+type+"' for gene '"+above.getUniquename()+"'");
+           gene = above;
+           Collection<FeatureRelationship> frs = gene.getFeatureRelationshipsForObjectId(); 
+           //logger.info("The number of possible transcripts is '"+frs.size()+"'");
+           for (FeatureRelationship fr : frs) {
+               transcript = fr.getFeatureBySubjectId();
+               break;
+           }
+       } else {
+           transcript = above;
+           //logger.info("Trying to store '"+type+"' for transcript '"+above.getUniquename()+"'");
+           Collection<FeatureRelationship> frs = transcript.getFeatureRelationshipsForSubjectId(); 
+           //logger.info("The number of possible genes is '"+frs.size()+"'");
+           for (FeatureRelationship fr : frs) {
+               gene = fr.getFeatureByObjectId();
+               break;
+           }
+       }
+        
+       Iterator<Location> it = loc.blockIterator();
+       int exonCount = 0;
+       while (it.hasNext()) {
+           String utrName = this.gns.get5pUtr(transcript.getUniqueName(), exonCount);
+           if ("three_prime_UTR".equals(type)) {
+               utrName = this.gns.get3pUtr(transcript.getUniqueName(), exonCount);
+           }
+           exonCount++;
+           Location exonLoc = it.next();      
+           Feature utr = this.featureUtils.createFeature("exon", "exon:"+(exonCount-1)+":"+utrName, this.organism);
+           FeatureRelationship utrFr = this.featureUtils.createRelationship(utr, transcript, REL_PART_OF, exonCount-1);
+           FeatureLoc utrFl = this.featureUtils.createLocation(parent, utr, 
+                   exonLoc.getMin()-1, exonLoc.getMax(), (short)feat.getStrand().getValue());
+
+           sequenceDao.persist(utr);
+           sequenceDao.persist(utrFr);
+           sequenceDao.persist(utrFl);
+       }
+        
+       String utrName = this.gns.get5pUtr(transcript.getUniqueName(), 0);
+       if ("three_prime_UTR".equals(type)) {
+           utrName = this.gns.get3pUtr(transcript.getUniqueName(), 0);
+       }
+       Feature utr = this.featureUtils.createFeature(type, utrName, this.organism);
+       FeatureRelationship utrFr = this.featureUtils.createRelationship(utr, transcript, REL_PART_OF, 0);
+       FeatureLoc utrFl = this.featureUtils.createLocation(parent, utr, 
+                loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());
+        sequenceDao.persist(utr);
+        sequenceDao.persist(utrFr);
+        sequenceDao.persist(utrFl);
+        
+        changeFeatureBounds(loc, gene);
+        changeFeatureBounds(loc, transcript);
+        
+    }
+
+    private void changeFeatureBounds(Location loc, Feature feature) {
+        int newMin = loc.getMin()-1;
+        int newMax = loc.getMax();
+        Collection<FeatureLoc> locs = feature.getFeatureLocsForFeatureId();
+        FeatureLoc currentLoc = locs.iterator().next();  // FIXME - Assumes that only 1 feature loc.  
+        int currentMin = currentLoc.getFmin();
+        int currentMax = currentLoc.getFmax();
+        if (currentMin > newMin) {
+            currentLoc.setFmin(newMin);
+            //logger.info("Would like to change min to '"+newMin+"' from '"+currentMin+"' for '"+feature.getUniquename()+"'");
+        }
+        if (currentMax < newMax) {
+            currentLoc.setFmax(newMax);
+            //logger.info("Would like to change max to '"+newMax+"' from '"+currentMax+"' for '"+feature.getUniquename()+"'");
+        }
+    }
+
+    public ProcessingPhase getProcessingPhase() {
+        return ProcessingPhase.FOURTH;
+    }
+        
+
 
 }

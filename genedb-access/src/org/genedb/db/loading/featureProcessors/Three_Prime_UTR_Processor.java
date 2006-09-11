@@ -25,6 +25,8 @@
 package org.genedb.db.loading.featureProcessors;
 
 
+import org.gmod.schema.sequence.Feature;
+
 import org.biojava.bio.seq.StrandedFeature;
 
 /**
@@ -39,8 +41,8 @@ import org.biojava.bio.seq.StrandedFeature;
 public class Three_Prime_UTR_Processor extends BaseUtrProcessor {
 
     @Override
-    public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature feat) {
-        processUTR("three_prime_UTR", parent, feat);
+    public void processStrandedFeature(Feature parent, StrandedFeature feat, int offset) {
+        processUTR("three_prime_UTR", parent, feat, offset);
     }
 
 }

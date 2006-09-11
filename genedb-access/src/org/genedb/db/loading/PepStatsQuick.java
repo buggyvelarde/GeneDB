@@ -108,20 +108,21 @@ class PepStatsQuick {
     /*
      */
     public static String replaceResidues(String peptideString, PepStatValues ret) {
+        String retString = peptideString;
         List<Character> replacedChars = new ArrayList<Character>();
 
-        if ( peptideString.indexOf("-") != -1 ) {
-            peptideString = peptideString.replaceAll("-", "A");
+        if ( retString.indexOf("-") != -1 ) {
+            retString = retString.replaceAll("-", "A");
             replacedChars.add('-');
         }
 
-        if ( peptideString.indexOf("~") != -1 ) {
-            peptideString = peptideString.replaceAll("~", "A");
+        if ( retString.indexOf("~") != -1 ) {
+            retString = retString.replaceAll("~", "A");
             replacedChars.add('~');
         }
 
-        if ( peptideString.indexOf("X") != -1 ) {
-            peptideString = peptideString.replaceAll("X", "A");
+        if ( retString.indexOf("X") != -1 ) {
+            retString = retString.replaceAll("X", "A");
             replacedChars.add('X');
         }
 
@@ -142,7 +143,7 @@ class PepStatsQuick {
                                   "), from ambiguous sequence data, by alanine (A)");
         }
 
-        return peptideString;
+        return retString;
     }
 
 

@@ -24,28 +24,38 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.hibernate3gen.Cv;
-import org.genedb.db.hibernate3gen.CvTerm;
-import org.genedb.db.hibernate3gen.Db;
-import org.genedb.db.hibernate3gen.DbXRef;
-import org.genedb.db.hibernate3gen.FeatureDbXRef;
-import org.genedb.db.hibernate3gen.FeatureProp;
-import org.genedb.db.hibernate3gen.FeaturePropPub;
-import org.genedb.db.hibernate3gen.Organism;
-import org.genedb.db.hibernate3gen.Pub;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_CURATION;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_DB_XREF;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_D_PSU_DB_XREF;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIVATE;
+
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.GeneralDao;
+import org.genedb.db.dao.PubDao;
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.FeatureUtils;
 import org.genedb.db.loading.GeneDbGeneNamingStrategy;
 import org.genedb.db.loading.GeneNamingStrategy;
 import org.genedb.db.loading.MiningUtils;
-import static org.genedb.db.loading.EmblQualifiers.*;
+
+import org.gmod.schema.cv.Cv;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.Db;
+import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
+import org.gmod.schema.pub.Pub;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeaturePropPub;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Feature;
 import org.biojava.bio.seq.StrandedFeature;
+import org.biojava.bio.symbol.Location;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -66,9 +76,11 @@ import java.util.Set;
  */
 public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
+    protected SequenceDao sequenceDao;
+    
+    protected CvDao cvDao;
+    
     protected FeatureUtils featureUtils;
-
-    protected DaoFactory daoFactory;
 
     protected Organism organism;
 
@@ -81,6 +93,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected CvTerm REL_PART_OF;
 
     protected Cv CV_MISC;
+    protected Cv CV_GENEDB;
 
     protected CvTerm MISC_NOTE;
     protected CvTerm MISC_CURATION;
@@ -104,7 +117,11 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     protected CvTerm REL_DERIVES_FROM;
 
-    public Set warnedDbs = new HashSet();
+    public Set<Db> warnedDbs = new HashSet<Db>();
+
+    private GeneralDao generalDao;
+    
+    protected PubDao pubDao;
 
     public BaseFeatureProcessor() {
         // Deliberately empty
@@ -121,24 +138,21 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     }
 
     public void afterPropertiesSet() {
-        CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
+        CV_RELATION = cvDao.getCvByName("relationship").get(0);
        
-        REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
-        CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
-        CV_MISC = daoFactory.getCvDao().findByName("autocreated").get(0);
-        CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
+        REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
+        CV_SO = cvDao.getCvByName("sequence").get(0);
+        CV_MISC = cvDao.getCvByName("autocreated").get(0);
+        CV_RELATION = cvDao.getCvByName("relationship").get(0);
+        CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
         
-        REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
-        REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv(
-                "derives_from", CV_SO).get(0);
-        MISC_NOTE = daoFactory.getCvTermDao().findByNameInCv(QUAL_NOTE, CV_MISC).get(0);
-        MISC_CURATION = daoFactory.getCvTermDao().findByNameInCv(QUAL_CURATION, CV_MISC).get(0);
-        MISC_PRIVATE = daoFactory.getCvTermDao().findByNameInCv(QUAL_PRIVATE, CV_MISC).get(0);
-        DB_GO = daoFactory.getDbDao().findByName("GO");
-    }
-
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+        REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
+        REL_DERIVES_FROM = cvDao.getCvTermByNameInCv("derives_from", CV_SO).get(0);
+        MISC_NOTE = cvDao.getCvTermByNameInCv(QUAL_NOTE, CV_MISC).get(0);
+        MISC_CURATION = cvDao.getCvTermByNameInCv(QUAL_CURATION, CV_MISC).get(0);
+        MISC_PRIVATE = cvDao.getCvTermByNameInCv(QUAL_PRIVATE, CV_MISC).get(0);
+        DB_GO = generalDao.getDbByName("GO");
+        
     }
 
     public void setOrganism(Organism organism) {
@@ -151,23 +165,33 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     }
 
 
-    public void process(org.genedb.db.jpa.Feature parent, Feature feat) {
+    public void process(final org.gmod.schema.sequence.Feature parent, final Feature feat, final int offset) {
         MiningUtils.sanityCheckAnnotation(feat, requiredSingle, requiredMultiple, 
                 optionalSingle , optionalMultiple, discard, false, true);
-        processStrandedFeature(parent, (StrandedFeature) feat);
+        
+      TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
+      tt.execute(
+              new TransactionCallbackWithoutResult() {
+                  @Override
+                  public void doInTransactionWithoutResult(TransactionStatus status) {
+                      processStrandedFeature(parent, (StrandedFeature) feat, offset);
+                  }
+              });
+        
+        //processStrandedFeature(parent, (StrandedFeature) feat);
     }
     
-    public abstract void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature f);
+    public abstract void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature f, int offset);
     
 
-    protected FeatureProp createFeatureProp(org.genedb.db.jpa.Feature f, Annotation an, String annotationKey, String dbKey, Cv cv) {
-        CvTerm cvTerm = daoFactory.getCvTermDao().findByNameInCv(annotationKey,cv).get(0);
+    protected FeatureProp createFeatureProp(org.gmod.schema.sequence.Feature f, Annotation an, String annotationKey, String dbKey, Cv cv) {
+        CvTerm cvTerm = cvDao.getCvTermByNameInCv(annotationKey,cv).get(0);
     
         String value = MiningUtils.getProperty(annotationKey, an, null);
-    
+        // TODO Other constructor?
         FeatureProp fp = new FeatureProp();
         fp.setRank(0);
-        fp.setCvterm(cvTerm);
+        fp.setCvTerm(cvTerm);
         fp.setFeature(f);
         // fp.setFeaturepropPubs(arg0);
         fp.setValue(value);
@@ -176,8 +200,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         return fp;
     }
 
-    protected void createFeaturePropsFromNotes(org.genedb.db.jpa.Feature f, Annotation an, String key, CvTerm cvTerm) {
-        logger.debug("About to set '"+key+"' for feature '" + f.getUniquename()
+    protected void createFeaturePropsFromNotes(org.gmod.schema.sequence.Feature f, Annotation an, String key, CvTerm cvTerm) {
+        logger.debug("About to set '"+key+"' for feature '" + f.getUniqueName()
                 + "'");
         // Cvterm cvTerm = daoFactory.getCvTermDao().findByNameInCv(key,
         // cv).get(0);
@@ -198,7 +222,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         for (String note : notes) {
             FeatureProp fp = new FeatureProp();
             fp.setRank(count);
-            fp.setCvterm(cvTerm);
+            fp.setCvTerm(cvTerm);
             fp.setFeature(f);
             // TODO Parse info from (PMID:...) if present
             // TODO cope with more than one
@@ -214,15 +238,15 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
             // fpub.setPub(pub);
             // // FIXME - should add fpubs.add(fpub);
             // } while (ps.isSplit());
-            fp.setFeaturepropPubs(fpubs);
+            fp.setFeaturePropPubs(fpubs);
             fp.setValue(note);
-            daoFactory.persist(fp);
+            sequenceDao.persist(fp);
             count++;
         }
         
     }
     
-    private void createDbXrefs(org.genedb.db.jpa.Feature polypeptide, Annotation an) {
+    protected void createDbXRefs(org.gmod.schema.sequence.Feature polypeptide, Annotation an) {
         List<String> xrefs = MiningUtils.getProperties(QUAL_DB_XREF, an);
         if (xrefs == null) {
             xrefs = new ArrayList<String>();
@@ -271,7 +295,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                         description = parts[1];
                     }
                 }
-                Db db = this.daoFactory.getDbDao().findByName(dbName);
+                Db db = generalDao.getDbByName(dbName);
                 if (db == null) {
                     if (!warnedDbs.contains(db)) {
                         logger.warn("Can't find a db entry for the name of '"+dbName+"'. Skipping");
@@ -279,29 +303,73 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                     }
                     continue;
                 }
-                logger.info("Trying to store '"+xref+"'. Got a db");
-                 DbXRef dbXRef = this.daoFactory.getDbXRefDao().findByDbAndAcc(db, acc);
+                //logger.info("Trying to store '"+xref+"'. Got a db");
+                 DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, acc);
                 if (dbXRef == null) {
-                    dbXRef = new DbXRef();
+                    dbXRef = new DbXRef(); // TODO Use constructor?
                     dbXRef.setDb(db);
                     dbXRef.setAccession(acc);
                     dbXRef.setVersion("1"); // TODO - a bit arbitary
                     // TODO - Mark as needing looking up for description
-                    daoFactory.persist(dbXRef);
-                    logger.info("Creating DbXref for db '"+db+"' and acc '"+acc+"'");
+                    generalDao.persist(dbXRef);
+                    //logger.info("Creating DbXref for db '"+db+"' and acc '"+acc+"'");
                 } else {
-                    logger.info("Using an existing dbXRef from the db");
+                    //logger.info("Using an existing dbXRef from the db");
                 }
-                logger.info("dbXRef just before storage is '"+dbXRef+"'");
-                FeatureDbXRef fdr = new FeatureDbXRef();
-                fdr.setDbxref(dbXRef);
-                fdr.setFeature(polypeptide);
-                logger.info("Persisting new FeatureDbXRef");
-                daoFactory.persist(fdr);
+                //logger.info("dbXRef just before storage is '"+dbXRef+"'");
+                FeatureDbXRef fdr = new FeatureDbXRef(dbXRef, polypeptide, true);
+                //logger.info("Persisting new FeatureDbXRef");
+                sequenceDao.persist(fdr);
                 // TODO Store any user supplied notes
             }
             
         }
+
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
+
+    public void setCvDao(CvDao cvDao) {
+        this.cvDao = cvDao;
+    }
+
+    public void setGeneralDao(GeneralDao generalDao) {
+        this.generalDao = generalDao;
+    }
+
+
+    protected org.gmod.schema.sequence.Feature tieFeatureByNameInQualifier(String qualifier, org.gmod.schema.sequence.Feature parent, StrandedFeature feat, Annotation an, Location loc) {
+            org.gmod.schema.sequence.Feature ret = null;
+            if (an.containsProperty(qualifier)) {
+                //logger.warn("Trying to tie UTR via '"+qualifier+"'");
+                // Hopefully the systematic name of a gene
+                String sysId = MiningUtils.getProperty(qualifier, an, null);
+                ret = sequenceDao.getFeatureByUniqueName(sysId);
+                if (ret == null) {
+    //                String utrName = this.gns.get5pUtr(gene.getUniquename(), 0);
+    //                if ("three_prime_UTR".equals(type)) {
+    //                    utrName = this.gns.get3pUtr(gene.getUniquename(), 0);
+    //                }
+    //                org.genedb.db.jpa.Feature utr = this.featureUtils
+    //                .createFeature(type, utrName, this.organism);
+    //                FeatureRelationship utrFr = featureUtils.createRelationship(
+    //                        utr, gene, REL_PART_OF);
+    //                FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
+    //                        loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());
+    //                daoFactory.persist(utr);
+    //                daoFactory.persist(utrFr);
+    //                daoFactory.persist(utrFl);
+    //                handled = true;
+    
+                    // TODO Complain bitterly
+                }
+            }
+            return ret;
+        }
+
+    public void setPubDao(PubDao pubDao) {
+        this.pubDao = pubDao;
+    }
 
 //    private ParsedString parseDbXref(String in, String prefix) {
 //            ParsedString ret;

@@ -27,6 +27,10 @@ package org.genedb.db.loading.featureProcessors;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_D_COLOUR;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 
+import org.genedb.db.loading.ProcessingPhase;
+
+import org.gmod.schema.sequence.Feature;
+
 import org.biojava.bio.seq.StrandedFeature;
 
 /**
@@ -49,7 +53,7 @@ public class Conflict_Processor extends BaseFeatureProcessor {
     }
 
     @Override
-    public void processStrandedFeature(org.genedb.db.jpa.Feature parent, StrandedFeature f) {
+    public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
         
         // TODO - How to store these
         
@@ -75,4 +79,9 @@ public class Conflict_Processor extends BaseFeatureProcessor {
 
     }
 
+
+    public ProcessingPhase getProcessingPhase() {
+        return ProcessingPhase.SIXTH;
+    }
+    
 }
