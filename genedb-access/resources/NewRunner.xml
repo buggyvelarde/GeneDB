@@ -5,7 +5,7 @@
 <!--
   - DispatcherServlet application context for GeneDB's web tier.
 	-->
-<beans default-init-method="afterPropertiesSet">
+<beans>
 <!--  xlmns="http://www.springframework.org/schema/beans"
 	xlmns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xlmns:util="http://www.springframework.org/schema/util"
@@ -30,33 +30,27 @@
 		<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
     </bean>
     
-    <bean id="featureDao" class="org.genedb.db.dao.FeatureDao">
+    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="platformTransactionManager" ref="transactionManager" />
     </bean>
     
-    <bean id="cvDao" class="org.genedb.db.dao.CvDao">
+    <bean id="cvDao" class="org.genedb.db.dao.CvDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="generalDao" ref="generalDao" />
     </bean>    
-    
-    <bean id="cvTermDao" class="org.genedb.db.dao.CvTermDao">
+        
+    <bean id="generalDao" class="org.genedb.db.dao.GeneralDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="platformTransactionManager" ref="transactionManager" />
     </bean>
         
-    <bean id="dbDao" class="org.genedb.db.dao.DbDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    
-        
-    <bean id="dbXRefDao" class="org.genedb.db.dao.DbXRefDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-        
-    <bean id="organismDao" class="org.genedb.db.dao.OrganismDao">
+    <bean id="organismDao" class="org.genedb.db.dao.OrganismDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>
     
                         
-    <bean id="pubDao" class="org.genedb.db.dao.PubDao">
+    <bean id="pubDao" class="org.genedb.db.dao.PubDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>
     
@@ -65,35 +59,82 @@
     </bean>
     
     
-    <bean id="daoFactory" class="org.genedb.db.dao.DaoFactory">
-  	  	<property name="transactionManager" ref="transactionManager" />
-  	  	<property name="sessionFactory" ref="sessionFactory" />
-    	<property name="featureDao" ref="featureDao" />
-    	<property name="cvDao" ref="cvDao" />
-    	<property name="cvTermDao" ref="cvTermDao" />
-    	<property name="organismDao" ref="organismDao" />
-    	<property name="pubDao" ref="pubDao" />
-    	<property name="dbDao" ref="dbDao" />
-    	<property name="dbXRefDao" ref="dbXRefDao" />
-    </bean>
-    
-    
     <bean id="beanFactoryPostProcessor" class="org.genedb.db.loading.PropertyOverrideConfigurerByCoding">
 		<property name="key" value="dataSourceMunging"/>
     </bean>
     
-    <bean id="runner" class="org.genedb.db.loading.NewRunner">
-    	<property name="daoFactory" ref="daoFactory" />
+    <bean id="runner" class="org.genedb.db.loading.NewRunner" init-method="afterPropertiesSet">
+    	<property name="sequenceDao" ref="sequenceDao" />
+    	<property name="organismDao" ref="organismDao" />
+    	<property name="cvDao" ref="cvDao" />
+    	<property name="generalDao" ref="generalDao" />
     	<property name="runnerConfigParser" ref="runnerConfigParser" />
+    	<property name="qualifierHandlerMap">
+    		<map>
+    			<entry key="CDS" value-ref="cdsProcessor" />
+    			<entry key="CDS_motif" value-ref="cdsMotifProcessor" />
+    			<entry key="BLASTN_HIT" value-ref="blastnHitProcessor" />
+    			<entry key="conflict" value-ref="conflictProcessor" />
+    			<entry key="3'UTR" value-ref="threePrimeUtrProcessor" />
+    			<entry key="5'UTR" value-ref="fivePrimeUtrProcessor" />
+    			<entry key="Intron" value-ref="intronProcessor" />
+    			<entry key="LTR" value-ref="ltrProcessor" />
+    			<entry key="misc_feature" value-ref="miscFeatureProcessor" />
+    			<entry key="misc_RNA" value-ref="miscRnaProcessor" />
+    			<entry key="mRNA" value-ref="mRnaProcessor" />
+    			<entry key="polyA_signal" value-ref="polyASignalProcessor" />
+    			<entry key="polyA_site" value-ref="polyASiteProcessor" />
+    			<entry key="promoter" value-ref="promoterProcessor" />
+    			<entry key="repeat_region" value-ref="repeatRegionProcessor" />
+    			<entry key="rRNA" value-ref="rRnaProcessor" />
+    			<entry key="snoRNA" value-ref="snoRnaProcessor" />
+    			<entry key="snRNA" value-ref="snRnaProcessor" />
+    			<entry key="tRNA" value-ref="tRnaProcessor" />   			    			    			    			    			    			    			    			    			    			    			
+    		</map>
+    	</property>
     </bean>
     
+    <bean id="baseFeatureProcessor" abstract="true" init-method="afterPropertiesSet">
+    	<property name="cvDao" ref="cvDao" />
+		<property name="generalDao" ref="generalDao" />
+		<property name="sequenceDao" ref="sequenceDao" />
+		<property name="pubDao" ref="pubDao" />
+    </bean>
+    
+    <bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor">
+		<property name="goParser" ref="goParser" />
+    </bean>
+    <bean name="cdsMotifProcessor" class="org.genedb.db.loading.featureProcessors.CDS_motif_Processor" parent="baseFeatureProcessor" />    
+    <bean name="blastnHitProcessor" class="org.genedb.db.loading.featureProcessors.BLASTN_HIT_Processor" parent="baseFeatureProcessor" />    
+    <bean name="conflictProcessor" class="org.genedb.db.loading.featureProcessors.Conflict_Processor" parent="baseFeatureProcessor" />    
+    <bean name="threePrimeUtrProcessor" class="org.genedb.db.loading.featureProcessors.Three_Prime_UTR_Processor" parent="baseFeatureProcessor" />    
+    <bean name="fivePrimeUtrProcessor" class="org.genedb.db.loading.featureProcessors.Five_Prime_UTR_Processor" parent="baseFeatureProcessor" />    
+    <bean name="intronProcessor" class="org.genedb.db.loading.featureProcessors.Intron_Processor" parent="baseFeatureProcessor" />    
+    <bean name="ltrProcessor" class="org.genedb.db.loading.featureProcessors.LTR_Processor" parent="baseFeatureProcessor" />    
+    <bean name="miscFeatureProcessor" class="org.genedb.db.loading.featureProcessors.Misc_feature_Processor" parent="baseFeatureProcessor" />    
+    <bean name="miscRnaProcessor" class="org.genedb.db.loading.featureProcessors.Misc_RNA_Processor" parent="baseFeatureProcessor" />    
+    <bean name="mRnaProcessor" class="org.genedb.db.loading.featureProcessors.MRNA_Processor" parent="baseFeatureProcessor" />    
+    <bean name="polyASignalProcessor" class="org.genedb.db.loading.featureProcessors.PolyA_signal_Processor" parent="baseFeatureProcessor" />    
+    <bean name="polyASiteProcessor" class="org.genedb.db.loading.featureProcessors.PolyA_site_Processor" parent="baseFeatureProcessor" />    
+    <bean name="promoterProcessor" class="org.genedb.db.loading.featureProcessors.Promoter_Processor" parent="baseFeatureProcessor" />    
+    <bean name="repeatRegionProcessor" class="org.genedb.db.loading.featureProcessors.Repeat_region_Processor" parent="baseFeatureProcessor" />    
+    <bean name="rRnaProcessor" class="org.genedb.db.loading.featureProcessors.RRNA_Processor" parent="baseFeatureProcessor" />    
+    <bean name="snoRnaProcessor" class="org.genedb.db.loading.featureProcessors.SnoRNA_Processor" parent="baseFeatureProcessor" />    
+    <bean name="snRnaProcessor" class="org.genedb.db.loading.featureProcessors.SnRNA_Processor" parent="baseFeatureProcessor" />    
+    <bean name="tRnaProcessor" class="org.genedb.db.loading.featureProcessors.TRNA_Processor" parent="baseFeatureProcessor" />    
+                                                                        
+    
     <bean id="runnerConfigParser" class="org.genedb.db.loading.RunnerConfigParser" />
+    
+    <bean id="goParser" class="org.genedb.db.loading.GoParser">
+	    <property name="cvDao" ref="cvDao" />
+    </bean>
     
     <!-- DataSource Property -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		 <property name="driverClassName" value="org.postgresql.Driver" />
-<!--	 	 <property name="url" value="jdbc:postgresql:ormtest" /> -->
-<!--         <property name="username" value="art" />-->
+	 	 <!-- <property name="url" value="jdbc:postgresql:ormtest" /> -->
+         <!-- <property name="username" value="art" /> -->
         <property name="url" value="jdbc:postgresql://holly.internal.sanger.ac.uk:5432/chado" />
         <!--<property name="username" value="plasmodia" />-->
         <property name="username" value="DELIBERATELY_BOGUS_NAME"/>
@@ -129,47 +170,60 @@
 	 <!--  OR mapping files. -->
  	<property name="mappingResources">
   	  <list>
-    	<value>org/genedb/db/hibernate3gen/CvTermPath.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/CvTermRelationship.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/PubProp.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/CvTermProp.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/Feature.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/Cv.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeaturePub.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeaturePropPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/CvTermSynonym.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/DbXRef.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/AnalysisProp.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/PubAuthor.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/Db.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureDbXRef.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureSynonym.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/Pub.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/AnalysisFeature.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/Analysis.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/Project.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureRelationshipPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/Tableinfo.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureCvTermDbXRef.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/CvTermDbXRef.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/CvTerm.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureLoc.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/PubDbXRef.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/Organism.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/DbXRefProp.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureCvTermPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureRelationshipProp.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureLocPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureCvTerm.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureCvTermProp.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/PubRelationship.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureProp.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/OrganismProp.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/Synonym.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureRelationshipPropPub.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/OrganismDbXRef.hbm.xml</value>
-        <value>org/genedb/db/hibernate3gen/FeatureRelationship.hbm.xml</value>
-    	   
+  	  	<!-- Analysis module -->
+  	    <value>org/gmod/schema/analysis/AnalysisFeature.hbm.xml</value>
+        <value>org/gmod/schema/analysis/Analysis.hbm.xml</value>
+        <value>org/gmod/schema/analysis/AnalysisProp.hbm.xml</value>
+        <!-- CV module -->
+    	<value>org/gmod/schema/cv/CvTermPath.hbm.xml</value>
+        <value>org/gmod/schema/cv/CvTermRelationship.hbm.xml</value>
+        <value>org/gmod/schema/cv/CvTermProp.hbm.xml</value>
+        <value>org/gmod/schema/cv/Cv.hbm.xml</value>
+        <value>org/gmod/schema/cv/CvTermSynonym.hbm.xml</value>
+        <value>org/gmod/schema/cv/CvTermDbXRef.hbm.xml</value>
+        <value>org/gmod/schema/cv/CvTerm.hbm.xml</value>
+        <value>org/gmod/schema/cv/DbXRefProp.hbm.xml</value>
+        <!-- General module -->
+        <value>org/gmod/schema/general/Project.hbm.xml</value>
+        <value>org/gmod/schema/general/Db.hbm.xml</value>
+        <value>org/gmod/schema/general/Tableinfo.hbm.xml</value>
+        <value>org/gmod/schema/general/DbXRef.hbm.xml</value>
+        <!-- Organism module -->
+        <value>org/gmod/schema/organism/Organism.hbm.xml</value>
+        <value>org/gmod/schema/organism/OrganismProp.hbm.xml</value>   
+        <value>org/gmod/schema/organism/OrganismDbXRef.hbm.xml</value>
+        <!-- Phylogeny module -->
+        <value>org/gmod/schema/phylogeny/PhylotreePub.hbm.xml</value>
+		<value>org/gmod/schema/phylogeny/Phylotree.hbm.xml</value>
+		<value>org/gmod/schema/phylogeny/PhylonodeRelationship.hbm.xml</value>
+		<value>org/gmod/schema/phylogeny/PhylonodePub.hbm.xml</value>
+		<value>org/gmod/schema/phylogeny/PhylonodeProp.hbm.xml</value>
+		<value>org/gmod/schema/phylogeny/PhylonodeOrganism.hbm.xml</value>
+		<value>org/gmod/schema/phylogeny/PhylonodeDbXRef.hbm.xml</value>
+		<value>org/gmod/schema/phylogeny/Phylonode.hbm.xml</value>
+		<!-- Pub module -->
+        <value>org/gmod/schema/pub/PubProp.hbm.xml</value>
+        <value>org/gmod/schema/pub/Pub.hbm.xml</value>
+        <value>org/gmod/schema/pub/PubAuthor.hbm.xml</value>
+        <value>org/gmod/schema/pub/PubDbXRef.hbm.xml</value>
+        <value>org/gmod/schema/pub/PubRelationship.hbm.xml</value>
+        <!-- Sequence module -->
+        <value>org/gmod/schema/sequence/Feature.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeaturePub.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeaturePropPub.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureDbXRef.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureSynonym.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureRelationshipPub.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureCvTermDbXRef.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureLoc.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureCvTermPub.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureRelationshipProp.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureCvTerm.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureCvTermProp.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureProp.hbm.xml</value>
+        <value>org/gmod/schema/sequence/Synonym.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureRelationshipPropPub.hbm.xml</value>
+        <value>org/gmod/schema/sequence/FeatureRelationship.hbm.xml</value>
    	 </list>
  	</property>
 	</bean>
