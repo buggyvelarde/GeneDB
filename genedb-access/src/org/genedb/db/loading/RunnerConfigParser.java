@@ -71,10 +71,10 @@ public class RunnerConfigParser {
      * @param directory the directory to start from
      * @param extension the file extension to match on
      */
-    private void addFilesFromDirectory(File directory, final String extension, final RunnerConfig rc) {
+    private void addFilesFromDirectory(final File directory, final String extension, final RunnerConfig rc) {
 	String[] names = directory.list(new FilenameFilter() {
 	    public boolean accept(File file, String name) {
-		if (file.isDirectory()) {
+		if (file.isDirectory() && !file.equals(directory)) {
 		    RunnerConfigParser.this.addFilesFromDirectory(file, extension, rc);
 		} else {
 		    if (name.endsWith("."+extension)) {
@@ -85,7 +85,7 @@ public class RunnerConfigParser {
 	    }
 	});
 	for (String name : names) {
-	    rc.getFileNames().add(name);
+	    rc.getFileNames().add(directory.getAbsolutePath()+File.separatorChar+name);
 	}
     }
 
