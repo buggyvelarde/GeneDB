@@ -4,6 +4,7 @@
 		<configExtension>xml</configExtension>
 	</configExtensions>
 	<configs>
+		<config>resources/NewRunner.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
