@@ -64,5 +64,8 @@ public class EmblQualifiers {
     public static final String QUAL_D_PSU_DB_XREF = "psu_db_xref";
     public static final String QUAL_D_EC_NUMBER   = "ec_number";
     
+    // Local ie GeneDB internal qualifiers
+    public static final String QUAL_TOP_LEVEL = "top_level_seq";
+    
 }
 
