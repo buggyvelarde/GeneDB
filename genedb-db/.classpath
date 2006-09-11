@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="out"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="input"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -8,5 +7,7 @@
 	<classpathentry kind="lib" path="lib/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-tools.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
+	<classpathentry sourcepath="/Users/art/Documents/eclipse-workspace/repository/springframework/spring-framework-2.0-rc3/dist/spring-src.zip" kind="lib" path="lib/spring-2.0RC3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
