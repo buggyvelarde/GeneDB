@@ -1,10 +1,10 @@
 package org.genedb.web.tags.db;
 
-import org.genedb.db.hibernate3gen.FeatureProp;
-import org.genedb.db.hibernate3gen.FeatureSynonym;
-import org.genedb.db.hibernate3gen.Synonym;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_TEMP_SYS_ID;
+
+import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.sequence.Synonym;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,10 +45,10 @@ public class SynonymTag extends SimpleTagSupport {
         System.err.println("The size of collection is '"+collection.size()+"'");
         for (FeatureSynonym featSynonym : collection) {
             Synonym synonym = featSynonym.getSynonym();
-            if (name.equals(synonym.getCvterm().getName())) {
+            if (name.equals(synonym.getCvTerm().getName())) {
                 filtered.add(featSynonym);
             } else {
-                if (name.equals(QUAL_SYS_ID) && QUAL_TEMP_SYS_ID.equals(synonym.getCvterm().getName())) {
+                if (name.equals(QUAL_SYS_ID) && QUAL_TEMP_SYS_ID.equals(synonym.getCvTerm().getName())) {
                     filtered.add(featSynonym);
                     if (tmpSysId != null) {
                         getJspContext().setAttribute(tmpSysId, Boolean.TRUE);

@@ -1,7 +1,7 @@
 package org.genedb.web.tags.db;
 
-import org.genedb.db.hibernate3gen.FeatureSynonym;
-import org.genedb.db.hibernate3gen.Synonym;
+import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.sequence.Synonym;
 
 import java.io.IOException;
 import java.util.Collection;

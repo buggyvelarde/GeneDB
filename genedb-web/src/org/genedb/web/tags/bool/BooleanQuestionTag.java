@@ -1,10 +1,7 @@
 package org.genedb.web.tags.bool;
 
-import org.genedb.query.BasicQueryI;
 import org.genedb.query.NumberedQueryI;
-import org.genedb.query.QueryI;
 import org.genedb.query.bool.BooleanQuery;
-import org.genedb.query.bool.BooleanQueryNode;
 import org.genedb.web.mvc.controller.QueryForm;
 import org.genedb.web.mvc.controller.WebConstants;
 

@@ -1,6 +1,5 @@
 package org.genedb.web.tags.bool;
 
-import org.genedb.query.BasicQueryI;
 import org.genedb.query.NumberedQueryI;
 import org.genedb.query.bool.BooleanQuery;
 

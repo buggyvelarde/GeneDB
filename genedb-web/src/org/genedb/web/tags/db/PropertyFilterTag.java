@@ -1,6 +1,6 @@
 package org.genedb.web.tags.db;
 
-import org.genedb.db.hibernate3gen.FeatureProp;
+import org.gmod.schema.sequence.FeatureProp;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class PropertyFilterTag extends SimpleTagSupport {
         List<FeatureProp> filtered = new ArrayList<FeatureProp>();
         if (collection != null) {
             for (FeatureProp prop : collection) {
-                if (name.equals(prop.getCvterm().getName())) {
+                if (name.equals(prop.getCvTerm().getName())) {
                     filtered.add(prop);
                 }
             }
