@@ -37,7 +37,7 @@ public class OrganismDbXRef implements Serializable {
      // Constructors
 
     /** default constructor */
-    private OrganismDbXRef() {
+    public OrganismDbXRef() {
     }
 
     /** full constructor */

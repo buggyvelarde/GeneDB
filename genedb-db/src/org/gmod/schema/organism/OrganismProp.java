@@ -44,7 +44,7 @@ public class OrganismProp implements Serializable {
      // Constructors
 
     /** default constructor */
-    private OrganismProp() {
+    public OrganismProp() {
     }
 
 	/** minimal constructor */

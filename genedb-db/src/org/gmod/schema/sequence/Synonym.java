@@ -6,6 +6,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +50,7 @@ public class Synonym implements Serializable {
      // Constructors
 
     /** default constructor */
-    private Synonym() {
+    public Synonym() {
     }
 
 	/** minimal constructor */
@@ -130,7 +131,7 @@ public class Synonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.SynonymI#getFeatureSynonyms()
      */
-    private Set<FeatureSynonym> getFeatureSynonyms() {
+    private Collection<FeatureSynonym> getFeatureSynonyms() {
         return this.featureSynonyms;
     }
     

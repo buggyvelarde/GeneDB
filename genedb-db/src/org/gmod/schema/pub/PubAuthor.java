@@ -46,7 +46,7 @@ public class PubAuthor implements Serializable {
      // Constructors
 
     /** default constructor */
-    private PubAuthor() {
+    public PubAuthor() {
     }
 
 	/** minimal constructor */

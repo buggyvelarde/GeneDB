@@ -3,6 +3,7 @@ package org.gmod.schema.sequence;
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +50,7 @@ public class FeatureRelationshipProp implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeatureRelationshipProp() {
+    public FeatureRelationshipProp() {
     }
 
 	/** minimal constructor */
@@ -112,7 +113,7 @@ public class FeatureRelationshipProp implements Serializable {
         this.rank = rank;
     }
 
-    private Set<FeatureRelationshipPropPub> getFeatureRelationshipPropPubs() {
+    private Collection<FeatureRelationshipPropPub> getFeatureRelationshipPropPubs() {
         return this.featureRelationshipPropPubs;
     }
     

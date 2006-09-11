@@ -39,7 +39,7 @@ public class FeatureCvTermPub implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeatureCvTermPub() {
+    public FeatureCvTermPub() {
     }
 
     /** full constructor */

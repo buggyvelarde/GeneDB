@@ -45,7 +45,7 @@ public class Tableinfo implements Serializable {
      // Constructors
 
     /** default constructor */
-    private Tableinfo() {
+    public Tableinfo() {
     }
 
 	/** minimal constructor */

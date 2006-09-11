@@ -40,7 +40,7 @@ public class CvTermProp implements Serializable {
      // Constructors
 
     /** default constructor */
-    private CvTermProp() {
+    public CvTermProp() {
     }
 
     /** full constructor */

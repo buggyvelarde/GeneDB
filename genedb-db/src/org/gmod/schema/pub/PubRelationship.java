@@ -43,7 +43,7 @@ public class PubRelationship implements Serializable {
      // Constructors
 
     /** default constructor */
-    private PubRelationship() {
+    public PubRelationship() {
     }
 
     /** full constructor */

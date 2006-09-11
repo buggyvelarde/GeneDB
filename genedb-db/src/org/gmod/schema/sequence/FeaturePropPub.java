@@ -36,7 +36,7 @@ public class FeaturePropPub implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeaturePropPub() {
+    public FeaturePropPub() {
     }
 
     /** full constructor */

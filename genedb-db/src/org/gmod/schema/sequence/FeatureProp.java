@@ -73,14 +73,14 @@ public class FeatureProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePropI#getCvterm()
      */
-    public CvTerm getCvterm() {
+    public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePropI#setCvterm(org.gmod.schema.cv.CvTermI)
      */
-    public void setCvterm(CvTerm cvTerm) {
+    public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 

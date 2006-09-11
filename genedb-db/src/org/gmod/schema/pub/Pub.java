@@ -14,6 +14,7 @@ import org.gmod.schema.sequence.FeatureRelationshipPub;
 import org.gmod.schema.sequence.FeatureSynonym;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -143,7 +144,7 @@ public class Pub implements Serializable {
      // Constructors
 
     /** default constructor */
-    private Pub() {
+    public Pub() {
     }
 
 	/** minimal constructor */
@@ -403,7 +404,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPubAuthors()
      */
-    private Set<PubAuthor> getPubAuthors() {
+    private Collection<PubAuthor> getPubAuthors() {
         return this.pubAuthors;
     }
     
@@ -417,7 +418,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPubRelationshipsForObjectId()
      */
-    private Set<PubRelationship> getPubRelationshipsForObjectId() {
+    private Collection<PubRelationship> getPubRelationshipsForObjectId() {
         return this.pubRelationshipsForObjectId;
     }
     
@@ -431,7 +432,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPubDbXRefs()
      */
-    private Set<PubDbXRef> getPubDbXRefs() {
+    private Collection<PubDbXRef> getPubDbXRefs() {
         return this.pubDbXRefs;
     }
     
@@ -445,7 +446,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureCvTerms()
      */
-    private Set<FeatureCvTerm> getFeatureCvTerms() {
+    private Collection<FeatureCvTerm> getFeatureCvTerms() {
         return this.featureCvTerms;
     }
     
@@ -459,7 +460,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureRelationshipPubs()
      */
-    private Set<FeatureRelationshipPub> getFeatureRelationshipPubs() {
+    private Collection<FeatureRelationshipPub> getFeatureRelationshipPubs() {
         return this.featureRelationshipPubs;
     }
     
@@ -473,7 +474,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeaturePubs()
      */
-    private Set<FeaturePub> getFeaturePubs() {
+    private Collection<FeaturePub> getFeaturePubs() {
         return this.featurePubs;
     }
     
@@ -487,7 +488,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeaturePropPubs()
      */
-    private Set<FeaturePropPub> getFeaturePropPubs() {
+    private Collection<FeaturePropPub> getFeaturePropPubs() {
         return this.featurePropPubs;
     }
     
@@ -501,7 +502,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureSynonyms()
      */
-    private Set<FeatureSynonym> getFeatureSynonyms() {
+    private Collection<FeatureSynonym> getFeatureSynonyms() {
         return this.featureSynonyms;
     }
     
@@ -515,7 +516,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureCvTermPubs()
      */
-    private Set<FeatureCvTermPub> getFeatureCvTermPubs() {
+    private Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
         return this.featureCvTermPubs;
     }
     
@@ -529,7 +530,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureRelationshipPropPubs()
      */
-    private Set<FeatureRelationshipPropPub> getFeatureRelationshipPropPubs() {
+    private Collection<FeatureRelationshipPropPub> getFeatureRelationshipPropPubs() {
         return this.featureRelationshipPropPubs;
     }
     
@@ -543,7 +544,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPubProps()
      */
-    private Set<PubProp> getPubProps() {
+    private Collection<PubProp> getPubProps() {
         return this.pubProps;
     }
     
@@ -557,7 +558,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPubRelationshipsForSubjectId()
      */
-    private Set<PubRelationship> getPubRelationshipsForSubjectId() {
+    private Collection<PubRelationship> getPubRelationshipsForSubjectId() {
         return this.pubRelationshipsForSubjectId;
     }
     
@@ -571,7 +572,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureLocPubs()
      */
-    private Set<FeatureLocPub> getFeatureLocPubs() {
+    private Collection<FeatureLocPub> getFeatureLocPubs() {
         return this.featureLocPubs;
     }
     

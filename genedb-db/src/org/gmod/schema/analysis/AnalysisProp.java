@@ -39,7 +39,7 @@ public class AnalysisProp implements Serializable {
      // Constructors
 
     /** default constructor */
-    private AnalysisProp() {
+    public AnalysisProp() {
     }
 
 	/** minimal constructor */

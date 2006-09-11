@@ -6,6 +6,7 @@ import org.gmod.schema.phylogeny.PhylonodeOrganism;
 import org.gmod.schema.sequence.Feature;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,7 +65,7 @@ public class Organism implements Serializable {
      // Constructors
 
     /** default constructor */
-    private Organism() {
+    public Organism() {
     }
 
 	/** minimal constructor */
@@ -194,7 +195,7 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#getFeatures()
      */
-    private Set<Feature> getFeatures() {
+    private Collection<Feature> getFeatures() {
         return this.features;
     }
     
@@ -208,7 +209,7 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#getOrganismDbXRefs()
      */
-    private Set<OrganismDbXRef> getOrganismDbXRefs() {
+    private Collection<OrganismDbXRef> getOrganismDbXRefs() {
         return this.organismDbXRefs;
     }
     

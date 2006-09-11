@@ -34,7 +34,7 @@ public class FeatureLocPub implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeatureLocPub() {}
+    public FeatureLocPub() {}
 
     /** full constructor */
     private FeatureLocPub(FeatureLoc featureLoc, Pub pub) {

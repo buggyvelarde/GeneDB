@@ -20,6 +20,7 @@ import org.gmod.schema.sequence.FeatureRelationshipProp;
 import org.gmod.schema.sequence.Synonym;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ import javax.persistence.Table;
 public class CvTerm implements Serializable {
 
     private Set<Phylotree> phylotrees = new HashSet<Phylotree>(0);
-    private Set<PhylonodeProp> phylonodeprops = new HashSet<PhylonodeProp>(0);
+    private Set<PhylonodeProp> phylonodeProps = new HashSet<PhylonodeProp>(0);
     private Set<PhylonodeRelationship> phylonodeRelationships = new HashSet<PhylonodeRelationship>(0);
     private Set<Phylonode> phylonodes = new HashSet<Phylonode>(0);
    
@@ -54,12 +55,12 @@ public class CvTerm implements Serializable {
     }
 
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvterm")
-    public Set<PhylonodeProp> getPhylonodeprops() {
-        return this.phylonodeprops;
+    public Set<PhylonodeProp> getPhylonodeProps() {
+        return this.phylonodeProps;
     }
     
-    public void setPhylonodeprops(Set<PhylonodeProp> phylonodeprops) {
-        this.phylonodeprops = phylonodeprops;
+    public void setPhylonodeProps(Set<PhylonodeProp> phylonodeProps) {
+        this.phylonodeProps = phylonodeProps;
     }
 
 
@@ -194,7 +195,7 @@ public class CvTerm implements Serializable {
      // Constructors
 
     /** default constructor */
-    private CvTerm() {
+    public CvTerm() {
     }
 
 	/** minimal constructor */
@@ -294,7 +295,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setName(java.lang.String)
      */
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
     
@@ -346,21 +347,21 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getAnalsisProps()
      */
-    private Set<AnalysisProp> getAnalysisProps() {
+    private Collection<AnalysisProp> getAnalysisProps() {
         return this.analysisProps;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setAnalsisProps(java.util.Set)
      */
-    private void setAnalsisProps(Set<AnalysisProp> analysisProps) {
+    private void setAnalysisProps(Set<AnalysisProp> analysisProps) {
         this.analysisProps = analysisProps;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermPropsForTypeId()
      */
-    private Set<CvTermProp> getCvTermPropsForTypeId() {
+    private Collection<CvTermProp> getCvTermPropsForTypeId() {
         return this.cvTermPropsForTypeId;
     }
     
@@ -374,7 +375,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermPropsForCvTermId()
      */
-    private Set<CvTermProp> getCvTermPropsForCvTermId() {
+    private Collection<CvTermProp> getCvTermPropsForCvTermId() {
         return this.cvTermPropsForCvTermId;
     }
     
@@ -388,7 +389,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getDbXRefProps()
      */
-    private Set<DbXRefProp> getDbXRefProps() {
+    private Collection<DbXRefProp> getDbXRefProps() {
         return this.dbXRefProps;
     }
     
@@ -402,7 +403,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getSynonyms()
      */
-    private Set<Synonym> getSynonyms() {
+    private Collection<Synonym> getSynonyms() {
         return this.synonyms;
     }
     
@@ -416,7 +417,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermDbXRefs()
      */
-    private Set<CvTermDbXRef> getCvTermDbXRefs() {
+    private Collection<CvTermDbXRef> getCvTermDbXRefs() {
         return this.cvTermDbXRefs;
     }
     
@@ -430,7 +431,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermPathsForTypeId()
      */
-    private Set<CvTermPath> getCvTermPathsForTypeId() {
+    private Collection<CvTermPath> getCvTermPathsForTypeId() {
         return this.cvTermPathsForTypeId;
     }
     
@@ -444,7 +445,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getFeatureCvTermProps()
      */
-    private Set<FeatureCvTermProp> getFeatureCvTermProps() {
+    private Collection<FeatureCvTermProp> getFeatureCvTermProps() {
         return this.featureCvTermProps;
     }
     
@@ -458,7 +459,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getFeatureCvTerms()
      */
-    private Set<FeatureCvTerm> getFeatureCvTerms() {
+    private Collection<FeatureCvTerm> getFeatureCvTerms() {
         return this.featureCvTerms;
     }
     
@@ -472,7 +473,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermRelationshipsForTypeId()
      */
-    private Set<CvTermRelationship> getCvTermRelationshipsForTypeId() {
+    private Collection<CvTermRelationship> getCvTermRelationshipsForTypeId() {
         return this.cvTermRelationshipsForTypeId;
     }
     
@@ -486,7 +487,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermRelationshipsForObjectId()
      */
-    private Set<CvTermRelationship> getCvTermRelationshipsForObjectId() {
+    private Collection<CvTermRelationship> getCvTermRelationshipsForObjectId() {
         return this.cvTermRelationshipsForObjectId;
     }
     
@@ -500,7 +501,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getPubProps()
      */
-    private Set<PubProp> getPubProps() {
+    private Collection<PubProp> getPubProps() {
         return this.pubProps;
     }
     
@@ -514,7 +515,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getOrganismProps()
      */
-    private Set<OrganismProp> getOrganismProps() {
+    private Collection<OrganismProp> getOrganismProps() {
         return this.organismProps;
     }
     
@@ -528,7 +529,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermRelationshipsForSubjectId()
      */
-    private Set<CvTermRelationship> getCvTermRelationshipsForSubjectId() {
+    private Collection<CvTermRelationship> getCvTermRelationshipsForSubjectId() {
         return this.cvTermRelationshipsForSubjectId;
     }
     
@@ -542,7 +543,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermSynonymsForCvTermId()
      */
-    private Set<CvTermSynonym> getCvTermSynonymsForCvTermId() {
+    private Collection<CvTermSynonym> getCvTermSynonymsForCvTermId() {
         return this.cvTermSynonymsForCvTermId;
     }
     
@@ -556,7 +557,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getFeatureProps()
      */
-    private Set<FeatureProp> getFeatureProps() {
+    private Collection<FeatureProp> getFeatureProps() {
         return this.featureProps;
     }
     
@@ -570,7 +571,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermPathsForSubjectId()
      */
-    private Set<CvTermPath> getCvTermPathsForSubjectId() {
+    private Collection<CvTermPath> getCvTermPathsForSubjectId() {
         return this.cvTermPathsForSubjectId;
     }
     
@@ -584,7 +585,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermPathsForObjectId()
      */
-    private Set<CvTermPath> getCvTermPathsForObjectId() {
+    private Collection<CvTermPath> getCvTermPathsForObjectId() {
         return this.cvTermPathsForObjectId;
     }
     
@@ -598,7 +599,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermSynonymsForTypeId()
      */
-    private Set<CvTermSynonym> getCvTermSynonymsForTypeId() {
+    private Collection<CvTermSynonym> getCvTermSynonymsForTypeId() {
         return this.cvTermSynonymsForTypeId;
     }
     
@@ -612,7 +613,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getPubs()
      */
-    private Set<Pub> getPubs() {
+    private Collection<Pub> getPubs() {
         return this.pubs;
     }
     
@@ -626,7 +627,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getFeatureRelationshipProps()
      */
-    private Set<FeatureRelationshipProp> getFeatureRelationshipProps() {
+    private Collection<FeatureRelationshipProp> getFeatureRelationshipProps() {
         return this.featureRelationshipProps;
     }
     
@@ -640,7 +641,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getFeatures()
      */
-    private Set<Feature> getFeatures() {
+    private Collection<Feature> getFeatures() {
         return this.features;
     }
     
@@ -654,7 +655,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getPubRelationships()
      */
-    private Set<PubRelationship> getPubRelationships() {
+    private Collection<PubRelationship> getPubRelationships() {
         return this.pubRelationships;
     }
     
@@ -668,7 +669,7 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getFeatureRelationships()
      */
-    private Set<FeatureRelationship> getFeatureRelationships() {
+    private Collection<FeatureRelationship> getFeatureRelationships() {
         return this.featureRelationships;
     }
     

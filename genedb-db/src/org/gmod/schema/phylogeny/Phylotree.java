@@ -5,6 +5,7 @@ package org.gmod.schema.phylogeny;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -112,7 +113,7 @@ public class Phylotree  implements java.io.Serializable {
         this.comment = comment;
     }
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylotree")
-    public Set<Phylonode> getPhylonodes() {
+    public Collection<Phylonode> getPhylonodes() {
         return this.phylonodes;
     }
     
@@ -120,7 +121,7 @@ public class Phylotree  implements java.io.Serializable {
         this.phylonodes = phylonodes;
     }
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylotree")
-    public Set<PhylotreePub> getPhylotreePubs() {
+    public Collection<PhylotreePub> getPhylotreePubs() {
         return this.phylotreePubs;
     }
     

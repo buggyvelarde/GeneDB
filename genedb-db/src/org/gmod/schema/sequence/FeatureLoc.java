@@ -32,7 +32,7 @@ public class FeatureLoc implements Serializable {
      
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="srcfeature_id", unique=false, nullable=true, insertable=true, updatable=true)
-    private Feature featureBySrcfeatureId;
+    private Feature featureBySrcFeatureId;
      
     @ManyToOne(cascade={},fetch=FetchType.LAZY)
     @JoinColumn(name="feature_id", unique=false, nullable=false, insertable=true, updatable=true)
@@ -60,7 +60,7 @@ public class FeatureLoc implements Serializable {
     private String residueInfo;
      
     @Column(name="locgroup", unique=false, nullable=false, insertable=true, updatable=true)
-    private int locgroup;
+    private int locGroup;
      
     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
     private int rank;
@@ -71,20 +71,20 @@ public class FeatureLoc implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeatureLoc() {
+    public FeatureLoc() {
     }
 
 	/** minimal constructor */
-    private FeatureLoc(Feature featureBySrcFeatureId, boolean fminPartial, boolean fmaxPartial, int locgroup, int rank) {
-        this.featureBySrcfeatureId = featureBySrcFeatureId;
+    private FeatureLoc(Feature featureBySrcFeatureId, boolean fminPartial, boolean fmaxPartial, int locGroup, int rank) {
+        this.featureBySrcFeatureId = featureBySrcFeatureId;
         this.fminPartial = fminPartial;
         this.fmaxPartial = fmaxPartial;
-        this.locgroup = locgroup;
+        this.locGroup = locGroup;
         this.rank = rank;
     }
     /** large constructor */
-    public FeatureLoc(Feature featureBySrcfeatureId, Feature featureByFeatureId, Integer fmin, boolean fminPartial, Integer fmax, boolean fmaxPartial, Short strand, Integer phase, int locgroup, int rank) {
-       this.featureBySrcfeatureId = featureBySrcfeatureId;
+    public FeatureLoc(Feature featureBySrcfeatureId, Feature featureByFeatureId, Integer fmin, boolean fminPartial, Integer fmax, boolean fmaxPartial, Short strand, Integer phase, int locGroup, int rank) {
+       this.featureBySrcFeatureId = featureBySrcfeatureId;
        this.featureByFeatureId = featureByFeatureId;
        this.fmin = fmin;
        this.fminPartial = fminPartial;
@@ -92,7 +92,7 @@ public class FeatureLoc implements Serializable {
        this.fmaxPartial = fmaxPartial;
        this.strand = strand;
        this.phase = phase;
-       this.locgroup = locgroup;
+       this.locGroup = locGroup;
        this.rank = rank;
     }
     
@@ -103,15 +103,15 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getFeatureBySrcfeatureId()
      */
-    private Feature getFeatureBySrcfeatureId() {
-        return this.featureBySrcfeatureId;
+    private Feature getFeatureBySrcFeatureId() {
+        return this.featureBySrcFeatureId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setFeatureBySrcfeatureId(org.genedb.db.jpa.Feature)
      */
-    private void setFeatureBySrcfeatureId(Feature featureBySrcfeatureId) {
-        this.featureBySrcfeatureId = featureBySrcfeatureId;
+    private void setFeatureBySrcFeatureId(Feature featureBySrcFeatureId) {
+        this.featureBySrcFeatureId = featureBySrcFeatureId;
     }
 
     /* (non-Javadoc)
@@ -232,15 +232,15 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getLocgroup()
      */
-    private int getLocgroup() {
-        return this.locgroup;
+    private int getLocGroup() {
+        return this.locGroup;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setLocgroup(int)
      */
-    private void setLocgroup(int locgroup) {
-        this.locgroup = locgroup;
+    private void setLocGroup(int locGroup) {
+        this.locGroup = locGroup;
     }
     
  

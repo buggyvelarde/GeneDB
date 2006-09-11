@@ -2,6 +2,7 @@ package org.gmod.schema.general;
 
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class Db implements Serializable {
      // Constructors
 
     /** default constructor */
-    private Db() {
+    public Db() {
     }
 
 	/** minimal constructor */
@@ -136,7 +137,7 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getDbXRefs()
      */
-    private Set<DbXRef> getDbXRefs() {
+    private Collection<DbXRef> getDbXRefs() {
         return this.dbXRefs;
     }
     

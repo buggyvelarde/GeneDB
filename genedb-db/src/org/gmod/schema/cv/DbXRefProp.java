@@ -42,7 +42,7 @@ public class DbXRefProp implements Serializable {
      // Constructors
 
     /** default constructor */
-    private DbXRefProp() {
+    public DbXRefProp() {
     }
 
     /** full constructor */

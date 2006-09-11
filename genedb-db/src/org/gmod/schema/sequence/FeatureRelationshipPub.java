@@ -39,7 +39,7 @@ public class FeatureRelationshipPub implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeatureRelationshipPub() {
+    public FeatureRelationshipPub() {
     }
 
     /** full constructor */

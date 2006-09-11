@@ -27,7 +27,7 @@ public class Project implements Serializable {
      // Constructors
 
     /** default constructor */
-    private Project() {
+    public Project() {
     }
 
     /** full constructor */

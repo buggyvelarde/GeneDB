@@ -41,7 +41,7 @@ public class FeatureCvTermProp implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeatureCvTermProp() {
+    public FeatureCvTermProp() {
     }
 
 	/** minimal constructor */
@@ -78,14 +78,14 @@ public class FeatureCvTermProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#getCvterm()
      */
-    private CvTerm getCvterm() {
+    private CvTerm getCvTerm() {
         return this.cvTerm;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#setCvterm(org.gmod.schema.cv.CvTermI)
      */
-    private void setCvterm(CvTerm cvTerm) {
+    private void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
@@ -99,7 +99,7 @@ public class FeatureCvTermProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#setFeatureCvterm(org.gmod.schema.sequence.FeatureCvTermI)
      */
-    private void setFeatureCvterm(FeatureCvTerm featureCvTerm) {
+    private void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }
     

@@ -41,7 +41,7 @@ public class CvTermRelationship implements Serializable {
      // Constructors
 
     /** default constructor */
-    private CvTermRelationship() {
+    public CvTermRelationship() {
     }
 
     /** full constructor */

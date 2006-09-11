@@ -45,7 +45,7 @@ public class AnalysisFeature implements Serializable {
      // Constructors
 
     /** default constructor */
-    private AnalysisFeature() {
+    public AnalysisFeature() {
     }
 
 	/** minimal constructor */
@@ -114,14 +114,14 @@ public class AnalysisFeature implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#getRawscore()
      */
-    private Double getRawscore() {
+    private Double getRawScore() {
         return this.rawScore;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#setRawscore(java.lang.Double)
      */
-    private void setRawscore(Double rawScore) {
+    private void setRawScore(Double rawScore) {
         this.rawScore = rawScore;
     }
     

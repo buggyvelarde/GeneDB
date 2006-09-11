@@ -40,7 +40,7 @@ public class FeatureRelationshipPropPub implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeatureRelationshipPropPub() {
+    public FeatureRelationshipPropPub() {
     }
 
     /** full constructor */
@@ -76,7 +76,7 @@ public class FeatureRelationshipPropPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipPropPubI#setFeatureRelationshipprop(org.genedb.db.jpa.FeatureRelationshipProp)
      */
-    private void setFeatureRelationshipprop(FeatureRelationshipProp featureRelationshipProp) {
+    private void setFeatureRelationshipProp(FeatureRelationshipProp featureRelationshipProp) {
         this.featureRelationshipProp = featureRelationshipProp;
     }
 

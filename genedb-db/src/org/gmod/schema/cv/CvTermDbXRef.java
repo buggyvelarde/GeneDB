@@ -40,7 +40,7 @@ public class CvTermDbXRef implements Serializable {
      // Constructors
 
     /** default constructor */
-    private CvTermDbXRef() {
+    public CvTermDbXRef() {
     }
 
     /** full constructor */

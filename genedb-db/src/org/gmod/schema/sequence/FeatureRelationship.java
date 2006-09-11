@@ -6,6 +6,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -174,7 +175,7 @@ public class FeatureRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipI#getFeatureRelationshipprops()
      */
-    private Set<FeatureRelationshipProp> getFeatureRelationshipProps() {
+    private Collection<FeatureRelationshipProp> getFeatureRelationshipProps() {
         return this.featureRelationshipProps;
     }
     
@@ -188,7 +189,7 @@ public class FeatureRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipI#getFeatureRelationshipPubs()
      */
-    private Set<FeatureRelationshipPub> getFeatureRelationshipPubs() {
+    private Collection<FeatureRelationshipPub> getFeatureRelationshipPubs() {
         return this.featureRelationshipPubs;
     }
     

@@ -41,7 +41,7 @@ public class CvTermSynonym implements Serializable {
      // Constructors
 
     /** default constructor */
-    private CvTermSynonym() {
+    public CvTermSynonym() {
     }
 
 	/** minimal constructor */

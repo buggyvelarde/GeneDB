@@ -2,6 +2,7 @@ package org.gmod.schema.analysis;
 
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +20,6 @@ public class Analysis implements Serializable {
 
     // Fields    
      @Id
-    
     @Column(name="analysis_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int analysisId;
      
@@ -59,7 +59,7 @@ public class Analysis implements Serializable {
      // Constructors
 
     /** default constructor */
-    private Analysis() {
+    public Analysis() {
     }
 
 	/** minimal constructor */
@@ -157,7 +157,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setProgramversion(java.lang.String)
      */
-    private void setProgramversion(String programVersion) {
+    private void setProgramVersion(String programVersion) {
         this.programVersion = programVersion;
     }
     
@@ -180,7 +180,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getSourcename()
      */
-    private String getSourcename() {
+    private String getSourceName() {
         return this.sourceName;
     }
     
@@ -232,14 +232,14 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setTimeexecuted(java.util.Date)
      */
-    private void setTimeexecuted(Date timeExecuted) {
+    private void setTimeExecuted(Date timeExecuted) {
         this.timeExecuted = timeExecuted;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getAnalysisfeatures()
      */
-    private Set<AnalysisFeature> getAnalysisFeatures() {
+    private Collection<AnalysisFeature> getAnalysisFeatures() {
         return this.analysisFeatures;
     }
     
@@ -253,7 +253,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getAnalysisprops()
      */
-    private Set<AnalysisProp> getAnalysisProps() {
+    private Collection<AnalysisProp> getAnalysisProps() {
         return this.analysisProps;
     }
     

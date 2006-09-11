@@ -57,7 +57,7 @@ public class FeatureSynonym implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeatureSynonym() {
+    public FeatureSynonym() {
     }
 
     /** full constructor */

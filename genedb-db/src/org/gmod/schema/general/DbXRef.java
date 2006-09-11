@@ -16,6 +16,7 @@ import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureDbXRef;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,15 +37,15 @@ import javax.persistence.Table;
 @Table(name="dbxref")
 public class DbXRef implements Serializable {
     
-    private Set<PhylonodeDbXRef> phylonodeDbxrefs = new HashSet<PhylonodeDbXRef>(0);
+    private Set<PhylonodeDbXRef> phylonodeDbXRefs = new HashSet<PhylonodeDbXRef>(0);
     private Set<Phylotree> phylotrees = new HashSet<Phylotree>(0);
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbxref")
-    public Set<PhylonodeDbXRef> getPhylonodeDbxrefs() {
-        return this.phylonodeDbxrefs;
+    public Set<PhylonodeDbXRef> getPhylonodeDbXRefs() {
+        return this.phylonodeDbXRefs;
     }
     
-    public void setPhylonodeDbxrefs(Set<PhylonodeDbXRef> phylonodeDbxrefs) {
-        this.phylonodeDbxrefs = phylonodeDbxrefs;
+    public void setPhylonodeDbXRefs(Set<PhylonodeDbXRef> phylonodeDbXRefs) {
+        this.phylonodeDbXRefs = phylonodeDbXRefs;
     }
 
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbxref")
@@ -207,7 +208,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getDbXRefProps()
      */
-    private Set<DbXRefProp> getDbXRefProps() {
+    private Collection<DbXRefProp> getDbXRefProps() {
         return this.dbXRefProps;
     }
     
@@ -221,7 +222,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getFeatureCvTermDbXRefs()
      */
-    private Set<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
+    private Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
         return this.featureCvTermDbXRefs;
     }
     
@@ -235,7 +236,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getFeatures()
      */
-    private Set<Feature> getFeatures() {
+    private Collection<Feature> getFeatures() {
         return this.features;
     }
     
@@ -249,7 +250,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getFeatureDbXRefs()
      */
-    private Set<FeatureDbXRef> getFeatureDbXRefs() {
+    private Collection<FeatureDbXRef> getFeatureDbXRefs() {
         return this.featureDbXRefs;
     }
     
@@ -263,7 +264,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getCvTerms()
      */
-    public Set<CvTerm> getCvTerms() {
+    public Collection<CvTerm> getCvTerms() {
         return this.cvTerms;
     }
     
@@ -277,7 +278,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getPubDbXRefs()
      */
-    private Set<PubDbXRef> getPubDbXRefs() {
+    private Collection<PubDbXRef> getPubDbXRefs() {
         return this.pubDbXRefs;
     }
     
@@ -291,7 +292,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getOrganismDbXRefs()
      */
-    private Set<OrganismDbXRef> getOrganismDbXRefs() {
+    private Collection<OrganismDbXRef> getOrganismDbXRefs() {
         return this.organismDbXRefs;
     }
     
@@ -305,7 +306,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getCvTermDbXRefs()
      */
-    private Set<CvTermDbXRef> getCvTermDbXRefs() {
+    private Collection<CvTermDbXRef> getCvTermDbXRefs() {
         return this.cvTermDbXRefs;
     }
     

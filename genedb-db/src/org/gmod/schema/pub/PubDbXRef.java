@@ -40,7 +40,7 @@ public class PubDbXRef implements Serializable {
      // Constructors
 
     /** default constructor */
-    private PubDbXRef() {
+    public PubDbXRef() {
     }
 
     /** full constructor */

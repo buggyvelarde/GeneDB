@@ -3,6 +3,7 @@ package org.gmod.schema.cv;
 
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class Cv implements Serializable {
      // Constructors
 
     /** default constructor */
-    private Cv() {
+    public Cv() {
     }
 
 	/** minimal constructor */
@@ -97,7 +98,7 @@ public class Cv implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#getCvTermPaths()
      */
-    private Set<CvTermPath> getCvTermPaths() {
+    private Collection<CvTermPath> getCvTermPaths() {
         return this.cvTermPaths;
     }
     
@@ -112,7 +113,7 @@ public class Cv implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#getCvTerms()
      */
-    private Set<CvTerm> getCvTerms() {
+    private Collection<CvTerm> getCvTerms() {
         return this.cvTerms;
     }
     

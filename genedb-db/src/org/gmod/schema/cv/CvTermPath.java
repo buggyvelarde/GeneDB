@@ -50,7 +50,7 @@ public class CvTermPath implements Serializable {
      // Constructors
 
     /** default constructor */
-    private CvTermPath() {
+    public CvTermPath() {
     }
 
 	/** minimal constructor */

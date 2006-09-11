@@ -8,6 +8,7 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.pub.Pub;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class FeatureCvTerm implements Serializable {
      // Constructors
 
     /** default constructor */
-    private FeatureCvTerm() {
+    public FeatureCvTerm() {
     }
 
 	/** minimal constructor */
@@ -160,21 +161,21 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvtermprops()
      */
-    private Set<FeatureCvTermProp> getFeatureCvTermProps() {
+    private Collection<FeatureCvTermProp> getFeatureCvTermProps() {
         return this.featureCvTermProps;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermprops(java.util.Set)
      */
-    private void setFeatureCvtermprops(Set<FeatureCvTermProp> featureCvTermProps) {
+    private void setFeatureCvTermProps(Set<FeatureCvTermProp> featureCvTermProps) {
         this.featureCvTermProps = featureCvTermProps;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvtermPubs()
      */
-    private Set<FeatureCvTermPub> getFeatureCvTermPubs() {
+    private Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
         return this.featureCvTermPubs;
     }
     
@@ -188,14 +189,14 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvtermDbxrefs()
      */
-    private Set<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
+    private Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
         return this.featureCvTermDbXRefs;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermDbxrefs(java.util.Set)
      */
-    private void setFeatureCvTermDbxrefs(Set<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
+    private void setFeatureCvTermDbXRefs(Set<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
         this.featureCvTermDbXRefs = featureCvTermDbXRefs;
     }
 
