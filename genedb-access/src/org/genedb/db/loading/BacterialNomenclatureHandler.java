@@ -14,7 +14,7 @@ public class BacterialNomenclatureHandler extends BaseNomenclatureHandler implem
 
     	Names ret = new Names();
 		String tmpPrefix = getOptions().get("prefix");
-		prefixes = tmpPrefix.split(";");
+		this.prefixes = tmpPrefix.split(";");
 		String name	=	null;
 		int count = 0;
 		
