@@ -19,7 +19,7 @@
 
 package org.gmod.schema.dao;
 
-import org.genedb.db.hibernate3gen.Organism;
+import org.gmod.schema.organism.Organism;
 
 import java.util.List;
 
@@ -46,6 +46,6 @@ public interface OrganismDaoI {
      * 
      * @return a (possibly empty) List<String> of all the organisms' common names
      */
-    public abstract List findAllOrganismCommonNames();
+    public abstract List<String> findAllOrganismCommonNames();
 
 }

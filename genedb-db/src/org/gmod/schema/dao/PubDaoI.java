@@ -19,7 +19,7 @@
 
 package org.gmod.schema.dao;
 
-import org.genedb.db.hibernate3gen.Pub;
+import org.gmod.schema.pub.Pub;
 
 public interface PubDaoI {
 

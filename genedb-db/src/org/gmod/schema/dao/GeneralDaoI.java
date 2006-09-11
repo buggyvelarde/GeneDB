@@ -19,8 +19,10 @@
 
 package org.gmod.schema.dao;
 
-import org.genedb.db.hibernate3gen.Db;
-import org.genedb.db.hibernate3gen.DbXRef;
+import org.gmod.schema.general.Db;
+import org.gmod.schema.general.DbXRef;
+
+
 
 public interface GeneralDaoI {
 

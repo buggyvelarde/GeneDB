@@ -19,8 +19,9 @@
 
 package org.gmod.schema.dao;
 
-import org.genedb.db.hibernate3gen.Cv;
-import org.genedb.db.hibernate3gen.CvTerm;
+
+import org.gmod.schema.cv.Cv;
+import org.gmod.schema.cv.CvTerm;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public interface CvDaoI {
      * @param name the name to lookup
      * @return the List<Cv> of matches, or null
      */
-    public abstract List getCvByName(String name);
+    public abstract List<Cv> getCvByName(String name);
 
     /**
      * Retrieve a CvTerm by id
@@ -61,7 +62,7 @@ public interface CvDaoI {
      * @param cv the controlled vocabulary this cvterm is part of
      * @return a (possibly empty) list of matching cvterms
      */
-    public abstract List getCvTermByNameInCv(String cvTermName, Cv cv);
+    public abstract List<CvTerm> getCvTermByNameInCv(String cvTermName, Cv cv);
 
 
     /**

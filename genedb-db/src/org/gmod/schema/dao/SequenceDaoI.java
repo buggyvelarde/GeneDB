@@ -19,11 +19,13 @@
 
 package org.gmod.schema.dao;
 
-import org.genedb.db.helpers.NameLookup;
-import org.genedb.db.hibernate3gen.CvTerm;
-import org.genedb.db.hibernate3gen.FeatureCvTerm;
-import org.genedb.db.hibernate3gen.Synonym;
-import org.genedb.db.jpa.Feature;
+
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.sequence.Synonym;
 
 import java.util.List;
 
@@ -51,15 +53,17 @@ public interface SequenceDaoI {
      * @param name the lookup name
      * @return a (possibly empty) List<Feature> of children with this current name
      */
-    public List getFeaturesByAnyCurrentName(String name);
+    public List<Feature> getFeaturesByAnyCurrentName(String name);
     
     /**
-     * Return a list of features with this name or synonym (including obsolete names)
+     * Return a list of features with this name or synonym (including obsolete names). The 
+     * name can contain an SQL wildcard (%) 
      *  
      * @param name the lookup name
+     * @param featureType the type of feature to return eg "gene"
      * @return a (possibly empty) List<Feature> of children with this name
      */
-    public List getFeaturesByAnyName(NameLookup nl, String featureType);
+    public List<Feature> getFeaturesByAnyName(String name, String featureType);
 
     
     // TODO Document overlap behaviour
@@ -73,7 +77,7 @@ public interface SequenceDaoI {
      * @param type 
      * @return a List<Feature> which ??? this range
      */
-    public List getFeaturesByRange(int min, int max, int strand,
+    public List<Feature> getFeaturesByRange(int min, int max, int strand,
             Feature parent, String type);
 
     /**
@@ -82,7 +86,7 @@ public interface SequenceDaoI {
      * @param parent the parent feature
      * @return a (possibly empty) List<Feature> of children located on this parent
      */
-    public List getFeaturesByLocatedOnFeature(Feature parent);
+    public List<Feature> getFeaturesByLocatedOnFeature(Feature parent);
 
     /**
      * Return the FeatureCvTerm that links a given Feature and CvTerm, with a given value of 'not'
@@ -111,7 +115,25 @@ public interface SequenceDaoI {
      * @param synonym the test Synonym
      * @return a (possibly empty) List<FeatureSynonym>
      */
-    public List getFeatureSynonymsByFeatureAndSynonym(
+    public List<FeatureSynonym> getFeatureSynonymsByFeatureAndSynonym(
             Feature feature, Synonym synonym);
+    
+    /**
+     * Return all the FeatureDbXRefs for a given feature, <b>specified by name</b>, or all if 
+     * <code>null</code> is passed
+     * 
+     * @param uniqueName the uniquename of a Feature, or null for all FeatureDbXRefs
+     * @return a (possibly empty) List<FeatureDbXRefI> 
+     */
+    public List<FeatureDbXRef> getFeatureDbXRefsByFeatureUniquename(final String uniqueName);
+    
+    /**
+     * Return the list of FeatureSynonyms for a given Feature, <b>specified by name</b>, or all if 
+     * <code>null</code> is passed
+     * 
+     * @param uniqueName the uniquename of a Feature, or null for all
+     * @return a (possibly empty) List<FeatureSynonymI> of matching synonyms
+     */
+    public List<FeatureSynonym> getFeatureSynonymsByFeatureUniquename(final String uniqueName);
 
 }
