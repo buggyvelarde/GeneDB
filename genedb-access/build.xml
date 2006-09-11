@@ -2,8 +2,14 @@
 
 <project name="genedb-access" default="genedb-access.jar" basedir=".">
 
-	<target name="genedb-access.jar" depends="" description="Create JAR file with DAOs">
-
+	<target name="get-latest-jars" depends="" 
+		description="Copy over JAR files from other projects">
+		<copy file="../genedb-db/ant-build/jar-build/genedb-hibernate.jar" todir="lib" />
+		<copy file="../genedb-db/ant-build/jar-build/chado-interface.jar" todir="lib" />
+	</target>
+	
+	
+	<target name="genedb-access.jar" depends="" description="Create JAR file">
 		<delete file="genedb-access.jar"/>
 
 		<copy todir="ant-build/jar">
@@ -12,7 +18,6 @@
 		</copy>
 		
 		<jar jarfile="genedb-access.jar">
-			
 			<fileset dir="ant-build/jar" />
 			<manifest>
 				<attribute name="Implementation-Title" value="GeneDB Loading"/>
@@ -20,7 +25,6 @@
 				<attribute name="Main-class" value="org.genedb.db.loading.NewRunner" />
 			</manifest>
 		</jar>
-
 	</target>
 	
 </project>
