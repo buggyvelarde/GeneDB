@@ -19,9 +19,14 @@
 
 package org.genedb.db.loading;
 
-import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.hibernate3gen.FeatureLoc;
-import org.genedb.db.hibernate3gen.Organism;
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.GeneralDao;
+import org.genedb.db.dao.OrganismDao;
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.loading.featureProcessors.CDS_Processor;
+
+import org.gmod.schema.organism.Organism;
+import org.gmod.schema.sequence.FeatureLoc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +51,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,29 +76,32 @@ import java.util.Set;
 public class NewRunner implements ApplicationContextAware {
 
     private static String usage="NewRunner commonname [config file]";
-    
+
     protected static final Log logger = LogFactory.getLog(NewRunner.class);
-    
+
     private FeatureHandler featureHandler = new StandardFeatureHandler();
-    
-    private DaoFactory daoFactory;
-    
+
     private RunnerConfig runnerConfig;
-    
+
     private RunnerConfigParser runnerConfigParser;
-    
-    private Map<String, FeatureProcessor> instanceMap = new HashMap<String, FeatureProcessor>();
-    
+
     private Set<String> noInstance = new HashSet<String>();
-    
+
     private FeatureUtils featureUtils;
-    
+
     private Organism organism;
 
-    
     private ApplicationContext applicationContext;
 
+    private SequenceDao sequenceDao;
+
+    private OrganismDao organismDao;
+
+    private CvDao cvDao;
+
+    private GeneralDao generalDao;
     
+    private Map<String, FeatureProcessor> qualifierHandlerMap;   
 
 
     /**
@@ -103,36 +112,47 @@ public class NewRunner implements ApplicationContextAware {
     public void afterPropertiesSet() {
         //logger.warn("Skipping organism set as not connected to db");
         runnerConfig = runnerConfigParser.getConfig();
-        organism = daoFactory.getOrganismDao().findByCommonName(runnerConfig.getOrganismCommonName()).get(0);
+        organism = organismDao.getOrganismByCommonName(runnerConfig.getOrganismCommonName());
         featureHandler.setOrganism(organism);
+        featureHandler.setCvDao(cvDao);
+        featureHandler.setGeneralDao(generalDao);
+        featureHandler.setSequenceDao(sequenceDao);
         featureUtils = new FeatureUtils();
-        featureUtils.setDaoFactory(daoFactory);
+        featureUtils.setCvDao(cvDao);
+        featureUtils.setSequenceDao(sequenceDao);
+        featureUtils.afterPropertiesSet();
         featureHandler.setFeatureUtils(featureUtils);
-        GoParser gp = new GoParser();
-        gp.setDaoFactory(daoFactory);
-        featureHandler.setGoParser(gp);
-        
+        //gp.setCvDao(cvDao);
+
         Map<String, String> nomenclatureOptions = runnerConfig.getNomenclatureOptions();
         String nomenclatureHandlerName = nomenclatureOptions.get("beanName");
         if (nomenclatureHandlerName == null) {
             nomenclatureHandlerName = "standardNomenclatureHandler";
         }
         NomenclatureHandler nomenclatureHandler = (NomenclatureHandler)
-            this.applicationContext.getBean(nomenclatureHandlerName, NomenclatureHandler.class);
+        this.applicationContext.getBean(nomenclatureHandlerName, NomenclatureHandler.class);
         nomenclatureHandler.setOptions(nomenclatureOptions);
-        
-        featureHandler.setNomenclatureHandler(nomenclatureHandler);
-        
-        
+
+        CDS_Processor cdsProcessor = 
+            (CDS_Processor) this.applicationContext.getBean("cdsProcessor", CDS_Processor.class);
+        cdsProcessor.setNomenclatureHandler(nomenclatureHandler);
+
+
         featureHandler.afterPropertiesSet();
+        
+        for (FeatureProcessor fp : qualifierHandlerMap.values()) {
+            fp.setOrganism(organism);
+            fp.setFeatureUtils(featureUtils);
+            fp.afterPropertiesSet();
+        }
     }
 
     private CharSequence blankString(char c, int size) {
-	StringBuilder buf = new StringBuilder(size);
-	for (int i =0; i < size; i++) {
-	    buf.append(c);
-	}
-	return buf;
+        StringBuilder buf = new StringBuilder(size);
+        for (int i =0; i < size; i++) {
+            buf.append(c);
+        }
+        return buf;
     }
 
 
@@ -141,45 +161,41 @@ public class NewRunner implements ApplicationContextAware {
      * Populate maps based on InterPro result files, GO association files etc
      */
     private void buildCaches() {
-	// TODO Auto-generated method stub
-	
+        // TODO Auto-generated method stub
+
     }
+
+
 
     /**
      * Call a process_* type method for this feature, based on its type
      * 
      * @param f The feature to dispatch on
      */
-    private void despatchOnFeatureType(final Feature f, final org.genedb.db.jpa.Feature parent) {
-        FeatureProcessor instance = null;
-        String mungedType = f.getType().replaceAll("'","_Prime_");
-        mungedType = mungedType.replaceAll("3", "Three");
-        mungedType = mungedType.replaceAll("5", "Five");
-        // TODO Make 1st letter upper case
-        mungedType = mungedType.substring(0,1).toUpperCase()+mungedType.substring(1);
-        if (this.instanceMap.containsKey(mungedType)) {
-            instance = this.instanceMap.get(mungedType);
-        } else {
-            if (this.noInstance.contains(mungedType)) {
-                return;
-            }
-            // Try and find a class
-            String className = "org.genedb.db.loading.featureProcessors."+mungedType+"_Processor";
-            try {
-                instance = (FeatureProcessor) Class.forName(className).newInstance();
-                instance.setDaoFactory(daoFactory);
-                instance.setFeatureUtils(featureUtils);
-                instance.setOrganism(organism);
-                instance.afterPropertiesSet();
-            }
-            catch (Exception exp) {
-                this.noInstance.add(mungedType);
-                logger.warn("No processor for qualifier of type '"+f.getType()+"' (Looked for '"+className+"') Reason '"+exp.getClass().getSimpleName()+"'");
-                return;
+    private void despatchOnFeatureType(final FeatureProcessor fp, final Feature f, final org.gmod.schema.sequence.Feature parent, final int offset) {
+        TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
+        tt.execute(
+                new TransactionCallbackWithoutResult() {
+                    @Override
+                    public void doInTransactionWithoutResult(TransactionStatus status) {
+                        fp.process(parent, f, offset);
+                    }
+                });
+    }   
+
+
+    private FeatureProcessor findFeatureProcessor(final Feature f) {
+        String type = f.getType();
+        FeatureProcessor instance = qualifierHandlerMap.get(type);
+        if (instance == null) {
+            if (!this.noInstance.contains(type)) {
+                this.noInstance.add(type);
+                logger.warn("No processor for qualifier of type '"+type+"' configured.");
             }
         }
-        instance.process(parent, f);
-    }
+        return instance;
+    }   
+
 
     /**
      * Create a list of Biojava sequences from an EMBL file. It fails fatally if no sequences are found.
@@ -188,94 +204,93 @@ public class NewRunner implements ApplicationContextAware {
      * @return the list of sequences, >1 if an EMBL stream
      */
     public List<Sequence> extractSequencesFromFile(File file) {
-	if (logger.isInfoEnabled()) {
-	    logger.info("Parsing file '"+file.getAbsolutePath()+"'");
-	}
-	List<Sequence> ret = new ArrayList<Sequence>(); 
-	
-	Reader in = null;
-	//ArrayList localCache = new ArrayList();
-	try {
-	    in = new FileReader(file);
-	    //        	if (showContigs) {
-	    //        	    System.err.println("Processing contig " + contigName);
-	    //        	}
-        	
-        	
-	    SequenceIterator seqIt = SeqIOTools.readEmbl( new BufferedReader(in) ); // TODO - biojava hack
+        if (logger.isInfoEnabled()) {
+            logger.info("Parsing file '"+file.getAbsolutePath()+"'");
+        }
+        List<Sequence> ret = new ArrayList<Sequence>(); 
 
-	    while ( seqIt.hasNext() ) {
-		ret.add(seqIt.nextSequence());
-	    }
-        	
-        
-	} catch (FileNotFoundException exp) {
-	    System.err.println("Couldn't open input file: " + file);
-	    exp.printStackTrace();
-	    System.exit(-1);
-	} catch (BioException exp) {
-	    System.err.println("Couldn't open input file: " + file);
-	    exp.printStackTrace();
-	    System.exit(-1);
-	}
-	finally {
-	    if (in != null) {
-		try {
-		    in.close();
-		} catch (IOException e) {
-		    // Shouldn't happen!
-		    e.printStackTrace();
-		}
-	    }
-	}
-	if (ret.size() == 0) {
-	    logger.fatal("No sequences found in '"+file.getAbsolutePath()+"'");
-	    System.exit(-1);
-	}
-	if (ret.size()>1) {
-	    logger.warn("More than one ("+ret.size()+") sequence found in '"+file.getAbsolutePath()+"'. Not recommended");
-	}
-	return ret;
+        Reader in = null;
+        //ArrayList localCache = new ArrayList();
+        try {
+            in = new FileReader(file);
+            //        	if (showContigs) {
+            //        	    System.err.println("Processing contig " + contigName);
+            //        	}
+
+
+            SequenceIterator seqIt = SeqIOTools.readEmbl( new BufferedReader(in) ); // TODO - biojava hack
+
+            while ( seqIt.hasNext() ) {
+                ret.add(seqIt.nextSequence());
+            }
+
+
+        } catch (FileNotFoundException exp) {
+            System.err.println("Couldn't open input file: " + file);
+            exp.printStackTrace();
+            System.exit(-1);
+        } catch (BioException exp) {
+            System.err.println("Couldn't open input file: " + file);
+            exp.printStackTrace();
+            System.exit(-1);
+        }
+        finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    // Shouldn't happen!
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (ret.size() == 0) {
+            logger.fatal("No sequences found in '"+file.getAbsolutePath()+"'");
+            System.exit(-1);
+        }
+        if (ret.size()>1) {
+            logger.warn("More than one ("+ret.size()+") sequence found in '"+file.getAbsolutePath()+"'. Not recommended");
+        }
+        return ret;
     }
 
     private void postProcess() {
-	// 	           addAttribution(getBRNACache());
-	//            addUnconditionalLinks(getBRNACache());
-	//            writeSPTRLinks(config, outDir, getBRNACache());
-	//
-	//            getInterPro(getBRNACache(), topDir.getAbsolutePath() + "/interpro", -1);
-	//
-	//            parseExtSignalP(config);
-	//            parseExtTMM(config);
-	//            parseExtGPI(config);
-	//            parseGOFile(topDir.getAbsolutePath() + "/goAssociation", false, null);
-	//            parseSWLinks(outDir, getBRNACache());
-	//
-	//            setDescriptions(getBRNACache());
-	//            generatePfams(topDir, outDir);
-	//
-	//            getProteinStats(config, outDir);
-	//            writeReports(config.getBooleanProperty("mining.writeReports"), organism, outDir);
-	// 
-	//            finishUp();
-	//sessionFactory.close();
+        // 	           addAttribution(getBRNACache());
+        //            addUnconditionalLinks(getBRNACache());
+        //            writeSPTRLinks(config, outDir, getBRNACache());
+        //
+        //            getInterPro(getBRNACache(), topDir.getAbsolutePath() + "/interpro", -1);
+        //
+        //            parseExtSignalP(config);
+        //            parseExtTMM(config);
+        //            parseExtGPI(config);
+        //            parseGOFile(topDir.getAbsolutePath() + "/goAssociation", false, null);
+        //            parseSWLinks(outDir, getBRNACache());
+        //
+        //            setDescriptions(getBRNACache());
+        //            generatePfams(topDir, outDir);
+        //
+        //            getProteinStats(config, outDir);
+        //            writeReports(config.getBooleanProperty("mining.writeReports"), organism, outDir);
+        // 
+        //            finishUp();
+        //sessionFactory.close();
     }
-    
+
     /**
      * The core processing loop. Read the config file to find out which EMBL files to read, 
      * and which 'synthetic' features to create
      */
     private void process() {
-	long start = new Date().getTime();
-        
+        long start = new Date().getTime();
+
         this.buildCaches();
 
         // First process simple files ie simple EMBL files
         List<String> fileNames = this.runnerConfig.getFileNames();
         for (String fileName : fileNames) {
             for (final Sequence seq : this.extractSequencesFromFile(new File(fileName))) {
-                
-                TransactionTemplate tt = new TransactionTemplate(daoFactory.getTransactionManager());
+                TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
                 tt.execute(
                         new TransactionCallbackWithoutResult() {
                             @Override
@@ -284,56 +299,65 @@ public class NewRunner implements ApplicationContextAware {
                             }
                         });
 
-	    }
-	}
-        
+            }
+        }
+
         // Now process synthetics ie config is a mixture of real embl files and synthetic features
         List<Synthetic> synthetics = this.runnerConfig.getSynthetics();
         for (Synthetic synthetic : synthetics) {          
-            org.genedb.db.jpa.Feature top = featureUtils.createFeature(synthetic.getSoType(), synthetic.getName(), organism);
-            daoFactory.persist(top);
+            final org.gmod.schema.sequence.Feature top = featureUtils.createFeature(synthetic.getSoType(), synthetic.getName(), organism);
+            sequenceDao.persist(top);
             StringBuilder residues = new StringBuilder();
-            
+
             for (Part part : synthetic.getParts()) {
-        	//System.err.println("Synthetic Part='"+synthetic+"'");
-		if (part instanceof FeaturePart) {
-		    FeaturePart fp = (FeaturePart) part;
-		    org.genedb.db.jpa.Feature f = 
-			featureUtils.createFeature(fp.getSoType(), fp.getName(), organism);
-		    FeatureLoc fl = featureUtils.createLocation(top, f, fp.getOffSet(), fp.getOffSet()+fp.getSize(), fp.getStrand());
-		    daoFactory.persist(f);
-		    daoFactory.persist(fl);
-		    residues.append(blankString('N', fp.getSize()));
-		}
-		
-		if (part instanceof FilePart) {
-		    FilePart fp = (FilePart) part;
-		    File tmp = new File(fp.getName());
-		    List<Sequence> sequences = this.extractSequencesFromFile(tmp);
-		    if (sequences.size()>1) {
-			logger.fatal("Can't use an EMBL stream '"+tmp.getAbsolutePath()+"' in a synthetic");
-			for (Sequence sequence : sequences) {
-			    logger.fatal(sequence);
-			}
-			throw new RuntimeException("Can't use an EMBL stream '"+tmp.getAbsolutePath()+"' in a synthetic");
-		    }
-		    Sequence seq = sequences.get(0);
-		    this.processSequence(seq, top, fp.getOffSet());
-		    residues.append(seq.seqString());	    
-		}
-		
-	    }
+                //System.err.println("Synthetic Part='"+synthetic+"'");
+                if (part instanceof FeaturePart) {
+                    FeaturePart fp = (FeaturePart) part;
+                    org.gmod.schema.sequence.Feature f = 
+                        featureUtils.createFeature(fp.getSoType(), fp.getName(), organism);
+                    FeatureLoc fl = featureUtils.createLocation(top, f, fp.getOffSet(), fp.getOffSet()+fp.getSize(), fp.getStrand());
+                    sequenceDao.persist(f);
+                    sequenceDao.persist(fl);
+                    residues.append(blankString('N', fp.getSize()));
+                }
+
+                if (part instanceof FilePart) {
+                    final FilePart fp = (FilePart) part;
+                    File tmp = new File(fp.getName());
+                    List<Sequence> sequences = this.extractSequencesFromFile(tmp);
+                    if (sequences.size()>1) {
+                        logger.fatal("Can't use an EMBL stream '"+tmp.getAbsolutePath()+"' in a synthetic");
+                        for (Sequence sequence : sequences) {
+                            logger.fatal(sequence);
+                        }
+                        throw new RuntimeException("Can't use an EMBL stream '"+tmp.getAbsolutePath()+"' in a synthetic");
+                    }
+                    final Sequence seq = sequences.get(0);
+
+//                  TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
+//                  tt.execute(
+//                  new TransactionCallbackWithoutResult() {
+//                  @Override
+//                  public void doInTransactionWithoutResult(TransactionStatus status) {
+                    processSequence(seq, top, fp.getOffSet());
+//                  }
+//                  });
+
+                    residues.append(seq.seqString());	    
+                }
+
+            }
             top.setResidues(residues.toString());
-            daoFactory.getHibernateTemplate().update(top);
+            //sequenceDao.update(top); // FIXME - Change to merge, or is it OK anyway?
         }
-        
+
         this.postProcess();
 
         long duration = (new Date().getTime()-start)/1000;
         logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
     }
-    
-    
+
+
     /**
      * This method is called once for each sequence. First it examines the source features, 
      * then CDSs, then other features
@@ -343,41 +367,84 @@ public class NewRunner implements ApplicationContextAware {
      * @param offset The base offset, when reparenting is taking place
      */
     @SuppressWarnings("unchecked")
-    private void processSequence(Sequence seq, org.genedb.db.jpa.Feature parent, int offset) {
-	try {
-	    org.genedb.db.jpa.Feature topLevel = this.featureHandler.processSources(seq);
-	    if (parent == null) {
-		parent = topLevel;
-	    }
-	    this.featureHandler.processCDS(seq, parent, offset);
-		
-	    Iterator featureIterator = seq.features();
-	    while (featureIterator.hasNext()) {
-		Feature feature = (Feature) featureIterator.next();
-		this.despatchOnFeatureType(feature, parent);
-	    //parseFeature(seq);
-	    }
-		
-	} catch (ChangeVetoException exp) {
-	    // TODO Auto-generated catch block
-	    exp.printStackTrace();
-	} catch (BioException exp) {
-	    // TODO Auto-generated catch block
-	    exp.printStackTrace();
-	}
+    private void processSequence(Sequence seq, org.gmod.schema.sequence.Feature parent, int offset) {
+        try {
+            org.gmod.schema.sequence.Feature topLevel = this.featureHandler.processSources(seq);
+            if (parent == null) {
+                parent = topLevel;
+                // Mark all top-level features
+                this.featureUtils.markTopLevelFeature(topLevel);
+            }
 
+            // Loop over all features, setting up feature processors and index them by ProcessingPhase
+            // Deal with any ProcessingPhase.FIRST on this loop. Note any features we can't process
+            
+            Map<ProcessingPhase,List<Feature>> processingStagesFeatureMap = 
+                new HashMap<ProcessingPhase, List<Feature>>(); 
+            
+            List<Feature> toRemove = new ArrayList<Feature>();
+            Iterator featureIterator = seq.features();
+            while (featureIterator.hasNext()) {
+                Feature feature = (Feature) featureIterator.next();
+                FeatureProcessor fp = findFeatureProcessor(feature);
+                if (fp != null) {
+                    ProcessingPhase pp = fp.getProcessingPhase();
+                    if (pp == ProcessingPhase.FIRST) {
+                        this.despatchOnFeatureType(fp, feature, parent, offset);
+                    }
+                    CollectionUtils.addItemToMultiValuedMap(pp, feature, processingStagesFeatureMap);
+                } else {
+                    toRemove.add(feature);
+                }
+            }
+
+            // Remove features that we dealt with in first pass, or can't deal with
+            // TODO Bother deleting as not looping thru' them - use index instead
+            for (Feature feature : processingStagesFeatureMap.get(ProcessingPhase.FIRST)) {
+                seq.removeFeature(feature);
+            }
+            processingStagesFeatureMap.put(ProcessingPhase.FIRST, Collections.EMPTY_LIST); // TO Keep this even if remove above & below
+            for (Feature feature : toRemove) {
+                seq.removeFeature(feature);
+            }
+
+
+            // Loop through each processing phase, and use index to process features
+            // then delete them
+            for (ProcessingPhase pp : ProcessingPhase.values()) {
+                if (pp == ProcessingPhase.FIRST) {
+                    continue;
+                }
+                List<Feature> features = processingStagesFeatureMap.get(pp);
+                if (features != null) {
+                    for (Feature feature : features) {
+                        FeatureProcessor fp = findFeatureProcessor(feature);
+                        this.despatchOnFeatureType(fp, feature, parent, offset);
+                    }
+                    if (pp == ProcessingPhase.LAST) {
+                        continue; // Rely on GC to tidy up
+                    }
+                    for (Feature feature : features) {
+                        seq.removeFeature(feature);
+                    }
+                }
+                processingStagesFeatureMap.put(ProcessingPhase.FIRST, Collections.EMPTY_LIST);
+            }
+
+        } catch (ChangeVetoException exp) {
+            // TODO Auto-generated catch block
+            exp.printStackTrace();
+        } catch (BioException exp) {
+            // TODO Auto-generated catch block
+            exp.printStackTrace();
+        }
 
     }
-    
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-	this.applicationContext = applicationContext;
+        this.applicationContext = applicationContext;
     }
-    
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-        this.featureHandler.setDaoFactory(this.daoFactory);
-    }
-	
+
     public void setOrganismCommonName(String organismCommonName) {
     }
 
@@ -395,11 +462,11 @@ public class NewRunner implements ApplicationContextAware {
      * @param args organism_common_name, [conf file path]
      */
     public static void main (String[] args) {
-	
+
         String organismCommonName = null;
         String loginName = null;
         String configFilePath = null; 
-            
+
         switch (args.length) {
             case 0:
                 System.err.println("No organism common name specified\n"+usage);
@@ -423,28 +490,49 @@ public class NewRunner implements ApplicationContextAware {
                 System.err.println("Too many arguments\n"+usage);
             System.exit(0);
         }
-        
-	// Override properties in Spring config file (using a 
-	// BeanFactoryPostProcessor) based on command-line args
-	Properties overrideProps = new Properties();
-	overrideProps.setProperty("dataSource.username", loginName);
-	overrideProps.setProperty("runner.organismCommonName", organismCommonName);
-	overrideProps.setProperty("runnerConfigParser.organismCommonName", organismCommonName);
-    
-    if (configFilePath != null) {
-        overrideProps.setProperty("runnerConfigParser.configFilePath", configFilePath);
-    }
-    
-    
-	PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
-	
-	
-	ApplicationContext ctx = new ClassPathXmlApplicationContext(
-	        new String[] {"NewRunner.xml"});
-	
-	NewRunner runner = (NewRunner) ctx.getBean("runner", NewRunner.class);
-	runner.process();
 
+        // Override properties in Spring config file (using a 
+        // BeanFactoryPostProcessor) based on command-line args
+        Properties overrideProps = new Properties();
+        overrideProps.setProperty("dataSource.username", loginName);
+        overrideProps.setProperty("runner.organismCommonName", organismCommonName);
+        overrideProps.setProperty("runnerConfigParser.organismCommonName", organismCommonName);
+
+        if (configFilePath != null) {
+            overrideProps.setProperty("runnerConfigParser.configFilePath", configFilePath);
+        }
+
+
+        PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
+
+
+        ApplicationContext ctx = new ClassPathXmlApplicationContext(
+                new String[] {"NewRunner.xml"});
+
+        NewRunner runner = (NewRunner) ctx.getBean("runner", NewRunner.class);
+        runner.process();
+
+    }
+
+    public void setOrganismDao(OrganismDao organismDao) {
+        this.organismDao = organismDao;
+    }
+
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
+
+    public void setCvDao(CvDao cvDao) {
+        this.cvDao = cvDao;
+    }
+
+    public void setGeneralDao(GeneralDao generalDao) {
+        this.generalDao = generalDao;
+    }
+
+    public void setQualifierHandlerMap(
+            Map<String, FeatureProcessor> qualifierHandlerMap) {
+        this.qualifierHandlerMap = qualifierHandlerMap;
     }
 
 }
