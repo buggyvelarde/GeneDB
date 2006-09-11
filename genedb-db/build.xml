@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="hibernateTry2" default="fulljar" basedir=".">
+<project name="genedb-db" default="alljars" basedir=".">
 
 	<path id="toolslib">
 		<path location="lib/hibernate-tools.jar" />
@@ -11,6 +11,11 @@
 		<path location="lib/cglib-2.1.3.jar" />
 		<path location="lib/postgresql-8.2dev-501.jdbc3.jar" />
 		<path location="lib/commons-collections-2.1.1.jar" />
+		<path location="lib/asm.jar" />
+		<path location="lib/jtidy-r8-21122004.jar" />
+		<path location="lib/retrotranslator-transformer-1.0.8.jar" />
+		<path location="lib/retrotranslator-runtime-1.0.8.jar" />
+		<path location="lib/backport-util-concurrent.jar" />
 	</path>
 	   
 	
@@ -26,18 +31,31 @@
 	<taskdef name="hibernatetool" 
 	         classname="org.hibernate.tool.ant.HibernateToolTask" 
 	         classpathref="toolslib" />
+	
 	<target name="generate-classes">
-	<hibernatetool destdir="out">
-	 <classpath>
+	<hibernatetool destdir="out-beta7">
+	 <!--<classpath>
 	  <path location="input"/>
 	 	<path location="input/org/genedb/db/hibernate3gen" />
-	 </classpath>
-
-	 <configuration configurationfile="input/org/genedb/db/hibernate3gen/hibernate.cfg.xml"/>
+	 </classpath>-->
+		 <classpath>
+		  <path location="bin"/>
+		 </classpath>
+		<jdbcconfiguration
+			configurationfile="out-beta7/hibernate.cfg.xml"
+		  packagename="org.genedb.db.beta7"
+		  revengfile="hibernate.reveng.xml"
+		  reversestrategy="org.genedb.db.hibernate2.MyStrategy"
+		  detectmanytomany="false"
+		  detectoptimisticlock="false" 
+		>
+		</jdbcconfiguration>
+	 <!--<configuration configurationfile="input/org/genedb/db/hibernate3gen/hibernate.cfg.xml"/> -->
+		<hbm2hbmxml destdir="out-beta7/hbm" />
 	 <hbm2ddl export="false" outputfilename="sql.dll" />
 	 <hbm2java jdk5="true" ejb3="true" />
 	</hibernatetool>
-		</target>
+   	</target>
 	
 	<target name="fulljar" depends="cleanGenerated,generate-classes" description="Create full JAR file with all Hibernate classes">
 
@@ -52,5 +70,79 @@
 		</jar>
 
 	</target>
+	
+	<property name="version" value="0.2"/>
+	<property name="jar-build" value="ant-build/jar-build"/>
 
+    <taskdef name="retrotranslator"
+    		 classpathref="toolslib" 
+             classname="net.sf.retrotranslator.transformer.RetrotranslatorTask" />
+	
+	<target name="alljars" description="Create full JAR files with interface/implementation split">
+
+		<delete>
+			<fileset dir="${jar-build}" />
+		</delete>
+		<mkdir dir="${jar-build}" />
+
+		<copy todir="${jar-build}/interface">
+			<fileset dir="." id="id">
+			    <include name="src/org/gmod/**/*.java" />
+			    <include name="bin/org/gmod/**/*.class" />
+			</fileset>
+		</copy>
+		<move todir="${jar-build}/interface/org">
+			<fileset dir="${jar-build}/interface/bin/org" />
+		</move>
+		<delete dir="${jar-build}/interface/bin" />
+		<jar jarfile="${jar-build}/chado-interface.jar">
+			<fileset dir="${jar-build}/interface" />
+			<manifest>
+				<attribute name="Implementation-Title" value="GeneDB Hibernate"/>
+				<attribute name="Implementation-Version" value="0.1"/>
+			</manifest>
+		</jar>
+		<replaceregexp byline="true">
+			<regexp pattern="^\s*@[A-Z].*$|^import javax.persistence.*$" />
+			<substitution expression="" />
+			<fileset dir="${jar-build}/interface/src" />
+		</replaceregexp>
+		
+	    <!--<path id="classpath">
+	        <fileset dir="lib" includes="**/*.jar"/>
+	    </path>-->
+
+	    <!--<retrotranslator destdir="${jar-build}/classes14" verify="true">
+	        <src path="${jar-build}/genedb-hibernate.jar"/>
+	        <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/>
+	        --><!--<classpath refid="classpath"/>--><!--
+	    </retrotranslator>-->
+		
+
+		<copy todir="${jar-build}/implementation">
+			<fileset dir="." id="id">
+				<include name="src/org/genedb/db/dao/**" />
+			    <include name="bin/org/genedb/db/dao/**" />
+			    <include name="input/org/gmod/**/*.hbm.xml" />
+			</fileset>
+		</copy>
+		<move todir="${jar-build}/implementation/org">
+			<fileset dir="${jar-build}/implementation/bin/org" />
+		</move>
+		<move todir="${jar-build}/implementation/org">
+			<fileset dir="${jar-build}/implementation/input/org">
+				<include name="**/*.hbm.xml" />
+			</fileset>
+		</move>
+		<delete dir="${jar-build}/implementation/input" />
+		<jar jarfile="${jar-build}/genedb-hibernate.jar">
+			<fileset dir="${jar-build}/implementation" />
+			<manifest>
+				<attribute name="Implementation-Title" value="GeneDB Hibernate"/>
+				<attribute name="Implementation-Version" value="0.1"/>
+			</manifest>
+		</jar>
+		
+	</target>
+	
 </project>
