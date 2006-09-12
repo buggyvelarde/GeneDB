@@ -82,7 +82,7 @@
     </servlet-mapping> -->
 	<servlet-mapping>
 		<servlet-name>genedb</servlet-name>
-		<url-pattern>/CircularGenome</url-pattern>
+		<url-pattern>/CircularGenomeForm</url-pattern>
 	</servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
