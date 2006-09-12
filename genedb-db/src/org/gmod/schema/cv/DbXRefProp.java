@@ -2,6 +2,7 @@ package org.gmod.schema.cv;
 
 
 
+import org.genedb.db.propinterface.PropertyI;
 import org.gmod.schema.general.DbXRef;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="dbxrefprop")
-public class DbXRefProp implements Serializable {
+public class DbXRefProp implements Serializable,PropertyI {
 
     // Fields    
     @Id
@@ -72,7 +73,7 @@ public class DbXRefProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#getCvTerm()
      */
-    private CvTerm getCvTerm() {
+    public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     

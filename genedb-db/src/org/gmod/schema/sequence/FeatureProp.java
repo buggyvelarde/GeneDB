@@ -1,5 +1,6 @@
 package org.gmod.schema.sequence;
 
+import org.genedb.db.propinterface.PropertyI;
 import org.gmod.schema.cv.CvTerm;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -21,7 +22,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="featureprop")
-public class FeatureProp implements Serializable {
+public class FeatureProp implements Serializable,PropertyI {
 
     // Fields    
     @SuppressWarnings("unused")

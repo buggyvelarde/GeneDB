@@ -1,6 +1,7 @@
 package org.gmod.schema.organism;
 
 
+import org.genedb.db.propinterface.PropertyI;
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="organismprop")
-public class OrganismProp implements Serializable {
+public class OrganismProp implements Serializable,PropertyI {
 
     // Fields    
      @Id
@@ -96,7 +97,7 @@ public class OrganismProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismPropI#getCvTerm()
      */
-    private CvTerm getCvTerm() {
+    public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     

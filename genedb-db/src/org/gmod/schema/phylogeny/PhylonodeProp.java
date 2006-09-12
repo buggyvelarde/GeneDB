@@ -2,6 +2,7 @@ package org.gmod.schema.phylogeny;
 // Generated Aug 31, 2006 4:02:18 PM by Hibernate Tools 3.2.0.beta7
 
 
+import org.genedb.db.propinterface.PropertyI;
 import org.gmod.schema.cv.CvTerm;
 
 import javax.persistence.Column;
@@ -21,7 +22,7 @@ import javax.persistence.UniqueConstraint;
     ,schema="public"
     , uniqueConstraints = { @UniqueConstraint( columnNames = { "phylonode_id", "type_id", "value", "rank" } ) }
 )
-public class PhylonodeProp  implements java.io.Serializable {
+public class PhylonodeProp  implements java.io.Serializable,PropertyI {
 
     // Fields    
 

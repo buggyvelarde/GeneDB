@@ -1,5 +1,6 @@
 package org.gmod.schema.sequence;
 
+import org.genedb.db.propinterface.PropertyI;
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_cvtermprop")
-public class FeatureCvTermProp implements Serializable {
+public class FeatureCvTermProp implements Serializable,PropertyI {
 
     // Fields    
 
@@ -78,7 +79,7 @@ public class FeatureCvTermProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#getCvterm()
      */
-    private CvTerm getCvTerm() {
+    public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     

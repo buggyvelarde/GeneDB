@@ -2,6 +2,7 @@ package org.gmod.schema.analysis;
 
 
 
+import org.genedb.db.propinterface.PropertyI;
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="analysisprop")
-public class AnalysisProp implements Serializable {
+public class AnalysisProp implements Serializable,PropertyI {
 
     // Fields    
 
@@ -88,7 +89,7 @@ public class AnalysisProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#getCvterm()
      */
-    private CvTerm getCvTerm() {
+    public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     
