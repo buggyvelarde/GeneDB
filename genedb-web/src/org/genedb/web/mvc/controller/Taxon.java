@@ -1,6 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-import org.springframework.web.servlet.View;
 
 public class Taxon {
 

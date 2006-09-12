@@ -1,25 +1,15 @@
 package org.genedb.web.mvc.controller.cgview;
 
-import org.genedb.web.mvc.controller.Taxon;
-import org.genedb.web.mvc.controller.TaxonUtils;
-import org.genedb.web.mvc.controller.WebUtils;
-
 import org.apache.commons.lang.StringEscapeUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.xml.sax.SAXException;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,13 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ca.ualberta.stothard.cgview.Cgview;
-import ca.ualberta.stothard.cgview.CgviewFactory;
-import ca.ualberta.stothard.cgview.CgviewHTMLDocument;
 import ca.ualberta.stothard.cgview.LabelBounds;
 
 /**
@@ -44,82 +31,82 @@ import ca.ualberta.stothard.cgview.LabelBounds;
  */
 public class CircularGenomeFormController extends SimpleFormController {
 
-	/**
-	 * Custom handler for homepage
-	 * @param request current HTTP request
-	 * @param response current HTTP response
-	 * @return a ModelAndView to render the response
-	 */
+    /**
+     * Custom handler for homepage
+     * @param request current HTTP request
+     * @param response current HTTP response
+     * @return a ModelAndView to render the response
+     */
     @Override
     public ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, 
             Object command, BindException errors) {
-            
+
         CircularGenomeCommandBean cgcb = (CircularGenomeCommandBean) command;
         List<String> answers = new ArrayList<String>();
-    //    if (WebUtils.extractTaxonOrOrganism(request, false, true, answers)) {
-    //        if (answers.size() > 0) {
-    //            Taxon taxon = TaxonUtils.getTaxonFromList(answers, 0);
+        //    if (WebUtils.extractTaxonOrOrganism(request, false, true, answers)) {
+        //        if (answers.size() > 0) {
+        //            Taxon taxon = TaxonUtils.getTaxonFromList(answers, 0);
 
-                CgviewFromGeneDBFactory factory = new CgviewFromGeneDBFactory();
+        CgviewFromGeneDBFactory factory = new CgviewFromGeneDBFactory();
 
-                try {
-                    Map settings = new HashMap();
-                    
-                    
-                    Cgview cgview = factory.createCgviewFromString("wibble");
-                    System.err.println("Got a cgview");
-//                  cgview.setDesiredZoomCenter(centerBaseValue.intValue());
-//                  cgview.setDesiredZoom(zoomValue.doubleValue());
-                    File tmpDir = new File(getServletContext().getRealPath("/tmp"));
-//                    File tmpDir = getTempDir();
-                    File pngFile = File.createTempFile("cgview", ".png", tmpDir);
-                    writeToPNGFile(cgview, pngFile, false);
-                    String relPath = pngFile.getAbsolutePath().substring(tmpDir.getAbsolutePath().length());
-                    //String browserPath = request.getContextPath()+"/DisplayTempFile"+relPath;
-                    String browserPath = request.getContextPath()+"/tmp"+relPath;
-                    settings.put("map", addImageMap(browserPath, cgview.getWidth(), cgview.getHeight(), cgview.getLabelBounds(), true));
-                    return new ModelAndView("graphics/circularGenome", "settings", settings);
-                } catch (IOException exp) {
-                    // TODO Auto-generated catch block
-                    exp.printStackTrace();
-                }
+        try {
+            Map settings = new HashMap();
 
 
+            Cgview cgview = factory.createCgviewFromString("wibble");
+            System.err.println("Got a cgview");
+//          cgview.setDesiredZoomCenter(centerBaseValue.intValue());
+//          cgview.setDesiredZoom(zoomValue.doubleValue());
+            File tmpDir = new File(getServletContext().getRealPath("/tmp"));
+//          File tmpDir = getTempDir();
+            File pngFile = File.createTempFile("cgview", ".png", tmpDir);
+            writeToPNGFile(cgview, pngFile, false);
+            String relPath = pngFile.getAbsolutePath().substring(tmpDir.getAbsolutePath().length());
+            //String browserPath = request.getContextPath()+"/DisplayTempFile"+relPath;
+            String browserPath = request.getContextPath()+"/tmp"+relPath;
+            settings.put("map", addImageMap(browserPath, cgview.getWidth(), cgview.getHeight(), cgview.getLabelBounds(), true));
+            return new ModelAndView("graphics/circularGenome", "settings", settings);
+        } catch (IOException exp) {
+            // TODO Auto-generated catch block
+            exp.printStackTrace();
+        }
 
 
-//            }
-//        }
+
+
+//      }
+//      }
         return new ModelAndView("homepages/frontPage");
-        }
+    }
 
 
-        /**
-         * Writes a Cgview object to a PNG file.
-         *
-         * @param cgview         the Cgview object.
-         * @param filename       the file to create.
-         * @param keepLastLabels whether or not to use labels generated by a previous call to one of the Cgview objects
-         *                       draw() or drawZoomed() methods.
-         * @throws IOException
-         */
-        public static void writeToPNGFile(Cgview cgview, File file, boolean keepLastLabels) throws IOException {
+    /**
+     * Writes a Cgview object to a PNG file.
+     *
+     * @param cgview         the Cgview object.
+     * @param filename       the file to create.
+     * @param keepLastLabels whether or not to use labels generated by a previous call to one of the Cgview objects
+     *                       draw() or drawZoomed() methods.
+     * @throws IOException
+     */
+    public static void writeToPNGFile(Cgview cgview, File file, boolean keepLastLabels) throws IOException {
 
-            BufferedImage buffImage = new BufferedImage(cgview.getWidth(), cgview.getHeight(), BufferedImage.TYPE_INT_RGB);
+        BufferedImage buffImage = new BufferedImage(cgview.getWidth(), cgview.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-            Graphics2D graphics2D = buffImage.createGraphics();
-            try {
-                if (cgview.getDesiredZoom() > 1.0d) {
-                    cgview.drawZoomed(graphics2D, cgview.getDesiredZoom(), cgview.getDesiredZoomCenter(), keepLastLabels);
-                } else {
-                    cgview.draw(graphics2D, keepLastLabels);
-                }
-                System.out.println("Writing picture to " + file.getAbsolutePath());
-                ImageIO.write(buffImage, "PNG", file);
-            } finally {
-                graphics2D.dispose();
+        Graphics2D graphics2D = buffImage.createGraphics();
+        try {
+            if (cgview.getDesiredZoom() > 1.0d) {
+                cgview.drawZoomed(graphics2D, cgview.getDesiredZoom(), cgview.getDesiredZoomCenter(), keepLastLabels);
+            } else {
+                cgview.draw(graphics2D, keepLastLabels);
             }
+            System.out.println("Writing picture to " + file.getAbsolutePath());
+            ImageIO.write(buffImage, "PNG", file);
+        } finally {
+            graphics2D.dispose();
         }
-        
+    }
+
 
     /**
      * Adds an image with an image map to this CgviewHTMLDocument, to implement mouseovers and hyperlinks associated
@@ -135,7 +122,7 @@ public class CircularGenomeFormController extends SimpleFormController {
      */
     public String addImageMap(String imageFile, int width, int height, List labelBounds, Boolean useOverlib) {
         StringBuilder ret = new StringBuilder();
-        
+
         ret.append("<img style=\"border:0\" src=\"" + StringEscapeUtils.escapeHtml(imageFile) + "\" width=\"" + Integer.toString(width) + "\" height=\"" + Integer.toString(height) + "\" usemap=\"#cgviewmap\" />" + '\n');
         ret.append("<map id=\"cgviewmap\" name=\"cgviewmap\">" + '\n');
 
@@ -155,14 +142,14 @@ public class CircularGenomeFormController extends SimpleFormController {
                 }
 
                 if ((currentLabelBounds.getMouseover() != null) && (!(currentLabelBounds.getMouseover().matches("\\S*")))) {
-            if (useOverlib.booleanValue()) {
-            ret.append("onmouseover=\"return overlib('" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "');\" ");
-            ret.append("onmouseout=\"return nd();\" ");
-            }
-            else {
-            ret.append("onmouseover=\"self.status='" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "'; return true;\" ");
-            ret.append("onmouseout=\"self.status=' '; return true;\" ");
-            }
+                    if (useOverlib.booleanValue()) {
+                        ret.append("onmouseover=\"return overlib('" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "');\" ");
+                        ret.append("onmouseout=\"return nd();\" ");
+                    }
+                    else {
+                        ret.append("onmouseover=\"self.status='" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "'; return true;\" ");
+                        ret.append("onmouseout=\"self.status=' '; return true;\" ");
+                    }
                 }
                 ret.append("/>" + '\n');
             }
@@ -171,5 +158,5 @@ public class CircularGenomeFormController extends SimpleFormController {
         ret.append("</map>" + '\n');
         return ret.toString();
     }
-    
+
 }

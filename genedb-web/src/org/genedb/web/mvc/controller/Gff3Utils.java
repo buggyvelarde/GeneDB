@@ -19,13 +19,9 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.jpa.Feature;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.orm.hibernate3.HibernateInterceptor;
+import org.gmod.schema.sequence.Feature;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLEncoder;

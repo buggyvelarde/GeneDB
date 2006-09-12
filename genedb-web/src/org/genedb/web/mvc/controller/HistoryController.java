@@ -1,12 +1,6 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.CvTermDao;
-import org.genedb.db.dao.FeatureDao;
-import org.genedb.db.hibernate3gen.Cv;
-import org.genedb.db.hibernate3gen.CvTerm;
-import org.genedb.db.hibernate3gen.FeatureRelationship;
-import org.genedb.db.jpa.Feature;
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.query.BasicQueryI;
 import org.genedb.query.NumberedQueryI;
 import org.genedb.query.QueryPlaceHolder;
@@ -27,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +33,7 @@ import javax.servlet.http.HttpSession;
  */
 public class HistoryController extends MultiActionController implements InitializingBean {
     
-    	private FeatureDao featureDao;
+    	private SequenceDao sequenceDao;
     	private FileCheckingInternalResourceViewResolver viewChecker;
 	
 	public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
@@ -336,8 +329,8 @@ public class HistoryController extends MultiActionController implements Initiali
 		
 	}
 
-	public void setFeatureDao(FeatureDao featureDao) {
-	    this.featureDao = featureDao;
+	public void setSequenceDao(SequenceDao sequenceDao) {
+	    this.sequenceDao = sequenceDao;
 	}
 
 //	public void setPubHome(PubHome pubHome) {

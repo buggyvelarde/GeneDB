@@ -19,7 +19,7 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.jpa.Feature;
+import org.gmod.schema.sequence.Feature;
 
 import org.apache.commons.lang.StringUtils;
 

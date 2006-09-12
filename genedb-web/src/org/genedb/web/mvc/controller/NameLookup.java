@@ -19,19 +19,18 @@
 
 package org.genedb.web.mvc.controller;
 
-import java.io.IOException;
-import java.io.Writer;
+public class NameLookup {
+    
+    private String lookup;
 
-public class GoAssociationUtils {
-
-    public void exportGoAssociation(Writer w, Taxon t, boolean strict) throws IOException {
-        // Find all proteins (or genes?) and loop over, extracting GO terms
-        
+    public String getLookup() {
+        return this.lookup;
     }
 
-    private void pln(Writer w, String line) throws IOException {
-        w.write(line);
-        w.write('\n');
+    public void setLookup(String lookup) {
+        this.lookup = lookup;
     }
     
+    
+
 }

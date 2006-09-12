@@ -1,12 +1,7 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.CvTermDao;
-import org.genedb.db.dao.FeatureDao;
-import org.genedb.db.hibernate3gen.Cv;
-import org.genedb.db.hibernate3gen.CvTerm;
-import org.genedb.db.hibernate3gen.FeatureRelationship;
-import org.genedb.db.jpa.Feature;
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.query.BasicQueryI;
 import org.genedb.query.NumberedQueryI;
 import org.genedb.query.QueryPlaceHolder;
@@ -14,16 +9,21 @@ import org.genedb.query.bool.BooleanOp;
 import org.genedb.query.bool.BooleanQuery;
 import org.genedb.web.tags.bool.QueryTreeWalker;
 
+import org.gmod.schema.cv.Cv;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureRelationship;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +35,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SearchController extends MultiActionController implements InitializingBean {
     
-    	private FeatureDao featureDao;
+    	private SequenceDao sequenceDao;
+        private CvDao cvDao;
     	private FileCheckingInternalResourceViewResolver viewChecker;
 	
 	public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
@@ -87,7 +88,7 @@ public class SearchController extends MultiActionController implements Initializ
 	    if (id == -1) {
 		    
 	    }
-	    Feature feat = featureDao.findById(id);
+	    Feature feat = sequenceDao.getFeatureById(id);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
@@ -104,7 +105,7 @@ public class SearchController extends MultiActionController implements Initializ
 	public ModelAndView DummyGeneFeature(HttpServletRequest request, HttpServletResponse response) {
 	    Feature feat = new Feature();
 	    feat.setName("dummy_name");
-	    feat.setUniquename("dummy_id");
+	    feat.setUniqueName("dummy_id");
 	    CvTerm cvTerm = new CvTerm();
 	    cvTerm.setName("gene");
 	    feat.setCvTerm(cvTerm);
@@ -119,7 +120,7 @@ public class SearchController extends MultiActionController implements Initializ
 	    if (name.equals(NO_VALUE_SUPPLIED)) {
 		    
 	    }
-	    Feature feat = featureDao.findByUniqueName(name);
+	    Feature feat = sequenceDao.getFeatureByUniqueName(name);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/generic";
@@ -130,13 +131,13 @@ public class SearchController extends MultiActionController implements Initializ
         if (type != null && type.equals("gene")) {
             viewName = "features/gene";
             Feature mRNA = null;
-            Set<FeatureRelationship> frs = feat.getFeatureRelationshipsForObjectId(); 
+            Collection<FeatureRelationship> frs = feat.getFeatureRelationshipsForObjectId(); 
             for (FeatureRelationship fr : frs) {
                 mRNA = fr.getFeatureBySubjectId();
                 break;
             }
             Feature polypeptide = null;
-            Set<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
+            Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
             for (FeatureRelationship fr : frs2) {
                 Feature f = fr.getFeatureBySubjectId();
                 if ("polypeptide".equals(f.getCvTerm().getName())) {
@@ -148,13 +149,6 @@ public class SearchController extends MultiActionController implements Initializ
         }
 	    return new ModelAndView(viewName, model);
 	}
-	
-	CvDao cvDao;
-	CvTermDao cvTermDao;
-	
-	public void setCvTermDao(CvTermDao cvTermDao) {
-	    this.cvTermDao = cvTermDao;
-	}
 
 	public void setCvDao(CvDao cvDao) {
 	    this.cvDao = cvDao;
@@ -162,7 +156,7 @@ public class SearchController extends MultiActionController implements Initializ
 
 	public ModelAndView FindCvByName(HttpServletRequest request, HttpServletResponse response) {
 	    String name = ServletRequestUtils.getStringParameter(request, "name", "%");
-	    List cvs = cvDao.findByName(name);
+	    List cvs = this.cvDao.getCvByName(name);
 	    Map model = new HashMap();
 	    String viewName = "db/listCv";
 	    if (cvs.size()==1) {
@@ -180,10 +174,10 @@ public class SearchController extends MultiActionController implements Initializ
 	    String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", "*");
 	    System.err.println("cvName="+cvName+"   :   cvTermName="+cvTermName);
 	    cvTermName = cvTermName.replace('*', '%');
-	    List cvs = cvDao.findByName(cvName);
+	    List cvs = cvDao.getCvByName(cvName);
 	    Cv cv = (Cv) cvs.get(0);
 	    System.err.println("cv="+cv);
-	    List cvTerms = cvTermDao.findByNameInCv(cvTermName, cv);
+	    List cvTerms = cvDao.getCvTermByNameInCv(cvTermName, cv);
 	    String viewName = "db/listCvTerms";
 	    Map model = new HashMap();
 	    
@@ -342,8 +336,8 @@ public class SearchController extends MultiActionController implements Initializ
 		
 	}
 
-	public void setFeatureDao(FeatureDao featureDao) {
-	    this.featureDao = featureDao;
+	public void setSequenceDao(SequenceDao sequenceDao) {
+	    this.sequenceDao = sequenceDao;
 	}
 
 //	public void setPubHome(PubHome pubHome) {

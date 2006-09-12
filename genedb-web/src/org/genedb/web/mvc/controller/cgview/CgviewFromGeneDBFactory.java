@@ -1,29 +1,63 @@
 package org.genedb.web.mvc.controller.cgview;
 
-import org.genedb.db.dao.FeatureDao;
+import static ca.ualberta.stothard.cgview.CgviewConstants.BASES;
+import static ca.ualberta.stothard.cgview.CgviewConstants.CENTISOMES;
+import static ca.ualberta.stothard.cgview.CgviewConstants.DECORATION_CLOCKWISE_ARROW;
+import static ca.ualberta.stothard.cgview.CgviewConstants.DECORATION_COUNTERCLOCKWISE_ARROW;
+import static ca.ualberta.stothard.cgview.CgviewConstants.DECORATION_HIDDEN;
+import static ca.ualberta.stothard.cgview.CgviewConstants.DECORATION_STANDARD;
+import static ca.ualberta.stothard.cgview.CgviewConstants.DIRECT_STRAND;
+import static ca.ualberta.stothard.cgview.CgviewConstants.INNER_LABELS_AUTO;
+import static ca.ualberta.stothard.cgview.CgviewConstants.INNER_LABELS_NO_SHOW;
+import static ca.ualberta.stothard.cgview.CgviewConstants.INNER_LABELS_SHOW;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LABEL;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LABEL_FORCE;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LABEL_NONE;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LABEL_ZOOMED;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_DRAW_ZOOMED;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_ITEM_ALIGN_CENTER;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_ITEM_ALIGN_LEFT;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_ITEM_ALIGN_RIGHT;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_LOWER_CENTER;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_LOWER_LEFT;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_LOWER_RIGHT;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_MIDDLE_CENTER;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_MIDDLE_LEFT;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_MIDDLE_LEFT_OF_CENTER;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_MIDDLE_RIGHT;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_MIDDLE_RIGHT_OF_CENTER;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_NO_DRAW_ZOOMED;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_UPPER_CENTER;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_UPPER_LEFT;
+import static ca.ualberta.stothard.cgview.CgviewConstants.LEGEND_UPPER_RIGHT;
+import static ca.ualberta.stothard.cgview.CgviewConstants.POSITIONS_AUTO;
+import static ca.ualberta.stothard.cgview.CgviewConstants.POSITIONS_NO_SHOW;
+import static ca.ualberta.stothard.cgview.CgviewConstants.POSITIONS_SHOW;
+import static ca.ualberta.stothard.cgview.CgviewConstants.REVERSE_STRAND;
+import static ca.ualberta.stothard.cgview.CgviewConstants.SWATCH_NO_SHOW;
+import static ca.ualberta.stothard.cgview.CgviewConstants.SWATCH_SHOW;
+
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.mvc.controller.ArtemisColours;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.DefaultHandler;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.util.Hashtable;
 import java.util.Stack;
-import java.io.*;
-import java.lang.Integer;
-import java.awt.*;
-import java.util.*;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ca.ualberta.stothard.cgview.Cgview;
 import ca.ualberta.stothard.cgview.Feature;
 import ca.ualberta.stothard.cgview.FeatureRange;
 import ca.ualberta.stothard.cgview.FeatureSlot;
 import ca.ualberta.stothard.cgview.Legend;
-import ca.ualberta.stothard.cgview.LegendItem;
-
-import static ca.ualberta.stothard.cgview.CgviewConstants.*;
-
-//xml
-//import org.apache.xerces.parsers.SAXParser;
-
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
 
 /**
  * This class reads an XML document and creates a Cgview object. The various elements and attributes in the file are
@@ -264,7 +298,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
     }
 
     
-    FeatureDao featureDAO;
+    SequenceDao sequenceDAO;
     
     /**
      * Generates a Cgview object from a String of XML content.

@@ -1,17 +1,17 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.CvTermDao;
-import org.genedb.db.dao.FeatureDao;
-import org.genedb.db.hibernate3gen.Cv;
-import org.genedb.db.hibernate3gen.CvTerm;
-import org.genedb.db.jpa.Feature;
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.query.BasicQueryI;
 import org.genedb.query.NumberedQueryI;
 import org.genedb.query.QueryPlaceHolder;
 import org.genedb.query.bool.BooleanOp;
 import org.genedb.query.bool.BooleanQuery;
 import org.genedb.web.tags.bool.QueryTreeWalker;
+
+import org.gmod.schema.cv.Cv;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.sequence.Feature;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SimpleReport extends MultiActionController implements InitializingBean {
     
-    	private FeatureDao featureDao;
+    	private SequenceDao sequenceDao;
     	//private PubHome pubHome;
     	private FileCheckingInternalResourceViewResolver viewChecker;
 	
@@ -88,7 +88,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    if (id == -1) {
 		    
 	    }
-	    Feature feat = featureDao.findById(id);
+	    Feature feat = sequenceDao.getFeatureById(id);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
@@ -105,7 +105,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	public ModelAndView DummyGeneFeature(HttpServletRequest request, HttpServletResponse response) {
 	    Feature feat = new Feature();
 	    feat.setName("dummy_name");
-	    feat.setUniquename("dummy_id");
+	    feat.setUniqueName("dummy_id");
 	    CvTerm cvTerm = new CvTerm();
 	    cvTerm.setName("gene");
 	    feat.setCvTerm(cvTerm);
@@ -128,7 +128,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
             exp.printStackTrace();
         }
         // Check sequence is valid in org
-	    Feature feat = featureDao.findByUniqueName(bean.getName());
+	    Feature feat = sequenceDao.getFeatureByUniqueName(bean.getName());
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
@@ -144,11 +144,6 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	}
 	
 	CvDao cvDao;
-	CvTermDao cvTermDao;
-	
-	public void setCvTermDao(CvTermDao cvTermDao) {
-	    this.cvTermDao = cvTermDao;
-	}
 
 	public void setCvDao(CvDao cvDao) {
 	    this.cvDao = cvDao;
@@ -156,7 +151,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 
 	public ModelAndView FindCvByName(HttpServletRequest request, HttpServletResponse response) {
 	    String name = ServletRequestUtils.getStringParameter(request, "name", "%");
-	    List cvs = cvDao.findByName(name);
+	    List cvs = cvDao.getCvByName(name);
 	    Map model = new HashMap();
 	    String viewName = "db/listCv";
 	    if (cvs.size()==1) {
@@ -174,10 +169,10 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", "*");
 	    System.err.println("cvName="+cvName+"   :   cvTermName="+cvTermName);
 	    cvTermName = cvTermName.replace('*', '%');
-	    List cvs = cvDao.findByName(cvName);
+	    List cvs = cvDao.getCvByName(cvName);
 	    Cv cv = (Cv) cvs.get(0);
 	    System.err.println("cv="+cv);
-	    List cvTerms = cvTermDao.findByNameInCv(cvTermName, cv);
+	    List cvTerms = cvDao.getCvTermByNameInCv(cvTermName, cv);
 	    String viewName = "db/listCvTerms";
 	    Map model = new HashMap();
 	    
@@ -336,8 +331,8 @@ public class SimpleReport extends MultiActionController implements InitializingB
 		
 	}
 
-	public void setFeatureDao(FeatureDao featureDao) {
-	    this.featureDao = featureDao;
+	public void setSequenceDao(SequenceDao sequenceDao) {
+	    this.sequenceDao = sequenceDao;
 	}
 
 //	public void setPubHome(PubHome pubHome) {

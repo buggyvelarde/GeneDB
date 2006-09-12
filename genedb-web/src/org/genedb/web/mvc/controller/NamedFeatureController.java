@@ -19,21 +19,21 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.DaoFactory;
-import org.genedb.db.dao.FeatureDao;
-import org.genedb.db.dao.NameLookup;
+
 import org.genedb.db.dao.OrganismDao;
-import org.genedb.db.hibernate3gen.FeatureRelationship;
-import org.genedb.db.jpa.Feature;
+import org.genedb.db.dao.SequenceDao;
+
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureRelationship;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,9 +47,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class NamedFeatureController extends SimpleFormController {
 
-    private DaoFactory daoFactory;
     private String listResultsView;
     private String formInputView;
+    private SequenceDao sequenceDao;
+    private OrganismDao organismDao;
 
   	
 	@Override
@@ -72,9 +73,8 @@ public class NamedFeatureController extends SimpleFormController {
         	viewName = formInputView;
         	return new ModelAndView(viewName,model);
         }
-        FeatureDao featureDao = this.daoFactory.getFeatureDao();
         
-        List<Feature> results = featureDao.findByAnyName(nl, "gene");
+        List<Feature> results = sequenceDao.getFeaturesByAnyName(nl.getLookup(), "gene");
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
@@ -83,8 +83,7 @@ public class NamedFeatureController extends SimpleFormController {
         if (results.size() > 1) {
             // Go to list results page
         	ResultBean rb = new ResultBean();
-        	OrganismDao organismDao = this.daoFactory.getOrganismDao();
-        	List<String> organisms = organismDao.findAll();
+        	List<String> organisms = organismDao.findAllOrganismCommonNames();
         	for (String string : organisms) {
 				logger.info(string);
 			}
@@ -99,13 +98,13 @@ public class NamedFeatureController extends SimpleFormController {
             if (type != null && type.equals("gene")) {
                 viewName = "features/gene";
                 Feature mRNA = null;
-                Set<FeatureRelationship> frs = feature.getFeatureRelationshipsForObjectId(); 
+                Collection<FeatureRelationship> frs = feature.getFeatureRelationshipsForObjectId(); 
                 for (FeatureRelationship fr : frs) {
                     mRNA = fr.getFeatureBySubjectId();
                     break;
                 }
                 Feature polypeptide = null;
-                Set<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
+                Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
                 for (FeatureRelationship fr : frs2) {
                     Feature f = fr.getFeatureBySubjectId();
                     if ("polypeptide".equals(f.getCvTerm().getName())) {
@@ -120,10 +119,6 @@ public class NamedFeatureController extends SimpleFormController {
         return new ModelAndView(viewName, model);
     }
 
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
-
     public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;
     }
@@ -131,4 +126,12 @@ public class NamedFeatureController extends SimpleFormController {
 	public void setFormInputView(String formInputView) {
 		this.formInputView = formInputView;
 	}
+
+    public void setOrganismDao(OrganismDao organismDao) {
+        this.organismDao = organismDao;
+    }
+
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
 }
