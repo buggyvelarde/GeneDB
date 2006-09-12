@@ -54,7 +54,7 @@
 
 
 <st:section name="Location" id="gene_location" collapsed="false" collapsible="true" hideIfEmpty="true">
-	<c:forEach items="${feature.featurelocsForFeatureId}" var="featLoc">
+	<c:forEach items="${feature.featureLocsForFeatureId}" var="featLoc">
 		<p>[${featLoc.rank}]&nbsp;&nbsp;${featLoc.strand}&nbsp;&nbsp;${featLoc.fmin}...${featLoc.fmax} on <i>to be done</i></p>
 	</c:forEach>
 </st:section>
@@ -88,8 +88,8 @@
     <table>
       <c:forEach items="${feature.featureRelationshipsForObjectId}" var="featRel">
         <tr><td>${featRel.rank}</td><td>${featRel.value}</td>
-        <td><a href="./FeatureByName?name=${featRel.featureBySubjectId.uniquename}">${featRel.featureBySubjectId.uniquename}</a> [${featRel.featureBySubjectId.cvTerm.name}]</td>
-        <td> is ${featRel.cvterm.name}</td><td>this</td></tr>
+        <td><a href="./FeatureByName?name=${featRel.featureBySubjectId.uniqueName}">${featRel.featureBySubjectId.displayName}</a> [${featRel.featureBySubjectId.cvTerm.name}]</td>
+        <td> is ${featRel.cvTerm.name}</td><td>this</td></tr>
       </c:forEach>
     </table>
   
@@ -99,8 +99,8 @@
         <c:forEach items="${feature.featureRelationshipsForSubjectId}" var="featRel">
      		  <tr><td>${featRel.rank}</td><td>${featRel.value}</td>
      		  <td>this</td>
-     		  <td> is ${featRel.cvterm.name}</td>
-     		  <td><a href="./FeatureByName?name=${featRel.featureByObjectId.uniquename}">${featRel.featureByObjectId.uniquename}</a> [${featRel.featureByObjectId.cvTerm.name}]</td></tr>
+     		  <td> is ${featRel.cvTerm.name}</td>
+     		  <td><a href="./FeatureByName?name=${featRel.featureByObjectId.uniqueName}">${featRel.featureByObjectId.displayNameame}</a> [${featRel.featureByObjectId.cvTerm.name}]</td></tr>
 
 		   </c:forEach>
         	</table>
@@ -115,9 +115,9 @@
 
 <st:section name="Gene Ontology Annotation" id="gene_go" collapsed="false" collapsible="true" hideIfEmpty="true">
     <table>
-      <c:forEach items="${polypeptide.featureCvterms}" var="featCvTerm" varStatus="status">
+      <c:forEach items="${polypeptide.featureCvTerms}" var="featCvTerm" varStatus="status">
         <tr>
-          <td>${status.count}</td><td>${featCvTerm.cvterm.name}</td>
+          <td>${status.count}</td><td>${featCvTerm.cvTerm.name}</td>
           <td>qualifier</td>
           <td>evidence</td>
           <td>others</td>
@@ -152,14 +152,14 @@
 
 
 <st:section name="Database Cross-References" id="gene_xref" collapsed="false" collapsible="true" hideIfEmpty="true">
-			<c:if test="${!empty feature.dbxref}">
-			   <c:set var="dbxref" value="${feature.dbxref}" />
-			   <p><b>Xref:</b> ${dbxref.db.name}:${dbxref.accession} : ${dbxref.description}</p>
+			<c:if test="${!empty feature.dbXRef}">
+			   <c:set var="dbxref" value="${feature.dbXRef}" />
+			   <p><b>Xref:</b> ${dbXRef.db.name}:${dbXRef.accession} : ${dbXRef.description}</p>
 			   <c:remove var="dbxref"/>
 			</c:if>
 <p>---</p>
-  <c:forEach items="${polypeptide.featureDbxrefs}" var="fdx">
-    <br /><a href="${fdx.dbxref.db.urlprefix}${fdx.dbxref.accession}">${fdx.dbxref.db.name}:${fdx.dbxref.accession}</a>&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbxref.description}
+  <c:forEach items="${polypeptide.featureDbXRefs}" var="fdx">
+    <br /><a href="${fdx.dbXRef.db.urlPrefix}${fdx.dbXRef.accession}">${fdx.dbXRef.db.name}:${fdx.dbXRef.accession}</a>&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbXRef.description}
   </c:forEach>
 
 
