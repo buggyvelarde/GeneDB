@@ -121,11 +121,9 @@
 
 		<copy todir="${jar-build}/implementation">
 			<fileset dir="." id="id">
-				<include name="src/org/genedb/db/dao/**" />
-			    <include name="bin/org/genedb/db/dao/**" />
+				<include name="src/org/genedb/db/**" />
+			    <include name="bin/org/genedb/db/**" />
 			    <include name="input/org/gmod/**/*.hbm.xml" />
-			    <include name="src/org/genedb/db/helpers/**" />
-			    <include name="bin/org/genedb/db/helpers/**" />
 			</fileset>
 		</copy>
 		<move todir="${jar-build}/implementation/org">
