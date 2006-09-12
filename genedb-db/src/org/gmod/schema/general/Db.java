@@ -108,7 +108,7 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getUrlPrefix()
      */
-    private String getUrlPrefix() {
+    public String getUrlPrefix() {
         return this.urlPrefix;
     }
     

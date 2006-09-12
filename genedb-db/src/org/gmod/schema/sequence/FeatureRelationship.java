@@ -131,7 +131,7 @@ public class FeatureRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipI#getCvterm()
      */
-    private CvTerm getCvTerm() {
+    public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     
@@ -146,7 +146,7 @@ public class FeatureRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipI#getValue()
      */
-    private String getValue() {
+    public String getValue() {
         return this.value;
     }
     
@@ -161,7 +161,7 @@ public class FeatureRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipI#getRank()
      */
-    private int getRank() {
+    public int getRank() {
         return this.rank;
     }
     

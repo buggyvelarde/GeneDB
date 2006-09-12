@@ -188,7 +188,7 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getStrand()
      */
-    private Short getStrand() {
+    public Short getStrand() {
         return this.strand;
     }
     
@@ -247,7 +247,7 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getRank()
      */
-    private int getRank() {
+    public int getRank() {
         return this.rank;
     }
     

@@ -448,7 +448,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getFeatureCvterms()
      */
-    private Collection<FeatureCvTerm> getFeatureCvTerms() {
+    public Collection<FeatureCvTerm> getFeatureCvTerms() {
         return this.featureCvTerms;
     }
     
@@ -513,8 +513,8 @@ public class Feature implements java.io.Serializable {
         this.featureSynonyms = featureSynonyms;
     }
 
-    private String getDisplayName() {
-        System.err.println("getName is returning '"+getName()+"'");
+    public String getDisplayName() {
+        //System.err.println("getName is returning '"+getName()+"'");
         return (getName() != null) ? getName() : getUniqueName(); 
     }
 
