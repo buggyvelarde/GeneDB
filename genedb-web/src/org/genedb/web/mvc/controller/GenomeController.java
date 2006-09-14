@@ -1,6 +1,6 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.domain.Organism;
+import org.genedb.domain.ExtendedOrganism;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,11 +31,11 @@ public class GenomeController extends AbstractController {
 
 	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	private String PATH_PREFIX = "/genome";
-	private Organism root;
+	private ExtendedOrganism root;
 	
 	
 	@Required
-	public void setRoot(Organism root) {
+	public void setRoot(ExtendedOrganism root) {
 	    this.root = root;
 	}
 

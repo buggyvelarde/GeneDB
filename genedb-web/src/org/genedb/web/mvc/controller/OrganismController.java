@@ -1,6 +1,6 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.domain.Organism;
+import org.genedb.domain.ExtendedOrganism;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -19,9 +19,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OrganismController extends AbstractController {
 
-    	private Organism root;
+    	private ExtendedOrganism root;
     
-	public void setRoot(Organism root) {
+	public void setRoot(ExtendedOrganism root) {
 	    this.root = root;
 	}
 
@@ -47,10 +47,10 @@ public class OrganismController extends AbstractController {
 	    return null;
 	}
 
-	private void showChildren(Writer out, Organism org, int level) throws IOException {
-	    List<Organism> children = org.getChildren();
+	private void showChildren(Writer out, ExtendedOrganism org, int level) throws IOException {
+	    List<ExtendedOrganism> children = org.getChildren();
 	    out.write("<h"+level+">"+org.getFullName()+"<h"+level+">\n");
-	    for (Organism child : children) {
+	    for (ExtendedOrganism child : children) {
 		showChildren(out, child, level+1);
 	    }
 	}
