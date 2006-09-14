@@ -71,25 +71,151 @@
     	<property name="runnerConfigParser" ref="runnerConfigParser" />
     	<property name="qualifierHandlerMap">
     		<map>
-    			<entry key="CDS" value-ref="cdsProcessor" />
-    			<entry key="CDS_motif" value-ref="cdsMotifProcessor" />
-    			<entry key="BLASTN_HIT" value-ref="blastnHitProcessor" />
-    			<entry key="conflict" value-ref="conflictProcessor" />
-    			<entry key="3'UTR" value-ref="threePrimeUtrProcessor" />
-    			<entry key="5'UTR" value-ref="fivePrimeUtrProcessor" />
-    			<entry key="Intron" value-ref="intronProcessor" />
-    			<entry key="LTR" value-ref="ltrProcessor" />
-    			<entry key="misc_feature" value-ref="miscFeatureProcessor" />
-    			<entry key="misc_RNA" value-ref="miscRnaProcessor" />
-    			<entry key="mRNA" value-ref="mRnaProcessor" />
-    			<entry key="polyA_signal" value-ref="polyASignalProcessor" />
-    			<entry key="polyA_site" value-ref="polyASiteProcessor" />
-    			<entry key="promoter" value-ref="promoterProcessor" />
-    			<entry key="repeat_region" value-ref="repeatRegionProcessor" />
-    			<entry key="rRNA" value-ref="rRnaProcessor" />
-    			<entry key="snoRNA" value-ref="snoRnaProcessor" />
-    			<entry key="snRNA" value-ref="snRnaProcessor" />
-    			<entry key="tRNA" value-ref="tRnaProcessor" />   			    			    			    			    			    			    			    			    			    			    			
+    		    <entry key="-10_signal">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.MinusTen_signal_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="-35_signal">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.MinusThirtyFive_signal_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="3'UTR">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Three_Prime_UTR_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="5'UTR">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Five_Prime_UTR_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="BLASTCDS">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.BLASTCDS_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="BLASTN_HIT">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.BLASTN_HIT_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="CDS" value-ref="cdsProcessor" />
+    		    <entry key="CDS_motif">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.CDS_motif_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="C_domain">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.C_domain_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="GPI_signal">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.GPI_signal_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="LTR">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.LTR_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="N_domain">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.N_domain_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="RBS">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.RBS_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="conflict">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Conflict_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="exon">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Exon_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="extension">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Extension_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="gene">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Gene_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="genetic_marker">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Genetic_marker_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="intron">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Intron_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="mRNA">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.MRNA_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="marker">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Marker_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="misc_RNA">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Misc_RNA_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="misc_feature">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Misc_feature_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="misc_recomb">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Misc_recomb_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="misc_signal">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Misc_signal_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="mutation">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Mutation_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="nextension">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Nextension_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="polyA_signal">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.PolyA_signal_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="polyA_site">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.PolyA_site_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="polymorphism">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Polymorphism_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="promoter">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Promoter_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="protein_bind">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Protein_bind_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="rDNA_Palindrome">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.RDNA_Palindrome_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="rRNA">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.RRNA_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="rep_origin">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Rep_origin_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="repeat_region">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Repeat_region_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="repeat_unit">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Repeat_unit_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="restriction">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Restriction_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="sRNA">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.SRNA_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	    		        		        		    
+    		    <entry key="sig_peptide">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Sig_peptide_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="similarity">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Similarity_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="slRNA">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.SlRNA_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	
+    		    <entry key="snRNA">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.SnRNA_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	    		        		        		    
+    		    <entry key="snoRNA">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.SnoRNA_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	    		        		        		    
+    		    <entry key="stem_loop">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Stem_loop_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	    		        		        		
+    		    <entry key="tRNA">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.TRNA_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	    		        		      
+    		    <entry key="terminator">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Terminator_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	 
+    		    <entry key="unsure">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Unsure_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="variation">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Variation_Processor" parent="baseFeatureProcessor" />
+    		    </entry>	    			    			    			    			    			    			    			    			    			    			
     		</map>
     	</property>
     </bean>
@@ -100,29 +226,10 @@
 		<property name="sequenceDao" ref="sequenceDao" />
 		<property name="pubDao" ref="pubDao" />
     </bean>
-    
-    <bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor">
+           
+	<bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor">
 		<property name="goParser" ref="goParser" />
-    </bean>
-    <bean name="cdsMotifProcessor" class="org.genedb.db.loading.featureProcessors.CDS_motif_Processor" parent="baseFeatureProcessor" />    
-    <bean name="blastnHitProcessor" class="org.genedb.db.loading.featureProcessors.BLASTN_HIT_Processor" parent="baseFeatureProcessor" />    
-    <bean name="conflictProcessor" class="org.genedb.db.loading.featureProcessors.Conflict_Processor" parent="baseFeatureProcessor" />    
-    <bean name="threePrimeUtrProcessor" class="org.genedb.db.loading.featureProcessors.Three_Prime_UTR_Processor" parent="baseFeatureProcessor" />    
-    <bean name="fivePrimeUtrProcessor" class="org.genedb.db.loading.featureProcessors.Five_Prime_UTR_Processor" parent="baseFeatureProcessor" />    
-    <bean name="intronProcessor" class="org.genedb.db.loading.featureProcessors.Intron_Processor" parent="baseFeatureProcessor" />    
-    <bean name="ltrProcessor" class="org.genedb.db.loading.featureProcessors.LTR_Processor" parent="baseFeatureProcessor" />    
-    <bean name="miscFeatureProcessor" class="org.genedb.db.loading.featureProcessors.Misc_feature_Processor" parent="baseFeatureProcessor" />    
-    <bean name="miscRnaProcessor" class="org.genedb.db.loading.featureProcessors.Misc_RNA_Processor" parent="baseFeatureProcessor" />    
-    <bean name="mRnaProcessor" class="org.genedb.db.loading.featureProcessors.MRNA_Processor" parent="baseFeatureProcessor" />    
-    <bean name="polyASignalProcessor" class="org.genedb.db.loading.featureProcessors.PolyA_signal_Processor" parent="baseFeatureProcessor" />    
-    <bean name="polyASiteProcessor" class="org.genedb.db.loading.featureProcessors.PolyA_site_Processor" parent="baseFeatureProcessor" />    
-    <bean name="promoterProcessor" class="org.genedb.db.loading.featureProcessors.Promoter_Processor" parent="baseFeatureProcessor" />    
-    <bean name="repeatRegionProcessor" class="org.genedb.db.loading.featureProcessors.Repeat_region_Processor" parent="baseFeatureProcessor" />    
-    <bean name="rRnaProcessor" class="org.genedb.db.loading.featureProcessors.RRNA_Processor" parent="baseFeatureProcessor" />    
-    <bean name="snoRnaProcessor" class="org.genedb.db.loading.featureProcessors.SnoRNA_Processor" parent="baseFeatureProcessor" />    
-    <bean name="snRnaProcessor" class="org.genedb.db.loading.featureProcessors.SnRNA_Processor" parent="baseFeatureProcessor" />    
-    <bean name="tRnaProcessor" class="org.genedb.db.loading.featureProcessors.TRNA_Processor" parent="baseFeatureProcessor" />    
-                                                                        
+	</bean>                                                             
     
     <bean id="runnerConfigParser" class="org.genedb.db.loading.RunnerConfigParser" />
     
