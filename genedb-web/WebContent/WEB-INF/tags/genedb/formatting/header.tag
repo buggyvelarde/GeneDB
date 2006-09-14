@@ -11,6 +11,7 @@
 		<c:set var="pageTitle" value="${title}" />
 	</c:if>
 	<title>${pageTitle}</title>
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/site.css"/>" />
     <jsp:doBody />
 </head>    
 <body>
