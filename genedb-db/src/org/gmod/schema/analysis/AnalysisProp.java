@@ -3,6 +3,7 @@ package org.gmod.schema.analysis;
 
 
 import org.genedb.db.propinterface.PropertyI;
+
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
@@ -17,7 +18,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="analysisprop")
-public class AnalysisProp implements Serializable,PropertyI {
+public class AnalysisProp implements Serializable, PropertyI {
 
     // Fields    
 

@@ -2,6 +2,7 @@ package org.gmod.schema.organism;
 
 
 import org.genedb.db.propinterface.PropertyI;
+
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="organismprop")
-public class OrganismProp implements Serializable,PropertyI {
+public class OrganismProp implements Serializable, PropertyI {
 
     // Fields    
      @Id

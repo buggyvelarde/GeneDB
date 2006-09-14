@@ -3,6 +3,7 @@ package org.gmod.schema.cv;
 
 
 import org.genedb.db.propinterface.PropertyI;
+
 import org.gmod.schema.general.DbXRef;
 
 import java.io.Serializable;
@@ -17,7 +18,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="dbxrefprop")
-public class DbXRefProp implements Serializable,PropertyI {
+public class DbXRefProp implements Serializable, PropertyI {
 
     // Fields    
     @Id

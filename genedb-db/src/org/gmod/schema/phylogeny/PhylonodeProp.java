@@ -3,6 +3,7 @@ package org.gmod.schema.phylogeny;
 
 
 import org.genedb.db.propinterface.PropertyI;
+
 import org.gmod.schema.cv.CvTerm;
 
 import javax.persistence.Column;
@@ -22,7 +23,7 @@ import javax.persistence.UniqueConstraint;
     ,schema="public"
     , uniqueConstraints = { @UniqueConstraint( columnNames = { "phylonode_id", "type_id", "value", "rank" } ) }
 )
-public class PhylonodeProp  implements java.io.Serializable,PropertyI {
+public class PhylonodeProp  implements java.io.Serializable, PropertyI {
 
     // Fields    
 

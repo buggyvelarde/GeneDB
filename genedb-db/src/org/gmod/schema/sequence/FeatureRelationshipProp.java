@@ -1,6 +1,7 @@
 package org.gmod.schema.sequence;
 
 import org.genedb.db.propinterface.PropertyI;
+
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
@@ -19,7 +20,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_relationshipprop")
-public class FeatureRelationshipProp implements Serializable,PropertyI {
+public class FeatureRelationshipProp implements Serializable, PropertyI {
 
     // Fields    
      @Id

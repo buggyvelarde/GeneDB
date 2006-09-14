@@ -1,6 +1,7 @@
 package org.gmod.schema.pub;
 
 import org.genedb.db.propinterface.PropertyI;
+
 import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="pubprop")
-public class PubProp implements Serializable,PropertyI {
+public class PubProp implements Serializable, PropertyI {
 
     // Fields    
      @Id
