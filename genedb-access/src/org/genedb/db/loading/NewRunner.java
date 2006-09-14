@@ -190,7 +190,9 @@ public class NewRunner implements ApplicationContextAware {
         if (instance == null) {
             if (!this.noInstance.contains(type)) {
                 this.noInstance.add(type);
-                logger.warn("No processor for qualifier of type '"+type+"' configured.");
+                // TODO Seriousness should be policy
+                //logger.warn("No processor for qualifier of type '"+type+"' configured.");
+                throw new RuntimeException("No processor for qualifier of type '"+type+"' configured.");
             }
         }
         return instance;
