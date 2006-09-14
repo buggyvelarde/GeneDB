@@ -24,3 +24,40 @@ h1 {
 .warning {
 	color: red;
 }
+
+
+/* begin cross-browser coloured fake-fieldsets */
+div.fieldset {
+  position:   relative;
+  margin-top: 1em;
+}
+
+div.fieldset div.content {
+  padding:          0.75em;
+  overflow:         auto;
+  display:          table-cell;
+  border:           black 1px solid;
+  background-color: yellow;
+}
+
+div.fieldset div.legend {
+  position:         absolute;
+  top:              -0.5em;
+  margin-left:      1em;
+  white-space:      nowrap;
+  display:          table-cell;
+  padding:          0 0.2em 0 0.2em;
+  font-weight:      bolder;
+  z-index:          1;
+  border:           black 1px solid;
+  background-color: white;
+}
+
+div.fieldset div.content img {
+  position:       relative;
+  padding-bottom: 0.5em;
+}
+
+* html div.fieldset div.legend { width: 100px; }
+
+/* end cross-browser coloured fake-fieldsets */
