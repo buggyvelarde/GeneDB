@@ -24,11 +24,16 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
+import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureProp;
 
+import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
+import org.biojava.bio.symbol.Location;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -51,28 +56,36 @@ public class BLASTCDS_Processor extends BaseFeatureProcessor {
 
     @Override
     public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
-        
+   
+    	
         // TODO - How to store these
         
-//        logger.debug("Entering processing for repeat");
-//        Location loc = f.getLocation();
-//        Annotation an = f.getAnnotation();
-//        short strand = (short)f.getStrand().getValue();
-//        String systematicId = "repeat"+loc.getMin()+"-"+loc.getMax(); 
-//        
-//        org.genedb.db.jpa.Feature repeat = this.featureUtils.createFeature("repeat", systematicId,
-//                this.organism);
-//        this.daoFactory.persist(repeat);
-//        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-//        FeatureLoc trnaFl = featureUtils.createLocation(parent,repeat,loc.getMin(),loc.getMax(),
-//                                                        strand);
-//        this.daoFactory.persist(trnaFl);
-//        //featureLocs.add(pepFl);
-//        //featureRelationships.add(pepFr);
-//        
-//        FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
-//        this.daoFactory.persist(fp);
-//        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
+        logger.debug("Entering processing for BLASTCDS");
+        Location loc = f.getLocation();
+        Annotation an = f.getAnnotation();
+        short strand = (short)f.getStrand().getValue();
+        String systematicId = MiningUtils.getProperty("temporary_systematic_id", an, "");
+        
+        Feature blast_cds = this.featureUtils.createFeature("match", systematicId,this.organism);
+        this.sequenceDao.persist(blast_cds);
+
+        FeatureLoc blastFl = this.featureUtils.createLocation(parent,blast_cds,loc.getMin(),loc.getMax(),strand);
+        this.sequenceDao.persist(blastFl);
+
+        FeatureProp hseqname = createFeatureProp(blast_cds, an, "hseqname", "hseqname", CV_MISC);
+        this.sequenceDao.persist(hseqname);
+        
+        FeatureProp score = createFeatureProp(blast_cds, an, "score", "score", CV_MISC);
+        this.sequenceDao.persist(score);
+        
+        FeatureProp pvalue = createFeatureProp(blast_cds, an, "p_value", "p_value", CV_MISC);
+        this.sequenceDao.persist(pvalue);
+        
+        FeatureProp percent_id = createFeatureProp(blast_cds, an, "percent_similarity", "percent_id", CV_MISC);
+        this.sequenceDao.persist(percent_id);
+        
+        //FeatureProp cstring = createFeatureProp(blast_cds, an, "cigar_string", "cigar_string", CV_MISC);
+        //this.sequenceDao.persist(cstring);
 
     }
 
