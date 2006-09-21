@@ -49,10 +49,13 @@ import org.genedb.db.loading.ProcessingPhase;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeatureRelationship;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
+
+import java.util.Iterator;
 
 
 /**
@@ -63,7 +66,8 @@ import org.biojava.bio.symbol.Location;
  * @author Chinmay Patel (cp2)
  */
 public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
-    
+ 
+    private static final String GENE="gene";
     
     public BaseRnaProcessor() {
         super(new String[]{}, 
@@ -76,6 +80,7 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
                 new String[]{QUAL_D_FASTA_FILE});
     }
 
+    @SuppressWarnings("unchecked")
     protected void processRna(Feature parent, StrandedFeature f, String type, int offset) {
         logger.debug("Entering processing for "+type);
         Location loc = f.getLocation().translate(offset);
@@ -87,7 +92,16 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
             return;
         }
         
-        org.gmod.schema.sequence.Feature rna = this.featureUtils.createFeature(type, systematicId, this.organism);
+        // Gene
+        Feature gene = this.featureUtils.createFeature(GENE, systematicId, this.organism);
+        sequenceDao.persist(gene);
+        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
+        FeatureLoc geneFl = this.featureUtils.createLocation(parent,gene,loc.getMin()-1,loc.getMax(),
+                                                        strand);
+        sequenceDao.persist(geneFl);
+        
+        // RNA
+        Feature rna = this.featureUtils.createFeature(type, systematicId, this.organism);
         sequenceDao.persist(rna);
         //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
         FeatureLoc rnaFl = this.featureUtils.createLocation(parent,rna,loc.getMin()-1,loc.getMax(),
@@ -102,6 +116,27 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
         createFeaturePropsFromNotes(rna, an, QUAL_CURATION, MISC_CURATION);
         createFeaturePropsFromNotes(rna, an, QUAL_PRIVATE, MISC_PRIVATE);
         createDbXRefs(rna, an);
+        
+        
+        // Store exons
+        Iterator<Location> it = loc.blockIterator();
+        int exonCount = 0;
+        while (it.hasNext()) {
+            exonCount++;
+            Location l = it.next();
+            Feature exon = this.featureUtils
+            .createFeature("exon", this.gns.getExon(systematicId,
+                    1, exonCount), this.organism);
+            FeatureRelationship exonFr = this.featureUtils.createRelationship(
+                    exon, rna, REL_PART_OF, exonCount -1);
+            FeatureLoc exonFl = this.featureUtils.createLocation(parent, exon, l
+                    .getMin()-1, l.getMax(), strand);
+            sequenceDao.persist(exon);
+            sequenceDao.persist(exonFl);
+            sequenceDao.persist(exonFr);
+        }
+        
+        
     }
     
     protected String findName(Annotation an, String type) {
