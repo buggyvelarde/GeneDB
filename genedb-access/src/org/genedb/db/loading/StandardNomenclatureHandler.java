@@ -71,10 +71,7 @@ public class StandardNomenclatureHandler implements NomenclatureHandler {
 
         l1 = MiningUtils.getProperties(QUAL_RESERVED, an);
         if ( l1 != null) {
-            if ( l1.size() > 1 ) {
-                throw new RuntimeException("GenericCDSParser: gene has more than 1 reserved name: "+names.getSystematicId());
-            }
-            names.setReserved(l1.get(0));
+            names.setReserved(l1);
         }
 
 	return names;

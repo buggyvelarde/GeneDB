@@ -10,7 +10,7 @@ public class Names {
     private String protein; // the name of the protein
     private List<String> synonyms; // a list of synonyms
     private List<String> obsolete; // a list of names that are no longer recommended
-    private String reserved; // A future primary name for this feature
+    private List<String> reserved; // A future primary name for this feature
     private List<String> previousSystematicIds; // a list of old systematic ids
     
     /**
@@ -72,10 +72,10 @@ public class Names {
     public void setPrimary(String primary) {
         this.primary = primary;
     }
-    public String getReserved() {
+    public List<String> getReserved() {
         return this.reserved;
     }
-    public void setReserved(String reserved) {
+    public void setReserved(List<String> reserved) {
         this.reserved = reserved;
     }
     public List<String> getSynonyms() {

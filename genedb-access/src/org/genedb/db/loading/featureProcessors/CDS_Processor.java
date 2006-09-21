@@ -331,8 +331,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     gene, true);
         }
         if (names.getReserved() != null) {
-            this.featureUtils.createSynonym(SYNONYM_RESERVED, names.getReserved(),
-                    gene, true);
+        	this.featureUtils.createSynonyms(SYNONYM_RESERVED, names.getReserved(),
+        			gene, true);
         }
         if (names.getSynonyms() != null) {
             this.featureUtils.createSynonyms(SYNONYM_SYNONYM, names.getSynonyms(),

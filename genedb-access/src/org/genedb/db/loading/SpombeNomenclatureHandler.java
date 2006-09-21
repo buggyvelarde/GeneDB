@@ -106,10 +106,7 @@ public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implement
         
         List<String> reserved = MiningUtils.getProperties("reserved_name", an);
         if (reserved != null) {
-            if ( reserved.size() > 1 ) {
-                throw new RuntimeException("SpombeNomenclatureHandler: gene has more than 1 reserved name: "+ret.getSystematicId());
-            }
-            ret.setReserved(reserved.get(0));
+            ret.setReserved(reserved);
         }
 
         return ret;
