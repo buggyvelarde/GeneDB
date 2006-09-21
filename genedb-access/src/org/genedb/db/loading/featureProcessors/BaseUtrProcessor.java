@@ -139,6 +139,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
     }
 
     
+    @SuppressWarnings("unchecked")
     private void storeUtr(String type, Feature above, Feature parent, StrandedFeature feat, Location loc) {
         // FIXME Doesn't cope with splicing
 
