@@ -39,10 +39,13 @@ import nu.xom.ValidityException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The loading process is driven by config files, one per organism. See an annotated config example for details.
@@ -56,6 +59,11 @@ public class RunnerConfigParser {
     private static final String DEFAULT_DATA_PREFIX = "/nfs/pathdb/prod/data/input";
     //private static final String DEFAULT_DATA_PREFIX = "/Users/art/Documents/Data/chadoloading";
 
+    private static final Set<String> VALID_OPTION_KEYS = new HashSet<String>();
+    {
+        VALID_OPTION_KEYS.addAll(Arrays.asList( new String[] {}));   
+    }
+    
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     private String organismCommonName;
@@ -63,6 +71,8 @@ public class RunnerConfigParser {
     private String configFilePath;
 
     private XPathEvaluator xPathEval;
+    
+
 
     /**
      * Recurse through a directory tree, adding any files with the given extension to 
@@ -159,6 +169,19 @@ public class RunnerConfigParser {
 	    }
 	    ret.setNomenclatureOptions(map);
 	}
+    
+    List<Element> propertyOptions = this.elementListFromXPath("code/options/*");
+    if (propertyOptions.size() > 0) {
+        Map<String, String> options = new HashMap<String, String>(0);
+        for (Element element : propertyOptions) {
+            String key = element.getAttribute("key").getValue();
+            if (VALID_OPTION_KEYS.contains(key)) {
+                options.put(key, element.getAttribute("value").getValue());  
+            }
+            logger.fatal("Found unrecognized option key '"+key+"'");
+        }
+        ret.setGeneralOptions(options);
+    }
 	
 	List<Element> files = this.elementListFromXPath("inputs/file");
 	for (Element element : files) {
@@ -181,7 +204,8 @@ public class RunnerConfigParser {
 	    } else {
 		directory = new File(configFile.getParentFile(), dirName);
 	    }
-	    String extension = "embl";
+        
+	    String extension = element.getAttribute("extension").getValue();
 	    this.addFilesFromDirectory(directory, extension, ret);
 	}
 

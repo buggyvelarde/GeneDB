@@ -45,6 +45,8 @@ public class RunnerConfig {
     
     private Map<String, String> nomenclatureOptions = new HashMap<String, String>(0);
 
+    private Map<String, String> generalOptions;
+    
     public List<String> getFileNames() {
 	return this.fileNames;
     }
@@ -67,6 +69,14 @@ public class RunnerConfig {
 
     public void setNomenclatureOptions(Map<String, String> nomenclatureOptions) {
         this.nomenclatureOptions = nomenclatureOptions;
+    }
+
+    public Map<String, String> getGeneralOptions() {
+        return this.generalOptions;
+    }
+
+    public void setGeneralOptions(Map<String, String> generalOptions) {
+        this.generalOptions = generalOptions;
     }
 
 
