@@ -147,12 +147,14 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
             if (loc.getMin() > 1) {
                 break;
             }
-            if (loc.getMin() == 1 && loc.getMax() == seq.length()) {
+            if (loc.getMax() == seq.length()) {
                 // Got a full-length source feature
                 if (fullLengthSource != null) {
                     // error - there can be only one
                 }
                 fullLengthSource = source;
+            } else {
+            	System.err.println("Got a source with max of '"+loc.getMax()+"' but looking for '"+seq.length()+"'");
             }
         }
         if (fullLengthSource == null) {
@@ -186,8 +188,8 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
         seq.removeFeature(fullLengthSource);
 
         for (Feature feature : sources) {
-            //FeatureUtils.dumpFeature(feature, null);
-            seq.removeFeature(feature); // FIXME - Needs sorting 
+            FeatureUtils.dumpFeature(feature, null);
+            seq.removeFeature(feature);
         }
         return topLevel;
     }
