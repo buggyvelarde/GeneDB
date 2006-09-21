@@ -186,8 +186,8 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
         seq.removeFeature(fullLengthSource);
 
         for (Feature feature : sources) {
-            FeatureUtils.dumpFeature(feature, null);
-            seq.removeFeature(feature);
+            //FeatureUtils.dumpFeature(feature, null);
+            seq.removeFeature(feature); // FIXME - Needs sorting 
         }
         return topLevel;
     }
