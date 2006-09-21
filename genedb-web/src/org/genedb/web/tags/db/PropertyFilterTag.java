@@ -1,16 +1,15 @@
 package org.genedb.web.tags.db;
 
-import org.gmod.schema.sequence.FeatureProp;
+import org.genedb.db.propinterface.PropertyI;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.lang.Object;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-import org.genedb.db.propinterface.PropertyI;
 
 public class PropertyFilterTag extends SimpleTagSupport {
 	
@@ -31,6 +30,7 @@ public class PropertyFilterTag extends SimpleTagSupport {
         this.name = name;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
 	public void doTag() throws JspException, IOException {
     	List filtered = new ArrayList();
