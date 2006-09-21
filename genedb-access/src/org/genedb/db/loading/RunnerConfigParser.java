@@ -18,26 +18,8 @@
  */
 package org.genedb.db.loading;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import net.sf.saxon.Configuration;
-import net.sf.saxon.om.Axis;
-import net.sf.saxon.om.AxisIterator;
-import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.xom.DocumentWrapper;
-import net.sf.saxon.xpath.XPathEvaluator;
-import net.sf.saxon.xpath.XPathException;
-
-import nu.xom.Builder;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Elements;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
-
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,6 +28,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import net.sf.saxon.Configuration;
+import net.sf.saxon.om.Axis;
+import net.sf.saxon.om.AxisIterator;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.xom.DocumentWrapper;
+import net.sf.saxon.xpath.XPathEvaluator;
+import net.sf.saxon.xpath.XPathException;
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Elements;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The loading process is driven by config files, one per organism. See an annotated config example for details.
@@ -71,8 +70,6 @@ public class RunnerConfigParser {
     private String configFilePath;
 
     private XPathEvaluator xPathEval;
-    
-
 
     /**
      * Recurse through a directory tree, adding any files with the given extension to 
@@ -82,20 +79,21 @@ public class RunnerConfigParser {
      * @param extension the file extension to match on
      */
     private void addFilesFromDirectory(final File directory, final String extension, final RunnerConfig rc) {
-	String[] names = directory.list(new FilenameFilter() {
-	    public boolean accept(File file, String name) {
+    	logger.info("Called with '"+directory.getAbsolutePath()+"'");
+    	File[] files = directory.listFiles(new FileFilter() {
+	    public boolean accept(File file) {
 		if (file.isDirectory() && !file.equals(directory)) {
 		    RunnerConfigParser.this.addFilesFromDirectory(file, extension, rc);
 		} else {
-		    if (name.endsWith("."+extension)) {
+		    if (file.getName().endsWith("."+extension)) {
 			return true;
 		    }
 		}
 		return false;
 	    }
 	});
-	for (String name : names) {
-	    rc.getFileNames().add(directory.getAbsolutePath()+File.separatorChar+name);
+	for (File file : files) {
+	    rc.getFileNames().add(file.getAbsolutePath());
 	}
     }
 
@@ -143,6 +141,10 @@ public class RunnerConfigParser {
 		this.logger.fatal("Config file doesn't exist at '"+this.configFilePath+"'");
 		System.exit(-1);
 	    }
+	    if (!configFile.isFile()) {
+			this.logger.fatal("Config file isn't a file at '"+this.configFilePath+"'");
+			System.exit(-1);
+		}
 	    Document doc = new Builder().build(configFile);
 	    this.initXPathEvaluator(doc);
 	}
@@ -204,8 +206,7 @@ public class RunnerConfigParser {
 	    } else {
 		directory = new File(configFile.getParentFile(), dirName);
 	    }
-        
-	    String extension = element.getAttribute("extension").getValue();
+	    String extension = "embl";
 	    this.addFilesFromDirectory(directory, extension, ret);
 	}
 
