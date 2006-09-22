@@ -162,7 +162,16 @@ public class RunnerConfigParser {
 	}
 	
 	// Process code
-	
+    
+    List<Element> featureHandlerOptions = this.elementListFromXPath("code/feature-handler-options/*");
+    if (featureHandlerOptions.size() > 0) {
+        Map<String, String> map = new HashMap<String, String>(0);
+        for (Element element : featureHandlerOptions) {
+        map.put(element.getAttribute("key").getValue(), element.getAttribute("value").getValue());
+        }
+        ret.setFeatureHandlerOptions(map);
+    }
+    
 	List<Element> nomenclatureOptions = this.elementListFromXPath("code/nomenclature-handler-options/*");
 	if (nomenclatureOptions.size() > 0) {
 	    Map<String, String> map = new HashMap<String, String>(0);

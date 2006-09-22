@@ -45,6 +45,8 @@ public class RunnerConfig {
     
     private Map<String, String> nomenclatureOptions = new HashMap<String, String>(0);
 
+    private Map<String, String> featureHandlerOptions = new HashMap<String, String>(0);
+    
     private Map<String, String> generalOptions;
     
     public List<String> getFileNames() {
@@ -77,6 +79,14 @@ public class RunnerConfig {
 
     public void setGeneralOptions(Map<String, String> generalOptions) {
         this.generalOptions = generalOptions;
+    }
+
+    public Map<String, String> getFeatureHandlerOptions() {
+        return this.featureHandlerOptions;
+    }
+
+    public void setFeatureHandlerOptions(Map<String, String> featureHandlerOptions) {
+        this.featureHandlerOptions = featureHandlerOptions;
     }
 
 
