@@ -79,7 +79,7 @@ public class NewRunner implements ApplicationContextAware {
 
     protected static final Log logger = LogFactory.getLog(NewRunner.class);
 
-    private FeatureHandler featureHandler = new StandardFeatureHandler();
+    private FeatureHandler featureHandler;
 
     private RunnerConfig runnerConfig;
 
@@ -137,6 +137,15 @@ public class NewRunner implements ApplicationContextAware {
             (CDS_Processor) this.applicationContext.getBean("cdsProcessor", CDS_Processor.class);
         cdsProcessor.setNomenclatureHandler(nomenclatureHandler);
 
+        
+        Map<String, String> featureHandlerOptions = runnerConfig.getFeatureHandlerOptions();
+        String featureHandlerName = featureHandlerOptions.get("beanName");
+        if (featureHandlerName == null) {
+            featureHandlerName = "fullLengthSourceFeatureHandler";
+        }
+        featureHandler = (FeatureHandler)
+        this.applicationContext.getBean(featureHandlerName, FeatureHandler.class);
+        featureHandler.setOptions(featureHandlerOptions);
 
         featureHandler.afterPropertiesSet();
         
@@ -291,13 +300,14 @@ public class NewRunner implements ApplicationContextAware {
         // First process simple files ie simple EMBL files
         List<String> fileNames = this.runnerConfig.getFileNames();
         for (String fileName : fileNames) {
-            for (final Sequence seq : this.extractSequencesFromFile(new File(fileName))) {
+            final File file = new File(fileName);
+            for (final Sequence seq : this.extractSequencesFromFile(file)) {
                 TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
                 tt.execute(
                         new TransactionCallbackWithoutResult() {
                             @Override
                             public void doInTransactionWithoutResult(TransactionStatus status) {
-                                processSequence(seq, null, 0);
+                                processSequence(file, seq, null, 0);
                             }
                         });
 
@@ -341,7 +351,7 @@ public class NewRunner implements ApplicationContextAware {
 //                  new TransactionCallbackWithoutResult() {
 //                  @Override
 //                  public void doInTransactionWithoutResult(TransactionStatus status) {
-                    processSequence(seq, top, fp.getOffSet());
+                    processSequence(tmp, seq, top, fp.getOffSet());
 //                  }
 //                  });
 
@@ -369,9 +379,9 @@ public class NewRunner implements ApplicationContextAware {
      * @param offset The base offset, when reparenting is taking place
      */
     @SuppressWarnings("unchecked")
-    private void processSequence(Sequence seq, org.gmod.schema.sequence.Feature parent, int offset) {
+    private void processSequence(File file, Sequence seq, org.gmod.schema.sequence.Feature parent, int offset) {
         try {
-            org.gmod.schema.sequence.Feature topLevel = this.featureHandler.processSources(seq);
+            org.gmod.schema.sequence.Feature topLevel = this.featureHandler.process(file, seq);
             if (parent == null) {
                 parent = topLevel;
                 // Mark all top-level features
