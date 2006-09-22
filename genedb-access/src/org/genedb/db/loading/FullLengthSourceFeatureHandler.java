@@ -42,6 +42,7 @@ import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
 import org.biojava.utils.ChangeVetoException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -56,7 +57,7 @@ import java.util.List;
  * 
  * @author Adrian Tivey (art)
  */
-public class StandardFeatureHandler extends BaseFeatureProcessor implements FeatureHandler {
+public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implements FeatureHandler {
 
     private List<FeatureListener> listeners = new ArrayList<FeatureListener>(0);
     
@@ -129,7 +130,7 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
      * @see org.genedb.db.loading.FeatureHandler#processSources(org.biojava.bio.seq.Sequence)
      */
     @SuppressWarnings("unchecked")
-    public org.gmod.schema.sequence.Feature processSources(Sequence seq)
+    public org.gmod.schema.sequence.Feature process(File file, Sequence seq)
             throws ChangeVetoException, BioException {
         FeatureHolder fh = seq.filter(new FeatureFilter.ByType(FT_SOURCE));
 
@@ -195,14 +196,6 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
     }
 
 
-    public void addFeatureListener(FeatureListener fl) {
-        listeners.add(fl);
-    }
-
-    public void removeFeatureListener(FeatureListener fl) {
-        listeners.remove(fl);
-    }
-
     private void fireEvent(FeatureEvent fe) {
         for (FeatureListener fl : listeners) {
             // TODO
@@ -212,11 +205,6 @@ public class StandardFeatureHandler extends BaseFeatureProcessor implements Feat
     @Override
     public void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature feat, int offset) {
         // Dummy method
-    }
-
-
-    public ProcessingPhase getProcessingPhase() {
-        return ProcessingPhase.FIRST;
     }
 
 }
