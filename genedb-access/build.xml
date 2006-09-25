@@ -27,4 +27,45 @@
 		</jar>
 	</target>
 	
+	<path id="exec-classpath">
+		<fileset dir="lib" />
+		<fileset file="genedb-access.jar" />
+	</path>
+	
+	<target name="load-spombe" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="spombe /nfs/pathdb/work/pathdb/pombe/spombe.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-twhipplei" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="twhipplei /nfs/pathdb/prod/data/input/twhipplei/twhipplei.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-tbrucei" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="tbrucei /nfs/pathdb/prod/data/input/tryp/tbrucei.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-smansoni" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="smansoni /nfs/pathdb/prod/data/input/smansoni/smansoni.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-pfalciparum" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="pfalciparum /nfs/pathdb/prod/data/input/malaria/pfalciparum.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	
 </project>
