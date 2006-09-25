@@ -83,6 +83,9 @@
     		    <entry key="5'UTR">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Five_Prime_UTR_Processor" parent="baseFeatureProcessor" />
     		    </entry>
+    		    <entry key="BAC_end">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.BAC_end_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
     		    <entry key="BLASTCDS">
     		    	<bean class="org.genedb.db.loading.featureProcessors.BLASTCDS_Processor" parent="baseFeatureProcessor" />
     		    </entry>
@@ -95,6 +98,9 @@
     		    </entry>
     		    <entry key="C_domain">
     		    	<bean class="org.genedb.db.loading.featureProcessors.C_domain_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="contig">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Contig_Processor" parent="baseFeatureProcessor" />
     		    </entry>
     		    <entry key="GPI_signal">
     		    	<bean class="org.genedb.db.loading.featureProcessors.GPI_signal_Processor" parent="baseFeatureProcessor" />
@@ -116,6 +122,9 @@
     		    </entry>
     		    <entry key="extension">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Extension_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
+    		    <entry key="gap">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Gap_Processor" parent="baseFeatureProcessor" />
     		    </entry>
     		    <entry key="gene">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Gene_Processor" parent="baseFeatureProcessor" />
