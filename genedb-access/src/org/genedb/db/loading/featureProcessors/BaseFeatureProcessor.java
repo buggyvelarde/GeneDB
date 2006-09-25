@@ -111,7 +111,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     protected Pub DUMMY_PUB;
 
-    private Cv CV_SO;
+    protected Cv CV_SO;
     
     protected Db DB_GO;
 
