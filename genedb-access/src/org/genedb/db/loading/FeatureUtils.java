@@ -39,7 +39,8 @@ public class FeatureUtils implements InitializingBean {
 	public Feature createFeature(String typeName, String uniqueName, Organism organism) {
         List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(typeName, so);
         if (cvTerms.size()==0) {
-            System.err.println("Unable to find name '"+typeName+"' in ontology '"+so.getDefinition()+"'");
+            System.err.println("Unable to find name '"+typeName+"' in ontology '"+so.getName()+"'");
+            throw new ExpectedLookupMissing("Unable to find name '"+typeName+"' in ontology '"+so.getName()+"'");
         }
         CvTerm type = cvTerms.get(0);
             //System.err.println("Got cvterm type:"+type);
