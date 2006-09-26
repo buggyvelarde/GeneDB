@@ -85,6 +85,7 @@
 		</delete>
 		<mkdir dir="${jar-build}" />
 
+		<!-- Build chado interface with POJOs -->
 		<copy todir="${jar-build}/interface">
 			<fileset dir="." id="id">
 			    <include name="src/org/gmod/**/*.java" />
@@ -98,27 +99,41 @@
 		<jar jarfile="${jar-build}/chado-interface.jar">
 			<fileset dir="${jar-build}/interface" />
 			<manifest>
-				<attribute name="Implementation-Title" value="GeneDB Hibernate"/>
-				<attribute name="Implementation-Version" value="0.1"/>
+				<attribute name="Implementation-Title" value="Chado Interface"/>
+				<attribute name="Implementation-Version" value="0.2"/>
 			</manifest>
 		</jar>
+		
+		
+		
+		<!-- Build JDK1.4 compatible version of chado-interface.jar -->
 		<replaceregexp byline="true">
 			<regexp pattern="^\s*@[A-Z].*$|^import javax.persistence.*$" />
 			<substitution expression="" />
 			<fileset dir="${jar-build}/interface/src" />
 		</replaceregexp>
 		
-	    <!--<path id="classpath">
+	    <path id="classpath2">
 	        <fileset dir="lib" includes="**/*.jar"/>
-	    </path>-->
+	    </path>
 
-	    <!--<retrotranslator destdir="${jar-build}/classes14" verify="true">
-	        <src path="${jar-build}/genedb-hibernate.jar"/>
+		<mkdir dir="${jar-build}/classes14" />
+	    <retrotranslator destdir="${jar-build}/classes14" verify="true">
+	        <src path="${jar-build}/chado-interface.jar"/>
 	        <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/>
-	        --><!--<classpath refid="classpath"/>--><!--
-	    </retrotranslator>-->
+	        <classpath refid="classpath2"/>
+	    </retrotranslator>
 		
-
+		<jar jarfile="${jar-build}/chado-14-interface.jar">
+			<fileset dir="${jar-build}/interface" />
+			<manifest>
+				<attribute name="Implementation-Title" value="Chado 1.4 Interface"/>
+				<attribute name="Implementation-Version" value="0.2"/>
+			</manifest>
+		</jar>
+		
+		
+		<!-- Build Hibernate implementation and JAR up -->
 		<copy todir="${jar-build}/implementation">
 			<fileset dir="." id="id">
 				<include name="src/org/genedb/db/**" />
