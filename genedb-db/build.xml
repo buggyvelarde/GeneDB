@@ -128,7 +128,7 @@
 	    </retrotranslator>
 		
 		<jar jarfile="${jar-build}/chado-14-interface.jar">
-			<fileset dir="${jar-build}/interface" />
+			<fileset dir="${jar-build}/classes14" />
 			<manifest>
 				<attribute name="Implementation-Title" value="Chado 1.4 Interface"/>
 				<attribute name="Implementation-Version" value="0.2"/>
