@@ -2,9 +2,9 @@ package org.gmod.schema.analysis;
 
 
 
-import org.genedb.db.propinterface.PropertyI;
 
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.utils.propinterface.PropertyI;
 
 import java.io.Serializable;
 

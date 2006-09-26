@@ -2,9 +2,9 @@ package org.gmod.schema.cv;
 
 
 
-import org.genedb.db.propinterface.PropertyI;
 
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.utils.propinterface.PropertyI;
 
 import java.io.Serializable;
 

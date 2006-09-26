@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.genedb.db.propinterface;
+package org.gmod.schema.utils.propinterface;
 
 import org.gmod.schema.cv.CvTerm;
 

@@ -1,8 +1,8 @@
 package org.gmod.schema.sequence;
 
-import org.genedb.db.propinterface.PropertyI;
 
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.utils.propinterface.PropertyI;
 
 import java.io.Serializable;
 import java.util.Collection;
