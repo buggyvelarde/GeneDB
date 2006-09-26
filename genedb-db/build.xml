@@ -79,7 +79,8 @@
              classname="net.sf.retrotranslator.transformer.RetrotranslatorTask" />
 	
 	<target name="alljars" description="Create full JAR files with interface/implementation split">
-
+		
+		<mkdir dir="${jar-build}" />
 		<delete>
 			<fileset dir="${jar-build}" />
 		</delete>
@@ -92,6 +93,8 @@
 			    <include name="bin/org/gmod/**/*.class" />
 			</fileset>
 		</copy>
+		
+		<mkdir dir="${jar-build}/interface/bin/org" />
 		<move todir="${jar-build}/interface/org">
 			<fileset dir="${jar-build}/interface/bin/org" />
 		</move>
@@ -141,6 +144,7 @@
 			    <include name="input/org/gmod/**/*.hbm.xml" />
 			</fileset>
 		</copy>
+		<mkdir dir="${jar-build}/implementation/bin/org" />
 		<move todir="${jar-build}/implementation/org">
 			<fileset dir="${jar-build}/implementation/bin/org" />
 		</move>
