@@ -196,14 +196,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPubId()
      */
-    private int getPubId() {
+    public int getPubId() {
         return this.pubId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setPubId(int)
      */
-    private void setPubId(int pubId) {
+    public void setPubId(int pubId) {
         this.pubId = pubId;
     }
 

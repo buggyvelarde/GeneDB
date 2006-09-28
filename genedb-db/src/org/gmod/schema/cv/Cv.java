@@ -56,11 +56,11 @@ public class Cv implements Serializable {
    
     // Property accessors
 
-    private int getCvId() {
+    public int getCvId() {
         return this.cvId;
     }
     
-    private void setCvId(int cvId) {
+    public void setCvId(int cvId) {
         this.cvId = cvId;
     }
     
@@ -68,14 +68,14 @@ public class Cv implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#getName()
      */
-    private String getName() {
+    public String getName() {
         return this.name;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#setName(java.lang.String)
      */
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
     
@@ -90,7 +90,7 @@ public class Cv implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#setDefinition(java.lang.String)
      */
-    private void setDefinition(String definition) {
+    public void setDefinition(String definition) {
         this.definition = definition;
     }
     
@@ -98,14 +98,14 @@ public class Cv implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#getCvTermPaths()
      */
-    private Collection<CvTermPath> getCvTermPaths() {
+    public Collection<CvTermPath> getCvTermPaths() {
         return this.cvTermPaths;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#setCvTermPaths(java.util.Set)
      */
-    private void setCvTermPaths(Set<CvTermPath> cvTermPaths) {
+    public void setCvTermPaths(Set<CvTermPath> cvTermPaths) {
         this.cvTermPaths = cvTermPaths;
     }
     
@@ -113,14 +113,14 @@ public class Cv implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#getCvTerms()
      */
-    private Collection<CvTerm> getCvTerms() {
+    public Collection<CvTerm> getCvTerms() {
         return this.cvTerms;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#setCvTerms(java.util.Set)
      */
-    private void setCvTerms(Set<CvTerm> cvTerms) {
+    public void setCvTerms(Set<CvTerm> cvTerms) {
         this.cvTerms = cvTerms;
     }
 

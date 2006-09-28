@@ -73,14 +73,14 @@ public class Synonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.SynonymI#getSynonymId()
      */
-    private int getSynonymId() {
+    public int getSynonymId() {
         return this.synonymId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.SynonymI#setSynonymId(int)
      */
-    private void setSynonymId(int synonymId) {
+    public void setSynonymId(int synonymId) {
         this.synonymId = synonymId;
     }
 

@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.sql.Timestamp;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -72,7 +73,7 @@ public class Feature implements java.io.Serializable {
      private String uniqueName;
      
     @Column(name="residues", unique=false, nullable=true, insertable=true, updatable=true)
-     private String residues;
+     private byte residues[];
      
     @Column(name="seqlen", unique=false, nullable=true, insertable=true, updatable=true)
      private Integer seqLen;
@@ -87,42 +88,42 @@ public class Feature implements java.io.Serializable {
      private boolean obsolete;
      
     @Column(name="timeaccessioned", unique=false, nullable=false, insertable=true, updatable=true, length=29)
-     private Date timeAccessioned;
+     private Timestamp timeAccessioned;
      
     @Column(name="timelastmodified", unique=false, nullable=false, insertable=true, updatable=true, length=29)
-     private Date timeLastModified;
+     private Timestamp timeLastModified;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureBySrcfeatureId")
-     private Set<FeatureLoc> featureLocsForSrcFeatureId = new HashSet<FeatureLoc>(0);
+     private Collection<FeatureLoc> featureLocsForSrcFeatureId = new HashSet<FeatureLoc>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureByObjectId")
-     private Set<FeatureRelationship> featureRelationshipsForObjectId = new HashSet<FeatureRelationship>(0);
+     private Collection<FeatureRelationship> featureRelationshipsForObjectId = new HashSet<FeatureRelationship>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureBySubjectId")
-     private Set<FeatureRelationship> featureRelationshipsForSubjectId = new HashSet<FeatureRelationship>(0);
+     private Collection<FeatureRelationship> featureRelationshipsForSubjectId = new HashSet<FeatureRelationship>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Set<FeatureDbXRef> featureDbXRefs = new HashSet<FeatureDbXRef>(0);
+     private Collection<FeatureDbXRef> featureDbXRefs = new HashSet<FeatureDbXRef>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureByFeatureId")
-     private Set<FeatureLoc> featureLocsForFeatureId = new HashSet<FeatureLoc>(0);
+     private Collection<FeatureLoc> featureLocsForFeatureId = new HashSet<FeatureLoc>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Set<FeatureCvTerm> featureCvTerms = new HashSet<FeatureCvTerm>(0);
+     private Collection<FeatureCvTerm> featureCvTerms = new HashSet<FeatureCvTerm>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
     //@Cascade( {CascadeType.ALL, CascadeType.DELETE_ORPHAN} )
-     private Set<FeatureProp> featureProps = new HashSet<FeatureProp>(0);
+     private Collection<FeatureProp> featureProps = new HashSet<FeatureProp>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Set<FeaturePub> featurePubs = new HashSet<FeaturePub>(0);
+     private Collection<FeaturePub> featurePubs = new HashSet<FeaturePub>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Set<AnalysisFeature> analysisFeatures = new HashSet<AnalysisFeature>(0);
+     private Collection<AnalysisFeature> analysisFeatures = new HashSet<AnalysisFeature>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Set<FeatureSynonym> featureSynonyms = new HashSet<FeatureSynonym>(0);
-
+     private Collection<FeatureSynonym> featureSynonyms = new HashSet<FeatureSynonym>(0);
+    
      // Constructors
 
     /** default constructor */
@@ -130,7 +131,7 @@ public class Feature implements java.io.Serializable {
     }
 
 	/** minimal constructor */
-    public Feature(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis, boolean obsolete, Date timeAccessioned, Date timeLastModified) {
+    public Feature(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis, boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {
         this.organism = organism;
         this.cvTerm = cvTerm;
         this.uniqueName = uniqueName;
@@ -141,8 +142,8 @@ public class Feature implements java.io.Serializable {
     }
     /** full constructor */
     private Feature(Organism organism, CvTerm cvTerm, DbXRef dbXRef, String name, String uniqueName, 
-            String residues, Integer seqLen, String md5Checksum, boolean analysis, boolean obsolete, 
-            Date timeAccessioned, Date timeLastModified, Set<FeatureLoc> featureLocsForSrcFeatureId, 
+            byte[] residues, Integer seqLen, String md5Checksum, boolean analysis, boolean obsolete, 
+            Timestamp timeAccessioned, Timestamp timeLastModified, Set<FeatureLoc> featureLocsForSrcFeatureId, 
             Set<FeatureRelationship> featureRelationshipsForObjectId, 
             Set<FeatureRelationship> featureRelationshipsForSubjectId, 
             Set<FeatureDbXRef> featureDbXRefs, Set<FeatureLoc> featureLocsForFeatureId, 
@@ -186,7 +187,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setFeatureId(int)
      */
-    private void setFeatureId(int featureId) {
+    public void setFeatureId(int featureId) {
         this.featureId = featureId;
     }
 
@@ -200,7 +201,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setOrganism(org.gmod.schema.organism.OrganismI)
      */
-    private void setOrganism(Organism organism) {
+    public void setOrganism(Organism organism) {
         this.organism = organism;
     }
 
@@ -228,7 +229,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setDbxref(org.gmod.schema.general.DbXRefI)
      */
-    private void setDbXRef(DbXRef dbXRef) {
+    public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
     
@@ -266,21 +267,21 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getResidues()
      */
-    public String getResidues() {
+    public byte[] getResidues() {
         return this.residues;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setResidues(java.lang.String)
      */
-    public void setResidues(String residues) {
+    public void setResidues(byte[] residues) {
         this.residues = residues;
         if (residues == null) {
             seqLen = 0;
             md5Checksum = "";
             return;
         }
-        this.seqLen = this.residues.length();
+        //seqLen = residues.length;
         this.md5Checksum = calcMD5(this.residues);
     }
     
@@ -288,14 +289,14 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getSeqlen()
      */
-    private Integer getSeqLen() {
+    public Integer getSeqLen() {
         return this.seqLen;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setSeqlen(java.lang.Integer)
      */
-    private void setSeqLen(Integer seqLen) {
+    public void setSeqLen(Integer seqLen) {
         this.seqLen = seqLen;
     }
     
@@ -303,14 +304,14 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getMd5Checksum()
      */
-    private String getMd5Checksum() {
+    public String getMd5Checksum() {
         return this.md5Checksum;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setMd5Checksum(java.lang.String)
      */
-    private void setMd5Checksum(String md5Checksum) {
+    public void setMd5Checksum(String md5Checksum) {
         this.md5Checksum = md5Checksum;
     }
     
@@ -325,7 +326,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setAnalysis(boolean)
      */
-    private void setAnalysis(boolean analysis) {
+    public void setAnalysis(boolean analysis) {
         this.analysis = analysis;
     }
     
@@ -340,7 +341,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setObsolete(boolean)
      */
-    private void setObsolete(boolean obsolete) {
+    public void setObsolete(boolean obsolete) {
         this.obsolete = obsolete;
     }
     
@@ -355,7 +356,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setTimeAccessioned(java.util.Date)
      */
-    private void setTimeAccessioned(Date timeAccessioned) {
+    public void setTimeAccessioned(Timestamp timeAccessioned) {
         this.timeAccessioned = timeAccessioned;
     }
     
@@ -363,28 +364,28 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getTimeLastModified()
      */
-    public Date getTimeLastModified() {
+    public Timestamp getTimeLastModified() {
         return this.timeLastModified;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setTimeLastModified(java.util.Date)
      */
-    private void setTimeLastModified(Date timeLastModified) {
+    public void setTimeLastModified(Timestamp timeLastModified) {
         this.timeLastModified = timeLastModified;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getFeaturelocsForSrcfeatureId()
      */
-    private Collection<FeatureLoc> getFeatureLocsForSrcFeatureId() {
+    public Collection<FeatureLoc> getFeatureLocsForSrcFeatureId() {
         return this.featureLocsForSrcFeatureId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setFeaturelocsForSrcfeatureId(java.util.Set)
      */
-    private void setFeatureLocsForSrcFeatureId(Set<FeatureLoc> featureLocsForSrcFeatureId) {
+    public void setFeatureLocsForSrcFeatureId(Collection<FeatureLoc> featureLocsForSrcFeatureId) {
         this.featureLocsForSrcFeatureId = featureLocsForSrcFeatureId;
     }
 
@@ -398,7 +399,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setFeatureRelationshipsForObjectId(java.util.Set)
      */
-    private void setFeatureRelationshipsForObjectId(Set<FeatureRelationship> featureRelationshipsForObjectId) {
+    public void setFeatureRelationshipsForObjectId(Collection<FeatureRelationship> featureRelationshipsForObjectId) {
         this.featureRelationshipsForObjectId = featureRelationshipsForObjectId;
     }
 
@@ -412,7 +413,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setFeatureRelationshipsForSubjectId(java.util.Set)
      */
-    private void setFeatureRelationshipsForSubjectId(Set<FeatureRelationship> featureRelationshipsForSubjectId) {
+    public void setFeatureRelationshipsForSubjectId(Collection<FeatureRelationship> featureRelationshipsForSubjectId) {
         this.featureRelationshipsForSubjectId = featureRelationshipsForSubjectId;
     }
 
@@ -426,7 +427,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setFeatureDbxrefs(java.util.Set)
      */
-    private void setFeatureDbXRefs(Set<FeatureDbXRef> featureDbXRefs) {
+    public void setFeatureDbXRefs(Collection<FeatureDbXRef> featureDbXRefs) {
         this.featureDbXRefs = featureDbXRefs;
     }
 
@@ -440,7 +441,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setFeaturelocsForFeatureId(java.util.Set)
      */
-    private void addFeatureLocsForFeatureId(FeatureLoc featureLocForFeatureId) {
+    public void addFeatureLocsForFeatureId(FeatureLoc featureLocForFeatureId) {
         featureLocForFeatureId.setFeatureByFeatureId(this);
         this.featureLocsForFeatureId.add(featureLocForFeatureId);
     }
@@ -455,7 +456,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setFeatureCvterms(java.util.Set)
      */
-    private void setFeatureCvTerms(Set<FeatureCvTerm> featureCvTerms) {
+    public void setFeatureCvTerms(Collection<FeatureCvTerm> featureCvTerms) {
         this.featureCvTerms = featureCvTerms;
     }
 
@@ -469,7 +470,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setFeatureProps(java.util.Set)
      */
-    private void addFeatureProp(FeatureProp featureProp) {
+    public void addFeatureProp(FeatureProp featureProp) {
         featureProp.setFeature(this);
         this.featureProps.add(featureProp);
     }
@@ -477,25 +478,25 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getFeaturePubs()
      */
-    private Collection<FeaturePub> getFeaturePubs() {
+    public Collection<FeaturePub> getFeaturePubs() {
         return this.featurePubs;
     }
     
-    private void setFeaturePubs(Set<FeaturePub> featurePubs) {
+    public void setFeaturePubs(Collection<FeaturePub> featurePubs) {
         this.featurePubs = featurePubs;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getAnalysisfeatures()
      */
-    private Collection<AnalysisFeature> getAnalysisFeatures() {
+    public Collection<AnalysisFeature> getAnalysisFeatures() {
         return this.analysisFeatures;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setAnalysisfeatures(java.util.Set)
      */
-    private void setAnalysisFeatures(Set<AnalysisFeature> analysisFeatures) {
+    public void setAnalysisFeatures(Collection<AnalysisFeature> analysisFeatures) {
         this.analysisFeatures = analysisFeatures;
     }
 
@@ -509,7 +510,7 @@ public class Feature implements java.io.Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#setFeatureSynonyms(java.util.Set)
      */
-    private void setFeatureSynonyms(Set<FeatureSynonym> featureSynonyms) {
+    public void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
         this.featureSynonyms = featureSynonyms;
     }
 
@@ -519,17 +520,17 @@ public class Feature implements java.io.Serializable {
     }
 
     @SuppressWarnings("unused")
-    private void setFeatureLocsForFeatureId(Set<FeatureLoc> featureLocsForFeatureId) {
+    public void setFeatureLocsForFeatureId(Collection<FeatureLoc> featureLocsForFeatureId) {
         this.featureLocsForFeatureId = featureLocsForFeatureId;
     }
 
     @SuppressWarnings("unused")
-    private void setFeatureProps(Set<FeatureProp> featureProps) {
+    public void setFeatureProps(Collection<FeatureProp> featureProps) {
         this.featureProps = featureProps;
     }
 
-    private String calcMD5(String in) {
-        byte[] residue = in.getBytes();
+    private String calcMD5(byte[] residue) {
+        //byte[] residue = in.getBytes();
         try {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
 //          MessageDigest tc1 = md.clone();

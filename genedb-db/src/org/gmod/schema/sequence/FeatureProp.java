@@ -89,7 +89,7 @@ public class FeatureProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePropI#getFeature()
      */
-    private Feature getFeature() {
+    public Feature getFeature() {
         return this.feature;
     }
     

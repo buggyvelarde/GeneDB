@@ -63,14 +63,14 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getDbId()
      */
-    private int getDbId() {
+    public int getDbId() {
         return this.dbId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDbId(int)
      */
-    private void setDbId(int dbId) {
+    public void setDbId(int dbId) {
         this.dbId = dbId;
     }
     
@@ -85,7 +85,7 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setName(java.lang.String)
      */
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
     
@@ -93,14 +93,14 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getDescription()
      */
-    private String getDescription() {
+    public String getDescription() {
         return this.description;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDescription(java.lang.String)
      */
-    private void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
     
@@ -115,7 +115,7 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setUrlPrefix(java.lang.String)
      */
-    private void setUrlPrefix(String urlPrefix) {
+    public void setUrlPrefix(String urlPrefix) {
         this.urlPrefix = urlPrefix;
     }
     
@@ -123,28 +123,28 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getUrl()
      */
-    private String getUrl() {
+    public String getUrl() {
         return this.url;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setUrl(java.lang.String)
      */
-    private void setUrl(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getDbXRefs()
      */
-    private Collection<DbXRef> getDbXRefs() {
+    public Collection<DbXRef> getDbXRefs() {
         return this.dbXRefs;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDbXRefs(java.util.Set)
      */
-    private void setDbXRefs(Set<DbXRef> dbXRefs) {
+    public void setDbXRefs(Set<DbXRef> dbXRefs) {
         this.dbXRefs = dbXRefs;
     }
 

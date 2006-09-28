@@ -136,14 +136,14 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getDbXRefId()
      */
-    private int getDbXRefId() {
+    public int getDbXRefId() {
         return this.dbXRefId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setDbXRefId(int)
      */
-    private void setDbXRefId(int dbXRefId) {
+    public void setDbXRefId(int dbXRefId) {
         this.dbXRefId = dbXRefId;
     }
     
@@ -151,7 +151,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#getVersion()
      */
-    private String getVersion() {
+    public String getVersion() {
         return this.version;
     }
     
@@ -201,7 +201,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setDescription(java.lang.String)
      */
-    private void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 

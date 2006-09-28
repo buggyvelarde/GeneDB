@@ -58,14 +58,14 @@ public class FeatureDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureDbXRefI#getFeatureDbXRefId()
      */
-    private int getFeatureDbXRefId() {
+    public int getFeatureDbXRefId() {
         return this.featureDbXRefId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureDbXRefI#setFeatureDbXRefId(int)
      */
-    private void setFeatureDbXRefId(int featureDbXRefId) {
+    public void setFeatureDbXRefId(int featureDbXRefId) {
         this.featureDbXRefId = featureDbXRefId;
     }
 
@@ -79,21 +79,21 @@ public class FeatureDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureDbXRefI#setDbxref(org.gmod.schema.general.DbXRefI)
      */
-    private void setDbXRef(DbXRef dbXRef) {
+    public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureDbXRefI#getFeature()
      */
-    private Feature getFeature() {
+    public Feature getFeature() {
         return this.feature;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureDbXRefI#setFeature(org.genedb.db.jpa.Feature)
      */
-    private void setFeature(Feature feature) {
+    public void setFeature(Feature feature) {
         this.feature = feature;
     }
     
@@ -108,7 +108,7 @@ public class FeatureDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureDbXRefI#setCurrent(boolean)
      */
-    private void setCurrent(boolean current) {
+    public void setCurrent(boolean current) {
         this.current = current;
     }
 

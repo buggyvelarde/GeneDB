@@ -75,14 +75,14 @@ public class FeatureSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#getFeatureSynonymId()
      */
-    private int getFeatureSynonymId() {
+    public int getFeatureSynonymId() {
         return this.featureSynonymId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setFeatureSynonymId(int)
      */
-    private void setFeatureSynonymId(int featureSynonymId) {
+    public void setFeatureSynonymId(int featureSynonymId) {
         this.featureSynonymId = featureSynonymId;
     }
 
@@ -96,21 +96,21 @@ public class FeatureSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setSynonym(org.gmod.schema.sequence.SynonymI)
      */
-    private void setSynonym(Synonym synonym) {
+    public void setSynonym(Synonym synonym) {
         this.synonym = synonym;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#getFeature()
      */
-    private Feature getFeature() {
+    public Feature getFeature() {
         return this.feature;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setFeature(org.genedb.db.jpa.Feature)
      */
-    private void setFeature(Feature feature) {
+    public void setFeature(Feature feature) {
         this.feature = feature;
     }
 
@@ -124,7 +124,7 @@ public class FeatureSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setPub(org.gmod.schema.pub.PubI)
      */
-    private void setPub(Pub pub) {
+    public void setPub(Pub pub) {
         this.pub = pub;
     }
     
@@ -139,7 +139,7 @@ public class FeatureSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setCurrent(boolean)
      */
-    private void setCurrent(boolean current) {
+    public void setCurrent(boolean current) {
         this.current = current;
     }
     
@@ -154,7 +154,7 @@ public class FeatureSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setInternal(boolean)
      */
-    private void setInternal(boolean internal) {
+    public void setInternal(boolean internal) {
         this.internal = internal;
     }
 

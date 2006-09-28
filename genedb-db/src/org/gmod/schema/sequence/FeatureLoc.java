@@ -103,21 +103,21 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getFeatureBySrcfeatureId()
      */
-    private Feature getFeatureBySrcFeatureId() {
+    public Feature getFeatureBySrcFeatureId() {
         return this.featureBySrcFeatureId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setFeatureBySrcfeatureId(org.genedb.db.jpa.Feature)
      */
-    private void setFeatureBySrcFeatureId(Feature featureBySrcFeatureId) {
+    public void setFeatureBySrcFeatureId(Feature featureBySrcFeatureId) {
         this.featureBySrcFeatureId = featureBySrcFeatureId;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getFeatureByFeatureId()
      */
-    private Feature getFeatureByFeatureId() {
+    public Feature getFeatureByFeatureId() {
         return this.featureByFeatureId;
     }
     
@@ -146,14 +146,14 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#isFminPartial()
      */
-    private boolean isFminPartial() {
+    public boolean isFminPartial() {
         return this.fminPartial;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setFminPartial(boolean)
      */
-    private void setFminPartial(boolean fminPartial) {
+    public void setFminPartial(boolean fminPartial) {
         this.fminPartial = fminPartial;
     }
     
@@ -174,14 +174,14 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#isFmaxPartial()
      */
-    private boolean isFmaxPartial() {
+    public boolean isFmaxPartial() {
         return this.fmaxPartial;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setFmaxPartial(boolean)
      */
-    private void setFmaxPartial(boolean fmaxPartial) {
+    public void setFmaxPartial(boolean fmaxPartial) {
         this.fmaxPartial = fmaxPartial;
     }
     
@@ -195,7 +195,7 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setStrand(java.lang.Short)
      */
-    private void setStrand(Short strand) {
+    public void setStrand(Short strand) {
         this.strand = strand;
     }
     
@@ -203,28 +203,28 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getPhase()
      */
-    private Integer getPhase() {
+    public Integer getPhase() {
         return this.phase;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setPhase(java.lang.Integer)
      */
-    private void setPhase(Integer phase) {
+    public void setPhase(Integer phase) {
         this.phase = phase;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getResidueInfo()
      */
-    private String getResidueInfo() {
+    public String getResidueInfo() {
         return this.residueInfo;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setResidueInfo(java.lang.String)
      */
-    private void setResidueInfo(String residueInfo) {
+    public void setResidueInfo(String residueInfo) {
         this.residueInfo = residueInfo;
     }
     
@@ -232,14 +232,14 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getLocgroup()
      */
-    private int getLocGroup() {
+    public int getLocGroup() {
         return this.locGroup;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setLocgroup(int)
      */
-    private void setLocGroup(int locGroup) {
+    public void setLocGroup(int locGroup) {
         this.locGroup = locGroup;
     }
     
@@ -254,31 +254,31 @@ public class FeatureLoc implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setRank(int)
      */
-    private void setRank(int rank) {
+    public void setRank(int rank) {
         this.rank = rank;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#getFeaturelocPubs()
      */
-    private Set<FeatureLocPub> getFeatureLocPubs() {
+    public Set<FeatureLocPub> getFeatureLocPubs() {
         return this.featureLocPubs;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocI#setFeaturelocPubs(java.util.Set)
      */
-    private void setFeaturelocPubs(Set<FeatureLocPub> featureLocPubs) {
+    public void setFeaturelocPubs(Set<FeatureLocPub> featureLocPubs) {
         this.featureLocPubs = featureLocPubs;
     }
 
     @SuppressWarnings("unused")
-    private int getFeatureLocId() {
+    public int getFeatureLocId() {
         return this.featureLocId;
     }
 
     @SuppressWarnings("unused")
-    private void setFeatureLocId(int featureLocId) {
+    public void setFeatureLocId(int featureLocId) {
         this.featureLocId = featureLocId;
     }
 

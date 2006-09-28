@@ -245,42 +245,42 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermId()
      */
-    private int getCvTermId() {
+    public int getCvTermId() {
         return this.cvTermId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setCvTermId(int)
      */
-    private void setCvTermId(int cvTermId) {
+    public void setCvTermId(int cvTermId) {
         this.cvTermId = cvTermId;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getDbXRef()
      */
-    private DbXRef getDbXRef() {
+    public DbXRef getDbXRef() {
         return this.dbXRef;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setDbXRef(org.genedb.db.jpa.DbXRef)
      */
-    private void setDbXRef(DbXRef dbXRef) {
+    public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCv()
      */
-    private Cv getCv() {
+    public Cv getCv() {
         return this.cv;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setCv(org.gmod.schema.cv.CvI)
      */
-    private void setCv(Cv cv) {
+    public void setCv(Cv cv) {
         this.cv = cv;
     }
     
@@ -303,14 +303,14 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getDefinition()
      */
-    private String getDefinition() {
+    public String getDefinition() {
         return this.definition;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setDefinition(java.lang.String)
      */
-    private void setDefinition(String definition) {
+    public void setDefinition(String definition) {
         this.definition = definition;
     }
     
@@ -318,14 +318,14 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getIsObsolete()
      */
-    private int getIsObsolete() {
+    public int getIsObsolete() {
         return this.isObsolete;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setIsObsolete(int)
      */
-    private void setIsObsolete(int isObsolete) {
+    public void setIsObsolete(int isObsolete) {
         this.isObsolete = isObsolete;
     }
     
@@ -333,14 +333,14 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getIsRelationshipType()
      */
-    private int getIsRelationshipType() {
+    public int getIsRelationshipType() {
         return this.isRelationshipType;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setIsRelationshipType(int)
      */
-    private void setIsRelationshipType(int isRelationshipType) {
+    public void setIsRelationshipType(int isRelationshipType) {
         this.isRelationshipType = isRelationshipType;
     }
 

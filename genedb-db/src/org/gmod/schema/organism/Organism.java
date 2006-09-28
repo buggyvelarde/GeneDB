@@ -92,14 +92,14 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#getOrganismId()
      */
-    private int getOrganismId() {
+    public int getOrganismId() {
         return this.organismId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#setOrganismId(int)
      */
-    private void setOrganismId(int organismId) {
+    public void setOrganismId(int organismId) {
         this.organismId = organismId;
     }
     
@@ -114,7 +114,7 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#setAbbreviation(java.lang.String)
      */
-    private void setAbbreviation(String abbreviation) {
+    public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
     
@@ -129,7 +129,7 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#setGenus(java.lang.String)
      */
-    private void setGenus(String genus) {
+    public void setGenus(String genus) {
         this.genus = genus;
     }
     
@@ -144,7 +144,7 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#setSpecies(java.lang.String)
      */
-    private void setSpecies(String species) {
+    public void setSpecies(String species) {
         this.species = species;
     }
     
@@ -159,7 +159,7 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#setCommonName(java.lang.String)
      */
-    private void setCommonName(String commonName) {
+    public void setCommonName(String commonName) {
         this.commonName = commonName;
     }
     
@@ -167,14 +167,14 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#getComment()
      */
-    private String getComment() {
+    public String getComment() {
         return this.comment;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#setComment(java.lang.String)
      */
-    private void setComment(String comment) {
+    public void setComment(String comment) {
         this.comment = comment;
     }
 
