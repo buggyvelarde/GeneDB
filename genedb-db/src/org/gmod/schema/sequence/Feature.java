@@ -124,6 +124,12 @@ public class Feature implements java.io.Serializable {
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
      private Collection<FeatureSynonym> featureSynonyms = new HashSet<FeatureSynonym>(0);
     
+    
+    // TJC
+    private FeatureLoc featureLoc;
+    private FeatureProp featureProp;
+    private FeatureRelationship featureRelationship;
+    
      // Constructors
 
     /** default constructor */
@@ -276,13 +282,13 @@ public class Feature implements java.io.Serializable {
      */
     public void setResidues(byte[] residues) {
         this.residues = residues;
-        if (residues == null) {
+/*        if (residues == null) {
             seqLen = 0;
             md5Checksum = "";
             return;
         }
-        //seqLen = residues.length;
-        this.md5Checksum = calcMD5(this.residues);
+        seqLen = residues.length;
+        this.md5Checksum = calcMD5(this.residues);*/
     }
     
 
@@ -549,6 +555,36 @@ public class Feature implements java.io.Serializable {
         exp.printStackTrace(); // Shouldn't happen
         }
         return null;
+    }
+
+    public FeatureLoc getFeatureLoc()
+    {
+      return featureLoc;
+    }
+
+    public void setFeatureLoc(FeatureLoc featureLoc)
+    {
+      this.featureLoc = featureLoc;
+    }
+
+    public FeatureProp getFeatureProp()
+    {
+      return featureProp;
+    }
+
+    public void setFeatureProp(FeatureProp featureProp)
+    {
+      this.featureProp = featureProp;
+    }
+
+    public FeatureRelationship getFeatureRelationship()
+    {
+      return featureRelationship;
+    }
+
+    public void setFeatureRelationship(FeatureRelationship featureRelationship)
+    {
+      this.featureRelationship = featureRelationship;
     }
     
 }
