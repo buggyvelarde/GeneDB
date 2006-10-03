@@ -81,5 +81,11 @@ public interface CvDaoI {
      * @return the corresponding CvTerm, or null
      */
     public abstract CvTerm getGoCvTermByAccViaDb(final String id);
+    
+    /**
+     * Retrieve all CvTerms
+     * @return a list of all cvterms
+     */
+    public abstract List<CvTerm> getCvTerms();
 
 }
