@@ -47,5 +47,12 @@ public interface OrganismDaoI {
      * @return a (possibly empty) List<String> of all the organisms' common names
      */
     public abstract List<String> findAllOrganismCommonNames();
+    
+    /**
+     * Get a list of all the  organisms 
+     * 
+     * @return a (possibly empty) List<Organism> of all the organisms'
+     */
+    public abstract List<Organism> getOrganisms();
 
 }
