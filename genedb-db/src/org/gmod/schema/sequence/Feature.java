@@ -127,8 +127,6 @@ public class Feature implements java.io.Serializable {
     
     // TJC
     private FeatureLoc featureLoc;
-    private FeatureProp featureProp;
-    private FeatureRelationship featureRelationship;
     
      // Constructors
 
@@ -422,6 +420,11 @@ public class Feature implements java.io.Serializable {
     public void setFeatureRelationshipsForSubjectId(Collection<FeatureRelationship> featureRelationshipsForSubjectId) {
         this.featureRelationshipsForSubjectId = featureRelationshipsForSubjectId;
     }
+    
+    public void addFeatureRelationshipsForSubjectId(FeatureRelationship featureRelationshipForSubjectId) {
+      featureRelationshipForSubjectId.setFeatureBySubjectId(this);
+      this.featureRelationshipsForSubjectId.add(featureRelationshipForSubjectId);
+    }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getFeatureDbxrefs()
@@ -567,26 +570,6 @@ public class Feature implements java.io.Serializable {
       this.featureLoc = featureLoc;
     }
 
-    public FeatureProp getFeatureProp()
-    {
-      return featureProp;
-    }
-
-    public void setFeatureProp(FeatureProp featureProp)
-    {
-      this.featureProp = featureProp;
-    }
-
-    public FeatureRelationship getFeatureRelationship()
-    {
-      return featureRelationship;
-    }
-
-    public void setFeatureRelationship(FeatureRelationship featureRelationship)
-    {
-      this.featureRelationship = featureRelationship;
-    }
-    
 }
 
 
