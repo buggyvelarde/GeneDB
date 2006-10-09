@@ -1,7 +1,9 @@
 <%@ page import="org.springframework.dao.DataAccessException"%>
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<format:header>Data Access Failure</format:header>
+<format:header name="Data Access Failure">
+	<st:init/>
+</format:header>
 
 
 <%

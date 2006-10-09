@@ -13,7 +13,7 @@
         	<dd>${feature.name}</dd>
         	
         	<dt><b>Unique name:</b></dt>
-        	<dd>${feature.uniquename}</dd>
+        	<dd>${feature.uniqueName}</dd>
         	
 			<dt><b>Type:</b></dt>
 			<dd>${feature.cvTerm.name}</dd>
@@ -50,8 +50,8 @@
         <c:forEach items="${feature.featureRelationshipsForSubjectId}" var="featRel">
      		  <tr><td>${featRel.rank}</td><td>${featRel.value}</td>
      		  <td>this</td>
-     		  <td> is ${featRel.cvterm.name}</td>
-     		  <td><a href="./FeatureByName?name=${featRel.featureByObjectId.uniquename}">${featRel.featureByObjectId.uniquename}</a> [${featRel.featureByObjectId.cvterm.name}]</td></tr>
+     		  <td> is ${featRel.cvTerm.name}</td>
+     		  <td><a href="./FeatureByName?name=${featRel.featureByObjectId.uniqueName}">${featRel.featureByObjectId.uniqueName}</a> [${featRel.featureByObjectId.cvTerm.name}]</td></tr>
 
 		   </c:forEach>
         	<table>
@@ -61,22 +61,22 @@
         	<table>
            <c:forEach items="${feature.featureRelationshipsForObjectId}" var="featRel">
      		  <tr><td>${featRel.rank}</td><td>${featRel.value}</td>
-     		  <td><a href="./FeatureByName?name=${featRel.featureBySubjectId.uniquename}">${featRel.featureBySubjectId.uniquename}</a> [${featRel.featureBySubjectId.cvterm.name}]</td>
-     		  <td> is ${featRel.cvterm.name}</td><td>this</td></tr>
+     		  <td><a href="./FeatureByName?name=${featRel.featureBySubjectId.uniqueName}">${featRel.featureBySubjectId.uniqueName}</a> [${featRel.featureBySubjectId.cvTerm.name}]</td>
+     		  <td> is ${featRel.cvTerm.name}</td><td>this</td></tr>
 		   </c:forEach>
 </table>
 
 <h3>Database X-refs</h3>
 
 
-			<c:if test="${!empty feature.dbxref}">
-			   <c:set var="dbxref" value="${feature.dbxref}" />
-			   <p><b>Xref:</b> ${dbxref.db.name}:${dbxref.accession} : ${dbxref.description}</p>
+			<c:if test="${!empty feature.dbXRef}">
+			   <c:set var="dbxref" value="${feature.dbXRef}" />
+			   <p><b>Xref:</b> ${dbxref.db.name}:${dbxRef.accession} : ${dbXRef.description}</p>
 			   <c:remove var="dbxref"/>
 			</c:if>
 <p>---</p>
-		   <c:forEach items="${feature.featureDbxrefs}" var="fdx">
-     		  <p>[${fdx.current}]&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbxref.db.name}:${fdx.dbxref.accession}&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbxref.description}</p>
+		   <c:forEach items="${feature.featureDbXRefs}" var="fdx">
+     		  <p>[${fdx.current}]&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbXRef.db.name}:${fdx.dbXRef.accession}&nbsp;&nbsp;&nbsp;&nbsp;${fdx.dbxref.description}</p>
 		   </c:forEach>		
 		   
 <h3>Feature Locations</h3>
