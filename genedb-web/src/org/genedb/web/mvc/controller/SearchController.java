@@ -149,7 +149,18 @@ public class SearchController extends MultiActionController implements Initializ
         }
 	    return new ModelAndView(viewName, model);
 	}
-
+	
+	public ModelAndView GeneOntology(HttpServletRequest request, HttpServletResponse response){
+		
+		String go = ServletRequestUtils.getStringParameter(request,"go", NO_VALUE_SUPPLIED);
+		String viewName = "features/GO";
+		Map model = new HashMap(2);
+		
+		//List <Feature> feat = sequenceDao.getFeatureByGO(go);
+		//model.put("feature", feat);
+		return new ModelAndView(viewName,model);
+	}
+	
 	public void setCvDao(CvDao cvDao) {
 	    this.cvDao = cvDao;
 	}

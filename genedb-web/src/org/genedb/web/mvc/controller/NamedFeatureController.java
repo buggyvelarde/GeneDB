@@ -22,6 +22,7 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.helpers.NameLookup;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
@@ -74,7 +75,7 @@ public class NamedFeatureController extends SimpleFormController {
         	return new ModelAndView(viewName,model);
         }
         
-        List<Feature> results = sequenceDao.getFeaturesByAnyName(nl.getLookup(), "gene");
+        List<Feature> results = sequenceDao.getFeaturesByAnyName(nl, "gene");
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
