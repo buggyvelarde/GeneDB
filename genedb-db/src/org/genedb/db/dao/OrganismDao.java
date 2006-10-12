@@ -39,6 +39,11 @@ public class OrganismDao extends BaseDao implements OrganismDaoI {
 		}
     	return organisms;
     }
+
+	public List<Organism> getOrganisms() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
     
 }

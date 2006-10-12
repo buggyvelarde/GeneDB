@@ -99,4 +99,9 @@ public class CvDao extends BaseDao implements CvDaoI {
             this.generalDao = generalDao;
         }
 
+		public List<CvTerm> getCvTerms() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 }

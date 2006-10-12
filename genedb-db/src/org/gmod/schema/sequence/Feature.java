@@ -37,7 +37,8 @@ import javax.persistence.Table;
 @Table(name="feature")
 public class Feature implements java.io.Serializable {
 
-    private Set<Phylonode> phylonodes = new HashSet<Phylonode>(0);
+    
+	private Set<Phylonode> phylonodes = new HashSet<Phylonode>(0);
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="feature")
     public Set<Phylonode> getPhylonodes() {
         return this.phylonodes;
@@ -267,7 +268,6 @@ public class Feature implements java.io.Serializable {
         this.uniqueName = uniqueName;
     }
     
-
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getResidues()
      */
