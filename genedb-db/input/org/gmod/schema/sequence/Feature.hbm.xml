@@ -41,7 +41,7 @@
                 feature within this organism</comment>
             </column>
         </property>
-        <property name="residues" type="string">
+        <property name="residues" type="org.genedb.db.helpers.TextByteType">
             <column name="residues">
                 <comment>A sequence of alphabetic characters representing biological residues (nucleic acids, amino acids). This column does not need to be manifested for all
                 features; it is optional for features such as exons where the residues can be derived from the featureloc. It is recommended that the value for this column be
