@@ -53,13 +53,13 @@ public class FeatureCvTerm implements Serializable {
      private boolean not;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvterm")
-     private Set<FeatureCvTermProp> featureCvTermProps = new HashSet<FeatureCvTermProp>(0);
+     private Collection<FeatureCvTermProp> featureCvTermProps = new HashSet<FeatureCvTermProp>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvterm")
-     private Set<FeatureCvTermPub> featureCvTermPubs = new HashSet<FeatureCvTermPub>(0);
+     private Collection<FeatureCvTermPub> featureCvTermPubs = new HashSet<FeatureCvTermPub>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvterm")
-     private Set<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
+     private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
 
      // Constructors
 
@@ -168,7 +168,7 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermprops(java.util.Set)
      */
-    public void setFeatureCvTermProps(Set<FeatureCvTermProp> featureCvTermProps) {
+    public void setFeatureCvTermProps(Collection<FeatureCvTermProp> featureCvTermProps) {
         this.featureCvTermProps = featureCvTermProps;
     }
 
@@ -182,7 +182,7 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermPubs(java.util.Set)
      */
-    public void setFeatureCvTermPubs(Set<FeatureCvTermPub> featureCvTermPubs) {
+    public void setFeatureCvTermPubs(Collection<FeatureCvTermPub> featureCvTermPubs) {
         this.featureCvTermPubs = featureCvTermPubs;
     }
 
@@ -196,7 +196,7 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermDbxrefs(java.util.Set)
      */
-    public void setFeatureCvTermDbXRefs(Set<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
+    public void setFeatureCvTermDbXRefs(Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
         this.featureCvTermDbXRefs = featureCvTermDbXRefs;
     }
 
