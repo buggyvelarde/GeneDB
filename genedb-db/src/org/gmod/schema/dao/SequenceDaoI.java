@@ -20,7 +20,6 @@
 package org.gmod.schema.dao;
 
 
-import org.genedb.db.helpers.NameLookup;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -64,7 +63,7 @@ public interface SequenceDaoI {
      * @param featureType the type of feature to return eg "gene"
      * @return a (possibly empty) List<Feature> of children with this name
      */
-    public List<Feature> getFeaturesByAnyName(NameLookup nl, String featureType);
+    public List<Feature> getFeaturesByAnyName(String nl, String featureType);
 
     
     // TODO Document overlap behaviour
