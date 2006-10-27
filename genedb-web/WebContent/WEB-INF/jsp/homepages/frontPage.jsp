@@ -491,7 +491,7 @@ This is a quick set of example links
 <li><a href="<c:url value="/examples/JSMenuTest.jsp"/>">Query drop-down</a> (OK)</li>
 <li><a href="./Admin/LockExaminer">Lock examiner</a> (OK)</li>
 <li><a href="./Search/FeatureByName?name=Tb927.2.4760">New tbrucei example</a></li>
-<li><a href="./Search/FeatureByName?name=Tb927.2.4760">New pombe example</a></li>
+<li><a href="./Search/FeatureByName?name=SPCC1223.06">New pombe example</a></li>
 <li><a href="./Search/DummyGeneFeature">New off-line example</a></li>
 </ul></td><td><ul>
 <li><a href="<c:url value="/Search/BooleanQuery?taxId=12345"/>">Boolean query page</a> (Partial)</li>
