@@ -45,6 +45,7 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
 
@@ -306,6 +307,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             if (fct == null) {
                 fct = new FeatureCvTerm(cvTerm, polypeptide, pub, not);
                 sequenceDao.persist(fct);
+                CvTerm evidence = null;
+                FeatureCvTermProp fctp = new FeatureCvTermProp(evidence , fct, go.getEvidence().getDescription(), 0);
+                
                 //logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
             } else {
                 logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvTerm.getName()+"'");
