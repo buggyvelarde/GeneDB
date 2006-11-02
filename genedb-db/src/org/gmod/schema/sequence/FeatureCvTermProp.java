@@ -109,14 +109,14 @@ public class FeatureCvTermProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#getValue()
      */
-    private String getValue() {
+    public String getValue() {
         return this.value;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#setValue(java.lang.String)
      */
-    private void setValue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
     
@@ -124,14 +124,14 @@ public class FeatureCvTermProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#getRank()
      */
-    private int getRank() {
+    public int getRank() {
         return this.rank;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#setRank(int)
      */
-    private void setRank(int rank) {
+    public void setRank(int rank) {
         this.rank = rank;
     }
 
