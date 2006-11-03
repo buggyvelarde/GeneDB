@@ -47,13 +47,13 @@ public class FeatureCvTermProp implements Serializable, PropertyI {
     }
 
 	/** minimal constructor */
-    private FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, int rank) {
+    public FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, int rank) {
         this.cvTerm = cvTerm;
         this.featureCvTerm = featureCvTerm;
         this.rank = rank;
     }
     /** full constructor */
-    private FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, String value, int rank) {
+    public FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, String value, int rank) {
        this.cvTerm = cvTerm;
        this.featureCvTerm = featureCvTerm;
        this.value = value;
@@ -87,7 +87,7 @@ public class FeatureCvTermProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#setCvterm(org.gmod.schema.cv.CvTermI)
      */
-    public void setCvTerm(CvTerm cvTerm) {
+    private void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
@@ -109,14 +109,14 @@ public class FeatureCvTermProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#getValue()
      */
-    public String getValue() {
+    private String getValue() {
         return this.value;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#setValue(java.lang.String)
      */
-    public void setValue(String value) {
+    private void setValue(String value) {
         this.value = value;
     }
     
@@ -124,14 +124,14 @@ public class FeatureCvTermProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#getRank()
      */
-    public int getRank() {
+    private int getRank() {
         return this.rank;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#setRank(int)
      */
-    public void setRank(int rank) {
+    private void setRank(int rank) {
         this.rank = rank;
     }
 

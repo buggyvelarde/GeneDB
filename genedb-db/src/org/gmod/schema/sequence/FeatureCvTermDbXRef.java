@@ -41,7 +41,7 @@ public class FeatureCvTermDbXRef implements Serializable {
     }
 
     /** full constructor */
-    private FeatureCvTermDbXRef(DbXRef dbXRef, FeatureCvTerm featureCvTerm) {
+    public FeatureCvTermDbXRef(DbXRef dbXRef, FeatureCvTerm featureCvTerm) {
        this.dbXRef = dbXRef;
        this.featureCvTerm = featureCvTerm;
     }

@@ -23,6 +23,9 @@
         <property name="not" type="boolean">
             <column name="is_not" not-null="true" />
         </property>
+        <property name="rank" type="int">
+            <column name="rank" not-null="true" />
+        </property>
         <set name="featureCvTermProps" inverse="true">
             <key>
                 <column name="feature_cvterm_id" not-null="true" />
