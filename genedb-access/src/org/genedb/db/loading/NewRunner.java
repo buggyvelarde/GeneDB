@@ -27,6 +27,7 @@ import org.genedb.db.loading.featureProcessors.CDS_Processor;
 
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.FeatureLoc;
+import org.hibernate.classic.Session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,9 +46,11 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -113,10 +116,26 @@ public class NewRunner implements ApplicationContextAware {
         //logger.warn("Skipping organism set as not connected to db");
         runnerConfig = runnerConfigParser.getConfig();
         organism = organismDao.getOrganismByCommonName(runnerConfig.getOrganismCommonName());
+
+        Map<String, String> featureHandlerOptions = runnerConfig.getFeatureHandlerOptions();
+        String featureHandlerName = featureHandlerOptions.get("beanName");
+        if (featureHandlerName == null) {
+            featureHandlerName = "fullLengthSourceFeatureHandler";
+        }
+        featureHandler = (FeatureHandler)
+        this.applicationContext.getBean(featureHandlerName, FeatureHandler.class);
+        featureHandler.setOptions(featureHandlerOptions);
+
+
+        
         featureHandler.setOrganism(organism);
         featureHandler.setCvDao(cvDao);
         featureHandler.setGeneralDao(generalDao);
         featureHandler.setSequenceDao(sequenceDao);
+
+        featureHandler.afterPropertiesSet();
+        
+        
         featureUtils = new FeatureUtils();
         featureUtils.setCvDao(cvDao);
         featureUtils.setSequenceDao(sequenceDao);
@@ -138,16 +157,7 @@ public class NewRunner implements ApplicationContextAware {
         cdsProcessor.setNomenclatureHandler(nomenclatureHandler);
 
         
-        Map<String, String> featureHandlerOptions = runnerConfig.getFeatureHandlerOptions();
-        String featureHandlerName = featureHandlerOptions.get("beanName");
-        if (featureHandlerName == null) {
-            featureHandlerName = "fullLengthSourceFeatureHandler";
-        }
-        featureHandler = (FeatureHandler)
-        this.applicationContext.getBean(featureHandlerName, FeatureHandler.class);
-        featureHandler.setOptions(featureHandlerOptions);
 
-        featureHandler.afterPropertiesSet();
         
         for (FeatureProcessor fp : qualifierHandlerMap.values()) {
             fp.setOrganism(organism);
@@ -291,8 +301,9 @@ public class NewRunner implements ApplicationContextAware {
     /**
      * The core processing loop. Read the config file to find out which EMBL files to read, 
      * and which 'synthetic' features to create
+     * @throws IOException 
      */
-    private void process() {
+    private void process(){
         long start = new Date().getTime();
 
         this.buildCaches();
@@ -314,10 +325,18 @@ public class NewRunner implements ApplicationContextAware {
             }
         }
 
+        /*
         // Now process synthetics ie config is a mixture of real embl files and synthetic features
+        
         List<Synthetic> synthetics = this.runnerConfig.getSynthetics();
-        for (Synthetic synthetic : synthetics) {          
-            final org.gmod.schema.sequence.Feature top = featureUtils.createFeature(synthetic.getSoType(), synthetic.getName(), organism);
+        for (Synthetic synthetic : synthetics) {
+        	
+        	//BufferedWriter out = null;
+        	//try {
+            //    out = new BufferedWriter(new FileWriter(synthetic.getName()));
+            //} catch (IOException e) {
+            //}
+        	final org.gmod.schema.sequence.Feature top = featureUtils.createFeature(synthetic.getSoType(), synthetic.getName(), organism);
             sequenceDao.persist(top);
             StringBuilder residues = new StringBuilder();
 
@@ -330,6 +349,7 @@ public class NewRunner implements ApplicationContextAware {
                     FeatureLoc fl = featureUtils.createLocation(top, f, fp.getOffSet(), fp.getOffSet()+fp.getSize(), fp.getStrand());
                     sequenceDao.persist(f);
                     sequenceDao.persist(fl);
+                    
                     residues.append(blankString('N', fp.getSize()));
                 }
 
@@ -359,10 +379,81 @@ public class NewRunner implements ApplicationContextAware {
                 }
 
             }
-            top.setResidues(residues.toString());
-            //sequenceDao.update(top); // FIXME - Change to merge, or is it OK anyway?
+           
+            top.setResidues(residues.toString().getBytes());
+            //logger.info("residues are :"+residues.toString().length());
+            //sequenceDao.merge(top); // FIXME - Change to merge, or is it OK anyway?
+            
         }
+        */
+        
+        /*
+         * new code below this to try and persist the residues into the database
+         */
+        List<Synthetic> synthetics = this.runnerConfig.getSynthetics();
+        
+        for (Synthetic synthetic : synthetics) {
+        	List <FeaturePart> featurePartList = new ArrayList<FeaturePart>();
+        	List <FilePart> fpList = new ArrayList<FilePart>();
+        	
+        	final org.gmod.schema.sequence.Feature top = featureUtils.createFeature(synthetic.getSoType(), synthetic.getName(), organism);
+            StringBuilder residues = new StringBuilder();
 
+            for (Part part : synthetic.getParts()) {
+                if (part instanceof FeaturePart) {
+                    FeaturePart fp = (FeaturePart) part;
+                    residues.append(blankString('N', fp.getSize()));
+                    featurePartList.add(fp);
+                }
+
+                if (part instanceof FilePart) {
+                    final FilePart fp = (FilePart) part;
+                    File tmp = new File(fp.getName());
+                    List<Sequence> sequences = this.extractSequencesFromFile(tmp);
+                    if (sequences.size()>1) {
+                        logger.fatal("Can't use an EMBL stream '"+tmp.getAbsolutePath()+"' in a synthetic");
+                        for (Sequence sequence : sequences) {
+                            logger.fatal(sequence);
+                        }
+                        throw new RuntimeException("Can't use an EMBL stream '"+tmp.getAbsolutePath()+"' in a synthetic");
+                    }
+                    final Sequence seq = sequences.get(0);
+                    //processSequence(tmp, seq, top, fp.getOffSet());
+                    residues.append(seq.seqString());
+                    fpList.add(fp);
+                }
+
+            }
+           
+            top.setResidues(residues.toString().getBytes());
+            sequenceDao.persist(top);
+            
+            for (FeaturePart fp : featurePartList) {
+            	org.gmod.schema.sequence.Feature f = 
+                    featureUtils.createFeature(fp.getSoType(), fp.getName(), organism);
+                FeatureLoc fl = featureUtils.createLocation(top, f, fp.getOffSet(), fp.getOffSet()+fp.getSize(), fp.getStrand());
+                sequenceDao.persist(f);
+                sequenceDao.persist(fl);
+			}
+            
+            for (FilePart fp : fpList) {
+            	File tmp = new File(fp.getName());
+                List<Sequence> sequences = this.extractSequencesFromFile(tmp);
+                if (sequences.size()>1) {
+                    logger.fatal("Can't use an EMBL stream '"+tmp.getAbsolutePath()+"' in a synthetic");
+                    for (Sequence sequence : sequences) {
+                        logger.fatal(sequence);
+                    }
+                    throw new RuntimeException("Can't use an EMBL stream '"+tmp.getAbsolutePath()+"' in a synthetic");
+                }
+                final Sequence seq = sequences.get(0);
+            	processSequence(tmp, seq, top, fp.getOffSet());
+			}
+            
+        }  
+        /*
+         * new code ends
+         */
         this.postProcess();
 
         long duration = (new Date().getTime()-start)/1000;
