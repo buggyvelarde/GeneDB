@@ -180,7 +180,7 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
                 .createFeature(foundType, uniqueName, this.organism);
         // System.err.println("Got a feature to persist");
 
-        topLevel.setResidues(seq.seqString());
+        topLevel.setResidues(seq.seqString().getBytes());
 
         sequenceDao.persist(topLevel);
         // System.err.println("Have persisted feature");

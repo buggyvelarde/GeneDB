@@ -25,6 +25,10 @@ import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.featureProcessors.CDS_Processor;
 
+import org.gmod.schema.cv.Cv;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.Db;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.hibernate.classic.Session;
@@ -307,7 +311,46 @@ public class NewRunner implements ApplicationContextAware {
         long start = new Date().getTime();
 
         this.buildCaches();
-
+        /* Load the cvterms from the file. 
+         * 
+         */
+        
+        try {
+	        BufferedReader in = new BufferedReader(new FileReader("/nfs/team81/cp2/Scripts/cvterms"));
+	        String str;
+	        while ((str = in.readLine()) != null) {
+	        	String sections[] = str.split("\t");
+	        	CvTerm cvTerm = null;
+	        	cvTerm = this.cvDao.getCvTermByNameAndCvName(sections[1], "CC_%");
+	        	if (cvTerm == null) {
+		        	cvTerm = new CvTerm();
+	        		Db db = generalDao.getDbByName("CCGEN");
+					DbXRef dbXRef = new DbXRef();
+					dbXRef.setDb(db);
+					String accession = "CCGEN_" + sections[1];
+					dbXRef.setAccession(accession);
+					dbXRef.setVersion("1");
+	    			generalDao.persist(dbXRef);
+	    			Cv cv = null;
+	    			String name = "CC_" + sections[0];
+	    			cv = this.cvDao.getCvByName(name).get(0);
+	    			if (cv == null) {
+	    				cv = new Cv();
+	    				cv.setName(name);
+	    				this.cvDao.persist(cv);
+	    			} else {
+	    				cvTerm.setCv(cv);
+	    			}
+	    			cvTerm.setDbXRef(dbXRef);
+	    			cvTerm.setName(sections[1]);
+	    			cvTerm.setDefinition(sections[1]);
+	    			this.cvDao.persist(cvTerm);
+	        	}
+	        }
+	        in.close();
+	        
+	    } catch (IOException e) {
+	    }
         // First process simple files ie simple EMBL files
         List<String> fileNames = this.runnerConfig.getFileNames();
         for (String fileName : fileNames) {
@@ -438,7 +481,7 @@ public class NewRunner implements ApplicationContextAware {
             
             for (FilePart fp : fpList) {
             	File tmp = new File(fp.getName());
-                List<Sequence> sequences = this.extractSequencesFromFile(tmp);
+            	List<Sequence> sequences = this.extractSequencesFromFile(tmp);
                 if (sequences.size()>1) {
                     logger.fatal("Can't use an EMBL stream '"+tmp.getAbsolutePath()+"' in a synthetic");
                     for (Sequence sequence : sequences) {
@@ -448,8 +491,7 @@ public class NewRunner implements ApplicationContextAware {
                 }
                 final Sequence seq = sequences.get(0);
             	processSequence(tmp, seq, top, fp.getOffSet());
-			}
-            
+            }
         }  
         /*
          * new code ends

@@ -94,6 +94,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     protected Cv CV_MISC;
     protected Cv CV_GENEDB;
+    protected Cv CV_CONTROLLEDCURATION;
+    protected Cv CV_PRODUCT;
 
     protected CvTerm MISC_NOTE;
     protected CvTerm MISC_CURATION;
@@ -119,7 +121,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     public Set<Db> warnedDbs = new HashSet<Db>();
 
-    private GeneralDao generalDao;
+    protected GeneralDao generalDao;
     
     protected PubDao pubDao;
 
@@ -145,7 +147,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         CV_MISC = cvDao.getCvByName("autocreated").get(0);
         CV_RELATION = cvDao.getCvByName("relationship").get(0);
         CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
-        
+        CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration").get(0);
+        CV_PRODUCT = cvDao.getCvByName("genedb_products").get(0);
         REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
         REL_DERIVES_FROM = cvDao.getCvTermByNameInCv("derives_from", CV_SO).get(0);
         MISC_NOTE = cvDao.getCvTermByNameInCv(QUAL_NOTE, CV_MISC).get(0);
@@ -317,12 +320,12 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                     //logger.info("Using an existing dbXRef from the db");
                 }
                 //logger.info("dbXRef just before storage is '"+dbXRef+"'");
-                FeatureDbXRef fdr = sequenceDao.getFeatureDbXRefByFeatureAndDbXRef(polypeptide, dbXRef);
-                if (fdr == null) {
-                	fdr = new FeatureDbXRef(dbXRef, polypeptide, true);
-                	logger.info("Persisting new FeatureDbXRef, dbXRef='"+dbXRef.getAccession()+"', feature='"+polypeptide.getDisplayName()+"'");
-                	sequenceDao.persist(fdr);
-                }
+                //FeatureDbXRef fdr = sequenceDao.getFeatureDbXRefByFeatureAndDbXRef(polypeptide, dbXRef);
+                //if (fdr == null) {
+                	//fdr = new FeatureDbXRef(dbXRef, polypeptide, true);
+                	//logger.info("Persisting new FeatureDbXRef, dbXRef='"+dbXRef.getAccession()+"', feature='"+polypeptide.getDisplayName()+"'");
+                	//sequenceDao.persist(fdr);
+                //}
                 // TODO Store any user supplied notes
             }
             

@@ -20,6 +20,7 @@ import org.gmod.schema.sequence.Synonym;
 import org.biojava.bio.seq.StrandedFeature;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +46,8 @@ public class FeatureUtils implements InitializingBean {
         CvTerm type = cvTerms.get(0);
             //System.err.println("Got cvterm type:"+type);
             Date now = new Date();
-            Feature feature = new Feature(organism, type, uniqueName, false, false, now, now);
+            Timestamp ts = new Timestamp(now.getTime());
+            Feature feature = new Feature(organism, type, uniqueName, false, false, ts, ts);
             return feature;
 	}
 
