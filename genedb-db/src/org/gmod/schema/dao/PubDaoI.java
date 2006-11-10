@@ -19,7 +19,11 @@
 
 package org.gmod.schema.dao;
 
+import java.util.List;
+
+import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.pub.Pub;
+import org.gmod.schema.pub.PubProp;
 
 public interface PubDaoI {
 
@@ -38,5 +42,13 @@ public interface PubDaoI {
      * @return the publication with this unique name, or null
      */
     public abstract Pub getPubByUniqueName(String uniqueName);
-
+    
+    /**
+     * Retrieve the publication property with Pub and Cvterm
+     * 
+     * @param pub the Publication
+     * @param cvTerm the cvTerm
+     * @return the publication or null
+     */
+    public abstract List<PubProp> getPubPropByPubAndCvTerm(Pub pub,CvTerm cvTerm);
 }

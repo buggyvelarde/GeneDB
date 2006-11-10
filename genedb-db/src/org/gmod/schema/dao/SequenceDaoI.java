@@ -20,13 +20,17 @@
 package org.gmod.schema.dao;
 
 
+import org.genedb.db.helpers.NameLookup;
+import org.genedb.db.helpers.Product;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface SequenceDaoI {
@@ -144,4 +148,43 @@ public interface SequenceDaoI {
      * @return a (possibly empty) List<Feature> of matching genes
      */
     public List<List> getFeatureByGO(final String go);
+    
+    /**
+     * Return a list of features contained in this organisms with this name or synonym (including obsolete names). The 
+     * name can contain an SQL wildcard (%) 
+     *  
+     * @param name the lookup name
+     * @param featureType the type of feature to return eg "gene"
+     * @param organisms the list of organisms
+     * @return a (possibly empty) List<Feature> of children with this name
+     */
+    public List<Feature> getFeaturesByAnyNameAndOrganism(String nl,List<String> ids,String featureType);
+    
+    /**
+     * Return a list of features contained in this organisms with this name or synonym (including obsolete names). The 
+     * name can contain an SQL wildcard (%) 
+     *  
+     * @param name the lookup name
+     * @param featureType the type of feature to return eg "gene"
+     * @param organisms the list of organisms
+     * @return a (possibly empty) List<Feature> of children with this name
+     */
+    public List<Product> getProducts();
+    
+    /**
+     * Return a list of features that have this particular cvterm 
+     * 
+     *  
+     * @param cvTermName the CvTerm name
+     * @return a (possibly empty) List<Feature> of children
+     */
+    public List<Feature> getFeaturesByCvTermName(String cvTermName);
+    
+    /**
+     * Return a list of top-level features 
+     * 
+     *  
+     * @return a (possibly empty) List<Feature> of children
+     */
+    public List<Feature> getTopLevelFeatures();
 }

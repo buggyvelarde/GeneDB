@@ -1,14 +1,34 @@
 package org.genedb.web.mvc.controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class WebUtils {
+import org.genedb.db.dao.SequenceDao;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
-    public static boolean extractTaxonOrOrganism(HttpServletRequest request, boolean required, boolean onlyOne, List<String> answers) {
+public class WebUtils {
+	
+	private static SequenceDao sequenceDao;
+	
+    public void setSequenceDao(SequenceDao sequenceDao) {
+		this.sequenceDao = sequenceDao;
+	}
+
+	public static boolean extractTaxonOrOrganism(HttpServletRequest request, boolean required, boolean onlyOne, List<String> answers) {
 	boolean problem = false;
 	String[] ids = request.getParameterValues("taxId");
 	String[] names = request.getParameterValues("org");
@@ -48,5 +68,110 @@ public class WebUtils {
 	stored.add(msg);
 	request.setAttribute(WebConstants.ERROR_MSG, stored);
     }
+    
+    public static String buildGViewerXMLFiles(List<Feature> displayFeatures,File tmpDir){
+    	List<Feature> topLevels = sequenceDao.getTopLevelFeatures();
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(tmpDir + "/sbase.xml");
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
 
+        Element genome = new Element("genome");
+        
+        int i = 0;
+        int length = 0;
+        for (Feature feature : topLevels) {
+        	String chromosomeName = feature.getUniqueName();
+            String chromosomeNumber = chromosomeName.substring(chromosomeName.length()-1);
+        	i++;
+			Element chromosome = new Element("chromosome");
+			Element end = new Element("end");
+			chromosome.setAttribute("index", Integer.toString(i));
+			chromosome.setAttribute("number", chromosomeNumber);
+			chromosome.setAttribute("length", Integer.toString(feature.getSeqLen()));
+			if (feature.getSeqLen() > length) {
+				length = feature.getSeqLen();
+			}
+			end.setText(Integer.toString(feature.getSeqLen()));
+
+			Element band = new Element("band");
+			band.setAttribute("index", "1");
+			band.setAttribute("name", "1");
+			Element start = new Element("start");
+			start.setText("0");
+			Element stain = new Element("stain");
+			stain.setText("gneg");
+			band.addContent(start);
+			band.addContent(end);
+			band.addContent(stain);
+			chromosome.addContent(band);
+			genome.addContent(chromosome);
+		}
+        
+        Document doc = new Document(genome);
+        XMLOutputter xmlout = new XMLOutputter();
+        xmlout.setFormat(Format.getPrettyFormat());
+        try {
+			xmlout.output(doc, out);
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        try {
+			out = new FileOutputStream(tmpDir + "/003.xml");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+        genome = new Element("genome");
+        
+        for (Feature feature : displayFeatures) {
+			Element XMLfeature = new Element("feature");
+			Element chromosome = new Element("chromosome");
+			Element chrstart = new Element("start");
+			Element chrend = new Element("end");
+			Element type = new Element("type");
+			Element color = new Element("colour");
+			Element label = new Element("label");
+			Element link = new Element("link");
+			
+			Collection<FeatureLoc> temp = feature.getFeatureLocsForFeatureId();
+			for (FeatureLoc fl : temp) {
+				String name = fl.getFeatureBySrcFeatureId().getUniqueName();
+				String number = name.substring(name.length()-1);
+				chromosome.setText(number);
+				chrstart.setText(fl.getFmin().toString());
+				chrend.setText(fl.getFmax().toString());
+			}
+			
+			type.setText("gene");
+			color.setText("ox79cc3d");
+			label.setText(feature.getUniqueName());
+			link.setText("http://holly.internal.sanger.ac.uk:8080/genedb-web/NameFeature?lookup="+feature.getUniqueName());
+			
+			XMLfeature.addContent(chromosome);
+			XMLfeature.addContent(chrstart);
+			XMLfeature.addContent(chrend);
+			XMLfeature.addContent(type);
+			XMLfeature.addContent(color);
+			XMLfeature.addContent(label);
+			XMLfeature.addContent(link);
+			genome.addContent(XMLfeature);
+		}
+        
+        doc = new Document(genome);
+        xmlout = new XMLOutputter();
+        xmlout.setFormat(Format.getPrettyFormat());
+        try {
+			xmlout.output(doc, out);
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        
+        return Integer.toString(length);
+    }
 }

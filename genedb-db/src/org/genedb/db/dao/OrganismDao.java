@@ -34,8 +34,7 @@ public class OrganismDao extends BaseDao implements OrganismDaoI {
     	List <String> organisms = new ArrayList<String>();
     	List <Organism> o = getHibernateTemplate().loadAll(Organism.class);
     	for (Organism organism : o) {
-			organisms.add(organism.getAbbreviation());
-			logger.info(organism.getAbbreviation());
+			organisms.add(organism.getCommonName());
 		}
     	return organisms;
     }

@@ -60,7 +60,7 @@
 </st:section>
 
 <st:section name="Note" id="gene_note" collapsed="false" collapsible="true" hideIfEmpty="true">
-  <db:propByName collection="${polypeptide.featureProps}" name="note" var="props">
+  <db:propByName collection="${polypeptide.featureCvTerms}" name="note" var="props">
     <c:forEach items="${props}" var="featProp">
       <br /><db:highlight>${featProp.value}</db:highlight>
     </c:forEach>
@@ -68,15 +68,18 @@
 </st:section>
 
 <st:section name="Curation" id="gene_curation" collapsed="false" collapsible="true" hideIfEmpty="true">
-  <db:propByName collection="${polypeptide.featureProps}" name="curation" var="props">
-    <c:forEach items="${props}" var="featProp">
-      <br /><db:highlight>${featProp.value}</db:highlight>
+  <db:propByName collection="${polypeptide.featureCvTerms}" name="CC" var="featcvterms">
+    <c:forEach items="${featcvterms}" var="featcvterm">
+      		<db:highlight>${featcvterm.cvTerm.name}</db:highlight>
+    		<c:forEach items="${featcvterm.featureCvTermProps}" var="featProp" varStatus="status">
+					<db:highlight>${featProp.value}</db:highlight>
+      		</c:forEach>
     </c:forEach>
   </db:propByName>
 </st:section>
 
 <st:section name="Private - wouldn't really be shown" id="gene_private" collapsed="false" collapsible="true" hideIfEmpty="true">
-  <db:propByName collection="${polypeptide.featureProps}" name="private" var="props">
+  <db:propByName collection="${polypeptide.featureCvTerms}" name="private" var="props">
     <c:forEach items="${props}" var="featProp">
       <br /><db:highlight>${featProp.value}</db:highlight>
     </c:forEach>
@@ -116,12 +119,14 @@
 <st:section name="Gene Ontology Annotation" id="gene_go" collapsed="false" collapsible="true" hideIfEmpty="true">
     <table>
       <c:forEach items="${polypeptide.featureCvTerms}" var="featCvTerm" varStatus="status">
-        <tr>
-          <td>${status.count}</td><td>${featCvTerm.cvTerm.name}</td>
-          <td>qualifier</td>
-          <td>evidence</td>
-          <td>others</td>
-        </tr>
+        
+	        <tr>
+	          <td>${status.count}</td><td>${featCvTerm.cvTerm.name}</td>
+	          <td>qualifier</td>
+	          <td>evidence</td>
+	          <td>others</td>
+	        </tr>
+	    
       </c:forEach>
     </table>
   

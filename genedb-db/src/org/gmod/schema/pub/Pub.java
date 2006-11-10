@@ -148,9 +148,9 @@ public class Pub implements Serializable {
     }
 
 	/** minimal constructor */
-    private Pub(CvTerm cvTerm, String uniqueName) {
-        this.cvTerm = cvTerm;
+    public Pub(String uniqueName, CvTerm cvTerm) {
         this.uniqueName = uniqueName;
+        this.cvTerm = cvTerm;
     }
     /** full constructor */
     private Pub(CvTerm cvTerm, String title, String volumeTitle, String volume, String seriesName, 

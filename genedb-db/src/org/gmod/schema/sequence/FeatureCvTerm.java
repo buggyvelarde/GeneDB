@@ -166,7 +166,7 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvtermprops()
      */
-    private Collection<FeatureCvTermProp> getFeatureCvTermProps() {
+    public Collection<FeatureCvTermProp> getFeatureCvTermProps() {
         return this.featureCvTermProps;
     }
     

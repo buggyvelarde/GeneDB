@@ -109,7 +109,7 @@ public class FeatureCvTermProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#getValue()
      */
-    private String getValue() {
+    public String getValue() {
         return this.value;
     }
     

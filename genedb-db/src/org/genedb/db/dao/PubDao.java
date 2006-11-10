@@ -1,8 +1,10 @@
 package org.genedb.db.dao;
 
 
+import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.PubDaoI;
 import org.gmod.schema.pub.Pub;
+import org.gmod.schema.pub.PubProp;
 
 import java.util.List;
 
@@ -24,7 +26,12 @@ public class PubDao extends BaseDao implements PubDaoI {
                 "from Pub pub where pub.uniqueName like :uniqueName", "uniqueName", uniqueName);
         return firstFromList(list, "uniqueName", uniqueName);
     }
-
+    
+    public List<PubProp> getPubPropByPubAndCvTerm(Pub pub,CvTerm cvTerm){
+    	List<PubProp> list = getHibernateTemplate().findByNamedParam(
+    			"from PubProp pp where pp.pub=:pub and pp.cvTerm=:cvTerm",new String[]{"pub","cvTerm"},new Object[]{pub,cvTerm});
+    	return list;
+    }
 //    public Pub findOrCreateByPmid(String pmid) {
 //	Dbxref xref = dbXRefDao.findByDbAcc(pmid);
 //	Pub pub = null;

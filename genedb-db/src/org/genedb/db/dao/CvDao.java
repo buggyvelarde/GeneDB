@@ -104,4 +104,15 @@ public class CvDao extends BaseDao implements CvDaoI {
 			return null;
 		}
 
+		public CvTerm getCvTermByNameAndCvName(String cvTermName, String name) {
+			List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
+		            "from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv.name like :name",
+		            new String[]{"cvTermName", "name"}, new Object[]{cvTermName, name});
+			if (cvTermList == null || cvTermList.size() == 0) {
+				return null;
+			} else {
+				return cvTermList.get(0);
+			}
+		}
+
 }

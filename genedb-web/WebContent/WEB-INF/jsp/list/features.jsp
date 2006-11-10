@@ -9,38 +9,32 @@
 	<script type="text/javascript">
 		function forward() {
 			var myList = document.getElementById("tmp")
-			document.location.href="../genedb-web/" + myList.options[myList.selectedIndex].text
+			document.location.href="../genedb-web/NameFeature?lookup=SPA*&orglist=" + myList.options[myList.selectedIndex].text
 		}
 	</script>
 </format:header>
-<sp:form commandName="rb" name="lst">
 	<table align="center" border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr><td colspan="3"><img src="<c:url value="/" />/includes/images/blank.gif" width="100%" height="1" alt="--------"/>
 	</tr>
 	<tr>
-	<td width="40%" bgcolor="#E2E2FF" align="center">
+		<td width="40%" bgcolor="#E2E2FF" align="center">
+			<form action="NameFeature">
 			Search String :
-			<form action="<c:url value="/" />/NamedFeature">
-			<input type="text" name="lookup"/> 
+			<input type="input" name="lookup" />
+			<input type="hidden" name="orglist" value="spombe"/>
 			<input type="submit" value="Submit"/> 
-	</td>
-	</form>
-	<td width="40%" bgcolor="#E2E2FF" align="center">
-			<input type="submit" value="Go To" name="pages">
-			<sp:select id="tmp" path="result" items="${rb.results}" onchange="forward()">
-			</sp:select>
-	</td>
+			</form>
+		</td>
 	</tr>
 	<tr><td colspan="3"><img src="<c:url value="/" />/includes/blank.gif" width="100%" height="1" alt="--------"/>
 	</tr>
 	</table>
-</sp:form>
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
-<display:table name="${results}" uid="tmp" pagesize="30" requestURI="/NamedFeature" class="simple" cellspacing="0" cellpadding="4">
-   	<display:column property="${tmp.organism.abbreviation}" title="Organism" class="fonts"/>
-	<display:column property="${tmp.cvTerm.name}" title="Type"/>
-	<display:column property="${tmp.uniqueName}" href="./Search/FeatureByName?name=${tmp_rowNum}"/>
+<display:table name="results" uid="tmp" pagesize="30" requestURI="/NameFeature" class="simple" cellspacing="0" cellpadding="4">
+   	<display:column property="organism.abbreviation" title="Organism"/>
+   	<display:column property="cvTerm.name" title="Type"/>
+	<display:column property="uniqueName" href="./Search/FeatureByName" paramId="name"/>
 </display:table>
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
 <format:footer />

@@ -50,13 +50,13 @@ public class PubProp implements Serializable, PropertyI {
     }
 
 	/** minimal constructor */
-    private PubProp(CvTerm cvTerm, Pub pub, String value) {
+    public PubProp(CvTerm cvTerm, Pub pub, String value) {
         this.cvTerm = cvTerm;
         this.pub = pub;
         this.value = value;
     }
     /** full constructor */
-    private PubProp(CvTerm cvTerm, Pub pub, String value, Integer rank) {
+    public PubProp(CvTerm cvTerm, Pub pub, String value, Integer rank) {
        this.cvTerm = cvTerm;
        this.pub = pub;
        this.value = value;
@@ -127,7 +127,7 @@ public class PubProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubPropI#getRank()
      */
-    private Integer getRank() {
+    public Integer getRank() {
         return this.rank;
     }
     

@@ -2,16 +2,21 @@ package org.genedb.db.dao;
 
 
 import org.genedb.db.helpers.NameLookup;
+import org.genedb.db.helpers.Product;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.SequenceDaoI;
+import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class SequenceDao extends BaseDao implements SequenceDaoI {
@@ -71,28 +76,20 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
      * @see org.genedb.db.dao.SequenceDaoI#getFeatureByAnyName(org.genedb.db.helpers.NameLookup, java.lang.String)
      */
     @SuppressWarnings({ "unchecked", "cast" })
-    public List<Feature> getFeaturesByAnyName(NameLookup nl,String featureType) {
+    public List<Feature> getFeaturesByAnyName(String nl,String featureType) {
 
-//        // Add wildcards if needed
-        if (nl.isNeedWildcards()) {
-            String lookup = nl.getLookup();
-            if (!lookup.startsWith("*")) {
-                lookup = "*" + lookup;
-            }
-            if (!lookup.endsWith("*")) {
-                lookup += "*";
-            }
-            nl.setLookup(lookup);
-            nl.setNeedWildcards(false);
+        if (!nl.startsWith("*")) {
+            nl = "*" + nl;
+        }
+        if (!nl.endsWith("*")) {
+            nl += "*";
         }
 
-        String lookup = nl.getLookup().replaceAll("\\*", "%");
+        String lookup = nl.replaceAll("\\*", "%");
 
-        // TODO Start for paging
-        getHibernateTemplate().setMaxResults(nl.getPageSize()); // TODO Check
-
-        // TODO Taxon and filter
+        logger.info("lookup is " + lookup);
         List<Feature> features = (List<Feature>)
+        //getHibernateTemplate().find
         getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureSynonym fs, Synonym s, CvTerm cvt where f=fs.feature and fs.synonym=s and fs.current=true and f.cvTerm=cvt.cvTermId and cvt.name='" + featureType + "' and s.name like :lookup",
                 "lookup", lookup);
         return features;
@@ -174,24 +171,28 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
     public List<List> getFeatureByGO(String go) {
     	String temp[] = go.split(":");
     	String number = temp[1];
-    	List <Feature> ids;
+    	List <Feature> polypeptides;
+    	List <CvTerm> goName;
     	List <Feature> features = new ArrayList<Feature>();
-	    	ids = getHibernateTemplate().findByNamedParam("select f " +
+    	polypeptides = getHibernateTemplate().findByNamedParam("select f " +
 	    			"from Feature f, DbXRef d, CvTerm c, FeatureCvTerm fc where " +
 	    			"d.accession=:number and d.dbXRefId=c.dbXRef and c.cvTermId=fc.cvTerm " +
 	    			"and fc.feature=f.featureId",
     			new String[]{"number"},
     			new Object[]{number});
-		for (Feature id : ids) {
-			logger.info(id.getUniqueName());
-			List<Feature> feat = getHibernateTemplate().findByNamedParam("select f " +
+		for (Feature polypep : polypeptides) {
+			logger.info(polypep.getUniqueName());
+			List<Feature> genes = getHibernateTemplate().findByNamedParam("select f " +
 					"from Feature f,FeatureRelationship f1,FeatureRelationship f2 where " +
-					"f2.featureBySubjectId=:id and f2.featureByObjectId=f1.featureBySubjectId " +
+					"f2.featureBySubjectId=:polypep and f2.featureByObjectId=f1.featureBySubjectId " +
 					"and f1.featureByObjectId=f",
-					new String[]{"id"},
-					new Object[]{id});
-			features.add(feat.get(0));
+					new String[]{"polypep"},
+					new Object[]{polypep});
+			features.add(genes.get(0));
 		}
+		goName = getHibernateTemplate().findByNamedParam("select cv " +
+				"from CvTerm cv where cv.dbXRef.accession=:number", new String[]{"number"}, new Object[]{number});
+		
 		List <Feature> flocs = new ArrayList<Feature>();
 		String name = "chromosome";
 		flocs = getHibernateTemplate().findByNamedParam("select f from Feature f " +
@@ -201,7 +202,77 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 		List <List> data = new ArrayList<List>();
 		data.add(features);
 		data.add(flocs);
+		data.add(goName);
     	return data;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Feature> getFeaturesByAnyNameAndOrganism(String nl, List<String> ids,String featureType) {
+		
+		
+		if (ids == null || ids.size()==0 ) {
+			logger.info("nl.getOrglist is null therefore calling featuresbyname");
+			return(getFeaturesByAnyName(nl,featureType));
+		}
+		
+		List<Feature> features = new ArrayList<Feature>();
+
+        if (!nl.startsWith("*")) {
+            nl = "*" + nl;
+        }
+        if (!nl.endsWith("*")) {
+            nl += "*";
+        }
+
+        String lookup = nl.replaceAll("\\*", "%");
+        String orglist = ids.get(0);
+         
+        /*
+        StringBuffer ids = new StringBuffer();
+        for (int i=0; i<organisms.size(); i++) {
+			if (i+1 == organisms.size()) {
+				ids.append(organisms.get(i).getOrganismId());
+			} else {
+				ids.append(organisms.get(i).getOrganismId());
+				ids.append(",");
+			}
+		}*/
+        //String id = Integer.toString(organism.getOrganismId());
+        logger.info("id is " + orglist);
+        logger.info("calling the right query...");
+        features = getHibernateTemplate().findByNamedParam("select f from Feature f where" +
+        		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in (:orglist)", 
+        		new String[]{"lookup","featureType","orglist"}, new Object[]{lookup,featureType,orglist});
+		return features;
+	}
+
+	public List<Product> getProducts() {
+		List<Product> products = new ArrayList<Product>();
+		Iterator results = getHibernateTemplate().find("select cvt.name,count(f.uniqueName) from CvTerm cvt,FeatureCvTerm fct,Feature f " +
+				"where f=fct.feature and cvt=fct.cvTerm and cvt.cv=15 group by cvt.name").listIterator();
+		while (results.hasNext()){
+			Product p = new Product();
+			Object[] row = (Object[]) results.next();
+			p.setName((String)row[0]);
+			p.setCount((Integer)row[1]);
+			products.add(p);
+		}
+		return products;
+	}
+
+	public List<Feature> getFeaturesByCvTermName(String cvTermName) {
+		List<Feature> features = getHibernateTemplate().findByNamedParam(
+				"select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName", 
+				"cvTermName", cvTermName);
+		return features;
+	}
+
+	public List<Feature> getTopLevelFeatures(){
+		String name = "chromosome%";
+		List<Feature> topLevels = getHibernateTemplate().findByNamedParam("select f from Feature f " +
+				"where f.cvTerm.name like :name",
+				"name",
+				name);
+		return topLevels;
+	}
 }

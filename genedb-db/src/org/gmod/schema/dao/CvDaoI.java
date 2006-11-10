@@ -87,5 +87,14 @@ public interface CvDaoI {
      * @return a list of all cvterms
      */
     public abstract List<CvTerm> getCvTerms();
+    
+    /**
+     * Retrieve a named CvTerm from a given Cv
+     * 
+     * @param cvTermName the name of the cvterm
+     * @param name the controlled vocabulary name this cvterm could be part of
+     * @return a (possibly empty) cvterm
+     */
+    public abstract CvTerm getCvTermByNameAndCvName(String cvTermName, String name);
 
 }

@@ -2,6 +2,7 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.helpers.Product;
 import org.genedb.query.BasicQueryI;
 import org.genedb.query.NumberedQueryI;
 import org.genedb.query.QueryPlaceHolder;
@@ -12,18 +13,28 @@ import org.genedb.web.tags.bool.QueryTreeWalker;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +49,12 @@ public class SearchController extends MultiActionController implements Initializ
     	private SequenceDao sequenceDao;
         private CvDao cvDao;
     	private FileCheckingInternalResourceViewResolver viewChecker;
+    	private String listProductsView;
 	
+	public void setListProductsView(String listProductsView) {
+			this.listProductsView = listProductsView;
+		}
+
 	public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
 	    this.viewChecker = viewChecker;
 	}
@@ -179,6 +195,31 @@ public class SearchController extends MultiActionController implements Initializ
 	    return new ModelAndView(viewName, model);
 	}
 	
+	public ModelAndView Products(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> model = new HashMap<String, Object>(1);
+		String viewName = listProductsView;
+		/*
+		HashMap hm = sequenceDao.getProducts();
+		
+		List<String> products = new ArrayList<String>();
+		List<String> numbers = new ArrayList<String>();
+		
+		int count = 0;
+		Set mappings = hm.entrySet();
+		for (Iterator i = mappings.iterator(); i.hasNext();) {
+	           Map.Entry me = (Map.Entry)i.next();
+	           Object product = me.getKey();
+	           Object number = me.getValue();
+	           products.add(count, product.toString());
+	           numbers.add(count,number.toString());
+	           count++;
+	        }
+		model.put("products", products);
+		model.put("numbers", numbers);*/
+		List<Product> products = sequenceDao.getProducts();
+		model.put("products", products);
+		return new ModelAndView(viewName,model);
+	}
 
 	public ModelAndView CvTermByCvName(HttpServletRequest request, HttpServletResponse response) {
 	    String cvName = ServletRequestUtils.getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
@@ -213,6 +254,95 @@ public class SearchController extends MultiActionController implements Initializ
 //	    return new ModelAndView("db/pub", model);
 //	}
 	
+	public ModelAndView FeatureByCvTermName(HttpServletRequest request, HttpServletResponse response) {
+		String viewName = null;
+		Map model = null;
+		String name = ServletRequestUtils.getStringParameter(request, "name", NO_VALUE_SUPPLIED);
+		List<Feature> features = sequenceDao.getFeaturesByCvTermName(name);
+		List<Feature> feats = null;
+		String length = null;
+		if(features.size() == 1){
+			Feature feat = features.get(0);
+			model = new HashMap(3);
+		    String type = feat.getCvTerm().getName();
+	        if (type != null && type.equals("gene")) {
+	            model.put("feature", feat);
+	        	viewName = "features/gene";
+	            Feature mRNA = null;
+	            Collection<FeatureRelationship> frs = feat.getFeatureRelationshipsForObjectId(); 
+	            for (FeatureRelationship fr : frs) {
+	                mRNA = fr.getFeatureBySubjectId();
+	                break;
+	            }
+	            Feature polypeptide = null;
+	            Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
+	            for (FeatureRelationship fr : frs2) {
+	                Feature f = fr.getFeatureBySubjectId();
+	                if ("polypeptide".equals(f.getCvTerm().getName())) {
+	                    polypeptide = f;
+	                }
+	            }
+	            model.put("polypeptide", polypeptide);
+	        } else {
+	        	viewName = "features/gene";
+	        	model.put("polypeptide", feat);
+	            Feature mRNA = null;
+	            Collection<FeatureRelationship> frs = feat.getFeatureRelationshipsForSubjectId(); 
+	            for (FeatureRelationship fr : frs) {
+	                mRNA = fr.getFeatureByObjectId();
+	                break;
+	            }
+	            Feature gene = null;
+	            Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForSubjectId(); 
+	            for (FeatureRelationship fr : frs2) {
+	                Feature f = fr.getFeatureByObjectId();
+	                if ("gene".equals(f.getCvTerm().getName())) {
+	                    gene = f;
+	                }
+	            }
+	            model.put("feature", gene);
+	        }
+		} else {
+			boolean polypep = false;
+			model = new HashMap(2);
+			for (Feature feature : features) {
+				if ("polypeptide".equals(feature.getCvTerm().getName())){
+					polypep = true;
+				}
+				break;
+			}
+			if(polypep){
+				feats = new ArrayList<Feature>();
+				for (Feature feature : features) {
+					Collection<FeatureRelationship> frs = feature.getFeatureRelationshipsForSubjectId();
+					Feature mRNA = null;
+					for (FeatureRelationship relationship : frs) {
+						mRNA = relationship.getFeatureByObjectId();
+						break;
+					}
+					Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForSubjectId();
+					for (FeatureRelationship relationship : frs2) {
+						Feature f = relationship.getFeatureByObjectId();
+						if("gene".equals(f.getCvTerm().getName())){
+							feats.add(f);
+						}
+					}
+				}
+				model.put("features", feats);
+				File tmpDir = new File(getServletContext().getRealPath("/GViewer/data"));
+				length = WebUtils.buildGViewerXMLFiles(feats, tmpDir);
+				model.put("length", length);
+			} else {
+				model.put("features", features);
+				File tmpDir = new File(getServletContext().getRealPath("/GViewer/data"));
+				length = WebUtils.buildGViewerXMLFiles(features, tmpDir);
+				model.put("length", length);
+			}
+			viewName = "list/features1";
+		}
+		return new ModelAndView(viewName,model);
+		
+	}
 	
 	/**
 	 * Custom handler for examples

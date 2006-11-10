@@ -19,6 +19,12 @@
 
 package org.genedb.db.helpers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.genedb.db.dao.OrganismDao;
+import org.gmod.schema.organism.Organism;
+
 //import java.util.List;
 
 public class NameLookup {
@@ -29,8 +35,11 @@ public class NameLookup {
     private int start = 0; // Which number to start at if paging
     private int pageSize; // How many results per page, if paging
     //private FeatureTypeFilter filter;
-
-    public String getLookup() {
+    private Organism organism;
+    private String orglist;
+    private OrganismDao organismDao;
+    
+    	public String getLookup() {
         return this.lookup;
     }
     
@@ -60,6 +69,35 @@ public class NameLookup {
     public void setStart(int start) {
         this.start = start;
     }
+
+	public Organism getOrganism() {
+		return organism;
+	}
+
+	public void setOrganism(Organism org) {
+		this.organism = org;
+	}
+
+	public OrganismDao getOrganismDao() {
+		return organismDao;
+	}
+
+	public void setOrganismDao(OrganismDao organismDao) {
+		this.organismDao = organismDao;
+	}
+
+	public String getOrglist() {
+		return orglist;
+	}
+
+	public void setOrglist(String orglist) {
+		this.orglist = orglist;
+		/*
+		List<Organism> org = new ArrayList<Organism>();
+		Organism o = organismDao.getOrganismByCommonName(orglist);
+		org.add(o);
+		setOrganisms(org); */
+	}
     
 //    public List<Taxon> getTaxons() {
 //        return this.taxons;

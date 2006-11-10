@@ -44,7 +44,7 @@ public class PubDbXRef implements Serializable {
     }
 
     /** full constructor */
-    private PubDbXRef(DbXRef dbXRef, Pub pub, boolean current) {
+    public PubDbXRef(DbXRef dbXRef, Pub pub, boolean current) {
        this.dbXRef = dbXRef;
        this.pub = pub;
        this.current = current;

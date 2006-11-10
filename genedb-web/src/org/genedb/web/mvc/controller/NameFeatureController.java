@@ -24,6 +24,7 @@ import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.helpers.NameLookup;
 
+import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 
@@ -46,7 +47,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class NamedFeatureController extends SimpleFormController {
+public class NameFeatureController extends SimpleFormController {
 
     private String listResultsView;
     private String formInputView;
@@ -74,8 +75,12 @@ public class NamedFeatureController extends SimpleFormController {
         	viewName = formInputView;
         	return new ModelAndView(viewName,model);
         }
-        
-        List<Feature> results = sequenceDao.getFeaturesByAnyName(nl, "gene");
+        logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
+        List<String> org = new ArrayList<String>();
+        if (nl.getOrglist() != null) {
+        	org.add(nl.getOrglist());
+        }
+        List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(nl.getLookup(), org,"gene");
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
@@ -83,14 +88,11 @@ public class NamedFeatureController extends SimpleFormController {
         }
         if (results.size() > 1) {
             // Go to list results page
-        	ResultBean rb = new ResultBean();
-        	List<String> organisms = organismDao.findAllOrganismCommonNames();
-        	for (String string : organisms) {
-				logger.info(string);
-			}
-        	rb.setResults(organisms);
+        	//ResultBean rb = new ResultBean();
+        	//List<String> organisms = organismDao.findAllOrganismCommonNames();
+        	//nl.setOrganisms(organisms);
         	viewName = listResultsView;
-            model.put("rb", rb);
+            //model.put("nameLookup", nl);
             model.put("results", results);
         } else {
             Feature feature = results.get(0);
