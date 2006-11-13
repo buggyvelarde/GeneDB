@@ -56,13 +56,13 @@ public class FeatureCvTerm implements Serializable {
     private int rank;
     
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvterm")
-     private Set<FeatureCvTermProp> featureCvTermProps = new HashSet<FeatureCvTermProp>(0);
+     private Collection<FeatureCvTermProp> featureCvTermProps = new HashSet<FeatureCvTermProp>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvterm")
-     private Set<FeatureCvTermPub> featureCvTermPubs = new HashSet<FeatureCvTermPub>(0);
+     private Collection<FeatureCvTermPub> featureCvTermPubs = new HashSet<FeatureCvTermPub>(0);
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvterm")
-     private Set<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
+     private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
 
      // Constructors
 
@@ -123,21 +123,21 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeature()
      */
-    private Feature getFeature() {
+    public Feature getFeature() {
         return this.feature;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeature(org.genedb.db.jpa.Feature)
      */
-    private void setFeature(Feature feature) {
+    public void setFeature(Feature feature) {
         this.feature = feature;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getPub()
      */
-    private Pub getPub() {
+    public Pub getPub() {
         return this.pub;
     }
     
@@ -152,14 +152,14 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#isNot()
      */
-    private boolean isNot() {
+    public boolean isNot() {
         return this.not;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setNot(boolean)
      */
-    private void setNot(boolean not) {
+    public void setNot(boolean not) {
         this.not = not;
     }
 
@@ -173,7 +173,7 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermprops(java.util.Set)
      */
-    private void setFeatureCvTermProps(Set<FeatureCvTermProp> featureCvTermProps) {
+    public void setFeatureCvTermProps(Collection<FeatureCvTermProp> featureCvTermProps) {
         this.featureCvTermProps = featureCvTermProps;
     }
 
@@ -187,7 +187,7 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermPubs(java.util.Set)
      */
-    private void setFeatureCvTermPubs(Set<FeatureCvTermPub> featureCvTermPubs) {
+    private void setFeatureCvTermPubs(Collection<FeatureCvTermPub> featureCvTermPubs) {
         this.featureCvTermPubs = featureCvTermPubs;
     }
 
@@ -201,7 +201,7 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermDbxrefs(java.util.Set)
      */
-    private void setFeatureCvTermDbXRefs(Set<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
+    private void setFeatureCvTermDbXRefs(Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
         this.featureCvTermDbXRefs = featureCvTermDbXRefs;
     }
 
