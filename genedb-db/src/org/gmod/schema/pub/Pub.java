@@ -345,14 +345,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getUniqueName()
      */
-    private String getUniqueName() {
+    public String getUniqueName() {
         return this.uniqueName;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setUniqueName(java.lang.String)
      */
-    private void setUniqueName(String uniqueName) {
+    public void setUniqueName(String uniqueName) {
         this.uniqueName = uniqueName;
     }
     
