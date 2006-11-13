@@ -70,21 +70,21 @@ public class PubDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#getDbXRef()
      */
-    private DbXRef getDbXRef() {
+    public DbXRef getDbXRef() {
         return this.dbXRef;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setDbXRef(org.gmod.schema.general.DbXRefI)
      */
-    private void setDbXRef(DbXRef dbXRef) {
+    public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#getPub()
      */
-    private Pub getPub() {
+    public Pub getPub() {
         return this.pub;
     }
     
