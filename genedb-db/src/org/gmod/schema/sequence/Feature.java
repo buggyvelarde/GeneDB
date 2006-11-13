@@ -281,13 +281,13 @@ public class Feature implements java.io.Serializable {
      */
     public void setResidues(byte[] residues) {
         this.residues = residues;
-        if (residues == null) {
+/*        if (residues == null) {
             seqLen = 0;
             md5Checksum = "";
             return;
         }
         seqLen = residues.length;
-        this.md5Checksum = calcMD5(this.residues);
+        this.md5Checksum = calcMD5(this.residues);*/
     }
     
 
