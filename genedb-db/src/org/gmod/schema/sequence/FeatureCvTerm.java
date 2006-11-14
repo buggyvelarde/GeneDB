@@ -102,7 +102,7 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvTermId(int)
      */
-    private void setFeatureCvTermId(int featureCvTermId) {
+    public void setFeatureCvTermId(int featureCvTermId) {
         this.featureCvTermId = featureCvTermId;
     }
 
