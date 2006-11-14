@@ -95,7 +95,7 @@ public class FeatureCvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvTermId()
      */
-    private int getFeatureCvTermId() {
+    public int getFeatureCvTermId() {
         return this.featureCvTermId;
     }
     

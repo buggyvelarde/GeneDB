@@ -65,28 +65,28 @@ public class FeatureCvTermDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermDbXRefI#getDbxref()
      */
-    private DbXRef getDbXRef() {
+    public DbXRef getDbXRef() {
         return this.dbXRef;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermDbXRefI#setDbxref(org.gmod.schema.general.DbXRefI)
      */
-    private void setDbXRef(DbXRef dbXRef) {
+    public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermDbXRefI#getFeatureCvterm()
      */
-    private FeatureCvTerm getFeatureCvTerm() {
+    public FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermDbXRefI#setFeatureCvterm(org.gmod.schema.sequence.FeatureCvTermI)
      */
-    private void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
+    public void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }
 
