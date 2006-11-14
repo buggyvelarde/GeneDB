@@ -25,14 +25,12 @@ public class OrganismProp implements Serializable, PropertyI {
     @Column(name="organismprop_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int organismPropId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          
          @JoinColumn(name="organism_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Organism organism;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;

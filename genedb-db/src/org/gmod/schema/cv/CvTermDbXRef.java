@@ -24,13 +24,11 @@ public class CvTermDbXRef implements Serializable {
     @Column(name="cvterm_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int cvTermDbXRefId;
     
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
      

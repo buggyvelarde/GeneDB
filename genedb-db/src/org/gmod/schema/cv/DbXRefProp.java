@@ -25,13 +25,11 @@ public class DbXRefProp implements Serializable, PropertyI {
     @Column(unique=false, nullable=false, insertable=true, updatable=true)
      private int dbXRefPropId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={},fetch=FetchType.LAZY)
         @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
      

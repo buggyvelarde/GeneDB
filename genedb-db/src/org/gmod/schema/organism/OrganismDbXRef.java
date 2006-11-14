@@ -22,14 +22,12 @@ public class OrganismDbXRef implements Serializable {
     @Column(name="organism_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int organismDbXRefId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          
          @JoinColumn(name="organism_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Organism organism;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          
          @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;

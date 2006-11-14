@@ -19,19 +19,14 @@ public class CvTermSynonym implements Serializable {
 
     // Fields    
      @Id
-    
     @Column(name="cvtermsynonym_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int cvTermSynonymId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
-         
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          @JoinColumn(name="cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByCvTermId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
-         
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          @JoinColumn(name="type_id", unique=false, nullable=true, insertable=true, updatable=true)
      private CvTerm cvTermByTypeId;
      

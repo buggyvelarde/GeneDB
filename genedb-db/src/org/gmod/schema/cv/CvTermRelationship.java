@@ -21,20 +21,15 @@ public class CvTermRelationship implements Serializable {
     @Column(name="cvterm_relationship_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int cvTermRelationshipId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={},fetch=FetchType.LAZY)
         @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermBySubjectId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
-        
+    @ManyToOne(cascade={},fetch=FetchType.LAZY)
         @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByObjectId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
-        
+    @ManyToOne(cascade={},fetch=FetchType.LAZY)
         @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByTypeId;
 

@@ -68,8 +68,7 @@ public class DbXRef implements Serializable {
     @Column(name="version", unique=false, nullable=false, insertable=true, updatable=true)
      private String version;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="db_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Db db;
      

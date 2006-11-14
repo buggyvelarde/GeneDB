@@ -21,25 +21,21 @@ public class CvTermPath implements Serializable {
     @Column(name="cvtermpath_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int cvTermPathId;
     
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermBySubjectId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={},fetch=FetchType.LAZY)
         
         @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByObjectId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         
         @JoinColumn(name="type_id", unique=false, nullable=true, insertable=true, updatable=true)
      private CvTerm cvTermByTypeId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         
         @JoinColumn(name="cv_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Cv cv;
