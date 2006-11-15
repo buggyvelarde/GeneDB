@@ -1,8 +1,47 @@
 <?xml version="1.0"?>
 
 <project name="genedb-db" default="alljars" basedir=".">
+	<description>This project will build the GeneDB (or any generic Chado) interface</description>
 
-	<path id="toolslib">
+	<!-- Paths/Properties you may have to change -->
+	
+	
+	
+	<!-- Define extra tasks -->
+	<taskdef name="hibernatetool" 
+	         classname="org.hibernate.tool.ant.HibernateToolTask" 
+	         classpathref="tools-hibernate-reveng-lib" />
+	
+    <taskdef name="retrotranslator"
+    		 classpathref="tools-translate-lib" 
+             classname="net.sf.retrotranslator.transformer.RetrotranslatorTask" />
+	
+	
+	
+	<!-- Paths/Properties -->
+	
+	<property name="version" value="0.2"/>
+	<property name="jar-build" value="ant-build/jar-build"/>
+	
+	
+	<!-- Classpaths -->
+	
+	<path id="tools-interface-compile-lib">
+		<path location="lib/hibernate-tools.jar" />
+		<path location="lib/hibernate3.jar" />
+		<path location="lib/ejb3-persistence.jar" />
+		<path location="lib/hibernate-annotations.jar" />
+	</path>
+	
+	<path id="tools-hibernate-compile-lib">
+		<path refid="tools-interface-compile-lib" />
+		<path location="lib/commons-logging-1.0.4.jar" />
+		<path location="lib/commons-collections-2.1.1.jar" />
+		<path location="lib/spring-2.0RC3.jar" />
+	</path>
+	  
+	
+	<path id="tools-hibernate-reveng-lib">
 		<path location="lib/hibernate-tools.jar" />
 		<path location="lib/hibernate3.jar" />
 		<path location="lib/freemarker.jar" />
@@ -13,13 +52,25 @@
 		<path location="lib/commons-collections-2.1.1.jar" />
 		<path location="lib/asm.jar" />
 		<path location="lib/jtidy-r8-21122004.jar" />
-		<path location="lib/retrotranslator-transformer-1.0.8.jar" />
-		<path location="lib/retrotranslator-runtime-1.0.8.jar" />
+		<path location="lib/spring-2.0RC3.jar" />
+		<path location="lib/ejb3-persistence.jar" />
+		<path location="lib/hibernate-annotations.jar" />
+	</path>
+	
+	<path id="tools-translate-lib">
+		<path location="lib/retrotranslator-transformer-1.1.0.jar" />
+		<path location="lib/retrotranslator-runtime-1.1.0.jar" />
 		<path location="lib/backport-util-concurrent.jar" />
 	</path>
-	   
+	
+	<!-- Targets -->
+	
+	<!-- General building, cleaning, JARing type targets -->
 	
 	<target name="cleanGenerated" >
+		<delete>
+			<filename name="ant-build"/>
+		</delete>
 		<delete>
 			<fileset dir="out">
 				<include name="org/genedb/**/*.java"/>
@@ -28,9 +79,100 @@
 		</delete>
 	</target>
 	
-	<taskdef name="hibernatetool" 
-	         classname="org.hibernate.tool.ant.HibernateToolTask" 
-	         classpathref="toolslib" />
+	
+	<target name="clean-build" >
+		<delete dir="ant-build"/>
+	</target>
+	
+	<target name="setup" >
+		<mkdir dir="ant-build" />
+		<mkdir dir="ant-build/src-interface" />
+		<mkdir dir="ant-build/classes-interface" />
+		<mkdir dir="ant-build/src-implementation" />
+		<mkdir dir="ant-build/classes-implementation" />
+		<mkdir dir="ant-build/src-1.4-interface" />
+		<mkdir dir="ant-build/classes-1.4-interface-pre" />
+		<mkdir dir="ant-build/classes-1.4-interface-post" />
+		<mkdir dir="ant-build/jars" />
+	</target>
+	
+	
+	<!-- ================================= 
+          target: make-interface              
+         ================================= -->
+    <target name="make-interface" depends="setup" 
+    	description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
+
+		<copy todir="ant-build/src-interface">
+			<fileset dir="src">
+			    <include name="org/gmod/schema/**/*.java"/>
+			</fileset>
+		</copy>
+    	
+		<javac srcdir="ant-build/src-interface" classpathref="tools-interface-compile-lib" destdir="ant-build/classes-interface" debug="on" />
+    	
+    </target>
+
+	
+	<!-- ================================= 
+          target: make-hibernate3-implementation              
+         ================================= -->
+    <target name="make-hibernate3-implementation" depends="make-interface" 
+    	description="--> Make JAR file with a Hibernate3.2 implementation of the chado/JDK1.5+ interface">
+
+		<copy todir="ant-build/src-implementation">
+			<fileset dir="src">
+			    <include name="org/genedb/**/*.java"/>
+			</fileset>
+		</copy>
+		
+		<javac srcdir="ant-build/src-implementation" destdir="ant-build/classes-implementation" debug="on">
+			<classpath refid="tools-hibernate-compile-lib" />
+			<classpath path="ant-build/classes-interface" />	
+		</javac>
+
+    	
+    </target>
+
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: make-1.4-interface-jar                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="make-1.4-interface-jar" depends="setup" 
+    	description="Prepare a JDK1.4 compatible version of the chado/Java interface" >
+    	
+		<copy todir="ant-build/src-1.4-interface">
+			<fileset dir="src">
+			    <include name="org/gmod/schema/**/*.java"/>
+			</fileset>
+		</copy>
+
+		<replaceregexp byline="true">
+			<regexp pattern="^\s*@[A-Z].*$|^import( static)? javax.persistence.*$|^import org.hibernate.*$" />
+			<substitution expression="" />
+			<fileset dir="ant-build/src-1.4-interface" />
+		</replaceregexp>
+    	
+
+		<javac srcdir="ant-build/src-1.4-interface" destdir="ant-build/classes-1.4-interface-pre" debug="on" />
+    	
+ 	    <retrotranslator destdir="ant-build/classes-1.4-interface-post" verify="true">
+	        <src path="ant-build/classes-1.4-interface-pre"/>
+	        <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/>
+	        <classpath refid="classpath2"/>
+	    </retrotranslator>
+    	
+		<jar jarfile="ant-build/jars/chado-14-interface.jar">
+			<fileset dir="ant-build/classes-1.4-interface-post" />
+			<manifest>
+				<attribute name="Implementation-Title" value="Chado 1.4 Interface"/>
+				<attribute name="Implementation-Version" value="0.3"/>
+			</manifest>
+		</jar>
+    </target>	
+    
+	
+	<!-- Hibernate targets -->
 	
 	<target name="generate-classes">
 	<hibernatetool destdir="out-beta7">
@@ -57,7 +199,14 @@
 	</hibernatetool>
    	</target>
 	
-	<target name="fulljar" depends="cleanGenerated,generate-classes" description="Create full JAR file with all Hibernate classes">
+
+	
+	<!-- To Sort -->
+	
+
+	
+	<target name="fulljar" depends="cleanGenerated,generate-classes" 
+		description="Create full JAR file with all Hibernate classes">
 
 		<delete file="genedb-hibernate.jar"/>
 
@@ -71,21 +220,8 @@
 
 	</target>
 	
-	<property name="version" value="0.2"/>
-	<property name="jar-build" value="ant-build/jar-build"/>
-
-    <taskdef name="retrotranslator"
-    		 classpathref="toolslib" 
-             classname="net.sf.retrotranslator.transformer.RetrotranslatorTask" />
-	
-	<target name="alljars" description="Create full JAR files with interface/implementation split">
+	<target name="main-jar" description="Create JAR with chado 1.5+ interface and POJOs">
 		
-		<mkdir dir="${jar-build}" />
-		<delete>
-			<fileset dir="${jar-build}" />
-		</delete>
-		<mkdir dir="${jar-build}" />
-
 		<!-- Build chado interface with POJOs -->
 		<copy todir="${jar-build}/interface">
 			<fileset dir="." id="id">
@@ -93,9 +229,7 @@
 			    <include name="bin/org/gmod/**/*.class" />
 			</fileset>
 		</copy>
-		
-		<mkdir dir="${jar-build}/interface/bin/org" />
-		<move todir="${jar-build}/interface/org">
+		<move todir="${jar-build}/interface/org" failonerror="false">
 			<fileset dir="${jar-build}/interface/bin/org" />
 		</move>
 		<delete dir="${jar-build}/interface/bin" />
@@ -107,8 +241,10 @@
 			</manifest>
 		</jar>
 		
-		
-		
+	</target>
+
+	
+	<target name="1.4-jar" description="Create JAR with chado 1.5+ interface and POJOs">
 		<!-- Build JDK1.4 compatible version of chado-interface.jar -->
 		<replaceregexp byline="true">
 			<regexp pattern="^\s*@[A-Z].*$|^import javax.persistence.*$" />
@@ -134,8 +270,10 @@
 				<attribute name="Implementation-Version" value="0.2"/>
 			</manifest>
 		</jar>
-		
-		
+	</target>
+	
+	
+	<target name="hibernate-implementation-jar">
 		<!-- Build Hibernate implementation and JAR up -->
 		<copy todir="${jar-build}/implementation">
 			<fileset dir="." id="id">
@@ -144,8 +282,7 @@
 			    <include name="input/org/gmod/**/*.hbm.xml" />
 			</fileset>
 		</copy>
-		<mkdir dir="${jar-build}/implementation/bin/org" />
-		<move todir="${jar-build}/implementation/org">
+		<move todir="${jar-build}/implementation/org" failonerror="false">
 			<fileset dir="${jar-build}/implementation/bin/org" />
 		</move>
 		<move todir="${jar-build}/implementation/org">
@@ -161,6 +298,14 @@
 				<attribute name="Implementation-Version" value="0.1"/>
 			</manifest>
 		</jar>
+		
+	
+	
+	</target>
+	
+	
+	<target name="alljars" description="Create all JAR files with interface/implementation split"
+		depends="clean-build,make-interface, make-hibernate3-implementation, make-1.4-interface-jar">
 		
 	</target>
 	
