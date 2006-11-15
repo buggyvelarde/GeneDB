@@ -111,6 +111,14 @@
     	
 		<javac srcdir="ant-build/src-interface" classpathref="tools-interface-compile-lib" destdir="ant-build/classes-interface" debug="on" />
     	
+		<jar jarfile="ant-build/jars/chado-interface.jar">
+			<fileset dir="ant-build/classes-interface" />
+			<manifest>
+				<attribute name="Implementation-Title" value="Chado Interface"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+			</manifest>
+		</jar>
+    	
     </target>
 
 	
@@ -130,7 +138,17 @@
 			<classpath refid="tools-hibernate-compile-lib" />
 			<classpath path="ant-build/classes-interface" />	
 		</javac>
-
+    	
+		<jar jarfile="ant-build/jars/genedb-hibernate.jar">
+			<fileset dir="ant-build/classes-implementation">
+				<include name="ant-build/classes-implementation"/>
+			    <include name="input/org/gmod/**/*.hbm.xml" />
+			</fileset>
+			<manifest>
+				<attribute name="Implementation-Title" value="GeneDB Hibernate"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+			</manifest>
+		</jar>
     	
     </target>
 
@@ -159,7 +177,7 @@
  	    <retrotranslator destdir="ant-build/classes-1.4-interface-post" verify="true">
 	        <src path="ant-build/classes-1.4-interface-pre"/>
 	        <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/>
-	        <classpath refid="classpath2"/>
+	        <classpath refid="tools-translate-lib"/>
 	    </retrotranslator>
     	
 		<jar jarfile="ant-build/jars/chado-14-interface.jar">
@@ -220,9 +238,9 @@
 
 	</target>
 	
+	<!--
 	<target name="main-jar" description="Create JAR with chado 1.5+ interface and POJOs">
 		
-		<!-- Build chado interface with POJOs -->
 		<copy todir="${jar-build}/interface">
 			<fileset dir="." id="id">
 			    <include name="src/org/gmod/**/*.java" />
@@ -241,11 +259,10 @@
 			</manifest>
 		</jar>
 		
-	</target>
+	</target> -->
 
 	
-	<target name="1.4-jar" description="Create JAR with chado 1.5+ interface and POJOs">
-		<!-- Build JDK1.4 compatible version of chado-interface.jar -->
+	<!-- <target name="1.4-jar" description="Create JAR with chado 1.5+ interface and POJOs">
 		<replaceregexp byline="true">
 			<regexp pattern="^\s*@[A-Z].*$|^import javax.persistence.*$" />
 			<substitution expression="" />
@@ -270,11 +287,10 @@
 				<attribute name="Implementation-Version" value="0.2"/>
 			</manifest>
 		</jar>
-	</target>
+	</target> -->
 	
 	
-	<target name="hibernate-implementation-jar">
-		<!-- Build Hibernate implementation and JAR up -->
+<!--	<target name="hibernate-implementation-jar">
 		<copy todir="${jar-build}/implementation">
 			<fileset dir="." id="id">
 				<include name="src/org/genedb/db/**" />
@@ -301,10 +317,10 @@
 		
 	
 	
-	</target>
+	</target> -->
 	
 	
-	<target name="alljars" description="Create all JAR files with interface/implementation split"
+	<target name="alljars" description="Create all 1.4/1.5+ JAR files with interface/implementation split"
 		depends="clean-build,make-interface, make-hibernate3-implementation, make-1.4-interface-jar">
 		
 	</target>
