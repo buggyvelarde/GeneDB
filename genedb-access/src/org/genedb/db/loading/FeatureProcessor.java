@@ -21,8 +21,8 @@ package org.genedb.db.loading;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
+import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
-
 import org.gmod.schema.organism.Organism;
 
 public interface FeatureProcessor {
@@ -40,6 +40,8 @@ public interface FeatureProcessor {
     public void setGeneralDao(GeneralDao generalDao);
 
     public void setSequenceDao(SequenceDao sequenceDao);
+    
+    public void setPubDao(PubDao pubDao);
     
     public ProcessingPhase getProcessingPhase();
     
