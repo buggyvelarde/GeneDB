@@ -10,6 +10,7 @@ import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
+import org.gmod.schema.utils.CountedName;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -259,12 +260,12 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 		return features;
 	}
 
-	public List<Product> getProducts() {
-		List<Product> products = new ArrayList<Product>();
+	public List<CountedName> getProducts() {
+		List<CountedName> products = new ArrayList<CountedName>();
 		Iterator results = getHibernateTemplate().find("select cvt.name,count(f.uniqueName) from CvTerm cvt,FeatureCvTerm fct,Feature f " +
 				"where f=fct.feature and cvt=fct.cvTerm and cvt.cv=15 group by cvt.name").listIterator();
 		while (results.hasNext()){
-			Product p = new Product();
+			CountedName p = new CountedName();
 			Object[] row = (Object[]) results.next();
 			p.setName((String)row[0]);
 			p.setCount((Integer)row[1]);

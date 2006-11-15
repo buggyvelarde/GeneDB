@@ -5,7 +5,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.pub.Pub;
-import org.gmod.schema.utils.propinterface.Rankable;
+import org.gmod.schema.utils.Rankable;
 
 import java.io.Serializable;
 import java.util.Collection;

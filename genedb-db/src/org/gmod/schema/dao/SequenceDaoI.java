@@ -27,6 +27,7 @@ import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
+import org.gmod.schema.utils.CountedName;
 
 import java.util.List;
 
@@ -164,4 +165,6 @@ public interface SequenceDaoI {
      * @return a (possibly empty) List<Feature> of children
      */
     public List<Feature> getTopLevelFeatures();
+    
+    public List<CountedName> getProducts();
 }
