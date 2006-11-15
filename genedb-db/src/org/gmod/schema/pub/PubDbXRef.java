@@ -75,7 +75,7 @@ public class PubDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setDbXRef(org.gmod.schema.general.DbXRefI)
      */
-    private void setDbXRef(DbXRef dbXRef) {
+    public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 
