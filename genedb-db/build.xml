@@ -141,7 +141,7 @@
     	
 		<jar jarfile="ant-build/jars/genedb-hibernate.jar">
 			<fileset dir="ant-build/classes-implementation">
-				<include name="ant-build/classes-implementation"/>
+				<include name="**/*.class"/>
 			    <include name="input/org/gmod/**/*.hbm.xml" />
 			</fileset>
 			<manifest>
