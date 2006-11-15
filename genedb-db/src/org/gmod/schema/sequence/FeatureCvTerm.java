@@ -3,7 +3,6 @@ package org.gmod.schema.sequence;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.utils.propinterface.Rankable;
@@ -35,8 +34,7 @@ public class FeatureCvTerm implements Serializable, Rankable {
     @Column(name="feature_cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureCvTermId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
      
@@ -44,8 +42,7 @@ public class FeatureCvTerm implements Serializable, Rankable {
     @JoinColumn(name="feature_id", unique=false, nullable=false, insertable=true, updatable=true)
     private Feature feature;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         
         @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
@@ -213,6 +210,8 @@ public class FeatureCvTerm implements Serializable, Rankable {
 	public void setRank(int rank) {
 		this.rank = rank;
 	}
+
+
 
 
 }
