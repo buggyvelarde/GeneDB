@@ -44,7 +44,7 @@ public class PubDbXRef implements Serializable {
     }
 
     /** full constructor */
-    public PubDbXRef(DbXRef dbXRef, Pub pub, boolean current) {
+    public PubDbXRef(Pub pub, DbXRef dbXRef, boolean current) {
        this.dbXRef = dbXRef;
        this.pub = pub;
        this.current = current;
@@ -77,7 +77,7 @@ public class PubDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setDbXRef(org.gmod.schema.general.DbXRefI)
      */
-    public void setDbXRef(DbXRef dbXRef) {
+    private void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 

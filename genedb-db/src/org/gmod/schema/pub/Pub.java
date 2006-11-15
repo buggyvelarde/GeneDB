@@ -152,6 +152,11 @@ public class Pub implements Serializable {
         this.uniqueName = uniqueName;
         this.cvTerm = cvTerm;
     }
+    
+    public Pub(String uniqueName) {
+        this.uniqueName = uniqueName;
+    }
+    
     /** full constructor */
     private Pub(CvTerm cvTerm, String title, String volumeTitle, String volume, String seriesName, 
             String issue, String pyear, String pages, String miniRef, String uniqueName, 
