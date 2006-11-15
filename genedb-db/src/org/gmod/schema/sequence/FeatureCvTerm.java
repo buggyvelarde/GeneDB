@@ -142,7 +142,7 @@ public class FeatureCvTerm implements Serializable, Rankable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setPub(org.gmod.schema.pub.PubI)
      */
-    private void setPub(Pub pub) {
+    public void setPub(Pub pub) {
         this.pub = pub;
     }
     
