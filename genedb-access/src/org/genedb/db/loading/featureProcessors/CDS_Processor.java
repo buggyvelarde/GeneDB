@@ -32,19 +32,25 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_SYNONYM;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_TEMP_SYS_ID;
 
-import org.genedb.db.dao.BaseDao;
-import org.genedb.db.dao.GeneralDao;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.StrandedFeature;
+import org.biojava.bio.symbol.Location;
 import org.genedb.db.loading.ControlledCurationInstance;
 import org.genedb.db.loading.ControlledCurationParser;
 import org.genedb.db.loading.FeatureProcessor;
-import org.genedb.db.loading.FeatureUtils;
 import org.genedb.db.loading.GoInstance;
 import org.genedb.db.loading.GoParser;
 import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.Names;
 import org.genedb.db.loading.NomenclatureHandler;
 import org.genedb.db.loading.ProcessingPhase;
-
+import org.genedb.db.loading.RankableUtils;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.Db;
@@ -56,19 +62,9 @@ import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermProp;
+import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
-
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.StringTokenizer;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -89,15 +85,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     
     private int count;
 
-    public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
-	}
-
-	@Override
+    @Override
     public void processStrandedFeature(final Feature parent, final StrandedFeature cds, final int offset) {
         final Annotation an = cds.getAnnotation();
 
@@ -363,11 +351,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 		            	pub = this.pubDao.getPubByUniqueName(DbXRef);
 	            		if (pub == null) {
 	            			CvTerm cvterm = this.cvDao.getCvTermByNameAndCvName("UNCHECKED", "publications");
-	            			pub = new Pub(DbXRef,cvterm);
+	            			pub = new Pub(DbXRef, cvterm);
 	            			this.pubDao.persist(pub);
 	            			//pubProp = new PubProp(cvt,pub,DbXRef,0);
 	            			//this.pubDao.persist(pubProp);
-	            			PubDbXRef pubDb = new PubDbXRef(dbxref,pub,true);
+	            			PubDbXRef pubDb = new PubDbXRef(pub, dbxref, true);
 	            			this.pubDao.persist(pubDb);
 	            		} else {
 	            			/*
@@ -397,15 +385,16 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     		}
 
             boolean not = false; // TODO - Should get from GO object
-            FeatureCvTerm fct = sequenceDao.getFeatureCvTermByFeatureAndCvTerm(polypeptide, cvt, not);
-            //FeatureCvTerm fct = new FeatureCvTerm(cvt, polypeptide, pub, not);
+            List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvt, not);
+            FeatureCvTerm fct;// = new FeatureCvTerm(cvt, polypeptide, pub, not);
             //sequenceDao.persist(fct);
             
-            if (fct == null) {
+            if (fcts == null || fcts.size()==0) {
                 fct = new FeatureCvTerm(cvt, polypeptide, pub, not,rank);
                 sequenceDao.persist(fct);
                 logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
             } else {
+            	fct = fcts.get(0);
                 logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
             }
             
@@ -558,6 +547,37 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         this.goParser = goParser;
     }
 
+    
+    protected Pub findOrCreatePubFromPMID(String ref) {
+    	logger.warn("Looking for '"+ref+"'");
+    	Db DB_PUBMED = generalDao.getDbByName("MEDLINE");
+    	int colon = ref.indexOf(":");
+    	String accession = ref;
+    	if (colon != -1) {
+    		accession = ref.substring(colon+1);
+    	}
+    	DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(DB_PUBMED, accession);
+    	Pub pub;
+    	if (dbXRef == null) {
+    		dbXRef = new DbXRef();
+    		dbXRef.setDb(DB_PUBMED);
+    		dbXRef.setAccession(accession);
+    		dbXRef.setVersion("1"); // TODO Somewhat arbitary!
+    		generalDao.persist(dbXRef);
+    		CvTerm cvTerm = cvDao.getCvTermById(1); //TODO -Hack
+    		pub = new Pub("PMID:"+accession, cvTerm);
+    		generalDao.persist(pub);
+    		PubDbXRef pubDbXRef = new PubDbXRef(pub, dbXRef, true);
+    		generalDao.persist(pubDbXRef);
+    	} else {
+    		logger.warn("DbXRef wasn't null");
+    		pub = pubDao.getPubByDbXRef(dbXRef);
+    	}
+    	logger.warn("returning pub='"+pub+"'");
+    	return pub;
+    }
+    
+    
     private void createGoEntries(Feature polypeptide, Annotation an) {
         List<GoInstance> gos = this.goParser.getNewStyleGoTerm(an);
         if (gos == null || gos.size() == 0) {
@@ -575,28 +595,95 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 continue;
             }
 
-            // Find or create feature_cvterm
-            Pub pub = pubDao.getPubByUniqueName(id);
+            Pub pub = pubDao.getPubByUniqueName("NULL");
+            String ref = go.getRef();
 
-            if (pub == null) {
-                pub = DUMMY_PUB; // FIXME - probably not right!!
+            
+
+            //if (pub == null) {
+                //pub = DUMMY_PUB; // FIXME - probably not right!!
+            //}
+
+                logger.warn("pub is '"+pub+"'");
+                
+            boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
+            List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvTerm, not);
+            int rank =0;
+            if (fcts.size() != 0) {
+            	rank = RankableUtils.getNextRank(fcts);
             }
-
-
-            boolean not = false; // TODO - Should get from GO object
-            FeatureCvTerm fct = sequenceDao.getFeatureCvTermByFeatureAndCvTerm(polypeptide, cvTerm, not);
-            if (fct == null) {
-                fct = new FeatureCvTerm(cvTerm, polypeptide, pub, not,0);
-                sequenceDao.persist(fct);
-                //logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
-            } else {
-                logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvTerm.getName()+"'");
+            //logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
+            FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, pub, not, rank);
+            sequenceDao.persist(fct);
+           
+            // Reference
+            Pub refPub = null;
+            if (ref != null && ref.startsWith("PMID:")) {
+            	// The reference is a pubmed id - usual case
+            	refPub = findOrCreatePubFromPMID(ref);
+            	FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
+            	sequenceDao.persist(fctp);
             }
+            
+            // Evidence
+            FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE , fct, go.getEvidence().getDescription(), 0);
+            sequenceDao.persist(fctp);    
+            
+            // Qualifiers
+            CvTerm qualifierTerm = null;
+            int qualifierRank = 0;
+            List<String> qualifiers = go.getQualifierList();
+            for (String qualifier : qualifiers) {
+                fctp = new FeatureCvTermProp(GO_KEY_QUALIFIER , fct, qualifier, qualifierRank);
+            	qualifierRank++;
+                sequenceDao.persist(fctp);
+			}
+            
+            // With/From
+           String xref = go.getWithFrom();
+           if (xref != null) {
+        	   int index = xref.indexOf(':');
+        	   if (index == -1 ) {
+        		   logger.error("Got an apparent dbxref but can't parse");
+        	   } else {
+        		   DbXRef dbXRef= findOrCreateDbXRefFromString(xref);
+        		   if (dbXRef != null) {
+        			   FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
+        			   sequenceDao.persist(fcvtdbx);
+        		   }
+        	   }
+        	   
+        	   
+        	   
+           }
+            
+            //logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
         }
 
     }
 
-    private void storeNames(Names names, CvTerm SYNONYM_RESERVED,
+    private DbXRef findOrCreateDbXRefFromString(String xref) {
+    	int index = xref.indexOf(':');
+    	if (index == -1) {
+    		logger.error("Can't parse '"+xref+"' as a dbxref as no colon");
+    		return null;
+    	}
+    	String dbName = xref.substring(0, index);
+    	String accession = xref.substring(index);
+		Db db = generalDao.getDbByName(dbName);
+		if (db == null) {
+    		logger.error("Can't find database named '"+dbName+"'");
+    		return null;
+		}
+		DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, accession);
+		if (dbXRef == null) {
+			dbXRef = new DbXRef(db, accession);
+			sequenceDao.persist(dbXRef);
+		}
+		return dbXRef;
+	}
+
+	private void storeNames(Names names, CvTerm SYNONYM_RESERVED,
             CvTerm SYNONYM_SYNONYM, CvTerm SYNONYM_PRIMARY,
             CvTerm SYNONYM_SYS_ID, CvTerm SYNONYM_TMP_SYS,
             Feature gene) {
