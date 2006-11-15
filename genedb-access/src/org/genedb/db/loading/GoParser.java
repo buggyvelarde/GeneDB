@@ -160,13 +160,10 @@ public class GoParser {
 			evidence=value;
 		    }
 
-		    if ("with".equals(key)) {
-			go.setWith( value );
+		    if ("with".equals(key) || "from".equals(key)) {
+			go.setWithFrom( value );
 		    }
 
-		    if ("from".equals(key)) {
-			go.setFrom( value );
-		    }
 
 		    if ("db_xref".equals(key)) {
 			go.setRef( value );
@@ -268,8 +265,7 @@ public class GoParser {
 		    go.setId( id );
 		    String name = lookUpGoName( id);
 		    go.setName(name);
-		    go.setWith("none");
-		    go.setFrom("none");
+		    go.setWithFrom("none");
 		    if ( rest == null ) {
 			//c.setRef( "none" );
 			go.setEvidence(GoEvidenceCode.IEA);

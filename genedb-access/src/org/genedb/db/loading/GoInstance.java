@@ -41,8 +41,7 @@ public class GoInstance {
     private List<String> qualifiers = new ArrayList<String>(0);
     private String id;
     private String ref;
-    private String with;
-    private String from;
+    private String withFrom;
     private GoEvidenceCode evidence;
     private String subtype;
     private String name;
@@ -190,10 +189,33 @@ public class GoInstance {
         return ret.toString();
     }
 
-    public void setWithFrom(String withFrom, GoEvidenceCode evidence) {
-	// TODO - set with or from based on evidence code
+    public void setWithFrom(String withFrom, GoEvidenceCode evidence) { 
+    	switch (evidence) {
+    	case IC:
+    		withFrom = withFrom;
+    		break;
+    	case IGI:
+    	case IPI:
+    	case IEA:
+    	case ISS:
+    		withFrom = withFrom;
+    		break;
+    	case IDA:
+    	case IEP:
+    	case IMP:
+    	case NAS:
+    	case ND:
+    	case NR:
+    	case RCA:
+    	case TAS:
+    		logger.warn("Attempting to set with/from for evidence code of '"+evidence.getDescription()+"'");
+    		break;
+    	}
     }
     
+    public void setWithFrom(String withFrom) {
+    	this.withFrom = withFrom;
+    }
     
     /**
      * Get the accesion number of the Classification.
@@ -292,10 +314,6 @@ public class GoInstance {
 	 * 
 	 */
 	public void validate() {
-	    if (from != null && with != null) {
-		logger.fatal("Invalid due to both with & from fields");
-		throw new ParsingException();
-	    }
 	    for (Iterator it = qualifiers.iterator(); it.hasNext();) {
 		String qualifier = (String) it.next();
 		if (!checkQualifier(qualifier)) {
@@ -323,20 +341,8 @@ public class GoInstance {
 		this.attribution = attribution;
 	}
 
-	public String getFrom() {
-	    return this.from;
-	}
-
-	public void setFrom(String from) {
-	    this.from = from;
-	}
-
-	public String getWith() {
-	    return this.with;
-	}
-
-	public void setWith(String with) {
-	    this.with = with;
+	public String getWithFrom() {
+	    return this.withFrom;
 	}
 
 }
