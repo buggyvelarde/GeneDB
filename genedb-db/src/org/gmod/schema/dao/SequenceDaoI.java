@@ -20,17 +20,14 @@
 package org.gmod.schema.dao;
 
 
-import org.genedb.db.helpers.NameLookup;
-import org.genedb.db.helpers.Product;
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.organism.Organism;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 
-import java.util.HashMap;
 import java.util.List;
 
 public interface SequenceDaoI {
@@ -67,7 +64,7 @@ public interface SequenceDaoI {
      * @param featureType the type of feature to return eg "gene"
      * @return a (possibly empty) List<Feature> of children with this name
      */
-    public List<Feature> getFeaturesByAnyName(String nl, String featureType);
+    public List<Feature> getFeaturesByAnyName(String name, String featureType);
 
     
     // TODO Document overlap behaviour
@@ -100,7 +97,7 @@ public interface SequenceDaoI {
      * @param not test for the not flag in the FeatureCvTerm 
      * @return the Feature, or null
      */
-    public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(Feature feature,
+    public List<FeatureCvTerm> getFeatureCvTermsByFeatureAndCvTermAndNot(Feature feature,
             CvTerm cvTerm, boolean not);
 
     /**
@@ -121,6 +118,8 @@ public interface SequenceDaoI {
      */
     public List<FeatureSynonym> getFeatureSynonymsByFeatureAndSynonym(
             Feature feature, Synonym synonym);
+    
+    public FeatureDbXRef getFeatureDbXRefByFeatureAndDbXRef(final Feature feature, final DbXRef dbXRef);
     
     /**
      * Return all the FeatureDbXRefs for a given feature, <b>specified by name</b>, or all if 
@@ -149,29 +148,7 @@ public interface SequenceDaoI {
      */
     public List<List> getFeatureByGO(final String go);
     
-    /**
-     * Return a list of features contained in this organisms with this name or synonym (including obsolete names). The 
-     * name can contain an SQL wildcard (%) 
-     *  
-     * @param name the lookup name
-     * @param featureType the type of feature to return eg "gene"
-     * @param organisms the list of organisms
-     * @return a (possibly empty) List<Feature> of children with this name
-     */
-    public List<Feature> getFeaturesByAnyNameAndOrganism(String nl,List<String> ids,String featureType);
-    
-    /**
-     * Return a list of features contained in this organisms with this name or synonym (including obsolete names). The 
-     * name can contain an SQL wildcard (%) 
-     *  
-     * @param name the lookup name
-     * @param featureType the type of feature to return eg "gene"
-     * @param organisms the list of organisms
-     * @return a (possibly empty) List<Feature> of children with this name
-     */
-    public List<Product> getProducts();
-    
-    /**
+        /**
      * Return a list of features that have this particular cvterm 
      * 
      *  

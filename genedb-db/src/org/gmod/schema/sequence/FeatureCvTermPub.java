@@ -43,7 +43,7 @@ public class FeatureCvTermPub implements Serializable {
     }
 
     /** full constructor */
-    private FeatureCvTermPub(Pub pub, FeatureCvTerm featureCvTerm) {
+    public FeatureCvTermPub(Pub pub, FeatureCvTerm featureCvTerm) {
        this.pub = pub;
        this.featureCvTerm = featureCvTerm;
     }
@@ -67,7 +67,7 @@ public class FeatureCvTermPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#getPub()
      */
-    private Pub getPub() {
+    public Pub getPub() {
         return this.pub;
     }
     

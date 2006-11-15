@@ -1,21 +1,17 @@
 package org.genedb.db.dao;
 
 
-import org.genedb.db.helpers.NameLookup;
 import org.genedb.db.helpers.Product;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.SequenceDaoI;
-import org.gmod.schema.organism.Organism;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
-import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -76,16 +72,18 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
      * @see org.genedb.db.dao.SequenceDaoI#getFeatureByAnyName(org.genedb.db.helpers.NameLookup, java.lang.String)
      */
     @SuppressWarnings({ "unchecked", "cast" })
-    public List<Feature> getFeaturesByAnyName(String nl,String featureType) {
+    public List<Feature> getFeaturesByAnyName(String name,String featureType) {
 
-        if (!nl.startsWith("*")) {
-            nl = "*" + nl;
+		// FIXME - need moving
+        if (!name.startsWith("*")) {
+            name = "*" + name;
         }
-        if (!nl.endsWith("*")) {
-            nl += "*";
+        if (!name.endsWith("*")) {
+            name += "*";
         }
 
-        String lookup = nl.replaceAll("\\*", "%");
+        // TODO Taxon and filter
+        String lookup = name.replaceAll("\\*", "%");
 
         logger.info("lookup is " + lookup);
         List<Feature> features = (List<Feature>)
@@ -99,12 +97,12 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
      * @see org.genedb.db.dao.SequenceDaoI#getFeatureCvTermByFeatureAndCvTerm(org.genedb.db.jpa.Feature, org.genedb.db.hibernate3gen.CvTerm, boolean)
      */
     @SuppressWarnings("unchecked")
-    public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(Feature feature, CvTerm cvTerm, boolean not) {
+    public List<FeatureCvTerm> getFeatureCvTermsByFeatureAndCvTermAndNot(Feature feature, CvTerm cvTerm, boolean not) {
         List<FeatureCvTerm> list = getHibernateTemplate().findByNamedParam("from FeatureCvTerm fct where fct.feature=:feature and fct.cvTerm=:cvTerm and fct.not=:not", 
                 new String[]{"feature", "cvTerm", "not"}, 
                 new Object[]{feature, cvTerm, not});
 
-        return firstFromList(list, "feature", feature.getUniqueName(), "cvTerm", cvTerm, "not", not);
+        return list;
     }
 
     /* (non-Javadoc)
@@ -156,6 +154,8 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                 new Object[] {uniqueName});
     }
 
+    
+    
     @SuppressWarnings("unchecked")
     public List<FeatureSynonym> getFeatureSynonymsByFeatureUniquename(String uniqueName) {
         if (uniqueName == null) {
@@ -205,6 +205,19 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 		data.add(goName);
     	return data;
 	}
+
+
+
+	@SuppressWarnings("unchecked")
+	public FeatureDbXRef getFeatureDbXRefByFeatureAndDbXRef(Feature feature, DbXRef dbXRef) {
+		List<FeatureDbXRef> results = getHibernateTemplate().findByNamedParam(
+                "from FeatureDbXRef fdxr where fdxr.feature=:feature and fdxr.dbXRef=:dbXRef",
+                new String[] {"feature", "dbXRef"},
+                new Object[] {feature, dbXRef});
+		return firstFromList(results, feature, dbXRef);
+	}
+
+
 
 	@SuppressWarnings("unchecked")
 	public List<Feature> getFeaturesByAnyNameAndOrganism(String nl, List<String> ids,String featureType) {

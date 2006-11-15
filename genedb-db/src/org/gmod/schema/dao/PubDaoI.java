@@ -22,6 +22,7 @@ package org.gmod.schema.dao;
 import java.util.List;
 
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.pub.PubProp;
 
@@ -42,8 +43,11 @@ public interface PubDaoI {
      * @return the publication with this unique name, or null
      */
     public abstract Pub getPubByUniqueName(String uniqueName);
+
     
-    /**
+    public Pub getPubByDbXRef(DbXRef dbXRef);
+    
+        /**
      * Retrieve the publication property with Pub and Cvterm
      * 
      * @param pub the Publication

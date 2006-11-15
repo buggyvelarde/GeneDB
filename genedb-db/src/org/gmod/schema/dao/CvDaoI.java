@@ -81,13 +81,14 @@ public interface CvDaoI {
      * @return the corresponding CvTerm, or null
      */
     public abstract CvTerm getGoCvTermByAccViaDb(final String id);
-    
+
+
     /**
      * Retrieve all CvTerms
      * @return a list of all cvterms
      */
     public abstract List<CvTerm> getCvTerms();
-    
+
     /**
      * Retrieve a named CvTerm from a given Cv
      * 
@@ -96,5 +97,9 @@ public interface CvDaoI {
      * @return a (possibly empty) cvterm
      */
     public abstract CvTerm getCvTermByNameAndCvName(String cvTermName, String name);
+
+public boolean existsNameInOntology(String name, Cv ontology);
+
+
 
 }

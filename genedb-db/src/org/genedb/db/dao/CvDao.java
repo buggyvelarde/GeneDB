@@ -99,10 +99,16 @@ public class CvDao extends BaseDao implements CvDaoI {
             this.generalDao = generalDao;
         }
 
+		public boolean existsNameInOntology(String name, Cv ontology) {
+			return this.getCvTermByNameInCv(name, ontology).size() > 0;
+		}
+
+
 		public List<CvTerm> getCvTerms() {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
 
 		public CvTerm getCvTermByNameAndCvName(String cvTermName, String name) {
 			List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
