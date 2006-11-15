@@ -3,7 +3,7 @@ package org.genedb.db.loading;
 import java.util.BitSet;
 import java.util.List;
 
-import org.gmod.schema.utils.propinterface.Rankable;
+import org.gmod.schema.utils.Rankable;
 
 public class RankableUtils {
 
