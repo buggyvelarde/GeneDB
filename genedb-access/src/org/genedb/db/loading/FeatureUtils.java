@@ -3,9 +3,16 @@ package org.genedb.db.loading;
 
 import static org.genedb.db.loading.EmblQualifiers.QUAL_TOP_LEVEL;
 
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.SequenceDao;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import org.biojava.bio.seq.StrandedFeature;
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.PubDao;
+import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.organism.Organism;
@@ -16,24 +23,16 @@ import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
-
-import org.biojava.bio.seq.StrandedFeature;
 import org.springframework.beans.factory.InitializingBean;
-
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class FeatureUtils implements InitializingBean {
     
 	private CvDao cvDao;
-	private Pub DUMMY_PUB;
+	private PubDao pubDao;
     private SequenceDao sequenceDao;
     private Cv so;
     protected CvTerm GENEDB_TOP_LEVEL;
-	
+	private Pub DUMMY_PUB;
     
     
     
@@ -130,8 +129,8 @@ public class FeatureUtils implements InitializingBean {
 	    }
 	}
 
-	public void setDummyPub(Pub dummyPub) {
-	    this.DUMMY_PUB = dummyPub;
+	public void setPubDao(PubDao pubDao) {
+	    this.pubDao = pubDao;
 	}
 
     public void setCvDao(CvDao cvDao) {
@@ -147,6 +146,7 @@ public class FeatureUtils implements InitializingBean {
         so = cvDao.getCvByName("sequence").get(0);
         Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
         GENEDB_TOP_LEVEL = cvDao.getCvTermByNameInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
+        DUMMY_PUB = pubDao.getPubByUniqueName("NULL");
     }
 	
     public void markTopLevelFeature(org.gmod.schema.sequence.Feature topLevel) {
