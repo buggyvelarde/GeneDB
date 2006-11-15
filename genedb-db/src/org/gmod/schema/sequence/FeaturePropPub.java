@@ -23,13 +23,11 @@ public class FeaturePropPub implements Serializable {
     @Column(name="featureprop_pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featurePropPubId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="featureprop_id", unique=false, nullable=false, insertable=true, updatable=true)
      private FeatureProp featureProp;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
 

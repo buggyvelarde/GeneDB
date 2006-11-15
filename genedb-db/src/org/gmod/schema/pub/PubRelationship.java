@@ -22,20 +22,17 @@ public class PubRelationship implements Serializable {
     @Column(name="pub_relationship_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int pubRelationshipId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          
          @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pubBySubjectId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          
          @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pubByObjectId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;

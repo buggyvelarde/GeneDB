@@ -27,8 +27,7 @@ public class FeatureDbXRef implements Serializable {
     @Column(name="feature_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureDbXRefId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={},fetch=FetchType.LAZY)
         
         @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;

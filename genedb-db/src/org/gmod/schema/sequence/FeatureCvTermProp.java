@@ -24,13 +24,11 @@ public class FeatureCvTermProp implements Serializable, PropertyI {
     @Column(name="feature_cvtermprop_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureCvTermPropId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          @JoinColumn(name="feature_cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private FeatureCvTerm featureCvTerm;
      

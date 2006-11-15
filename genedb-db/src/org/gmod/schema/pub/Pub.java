@@ -60,8 +60,7 @@ public class Pub implements Serializable {
     @Column(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int pubId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;

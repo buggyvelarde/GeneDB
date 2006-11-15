@@ -32,8 +32,7 @@ public class Synonym implements Serializable {
     @Column(name="synonym_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int synonymId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         
         @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;

@@ -40,8 +40,7 @@ public class FeatureRelationship implements Serializable {
     @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true) 
     private Feature featureByObjectId;
      
-    @ManyToOne(cascade={},
-            fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         
         @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;

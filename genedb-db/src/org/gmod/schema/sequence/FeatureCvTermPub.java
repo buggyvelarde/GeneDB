@@ -24,14 +24,12 @@ public class FeatureCvTermPub implements Serializable {
     @Column(name="feature_cvterm_pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureCvTermPubId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          
          @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          
          @JoinColumn(name="feature_cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private FeatureCvTerm featureCvTerm;

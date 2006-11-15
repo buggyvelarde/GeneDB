@@ -50,8 +50,8 @@ public class PhylonodeDbXRef  implements java.io.Serializable {
     public void setPhylonodeDbXRefId(int phylonodeDbXRefId) {
         this.phylonodeDbXRefId = phylonodeDbXRefId;
     }
-@ManyToOne(cascade={},
-        fetch=FetchType.LAZY)
+    
+@ManyToOne(cascade={},fetch=FetchType.LAZY)
     
     @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
     public DbXRef getDbXRef() {
@@ -61,9 +61,7 @@ public class PhylonodeDbXRef  implements java.io.Serializable {
     public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
-@ManyToOne(cascade={},
-        fetch=FetchType.LAZY)
-    
+@ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="phylonode_id", unique=false, nullable=false, insertable=true, updatable=true)
     public Phylonode getPhylonode() {
         return this.phylonode;

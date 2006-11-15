@@ -110,9 +110,7 @@ public class Phylonode  implements java.io.Serializable {
     public void setPhylonode(Phylonode phylonode) {
         this.phylonode = phylonode;
     }
-@ManyToOne(cascade={},
-        fetch=FetchType.LAZY)
-    
+@ManyToOne(cascade={},fetch=FetchType.LAZY)
     @JoinColumn(name="type_id", unique=false, nullable=true, insertable=true, updatable=true)
     public CvTerm getCvTerm() {
         return this.cvTerm;
@@ -121,9 +119,7 @@ public class Phylonode  implements java.io.Serializable {
     public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
-@ManyToOne(cascade={},
-        fetch=FetchType.LAZY)
-    
+@ManyToOne(cascade={},fetch=FetchType.LAZY)
     @JoinColumn(name="feature_id", unique=false, nullable=true, insertable=true, updatable=true)
     public Feature getFeature() {
         return this.feature;

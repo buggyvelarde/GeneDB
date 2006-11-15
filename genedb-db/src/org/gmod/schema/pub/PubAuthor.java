@@ -22,9 +22,7 @@ public class PubAuthor implements Serializable {
     @Column(name="pubauthor_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int pubAuthorId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
-         
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
      

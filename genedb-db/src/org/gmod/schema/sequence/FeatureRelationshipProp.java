@@ -28,14 +28,12 @@ public class FeatureRelationshipProp implements Serializable, PropertyI {
     @Column(name="feature_relationshipprop_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureRelationshipPropId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          
          @JoinColumn(name="feature_relationship_id", unique=false, nullable=false, insertable=true, updatable=true)    
      private FeatureRelationship featureRelationship;

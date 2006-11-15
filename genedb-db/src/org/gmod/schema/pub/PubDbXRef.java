@@ -22,14 +22,12 @@ public class PubDbXRef implements Serializable {
     @Column(name="pub_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int pubDbXRefId;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          
          @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
      
-     @ManyToOne(cascade={},
-             fetch=FetchType.LAZY)
+     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          
          @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
