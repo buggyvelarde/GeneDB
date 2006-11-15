@@ -4,8 +4,8 @@
 
 	<target name="get-latest-jars" depends="" 
 		description="Copy over JAR files from other projects">
-		<copy file="../genedb-db/ant-build/jar-build/genedb-hibernate.jar" todir="lib" />
-		<copy file="../genedb-db/ant-build/jar-build/chado-interface.jar" todir="lib" />
+		<copy file="../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="lib" />
+		<copy file="../genedb-db/ant-build/jars/chado-interface.jar" todir="lib" />
 	</target>
 	
 	
