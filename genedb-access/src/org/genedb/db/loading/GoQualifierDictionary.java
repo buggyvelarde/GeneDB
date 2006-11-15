@@ -54,7 +54,7 @@ public class GoQualifierDictionary {
 	officialQualifiers.add("colocalizes_with");
     }
 
-    private static final String GO_QUALIFIER_FILENAME = "/nfs/disk222/yeastpub/analysis/yeast/pombe/CONTIGS/Docs/PSU_GO_qualifiers.txt";
+    private static final String GO_QUALIFIER_FILENAME = "/nfs/disk222/yeastpub/analysis/yeast/pombe/CONTIGS/DOCS/PSU_GO_qualifiers.txt";
 
     private void initPsuQualifiers() {
 	FileReader r = null;
