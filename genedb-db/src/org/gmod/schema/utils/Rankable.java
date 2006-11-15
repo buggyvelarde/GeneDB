@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gmod.schema.utils.propinterface;
+package org.gmod.schema.utils;
 
 /**
  * @author art
