@@ -118,6 +118,10 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected Db DB_GO;
 
     protected CvTerm REL_DERIVES_FROM;
+    
+    protected CvTerm GO_KEY_EVIDENCE;
+    protected CvTerm GO_KEY_DATE;
+    protected CvTerm GO_KEY_QUALIFIER;
 
     public Set<Db> warnedDbs = new HashSet<Db>();
 
@@ -155,6 +159,14 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         MISC_CURATION = cvDao.getCvTermByNameInCv(QUAL_CURATION, CV_MISC).get(0);
         MISC_PRIVATE = cvDao.getCvTermByNameInCv(QUAL_PRIVATE, CV_MISC).get(0);
         DB_GO = generalDao.getDbByName("GO");
+     
+        DUMMY_PUB = pubDao.getPubByUniqueName("NULL");
+        logger.warn("Just looked up DUMMY_PUB and it is '"+DUMMY_PUB+"'");
+        
+        Cv goKeys = cvDao.getCvByName("genedb_fcvt_prop_keys").get(0);
+        GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", goKeys).get(0);
+        GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", goKeys).get(0);
+        GO_KEY_DATE = cvDao.getCvTermByNameInCv("date", goKeys).get(0);
         
     }
 
@@ -317,8 +329,9 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                     generalDao.persist(dbXRef);
                     //logger.info("Creating DbXref for db '"+db+"' and acc '"+acc+"'");
                 } else {
-                    //logger.info("Using an existing dbXRef from the db");
+                    logger.info("Using an existing dbXRef from the db");
                 }
+                // FIXME May have commented out nmext block accidentally while merging
                 //logger.info("dbXRef just before storage is '"+dbXRef+"'");
                 //FeatureDbXRef fdr = sequenceDao.getFeatureDbXRefByFeatureAndDbXRef(polypeptide, dbXRef);
                 //if (fdr == null) {
