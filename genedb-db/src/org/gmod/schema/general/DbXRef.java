@@ -109,11 +109,12 @@ public class DbXRef implements Serializable {
     }
 
 	/** minimal constructor */
-    private DbXRef(String version, Db db, String accession) {
-        this.version = version;
+    public DbXRef(Db db, String accession) {
+        this.version = "1";
         this.db = db;
         this.accession = accession;
     }
+    
     /** full constructor */
     private DbXRef(String version, Db db, String accession, String description, Set<DbXRefProp> dbXRefProps, Set<FeatureCvTermDbXRef> featureCvTermDbXRefs, Set<Feature> features, Set<FeatureDbXRef> featureDbXRefs, Set<CvTerm> cvTerms, Set<PubDbXRef> pubDbXRefs, Set<OrganismDbXRef> organismDbXRefs, Set<CvTermDbXRef> cvTermDbXRefs) {
        this.version = version;
