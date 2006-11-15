@@ -39,13 +39,13 @@ import javax.persistence.Table;
 public class Feature implements java.io.Serializable {
 
     
-	private Set<Phylonode> phylonodes = new HashSet<Phylonode>(0);
+	private Collection<Phylonode> phylonodes;
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="feature")
-    public Set<Phylonode> getPhylonodes() {
+    public Collection<Phylonode> getPhylonodes() {
         return this.phylonodes;
     }
     
-    public void setPhylonodes(Set<Phylonode> phylonodes) {
+    public void setPhylonodes(Collection<Phylonode> phylonodes) {
         this.phylonodes = phylonodes;
     }
     
@@ -96,35 +96,35 @@ public class Feature implements java.io.Serializable {
      private Timestamp timeLastModified;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureBySrcfeatureId")
-     private Collection<FeatureLoc> featureLocsForSrcFeatureId = new HashSet<FeatureLoc>(0);
+     private Collection<FeatureLoc> featureLocsForSrcFeatureId;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureByObjectId")
-     private Collection<FeatureRelationship> featureRelationshipsForObjectId = new HashSet<FeatureRelationship>(0);
+     private Collection<FeatureRelationship> featureRelationshipsForObjectId;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureBySubjectId")
-     private Collection<FeatureRelationship> featureRelationshipsForSubjectId = new HashSet<FeatureRelationship>(0);
+     private Collection<FeatureRelationship> featureRelationshipsForSubjectId;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Collection<FeatureDbXRef> featureDbXRefs = new HashSet<FeatureDbXRef>(0);
+     private Collection<FeatureDbXRef> featureDbXRefs;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureByFeatureId")
-     private Collection<FeatureLoc> featureLocsForFeatureId = new HashSet<FeatureLoc>(0);
+     private Collection<FeatureLoc> featureLocsForFeatureId;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Collection<FeatureCvTerm> featureCvTerms = new HashSet<FeatureCvTerm>(0);
+     private Collection<FeatureCvTerm> featureCvTerms;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
     //@Cascade( {CascadeType.ALL, CascadeType.DELETE_ORPHAN} )
-     private Collection<FeatureProp> featureProps = new HashSet<FeatureProp>(0);
+     private Collection<FeatureProp> featureProps;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Collection<FeaturePub> featurePubs = new HashSet<FeaturePub>(0);
+     private Collection<FeaturePub> featurePubs;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Collection<AnalysisFeature> analysisFeatures = new HashSet<AnalysisFeature>(0);
+     private Collection<AnalysisFeature> analysisFeatures;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
-     private Collection<FeatureSynonym> featureSynonyms = new HashSet<FeatureSynonym>(0);
+     private Collection<FeatureSynonym> featureSynonyms;
     
     
     // TJC
