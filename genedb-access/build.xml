@@ -8,8 +8,13 @@
 		<copy file="../genedb-db/ant-build/jars/chado-interface.jar" todir="lib" />
 	</target>
 	
+	<target name="compile">
+		<javac srcdir="src" destdir="ant-build/classes">
+			<classpath path="lib/*.jar"/>
+		</javac>
+	</target>
 	
-	<target name="genedb-access.jar" depends="" description="Create JAR file">
+	<target name="genedb-access.jar" depends="compile" description="Create JAR file">
 		<delete file="genedb-access.jar"/>
 
 		<copy todir="ant-build/jar">
