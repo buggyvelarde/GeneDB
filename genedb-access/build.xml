@@ -11,6 +11,7 @@
 	<target name="compile">
 		<javac srcdir="src" destdir="ant-build/classes">
 			<classpath path="lib/chado-interface.jar"/>
+			<classpath path="lib/biojava-1.4.jar"/>
 		</javac>
 	</target>
 	
