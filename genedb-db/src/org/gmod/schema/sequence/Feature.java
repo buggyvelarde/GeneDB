@@ -398,7 +398,7 @@ public class Feature implements java.io.Serializable {
      * @see org.genedb.db.jpa.FeatureI#getFeatureRelationshipsForObjectId()
      */
     public Collection<FeatureRelationship> getFeatureRelationshipsForObjectId() {
-        return this.featureRelationshipsForObjectId;
+        return (featureRelationshipsForObjectId = CollectionUtils.safeGetter(featureRelationshipsForObjectId));
     }
     
     /* (non-Javadoc)
