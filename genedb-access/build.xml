@@ -15,6 +15,7 @@
 			<classpath path="lib/commons-logging.jar"/>
 			<classpath path="lib/ejb3-persistence.jar"/>
 			<classpath path="lib/hibernate-annotations.jar"/>
+			<classpath path="lib/genedb-hibernate.jar"/>
 		</javac>
 	</target>
 	
