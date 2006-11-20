@@ -192,13 +192,13 @@ public class GoInstance {
     public void setWithFrom(String withFrom, GoEvidenceCode evidence) { 
     	switch (evidence) {
     	case IC:
-    		withFrom = withFrom;
+    		this.withFrom = withFrom;
     		break;
     	case IGI:
     	case IPI:
     	case IEA:
     	case ISS:
-    		withFrom = withFrom;
+    		this.withFrom = withFrom;
     		break;
     	case IDA:
     	case IEP:
