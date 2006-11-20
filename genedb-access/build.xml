@@ -16,6 +16,7 @@
 			<classpath path="lib/ejb3-persistence.jar"/>
 			<classpath path="lib/hibernate-annotations.jar"/>
 			<classpath path="lib/genedb-hibernate.jar"/>
+			<classpath path="lib/spring-2.0RC3.jar"/>
 		</javac>
 	</target>
 	
