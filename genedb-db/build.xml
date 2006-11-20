@@ -190,7 +190,7 @@
     </target>	
     
 	
-	<!-- Hibernate targets -->
+	<!-- Hibernate reverse engineering targets -->
 	
 	<target name="generate-classes">
 	<hibernatetool destdir="out-beta7">
