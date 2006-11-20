@@ -514,7 +514,7 @@ public class Feature implements java.io.Serializable {
      * @see org.genedb.db.jpa.FeatureI#getFeatureSynonyms()
      */
     public Collection<FeatureSynonym> getFeatureSynonyms() {
-        return this.featureSynonyms;
+        return (featureSynonyms = CollectionUtils.safeGetter(featureSynonyms));
     }
     
     /* (non-Javadoc)
