@@ -10,7 +10,7 @@
 	
 	<target name="compile">
 		<javac srcdir="src" destdir="ant-build/classes">
-			<classpath path="lib/*.jar"/>
+			<classpath path="lib/chado-interface.jar"/>
 		</javac>
 	</target>
 	
