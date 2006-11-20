@@ -474,7 +474,7 @@ public class Feature implements java.io.Serializable {
      * @see org.genedb.db.jpa.FeatureI#getFeatureProps()
      */
     public Collection<FeatureProp> getFeatureProps() {
-        return this.featureProps;
+        return (featureProps = CollectionUtils.safeGetter(featureProps));
     }
     
     /* (non-Javadoc)
@@ -482,7 +482,7 @@ public class Feature implements java.io.Serializable {
      */
     public void addFeatureProp(FeatureProp featureProp) {
         featureProp.setFeature(this);
-        this.featureProps.add(featureProp);
+        getFeatureProps().add(featureProp);
     }
 
     /* (non-Javadoc)
