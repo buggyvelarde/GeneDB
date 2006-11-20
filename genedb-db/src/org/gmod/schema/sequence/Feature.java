@@ -445,7 +445,7 @@ public class Feature implements java.io.Serializable {
      * @see org.genedb.db.jpa.FeatureI#getFeaturelocsForFeatureId()
      */
     public Collection<FeatureLoc> getFeatureLocsForFeatureId() {
-        return this.featureLocsForFeatureId;
+        return (featureLocsForFeatureId = CollectionUtils.safeGetter(featureLocsForFeatureId));
     }
     
     /* (non-Javadoc)
