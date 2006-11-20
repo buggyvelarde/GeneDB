@@ -7,6 +7,7 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
+import org.gmod.schema.utils.CollectionUtils;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -378,12 +379,12 @@ public class Feature implements java.io.Serializable {
     public void setTimeLastModified(Timestamp timeLastModified) {
         this.timeLastModified = timeLastModified;
     }
-
+    
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureI#getFeaturelocsForSrcfeatureId()
      */
     public Collection<FeatureLoc> getFeatureLocsForSrcFeatureId() {
-        return this.featureLocsForSrcFeatureId;
+        return (featureLocsForSrcFeatureId = CollectionUtils.safeGetter(featureLocsForSrcFeatureId));
     }
     
     /* (non-Javadoc)
@@ -411,7 +412,7 @@ public class Feature implements java.io.Serializable {
      * @see org.genedb.db.jpa.FeatureI#getFeatureRelationshipsForSubjectId()
      */
     public Collection<FeatureRelationship> getFeatureRelationshipsForSubjectId() {
-        return this.featureRelationshipsForSubjectId;
+        return (featureRelationshipsForSubjectId = CollectionUtils.safeGetter(featureRelationshipsForSubjectId));
     }
     
     /* (non-Javadoc)
