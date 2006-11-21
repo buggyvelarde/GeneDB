@@ -580,8 +580,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     
     private void createGoEntries(Feature polypeptide, Annotation an) {
         List<GoInstance> gos = this.goParser.getNewStyleGoTerm(an);
-        if (gos == null || gos.size() == 0) {
-            return;
+        if (gos.size() == 0) {
+            return;   // No internal GO annotation to store
         }
 
         for (GoInstance go : gos) {
@@ -595,7 +595,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 continue;
             }
 
-            Pub pub = pubDao.getPubByUniqueName("NULL");
+            //Pub pub = pubDao.getPubByUniqueName("NULL");
             String ref = go.getRef();
 
             
@@ -604,26 +604,23 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 //pub = DUMMY_PUB; // FIXME - probably not right!!
             //}
 
-                logger.warn("pub is '"+pub+"'");
+               // logger.warn("pub is '"+pub+"'");
                 
-            boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
-            List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvTerm, not);
-            int rank =0;
-            if (fcts.size() != 0) {
-            	rank = RankableUtils.getNextRank(fcts);
-            }
-            //logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
-            FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, pub, not, rank);
-            sequenceDao.persist(fct);
-           
             // Reference
             Pub refPub = null;
             if (ref != null && ref.startsWith("PMID:")) {
-            	// The reference is a pubmed id - usual case
-            	refPub = findOrCreatePubFromPMID(ref);
-            	FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-            	sequenceDao.persist(fctp);
+                // The reference is a pubmed id - usual case
+                refPub = findOrCreatePubFromPMID(ref);
+                //FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
+                //sequenceDao.persist(fctp);
             }
+            
+            boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
+            List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvTerm, not);
+            int rank = RankableUtils.getNextRank(fcts);
+            //logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
+            FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
+            sequenceDao.persist(fct);
             
             // Evidence
             FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE , fct, go.getEvidence().getDescription(), 0);
@@ -767,11 +764,15 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 //  return ret;
 //  }
 
-//  private String translate(String nucleic) {
-//  if (translation != null && translation.length() > 0 ) {
-//  this.setSequence(SequenceType.SEQ_PROTEIN, translation);
+    private int translationTable;
+    
+    
+    
+  //private String translate(String nucleic, Feature peptide) {
+//      if (translation != null && translation.length() > 0 ) {
+//          this.setSequence(SequenceType.SEQ_PROTEIN, translation);
 //  return;
-//  }
+
 
 //  if ( table != null) {
 //  try {
@@ -807,10 +808,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 //  if (cdStartNum != 1) {
 //  setCodonStart(cdStartNum);
 //  }
-
-//  SeqTrans.SeqTransResult result =
-//  SeqTrans.getInstance().translate(this, getTranslationTableNumber(),
-//  getCodonStart().intValue(), codon, except);
+//      translationTable = 1;
+//      int codonStart = 1;
+//      String except = "";
+//      SeqTrans.SeqTransResult result = SeqTrans.getInstance().translate(nucleic, translationTable,
+//          codonStart, codon, except);
 //  setProteinWarning(result.getWarning());
 //  setSequence(SequenceType.SEQ_PROTEIN, result.getSeq());
 
