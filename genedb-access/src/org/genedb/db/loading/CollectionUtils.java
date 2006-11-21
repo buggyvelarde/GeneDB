@@ -1,6 +1,8 @@
 package org.genedb.db.loading;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +20,11 @@ public class CollectionUtils {
     }
     
 
+    public static <T> Collection<T> safeGetter(Collection<T> collection) {
+        if (collection != null) {
+            return collection;
+        }
+        return new HashSet<T>(0);
+    }
+    
 }
