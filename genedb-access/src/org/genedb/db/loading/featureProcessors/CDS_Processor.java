@@ -528,9 +528,12 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 other = false;
                 for (String DbXRef : list) {
                         String sections[] = DbXRef.split(":");
-                        if(!("PMID".equals(sections[0]))){
-                                DbXRef dbxref = null;
-                                Db db = this.generalDao.getDbByName(sections[0].toUpperCase());
+                        if (sections.length != 2) {
+                        	logger.error("Unable to parse a dbxref from '"+DbXRef+"'");
+                        } else {
+                        	if(!("PMID".equals(sections[0]))){
+                        		DbXRef dbxref = null;
+                        		Db db = this.generalDao.getDbByName(sections[0].toUpperCase());
                                 dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
                                 if (dbxref == null) {
                                         dbxref = new DbXRef();
@@ -542,6 +545,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                                         FeatureCvTermDbXRef fcvDb = new FeatureCvTermDbXRef(dbxref,fct);
                                         this.sequenceDao.persist(fcvDb);
                                 }
+                        	}
                         }
                 }
             }
