@@ -154,5 +154,10 @@ public class FeatureUtils implements InitializingBean {
         fp.setCvTerm(GENEDB_TOP_LEVEL);
         fp.setValue("true");
     }
+
+
+	public void setDummyPub(Pub dummyPub) {
+		DUMMY_PUB = dummyPub;
+	}
     
 }
