@@ -6,6 +6,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.utils.Rankable;
+import org.gmod.schema.utils.propinterface.PropertyI;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -25,7 +26,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_cvterm")
-public class FeatureCvTerm implements Serializable, Rankable {
+public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
 
     // Fields 
     
@@ -178,7 +179,7 @@ public class FeatureCvTerm implements Serializable, Rankable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvtermPubs()
      */
-    private Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
+    public Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
         return this.featureCvTermPubs;
     }
     
@@ -192,7 +193,7 @@ public class FeatureCvTerm implements Serializable, Rankable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvtermDbxrefs()
      */
-    private Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
+    public Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
         return this.featureCvTermDbXRefs;
     }
     
