@@ -1,8 +1,21 @@
 package org.genedb.web.mvc.controller;
 
+import org.biojava.bio.BioException;
+import org.biojava.bio.proteomics.IsoelectricPointCalc;
+import org.biojava.bio.proteomics.MassCalc;
+import org.biojava.bio.seq.ProteinTools;
+import org.biojava.bio.seq.io.SymbolTokenization;
+import org.biojava.bio.symbol.Alphabet;
+import org.biojava.bio.symbol.IllegalAlphabetException;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.bio.symbol.SimpleSymbolList;
+import org.biojava.bio.symbol.SymbolList;
+import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.helpers.Product;
+import org.genedb.db.loading.FeatureUtils;
+import org.gmod.schema.utils.PeptideProperties;
+import org.gmod.schema.utils.Product;
 import org.genedb.query.BasicQueryI;
 import org.genedb.query.NumberedQueryI;
 import org.genedb.query.QueryPlaceHolder;
@@ -28,6 +41,7 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -161,6 +175,43 @@ public class SearchController extends MultiActionController implements Initializ
                 }
             }
             model.put("polypeptide", polypeptide);
+            String seqString = FeatureUtils.getResidues(polypeptide);
+    		Alphabet protein = ProteinTools.getAlphabet();
+    		SymbolTokenization proteinToke = null;
+    		SymbolList seq = null;
+    		PeptideProperties pp = new PeptideProperties();
+    		try {
+    			proteinToke = protein.getTokenization("token");
+    			seq = new SimpleSymbolList(proteinToke, seqString);
+    		} catch (BioException e) {
+
+    		}
+			IsoelectricPointCalc ipc = new IsoelectricPointCalc();
+			Double cal = 0.0;
+			try {
+				cal = ipc.getPI(seq, false, false);
+			} catch (IllegalAlphabetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BioException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			DecimalFormat df = new DecimalFormat("#.##");
+			pp.setIsoelectricPoint(df.format(cal));
+			pp.setAminoAcids(Integer.toString(seqString.length()));
+			MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
+			try {
+				cal = mc.getMass(seq)/1000;
+			} catch (IllegalSymbolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			pp.setMass(df.format(cal));
+			
+			cal = WebUtils.getCharge(seq);
+			pp.setCharge(df.format(cal));
+			model.put("polyprop", pp);
             //System.err.println("The value of pp is '"+polypeptide+"'");
         }
 	    return new ModelAndView(viewName, model);
@@ -254,11 +305,12 @@ public class SearchController extends MultiActionController implements Initializ
 //	    return new ModelAndView("db/pub", model);
 //	}
 	
-	public ModelAndView FeatureByCvTermName(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView FeatureByCvTermNameAndCvName(HttpServletRequest request, HttpServletResponse response) {
 		String viewName = null;
 		Map model = null;
 		String name = ServletRequestUtils.getStringParameter(request, "name", NO_VALUE_SUPPLIED);
-		List<Feature> features = sequenceDao.getFeaturesByCvTermName(name);
+		String cvName = ServletRequestUtils.getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
+		List<Feature> features = sequenceDao.getFeaturesByCvTermNameAndCvName(name,cvName);
 		List<Feature> feats = null;
 		String length = null;
 		if(features.size() == 1){

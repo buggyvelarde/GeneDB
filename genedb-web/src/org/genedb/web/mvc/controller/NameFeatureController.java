@@ -20,17 +20,32 @@
 package org.genedb.web.mvc.controller;
 
 
+import org.biojava.bio.BioException;
+import org.biojava.bio.proteomics.IsoelectricPointCalc;
+import org.biojava.bio.proteomics.MassCalc;
+import org.biojava.bio.seq.DNATools;
+import org.biojava.bio.seq.ProteinTools;
+import org.biojava.bio.seq.io.SymbolTokenization;
+import org.biojava.bio.symbol.Alphabet;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.bio.symbol.SimpleSymbolList;
+import org.biojava.bio.symbol.SymbolList;
+import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.helpers.NameLookup;
+import org.genedb.db.loading.FeatureUtils;
+import org.genedb.db.loading.SeqTrans;
 
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.utils.PeptideProperties;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -115,6 +130,31 @@ public class NameFeatureController extends SimpleFormController {
                     }
                 }
                 model.put("polypeptide", polypeptide);
+                String seqString = FeatureUtils.getResidues(polypeptide);
+                Alphabet protein = ProteinTools.getAlphabet();
+        		SymbolTokenization proteinToke = null;
+        		SymbolList seq = null;
+        		PeptideProperties pp = new PeptideProperties();
+        		try {
+        			proteinToke = protein.getTokenization("token");
+        			seq = new SimpleSymbolList(proteinToke, seqString);
+        			System.out.println("symbol list is : " + seq);
+        		} catch (BioException e) {
+        			System.out.println("in exception : " );
+        			e.printStackTrace();
+        		}
+    			IsoelectricPointCalc ipc = new IsoelectricPointCalc();
+    			Double cal = ipc.getPI(seq, true, true);
+    			DecimalFormat df = new DecimalFormat("#.##");
+    			pp.setIsoelectricPoint(df.format(cal));
+    			pp.setAminoAcids(Integer.toString(seqString.length()));
+    			MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
+    			cal = mc.getMass(seq) / 1000;
+    			pp.setMass(df.format(cal));
+    			
+    			cal = WebUtils.getCharge(seq);
+    			pp.setCharge(df.format(cal));
+    			model.put("polyprop", pp);
             }
 
         }

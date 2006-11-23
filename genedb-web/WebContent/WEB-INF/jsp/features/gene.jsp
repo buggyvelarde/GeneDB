@@ -2,6 +2,7 @@
 <%@ taglib prefix="db" uri="db" %>
 <format:header name="Gene: ${feature.displayName}">
 	<st:init />
+	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:header>
 
 <st:section name="Naming" id="gene_naming" collapsed="false" collapsible="false" hideIfEmpty="true">
@@ -49,6 +50,13 @@
         	
 			<dt><b>Organism:</b></dt>
 			<dd>${feature.organism.genus} ${feature.organism.species}</dd>
+			
+			<dt><b>Product:</b></dt>
+			<c:forEach items="${polypeptide.featureCvTerms}" var="featCvTerm">
+				<c:if test="${featCvTerm.cvTerm.cv.name == 'genedb_products'}">
+					<dd>${featCvTerm.cvTerm.name}</dd>
+				</c:if>
+			</c:forEach>
 </dl>
 </st:section>
 
@@ -68,21 +76,7 @@
 </st:section>
 
 <st:section name="Curation" id="gene_curation" collapsed="false" collapsible="true" hideIfEmpty="true">
--- Controlled curation --
-  <db:propByName collection="${polypeptide.featureCvTerms}" name="CC" var="featcvterms">
-    <c:forEach items="${featcvterms}" var="featcvterm">
-      		<db:highlight>${featcvterm.cvTerm.name}</db:highlight>
-    		<c:forEach items="${featcvterm.featureCvTermProps}" var="featProp" varStatus="status">
-					<db:highlight>${featProp.value}</db:highlight>
-      		</c:forEach>
-    </c:forEach>
-  </db:propByName>
-<br>-- Curation --
-  <db:propByName collection="${polypeptide.featureProps}" name="curation" var="props">
-    <c:forEach items="${props}" var="featProp">
-      <br /><db:highlight>${featProp.value}</db:highlight>
-    </c:forEach>
-  </db:propByName>
+ <db:curation polypeptide="${polypeptide}"></db:curation>
 </st:section>
 
 <st:section name="Private - wouldn't really be shown" id="gene_private" collapsed="false" collapsible="true" hideIfEmpty="true">
@@ -118,9 +112,20 @@
 </st:section>
 
 <st:section name="Predicted Peptide Properties" id="gene_pepprop" collapsed="false" collapsible="true" hideIfEmpty="true">
-
-<p>Yes, it has some</p>
-
+<table class="simple">
+	<tr>
+		<td><b>Isoelectric Point</b></td>
+		<td>pH <c:out value="${polyprop.isoelectricPoint}"/> </td>
+		<td><b>Mass</b></td>
+		<td><c:out value="${polyprop.mass}"/> kDa </td>
+	</tr>
+	<tr>
+		<td><b>Charge</b></td>
+		<td><c:out value="${polyprop.charge}"/></td>
+		<td><b>Amino Acids</b></td>
+		<td><c:out value="${polyprop.aminoAcids}"></c:out>
+	</tr>
+</table>
 </st:section>
 
 <st:section name="Gene Ontology Annotation" id="gene_go" collapsed="false" collapsible="true" hideIfEmpty="true">

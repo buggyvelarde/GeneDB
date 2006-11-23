@@ -20,7 +20,7 @@
 </font>
 </c:forEach>
 
-<sp:form commandName="nameLookup" action="NamedFeature" method="post">
+<sp:form commandName="nameLookup" action="NameFeature" method="post">
 	<table align="center" width="50%">
 		<tr>
 			<td>Look Up :</td>

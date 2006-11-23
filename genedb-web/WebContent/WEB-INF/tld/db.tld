@@ -74,4 +74,14 @@
    <body-content>scriptless</body-content>
  </tag>
 
+ <tag>
+   <name>curation</name>
+   <tag-class>org.genedb.web.tags.db.DisplayControlledCuration</tag-class>
+   <body-content>scriptless</body-content>
+   <attribute>
+       <name>polypeptide</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+ </tag>
 </taglib>
