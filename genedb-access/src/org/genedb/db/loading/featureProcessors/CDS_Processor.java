@@ -397,6 +397,10 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
             } else {
                 fct = fcts.get(0);
+                int r = fct.getRank();
+                r++;
+                fct = new FeatureCvTerm(cvt,polypeptide,pub,not,r);
+                sequenceDao.persist(fct);
                 logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
             }
 
