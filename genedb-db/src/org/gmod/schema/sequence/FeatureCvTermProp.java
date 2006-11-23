@@ -130,29 +130,38 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
         this.featureCvTermPropId = featureCvTermPropId;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureCvTermPropI#getCvterm()
+    /**
+     * Accessor for featureCvTerm
+     * 
+     * @see featureCvTerm
      */
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureCvTermPropI#setCvterm(org.gmod.schema.cv.CvTermI)
+    /**
+     * Accessor for cvTerm
+     * 
+     * @see cvTerm
      */
     public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureCvTermPropI#getFeatureCvterm()
+    /**
+     * Accessor for featureCvTerm
+     * 
+     * @see featureCvTerm
      */
     private FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureCvTermPropI#setFeatureCvterm(org.gmod.schema.sequence.FeatureCvTermI)
+
+    /**
+     * Accessor for featureCvTerm
+     * 
+     * @see featureCvTerm
      */
     private void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
