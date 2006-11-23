@@ -68,6 +68,7 @@
     	<property name="organismDao" ref="organismDao" />
     	<property name="cvDao" ref="cvDao" />
     	<property name="generalDao" ref="generalDao" />
+    	<property name="pubDao" ref="pubDao" />
     	<property name="runnerConfigParser" ref="runnerConfigParser" />
     	<property name="qualifierHandlerMap">
     		<map>
@@ -209,7 +210,10 @@
     		    </entry>	    		        		        		    
     		    <entry key="snoRNA">
     		    	<bean class="org.genedb.db.loading.featureProcessors.SnoRNA_Processor" parent="baseFeatureProcessor" />
-    		    </entry>	    		        		        		    
+    		    </entry>
+    		    <entry key="source">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Source_Processor" parent="baseFeatureProcessor" />
+    		    </entry>		    		        		        		    
     		    <entry key="stem_loop">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Stem_loop_Processor" parent="baseFeatureProcessor" />
     		    </entry>	    		        		        		
@@ -238,12 +242,19 @@
            
 	<bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor">
 		<property name="goParser" ref="goParser" />
+                <property name="ccParser" ref="ccParser" />
 	</bean>                                                             
     
     <bean id="runnerConfigParser" class="org.genedb.db.loading.RunnerConfigParser" />
     
+    <bean id="fullLengthSourceFeatureHandler" class="org.genedb.db.loading.FullLengthSourceFeatureHandler"/>
+    <bean id="optionDrivenFeatureHandler" class="org.genedb.db.loading.OptionDrivenFeatureHandler"/>
+    
     <bean id="goParser" class="org.genedb.db.loading.GoParser">
 	    <property name="cvDao" ref="cvDao" />
+    </bean>
+    
+    <bean id="ccParser" class="org.genedb.db.loading.ControlledCurationParser">
     </bean>
     
     <!-- DataSource Property -->
