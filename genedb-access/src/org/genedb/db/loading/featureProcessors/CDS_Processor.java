@@ -614,8 +614,18 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 //pub = DUMMY_PUB; // FIXME - probably not right!!
             //}
 
-                logger.warn("pub is '"+pub+"'");
-
+            logger.warn("pub is '"+pub+"'");
+            // Reference
+            Pub refPub = null;
+            if (ref != null && ref.startsWith("PMID:")) {
+            	// The reference is a pubmed id - usual case
+            	refPub = findOrCreatePubFromPMID(ref);
+            	//FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
+            	//sequenceDao.persist(fctp);
+            }
+            if (refPub == null) {
+            	refPub = pub;
+            }
             boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
             List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvTerm, not);
             int rank =0;
@@ -623,17 +633,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 rank = RankableUtils.getNextRank(fcts);
             }
             //logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
-            FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, pub, not, rank);
+            FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
             sequenceDao.persist(fct);
-
-            // Reference
-            Pub refPub = null;
-            if (ref != null && ref.startsWith("PMID:")) {
-                // The reference is a pubmed id - usual case
-                refPub = findOrCreatePubFromPMID(ref);
-                FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-                sequenceDao.persist(fctp);
-            }
 
             // Evidence
             FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE , fct, go.getEvidence().getDescription(), 0);
