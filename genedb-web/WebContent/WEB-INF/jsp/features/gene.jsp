@@ -60,7 +60,7 @@
 </st:section>
 
 <st:section name="Note" id="gene_note" collapsed="false" collapsible="true" hideIfEmpty="true">
-  <db:propByName collection="${polypeptide.featureCvTerms}" name="note" var="props">
+  <db:propByName collection="${polypeptide.featureProps}" name="note" var="props">
     <c:forEach items="${props}" var="featProp">
       <br /><db:highlight>${featProp.value}</db:highlight>
     </c:forEach>
@@ -76,10 +76,16 @@
       		</c:forEach>
     </c:forEach>
   </db:propByName>
+---
+  <db:propByName collection="${polypeptide.featureProps}" name="curation" var="props">
+    <c:forEach items="${props}" var="featProp">
+      <br /><db:highlight>${featProp.value}</db:highlight>
+    </c:forEach>
+  </db:propByName>
 </st:section>
 
 <st:section name="Private - wouldn't really be shown" id="gene_private" collapsed="false" collapsible="true" hideIfEmpty="true">
-  <db:propByName collection="${polypeptide.featureCvTerms}" name="private" var="props">
+  <db:propByName collection="${polypeptide.featureProps}" name="private" var="props">
     <c:forEach items="${props}" var="featProp">
       <br /><db:highlight>${featProp.value}</db:highlight>
     </c:forEach>
@@ -117,16 +123,19 @@
 </st:section>
 
 <st:section name="Gene Ontology Annotation" id="gene_go" collapsed="false" collapsible="true" hideIfEmpty="true">
-    <table>
+    <table border="1">
       <c:forEach items="${polypeptide.featureCvTerms}" var="featCvTerm" varStatus="status">
-        
-	        <tr>
-	          <td>${status.count}</td><td>${featCvTerm.cvTerm.name}</td>
-	          <td>qualifier</td>
-	          <td>evidence</td>
-	          <td>others</td>
-	        </tr>
-	    
+        <tr>
+          <td>GO:${featCvTerm.cvTerm.dbXRef.accession}</td>
+          <td>${featCvTerm.cvTerm.name}</td>
+          <td><db:propByName collection="${featCvTerm.featureCvTermProps}" name="qualifier" var="qualifiers">
+    <c:forEach items="${qualifiers}" var="qualifier" varStatus="st"><c:if test="${st.count > 1}"> |</c:if>${qualifier.value}</c:forEach></db:propByName></td>
+          <td><db:propByName collection="${featCvTerm.featureCvTermProps}" name="evidence" var="evidence">
+    <c:forEach items="${evidence}" var="ev">${ev.value}</c:forEach></db:propByName>&nbsp;
+    <c:forEach items="${featCvTerm.featureCvTermPubs}" var="fctp">(${fctp.pub.uniqueName})</c:forEach></td>
+    <td><c:forEach items="${featCvTerm.featureCvTermDbXRefs}" var="fctdbx">${fctdbx.dbXRef.db.name}${fctdbx.dbXRef.accession}</c:forEach></td>
+          <td>n others</td>
+        </tr>
       </c:forEach>
     </table>
   
