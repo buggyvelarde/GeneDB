@@ -68,6 +68,7 @@
 </st:section>
 
 <st:section name="Curation" id="gene_curation" collapsed="false" collapsible="true" hideIfEmpty="true">
+-- Controlled curation --
   <db:propByName collection="${polypeptide.featureCvTerms}" name="CC" var="featcvterms">
     <c:forEach items="${featcvterms}" var="featcvterm">
       		<db:highlight>${featcvterm.cvTerm.name}</db:highlight>
@@ -76,7 +77,7 @@
       		</c:forEach>
     </c:forEach>
   </db:propByName>
----
+<br>-- Curation --
   <db:propByName collection="${polypeptide.featureProps}" name="curation" var="props">
     <c:forEach items="${props}" var="featProp">
       <br /><db:highlight>${featProp.value}</db:highlight>
