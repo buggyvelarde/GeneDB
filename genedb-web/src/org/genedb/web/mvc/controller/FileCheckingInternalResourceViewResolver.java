@@ -1,16 +1,16 @@
 package org.genedb.web.mvc.controller;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
-import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 public class FileCheckingInternalResourceViewResolver extends
 	InternalResourceViewResolver {

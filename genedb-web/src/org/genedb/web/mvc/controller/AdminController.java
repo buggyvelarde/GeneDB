@@ -1,10 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +7,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
