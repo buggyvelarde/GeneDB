@@ -202,6 +202,15 @@ public class CvTerm implements Serializable {
         this.isObsolete = isObsolete;
         this.isRelationshipType = isRelationshipType;
     }
+    
+    /** useful constructor! */
+    public CvTerm(Cv cv, DbXRef dbXRef, String name, String definition) {
+       this.dbXRef = dbXRef;
+       this.cv = cv;
+       this.name = name;
+       this.definition = definition;
+    }
+    
     /** full constructor */
     private CvTerm(DbXRef dbXRef, Cv cv, String name, String definition, int isObsolete, int isRelationshipType, Collection<AnalysisProp> analysisProps, Collection<CvTermProp> cvTermPropsForTypeId, Collection<CvTermProp> cvTermPropsForCvTermId, Collection<DbXRefProp> dbXRefProps, Collection<Synonym> synonyms, Collection<CvTermDbXRef> cvTermDbXRefs, Collection<CvTermPath> cvTermPathsForTypeId, Collection<FeatureCvTermProp> featureCvTermProps, Collection<FeatureCvTerm> featureCvTerms, Collection<CvTermRelationship> cvTermRelationshipsForTypeId, Collection<CvTermRelationship> cvTermRelationshipsForObjectId, Collection<PubProp> pubProps, Collection<OrganismProp> organismProps, Collection<CvTermRelationship> cvTermRelationshipsForSubjectId, Collection<CvTermSynonym> cvTermSynonymsForCvTermId, Collection<FeatureProp> featureProps, Collection<CvTermPath> cvTermPathsForSubjectId, Collection<CvTermPath> cvTermPathsForObjectId, Collection<CvTermSynonym> cvTermSynonymsForTypeId, Collection<Pub> pubs, Collection<FeatureRelationshipProp> featureRelationshipProps, Collection<Feature> features, Collection<PubRelationship> pubRelationships, Collection<FeatureRelationship> featureRelationships) {
        this.dbXRef = dbXRef;

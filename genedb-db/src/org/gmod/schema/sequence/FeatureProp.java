@@ -60,6 +60,15 @@ public class FeatureProp implements Serializable, PropertyI {
         this.cvTerm = cvTerm;
         this.rank = rank;
     }
+    
+    /** useful constructor ! */
+    public FeatureProp(Feature feature, CvTerm cvTerm, String value, int rank) {
+       this.cvTerm = cvTerm;
+       this.feature = feature;
+       this.value = value;
+       this.rank = rank;
+    }
+    
     /** full constructor */
     private FeatureProp(CvTerm cvTerm, Feature feature, String value, int rank, Set<FeaturePropPub> featurePropPubs) {
        this.cvTerm = cvTerm;
