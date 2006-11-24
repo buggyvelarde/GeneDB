@@ -34,6 +34,7 @@ import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.loading.DbUtilsBean;
 import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.FeatureUtils;
 import org.genedb.db.loading.GeneDbGeneNamingStrategy;
@@ -81,6 +82,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected CvDao cvDao;
     
     protected FeatureUtils featureUtils;
+    
+    protected DbUtilsBean dbUtilsBean;
 
     protected Organism organism;
 
@@ -203,13 +206,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         CvTerm cvTerm = cvDao.getCvTermByNameInCv(annotationKey,cv).get(0);
     
         String value = MiningUtils.getProperty(annotationKey, an, null);
-        // TODO Other constructor?
-        FeatureProp fp = new FeatureProp();
-        fp.setRank(0);
-        fp.setCvTerm(cvTerm);
-        fp.setFeature(f);
-        // fp.setFeaturepropPubs(arg0);
-        fp.setValue(value);
+        FeatureProp fp = new FeatureProp(f, cvTerm, value, 0);
     
         f.getFeatureProps().add(fp);
         return fp;
@@ -233,12 +230,9 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
             }
         }
     
-        int count = 0;
+        int rank = 0;
         for (String note : notes) {
-            FeatureProp fp = new FeatureProp();
-            fp.setRank(count);
-            fp.setCvTerm(cvTerm);
-            fp.setFeature(f);
+            FeatureProp fp = new FeatureProp(f, cvTerm, note, rank);
             // TODO Parse info from (PMID:...) if present
             // TODO cope with more than one
             Set<FeaturePropPub> fpubs = new HashSet<FeaturePropPub>();
@@ -254,9 +248,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
             // // FIXME - should add fpubs.add(fpub);
             // } while (ps.isSplit());
             fp.setFeaturePropPubs(fpubs);
-            fp.setValue(note);
             sequenceDao.persist(fp);
-            count++;
+            rank++;
         }
         
     }
@@ -290,16 +283,16 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
             }
             
             for (String xref : xrefs) {
-                if (xref.indexOf(":") == -1 ) {
-                    logger.warn("Can't parse dbxref into db and acc '"+xref+"'. Skipping");
+                int index = xref.indexOf(":");
+                if (index == -1 ) {
+                    logger.error("Can't parse dbxref into db and acc '"+xref+"'. Skipping");
                     continue;
                 }
-                String[] parts = xref.split(":");
-                String dbName = parts[0];
-                String acc = parts[1];
+                String dbName = xref.substring(0, index);
+                String acc = xref.substring(+1);
                 String description = null;
                 if (acc.indexOf(";") != -1) {
-                    parts = acc.split(";");
+                    String[] parts = acc.split(";");
                     if (parts.length>0) {
                         acc = parts[0];
                     } else {
@@ -310,7 +303,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                         description = parts[1];
                     }
                 }
-                Db db = generalDao.getDbByName(dbName);
+                Db db = dbUtilsBean.getDbByName(dbName);
                 if (db == null) {
                     if (!warnedDbs.contains(db)) {
                         logger.warn("Can't find a db entry for the name of '"+dbName+"'. Skipping");
