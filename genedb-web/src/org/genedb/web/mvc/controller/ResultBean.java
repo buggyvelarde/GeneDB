@@ -1,8 +1,8 @@
 package org.genedb.web.mvc.controller;
 
-import java.util.List;
-
 import org.gmod.schema.organism.Organism;
+
+import java.util.List;
 
 public class ResultBean {
 
