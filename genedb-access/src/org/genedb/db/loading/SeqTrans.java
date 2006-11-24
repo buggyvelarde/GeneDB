@@ -89,7 +89,7 @@ public class SeqTrans {
 //            in = in.substring(codonStart-1);
 //            startCodon = "";
 //        }
-        TranslationTable tt = RNATools.getGeneticCode(Integer.toString(translTable));
+        TranslationTable tt = RNATools.getGeneticCode(TranslationTable.UNIVERSAL);
 //        Set altStartCodons = GeneticCodes.getAltStartCodons(Integer.toString(translTable));
 //        if (altStartCodons.contains(startCodon)) {
 //            in = "ATG"+ in.substring(3);
@@ -109,6 +109,7 @@ public class SeqTrans {
 
             // view the RNA sequence as codons
             seq = SymbolListViews.windowedSymbolList(seq, 3);
+            System.out.println(tt.toString());
             SymbolList protein = SymbolListViews.translate(seq, tt);
             return protein.seqString();
         }

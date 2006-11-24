@@ -4,10 +4,12 @@ package org.genedb.db.loading;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_TOP_LEVEL;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.biojava.bio.seq.StrandedFeature;
 import org.genedb.db.dao.CvDao;
@@ -159,5 +161,66 @@ public class FeatureUtils implements InitializingBean {
 	public void setDummyPub(Pub dummyPub) {
 		DUMMY_PUB = dummyPub;
 	}
+    
+    public static String getResidues(Feature feature){
+    	String residues = null;
+    	residues = new String(feature.getResidues());
+    	
+    	if (!residues.contains("A")){
+    		if("gene".equals(feature.getCvTerm().getName())){
+    			Collection<FeatureLoc> fl = feature.getFeatureLocsForFeatureId();
+    			for (FeatureLoc loc : fl) {
+					Feature toplevel = loc.getFeatureBySrcFeatureId();
+					String temp = new String(toplevel.getResidues());
+					residues = temp.substring(loc.getFmin(), loc.getFmax());
+					return residues;
+				}
+    		} else if ("mrna".equals(feature.getCvTerm().getName())){
+    			Collection<FeatureRelationship> fr = feature.getFeatureRelationshipsForSubjectId();
+    			for (FeatureRelationship relationship : fr) {
+					Feature gene = relationship.getFeatureByObjectId();
+					Feature toplevel = gene.getFeatureLoc().getFeatureBySrcFeatureId();
+					String temp = new String(toplevel.getResidues());
+					residues = temp.substring(gene.getFeatureLoc().getFmin(),gene.getFeatureLoc().getFmax());
+					return residues;
+				}
+    		} else {
+    			Collection<FeatureRelationship> fr = feature.getFeatureRelationshipsForSubjectId();
+    			Feature mrna = null;
+    			for (FeatureRelationship relationship : fr) {
+    				mrna = relationship.getFeatureByObjectId();
+    				System.out.println("mrna name is : " + mrna.getUniqueName());
+    				break;
+    			}
+    			//Feature gene = null;
+    			Collection<FeatureRelationship> fr2 = mrna.getFeatureRelationshipsForSubjectId();
+    			for (FeatureRelationship relationship : fr2) {
+					Feature gene = relationship.getFeatureByObjectId();
+					System.out.println("gene name is : " + gene.getUniqueName());
+					Feature toplevel = gene.getFeatureLocsForFeatureId().iterator().next().getFeatureBySrcFeatureId();
+					String temp = new String(toplevel.getResidues());
+					//System.out.println("Residues " + temp);
+					FeatureLoc fl = mrna.getFeatureLocsForFeatureId().iterator().next();
+					System.out.println(fl.getFmin() + " " + fl.getFmax());
+					residues = temp.substring(fl.getFmin(),fl.getFmax());
+					SeqTrans st = new SeqTrans();
+					residues = st.translate(residues.getBytes(), 1,1);
+					if (residues.contains("*")){
+						String toSend = new String();
+						toSend = residues;
+						StringTokenizer token = new StringTokenizer(toSend,"*");
+						residues = new String();
+						while(token.hasMoreTokens()){
+							residues = residues + token.nextToken();
+						}
+						//System.out.println("residues are : " + residues);
+					}
+					return residues;
+				}
+    		}
+    		
+    	}
+    	return residues;
+    }
     
 }
