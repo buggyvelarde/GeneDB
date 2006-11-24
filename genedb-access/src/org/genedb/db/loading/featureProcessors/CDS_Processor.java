@@ -308,11 +308,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     if (cc.getCv() != null) {
                         cv = this.cvDao.getCvByName("CC" + cc.getCv()).get(0);
                     }
-                    cvt = new CvTerm();
-                    cvt.setCv(cv);
-                    cvt.setDbXRef(dbXRef);
-                    cvt.setName(cc.getTerm());
-                    cvt.setDefinition(cc.getTerm());
+                    cvt = new CvTerm(cv, dbXRef, cc.getTerm(), cc.getTerm());
                     generalDao.persist(cvt);
                 }
 

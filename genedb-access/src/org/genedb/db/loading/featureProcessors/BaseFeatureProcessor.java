@@ -206,11 +206,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         CvTerm cvTerm = cvDao.getCvTermByNameInCv(annotationKey,cv).get(0);
     
         String value = MiningUtils.getProperty(annotationKey, an, null);
-        FeatureProp fp = new FeatureProp();
-        fp.setCvTerm(cvTerm);
-        fp.setRank(0);
-        fp.setValue(value);
-        fp.setFeature(f);
+        FeatureProp fp = new FeatureProp(f, cvTerm, value, 0);
+    
         f.getFeatureProps().add(fp);
         return fp;
     }
@@ -235,11 +232,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     
         int rank = 0;
         for (String note : notes) {
-            FeatureProp fp = new FeatureProp();
-            fp.setFeature(f);
-            fp.setCvTerm(cvTerm);
-            fp.setValue(note);
-            fp.setRank(rank);
+            FeatureProp fp = new FeatureProp(f, cvTerm, note, rank);
             // TODO Parse info from (PMID:...) if present
             // TODO cope with more than one
             Set<FeaturePropPub> fpubs = new HashSet<FeaturePropPub>();
