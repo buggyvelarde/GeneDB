@@ -17,7 +17,8 @@ public class GeneralDao extends BaseDao implements GeneralDaoI {
     @SuppressWarnings("unchecked")
     public Db getDbByName(String name) {
         List<Db> results = getHibernateTemplate().findByNamedParam(
-		"from Db db where db.name=:name", "name", name);
+		"from Db db where upper(db.name)=:name",
+        "name", name.toUpperCase());
         return firstFromList(results, "name", name);
     }
     
