@@ -76,7 +76,14 @@
 </st:section>
 
 <st:section name="Curation" id="gene_curation" collapsed="false" collapsible="true" hideIfEmpty="true">
- <db:curation polypeptide="${polypeptide}"></db:curation>
+-- Controlled curation --
+<db:curation polypeptide="${polypeptide}"></db:curation>
+<br>-- Curation --
+  <db:propByName collection="${polypeptide.featureProps}" name="curation" var="props">
+    <c:forEach items="${props}" var="featProp">
+      <br /><db:highlight>${featProp.value}</db:highlight>
+    </c:forEach>
+  </db:propByName>
 </st:section>
 
 <st:section name="Private - wouldn't really be shown" id="gene_private" collapsed="false" collapsible="true" hideIfEmpty="true">
@@ -129,8 +136,10 @@
 </st:section>
 
 <st:section name="Gene Ontology Annotation" id="gene_go" collapsed="false" collapsible="true" hideIfEmpty="true">
-    <table border="1">
-      <c:forEach items="${polypeptide.featureCvTerms}" var="featCvTerm" varStatus="status">
+  
+      <table border="2">
+      <tr><td colspan="6">Biological Process</td></tr>
+      <db:filtered-loop items="${polypeptide.featureCvTerms}" cv="biological_process" var="featCvTerm" varStatus="status">
         <tr>
           <td>GO:${featCvTerm.cvTerm.dbXRef.accession}</td>
           <td>${featCvTerm.cvTerm.name}</td>
@@ -142,10 +151,38 @@
     <td><c:forEach items="${featCvTerm.featureCvTermDbXRefs}" var="fctdbx">${fctdbx.dbXRef.db.name}${fctdbx.dbXRef.accession}</c:forEach></td>
           <td>n others</td>
         </tr>
-      </c:forEach>
-    </table>
-  
+      </db:filtered-loop>
 
+      <tr><td colspan="6">Cellular Component</td></tr>
+      <db:filtered-loop items="${polypeptide.featureCvTerms}" cv="cellular_component" var="featCvTerm" varStatus="status">
+        <tr>
+          <td>GO:${featCvTerm.cvTerm.dbXRef.accession}</td>
+          <td>${featCvTerm.cvTerm.name}</td>
+          <td><db:propByName collection="${featCvTerm.featureCvTermProps}" name="qualifier" var="qualifiers">
+    <c:forEach items="${qualifiers}" var="qualifier" varStatus="st"><c:if test="${st.count > 1}"> |</c:if>${qualifier.value}</c:forEach></db:propByName></td>
+          <td><db:propByName collection="${featCvTerm.featureCvTermProps}" name="evidence" var="evidence">
+    <c:forEach items="${evidence}" var="ev">${ev.value}</c:forEach></db:propByName>&nbsp;
+    <c:forEach items="${featCvTerm.featureCvTermPubs}" var="fctp">(${fctp.pub.uniqueName})</c:forEach></td>
+    <td><c:forEach items="${featCvTerm.featureCvTermDbXRefs}" var="fctdbx">${fctdbx.dbXRef.db.name}${fctdbx.dbXRef.accession}</c:forEach></td>
+          <td>n others</td>
+        </tr>
+      </db:filtered-loop>
+
+      <tr><td colspan="6">Molecular Function</td></tr>
+      <db:filtered-loop items="${polypeptide.featureCvTerms}" cv="molecular_function" var="featCvTerm" varStatus="status">
+        <tr>
+          <td>GO:${featCvTerm.cvTerm.dbXRef.accession}</td>
+          <td>${featCvTerm.cvTerm.name}</td>
+          <td><db:propByName collection="${featCvTerm.featureCvTermProps}" name="qualifier" var="qualifiers">
+    <c:forEach items="${qualifiers}" var="qualifier" varStatus="st"><c:if test="${st.count > 1}"> |</c:if>${qualifier.value}</c:forEach></db:propByName></td>
+          <td><db:propByName collection="${featCvTerm.featureCvTermProps}" name="evidence" var="evidence">
+    <c:forEach items="${evidence}" var="ev">${ev.value}</c:forEach></db:propByName>&nbsp;
+    <c:forEach items="${featCvTerm.featureCvTermPubs}" var="fctp">(${fctp.pub.uniqueName})</c:forEach></td>
+    <td><c:forEach items="${featCvTerm.featureCvTermDbXRefs}" var="fctdbx">${fctdbx.dbXRef.db.name}${fctdbx.dbXRef.accession}</c:forEach></td>
+          <td>n others</td>
+        </tr>
+      </db:filtered-loop>
+    </table>
 
 
 </st:section>
