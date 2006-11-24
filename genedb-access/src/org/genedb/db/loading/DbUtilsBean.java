@@ -13,7 +13,7 @@ import java.util.Map;
 public class DbUtilsBean implements InitializingBean {
     
 	private GeneralDao generalDao;
-    private Map<String, String> aliases;
+    private Map<String, String> aliases = new HashMap<String, String>(0);
 	
 	public Db getDbByName(String dbName) {
         String lookup = dbName;
@@ -32,9 +32,8 @@ public class DbUtilsBean implements InitializingBean {
 //        GENEDB_TOP_LEVEL = cvDao.getCvTermByNameInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
     }
 
-    public void setAliases(Map<String, String> aliases) {
-        this.aliases = new HashMap<String, String>(aliases.size());
-        for (Map.Entry<String, String> entry : aliases.entrySet()) {
+    public void setAliases(Map<String, String> mixedCaseAliases) {
+        for (Map.Entry<String, String> entry : mixedCaseAliases.entrySet()) {
             this.aliases.put(entry.getKey().toUpperCase(), entry.getValue());
         }
     }

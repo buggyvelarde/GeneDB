@@ -383,6 +383,10 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         this.pubDao = pubDao;
     }
 
+	public void setDbUtilsBean(DbUtilsBean dbUtilsBean) {
+		this.dbUtilsBean = dbUtilsBean;
+	}
+
 //    private ParsedString parseDbXref(String in, String prefix) {
 //            ParsedString ret;
 //            String lookFor = "(" + prefix;

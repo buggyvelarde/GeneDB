@@ -238,7 +238,12 @@
 		<property name="generalDao" ref="generalDao" />
 		<property name="sequenceDao" ref="sequenceDao" />
 		<property name="pubDao" ref="pubDao" />
+		<property name="dbUtilsBean" ref="dbUtilsBean" />
     </bean>
+           
+	<bean id="dbUtilsBean" class="org.genedb.db.loading.DbUtilsBean">
+		<property name="generalDao" ref="generalDao" /> 
+	</bean> 
            
 	<bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor">
 		<property name="goParser" ref="goParser" />
