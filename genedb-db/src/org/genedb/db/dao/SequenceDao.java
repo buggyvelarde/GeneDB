@@ -1,7 +1,6 @@
 package org.genedb.db.dao;
 
 
-import org.genedb.db.helpers.Product;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.SequenceDaoI;
 import org.gmod.schema.general.DbXRef;
@@ -260,28 +259,25 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 		return features;
 	}
 
-	public List<CountedName> getProducts() {
-		List<CountedName> products = new ArrayList<CountedName>();
-		Iterator results = getHibernateTemplate().find("select cvt.name,count(f.uniqueName) from CvTerm cvt,FeatureCvTerm fct,Feature f " +
-				"where f=fct.feature and cvt=fct.cvTerm and cvt.cv=15 group by cvt.name").listIterator();
-		while (results.hasNext()){
-			CountedName p = new CountedName();
-			Object[] row = (Object[]) results.next();
-			p.setName((String)row[0]);
-			p.setCount((Integer)row[1]);
-			products.add(p);
-		}
-		return products;
+	@SuppressWarnings("unchecked")
+    // FIXME - Remove hard coded value - make more general?
+    public List<CountedName> getProducts() {
+		return getHibernateTemplate().find("select new CountedName(cvt.name,count(f.uniqueName))" +
+                " from CvTerm cvt,FeatureCvTerm fct,Feature f " +
+				"where f=fct.feature and cvt=fct.cvTerm and cvt.cv=15 group by cvt.name");
 	}
 
-	public List<Feature> getFeaturesByCvTermName(String cvTermName) {
+	@SuppressWarnings("unchecked")
+    public List<Feature> getFeaturesByCvTermName(String cvTermName) {
 		List<Feature> features = getHibernateTemplate().findByNamedParam(
 				"select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName", 
 				"cvTermName", cvTermName);
 		return features;
 	}
 
-	public List<Feature> getTopLevelFeatures(){
+	@SuppressWarnings("unchecked")
+    // FIXME - Use top level properties instead
+    public List<Feature> getTopLevelFeatures() {
 		String name = "chromosome%";
 		List<Feature> topLevels = getHibernateTemplate().findByNamedParam("select f from Feature f " +
 				"where f.cvTerm.name like :name",
