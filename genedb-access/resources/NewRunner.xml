@@ -242,7 +242,12 @@
     </bean>
            
 	<bean id="dbUtilsBean" class="org.genedb.db.loading.DbUtilsBean">
-		<property name="generalDao" ref="generalDao" /> 
+		<property name="generalDao" ref="generalDao" />
+		<property name="aliases">
+			<map>
+			<entry key="SPTR" value="UniProt" />
+			</map>
+		</property>
 	</bean> 
            
 	<bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor">
