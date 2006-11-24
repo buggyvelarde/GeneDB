@@ -1,5 +1,11 @@
 package org.genedb.web.tags.db;
 
+import org.genedb.web.mvc.controller.WebUtils;
+
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermProp;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,19 +15,6 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.web.mvc.controller.WebUtils;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureCvTermProp;
-
-import org.biojava.bio.BioException;
-import org.biojava.bio.proteomics.*;
-import org.biojava.bio.symbol.Alphabet;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.bio.symbol.SimpleSymbolList;
-import org.biojava.bio.symbol.SymbolList;
 
 public class DisplayControlledCuration extends SimpleTagSupport{
 	

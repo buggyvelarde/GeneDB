@@ -1,5 +1,7 @@
 package org.genedb.web.tags.db;
 
+import org.gmod.schema.utils.propinterface.PropertyI;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,8 +9,6 @@ import java.util.List;
 
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.jstl.core.LoopTagSupport;
-
-import org.gmod.schema.utils.propinterface.PropertyI;
 
 public class FilteredPropertyLoopTag extends LoopTagSupport {
 
