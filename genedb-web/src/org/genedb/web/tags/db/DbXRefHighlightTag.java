@@ -11,6 +11,8 @@ public class DbXRefHighlightTag extends SimpleTagSupport {
     @Override
 	public void doTag() throws JspException, IOException {
         // TODO currently a no-op
+        // Should lookup URL
+        // different class for internal, external URL
 		JspWriter out = getJspContext().getOut();
         getJspBody().invoke(out);
 	}
