@@ -149,7 +149,7 @@ public interface SequenceDaoI {
      */
     public List<List> getFeatureByGO(final String go);
     
-        /**
+     /**
      * Return a list of features that have this particular cvterm 
      * 
      *  
@@ -157,6 +157,15 @@ public interface SequenceDaoI {
      * @return a (possibly empty) List<Feature> of children
      */
     public List<Feature> getFeaturesByCvTermName(String cvTermName);
+    
+    /**
+     * Return a list of features that have this particular cvterm 
+     * 
+     *  
+     * @param cvTermName the CvTerm name
+     * @return a (possibly empty) List<Feature> of children
+     */
+    public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName);
     
     /**
      * Return a list of top-level features 

@@ -25,11 +25,12 @@
 	</bean>
     
     <bean id="standardNomenclatureHandler" class="org.genedb.db.loading.StandardNomenclatureHandler" />
-    <bean id="bacterialNomenclatureHandler" class="org.genedb.db.loading.BacterialNomenclatureHandler" />
+    <bean id="bacterialNomenclatureHandler" class="org.genedb.db.loading.BacterialNomenclatureHandler" >
+    	<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
+    </bean>
     <bean id="sPombeNomenclatureHandler" class="org.genedb.db.loading.SpombeNomenclatureHandler">
 		<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
     </bean>
-    
     <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="platformTransactionManager" ref="transactionManager" />
@@ -100,9 +101,12 @@
     		    <entry key="C_domain">
     		    	<bean class="org.genedb.db.loading.featureProcessors.C_domain_Processor" parent="baseFeatureProcessor" />
     		    </entry>
-    		    <entry key="contig">
-    		    	<bean class="org.genedb.db.loading.featureProcessors.Contig_Processor" parent="baseFeatureProcessor" />
+    		    <entry key="centromere">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Centromere_Processor" parent="baseFeatureProcessor" />
     		    </entry>
+    		    <!-- <entry key="contig">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.Contig_Processor" parent="baseFeatureProcessor" />
+    		    </entry>  -->
     		    <entry key="GPI_signal">
     		    	<bean class="org.genedb.db.loading.featureProcessors.GPI_signal_Processor" parent="baseFeatureProcessor" />
     		    </entry>
@@ -124,9 +128,9 @@
     		    <entry key="extension">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Extension_Processor" parent="baseFeatureProcessor" />
     		    </entry>
-    		    <entry key="gap">
+    		    <!-- <entry key="gap">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Gap_Processor" parent="baseFeatureProcessor" />
-    		    </entry>
+    		    </entry>  -->
     		    <entry key="gene">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Gene_Processor" parent="baseFeatureProcessor" />
     		    </entry>
@@ -211,9 +215,9 @@
     		    <entry key="snoRNA">
     		    	<bean class="org.genedb.db.loading.featureProcessors.SnoRNA_Processor" parent="baseFeatureProcessor" />
     		    </entry>
-    		    <entry key="source">
+    		    <!--  <entry key="source">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Source_Processor" parent="baseFeatureProcessor" />
-    		    </entry>		    		        		        		    
+    		    </entry> -->		    		        		        		    
     		    <entry key="stem_loop">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Stem_loop_Processor" parent="baseFeatureProcessor" />
     		    </entry>	    		        		        		

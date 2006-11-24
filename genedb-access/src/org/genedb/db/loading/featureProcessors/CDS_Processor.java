@@ -308,7 +308,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     if (cc.getCv() != null) {
                         cv = this.cvDao.getCvByName("CC" + cc.getCv()).get(0);
                     }
-                    cvt = new CvTerm(cv, dbXRef, cc.getTerm(), cc.getTerm());
+                    cvt = new CvTerm();
+                    cvt.setCv(cv);
+                    cvt.setDbXRef(dbXRef);
+                    cvt.setName(cc.getTerm());
+                    cvt.setDefinition(cc.getTerm());
                     generalDao.persist(cvt);
                 }
 
@@ -364,7 +368,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     sequenceDao.persist(fct);
                     logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
                 } else {
-                    fct = fcts.get(0);
+                    if(fcts.size() > 1){
+                    	fct = fcts.get(fcts.size() - 1);
+                    } else {
+                    	fct = fcts.get(0);
+                    }
                     int r = fct.getRank();
                     r++;
                     fct = new FeatureCvTerm(cvt,polypeptide,pub,not,r);
@@ -718,7 +726,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     cvTerm = new CvTerm();
                     DbXRef dbXRef = new DbXRef(this.generalDao.getDbByName("PRODUCT"), product);
                     this.generalDao.persist(dbXRef);
-                    cvTerm = new CvTerm(cv, dbXRef, product, product);
+                    cvTerm = new CvTerm();
+                    cvTerm.setCv(cv);
+                    cvTerm.setDbXRef(dbXRef);
+                    cvTerm.setName(product);
+                    cvTerm.setDefinition(product);
                     this.cvDao.persist(cvTerm);
                 } else {
                     cvTerm = cvTermList.get(0);

@@ -285,4 +285,12 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 				name);
 		return topLevels;
 	}
+
+	public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName) {
+		List<Feature> features = getHibernateTemplate().findByNamedParam(
+				"select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName and f.cvTerm.cv.name like :cvName", 
+				new String[]{"cvTermName","cvName"}, new Object[]{cvTermName,cvName});
+		return features;
+
+	}
 }
