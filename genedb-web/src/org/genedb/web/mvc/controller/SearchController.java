@@ -1,5 +1,22 @@
 package org.genedb.web.mvc.controller;
 
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.loading.FeatureUtils;
+import org.genedb.query.BasicQueryI;
+import org.genedb.query.NumberedQueryI;
+import org.genedb.query.QueryPlaceHolder;
+import org.genedb.query.bool.BooleanOp;
+import org.genedb.query.bool.BooleanQuery;
+import org.genedb.web.tags.bool.QueryTreeWalker;
+
+import org.gmod.schema.cv.Cv;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.utils.CountedName;
+import org.gmod.schema.utils.PeptideProperties;
+
 import org.biojava.bio.BioException;
 import org.biojava.bio.proteomics.IsoelectricPointCalc;
 import org.biojava.bio.proteomics.MassCalc;
@@ -11,44 +28,18 @@ import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.SimpleSymbolList;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.loading.FeatureUtils;
-import org.gmod.schema.utils.PeptideProperties;
-import org.gmod.schema.utils.Product;
-import org.genedb.query.BasicQueryI;
-import org.genedb.query.NumberedQueryI;
-import org.genedb.query.QueryPlaceHolder;
-import org.genedb.query.bool.BooleanOp;
-import org.genedb.query.bool.BooleanQuery;
-import org.genedb.web.tags.bool.QueryTreeWalker;
-
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -267,7 +258,7 @@ public class SearchController extends MultiActionController implements Initializ
 	        }
 		model.put("products", products);
 		model.put("numbers", numbers);*/
-		List<Product> products = sequenceDao.getProducts();
+		List<CountedName> products = sequenceDao.getProducts();
 		model.put("products", products);
 		return new ModelAndView(viewName,model);
 	}
