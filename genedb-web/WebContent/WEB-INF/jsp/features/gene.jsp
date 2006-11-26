@@ -53,7 +53,12 @@
 	<c:forEach items="${feature.featureLocsForFeatureId}" var="featLoc">
 		<p>[${featLoc.rank}]&nbsp;&nbsp;${featLoc.strand}&nbsp;&nbsp;${featLoc.fmin}...${featLoc.fmax} on <i>to be done</i></p>
 	</c:forEach>
+
+
+<p align="center">I'm a pretty graphic</p>
+
 </st:section>
+
 
 <st:section name="Note" id="gene_note" collapsed="false" collapsible="true" hideIfEmpty="true">
   <db:propByName collection="${polypeptide.featureProps}" name="note" var="props">
@@ -121,8 +126,6 @@
       <format:go-section title="Cellular Component" cvName="cellular_component" feature="${polypeptide}" />
       <format:go-section title="Molecular Function" cvName="molecular_function" feature="${polypeptide}" />  
     </table>
-
-
 </st:section>
 
 <st:section name="Catalytic Activity" id="gene_catalytic" collapsed="false" collapsible="true" hideIfEmpty="true">
