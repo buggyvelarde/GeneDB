@@ -6,58 +6,46 @@
 </format:header>
 
 <st:section name="Naming" id="gene_naming" collapsed="false" collapsible="false" hideIfEmpty="true">
-        	
+        
+  <table>	
   <db:synonym name="primary_name" var="name" collection="${feature.featureSynonyms}">
-    <br /><b>Name:</b> <db:list-string collection="${name}" />
+    <tr><td><b>Name:</b></td><td> <db:list-string collection="${name}" /></td></tr>
   </db:synonym>
   <db:synonym name="protein_name" var="name" collection="${feature.featureSynonyms}">
-    <br /><b>Protein:</b> <db:list-string collection="${name}" />
+    <tr><td><b>Protein:</b></td><td> <db:list-string collection="${name}" /></td></tr>
   </db:synonym>
   <db:synonym name="systematic_id" var="name" collection="${feature.featureSynonyms}" tmpSysId="tmpSysId">
-    <br /><b>Systematic id:</b> <db:list-string collection="${name}" /> 
-    <c:if test="${tmpSysId}"><span class="warning">(Note: this id is temporary and will change in future)</span></c:if>
+    <tr><td><b>Systematic id:</b></td><td> <db:list-string collection="${name}" /> 
+    <c:if test="${tmpSysId}"><span class="warning">(Note: this id is temporary and will change in future)</span></c:if></td></tr>
   </db:synonym>
   <db:synonym name="previous_systematic_id" var="name" collection="${feature.featureSynonyms}">
-    <br /><b>Prev. systematic id:</b> <db:list-string collection="${name}" />
+    <tr><td><b>Prev. systematic id:</b></td><td> <db:list-string collection="${name}" /></td></tr>
   </db:synonym>
   <db:synonym name="synonym" var="name" collection="${feature.featureSynonyms}">
-    <br /><b>Synonym:</b> <db:list-string collection="${name}" />
+    <tr><td><b>Synonym:</b></td><td> <db:list-string collection="${name}" /></td></tr>
   </db:synonym>
   <db:synonym name="obsolete_name" var="name" collection="${feature.featureSynonyms}">
-    <br /><b>Obsolete Name:</b> <db:list-string collection="${name}" />
+    <tr><td><b>Obsolete Name:</b></td><td> <db:list-string collection="${name}" /></td></tr>
   </db:synonym>
   <db:synonym name="reserved_name" var="name" collection="${feature.featureSynonyms}">
-    <br /><b>Reserved Name:</b> <db:list-string collection="${name}" />
+    <tr><td><b>Reserved Name:</b></td><td> <db:list-string collection="${name}" /></td></tr>
   </db:synonym>
-        	
-        	
-        	<dl>
-        	
-			<dt><b>Type:</b></dt>
-			<dd>${feature.cvTerm.name}</dd>
-        	
-        	<dt><b>Analysis Feature:</b></dt>
-        	<dd>${feature.analysis}</dd>
-        	
-        	<dt><b>Obsolete?:</b></dt>
-        	<dd>${feature.obsolete}</dd>
-        	
-        	<dt><b>Date created:</b></dt>
-        	<dd>${feature.timeAccessioned}</dd>
-        	
-        	<dt><b>Date last modified:</b></dt>
-        	<dd>${feature.timeLastModified}</dd>
-        	
-			<dt><b>Organism:</b></dt>
-			<dd>${feature.organism.genus} ${feature.organism.species}</dd>
-			
-			<dt><b>Product:</b></dt>
-			<c:forEach items="${polypeptide.featureCvTerms}" var="featCvTerm">
+
+  <tr><td colspan="2">&nbsp;</td>
+  
+	<tr><td><b>Type:</b></td><td>${feature.cvTerm.name}</td></tr>  
+	<tr><td><b>Analysis Feature:</b></td><td>${feature.analysis}</td></tr>  
+	<tr><td><b>Obsolete?:</b></td><td>${feature.obsolete}</td></tr>  
+	<tr><td><b>Date created:</b></td><td>${feature.timeAccessioned}</td></tr>  
+	<tr><td><b>Date last modified:</b></td><td>${feature.timeLastModified}</td></tr>  
+	<tr><td><b>Organism:</b></td><td>${feature.organism.genus} ${feature.organism.species}</td></tr>  
+	<tr><td><b>Product:</b></td><td><c:forEach items="${polypeptide.featureCvTerms}" var="featCvTerm">
 				<c:if test="${featCvTerm.cvTerm.cv.name == 'genedb_products'}">
 					<dd>${featCvTerm.cvTerm.name}</dd>
 				</c:if>
-			</c:forEach>
-</dl>
+			</c:forEach></td></tr>
+			
+  </table>	
 </st:section>
 
 
@@ -122,22 +110,26 @@
 <table class="simple">
 	<tr>
 		<td><b>Isoelectric Point</b></td>
-		<td>pH <c:out value="${polyprop.isoelectricPoint}"/> </td>
+		<td>pH ${polyprop.isoelectricPoint}" </td>
 		<td><b>Mass</b></td>
-		<td><c:out value="${polyprop.mass}"/> kDa </td>
+		<td>${polyprop.mass}" kDa </td>
 	</tr>
 	<tr>
 		<td><b>Charge</b></td>
-		<td><c:out value="${polyprop.charge}"/></td>
+		<td>${polyprop.charge}</td>
 		<td><b>Amino Acids</b></td>
-		<td><c:out value="${polyprop.aminoAcids}"></c:out>
+		<td>${polyprop.aminoAcids}</td>
 	</tr>
 </table>
 </st:section>
 
 <st:section name="Gene Ontology Annotation" id="gene_go" collapsed="false" collapsible="true" hideIfEmpty="true">
   
-      <table border="2">
+      <table border="1">
+      <format:go-section title="Biological Process" cvName="biological_process" feature=${polypeptide} />
+      <format:go-section title="Cellular Component" cvName="cellular_component" feature=${polypeptide} />
+      <format:go-section title="Molecular Function" cvName="molecular_function" feature=${polypeptide} />
+                  
       <tr><td colspan="6">Biological Process</td></tr>
       <db:filtered-loop items="${polypeptide.featureCvTerms}" cv="biological_process" var="featCvTerm" varStatus="status">
         <tr>
@@ -182,6 +174,8 @@
           <td>n others</td>
         </tr>
       </db:filtered-loop>
+      
+      
     </table>
 
 
