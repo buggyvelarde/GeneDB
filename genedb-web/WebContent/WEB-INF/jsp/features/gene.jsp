@@ -74,14 +74,6 @@
   </db:propByName>
 </st:section>
 
-<st:section name="Private - wouldn't really be shown" id="gene_private" collapsed="false" collapsible="true" hideIfEmpty="true">
-  <db:propByName collection="${polypeptide.featureProps}" name="private" var="props">
-    <c:forEach items="${props}" var="featProp">
-      <br /><db:highlight>${featProp.value}</db:highlight>
-    </c:forEach>
-  </db:propByName>
-</st:section>
-
 <st:section name="Structure - wouldn't necessarily be shown" id="gene_structure" collapsed="false" collapsible="true" hideIfEmpty="true">
   <h5>This feature is object</h5>
     <table>
