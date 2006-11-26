@@ -110,9 +110,9 @@
 <table class="simple">
 	<tr>
 		<td><b>Isoelectric Point</b></td>
-		<td>pH ${polyprop.isoelectricPoint}" </td>
+		<td>pH ${polyprop.isoelectricPoint} </td>
 		<td><b>Mass</b></td>
-		<td>${polyprop.mass}" kDa </td>
+		<td>${polyprop.mass} kDa </td>
 	</tr>
 	<tr>
 		<td><b>Charge</b></td>
