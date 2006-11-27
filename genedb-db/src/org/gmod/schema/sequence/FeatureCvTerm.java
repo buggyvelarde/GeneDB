@@ -186,7 +186,7 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermPubs(java.util.Set)
      */
-    private void setFeatureCvTermPubs(Collection<FeatureCvTermPub> featureCvTermPubs) {
+    public void setFeatureCvTermPubs(Collection<FeatureCvTermPub> featureCvTermPubs) {
         this.featureCvTermPubs = featureCvTermPubs;
     }
 
@@ -200,7 +200,7 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermDbxrefs(java.util.Set)
      */
-    private void setFeatureCvTermDbXRefs(Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
+    public void setFeatureCvTermDbXRefs(Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
         this.featureCvTermDbXRefs = featureCvTermDbXRefs;
     }
 
