@@ -51,14 +51,14 @@ public class FeatureCvTermPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#getFeatureCvTermPubId()
      */
-    private int getFeatureCvTermPubId() {
+    public int getFeatureCvTermPubId() {
         return this.featureCvTermPubId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#setFeatureCvTermPubId(int)
      */
-    private void setFeatureCvTermPubId(int featureCvTermPubId) {
+    public void setFeatureCvTermPubId(int featureCvTermPubId) {
         this.featureCvTermPubId = featureCvTermPubId;
     }
 
@@ -72,21 +72,21 @@ public class FeatureCvTermPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#setPub(org.gmod.schema.pub.PubI)
      */
-    private void setPub(Pub pub) {
+    public void setPub(Pub pub) {
         this.pub = pub;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#getFeatureCvterm()
      */
-    private FeatureCvTerm getFeatureCvTerm() {
+    public FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#setFeatureCvterm(org.gmod.schema.sequence.FeatureCvTermI)
      */
-    private void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
+    public void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }
 
