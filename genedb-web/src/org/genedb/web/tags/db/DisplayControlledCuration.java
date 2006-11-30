@@ -107,7 +107,7 @@ public class DisplayControlledCuration extends SimpleTagSupport{
 				size = WebUtils.featureListSize(fct.getCvTerm().getName(),"CC_genedb_controlledcuration");
 				if(size > 1) {
 					size = size - 1;
-					out.println(startTag + "<a href=\"http://holly.internal.sanger.ac.uk:8080/genedb-web/Search/FeatureByCvTermName?name=" + fct.getCvTerm().getName() + "\">" + "(" + size + " others)" + "</a>" + endTag );
+					out.println(startTag + "<a href=\"http://holly.internal.sanger.ac.uk:8080/genedb-web/Search/FeatureByCvTermNameAndCvName?name=" + fct.getCvTerm().getName() + "&cvName=" + fct.getCvTerm().getCv().getName() + "\">" + "(" + size + " others)" + "</a>" + endTag );
 				} else {
 					out.println(startTag + "( 0 others )" + endTag);
 				}
