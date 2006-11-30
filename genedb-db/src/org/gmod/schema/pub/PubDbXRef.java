@@ -89,7 +89,7 @@ public class PubDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setPub(org.gmod.schema.pub.PubI)
      */
-    private void setPub(Pub pub) {
+    public void setPub(Pub pub) {
         this.pub = pub;
     }
     
@@ -97,14 +97,14 @@ public class PubDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#isCurrent()
      */
-    private boolean isCurrent() {
+    public boolean isCurrent() {
         return this.current;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setCurrent(boolean)
      */
-    private void setCurrent(boolean current) {
+    public void setCurrent(boolean current) {
         this.current = current;
     }
 
