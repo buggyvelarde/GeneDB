@@ -22,7 +22,8 @@ public class DisplayControlledCuration extends SimpleTagSupport{
 
 	
 	
-	public void doTag() throws JspException, IOException {
+	@Override
+    public void doTag() throws JspException, IOException {
 		Collection<FeatureCvTerm>  listFeatCvTerm = polypeptide.getFeatureCvTerms();
 		System.out.println("featureCvTerm Collection size is " + listFeatCvTerm.size());
 		JspWriter out = getJspContext().getOut();
