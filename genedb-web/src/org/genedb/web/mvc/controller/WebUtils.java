@@ -196,71 +196,71 @@ public class WebUtils {
     	return size;
     }
     
-    public static double getCharge(SymbolList aaSymList){
-    	Map chargeFor;
-    	double charge = 0.0;
-        
-        
-        try {
-            Alphabet aa = ProteinTools.getAlphabet();
-            SymbolTokenization aaToken = aa.getTokenization("token");
-
-            chargeFor = new SmallMap();
-
-            // A,C,F,G,I,L,M,N,P,Q,S,T,U,V,W,X,Y are all zero
-            chargeFor.put(aaToken.parseToken("B"), new Double(-0.5));
-            chargeFor.put(aaToken.parseToken("D"), new Double(-1));
-            chargeFor.put(aaToken.parseToken("E"), new Double(-1));
-            chargeFor.put(aaToken.parseToken("H"), new Double(0.5));
-            chargeFor.put(aaToken.parseToken("K"), new Double(1));
-            chargeFor.put(aaToken.parseToken("R"), new Double(1));
-            chargeFor.put(aaToken.parseToken("Z"), new Double(-0.5));
-        }
-        catch(IllegalSymbolException e){
-            e.printStackTrace();
-            throw new RuntimeException("Unexpected biojava error - illegal symbol");
-        }
-        catch(BioException e){
-            e.printStackTrace();
-            throw new RuntimeException("Unexpected biojava error - general");
-        }
-        
-        Map counts = residueCount(aaSymList,chargeFor);
-        // iterate thru' all counts computing the partial contribution to charge
-        Iterator countI = counts.keySet().iterator();
-
-        while (countI.hasNext()) {
-            Symbol sym = (Symbol) countI.next();
-            Double chargeValue = (Double) chargeFor.get(sym);
-
-            double symbolsCharge = chargeValue.doubleValue();
-            int count = ((Integer) counts.get(sym)).intValue();
-
-            charge += (symbolsCharge * count);
-        }
-        return charge;
-    }
-
-
-    private static Map residueCount(SymbolList aaSymList,Map chargeFor) {
-        // iterate thru' aaSymList collating number of relevant residues
-        Iterator residues = aaSymList.iterator();
-
-        Map symbolCounts = new SmallMap();
-
-        while (residues.hasNext()) {
-            Symbol sym =  (Symbol) residues.next();
-
-            if (chargeFor.containsKey(sym)) {
-                Integer currCount = (Integer) symbolCounts.get(sym);
-
-                if (currCount != null) {
-                    currCount = currCount + 1;
-                } else {
-                    symbolCounts.put(sym, new Integer(1));
-                }
-            }
-        }
-        return symbolCounts;
-    }
+//    public static double getCharge(SymbolList aaSymList){
+//    	Map chargeFor;
+//    	double charge = 0.0;
+//        
+//        
+//        try {
+//            Alphabet aa = ProteinTools.getAlphabet();
+//            SymbolTokenization aaToken = aa.getTokenization("token");
+//
+//            chargeFor = new SmallMap();
+//
+//            // A,C,F,G,I,L,M,N,P,Q,S,T,U,V,W,X,Y are all zero
+//            chargeFor.put(aaToken.parseToken("B"), new Double(-0.5));
+//            chargeFor.put(aaToken.parseToken("D"), new Double(-1));
+//            chargeFor.put(aaToken.parseToken("E"), new Double(-1));
+//            chargeFor.put(aaToken.parseToken("H"), new Double(0.5));
+//            chargeFor.put(aaToken.parseToken("K"), new Double(1));
+//            chargeFor.put(aaToken.parseToken("R"), new Double(1));
+//            chargeFor.put(aaToken.parseToken("Z"), new Double(-0.5));
+//        }
+//        catch(IllegalSymbolException e){
+//            e.printStackTrace();
+//            throw new RuntimeException("Unexpected biojava error - illegal symbol");
+//        }
+//        catch(BioException e){
+//            e.printStackTrace();
+//            throw new RuntimeException("Unexpected biojava error - general");
+//        }
+//        
+//        Map counts = residueCount(aaSymList,chargeFor);
+//        // iterate thru' all counts computing the partial contribution to charge
+//        Iterator countI = counts.keySet().iterator();
+//
+//        while (countI.hasNext()) {
+//            Symbol sym = (Symbol) countI.next();
+//            Double chargeValue = (Double) chargeFor.get(sym);
+//
+//            double symbolsCharge = chargeValue.doubleValue();
+//            int count = ((Integer) counts.get(sym)).intValue();
+//
+//            charge += (symbolsCharge * count);
+//        }
+//        return charge;
+//    }
+//
+//
+//    private static Map residueCount(SymbolList aaSymList,Map chargeFor) {
+//        // iterate thru' aaSymList collating number of relevant residues
+//        Iterator residues = aaSymList.iterator();
+//
+//        Map symbolCounts = new SmallMap();
+//
+//        while (residues.hasNext()) {
+//            Symbol sym =  (Symbol) residues.next();
+//
+//            if (chargeFor.containsKey(sym)) {
+//                Integer currCount = (Integer) symbolCounts.get(sym);
+//
+//                if (currCount != null) {
+//                    currCount = currCount + 1;
+//                } else {
+//                    symbolCounts.put(sym, new Integer(1));
+//                }
+//            }
+//        }
+//        return symbolCounts;
+//    }
 }

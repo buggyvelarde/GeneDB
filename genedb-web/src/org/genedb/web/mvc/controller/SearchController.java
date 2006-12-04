@@ -166,47 +166,53 @@ public class SearchController extends MultiActionController implements Initializ
                 }
             }
             model.put("polypeptide", polypeptide);
-            String seqString = FeatureUtils.getResidues(polypeptide);
-    		Alphabet protein = ProteinTools.getAlphabet();
-    		SymbolTokenization proteinToke = null;
-    		SymbolList seq = null;
-    		PeptideProperties pp = new PeptideProperties();
-    		try {
-    			proteinToke = protein.getTokenization("token");
-    			seq = new SimpleSymbolList(proteinToke, seqString);
-    		} catch (BioException e) {
-
-    		}
-			IsoelectricPointCalc ipc = new IsoelectricPointCalc();
-			Double cal = 0.0;
-			try {
-				cal = ipc.getPI(seq, false, false);
-			} catch (IllegalAlphabetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BioException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			DecimalFormat df = new DecimalFormat("#.##");
-			pp.setIsoelectricPoint(df.format(cal));
-			pp.setAminoAcids(Integer.toString(seqString.length()));
-			MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
-			try {
-				cal = mc.getMass(seq)/1000;
-			} catch (IllegalSymbolException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			pp.setMass(df.format(cal));
-			
-			cal = WebUtils.getCharge(seq);
-			pp.setCharge(df.format(cal));
+            PeptideProperties pp = calculatePepstats(polypeptide);
 			model.put("polyprop", pp);
             //System.err.println("The value of pp is '"+polypeptide+"'");
         }
 	    return new ModelAndView(viewName, model);
 	}
+
+    private PeptideProperties calculatePepstats(Feature polypeptide) {
+
+        String seqString = FeatureUtils.getResidues(polypeptide);
+        Alphabet protein = ProteinTools.getAlphabet();
+        SymbolTokenization proteinToke = null;
+        SymbolList seq = null;
+        PeptideProperties pp = new PeptideProperties();
+        try {
+        	proteinToke = protein.getTokenization("token");
+        	seq = new SimpleSymbolList(proteinToke, seqString);
+        } catch (BioException e) {
+
+        }
+        IsoelectricPointCalc ipc = new IsoelectricPointCalc();
+        Double cal = 0.0;
+        try {
+        	cal = ipc.getPI(seq, false, false);
+        } catch (IllegalAlphabetException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+        } catch (BioException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+        }
+        DecimalFormat df = new DecimalFormat("#.##");
+        pp.setIsoelectricPoint(df.format(cal));
+        pp.setAminoAcids(Integer.toString(seqString.length()));
+        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
+        try {
+        	cal = mc.getMass(seq)/1000;
+        } catch (IllegalSymbolException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+        }
+        pp.setMass(df.format(cal));
+        
+        cal = WebUtils.getCharge(seq);
+        pp.setCharge(df.format(cal));
+        return pp;
+    }
 	
 	public ModelAndView GeneOntology(HttpServletRequest request, HttpServletResponse response){
 		
