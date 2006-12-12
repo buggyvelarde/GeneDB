@@ -74,7 +74,8 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
         Feature above = null;
         above = tieFeatureByNameInQualifier("systematic_id", parent, feat, an, loc);
         if (above == null) {
-            above = tieFeatureByNameInQualifier("temporary_systematic_id", parent, feat, an, loc);
+            System.out.print("type : " + type);
+        	above = tieFeatureByNameInQualifier("temporary_systematic_id", parent, feat, an, loc);
         }
         if (above == null) {
             above = tieFeatureByNameInQualifier("gene", parent, feat, an, loc);
@@ -150,7 +151,10 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
            //logger.info("Trying to store '"+type+"' for gene '"+above.getUniquename()+"'");
            gene = above;
            Collection<FeatureRelationship> frs = gene.getFeatureRelationshipsForObjectId(); 
-           //logger.info("The number of possible transcripts is '"+frs.size()+"'");
+           logger.info("The number of possible transcripts is '"+frs.size()+"'");
+           for (FeatureRelationship fr : frs) {
+               System.out.println(fr.getFeatureBySubjectId().getUniqueName());
+           }
            for (FeatureRelationship fr : frs) {
                transcript = fr.getFeatureBySubjectId();
                break;
@@ -175,6 +179,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
            }
            exonCount++;
            Location exonLoc = it.next();      
+           System.out.println("creating utr with name " + "exon:"+(exonCount-1)+":"+utrName);
            Feature utr = this.featureUtils.createFeature("exon", "exon:"+(exonCount-1)+":"+utrName, this.organism);
            FeatureRelationship utrFr = this.featureUtils.createRelationship(utr, transcript, REL_PART_OF, exonCount-1);
            FeatureLoc utrFl = this.featureUtils.createLocation(parent, utr, 

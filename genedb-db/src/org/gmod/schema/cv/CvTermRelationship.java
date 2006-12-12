@@ -40,7 +40,7 @@ public class CvTermRelationship implements Serializable {
     }
 
     /** full constructor */
-    private CvTermRelationship(CvTerm cvTermBySubjectId, CvTerm cvTermByObjectId, CvTerm cvTermByTypeId) {
+    public CvTermRelationship(CvTerm cvTermBySubjectId, CvTerm cvTermByObjectId, CvTerm cvTermByTypeId) {
        this.cvTermBySubjectId = cvTermBySubjectId;
        this.cvTermByObjectId = cvTermByObjectId;
        this.cvTermByTypeId = cvTermByTypeId;

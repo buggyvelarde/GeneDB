@@ -2,6 +2,7 @@ package org.genedb.db.dao;
 
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class BaseDao extends HibernateDaoSupport {
      * @param o The object to store
      */
     public void persist(Object o) {
-        getHibernateTemplate().persist(o);
+    	getHibernateTemplate().persist(o);
     }
     
     /**

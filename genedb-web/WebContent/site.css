@@ -1,0 +1,67 @@
+@CHARSET "UTF-8";
+
+body {
+ margin: 0;
+ padding: 0;
+}
+
+P.section {
+	text-align: center;
+	font-weight: bold;
+	background-color: #E2E2FF;
+	border-top: 1px solid lightgray;
+}
+
+div.section-body {
+ padding-left: 3px;
+ padding-right: 3px;
+}
+
+h1 {
+	font-family: Arial,Helvetica,Geneva,sans-serif;
+}
+
+.warning {
+	color: red;
+}
+
+
+/* begin cross-browser coloured fake-fieldsets */
+div.fieldset {
+  position:   relative;
+  margin-top: 1em;
+  align:      center;
+}
+
+div.fieldset div.content {
+  /*padding:          0.75em;*/
+  overflow:         auto;
+  display:          table-cell;
+  border:           black 0px solid;
+  background-color: white;
+  text-color:       #FFE3BF;
+  align:            center;
+}
+
+div.fieldset div.legend {
+  position:         absolute;
+  top:              -0.5em;
+  margin-left:      1em;
+  white-space:      nowrap;
+  display:          table-cell;
+  padding:          0 0.2em 0 0.2em;
+  font-weight:      bolder;
+  z-index:          1;
+  border:           black 1px solid;
+  background-color: white;
+  text-color:       #660000;
+  align:            center;
+}
+
+div.fieldset div.content img {
+  position:       relative;
+}
+
+* html div.fieldset div.legend { width: 100px; }
+
+/* end cross-browser coloured fake-fieldsets */

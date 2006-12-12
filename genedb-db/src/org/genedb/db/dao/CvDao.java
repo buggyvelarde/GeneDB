@@ -121,4 +121,14 @@ public class CvDao extends BaseDao implements CvDaoI {
 			}
 		}
 
+		public CvTerm getCvTermByDbXRef(DbXRef dbXRef) {
+			List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
+					"from CvTerm cvt where cvt.dbXRef = :dbXRef","dbXRef" , dbXRef);
+			if (cvTermList == null || cvTermList.size() == 0) {
+				return null;
+			} else {
+				return cvTermList.get(0);
+			}
+		}
+
 }

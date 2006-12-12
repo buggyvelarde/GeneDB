@@ -32,7 +32,6 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_SYNONYM;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_TEMP_SYS_ID;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -40,33 +39,18 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.biojava.bio.Annotation;
-import org.biojava.bio.BioException;
-import org.biojava.bio.proteomics.IsoelectricPointCalc;
-import org.biojava.bio.proteomics.MassCalc;
-import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.Alphabet;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.Location;
-import org.biojava.bio.symbol.SimpleSymbolList;
-import org.biojava.bio.symbol.SymbolList;
-import org.biojava.bio.symbol.SymbolPropertyTable;
-
 import org.genedb.db.loading.ControlledCurationInstance;
 import org.genedb.db.loading.ControlledCurationParser;
 import org.genedb.db.loading.FeatureProcessor;
-import org.genedb.db.loading.FeatureUtils;
 import org.genedb.db.loading.GoInstance;
 import org.genedb.db.loading.GoParser;
 import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.Names;
 import org.genedb.db.loading.NomenclatureHandler;
 import org.genedb.db.loading.ProcessingPhase;
-import org.genedb.db.loading.ProteinUtils;
 import org.genedb.db.loading.RankableUtils;
-
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.Db;
@@ -81,7 +65,6 @@ import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.utils.PeptideProperties;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -201,7 +184,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             String mRnaName = this.gns.getTranscript(sysId, transcriptNum);
             String baseName = sysId;
             if (altSplicing) {
-                mRnaName = this.gns.getGene(sysId);
+            	mRnaName = this.gns.getGene(sysId);
                 baseName = mRnaName;
             }
             Feature mRNA = this.featureUtils
@@ -260,7 +243,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             featureLocs.add(pepFl);
             featureRelationships.add(pepFr);
             // TODO store protein translation
-            // calculatePepstats(polypeptide); // TODO Uncomment once checked if currently working
+            // TODO protein props - store here or just in query version
             sequenceDao.persist(polypeptide);
 
             createProducts(polypeptide, an, "product", CV_PRODUCTS);
@@ -278,6 +261,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             createGoEntries(polypeptide, an);
 
             createControlledCuration(polypeptide,an,CV_CONTROLLEDCURATION);
+            
+            processClass(polypeptide,an);
 
             //String nucleic = parent.getResidues().substring(loc.getMin(),
             // loc.getMax());
@@ -304,7 +289,38 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
     }
 
-    private void createControlledCuration(Feature polypeptide, Annotation an, Cv controlledCuration) {
+    private void processClass(Feature polypeptide, Annotation an) {
+    	List<String> classes = MiningUtils.getProperties("class", an);
+    	if (classes != null){
+	    	for (String rileyClass : classes) {
+				if("1.5.0".equals(rileyClass)){
+					System.out.println("i am here ... ");
+				}
+	    		String sections[] = rileyClass.split("\\.");
+				StringBuilder sb = new StringBuilder();
+				for (String string : sections) {
+					if(string.length() >= 2){
+						if(string.charAt(0) == '0'){
+							sb.append(string.substring(1) + ".");
+						} else {
+							sb.append(string + ".");
+						}
+					} else {
+						sb.append(string + ".");
+					}
+				}
+				rileyClass = sb.toString().substring(0, sb.toString().length()-1);
+	    		Db db = this.generalDao.getDbByName("RILEY");
+	    		DbXRef dbXRef = this.generalDao.getDbXRefByDbAndAcc(db,rileyClass);
+	    		CvTerm cvTerm = this.cvDao.getCvTermByDbXRef(dbXRef);
+	    		Pub pub = DUMMY_PUB;
+	    		FeatureCvTerm fct = new FeatureCvTerm(cvTerm,polypeptide,pub,false,0);
+	    		this.sequenceDao.persist(fct);
+			}
+    	}
+	}
+
+	private void createControlledCuration(Feature polypeptide, Annotation an, Cv controlledCuration) {
 
         List<ControlledCurationInstance> ccs = this.ccParser.getAllControlledCurationFromAnnotation(an);
         if (ccs == null || ccs.size() == 0) {
@@ -323,7 +339,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     
                     Cv cv = controlledCuration;
                     if (cc.getCv() != null) {
-                        cv = this.cvDao.getCvByName("CC" + cc.getCv()).get(0);
+                        cv = this.cvDao.getCvByName("CC_" + cc.getCv()).get(0);
                     }
                     cvt = new CvTerm(cv, dbXRef, cc.getTerm(), cc.getTerm());
                     generalDao.persist(cvt);
@@ -565,16 +581,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
             Pub pub = pubDao.getPubByUniqueName("NULL");
             String ref = go.getRef();
-            // Reference
-            Pub refPub = pub;
-            if (ref != null && ref.startsWith("PMID:")) {
-                // The reference is a pubmed id - usual case
-                refPub = findOrCreatePubFromPMID(ref);
-                //FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-                //sequenceDao.persist(fctp);
-            }
-            
-            
+
 //            logger.warn("pub is '"+pub+"'");
 
             boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
@@ -584,17 +591,17 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 rank = RankableUtils.getNextRank(fcts);
             }
             //logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
-            FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
+            FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, pub, not, rank);
             sequenceDao.persist(fct);
 
             // Reference
-//            Pub refPub = null;
-//            if (ref != null && ref.startsWith("PMID:")) {
-//                // The reference is a pubmed id - usual case
-//                refPub = findOrCreatePubFromPMID(ref);
-//                FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-//                sequenceDao.persist(fctp);
-//            }
+            Pub refPub = null;
+            if (ref != null && ref.startsWith("PMID:")) {
+                // The reference is a pubmed id - usual case
+                refPub = findOrCreatePubFromPMID(ref);
+                FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
+                sequenceDao.persist(fctp);
+            }
 
             // Evidence
             FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE , fct, go.getEvidence().getDescription(), 0);
@@ -617,12 +624,10 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                    if (index == -1 ) {
                            logger.error("Got an apparent dbxref but can't parse");
                    } else {
-                           List<DbXRef> dbXRefs= findOrCreateDbXRefsFromString(xref);
-                           for (DbXRef dbXRef : dbXRefs) {
-                               if (dbXRef != null) {
+                           DbXRef dbXRef= findOrCreateDbXRefFromString(xref);
+                           if (dbXRef != null) {
                                    FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
                                    sequenceDao.persist(fcvtdbx);
-                               }
                            }
                    }
            }
@@ -632,48 +637,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
     }
 
-    
-    private PeptideProperties calculatePepstats(Feature polypeptide) {
-
-        String seqString = FeatureUtils.getResidues(polypeptide);
-        Alphabet protein = ProteinTools.getAlphabet();
-        SymbolTokenization proteinToke = null;
-        SymbolList seq = null;
-        PeptideProperties pp = new PeptideProperties();
-        try {
-            proteinToke = protein.getTokenization("token");
-            seq = new SimpleSymbolList(proteinToke, seqString);
-        } catch (BioException e) {
-
-        }
-        IsoelectricPointCalc ipc = new IsoelectricPointCalc();
-        Double cal = 0.0;
-        try {
-            cal = ipc.getPI(seq, false, false);
-        } catch (IllegalAlphabetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (BioException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        DecimalFormat df = new DecimalFormat("#.##");
-        pp.setIsoelectricPoint(df.format(cal));
-        pp.setAminoAcids(Integer.toString(seqString.length()));
-        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
-        try {
-            cal = mc.getMass(seq)/1000;
-        } catch (IllegalSymbolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        pp.setMass(df.format(cal));
-        
-        cal = ProteinUtils.getCharge(seq);
-        pp.setCharge(df.format(cal));
-        return pp;
-    }
-    
     private boolean looksLikePub(String xref) {
         if (xref.startsWith("PMID:")) {
             return true;
@@ -696,16 +659,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
     }
     
-    private List<DbXRef> findOrCreateDbXRefsFromString(String xref) {
-        List<DbXRef> ret = new ArrayList<DbXRef>();
-        StringTokenizer st = new StringTokenizer(xref, "|");
-        while (st.hasMoreTokens()) {
-            ret.add(findOrCreateDbXRefFromString(st.nextToken()));
-        }
-        return ret;
-    }
-        
-        
     private DbXRef findOrCreateDbXRefFromString(String xref) {
         int index = xref.indexOf(':');
         if (index == -1) {

@@ -22,6 +22,7 @@ package org.gmod.schema.dao;
 
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.DbXRef;
 
 import java.util.List;
 
@@ -97,6 +98,14 @@ public interface CvDaoI {
      * @return a (possibly empty) cvterm
      */
     public abstract CvTerm getCvTermByNameAndCvName(String cvTermName, String name);
+    
+    /**
+     * Get a CvTerm by DbXRef
+     * 
+     * @param dbXRef the DbXRef 
+     * @return the corresponding CvTerm, or null
+     */
+    public abstract CvTerm getCvTermByDbXRef(DbXRef dbXRef);
 
 public boolean existsNameInOntology(String name, Cv ontology);
 
