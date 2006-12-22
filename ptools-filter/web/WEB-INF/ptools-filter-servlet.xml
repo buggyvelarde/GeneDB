@@ -27,6 +27,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     
     <bean id="mainController" class="org.genedb.ptoolsFilter.FilteringUrlFilenameViewController">
         <property name="prefix" value="/tmp/"/>
+        <property name="suffix" value=".gif" />
         <property name="allowSubdirs" value="false" />
         <property name="directOutput" value="true" />
         <property name="directoryListing" value="false" />
