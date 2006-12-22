@@ -39,9 +39,8 @@ public class FilteringUrlFilenameViewController extends
     private boolean allowSubdirs=false;
     private boolean directOutput=true;
     private boolean directoryListing=false;
-    private List<String> allowedExtensions;
+    private List allowedExtensions;
     
-    @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mav = super.handleRequestInternal(request, response);
         
