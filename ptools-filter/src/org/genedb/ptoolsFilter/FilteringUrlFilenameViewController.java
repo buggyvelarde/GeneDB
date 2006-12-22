@@ -47,7 +47,7 @@ public class FilteringUrlFilenameViewController extends
         String viewName = mav.getViewName();
         File view = new File(viewName);
         if (!view.exists()) {
-            throw new RuntimeException("Not a valid file '"+viewName+"'");
+            throw new RuntimeException("Not a valid file 1 '"+viewName+"'");
         }
 
         try {
@@ -55,7 +55,7 @@ public class FilteringUrlFilenameViewController extends
                 throw new RuntimeException("Not a legal file '"+view.getCanonicalPath()+"'");
             }
         } catch (IOException exp) {
-            throw new RuntimeException("Not a valid file '"+viewName+"'");
+            throw new RuntimeException("Not a valid file 2 '"+viewName+"', "+exp.getMessage());
         }
         
         if (directOutput) {
