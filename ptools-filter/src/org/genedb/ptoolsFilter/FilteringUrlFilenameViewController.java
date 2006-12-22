@@ -73,5 +73,21 @@ public class FilteringUrlFilenameViewController extends
         //return viewName;
     }
 
+	public void setAllowedExtensions(List allowedExtensions) {
+		this.allowedExtensions = allowedExtensions;
+	}
+
+	public void setAllowSubdirs(boolean allowSubdirs) {
+		this.allowSubdirs = allowSubdirs;
+	}
+
+	public void setDirectoryListing(boolean directoryListing) {
+		this.directoryListing = directoryListing;
+	}
+
+	public void setDirectOutput(boolean directOutput) {
+		this.directOutput = directOutput;
+	}
+
     
 }
