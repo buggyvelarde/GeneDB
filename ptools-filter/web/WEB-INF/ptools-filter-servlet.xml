@@ -17,14 +17,14 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	 - It is used instead of the default BeanNameUrlHandlerMapping. It builds paths 
 	 - based upon the Controller's name 
 	 -->
-	<bean id="urlMapping" class="org.genedb.web.mvc.controller.CaseSensitiveControllerClassNameHandlerMapping">
+	<!-- <bean id="urlMapping" class="org.genedb.web.mvc.controller.CaseSensitiveControllerClassNameHandlerMapping">
 		<property name="alwaysUseFullPath" value="true" />
 		 <property name="interceptors">
       <list>
         <ref bean="openSessionInView"/>
       </list>
     </property>
-	</bean>
+	</bean>-->
 
 
 	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
