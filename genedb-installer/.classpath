@@ -2,5 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="/Users/art/Software/MyApps/eclipse-3.2/plugins/org.codehaus.groovy.eclipse_1.0.0.20061211/lib/commons-io-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/art/Software/MyApps/eclipse-3.2/plugins/org.codehaus.groovy.eclipse_1.0.0.20061211/lib/commons-lang-2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/art/Software/MyApps/eclipse-3.2/plugins/org.codehaus.groovy.eclipse_1.0.0.20061211/lib/groovy-all-1.0-RC-01.jar"/>
+	<classpathentry exported="true" kind="lib" path="bin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
