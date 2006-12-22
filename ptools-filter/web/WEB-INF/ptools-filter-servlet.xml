@@ -29,7 +29,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
     
-    <bean id="MainController" class="org.genedb.ptools-filter.FilteringUrlFilenameViewController">
+    <bean id="MainController" class="org.genedb.ptoolsFilter.FilteringUrlFilenameViewController">
         <property name="prefix" value="/tmp/"/>
         <property name="allowSubdirs" value="false" />
         <property name="directOutput" value="true" />
