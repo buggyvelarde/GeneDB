@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<beans xmlns="http://www.springframework.org/schema/beans" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xmlns:util="http://www.springframework.org/schema/util" 
-> 
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<!-- <beans xmlns="http://www.springframework.org/schema/beans"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:util="http://www.springframework.org/schema/util" xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd 
+http://www.springframework.org/schema/util http://www.springframework.org/schema/beans/spring-util-2.0.xsd"> 
+-->
+<beans>
 
 <!--
   - DispatcherServlet application context for GeneDB's web tier.
@@ -30,13 +31,13 @@ xmlns:util="http://www.springframework.org/schema/util"
     
     <bean id="MainController" class="org.genedb.ptools-filter.FilteringUrlFilenameViewController">
         <property name="prefix" value="/tmp/"/>
-        <property name="allowSubdirs" value="false">
+        <property name="allowSubdirs" value="false" />
         <property name="directOutput" value="true" />
         <property name="directoryListing" value="false" />
         <property name="allowedExtensions">
-            <util:list>
-                <value>.gif</value>
-           </util:list>
+            <list>
+                <value>".gif"</value>
+           </list>
         </property>
     </bean>
     
