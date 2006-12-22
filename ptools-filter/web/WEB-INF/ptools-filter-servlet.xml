@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:util="http://www.springframework.org/schema/util" 
+> 
+
+
+<!--
+  - DispatcherServlet application context for GeneDB's web tier.
+-->
+	
+	<!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+	<!--
+	 - This bean is an explicit URL mapper that is used by the GeneDB DispatcherServlet
+	 - It is used instead of the default BeanNameUrlHandlerMapping. It builds paths 
+	 - based upon the Controller's name 
+	 -->
+	<bean id="urlMapping" class="org.genedb.web.mvc.controller.CaseSensitiveControllerClassNameHandlerMapping">
+		<property name="alwaysUseFullPath" value="true" />
+		 <property name="interceptors">
+      <list>
+        <ref bean="openSessionInView"/>
+      </list>
+    </property>
+	</bean>
+
+
+	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
+    
+    <bean id="MainController" class="org.genedb.ptools-filter.FilteringUrlFilenameViewController">
+        <property name="prefix" value="/tmp/"/>
+        <property name="allowSubdirs" value="false">
+        <property name="directOutput" value="true" />
+        <property name="directoryListing" value="false" />
+        <property name="allowedExtensions">
+            <util:list>
+                <value>.gif</value>
+           </util:list>
+        </property>
+    </bean>
+    
+</beans>
