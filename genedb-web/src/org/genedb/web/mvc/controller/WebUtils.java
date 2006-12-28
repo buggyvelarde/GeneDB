@@ -37,7 +37,7 @@ public class WebUtils {
 	private static SequenceDao sequenceDao;
 	
     public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
+		WebUtils.sequenceDao = sequenceDao;
 	}
 
 	public static boolean extractTaxonOrOrganism(HttpServletRequest request, boolean required, boolean onlyOne, List<String> answers) {
