@@ -209,7 +209,7 @@ public class SearchController extends MultiActionController implements Initializ
         }
         pp.setMass(df.format(cal));
         
-        cal = WebUtils.getCharge(seq);
+        //cal = WebUtils.getCharge(seq);
         pp.setCharge(df.format(cal));
         return pp;
     }
