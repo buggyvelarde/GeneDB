@@ -15,9 +15,7 @@
   <script src="unittest.js" type="text/javascript"></script>
   <link rel="stylesheet" href="wtsi.css" type="text/css"/>
   <link rel="stylesheet" href="site.css" type="text/css"/>
-  <script type="text/javascript">
-    var ids = new Array();
-   </script>
+  <script type="text/javascript">var ids = new Array();</script>
 </head>
 <body>
 <h1>Test Drag-Drop</h1>
