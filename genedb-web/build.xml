@@ -4,9 +4,23 @@
 
 	<target name="get-latest-jars" depends="" 
 		description="Copy over JAR files from other projects">
-		<copy file="../genedb-access/lib/genedb-hibernate.jar" todir="WebContent/WEB-INF/lib" />
-		<copy file="../genedb-access/lib/chado-interface.jar" todir="WebContent/WEB-INF/lib" />
+		<copy file="../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="WebContent/WEB-INF/lib" />
+		<copy file="../genedb-db/ant-build/jars/chado-interface.jar" todir="WebContent/WEB-INF/lib" />
 		<copy file="../genedb-access/genedb-access.jar" todir="WebContent/WEB-INF/lib" />
+	</target>
+	
+	<target name="make-other-projects">
+		<ant dir="../genedb-db" target="alljars" />
+		<ant dir="../genedb-access" target="genedb-access.jar" />
+		<antcall target="get-latest-jars"/>
+	</target>
+	
+	<target name="make-all-and-deploy" depends="make-other-projects, compile, deploy"/>
+	
+	<target name="compile">
+	</target>
+	
+	<target name="deploy">
 	</target>
 	
 </project>
