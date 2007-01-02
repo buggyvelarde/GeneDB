@@ -34,15 +34,16 @@ public class FastaUtils {
             Feature feat, Strand strand, int min, int max) throws IOException {
         // TODO - ignores strand
         //w.write('>' + header + '\n');
-        String seq = feat.getResidues().substring(min, max);
+        byte[] seq = feat.getResidues(min, max);
         exportFasta(w, header, seq, spaces);
     }
 
 
-    public static void exportFasta(Writer w, String header, String seq, boolean spaces) throws IOException {
+    public static void exportFasta(Writer w, String header, byte[] seq, boolean spaces) throws IOException {
         w.write('>' + header + '\n');
         int count = 0;
-        for (char c : seq.toCharArray()) {
+        for (byte b : seq) {
+            char c = (char) b;
             if (count % 60 == 0) {
                 w.write('\n');
             } else {
