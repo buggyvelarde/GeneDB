@@ -126,31 +126,31 @@ public class NameFeatureController extends SimpleFormController {
                     }
                 }
                 model.put("polypeptide", polypeptide);
-                String seqString = FeatureUtils.getResidues(polypeptide);
-                Alphabet protein = ProteinTools.getAlphabet();
-        		SymbolTokenization proteinToke = null;
-        		SymbolList seq = null;
-        		PeptideProperties pp = new PeptideProperties();
-        		try {
-        			proteinToke = protein.getTokenization("token");
-        			seq = new SimpleSymbolList(proteinToke, seqString);
-        			System.out.println("symbol list is : " + seq);
-        		} catch (BioException e) {
-        			System.out.println("in exception : " );
-        			e.printStackTrace();
-        		}
-    			IsoelectricPointCalc ipc = new IsoelectricPointCalc();
-    			Double cal = ipc.getPI(seq, true, true);
-    			DecimalFormat df = new DecimalFormat("#.##");
-    			pp.setIsoelectricPoint(df.format(cal));
-    			pp.setAminoAcids(Integer.toString(seqString.length()));
-    			MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
-    			cal = mc.getMass(seq) / 1000;
-    			pp.setMass(df.format(cal));
-    			
-    			cal = WebUtils.getCharge(seq);
-    			pp.setCharge(df.format(cal));
-    			model.put("polyprop", pp);
+//                String seqString = FeatureUtils.getResidues(polypeptide);
+//                Alphabet protein = ProteinTools.getAlphabet();
+//        		SymbolTokenization proteinToke = null;
+//        		SymbolList seq = null;
+//        		PeptideProperties pp = new PeptideProperties();
+//        		try {
+//        			proteinToke = protein.getTokenization("token");
+//        			seq = new SimpleSymbolList(proteinToke, seqString);
+//        			System.out.println("symbol list is : " + seq);
+//        		} catch (BioException e) {
+//        			System.out.println("in exception : " );
+//        			e.printStackTrace();
+//        		}
+//    			IsoelectricPointCalc ipc = new IsoelectricPointCalc();
+//    			Double cal = ipc.getPI(seq, true, true);
+//    			DecimalFormat df = new DecimalFormat("#.##");
+//    			pp.setIsoelectricPoint(df.format(cal));
+//    			pp.setAminoAcids(Integer.toString(seqString.length()));
+//    			MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
+//    			cal = mc.getMass(seq) / 1000;
+//    			pp.setMass(df.format(cal));
+//    			
+//    			cal = WebUtils.getCharge(seq);
+//    			pp.setCharge(df.format(cal));
+//    			model.put("polyprop", pp);
             }
 
         }
