@@ -5,7 +5,7 @@
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:header>
 
-<p>See <a href="http://www.genedb.org/genedb/Search?organism=All&name=${feature.uniqueName}">corresponding gene</a> in production GeneDB</p>
+<p>See <a href="http://www.genedb.org/genedb/Search?organism=All:*&name=${feature.uniqueName}">corresponding gene</a> in production GeneDB</p>
 
 <st:section name="Naming" id="gene_naming" collapsed="false" collapsible="false" hideIfEmpty="true">
         
