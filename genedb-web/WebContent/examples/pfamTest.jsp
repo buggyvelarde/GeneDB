@@ -1,12 +1,12 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<script src="/genedb-web/includes/scripts/script.aculo.us/prototype.js" type="text/javascript"></script>
-<script src="/genedb-web/includes/scripts/script.aculo.us/scriptaculous.js" type="text/javascript"></script>
-<script src="/genedb-web/includes/scripts/autocomplete.js" type="text/javascript"></script>
-<script src="/genedb-web/includes/scripts/spring-util.js" type="text/javascript"></script>
-<script src='/genedb-web/dwr/interface/PfamLookup.js' type="text/javascript"></script>
-<script src='/genedb-web/dwr/engine.js' type="text/javascript"></script>
-<script src='/genedb-web/dwr/util.js' type="text/javascript"></script>
+<script src="<c:url value="/includes/scripts/script.aculo.us/prototype.js"/>" type="text/javascript"></script>
+<script src="<c:url value="/includes/scripts/script.aculo.us/scriptaculous.js"/>" type="text/javascript"></script>
+<script src="<c:url value="/includes/scripts/autocomplete.js"/>" type="text/javascript"></script>
+<script src="<c:url value="/includes/scripts/spring-util.js"/>" type="text/javascript"></script>
+<script src='<c:url value="/dwr/interface/PfamLookup.js"/>' type="text/javascript"></script>
+<script src='<c:url value="/dwr/engine.js"/>' type="text/javascript"></script>
+<script src='<c:url value="/dwr/util.js"/>' type="text/javascript"></script>
 
 <script type="text/javascript" language="javascript">
 // <!CDATA[
