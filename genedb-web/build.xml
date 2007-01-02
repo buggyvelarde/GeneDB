@@ -17,10 +17,40 @@
 	
 	<target name="make-all-and-deploy" depends="make-other-projects, compile, deploy"/>
 	
-	<target name="compile">
-	</target>
+	<!-- ================================= 
+          target: compile             
+         ================================= -->
+    <target name="compile" depends="" 
+    	description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
+
+		<copy todir="ant-build/src-interface">
+			<fileset dir="src">
+			    <include name="org/gmod/schema/**/*.java"/>
+			</fileset>
+		</copy>
+    	
+    	<mkdir dir="ant-build/classes"/>
+		<javac srcdir="src" classpathref="tools-interface-compile-lib" destdir="ant-build/classes" debug="on" />
+    	
+		<jar jarfile="ant-build/jars/chado-interface.jar">
+			<fileset dir="ant-build/classes-interface" />
+			<manifest>
+				<attribute name="Implementation-Title" value="Chado Interface"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+			</manifest>
+		</jar>
+    	
+    </target>
 	
 	<target name="deploy">
+			<copy todir="${finaldest.webapps}.tmp">
+				<fileset dir="${webapp.staging}" casesensitive="false" followSymLinks="false" />
+			</copy>
+	    	<delete dir="${finaldest.webapps}.old" failonerror="false"/>
+			<!-- Do  moves, then rm -->
+			<move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" />
+			<move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
+
 	</target>
 	
 </project>
