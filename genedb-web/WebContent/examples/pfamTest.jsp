@@ -27,7 +27,7 @@
 
 
 <body onload="DWRUtil.useLoadingMessage(); createAutoCompleter()">
-<format:header name="pfamTest">Welcome to the GeneDB website<br />Version 4.0</format:header>
+<format:header name="pfamTest" />
 
 <h3>Pfam parameter test</h3>
 
