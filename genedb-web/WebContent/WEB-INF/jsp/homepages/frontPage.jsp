@@ -124,7 +124,7 @@
 																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=PF08_0098">New malaria example</a></li>
 																				<li id="mainlevel-nav"><a href="http://localhost:8080/genedb-web/Genome/Trypanasoma_brucei_brucei/current">Common URL</a></li>
 																				<li id="mainlevel-nav"><a href="./Admin/LockExaminer">Lock examiner</a></li>
-																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760">New pombe example</a></li>
+																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=SPCC1223.06">New pombe example</a></li>
 																				<li id="mainlevel-nav"><a href="<c:url value="/Search/BooleanQuery?taxId=12345"/>">Boolean query page</a></li>
 																				<li id="mainlevel-nav"><a href="./Search/FindCvByName"/>CV Browser (check)</a></li>
 																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760">New pombe alt-splicing example</a></li>
