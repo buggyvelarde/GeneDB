@@ -14,9 +14,9 @@ function toggleSection(section, path) {
 }
 
 function getImage(path, expanded) {
-	img = path + "/includes/images/tri.gif";
+	img = path + "includes/images/tri.gif";
 	if (expanded) {
-		img = path + "/includes/images/tridown.gif";
+		img = path + "includes/images/tridown.gif";
 	}
 	return img;
 }
