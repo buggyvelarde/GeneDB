@@ -15,7 +15,7 @@
 	<c:set var="imgLoc">${contextPath}includes/images/tridown.gif"</c:set>
 </c:if>
 
-<p class="section"><img id="sect_${id}_image" src="${imgLoc}" onclick="toggleSection('${id}', ${contextPath})"/>&nbsp;${name}</p>
+<p class="section"><img id="sect_${id}_image" src="${imgLoc}" onclick="toggleSection('${id}', '${contextPath}')"/>&nbsp;${name}</p>
 <div class="section-body" id="sect_${id}_content" <c:if test="${collapsed}">style="display:none"</c:if>>
 <jsp:doBody />
 </div>
