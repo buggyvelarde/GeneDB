@@ -45,12 +45,12 @@ public class BrowseBean implements InitializingBean {
 	}
 
 	public List<String> getPossibleMatches(String search) {
-        //return cvDao.getPossibleMatches(search, cv, limit);
-        List<String> results = new ArrayList<String>();
-        results.add("a");
-        results.add("b");
-        results.add("c");
-        return results;
+        return cvDao.getPossibleMatches(search, cv, limit);
+//        List<String> results = new ArrayList<String>();
+//        results.add("a");
+//        results.add("b");
+//        results.add("c");
+//        return results;
 	}
     
     public List<CountedName> getAllTerms() {
