@@ -7,6 +7,7 @@ import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.utils.CountedName;
 
+import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -122,6 +123,7 @@ public class CvDao extends BaseDao implements CvDaoI {
 			}
 		}
 
+        
 		public CvTerm getCvTermByDbXRef(DbXRef dbXRef) {
 			List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
 					"from CvTerm cvt where cvt.dbXRef = :dbXRef","dbXRef" , dbXRef);
@@ -132,14 +134,22 @@ public class CvDao extends BaseDao implements CvDaoI {
 			}
 		}
 
-        public List<CountedName> getAllTerms() {
-            // TODO Auto-generated method stub
-            return null;
+        
+        // TODO Should this just return genes?
+        public List<CountedName> getAllTermsInCvWithCount(Cv cv) {
+            return getHibernateTemplate().findByNamedParam("select new CountedName(cvt.name,count(f.uniqueName))" +
+                    " from CvTerm cvt,FeatureCvTerm fct,Feature f " +
+            "where f=fct.feature and cvt=fct.cvTerm and cvt.cv=:cv group by cvt.name",
+            new String[]{"cv"}, new Object[]{cv});
         }
 
-        public List<String> getPossibleMatches(String search, Cv cv) {
-            // TODO Auto-generated method stub
-            return null;
+        // TODO Use limit
+        public List<String> getPossibleMatches(String search, Cv cv, int limit) {
+            HibernateTemplate ht = getHibernateTemplate();
+            ht.setMaxResults(limit);
+            return ht.findByNamedParam(
+            "from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv = :cv",
+            new String[]{"cvTermName", "cv"}, new Object[]{"%"+search+"%", cv});
         }
 
 }

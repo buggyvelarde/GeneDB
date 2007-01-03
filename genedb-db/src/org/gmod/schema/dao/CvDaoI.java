@@ -111,8 +111,8 @@ public interface CvDaoI {
     public boolean existsNameInOntology(String name, Cv ontology);
 
 
-    public List<String> getPossibleMatches(String search, Cv cv);
+    public List<String> getPossibleMatches(String search, Cv cv, int limit);
 
-    public List<CountedName> getAllTerms();
+    public List<CountedName> getAllTermsInCvWithCount(Cv cv);
 
 }
