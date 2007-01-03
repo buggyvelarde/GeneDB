@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
- <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
-	"http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd"> -->
 
 <!--
   - DispatcherServlet application context for GeneDB's web tier.
 	-->
-<beans>
-<!--  xlmns="http://www.springframework.org/schema/beans"
+<beans xlmns="http://www.springframework.org/schema/beans"
 	xlmns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xlmns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -25,6 +24,12 @@
 	</bean>
 	
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+    <bean id="go-component-bean" class="org.genedb.web.mvc.controller.BrowseBean">
+        <property name="cvDao"  ref="cvDao" />
+        <property name="sequenceDao"  ref="sequenceDao" />
+        <property name="cvName"  value="biological_process" />
+    </bean>
 
 	<!--
 	  - This bean provides explicit View mappings in a resource bundle instead of the
