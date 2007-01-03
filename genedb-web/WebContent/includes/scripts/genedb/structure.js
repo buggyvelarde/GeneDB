@@ -9,11 +9,10 @@ function toggleSection(section, path) {
 	} else {
 		Effect.Appear(div);
 	}
-
-	img.src = getImage(path, !visible);
+	img.src = getToggleImage(path, !visible);
 }
 
-function getImage(path, expanded) {
+function getToggleImage(path, expanded) {
 	img = path + "includes/images/tri.gif";
 	if (expanded) {
 		img = path + "includes/images/tridown.gif";
