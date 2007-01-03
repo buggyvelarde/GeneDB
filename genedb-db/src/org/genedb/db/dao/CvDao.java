@@ -5,6 +5,7 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.utils.CountedName;
 
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -130,5 +131,15 @@ public class CvDao extends BaseDao implements CvDaoI {
 				return cvTermList.get(0);
 			}
 		}
+
+        public List<CountedName> getAllTerms() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public List<String> getPossibleMatches(String search, Cv cv) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
 }

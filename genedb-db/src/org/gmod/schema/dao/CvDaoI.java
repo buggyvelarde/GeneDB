@@ -23,6 +23,7 @@ package org.gmod.schema.dao;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.utils.CountedName;
 
 import java.util.List;
 
@@ -107,8 +108,11 @@ public interface CvDaoI {
      */
     public abstract CvTerm getCvTermByDbXRef(DbXRef dbXRef);
 
-public boolean existsNameInOntology(String name, Cv ontology);
+    public boolean existsNameInOntology(String name, Cv ontology);
 
 
+    public List<String> getPossibleMatches(String search, Cv cv);
+
+    public List<CountedName> getAllTerms();
 
 }
