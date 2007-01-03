@@ -1,7 +1,5 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<script src="<c:url value="/includes/scripts/script.aculo.us/prototype.js"/>" type="text/javascript"></script>
-<script src="<c:url value="/includes/scripts/script.aculo.us/scriptaculous.js"/>" type="text/javascript"></script>
 <script src="<c:url value="/includes/scripts/autocomplete.js"/>" type="text/javascript"></script>
 <script src="<c:url value="/includes/scripts/spring-util.js"/>" type="text/javascript"></script>
 <script src='<c:url value="/dwr/interface/goProcessBrowse.js"/>' type="text/javascript"></script>
@@ -27,7 +25,7 @@
 
 
 <body onload="DWRUtil.useLoadingMessage(); createAutoCompleter()">
-<format:header name="DWR/Scriptaculous autocomplete test" />
+<format:header name="DWR/YUI autocomplete test" />
 
 <p>Imagine you've just chosen a "Select genes with a specific GO process"</p>
 
