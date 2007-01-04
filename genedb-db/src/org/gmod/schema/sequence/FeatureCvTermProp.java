@@ -153,7 +153,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
      * 
      * @see featureCvTerm
      */
-    private FeatureCvTerm getFeatureCvTerm() {
+    public FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
     
@@ -163,7 +163,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
      * 
      * @see featureCvTerm
      */
-    private void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
+    public void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }
     
