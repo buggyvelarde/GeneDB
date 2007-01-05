@@ -150,6 +150,9 @@
         <property name="methodNameResolver" ref="historyControllerResolver"/>
     </bean>
     
+       
+    <bean id="StaticController" class="org.genedb.web.mvc.controller.StaticController"/>
+    
     <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NameFeatureController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
