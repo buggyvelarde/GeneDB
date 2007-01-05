@@ -2,6 +2,47 @@
 
 <project name="genedb-web" default="get-latest-jars" basedir=".">
 
+	<!-- Paths/Properties you may have to change -->
+	
+	<property name="version" value="0.2"/>
+	<property name="jar-build" value="ant-build/jar-build"/>
+	<property name="lib-dir" value="WebContent/WEB-INF/lib"/>
+	<property name="finaldest.webapps" value="/software/pathogen/projects/genedb/byhand/webapps/ROOT"/>
+	
+	<!-- Classpaths -->
+	
+	<path id="compile-lib">
+		<path location="${lib-dir}/spring-2.0.1.jar" />
+	        <path location="${lib-dir}/genedb-hibernate.jar" />
+	        <path location="${lib-dir}/genedb-access.jar" />
+	        <path location="${lib-dir}/chado-interface.jar" />
+	        <path location="${lib-dir}/genedb-query.jar" />
+	        <path location="${lib-dir}/jstl.jar" />
+	        <path location="${lib-dir}/jdom.jar" />
+	        <path location="${lib-dir}/cgview.jar" />
+	        <path location="${lib-dir}/commons-lang-2.1.jar" />
+	        <path location="${lib-dir}/biojava-1.5-beta.jar" />
+	        <path location="${lib-dir}/displaytag-1.1.jar" />
+	        <path location="${lib-dir}/commons-logging.jar" />
+	        <path location="${lib-dir}/ejb3-persistence.jar" />
+		<path location="${lib-dir}/hibernate-annotations.jar" />
+		<path location="lib/servlet-api.jar" />
+		<path location="lib/jsp-api.jar" />
+	</path>
+	
+	<target name="wrong-setup" >
+		<mkdir dir="ant-build" />
+		<mkdir dir="ant-build/src-interface" />
+		<mkdir dir="ant-build/classes-interface" />
+		<mkdir dir="ant-build/src-implementation" />
+		<mkdir dir="ant-build/classes-implementation" />
+		<mkdir dir="ant-build/src-1.4-interface" />
+		<mkdir dir="ant-build/classes-1.4-interface-pre" />
+		<mkdir dir="ant-build/classes-1.4-interface-post" />
+		<mkdir dir="ant-build/jars" />
+	</target>
+	
+
 	<target name="get-latest-jars" depends="" 
 		description="Copy over JAR files from other projects">
 		<copy file="../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="WebContent/WEB-INF/lib" />
@@ -11,6 +52,7 @@
 	
 	<target name="make-other-projects">
 		<ant dir="../genedb-db" target="alljars" />
+		<ant dir="../genedb-access" target="get-latest-jars" />
 		<ant dir="../genedb-access" target="genedb-access.jar" />
 		<antcall target="get-latest-jars"/>
 	</target>
@@ -21,35 +63,36 @@
           target: compile             
          ================================= -->
     <target name="compile" depends="" 
-    	description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
+    	description="--> Compile classes">
 
-		<copy todir="ant-build/src-interface">
-			<fileset dir="src">
-			    <include name="org/gmod/schema/**/*.java"/>
-			</fileset>
-		</copy>
-    	
     	<mkdir dir="ant-build/classes"/>
-		<javac srcdir="src" classpathref="tools-interface-compile-lib" destdir="ant-build/classes" debug="on" />
+		<javac srcdir="src" classpathref="compile-lib" destdir="ant-build/classes" debug="on">
+<compilerarg line="-Xlint:unchecked" />
+</javac>
     	
-		<jar jarfile="ant-build/jars/chado-interface.jar">
+<!--		<jar jarfile="ant-build/jars/chado-interface.jar">
 			<fileset dir="ant-build/classes-interface" />
 			<manifest>
 				<attribute name="Implementation-Title" value="Chado Interface"/>
 				<attribute name="Implementation-Version" value="${version}"/>
 			</manifest>
-		</jar>
+		</jar> -->
     	
     </target>
 	
 	<target name="deploy">
-			<copy todir="${finaldest.webapps}.tmp">
-				<fileset dir="${webapp.staging}" casesensitive="false" followSymLinks="false" />
-			</copy>
-	    	<delete dir="${finaldest.webapps}.old" failonerror="false"/>
-			<!-- Do  moves, then rm -->
-			<move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" />
-			<move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
+	   <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
+	   <copy todir="${finaldest.webapps}.tmp">
+	      <fileset dir="WebContent" casesensitive="false" followSymLinks="false" />
+	   </copy>
+	   <copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
+	      <fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
+	   </copy>
+<echo>About to delete ${finaldest.webapps}.old</echo>
+	   <delete dir="${finaldest.webapps}.old" failonerror="false"/>
+	   <move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
+	   <move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
+	   <delete dir="${finaldest.webapps}.old" failonerror="false"/> <!-- temp hack -->
 
 	</target>
 	
