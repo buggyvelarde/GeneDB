@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
-	"http://www.springframework.org/dtd/spring-beans.dtd"> -->
-
-<!--
-  - DispatcherServlet application context for GeneDB's web tier.
-	-->
-<beans xlmns="http://www.springframework.org/schema/beans"
-	xlmns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xlmns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
-	init-method="postConstruction"> -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+        http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd"
+	default-init-method="postConstruction">
 
 	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
@@ -25,11 +21,22 @@
 	
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
 
-    <bean id="go-component-bean" class="org.genedb.web.mvc.controller.BrowseBean">
-        <property name="cvDao"  ref="cvDao" />
-        <property name="sequenceDao"  ref="sequenceDao" />
+    <bean id="goProcessBrowse" class="org.genedb.web.mvc.controller.BrowseBean">
+        <dwr:remote javascript="goProcessBrowse">
+           <dwr:include method="getPossibleMatches" />
+        </dwr:remote>
+        <property name="cvDaoI"  ref="cvDao" />
+        <property name="sequenceDaoI"  ref="sequenceDao" />
         <property name="cvName"  value="biological_process" />
     </bean>
+
+    <dwr:controller id="dwrController" debug="true"/>
+
+    <dwr:configuration>
+       <!-- <dwr:create type="new" javascript="AjaxHelper" class="com.interface21.springone.AjaxHelper"/>
+        <dwr:convert type="bean" class="com.interface21.springone.data.Person"/> -->
+    </dwr:configuration>
+
 
 	<!--
 	  - This bean provides explicit View mappings in a resource bundle instead of the
@@ -82,6 +89,16 @@
 	</bean>
 
 
+    <bean id="dwrHandlerMappings" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="order" value="1" />
+        <property name="alwaysUseFullPath" value="true"></property>
+        <property name="mappings">
+            <props>
+                <prop key="/dwr/**/*">dwrController</prop>
+            </props>
+        </property>
+    </bean>
+
 	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
 
 	<!--
@@ -94,10 +111,10 @@
 <!--	</bean>-->
 <!--    -->
 <!---->
-    <bean id="commonURLController" class="org.genedb.web.mvc.controller.GenomeController">
+<!--    <bean id="commonURLController" class="org.genedb.web.mvc.controller.GenomeController"> -->
          <!-- <property name="methodNameResolver" ref="genedbControllerResolver"/> -->
-         <property name="root" ref="org-Root" />
-    </bean>
+<!--         <property name="root" ref="org-Root" />
+    </bean> -->
 
 	<!--
 	  - This bean is a MethodNameResolver definition for a MultiActionController.
@@ -133,7 +150,7 @@
         <property name="methodNameResolver" ref="historyControllerResolver"/>
     </bean>
     
-    <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
+    <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NameFeatureController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="nameLookup"/>
@@ -297,9 +314,9 @@
     
 	<bean id="HomepageController" class="org.genedb.web.mvc.controller.HomepageController" />
     
-	<bean id="OrganismController" class="org.genedb.web.mvc.controller.OrganismController">
+<!--	<bean id="OrganismController" class="org.genedb.web.mvc.controller.OrganismController">
 		<property name="root" ref="org-Root" />
-    </bean>
+    </bean> -->
     
     <!--
       - This bean is a MethodNameResolver definition for a MultiActionController.
