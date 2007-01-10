@@ -119,6 +119,8 @@ public class Feature implements java.io.Serializable {
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
     private Collection<FeatureSynonym> featureSynonyms;
     
+    private FeatureLoc featureLoc;
+    
      // Constructors
 
     /** default constructor */
@@ -558,7 +560,15 @@ public class Feature implements java.io.Serializable {
         }
         return null;
     }
+    
+    public FeatureLoc getFeatureLoc()
+    {
+      return featureLoc;
+    }
+
+    public void setFeatureLoc(FeatureLoc featureLoc)
+    {
+      this.featureLoc = featureLoc;
+    }
 
 }
-
-
