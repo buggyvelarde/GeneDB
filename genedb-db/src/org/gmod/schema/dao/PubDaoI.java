@@ -25,6 +25,7 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.pub.PubProp;
+import org.gmod.schema.pub.PubDbXRef;
 
 public interface PubDaoI {
 
@@ -46,6 +47,12 @@ public interface PubDaoI {
 
     
     public Pub getPubByDbXRef(DbXRef dbXRef);
+    
+    /**
+     * Get a list of all PubDbXRef's
+     * @return list of PubDbXRef's
+     */
+    public List<PubDbXRef> getPubDbXRef();
     
         /**
      * Retrieve the publication property with Pub and Cvterm
