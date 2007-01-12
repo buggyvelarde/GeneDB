@@ -214,14 +214,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getCvTerm()
      */
-    private CvTerm getCvTerm() {
+    public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setCvTerm(org.gmod.schema.cv.CvTermI)
      */
-    private void setCvTerm(CvTerm cvTerm) {
+    public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
     
@@ -236,7 +236,7 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setTitle(java.lang.String)
      */
-    private void setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
     
@@ -244,14 +244,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getVolumeTitle()
      */
-    private String getVolumeTitle() {
+    public String getVolumeTitle() {
         return this.volumeTitle;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setVolumeTitle(java.lang.String)
      */
-    private void setVolumeTitle(String volumeTitle) {
+    public void setVolumeTitle(String volumeTitle) {
         this.volumeTitle = volumeTitle;
     }
     
@@ -259,14 +259,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getVolume()
      */
-    private String getVolume() {
+    public String getVolume() {
         return this.volume;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setVolume(java.lang.String)
      */
-    private void setVolume(String volume) {
+    public void setVolume(String volume) {
         this.volume = volume;
     }
     
@@ -274,14 +274,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getSeriesName()
      */
-    private String getSeriesName() {
+    public String getSeriesName() {
         return this.seriesName;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setSeriesName(java.lang.String)
      */
-    private void setSeriesName(String seriesName) {
+    public void setSeriesName(String seriesName) {
         this.seriesName = seriesName;
     }
     
@@ -289,14 +289,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getIssue()
      */
-    private String getIssue() {
+    public String getIssue() {
         return this.issue;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setIssue(java.lang.String)
      */
-    private void setIssue(String issue) {
+    public void setIssue(String issue) {
         this.issue = issue;
     }
     
@@ -304,14 +304,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPyear()
      */
-    private String getPyear() {
+    public String getPyear() {
         return this.pyear;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setPyear(java.lang.String)
      */
-    private void setPyear(String pyear) {
+    public void setPyear(String pyear) {
         this.pyear = pyear;
     }
     
@@ -319,14 +319,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPages()
      */
-    private String getPages() {
+    public String getPages() {
         return this.pages;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setPages(java.lang.String)
      */
-    private void setPages(String pages) {
+    public void setPages(String pages) {
         this.pages = pages;
     }
     
@@ -334,14 +334,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getMiniRef()
      */
-    private String getMiniRef() {
+    public String getMiniRef() {
         return this.miniRef;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setMiniRef(java.lang.String)
      */
-    private void setMiniRef(String miniRef) {
+    public void setMiniRef(String miniRef) {
         this.miniRef = miniRef;
     }
     
@@ -364,14 +364,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getobsolete()
      */
-    private Boolean getObsolete() {
+    public Boolean getObsolete() {
         return this.obsolete;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setobsolete(java.lang.Boolean)
      */
-    private void setObsolete(Boolean obsolete) {
+    public void setObsolete(Boolean obsolete) {
         this.obsolete = obsolete;
     }
     
@@ -379,14 +379,14 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPublisher()
      */
-    private String getPublisher() {
+    public String getPublisher() {
         return this.publisher;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setPublisher(java.lang.String)
      */
-    private void setPublisher(String publisher) {
+    public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
     
@@ -394,42 +394,42 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPubPlace()
      */
-    private String getPubPlace() {
+    public String getPubPlace() {
         return this.pubPlace;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setPubPlace(java.lang.String)
      */
-    private void setPubPlace(String pubPlace) {
+    public void setPubPlace(String pubPlace) {
         this.pubPlace = pubPlace;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPubAuthors()
      */
-    private Collection<PubAuthor> getPubAuthors() {
+    public Collection<PubAuthor> getPubAuthors() {
         return this.pubAuthors;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setPubAuthors(java.util.Set)
      */
-    private void setPubAuthors(Set<PubAuthor> pubAuthors) {
+    public void setPubAuthors(Set<PubAuthor> pubAuthors) {
         this.pubAuthors = pubAuthors;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getPubRelationshipsForObjectId()
      */
-    private Collection<PubRelationship> getPubRelationshipsForObjectId() {
+    public Collection<PubRelationship> getPubRelationshipsForObjectId() {
         return this.pubRelationshipsForObjectId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setPubRelationshipsForObjectId(java.util.Set)
      */
-    private void setPubRelationshipsForObjectId(Set<PubRelationship> pubRelationshipsForObjectId) {
+    public void setPubRelationshipsForObjectId(Set<PubRelationship> pubRelationshipsForObjectId) {
         this.pubRelationshipsForObjectId = pubRelationshipsForObjectId;
     }
 
