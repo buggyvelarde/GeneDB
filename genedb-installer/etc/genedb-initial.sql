@@ -229,7 +229,10 @@ insert into cv (name, definition)
        
 insert into cv (name, definition)
        values ('genedb_synonym_type', 'GeneDB-specific cv for more specific naming');
-       
+
+insert into cv (name, definition)
+		values ('CC_genedb_controlledcuration', 'GeneDB-specific cv for controlled curation terms');
+      
 insert into cv (name, definition)
        values ('genedb_fcvt_prop_keys', 'Specific values which are used as keys for looking up feature_cvterm_prop');       
 
