@@ -142,7 +142,9 @@
 		<jar jarfile="ant-build/jars/genedb-hibernate.jar">
 			<fileset dir="ant-build/classes-implementation">
 				<include name="**/*.class"/>
-			    <include name="input/org/gmod/**/*.hbm.xml" />
+			</fileset>
+			<fileset dir="input">
+			    <include name="org/gmod/**/*.hbm.xml" />
 			</fileset>
 			<manifest>
 				<attribute name="Implementation-Title" value="GeneDB Hibernate"/>
@@ -176,7 +178,8 @@
     	
  	    <retrotranslator destdir="ant-build/classes-1.4-interface-post" verify="true">
 	        <src path="ant-build/classes-1.4-interface-pre"/>
-	        <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/>
+	        <!-- <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/> -->
+	        <classpath location="/software/pathogen/external/applications/java/jdk1.6.0/jre/lib/rt.jar"/>
 	        <classpath refid="tools-translate-lib"/>
 	    </retrotranslator>
     	
