@@ -27,8 +27,7 @@ import org.gmod.schema.utils.CountedName;
 
 import java.util.List;
 
-public interface CvDaoI {
-
+public interface CvDaoI extends BaseDaoI {
     
     /**
      * Get a CV by id

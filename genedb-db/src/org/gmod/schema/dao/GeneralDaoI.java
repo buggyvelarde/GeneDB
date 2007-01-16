@@ -24,7 +24,7 @@ import org.gmod.schema.general.DbXRef;
 
 
 
-public interface GeneralDaoI {
+public interface GeneralDaoI extends BaseDaoI{
 
     /**
      * Retrieve a database by name

@@ -23,7 +23,7 @@ import org.gmod.schema.organism.Organism;
 
 import java.util.List;
 
-public interface OrganismDaoI {
+public interface OrganismDaoI extends BaseDaoI {
 
     /**
      * Get the organism corresponding to this id

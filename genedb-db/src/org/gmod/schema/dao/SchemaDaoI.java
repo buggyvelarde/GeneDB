@@ -23,7 +23,7 @@ package org.gmod.schema.dao;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface SchemaDaoI {
+public interface SchemaDaoI extends BaseDaoI {
 
     /**
      * Given a list of distict cvterm_id/type_id's of feature types

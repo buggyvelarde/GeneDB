@@ -27,7 +27,7 @@ import org.gmod.schema.pub.Pub;
 import org.gmod.schema.pub.PubProp;
 import org.gmod.schema.pub.PubDbXRef;
 
-public interface PubDaoI {
+public interface PubDaoI extends BaseDaoI {
 
     /**
      * Retrieve the publication with this primary key

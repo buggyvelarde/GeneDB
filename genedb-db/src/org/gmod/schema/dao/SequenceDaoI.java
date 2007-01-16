@@ -33,7 +33,7 @@ import org.gmod.schema.utils.CountedName;
 
 import java.util.List;
 
-public interface SequenceDaoI {
+public interface SequenceDaoI extends BaseDaoI {
 
     /**
      * Return the feature corresponding to this feature_id 

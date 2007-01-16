@@ -27,7 +27,7 @@ import java.util.List;
 
 
 
-public interface PhylogenyDaoI {
+public interface PhylogenyDaoI extends BaseDaoI {
 
     public Phylotree getPhyloTreeByName(String name);
     
