@@ -162,6 +162,16 @@ public class FeatureUtils implements InitializingBean {
 		DUMMY_PUB = dummyPub;
 	}
     
+    private static FeatureLoc getZeroRankFeatureLoc(Feature f) {
+        Collection <FeatureLoc> collection = f.getFeatureLocsForSrcFeatureId();
+        for (FeatureLoc loc : collection) {
+            if (loc.getRank() == 0) {
+                return loc;
+            }
+        }
+        return null;
+    }
+    
     public static String getResidues(Feature feature){
     	String residues = null;
     	residues = new String(feature.getResidues());
@@ -179,9 +189,10 @@ public class FeatureUtils implements InitializingBean {
     			Collection<FeatureRelationship> fr = feature.getFeatureRelationshipsForSubjectId();
     			for (FeatureRelationship relationship : fr) {
 					Feature gene = relationship.getFeatureByObjectId();
-					Feature toplevel = gene.getFeatureLoc().getFeatureBySrcFeatureId();
+                    FeatureLoc parentLoc = getZeroRankFeatureLoc(gene);
+					Feature toplevel = parentLoc.getFeatureBySrcFeatureId();
 					String temp = new String(toplevel.getResidues());
-					residues = temp.substring(gene.getFeatureLoc().getFmin(),gene.getFeatureLoc().getFmax());
+					residues = temp.substring(parentLoc.getFmin(),parentLoc.getFmax());
 					return residues;
 				}
     		} else {
