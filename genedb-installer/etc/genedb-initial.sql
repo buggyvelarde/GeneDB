@@ -206,13 +206,13 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select dbxref_id from dbxref where accession='genedb_misc:isolectric_point'),
 		0, 0); 
 		
-#insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:top_level_seq');
-#insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
-#		values ((select cv_id from cv where name='genedb_misc'), 
-#		'top_level_seq',
-#		'Marker to indicate that a sequence should be considered a top level feature',
-#		(select dbxref_id from dbxref where accession='genedb_misc:top_level_seq'),
-#		0, 0); 
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:top_level_seq');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_misc'), 
+		'top_level_seq',
+		'Marker to indicate that a sequence should be considered a top level feature',
+		(select dbxref_id from dbxref where accession='genedb-misc:top_level_seq'),
+		0, 0); 
 		
 		
 insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:taxonomy');
@@ -222,19 +222,133 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		'Marker to indicate that a sequence should be considered a top level feature',
 		(select dbxref_id from dbxref where accession='genedb_misc:taxonomy'),
 		0, 0); 
+		
+		
+		
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'autocreated:note');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='autocreated'), 
+		'note',
+		'Free text comment field',
+		(select dbxref_id from dbxref where accession='autocreated:note'),
+		0, 0); 
+       
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'autocreated:curation');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='autocreated'), 
+		'curation',
+		'Free text note field for local curation',
+		(select dbxref_id from dbxref where accession='autocreated:curation'),
+		0, 0); 
+		
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'autocreated:private');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='autocreated'), 
+		'private',
+		'Free text note field for comments not to be made publicly visible',
+		(select dbxref_id from dbxref where accession='autocreated:private'),
+		0, 0); 
+		
+		
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_fcvt_prop_keys:evidence');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_fcvt_prop_keys'), 
+		'evidence',
+		'Free text note field for supporting evidence',
+		(select dbxref_id from dbxref where accession='genedb_fcvt_prop_keys:evidence'),
+		0, 0); 
+		
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_fcvt_prop_keys:qualifier');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_fcvt_prop_keys'), 
+		'qualifier',
+		'qualifier',
+		(select dbxref_id from dbxref where accession='genedb_fcvt_prop_keys:qualifier'),
+		0, 0); 
        
        
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_fcvt_prop_keys:date');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_fcvt_prop_keys'), 
+		'date',
+		'date',
+		(select dbxref_id from dbxref where accession='genedb_fcvt_prop_keys:date'),
+		0, 0); 
+		
 insert into cv (name, definition)
        values ('genedb_literature', 'GeneDB-specific vocab for types of literature eg paper');
        
 insert into cv (name, definition)
        values ('genedb_synonym_type', 'GeneDB-specific cv for more specific naming');
 
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_synonym_type:reserved_name');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_synonym_type'), 
+		'reserved_name',
+		'A name reserved for future use eg a paper pending',
+		(select dbxref_id from dbxref where accession='genedb_synonym_type:reserved_name'),
+		0, 0); 
+              
+
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_synonym_type:synonym');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_synonym_type'), 
+		'synonym',
+		'synonym',
+		(select dbxref_id from dbxref where accession='genedb_synonym_type:synonym'),
+		0, 0); 
+		
+		
+		
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_synonym_type:primary_name');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_synonym_type'), 
+		'primary_name',
+		'eg gene symbol',
+		(select dbxref_id from dbxref where accession='genedb_synonym_type:primary_name'),
+		0, 0); 
+		
+		
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_synonym_type:protein_name');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_synonym_type'), 
+		'protein_name',
+		'Specific name for the protein - may be different from gene symbol',
+		(select dbxref_id from dbxref where accession='genedb_synonym_type:protein_name'),
+		0, 0); 
+		
+		
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_synonym_type:systematic_id');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_synonym_type'), 
+		'systematic_id',
+		'Unique, permanent, accession name for feature',
+		(select dbxref_id from dbxref where accession='genedb_synonym_type:systematic_id'),
+		0, 0);        
+
+		
+		
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_synonym_type:temporary_systematic_id');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_synonym_type'), 
+		'temporary_systematic_id',
+		'Unique accession name for feature. Unstable - will change in future',
+		(select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
+		0, 0);  
+	
+		
 insert into cv (name, definition)
 		values ('CC_genedb_controlledcuration', 'GeneDB-specific cv for controlled curation terms');
-      
+
+insert into cv (name, definition)
+		values ('genedb_products', 'GeneDB-specific cv for products');
+ 
+
 insert into cv (name, definition)
        values ('genedb_fcvt_prop_keys', 'Specific values which are used as keys for looking up feature_cvterm_prop');       
+
+
+
 
        
 -- Load phylogeny relationships
