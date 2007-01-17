@@ -6,6 +6,8 @@ import org.gmod.schema.dao.SequenceDaoI;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermDbXRef;
+import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
@@ -35,6 +37,14 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
             return (Feature) features.get(0);
         }
         return null;
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<Feature> getFeaturesByUniqueName(String name) {
+        List features = getHibernateTemplate().findByNamedParam(
+                "from Feature f where f.uniqueName like :name", "name", name);
+        return features;
     }
 
     /* (non-Javadoc)
@@ -293,4 +303,24 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 		return features;
 
 	}
+
+    public List<Feature> getAllFeatureSynonymsAsFeature() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<FeatureCvTermDbXRef> getFeatureCvTermDbXRefByFeature(Feature feature) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<FeatureCvTermPub> getFeatureCvTermPubByFeature(Feature feature) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<FeatureCvTerm> getFeatureCvTermsByFeature(Feature feature) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

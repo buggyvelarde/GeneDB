@@ -1,5 +1,6 @@
 package org.genedb.db.dao;
 
+import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.pub.PubProp;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.PubDaoI;
@@ -67,6 +68,12 @@ public class PubDao extends BaseDao implements PubDaoI {
     	List<PubProp> list = getHibernateTemplate().findByNamedParam(
     			"from PubProp pp where pp.pub=:pub and pp.cvTerm=:cvTerm",new String[]{"pub","cvTerm"},new Object[]{pub,cvTerm});
     	return list;
+    }
+
+    
+    public List<PubDbXRef> getPubDbXRef() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

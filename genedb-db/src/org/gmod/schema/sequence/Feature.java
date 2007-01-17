@@ -278,7 +278,7 @@ public class Feature implements java.io.Serializable {
      * @return the length
      */
     public int getSeqLen() {
-        if (this.seqLen.intValue() == -1) {
+        if (this.seqLen.intValue() == -1 && residues != null) {
             return getResidues().length;
         }
         return this.seqLen.intValue();
