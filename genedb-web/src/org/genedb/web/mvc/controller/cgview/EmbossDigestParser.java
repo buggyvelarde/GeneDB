@@ -51,7 +51,7 @@ public class EmbossDigestParser implements InitializingBean {
             if (line.startsWith("#")) {
                 continue;
             }
-            int space = line.indexOf(" ");
+            int space = line.indexOf("\t");
             if (space>1) {
                 digests.add(line.substring(0, space));
             } else {
