@@ -48,7 +48,12 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.Hashtable;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,28 +76,28 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
 
     private static final String contextPath = "/genedb-web/";
     
-    private final static Hashtable LABEL_TYPES = new Hashtable();
-    private final static Hashtable GLOBAL_LABEL_TYPES = new Hashtable();
-    private final static Hashtable DECORATIONS = new Hashtable();
-    private final static Hashtable RULER_UNITS = new Hashtable();
-    private final static Hashtable USE_INNER_LABELS = new Hashtable();
-    private final static Hashtable GIVE_FEATURE_POSITIONS = new Hashtable();
-    private final static Hashtable FEATURE_THICKNESSES = new Hashtable();
-    private final static Hashtable FEATURESLOT_SPACINGS = new Hashtable();
-    private final static Hashtable BACKBONE_THICKNESSES = new Hashtable();
-    private final static Hashtable ARROWHEAD_LENGTHS = new Hashtable();
-    private final static Hashtable MINIMUM_FEATURE_LENGTHS = new Hashtable();
-    private final static Hashtable ORIGINS = new Hashtable();
-    private final static Hashtable TICK_THICKNESSES = new Hashtable();
-    private final static Hashtable TICK_LENGTHS = new Hashtable();
-    private final static Hashtable LABEL_LINE_THICKNESSES = new Hashtable();
-    private final static Hashtable LABEL_LINE_LENGTHS = new Hashtable();
-    private final static Hashtable LABEL_PLACEMENT_QUALITIES = new Hashtable();
-    private final static Hashtable BOOLEANS = new Hashtable();
-    private final static Hashtable SWATCH_TYPES = new Hashtable();
-    private final static Hashtable LEGEND_POSITIONS = new Hashtable();
-    private final static Hashtable LEGEND_ALIGNMENTS = new Hashtable();
-    private final static Hashtable LEGEND_SHOW_ZOOM = new Hashtable();
+    private final static Map<String, Integer> LABEL_TYPES = new HashMap<String, Integer>();
+    private final static Map<String, Integer> GLOBAL_LABEL_TYPES = new HashMap<String, Integer>();
+    private final static Map<String, Integer> DECORATIONS = new HashMap<String, Integer>();
+    private final static Map<String, Integer> RULER_UNITS = new HashMap<String, Integer>();
+    private final static Map<String, Integer> USE_INNER_LABELS = new HashMap<String, Integer>();
+    private final static Map<String, Integer> GIVE_FEATURE_POSITIONS = new HashMap<String, Integer>();
+    private final static Map<String, Float> FEATURE_THICKNESSES = new HashMap<String, Float>();
+    private final static Map<String, Float> FEATURESLOT_SPACINGS = new HashMap<String, Float>();
+    private final static Map<String, Float> BACKBONE_THICKNESSES = new HashMap<String, Float>();
+    private final static Map<String, Double> ARROWHEAD_LENGTHS = new HashMap<String, Double>();
+    private final static Map<String, Double> MINIMUM_FEATURE_LENGTHS = new HashMap<String, Double>();
+    private final static Map<String, Double> ORIGINS = new HashMap<String, Double>();
+    private final static Map<String, Float> TICK_THICKNESSES = new HashMap<String, Float>();
+    private final static Map<String, Float> TICK_LENGTHS = new HashMap<String, Float>();
+    private final static Map<String, Float> LABEL_LINE_THICKNESSES = new HashMap<String, Float>();
+    private final static Map<String, Double> LABEL_LINE_LENGTHS = new HashMap<String, Double>();
+    private final static Map<String, Integer> LABEL_PLACEMENT_QUALITIES = new HashMap<String, Integer>();
+    private final static Map<String, Boolean> BOOLEANS = new HashMap<String, Boolean>();
+    private final static Map<String, Integer> SWATCH_TYPES = new HashMap<String, Integer>();
+    private final static Map<String, Integer> LEGEND_POSITIONS = new HashMap<String, Integer>();
+    private final static Map<String, Integer> LEGEND_ALIGNMENTS = new HashMap<String, Integer>();
+    private final static Map<String, Integer> LEGEND_SHOW_ZOOM = new HashMap<String, Integer>();
 
     private final static int MAX_BASES = 10000000;
     private final static int MIN_BASES = 10;
@@ -316,12 +321,21 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
         //FeatureSlot reverse = new FeatureSlot(ret, REVERSE_STRAND);
         
         FeatureSlot cutSlot = new FeatureSlot(ret, DIRECT_STRAND);
+
+        EmbossTableParser etp = new EmbossTableParser();
+        List<CutSite> sites = null;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("/Users/art/Desktop Tidier/Projects/genedb-ng/circular genome/out1.txt"));
+            sites = etp.parse(br);
+        }
+        catch (IOException exp) {
+            throw new RuntimeException("Couldn't read, or parse results");
+        }
         
-        int[] coords = {1, 1000, 1001, 3500, 3501, 10000, 10001, 14000, 14001, 14050, 14051, 19999};
-        boolean set = true;
-        for (int i = 0; i < coords.length; i+=2) { 
-            createFeature(cutSlot, coords[i], coords[i+1], (i/2)+1);
-            set = !set;
+        int i = 0;
+        for (CutSite cutSite : sites) {
+            createFeature(cutSlot, cutSite.getStart(), cutSite.getEnd(), i);
+            i++;
         }
         return ret;
     }
@@ -437,7 +451,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //featureThickness
                 if (elem.attributes.getValue("featureThickness") != null) {
                     if (FEATURE_THICKNESSES.get(((elem.attributes.getValue("featureThickness"))).toLowerCase()) != null) {
-                        currentFeatureSlot.setFeatureThickness(((Float) FEATURE_THICKNESSES.get(((elem.attributes.getValue("featureThickness"))).toLowerCase())).floatValue());
+                        currentFeatureSlot.setFeatureThickness((FEATURE_THICKNESSES.get(((elem.attributes.getValue("featureThickness"))).toLowerCase())).floatValue());
 
                     } else {
 			try {
@@ -458,7 +472,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //showShading
                 if (elem.attributes.getValue("showShading") != null) {
                     if (BOOLEANS.get(((elem.attributes.getValue("showShading"))).toLowerCase()) != null) {
-                        currentFeatureSlot.setShowShading(((Boolean) BOOLEANS.get(((elem.attributes.getValue("showShading"))).toLowerCase())).booleanValue());
+                        currentFeatureSlot.setShowShading((BOOLEANS.get(((elem.attributes.getValue("showShading"))).toLowerCase())).booleanValue());
                     } else {
                         String error = "value for 'showShading' attribute in featureSlot element not understood";
                         if (locator != null) {
@@ -513,7 +527,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //color
                 if (elem.attributes.getValue("color") != null) {
                     if (ArtemisColours.getByName(((elem.attributes.getValue("color"))).toLowerCase()) != null) {
-                        currentFeature.setColor((Color) ArtemisColours.getByName(((elem.attributes.getValue("color"))).toLowerCase()));
+                        currentFeature.setColor(ArtemisColours.getByName(((elem.attributes.getValue("color"))).toLowerCase()));
                     } else {
                         m = colorDescriptionPattern.matcher(elem.attributes.getValue("color"));
                         if (m.find()) {
@@ -640,7 +654,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 if (elem.attributes.getValue("decoration") != null) {
 
                     if (DECORATIONS.get(((elem.attributes.getValue("decoration"))).toLowerCase()) != null) {
-                        currentFeature.setDecoration(((Integer) DECORATIONS.get(((elem.attributes.getValue("decoration"))).toLowerCase())).intValue());
+                        currentFeature.setDecoration((DECORATIONS.get(((elem.attributes.getValue("decoration"))).toLowerCase())).intValue());
                     } else {
                         String error = "value for 'decoration' attribute in feature element not understood";
                         if (locator != null) {
@@ -653,7 +667,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //showLabel
                 if (elem.attributes.getValue("showLabel") != null) {
                     if (LABEL_TYPES.get(((elem.attributes.getValue("showLabel"))).toLowerCase()) != null) {
-                        currentFeature.setShowLabel(((Integer) LABEL_TYPES.get(((elem.attributes.getValue("showLabel"))).toLowerCase())).intValue());
+                        currentFeature.setShowLabel((LABEL_TYPES.get(((elem.attributes.getValue("showLabel"))).toLowerCase())).intValue());
                     } else {
                         String error = "value for 'showLabel' attribute in feature element not understood";
                         if (locator != null) {
@@ -709,7 +723,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //showShading
                 if (elem.attributes.getValue("showShading") != null) {
                     if (BOOLEANS.get(((elem.attributes.getValue("showShading"))).toLowerCase()) != null) {
-                        currentFeature.setShowShading(((Boolean) BOOLEANS.get(((elem.attributes.getValue("showShading"))).toLowerCase())).booleanValue());
+                        currentFeature.setShowShading((BOOLEANS.get(((elem.attributes.getValue("showShading"))).toLowerCase())).booleanValue());
                     } else {
                         String error = "value for 'showShading' attribute in feature element not understood";
                         if (locator != null) {
@@ -856,7 +870,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //color
                 if (elem.attributes.getValue("color") != null) {
                     if (ArtemisColours.getByName(((elem.attributes.getValue("color"))).toLowerCase()) != null) {
-                        currentFeatureRange.setColor((Color) ArtemisColours.getByName(((elem.attributes.getValue("color"))).toLowerCase()));
+                        currentFeatureRange.setColor(ArtemisColours.getByName(((elem.attributes.getValue("color"))).toLowerCase()));
                     } else {
                         m = colorDescriptionPattern.matcher(elem.attributes.getValue("color"));
                         if (m.find()) {
@@ -984,7 +998,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 if (elem.attributes.getValue("decoration") != null) {
 
                     if (DECORATIONS.get(((elem.attributes.getValue("decoration"))).toLowerCase()) != null) {
-                        currentFeatureRange.setDecoration(((Integer) DECORATIONS.get(((elem.attributes.getValue("decoration"))).toLowerCase())).intValue());
+                        currentFeatureRange.setDecoration((DECORATIONS.get(((elem.attributes.getValue("decoration"))).toLowerCase())).intValue());
                     } else {
                         String error = "value for 'decoration' attribute in featureRange element not understood";
                         if (locator != null) {
@@ -997,7 +1011,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //showLabel
                 if (elem.attributes.getValue("showLabel") != null) {
                     if (LABEL_TYPES.get(((elem.attributes.getValue("showLabel"))).toLowerCase()) != null) {
-                        currentFeatureRange.setShowLabel(((Integer) LABEL_TYPES.get(((elem.attributes.getValue("showLabel"))).toLowerCase())).intValue());
+                        currentFeatureRange.setShowLabel((LABEL_TYPES.get(((elem.attributes.getValue("showLabel"))).toLowerCase())).intValue());
                     } else {
                         String error = "value for 'showLabel' attribute in featureRange element not understood";
                         if (locator != null) {
@@ -1053,7 +1067,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //showShading
                 if (elem.attributes.getValue("showShading") != null) {
                     if (BOOLEANS.get(((elem.attributes.getValue("showShading"))).toLowerCase()) != null) {
-                        currentFeatureRange.setShowShading(((Boolean) BOOLEANS.get(((elem.attributes.getValue("showShading"))).toLowerCase())).booleanValue());
+                        currentFeatureRange.setShowShading((BOOLEANS.get(((elem.attributes.getValue("showShading"))).toLowerCase())).booleanValue());
                     } else {
                         String error = "value for 'showShading' attribute in featureRange element not understood";
                         if (locator != null) {
@@ -1121,7 +1135,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //fontColor
                 if (elem.attributes.getValue("fontColor") != null) {
                     if (ArtemisColours.getByName(((elem.attributes.getValue("fontColor"))).toLowerCase()) != null) {
-                        currentLegend.setFontColor((Color) ArtemisColours.getByName(((elem.attributes.getValue("fontColor"))).toLowerCase()));
+                        currentLegend.setFontColor(ArtemisColours.getByName(((elem.attributes.getValue("fontColor"))).toLowerCase()));
                     } else {
                         m = colorDescriptionPattern.matcher(elem.attributes.getValue("fontColor"));
                         if (m.find()) {
@@ -1195,7 +1209,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //position
                 if (elem.attributes.getValue("position") != null) {
                     if (LEGEND_POSITIONS.get(((elem.attributes.getValue("position"))).toLowerCase()) != null) {
-                        currentLegend.setPosition(((Integer) LEGEND_POSITIONS.get(((elem.attributes.getValue("position"))).toLowerCase())).intValue());
+                        currentLegend.setPosition((LEGEND_POSITIONS.get(((elem.attributes.getValue("position"))).toLowerCase())).intValue());
                     } else {
                         String error = "value for 'position' attribute in legend element not understood";
                         if (locator != null) {
@@ -1209,7 +1223,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //textAlignment
                 if (elem.attributes.getValue("textAlignment") != null) {
                     if (LEGEND_ALIGNMENTS.get(((elem.attributes.getValue("textAlignment"))).toLowerCase()) != null) {
-                        currentLegend.setAlignment(((Integer) LEGEND_ALIGNMENTS.get(((elem.attributes.getValue("textAlignment"))).toLowerCase())).intValue());
+                        currentLegend.setAlignment((LEGEND_ALIGNMENTS.get(((elem.attributes.getValue("textAlignment"))).toLowerCase())).intValue());
                     } else {
                         String error = "value for 'textAlignment' attribute in legend element not understood";
                         if (locator != null) {
@@ -1223,7 +1237,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //drawWhenZoomed
                 if (elem.attributes.getValue("drawWhenZoomed") != null) {
                     if (LEGEND_SHOW_ZOOM.get(((elem.attributes.getValue("drawWhenZoomed"))).toLowerCase()) != null) {
-                        currentLegend.setPosition(((Integer) LEGEND_POSITIONS.get(((elem.attributes.getValue("drawWhenZoomed"))).toLowerCase())).intValue());
+                        currentLegend.setPosition((LEGEND_POSITIONS.get(((elem.attributes.getValue("drawWhenZoomed"))).toLowerCase())).intValue());
                     } else {
                         String error = "value for 'drawWhenZoomed' attribute in legend element not understood";
                         if (locator != null) {
@@ -1269,7 +1283,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //backgroundColor
                 if (elem.attributes.getValue("backgroundColor") != null) {
                     if (ArtemisColours.getByName(((elem.attributes.getValue("backgroundColor"))).toLowerCase()) != null) {
-                        currentLegend.setBackgroundColor((Color) ArtemisColours.getByName(((elem.attributes.getValue("backgroundColor"))).toLowerCase()));
+                        currentLegend.setBackgroundColor(ArtemisColours.getByName(((elem.attributes.getValue("backgroundColor"))).toLowerCase()));
                     } else {
                         m = colorDescriptionPattern.matcher(elem.attributes.getValue("backgroundColor"));
                         if (m.find()) {
@@ -1303,7 +1317,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
                 //allowLabelClash
                 if (elem.attributes.getValue("allowLabelClash") != null) {
                     if (BOOLEANS.get(((elem.attributes.getValue("allowLabelClash"))).toLowerCase()) != null) {
-                        currentLegend.setAllowLabelClash(((Boolean) BOOLEANS.get(((elem.attributes.getValue("allowLabelClash"))).toLowerCase())).booleanValue());
+                        currentLegend.setAllowLabelClash((BOOLEANS.get(((elem.attributes.getValue("allowLabelClash"))).toLowerCase())).booleanValue());
                     } else {
                         String error = "value for 'allowLabelClash' attribute in legend element not understood";
                         if (locator != null) {

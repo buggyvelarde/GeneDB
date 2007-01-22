@@ -1,6 +1,8 @@
 package org.genedb.web.mvc.controller.cgview;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -29,7 +31,18 @@ import ca.ualberta.stothard.cgview.LabelBounds;
  * @author Paul Stothard
  * @author Adrian Tivey
  */
-public class CircularGenomeFormController extends SimpleFormController {
+public class CircularGenomeFormController extends SimpleFormController implements InitializingBean {
+    
+    private List<String> digestNames;
+    
+    private ExecutionService restrictService;
+    
+    private ExecutionService digestService;
+    
+    private CachedFileFactory cachedFileFactory;
+
+    private EmbossDigestParser embossDigestParser;
+
 
     /**
      * Custom handler for homepage
@@ -37,6 +50,7 @@ public class CircularGenomeFormController extends SimpleFormController {
      * @param response current HTTP response
      * @return a ModelAndView to render the response
      */
+    @SuppressWarnings("unchecked")
     @Override
     public ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, 
             Object command, BindException errors) {
@@ -52,27 +66,26 @@ public class CircularGenomeFormController extends SimpleFormController {
         try {
             Map settings = new HashMap();
 
-
             Cgview cgview = factory.createCgviewFromString("wibble");
-            System.err.println("Got a cgview");
+//            System.err.println("Got a cgview");
 //          cgview.setDesiredZoomCenter(centerBaseValue.intValue());
 //          cgview.setDesiredZoom(zoomValue.doubleValue());
-            File tmpDir = new File(getServletContext().getRealPath("/tmp"));
-//          File tmpDir = getTempDir();
-            File pngFile = File.createTempFile("cgview", ".png", tmpDir);
-            writeToPNGFile(cgview, pngFile, false);
-            String relPath = pngFile.getAbsolutePath().substring(tmpDir.getAbsolutePath().length());
-            //String browserPath = request.getContextPath()+"/DisplayTempFile"+relPath;
-            String browserPath = request.getContextPath()+"/tmp"+relPath;
-            settings.put("map", addImageMap(browserPath, cgview.getWidth(), cgview.getHeight(), cgview.getLabelBounds(), true));
+            CachedFile pngFile = cachedFileFactory.getCachedFile("organism"+":"+"enzyme");
+            
+            writeToPNGFile(cgview, pngFile.getFile(), false);
+            
+            String browserPath = pngFile.getBrowserPath(request);
+            
+            String imageMap = addImageMap(browserPath, cgview.getWidth(), 
+                    cgview.getHeight(), cgview.getLabelBounds(), true);
+            
+            settings.put("map", imageMap);
+
             return new ModelAndView("graphics/circularGenome", "settings", settings);
         } catch (IOException exp) {
-            // TODO Auto-generated catch block
             exp.printStackTrace();
+            // FIXME - Need msg before returning to form or homepage
         }
-
-
-
 
 //      }
 //      }
@@ -159,4 +172,28 @@ public class CircularGenomeFormController extends SimpleFormController {
         return ret.toString();
     }
 
+
+
+    @Required
+    public void setDigestService(ExecutionService digestService) {
+        this.digestService = digestService;
+    }
+
+    @Required
+    public void setRestrictService(ExecutionService restrictService) {
+        this.restrictService = restrictService;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        digestNames = embossDigestParser.getDigests();
+    }
+
+
+    public void setEmbossDigestParser(EmbossDigestParser embossDigestParser) {
+        this.embossDigestParser = embossDigestParser;
+    }
+
+    
+    
+    
 }

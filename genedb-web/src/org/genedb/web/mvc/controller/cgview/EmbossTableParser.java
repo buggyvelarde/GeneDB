@@ -19,42 +19,34 @@
 
 package org.genedb.web.mvc.controller.cgview;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ExecutionEnvironment {
+public class EmbossTableParser {
     
-    private Map<String, String> environ = new HashMap<String,String>(0);
+    List<CutSite> list = new ArrayList<CutSite>();
     
-    private File workingDirectory = new File(System.getProperty("working.dir")); // FIXME
-    
-    private String path = new String();
-
-    public Map<String, String> getEnviron() {
-        return this.environ;
+    public List<CutSite> parse(BufferedReader br) throws IOException {
+        
+        String line;
+        while ((line = br.readLine()) != null) {
+            String trim = line.trim();
+            if (trim.startsWith("#")) {
+                continue;
+            }
+            if (line.length() == 0) {
+                continue;
+            }
+            if (line.startsWith("Start")) {
+                continue;
+            }
+            String[] parts = line.split("\\\t");
+            CutSite cutSite = new CutSite(parts[0], parts[1]);
+            list.add(cutSite);
+        }
+        return list;
     }
-
-    public void setEnviron(Map<String, String> environ) {
-        this.environ = environ;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getPath() {
-        return this.path;
-    }
-
-    public File getWorkingDirectory() {
-        return this.workingDirectory;
-    }
-
-    public void setWorkingDirectory(File workingDirectory) {
-        this.workingDirectory = workingDirectory;
-    }
-    
-    
 
 }

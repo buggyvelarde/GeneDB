@@ -19,41 +19,11 @@
 
 package org.genedb.web.mvc.controller.cgview;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-public class ExecutionEnvironment {
+public interface ExecutionFilter {
     
-    private Map<String, String> environ = new HashMap<String,String>(0);
+    public Object getResult();
     
-    private File workingDirectory = new File(System.getProperty("working.dir")); // FIXME
     
-    private String path = new String();
-
-    public Map<String, String> getEnviron() {
-        return this.environ;
-    }
-
-    public void setEnviron(Map<String, String> environ) {
-        this.environ = environ;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getPath() {
-        return this.path;
-    }
-
-    public File getWorkingDirectory() {
-        return this.workingDirectory;
-    }
-
-    public void setWorkingDirectory(File workingDirectory) {
-        this.workingDirectory = workingDirectory;
-    }
     
     
 
