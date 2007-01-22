@@ -56,7 +56,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
             Object command, BindException errors) {
 
         CircularGenomeCommandBean cgcb = (CircularGenomeCommandBean) command;
-        List<String> answers = new ArrayList<String>();
+        //List<String> answers = new ArrayList<String>();
         //    if (WebUtils.extractTaxonOrOrganism(request, false, true, answers)) {
         //        if (answers.size() > 0) {
         //            Taxon taxon = TaxonUtils.getTaxonFromList(answers, 0);
@@ -204,6 +204,11 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
     public void setEmbossDigestParser(EmbossDigestParser embossDigestParser) {
         this.embossDigestParser = embossDigestParser;
+    }
+
+
+    public void setCachedFileFactory(CachedFileFactory cachedFileFactory) {
+        this.cachedFileFactory = cachedFileFactory;
     }
 
     

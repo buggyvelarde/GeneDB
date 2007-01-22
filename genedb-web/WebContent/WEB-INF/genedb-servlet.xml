@@ -169,15 +169,19 @@
         <property name="embossDir" value="/nfs/disk100/pubseq/emboss" />
     </bean>
     
+    <bean id="cachedFileFactory" class="org.genedb.web.mvc.controller.cgview.CachedFileFactory">
+  
+    </bean> 
+    
 	<bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
 			<property name="commandClass" value="org.genedb.web.mvc.controller.cgview.CircularGenomeCommandBean" />
 			<property name="formView" value="graphics/circularGenomeForm" />
-            <property name="embossDigestParser" ref="embossDigestParser" /> 
+            <property name="embossDigestParser" ref="embossDigestParser" />
+            <property name="cachedFileFactory" ref="cachedFileFactory" />
                <!--  private ExecutionService restrictService;
     
     private ExecutionService digestService;
-    
-    private CachedFileFactory cachedFileFactory; -->
+ -->
 
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
 <!--        <property name="featureDao" ref="featureDao"/>-->
