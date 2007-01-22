@@ -57,7 +57,6 @@ public class EmbossDigestParser implements InitializingBean {
     }
 
     public void setEmbossDir(String embossDir) {
-    
         this.embossDir = embossDir;
     }
 

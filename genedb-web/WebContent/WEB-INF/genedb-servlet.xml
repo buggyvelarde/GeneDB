@@ -22,7 +22,7 @@
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
 
     <bean id="goProcessBrowse" class="org.genedb.web.mvc.controller.BrowseBean">
-        <dwr:remote javascript="goProcessBrowse">
+        <dwr:remote javascript="goPBrowse">
            <dwr:include method="getPossibleMatches" />
         </dwr:remote>
         <property name="cvDaoI"  ref="cvDao" />
@@ -165,9 +165,20 @@
         <property name="bindOnNewForm" value="true" />
     </bean>
     
+    <bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
+        <property name="embossDir" value="/nfs/disk100/pubseq/emboss" />
+    </bean>
+    
 	<bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
 			<property name="commandClass" value="org.genedb.web.mvc.controller.cgview.CircularGenomeCommandBean" />
 			<property name="formView" value="graphics/circularGenomeForm" />
+            <property name="embossDigestParser" ref="embossDigestParser" /> 
+               <!--  private ExecutionService restrictService;
+    
+    private ExecutionService digestService;
+    
+    private CachedFileFactory cachedFileFactory; -->
+
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
 <!--        <property name="featureDao" ref="featureDao"/>-->
     </bean>
