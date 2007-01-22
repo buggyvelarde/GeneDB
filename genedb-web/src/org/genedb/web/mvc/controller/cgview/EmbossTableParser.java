@@ -48,7 +48,7 @@ public class EmbossTableParser {
                 continue;
             }
             System.err.println("'"+parts[0]+"', '"+parts[1]+"', '"+parts[2]+"'");
-            CutSite cutSite = new CutSite(parts[0], parts[1]);
+            CutSite cutSite = new CutSite(parts[1], parts[2]);
             list.add(cutSite);
         }
         return list;
