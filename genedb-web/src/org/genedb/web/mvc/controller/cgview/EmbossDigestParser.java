@@ -52,7 +52,11 @@ public class EmbossDigestParser implements InitializingBean {
                 continue;
             }
             int space = line.indexOf(" ");
-            digests.add(line.substring(0, space));
+            if (space>1) {
+                digests.add(line.substring(0, space));
+            } else {
+                System.err.println("Couldn't get enzyme name from '"+line+"'");
+            }
         }
     }
 
