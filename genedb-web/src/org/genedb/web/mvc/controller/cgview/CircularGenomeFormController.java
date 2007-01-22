@@ -179,6 +179,10 @@ public class CircularGenomeFormController extends SimpleFormController implement
     protected Map referenceData(HttpServletRequest req) throws Exception {
         Map ret = new HashMap();
         ret.put("digestNames", digestNames);
+        List<String> orgs = new ArrayList<String>();
+        orgs.add("S. typhi");
+        orgs.add("S. pyogenes");
+        ret.put("organisms", orgs);
         return ret;
     }
 

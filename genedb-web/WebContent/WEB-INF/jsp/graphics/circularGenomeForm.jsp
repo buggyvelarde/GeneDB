@@ -17,7 +17,7 @@
 	<table align="center" width="50%">
 		<tr>
 			<td>Organism :</td>
-			<td><sp:input path="taxon"/></td>
+			<td><sp:select items="${organisms}" path="taxon"/></td>
 		</tr>
 		<tr>
 			<td>Restriction Enzyme :</td>
