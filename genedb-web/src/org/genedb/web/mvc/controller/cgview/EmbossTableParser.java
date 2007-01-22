@@ -43,6 +43,10 @@ public class EmbossTableParser {
                 continue;
             }
             String[] parts = line.split("\\\t");
+            if (parts.length < 2) {
+                System.err.println("Unable to split '"+line+"' into at least 2 parts");
+                continue;
+            }
             CutSite cutSite = new CutSite(parts[0], parts[1]);
             list.add(cutSite);
         }
