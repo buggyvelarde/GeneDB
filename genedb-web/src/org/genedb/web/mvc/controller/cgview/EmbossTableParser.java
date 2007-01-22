@@ -39,12 +39,12 @@ public class EmbossTableParser {
             if (line.length() == 0) {
                 continue;
             }
-            if (line.startsWith("Start")) {
+            String[] parts = line.split("\\s+");
+            if (parts.length < 3) {
+                System.err.println("Unable to split '"+line+"' into at least 2 parts");
                 continue;
             }
-            String[] parts = line.split("\\s+");
-            if (parts.length < 2) {
-                System.err.println("Unable to split '"+line+"' into at least 2 parts");
+            if ("Start".equals(parts[1])) {
                 continue;
             }
             System.err.println("'"+parts[0]+"', '"+parts[1]+"', '"+parts[2]+"'");
