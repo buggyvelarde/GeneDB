@@ -1,6 +1,7 @@
 package org.genedb.web.mvc.controller.cgview;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,16 @@ public class CachedFile {
     
     public CachedFile(File newFile, String pathPrefix, String relPath) {
         this.file = newFile;
+        if (newFile != null) {
+            try {
+                System.err.println("Trying to create a newFile with '"+newFile.getCanonicalPath()+"'");
+            }
+            catch (IOException exp) {
+                exp.printStackTrace();
+            }
+            } else {
+            System.err.println("newFile is null");
+        }
         this.pathPrefix = pathPrefix;
         this.relPath = relPath;
     }

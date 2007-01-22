@@ -24,7 +24,7 @@ public class CachedFileFactory implements ServletConfigAware, InitializingBean {
     
     private ServletContext context;
     
-    private boolean useSubDirs;
+    private boolean useSubDirs = false;
     
     
     
