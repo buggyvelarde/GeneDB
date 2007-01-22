@@ -42,7 +42,7 @@ public class EmbossTableParser {
             if (line.startsWith("Start")) {
                 continue;
             }
-            String[] parts = line.split("\\\t");
+            String[] parts = line.split("\\t");
             if (parts.length < 2) {
                 System.err.println("Unable to split '"+line+"' into at least 2 parts");
                 continue;
