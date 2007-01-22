@@ -325,7 +325,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
         EmbossTableParser etp = new EmbossTableParser();
         List<CutSite> sites = null;
         try {
-            BufferedReader br = new BufferedReader(new FileReader("/Users/art/Desktop Tidier/Projects/genedb-ng/circular genome/out1.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("/nfs/team81/art/circular-restrict.txt"));
             sites = etp.parse(br);
         }
         catch (IOException exp) {
