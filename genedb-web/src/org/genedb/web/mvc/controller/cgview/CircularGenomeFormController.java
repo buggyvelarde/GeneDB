@@ -43,6 +43,17 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
     private EmbossDigestParser embossDigestParser;
 
+    private Map<String, String> orgs = new HashMap<String, String>();
+    
+    public CircularGenomeFormController() {
+        String ROOT = "/nfs/pathdb/prod/data/input";
+        orgs.put("S. typhi", ROOT+"styphi/chr1/St.art");
+        orgs.put("S. pyogenes", ROOT+"spyogenes/curated/SP.embl");
+        orgs.put("C. jejuni", ROOT+"cjejuni/curated/chr1/Cj.embl");
+    }
+    
+    
+
 
     /**
      * Custom handler for homepage
@@ -179,10 +190,10 @@ public class CircularGenomeFormController extends SimpleFormController implement
     protected Map referenceData(HttpServletRequest req) throws Exception {
         Map ret = new HashMap();
         ret.put("digestNames", digestNames);
-        List<String> orgs = new ArrayList<String>();
-        orgs.add("S. typhi");
-        orgs.add("S. pyogenes");
-        ret.put("organisms", orgs);
+//        List<String> orgs = new ArrayList<String>();
+//        orgs.add("S. typhi");
+//        orgs.add("S. pyogenes");
+        ret.put("organisms", orgs.keySet());
         return ret;
     }
 
