@@ -173,6 +173,15 @@ public class CircularGenomeFormController extends SimpleFormController implement
     }
 
 
+    
+
+    @Override
+    protected Map referenceData(HttpServletRequest req) throws Exception {
+        Map ret = new HashMap();
+        ret.put("digestNames", digestNames);
+        return ret;
+    }
+
 
     @Required
     public void setDigestService(ExecutionService digestService) {
