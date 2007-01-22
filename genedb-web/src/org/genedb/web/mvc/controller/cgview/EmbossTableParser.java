@@ -47,6 +47,7 @@ public class EmbossTableParser {
                 System.err.println("Unable to split '"+line+"' into at least 2 parts");
                 continue;
             }
+            System.err.println("'"+parts[0]+"', '"+parts[1]+"', '"+parts[2]+"'");
             CutSite cutSite = new CutSite(parts[0], parts[1]);
             list.add(cutSite);
         }
