@@ -279,63 +279,61 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     //        }
             
         if (xrefs.size() == 0) {
-                return;
-            }
-            
-            for (String xref : xrefs) {
-                int index = xref.indexOf(":");
-                if (index == -1 ) {
-                    logger.error("Can't parse dbxref into db and acc '"+xref+"'. Skipping");
-                    continue;
-                }
-                String dbName = xref.substring(0, index);
-                String acc = xref.substring(+1);
-                String description = null;
-                if (acc.indexOf(";") != -1) {
-                    String[] parts = acc.split(";");
-                    if (parts.length>0) {
-                        acc = parts[0];
-                    } else {
-                        logger.warn("Can't parse dbxref properly '"+xref+"'. Skipping");
-                        continue;
-                    }
-                    if (parts.length>1) {
-                        description = parts[1];
-                    }
-                }
-                Db db = dbUtilsBean.getDbByName(dbName);
-                if (db == null) {
-                    if (!warnedDbs.contains(db)) {
-                        logger.warn("Can't find a db entry for the name of '"+dbName+"'. Skipping");
-                        warnedDbs.add(db);
-                    }
-                    continue;
-                }
-                //logger.info("Trying to store '"+xref+"'. Got a db");
-                 DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, acc);
-                if (dbXRef == null) {
-                    dbXRef = new DbXRef(); // TODO Use constructor?
-                    dbXRef.setDb(db);
-                    dbXRef.setAccession(acc);
-                    dbXRef.setVersion("1"); // TODO - a bit arbitary
-                    // TODO - Mark as needing looking up for description
-                    generalDao.persist(dbXRef);
-                    //logger.info("Creating DbXref for db '"+db+"' and acc '"+acc+"'");
-                } else {
-                    logger.info("Using an existing dbXRef from the db");
-                }
-                // FIXME May have commented out nmext block accidentally while merging
-                //logger.info("dbXRef just before storage is '"+dbXRef+"'");
-                //FeatureDbXRef fdr = sequenceDao.getFeatureDbXRefByFeatureAndDbXRef(polypeptide, dbXRef);
-                //if (fdr == null) {
-                	//fdr = new FeatureDbXRef(dbXRef, polypeptide, true);
-                	//logger.info("Persisting new FeatureDbXRef, dbXRef='"+dbXRef.getAccession()+"', feature='"+polypeptide.getDisplayName()+"'");
-                	//sequenceDao.persist(fdr);
-                //}
-                // TODO Store any user supplied notes
-            }
-            
+            return;
         }
+
+        for (String xref : xrefs) {
+            int index = xref.indexOf(":");
+            if (index == -1 ) {
+                logger.error("Can't parse dbxref into db and acc '"+xref+"'. Skipping");
+                continue;
+            }
+            String dbName = xref.substring(0, index);
+            String acc = xref.substring(+1);
+            String description = null;
+            if (acc.indexOf(";") != -1) {
+                String[] parts = acc.split(";");
+                if (parts.length>0) {
+                    acc = parts[0];
+                } else {
+                    logger.warn("Can't parse dbxref properly '"+xref+"'. Skipping");
+                    continue;
+                }
+                if (parts.length>1) {
+                    description = parts[1];
+                }
+            }
+            
+            Db db = dbUtilsBean.getDbByName(dbName);
+            if (db == null) {
+                if (!warnedDbs.contains(db)) {
+                    logger.warn("Can't find a db entry for the name of '"+dbName+"'. Skipping");
+                    warnedDbs.add(db);
+                }
+                continue;
+            }
+            //logger.info("Trying to store '"+xref+"'. Got a db");
+            DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, acc);
+            if (dbXRef == null) {
+                dbXRef = new DbXRef(db, acc); // TODO Use constructor?
+                dbXRef.setVersion("1"); // TODO - a bit arbitary
+                // TODO - Mark as needing looking up for description
+                generalDao.persist(dbXRef);
+                //logger.info("Creating DbXref for db '"+db+"' and acc '"+acc+"'");
+                // FIXME May have commented out next block accidentally while merging
+                //logger.info("dbXRef just before storage is '"+dbXRef+"'");
+                FeatureDbXRef fdr = sequenceDao.getFeatureDbXRefByFeatureAndDbXRef(polypeptide, dbXRef);
+                //if (fdr == null) {
+                fdr = new FeatureDbXRef(dbXRef, polypeptide, true);
+                logger.info("Persisting new FeatureDbXRef, dbXRef='"+dbXRef.getAccession()+"', feature='"+polypeptide.getDisplayName()+"'");
+                sequenceDao.persist(fdr);
+            } else {
+                logger.info("Using an existing dbXRef from the db");
+            }
+            // TODO Store any user supplied notes
+        }
+
+    }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
