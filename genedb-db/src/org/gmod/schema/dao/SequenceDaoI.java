@@ -44,13 +44,21 @@ public interface SequenceDaoI extends BaseDaoI {
     public Feature getFeatureById(int id);
 
     /**
-     * Return a features with this systematic id
+     * Return a list of features with this uniquename
      *  
-     * @param name the systematic id
+     * @param name the uniquename
      * @return the Feature, or null
      */
-    public Feature getFeatureByUniqueName(String name);
-
+    public List<Feature> getFeaturesByUniqueName(String name);
+    
+    /**
+     * 
+     * @param name the uniquename
+     * @param featureType the type of feature to return eg "gene"
+     * @return
+     */
+    public Feature getFeatureByUniqueName(String name, String featureType);
+    
     /**
      * Return a list of features with any current (ie non-obsolete) name or synonym
      *  
