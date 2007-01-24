@@ -320,7 +320,6 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                 // TODO - Mark as needing looking up for description
                 generalDao.persist(dbXRef);
                 //logger.info("Creating DbXref for db '"+db+"' and acc '"+acc+"'");
-                // FIXME May have commented out next block accidentally while merging
                 //logger.info("dbXRef just before storage is '"+dbXRef+"'");
                 FeatureDbXRef fdr = sequenceDao.getFeatureDbXRefByFeatureAndDbXRef(polypeptide, dbXRef);
                 //if (fdr == null) {
