@@ -315,8 +315,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
             //logger.info("Trying to store '"+xref+"'. Got a db");
             DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, acc);
             if (dbXRef == null) {
-                dbXRef = new DbXRef(db, acc); // TODO Use constructor?
-                dbXRef.setVersion("1"); // TODO - a bit arbitary
+                dbXRef = new DbXRef(db, acc);
                 // TODO - Mark as needing looking up for description
                 generalDao.persist(dbXRef);
                 //logger.info("Creating DbXref for db '"+db+"' and acc '"+acc+"'");
