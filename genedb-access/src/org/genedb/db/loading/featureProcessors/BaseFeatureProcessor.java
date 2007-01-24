@@ -321,9 +321,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                 generalDao.persist(dbXRef);
                 //logger.info("Creating DbXref for db '"+db+"' and acc '"+acc+"'");
                 //logger.info("dbXRef just before storage is '"+dbXRef+"'");
-                FeatureDbXRef fdr = sequenceDao.getFeatureDbXRefByFeatureAndDbXRef(polypeptide, dbXRef);
-                //if (fdr == null) {
-                fdr = new FeatureDbXRef(dbXRef, polypeptide, true);
+                FeatureDbXRef fdr = new FeatureDbXRef(dbXRef, polypeptide, true);
                 logger.info("Persisting new FeatureDbXRef, dbXRef='"+dbXRef.getAccession()+"', feature='"+polypeptide.getDisplayName()+"'");
                 sequenceDao.persist(fdr);
             } else {
