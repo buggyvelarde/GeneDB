@@ -26,16 +26,11 @@ import java.util.List;
 public interface SchemaDaoI extends BaseDaoI {
 
     /**
-     * Given a list of distict cvterm_id/type_id's of feature types
-     * that have residues (from getResidueType()) in the given schema
-     * and the schema name return a list of features in the schema
-     * with residues.
-     * @param cvterm_ids list of cvterm_id/type_id's
-     * @param schema schema/organism name or null
+     * Return a list of features with residues.
      * @return the <code>List</code> of <code>Feature</code> objects
      * @throws SQLException
      */
-    public List getResidueFeatures(List cvterm_ids, final String schema) throws SQLException;
+    public List getResidueFeatures() throws SQLException;
 
 
     /**
