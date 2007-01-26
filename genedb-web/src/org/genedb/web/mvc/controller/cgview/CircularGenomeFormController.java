@@ -93,7 +93,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
                 InputStream is = p.getInputStream();
                 int inchar;
                 while ((inchar = is.read())!=-1) {
-                    System.err.print(inchar);
+                    System.err.print((char)inchar);
                 }
                 System.err.println("**");
                 p.waitFor();
