@@ -12,6 +12,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -81,13 +83,21 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
             // Run restrict over organism
             String embossDir = "/nfs/disk100/pubseq/emboss";
-            File output = File.createTempFile("circular_genome", "txt");
+            File output = File.createTempFile("circular_genome", ".txt");
             String[] args = {embossDir+"/bin/restrict", input, "-auto", "-limit", "y", "-enzymes", "'"+cgcb.getEnzymeName()+"'", "-out", output.getCanonicalPath() };
             ProcessBuilder pb = new ProcessBuilder(args);
             pb.redirectErrorStream(true);
             Process p = pb.start();
+            System.err.print("**");
             try {
+                InputStream is = p.getInputStream();
+                int inchar;
+                while ((inchar = is.read())!=-1) {
+                    System.err.print(inchar);
+                }
+                System.err.println("**");
                 p.waitFor();
+                System.err.println("Process exited with '"+p.exitValue()+"'");
             } catch (InterruptedException exp) {
                 // TODO Report error
                 exp.printStackTrace();
