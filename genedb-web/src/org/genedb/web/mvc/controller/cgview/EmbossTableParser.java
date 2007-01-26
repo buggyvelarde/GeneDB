@@ -28,20 +28,28 @@ public class EmbossTableParser {
     
     List<CutSite> list = new ArrayList<CutSite>();
     
+    private int length;
+    
+    
     public List<CutSite> parse(BufferedReader br) throws IOException {
         
         String line;
         while ((line = br.readLine()) != null) {
             String trim = line.trim();
             if (trim.startsWith("#")) {
+                if (trim.indexOf("Sequence:")!=-1) {
+                    int pos = trim.indexOf("to: ");
+                    String l = trim.substring(pos+4);
+                    length = Integer.parseInt(l);
+                }
                 continue;
             }
-            if (line.length() == 0) {
+            if (trim.length() == 0) {
                 continue;
             }
-            String[] parts = line.split("\\s+");
+            String[] parts = trim.split("\\s+");
             if (parts.length < 3) {
-                System.err.println("Unable to split '"+line+"' into at least 2 parts");
+                System.err.println("Unable to split '"+trim+"' into at least 2 parts");
                 continue;
             }
             if ("Start".equals(parts[1])) {
@@ -52,6 +60,11 @@ public class EmbossTableParser {
             list.add(cutSite);
         }
         return list;
+    }
+
+
+    public int getLength() {
+        return this.length;
     }
 
 }

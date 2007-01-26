@@ -339,6 +339,38 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
         }
         return ret;
     }
+    
+    public Cgview createCgviewFromEmbossReport(String fileName) {
+        //org.genedb.db.hibernate.Feature chromosome = featureDAO.findByUniqueName(id);
+        //Cgview ret = new Cgview(chromosome.getSeqlen());
+
+
+        //FeatureSlot forward = new FeatureSlot(ret, DIRECT_STRAND);
+        //FeatureSlot reverse = new FeatureSlot(ret, REVERSE_STRAND);
+        
+
+
+        EmbossTableParser etp = new EmbossTableParser();
+        List<CutSite> sites = null;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            sites = etp.parse(br);
+        }
+        catch (IOException exp) {
+            throw new RuntimeException("Couldn't read, or parse results");
+        }
+        
+        Cgview ret = new Cgview(etp.getLength());
+        ret.setHeight(600);
+        FeatureSlot cutSlot = new FeatureSlot(ret, DIRECT_STRAND);
+        
+        int i = 0;
+        for (CutSite cutSite : sites) {
+            createFeature(cutSlot, cutSite.getStart(), cutSite.getEnd(), i);
+            i++;
+        }
+        return ret;
+    }
 
     private void createFeature(FeatureSlot cutSlot, int coord1, int coord2, int counter) {
         Feature f1 = new Feature(cutSlot);

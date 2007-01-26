@@ -12,7 +12,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +46,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
     private Map<String, String> orgs = new HashMap<String, String>();
     
     public CircularGenomeFormController() {
-        String ROOT = "/nfs/pathdb/prod/data/input";
+        String ROOT = "/nfs/team81/art/circ_genome_data/";
         orgs.put("S. typhi", ROOT+"styphi/chr1/St.art");
         orgs.put("S. pyogenes", ROOT+"spyogenes/curated/SP.embl");
         orgs.put("C. jejuni", ROOT+"cjejuni/curated/chr1/Cj.embl");
@@ -76,12 +76,31 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
         try {
             Map settings = new HashMap();
+            
+            String input = orgs.get(cgcb.getTaxon());
 
-            Cgview cgview = factory.createCgviewFromString("wibble");
+            // Run restrict over organism
+            String embossDir = "/nfs/disk100/pubseq/emboss";
+            File output = File.createTempFile("circular_genome", "txt");
+            String[] args = {embossDir+"/bin/restrict", input, "-auto", "-limit", "y", "-enzymes", "'"+cgcb.getEnzymeName()+"'", "-out", output.getCanonicalPath() };
+            ProcessBuilder pb = new ProcessBuilder(args);
+            pb.redirectErrorStream(true);
+            Process p = pb.start();
+            try {
+                p.waitFor();
+            } catch (InterruptedException exp) {
+                // TODO Report error
+                exp.printStackTrace();
+                return null;
+            }
+            System.err.println("Written output to '"+output.getCanonicalPath()+"'");
+            
+//            Cgview cgview = factory.createCgviewFromEmbossReport("/nfs/team81/art/circular-restrict.txt");            
+            Cgview cgview = factory.createCgviewFromEmbossReport(output.getCanonicalPath());
 //            System.err.println("Got a cgview");
 //          cgview.setDesiredZoomCenter(centerBaseValue.intValue());
 //          cgview.setDesiredZoom(zoomValue.doubleValue());
-            CachedFile pngFile = cachedFileFactory.getCachedFile("organism"+":"+"enzyme");
+            CachedFile pngFile = cachedFileFactory.getCachedFile("organism-"+cgcb.getTaxon()+":"+"enzyme-"+cgcb.getEnzymeName());
             
             writeToPNGFile(cgview, pngFile.getFile(), false);
             
@@ -124,7 +143,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
             } else {
                 cgview.draw(graphics2D, keepLastLabels);
             }
-            System.out.println("Writing picture to " + file.getAbsolutePath());
+            System.err.println("Writing picture to " + file.getAbsolutePath());
             ImageIO.write(buffImage, "PNG", file);
         } finally {
             graphics2D.dispose();
@@ -188,11 +207,8 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
     @Override
     protected Map referenceData(HttpServletRequest req) throws Exception {
-        Map ret = new HashMap();
+        Map<String, Collection> ret = new HashMap<String, Collection>();
         ret.put("digestNames", digestNames);
-//        List<String> orgs = new ArrayList<String>();
-//        orgs.add("S. typhi");
-//        orgs.add("S. pyogenes");
         ret.put("organisms", orgs.keySet());
         return ret;
     }
