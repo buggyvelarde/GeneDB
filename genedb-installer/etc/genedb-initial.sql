@@ -168,11 +168,43 @@ delete from db where name like 'DB:%';
 -- Add local dbs
 -- Add GeneDB dbs
 
+insert into db (name) values ('PRODUCT');
+insert into db (name) values ('CCGEN');
+insert into db (name, description) values 
+	('genedb-internal', 'Local values for where we need a dbxref eg for new cvterms');
+
+
+
 -- Add local cv and cvterms
 insert into cv (name, definition)
        values ('genedb_misc', 'Miscellaneous GeneDB-specific terms');
 
 
+insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb-internal'), 'genedb_literature:lit_unknown', 'dbxref for UNKNOWN literature type');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_literature'), 
+		'Unknown',
+		'Unknown literature type ',
+		(select dbxref_id from dbxref where accession='genedb_literature:lit_unknown'),
+		0, 0); 
+
+
+insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb-internal'), 'genedb_literature:lit_notfetch', ' dbxref for NOTFETCHED literature type');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_literature'), 
+		'Not Fetched',
+		'Not Fetched literature type',
+		(select dbxref_id from dbxref where accession='genedb_literature:lit_notfetch'),
+		0, 0); 
+		
+
+insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb-internal'), 'genedb_literature:lit_journal', 'dbxref for Journal literature type');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='genedb_literature'), 
+		'Journal',
+		'journal literature type',
+		(select dbxref_id from dbxref where accession='genedb_literature:lit_journal'),
+		0, 0); 
 
 insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:top_level_seq');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
@@ -239,6 +271,14 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		'curation',
 		'Free text note field for local curation',
 		(select dbxref_id from dbxref where accession='autocreated:curation'),
+		0, 0); 
+		
+		insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'autocreated:colour');
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
+		values ((select cv_id from cv where name='autocreated'), 
+		'colour',
+		'colour value',
+		(select dbxref_id from dbxref where accession='autocreated:colour'),
 		0, 0); 
 		
 insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'autocreated:private');
@@ -342,7 +382,7 @@ insert into cv (name, definition)
 
 insert into cv (name, definition)
 		values ('genedb_products', 'GeneDB-specific cv for products');
- 
+
 
 insert into cv (name, definition)
        values ('genedb_fcvt_prop_keys', 'Specific values which are used as keys for looking up feature_cvterm_prop');       
