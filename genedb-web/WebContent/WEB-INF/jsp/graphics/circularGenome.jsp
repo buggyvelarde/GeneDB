@@ -5,7 +5,7 @@
 	<script type="text/javascript">
 	function showMenu(left, right) {
 	   var addr = '<a href="http://www.bbc.co.uk">';
-	   return overlib('" + addr + "')
+	   return overlib(addr)
 	}
 	</script>
 	<st:init />
