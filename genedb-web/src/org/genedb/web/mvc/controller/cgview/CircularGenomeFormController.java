@@ -196,13 +196,15 @@ public class CircularGenomeFormController extends SimpleFormController implement
                     ret.append("href=\"" + currentLabelBounds.getHyperlink() + "\" ");
                 }
 
-                if ((currentLabelBounds.getMouseover() != null) && (!(currentLabelBounds.getMouseover().matches("\\S*")))) {
+//                if ((currentLabelBounds.getMouseover() != null) && (!(currentLabelBounds.getMouseover().matches("\\S*")))) {
+                if (currentLabelBounds.getMouseover() != null) {
                     if (useOverlib) {
                         ret.append("onmouseover=\"return overlib('" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "');\" ");
                         ret.append("onmouseout=\"return nd();\" ");
                     } else {
-                        ret.append("onmouseover=\"self.status='" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "'; return true;\" ");
-                        ret.append("onmouseout=\"self.status=' '; return true;\" ");
+                        //ret.append("onmouseover=\"self.status='" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "'; return true;\" ");
+                        //ret.append("onmouseout=\"self.status=' '; return true;\" ");
+                        ret.append("onmouseover=\""+currentLabelBounds.getMouseover() + "; return true;\" ");
                     }
                 }
                 ret.append("/>" + '\n');
