@@ -376,7 +376,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
     private void createFeature(FeatureSlot cutSlot, int coord1, int coord2, int counter) {
         Feature f1 = new Feature(cutSlot);
         //f1.setShowLabel(LABEL_FORCE);
-        f1.setLabel("Restriction Zone "+counter);
+        f1.setLabel("Cut site "+counter);
         f1.setProportionOfThickness(0.5f);
         if (counter % 2 == 0) {
             f1.setColor(ArtemisColours.getByName("red"));
