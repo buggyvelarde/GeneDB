@@ -119,7 +119,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
             String browserPath = pngFile.getBrowserPath(request);
             
             String imageMap = addImageMap(browserPath, cgview.getWidth(), 
-                    cgview.getHeight(), cgview.getLabelBounds(), false);
+                    cgview.getHeight(), cgview.getLabelBounds(), true);
             
             settings.put("map", imageMap);
 
