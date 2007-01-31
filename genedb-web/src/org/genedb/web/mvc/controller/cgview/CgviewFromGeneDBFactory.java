@@ -360,6 +360,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
             throw new RuntimeException("Couldn't read, or parse results");
         }
         
+        System.err.println("Found '"+sites.size()+"' cutsites in a length of '"+etp.getLength()+"'");
         Cgview ret = new Cgview(etp.getLength());
         ret.setHeight(600);
         FeatureSlot cutSlot = new FeatureSlot(ret, DIRECT_STRAND);
