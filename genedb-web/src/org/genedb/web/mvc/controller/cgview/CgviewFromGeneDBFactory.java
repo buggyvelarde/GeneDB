@@ -368,22 +368,23 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
         
         int counter = 0;
         Iterator<CutSite> it = sites.iterator();
-        CutSite firstCutSite = it.next();
-        int firstCutPos = firstCutSite.getStart();
-        int lastCutPos = firstCutSite.getEnd();
+        CutSite cutSite = it.next();
+        int firstCutPos = cutSite.getStart();
+        int lastCutPos = cutSite.getEnd();
         while (it.hasNext()) {
-            CutSite cutSite = it.next();
+            cutSite = it.next();
             createFeature(cutSlot, lastCutPos, cutSite.getStart(), counter);
             lastCutPos = cutSite.getEnd();
             counter++;
         }
+        createFeature(cutSlot, lastCutPos, firstCutPos, counter);
         return ret;
     }
 
     private void createFeature(FeatureSlot cutSlot, int coord1, int coord2, int counter) {
         Feature f1 = new Feature(cutSlot);
-        //f1.setShowLabel(LABEL_FORCE);
-        f1.setLabel("R. frag "+counter + "("+(coord2-coord1)+" bp)");
+        f1.setShowLabel(LABEL_FORCE);
+        f1.setLabel("R. frag "+counter + " ("+(coord2-coord1)+" bp)");
         f1.setProportionOfThickness(0.5f);
         if (counter % 2 == 0) {
             f1.setColor(ArtemisColours.getByName("red"));
