@@ -1,7 +1,12 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<format:header name="Restriction mappping">
+<format:header name="Restriction mapping">
 	<script type="text/javascript" src="<c:url value="/includes/scripts/overlib/overlib.js"/>"></script>
+	<script type="text/javascript">
+	function showMenu(left, right) {
+	   var addr = '<a href="http://www.bbc.co.uk">';
+	   return overlib('" + addr + "')
+	</script>
 	<st:init />
 </format:header>
 
