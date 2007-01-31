@@ -234,7 +234,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
             System.err.println(label);
             int colon = label.indexOf(":");
-            if (colon == -1) {
+            if (colon != -1) {
                 int dash = label.indexOf("->");
                 int lbr = label.indexOf("(");
                 int bp = label.indexOf(" bp");
