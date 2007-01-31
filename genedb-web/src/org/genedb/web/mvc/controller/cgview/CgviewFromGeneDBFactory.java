@@ -52,6 +52,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -365,10 +366,16 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
         ret.setHeight(600);
         FeatureSlot cutSlot = new FeatureSlot(ret, DIRECT_STRAND);
         
-        int i = 0;
-        for (CutSite cutSite : sites) {
-            createFeature(cutSlot, cutSite.getStart(), cutSite.getEnd(), i);
-            i++;
+        int counter = 0;
+        Iterator<CutSite> it = sites.iterator();
+        CutSite firstCutSite = it.next();
+        int firstCutPos = firstCutSite.getStart();
+        int lastCutPos = firstCutSite.getEnd();
+        while (it.hasNext()) {
+            CutSite cutSite = it.next();
+            createFeature(cutSlot, lastCutPos, cutSite.getStart(), counter);
+            lastCutPos = cutSite.getEnd();
+            counter++;
         }
         return ret;
     }
@@ -376,7 +383,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
     private void createFeature(FeatureSlot cutSlot, int coord1, int coord2, int counter) {
         Feature f1 = new Feature(cutSlot);
         //f1.setShowLabel(LABEL_FORCE);
-        f1.setLabel("Cut site "+counter);
+        f1.setLabel("R. frag "+counter + "("+(coord2-coord1)+" bp)");
         f1.setProportionOfThickness(0.5f);
         if (counter % 2 == 0) {
             f1.setColor(ArtemisColours.getByName("red"));
