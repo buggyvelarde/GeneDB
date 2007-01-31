@@ -223,17 +223,27 @@ public class CircularGenomeFormController extends SimpleFormController implement
     public String addTempTable(String in, List labelBounds) {
         StringBuilder ret = new StringBuilder(in);
         ret.append("<table border=\"1\">\n");
-        ret.append("<tr><th>Fragment</th><th>Start</th><th>End</th><th>Length></th><th>EMBL</th><th>Artemis</th><th>Table</th></tr>");
+        ret.append("<tr><th>Fragment</th><th>Start</th><th>End</th><th>Length</th><th>EMBL</th><th>Artemis</th><th>Table</th></tr>");
                 
         //add areas
         Iterator i;
         i = labelBounds.iterator();
         while (i.hasNext()) {
             LabelBounds clb = (LabelBounds) i.next();
+            String label = clb.getLabel();
+            int colon = label.indexOf(":");
+            int dash = label.indexOf("-");
+            int lbr = label.indexOf("(");
+            int bp = label.indexOf(" bp");
+            String count = label.substring(0, colon);
+            String start = label.substring(colon, dash);
+            String end = label.substring(dash, lbr);
             ret.append("<tr><td>");
-            ret.append(clb.getLabel());
+            ret.append(count);
             ret.append("</td><td>");
+            ret.append(start);
             ret.append("</td><td>");
+            ret.append(end);
             ret.append("</td><td>");
             ret.append("</td><td>");
             ret.append("Link</td><td>");
