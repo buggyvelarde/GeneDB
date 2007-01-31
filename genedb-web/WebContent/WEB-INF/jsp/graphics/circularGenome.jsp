@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<format:header name="Gene: ${feature.uniquename}">
+<format:header name="Restriction mappping">
+	<script type="text/javascript" src="<c:url value="/includes/scripts/overlib/overlib.js"/>"></script>
 	<st:init />
 </format:header>
 
@@ -8,7 +9,7 @@
 
 <h3>Diagram</h3>
 
-<p>${settings.map}</p>
+<p align="center">${settings.map}</p>
 
 
 		   
