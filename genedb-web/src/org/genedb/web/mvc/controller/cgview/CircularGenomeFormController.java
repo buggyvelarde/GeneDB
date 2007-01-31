@@ -234,24 +234,26 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
             System.err.println(label);
             int colon = label.indexOf(":");
-            int dash = label.indexOf("->");
-            int lbr = label.indexOf("(");
-            int bp = label.indexOf(" bp");
-            String count = label.substring(0, colon);
-            String start = label.substring(colon, dash);
-            String end = label.substring(dash, lbr);
-            ret.append("<tr><td>");
-            ret.append(count);
-            ret.append("</td><td>");
-            ret.append(start);
-            ret.append("</td><td>");
-            ret.append(end);
-            ret.append("</td><td>");
-            ret.append("</td><td>");
-            ret.append("Link</td><td>");
-            ret.append("Link</td><td>");
-            ret.append("Link</td>");
-            ret.append("</tr>\n");
+            if (colon == -1) {
+                int dash = label.indexOf("->");
+                int lbr = label.indexOf("(");
+                int bp = label.indexOf(" bp");
+                String count = label.substring(0, colon);
+                String start = label.substring(colon, dash);
+                String end = label.substring(dash, lbr);
+                ret.append("<tr><td>");
+                ret.append(count);
+                ret.append("</td><td>");
+                ret.append(start);
+                ret.append("</td><td>");
+                ret.append(end);
+                ret.append("</td><td>");
+                ret.append("</td><td>");
+                ret.append("Link</td><td>");
+                ret.append("Link</td><td>");
+                ret.append("Link</td>");
+                ret.append("</tr>\n");
+            }
         }
         ret.append("</table>" + '\n');
         return ret.toString();
