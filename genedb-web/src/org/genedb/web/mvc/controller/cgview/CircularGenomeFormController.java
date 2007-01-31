@@ -121,6 +121,8 @@ public class CircularGenomeFormController extends SimpleFormController implement
             String imageMap = addImageMap(browserPath, cgview.getWidth(), 
                     cgview.getHeight(), cgview.getLabelBounds(), true);
             
+            imageMap = addTempTable(imageMap, cgview.getLabelBounds());
+            
             settings.put("map", imageMap);
 
             return new ModelAndView("graphics/circularGenome", "settings", settings);
@@ -198,16 +200,17 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
 //                if ((currentLabelBounds.getMouseover() != null) && (!(currentLabelBounds.getMouseover().matches("\\S*")))) {
                 if (currentLabelBounds.getMouseover() != null) {
-                    if (useOverlib) {
-                        ret.append("onmouseover=\"return showMenu(3,5);\" ");
-//                        ret.append("onmouseover=\"return overlib('" + currentLabelBounds.getMouseover() + "');\" ");
-                        //ret.append("onmouseover=\"return overlib('" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "');\" ");
-                        ret.append("onmouseout=\"return nd();\" ");
-                    } else {
-                        //ret.append("onmouseover=\"self.status='" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "'; return true;\" ");
-                        //ret.append("onmouseout=\"self.status=' '; return true;\" ");
-                        ret.append("onmouseover=\""+currentLabelBounds.getMouseover() + "; return true;\" ");
-                    }
+                    
+//                    if (useOverlib) {
+//                        ret.append("onmouseover=\"return showMenu(3,5);\" ");
+////                        ret.append("onmouseover=\"return overlib('" + currentLabelBounds.getMouseover() + "');\" ");
+//                        //ret.append("onmouseover=\"return overlib('" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "');\" ");
+//                        ret.append("onmouseout=\"return nd();\" ");
+//                    } else {
+//                        //ret.append("onmouseover=\"self.status='" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "'; return true;\" ");
+//                        //ret.append("onmouseout=\"self.status=' '; return true;\" ");
+//                        ret.append("onmouseover=\""+currentLabelBounds.getMouseover() + "; return true;\" ");
+//                    }
                 }
                 ret.append("/>" + '\n');
             }
@@ -217,7 +220,30 @@ public class CircularGenomeFormController extends SimpleFormController implement
         return ret.toString();
     }
 
-
+    public String addTempTable(String in, List labelBounds) {
+        StringBuilder ret = new StringBuilder(in);
+        ret.append("<table border=\"1\">\n");
+        ret.append("<tr><th>Fragment</th><th>Start</th><th>End</th><th>Length></th><th>EMBL</th><th>Artemis</th><th>Table</th></tr>");
+                
+        //add areas
+        Iterator i;
+        i = labelBounds.iterator();
+        while (i.hasNext()) {
+            LabelBounds clb = (LabelBounds) i.next();
+            ret.append("<tr><td>");
+            ret.append(clb.getLabel());
+            ret.append("</td><td>");
+            ret.append("</td><td>");
+            ret.append("</td><td>");
+            ret.append("</td><td>");
+            ret.append("Link</td><td>");
+            ret.append("Link</td><td>");
+            ret.append("Link</td>");
+            ret.append("</tr>\n");
+        }
+        ret.append("</table>" + '\n');
+        return ret.toString();
+    }
     
 
     @Override
