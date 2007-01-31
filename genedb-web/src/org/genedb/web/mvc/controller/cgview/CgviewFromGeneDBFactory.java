@@ -381,9 +381,9 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
         return ret;
     }
 
-    private void createFeature(FeatureSlot cutSlot, int coord1, int coord2, int counter) {
+    private Feature createFeature(FeatureSlot cutSlot, int coord1, int coord2, int counter) {
         Feature f1 = new Feature(cutSlot);
-        f1.setShowLabel(LABEL_FORCE);
+        f1.setShowLabel(3);
         f1.setLabel("R. frag "+counter + " ("+(coord2-coord1)+" bp)");
         f1.setProportionOfThickness(0.5f);
         if (counter % 2 == 0) {
@@ -395,6 +395,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
         f1.setMouseover("alert(\'hello\')");
         f1.setHyperlink(contextPath+"SimpleReport/ByRegion/report=list&of=html&org=wibble&feat=&min=coord1&max=coord2&field=sysId&field=molWeight");
         FeatureRange fr = new FeatureRange(f1, coord1, coord2);
+        return f1;
     }
 
 //    /**
