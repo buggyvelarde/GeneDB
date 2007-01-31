@@ -231,8 +231,10 @@ public class CircularGenomeFormController extends SimpleFormController implement
         while (i.hasNext()) {
             LabelBounds clb = (LabelBounds) i.next();
             String label = clb.getLabel();
+
+            System.err.println(label);
             int colon = label.indexOf(":");
-            int dash = label.indexOf("-");
+            int dash = label.indexOf("->");
             int lbr = label.indexOf("(");
             int bp = label.indexOf(" bp");
             String count = label.substring(0, colon);
