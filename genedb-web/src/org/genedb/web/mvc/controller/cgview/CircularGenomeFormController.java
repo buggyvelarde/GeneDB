@@ -119,7 +119,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
             String browserPath = pngFile.getBrowserPath(request);
             
             String imageMap = addImageMap(browserPath, cgview.getWidth(), 
-                    cgview.getHeight(), cgview.getLabelBounds(), true);
+                    cgview.getHeight(), cgview.getLabelBounds(), false);
             
             settings.put("map", imageMap);
 
@@ -175,7 +175,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
      *                    {@link Cgview#getLabelBounds()} method.
      * @param useOverlib whether or not to use the overlib.js JavaScript library for PNG and JPG image maps.
      */
-    public String addImageMap(String imageFile, int width, int height, List labelBounds, Boolean useOverlib) {
+    public String addImageMap(String imageFile, int width, int height, List labelBounds, boolean useOverlib) {
         StringBuilder ret = new StringBuilder();
 
         ret.append("<img style=\"border:0\" src=\"" + StringEscapeUtils.escapeHtml(imageFile) + "\" width=\"" + Integer.toString(width) + "\" height=\"" + Integer.toString(height) + "\" usemap=\"#cgviewmap\" />" + '\n');
@@ -197,11 +197,10 @@ public class CircularGenomeFormController extends SimpleFormController implement
                 }
 
                 if ((currentLabelBounds.getMouseover() != null) && (!(currentLabelBounds.getMouseover().matches("\\S*")))) {
-                    if (useOverlib.booleanValue()) {
+                    if (useOverlib) {
                         ret.append("onmouseover=\"return overlib('" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "');\" ");
                         ret.append("onmouseout=\"return nd();\" ");
-                    }
-                    else {
+                    } else {
                         ret.append("onmouseover=\"self.status='" + StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover()) + "'; return true;\" ");
                         ret.append("onmouseout=\"self.status=' '; return true;\" ");
                     }
