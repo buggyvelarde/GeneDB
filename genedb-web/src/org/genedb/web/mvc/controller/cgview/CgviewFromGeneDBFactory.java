@@ -384,7 +384,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
     private Feature createFeature(FeatureSlot cutSlot, int coord1, int coord2, int counter) {
         Feature f1 = new Feature(cutSlot);
         //f1.setShowLabel(3);
-        f1.setLabel("R. frag "+counter + " ("+(coord2-coord1)+" bp)");
+        f1.setLabel(counter + ":"+coord1+"-"+coord2+" ("+(coord2-coord1)+" bp)");
         f1.setProportionOfThickness(0.5f);
         if (counter % 2 == 0) {
             f1.setColor(ArtemisColours.getByName("red"));
