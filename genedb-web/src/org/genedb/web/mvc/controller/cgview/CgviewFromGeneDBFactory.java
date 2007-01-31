@@ -392,7 +392,7 @@ public class CgviewFromGeneDBFactory extends DefaultHandler {
             f1.setColor(ArtemisColours.getByName("blue"));
             f1.setRadiusAdjustment(0.5f);
         }
-        f1.setMouseover("Menu 1\nMenu 2");
+        f1.setMouseover("<a href=\"www.google.com\">Menu 1</a>&nbsp;&nbsp;<a href=\"www.sanger.ac.uk\">Menu 2</a>");
         f1.setHyperlink(contextPath+"SimpleReport/ByRegion/report=list&of=html&org=wibble&feat=&min=coord1&max=coord2&field=sysId&field=molWeight");
         FeatureRange fr = new FeatureRange(f1, coord1, coord2);
         return f1;
