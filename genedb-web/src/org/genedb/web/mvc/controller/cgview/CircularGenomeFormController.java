@@ -107,7 +107,8 @@ public class CircularGenomeFormController extends SimpleFormController implement
             System.err.println("Written output to '"+output.getCanonicalPath()+"'");
             
 //            Cgview cgview = factory.createCgviewFromEmbossReport("/nfs/team81/art/circular-restrict.txt");            
-            Cgview cgview = factory.createCgviewFromEmbossReport(output.getCanonicalPath());
+            //Cgview cgview = factory.createCgviewFromEmbossReport(output.getCanonicalPath());
+            Cgview cgview = factory.createCgviewFromEmbossReport("/nfs/team81/art/circ_genome_data/output1.txt");
 //            System.err.println("Got a cgview");
 //          cgview.setDesiredZoomCenter(centerBaseValue.intValue());
 //          cgview.setDesiredZoom(zoomValue.doubleValue());
