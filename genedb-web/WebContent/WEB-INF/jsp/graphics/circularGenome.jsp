@@ -6,6 +6,7 @@
 	function showMenu(left, right) {
 	   var addr = '<a href="http://www.bbc.co.uk">';
 	   return overlib('" + addr + "')
+	}
 	</script>
 	<st:init />
 </format:header>
