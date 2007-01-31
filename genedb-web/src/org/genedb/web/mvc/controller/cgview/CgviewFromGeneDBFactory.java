@@ -75,7 +75,7 @@ import ca.ualberta.stothard.cgview.Legend;
 
 public class CgviewFromGeneDBFactory extends DefaultHandler {
 
-    private static final String contextPath = "/genedb-web/";
+    private static final String contextPath = "/";
     
     private final static Map<String, Integer> LABEL_TYPES = new HashMap<String, Integer>();
     private final static Map<String, Integer> GLOBAL_LABEL_TYPES = new HashMap<String, Integer>();
