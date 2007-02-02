@@ -24,7 +24,7 @@ public class StandardNomenclatureHandler implements NomenclatureHandler {
                 throw new RuntimeException("StandardNomenclatureHandler: CDS has more than 1 systematic id: "+l1.get(0));
             }
             sysId = l1.get(0);
-            names.setSystematicIdAndTemp(sysId, true);
+            names.setSystematicIdAndTemp(sysId, false);
         }
 
         String tmpId = null;
@@ -37,7 +37,7 @@ public class StandardNomenclatureHandler implements NomenclatureHandler {
             if ( sysId != null) {
                 throw new RuntimeException("CDS has both a systematic id '"+sysId+"' and a temporary systematic id '"+tmpId+"'");
             }
-            names.setSystematicIdAndTemp(tmpId, false);
+            names.setSystematicIdAndTemp(tmpId, true);
         }
 
 

@@ -113,7 +113,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setName(java.lang.String)
      */
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
     
@@ -127,7 +127,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setDescription(java.lang.String)
      */
-    private void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
     
@@ -142,7 +142,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setProgram(java.lang.String)
      */
-    private void setProgram(String program) {
+    public void setProgram(String program) {
         this.program = program;
     }
     
@@ -157,7 +157,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setProgramversion(java.lang.String)
      */
-    private void setProgramVersion(String programVersion) {
+    public void setProgramVersion(String programVersion) {
         this.programVersion = programVersion;
     }
     
@@ -172,7 +172,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setAlgorithm(java.lang.String)
      */
-    private void setAlgorithm(String algorithm) {
+    public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
     }
     
@@ -187,7 +187,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setSourcename(java.lang.String)
      */
-    private void setSourceName(String sourceName) {
+    public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
     
@@ -202,7 +202,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setSourceversion(java.lang.String)
      */
-    private void setSourceVersion(String sourceVersion) {
+    public void setSourceVersion(String sourceVersion) {
         this.sourceVersion = sourceVersion;
     }
     
@@ -217,7 +217,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setSourceuri(java.lang.String)
      */
-    private void setSourceUri(String sourceUri) {
+    public void setSourceUri(String sourceUri) {
         this.sourceUri = sourceUri;
     }
     
@@ -232,7 +232,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setTimeexecuted(java.util.Date)
      */
-    private void setTimeExecuted(Date timeExecuted) {
+    public void setTimeExecuted(Date timeExecuted) {
         this.timeExecuted = timeExecuted;
     }
 

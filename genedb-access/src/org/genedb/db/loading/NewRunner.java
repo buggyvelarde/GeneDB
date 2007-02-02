@@ -52,6 +52,7 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.featureProcessors.CDS_Processor;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.cv.CvTermRelationship;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
@@ -387,7 +388,8 @@ loadCvTerms();
         /*
          * new code below this to try and persist the residues into the database
          */
-        List<Synthetic> synthetics = this.runnerConfig.getSynthetics();
+        
+		List<Synthetic> synthetics = this.runnerConfig.getSynthetics();
         
         for (Synthetic synthetic : synthetics) {
         	List <FeaturePart> featurePartList = new ArrayList<FeaturePart>();
@@ -660,19 +662,23 @@ loadCvTerms();
         try {
 	        BufferedReader in = new BufferedReader(new FileReader("/nfs/team81/cp2/Scripts/cvterms"));
 	        String str;
-	        while ((str = in.readLine()) != null) {
+	        while (((str = in.readLine()) != null)) {
 	        	String sections[] = str.split("\t");
 	        	CvTerm cvTerm = null;
 	        	cvTerm = this.cvDao.getCvTermByNameAndCvName(sections[1], "CC_%");
 	        	if (cvTerm == null) {
 		        	cvTerm = new CvTerm();
-	        		Db db = generalDao.getDbByName("CCGEN");
-					DbXRef dbXRef = new DbXRef();
-					dbXRef.setDb(db);
-					String accession = "CCGEN_" + sections[1];
-					dbXRef.setAccession(accession);
-					dbXRef.setVersion("1");
-	    			generalDao.persist(dbXRef);
+		        	Db db = generalDao.getDbByName("CCGEN");
+		        	String accession = "CCGEN_" + sections[1];
+		        	DbXRef dbXRef = null;
+		        	dbXRef = generalDao.getDbXRefByDbAndAcc(db,accession);
+		        	if (dbXRef == null) { 
+		        		dbXRef = new DbXRef();
+		        		dbXRef.setDb(db);
+		        		dbXRef.setAccession(accession);
+		        		dbXRef.setVersion("1");
+		        		generalDao.persist(dbXRef);
+		        	}
 	    			Cv cv = null;
 	    			String name = "CC_" + sections[0];
 	    			cv = this.cvDao.getCvByName(name).get(0);
@@ -693,6 +699,67 @@ loadCvTerms();
 	        
 	    } catch (IOException e) {
 	    }
+	    
+	    try {
+	        BufferedReader in = new BufferedReader(new FileReader("/nfs/pathdb/prod/data/input/linksManager/RILEY.dat"));
+	        String str;
+	        String parent = null;
+	        CvTerm parentId = null;
+	        String child = null;
+	        CvTerm childId = null;
+	        Cv CV_RELATION = cvDao.getCvByName("relationship").get(0);
+	        CvTerm REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
+	        while ((str = in.readLine()) != null) {
+	        	String sections[] = str.split("\t");
+	        	CvTerm cvTerm = null;
+	        	cvTerm = this.cvDao.getCvTermByNameAndCvName(sections[2], "RILEY");
+	        	if(cvTerm == null){
+		        	cvTerm = new CvTerm();
+	        		Db db = generalDao.getDbByName("RILEY");
+					DbXRef dbXRef = new DbXRef();
+					dbXRef.setDb(db);
+					String accession = sections[1];
+					dbXRef.setAccession(accession);
+					dbXRef.setVersion("1");
+	    			generalDao.persist(dbXRef);
+	    			Cv cv = null;
+	    			cv = this.cvDao.getCvByName("RILEY").get(0);
+					cvTerm.setCv(cv);
+	    			cvTerm.setDbXRef(dbXRef);
+	    			cvTerm.setName(sections[2]);
+	    			cvTerm.setDefinition(sections[2]);
+	    			this.cvDao.persist(cvTerm);
+	
+		        	if(!sections[1].startsWith("0.0")) {
+		        		String temp[] = sections[1].split("\\.");
+		        		if(parent != null){
+			        		if(parent.equals(temp[0])){
+			        			if (child.equals(temp[1])){
+			        				CvTermRelationship ctr = new CvTermRelationship(cvTerm,childId,REL_PART_OF);
+			        				this.cvDao.persist(ctr);
+			        			}else {
+			        				child = temp[1];
+			        				childId = cvTerm;
+			        				CvTermRelationship ctr = new CvTermRelationship(cvTerm,parentId,REL_PART_OF);
+			        				this.cvDao.persist(ctr);
+			        			}
+			        		} else {
+			        			parent = temp[0];
+			        			child = temp[1];
+			        			parentId = cvTerm;
+			        		}
+		        		} else {
+		        			parent = temp[0];
+		        			child = temp[1];
+		        			parentId = cvTerm;
+		        		}
+		        	}
+	        	}
+	        }
+	        in.close();
+	    } catch (IOException e) {
+	    	
 	    }
+	 }
 
 }

@@ -3,6 +3,7 @@ package org.genedb.db.dao;
 
 
 
+import org.gmod.schema.analysis.Analysis;
 import org.gmod.schema.dao.GeneralDaoI;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
@@ -33,5 +34,9 @@ public class GeneralDao extends BaseDao implements GeneralDaoI {
                 new Object[]{db, accession});
         return firstFromList(xrefs, "db", db, "accession", accession);
     }
-
+    
+    public Analysis getAnalysisByProgram(String program) {
+    	List<Analysis> temp = getHibernateTemplate().findByNamedParam("from Analysis a where a.program=:program","program",program);
+    	return temp.get(0);
+    }
 }

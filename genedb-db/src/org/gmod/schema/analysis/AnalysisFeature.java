@@ -49,12 +49,12 @@ public class AnalysisFeature implements Serializable {
     }
 
 	/** minimal constructor */
-    private AnalysisFeature(Analysis analysis, Feature feature) {
+    public AnalysisFeature(Analysis analysis, Feature feature) {
         this.analysis = analysis;
         this.feature = feature;
     }
     /** full constructor */
-    private AnalysisFeature(Analysis analysis, Feature feature, Double rawScore, Double normScore, Double significance, Double identity) {
+    public AnalysisFeature(Analysis analysis, Feature feature, Double rawScore, Double normScore, Double significance, Double identity) {
        this.analysis = analysis;
        this.feature = feature;
        this.rawScore = rawScore;
