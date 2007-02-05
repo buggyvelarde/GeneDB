@@ -170,8 +170,9 @@ delete from db where name like 'DB:%';
 
 insert into db (name) values ('PRODUCT');
 insert into db (name) values ('CCGEN');
+
 insert into db (name, description) values 
-	('genedb-internal', 'Local values for where we need a dbxref eg for new cvterms');
+	('genedb_internal', 'Local values for where we need a dbxref eg for new cvterms');
 
 
 
@@ -203,7 +204,7 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		0, 0); 
 		
 
-insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb-internal'), 'genedb_literature:lit_journal', 'dbxref for Journal literature type');
+insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb_internal'), 'genedb_literature:lit_journal', 'dbxref for Journal literature type');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
 		values ((select cv_id from cv where name='genedb_literature'), 
 		'Journal',
