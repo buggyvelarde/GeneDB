@@ -179,6 +179,11 @@ insert into db (name, description) values
 insert into cv (name, definition)
        values ('genedb_misc', 'Miscellaneous GeneDB-specific terms');
 
+insert into cv (name, definition)
+       values ('genedb_literature', 'GeneDB-specific terms for literature');
+
+
+
 
 insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb-internal'), 'genedb_literature:lit_unknown', 'dbxref for UNKNOWN literature type');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
@@ -397,7 +402,6 @@ insert into phylotree (dbxref_id, name, type_id, comment)
 		values (
 		(select dxref_id from dbxref where accession='genedb-misc:organism_heirachy'),
 		 'org_heirachy', 
-		(select from cvterm where name='taxonomy')
+		(select cvterm_id from cvterm where name='taxonomy')
 		 , 'GeneDB organism heirachy');
 		 
-insert into phylonode(parent_phylonode_id, phylotree_id)
