@@ -184,6 +184,16 @@ insert into cv (name, definition)
        values ('genedb_literature', 'GeneDB-specific terms for literature');
 
 
+insert into cv (name, definition)
+		values ('CC_genedb_controlledcuration', 'GeneDB-specific cv for controlled curation terms');
+
+insert into cv (name, definition)
+		values ('genedb_products', 'GeneDB-specific cv for products');
+
+
+insert into cv (name, definition)
+       values ('genedb_fcvt_prop_keys', 'Specific values which are used as keys for looking up feature_cvterm_prop');       
+
 
 
 insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb_internal'), 'genedb_literature:lit_unknown', 'dbxref for UNKNOWN literature type');
@@ -241,7 +251,7 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		values ((select cv_id from cv where name='genedb_misc'), 
 		'isoelectric_point',
 		'Marker to indicate that a sequence should be considered a top level feature',
-		(select dbxref_id from dbxref where accession='genedb_misc:isolectric_point'),
+		(select dbxref_id from dbxref where accession='genedb_misc:isoelectric_point'),
 		0, 0); 
 		
 insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:top_level_seq');
@@ -383,16 +393,6 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		0, 0);  
 	
 		
-insert into cv (name, definition)
-		values ('CC_genedb_controlledcuration', 'GeneDB-specific cv for controlled curation terms');
-
-insert into cv (name, definition)
-		values ('genedb_products', 'GeneDB-specific cv for products');
-
-
-insert into cv (name, definition)
-       values ('genedb_fcvt_prop_keys', 'Specific values which are used as keys for looking up feature_cvterm_prop');       
-
 
 
 
