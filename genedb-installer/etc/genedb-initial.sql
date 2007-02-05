@@ -185,7 +185,7 @@ insert into cv (name, definition)
 
 
 
-insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb-internal'), 'genedb_literature:lit_unknown', 'dbxref for UNKNOWN literature type');
+insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb_internal'), 'genedb_literature:lit_unknown', 'dbxref for UNKNOWN literature type');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
 		values ((select cv_id from cv where name='genedb_literature'), 
 		'Unknown',
@@ -194,7 +194,7 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		0, 0); 
 
 
-insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb-internal'), 'genedb_literature:lit_notfetch', ' dbxref for NOTFETCHED literature type');
+insert into dbxref(db_id, accession, description) values ((select db_id from db where name='genedb_internal'), 'genedb_literature:lit_notfetch', ' dbxref for NOTFETCHED literature type');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
 		values ((select cv_id from cv where name='genedb_literature'), 
 		'Not Fetched',
@@ -211,7 +211,7 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select dbxref_id from dbxref where accession='genedb_literature:lit_journal'),
 		0, 0); 
 
-insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:top_level_seq');
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:top_level_seq');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
 		values ((select cv_id from cv where name='genedb_misc'), 
 		'top_level_seq',
@@ -219,7 +219,7 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select dbxref_id from dbxref where accession='genedb_misc:top_level_seq'),
 		0, 0); 
 
-insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:protein_charge');
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:protein_charge');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
 		values ((select cv_id from cv where name='genedb_misc'), 
 		'protein_charge',
@@ -227,7 +227,7 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select dbxref_id from dbxref where accession='genedb_misc:protein_charge'),
 		0, 0); 
 		
-insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:molecular_mass');
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:molecular_mass');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
 		values ((select cv_id from cv where name='genedb_misc'), 
 		'molecular_mass',
@@ -235,7 +235,7 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select dbxref_id from dbxref where accession='genedb_misc:molecular_mass'),
 		0, 0); 
 		
-insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:isoelectric_point');
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:isoelectric_point');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
 		values ((select cv_id from cv where name='genedb_misc'), 
 		'isoelectric_point',
@@ -243,16 +243,16 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select dbxref_id from dbxref where accession='genedb_misc:isolectric_point'),
 		0, 0); 
 		
-insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:top_level_seq');
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:top_level_seq');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
 		values ((select cv_id from cv where name='genedb_misc'), 
 		'top_level_seq',
 		'Marker to indicate that a sequence should be considered a top level feature',
-		(select dbxref_id from dbxref where accession='genedb-misc:top_level_seq'),
+		(select dbxref_id from dbxref where accession='genedb_misc:top_level_seq'),
 		0, 0); 
 		
 		
-insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:taxonomy');
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:taxonomy');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
 		values ((select cv_id from cv where name='genedb_misc'), 
 		'taxonomy',
@@ -397,10 +397,10 @@ insert into cv (name, definition)
 
        
 -- Load phylogeny relationships
-insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb-misc:organism_heirachy');
+insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:organism_heirachy');
 insert into phylotree (dbxref_id, name, type_id, comment)
 		values (
-		(select dbxref_id from dbxref where accession='genedb-misc:organism_heirachy'),
+		(select dbxref_id from dbxref where accession='genedb_misc:organism_heirachy'),
 		 'org_heirachy', 
 		(select cvterm_id from cvterm where name='taxonomy')
 		 , 'GeneDB organism heirachy');
