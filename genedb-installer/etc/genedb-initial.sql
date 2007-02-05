@@ -254,14 +254,6 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select dbxref_id from dbxref where accession='genedb_misc:isoelectric_point'),
 		0, 0); 
 		
-insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:top_level_seq');
-insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
-		values ((select cv_id from cv where name='genedb_misc'), 
-		'top_level_seq',
-		'Marker to indicate that a sequence should be considered a top level feature',
-		(select dbxref_id from dbxref where accession='genedb_misc:top_level_seq'),
-		0, 0); 
-		
 		
 insert into dbxref(db_id, accession) values ((select db_id from db where name='null'), 'genedb_misc:taxonomy');
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
@@ -330,10 +322,7 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		'date',
 		(select dbxref_id from dbxref where accession='genedb_fcvt_prop_keys:date'),
 		0, 0); 
-		
-insert into cv (name, definition)
-       values ('genedb_literature', 'GeneDB-specific vocab for types of literature eg paper');
-       
+
 insert into cv (name, definition)
        values ('genedb_synonym_type', 'GeneDB-specific cv for more specific naming');
 
