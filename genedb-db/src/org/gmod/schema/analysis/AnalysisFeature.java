@@ -69,28 +69,28 @@ public class AnalysisFeature implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#getAnalysisFeatureId()
      */
-    private int getAnalysisFeatureId() {
+    public int getAnalysisFeatureId() {
         return this.analysisFeatureId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#setAnalysisFeatureId(int)
      */
-    private void setAnalysisFeatureId(int analysisFeatureId) {
+    public void setAnalysisFeatureId(int analysisFeatureId) {
         this.analysisFeatureId = analysisFeatureId;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#getAnalysis()
      */
-    private Analysis getAnalysis() {
+    public Analysis getAnalysis() {
         return this.analysis;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#setAnalysis(org.genedb.db.jpa.Analysis)
      */
-    private void setAnalysis(Analysis analysis) {
+    public void setAnalysis(Analysis analysis) {
         this.analysis = analysis;
     }
 
@@ -99,14 +99,14 @@ public class AnalysisFeature implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#getFeature()
      */
-    private Feature getFeature() {
+    public Feature getFeature() {
         return this.feature;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#setFeature(org.genedb.db.jpa.Feature)
      */
-    private void setFeature(Feature feature) {
+    public void setFeature(Feature feature) {
         this.feature = feature;
     }
     
@@ -114,56 +114,56 @@ public class AnalysisFeature implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#getRawscore()
      */
-    private Double getRawScore() {
+    public Double getRawScore() {
         return this.rawScore;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#setRawscore(java.lang.Double)
      */
-    private void setRawScore(Double rawScore) {
+    public void setRawScore(Double rawScore) {
         this.rawScore = rawScore;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#getNormscore()
      */
-    private Double getNormScore() {
+    public Double getNormScore() {
         return this.normScore;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#setNormscore(java.lang.Double)
      */
-    private void setNormScore(Double normScore) {
+    public void setNormScore(Double normScore) {
         this.normScore = normScore;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#getSignificance()
      */
-    private Double getSignificance() {
+    public Double getSignificance() {
         return this.significance;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#setSignificance(java.lang.Double)
      */
-    private void setSignificance(Double significance) {
+    public void setSignificance(Double significance) {
         this.significance = significance;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#getIdentity()
      */
-    private Double getIdentity() {
+    public Double getIdentity() {
         return this.identity;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisFeatureI#setIdentity(java.lang.Double)
      */
-    private void setIdentity(Double identity) {
+    public void setIdentity(Double identity) {
         this.identity = identity;
     }
 
