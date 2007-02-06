@@ -440,7 +440,7 @@ public class Feature implements java.io.Serializable {
      */
     public void addFeatureLocsForFeatureId(FeatureLoc featureLocForFeatureId) {
         featureLocForFeatureId.setFeatureByFeatureId(this);
-        this.featureLocsForFeatureId.add(featureLocForFeatureId);
+        getFeatureLocsForFeatureId().add(featureLocForFeatureId);
     }
 
     /* (non-Javadoc)
