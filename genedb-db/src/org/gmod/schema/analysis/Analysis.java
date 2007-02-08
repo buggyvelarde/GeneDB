@@ -106,7 +106,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getName()
      */
-    private String getName() {
+    public String getName() {
         return this.name;
     }
     
@@ -120,7 +120,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getDescription()
      */
-    private String getDescription() {
+    public String getDescription() {
         return this.description;
     }
     
@@ -135,7 +135,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getProgram()
      */
-    private String getProgram() {
+    public String getProgram() {
         return this.program;
     }
     
@@ -150,7 +150,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getProgramversion()
      */
-    private String getProgramVersion() {
+    public String getProgramVersion() {
         return this.programVersion;
     }
     
@@ -165,7 +165,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getAlgorithm()
      */
-    private String getAlgorithm() {
+    public String getAlgorithm() {
         return this.algorithm;
     }
     
@@ -180,7 +180,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getSourcename()
      */
-    private String getSourceName() {
+    public String getSourceName() {
         return this.sourceName;
     }
     
@@ -195,7 +195,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getSourceversion()
      */
-    private String getSourceVersion() {
+    public String getSourceVersion() {
         return this.sourceVersion;
     }
     
@@ -210,7 +210,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getSourceuri()
      */
-    private String getSourceUri() {
+    public String getSourceUri() {
         return this.sourceUri;
     }
     
@@ -225,7 +225,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getTimeexecuted()
      */
-    private Date getTimeExecuted() {
+    public Date getTimeExecuted() {
         return this.timeExecuted;
     }
     
@@ -239,21 +239,21 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getAnalysisfeatures()
      */
-    private Collection<AnalysisFeature> getAnalysisFeatures() {
+    public Collection<AnalysisFeature> getAnalysisFeatures() {
         return this.analysisFeatures;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setAnalysisfeatures(java.util.Set)
      */
-    private void setAnalysisFeatures(Set<AnalysisFeature> analysisFeatures) {
+    public void setAnalysisFeatures(Set<AnalysisFeature> analysisFeatures) {
         this.analysisFeatures = analysisFeatures;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getAnalysisprops()
      */
-    private Collection<AnalysisProp> getAnalysisProps() {
+    public Collection<AnalysisProp> getAnalysisProps() {
         return this.analysisProps;
     }
     
