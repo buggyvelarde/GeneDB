@@ -68,6 +68,9 @@ public class FeatureLoc implements Serializable {
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureloc")
      private Set<FeatureLocPub> featureLocPubs = new HashSet<FeatureLocPub>(0);
 
+    // used by artemis
+    private int srcFeatureId;
+    
      // Constructors
 
     /** default constructor */
@@ -280,6 +283,16 @@ public class FeatureLoc implements Serializable {
     @SuppressWarnings("unused")
     public void setFeatureLocId(int featureLocId) {
         this.featureLocId = featureLocId;
+    }
+
+    public int getSrcFeatureId()
+    {
+      return srcFeatureId;
+    }
+
+    public void setSrcFeatureId(int srcFeatureId)
+    {
+      this.srcFeatureId = srcFeatureId;
     }
 
 
