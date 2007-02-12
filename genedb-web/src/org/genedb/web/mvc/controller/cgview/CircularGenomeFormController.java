@@ -239,8 +239,9 @@ public class CircularGenomeFormController extends SimpleFormController implement
                 int lbr = label.indexOf("(");
                 int bp = label.indexOf(" bp");
                 String count = label.substring(0, colon);
-                String start = label.substring(colon, dash);
-                String end = label.substring(dash, lbr);
+                String start = label.substring(colon+1, dash);
+                String end = label.substring(dash+2, lbr);
+                String length = label.substring(lbr+1, bp);
                 ret.append("<tr><td>");
                 ret.append(count);
                 ret.append("</td><td>");
@@ -248,10 +249,11 @@ public class CircularGenomeFormController extends SimpleFormController implement
                 ret.append("</td><td>");
                 ret.append(end);
                 ret.append("</td><td>");
+                ret.append(length);
                 ret.append("</td><td>");
-                ret.append("Link</td><td>");
-                ret.append("Link</td><td>");
-                ret.append("Link</td>");
+                ret.append("<a href=\"FlatFileReport/of=embl&org=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
+                ret.append("<a href=\"FlatFileReport/of=artemis&org=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
+                ret.append("<a href=\"FlatFileReport/of=table&org=wibble&min="+start+"&max="+end+"\">Link</a></td>");
                 ret.append("</tr>\n");
             }
         }
