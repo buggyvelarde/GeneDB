@@ -3,86 +3,151 @@ package org.genedb.db.loading;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.Annotation;
-import org.gmod.schema.analysis.Analysis;
 
 public class SimilarityParser {
-
+	
+	protected static final Log logger = LogFactory.getLog(SimilarityParser.class);
+	
 	public List<SimilarityInstance> getAllSimilarityInstance(Annotation an){
 		List<SimilarityInstance> ret = new ArrayList<SimilarityInstance>();
 		
 		List<String> similarities = MiningUtils.getProperties("similarity", an);
 		
-		for (String similarity : similarities) {
-			SimilarityInstance si = new SimilarityInstance();
-			
-			String sections[] = similarity.split(";");
-			if (sections[0] != ""){
-				si.setAlgorithm(sections[0]);
-			}
-			
-			if (sections[1] != ""){
-				String values[] = sections[1].split(" ");
-				si.setPriDatabase(values[0]);
+		if (similarities != null) {
+			for (String similarity : similarities) {
+				SimilarityInstance si = new SimilarityInstance();
 				
-				values[1].replaceFirst("(", "");
-				values[1].replaceFirst(")", "");
-				si.setSecDatabase(values[1]);
-			}
-			
-			if (sections[2] != ""){
-				si.setOrganism(sections[2]);
-			}
-			
-			if (sections[3] != ""){
-				si.setProduct(sections[3]);
-			}
-			
-			if (sections[4] != ""){
-				si.setGene(sections[4]);
-			}
-			
-			if (sections[5] != ""){
-				String values[] = sections[5].split(" ");
-				si.setLength(values[1]);
-			}
-			
-			if (sections[6] != ""){
-				String values[] = sections[6].split("=");
-				si.setId(values[1]);
-			}
-			
-			if (sections[7] != ""){
-				String values[] = sections[7].split("=");
-				si.setUngappedId(values[1]);
-			}
-			
-			if (sections[8] != ""){
-				String values[] = sections[8].split("=");
-				si.setEvalue(values[1]);
-			}
-			
-			if (sections[9] != ""){
-				String values[] = sections[9].split("=");
-				si.setScore(values[1]);
-			}
-			
-			if (sections[10] != ""){
-				si.setOverlap(sections[10]);
-			}
-			
-			if (sections[11] != ""){
-				String values[] = sections[11].split(" ");
-				si.setQuery(values[1]);
-			}
-			
-			if (sections[12] != ""){
-				String values[] = sections[12].split(" ");
-				si.setSubject(values[1]);
+				String sections[] = similarity.split(";");
+				int count = 0;
+				for (String value : sections) {
+					count++;
+					
+					switch (count) {
+					case 1:
+						if (value.length() > 1){
+							si.setAlgorithm(value);
+						}
+						break;
+					case 2:
+						if (value.length() > 1){
+							String temp = value.replaceAll("^\\s+", "");
+							temp = temp.replaceAll("\\s+$", "");
+							String values[] = temp.split(" ");
+							si.setPriDatabase(values[0]);
+							
+							temp = values[1].replaceAll("^\\W", "");
+							temp = temp.replaceAll("\\W$", "");
+							si.setSecDatabase(temp);
+						}
+						break;
+					case 3:
+						if (value.length() > 1){
+							String temp = value.replaceAll("^\\s+", "");
+							temp = temp.replaceAll("\\s+$", "");
+							si.setOrganism(temp);
+						}
+						break;
+					case 4:
+						if (value.length() > 1){
+							String temp = value.replaceAll("^\\s+", "");
+							temp = temp.replaceAll("\\s+$", "");
+							si.setProduct(temp);
+						}
+						break;
+					case 5:
+						if (value.length() > 1){
+							String temp = value.replaceAll("^\\s+", "");
+							temp = temp.replaceAll("\\s+$", "");
+							si.setGene(temp);
+						}
+						break;
+					case 6:
+						if (value.length() > 1){
+							String temp = value.replaceAll("^\\s+", "");
+							String values[] = temp.split(" ");
+							if(values.length != 3){
+								count--;
+							} else {
+								si.setLength(values[1]);
+							}
+						}
+						break;
+					case 7:
+						if (value.length() > 1){
+							if (value.contains("=")){
+								String values[] = value.split("=");
+								si.setId(values[1].replaceAll("\\W$", ""));
+							}
+						}
+						break;
+					case 8:
+						if (value.length() > 1){
+							if (value.contains("=")){
+								String values[] = value.split("=");
+								si.setUngappedId(values[1].replaceAll("\\W$", ""));
+							}
+						}
+						break;
+					case 9:
+						if (value.length() > 1){
+							if (value.contains("=")){
+								String values[] = value.split("=");
+								si.setEvalue(values[1].replaceAll("\\W$", ""));
+							}
+						}
+						break;
+					case 10:
+						if (value.length() > 1){
+							if (value.contains("=")){
+								String values[] = value.split("=");
+								si.setScore(values[1]);
+							}
+						}
+						break;
+					case 11:
+						if (value.length() > 1){
+							si.setOverlap(value);
+						}
+						break;
+					case 12:
+						if (value.length() > 1){
+							String temp = value.replaceAll("^\\s+", "");
+							String values[] = temp.split(" ");
+							if(values[1].equals("aa")){
+								count++;
+							}
+							si.setQuery(values[1]);
+						} else {
+							count--;
+						}
+						break;
+					case 13:
+						if (value.length() > 1){
+							String temp = value.replaceAll("^\\s+", "");
+							String values[] = temp.split(" ");
+							if(values[1].equals("aa")){
+								count++;
+							}
+							si.setSubject(values[1]);
+							
+						} else {
+							count--;
+						}
+						break;
+					}
+				}
+				if (count != 13) {
+					logger.error("THIS QUALIFIER IS NOT CURATED PROPERLY: " + an.getProperty("systematic_id"));
+					System.out.println("THIS QUALIFIER IS NOT CURATED PROPERLY: " + an.getProperty("systematic_id"));
+				} else {
+					ret.add(si);
+				}
 				
 			}
-			ret.add(si);
-		}
+		} 
 		return ret;
 	}
 }
