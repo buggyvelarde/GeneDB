@@ -286,7 +286,7 @@ class LoadGeneDbPhylogeny {
                 </node>
             </node>
         </node>
-		<node name="Fubar">
+		<node name="Eukaryotes">
 			<organism name="Cdubliniensis">
 			</organism>
 			<organism name="Ddiscoideum">
