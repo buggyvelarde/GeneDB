@@ -357,7 +357,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                 //logger.warn("Trying to tie UTR via '"+qualifier+"'");
                 // Hopefully the systematic name of a gene
                 String sysId = MiningUtils.getProperty(qualifier, an, null);
-                ret = sequenceDao.getFeatureByUniqueName(sysId);
+                ret = sequenceDao.getFeaturesByUniqueName(sysId).get(0);
                 if (ret == null) {
     //                String utrName = this.gns.get5pUtr(gene.getUniquename(), 0);
     //                if ("three_prime_UTR".equals(type)) {

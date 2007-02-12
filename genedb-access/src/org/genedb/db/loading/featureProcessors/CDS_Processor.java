@@ -35,6 +35,7 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_TEMP_SYS_ID;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -156,7 +157,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             boolean altSplicing = false;
             String sharedId = MiningUtils.getProperty("shared_id", an, null);
             if (sharedId != null) {
-                gene = sequenceDao.getFeatureByUniqueName(sharedId);
+                gene = sequenceDao.getFeaturesByUniqueName(sharedId).get(0);
                 altSplicing = true;
             }
 
@@ -324,179 +325,192 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
      */
     private void createSimilarity(Feature polypeptide, Feature transcript,Annotation an) {
     	
+    	String cv = "SI_genedb_similarity";
     	List<SimilarityInstance> similarities = this.siParser.getAllSimilarityInstance(an);
 		int count = 0;
-		
-    	for (SimilarityInstance si : similarities) {
-    		
-    		count++;
-    		
-    		Feature queryFeature = null;
-    		String cvTerm = null;
-    		
-			if (si.getAlgorithm().equals("fasta")) {
-				queryFeature = transcript;
-				cvTerm = "nucleotide_match";
-			} else {
-				queryFeature = polypeptide;
-				cvTerm = "protein_match";
-			}
-			/* look for analysis and create new if one does not already exsists */
-			
-			Analysis analysis = null;
-			analysis = this.generalDao.getAnalysisByProgram(si.getAlgorithm());
-			if (analysis == null){
-				analysis = new Analysis();
-				analysis.setAlgorithm(si.getAlgorithm());
-				analysis.setProgram(si.getAlgorithm());
-				analysis.setProgramVersion("1.0");
-				analysis.setSourceName(si.getAlgorithm());
-				this.generalDao.persist(analysis);
-			}
-			
-			/* create match feature 
-	         * create new dbxref for match feature if one does not already exsists 
-	         */ 
-			
-			Feature matchFeature = null;
-			String uniqueName = null;
-			
-			uniqueName = "MATCH_" + queryFeature.getUniqueName() + "_" + count;
-			
-			matchFeature = this.featureUtils.createFeature(cvTerm, uniqueName, organism);
-			this.sequenceDao.persist(matchFeature);
-			
-			CvTerm uId = this.cvDao.getCvTermByNameAndCvName("ungappedid", "similarity");
-			FeatureProp ungappedId = new FeatureProp(matchFeature,uId,si.getUngappedId(),0);
-			this.sequenceDao.persist(ungappedId);
-			
-			CvTerm olap = this.cvDao.getCvTermByNameAndCvName("overlap", "similarity");
-			FeatureProp overlap = new FeatureProp(matchFeature,olap,si.getOverlap(),0);
-			this.sequenceDao.persist(overlap);
-			
-			/* create analysisfeature 
-			 * 
-			 */
-			Double score = null;
-			if (si.getScore() != null) {
-				score = Double.parseDouble(si.getScore());
-			} 
-			
-			Double evalue = null;
-			if (si.getEvalue() != null) {
-				evalue = Double.parseDouble(si.getEvalue());
-			} 
-			
-			Double id = null;
-			if (si.getId() != null) {
-				id = Double.parseDouble(si.getId());
-			} 
-			
-			AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
-			this.generalDao.persist(analysisFeature);
-			
-			/* create subject feature if one does not already exists. If two database are 
-			 * referenced; seperate the primary and the secondary. Create feature.dbxref 
-			 * for primary and featuredbxref for secondary. Also add organism, product, gene, 
-			 * overlap and ungappedid as featureprop to this feature. Create featureloc from 
-			 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id 
-			 * of featureloc to 0. 
-			 */
-			Feature subjectFeature = null;
-			subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getPriDatabase());
-			if (subjectFeature == null) {
-				subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getSecDatabase());
-			}
-			
-			if (subjectFeature == null) {
+		if (similarities.size() > 0)  {
+	    	for (SimilarityInstance si : similarities) {
+	    		
+	    		count++;
+	    		
+	    		Feature queryFeature = null;
+	    		String cvTerm = null;
+	    		
+				if (si.getAlgorithm().equals("fasta")) {
+					queryFeature = polypeptide;
+					cvTerm = "protein_match";
+				} else {
+					queryFeature = transcript;
+					cvTerm = "nucleotide_match";
+				}
+				/* look for analysis and create new if one does not already exsists */
 				
-				/* hmm...looks like encountered this for the first time so create
-				 * subject feature
-				 */
-				
-				DbXRef dbXRef = null;
-				String sections[] = si.getPriDatabase().split(":");
-				String values[] = si.getSecDatabase().split(":");
-	
-				String priDatabase = sections[0];
-				String priId = sections[1];
-				
-				String secDatabase = values[0];
-				String secId = values[1];
-				
-				String accession = null;
-				uniqueName = null;
-				
-				Db db = this.generalDao.getDbByName(priDatabase);
-				
-				if (priDatabase.equals(secDatabase)) {
-					if (priId.contains("_")) {
-						accession = secId;
-					} else {
-						accession = priId;
-					}
-					uniqueName = priDatabase + ":" + accession;
-					subjectFeature = this.featureUtils.createFeature("region", uniqueName, organism);
-
-					dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, accession);
-					if (dbXRef == null) {
-						dbXRef = new DbXRef(db,accession);
-						this.generalDao.persist(dbXRef);
-					}
-					subjectFeature.setDbXRef(dbXRef);
-					this.sequenceDao.persist(subjectFeature);
-				}  else {
-					
-					subjectFeature = this.featureUtils.createFeature("region", si.getPriDatabase(), organism);
-					
-					dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, accession);
-					if (dbXRef == null) {
-						dbXRef = new DbXRef(db,priId);
-						this.generalDao.persist(dbXRef);
-					}
-					subjectFeature.setDbXRef(dbXRef);
-					this.sequenceDao.persist(subjectFeature);
-					
-					DbXRef secDbXRef = null;
-					Db secDb = this.generalDao.getDbByName(secDatabase);
-					secDbXRef = this.generalDao.getDbXRefByDbAndAcc(secDb, secId);
-					if (secDbXRef == null) {
-						secDbXRef = new DbXRef(secDb,secId);
-						this.generalDao.persist(secDbXRef);
-					}
-					FeatureDbXRef featureDbXRef = new FeatureDbXRef(secDbXRef,subjectFeature,true);
-					this.sequenceDao.persist(featureDbXRef);
+				Analysis analysis = null;
+				analysis = this.generalDao.getAnalysisByProgram(si.getAlgorithm());
+				if (analysis == null){
+					analysis = new Analysis();
+					analysis.setAlgorithm(si.getAlgorithm());
+					analysis.setProgram(si.getAlgorithm());
+					analysis.setProgramVersion("1.0");
+					analysis.setSourceName(si.getAlgorithm());
+					Date today = new Date(0);
+					analysis.setTimeExecuted(today);
+					this.generalDao.persist(analysis);
 				}
 				
-				/* once the dbxrefs are set create featureprop for gene, organism and product
+				/* create match feature 
+		         * create new dbxref for match feature if one does not already exsists 
+		         */ 
+				
+				Feature matchFeature = null;
+				String uniqueName = null;
+				
+				uniqueName = "MATCH_" + queryFeature.getUniqueName() + "_" + count;
+				
+				matchFeature = this.featureUtils.createFeature(cvTerm, uniqueName, organism);
+				this.sequenceDao.persist(matchFeature);
+				
+				CvTerm uId = this.cvDao.getCvTermByNameAndCvName("ungapped id",cv );
+				FeatureProp ungappedId = new FeatureProp(matchFeature,uId,si.getUngappedId(),0);
+				this.sequenceDao.persist(ungappedId);
+				
+				CvTerm olap = this.cvDao.getCvTermByNameAndCvName("overlap", cv);
+				FeatureProp overlap = new FeatureProp(matchFeature,olap,si.getOverlap(),0);
+				this.sequenceDao.persist(overlap);
+				
+				/* create analysisfeature 
 				 * 
 				 */
-				CvTerm org = this.cvDao.getCvTermByNameAndCvName("organism", "similarity");
-				FeatureProp propOrganism = new FeatureProp(subjectFeature,org,si.getOrganism(),0);
-				this.sequenceDao.persist(propOrganism);
+				Double score = null;
+				if (si.getScore() != null) {
+					score = Double.parseDouble(si.getScore());
+				} 
 				
-				CvTerm pro = this.cvDao.getCvTermByNameAndCvName("product", "similarity");
-				FeatureProp propProduct = new FeatureProp(subjectFeature,pro,si.getProduct(),1);
-				this.sequenceDao.persist(propProduct);
+				Double evalue = null;
+				if (si.getEvalue() != null) {
+					evalue = Double.parseDouble(si.getEvalue());
+				} 
 				
-				CvTerm gene = this.cvDao.getCvTermByNameAndCvName("gene", "similarity");
-				FeatureProp propGene = new FeatureProp(subjectFeature,gene,si.getGene(),2);
-				this.sequenceDao.persist(propGene);
+				Double id = null;
+				if (si.getId() != null) {
+					id = Double.parseDouble(si.getId());
+				} 
+				
+				AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
+				this.generalDao.persist(analysisFeature);
+				
+				/* create subject feature if one does not already exists. If two database are 
+				 * referenced; seperate the primary and the secondary. Create feature.dbxref 
+				 * for primary and featuredbxref for secondary. Also add organism, product, gene, 
+				 * overlap and ungappedid as featureprop to this feature. Create featureloc from 
+				 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id 
+				 * of featureloc to 0. 
+				 */
+				Feature subjectFeature = null;
+				subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getPriDatabase(),"similarity_region");
+				if (subjectFeature == null) {
+					subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getSecDatabase(),"similarity_region");
+				}
+				
+				if (subjectFeature == null) {
+					
+					/* hmm...looks like encountered this for the first time so create
+					 * subject feature
+					 */
+					
+					DbXRef dbXRef = null;
+					String sections[] = si.getPriDatabase().split(":");
+					String values[] = si.getSecDatabase().split(":");
+		
+					String priDatabase = sections[0];
+					String priId = sections[1];
+					
+					String secDatabase = values[0];
+					String secId = values[1];
+					
+					String accession = null;
+					uniqueName = null;
+					
+					Db db = null;
+					if (priDatabase.equals("SWALL")){
+						db = this.generalDao.getDbByName("UniProt");
+					} else {
+						db = this.generalDao.getDbByName(priDatabase);
+					}
+						
+					if (priDatabase.equals(secDatabase)) {
+						if (priId.contains("_")) {
+							accession = secId;
+						} else {
+							accession = priId;
+						}
+						uniqueName = priDatabase + ":" + accession;
+						subjectFeature = this.featureUtils.createFeature("similarity_region", uniqueName, organism);
+	
+						dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, accession);
+						if (dbXRef == null) {
+							dbXRef = new DbXRef(db,accession);
+							this.generalDao.persist(dbXRef);
+						}
+						subjectFeature.setDbXRef(dbXRef);
+						subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
+						this.sequenceDao.persist(subjectFeature);
+					}  else {
+						
+						subjectFeature = this.featureUtils.createFeature("similarity_region", si.getPriDatabase(), organism);
+						
+						dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, priId);
+						if (dbXRef == null) {
+							dbXRef = new DbXRef(db,priId);
+							this.generalDao.persist(dbXRef);
+						}
+						subjectFeature.setDbXRef(dbXRef);
+						subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
+						this.sequenceDao.persist(subjectFeature);
+						
+						DbXRef secDbXRef = null;
+						Db secDb = this.generalDao.getDbByName(secDatabase);
+						secDbXRef = this.generalDao.getDbXRefByDbAndAcc(secDb, secId);
+						if (secDbXRef == null) {
+							secDbXRef = new DbXRef(secDb,secId);
+							this.generalDao.persist(secDbXRef);
+						}
+						FeatureDbXRef featureDbXRef = new FeatureDbXRef(secDbXRef,subjectFeature,true);
+						this.sequenceDao.persist(featureDbXRef);
+					}
+					
+					/* once the dbxrefs are set create featureprop for gene, organism and product
+					 * 
+					 */
+					CvTerm org = this.cvDao.getCvTermByNameAndCvName("organism", cv);
+					FeatureProp propOrganism = new FeatureProp(subjectFeature,org,si.getOrganism(),0);
+					this.sequenceDao.persist(propOrganism);
+					
+					CvTerm pro = this.cvDao.getCvTermByNameAndCvName("product", cv);
+					FeatureProp propProduct = new FeatureProp(subjectFeature,pro,si.getProduct(),1);
+					this.sequenceDao.persist(propProduct);
+					
+					CvTerm gene = this.cvDao.getCvTermByNameAndCvName("gene", cv);
+					FeatureProp propGene = new FeatureProp(subjectFeature,gene,si.getGene(),2);
+					this.sequenceDao.persist(propGene);
+					
+				}
+				
+				/* create featureloc and attach 'em to matchFeature
+				 * 
+				 */
+				short strand = 1;
+				String sCoords[] = si.getSubject().split("-");
+	     		FeatureLoc subjectFLoc = this.featureUtils.createLocation(subjectFeature, matchFeature,Integer.parseInt(sCoords[0]) ,Integer.parseInt(sCoords[1]), strand);
+	     		subjectFLoc.setRank(0);
+				this.sequenceDao.persist(subjectFLoc);
+				
+				String qCoords[] = si.getQuery().split("-");
+				FeatureLoc queryFLoc = this.featureUtils.createLocation(queryFeature, matchFeature,Integer.parseInt(qCoords[0]) ,Integer.parseInt(qCoords[1]), strand);
+				queryFLoc.setRank(1);
+				this.sequenceDao.persist(queryFLoc);
 				
 			}
-			
-			/* create featureloc and attach 'em to matchFeature
-			 * 
-			 */
-			short strand = 1;
-			String sCoords[] = si.getSubject().split("-");
-			FeatureLoc subjectFLoc = this.featureUtils.createLocation(matchFeature, subjectFeature,Integer.parseInt(sCoords[0]) ,Integer.parseInt(sCoords[1]), strand);
-			this.sequenceDao.persist(subjectFLoc);
-			
-			String qCoords[] = si.getSubject().split("-");
-			FeatureLoc queryFLoc = this.featureUtils.createLocation(matchFeature, queryFeature,Integer.parseInt(qCoords[0]) ,Integer.parseInt(qCoords[1]), strand);
-			this.sequenceDao.persist(queryFLoc);
-			
 		}
 	}
 
@@ -1145,7 +1159,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 			return siParser;
 		}
 
-		public void setSParser(SimilarityParser siparser) {
+		public void setSiParser(SimilarityParser siparser) {
 			this.siParser = siparser;
 		}
 
