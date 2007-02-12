@@ -29,12 +29,15 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 
     /* (non-Javadoc)
      * @see org.genedb.db.dao.SequenceDaoI#getFeatureByUniqueName(java.lang.String)
+     * TODO please modify this code, it is not compatible...
      */
-    public Feature getFeatureByUniqueName(String name) {
-        List features = getHibernateTemplate().findByNamedParam(
-                "from Feature f where f.uniqueName=:name", "name", name);
+    public Feature getFeatureByUniqueName(String name, String featureType) {
+    	@SuppressWarnings("unchecked")
+    	List<Feature> features = (List<Feature>) getHibernateTemplate().findByNamedParam(
+                "from Feature f where f.uniqueName=:name and f.cvTerm.name=:featureType",
+                new String[]{"name","featureType"},new Object[]{name,featureType});
         if (features.size() > 0) {
-            return (Feature) features.get(0);
+            return features.get(0);
         }
         return null;
     }

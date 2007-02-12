@@ -37,6 +37,9 @@ public class GeneralDao extends BaseDao implements GeneralDaoI {
     
     public Analysis getAnalysisByProgram(String program) {
     	List<Analysis> temp = getHibernateTemplate().findByNamedParam("from Analysis a where a.program=:program","program",program);
-    	return temp.get(0);
+    	if (temp.size() > 0) {
+    		return temp.get(0);
+    	} 
+    	return null;
     }
 }
