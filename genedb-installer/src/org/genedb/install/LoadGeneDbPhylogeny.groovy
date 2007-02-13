@@ -521,101 +521,79 @@ class LoadGeneDbPhylogeny {
 					<property name="mitoTransTable" value="3"/>
 				</organism>
             </node>
-            
-        </node>
-		<node name="Eukaryotes">
-			<organism name="Bmarinus">
-				<property name="taxonId" value="" />
-				<property name="fullName" value="" />
-				<property name="nickname" value="bmarinus" />
-            	<property name="dbName" value="GeneDB_Bmarinus" />
-				<property name="transTable" value=""/>
-				<property name="mitoTransTable" value=""/>
-			</organism>
-			<!--<organism name="">
-			</organism>
-			<organism name="">
-			</organism>
-			<organism name="">
-			</organism>
-			<organism name="">
-			</organism>
-			<organism name="">
-			</organism> -->
-
 		</node>
 		<node name="bacteria">
-			<organism name="Bacteriovorax marinus">
+			<organism name="Bmarinus">
 				<property name="taxonId" value="97084" />
 				<property name="fullName" value="Bacteriovorax marinus" />
 				<property name="nickname" value="bmarinus" />
             	<property name="dbName" value="GeneDB_Bmarinus" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Bacteroides fragilis NCTC 9343">
+			<organism name="Bfragilis_NCTC9343">
 				<property name="taxonId" value="272559" />
 				<property name="fullName" value="Bacteroides fragilis NCTC 9343" />
 				<property name="nickname" value="bfragilis" />
             	<property name="dbName" value="GeneDB_Bfragilis" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Campylobacter jejuni">
+			<organism name="Cjejuni">
 				<property name="taxonId" value="197" />
 				<property name="fullName" value="Campylobacter jejuni" />
 				<property name="nickname" value="cjejuni" />
             	<property name="dbName" value="GeneDB_Cjejuni" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Chlamydia trachomatis">
+			<organism name="Ctrachomatis">
 				<property name="taxonId" value="813" />
 				<property name="fullName" value="Chlamydia trachomatis" />
 				<property name="nickname" value="" />
             	<property name="dbName" value="GeneDB_Ctrachomatis" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Chlamydophila abortus">
+			<organism name="Cabortus">
 				<property name="taxonId" value="83555" />
 				<property name="fullName" value="Chlamydophila abortus" />
 				<property name="nickname" value="cabortus" />
             	<property name="dbName" value="GeneDB_Cabortus" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Clavibacter michiganensis">
+			<organism name="Cmichiganensis">
 				<property name="taxonId" value="28447" />
 				<property name="fullName" value="Clavibacter michiganensis" />
 				<property name="nickname" value="cmichiganensis" />
             	<property name="dbName" value="GeneDB_Cmichiganensis" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Corynebacterium diphtheriae">
+			<organism name="Cdiphtheriae">
 				<property name="taxonId" value="1717" />
 				<property name="fullName" value=Corynebacterium diphtheriae"" />
 				<property name="nickname" value="diphtheria" />
             	<property name="dbName" value="GeneDB_Cdiphtheriae" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Erwinia carotovora">
+			<organism name="Ecarotovora">
 				<property name="taxonId" value="554" />
 				<property name="fullName" value="Erwinia carotovora" />
 				<property name="nickname" value="ecarot" />
             	<property name="dbName" value="GeneDB_Ecarotovora" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Escherichia coli 042">
+			<organism name="Ecoli_042">
 				<property name="taxonId" value="216592" />
 				<property name="fullName" value="Escherichia coli 042" />
 				<property name="nickname" value="ecoli" />
             	<property name="dbName" value="GeneDB_Ecoli" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Pseudomonas fluorescens">
+			<organism name="Pfluorescens">
 				<property name="taxonId" value="294" />
 				<property name="fullName" value="Pseudomonas fluorescens" />
 				<property name="nickname" value="pfluorescens" />
             	<property name="dbName" value="GeneDB_Pfluorescens" />
 				<property name="transTable" value="11"/>
 			</organism>
-			<organism name="Rhizobium leguminosarum">
+			<organism name="Rleguminosarum">
 				<property name="taxonId" value="384" />
 				<property name="fullName" value="Rhizobium leguminosarum" />
 				<property name="nickname" value="rleguminosarum" />
@@ -623,28 +601,28 @@ class LoadGeneDbPhylogeny {
 				<property name="transTable" value="11"/>
 			</organism>
 			<node name="Bordetella">
-				<organism name="Bordetella avium 197N">
+				<organism name="Bavium_197N">
 					<property name="taxonId" value="360910" />
 					<property name="fullName" value="Bordetella avium 197N" />
 					<property name="nickname" value="bavium" />
 	            	<property name="dbName" value="GeneDB_Bavium" />
 					<property name="transTable" value="11"/>
 				</organism>
-				<organism name="Bordetella bronchiseptica">
+				<organism name="Bbronchiseptica">
 					<property name="taxonId" value="518" />
 					<property name="fullName" value="Bordetella bronchiseptica" />
 					<property name="nickname" value="bronchi" />
 	            	<property name="dbName" value="GeneDB_Bbronchiseptica" />
 					<property name="transTable" value="11"/>
 				</organism>
-				<organism name="Bordetella parapertussis">
+				<organism name="Bparapertussis">
 					<property name="taxonId" value="519" />
 					<property name="fullName" value="Bordetella parapertussis" />
 					<property name="nickname" value="parapert" />
 	            	<property name="dbName" value="GeneDB_Bparapertussis" />
 					<property name="transTable" value="11"/>
 				</organism>
-				<organism name="Bordetella pertussis">
+				<organism name="Bpertussis">
 					<property name="taxonId" value="520" />
 					<property name="fullName" value="Bordetella pertussis" />
 					<property name="nickname" value="pert" />
@@ -653,14 +631,14 @@ class LoadGeneDbPhylogeny {
 				</organism>
 			</node>
 			<node name="Burkholderia">
-				<organism name="Burkholderia cenocepacia">
+				<organism name="Bcenocepacia">
 					<property name="taxonId" value="95486" />
 					<property name="fullName" value="Burkholderia cenocepacia" />
 					<property name="nickname" value="bcenocepacia" />
 	            	<property name="dbName" value="GeneDB_Bcenocepacia" />
 					<property name="transTable" value="11"/>
 				</organism>
-				<organism name="Burkholderia pseudomallei">
+				<organism name="Bpseudomallei">
 					<property name="taxonId" value="28450" />
 					<property name="fullName" value="Burkholderia pseudomallei" />
 					<property name="nickname" value="bpseudomallei" />
@@ -669,14 +647,14 @@ class LoadGeneDbPhylogeny {
 				</organism>
 			</node>
 			<node name="Clostridium">
-				<organism name="Clostridium botulinum">
+				<organism name="Cbotulinum">
 					<property name="taxonId" value="1491" />
 					<property name="fullName" value="Clostridium botulinum" />
 					<property name="nickname" value="cbotulinum" />
 	            	<property name="dbName" value="GeneDB_Cbotulinum" />
 					<property name="transTable" value="11"/>
 				</organism>
-				<organism name="Clostridium difficile">
+				<organism name="Cdifficile">
 					<property name="taxonId" value="1496" />
 					<property name="fullName" value="Clostridium difficile" />
 					<property name="nickname" value="cdifficile" />
@@ -685,28 +663,28 @@ class LoadGeneDbPhylogeny {
 				</organism>
 			</node>
 			<node name="Mycobacterium">
-				<organism name="Mycobacterium bovis">
+				<organism name="Mbovis">
 					<property name="taxonId" value="1765" />
 					<property name="fullName" value="Mycobacterium bovis" />
 					<property name="nickname" value="mbovis" />
 	            	<property name="dbName" value="GeneDB_Mbovis" />
 					<property name="transTable" value="11"/>
 				</organism>
-				<organism name="Mycobacterium leprae">
+				<organism name="Mleprae">
 					<property name="taxonId" value="1769" />
 					<property name="fullName" value="Mycobacterium leprae" />
 					<property name="nickname" value="mleprae" />
 	            	<property name="dbName" value="GeneDB_Mleprae" />
 					<property name="transTable" value="11"/>
 				</organism>
-				<organism name="Mycobacterium marinum">
+				<organism name="Mmarinum">
 					<property name="taxonId" value="1781" />
 					<property name="fullName" value="Mycobacterium marinum" />
 					<property name="nickname" value="mmarinum" />
 	            	<property name="dbName" value="GeneDB_Mmarinum" />
 					<property name="transTable" value="11"/>
 				</organism>
-				<organism name="Mycobacterium tuberculosis">
+				<organism name="Mtuberculosis">
 					<property name="taxonId" value="1773" />
 					<property name="fullName" value="Mycobacterium tuberculosis" />
 					<property name="nickname" value="mtuberculosis" />
@@ -715,102 +693,20 @@ class LoadGeneDbPhylogeny {
 				</organism>
 			</node>
 			<node name="Neisseria">
-				<organism name="Neisseria meningitidis">
+				<organism name="Nmeningitidis">
 					<property name="taxonId" value="487" />
 					<property name="fullName" value="Neisseria meningitidis" />
 					<property name="nickname" value="nmeningitidis" />
 	            	<property name="dbName" value="GeneDB_Nmeningitidis" />
 					<property name="transTable" value="11"/>
 				</organism>
-				<organism name="Neisseria meningitidis C">
+				<organism name="Nmeningitidis_C">
 					<property name="taxonId" value="272831" />
 					<property name="fullName" value="Neisseria meningitidis C" />
 					<property name="nickname" value="nmeningitidisC" />
 	            	<property name="dbName" value="GeneDB_NmeningitidisC" />
 					<property name="transTable" value="11"/>
 				</organism>
-			</node>
-			<node name="Salmonella">
-				<organism name="">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
-					<property name="nickname" value="" />
-	            	<property name="dbName" value="" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-				</organism>
-				<organism name="">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
-					<property name="nickname" value="" />
-	            	<property name="dbName" value="" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-				</organism>
-				<organism name="">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
-					<property name="nickname" value="" />
-	            	<property name="dbName" value="" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-				</organism>
-			</node>
-			<node name="Staphylococcus">
-				<organism name="">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
-					<property name="nickname" value="" />
-	            	<property name="dbName" value="" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-				</organism>
-				<organism name="">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
-					<property name="nickname" value="" />
-	            	<property name="dbName" value="" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-				</organism>
-			</node>
-			<node name="Streptococcus">
-				<organism name="">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
-					<property name="nickname" value="" />
-	            	<property name="dbName" value="" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-				</organism>
-				<organism name="">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
-					<property name="nickname" value="" />
-	            	<property name="dbName" value="" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-				</organism>
-			</node>
-			<node name="Yersinia">
-				<organism name="">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
-					<property name="nickname" value="" />
-	            	<property name="dbName" value="" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-				</organism>
-				<organism name="">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
-					<property name="nickname" value="" />
-	            	<property name="dbName" value="" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-				</organism>
-			</node>
-			<node name="Neisseria">
 			</node>
 			<node name="Salmonella">
 				<organism name="Sbongori">
