@@ -810,6 +810,93 @@ class LoadGeneDbPhylogeny {
 					<property name="mitoTransTable" value=""/>
 				</organism>
 			</node>
+			<node name="Neisseria">
+			</node>
+			<node name="Salmonella">
+				<organism name="Sbongori">
+					<property name="taxonId" value="54736" />
+					<property name="fullName" value="Salmonella bongori" />
+					<property name="nickname" value="sbongori" />
+	            	<property name="dbName" value="GeneDB_Sbongori" />
+					<property name="transTable" value="11"/>
+				</organism>	
+				<organism name="Senteritidis_PT4">
+					<property name="taxonId" value="592" />
+					<property name="fullName" value="Salmonella enteritidis PT4" />
+					<property name="nickname" value="senteritidis" />
+	            	<property name="dbName" value="GeneDB_Senteritidis_PT4" />
+					<property name="transTable" value="11"/>
+				</organism>
+			</node>
+			<organism name="Smarcescens">
+					<property name="taxonId" value="615" />
+					<property name="fullName" value="Serratia marcescens" />
+					<property name="nickname" value="smarcescens " />
+	            	<property name="dbName" value="GeneDB_Smarcescens" />
+					<property name="transTable" value="11"/>
+			</organism>
+			<node name="Staphylococcus">
+				<organism name="Saureus_MRSA252">
+					<property name="taxonId" value="282458" />
+					<property name="fullName" value="Staphylococcus aureus (MRSA252)" />
+					<property name="nickname" value="saureusMRSA" />
+	            	<property name="dbName" value="GeneDB_SaureusMRSA" />
+					<property name="transTable" value="11"/>
+				</organism>	
+				<organism name="Saureus_MSSA476">
+					<property name="taxonId" value="282459" />
+					<property name="fullName" value="Staphylococcus aureus (MSSA476)" />
+					<property name="nickname" value="saureusMSSA476" />
+	            	<property name="dbName" value="GeneDB_SaureusMSSA" />
+					<property name="transTable" value="11"/>
+				</organism>
+			</node>
+			<organism name="Smaltophilia">
+				<property name="taxonId" value="40324" />
+				<property name="fullName" value="Stenotrophomonas maltophilia" />
+				<property name="nickname" value="smaltophilia" />
+            	<property name="dbName" value="GeneDB_Smaltophilia" />
+				<property name="transTable" value="11"/>
+			</organism>
+			<node name="Streptococcus">
+				<organism name="Spyogenes">
+					<property name="taxonId" value="1314" />
+					<property name="fullName" value="Streptococcus pyogenes" />
+					<property name="nickname" value="spyogenes" />
+	            	<property name="dbName" value="GeneDB_Spyogenes" />
+					<property name="transTable" value="11"/>
+				</organism>	
+				<organism name="Suberis">
+					<property name="taxonId" value="1349" />
+					<property name="fullName" value="Streptococcus uberis" />
+					<property name="nickname" value="suberis" />
+	            	<property name="dbName" value="GeneDB_Suberis" />
+					<property name="transTable" value="11"/>
+				</organism>
+			</node>
+			<organism name="Twhipplei">
+				<property name="taxonId" value="2039" />
+				<property name="fullName" value="Tropheryma whipplei" />
+				<property name="nickname" value="twhipplei" />
+            	<property name="dbName" value="GeneDB_Twhipplei" />
+				<property name="transTable" value="11"/>
+			</organism>	
+			<node name="Yersinia">
+				<organism name="Ypestis">
+					<property name="taxonId" value="632" />
+					<property name="fullName" value="Yersinia pestis" />
+					<property name="nickname" value="ypsetis" />
+	            	<property name="dbName" value="GeneDB_Ypestis" />
+					<property name="transTable" value="11"/>
+				</organism>	
+				<organism name="Yenterocolitica">
+					<property name="taxonId" value="630" />
+					<property name="fullName" value="Yersinia enterocolitica" />
+					<property name="nickname" value="yenterocolitica" />
+	            	<property name="dbName" value="GeneDB_Yenterocolitica" />
+					<property name="transTable" value="11"/>
+				</organism>
+			</node>
 		</node>
     </node>
 </org-heirachy>
