@@ -331,12 +331,13 @@ class LoadGeneDbPhylogeny {
 		<node name="Helminths">
 			<node name="platyhelminths">
 				<organism name="Smansoni">
-					<property name="taxonId" value="" />
-					<property name="fullName" value="" />
+					<property name="taxonId" value="6183" />
+					<property name="fullName" value="Schistosoma mansoni" />
 					<property name="nickname" value="smansoni" />
 	            	<property name="dbName" value="GeneDB_Smansoni" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
+					<property name="transTable" value="1"/>
+					<property name="mitoTransTable" value="9"/>
+					<property name="curator" value="mb4"/>
 				</organism>
 			</node>
 		</node>
@@ -349,6 +350,7 @@ class LoadGeneDbPhylogeny {
 	                <property name="dbName" value="GeneDB_Lbraziliensis" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="csp"/>
 				</organism>
                 <organism name="Lmajor">
                     <property name="taxonId" value="5664" />
@@ -357,6 +359,7 @@ class LoadGeneDbPhylogeny {
                     <property name="dbName" value="GeneDB_Lmajor" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="csp"/>
                 </organism>
                 <organism name="Linfantum">
                     <property name="taxonId" value="5761" />
@@ -365,6 +368,7 @@ class LoadGeneDbPhylogeny {
                     <property name="dbName" value="GeneDB_Linfantum" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="csp"/>
                 </organism>
             </node>
             <node name="Trypanasoma">
@@ -375,6 +379,7 @@ class LoadGeneDbPhylogeny {
 	                <property name="dbName" value="GeneDB_Tcongolense" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="chf"/>
 				</organism>
 				<organism name="Tbruceibrucei427">
                     <property name="taxonId" value="5761" />
@@ -383,6 +388,7 @@ class LoadGeneDbPhylogeny {
 					<property name="dbName" value="GeneDB_Tbrucei427" />
 					<property name="transTable" value=""/>
 					<property name="mitoTransTable" value=""/>
+					<property name="curator" value="chf"/>
                 </organism>
                 <organism name="Tbruceibrucei927">
                     <property name="taxonId" value="185431" />
@@ -391,6 +397,7 @@ class LoadGeneDbPhylogeny {
 					<property name="dbName" value="GeneDB_Tbrucei927" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="chf"/>
                 </organism>
                 <organism name="Tbruceigambiense">
                     <property name="taxonId" value="31285" />
@@ -399,6 +406,7 @@ class LoadGeneDbPhylogeny {
 					<property name="dbName" value="GeneDB_Tgambiense" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="chf"/>
                 </organism>
                 <organism name="Tvivax">
                     <property name="taxonId" value="5699" />
@@ -407,6 +415,7 @@ class LoadGeneDbPhylogeny {
                     <property name="dbName" value="GeneDB_Tvivax" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="chf"/>
                 </organism>
                 <organism name="Tcruzi">
                     <property name="taxonId" value="5693" />
@@ -415,6 +424,7 @@ class LoadGeneDbPhylogeny {
                     <property name="dbName" value="GeneDB_Tcruzi" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="chf"/>
                 </organism>
             </node>
             <node name="Protozoa">
@@ -425,6 +435,7 @@ class LoadGeneDbPhylogeny {
 	                <property name="dbName" value="GeneDB_Ddiscoideum" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="1"/>
+					<property name="curator" value="mar"/>
 				</organism>
 				<organism name="Ehistolytica">
 					<property name="taxonId" value="5759" />
@@ -433,6 +444,7 @@ class LoadGeneDbPhylogeny {
 	                <property name="dbName" value="GeneDB_Ehistolytica" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="1"/>
+					<property name="curator" value="mb4"/>
 				</organism>
 				<node name="Apicomplexa">
 					<organism name="Etenella">
@@ -442,6 +454,7 @@ class LoadGeneDbPhylogeny {
 		                <property name="dbName" value="GeneDB_Etenella" />
 						<property name="transTable" value="1"/>
 						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="mar"/>
 				  	</organism>
 					<organism name="Tannulata">
 						<property name="taxonId" value="5874" />				
@@ -450,6 +463,7 @@ class LoadGeneDbPhylogeny {
 		                <property name="dbName" value="GeneDB_Tannulata" />
 						<property name="transTable" value="1"/>
 						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="ap2"/>
 					</organism>
 	                <node name="Plasmodia">
 	                    <organism name="Pfalciparum">
@@ -459,6 +473,7 @@ class LoadGeneDbPhylogeny {
 	                        <property name="dbName" value="GeneDB_Pfalciparum" />
 							<property name="transTable" value="1"/>
 						    <property name="mitoTransTable" value="4"/>
+							<property name="curator" value="aeb"/>
 	                    </organism>
 	                    <organism name="Pknowlesi">
 	                        <property name="taxonId" value="5850" />
@@ -467,6 +482,7 @@ class LoadGeneDbPhylogeny {
 	                        <property name="dbName" value="GeneDB_Pknowlesi" />
 							<property name="transTable" value="1"/>
 							<property name="mitoTransTable" value="4"/>
+							<property name="curator" value="aeb"/>
 	                    </organism>
 	                    <organism name="Pberghei">
 	                        <property name="taxonId" value="5821" />
@@ -475,6 +491,7 @@ class LoadGeneDbPhylogeny {
 	                        <property name="dbName" value="GeneDB_Pberghei" />
 							<property name="transTable" value="1"/>
 							<property name="mitoTransTable" value="4"/>
+							<property name="curator" value="aeb"/>
 	                    </organism>
 	                    <organism name="Pchabaudi">
 	                        <property name="taxonId" value="5825" />
@@ -483,6 +500,7 @@ class LoadGeneDbPhylogeny {
 	                        <property name="dbName" value="GeneDB_Pchabaudi" />
 							<property name="transTable" value="1"/>
 							<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="aeb"/>
 	                    </organism>
 	                </node>
 	            </node>
@@ -495,6 +513,7 @@ class LoadGeneDbPhylogeny {
                     <property name="dbName" value="GeneDB_Scerevisiae" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="3"/>
+					<property name="curator" value="val"/>
                 </organism>
                 <organism name="Spombe">
                     <property name="taxonId" value="4896" />
@@ -503,6 +522,7 @@ class LoadGeneDbPhylogeny {
                     <property name="dbName" value="GeneDB_Spombe" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="val"/>
                 </organism>
                 <organism name="Afumigatus">
                     <property name="taxonId" value="5085" />
@@ -511,6 +531,7 @@ class LoadGeneDbPhylogeny {
                     <property name="dbName" value="GeneDB_Afumigatus" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
+					<property name="curator" value="mb4"/>
                 </organism>
 				<organism name="Cdubliniensis">
 					<property name="taxonId" value="42374" />
@@ -519,6 +540,7 @@ class LoadGeneDbPhylogeny {
 	                <property name="dbName" value="GeneDB_Cdubliniensis" />
 					<property name="transTable" value="12"/>
 					<property name="mitoTransTable" value="3"/>
+					<property name="curator" value="mb4"/>
 				</organism>
             </node>
 		</node>
@@ -529,6 +551,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="bmarinus" />
             	<property name="dbName" value="GeneDB_Bmarinus" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="sdb"/>
 			</organism>
 			<organism name="Bfragilis_NCTC9343">
 				<property name="taxonId" value="272559" />
@@ -536,6 +559,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="bfragilis" />
             	<property name="dbName" value="GeneDB_Bfragilis" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="amct"/>
 			</organism>
 			<organism name="Cjejuni">
 				<property name="taxonId" value="197" />
@@ -543,6 +567,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="cjejuni" />
             	<property name="dbName" value="GeneDB_Cjejuni" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="sdb"/>
 			</organism>
 			<organism name="Ctrachomatis">
 				<property name="taxonId" value="813" />
@@ -550,6 +575,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="" />
             	<property name="dbName" value="GeneDB_Ctrachomatis" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="nrt"/>
 			</organism>
 			<organism name="Cabortus">
 				<property name="taxonId" value="83555" />
@@ -557,6 +583,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="cabortus" />
             	<property name="dbName" value="GeneDB_Cabortus" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="nrt"/>
 			</organism>
 			<organism name="Cmichiganensis">
 				<property name="taxonId" value="28447" />
@@ -564,6 +591,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="cmichiganensis" />
             	<property name="dbName" value="GeneDB_Cmichiganensis" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="sdb"/>
 			</organism>
 			<organism name="Cdiphtheriae">
 				<property name="taxonId" value="1717" />
@@ -571,6 +599,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="diphtheria" />
             	<property name="dbName" value="GeneDB_Cdiphtheriae" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="amct"/>
 			</organism>
 			<organism name="Ecarotovora">
 				<property name="taxonId" value="554" />
@@ -578,6 +607,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="ecarot" />
             	<property name="dbName" value="GeneDB_Ecarotovora" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="ms5"/>
 			</organism>
 			<organism name="Ecoli_042">
 				<property name="taxonId" value="216592" />
@@ -585,6 +615,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="ecoli" />
             	<property name="dbName" value="GeneDB_Ecoli" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="net"/>
 			</organism>
 			<organism name="Pfluorescens">
 				<property name="taxonId" value="294" />
@@ -592,6 +623,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="pfluorescens" />
             	<property name="dbName" value="GeneDB_Pfluorescens" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="amct"/>
 			</organism>
 			<organism name="Rleguminosarum">
 				<property name="taxonId" value="384" />
@@ -599,6 +631,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="rleguminosarum" />
             	<property name="dbName" value="GeneDB_Rleguminosarum" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="lcc"/>
 			</organism>
 			<node name="Bordetella">
 				<organism name="Bavium_197N">
@@ -607,6 +640,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="bavium" />
 	            	<property name="dbName" value="GeneDB_Bavium" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="ms5"/>
 				</organism>
 				<organism name="Bbronchiseptica">
 					<property name="taxonId" value="518" />
@@ -614,6 +648,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="bronchi" />
 	            	<property name="dbName" value="GeneDB_Bbronchiseptica" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="ms5"/>
 				</organism>
 				<organism name="Bparapertussis">
 					<property name="taxonId" value="519" />
@@ -621,6 +656,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="parapert" />
 	            	<property name="dbName" value="GeneDB_Bparapertussis" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="ms5"/>
 				</organism>
 				<organism name="Bpertussis">
 					<property name="taxonId" value="520" />
@@ -628,6 +664,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="pert" />
 	            	<property name="dbName" value="GeneDB_Bpertussis" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="ms5"/>
 				</organism>
 			</node>
 			<node name="Burkholderia">
@@ -637,6 +674,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="bcenocepacia" />
 	            	<property name="dbName" value="GeneDB_Bcenocepacia" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="mh3"/>
 				</organism>
 				<organism name="Bpseudomallei">
 					<property name="taxonId" value="28450" />
@@ -644,6 +682,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="bpseudomallei" />
 	            	<property name="dbName" value="GeneDB_Bpseudomallei" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="mh3"/>
 				</organism>
 			</node>
 			<node name="Clostridium">
@@ -653,6 +692,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="cbotulinum" />
 	            	<property name="dbName" value="GeneDB_Cbotulinum" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="ms5"/>
 				</organism>
 				<organism name="Cdifficile">
 					<property name="taxonId" value="1496" />
@@ -660,6 +700,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="cdifficile" />
 	            	<property name="dbName" value="GeneDB_Cdifficile" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="ms5"/>
 				</organism>
 			</node>
 			<node name="Mycobacterium">
@@ -669,6 +710,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="mbovis" />
 	            	<property name="dbName" value="GeneDB_Mbovis" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="parkhill"/>
 				</organism>
 				<organism name="Mleprae">
 					<property name="taxonId" value="1769" />
@@ -676,6 +718,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="mleprae" />
 	            	<property name="dbName" value="GeneDB_Mleprae" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="parkhill"/>
 				</organism>
 				<organism name="Mmarinum">
 					<property name="taxonId" value="1781" />
@@ -683,6 +726,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="mmarinum" />
 	            	<property name="dbName" value="GeneDB_Mmarinum" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="parkhill"/>
 				</organism>
 				<organism name="Mtuberculosis">
 					<property name="taxonId" value="1773" />
@@ -690,6 +734,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="mtuberculosis" />
 	            	<property name="dbName" value="GeneDB_Mtuberculosis" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="nrt"/>
 				</organism>
 			</node>
 			<node name="Neisseria">
@@ -699,6 +744,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="nmeningitidis" />
 	            	<property name="dbName" value="GeneDB_Nmeningitidis" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="sdb"/>
 				</organism>
 				<organism name="Nmeningitidis_C">
 					<property name="taxonId" value="272831" />
@@ -706,6 +752,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="nmeningitidisC" />
 	            	<property name="dbName" value="GeneDB_NmeningitidisC" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="sdb"/>
 				</organism>
 			</node>
 			<node name="Salmonella">
@@ -715,6 +762,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="sbongori" />
 	            	<property name="dbName" value="GeneDB_Sbongori" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="nrt"/>
 				</organism>	
 				<organism name="Senteritidis_PT4">
 					<property name="taxonId" value="592" />
@@ -722,6 +770,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="senteritidis" />
 	            	<property name="dbName" value="GeneDB_Senteritidis_PT4" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="nrt"/>
 				</organism>
 			</node>
 			<organism name="Smarcescens">
@@ -730,6 +779,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="smarcescens " />
 	            	<property name="dbName" value="GeneDB_Smarcescens" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="nrt"/>
 			</organism>
 			<node name="Staphylococcus">
 				<organism name="Saureus_MRSA252">
@@ -738,6 +788,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="saureusMRSA" />
 	            	<property name="dbName" value="GeneDB_SaureusMRSA" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="mh3"/>
 				</organism>	
 				<organism name="Saureus_MSSA476">
 					<property name="taxonId" value="282459" />
@@ -745,6 +796,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="saureusMSSA476" />
 	            	<property name="dbName" value="GeneDB_SaureusMSSA" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="mh3"/>
 				</organism>
 			</node>
 			<organism name="Smaltophilia">
@@ -753,6 +805,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="smaltophilia" />
             	<property name="dbName" value="GeneDB_Smaltophilia" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="lcc"/>
 			</organism>
 			<node name="Streptococcus">
 				<organism name="Spyogenes">
@@ -761,6 +814,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="spyogenes" />
 	            	<property name="dbName" value="GeneDB_Spyogenes" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="mh3"/>
 				</organism>	
 				<organism name="Suberis">
 					<property name="taxonId" value="1349" />
@@ -768,6 +822,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="suberis" />
 	            	<property name="dbName" value="GeneDB_Suberis" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="mh3"/>
 				</organism>
 			</node>
 			<organism name="Twhipplei">
@@ -776,6 +831,7 @@ class LoadGeneDbPhylogeny {
 				<property name="nickname" value="twhipplei" />
             	<property name="dbName" value="GeneDB_Twhipplei" />
 				<property name="transTable" value="11"/>
+				<property name="curator" value="sdb"/>
 			</organism>	
 			<node name="Yersinia">
 				<organism name="Ypestis">
@@ -784,6 +840,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="ypsetis" />
 	            	<property name="dbName" value="GeneDB_Ypestis" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="nrt"/>
 				</organism>	
 				<organism name="Yenterocolitica">
 					<property name="taxonId" value="630" />
@@ -791,6 +848,7 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="yenterocolitica" />
 	            	<property name="dbName" value="GeneDB_Yenterocolitica" />
 					<property name="transTable" value="11"/>
+					<property name="curator" value="nrt"/>
 				</organism>
 			</node>
 		</node>
