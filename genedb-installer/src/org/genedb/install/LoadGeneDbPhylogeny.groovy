@@ -328,9 +328,28 @@ class LoadGeneDbPhylogeny {
 	static String input = '''<?xml version="1.0" encoding="UTF-8"?>
 <org-heirachy>
     <node name="Root">
+		<node name="Helminths">
+			<node name="platyhelminths">
+				<organism name="Smansoni">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="smansoni" />
+	            	<property name="dbName" value="GeneDB_Smansoni" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+			</node>
+		</node>
         <node name="Kinetoplastids">
-            <node name="Protozoa"></node>
             <node name="Leishmania">
+				<organism name="Lbraziliensis">
+					<property name="taxonId" value="5660" />
+					<property name="fullName" value="Leishmania braziliensis" />
+					<property name="nickname" value="lbraziliensis" />
+	                <property name="dbName" value="GeneDB_Lbraziliensis" />
+					<property name="transTable" value="1"/>
+					<property name="mitoTransTable" value="4"/>
+				</organism>
                 <organism name="Lmajor">
                     <property name="taxonId" value="5664" />
                     <property name="fullName" value="Leishmania major" />
@@ -349,10 +368,18 @@ class LoadGeneDbPhylogeny {
                 </organism>
             </node>
             <node name="Trypanasoma">
-                <organism name="Tbruceibrucei427">
+                <organism name="Tcongolense">
+					<property name="taxonId" value="5692" />
+					<property name="fullName" value="Trypanosoma congolense" />
+					<property name="nickname" value="tcongolense" />
+	                <property name="dbName" value="GeneDB_Tcongolense" />
+					<property name="transTable" value="1"/>
+					<property name="mitoTransTable" value="4"/>
+				</organism>
+				<organism name="Tbruceibrucei427">
                     <property name="taxonId" value="5761" />
 					<property name="fullName" value="Trypanasoma brucei brucei, strain 427" />
-					<property name="nickname" value="" />
+					<property name="nickname" value="tbrucei427" />
 					<property name="dbName" value="GeneDB_Tbrucei427" />
 					<property name="transTable" value=""/>
 					<property name="mitoTransTable" value=""/>
@@ -360,7 +387,7 @@ class LoadGeneDbPhylogeny {
                 <organism name="Tbruceibrucei927">
                     <property name="taxonId" value="185431" />
 					<property name="fullName" value="Trypanasoma brucei brucei, strain 927" />
-					<property name="nickname" value="" />
+					<property name="nickname" value="tryp" />
 					<property name="dbName" value="GeneDB_Tbrucei927" />
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
@@ -390,46 +417,80 @@ class LoadGeneDbPhylogeny {
 					<property name="mitoTransTable" value="4"/>
                 </organism>
             </node>
-            <node name="Apicomplexa">
-                <node name="Plasmodia">
-                    <organism name="Pfalciparum">
-                        <property name="taxonId" value="5833" />
-                        <property name="fullName" value="Plasmodium falciparum" />
-                        <property name="nickname" value="malaria" />
-                        <property name="dbName" value="GeneDB_Pfalciparum" />
-						<property name="transTable" value="1"/>
-					    <property name="mitoTransTable" value="4"/>
-                    </organism>
-                    <organism name="Pknowlesi">
-                        <property name="taxonId" value="5850" />
-                        <property name="fullName" value="Plasmodium knowlesi" />
-                        <property name="nickname" value="pknowlesi" />
-                        <property name="dbName" value="GeneDB_Pknowlesi" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-                    </organism>
-                    <organism name="Pberghei">
-                        <property name="taxonId" value="5821" />
-                        <property name="fullName" value="Plasmodium berghei" />
-                        <property name="nickname" value="pberghei" />
-                        <property name="dbName" value="GeneDB_Pberghei" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-                    </organism>
-                    <organism name="Pchabaudi">
-                        <property name="taxonId" value="5825" />
-                        <property name="fullName" value="Plasmodium chabaudi" />
-                        <property name="nickname" value="pchabaudi" />
-                        <property name="dbName" value="GeneDB_Pchabaudi" />
+            <node name="Protozoa">
+	            <organism name="Ddiscoideum">
+					<property name="taxonId" value="44689" />
+					<property name="fullName" value="Dictyostelium discoideum" />
+					<property name="nickname" value="dicty" />
+	                <property name="dbName" value="GeneDB_Ddiscoideum" />
+					<property name="transTable" value="1"/>
+					<property name="mitoTransTable" value="1"/>
+				</organism>
+				<organism name="Ehistolytica">
+					<property name="taxonId" value="5759" />
+					<property name="fullName" value="Entamoeba histolytica" />
+					<property name="nickname" value="ehistolytica" />
+	                <property name="dbName" value="GeneDB_Ehistolytica" />
+					<property name="transTable" value="1"/>
+					<property name="mitoTransTable" value="1"/>
+				</organism>
+				<node name="Apicomplexa">
+					<organism name="Etenella">
+						<property name="taxonId" value="5802" />
+						<property name="fullName" value="Eimeria tenella" />
+						<property name="nickname" value="etenella" />
+		                <property name="dbName" value="GeneDB_Etenella" />
 						<property name="transTable" value="1"/>
 						<property name="mitoTransTable" value="4"/>
-                    </organism>
-                </node>
-            </node>
+				  	</organism>
+					<organism name="Tannulata">
+						<property name="taxonId" value="5874" />				
+						<property name="fullName" value="Theileria annulata" />
+						<property name="nickname" value="annulata" />
+		                <property name="dbName" value="GeneDB_Tannulata" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+					</organism>
+	                <node name="Plasmodia">
+	                    <organism name="Pfalciparum">
+	                        <property name="taxonId" value="5833" />
+	                        <property name="fullName" value="Plasmodium falciparum" />
+	                        <property name="nickname" value="malaria" />
+	                        <property name="dbName" value="GeneDB_Pfalciparum" />
+							<property name="transTable" value="1"/>
+						    <property name="mitoTransTable" value="4"/>
+	                    </organism>
+	                    <organism name="Pknowlesi">
+	                        <property name="taxonId" value="5850" />
+	                        <property name="fullName" value="Plasmodium knowlesi" />
+	                        <property name="nickname" value="pknowlesi" />
+	                        <property name="dbName" value="GeneDB_Pknowlesi" />
+							<property name="transTable" value="1"/>
+							<property name="mitoTransTable" value="4"/>
+	                    </organism>
+	                    <organism name="Pberghei">
+	                        <property name="taxonId" value="5821" />
+	                        <property name="fullName" value="Plasmodium berghei" />
+	                        <property name="nickname" value="pberghei" />
+	                        <property name="dbName" value="GeneDB_Pberghei" />
+							<property name="transTable" value="1"/>
+							<property name="mitoTransTable" value="4"/>
+	                    </organism>
+	                    <organism name="Pchabaudi">
+	                        <property name="taxonId" value="5825" />
+	                        <property name="fullName" value="Plasmodium chabaudi" />
+	                        <property name="nickname" value="pchabaudi" />
+	                        <property name="dbName" value="GeneDB_Pchabaudi" />
+							<property name="transTable" value="1"/>
+							<property name="mitoTransTable" value="4"/>
+	                    </organism>
+	                </node>
+	            </node>
+			</node>
             <node name="Fungi">
                 <organism name="Scerevisiae">
                     <property name="taxonId" value="4932" />
-                    <property name="fullName" value="S... cerevisiae" />
+                    <property name="fullName" value="Saccharomyces cerevisiae" />
                     <property name="nickname" value="cerevisiae" />
                     <property name="dbName" value="GeneDB_Scerevisiae" />
 					<property name="transTable" value="1"/>
@@ -437,7 +498,7 @@ class LoadGeneDbPhylogeny {
                 </organism>
                 <organism name="Spombe">
                     <property name="taxonId" value="4896" />
-                    <property name="fullName" value="S... pombe" />
+                    <property name="fullName" value="Schizosaccharomyces pombe" />
                     <property name="nickname" value="pombe" />
                     <property name="dbName" value="GeneDB_Spombe" />
 					<property name="transTable" value="1"/>
@@ -451,93 +512,22 @@ class LoadGeneDbPhylogeny {
 					<property name="transTable" value="1"/>
 					<property name="mitoTransTable" value="4"/>
                 </organism>
+				<organism name="Cdubliniensis">
+					<property name="taxonId" value="42374" />
+					<property name="fullName" value="Candida dubliniensis" />
+					<property name="nickname" value="cdubliniensis" />
+	                <property name="dbName" value="GeneDB_Cdubliniensis" />
+					<property name="transTable" value="12"/>
+					<property name="mitoTransTable" value="3"/>
+				</organism>
             </node>
-            <node name="Eubacteria">
-                <node name="Protobacteria">
-                    <node name="Gammaprotbacteria"></node>
-                    <node name="Alphaprotobacteria"></node>
-                    <node name="Betaprotobacteria"></node>
-                    <node name="Delta-Epsilon-subdivisions"></node>
-                </node>
-                <node name="Actinobacteria"></node>
-                <node name="Bacterideter"></node>
-                <node name="Chlamydiae"></node>
-                <node name="Firmiates">
-                    <node name="Bacilli"></node>
-                    <node name="Clostridia"></node>
-                    <node name="Midliates"></node>
-                </node>
-            </node>
+            
         </node>
 		<node name="Eukaryotes">
-			<organism name="Cdubliniensis">
-				<property name="taxonId" value="42374" />
-				<property name="fullName" value="Candida dubliniensis" />
-				<property name="nickname" value="" />
-                <property name="dbName" value="GeneDB_Cdubliniensis" />
-				<property name="transTable" value="12"/>
-				<property name="mitoTransTable" value="3"/>
-			</organism>
-			<organism name="Ddiscoideum">
-				<property name="taxonId" value="44689" />
-				<property name="fullName" value="Dictyostelium discoideum" />
-				<property name="nickname" value="" />
-                <property name="dbName" value="GeneDB_Ddiscoideum" />
-				<property name="transTable" value="1"/>
-				<property name="mitoTransTable" value="1"/>
-			</organism>
-			<organism name="Ehistolytica">
-				<property name="taxonId" value="5759" />
-				<property name="fullName" value="Entamoeba histolytica" />
-				<property name="nickname" value="" />
-                <property name="dbName" value="GeneDB_Ehistolytica" />
-				<property name="transTable" value="1"/>
-				<property name="mitoTransTable" value="1"/>
-			</organism>
- 			<organism name="Etenella">
-				<property name="taxonId" value="5802" />
-				<property name="fullName" value="Eimeria tenella" />
-				<property name="nickname" value="" />
-                <property name="dbName" value="GeneDB_Etenella" />
-				<property name="transTable" value="1"/>
-				<property name="mitoTransTable" value="4"/>
-			</organism>
-			<organism name="Lbraziliensis">
-				<property name="taxonId" value="5660" />
-				<property name="fullName" value="Leishmania braziliensis" />
-				<property name="nickname" value="" />
-                <property name="dbName" value="GeneDB_Lbraziliensis" />
-				<property name="transTable" value="1"/>
-				<property name="mitoTransTable" value="4"/>
-			</organism>
-			<organism name="Tannulata">
-				<property name="taxonId" value="5874" />				
-				<property name="fullName" value="Theileria annulata" />
-				<property name="nickname" value="" />
-                <property name="dbName" value="GeneDB_Tannulata" />
-				<property name="transTable" value="1"/>
-				<property name="mitoTransTable" value="4"/>
-			</organism>
-			<organism name="Tcongolense">
-				<property name="taxonId" value="5692" />
-				<property name="fullName" value="Trypanosoma congolense" />
-				<property name="nickname" value="" />
-                <property name="dbName" value="GeneDB_Tcongolense" />
-				<property name="transTable" value="1"/>
-				<property name="mitoTransTable" value="4"/>
-			</organism>
-			<organism name="Smansoni">
-				<property name="taxonId" value="" />
-				<property name="fullName" value="" />
-				<property name="nickname" value="" />
-            	<property name="dbName" value="GeneDB_Smansoni" />
-				<property name="transTable" value=""/>
-				<property name="mitoTransTable" value=""/>
-			</organism>
 			<organism name="Bmarinus">
 				<property name="taxonId" value="" />
 				<property name="fullName" value="" />
-				<property name="nickname" value="" />
+				<property name="nickname" value="bmarinus" />
             	<property name="dbName" value="GeneDB_Bmarinus" />
 				<property name="transTable" value=""/>
 				<property name="mitoTransTable" value=""/>
@@ -553,6 +543,106 @@ class LoadGeneDbPhylogeny {
 			<organism name="">
 			</organism> -->
 
+		</node>
+		<node name="bacteria">
+			<node name="Bordetella">
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+			</node>
+			<node name="Burkholderia">
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+			</node>
+			<node name="Clostridium">
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+			</node>
+			<node name="Mycobacterium">
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+				<organism name="">
+					<property name="taxonId" value="" />
+					<property name="fullName" value="" />
+					<property name="nickname" value="" />
+	            	<property name="dbName" value="" />
+					<property name="transTable" value=""/>
+					<property name="mitoTransTable" value=""/>
+				</organism>
+			</node>
+			<node name="Neisseria">
+			</node>
+			<node name="Salmonella">
+			</node>
+			<node name="Staphylococcus">
+			</node>
+			<node name="Streptococcus">
+			</node>
+			<node name="Yersinia">
+			</node>
 		</node>
     </node>
 </org-heirachy>
