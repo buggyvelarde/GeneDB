@@ -141,13 +141,9 @@ class LoadGeneDbPhylogeny {
 		*/
 
     }
-        
-    
-	static void main(args) {
-    	LoadGeneDbPhylogeny lgp = new LoadGeneDbPhylogeny()
-    	lgp.process(input);
-	}
 
+
+	// Select a value for the primary key based on the maximum current value
 	def getNextId(def table) {
 		def col = table + "_id";
 	    int id = db.rows("SELECT max("+col+") as "+col+" from " + table)[0]["${col}"];
@@ -179,103 +175,111 @@ class LoadGeneDbPhylogeny {
         )		
 	}
 
-	  
-	  void setLeftAndRight(def node, def depth) {
-	      if (node.name() != 'node' && node.name() != 'organism') {
-	          return
-	      }
-	      node.attributes().put('depth', depth);
-	      node.attributes().put('left', ++index);
-	      ++depth;
-	      node.children().each(
-	              {setLeftAndRight(it, depth)}
-	      )
-	      node.attributes().put('right', ++index)     
-	  }
+	// Walk the tree for node and organism nodes, storing values for 
+	// depth and left on the way down, and right on the way back up
+	void setLeftAndRight(def node, def depth) {
+		if (node.name() != 'node' && node.name() != 'organism') {
+		    return
+		}
+		node.attributes().put('depth', depth);
+		node.attributes().put('left', ++index);
+		++depth;
+		node.children().each(
+		        {setLeftAndRight(it, depth)}
+		        )
+		node.attributes().put('right', ++index)     
+	}
 	
-	  
-  void createNode(def node, def parent, def tree) {
-      assert node != null
-      switch (node.name()) {
-          case 'node':
-              createPhylonode(node, parent, tree)
-              def newNode = getNextId("phylonode")
-              node.children().each(
-                      {createNode(it, newNode, tree)}
-              )
-              break
-          case 'organism':
-          	  def newNode = createPhylonode(node, parent, tree)
+	// Now walk the tree creating db entries  
+	void createNode(def node, def parent, def tree) {
+		assert node != null
+		switch (node.name()) {
+			case 'node':
+				createPhylonode(node, parent, tree)
+				def newNode = getNextId("phylonode")
+				node.children().each(
+					{createNode(it, newNode, tree)}
+					)
+				// TODO Pick up page attribute - anything else?
+			break
+			case 'organism':
+				def newNode = createPhylonode(node, parent, tree)
           	  
-          	  Map props = new HashMap()
+				Map props = new HashMap()
+				node.children().each({
+					def key
+					def value
+					for (attr in it.attributes()) {
+						if (attr.key == "name") {
+							key = attr.value
+						} else {
+							value = attr.value
+						}
+					}
+					props.put(key, value)
+				}
+				)
           	  
-          	  node.children().each({
-          	      def key
-          	      def value
-          	      for (attr in it.attributes()) {
-          	          if (attr.key == "name") {
-          	              key = attr.value
-          	          } else {
-          	              value = attr.value
-          	          }
-          	      }
-          	      props.put(key, value)
-          	  })
+				List sections
+				String temp = props.remove("fullName")
           	  
-          	  List sections
-          	  String temp = props.remove("fullName")
+				if (temp.contains(",")) {
+					sections = temp.split(",")
+				} else {
+					sections = temp.split(" ")
+				}
+				//Matcher matcher = (temp =~ /([a-zA-Z]+)\s+([a-zA-Z]+)/) 
+				//println (matcher[0])
+				//println (matcher[0][1]+","+matcher[0][2])
           	  
-          	  if(temp.contains(",")) {
-          		sections = temp.split(",")
-          	  } else {
-          		sections = temp.split(" ")
-          	  }
-          	  //Matcher matcher = (temp =~ /([a-zA-Z]+)\s+([a-zA-Z]+)/) 
-          	  //println (matcher[0])
-          	  //println (matcher[0][1]+","+matcher[0][2])
-          	  
-          	  createOrganism(node,sections[0],sections[-1])
+				createOrganism(node,sections[0],sections[-1])
               
-          	  nodeOrgDataSet.add(
-            	phylonode_id: getNextId("phylonode"),
-            	organism_id:  getNextId("organism")
-            )
-			
+				nodeOrgDataSet.add(
+					phylonode_id: getNextId("phylonode"),
+					organism_id:  getNextId("organism")
+					)
+					
+				checkPropExists(props, node, "taxonId")
+				checkPropExists(props, node, "transTable")
+				checkPropExists(props, "curator")
+				
+				if (!props.containsKey("nickname") && !props.containsKey("newOrg")) {
+					println "No nickname for '"+node.'@name'+"'"
+					throw new RuntimeException("Found an old organism without a nickname")
+				}
+				if (props.containsKey("nickname") && props.get("nickname").size()==0) {
+					println "No nickname for '"+node.'@name'+"'"
+					throw new RuntimeException("Found an old organism without a nickname")
+				}
+				props.remove("newOrg")
+				props.put("fullName",temp)
           	  
-      
-          	  checkPropExists(props, node, "taxonId")
-          	  checkPropExists(props, node, "transTable")
-          	  //checkPropExists(props, "")
-          	  if (!props.containsKey("nickname") && !props.containsKey("newOrg")) {
-     	   		println "No nickname for '"+node.'@name'+"'"
-              }
-          	  props.remove("newOrg")
-          	  props.put("fullName",temp)
-          	  
-          	  int orgId = getNextId("organism")
-          	  props.each(
-          			  {
-          				List rows = db.rows("select * from cvterm where name='"+it.key+"'")
-          				int type_id = rows[0]."cvterm_id"
-          				String value = it.value;
-        				orgPropDataSet.add(
-          	        		  organism_id: orgId,
-          	        		  type_id: type_id,
-          	        		  value: value,
-          	        		  rank: 0)}
-          	  )
-	          break
-          default:
-              throw new RuntimeException("Saw a node of '"+node.name()+"' when expecting node or organism");
-      }
-  }
+				int orgId = getNextId("organism")
+				props.each({
+					List rows = db.rows("select * from cvterm where name='"+it.key+"'")
+					int type_id = rows[0]."cvterm_id"
+					String value = it.value;
+					orgPropDataSet.add(
+						organism_id: orgId,
+						type_id: type_id,
+						value: value,
+						rank: 0)
+						}
+				)
+				break
+			default:
+				throw new RuntimeException("Saw a node of '"+node.name()+"' when expecting node or organism");
+		}
+	}
   
-  void checkPropExists(def map, def node, String key) {
-	  if (!map.containsKey(key)) {
-     	   println "No "+key+" for '"+node.'@name'+"'"
-      }
-  }
+	// Sanity check that an expected property is present 
+	void checkPropExists(def map, def node, String key) {
+	    if (!map.containsKey(key)) {
+	        throw new RuntimeException("No "+key+" for '"+node.'@name'+"'")
+		}
+	}
   
+	// Create a set of db entries when a phylogeny node is encountered
 	void createPhylonode(def node, def parent, def tree) {
 		println "CreatePhylonode: name='"+node.'@name'+"', left='"+node.attributes().get('left')+"', right='"+node.attributes().right+"' depth='"+node.attributes().depth+"'";
 		double dist = node.parent().size();
@@ -292,15 +296,15 @@ class LoadGeneDbPhylogeny {
         	label:               nodeName,		
         	distance:            dist,
       	)
-  }
+	}
   
+	// Create a set of db entries when an organism node is encountered
 	void createOrganism(def node,def genus,def species) {
 		println "CreateOrganism called with '"+node.'@name'+"'"
 		String abb = node.'@name'
 		String gen = genus;
 		String sp = species;
-		orgDataSet.add(
-			
+		orgDataSet.add(		
 			abbreviation: abb,
             genus:        gen,
             species:      sp,
@@ -324,12 +328,20 @@ class LoadGeneDbPhylogeny {
 		)
 		
 	}
-  
+	
+        
+	static void main(args) {
+    	LoadGeneDbPhylogeny lgp = new LoadGeneDbPhylogeny()
+    	lgp.process(input);
+	}
+	
+
+	// The XML config file for loading the organism and phylogeny modules
 	static String input = '''<?xml version="1.0" encoding="UTF-8"?>
 <org-heirachy>
     <node name="Root">
 		<node name="Helminths">
-			<node name="platyhelminths">
+			<node name="Platyhelminths">
 				<organism name="Smansoni">
 					<property name="taxonId" value="6183" />
 					<property name="fullName" value="Schistosoma mansoni" />
@@ -371,7 +383,7 @@ class LoadGeneDbPhylogeny {
 					<property name="curator" value="csp"/>
                 </organism>
             </node>
-            <node name="Trypanasoma">
+            <node name="Trypanosoma" page="true">
                 <organism name="Tcongolense">
 					<property name="taxonId" value="5692" />
 					<property name="fullName" value="Trypanosoma congolense" />
@@ -383,7 +395,7 @@ class LoadGeneDbPhylogeny {
 				</organism>
 				<organism name="Tbruceibrucei427">
                     <property name="taxonId" value="5761" />
-					<property name="fullName" value="Trypanasoma brucei brucei, strain 427" />
+					<property name="fullName" value="Trypanosoma brucei brucei, strain 427" />
 					<property name="nickname" value="tbrucei427" />
 					<property name="dbName" value="GeneDB_Tbrucei427" />
 					<property name="transTable" value=""/>
@@ -392,7 +404,7 @@ class LoadGeneDbPhylogeny {
                 </organism>
                 <organism name="Tbruceibrucei927">
                     <property name="taxonId" value="185431" />
-					<property name="fullName" value="Trypanasoma brucei brucei, strain 927" />
+					<property name="fullName" value="Trypanosoma brucei brucei, strain 927" />
 					<property name="nickname" value="tryp" />
 					<property name="dbName" value="GeneDB_Tbrucei927" />
 					<property name="transTable" value="1"/>
@@ -401,7 +413,7 @@ class LoadGeneDbPhylogeny {
                 </organism>
                 <organism name="Tbruceigambiense">
                     <property name="taxonId" value="31285" />
-					<property name="fullName" value="Trypanasoma brucei gambiense" />
+					<property name="fullName" value="Trypanosoma brucei gambiense" />
                     <property name="nickname" value="tgambiense" />
 					<property name="dbName" value="GeneDB_Tgambiense" />
 					<property name="transTable" value="1"/>
@@ -410,7 +422,7 @@ class LoadGeneDbPhylogeny {
                 </organism>
                 <organism name="Tvivax">
                     <property name="taxonId" value="5699" />
-                    <property name="fullName" value="Trypanasoma vivax" />
+                    <property name="fullName" value="Trypanosoma vivax" />
                     <property name="nickname" value="tvivax" />
                     <property name="dbName" value="GeneDB_Tvivax" />
 					<property name="transTable" value="1"/>
@@ -419,7 +431,7 @@ class LoadGeneDbPhylogeny {
                 </organism>
                 <organism name="Tcruzi">
                     <property name="taxonId" value="5693" />
-                    <property name="fullName" value="Trypanasoma cruzi" />
+                    <property name="fullName" value="Trypanosoma cruzi" />
                     <property name="nickname" value="tcruzi" />
                     <property name="dbName" value="GeneDB_Tcruzi" />
 					<property name="transTable" value="1"/>
@@ -465,7 +477,7 @@ class LoadGeneDbPhylogeny {
 						<property name="mitoTransTable" value="4"/>
 						<property name="curator" value="ap2"/>
 					</organism>
-	                <node name="Plasmodia">
+	                <node name="Plasmodia" page="true">
 	                    <organism name="Pfalciparum">
 	                        <property name="taxonId" value="5833" />
 	                        <property name="fullName" value="Plasmodium falciparum" />
@@ -500,55 +512,55 @@ class LoadGeneDbPhylogeny {
 	                        <property name="dbName" value="GeneDB_Pchabaudi" />
 							<property name="transTable" value="1"/>
 							<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="aeb"/>
+							<property name="curator" value="aeb"/>
 	                    </organism>
 	                </node>
 	            </node>
 			</node>
-            <node name="Fungi">
-                <organism name="Scerevisiae">
-                    <property name="taxonId" value="4932" />
-                    <property name="fullName" value="Saccharomyces cerevisiae" />
-                    <property name="nickname" value="cerevisiae" />
-                    <property name="dbName" value="GeneDB_Scerevisiae" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="3"/>
-					<property name="curator" value="val"/>
-                </organism>
-                <organism name="Spombe">
-                    <property name="taxonId" value="4896" />
-                    <property name="fullName" value="Schizosaccharomyces pombe" />
-                    <property name="nickname" value="pombe" />
-                    <property name="dbName" value="GeneDB_Spombe" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="val"/>
-                </organism>
-                <organism name="Afumigatus">
-                    <property name="taxonId" value="5085" />
-                    <property name="fullName" value="Aspergillus fumigatus" />
-                    <property name="nickname" value="asp" />
-                    <property name="dbName" value="GeneDB_Afumigatus" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="mb4"/>
-                </organism>
-				<organism name="Cdubliniensis">
-					<property name="taxonId" value="42374" />
-					<property name="fullName" value="Candida dubliniensis" />
-					<property name="nickname" value="cdubliniensis" />
-	                <property name="dbName" value="GeneDB_Cdubliniensis" />
-					<property name="transTable" value="12"/>
-					<property name="mitoTransTable" value="3"/>
-					<property name="curator" value="mb4"/>
-				</organism>
-            </node>
 		</node>
+        <node name="Fungi">
+            <organism name="Scerevisiae">
+                <property name="taxonId" value="4932" />
+                <property name="fullName" value="Saccharomyces cerevisiae" />
+                <property name="nickname" value="cerevisiae" />
+                <property name="dbName" value="GeneDB_Scerevisiae" />
+				<property name="transTable" value="1"/>
+				<property name="mitoTransTable" value="3"/>
+				<property name="curator" value="val"/>
+            </organism>
+            <organism name="Spombe">
+                <property name="taxonId" value="4896" />
+                <property name="fullName" value="Schizosaccharomyces pombe" />
+                <property name="nickname" value="pombe" />
+                <property name="dbName" value="GeneDB_Spombe" />
+				<property name="transTable" value="1"/>
+				<property name="mitoTransTable" value="4"/>
+				<property name="curator" value="val"/>
+            </organism>
+            <organism name="Afumigatus">
+                <property name="taxonId" value="5085" />
+                <property name="fullName" value="Aspergillus fumigatus" />
+                <property name="nickname" value="asp" />
+                <property name="dbName" value="GeneDB_Afumigatus" />
+				<property name="transTable" value="1"/>
+				<property name="mitoTransTable" value="4"/>
+				<property name="curator" value="mb4"/>
+            </organism>
+			<organism name="Cdubliniensis">
+				<property name="taxonId" value="42374" />
+				<property name="fullName" value="Candida dubliniensis" />
+				<property name="nickname" value="cdubliniensis" />
+                <property name="dbName" value="GeneDB_Cdubliniensis" />
+				<property name="transTable" value="12"/>
+				<property name="mitoTransTable" value="3"/>
+				<property name="curator" value="mb4"/>
+			</organism>
+        </node>
 		<node name="bacteria">
 			<organism name="Bmarinus">
 				<property name="taxonId" value="97084" />
 				<property name="fullName" value="Bacteriovorax marinus" />
-				<property name="nickname" value="bmarinus" />
+				<property name="newOrg" value="true" />
             	<property name="dbName" value="GeneDB_Bmarinus" />
 				<property name="transTable" value="11"/>
 				<property name="curator" value="sdb"/>
@@ -588,7 +600,7 @@ class LoadGeneDbPhylogeny {
 			<organism name="Cmichiganensis">
 				<property name="taxonId" value="28447" />
 				<property name="fullName" value="Clavibacter michiganensis" />
-				<property name="nickname" value="cmichiganensis" />
+				<property name="newOrg" value="true" />
             	<property name="dbName" value="GeneDB_Cmichiganensis" />
 				<property name="transTable" value="11"/>
 				<property name="curator" value="sdb"/>
@@ -620,7 +632,7 @@ class LoadGeneDbPhylogeny {
 			<organism name="Pfluorescens">
 				<property name="taxonId" value="294" />
 				<property name="fullName" value="Pseudomonas fluorescens" />
-				<property name="nickname" value="pfluorescens" />
+				<property name="newOrg" value="true" />
             	<property name="dbName" value="GeneDB_Pfluorescens" />
 				<property name="transTable" value="11"/>
 				<property name="curator" value="amct"/>
@@ -755,11 +767,11 @@ class LoadGeneDbPhylogeny {
 					<property name="curator" value="sdb"/>
 				</organism>
 			</node>
-			<node name="Salmonella">
+			<node name="Salmonella" page="true">
 				<organism name="Sbongori">
 					<property name="taxonId" value="54736" />
 					<property name="fullName" value="Salmonella bongori" />
-					<property name="nickname" value="sbongori" />
+					<property name="newOrg" value="true" />
 	            	<property name="dbName" value="GeneDB_Sbongori" />
 					<property name="transTable" value="11"/>
 					<property name="curator" value="nrt"/>
@@ -767,7 +779,7 @@ class LoadGeneDbPhylogeny {
 				<organism name="Senteritidis_PT4">
 					<property name="taxonId" value="592" />
 					<property name="fullName" value="Salmonella enteritidis PT4" />
-					<property name="nickname" value="senteritidis" />
+					<property name="newOrg" value="true" />
 	            	<property name="dbName" value="GeneDB_Senteritidis_PT4" />
 					<property name="transTable" value="11"/>
 					<property name="curator" value="nrt"/>
@@ -776,7 +788,7 @@ class LoadGeneDbPhylogeny {
 			<organism name="Smarcescens">
 					<property name="taxonId" value="615" />
 					<property name="fullName" value="Serratia marcescens" />
-					<property name="nickname" value="smarcescens " />
+					<property name="newOrg" value="true" />
 	            	<property name="dbName" value="GeneDB_Smarcescens" />
 					<property name="transTable" value="11"/>
 					<property name="curator" value="nrt"/>
@@ -802,7 +814,7 @@ class LoadGeneDbPhylogeny {
 			<organism name="Smaltophilia">
 				<property name="taxonId" value="40324" />
 				<property name="fullName" value="Stenotrophomonas maltophilia" />
-				<property name="nickname" value="smaltophilia" />
+				<property name="newOrg" value="true" />
             	<property name="dbName" value="GeneDB_Smaltophilia" />
 				<property name="transTable" value="11"/>
 				<property name="curator" value="lcc"/>
@@ -845,7 +857,7 @@ class LoadGeneDbPhylogeny {
 				<organism name="Yenterocolitica">
 					<property name="taxonId" value="630" />
 					<property name="fullName" value="Yersinia enterocolitica" />
-					<property name="nickname" value="yenterocolitica" />
+					<property name="newOrg" value="true" />
 	            	<property name="dbName" value="GeneDB_Yenterocolitica" />
 					<property name="transTable" value="11"/>
 					<property name="curator" value="nrt"/>
