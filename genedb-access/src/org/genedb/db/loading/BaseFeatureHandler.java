@@ -135,7 +135,8 @@ public abstract class BaseFeatureHandler extends BaseFeatureProcessor implements
     }
 
     private void fireEvent(FeatureEvent fe) {
-        for (FeatureListener fl : listeners) {
+        for (@SuppressWarnings("unused")
+        FeatureListener fl : listeners) {
             // TODO
         }
     }
