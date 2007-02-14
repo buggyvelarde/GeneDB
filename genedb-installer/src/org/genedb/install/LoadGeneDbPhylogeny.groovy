@@ -353,93 +353,93 @@ class LoadGeneDbPhylogeny {
 				</organism>
 			</node>
 		</node>
-        <node name="Kinetoplastids">
-            <node name="Leishmania">
-				<organism name="Lbraziliensis">
-					<property name="taxonId" value="5660" />
-					<property name="fullName" value="Leishmania braziliensis" />
-					<property name="nickname" value="lbraziliensis" />
-	                <property name="dbName" value="GeneDB_Lbraziliensis" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="csp"/>
-				</organism>
-                <organism name="Lmajor">
-                    <property name="taxonId" value="5664" />
-                    <property name="fullName" value="Leishmania major" />
-                    <property name="nickname" value="leish" />
-                    <property name="dbName" value="GeneDB_Lmajor" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="csp"/>
-                </organism>
-                <organism name="Linfantum">
-                    <property name="taxonId" value="5761" />
-                    <property name="fullName" value="Leishmania infantum" />
-                    <property name="nickname" value="linfantum" />
-                    <property name="dbName" value="GeneDB_Linfantum" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="csp"/>
-                </organism>
-            </node>
-            <node name="Trypanosoma" page="true">
-                <organism name="Tcongolense">
-					<property name="taxonId" value="5692" />
-					<property name="fullName" value="Trypanosoma congolense" />
-					<property name="nickname" value="tcongolense" />
-	                <property name="dbName" value="GeneDB_Tcongolense" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="chf"/>
-				</organism>
-				<organism name="Tbruceibrucei427">
-                    <property name="taxonId" value="5761" />
-					<property name="fullName" value="Trypanosoma brucei brucei, strain 427" />
-					<property name="nickname" value="tbrucei427" />
-					<property name="dbName" value="GeneDB_Tbrucei427" />
-					<property name="transTable" value=""/>
-					<property name="mitoTransTable" value=""/>
-					<property name="curator" value="chf"/>
-                </organism>
-                <organism name="Tbruceibrucei927">
-                    <property name="taxonId" value="185431" />
-					<property name="fullName" value="Trypanosoma brucei brucei, strain 927" />
-					<property name="nickname" value="tryp" />
-					<property name="dbName" value="GeneDB_Tbrucei927" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="chf"/>
-                </organism>
-                <organism name="Tbruceigambiense">
-                    <property name="taxonId" value="31285" />
-					<property name="fullName" value="Trypanosoma brucei gambiense" />
-                    <property name="nickname" value="tgambiense" />
-					<property name="dbName" value="GeneDB_Tgambiense" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="chf"/>
-                </organism>
-                <organism name="Tvivax">
-                    <property name="taxonId" value="5699" />
-                    <property name="fullName" value="Trypanosoma vivax" />
-                    <property name="nickname" value="tvivax" />
-                    <property name="dbName" value="GeneDB_Tvivax" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="chf"/>
-                </organism>
-                <organism name="Tcruzi">
-                    <property name="taxonId" value="5693" />
-                    <property name="fullName" value="Trypanosoma cruzi" />
-                    <property name="nickname" value="tcruzi" />
-                    <property name="dbName" value="GeneDB_Tcruzi" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="4"/>
-					<property name="curator" value="chf"/>
-                </organism>
-            </node>
-            <node name="Protozoa">
+		<node name="Protozoa">
+		    <node name="Kinetoplastids">
+		        <node name="Leishmania">
+					<organism name="Lbraziliensis">
+						<property name="taxonId" value="5660" />
+						<property name="fullName" value="Leishmania braziliensis" />
+						<property name="nickname" value="lbraziliensis" />
+		                <property name="dbName" value="GeneDB_Lbraziliensis" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="csp"/>
+					</organism>
+		            <organism name="Lmajor">
+		                <property name="taxonId" value="5664" />
+		                <property name="fullName" value="Leishmania major" />
+		                <property name="nickname" value="leish" />
+		                <property name="dbName" value="GeneDB_Lmajor" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="csp"/>
+		            </organism>
+	                <organism name="Linfantum">
+	                    <property name="taxonId" value="5761" />
+	                    <property name="fullName" value="Leishmania infantum" />
+	                    <property name="nickname" value="linfantum" />
+	                    <property name="dbName" value="GeneDB_Linfantum" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="csp"/>
+	                </organism>
+	            </node>
+	            <node name="Trypanosoma" page="true">
+	                <organism name="Tcongolense">
+						<property name="taxonId" value="5692" />
+						<property name="fullName" value="Trypanosoma congolense" />
+						<property name="nickname" value="tcongolense" />
+		                <property name="dbName" value="GeneDB_Tcongolense" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="chf"/>
+					</organism>
+					<organism name="Tbruceibrucei427">
+	                    <property name="taxonId" value="5761" />
+						<property name="fullName" value="Trypanosoma brucei brucei, strain 427" />
+						<property name="nickname" value="tbrucei427" />
+						<property name="dbName" value="GeneDB_Tbrucei427" />
+						<property name="transTable" value=""/>
+						<property name="mitoTransTable" value=""/>
+						<property name="curator" value="chf"/>
+	                </organism>
+	                <organism name="Tbruceibrucei927">
+	                    <property name="taxonId" value="185431" />
+						<property name="fullName" value="Trypanosoma brucei brucei, strain 927" />
+						<property name="nickname" value="tryp" />
+						<property name="dbName" value="GeneDB_Tbrucei927" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="chf"/>
+	                </organism>
+	                <organism name="Tbruceigambiense">
+	                    <property name="taxonId" value="31285" />
+						<property name="fullName" value="Trypanosoma brucei gambiense" />
+	                    <property name="nickname" value="tgambiense" />
+						<property name="dbName" value="GeneDB_Tgambiense" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="chf"/>
+	                </organism>
+	                <organism name="Tvivax">
+	                    <property name="taxonId" value="5699" />
+	                    <property name="fullName" value="Trypanosoma vivax" />
+	                    <property name="nickname" value="tvivax" />
+	                    <property name="dbName" value="GeneDB_Tvivax" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="chf"/>
+	                </organism>
+	                <organism name="Tcruzi">
+	                    <property name="taxonId" value="5693" />
+	                    <property name="fullName" value="Trypanosoma cruzi" />
+	                    <property name="nickname" value="tcruzi" />
+	                    <property name="dbName" value="GeneDB_Tcruzi" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="chf"/>
+	                </organism>
+	            </node>
 	            <organism name="Ddiscoideum">
 					<property name="taxonId" value="44689" />
 					<property name="fullName" value="Dictyostelium discoideum" />
