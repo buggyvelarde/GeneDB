@@ -29,7 +29,6 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 
     /* (non-Javadoc)
      * @see org.genedb.db.dao.SequenceDaoI#getFeatureByUniqueName(java.lang.String)
-     * TODO please modify this code, it is not compatible...
      */
     public Feature getFeatureByUniqueName(String name, String featureType) {
     	@SuppressWarnings("unchecked")
