@@ -54,7 +54,7 @@ public interface SequenceDaoI extends BaseDaoI {
     /**
      * 
      * @param name the uniquename
-     * @param featureType the type of feature to return eg "gene"
+     * @param featureType the type of feature to return eg "gene". <b>NB</> String, not a type argument
      * @return
      */
     public Feature getFeatureByUniqueName(String name, String featureType);
