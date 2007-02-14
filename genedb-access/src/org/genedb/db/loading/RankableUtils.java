@@ -14,5 +14,14 @@ public class RankableUtils {
 		}
 		return bs.nextClearBit(0);
 	}
+    
+    public static <T extends Rankable> T getRankZero(List<T> list) {
+        for (T t : list) {
+            if (t.getRank()==0) {
+                return t;
+            }
+        }
+        return null;
+    }
 
 }
