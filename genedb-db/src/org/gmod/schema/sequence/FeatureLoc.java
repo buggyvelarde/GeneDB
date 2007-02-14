@@ -285,13 +285,11 @@ public class FeatureLoc implements Serializable {
         this.featureLocId = featureLocId;
     }
 
-    public int getSrcFeatureId()
-    {
+    public int getSrcFeatureId() {
       return srcFeatureId;
     }
 
-    public void setSrcFeatureId(int srcFeatureId)
-    {
+    public void setSrcFeatureId(int srcFeatureId) {
       this.srcFeatureId = srcFeatureId;
     }
 
