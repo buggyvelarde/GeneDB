@@ -41,6 +41,8 @@ import org.gmod.schema.sequence.Feature;
 
 import org.biojava.bio.seq.StrandedFeature;
 
+import java.util.List;
+
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
  * be called from the command-line, or a Makefile.
@@ -50,8 +52,10 @@ import org.biojava.bio.seq.StrandedFeature;
  * 
  * @author Adrian Tivey (art)
  */
-public class Misc_feature_Processor extends BaseFeatureProcessor {
+public abstract class Misc_feature_Processor extends BasePossibleHandlerProcessor {
 
+    private List<PossibleHandler> possibleHandlers;
+    
     public Misc_feature_Processor() {
         super(new String[]{}, 
                 new String[]{}, 
@@ -62,31 +66,11 @@ public class Misc_feature_Processor extends BaseFeatureProcessor {
                 new String[]{QUAL_D_FASTA_FILE});
     }
 
+
     @Override
-    public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
-        // TODO Write this
-//        logger.debug("Entering processing for repeat");
-//        Location loc = f.getLocation();
-//        Annotation an = f.getAnnotation();
-//        short strand = (short)f.getStrand().getValue();
-//        String systematicId = "repeat"+loc.getMin()+"-"+loc.getMax(); 
-//        
-//        org.genedb.db.jpa.Feature repeat = this.featureUtils.createFeature("repeat", systematicId,
-//                this.organism);
-//        this.daoFactory.persist(repeat);
-//        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-//        FeatureLoc trnaFl = featureUtils.createLocation(parent,repeat,loc.getMin(),loc.getMax(),
-//                                                        strand);
-//        this.daoFactory.persist(trnaFl);
-//        //featureLocs.add(pepFl);
-//        //featureRelationships.add(pepFr);
-//        
-//        FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
-//        this.daoFactory.persist(fp);
-//        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
-
+    protected String getFeatureType() {
+        return "misc_feature";
     }
-
 
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SIXTH;
