@@ -140,7 +140,6 @@ public class FeatureUtils implements InitializingBean {
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
-    
         this.sequenceDao = sequenceDao;
     }
 
@@ -177,6 +176,7 @@ public class FeatureUtils implements InitializingBean {
     	residues = new String(feature.getResidues());
     	
     	if (!residues.contains("A")){
+            // TODO Check what this is intended to do
     		if("gene".equals(feature.getCvTerm().getName())){
     			Collection<FeatureLoc> fl = feature.getFeatureLocsForFeatureId();
     			for (FeatureLoc loc : fl) {
