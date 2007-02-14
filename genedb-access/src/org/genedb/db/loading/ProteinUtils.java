@@ -19,6 +19,8 @@
 
 package org.genedb.db.loading;
 
+import org.gmod.schema.sequence.Feature;
+
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.seq.io.SymbolTokenization;
@@ -26,7 +28,6 @@ import org.biojava.bio.symbol.Alphabet;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.Symbol;
 import org.biojava.bio.symbol.SymbolList;
-import org.biojava.utils.SmallMap;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,7 +67,7 @@ public class ProteinUtils {
         
         double charge = 0.0;
         
-        Map counts = residueCount(aaSymList,chargeFor);
+        Map counts = residueCount(aaSymList);
         // iterate thru' all counts computing the partial contribution to charge
         Iterator countI = counts.keySet().iterator();
 
@@ -82,7 +83,7 @@ public class ProteinUtils {
         return charge;
     }
     
-    private static Map<Symbol, Integer> residueCount(SymbolList aaSymList,Map chargeFor) {
+    private static Map<Symbol, Integer> residueCount(SymbolList aaSymList) {
         // iterate thru' aaSymList collating number of relevant residues
         Iterator residues = aaSymList.iterator();
 
@@ -92,7 +93,7 @@ public class ProteinUtils {
             Symbol sym =  (Symbol) residues.next();
 
             if (chargeFor.containsKey(sym)) {
-                Integer currCount = (Integer) symbolCounts.get(sym);
+                Integer currCount = symbolCounts.get(sym);
 
                 if (currCount != null) {
                     currCount = currCount + 1;
@@ -102,6 +103,12 @@ public class ProteinUtils {
             }
         }
         return symbolCounts;
+    }
+    
+    
+    public static void addDomain(Feature protein, String domainType, String acc) {
+        
+        
     }
     
 }
