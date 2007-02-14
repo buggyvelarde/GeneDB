@@ -157,6 +157,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             boolean altSplicing = false;
             String sharedId = MiningUtils.getProperty("shared_id", an, null);
             if (sharedId != null) {
+            	// TODO Tidy
                 gene = sequenceDao.getFeaturesByUniqueName(sharedId).get(0);
                 altSplicing = true;
             }
@@ -518,10 +519,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     	List<String> classes = MiningUtils.getProperties("class", an);
     	if (classes != null){
 	    	for (String rileyClass : classes) {
+                // Remove leading zeros from RILEY numbers
 	    		String sections[] = rileyClass.split("\\.");
 				StringBuilder sb = new StringBuilder();
 				for (String string : sections) {
-					if(string.length() >= 2){
+					if (string.length() >= 2) {
 						if(string.charAt(0) == '0'){
 							sb.append(string.substring(1) + ".");
 						} else {
@@ -905,8 +907,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         CvTerm MISC_CHARGE = cvDao.getCvTermByNameAndCvName("protein_charge", "genedb_misc"); 
         
         
-        FeatureProp fp = new FeatureProp(polypeptide, MISC_ISOELECTRIC, df.format(cal), 0);
-        
+        FeatureProp fp = new FeatureProp(polypeptide, MISC_ISOELECTRIC, df.format(cal), 0); 
         
         pp.setAminoAcids(Integer.toString(seqString.length()));
         MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
@@ -1153,11 +1154,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         public void setCcParser(ControlledCurationParser ccParser) {
                 this.ccParser = ccParser;
         }
-		
-        
-		public SimilarityParser getSiParser() {
-			return siParser;
-		}
 
 		public void setSiParser(SimilarityParser siparser) {
 			this.siParser = siparser;

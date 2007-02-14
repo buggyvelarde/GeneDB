@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 public class StandardNomenclatureHandler implements NomenclatureHandler {
-    
+
     public Names findNames(Annotation an) {
-	Names names = new Names();
+        Names names = new Names();
         String sysId = null;
         List<String> l1 = MiningUtils.getProperties(QUAL_SYS_ID, an);
         if ( l1 != null) {
@@ -74,15 +74,15 @@ public class StandardNomenclatureHandler implements NomenclatureHandler {
             names.setReserved(l1);
         }
 
-	return names;
+        return names;
     }
 
     /**
-     * NOOP as StandardNomenclatureHandler doesn't accept options
+     * NOP as StandardNomenclatureHandler doesn't accept options
      * @see org.genedb.db.loading.NomenclatureHandler#setOptions(java.util.Map)
      */
     public void setOptions(Map<String, String> nomenclatureOptions) {
-	// Deliberately empty
+        // Deliberately empty
     }
 
 }
