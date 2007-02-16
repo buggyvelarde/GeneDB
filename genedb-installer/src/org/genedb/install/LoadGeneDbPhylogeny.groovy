@@ -36,6 +36,8 @@ class LoadGeneDbPhylogeny {
     
     def organismDbXRefSet;
     
+    def nodePropDataSet;
+    
     LoadGeneDbPhylogeny() {
 		db = Sql.newInstance(
 			'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10001/chado',
@@ -52,7 +54,9 @@ class LoadGeneDbPhylogeny {
      	nodeDataSet = db.dataSet("phylonode")
 		//nodeId = getNextId("phylonode")
 		
-     	nodeOrgDataSet = db.dataSet("phylonode_organism")
+     	nodePropDataSet = db.dataSet("phylonodeprop")
+		
+		nodeOrgDataSet = db.dataSet("phylonode_organism")
 		//nodeOrgId = getNextId("phylonode_organism")
 		
 		orgPropDataSet = db.dataSet("organismprop");
@@ -138,8 +142,49 @@ class LoadGeneDbPhylogeny {
 	    		dbxref_id: getNextId("dbxref"),
 	    		is_obsolete: 0,
 	    		is_relationshiptype: 0)
-		*/
+		
+		dbxref.add(
+	    		db_id: dbId,
+	    		accession: "DisplayPage",
+	    		version: "1",
+	    		description: "dbxref for cvterm DisplayPage")
+	    
+	    cvTerm.add(
+	    		cv_id: cv,
+	    		name: "DisplayPage",
+	    		definition: "cvterm for attribute value page in taxonomy xml, which decides whether ot not a group should have individual page",
+	    		dbxref_id: getNextId("dbxref"),
+	    		is_obsolete: 0,
+	    )
 
+		dbxref.add(
+	    		db_id: dbId,
+	    		accession: "curator",
+	    		version: "1",
+	    		description: "dbxref for cvterm curator")
+	    
+	    cvTerm.add(
+	    		cv_id: cv,
+	    		name: "curator",
+	    		definition: "curator",
+	    		dbxref_id: getNextId("dbxref"),
+	    		is_obsolete: 0,
+	    		is_relationshiptype: 0)
+	    		
+	    dbxref.add(
+	    		db_id: dbId,
+	    		accession: "mitoTransTable",
+	    		version: "1",
+	    		description: "dbxref for cvterm mitoTransTable")
+	    
+	    cvTerm.add(
+	    		cv_id: cv,
+	    		name: "mitoTransTable",
+	    		definition: "mitoTransTable",
+	    		dbxref_id: getNextId("dbxref"),
+	    		is_obsolete: 0,
+	    		is_relationshiptype: 0)
+		*/
     }
 
 
@@ -151,14 +196,10 @@ class LoadGeneDbPhylogeny {
 	        return 1
 	    }
 	    return id;
-		
-		//def col = table + "_" + table + "_id_seq";
-	    //def id = db.rows("SELECT nextval("+col+") as "+col)[0]["${col}"];
-	    //if (id == null) {
-	    //    return 1
-	    //}
-	    //return id;
 	}
+	
+	List tids;
+	List prev;
 	
 	void process(def inp) {
 	    List trees = db.rows("SELECT * from phylotree where name='org_heirachy'");
@@ -167,7 +208,12 @@ class LoadGeneDbPhylogeny {
   
 	    index = 0
 	    heirachy.node.children().each(
-	            {setLeftAndRight(it, 1)}
+	            {
+		            tids = new ArrayList() 
+		            prev = new ArrayList()
+		            //println "tids is ->> " + tids.size()
+	            	setLeftAndRight(it, 1,tids) 
+				}
         )	
 	    
 	    heirachy.node.children().each(
@@ -177,17 +223,32 @@ class LoadGeneDbPhylogeny {
 
 	// Walk the tree for node and organism nodes, storing values for 
 	// depth and left on the way down, and right on the way back up
-	void setLeftAndRight(def node, def depth) {
+	
+	void setLeftAndRight(def node, def depth,List tids) {
 		if (node.name() != 'node' && node.name() != 'organism') {
-		    return
+		    //println "node name is ---> " + node.name()
+		    Map props = node.attributes();
+		    if (props.get("name") == "taxonId") {
+		    	//println props.get("value")
+		    	tids.add(props.get("value"))
+		    }
+			return
 		}
 		node.attributes().put('depth', depth);
 		node.attributes().put('left', ++index);
 		++depth;
 		node.children().each(
-		        {setLeftAndRight(it, depth)}
+		        {
+		        	if (it.name() == "node") {
+		        		tids = new ArrayList()
+		        	}
+		        	setLeftAndRight(it, depth,tids)
+		        }
 		        )
-		node.attributes().put('right', ++index)     
+		node.attributes().put('right', ++index) 
+		if (node.name() == "node") {
+			node.attributes().put('tanonIds',tids)
+		}
 	}
 	
 	// Now walk the tree creating db entries  
@@ -203,7 +264,7 @@ class LoadGeneDbPhylogeny {
 				// TODO Pick up page attribute - anything else?
 			break
 			case 'organism':
-				def newNode = createPhylonode(node, parent, tree)
+				createPhylonode(node, parent, tree)
           	  
 				Map props = new HashMap()
 				node.children().each({
@@ -234,14 +295,14 @@ class LoadGeneDbPhylogeny {
           	  
 				createOrganism(node,sections[0],sections[-1])
               
-				nodeOrgDataSet.add(
+				/*nodeOrgDataSet.add(
 					phylonode_id: getNextId("phylonode"),
 					organism_id:  getNextId("organism")
-					)
+					)*/
 					
 				checkPropExists(props, node, "taxonId")
 				checkPropExists(props, node, "transTable")
-				checkPropExists(props, "curator")
+				checkPropExists(props, node,"curator")
 				
 				if (!props.containsKey("nickname") && !props.containsKey("newOrg")) {
 					println "No nickname for '"+node.'@name'+"'"
@@ -259,11 +320,11 @@ class LoadGeneDbPhylogeny {
 					List rows = db.rows("select * from cvterm where name='"+it.key+"'")
 					int type_id = rows[0]."cvterm_id"
 					String value = it.value;
-					orgPropDataSet.add(
+					/*orgPropDataSet.add(
 						organism_id: orgId,
 						type_id: type_id,
 						value: value,
-						rank: 0)
+						rank: 0)*/
 						}
 				)
 				break
@@ -281,8 +342,8 @@ class LoadGeneDbPhylogeny {
   
 	// Create a set of db entries when a phylogeny node is encountered
 	void createPhylonode(def node, def parent, def tree) {
-		println "CreatePhylonode: name='"+node.'@name'+"', left='"+node.attributes().get('left')+"', right='"+node.attributes().right+"' depth='"+node.attributes().depth+"'";
-		double dist = node.parent().size();
+		println "CreatePhylonode: name='"+node.'@name'+"', left='"+node.attributes().get('left')+"', right='"+node.attributes().right+"' depth='"+node.attributes().depth+"' taxonids='"+node.attributes().taxonIds+"'" ;
+		/*double dist = node.parent().size();
 		int left = node.attributes().left;
 		int right = node.attributes().right;
 		int ptree = tree;
@@ -295,13 +356,38 @@ class LoadGeneDbPhylogeny {
         	right_idx:           right, 	
         	label:               nodeName,		
         	distance:            dist,
-      	)
+      	)*/
+      	
+      	for (attr in node.attributes()) {
+      		if (attr.key == "page") {
+      			println "CreatePhylonodeProp: page='"+attr.value+"'"
+      			/*int type_id = db.rows("select * from cvterm where name='DisplayPage'")[0]["cvterm_id"]
+				String value = attr.value;      			                                                                          
+      			nodePropDataSet.add(
+      				phylonode_id: getNextId("phylonode"),
+      				type_id:      type_id,
+      				value:		  value,
+      				rank:		  0
+      			)*/
+      		}
+      		if (attr.key == "tanonIds") {
+      			println "CreatePhylonodeProp: taxonid='"+attr.value+"'"
+      			/*int type_id = db.rows("select * from cvterm where name='taxonid'")[0]["cvterm_id"]
+				String value = attr.value;      			                                                                          
+      			nodePropDataSet.add(
+      				phylonode_id: getNextId("phylonode"),
+      				type_id:      type_id,
+      				value:		  value,
+      				rank:		  0
+      			)*/
+      		}
+      	}
 	}
   
 	// Create a set of db entries when an organism node is encountered
 	void createOrganism(def node,def genus,def species) {
 		println "CreateOrganism called with '"+node.'@name'+"'"
-		String abb = node.'@name'
+		/*String abb = node.'@name'
 		String gen = genus;
 		String sp = species;
 		orgDataSet.add(		
@@ -325,7 +411,7 @@ class LoadGeneDbPhylogeny {
 		organismDbXRefSet.add(
 		    organism_id: getNextId("organism"),
 		    dbxref_id:   getNextId("dbxref")
-		)
+		)*/
 		
 	}
 	
@@ -337,6 +423,45 @@ class LoadGeneDbPhylogeny {
 	
 
 	// The XML config file for loading the organism and phylogeny modules
+	/*static String input = '''<?xml version="1.0" encoding="UTF-8"?>
+<org-heirachy>
+    <node name="Root">
+		<node name="Protozoa">
+		    <node name="Kinetoplastids">
+		        <node name="Leishmania">
+					<organism name="Lbraziliensis">
+						<property name="taxonId" value="5660" />
+						<property name="fullName" value="Leishmania braziliensis" />
+						<property name="nickname" value="lbraziliensis" />
+		                <property name="dbName" value="GeneDB_Lbraziliensis" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="csp"/>
+					</organism>
+		            <organism name="Lmajor">
+		                <property name="taxonId" value="5664" />
+		                <property name="fullName" value="Leishmania major" />
+		                <property name="nickname" value="leish" />
+		                <property name="dbName" value="GeneDB_Lmajor" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="csp"/>
+		            </organism>
+	                <organism name="Linfantum">
+	                    <property name="taxonId" value="5761" />
+	                    <property name="fullName" value="Leishmania infantum" />
+	                    <property name="nickname" value="linfantum" />
+	                    <property name="dbName" value="GeneDB_Linfantum" />
+						<property name="transTable" value="1"/>
+						<property name="mitoTransTable" value="4"/>
+						<property name="curator" value="csp"/>
+	                </organism>
+	            </node>
+			</node>
+		</node>
+	</node>
+</org-heirachy>
+''';*/
 	static String input = '''<?xml version="1.0" encoding="UTF-8"?>
 <org-heirachy>
     <node name="Root">
@@ -584,7 +709,7 @@ class LoadGeneDbPhylogeny {
 			<organism name="Ctrachomatis">
 				<property name="taxonId" value="813" />
 				<property name="fullName" value="Chlamydia trachomatis" />
-				<property name="nickname" value="" />
+				<property name="nickname" value="testing" />
             	<property name="dbName" value="GeneDB_Ctrachomatis" />
 				<property name="transTable" value="11"/>
 				<property name="curator" value="nrt"/>
@@ -607,7 +732,7 @@ class LoadGeneDbPhylogeny {
 			</organism>
 			<organism name="Cdiphtheriae">
 				<property name="taxonId" value="1717" />
-				<property name="fullName" value=Corynebacterium diphtheriae"" />
+				<property name="fullName" value="Corynebacterium diphtheriae" />
 				<property name="nickname" value="diphtheria" />
             	<property name="dbName" value="GeneDB_Cdiphtheriae" />
 				<property name="transTable" value="11"/>
