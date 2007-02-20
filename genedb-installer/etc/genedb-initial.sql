@@ -26,11 +26,16 @@ delete from organism where common_name = 'rice';
 -- Clear dbs
 --
 delete from db where name like 'DB:%';
+delete from db where name = 'UNIPROT';
+
 --
 -- Add local dbs and update existing dbs
 --
 insert into db (name) values ('PRODUCT');
-insert into db (name) values ('CCGEN');
+insert into db (name, description) values (
+		'CCGEN',
+		'Db where we store db entries corresponding to controlled curation CV terms'
+);
 
 insert into db (name, description) values (
 		'genedb_internal',
@@ -64,6 +69,7 @@ insert into cv (name, definition) values (
 		'GeneDB-specific cv for controlled curation terms'
 );
 
+-- Do we need a CV for products, or just a db?
 insert into cv (name, definition) values (
 		'genedb_products',
 		'GeneDB-specific cv for products'
@@ -475,6 +481,18 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 );
 
 
+insert into dbxref(db_id, accession, description) values (
+		(select db_id from db where name='null'), 
+		'genedb_misc:taxonList',
+		'dbxref for cvterm taxonList'
+);
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
+		(select cv_id from cv where name='genedb_misc'), 
+		'taxonList',
+		'List of taxon ids of this org and all its children recursively',
+		(select dbxref_id from dbxref where accession='genedb_misc:taxonList'),
+		0, 0
+);
 
 
 
