@@ -482,15 +482,15 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 
 
 insert into dbxref(db_id, accession, description) values (
-		(select db_id from db where name='null'), 
-		'genedb_misc:taxonList',
+		(select db_id from db where name='genedb_internal'), 
+		'genedb_internal:taxonList',
 		'dbxref for cvterm taxonList'
 );
 insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
 		(select cv_id from cv where name='genedb_misc'), 
 		'taxonList',
 		'List of taxon ids of this org and all its children recursively',
-		(select dbxref_id from dbxref where accession='genedb_misc:taxonList'),
+		(select dbxref_id from dbxref where accession='genedb_internal:taxonList'),
 		0, 0
 );
 
