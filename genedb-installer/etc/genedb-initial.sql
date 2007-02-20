@@ -388,20 +388,6 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 
 insert into dbxref(db_id, accession, description) values (
 		(select db_id from db where name='null'), 
-		'genedb_synonym_type:dbName',
-		'dbxref for cvterm dbName'
-);
-insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
-		(select cv_id from cv where name='genedb_misc_...'), 
-		'dbName',
-		'database name for organism',
-		(select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
-		0, 0
-);
-
-
-insert into dbxref(db_id, accession, description) values (
-		(select db_id from db where name='null'), 
 		'genedb_synonym_type:transTable',
 		'dbxref for cvterm transTable'
 );
@@ -522,6 +508,20 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		'mitochondrialTranslationTable',
 		'mitochondrialTranslationTable',
 		(select dbxref_id from dbxref where accession='genedb_internal:mitochondrialTranslationTable'),
+		0, 0
+);
+
+
+insert into dbxref(db_id, accession, description) values (
+		(select db_id from db where name='genedb_internal'), 
+		'genedb_internal:dbName',
+		'dbxref for cvterm dbName'
+);
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
+		(select cv_id from cv where name='genedb_misc'), 
+		'dbName',
+		'database name for organism',
+		(select dbxref_id from dbxref where accession='genedb_internal:dbName'),
 		0, 0
 );
 -- Load phylogeny relationships
