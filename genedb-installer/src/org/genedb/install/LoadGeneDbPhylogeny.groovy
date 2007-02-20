@@ -30,7 +30,7 @@ class LoadGeneDbPhylogeny {
     
     def dbId;
     
-    def cv;
+    def genedbMiscCvId;
     
     def cvTerm;
     
@@ -38,7 +38,7 @@ class LoadGeneDbPhylogeny {
     
     def nodePropDataSet;
     
-    boolean writeBack = false;
+    boolean writeBack = true;
     
     LoadGeneDbPhylogeny() {
 		db = Sql.newInstance(
@@ -48,27 +48,22 @@ class LoadGeneDbPhylogeny {
 			'org.postgresql.Driver')
 			
      	orgDataSet = db.dataSet("organism")
-		//orgId = getMaxIdFromPrimaryKey("organism")
 		
 		orgPropDataSet = db.dataSet("organismprop")
-		//orgId = getMaxIdFromPrimaryKey("organismprop")
 		
      	nodeDataSet = db.dataSet("phylonode")
-		//nodeId = getMaxIdFromPrimaryKey("phylonode")
 		
      	nodePropDataSet = db.dataSet("phylonodeprop")
 		
 		nodeOrgDataSet = db.dataSet("phylonode_organism")
-		//nodeOrgId = getMaxIdFromPrimaryKey("phylonode_organism")
 		
 		orgPropDataSet = db.dataSet("organismprop");
-		//orgPropId = getMaxIdFromPrimaryKey("organismprop");
 		
 		List trees =   db.rows("SELECT * from db where name='null'");
 	    dbId = trees[0]."db_id";
 	    
-	    trees = db.rows("select * from cv where name='sequence'");
-	    cv = trees[0]."cv_id";
+	    trees = db.rows("select * from cv where name='genedb_misc'");
+	    genedbMiscCvId = trees[0]."cv_id";
 	    
 	    dbxref = db.dataSet("dbxref");
 	    cvTerm = db.dataSet("cvterm");
@@ -78,10 +73,10 @@ class LoadGeneDbPhylogeny {
     }
 
 
-	// Select a value for the primary key based on the maximum current value
-	def getMaxIdFromPrimaryKey(def table) {
-		def col = table + "_id";
-	    int id = db.rows("SELECT max("+col+") as "+col+" from " + table)[0]["${col}"];
+	// Find the maximum current value of the primary key for this table 
+	def getMaxIdFromPrimaryKey(String tableName) {
+		def col = tableName + "_id";
+	    int id = db.rows("SELECT max("+col+") as "+col+" from " + tableName)[0]["${col}"];
 	    if (id == null) {
 	        return 1
 	    }
@@ -92,14 +87,17 @@ class LoadGeneDbPhylogeny {
 	void process(def inp) {
 	    List trees = db.rows("SELECT * from phylotree where name='org_heirachy'");
 	    def tree = trees[0]."phylotree_id";
-	    def heirachy = new XmlSlurper().parseText(inp) 
+	    def heirachy = new XmlParser().parseText(inp) 
   
-	    index = 0
-	    heirachy.node.children().each(
+	    index = getMaxIdFromPrimaryKey("phylonode")
+	    heirachy.children().each(
 	            {setLeftAndRight(it, 1)}
         )
-	    
-	    heirachy.node.children().each(
+//def rootNode = createPhylonode(, null, );
+//      setLeftAndRight(heirachy.node, 1)
+//        )
+	    //createNode(hierachy.node, null, tree)
+	    heirachy.children().each(
 	            {createNode(it, null, tree)}
         )		
 	}
@@ -110,6 +108,7 @@ class LoadGeneDbPhylogeny {
 		if (node.name() != 'node' && node.name() != 'organism') {
 			return Collections.EMPTY_LIST;
 		}
+		System.out.println("Processing node on way down, depth='"+depth+"'")
 		node.attributes().put('depth', depth);
 		node.attributes().put('left', ++index);
 		++depth;
@@ -138,49 +137,40 @@ class LoadGeneDbPhylogeny {
 		   	checkAttributeExists(node, "taxonId")
 		    nestedTaxons.add(node.'@taxonId')
 		}
-		node.attributes().put('taxonLists', nestedTaxons.join(" "));
+		node.attributes().put('taxonList', nestedTaxons.join(" "));
 		return nestedTaxons;
 	}
 	
 	// Now walk the tree creating db entries  
-	void createNode(def node, def parent, def tree) {
+	void createNode(def node, def parentId, def tree) {
 		assert node != null
 		switch (node.name()) {
 			case 'node':
-				createPhylonode(node, parent, tree)
-				def newNode = getMaxIdFromPrimaryKey("phylonode")
+				def newNodeId = createPhylonode(node, parentId, tree)
 				node.children().each(
-					{createNode(it, newNode, tree)}
-					)
+					{createNode(it, newNodeId, tree)}
+				)
 				// TODO Pick up page attribute - anything else?
 			break
 			case 'organism':
-				createPhylonode(node, parent, tree)
+				def newNodeId = createPhylonode(node, parentId, tree)
           	  
-				List sections
 				Map props = node.attributes()
 				String temp = props.remove("fullName")
+
+				List sections = temp.split(" ", 2);
           	  
-				if (temp.contains(",")) {
-					sections = temp.split(",")
-				} else {
-					sections = temp.split(" ")
-				}
-				//Matcher matcher = (temp =~ /([a-zA-Z]+)\s+([a-zA-Z]+)/) 
-				//println (matcher[0])
-				//println (matcher[0][1]+","+matcher[0][2])
-          	  
-				createOrganism(node,sections[0],sections[-1])
+				createOrganism(node,sections[0],sections[1])
               
 				if (writeBack) {
 					nodeOrgDataSet.add(
-						phylonode_id: getMaxIdFromPrimaryKey("phylonode"),
+						phylonode_id: newNodeId,
 						organism_id:  getMaxIdFromPrimaryKey("organism")
 					)
 				}
 					
-				checkAttributeExists(node, "transTable")
-				checkAttributeExists(node,"curator")
+				checkAttributeExists(node, "translationTable")
+				checkAttributeExists(node,"curatorEmail")
 				
 				if (!props.containsKey("nickname") && !props.containsKey("newOrg")) {
 					println "No nickname for '"+node.'@name'+"'"
@@ -191,7 +181,7 @@ class LoadGeneDbPhylogeny {
 					throw new RuntimeException("Found an old organism without a nickname")
 				}
 				props.remove("newOrg")
-				props.put("fullName",temp)
+				//props.put("fullName",temp)
           	  
 				int orgId = getMaxIdFromPrimaryKey("organism")
 				props.each({
@@ -199,7 +189,7 @@ class LoadGeneDbPhylogeny {
 					if (rows[0] == null) {
 					    throw new RuntimeException("Couldn't get cvterm for '"+it.key+"'");
 					}
-					int type_id = rows[0]."cvterm_id"
+					int type_id = findCvTerm(it.key)
 					String value = it.value;
 					if (writeBack) {
 						orgPropDataSet.add(
@@ -211,7 +201,8 @@ class LoadGeneDbPhylogeny {
 				})
 				break
 			default:
-				throw new RuntimeException("Saw a node of '"+node.name()+"' when expecting node or organism");
+				throw new RuntimeException("Saw a node of '"+node.name()
+				        +"' when expecting node or organism");
 		}
 	}
   
@@ -223,8 +214,8 @@ class LoadGeneDbPhylogeny {
 	}
   
 	// Create a set of db entries when a phylogeny node is encountered
-	void createPhylonode(def node, def parent, def tree) {
-		double dist = node.parent().size();
+	int createPhylonode(def node, def parent, def tree) {
+		//double dist = node.parent().size();
 		int left = node.attributes().left;
 		int right = node.attributes().right;
 		int depth = node.attributes().depth;
@@ -241,10 +232,13 @@ class LoadGeneDbPhylogeny {
        		 	left_idx:            left, 	
        		 	right_idx:           right, 	
        		 	label:               nodeName,		
-       		 	distance:            dist,
+       		 	distance:            depth,
       		)
 		}
-      	
+		node.attributes().remove("left");
+		node.attributes().remove("right");
+		node.attributes().remove("depth")
+		
       	for (attr in node.attributes()) {
       		if (attr.key == "page") {
       			println "CreatePhylonodeProp: page='"+attr.value+"'"
@@ -259,9 +253,9 @@ class LoadGeneDbPhylogeny {
       				)
       			}
       		}
-      		if (attr.key == "taxonIds") {
-      			println "CreatePhylonodeProp: taxonid='"+attr.value+"'"
-      			int type_id = db.rows("select * from cvterm where name='taxonid'")[0]["cvterm_id"]
+      		if (attr.key == "taxonList") {
+      			println "CreatePhylonodeProp: taxonList='"+attr.value+"'"
+      			int type_id = findCvTerm("taxonList")
 				String value = attr.value;
       			if (writeBack) {
 	      			nodePropDataSet.add(
@@ -273,8 +267,19 @@ class LoadGeneDbPhylogeny {
       			}
       		}
       	}
+		node.attributes().remove("taxonList");
+		return getMaxIdFromPrimaryKey("phylonode")
 	}
   
+	int findCvTerm(String termName) {
+	    def rows = db.rows("select cvterm_id from cvterm where name='"+termName
+	            +"' and cv_id='"+genedbMiscCvId+"'")
+	    if (rows[0] == null) {
+	        throw new RuntimeException("Couldn't get cvterm for '"+termName+"'");
+	    }
+	    return rows[0]["cvterm_id"]
+	}
+	
 	// Create a set of db entries when an organism node is encountered
 	void createOrganism(def node,def genus,def species) {
 		println "CreateOrganism called with '"+node.'@name'+"'"
@@ -294,19 +299,20 @@ class LoadGeneDbPhylogeny {
         int id = dbId
          //Create dbxref
          if (writeBack) {
-	        dbxref.add(
-    	        db_id:	id,
-        	    accession:		accession,
-				version:		1,
-				description:	"dbxref for organism"
-         	)
+//	        dbxref.add(
+//    	        db_id:	id,
+//        	    accession:		accession,
+//				version:		1,
+//				description:	"dbxref for organism"
+//         	)
         
 	         //Create organism dbxref
-			organismDbXRefSet.add(
-			    organism_id: getMaxIdFromPrimaryKey("organism"),
-		 	    dbxref_id:   getMaxIdFromPrimaryKey("dbxref")
-			)
+//			organismDbXRefSet.add(
+//			    organism_id: getMaxIdFromPrimaryKey("organism"),
+//		 	    dbxref_id:   getMaxIdFromPrimaryKey("dbxref")
+//			)
          }
+        node.attributes().remove("name");
 	}
 	
         
@@ -327,9 +333,9 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Schistosoma mansoni" />
 					<property name="nickname" value="smansoni" />
 	            	<property name="dbName" value="GeneDB_Smansoni" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="9"/>
-					<property name="curator" value="mb4"/>
+					<property name="translationTable" value="1"/>
+					<property name="mitochondrialTranslationTable" value="9"/>
+					<property name="curatorEmail" value="mb4"/>
 				</organism>
 			</node>
 		</node>
@@ -341,27 +347,27 @@ class LoadGeneDbPhylogeny {
 						<property name="fullName" value="Leishmania braziliensis" />
 						<property name="nickname" value="lbraziliensis" />
 		                <property name="dbName" value="GeneDB_Lbraziliensis" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="csp"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="csp"/>
 					</organism>
 		            <organism name="Lmajor">
 		                <property name="taxonId" value="5664" />
 		                <property name="fullName" value="Leishmania major" />
 		                <property name="nickname" value="leish" />
 		                <property name="dbName" value="GeneDB_Lmajor" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="csp"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="csp"/>
 		            </organism>
 	                <organism name="Linfantum">
 	                    <property name="taxonId" value="5761" />
 	                    <property name="fullName" value="Leishmania infantum" />
 	                    <property name="nickname" value="linfantum" />
 	                    <property name="dbName" value="GeneDB_Linfantum" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="csp"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="csp"/>
 	                </organism>
 	            </node>
 	            <node name="Trypanosoma" page="true">
@@ -370,54 +376,54 @@ class LoadGeneDbPhylogeny {
 						<property name="fullName" value="Trypanosoma congolense" />
 						<property name="nickname" value="tcongolense" />
 		                <property name="dbName" value="GeneDB_Tcongolense" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="chf"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="chf"/>
 					</organism>
 					<organism name="Tbruceibrucei427">
 	                    <property name="taxonId" value="5761" />
 						<property name="fullName" value="Trypanosoma brucei brucei, strain 427" />
 						<property name="nickname" value="tbrucei427" />
 						<property name="dbName" value="GeneDB_Tbrucei427" />
-						<property name="transTable" value=""/>
-						<property name="mitoTransTable" value=""/>
-						<property name="curator" value="chf"/>
+						<property name="translationTable" value=""/>
+						<property name="mitochondrialTranslationTable" value=""/>
+						<property name="curatorEmail" value="chf"/>
 	                </organism>
 	                <organism name="Tbruceibrucei927">
 	                    <property name="taxonId" value="185431" />
 						<property name="fullName" value="Trypanosoma brucei brucei, strain 927" />
 						<property name="nickname" value="tryp" />
 						<property name="dbName" value="GeneDB_Tbrucei927" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="chf"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="chf"/>
 	                </organism>
 	                <organism name="Tbruceigambiense">
 	                    <property name="taxonId" value="31285" />
 						<property name="fullName" value="Trypanosoma brucei gambiense" />
 	                    <property name="nickname" value="tgambiense" />
 						<property name="dbName" value="GeneDB_Tgambiense" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="chf"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="chf"/>
 	                </organism>
 	                <organism name="Tvivax">
 	                    <property name="taxonId" value="5699" />
 	                    <property name="fullName" value="Trypanosoma vivax" />
 	                    <property name="nickname" value="tvivax" />
 	                    <property name="dbName" value="GeneDB_Tvivax" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="chf"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="chf"/>
 	                </organism>
 	                <organism name="Tcruzi">
 	                    <property name="taxonId" value="5693" />
 	                    <property name="fullName" value="Trypanosoma cruzi" />
 	                    <property name="nickname" value="tcruzi" />
 	                    <property name="dbName" value="GeneDB_Tcruzi" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="chf"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="chf"/>
 	                </organism>
 	            </node>
 	            <organism name="Ddiscoideum">
@@ -425,18 +431,18 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Dictyostelium discoideum" />
 					<property name="nickname" value="dicty" />
 	                <property name="dbName" value="GeneDB_Ddiscoideum" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="1"/>
-					<property name="curator" value="mar"/>
+					<property name="translationTable" value="1"/>
+					<property name="mitochondrialTranslationTable" value="1"/>
+					<property name="curatorEmail" value="mar"/>
 				</organism>
 				<organism name="Ehistolytica">
 					<property name="taxonId" value="5759" />
 					<property name="fullName" value="Entamoeba histolytica" />
 					<property name="nickname" value="ehistolytica" />
 	                <property name="dbName" value="GeneDB_Ehistolytica" />
-					<property name="transTable" value="1"/>
-					<property name="mitoTransTable" value="1"/>
-					<property name="curator" value="mb4"/>
+					<property name="translationTable" value="1"/>
+					<property name="mitochondrialTranslationTable" value="1"/>
+					<property name="curatorEmail" value="mb4"/>
 				</organism>
 				<node name="Apicomplexa">
 					<organism name="Etenella">
@@ -444,18 +450,18 @@ class LoadGeneDbPhylogeny {
 						<property name="fullName" value="Eimeria tenella" />
 						<property name="nickname" value="etenella" />
 		                <property name="dbName" value="GeneDB_Etenella" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="mar"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="mar"/>
 				  	</organism>
 					<organism name="Tannulata">
 						<property name="taxonId" value="5874" />				
 						<property name="fullName" value="Theileria annulata" />
 						<property name="nickname" value="annulata" />
 		                <property name="dbName" value="GeneDB_Tannulata" />
-						<property name="transTable" value="1"/>
-						<property name="mitoTransTable" value="4"/>
-						<property name="curator" value="ap2"/>
+						<property name="translationTable" value="1"/>
+						<property name="mitochondrialTranslationTable" value="4"/>
+						<property name="curatorEmail" value="ap2"/>
 					</organism>
 	                <node name="Plasmodia" page="true">
 	                    <organism name="Pfalciparum">
@@ -463,36 +469,36 @@ class LoadGeneDbPhylogeny {
 	                        <property name="fullName" value="Plasmodium falciparum" />
 	                        <property name="nickname" value="malaria" />
 	                        <property name="dbName" value="GeneDB_Pfalciparum" />
-							<property name="transTable" value="1"/>
-						    <property name="mitoTransTable" value="4"/>
-							<property name="curator" value="aeb"/>
+							<property name="translationTable" value="1"/>
+						    <property name="mitochondrialTranslationTable" value="4"/>
+							<property name="curatorEmail" value="aeb"/>
 	                    </organism>
 	                    <organism name="Pknowlesi">
 	                        <property name="taxonId" value="5850" />
 	                        <property name="fullName" value="Plasmodium knowlesi" />
 	                        <property name="nickname" value="pknowlesi" />
 	                        <property name="dbName" value="GeneDB_Pknowlesi" />
-							<property name="transTable" value="1"/>
-							<property name="mitoTransTable" value="4"/>
-							<property name="curator" value="aeb"/>
+							<property name="translationTable" value="1"/>
+							<property name="mitochondrialTranslationTable" value="4"/>
+							<property name="curatorEmail" value="aeb"/>
 	                    </organism>
 	                    <organism name="Pberghei">
 	                        <property name="taxonId" value="5821" />
 	                        <property name="fullName" value="Plasmodium berghei" />
 	                        <property name="nickname" value="pberghei" />
 	                        <property name="dbName" value="GeneDB_Pberghei" />
-							<property name="transTable" value="1"/>
-							<property name="mitoTransTable" value="4"/>
-							<property name="curator" value="aeb"/>
+							<property name="translationTable" value="1"/>
+							<property name="mitochondrialTranslationTable" value="4"/>
+							<property name="curatorEmail" value="aeb"/>
 	                    </organism>
 	                    <organism name="Pchabaudi">
 	                        <property name="taxonId" value="5825" />
 	                        <property name="fullName" value="Plasmodium chabaudi" />
 	                        <property name="nickname" value="pchabaudi" />
 	                        <property name="dbName" value="GeneDB_Pchabaudi" />
-							<property name="transTable" value="1"/>
-							<property name="mitoTransTable" value="4"/>
-							<property name="curator" value="aeb"/>
+							<property name="translationTable" value="1"/>
+							<property name="mitochondrialTranslationTable" value="4"/>
+							<property name="curatorEmail" value="aeb"/>
 	                    </organism>
 	                </node>
 	            </node>
@@ -504,36 +510,36 @@ class LoadGeneDbPhylogeny {
                 <property name="fullName" value="Saccharomyces cerevisiae" />
                 <property name="nickname" value="cerevisiae" />
                 <property name="dbName" value="GeneDB_Scerevisiae" />
-				<property name="transTable" value="1"/>
-				<property name="mitoTransTable" value="3"/>
-				<property name="curator" value="val"/>
+				<property name="translationTable" value="1"/>
+				<property name="mitochondrialTranslationTable" value="3"/>
+				<property name="curatorEmail" value="val"/>
             </organism>
             <organism name="Spombe">
                 <property name="taxonId" value="4896" />
                 <property name="fullName" value="Schizosaccharomyces pombe" />
                 <property name="nickname" value="pombe" />
                 <property name="dbName" value="GeneDB_Spombe" />
-				<property name="transTable" value="1"/>
-				<property name="mitoTransTable" value="4"/>
-				<property name="curator" value="val"/>
+				<property name="translationTable" value="1"/>
+				<property name="mitochondrialTranslationTable" value="4"/>
+				<property name="curatorEmail" value="val"/>
             </organism>
             <organism name="Afumigatus">
                 <property name="taxonId" value="5085" />
                 <property name="fullName" value="Aspergillus fumigatus" />
                 <property name="nickname" value="asp" />
                 <property name="dbName" value="GeneDB_Afumigatus" />
-				<property name="transTable" value="1"/>
-				<property name="mitoTransTable" value="4"/>
-				<property name="curator" value="mb4"/>
+				<property name="translationTable" value="1"/>
+				<property name="mitochondrialTranslationTable" value="4"/>
+				<property name="curatorEmail" value="mb4"/>
             </organism>
 			<organism name="Cdubliniensis">
 				<property name="taxonId" value="42374" />
 				<property name="fullName" value="Candida dubliniensis" />
 				<property name="nickname" value="cdubliniensis" />
                 <property name="dbName" value="GeneDB_Cdubliniensis" />
-				<property name="transTable" value="12"/>
-				<property name="mitoTransTable" value="3"/>
-				<property name="curator" value="mb4"/>
+				<property name="translationTable" value="12"/>
+				<property name="mitochondrialTranslationTable" value="3"/>
+				<property name="curatorEmail" value="mb4"/>
 			</organism>
         </node>
 		<node name="bacteria">
@@ -542,88 +548,88 @@ class LoadGeneDbPhylogeny {
 				<property name="fullName" value="Bacteriovorax marinus" />
 				<property name="newOrg" value="true" />
             	<property name="dbName" value="GeneDB_Bmarinus" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="sdb"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="sdb"/>
 			</organism>
 			<organism name="Bfragilis_NCTC9343">
 				<property name="taxonId" value="272559" />
 				<property name="fullName" value="Bacteroides fragilis NCTC 9343" />
 				<property name="nickname" value="bfragilis" />
             	<property name="dbName" value="GeneDB_Bfragilis" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="amct"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="amct"/>
 			</organism>
 			<organism name="Cjejuni">
 				<property name="taxonId" value="197" />
 				<property name="fullName" value="Campylobacter jejuni" />
 				<property name="nickname" value="cjejuni" />
             	<property name="dbName" value="GeneDB_Cjejuni" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="sdb"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="sdb"/>
 			</organism>
 			<organism name="Ctrachomatis">
 				<property name="taxonId" value="813" />
 				<property name="fullName" value="Chlamydia trachomatis" />
 				<property name="nickname" value="testing" />
             	<property name="dbName" value="GeneDB_Ctrachomatis" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="nrt"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="nrt"/>
 			</organism>
 			<organism name="Cabortus">
 				<property name="taxonId" value="83555" />
 				<property name="fullName" value="Chlamydophila abortus" />
 				<property name="nickname" value="cabortus" />
             	<property name="dbName" value="GeneDB_Cabortus" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="nrt"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="nrt"/>
 			</organism>
 			<organism name="Cmichiganensis">
 				<property name="taxonId" value="28447" />
 				<property name="fullName" value="Clavibacter michiganensis" />
 				<property name="newOrg" value="true" />
             	<property name="dbName" value="GeneDB_Cmichiganensis" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="sdb"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="sdb"/>
 			</organism>
 			<organism name="Cdiphtheriae">
 				<property name="taxonId" value="1717" />
 				<property name="fullName" value="Corynebacterium diphtheriae" />
 				<property name="nickname" value="diphtheria" />
             	<property name="dbName" value="GeneDB_Cdiphtheriae" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="amct"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="amct"/>
 			</organism>
 			<organism name="Ecarotovora">
 				<property name="taxonId" value="554" />
 				<property name="fullName" value="Erwinia carotovora" />
 				<property name="nickname" value="ecarot" />
             	<property name="dbName" value="GeneDB_Ecarotovora" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="ms5"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="ms5"/>
 			</organism>
 			<organism name="Ecoli_042">
 				<property name="taxonId" value="216592" />
 				<property name="fullName" value="Escherichia coli 042" />
 				<property name="nickname" value="ecoli" />
             	<property name="dbName" value="GeneDB_Ecoli" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="net"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="net"/>
 			</organism>
 			<organism name="Pfluorescens">
 				<property name="taxonId" value="294" />
 				<property name="fullName" value="Pseudomonas fluorescens" />
 				<property name="newOrg" value="true" />
             	<property name="dbName" value="GeneDB_Pfluorescens" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="amct"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="amct"/>
 			</organism>
 			<organism name="Rleguminosarum">
 				<property name="taxonId" value="384" />
 				<property name="fullName" value="Rhizobium leguminosarum" />
 				<property name="nickname" value="rleguminosarum" />
             	<property name="dbName" value="GeneDB_Rleguminosarum" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="lcc"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="lcc"/>
 			</organism>
 			<node name="Bordetella">
 				<organism name="Bavium_197N">
@@ -631,32 +637,32 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Bordetella avium 197N" />
 					<property name="nickname" value="bavium" />
 	            	<property name="dbName" value="GeneDB_Bavium" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="ms5"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="ms5"/>
 				</organism>
 				<organism name="Bbronchiseptica">
 					<property name="taxonId" value="518" />
 					<property name="fullName" value="Bordetella bronchiseptica" />
 					<property name="nickname" value="bronchi" />
 	            	<property name="dbName" value="GeneDB_Bbronchiseptica" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="ms5"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="ms5"/>
 				</organism>
 				<organism name="Bparapertussis">
 					<property name="taxonId" value="519" />
 					<property name="fullName" value="Bordetella parapertussis" />
 					<property name="nickname" value="parapert" />
 	            	<property name="dbName" value="GeneDB_Bparapertussis" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="ms5"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="ms5"/>
 				</organism>
 				<organism name="Bpertussis">
 					<property name="taxonId" value="520" />
 					<property name="fullName" value="Bordetella pertussis" />
 					<property name="nickname" value="pert" />
 	            	<property name="dbName" value="GeneDB_Bpertussis" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="ms5"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="ms5"/>
 				</organism>
 			</node>
 			<node name="Burkholderia">
@@ -665,16 +671,16 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Burkholderia cenocepacia" />
 					<property name="nickname" value="bcenocepacia" />
 	            	<property name="dbName" value="GeneDB_Bcenocepacia" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="mh3"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="mh3"/>
 				</organism>
 				<organism name="Bpseudomallei">
 					<property name="taxonId" value="28450" />
 					<property name="fullName" value="Burkholderia pseudomallei" />
 					<property name="nickname" value="bpseudomallei" />
 	            	<property name="dbName" value="GeneDB_Bpseudomallei" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="mh3"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="mh3"/>
 				</organism>
 			</node>
 			<node name="Clostridium">
@@ -683,16 +689,16 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Clostridium botulinum" />
 					<property name="nickname" value="cbotulinum" />
 	            	<property name="dbName" value="GeneDB_Cbotulinum" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="ms5"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="ms5"/>
 				</organism>
 				<organism name="Cdifficile">
 					<property name="taxonId" value="1496" />
 					<property name="fullName" value="Clostridium difficile" />
 					<property name="nickname" value="cdifficile" />
 	            	<property name="dbName" value="GeneDB_Cdifficile" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="ms5"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="ms5"/>
 				</organism>
 			</node>
 			<node name="Mycobacterium">
@@ -701,32 +707,32 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Mycobacterium bovis" />
 					<property name="nickname" value="mbovis" />
 	            	<property name="dbName" value="GeneDB_Mbovis" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="parkhill"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="parkhill"/>
 				</organism>
 				<organism name="Mleprae">
 					<property name="taxonId" value="1769" />
 					<property name="fullName" value="Mycobacterium leprae" />
 					<property name="nickname" value="mleprae" />
 	            	<property name="dbName" value="GeneDB_Mleprae" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="parkhill"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="parkhill"/>
 				</organism>
 				<organism name="Mmarinum">
 					<property name="taxonId" value="1781" />
 					<property name="fullName" value="Mycobacterium marinum" />
 					<property name="nickname" value="mmarinum" />
 	            	<property name="dbName" value="GeneDB_Mmarinum" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="parkhill"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="parkhill"/>
 				</organism>
 				<organism name="Mtuberculosis">
 					<property name="taxonId" value="1773" />
 					<property name="fullName" value="Mycobacterium tuberculosis" />
 					<property name="nickname" value="mtuberculosis" />
 	            	<property name="dbName" value="GeneDB_Mtuberculosis" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="nrt"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="nrt"/>
 				</organism>
 			</node>
 			<node name="Neisseria">
@@ -735,16 +741,16 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Neisseria meningitidis" />
 					<property name="nickname" value="nmeningitidis" />
 	            	<property name="dbName" value="GeneDB_Nmeningitidis" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="sdb"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="sdb"/>
 				</organism>
 				<organism name="Nmeningitidis_C">
 					<property name="taxonId" value="272831" />
 					<property name="fullName" value="Neisseria meningitidis C" />
 					<property name="nickname" value="nmeningitidisC" />
 	            	<property name="dbName" value="GeneDB_NmeningitidisC" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="sdb"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="sdb"/>
 				</organism>
 			</node>
 			<node name="Salmonella" page="true">
@@ -753,16 +759,16 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Salmonella bongori" />
 					<property name="newOrg" value="true" />
 	            	<property name="dbName" value="GeneDB_Sbongori" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="nrt"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="nrt"/>
 				</organism>	
 				<organism name="Senteritidis_PT4">
 					<property name="taxonId" value="592" />
 					<property name="fullName" value="Salmonella enteritidis PT4" />
 					<property name="newOrg" value="true" />
 	            	<property name="dbName" value="GeneDB_Senteritidis_PT4" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="nrt"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="nrt"/>
 				</organism>
 			</node>
 			<organism name="Smarcescens">
@@ -770,8 +776,8 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Serratia marcescens" />
 					<property name="newOrg" value="true" />
 	            	<property name="dbName" value="GeneDB_Smarcescens" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="nrt"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="nrt"/>
 			</organism>
 			<node name="Staphylococcus">
 				<organism name="Saureus_MRSA252">
@@ -779,16 +785,16 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Staphylococcus aureus (MRSA252)" />
 					<property name="nickname" value="saureusMRSA" />
 	            	<property name="dbName" value="GeneDB_SaureusMRSA" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="mh3"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="mh3"/>
 				</organism>	
 				<organism name="Saureus_MSSA476">
 					<property name="taxonId" value="282459" />
 					<property name="fullName" value="Staphylococcus aureus (MSSA476)" />
 					<property name="nickname" value="saureusMSSA476" />
 	            	<property name="dbName" value="GeneDB_SaureusMSSA" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="mh3"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="mh3"/>
 				</organism>
 			</node>
 			<organism name="Smaltophilia">
@@ -796,8 +802,8 @@ class LoadGeneDbPhylogeny {
 				<property name="fullName" value="Stenotrophomonas maltophilia" />
 				<property name="newOrg" value="true" />
             	<property name="dbName" value="GeneDB_Smaltophilia" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="lcc"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="lcc"/>
 			</organism>
 			<node name="Streptococcus">
 				<organism name="Spyogenes">
@@ -805,16 +811,16 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Streptococcus pyogenes" />
 					<property name="nickname" value="spyogenes" />
 	            	<property name="dbName" value="GeneDB_Spyogenes" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="mh3"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="mh3"/>
 				</organism>	
 				<organism name="Suberis">
 					<property name="taxonId" value="1349" />
 					<property name="fullName" value="Streptococcus uberis" />
 					<property name="nickname" value="suberis" />
 	            	<property name="dbName" value="GeneDB_Suberis" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="mh3"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="mh3"/>
 				</organism>
 			</node>
 			<organism name="Twhipplei">
@@ -822,8 +828,8 @@ class LoadGeneDbPhylogeny {
 				<property name="fullName" value="Tropheryma whipplei" />
 				<property name="nickname" value="twhipplei" />
             	<property name="dbName" value="GeneDB_Twhipplei" />
-				<property name="transTable" value="11"/>
-				<property name="curator" value="sdb"/>
+				<property name="translationTable" value="11"/>
+				<property name="curatorEmail" value="sdb"/>
 			</organism>	
 			<node name="Yersinia">
 				<organism name="Ypestis">
@@ -831,16 +837,16 @@ class LoadGeneDbPhylogeny {
 					<property name="fullName" value="Yersinia pestis" />
 					<property name="nickname" value="ypsetis" />
 	            	<property name="dbName" value="GeneDB_Ypestis" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="nrt"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="nrt"/>
 				</organism>	
 				<organism name="Yenterocolitica">
 					<property name="taxonId" value="630" />
 					<property name="fullName" value="Yersinia enterocolitica" />
 					<property name="newOrg" value="true" />
 	            	<property name="dbName" value="GeneDB_Yenterocolitica" />
-					<property name="transTable" value="11"/>
-					<property name="curator" value="nrt"/>
+					<property name="translationTable" value="11"/>
+					<property name="curatorEmail" value="nrt"/>
 				</organism>
 			</node>
 		</node>
