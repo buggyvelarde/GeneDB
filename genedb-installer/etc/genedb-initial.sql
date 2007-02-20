@@ -388,20 +388,6 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 
 insert into dbxref(db_id, accession, description) values (
 		(select db_id from db where name='null'), 
-		'genedb_synonym_type:nickname',
-		'dbxref for cvterm nickname'
-);
-insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
-		(select cv_id from cv where name='genedb_misc_...'), 
-		'nickname',
-		'nickname of organism',
-		(select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
-		0, 0
-);
-
-
-insert into dbxref(db_id, accession, description) values (
-		(select db_id from db where name='null'), 
 		'genedb_synonym_type:dbName',
 		'dbxref for cvterm dbName'
 );
@@ -497,6 +483,19 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		0, 0
 );
 
+
+insert into dbxref(db_id, accession, description) values (
+		(select db_id from db where name='genedb_internal'), 
+		'genedb_internal:nickname',
+		'dbxref for cvterm nickname'
+);
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
+		(select cv_id from cv where name='genedb_misc'), 
+		'nickname',
+		'nickname of organism',
+		(select dbxref_id from dbxref where accession='genedb_internal:nickname'),
+		0, 0
+);
 
 -- Load phylogeny relationships
 insert into dbxref(db_id, accession) values (
