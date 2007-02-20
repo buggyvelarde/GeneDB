@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,36 +41,48 @@ public class WebUtils {
 		WebUtils.sequenceDao = sequenceDao;
 	}
 
-	public static boolean extractTaxonOrOrganism(HttpServletRequest request, boolean required, boolean onlyOne, List<String> answers) {
-	boolean problem = false;
-	String[] ids = request.getParameterValues("taxId");
-	String[] names = request.getParameterValues("org");
-	List<String> idsAndNames = new ArrayList<String>();
-	if (ids != null) idsAndNames.addAll(Arrays.asList(ids));
-	if (names != null) idsAndNames.addAll(Arrays.asList(names));
-	
-	int length = idsAndNames.size();
-	if (required && length==0) {
-	    buildErrorMsg(request, "No taxon id (or organism name) supplied when expected");
-	    problem = true;
-	}
-	if (onlyOne && length>1) {
-	    buildErrorMsg(request, "Only expected 1 taxon id (or organism name)");
-	    problem = true;
-	}
-			
-			
-	if (problem) {
-	    return false;
-	}
-	//		if (errMsg == null) {
-	//			request.setAttribute(errMsg, errMsg);
-	//		}
-	answers.addAll(idsAndNames);
-	// TODO check required and onlyone
-	// TODO store error message if necessary
-	// TODO check if ids for which we have data - need new flag
-	return true;
+    public static boolean extractTaxonOrOrganism(HttpServletRequest request, boolean required, boolean onlyOne, List<String> answers) {
+        boolean problem = false;
+
+        String[] names = request.getParameterValues("org");
+        
+        List<String> idsAndNames = new ArrayList<String>();
+        if (names != null) {
+            for (String entry : names) {
+                String[] entries = entry.split(":");
+                idsAndNames.addAll(Arrays.asList(entries));
+            }
+        }
+
+        String msg = WebUtils.validateTaxons(idsAndNames);
+        
+        int length = idsAndNames.size();
+        if (required && length==0) {
+            buildErrorMsg(request, "No taxon id (or organism name) supplied when expected");
+            problem = true;
+        }
+        if (onlyOne && length>1) {
+            buildErrorMsg(request, "Only expected 1 taxon id (or organism name)");
+            problem = true;
+        }
+
+
+        if (problem) {
+            return false;
+        }
+        //		if (errMsg == null) {
+        //			request.setAttribute(errMsg, errMsg);
+        //		}
+        answers.addAll(idsAndNames);
+        // TODO check required and onlyone
+        // TODO store error message if necessary
+        // TODO check if ids for which we have data - need new flag
+        return true;
+    }
+
+    private static String validateTaxons(List<String> idsAndNames) {
+        // TODO 
+        return null;
     }
 
     public static void buildErrorMsg(HttpServletRequest request, String msg) {
