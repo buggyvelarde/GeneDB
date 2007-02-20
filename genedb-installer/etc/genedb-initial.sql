@@ -384,20 +384,6 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
 		0, 0
 );
-
-
-insert into dbxref(db_id, accession, description) values (
-		(select db_id from db where name='null'), 
-		'genedb_synonym_type:transTable',
-		'dbxref for cvterm transTable'
-);
-insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
-		(select cv_id from cv where name='genedb_misc_...'), 
-		'transTable',
-		'transTable',
-		(select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
-		0, 0
-);
 	
 	
 insert into dbxref(db_id, accession, description) values (
@@ -409,20 +395,6 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select cv_id from cv where name='genedb_misc_...'), 
 		'DisplayPage',
 		'cvterm for attribute value page in taxonomy xml, which decides whether ot not a group should have individual page',
-		(select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
-		0, 0
-);
-
-
-insert into dbxref(db_id, accession, description) values (
-		(select db_id from db where name='null'), 
-		'genedb_synonym_type:curator',
-		'dbxref for cvterm curator'
-);
-insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
-		(select cv_id from cv where name='genedb_misc_...'), 
-		'curator',
-		'curator',
 		(select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
 		0, 0
 );
@@ -524,6 +496,21 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		(select dbxref_id from dbxref where accession='genedb_internal:dbName'),
 		0, 0
 );
+
+
+insert into dbxref(db_id, accession, description) values (
+		(select db_id from db where name='genedb_internal'), 
+		'genedb_internal:translationTable',
+		'dbxref for cvterm translationTable'
+);
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
+		(select cv_id from cv where name='genedb_misc'), 
+		'translationTable',
+		'translationTable',
+		(select dbxref_id from dbxref where accession='genedb_internal:translationTable'),
+		0, 0
+);
+
 -- Load phylogeny relationships
 insert into dbxref(db_id, accession) values (
 		(select db_id from db where name='null'),
