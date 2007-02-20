@@ -497,6 +497,33 @@ insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relations
 		0, 0
 );
 
+
+insert into dbxref(db_id, accession, description) values (
+		(select db_id from db where name='genedb_internal'), 
+		'genedb_internal:curatorName',
+		'dbxref for cvterm curator name'
+);
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
+		(select cv_id from cv where name='genedb_misc'), 
+		'curatorName',
+		'curatorName',
+		(select dbxref_id from dbxref where accession='genedb_internal:curatorName'),
+		0, 0
+);
+
+
+insert into dbxref(db_id, accession, description) values (
+		(select db_id from db where name='genedb_internal'), 
+		'genedb_internal:curatorEmail',
+		'dbxref for cvterm curator email'
+);
+insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
+		(select cv_id from cv where name='genedb_misc'), 
+		'curatorEmail',
+		'curatorEmail',
+		(select dbxref_id from dbxref where accession='genedb_internal:curatorEmail'),
+		0, 0
+);
 -- Load phylogeny relationships
 insert into dbxref(db_id, accession) values (
 		(select db_id from db where name='null'),
