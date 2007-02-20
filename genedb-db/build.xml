@@ -28,7 +28,7 @@
 	
 	<path id="tools-interface-compile-lib">
 		<path location="lib/hibernate-tools.jar" />
-		<path location="lib/hibernate3.jar" />
+		<path location="../genedb-installer/lib/hibernate-3.2.jar" />
 		<path location="lib/ejb3-persistence.jar" />
 		<path location="lib/hibernate-annotations.jar" />
 	</path>
@@ -37,7 +37,7 @@
 		<path refid="tools-interface-compile-lib" />
 		<path location="lib/commons-logging-1.0.4.jar" />
 		<path location="lib/commons-collections-2.1.1.jar" />
-		<path location="lib/spring-2.0RC3.jar" />
+		<path location="../genedb-installer/lib/spring-2.0.2.jar" />
 	</path>
 	  
 	
@@ -178,8 +178,8 @@
     	
  	    <retrotranslator destdir="ant-build/classes-1.4-interface-post" verify="true">
 	        <src path="ant-build/classes-1.4-interface-pre"/>
-	        <!-- <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/> -->
-	        <classpath location="/software/pathogen/external/applications/java/jdk1.6.0/jre/lib/rt.jar"/>
+	        <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/>
+	        <!--<classpath location="/software/pathogen/external/applications/java/jdk1.6.0/jre/lib/rt.jar"/>-->
 	        <classpath refid="tools-translate-lib"/>
 	    </retrotranslator>
     	
