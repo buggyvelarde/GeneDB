@@ -22,33 +22,12 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.helpers.NameLookup;
-import org.genedb.db.loading.FeatureUtils;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.utils.PeptideProperties;
-
-import org.biojava.bio.BioException;
-import org.biojava.bio.proteomics.IsoelectricPointCalc;
-import org.biojava.bio.proteomics.MassCalc;
-import org.biojava.bio.seq.ProteinTools;
-import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.Alphabet;
-import org.biojava.bio.symbol.SimpleSymbolList;
-import org.biojava.bio.symbol.SymbolList;
-import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 
