@@ -103,6 +103,9 @@ public class Organism implements Serializable {
         this.organismId = organismId;
     }
     
+    public String getFullName() {
+        return getGenus()+' '+getSpecies();
+    }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#getAbbreviation()
