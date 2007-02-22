@@ -50,9 +50,9 @@
       - This means that its beans are automatically available in these child contexts,
       - both for getBean(name) calls and (external) bean references.
 	-->
-	<listener>
+	<!-- <listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+	</listener> -->
 
     <!--
       - Loads the root application context of this web app at startup,
