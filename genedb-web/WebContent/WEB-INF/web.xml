@@ -54,6 +54,14 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
+    <!--
+      - Loads the root application context of this web app at startup,
+      - by default from "/WEB-INF/applicationContext.xml".
+    -->
+    <listener>
+        <listener-class>org.genedb.web.mvc.controller.TaxonManagerListener</listener-class>
+    </listener>
+
 	<servlet>
 		<servlet-name>genedb</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -84,9 +92,13 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/History/*</url-pattern>
     </servlet-mapping>
-        <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/NamedFeature</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/FlatFileReport</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
