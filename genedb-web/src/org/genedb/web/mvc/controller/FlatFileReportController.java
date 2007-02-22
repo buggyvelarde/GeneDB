@@ -29,6 +29,8 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 
 /**
@@ -45,10 +47,11 @@ public class FlatFileReportController extends SimpleFormController {
     private OrganismDao organismDao;
 
   	
-//	@Override
-//    protected boolean isFormSubmission(HttpServletRequest request) {
-//        return true;
-//    }
+	@Override
+    protected boolean isFormSubmission(HttpServletRequest request) {
+        boolean sup = super.isFormSubmission(request);
+        return sup ? true : (request.getParameterMap().size() > 0);
+    }
 
     @Override
     protected ModelAndView onSubmit(Object command) throws Exception {
@@ -151,7 +154,6 @@ public class FlatFileReportController extends SimpleFormController {
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
-    
 }
 
     class FlatFileReportBean {
@@ -160,8 +162,6 @@ public class FlatFileReportController extends SimpleFormController {
         int start;
         int end;
         
-        
-        
     }
     
-  
+ 
