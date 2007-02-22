@@ -24,12 +24,12 @@ import org.gmod.schema.dao.PhylogenyDaoI;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.phylogeny.PhylonodeOrganism;
-import org.gmod.schema.phylogeny.PhylonodeProp;
-import org.gmod.schema.phylogeny.PhylonodeRelationship;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -49,6 +49,18 @@ public class TaxonNodeManager implements InitializingBean{
         // TODO Auto-generated method stub
         // Find root node
         // Walk over children
+//        Set nodes = new HashSet<TaxonNode>();
+//        List<Phylonode> phylonodes = phylogenyDao.getAllNodes();
+//        for (Phylonode phylonode: phylonodes) {
+//            nodes.add(new TaxonNode(phylonode));
+//        }
+//        Collections.sort(phylonodes, new Comparator<Phylonode>() {
+//            public int compare(Object arg0, Object arg1) {
+//                // TODO Auto-generated method stub
+//                return 0;
+//            }
+//            
+//        });
         
     }
     
@@ -83,20 +95,6 @@ public class TaxonNodeManager implements InitializingBean{
         }
         return ret;
     }
-    
-//    Phylonode getParent(Phylonode node) {
-//        Collection<PhylonodeRelationship> relations = node.getPhylonodeRelationshipsForSubjectId();
-//        if (relations.size() > 1) {
-//            throw new RuntimeException("Got more than 1 parent for '"+node.getLabel()+"'");
-//        }
-//        if (node.getDistance() == 1) {
-//            return null;
-//        }
-//        if (relations.size() == 0) {
-//            throw new RuntimeException("Got no parent for '"+node.getLabel()+"' but depth isn't 0");
-//        }
-//        return relations.iterator().next().getPhylonodeByObjectId();
-//    }
     
     private Phylonode getPhlyonodeForOrganism(Organism org) {
         Set<PhylonodeOrganism> pos = org.getPhylonodeOrganisms();
