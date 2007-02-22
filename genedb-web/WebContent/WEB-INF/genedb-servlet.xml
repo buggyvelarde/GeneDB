@@ -153,6 +153,7 @@
         
     <bean id="FlatFileReportController" class="org.genedb.web.mvc.controller.FlatFileReportController">
             <property name="commandClass" value="org.genedb.web.mvc.controller.FlatFileReportBean" />
+            <property name="successView" value="list/features" />
     </bean>
        
     <bean id="StaticController" class="org.genedb.web.mvc.controller.StaticController"/>
