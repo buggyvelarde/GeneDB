@@ -33,6 +33,10 @@ public class TaxonNode {
     boolean webLinkable = false;
 
 
+    public TaxonNode(TaxonNode parent, Phylonode phylonode) {
+        
+    }
+    
     public TaxonNode(TaxonNode parent, Phylonode phylonode, Organism organism) {
         this.parent = parent;
         this.parent.addChild(this);
