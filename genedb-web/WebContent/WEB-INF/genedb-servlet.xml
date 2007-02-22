@@ -84,7 +84,6 @@
 		 <property name="interceptors">
       <list>
         <ref bean="openSessionInView"/>
-        <ref bean="setUpTaxonManager" />
       </list>
     </property>
 	</bean>
