@@ -23,6 +23,7 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 
+import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -54,12 +55,12 @@ public class FlatFileReportController extends SimpleFormController {
     }
 
     @Override
-    protected ModelAndView onSubmit(Object command) throws Exception {
+    protected ModelAndView onSubmit(Object command, BindException errors) throws Exception {
         FlatFileReportBean ffrb = (FlatFileReportBean) command;
         
         System.err.println("onSubmit has been called");
         
-        String outputFormat = ffrb.outputFormat;
+        String outputFormat = ffrb.getOutputFormat();
             
         if ("Artemis".equals(outputFormat)) {
             //Create command and send as text/plain
