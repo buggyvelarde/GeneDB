@@ -159,8 +159,34 @@ public class FlatFileReportController extends SimpleFormController {
     class FlatFileReportBean {
         String organism;
         String outputFormat;
-        int start;
-        int end;
+        int min;
+        int max;
+        
+        public int getMax() {
+            return this.max;
+        }
+        public void setMax(int max) {
+            this.max = max;
+        }
+        public String getOrganism() {
+            return this.organism;
+        }
+        public void setOrganism(String organism) {
+            this.organism = organism;
+        }
+        public String getOutputFormat() {
+            return this.outputFormat;
+        }
+        public void setOutputFormat(String outputFormat) {
+            this.outputFormat = outputFormat;
+        }
+        public int getMin() {
+            return this.min;
+        }
+        public void setMin(int min) {
+            this.min = min;
+        }
+        
         
     }
     
