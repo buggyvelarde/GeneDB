@@ -251,9 +251,9 @@ public class CircularGenomeFormController extends SimpleFormController implement
                 ret.append("</td><td>");
                 ret.append(length);
                 ret.append("</td><td>");
-                ret.append("<a href=\"FlatFileReport?of=embl&org=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
-                ret.append("<a href=\"FlatFileReport?of=artemis&org=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
-                ret.append("<a href=\"FlatFileReport?of=table&org=wibble&min="+start+"&max="+end+"\">Link</a></td>");
+                ret.append("<a href=\"FlatFileReport?of=EMBL&org=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
+                ret.append("<a href=\"FlatFileReport?of=Artemis&org=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
+                ret.append("<a href=\"FlatFileReport?of=Table&org=wibble&min="+start+"&max="+end+"\">Link</a></td>");
                 ret.append("</tr>\n");
             }
         }
