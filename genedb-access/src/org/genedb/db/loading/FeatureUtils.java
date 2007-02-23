@@ -85,7 +85,7 @@ public class FeatureUtils implements InitializingBean {
 	 * @return the newly constructed FeatureLocation, not persisted
 	 */
 	public FeatureLoc createLocation(Feature parent, Feature child, int min, int max, short strand) {
-	    return new FeatureLoc(parent, child, min, false, max, false, strand, 0, 0, 0);
+	    return new FeatureLoc(parent, child, min, false, max, false, strand, null, 0, 0);
 	}
 
 	public FeatureRelationship createRelationship(Feature subject, Feature object, CvTerm relType, int rank) {

@@ -408,7 +408,15 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 				 * of featureloc to 0. 
 				 */
 				Feature subjectFeature = null;
-				subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getPriDatabase(),"similarity_region");
+				String sections[] = si.getPriDatabase().split(":");
+				String values[] = si.getSecDatabase().split(":");
+				if(sections[0].equals("SWALL") && sections[1].contains("_")) {
+					subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+values[1],"similarity_region");
+				} else if(sections[0].equals("SWALL")){
+					subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+sections[1],"similarity_region");
+				} else {
+					subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getPriDatabase(),"similarity_region");
+				}
 				if (subjectFeature == null) {
 					subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getSecDatabase(),"similarity_region");
 				}
@@ -420,8 +428,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 					 */
 					
 					DbXRef dbXRef = null;
-					String sections[] = si.getPriDatabase().split(":");
-					String values[] = si.getSecDatabase().split(":");
+					
+					
 		
 					String priDatabase = sections[0];
 					String priId = sections[1];
@@ -445,6 +453,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 						} else {
 							accession = priId;
 						}
+						if (priDatabase.equals("SWALL")) {
+							priDatabase = "UniProt";
+						}
 						uniqueName = priDatabase + ":" + accession;
 						subjectFeature = this.featureUtils.createFeature("similarity_region", uniqueName, organism);
 	
@@ -457,8 +468,10 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 						subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
 						this.sequenceDao.persist(subjectFeature);
 					}  else {
-						
-						subjectFeature = this.featureUtils.createFeature("similarity_region", si.getPriDatabase(), organism);
+						if (priDatabase.equals("SWALL")) {
+							priDatabase = "UniProt";
+						}
+						subjectFeature = this.featureUtils.createFeature("similarity_region", priDatabase + ":" + sections[1], organism);
 						
 						dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, priId);
 						if (dbXRef == null) {
