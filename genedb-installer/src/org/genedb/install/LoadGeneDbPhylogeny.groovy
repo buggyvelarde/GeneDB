@@ -463,7 +463,7 @@ class LoadGeneDbPhylogeny {
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="ap2"/>
 					</organism>
-	                <node name="Plasmodia" page="true">
+	                <node name="Plasmodium" page="true">
 	                    <organism name="Pfalciparum">
 	                        <property name="taxonId" value="5833" />
 	                        <property name="fullName" value="Plasmodium falciparum" />
