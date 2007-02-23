@@ -343,8 +343,8 @@ class LoadGeneDbPhylogeny {
 		    <node name="Kinetoplastids">
 		        <node name="Leishmania">
 					<organism name="Lbraziliensis">
-						<property name="taxonId" value="5660" />
-						<property name="fullName" value="Leishmania braziliensis" />
+						<property name="taxonId" value="420245" />
+						<property name="fullName" value="Leishmania braziliensis MHOM/BR/75/M2904" />
 						<property name="nickname" value="lbraziliensis" />
 		                <property name="dbName" value="GeneDB_Lbraziliensis" />
 						<property name="translationTable" value="1"/>
@@ -352,8 +352,8 @@ class LoadGeneDbPhylogeny {
 						<property name="curatorEmail" value="csp"/>
 					</organism>
 		            <organism name="Lmajor">
-		                <property name="taxonId" value="5664" />
-		                <property name="fullName" value="Leishmania major" />
+		                <property name="taxonId" value="347515" />
+		                <property name="fullName" value="Leishmania major strain Friedlin" />
 		                <property name="nickname" value="leish" />
 		                <property name="dbName" value="GeneDB_Lmajor" />
 						<property name="translationTable" value="1"/>
@@ -361,8 +361,8 @@ class LoadGeneDbPhylogeny {
 						<property name="curatorEmail" value="csp"/>
 		            </organism>
 	                <organism name="Linfantum">
-	                    <property name="taxonId" value="5761" />
-	                    <property name="fullName" value="Leishmania infantum" />
+	                    <property name="taxonId" value="5671" />
+	                    <property name="fullName" value="Leishmania infantum JPCM5 " />
 	                    <property name="nickname" value="linfantum" />
 	                    <property name="dbName" value="GeneDB_Linfantum" />
 						<property name="translationTable" value="1"/>
