@@ -78,7 +78,8 @@ public class FlatFileReportController extends SimpleFormController {
         String outputFormat = ffrb.getOutputFormat();
             
         if ("Artemis".equals(outputFormat)) {
-            response.setContentType("application/x-java-jnlp-file");
+            response.setContentType("text/plain");
+            //response.setContentType("application/x-java-jnlp-file");
             PrintWriter out = response.getWriter();
                 
             out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -107,6 +108,7 @@ public class FlatFileReportController extends SimpleFormController {
             out.println("</argument>");
             out.println("</application-desc>");
             out.println("</jnlp>");
+            out.flush();
             
             return null;
         }
