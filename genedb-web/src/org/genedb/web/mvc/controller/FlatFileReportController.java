@@ -138,7 +138,8 @@ public class FlatFileReportController extends SimpleFormController {
 
     
     private SubSequence extractSubSequence(FlatFileReportBean ffrb) throws FileNotFoundException, BioException {
-        String fileName = "";
+        String ROOT = "/nfs/team81/art/circ_genome_data/";
+        String fileName = ROOT+"styphi/chr1/St.art";
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         
 
@@ -180,10 +181,10 @@ public class FlatFileReportController extends SimpleFormController {
 }
 
     class FlatFileReportBean {
-        String organism;
-        String outputFormat;
-        int min;
-        int max;
+        private String organism;
+        private String outputFormat;
+        private int min;
+        private int max;
         
         public int getMax() {
             return this.max;
