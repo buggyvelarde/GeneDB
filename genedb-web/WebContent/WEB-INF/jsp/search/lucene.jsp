@@ -3,7 +3,7 @@
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
 
-<format:header name="Name Search">
+<format:header name="Lucene Search">
 	<st:init />
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 	<script type="text/javascript">
@@ -15,21 +15,21 @@
 		}
 	</script>
 </format:header>
-
 <c:forEach items="${status}" var ="errorMessage"> 
 <font color="red">
 <c:out value ="${errorMessage}"/><br>
 </font>
 </c:forEach>
-<sp:form commandName="nameLookup" action="NameFeature" method="post" onsubmit="check(this)">
+<sp:form commandName="luceneSearch" action="LuceneSearch" method="post" onsubmit="check(this)">
 	<table align="center" width="50%">
 		<tr>
-			<td>Organisms: 
-				<sp:select path="organism">
-					<sp:options items="${organisms}"/>
+			<td>Fields: 
+				<sp:select path="field">
+					<sp:option value="ALL" label="ALL"/>
+					<sp:options items="${fields}"/>
 				</sp:select>
 			</td>
-			<td>Look Up : <sp:input path="lookup"/></td>
+			<td>Search String: <sp:input path="query" /></td>
 			<td><input type="submit" value="Submit" /></td>
 		</tr>
 	</table>
