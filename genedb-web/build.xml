@@ -21,7 +21,7 @@
 	        <path location="${lib-dir}/jdom.jar" />
 	        <path location="${lib-dir}/cgview.jar" />
 	        <path location="${lib-dir}/commons-lang-2.1.jar" />
-	        <path location="${lib-dir}/biojava-1.5-beta.jar" />
+	        <path location="${lib-dir}/biojava-1.5-beta2.jar" />
 	        <path location="${lib-dir}/displaytag-1.1.jar" />
 	        <path location="${lib-dir}/commons-logging.jar" />
 	        <path location="${lib-dir}/ejb3-persistence.jar" />
