@@ -20,7 +20,6 @@
 package org.genedb.db.loading;
 
 
-import org.gmod.schema.dao.OrganismDaoI;
 import org.gmod.schema.dao.PhylogenyDaoI;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
@@ -39,8 +38,6 @@ import java.util.Set;
 public class TaxonNodeManager implements InitializingBean{
     
     private PhylogenyDaoI phylogenyDao;
-    
-    private OrganismDaoI organismDao;
     
     private Map<String, TaxonNode> labelTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> taxonTaxonNodeMap = new HashMap<String, TaxonNode>();
@@ -62,9 +59,8 @@ public class TaxonNodeManager implements InitializingBean{
         }
         
         // Set up all child/parent relationships
-        TaxonNode root = labelTaxonNodeMap.get("Root");
         while (nodes.size() > 0) {
-            Set tempNodes = new HashSet<TaxonNode>();
+            Set<TaxonNode> tempNodes = new HashSet<TaxonNode>();
             for (Iterator it = nodes.iterator(); it.hasNext();) {
                 TaxonNode tn = (TaxonNode) it.next();
                 Phylonode node = tn.getPhylonode().getPhylonode();
@@ -102,7 +98,8 @@ public class TaxonNodeManager implements InitializingBean{
     }
     
     
-    public List<TaxonNode> getHeirachy(TaxonNode node) {
+    public List<TaxonNode> getHeirachy(TaxonNode start) {
+        TaxonNode node = start;
         List<TaxonNode> ret = new LinkedList<TaxonNode>();
         ret.add(node);
         while (!node.isRoot()) {
@@ -155,6 +152,11 @@ public class TaxonNodeManager implements InitializingBean{
             return ret;
         }
         return nickNameTaxonNodeMap.get(name);
+    }
+
+
+    public void setPhylogenyDao(PhylogenyDaoI phylogenyDao) {
+        this.phylogenyDao = phylogenyDao;
     }
 
 }

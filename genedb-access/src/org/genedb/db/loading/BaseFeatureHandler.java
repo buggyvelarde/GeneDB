@@ -24,27 +24,11 @@
  */
 package org.genedb.db.loading;
 
-import static org.genedb.db.loading.EmblFeatureKeys.FT_SOURCE;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_CHROMOSOME;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIVATE;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_SO_TYPE;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
-
 import org.genedb.db.loading.featureProcessors.BaseFeatureProcessor;
 
-import org.biojava.bio.Annotation;
-import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Feature;
-import org.biojava.bio.seq.FeatureFilter;
-import org.biojava.bio.seq.FeatureHolder;
-import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
-import org.biojava.utils.ChangeVetoException;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
