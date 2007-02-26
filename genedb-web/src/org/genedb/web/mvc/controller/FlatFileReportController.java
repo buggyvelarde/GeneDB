@@ -139,7 +139,7 @@ public class FlatFileReportController extends SimpleFormController {
     
     private SubSequence extractSubSequence(FlatFileReportBean ffrb) throws FileNotFoundException, BioException {
         String ROOT = "/nfs/team81/art/circ_genome_data/";
-        String fileName = ROOT+"styphi/chr1/St.art";
+        String fileName = ROOT+"styphi/chr1/St.embl";
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         
 
