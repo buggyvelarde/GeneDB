@@ -50,7 +50,7 @@ public class TaxonNodeManager implements InitializingBean{
 
     public void afterPropertiesSet() throws Exception {
         Set<TaxonNode> nodes = new HashSet<TaxonNode>();
-        List<Phylonode> phylonodes = phylogenyDao.getAllNodes();
+        List<Phylonode> phylonodes = phylogenyDao.getAllPhylonodes();
         for (Phylonode phylonode: phylonodes) {
             TaxonNode tn = new TaxonNode(phylonode);
             nodes.add(tn);
