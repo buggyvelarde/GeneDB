@@ -27,11 +27,10 @@ public class PhylogenyDao extends BaseDao implements PhylogenyDaoI {
         return firstFromList(trees, "name", name);
     }
 
-	@SuppressWarnings("unchecked")
-	public List<Phylonode> getAllPhylonodes() {
-		List<Phylonode> nodes = getHibernateTemplate().find("from Phylonode");
-		return nodes;
-	}
+    @SuppressWarnings({ "cast", "unchecked" })
+    public List<Phylonode> getAllPhylonodes() {
+        return (List<Phylonode>) getHibernateTemplate().loadAll(Phylonode.class);
+    }
 	
 	/* returns phylonodes that have depth 'd'
 	 * (non-Javadoc)
@@ -81,6 +80,5 @@ public class PhylogenyDao extends BaseDao implements PhylogenyDaoI {
 
 	}
 
-    
     
 }
