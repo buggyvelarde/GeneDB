@@ -41,7 +41,7 @@ public class WebUtils {
 		WebUtils.sequenceDao = sequenceDao;
 	}
 
-    public static boolean extractTaxonOrOrganism(HttpServletRequest request, boolean required, boolean onlyOne, List<String> answers) {
+    public static boolean extractTaxonNodesFromRequest(HttpServletRequest request, List<String> answers, boolean required, boolean onlyOne) {
         boolean problem = false;
 
         String[] names = request.getParameterValues("org");
