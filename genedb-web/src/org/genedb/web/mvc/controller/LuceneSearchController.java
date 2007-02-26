@@ -1,8 +1,6 @@
 package org.genedb.web.mvc.controller;
 
 
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,14 +18,6 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.compass.core.Compass;
-import org.compass.core.CompassDetachedHits;
-import org.compass.core.CompassHitIterator;
-import org.compass.core.CompassHits;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
-import org.compass.core.config.CompassConfiguration;
-import org.compass.core.impl.DefaultCompassHit;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,11 +30,13 @@ public class LuceneSearchController extends SimpleFormController {
 	private SequenceDao sequenceDao;
     private OrganismDao organismDao;
     
+    @Override
     protected boolean isFormSubmission(HttpServletRequest request) {
         //System.out.println("called first time : " + request.getAttribute("query"));
     	return true;
     }
     
+    @Override
     protected ModelAndView onSubmit(Object command) throws Exception {
 		LuceneSearch luceneSearch = (LuceneSearch) command;
 		String queryString = luceneSearch.getQuery();
@@ -113,27 +105,27 @@ public class LuceneSearchController extends SimpleFormController {
         	model.put("luceneSearch", luceneSearch);
         	viewName = formInputView;
         	return new ModelAndView(viewName,model);
-		} else {
-			List<SearchHit> results = new ArrayList<SearchHit>();
-						
-			for (int i=0;i<hits.length();i++) {
-				Document doc = hits.doc(i);
-				SearchHit sh = new SearchHit();
-				sh.setTitle(doc.get("ID"));
-				sh.setUrl(doc.get("url"));
-				sh.setChr(doc.get("chr"));
-				sh.setStart(doc.get("start"));
-				sh.setStop(doc.get("stop"));
-				sh.setStrand(doc.get("strand"));
-				results.add(sh);
-			}
-			model.put("results", results);
-			viewName = listResultsView;
-			return new ModelAndView(viewName,model);
 		}
+        
+		List<SearchHit> results = new ArrayList<SearchHit>();
+		
+		for (int i=0;i<hits.length();i++) {
+		    Document doc = hits.doc(i);
+		    SearchHit sh = new SearchHit();
+		    sh.setTitle(doc.get("ID"));
+		    sh.setUrl(doc.get("url"));
+		    sh.setChr(doc.get("chr"));
+		    sh.setStart(doc.get("start"));
+		    sh.setStop(doc.get("stop"));
+		    sh.setStrand(doc.get("strand"));
+		    results.add(sh);
+		}
+		model.put("results", results);
+		viewName = listResultsView;
+		return new ModelAndView(viewName,model);
+    }
 
     	
-    }
 	public String getFormInputView() {
 		return formInputView;
 	}
