@@ -103,7 +103,7 @@ public class FlatFileReportController extends SimpleFormController {
             out.println("<jar href=\"http://www.sanger.ac.uk/Software/Artemis/v8/sartemis_v8.jar\"/>");
             out.println("</resources>");
             out.println("<application-desc main-class=\"uk.ac.sanger.artemis.components.ArtemisMain\">");
-            out.print("<argument>http://www.genedb.org");
+            out.print("<argument>http://pathdbsrv1a:9005");
             out.print(generateLinkBackURL(ffrb.getOrganism(), ffrb.getMin(), ffrb.getMax(), "EMBL"));
             out.println("</argument>");
             out.println("</application-desc>");
