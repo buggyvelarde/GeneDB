@@ -27,10 +27,12 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 
@@ -55,7 +57,7 @@ public class FlatFileReportController extends SimpleFormController {
     }
 
     @Override
-    protected ModelAndView onSubmit(Object command, BindException errors) throws Exception {
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         FlatFileReportBean ffrb = (FlatFileReportBean) command;
         
         System.err.println("onSubmit has been called");
@@ -63,13 +65,18 @@ public class FlatFileReportController extends SimpleFormController {
         String outputFormat = ffrb.getOutputFormat();
             
         if ("Artemis".equals(outputFormat)) {
+            response.setContentType("text/plain");
+            PrintWriter out = response.getWriter();
+            out.println("Artemis - blah, blah, blah");
             //Create command and send as text/plain
             // It'll reference this with EMBL output 
             return null;
         }
         
         if ("EMBL".equals(outputFormat)) {
-            //Create subset and stream as text/plain
+            response.setContentType("text/plain");
+            PrintWriter out = response.getWriter();
+            out.println("blah, blah, blah");
             return null;
         }
         
