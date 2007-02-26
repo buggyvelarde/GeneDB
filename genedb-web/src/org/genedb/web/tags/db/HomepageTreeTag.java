@@ -1,6 +1,6 @@
 package org.genedb.web.tags.db;
 
-import org.genedb.web.mvc.controller.TaxonNode;
+import org.genedb.db.loading.TaxonNode;
 
 import java.io.IOException;
 
