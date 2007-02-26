@@ -25,13 +25,18 @@ public class HomepageController extends AbstractController {
 	@Override
 	public ModelAndView handleRequestInternal(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
 	        List<String> answers = new ArrayList<String>();
+	        
 	        if (WebUtils.extractTaxonOrOrganism(request, false, true, answers)) {
 	            	if (answers.size() > 0) {
 	            	    Taxon taxon = TaxonUtils.getTaxonFromList(answers, 0);
 	            	    return new ModelAndView("homepages/"+taxon.getHomepageViewName(), "taxon", taxon);
 	            	}
 	        }
-	        return new ModelAndView("homepages/frontPage");
+	        
+	        	return new ModelAndView("homepages/testing2");
+	        
+	        	//return new ModelAndView("homepages/frontPage");
+	        
 	}
 
 

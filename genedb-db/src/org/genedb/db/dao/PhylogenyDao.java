@@ -27,6 +27,60 @@ public class PhylogenyDao extends BaseDao implements PhylogenyDaoI {
         return firstFromList(trees, "name", name);
     }
 
+	@SuppressWarnings("unchecked")
+	public List<Phylonode> getAllPhylonodes() {
+		List<Phylonode> nodes = getHibernateTemplate().find("from Phylonode");
+		return nodes;
+	}
+	
+	/* returns phylonodes that have depth 'd'
+	 * (non-Javadoc)
+	 * @see org.gmod.schema.dao.PhylogenyDaoI#getPhylonodeByDepth(double)
+	 
+	@SuppressWarnings("unchecked")
+	public List<Phylonode> getPhylonodeByDepth(double depth) {
+		List<Phylonode> nodes = getHibernateTemplate().findByNamedParam(
+				"from Phylonode p where p.distance=:depth", 
+				"depth", depth);
+		return nodes;
+	}*/
+	
+
+	@SuppressWarnings("unchecked")
+	public List<Phylonode> getPhylonodeByDepthAndParent(double depth, Phylonode parent) {
+		List<Phylonode> nodes = null;
+		if(parent == null) {
+			nodes = getHibernateTemplate().findByNamedParam(
+					"from Phylonode p where p.distance=:depth",
+					new String("depth"),
+					depth);
+
+		} else {
+			nodes = getHibernateTemplate().findByNamedParam(
+				"from Phylonode p where p.distance=:depth and p.phylonode=:parent",
+				new String[]{"depth","parent"},
+				new Object[]{depth,parent});
+		}
+		return nodes;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Phylonode> getPhylonodeByName(String name) {
+		List<Phylonode> nodes = getHibernateTemplate().findByNamedParam(
+				"from phylonode p where p.label=:name", new String("name"), 
+				name);
+		return nodes;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Phylonode> getPhylonodesByParent(Phylonode parent) {
+		List<Phylonode> nodes = getHibernateTemplate().findByNamedParam(
+				"from phylonode p where p.phylonode=:parent", new String("parent"), 
+				parent);
+		return nodes;
+
+	}
+
     
     
 }

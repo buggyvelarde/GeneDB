@@ -17,29 +17,29 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.gmod.schema.dao;
+package org.genedb.web.mvc.controller;
 
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.phylogeny.Phylonode;
-import org.gmod.schema.phylogeny.Phylotree;
+public class NameLookup {
+    
+    private String lookup; // The name to lookup, using * for wildcards
+    private String organism;
+       
+    public String getLookup() {
+        return this.lookup;
+    }
+    
+    public void setLookup(String lookup) {
+        this.lookup = lookup;
+    }
 
-import java.util.List;
+	public String getOrganism() {
+		return organism;
+	}
 
-
-
-public interface PhylogenyDaoI extends BaseDaoI {
-
-    public Phylotree getPhyloTreeByName(String name);
+	public void setOrganism(String organism) {
+		this.organism = organism;
+	}
     
-    public List<Phylonode> getPhyloNodesByCvTermInTree(CvTerm type, Phylotree tree);
     
-    public List<Phylonode> getAllPhylonodes();
-    
-    public List<Phylonode> getPhylonodeByDepthAndParent(double depth,Phylonode parent);
-    
-    public List<Phylonode> getPhylonodeByName(String name);
-    
-    public List<Phylonode> getPhylonodesByParent(Phylonode parent);
-    
-    //public List<Phylonode> getPhylonodeByDepth(double depth);
 }
+

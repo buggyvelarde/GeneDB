@@ -184,7 +184,7 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#getOrganismProps()
      */
-    private Set<OrganismProp> getOrganismProps() {
+    public Set<OrganismProp> getOrganismProps() {
         return this.organismProps;
     }
     

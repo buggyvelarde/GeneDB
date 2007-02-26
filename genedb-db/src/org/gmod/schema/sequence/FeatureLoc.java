@@ -78,7 +78,8 @@ public class FeatureLoc implements Serializable {
     }
 
 	/** minimal constructor */
-    private FeatureLoc(Feature featureBySrcFeatureId, boolean fminPartial, boolean fmaxPartial, int locGroup, int rank) {
+    @SuppressWarnings("unused")
+	private FeatureLoc(Feature featureBySrcFeatureId, boolean fminPartial, boolean fmaxPartial, int locGroup, int rank) {
         this.featureBySrcFeatureId = featureBySrcFeatureId;
         this.fminPartial = fminPartial;
         this.fmaxPartial = fmaxPartial;
