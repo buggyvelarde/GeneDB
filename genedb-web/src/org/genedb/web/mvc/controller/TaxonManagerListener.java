@@ -20,6 +20,8 @@
 package org.genedb.web.mvc.controller;
 
 
+import org.genedb.db.loading.TaxonNodeManager;
+
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
