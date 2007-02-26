@@ -23,11 +23,24 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 
+import org.biojava.bio.BioException;
+import org.biojava.bio.seq.FeatureFilter;
+import org.biojava.bio.seq.FeatureHolder;
+import org.biojava.bio.seq.Sequence;
+import org.biojava.bio.seq.SequenceIterator;
+import org.biojava.bio.seq.impl.SubSequence;
+import org.biojava.bio.seq.io.SeqIOTools;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,87 +78,89 @@ public class FlatFileReportController extends SimpleFormController {
         String outputFormat = ffrb.getOutputFormat();
             
         if ("Artemis".equals(outputFormat)) {
-            response.setContentType("text/plain");
+            response.setContentType("application/x-java-jnlp-file");
             PrintWriter out = response.getWriter();
-            out.println("Artemis - blah, blah, blah");
-            //Create command and send as text/plain
-            // It'll reference this with EMBL output 
+                
+            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            out.println("<jnlp");
+            out.println("spec=\"1.0+\"");
+            out.println("codebase=\"http://www.sanger.ac.uk/Software/Artemis/v8/\">");
+            out.println("<information>");
+            out.println("<title>Artemis</title>");
+            out.println("<vendor>Sanger Institute</vendor>"); 
+            out.println("<homepage href=\"http://www.sanger.ac.uk/Software/Artemis/\"/>");
+            out.println("<description>Artemis</description>");
+            out.println("<description kind=\"short\">DNA sequence viewer and annotation tool.");
+            out.println("</description>");
+            out.println("<offline-allowed/>");
+            out.println("</information>");
+            out.println("<security>");
+            out.println("<all-permissions/>");
+            out.println("</security>");
+            out.println("<resources>");
+            out.println("<j2se version=\"1.4+ 1.4.2\" initial-heap-size=\"32m\" max-heap-size=\"200m\"/>");
+            out.println("<jar href=\"http://www.sanger.ac.uk/Software/Artemis/v8/sartemis_v8.jar\"/>");
+            out.println("</resources>");
+            out.println("<application-desc main-class=\"uk.ac.sanger.artemis.components.ArtemisMain\">");
+            out.print("<argument>http://www.genedb.org");
+            out.print(generateLinkBackURL(ffrb.getOrganism(), ffrb.getMin(), ffrb.getMax(), "EMBL"));
+            out.println("</argument>");
+            out.println("</application-desc>");
+            out.println("</jnlp>");
+            
             return null;
         }
+            
         
         if ("EMBL".equals(outputFormat)) {
             response.setContentType("text/plain");
-            PrintWriter out = response.getWriter();
-            out.println("blah, blah, blah");
+            
+            SubSequence sub = extractSubSequence(ffrb);
+            
+            OutputStream out = response.getOutputStream();
+            SeqIOTools.biojavaToFile("EMBL", "DNA", out, sub);
+
             return null;
         }
         
         if ("Table".equals(outputFormat)) {
             //Create subset, parse and forward to page
+            SubSequence sub = extractSubSequence(ffrb);
+            FeatureHolder fh = sub.filter(new FeatureFilter.ByType("CDS"));
             Map<String, Object> model = new HashMap<String, Object>(3);
+            model.put("features", fh.features());
             String viewName = null;
             return new ModelAndView(viewName, model);
         }
         
         return null;
-
-//        if(ffrb.getLookup() == "" || ffrb.getLookup() == null) {
-//        	List <String> err = new ArrayList <String> ();
-//        	logger.info("Look up is null");
-//        	err.add("No search String found");
-//        	err.add("please use the form below to search again");
-//            Map model = new HashMap();
-//        	model.put("status", err);
-//        	//model.put("nameLookup", nl);
-//        	String viewName = formInputView;
-//        	return new ModelAndView(viewName,model);
-//        }
-//        logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
-//        List<String> org = new ArrayList<String>();
-//        if (nl.getOrglist() != null) {
-//        	org.add(nl.getOrglist());
-//        }
-//        List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(nl.getLookup(), org,"gene");
-//        
-//        if (results == null || results.size() == 0) {
-//            logger.info("result is null");
-//            // TODO Fail page
-//        }
-//        if (results.size() > 1) {
-//            // Go to list results page
-//        	//ResultBean rb = new ResultBean();
-//        	//List<String> organisms = organismDao.findAllOrganismCommonNames();
-//        	//nl.setOrganisms(organisms);
-//        	viewName = listResultsView;
-//            //model.put("nameLookup", nl);
-//            model.put("results", results);
-//        } else {
-//            Feature feature = results.get(0);
-//            model.put("feature", feature);
-//            String type = feature.getCvTerm().getName();
-//            if (type != null && type.equals("gene")) {
-//                viewName = "features/gene";
-//                Feature mRNA = null;
-//                Collection<FeatureRelationship> frs = feature.getFeatureRelationshipsForObjectId(); 
-//                for (FeatureRelationship fr : frs) {
-//                    mRNA = fr.getFeatureBySubjectId();
-//                    break;
-//                }
-//                Feature polypeptide = null;
-//                Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
-//                for (FeatureRelationship fr : frs2) {
-//                    Feature f = fr.getFeatureBySubjectId();
-//                    if ("polypeptide".equals(f.getCvTerm().getName())) {
-//                        polypeptide = f;
-//                    }
-//                }
-//                model.put("polypeptide", polypeptide);
-//            }
-//
-//        }
-//
-//        return new ModelAndView(viewName, model);
     }
+
+    
+    private SubSequence extractSubSequence(FlatFileReportBean ffrb) throws FileNotFoundException, BioException {
+        String fileName = "";
+        BufferedReader br = new BufferedReader(new FileReader(fileName));
+        
+
+        SequenceIterator iter =
+            (SequenceIterator)SeqIOTools.fileToBiojava("EMBL", "DNA", br);
+        Sequence seq = iter.nextSequence();
+        
+        SubSequence sub = new SubSequence(seq, ffrb.getMin(), ffrb.getMax());
+        return sub;
+    }
+    
+    private String generateLinkBackURL(String organism, int bottom, int top, String of) {
+        String ret = null;
+        try {
+            ret = "/FlatFileReport?organism="+URLEncoder.encode(organism,"UTF-8")
+            +"&min="+bottom+"&max="+top+"&outputFormat="+of+"&dest=EMBL&fromArtemis=true";
+        } catch (UnsupportedEncodingException e) {
+            // Deliberately empty - using a required encoding
+        }
+        return ret;
+    }
+    
 
     public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;
