@@ -24,6 +24,9 @@ public class DisplaySimilarity extends SimpleTagSupport {
 	
 	@Override
     public void doTag() throws JspException, IOException {
+		/* define the variables to hold the values
+		 * 
+		 */
 		List<Feature> similarityFeatures = new ArrayList<Feature>();
 		
 		String overlap = null;
@@ -35,8 +38,12 @@ public class DisplaySimilarity extends SimpleTagSupport {
 		String description = null;
 		String organism = null;
 		
+		/* loop through all the featurelocs associated with polypeptide
+		 * if any MatchFeature found, store it in the arraylist 
+		 */
 		Collection<FeatureLoc> flocs = polypeptide.getFeatureLocsForSrcFeatureId();
 		JspWriter out = getJspContext().getOut();
+		
 		
 		for (FeatureLoc loc : flocs) {
 			if("protein_match".equals(loc.getFeatureByFeatureId().getCvTerm().getName())) {
@@ -44,6 +51,9 @@ public class DisplaySimilarity extends SimpleTagSupport {
 			} 
 		}
 		
+		/* loop through all the featurelocs associated with the transcript
+		 * if any MatchFeature found, store it in the arraylist
+		 */
 		flocs = transcript.getFeatureLocsForSrcFeatureId();
 		for (FeatureLoc loc : flocs) {
 			if ("nucleotide_match".equals(loc.getFeatureByFeatureId().getCvTerm().getName())) {
@@ -51,6 +61,9 @@ public class DisplaySimilarity extends SimpleTagSupport {
 			}
 		}
 		
+		/* if the arraylist contains something loop through the MatchFeatures
+		 * to find the values required to display on the page
+		 */
 		int count = 1;
 		if (similarityFeatures.size() > 0) {
 			out.println("<table width=\"100%\" cellpadding=\"2\" cellspacing=\"2\">");
