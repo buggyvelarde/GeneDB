@@ -43,7 +43,7 @@ public class LuceneSearchController extends SimpleFormController {
 		Map<String, Object> model = new HashMap<String, Object>(4);
 		String viewName = null;
 				
-		IndexReader ir = IndexReader.open("/nfs/team81/cp2/Desktop/lucene/index/gff/");
+		IndexReader ir = IndexReader.open("/nfs/team81/cp2/lucene/index/gff/");
 		Collection<String> c = ir.getFieldNames(IndexReader.FieldOption.INDEXED);
 		List<String> fields = new ArrayList<String>();
 		for (String object : c) {
@@ -93,7 +93,7 @@ public class LuceneSearchController extends SimpleFormController {
 			s.append(searchString);
 			searchString = s.toString();
 		}
-		query = qp.parse(searchString+"*");
+		query = qp.parse(searchString);
 		
 		hits = searcher.search(query);
 		if (hits.length() == 0) {
