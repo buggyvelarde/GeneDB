@@ -141,7 +141,7 @@ public class SearchController extends MultiActionController implements Initializ
 	    if (name.equals(NO_VALUE_SUPPLIED)) {
 		    
 	    }
-	    Feature feat = sequenceDao.getFeatureByUniqueName(name);
+	    Feature feat = sequenceDao.getFeaturesByUniqueName(name).get(0);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/generic";
