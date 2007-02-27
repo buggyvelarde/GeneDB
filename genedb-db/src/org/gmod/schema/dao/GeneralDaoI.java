@@ -19,8 +19,10 @@
 
 package org.gmod.schema.dao;
 
+import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.sequence.Feature;
 
 
 
@@ -43,4 +45,11 @@ public interface GeneralDaoI extends BaseDaoI{
      */
     public abstract DbXRef getDbXRefByDbAndAcc(Db db, String accession);
 
+    /**
+     * Retrieve the analysisfeature corresponding to the given feature
+     * 
+     * @param feature the feature whose analysisfeature has to be found
+     * @return the analysisfeature
+     */
+    public abstract AnalysisFeature getAnalysisFeatureFromFeature(Feature feature);
 }
