@@ -21,10 +21,12 @@ package org.genedb.web.mvc.controller;
 
 
 import org.genedb.db.dao.OrganismDao;
+import org.genedb.db.dao.PhylogenyDao;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.helpers.NameLookup;
+import org.genedb.web.mvc.controller.NameLookup;
 import org.genedb.db.loading.FeatureUtils;
 
+import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.utils.PeptideProperties;
@@ -64,7 +66,7 @@ public class NameFeatureController extends SimpleFormController {
     private String formInputView;
     private SequenceDao sequenceDao;
     private OrganismDao organismDao;
-
+    private PhylogenyDao phylogenyDao;
   	
 	@Override
     protected boolean isFormSubmission(HttpServletRequest request) {
@@ -74,22 +76,39 @@ public class NameFeatureController extends SimpleFormController {
     @Override
     protected ModelAndView onSubmit(Object command) throws Exception {
         NameLookup nl = (NameLookup) command;
-        Map<String, Object> model = new HashMap<String, Object>(3);
+        String queryString = nl.getLookup();
+        Map<String, Object> model = new HashMap<String, Object>(4);
         String viewName = null;
-        if(nl.getLookup() == "" || nl.getLookup() == null) {
-        	List <String> err = new ArrayList <String> ();
-        	logger.info("Look up is null");
-        	err.add("No search String found");
+        
+        List<Phylonode> nodes = this.phylogenyDao.getAllPhylonodes();
+        List<String> organisms = new ArrayList<String>();
+        for (Phylonode node : nodes) {
+			organisms.add(node.getLabel());
+		}
+        if (queryString == "Please enter search text ..."){
+			List <String> err = new ArrayList <String> ();
+			err.add("No search String found");
         	err.add("please use the form below to search again");
         	model.put("status", err);
+        	model.put("organisms", organisms);
         	model.put("nameLookup", nl);
         	viewName = formInputView;
         	return new ModelAndView(viewName,model);
-        }
+		} else if (queryString == null){
+			viewName = formInputView;
+			model.put("organisms", organisms);
+			model.put("nameLookup", nl);
+        	return new ModelAndView(viewName,model);
+		}
+        
         logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
         List<String> org = new ArrayList<String>();
-        if (nl.getOrglist() != null) {
-        	org.add(nl.getOrglist());
+        String organism = nl.getOrganism();
+        if (this.organismDao.getOrganismByCommonName(organism) != null){
+        	org.add(organism);
+        } else {
+        	List<Phylonode> pNodes = this.phylogenyDao.getPhylonodesByParent(this.phylogenyDao.getPhylonodeByName(organism).get(0));
+        	org = getOrganisms(pNodes,org);
         }
         List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(nl.getLookup(), org,"gene");
         
@@ -126,31 +145,32 @@ public class NameFeatureController extends SimpleFormController {
                     }
                 }
                 model.put("polypeptide", polypeptide);
-//                String seqString = FeatureUtils.getResidues(polypeptide);
-//                Alphabet protein = ProteinTools.getAlphabet();
-//        		SymbolTokenization proteinToke = null;
-//        		SymbolList seq = null;
-//        		PeptideProperties pp = new PeptideProperties();
-//        		try {
-//        			proteinToke = protein.getTokenization("token");
-//        			seq = new SimpleSymbolList(proteinToke, seqString);
-//        			System.out.println("symbol list is : " + seq);
-//        		} catch (BioException e) {
-//        			System.out.println("in exception : " );
-//        			e.printStackTrace();
-//        		}
-//    			IsoelectricPointCalc ipc = new IsoelectricPointCalc();
-//    			Double cal = ipc.getPI(seq, true, true);
-//    			DecimalFormat df = new DecimalFormat("#.##");
-//    			pp.setIsoelectricPoint(df.format(cal));
-//    			pp.setAminoAcids(Integer.toString(seqString.length()));
-//    			MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
-//    			cal = mc.getMass(seq) / 1000;
-//    			pp.setMass(df.format(cal));
-//    			
-//    			cal = WebUtils.getCharge(seq);
-//    			pp.setCharge(df.format(cal));
-//    			model.put("polyprop", pp);
+                model.put("transcript", mRNA);
+                String seqString = FeatureUtils.getResidues(polypeptide);
+                Alphabet protein = ProteinTools.getAlphabet();
+        		SymbolTokenization proteinToke = null;
+        		SymbolList seq = null;
+        		PeptideProperties pp = new PeptideProperties();
+        		try {
+        			proteinToke = protein.getTokenization("token");
+        			seq = new SimpleSymbolList(proteinToke, seqString);
+        			System.out.println("symbol list is : " + seq);
+        		} catch (BioException e) {
+        			System.out.println("in exception : " );
+        			e.printStackTrace();
+        		}
+    			IsoelectricPointCalc ipc = new IsoelectricPointCalc();
+    			Double cal = ipc.getPI(seq, true, true);
+    			DecimalFormat df = new DecimalFormat("#.##");
+    			pp.setIsoelectricPoint(df.format(cal));
+    			pp.setAminoAcids(Integer.toString(seqString.length()));
+    			MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
+    			cal = mc.getMass(seq) / 1000;
+    			pp.setMass(df.format(cal));
+    			
+    			cal = WebUtils.getCharge(seq);
+    			pp.setCharge(df.format(cal));
+    			model.put("polyprop", pp);
             }
 
         }
@@ -158,7 +178,18 @@ public class NameFeatureController extends SimpleFormController {
         return new ModelAndView(viewName, model);
     }
 
-    public void setListResultsView(String listResultsView) {
+    private List<String> getOrganisms(List<Phylonode> nodes, List<String> org) {
+    	for (Phylonode phylonode : nodes) {
+			if (this.organismDao.getOrganismByCommonName(phylonode.getLabel()) != null){
+	        	org.add(phylonode.getLabel());
+			} else {
+				org = getOrganisms(this.phylogenyDao.getPhylonodesByParent(phylonode),org);
+			}
+		}
+		return org;
+	}
+
+	public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;
     }
 
@@ -173,4 +204,12 @@ public class NameFeatureController extends SimpleFormController {
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
+
+	public PhylogenyDao getPhylogenyDao() {
+		return phylogenyDao;
+	}
+
+	public void setPhylogenyDao(PhylogenyDao phylogenyDao) {
+		this.phylogenyDao = phylogenyDao;
+	}
 }
