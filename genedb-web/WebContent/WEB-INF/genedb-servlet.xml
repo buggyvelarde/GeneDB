@@ -99,6 +99,15 @@
         </property>
     </bean>
 
+
+    <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.loading.TaxonNodeArray">
+        <property name="taxonNodeManager" ref="taxonNodeManager" />
+    </bean>
+    
+    <bean id="taxonNodeManager" class="org.genedb.db.loading.TaxonNodeManager">
+    
+    </bean>
+
 	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
 
 	<!--
@@ -337,7 +346,9 @@
     
 	<!-- <bean id="pubHome" class="org.genedb.db.hibernate.PubHome" /> -->
     
-	<bean id="HomepageController" class="org.genedb.web.mvc.controller.HomepageController" />
+	<bean id="HomepageController" class="org.genedb.web.mvc.controller.HomepageController">
+        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    </bean>
     
 <!--	<bean id="OrganismController" class="org.genedb.web.mvc.controller.OrganismController">
 		<property name="root" ref="org-Root" />
