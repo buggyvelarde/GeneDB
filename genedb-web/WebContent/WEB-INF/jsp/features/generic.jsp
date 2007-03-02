@@ -54,7 +54,7 @@
      		  <td><a href="./FeatureByName?name=${featRel.featureByObjectId.uniqueName}">${featRel.featureByObjectId.uniqueName}</a> [${featRel.featureByObjectId.cvTerm.name}]</td></tr>
 
 		   </c:forEach>
-        	<table>
+        	</table>
 
         	<h5>This feature is object</h5>
         	
