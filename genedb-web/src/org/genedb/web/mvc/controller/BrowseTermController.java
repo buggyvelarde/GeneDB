@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class BrowseTermController extends SimpleFormController {
+public class BrowseTermController extends PostOrGetFormController {
 
     private OrganismDao organismDao;
     private CvDaoI cvDaoI;
@@ -78,11 +78,10 @@ public class BrowseTermController extends SimpleFormController {
 //            logger.info(string);
 //        }
         //rb.setResults(organisms);
-        viewName = getSuccessView();
         //model.put("rb", rb);
         model.put("results", results);
 
-        return new ModelAndView(viewName, model);
+        return new ModelAndView((String)null, model);
     }
 
 

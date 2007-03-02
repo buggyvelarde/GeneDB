@@ -26,13 +26,10 @@ import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.utils.CountedName;
 
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 
@@ -42,21 +39,12 @@ import javax.servlet.http.HttpServletRequest;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class BrowseCategoryController extends SimpleFormController {
+public class BrowseCategoryController extends PostOrGetFormController {
 
     private OrganismDao organismDao;
     private CvDaoI cvDaoI;
     private String cvName;
 
-  	
-	@Override
-    protected boolean isFormSubmission(HttpServletRequest request) {
-        boolean post = super.isFormSubmission(request);
-        if (post || request.getParameterMap().size() > 0) {
-            return true;
-        }
-        return false;
-    }
 
     @Override
     protected ModelAndView onSubmit(Object command) throws Exception {
