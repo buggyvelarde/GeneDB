@@ -65,7 +65,7 @@ public class TaxonNodeArrayPropertyEditor extends PropertyEditorSupport {
 //        System.err.println("Exiting normally");
     }
 
-    public void setWibbleManager(TaxonNodeManager taxonNodeManager) {
+    public void setTaxonNodeManager(TaxonNodeManager taxonNodeManager) {
         this.taxonNodeManager = taxonNodeManager;
     }
 
