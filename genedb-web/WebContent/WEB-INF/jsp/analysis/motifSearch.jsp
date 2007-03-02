@@ -78,6 +78,6 @@ Organism:
 	  </td>		  
 	</tr>
 </table>    
-</FORM>
+<!-- </FORM> -->
 
 <format:footer />
