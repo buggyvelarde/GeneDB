@@ -38,6 +38,7 @@ public class TaxonNode {
 
     public TaxonNode(Phylonode phylonode) {
         this.phylonode = phylonode;
+        this.shortName = phylonode.getLabel();
     }
     
     public TaxonNode(TaxonNode parent, Phylonode phylonode, Organism organism) {
