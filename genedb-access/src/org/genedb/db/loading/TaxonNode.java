@@ -13,6 +13,7 @@ import org.gmod.schema.phylogeny.PhylonodeProp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -32,6 +33,7 @@ public class TaxonNode {
     private List<TaxonNode> children = new ArrayList<TaxonNode>();
     private boolean webLinkable = false;
     private String nickName;
+    private Map<String, Map<String, Object>> appDetails;
 
 
     public TaxonNode(Phylonode phylonode) {
@@ -116,6 +118,10 @@ public class TaxonNode {
     
     public boolean isWebLinkable() {
         return webLinkable;
+    }
+    
+    public Map<String, Object> getAppDetails(String key) {
+        return Collections.unmodifiableMap(appDetails.get(key));
     }
     
 
