@@ -57,6 +57,9 @@ public class TaxonNodeArrayPropertyEditor extends PropertyEditorSupport {
         List<TaxonNode> nodeList = new ArrayList<TaxonNode>(0); 
         for (String part : parts) {
             TaxonNode node = taxonNodeManager.getTaxonNodeByString(part, true);
+            if (node == null) {
+                throw new IllegalArgumentException("Can't parse '"+part+"' as a organism identifier");
+            }
             nodeList.add(node);
         }
         TaxonNode[] nodes = nodeList.toArray(new TaxonNode[1]);
