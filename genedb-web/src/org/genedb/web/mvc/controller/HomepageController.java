@@ -6,6 +6,7 @@ import org.genedb.db.loading.TaxonNodeArrayPropertyEditor;
 import static org.genedb.web.mvc.controller.WebConstants.CRUMB;
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -82,6 +83,12 @@ public class HomepageController extends AbstractController {
 
     private List<NewsItem> checkNews(TaxonNode node) {
         return new ArrayList<NewsItem>(0);
+    }
+
+    @Required
+    public void setTaxonNodeArrayPropertyEditor(
+            TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
+        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
     }
 
 
