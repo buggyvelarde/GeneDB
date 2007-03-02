@@ -22,9 +22,17 @@ public class BreadcrumbTag extends SimpleTagSupport {
         TaxonNodeManager tnm = (TaxonNodeManager)
         getJspContext().getAttribute(TAXON_NODE_MANAGER, APPLICATION_SCOPE);
         
+        if (tnm == null) {
+            // TODO Log problem
+            return;
+        }
         System.err.println("TaxonNodeManager is '"+tnm+"'");
         
         TaxonNode taxonNode = (TaxonNode) getJspContext().getAttribute(TAXON_NODE, PAGE_SCOPE);
+        if (taxonNode == null) {
+            // TODO Log problem
+            return;
+        }
         
         System.err.println("TaxonNode is '"+taxonNode+"'");
         
