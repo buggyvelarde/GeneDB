@@ -38,7 +38,7 @@ public class HomepageController extends AbstractController {
         TaxonNode[] nodes = new TaxonNode[1];
         
         ServletRequestDataBinder binder = new ServletRequestDataBinder(nodes);
-        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
+        binder.registerCustomEditor(TaxonNode[].class, "org", taxonNodeArrayPropertyEditor);
         binder.bind(request);
         //BindingResult br = binder.getBindingResult();
         
