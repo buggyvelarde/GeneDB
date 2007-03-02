@@ -70,11 +70,15 @@ public class TaxonNodeManager implements InitializingBean{
                 TaxonNode tn = (TaxonNode) it.next();
                 Phylonode phylonode = tn.getPhylonode();
                 Phylonode node = phylonode.getParent();
-                if (labelTaxonNodeMap.containsKey(node.getLabel())) {
-                    TaxonNode parent = labelTaxonNodeMap.get(node.getLabel());
-                    parent.addChild(tn);
+                if (node != null) {
+                    if (labelTaxonNodeMap.containsKey(node.getLabel())) {
+                        TaxonNode parent = labelTaxonNodeMap.get(node.getLabel());
+                        parent.addChild(tn);
+                    } else {
+                        tempNodes.add(tn);
+                    }
                 } else {
-                    tempNodes.add(tn);
+                    System.err.println("Skipping one - maybe Root?");
                 }
             }
             nodes = tempNodes;
