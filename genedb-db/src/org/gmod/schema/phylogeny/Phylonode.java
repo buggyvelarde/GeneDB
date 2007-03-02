@@ -31,7 +31,7 @@ public class Phylonode  implements java.io.Serializable {
 
      private int phylonodeId;
      private Phylotree phylotree;
-     private Phylonode phylonode;
+     private Phylonode parent;
      private CvTerm cvTerm;
      private Feature feature;
      private int leftIdx;
@@ -60,10 +60,10 @@ public class Phylonode  implements java.io.Serializable {
         this.rightIdx = rightIdx;
     }
     /** full constructor */
-    public Phylonode(int phylonodeId, Phylotree phylotree, Phylonode phylonode, CvTerm cvTerm, Feature feature, int leftIdx, int rightIdx, String label, Double distance, Set<PhylonodeRelationship> phylonodeRelationshipsForObjectId, Set<PhylonodeOrganism> phylonodeOrganisms, Set<PhylonodePub> phylonodePubs, Set<Phylonode> phylonodes, Set<PhylonodeRelationship> phylonodeRelationshipsForSubjectId, Set<PhylonodeDbXRef> phylonodeDbXRefs, Set<PhylonodeProp> phylonodeProps) {
+    public Phylonode(int phylonodeId, Phylotree phylotree, Phylonode parent, CvTerm cvTerm, Feature feature, int leftIdx, int rightIdx, String label, Double distance, Set<PhylonodeRelationship> phylonodeRelationshipsForObjectId, Set<PhylonodeOrganism> phylonodeOrganisms, Set<PhylonodePub> phylonodePubs, Set<Phylonode> phylonodes, Set<PhylonodeRelationship> phylonodeRelationshipsForSubjectId, Set<PhylonodeDbXRef> phylonodeDbXRefs, Set<PhylonodeProp> phylonodeProps) {
        this.phylonodeId = phylonodeId;
        this.phylotree = phylotree;
-       this.phylonode = phylonode;
+       this.parent = parent;
        this.cvTerm = cvTerm;
        this.feature = feature;
        this.leftIdx = leftIdx;
@@ -103,12 +103,12 @@ public class Phylonode  implements java.io.Serializable {
     
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="parent_phylonode_id", unique=false, nullable=true, insertable=true, updatable=true)
-    public Phylonode getPhylonode() {
-        return this.phylonode;
+    public Phylonode getParent() {
+        return this.parent;
     }
     
-    public void setPhylonode(Phylonode phylonode) {
-        this.phylonode = phylonode;
+    public void setParent(Phylonode parent) {
+        this.parent = parent;
     }
 @ManyToOne(cascade={},fetch=FetchType.LAZY)
     @JoinColumn(name="type_id", unique=false, nullable=true, insertable=true, updatable=true)

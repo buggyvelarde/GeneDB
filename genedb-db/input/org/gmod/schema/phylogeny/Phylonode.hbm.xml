@@ -13,7 +13,7 @@
         <many-to-one name="phylotree" class="org.gmod.schema.phylogeny.Phylotree" fetch="select">
             <column name="phylotree_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="phylonode" class="org.gmod.schema.phylogeny.Phylonode" fetch="select">
+        <many-to-one name="parent" class="org.gmod.schema.phylogeny.Phylonode" fetch="select">
             <column name="parent_phylonode_id" />
         </many-to-one>
         <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
