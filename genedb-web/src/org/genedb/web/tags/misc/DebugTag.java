@@ -36,7 +36,7 @@ public class DebugTag extends SimpleTagSupport {
 	private void displayAttrsInScope(JspWriter out, PageContext pc, String scopeName, int scope) throws IOException {
         StringBuilder ret = new StringBuilder();
         ret.append("<h2>");
-        ret.append(scopeName+ " "+scope);
+        ret.append(scopeName+ " ("+scope+")");
         ret.append("</h2>");
         ret.append("<table border=\"1\">");
         Enumeration e = pc.getAttributeNamesInScope(scope);
