@@ -70,7 +70,7 @@ public class ComplexQueryController extends MultiActionController implements Ini
 			qf.setNumberedQuery(q);
 		}
 
-		boolean submitPressed = false;
+		//boolean submitPressed = false;
 		if ("Run".equals(request.getParameter("runquery"))) {
 		    if (q.isComplete()) {
 			return new ModelAndView("resultListView");
