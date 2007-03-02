@@ -37,7 +37,7 @@ public class TaxonNode {
 
 
     public TaxonNode(Phylonode phylonode) {
-        
+        this.phylonode = phylonode;
     }
     
     public TaxonNode(TaxonNode parent, Phylonode phylonode, Organism organism) {
