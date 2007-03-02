@@ -209,6 +209,7 @@ public class WebUtils {
     	return size;
     }
     
+    // TODO Remove me once charge is stored by mining code
     public static double getCharge(SymbolList aaSymList){
     	Map chargeFor;
     	double charge = 0.0;
