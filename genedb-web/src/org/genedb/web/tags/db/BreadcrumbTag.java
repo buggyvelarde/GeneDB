@@ -22,7 +22,11 @@ public class BreadcrumbTag extends SimpleTagSupport {
         TaxonNodeManager tnm = (TaxonNodeManager)
         getJspContext().getAttribute(TAXON_NODE_MANAGER, APPLICATION_SCOPE);
         
+        System.err.println("TaxonNodeManager is '"+tnm+"'");
+        
         TaxonNode taxonNode = (TaxonNode) getJspContext().getAttribute(TAXON_NODE, PAGE_SCOPE);
+        
+        System.err.println("TaxonNode is '"+taxonNode+"'");
         
         // Get cache from application scope
         String trail = checkCache(taxonNode);
