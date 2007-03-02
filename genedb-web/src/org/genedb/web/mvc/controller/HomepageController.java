@@ -42,16 +42,24 @@ public class HomepageController extends AbstractController {
         binder.bind(request);
         //BindingResult br = binder.getBindingResult();
         
-        if (nodes == null || nodes.length == 0) {
+        List<TaxonNode> nodeList = new ArrayList<TaxonNode>();
+        for (TaxonNode node : nodes) {
+            if (node != null) {
+                nodeList.add(node);
+            }
+        }
+        
+        if (nodeList.size() == 0) {
+            System.err.println("No taxon nodes - go home");
             return new ModelAndView(DEFAULT_HOMEPAGE);
         }
-        if (nodes.length > 1) {
+        if (nodeList.size() > 1) {
             // TODO Add error message
             System.err.println("Got too many taxon nodes");
             return new ModelAndView(DEFAULT_HOMEPAGE);
         }
         
-        TaxonNode node = nodes[0];
+        TaxonNode node = nodeList.get(0);
         String viewName = HOMEPAGE + DEFAULT_STYLE;
         
         Map props = node.getAppDetails("WEB");
