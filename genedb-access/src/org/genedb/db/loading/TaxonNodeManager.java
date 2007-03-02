@@ -62,7 +62,6 @@ public class TaxonNodeManager implements InitializingBean{
             nickNameTaxonNodeMap.put(tn.getNickName(), tn);
         }
         
-        System.err.println("About to try and create relationships");
         // Set up all child/parent relationships
         while (nodes.size() > 0) {
             Set<TaxonNode> tempNodes = new HashSet<TaxonNode>();
@@ -72,11 +71,11 @@ public class TaxonNodeManager implements InitializingBean{
                 Phylonode node = phylonode.getParent();
                 if (node != null) {
                     if (labelTaxonNodeMap.containsKey(node.getLabel())) {
-                        System.err.println("Match found for '"+node.getLabel()+"'");
+                        //System.err.println("Match found for '"+node.getLabel()+"'");
                         TaxonNode parent = labelTaxonNodeMap.get(node.getLabel());
                         parent.addChild(tn);
                     } else {
-                        System.err.println("No match for '"+node.getLabel()+"'");
+                        //System.err.println("No match for '"+node.getLabel()+"'");
                         tempNodes.add(tn);
                     }
                 } else {
