@@ -105,7 +105,7 @@
     </bean>
     
     <bean id="taxonNodeManager" class="org.genedb.db.loading.TaxonNodeManager">
-    
+        <property name="phylogenyDao" ref="phylogenyDao" />
     </bean>
 
 	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
@@ -225,8 +225,11 @@
     <bean id="organismDao" class="org.genedb.db.dao.OrganismDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>
-    
-                        
+           
+    <bean id="phylogenyDao" class="org.genedb.db.dao.PhylogenyDao" init-method="afterPropertiesSet">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+                       
     <bean id="pubDao" class="org.genedb.db.dao.PubDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>
