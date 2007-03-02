@@ -7,6 +7,7 @@ import static org.genedb.web.mvc.controller.WebConstants.CRUMB;
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -36,31 +37,28 @@ public class HomepageController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         
-        TaxonNode[] nodes = new TaxonNode[1];
+        TaxonNodeArrayHolder tnah = new TaxonNodeArrayHolder();
         
-        ServletRequestDataBinder binder = new ServletRequestDataBinder(nodes);
-        binder.registerCustomEditor(TaxonNode[].class, "org", taxonNodeArrayPropertyEditor);
+        ServletRequestDataBinder binder = new ServletRequestDataBinder(tnah);
+        binder.initDirectFieldAccess();
+        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
         binder.bind(request);
-        //BindingResult br = binder.getBindingResult();
+        BindingResult br = binder.getBindingResult();
+        System.err.println(br);
         
-        List<TaxonNode> nodeList = new ArrayList<TaxonNode>();
-        for (TaxonNode node : nodes) {
-            if (node != null) {
-                nodeList.add(node);
-            }
-        }
+        TaxonNode[] nodes = tnah.org;
         
-        if (nodeList.size() == 0) {
+        if (nodes == null || nodes.length == 0) {
             System.err.println("No taxon nodes - go home");
             return new ModelAndView(DEFAULT_HOMEPAGE);
         }
-        if (nodeList.size() > 1) {
+        if (nodes.length > 1) {
             // TODO Add error message
             System.err.println("Got too many taxon nodes");
             return new ModelAndView(DEFAULT_HOMEPAGE);
         }
         
-        TaxonNode node = nodeList.get(0);
+        TaxonNode node = nodes[0];
         String viewName = HOMEPAGE + DEFAULT_STYLE;
         
         Map props = node.getAppDetails("WEB");
@@ -90,7 +88,19 @@ public class HomepageController extends AbstractController {
             TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
         this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
     }
+    
+}
 
+class TaxonNodeArrayHolder {
+    
+    TaxonNode[] org;
 
+//    public TaxonNode[] getOrg() {
+//        return this.org;
+//    }
+//
+//    public void setOrg(TaxonNode[] org) {
+//        this.org = org;
+//    }
     
 }
