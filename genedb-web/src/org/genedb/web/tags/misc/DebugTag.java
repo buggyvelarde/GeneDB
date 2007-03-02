@@ -25,7 +25,7 @@ public class DebugTag extends SimpleTagSupport {
         JspWriter out = getJspContext().getOut();
         
         displayAttrsInScope(out, pc, APPLICATION);
-        displayAttrsInScope(out, pc, SESSION);
+        //displayAttrsInScope(out, pc, SESSION);
         displayAttrsInScope(out, pc, REQUEST);
         displayAttrsInScope(out, pc, PAGE);
 
