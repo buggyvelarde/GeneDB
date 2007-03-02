@@ -137,10 +137,13 @@ public class TaxonNode {
     @Override
     public String toString() {
         StringBuffer ret = new StringBuffer();
-        ret.append("taxon id: ");
+        ret.append("taxon id='");
         ret.append(getTaxonId());
-        ret.append("     name: ");
+        ret.append("' fullName='");
         ret.append(getFullName());
+        ret.append("' shortName='");
+        ret.append(getShortName());
+        ret.append("'");
         return ret.toString();
     }
 
