@@ -100,7 +100,7 @@
     </bean>
 
 
-    <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.loading.TaxonNodeArray">
+    <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.loading.TaxonNodeArrayPropertyEditor">
         <property name="taxonNodeManager" ref="taxonNodeManager" />
     </bean>
     
