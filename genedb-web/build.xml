@@ -13,6 +13,7 @@
 	
 	<path id="compile-lib">
 			<path location="${lib-dir}/spring-2.0.2.jar" />
+			<path location="${lib-dir}/lucene-core-2.0.1-dev.jar" />
 	        <path location="${lib-dir}/genedb-hibernate.jar" />
 	        <path location="${lib-dir}/genedb-access.jar" />
 	        <path location="${lib-dir}/chado-interface.jar" />
