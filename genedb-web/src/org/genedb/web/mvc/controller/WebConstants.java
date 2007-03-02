@@ -9,5 +9,8 @@ public class WebConstants {
 	public static final Object TAX_ID = "taxId";
 	public static final String MODEL_MAP = "model";
 	public static final String QUERY_FORM = "QUERY_FORM";
+    public static final String TAXON_NODE = "TAXON_NODE";
+    public static final String CRUMB = "BREAD_CRUMB";
+    
 
 }
