@@ -4,9 +4,9 @@ package org.genedb.web.mvc.controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-import org.springframework.web.servlet.mvc.ControllerClassNameHandlerMapping;
+import org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping;
 
-public class CaseSensitiveControllerClassNameHandlerMapping extends org.springframework.web.servlet.mvc.ControllerClassNameHandlerMapping {
+public class CaseSensitiveControllerClassNameHandlerMapping extends ControllerClassNameHandlerMapping {
 
         /**
          * Implementation of {@link HandlerMapping} that follows a simple convention for generating
