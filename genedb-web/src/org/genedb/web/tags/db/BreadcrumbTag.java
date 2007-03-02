@@ -1,6 +1,8 @@
 package org.genedb.web.tags.db;
 
 import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
+import static javax.servlet.jsp.PageContext.PAGE_SCOPE;
+import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANAGER;
 
 import org.genedb.db.loading.TaxonNode;
@@ -14,14 +16,13 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class BreadcrumbTag extends SimpleTagSupport {
-
-	private TaxonNode taxonNode;
-    
 	
     @Override
     public void doTag() throws JspException, IOException {
-        TaxonNodeManager tnm = (TaxonNodeManager) 
+        TaxonNodeManager tnm = (TaxonNodeManager)
         getJspContext().getAttribute(TAXON_NODE_MANAGER, APPLICATION_SCOPE);
+        
+        TaxonNode taxonNode = (TaxonNode) getJspContext().getAttribute(TAXON_NODE, PAGE_SCOPE);
         
         // Get cache from application scope
         String trail = checkCache(taxonNode);
@@ -53,9 +54,5 @@ public class BreadcrumbTag extends SimpleTagSupport {
 	private void setCache(TaxonNode tn, String path) {
 	    // TODO
     }
-
-    public void setTaxonNode(TaxonNode taxonNode) {
-		this.taxonNode = taxonNode;
-	}
 
 }
