@@ -83,7 +83,7 @@
     </attribute> 
  </tag>
  
-
+ 
  <tag>
    <name>list-string</name>
    <tag-class>org.genedb.web.tags.db.ListStringTag</tag-class>
@@ -98,6 +98,13 @@
        <rtexprvalue>true</rtexprvalue>
        <required>true</required>
     </attribute> 
+ </tag>
+
+
+ <tag>
+   <name>breadcrumb</name>
+   <tag-class>org.genedb.web.tags.db.BreadcrumbTag</tag-class>
+   <body-content>empty</body-content>
  </tag>
  
  <tag>
@@ -133,4 +140,5 @@
    <tag-class>org.genedb.web.tags.db.DisplayPhylogeny</tag-class>
    <body-content>scriptless</body-content>
  </tag>
+
 </taglib>
