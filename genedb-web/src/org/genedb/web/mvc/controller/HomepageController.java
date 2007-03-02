@@ -6,6 +6,8 @@ import org.genedb.db.loading.TaxonNodeArrayPropertyEditor;
 import static org.genedb.web.mvc.controller.WebConstants.CRUMB;
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -21,7 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * 
+ * Controller for selecting and forwarding to a homepage view. It uses the one set 
+ * as a phylonode property, otherwise a default one. An error, or no arguments, 
+ * returns the default homepage.
  *
  * @author Adrian Tivey
  */
@@ -29,10 +33,11 @@ public class HomepageController extends AbstractController {
 
     private static String HOMEPAGE = "homepages/";
     private static String DEFAULT_HOMEPAGE = HOMEPAGE + "frontPage";
-    private static String DEFAULT_STYLE = "wibble";
+    private static String DEFAULT_STYLE = "childListing"; // FIXME
    
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
     
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -43,11 +48,14 @@ public class HomepageController extends AbstractController {
         binder.initDirectFieldAccess();
         binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
         binder.bind(request);
-        BindingResult br = binder.getBindingResult();
-        System.err.println(br);
+        BindingResult bindResult = binder.getBindingResult();
+        
+        if (bindResult.hasGlobalErrors()) {
+            System.err.println("Binding errors - go home");
+            return new ModelAndView(DEFAULT_HOMEPAGE);
+        }
         
         TaxonNode[] nodes = tnah.org;
-        
         if (nodes == null || nodes.length == 0) {
             System.err.println("No taxon nodes - go home");
             return new ModelAndView(DEFAULT_HOMEPAGE);
@@ -91,16 +99,16 @@ public class HomepageController extends AbstractController {
     
 }
 
+
+/**
+ * Simple struct to make databinding easier
+ * 
+ * @author A. Tivey (art)
+ */
 class TaxonNodeArrayHolder {
     
+    /**
+     * Field, directly accessed by databinder and for reading
+     */
     TaxonNode[] org;
-
-//    public TaxonNode[] getOrg() {
-//        return this.org;
-//    }
-//
-//    public void setOrg(TaxonNode[] org) {
-//        this.org = org;
-//    }
-    
 }
