@@ -68,7 +68,8 @@ public class TaxonNodeManager implements InitializingBean{
             Set<TaxonNode> tempNodes = new HashSet<TaxonNode>();
             for (Iterator it = nodes.iterator(); it.hasNext();) {
                 TaxonNode tn = (TaxonNode) it.next();
-                Phylonode node = tn.getPhylonode().getPhylonode();
+                Phylonode phylonode = tn.getPhylonode();
+                Phylonode node = phylonode.getParent();
                 if (labelTaxonNodeMap.containsKey(node.getLabel())) {
                     TaxonNode parent = labelTaxonNodeMap.get(node.getLabel());
                     parent.addChild(tn);
