@@ -402,7 +402,7 @@ public class SearchController extends MultiActionController implements Initializ
 	@SuppressWarnings("unchecked")
 	public ModelAndView BooleanQuery(HttpServletRequest request, HttpServletResponse response) {
 		List<String> answers = new ArrayList<String>();
-		if (!WebUtils.extractTaxonOrOrganism(request, true, false, answers)) {
+		if (!WebUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
 			return new ModelAndView("chooseTaxonContextView");
 		}
 		
