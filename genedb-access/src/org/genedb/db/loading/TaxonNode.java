@@ -122,7 +122,10 @@ public class TaxonNode {
     }
     
     public Map<String, Object> getAppDetails(String key) {
-        return Collections.unmodifiableMap(appDetails.get(key));
+        if (appDetails.containsKey(key)) {
+            return Collections.unmodifiableMap(appDetails.get(key));
+        }
+        return Collections.emptyMap();
     }
     
 
