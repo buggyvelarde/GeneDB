@@ -49,6 +49,9 @@ public class TaxonNodeManager implements InitializingBean{
     public void afterPropertiesSet() throws Exception {
         Set<TaxonNode> nodes = new HashSet<TaxonNode>();
         List<Phylonode> phylonodes = phylogenyDao.getAllPhylonodes();
+        if (phylonodes == null || phylonodes.size() == 0) {
+            throw new RuntimeException("Got empty list for phylonodes");
+        }
         for (Phylonode phylonode: phylonodes) {
             TaxonNode tn = new TaxonNode(phylonode);
             nodes.add(tn);
@@ -59,6 +62,7 @@ public class TaxonNodeManager implements InitializingBean{
             nickNameTaxonNodeMap.put(tn.getNickName(), tn);
         }
         
+        System.err.println("About to try and create relationships");
         // Set up all child/parent relationships
         while (nodes.size() > 0) {
             Set<TaxonNode> tempNodes = new HashSet<TaxonNode>();
