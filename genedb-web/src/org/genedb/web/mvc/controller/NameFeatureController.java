@@ -41,7 +41,6 @@ import org.biojava.bio.symbol.SimpleSymbolList;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -49,8 +48,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 
@@ -60,18 +57,13 @@ import javax.servlet.http.HttpServletRequest;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class NameFeatureController extends SimpleFormController {
+public class NameFeatureController extends PostOrGetFormController {
 
     private String listResultsView;
     private String formInputView;
     private SequenceDao sequenceDao;
     private OrganismDao organismDao;
     private PhylogenyDao phylogenyDao;
-  	
-	@Override
-    protected boolean isFormSubmission(HttpServletRequest request) {
-        return true;
-    }
 
     @Override
     protected ModelAndView onSubmit(Object command) throws Exception {

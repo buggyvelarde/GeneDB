@@ -26,7 +26,6 @@ import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.utils.CountedName;
 
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import java.util.HashMap;
 import java.util.List;

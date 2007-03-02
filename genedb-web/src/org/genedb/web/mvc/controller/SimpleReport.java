@@ -128,7 +128,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
             exp.printStackTrace();
         }
         // Check sequence is valid in org
-	    Feature feat = sequenceDao.getFeatureByUniqueName(bean.getName());
+	    Feature feat = sequenceDao.getFeaturesByUniqueName(bean.getName()).get(0);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);		
 	    String viewName = "features/gene";
@@ -207,7 +207,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	@SuppressWarnings("unchecked")
 	public ModelAndView BooleanQuery(HttpServletRequest request, HttpServletResponse response) {
 		List<String> answers = new ArrayList<String>();
-		if (!WebUtils.extractTaxonOrOrganism(request, true, false, answers)) {
+		if (!WebUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
 			return new ModelAndView("chooseTaxonContextView");
 		}
 		
