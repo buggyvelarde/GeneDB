@@ -9,7 +9,7 @@
 	</target>
 	
 	<target name="compile">
-		<javac srcdir="src" destdir="ant-build/classes">
+		<javac srcdir="src" destdir="ant-build/classes" debug="true">
 			<classpath path="lib/chado-interface.jar"/>
 			<classpath path="lib/biojava-1.4.jar"/>
 			<classpath path="lib/commons-logging.jar"/>
