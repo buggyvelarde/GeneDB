@@ -26,6 +26,7 @@ import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.phylogeny.PhylonodeOrganism;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -154,7 +155,7 @@ public class TaxonNodeManager implements InitializingBean{
         return nickNameTaxonNodeMap.get(name);
     }
 
-
+    @Required
     public void setPhylogenyDao(PhylogenyDaoI phylogenyDao) {
         this.phylogenyDao = phylogenyDao;
     }
