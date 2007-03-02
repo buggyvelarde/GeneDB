@@ -1,9 +1,9 @@
 package org.genedb.web.tags.misc;
 
-import static javax.servlet.jsp.PageContext.APPLICATION;
-import static javax.servlet.jsp.PageContext.PAGE;
-import static javax.servlet.jsp.PageContext.SESSION;
-import static javax.servlet.jsp.PageContext.REQUEST;
+import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
+import static javax.servlet.jsp.PageContext.PAGE_SCOPE;
+import static javax.servlet.jsp.PageContext.SESSION_SCOPE;
+import static javax.servlet.jsp.PageContext.REQUEST_SCOPE;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -24,22 +24,21 @@ public class DebugTag extends SimpleTagSupport {
         PageContext pc = (PageContext) getJspContext();
         JspWriter out = getJspContext().getOut();
         
-        displayAttrsInScope(out, pc, APPLICATION);
-        //displayAttrsInScope(out, pc, SESSION);
-        displayAttrsInScope(out, pc, REQUEST);
-        displayAttrsInScope(out, pc, PAGE);
+        displayAttrsInScope(out, pc, "Application", APPLICATION_SCOPE);
+        //displayAttrsInScope(out, pc, SESSION_SCOPE);
+        displayAttrsInScope(out, pc, "Request", REQUEST_SCOPE);
+        displayAttrsInScope(out, pc, "Page", PAGE_SCOPE);
 
 
     }
     
 
-	private void displayAttrsInScope(JspWriter out, PageContext pc, String application) throws IOException {
+	private void displayAttrsInScope(JspWriter out, PageContext pc, String scopeName, int scope) throws IOException {
         StringBuilder ret = new StringBuilder();
         ret.append("<h2>");
-        ret.append(application);
+        ret.append(scopeName+ " "+scope);
         ret.append("</h2>");
         ret.append("<table border=\"1\">");
-        int scope = pc.getAttributesScope(application);
         Enumeration e = pc.getAttributeNamesInScope(scope);
         while (e.hasMoreElements()) {
             String key = (String) e.nextElement();
