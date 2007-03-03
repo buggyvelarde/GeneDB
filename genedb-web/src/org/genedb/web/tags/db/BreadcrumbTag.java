@@ -1,7 +1,7 @@
 package org.genedb.web.tags.db;
 
 import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
-import static javax.servlet.jsp.PageContext.PAGE_SCOPE;
+import static javax.servlet.jsp.PageContext.REQUEST_SCOPE;
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANAGER;
 
@@ -28,7 +28,7 @@ public class BreadcrumbTag extends SimpleTagSupport {
         }
         System.err.println("TaxonNodeManager is '"+tnm+"'");
         
-        TaxonNode taxonNode = (TaxonNode) getJspContext().getAttribute(TAXON_NODE, PAGE_SCOPE);
+        TaxonNode taxonNode = (TaxonNode) getJspContext().getAttribute(TAXON_NODE, REQUEST_SCOPE);
         if (taxonNode == null) {
             // TODO Log problem
             return;
