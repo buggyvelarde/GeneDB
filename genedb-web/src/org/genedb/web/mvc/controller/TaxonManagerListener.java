@@ -37,6 +37,7 @@ public class TaxonManagerListener implements ServletContextListener {
     //is ready to service requests
     public void contextInitialized(ServletContextEvent event) {
         ServletContext context = event.getServletContext();
+        
         WebApplicationContext wac = 
             WebApplicationContextUtils.getWebApplicationContext(context);
         
