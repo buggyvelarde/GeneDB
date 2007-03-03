@@ -200,6 +200,10 @@
         <!-- <property name="viewChecker" ref="checkingViewResolver"/> -->
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+  <bean id="openSessionInView" class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+    <property name="sessionFactory"><ref bean="sessionFactory"/></property>
+  </bean>
 	
     
 	<!-- <bean id="pubHome" class="org.genedb.db.hibernate.PubHome" /> -->
