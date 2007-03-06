@@ -7,15 +7,20 @@ import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANA
 
 import org.genedb.db.loading.TaxonNode;
 import org.genedb.db.loading.TaxonNodeManager;
+import org.genedb.web.mvc.controller.WebConstants;
+import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class BreadcrumbTag extends SimpleTagSupport {
+	
+    String seperator = "<small> >> </small>";
 	
     @Override
     public void doTag() throws JspException, IOException {
@@ -26,7 +31,6 @@ public class BreadcrumbTag extends SimpleTagSupport {
             // TODO Log problem
             return;
         }
-        System.err.println("TaxonNodeManager is '"+tnm+"'");
         
         TaxonNode taxonNode = (TaxonNode) getJspContext().getAttribute(TAXON_NODE, REQUEST_SCOPE);
         if (taxonNode == null) {
@@ -34,9 +38,7 @@ public class BreadcrumbTag extends SimpleTagSupport {
             return;
         }
         
-        System.err.println("TaxonNode is '"+taxonNode+"'");
-        
-        // Get cache from application scope
+        String prefix = getContextPathFromJspContext(getJspContext());
         String trail = checkCache(taxonNode);
         if (trail == null) {
             StringBuilder buf = new StringBuilder();
@@ -44,18 +46,39 @@ public class BreadcrumbTag extends SimpleTagSupport {
             boolean first = true;
             for (TaxonNode node : nodes) {
                 if (!first) {
-                    buf.append(" >> ");
+					buf.append(seperator);
+                }
+                if (node.isWebLinkable()) {
+                  	buf.append("<a href=\"");
+                  	buf.append(prefix);
+                  	buf.append("/Homepage?org=");
+                	buf.append(node.getShortName());
+                	buf.append("\">");
                 }
                 buf.append(node.getShortName());
+                if (node.isWebLinkable()) {
+                	buf.append("</a>");
+                }
                 first = false;
             }
             trail = buf.toString();
             // Store in cache
         }
         
+        trail += seperator + getJspContext().getAttribute(WebConstants.CRUMB, REQUEST_SCOPE);
+        
         JspWriter out = getJspContext().getOut();
         out.write(trail);
     }
+
+
+	private String getContextPathFromJspContext(JspContext context) {
+		String prefix = (String) context.getAttribute(WebUtils.FORWARD_CONTEXT_PATH_ATTRIBUTE, REQUEST_SCOPE);
+        if (!prefix.equals("/")) {
+        	prefix += "/";
+        }
+		return prefix;
+	}
     
 
 	private String checkCache(TaxonNode tn) {
