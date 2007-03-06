@@ -68,12 +68,11 @@ public class TaxonNodeManager implements InitializingBean{
             for (Iterator it = nodes.iterator(); it.hasNext();) {
                 TaxonNode tn = (TaxonNode) it.next();
                 Phylonode phylonode = tn.getPhylonode();
-                Phylonode node = phylonode.getParent();
-                if (node != null) {
-                    if (labelTaxonNodeMap.containsKey(node.getLabel())) {
-                        //System.err.println("Match found for '"+node.getLabel()+"'");
-                        TaxonNode parent = labelTaxonNodeMap.get(node.getLabel());
-                        parent.addChild(tn);
+                Phylonode parent = phylonode.getParent();
+                if (parent != null) {
+                    if (labelTaxonNodeMap.containsKey(parent.getLabel())) {
+                        TaxonNode parentTn = labelTaxonNodeMap.get(parent.getLabel());
+                        parentTn.addChild(tn);
                     } else {
                         //System.err.println("No match for '"+node.getLabel()+"'");
                         tempNodes.add(tn);
