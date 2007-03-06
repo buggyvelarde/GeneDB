@@ -42,25 +42,25 @@ public class TaxonNode {
         this.shortName = phylonode.getLabel();
     }
     
-    public TaxonNode(TaxonNode parent, Phylonode phylonode, Organism organism) {
-        this.parent = parent;
-        this.parent.addChild(this);
-        this.phylonode = phylonode;
-        this.organism = organism;
-        this.fullName = this.organism.getGenus() + ' ' + this.organism.getSpecies();
-        this.shortName = phylonode.getLabel();
-        this.taxonId = getPhylonodeProperty("");
-        this.dbName = getPhylonodeProperty("");
-        this.htmlName = getPhylonodeProperty("");
-        if (this.organism != null) {
-            this.webLinkable = true;
-        } else {
-            String webLink = getPhylonodeProperty("");
-            if ("true".equals(webLink)) {
-                webLinkable = true;
-            }
-        }
-    }
+//    public TaxonNode(TaxonNode parent, Phylonode phylonode, Organism organism) {
+//        this.parent = parent;
+//        this.parent.addChild(this);
+//        this.phylonode = phylonode;
+//        this.organism = organism;
+//        this.fullName = this.organism.getGenus() + ' ' + this.organism.getSpecies();
+//        this.shortName = phylonode.getLabel();
+//        this.taxonId = getPhylonodeProperty("");
+//        this.dbName = getPhylonodeProperty("");
+//        this.htmlName = getPhylonodeProperty("");
+//        if (this.organism != null) {
+//            this.webLinkable = true;
+//        } else {
+//            String webLink = getPhylonodeProperty("");
+//            if ("true".equals(webLink)) {
+//                webLinkable = true;
+//            }
+//        }
+//    }
 
     private String getPhylonodeProperty(String key) {
         for (PhylonodeProp prop : phylonode.getPhylonodeProps()) {
@@ -98,8 +98,13 @@ public class TaxonNode {
         return this.parent;
     }
 
-    void addChild(TaxonNode child) {
+    private void setParent(TaxonNode parent) {
+		this.parent = parent;
+	}
+
+	void addChild(TaxonNode child) {
         this.children.add(child);
+        child.setParent(this);
     }
 
     public List<TaxonNode> getChildren() {
