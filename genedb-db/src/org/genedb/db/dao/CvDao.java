@@ -135,12 +135,20 @@ public class CvDao extends BaseDao implements CvDaoI {
 		}
 
         
-        // TODO Should this just return genes?
         public List<CountedName> getAllTermsInCvWithCount(Cv cv) {
             return getHibernateTemplate().findByNamedParam("select new CountedName(cvt.name,count(f.uniqueName))" +
                     " from CvTerm cvt,FeatureCvTerm fct,Feature f " +
             "where f=fct.feature and cvt=fct.cvTerm and cvt.cv=:cv group by cvt.name",
             new String[]{"cv"}, new Object[]{cv});
+        }
+        
+        
+        @SuppressWarnings("unchecked")
+        public List<CountedName> getCountedNamesByCvNameAndOrganism(String cvName, String orgs) {
+            return getHibernateTemplate().findByNamedParam("select new CountedName(cvt.name,count(f.uniqueName))" +
+                    " from CvTerm cvt,FeatureCvTerm fct,Feature f " +
+            "where f.organism.commonName in (:orgs) and f=fct.feature and cvt=fct.cvTerm and cvt.cv.name=:cvName group by cvt.name",
+            new String[]{"cvName", "orgs"}, new Object[]{cvName, orgs});
         }
 
         // TODO Use limit
