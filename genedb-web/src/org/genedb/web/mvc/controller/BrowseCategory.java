@@ -25,5 +25,6 @@ public enum BrowseCategory {
     GO_MOLECULAR_FUNCTION,
     PRODUCT,
     CONTROLLED_CURATION,
-    UNIPROT_KEYWORDS;
+    UNIPROT_KEYWORDS,
+    RILEY;
 }
