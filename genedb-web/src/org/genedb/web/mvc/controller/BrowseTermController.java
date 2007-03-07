@@ -21,11 +21,16 @@ package org.genedb.web.mvc.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.TaxonNode;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.utils.CountedName;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -43,7 +48,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
 
 
     @Override
-    protected ModelAndView onSubmit(Object command, BindException be) throws Exception {
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
 
         BrowseTermBean btb = (BrowseTermBean) command;
         
@@ -52,19 +57,11 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), nodes);
         
         if (results == null || results.size() == 0) {
-            logger.info("result is null");
-            // TODO - error page
-            getFormView();
+            logger.info("result is null"); // TODO Improve text
+            be.reject("No results"); // FIXME - Should be message key
+            return showForm(request, response, be);
         }
         
-        // Go to list results page
-//        ResultBean rb = new ResultBean();
-//        List<String> organisms = organismDao.findAllOrganismCommonNames();
-//        for (String string : organisms) {
-//            logger.info(string);
-//        }
-        //rb.setResults(organisms);
-        //model.put("rb", rb);
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject(results);
 
