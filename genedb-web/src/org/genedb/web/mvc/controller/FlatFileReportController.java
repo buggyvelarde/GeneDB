@@ -27,12 +27,11 @@ import org.biojava.bio.BioException;
 import org.biojava.bio.seq.FeatureFilter;
 import org.biojava.bio.seq.FeatureHolder;
 import org.biojava.bio.seq.Sequence;
-import org.biojava.bio.seq.SequenceIterator;
 import org.biojava.bio.seq.impl.SubSequence;
-import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojavax.bio.seq.RichSequenceIterator;
+import org.biojavax.bio.seq.RichSequence.IOTools;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -55,19 +54,13 @@ import javax.servlet.http.HttpServletResponse;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class FlatFileReportController extends SimpleFormController {
+public class FlatFileReportController extends PostOrGetFormController {
 
     private String listResultsView;
     private String formInputView;
     private SequenceDao sequenceDao;
     private OrganismDao organismDao;
 
-  	
-	@Override
-    protected boolean isFormSubmission(HttpServletRequest request) {
-        boolean sup = super.isFormSubmission(request);
-        return sup ? true : (request.getParameterMap().size() > 0);
-    }
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
@@ -120,7 +113,7 @@ public class FlatFileReportController extends SimpleFormController {
             SubSequence sub = extractSubSequence(ffrb);
             
             OutputStream out = response.getOutputStream();
-            SeqIOTools.biojavaToFile("EMBL", "DNA", out, sub);
+            IOTools.writeEMBL(out, sub, null);
 
             return null;
         }
@@ -145,8 +138,7 @@ public class FlatFileReportController extends SimpleFormController {
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         
 
-        SequenceIterator iter =
-            (SequenceIterator)SeqIOTools.fileToBiojava("EMBL", "DNA", br);
+        RichSequenceIterator iter = IOTools.readEMBLDNA(br, null);
         Sequence seq = iter.nextSequence();
         
         SubSequence sub = new SubSequence(seq, ffrb.getMin(), ffrb.getMax());
@@ -157,7 +149,7 @@ public class FlatFileReportController extends SimpleFormController {
         String ret = null;
         try {
             ret = "/FlatFileReport?organism="+URLEncoder.encode(organism,"UTF-8")
-            +"&min="+bottom+"&max="+top+"&outputFormat="+of+"&dest=EMBL&fromArtemis=true";
+            +"&min="+bottom+"&max="+top+"&outputFormat="+of;
         } catch (UnsupportedEncodingException e) {
             // Deliberately empty - using a required encoding
         }
