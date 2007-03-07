@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006 Genome Research Limited.
+ * Copyright (c) 2006-2007 Genome Research Limited.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published
@@ -20,16 +20,19 @@
 package org.genedb.web.mvc.controller;
 
 
-import org.genedb.db.dao.OrganismDao;
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.loading.TaxonNode;
 
 import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.utils.CountedName;
 
+import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 
 
@@ -39,51 +42,54 @@ import java.util.Map;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class BrowseCategoryController extends PostOrGetFormController {
-
-    private OrganismDao organismDao;
-    private CvDaoI cvDaoI;
+public class BrowseCategoryController extends TaxonNodeBindingFormController {
+    
+    private CvDao cvDao;
     private String cvName;
 
 
     @Override
-    protected ModelAndView onSubmit(Object command) throws Exception {
-        BrowseCategory bc = (BrowseCategory) command;
+    protected ModelAndView onSubmit(Object command, BindException be) throws Exception {
+        BrowseCategoryBean bcb = (BrowseCategoryBean) command;
 
-        List<CountedName> results = null; // FIXME = cvDaoI.getCvTermsByCvNameAndOrganism(cvName);
-        String viewName;
-        Map model = new HashMap();
+        String taxonList = TaxonUtils.getTaxonListFromNodes(bcb.getTaxonNodes());
+        List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(bcb.getCategory(), taxonList);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
             // TODO - error page
-            getFormView();
+            return new ModelAndView(getFormView());
         }
+        
         // Go to list results page
-//        ResultBean rb = new ResultBean();
-//        List<String> organisms = organismDao.findAllOrganismCommonNames();
-//        for (String string : organisms) {
-//            logger.info(string);
-//        }
-        //rb.setResults(organisms);
-        viewName = getSuccessView();
-        //model.put("rb", rb);
-        model.put("results", results);
-
-        return new ModelAndView(viewName, model);
+        ModelAndView mav = new ModelAndView(getSuccessView());
+        mav.addObject(results);
+        
+        return mav;
     }
 
-
-//    public void setOrganismDao(OrganismDao organismDao) {
-//        this.organismDao = organismDao;
-//    }
-//
-//    public void setSequenceDao(SequenceDao sequenceDao) {
-//        this.sequenceDao = sequenceDao;
-//    }
-
-    public void setCvDaoI(CvDaoI cvDaoI) {
-        this.cvDaoI = cvDaoI;
+    public void setCvDao(CvDao cvDao) {
+        this.cvDao = cvDao;
     }
 
+}
+
+class BrowseCategoryBean {
+    
+    private TaxonNode[] taxonNodes;
+    private BrowseCategory category;
+    
+    public BrowseCategory getCategory() {
+        return this.category;
+    }
+    public void setCategory(BrowseCategory category) {
+        this.category = category;
+    }
+    public TaxonNode[] getTaxonNodes() {
+        return this.taxonNodes;
+    }
+    public void setTaxonNodes(TaxonNode[] taxonNodes) {
+        this.taxonNodes = taxonNodes;
+    }
+    
 }
