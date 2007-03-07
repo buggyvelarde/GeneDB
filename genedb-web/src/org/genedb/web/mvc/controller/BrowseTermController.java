@@ -19,21 +19,14 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.CvDao;
+import java.util.List;
+
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.TaxonNode;
-
-import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.utils.CountedName;
-
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 
@@ -45,9 +38,8 @@ import java.util.Map;
  * @author Adrian Tivey (art)
  */
 public class BrowseTermController extends TaxonNodeBindingFormController {
-    
-    private CvDao cvDao;
-    private String cvName;
+	
+	private SequenceDao sequenceDao;
 
 
     @Override
@@ -57,7 +49,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         
         String nodes = StringUtils.arrayToDelimitedString(btb.getTaxonNodes(), " ");
 
-        List<Feature> results = cvDao.getFeaturesByCvNameAndCvTermNameAndOrganism(btb.getCategory(), btb.getTerm(), nodes);
+        List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), nodes);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
@@ -79,9 +71,9 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         return mav;
     }
 
-    public void setCvDao(CvDao cvDao) {
-        this.cvDao = cvDao;
-    }
+	public void setSequenceDao(SequenceDao sequenceDao) {
+		this.sequenceDao = sequenceDao;
+	}
 
 }
 
