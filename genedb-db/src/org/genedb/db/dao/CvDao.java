@@ -145,7 +145,7 @@ public class CvDao extends BaseDao implements CvDaoI {
         
         @SuppressWarnings("unchecked")
         public List<CountedName> getCountedNamesByCvNameAndOrganism(String cvName, String orgs) {
-            return getHibernateTemplate().findByNamedParam("select new CountedName(cvt.name,count(f.uniqueName))" +
+            return getHibernateTemplate().findByNamedParam("select new org.gmod.schema.utils.CountedName(cvt.name,count(f.uniqueName))" +
                     " from CvTerm cvt,FeatureCvTerm fct,Feature f " +
             "where f.organism.commonName in (:orgs) and f=fct.feature and cvt=fct.cvTerm and cvt.cv.name=:cvName group by cvt.name",
             new String[]{"cvName", "orgs"}, new Object[]{cvName, orgs});
