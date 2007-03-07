@@ -23,7 +23,6 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.loading.TaxonNode;
 
-import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.utils.CountedName;
 
 import org.springframework.validation.BindException;
@@ -32,6 +31,9 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 
@@ -47,23 +49,33 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
     private CvDao cvDao;
     private String cvName;
 
+    
 
-    @Override
-    protected ModelAndView onSubmit(Object command, BindException be) throws Exception {
+    @SuppressWarnings("unchecked")
+	@Override
+	protected Map referenceData(HttpServletRequest request) throws Exception {
+    	Map reference = new HashMap();
+    	reference.put("categories", BrowseCategory.values());
+    	return reference;
+	}
+
+	@Override
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
         BrowseCategoryBean bcb = (BrowseCategoryBean) command;
 
         String taxonList = TaxonUtils.getTaxonListFromNodes(bcb.getTaxonNodes());
         List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(bcb.getCategory().toString(), taxonList);
         
         if (results == null || results.size() == 0) {
-            logger.info("result is null");
-            // TODO - error page
-            return new ModelAndView(getFormView());
+            logger.info("result is null"); // TODO Improve text
+            be.reject("No results"); // FIXME - Should be message key
+            return showForm(request, response, be);
         }
         
         // Go to list results page
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject(results);
+
         
         return mav;
     }
