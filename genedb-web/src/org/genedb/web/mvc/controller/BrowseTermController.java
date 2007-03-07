@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006 Genome Research Limited.
+ * Copyright (c) 2006-2007 Genome Research Limited.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published
@@ -19,19 +19,22 @@
 
 package org.genedb.web.mvc.controller;
 
-
-import org.genedb.db.dao.OrganismDao;
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.loading.TaxonNode;
 
 import org.gmod.schema.dao.CvDaoI;
+import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.utils.CountedName;
 
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 
 
 
@@ -41,35 +44,27 @@ import javax.servlet.http.HttpServletRequest;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class BrowseTermController extends PostOrGetFormController {
-
-    private OrganismDao organismDao;
-    private CvDaoI cvDaoI;
+public class BrowseTermController extends TaxonNodeBindingFormController {
+    
+    private CvDao cvDao;
     private String cvName;
 
-  	
-	@Override
-    protected boolean isFormSubmission(HttpServletRequest request) {
-        boolean post = super.isFormSubmission(request);
-        if (post || request.getParameterMap().size() > 0) {
-            return true;
-        }
-        return false;
-    }
 
     @Override
-    protected ModelAndView onSubmit(Object command) throws Exception {
-        BrowseCategory bc = (BrowseCategory) command;
+    protected ModelAndView onSubmit(Object command, BindException be) throws Exception {
 
-        List<CountedName> results = null; // FIXME = cvDaoI.getCvTermsByCvNameAndOrganism(cvName);
-        String viewName;
-        Map model = new HashMap();
+        BrowseTermBean btb = (BrowseTermBean) command;
+        
+        String nodes = StringUtils.arrayToDelimitedString(btb.getTaxonNodes(), " ");
+
+        List<Feature> results = cvDao.getFeaturesByCvNameAndCvTermNameAndOrganism(btb.getCategory(), btb.getTerm(), nodes);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
             // TODO - error page
             getFormView();
         }
+        
         // Go to list results page
 //        ResultBean rb = new ResultBean();
 //        List<String> organisms = organismDao.findAllOrganismCommonNames();
@@ -78,22 +73,43 @@ public class BrowseTermController extends PostOrGetFormController {
 //        }
         //rb.setResults(organisms);
         //model.put("rb", rb);
-        model.put("results", results);
+        ModelAndView mav = new ModelAndView(getSuccessView());
+        mav.addObject(results);
 
-        return new ModelAndView((String)null, model);
+        return mav;
     }
 
-
-//    public void setOrganismDao(OrganismDao organismDao) {
-//        this.organismDao = organismDao;
-//    }
-//
-//    public void setSequenceDao(SequenceDao sequenceDao) {
-//        this.sequenceDao = sequenceDao;
-//    }
-
-    public void setCvDaoI(CvDaoI cvDaoI) {
-        this.cvDaoI = cvDaoI;
+    public void setCvDao(CvDao cvDao) {
+        this.cvDao = cvDao;
     }
 
 }
+
+
+class BrowseTermBean {
+    
+    private TaxonNode[] taxonNodes;
+    private BrowseCategory category;
+    private String term;
+    
+    public BrowseCategory getCategory() {
+        return this.category;
+    }
+    public void setCategory(BrowseCategory category) {
+        this.category = category;
+    }
+    public TaxonNode[] getTaxonNodes() {
+        return this.taxonNodes;
+    }
+    public void setTaxonNodes(TaxonNode[] taxonNodes) {
+        this.taxonNodes = taxonNodes;
+    }
+    public String getTerm() {
+        return this.term;
+    }
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
+}
+
