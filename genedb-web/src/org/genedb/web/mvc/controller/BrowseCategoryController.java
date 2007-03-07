@@ -53,7 +53,7 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
         BrowseCategoryBean bcb = (BrowseCategoryBean) command;
 
         String taxonList = TaxonUtils.getTaxonListFromNodes(bcb.getTaxonNodes());
-        List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(bcb.getCategory(), taxonList);
+        List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(bcb.getCategory().toString(), taxonList);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
