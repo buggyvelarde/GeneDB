@@ -6,18 +6,19 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Wibble data binding</title>
+<title>Browse catalogues</title>
 </head>
 <body>
 
-<p>This is a test of Wibble data binding 
+<p>This is a page for launching browse category stuff
 
-<form:form action="/genedb-web/FlatFileReport">
+<form:form action="/genedb-web/BrowseCategory" commandName="browseCategory">
 
-<p><form:errors path="org" /></p>
+<p><form:errors path="*" /></p>
 
-<input type="hidden" name="org" value="leela:nyssa" />
+<input type="hidden" name="org" value="tcruzi" />
 
+<form:select path="category" items="${categories}" />
 
 <input type="submit" />
 
