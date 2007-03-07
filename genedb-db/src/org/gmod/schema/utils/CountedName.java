@@ -17,6 +17,13 @@ public class CountedName {
 	 */
 	private int count;
 
+	
+	
+	public CountedName(String name, int count) {
+		this.name = name;
+		this.count = count;
+	}
+
 	/**
 	 * @return
 	 */
