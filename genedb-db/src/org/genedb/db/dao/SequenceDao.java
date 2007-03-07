@@ -14,7 +14,6 @@ import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.utils.CountedName;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class SequenceDao extends BaseDao implements SequenceDaoI {
@@ -115,6 +114,16 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                 new Object[]{feature, cvTerm, not});
 
         return list;
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+	public List<Feature> getFeaturesByCvNameAndCvTermNameAndOrganisms(String cvName, 
+    		String cvTermName, String orgs) {
+        return getHibernateTemplate().findByNamedParam("select f" +
+                " from CvTerm cvt,FeatureCvTerm fct,Feature f " +
+        "where f.organism.commonName in (:orgs) and f=fct.feature and cvt=fct.cvTerm and cvt.cv.name=:cvName and cvt.name=:cvTermName",
+        new String[]{"cvName", "cvTermName", "orgs"}, new Object[]{cvName, cvTermName, orgs});
     }
 
     /* (non-Javadoc)
@@ -298,6 +307,7 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 		return topLevels;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName) {
 		List<Feature> features = getHibernateTemplate().findByNamedParam(
 				"select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName and f.cvTerm.cv.name like :cvName", 
