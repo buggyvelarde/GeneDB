@@ -78,18 +78,6 @@ insert into cv (name, definition) values (
 -- ----------------------
 -- --- CvTerms
 -- ----------------------
-		
--- insert into dbxref(db_id, accession) 
---		values ((select db_id from db where name='null'),
---		'genedb_misc:taxonomy'
---);
---insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype)
---		values ((select cv_id from cv where name='genedb_misc'), 
---		'taxonomy',
---		'Marker to indicate that a sequence should be considered a top level feature',
---		(select dbxref_id from dbxref where accession='genedb_misc:taxonomy'),
---		0, 0
---);
 
 --insert into dbxref(db_id, accession, description) values (
 --		(select db_id from db where name='null'), 
