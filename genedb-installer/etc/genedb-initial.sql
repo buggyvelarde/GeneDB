@@ -106,13 +106,13 @@ insert into cv (name, definition) values (
 
 
 -- Load phylogeny relationships
---insert into dbxref(db_id, accession) values (
---		(select db_id from db where name='null'),
---		'genedb_misc:organism_heirachy'
---);
---insert into phylotree (dbxref_id, name, type_id, comment) values (
---		(select dbxref_id from dbxref where accession='genedb_misc:organism_heirachy'),
---		'org_heirachy', 
---		(select cvterm_id from cvterm where name='taxonomy'),
---		'GeneDB organism heirachy'
---);
+insert into dbxref(db_id, accession) values (
+		(select db_id from db where name='null'),
+		'genedb_misc:organism_heirachy'
+);
+insert into phylotree (dbxref_id, name, type_id, comment) values (
+		(select dbxref_id from dbxref where accession='genedb_misc:organism_heirachy'),
+		'org_heirachy', 
+		(select cvterm_id from cvterm where name='taxonomy'),
+		'GeneDB organism heirachy'
+);
