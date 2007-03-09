@@ -50,7 +50,7 @@ import java.util.Properties;
  * Usage: NewRunner common_nane [config_file]
  *
  *
- * @author Adrian Tivey (art)
+ * @author Chinmay Patel (cp2)
  */
 public class LoadControlledCurationCVs implements ApplicationContextAware {
 
