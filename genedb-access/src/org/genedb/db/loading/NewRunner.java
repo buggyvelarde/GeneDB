@@ -315,7 +315,7 @@ public class NewRunner implements ApplicationContextAware {
 
         this.buildCaches();
 
-loadCvTerms();
+        //loadCvTerms();
         // First process simple files ie simple EMBL files
         List<String> fileNames = this.runnerConfig.getFileNames();
         for (String fileName : fileNames) {
@@ -654,112 +654,112 @@ loadCvTerms();
 	}
 
 
-	private void loadCvTerms() {
-        /* Load the cvterms from the file. 
-         * 
-         */
-        
-        try {
-	        BufferedReader in = new BufferedReader(new FileReader("/nfs/team81/cp2/Scripts/cvterms"));
-	        String str;
-	        while (((str = in.readLine()) != null)) {
-	        	String sections[] = str.split("\t");
-	        	CvTerm cvTerm = null;
-	        	cvTerm = this.cvDao.getCvTermByNameAndCvName(sections[1], "CC_%");
-	        	if (cvTerm == null) {
-		        	cvTerm = new CvTerm();
-		        	Db db = generalDao.getDbByName("CCGEN");
-		        	String accession = "CCGEN_" + sections[1];
-		        	DbXRef dbXRef = null;
-		        	dbXRef = generalDao.getDbXRefByDbAndAcc(db,accession);
-		        	if (dbXRef == null) { 
-		        		dbXRef = new DbXRef();
-		        		dbXRef.setDb(db);
-		        		dbXRef.setAccession(accession);
-		        		dbXRef.setVersion("1");
-		        		generalDao.persist(dbXRef);
-		        	}
-	    			Cv cv = null;
-	    			String name = "CC_" + sections[0];
-	    			cv = this.cvDao.getCvByName(name).get(0);
-	    			if (cv == null) {
-	    				cv = new Cv();
-	    				cv.setName(name);
-	    				this.cvDao.persist(cv);
-	    			} else {
-	    				cvTerm.setCv(cv);
-	    			}
-	    			cvTerm.setDbXRef(dbXRef);
-	    			cvTerm.setName(sections[1]);
-	    			cvTerm.setDefinition(sections[1]);
-	    			this.cvDao.persist(cvTerm);
-	        	}
-	        }
-	        in.close();
-	        
-	    } catch (IOException e) {
-	    }
-	    
-	    try {
-	        BufferedReader in = new BufferedReader(new FileReader("/nfs/pathdb/prod/data/input/linksManager/RILEY.dat"));
-	        String str;
-	        String parent = null;
-	        CvTerm parentId = null;
-	        String child = null;
-	        CvTerm childId = null;
-	        Cv CV_RELATION = cvDao.getCvByName("relationship").get(0);
-	        CvTerm REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
-	        while ((str = in.readLine()) != null) {
-	        	String sections[] = str.split("\t");
-	        	CvTerm cvTerm = null;
-	        	cvTerm = this.cvDao.getCvTermByNameAndCvName(sections[2], "RILEY");
-	        	if(cvTerm == null){
-		        	cvTerm = new CvTerm();
-	        		Db db = generalDao.getDbByName("RILEY");
-					DbXRef dbXRef = new DbXRef();
-					dbXRef.setDb(db);
-					String accession = sections[1];
-					dbXRef.setAccession(accession);
-					dbXRef.setVersion("1");
-	    			generalDao.persist(dbXRef);
-	    			Cv cv = null;
-	    			cv = this.cvDao.getCvByName("RILEY").get(0);
-					cvTerm.setCv(cv);
-	    			cvTerm.setDbXRef(dbXRef);
-	    			cvTerm.setName(sections[2]);
-	    			cvTerm.setDefinition(sections[2]);
-	    			this.cvDao.persist(cvTerm);
-	
-		        	if(!sections[1].startsWith("0.0")) {
-		        		String temp[] = sections[1].split("\\.");
-		        		if(parent != null){
-			        		if(parent.equals(temp[0])){
-			        			if (child.equals(temp[1])){
-			        				CvTermRelationship ctr = new CvTermRelationship(cvTerm,childId,REL_PART_OF);
-			        				this.cvDao.persist(ctr);
-			        			}else {
-			        				child = temp[1];
-			        				childId = cvTerm;
-			        				CvTermRelationship ctr = new CvTermRelationship(cvTerm,parentId,REL_PART_OF);
-			        				this.cvDao.persist(ctr);
-			        			}
-			        		} else {
-			        			parent = temp[0];
-			        			child = temp[1];
-			        			parentId = cvTerm;
-			        		}
-		        		} else {
-		        			parent = temp[0];
-		        			child = temp[1];
-		        			parentId = cvTerm;
-		        		}
-		        	}
-	        	}
-	        }
-	        in.close();
-	    } catch (IOException e) {
-	    	
-	    }
-	 }
+//	private void loadCvTerms() {
+//        /* Load the cvterms from the file. 
+//         * 
+//         */
+//        
+//        try {
+//	        BufferedReader in = new BufferedReader(new FileReader("/nfs/team81/cp2/Scripts/cvterms"));
+//	        String str;
+//	        while (((str = in.readLine()) != null)) {
+//	        	String sections[] = str.split("\t");
+//	        	CvTerm cvTerm = null;
+//	        	cvTerm = this.cvDao.getCvTermByNameAndCvName(sections[1], "CC_%");
+//	        	if (cvTerm == null) {
+//		        	cvTerm = new CvTerm();
+//		        	Db db = generalDao.getDbByName("CCGEN");
+//		        	String accession = "CCGEN_" + sections[1];
+//		        	DbXRef dbXRef = null;
+//		        	dbXRef = generalDao.getDbXRefByDbAndAcc(db,accession);
+//		        	if (dbXRef == null) { 
+//		        		dbXRef = new DbXRef();
+//		        		dbXRef.setDb(db);
+//		        		dbXRef.setAccession(accession);
+//		        		dbXRef.setVersion("1");
+//		        		generalDao.persist(dbXRef);
+//		        	}
+//	    			Cv cv = null;
+//	    			String name = "CC_" + sections[0];
+//	    			cv = this.cvDao.getCvByName(name).get(0);
+//	    			if (cv == null) {
+//	    				cv = new Cv();
+//	    				cv.setName(name);
+//	    				this.cvDao.persist(cv);
+//	    			} else {
+//	    				cvTerm.setCv(cv);
+//	    			}
+//	    			cvTerm.setDbXRef(dbXRef);
+//	    			cvTerm.setName(sections[1]);
+//	    			cvTerm.setDefinition(sections[1]);
+//	    			this.cvDao.persist(cvTerm);
+//	        	}
+//	        }
+//	        in.close();
+//	        
+//	    } catch (IOException e) {
+//	    }
+//	    
+//	    try {
+//	        BufferedReader in = new BufferedReader(new FileReader("/nfs/pathdb/prod/data/input/linksManager/RILEY.dat"));
+//	        String str;
+//	        String parent = null;
+//	        CvTerm parentId = null;
+//	        String child = null;
+//	        CvTerm childId = null;
+//	        Cv CV_RELATION = cvDao.getCvByName("relationship").get(0);
+//	        CvTerm REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
+//	        while ((str = in.readLine()) != null) {
+//	        	String sections[] = str.split("\t");
+//	        	CvTerm cvTerm = null;
+//	        	cvTerm = this.cvDao.getCvTermByNameAndCvName(sections[2], "RILEY");
+//	        	if(cvTerm == null){
+//		        	cvTerm = new CvTerm();
+//	        		Db db = generalDao.getDbByName("RILEY");
+//					DbXRef dbXRef = new DbXRef();
+//					dbXRef.setDb(db);
+//					String accession = sections[1];
+//					dbXRef.setAccession(accession);
+//					dbXRef.setVersion("1");
+//	    			generalDao.persist(dbXRef);
+//	    			Cv cv = null;
+//	    			cv = this.cvDao.getCvByName("RILEY").get(0);
+//					cvTerm.setCv(cv);
+//	    			cvTerm.setDbXRef(dbXRef);
+//	    			cvTerm.setName(sections[2]);
+//	    			cvTerm.setDefinition(sections[2]);
+//	    			this.cvDao.persist(cvTerm);
+//	
+//		        	if(!sections[1].startsWith("0.0")) {
+//		        		String temp[] = sections[1].split("\\.");
+//		        		if(parent != null){
+//			        		if(parent.equals(temp[0])){
+//			        			if (child.equals(temp[1])){
+//			        				CvTermRelationship ctr = new CvTermRelationship(cvTerm,childId,REL_PART_OF);
+//			        				this.cvDao.persist(ctr);
+//			        			}else {
+//			        				child = temp[1];
+//			        				childId = cvTerm;
+//			        				CvTermRelationship ctr = new CvTermRelationship(cvTerm,parentId,REL_PART_OF);
+//			        				this.cvDao.persist(ctr);
+//			        			}
+//			        		} else {
+//			        			parent = temp[0];
+//			        			child = temp[1];
+//			        			parentId = cvTerm;
+//			        		}
+//		        		} else {
+//		        			parent = temp[0];
+//		        			child = temp[1];
+//		        			parentId = cvTerm;
+//		        		}
+//		        	}
+//	        	}
+//	        }
+//	        in.close();
+//	    } catch (IOException e) {
+//	    	
+//	    }
+//	 }
 
 }
