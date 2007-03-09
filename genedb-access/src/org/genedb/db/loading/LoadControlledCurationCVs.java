@@ -28,6 +28,8 @@ import org.gmod.schema.cv.CvTermRelationship;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -52,32 +54,14 @@ import java.util.Properties;
  */
 public class LoadControlledCurationCVs implements ApplicationContextAware {
 
-    private static String usage="NewRunner commonname [config file]";
-//
-//    protected static final Log logger = LogFactory.getLog(NewRunner.class);
-//
-//    private FeatureHandler featureHandler;
-//
-//    private RunnerConfig runnerConfig;
-//
-//    private RunnerConfigParser runnerConfigParser;
-//
-//    private Set<String> noInstance = new HashSet<String>();
-//
-//    private FeatureUtils featureUtils;
-//
-//    private Organism organism;
-//
+    private static String usage="LoadControlledCuration";
+    
+    protected final Log logger = LogFactory.getLog(this.getClass());
+    
     private ApplicationContext applicationContext;
-//
-//    private SequenceDao sequenceDao;
-//
-//    private OrganismDao organismDao;
-//
+
     private CvDao cvDao;
-//    
-//    private PubDao pubDao;
-//
+
     private GeneralDao generalDao;
 
 
@@ -115,53 +99,22 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
      */
     public static void main (String[] args) throws IOException {
 
-        String organismCommonName = null;
-        String loginName = null;
-        String configFilePath = null;
-
-        switch (args.length) {
-            case 0:
-                System.err.println("No organism common name specified\n"+usage);
-                System.exit(0);
-                break; // To prevent fall-through warning
-            case 1:
-                organismCommonName = args[0];
-                loginName = organismCommonName;
-                break;
-            case 2:
-                organismCommonName = args[0];
-                loginName = organismCommonName;
-                configFilePath = args[1];
-                break;
-            case 3:
-                organismCommonName = args[0];
-                configFilePath = args[1];
-                loginName = args[2];
-                break;
-            default:
-                System.err.println("Too many arguments\n"+usage);
-            System.exit(0);
+        if (args.length != 0) {
+            System.err.println("Unexpected Argument\n"+usage);
+            System.exit(1);
         }
 
         // Override properties in Spring config file (using a
         // BeanFactoryPostProcessor) based on command-line args
         Properties overrideProps = new Properties();
-        overrideProps.setProperty("dataSource.username", loginName);
-        overrideProps.setProperty("runner.organismCommonName", organismCommonName);
-        overrideProps.setProperty("runnerConfigParser.organismCommonName", organismCommonName);
-
-        if (configFilePath != null) {
-            overrideProps.setProperty("runnerConfigParser.configFilePath", configFilePath);
-        }
-
+        overrideProps.setProperty("dataSource.username", "chado");
 
         PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
-
 
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"NewRunner.xml"});
 
-        LoadControlledCurationCVs lccc = (LoadControlledCurationCVs) ctx.getBean("runner", NewRunner.class);
+        LoadControlledCurationCVs lccc = (LoadControlledCurationCVs) ctx.getBean("loadControlledCuration", NewRunner.class);
         lccc.loadCvTerms();
         lccc.loadRileyDb();
 
