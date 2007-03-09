@@ -147,19 +147,18 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
                 String accession = "CCGEN_" + sections[1];
                 DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db,accession);
                 if (dbXRef == null) { 
-                    dbXRef = new DbXRef();
-                    dbXRef.setDb(db);
-                    dbXRef.setAccession(accession);
-                    dbXRef.setVersion("1");
+                    dbXRef = new DbXRef(db, accession);
                     generalDao.persist(dbXRef);
                 }
                 String name = "CC_" + sections[0];
                 Cv cv = this.cvDao.getCvByName(name).get(0);
                 if (cv == null) {
-                    cv = new Cv();
+                    // TODO Do we want to create cvs dynamically? Or bail
+                    //cv = new Cv();
                     //cv = new Cv(name);
                     //cv.setName(name);
-                    this.cvDao.persist(cv);
+                    //this.cvDao.persist(cv);
+                    throw new RuntimeException("Can't find required cv of name'"+name+"'");
                 }
                 cvTerm = new CvTerm(cv, dbXRef, sections[1], sections[1]);
                 this.cvDao.persist(cvTerm);
