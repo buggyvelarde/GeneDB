@@ -19,8 +19,6 @@
 
 package org.genedb.db.helpers;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import org.genedb.db.dao.OrganismDao;
 import org.gmod.schema.organism.Organism;
