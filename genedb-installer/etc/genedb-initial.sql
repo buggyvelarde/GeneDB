@@ -67,6 +67,12 @@ insert into cv (name, definition) values (
 		'GeneDB-specific cv for controlled curation terms - protein family'
 );
 
+
+insert into cv (name, definition) values (
+		'CC_name_derivation',
+		'GeneDB-specific cv for controlled curation terms - name derivation'
+);
+
 -- Do we need a CV for products, or just a db?
 insert into cv (name, definition) values (
 		'genedb_products',
