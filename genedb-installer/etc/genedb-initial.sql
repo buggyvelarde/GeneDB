@@ -61,6 +61,11 @@ insert into cv (name, definition) values (
 );
 
 insert into cv (name, definition) values (
+		'RILEY',
+		'CV for storing Monica RILEY classifications'
+);
+
+insert into cv (name, definition) values (
 		'CC_genedb_controlledcuration',
 		'GeneDB-specific cv for controlled curation terms'
 );
