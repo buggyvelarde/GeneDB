@@ -13,7 +13,7 @@ public interface History {
 	 * 
 	 * @return a set of all the datatypes contained in the history
 	 */
-	public Set getTypes();
+	public Set<String> getTypes();
 
 	
 	/**
@@ -22,7 +22,7 @@ public interface History {
 	 * @param type The MIME-type type of the dataset
 	 * @return a list of Results that contain a particular type
 	 */
-	public List getResults(String type);
+	public List<Result> getResults(String type);
 
 	
 	/**
@@ -44,7 +44,7 @@ public interface History {
 	 * 
 	 * @return whether there are any entries in the history
 	 */
-	public boolean isEmpty();
+	public boolean isFilled();
 
 	
 	/**

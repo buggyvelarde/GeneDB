@@ -17,14 +17,14 @@ public class SimpleHistory implements History {
 	/* (non-Javadoc)
 	 * @see org.genedb.query.History2#getTypes()
 	 */
-	public Set getTypes() {
+	public Set<String> getTypes() {
 		return entries.keySet();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.genedb.query.History2#getResultDataSets(java.lang.String)
 	 */
-	public List getResults(String type) {
+	public List<Result> getResults(String type) {
 		return entries.get(type);
 	}
 
@@ -45,8 +45,8 @@ public class SimpleHistory implements History {
 	/* (non-Javadoc)
 	 * @see org.genedb.query.History2#isEmpty()
 	 */
-	public boolean isEmpty() {
-		return entries.isEmpty();
+	public boolean isFilled() {
+		return !entries.isEmpty();
 	}
 
 	/* (non-Javadoc)
