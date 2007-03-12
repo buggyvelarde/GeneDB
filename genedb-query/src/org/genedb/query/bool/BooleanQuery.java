@@ -46,24 +46,29 @@ public class BooleanQuery extends BooleanQueryNode {
 		this.query2 = query2;
 	}
 
-	public String getSimpleDescription() {
+	@Override
+    public String getSimpleDescription() {
 		// TODO Auto-generated method stub
 		return "( " + query1.getSimpleDescription() + "  " + op + "  " + query2.getSimpleDescription() + " )";
 	}
 
-	public int getIndex() {
+	@Override
+    public int getIndex() {
 		return index;
 	}
 
-	public void setIndex(int index) {
+	@Override
+    public void setIndex(int index) {
 		this.index = index;
 	}
 
-	public boolean isComplete() {
+	@Override
+    public boolean isComplete() {
 		return getFirstQuery().isComplete() && getSecondQuery().isComplete();
 	}
 
-	public String getName() {
+	@Override
+    public String getName() {
 	    // TODO Auto-generated method stub
 	    return null;
 	}
@@ -83,7 +88,8 @@ public class BooleanQuery extends BooleanQueryNode {
 	    return false;
 	}
 
-	public Result process() {
+	@Override
+    public Result process() {
 	    // TODO Auto-generated method stub
 	    return null;
 	}
