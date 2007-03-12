@@ -78,6 +78,13 @@ insert into cv (name, definition) values (
 		'CC_species_dist',
 		'GeneDB-specific cv for controlled curation terms - species_dist'
 );
+
+
+insert into cv (name, definition) values (
+		'CC_pt_mod',
+		'GeneDB-specific cv for controlled curation terms - post translation modification'
+);
+
 -- Do we need a CV for products, or just a db?
 insert into cv (name, definition) values (
 		'genedb_products',
