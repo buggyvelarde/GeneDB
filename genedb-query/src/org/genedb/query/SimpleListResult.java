@@ -125,7 +125,7 @@ public class SimpleListResult implements Result {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer ret = new StringBuffer("SimpleListResult name='");
+		StringBuilder ret = new StringBuilder("SimpleListResult name='");
 		ret.append(name);
 		ret.append("' size=");
 		ret.append(size());
