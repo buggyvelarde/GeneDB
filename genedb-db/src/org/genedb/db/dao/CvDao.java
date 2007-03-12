@@ -5,6 +5,7 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.utils.CountedName;
 
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -150,6 +151,7 @@ public class CvDao extends BaseDao implements CvDaoI {
             "where f.organism.commonName in (:orgs) and f=fct.feature and cvt=fct.cvTerm and cvt.cv.name=:cvName group by cvt.name",
             new String[]{"cvName", "orgs"}, new Object[]{cvName, orgs});
         }
+
 
         // TODO Use limit
         public List<String> getPossibleMatches(String search, Cv cv, int limit) {
