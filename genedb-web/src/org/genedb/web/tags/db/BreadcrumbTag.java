@@ -55,6 +55,7 @@ public class BreadcrumbTag extends SimpleTagSupport {
                 	buf.append(node.getShortName());
                 	buf.append("\">");
                 }
+                // TODO Don't hyperlink last org if page is homepage
                 buf.append(node.getShortName());
                 if (node.isWebLinkable()) {
                 	buf.append("</a>");
