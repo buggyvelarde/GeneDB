@@ -28,6 +28,10 @@ insert into db (name, description) values (
 		'Db where we store db entries corresponding to products');
 		
 insert into db (name, description) values (
+		'RILEY',
+		'Db where we store db entries corresponding to RILEY terms');
+		
+insert into db (name, description) values (
 		'CCGEN',
 		'Db where we store db entries corresponding to controlled curation CV terms'
 );
