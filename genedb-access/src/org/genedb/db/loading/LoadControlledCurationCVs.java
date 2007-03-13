@@ -31,13 +31,17 @@ import org.gmod.schema.general.DbXRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.hibernate3.HibernateAccessor;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 
@@ -63,18 +67,18 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
     private CvDao cvDao;
 
     private GeneralDao generalDao;
+    
+    private HibernateTransactionManager hibernateTransactionManager;
+
+    @Required
+    public void setHibernateTransactionManager(
+			HibernateTransactionManager hibernateTransactionManager) {
+		this.hibernateTransactionManager = hibernateTransactionManager;
+	}
 
 
-    /**
-     * This is called once the ApplicationContext has set up all of this
-     * beans properties. It fetches/creates beans which can't be injected
-     * as they depend on command-line args
-     */
-    public void afterPropertiesSet() {
 
-    }
-
-    private CharSequence blankString(char c, int size) {
+	private CharSequence blankString(char c, int size) {
         StringBuilder buf = new StringBuilder(size);
         for (int i =0; i < size; i++) {
             buf.append(c);
@@ -114,16 +118,18 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"NewRunner.xml"});
 
-        LoadControlledCurationCVs lccc = (LoadControlledCurationCVs) ctx.getBean("loadControlledCuration", NewRunner.class);
+        LoadControlledCurationCVs lccc = (LoadControlledCurationCVs) ctx.getBean("loadControlledCuration", LoadControlledCurationCVs.class);
         lccc.loadCvTerms();
         lccc.loadRileyDb();
 
     }
 
+    @Required
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
     }
 
+    @Required
     public void setGeneralDao(GeneralDao generalDao) {
         this.generalDao = generalDao;
     }
@@ -153,14 +159,12 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
                         generalDao.persist(dbXRef);
                     }
                     String name = "CC_" + rawCvName;
-                    Cv cv = this.cvDao.getCvByName(name).get(0);
-                    if (cv == null) {
-                        // TODO Do we want to create cvs dynamically? Or bail
-                        //cv = new Cv();
-                        //cv = new Cv(name);
-                        //cv.setName(name);
-                        //this.cvDao.persist(cv);
-                        throw new RuntimeException("Can't find required cv of name'"+name+"'");
+                    List<Cv> cvs = this.cvDao.getCvByName(name);
+                    Cv cv = null;
+                    if (cvs.size() == 1) {
+                    	cv = cvs.get(0);
+                    } else {
+                        throw new RuntimeException("Can't find required cv of name '"+name+"'");
                     }
                     cvTerm = new CvTerm(cv, dbXRef, sections[1], sections[1]);
                     this.cvDao.persist(cvTerm);
@@ -170,15 +174,17 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
         in.close();
     }
 
+    
     private void loadRileyDb() throws IOException {
 
+    	hibernateTransactionManager.getSessionFactory().openSession();
         BufferedReader in = new BufferedReader(new FileReader("/nfs/pathdb/prod/data/input/linksManager/RILEY.dat"));
         String parent = null;
         CvTerm parentId = null;
         String child = null;
         CvTerm childId = null;
         Cv CV_RELATION = cvDao.getCvByName("relationship").get(0);
-        CvTerm REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
+        CvTerm REL_IS_A = cvDao.getCvTermByNameInCv("is_a", CV_RELATION).get(0);
         String str;
         while ((str = in.readLine()) != null) {
             String sections[] = str.split("\t");
@@ -186,6 +192,9 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
             if(cvTerm == null){
                 cvTerm = new CvTerm();
                 Db db = generalDao.getDbByName("RILEY");
+                if (db == null) {
+                	throw new RuntimeException("The database RILEY doesn't exist in the db");
+                }
                 DbXRef dbXRef = new DbXRef(db, sections[1]);
                 generalDao.persist(dbXRef);
                 Cv cv = this.cvDao.getCvByName("RILEY").get(0);
@@ -197,12 +206,12 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
                     if (parent != null) {
                         if (parent.equals(temp[0])){
                             if (child.equals(temp[1])) {
-                                CvTermRelationship ctr = new CvTermRelationship(cvTerm,childId,REL_PART_OF);
+                                CvTermRelationship ctr = new CvTermRelationship(cvTerm,childId,REL_IS_A);
                                 this.cvDao.persist(ctr);
                             } else {
                                 child = temp[1];
                                 childId = cvTerm;
-                                CvTermRelationship ctr = new CvTermRelationship(cvTerm,parentId,REL_PART_OF);
+                                CvTermRelationship ctr = new CvTermRelationship(cvTerm,parentId,REL_IS_A);
                                 this.cvDao.persist(ctr);
                             }
                         } else {
@@ -219,6 +228,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
             }
         }
         in.close();
+        hibernateTransactionManager.getSessionFactory().close();
     }
 
 
