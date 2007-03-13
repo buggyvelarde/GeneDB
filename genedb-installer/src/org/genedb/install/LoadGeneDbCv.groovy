@@ -263,11 +263,11 @@ class LoadGeneDbCv {
         <term name="feature_cvterm_props" description="Keys for storing information specifically for FeatureCvTermProps">
             <term name="qualifier" description="eg NOT, colocalizes_with" />
             <term name="evidence" description="Typically an evidence code" />
-            <term name="date" description="Date the annotation was made/last reviewed" /> 
+			<term name="residue" description="The residues affected by this" />
+			<term name="attribution" description="Who supplied this data" />
         </term>
         
         <term name="feature_props" description="Keys for storing information, for any feature in general">
-            <term name="note" description="Free text note field for curation, may be external eg another sequencing center" />
             <term name="curation" description="Free text note field for local curation" />
             <term name="private" description="Free text note field for comments not to be made publicly visible" />      
         </term>
@@ -280,7 +280,9 @@ class LoadGeneDbCv {
                 <term name="curatorEmail" description="Email of organism curator" />
                 <term name="mitochondrialTranslationTable" description="Translation table used for mitochondrial DNA" />
                 <term name="translationTable" description="Translation table" />
-				<term name="homePage" description="Style of homepage wanted, if any" />                                                                                         
+				<term name="app_www_homePage" description="Style of homepage wanted, if any" />  
+				<term name="htmlShortName" description="The short name in HTML format" />
+				<term name="htmlFullName" description="The full name in HTML format" />                                                                                      
         </term>
     </cv>
     
