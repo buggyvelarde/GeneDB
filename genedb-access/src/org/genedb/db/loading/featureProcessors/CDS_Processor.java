@@ -78,7 +78,6 @@ import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.pub.PubDbXRef;
-import org.gmod.schema.pub.PubProp;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
@@ -106,7 +105,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     private GoParser goParser;
 
     private ControlledCurationParser ccParser;
-    
+
     private SimilarityParser siParser;
 
     private int count;
@@ -157,7 +156,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             boolean altSplicing = false;
             String sharedId = MiningUtils.getProperty("shared_id", an, null);
             if (sharedId != null) {
-            	// TODO Tidy
+                // TODO Tidy
                 gene = sequenceDao.getFeaturesByUniqueName(sharedId).get(0);
                 altSplicing = true;
             }
@@ -288,10 +287,10 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             createGoEntries(polypeptide, an);
 
             createControlledCuration(polypeptide,an,CV_CONTROLLEDCURATION);
-            
+
             //TODO enable this and code for it in createSimilarity method
             createSimilarity(polypeptide,mRNA,an);
-            
+
             processClass(polypeptide,an);
 
             //String nucleic = parent.getResidues().substring(loc.getMin(),
@@ -318,483 +317,392 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             throw exp;
         }
     }
-    
-    
+
+
     /**
      * @param polypeptide
      * @param an
      */
     private void createSimilarity(Feature polypeptide, Feature transcript,Annotation an) {
-    	
-    	String cv = "SI_genedb_similarity";
-    	List<SimilarityInstance> similarities = this.siParser.getAllSimilarityInstance(an);
-		int count = 0;
-		if (similarities.size() > 0)  {
-	    	for (SimilarityInstance si : similarities) {
-	    		
-	    		count++;
-	    		
-	    		Feature queryFeature = null;
-	    		String cvTerm = null;
-	    		
-				if (si.getAlgorithm().equals("fasta")) {
-					queryFeature = polypeptide;
-					cvTerm = "protein_match";
-				} else {
-					queryFeature = transcript;
-					cvTerm = "nucleotide_match";
-				}
-				/* look for analysis and create new if one does not already exsists */
-				
-				Analysis analysis = null;
-				analysis = this.generalDao.getAnalysisByProgram(si.getAlgorithm());
-				if (analysis == null){
-					analysis = new Analysis();
-					analysis.setAlgorithm(si.getAlgorithm());
-					analysis.setProgram(si.getAlgorithm());
-					analysis.setProgramVersion("1.0");
-					analysis.setSourceName(si.getAlgorithm());
-					Date today = new Date(0);
-					analysis.setTimeExecuted(today);
-					this.generalDao.persist(analysis);
-				}
-				
-				/* create match feature 
-		         * create new dbxref for match feature if one does not already exsists 
-		         */ 
-				
-				Feature matchFeature = null;
-				String uniqueName = null;
-				
-				uniqueName = "MATCH_" + queryFeature.getUniqueName() + "_" + count;
-				
-				matchFeature = this.featureUtils.createFeature(cvTerm, uniqueName, organism);
-				this.sequenceDao.persist(matchFeature);
-				
-				CvTerm uId = this.cvDao.getCvTermByNameAndCvName("ungapped id",cv );
-				FeatureProp ungappedId = new FeatureProp(matchFeature,uId,si.getUngappedId(),0);
-				this.sequenceDao.persist(ungappedId);
-				
-				CvTerm olap = this.cvDao.getCvTermByNameAndCvName("overlap", cv);
-				FeatureProp overlap = new FeatureProp(matchFeature,olap,si.getOverlap(),0);
-				this.sequenceDao.persist(overlap);
-				
-				/* create analysisfeature 
-				 * 
-				 */
-				Double score = null;
-				if (si.getScore() != null) {
-					score = Double.parseDouble(si.getScore());
-				} 
-				
-				Double evalue = null;
-				if (si.getEvalue() != null) {
-					evalue = Double.parseDouble(si.getEvalue());
-				} 
-				
-				Double id = null;
-				if (si.getId() != null) {
-					id = Double.parseDouble(si.getId());
-				} 
-				
-				AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
-				this.generalDao.persist(analysisFeature);
-				
-				/* create subject feature if one does not already exists. If two database are 
-				 * referenced; seperate the primary and the secondary. Create feature.dbxref 
-				 * for primary and featuredbxref for secondary. Also add organism, product, gene, 
-				 * overlap and ungappedid as featureprop to this feature. Create featureloc from 
-				 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id 
-				 * of featureloc to 0. 
-				 */
-				Feature subjectFeature = null;
-				String sections[] = si.getPriDatabase().split(":");
-				String values[] = si.getSecDatabase().split(":");
-				if(sections[0].equals("SWALL") && sections[1].contains("_")) {
-					subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+values[1],"similarity_region");
-				} else if(sections[0].equals("SWALL")){
-					subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+sections[1],"similarity_region");
-				} else {
-					subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getPriDatabase(),"similarity_region");
-				}
-				if (subjectFeature == null) {
-					subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getSecDatabase(),"similarity_region");
-				}
-				
-				if (subjectFeature == null) {
-					
-					/* hmm...looks like encountered this for the first time so create
-					 * subject feature
-					 */
-					
-					DbXRef dbXRef = null;
-					
-					
-		
-					String priDatabase = sections[0];
-					String priId = sections[1];
-					
-					String secDatabase = values[0];
-					String secId = values[1];
-					
-					String accession = null;
-					uniqueName = null;
-					
-					Db db = null;
-					if (priDatabase.equals("SWALL")){
-						db = this.generalDao.getDbByName("UniProt");
-					} else {
-						db = this.generalDao.getDbByName(priDatabase);
-					}
-						
-					if (priDatabase.equals(secDatabase)) {
-						if (priId.contains("_")) {
-							accession = secId;
-						} else {
-							accession = priId;
-						}
-						if (priDatabase.equals("SWALL")) {
-							priDatabase = "UniProt";
-						}
-						uniqueName = priDatabase + ":" + accession;
-						subjectFeature = this.featureUtils.createFeature("similarity_region", uniqueName, organism);
-	
-						dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, accession);
-						if (dbXRef == null) {
-							dbXRef = new DbXRef(db,accession);
-							this.generalDao.persist(dbXRef);
-						}
-						subjectFeature.setDbXRef(dbXRef);
-						subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
-						this.sequenceDao.persist(subjectFeature);
-					}  else {
-						if (priDatabase.equals("SWALL")) {
-							priDatabase = "UniProt";
-						}
-						subjectFeature = this.featureUtils.createFeature("similarity_region", priDatabase + ":" + sections[1], organism);
-						
-						dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, priId);
-						if (dbXRef == null) {
-							dbXRef = new DbXRef(db,priId);
-							this.generalDao.persist(dbXRef);
-						}
-						subjectFeature.setDbXRef(dbXRef);
-						subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
-						this.sequenceDao.persist(subjectFeature);
-						
-						DbXRef secDbXRef = null;
-						Db secDb = this.generalDao.getDbByName(secDatabase);
-						secDbXRef = this.generalDao.getDbXRefByDbAndAcc(secDb, secId);
-						if (secDbXRef == null) {
-							secDbXRef = new DbXRef(secDb,secId);
-							this.generalDao.persist(secDbXRef);
-						}
-						FeatureDbXRef featureDbXRef = new FeatureDbXRef(secDbXRef,subjectFeature,true);
-						this.sequenceDao.persist(featureDbXRef);
-					}
-					
-					/* once the dbxrefs are set create featureprop for gene, organism and product
-					 * 
-					 */
-					CvTerm org = this.cvDao.getCvTermByNameAndCvName("organism", cv);
-					FeatureProp propOrganism = new FeatureProp(subjectFeature,org,si.getOrganism(),0);
-					this.sequenceDao.persist(propOrganism);
-					
-					CvTerm pro = this.cvDao.getCvTermByNameAndCvName("product", cv);
-					FeatureProp propProduct = new FeatureProp(subjectFeature,pro,si.getProduct(),1);
-					this.sequenceDao.persist(propProduct);
-					
-					CvTerm gene = this.cvDao.getCvTermByNameAndCvName("gene", cv);
-					FeatureProp propGene = new FeatureProp(subjectFeature,gene,si.getGene(),2);
-					this.sequenceDao.persist(propGene);
-					
-				}
-				
-				/* create featureloc and attach 'em to matchFeature
-				 * 
-				 */
-				short strand = 1;
-				String sCoords[] = si.getSubject().split("-");
-	     		FeatureLoc subjectFLoc = this.featureUtils.createLocation(subjectFeature, matchFeature,Integer.parseInt(sCoords[0]) ,Integer.parseInt(sCoords[1]), strand);
-	     		subjectFLoc.setRank(0);
-				this.sequenceDao.persist(subjectFLoc);
-				
-				String qCoords[] = si.getQuery().split("-");
-				FeatureLoc queryFLoc = this.featureUtils.createLocation(queryFeature, matchFeature,Integer.parseInt(qCoords[0]) ,Integer.parseInt(qCoords[1]), strand);
-				queryFLoc.setRank(1);
-				this.sequenceDao.persist(queryFLoc);
-				
-			}
-		}
-	}
 
-	private void processClass(Feature polypeptide, Annotation an) {
-    	List<String> classes = MiningUtils.getProperties("class", an);
-    	if (classes != null){
-	    	for (String rileyClass : classes) {
+        String cv = "SI_genedb_similarity";
+        List<SimilarityInstance> similarities = this.siParser.getAllSimilarityInstance(an);
+        int count = 0;
+        if (similarities.size() > 0)  {
+            for (SimilarityInstance si : similarities) {
+
+                count++;
+
+                Feature queryFeature = null;
+                String cvTerm = null;
+
+                if (si.getAlgorithm().equals("fasta")) {
+                    queryFeature = polypeptide;
+                    cvTerm = "protein_match";
+                } else {
+                    queryFeature = transcript;
+                    cvTerm = "nucleotide_match";
+                }
+                /* look for analysis and create new if one does not already exsists */
+
+                Analysis analysis = null;
+                analysis = this.generalDao.getAnalysisByProgram(si.getAlgorithm());
+                if (analysis == null){
+                    analysis = new Analysis();
+                    analysis.setAlgorithm(si.getAlgorithm());
+                    analysis.setProgram(si.getAlgorithm());
+                    analysis.setProgramVersion("1.0");
+                    analysis.setSourceName(si.getAlgorithm());
+                    Date epoch = new Date(0);
+                    analysis.setTimeExecuted(epoch);
+                    this.generalDao.persist(analysis);
+                }
+
+                /* create match feature 
+                 * create new dbxref for match feature if one does not already exsists 
+                 */ 
+
+                Feature matchFeature = null;
+                String uniqueName = null;
+
+                uniqueName = "MATCH_" + queryFeature.getUniqueName() + "_" + count;
+
+                matchFeature = this.featureUtils.createFeature(cvTerm, uniqueName, organism);
+                this.sequenceDao.persist(matchFeature);
+
+                CvTerm uId = this.cvDao.getCvTermByNameAndCvName("ungapped id",cv );
+                FeatureProp ungappedId = new FeatureProp(matchFeature,uId,si.getUngappedId(),0);
+                this.sequenceDao.persist(ungappedId);
+
+                CvTerm olap = this.cvDao.getCvTermByNameAndCvName("overlap", cv);
+                FeatureProp overlap = new FeatureProp(matchFeature,olap,si.getOverlap(),0);
+                this.sequenceDao.persist(overlap);
+
+                /* create analysisfeature 
+                 * 
+                 */
+                Double score = null;
+                if (si.getScore() != null) {
+                    score = Double.parseDouble(si.getScore());
+                } 
+
+                Double evalue = null;
+                if (si.getEvalue() != null) {
+                    evalue = Double.parseDouble(si.getEvalue());
+                } 
+
+                Double id = null;
+                if (si.getId() != null) {
+                    id = Double.parseDouble(si.getId());
+                } 
+
+                AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
+                this.generalDao.persist(analysisFeature);
+
+                /* create subject feature if one does not already exists. If two database are 
+                 * referenced; seperate the primary and the secondary. Create feature.dbxref 
+                 * for primary and featuredbxref for secondary. Also add organism, product, gene, 
+                 * overlap and ungappedid as featureprop to this feature. Create featureloc from 
+                 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id 
+                 * of featureloc to 0. 
+                 */
+                Feature subjectFeature = null;
+                String sections[] = si.getPriDatabase().split(":");
+                String values[] = si.getSecDatabase().split(":");
+                if(sections[0].equals("SWALL") && sections[1].contains("_")) {
+                    subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+values[1],"similarity_region");
+                } else if(sections[0].equals("SWALL")){
+                    subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+sections[1],"similarity_region");
+                } else {
+                    subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getPriDatabase(),"similarity_region");
+                }
+                if (subjectFeature == null) {
+                    subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getSecDatabase(),"similarity_region");
+                }
+
+                if (subjectFeature == null) {
+
+                    /* hmm...looks like encountered this for the first time so create
+                     * subject feature
+                     */
+
+                    DbXRef dbXRef = null;
+
+
+
+                    String priDatabase = sections[0];
+                    String priId = sections[1];
+
+                    String secDatabase = values[0];
+                    String secId = values[1];
+
+                    String accession = null;
+                    uniqueName = null;
+
+                    Db db = null;
+                    if (priDatabase.equals("SWALL")){
+                        db = this.generalDao.getDbByName("UniProt");
+                    } else {
+                        db = this.generalDao.getDbByName(priDatabase);
+                    }
+
+                    if (priDatabase.equals(secDatabase)) {
+                        if (priId.contains("_")) {
+                            accession = secId;
+                        } else {
+                            accession = priId;
+                        }
+                        if (priDatabase.equals("SWALL")) {
+                            priDatabase = "UniProt";
+                        }
+                        uniqueName = priDatabase + ":" + accession;
+                        subjectFeature = this.featureUtils.createFeature("similarity_region", uniqueName, organism);
+
+                        dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, accession);
+                        if (dbXRef == null) {
+                            dbXRef = new DbXRef(db,accession);
+                            this.generalDao.persist(dbXRef);
+                        }
+                        subjectFeature.setDbXRef(dbXRef);
+                        subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
+                        this.sequenceDao.persist(subjectFeature);
+                    }  else {
+                        if (priDatabase.equals("SWALL")) {
+                            priDatabase = "UniProt";
+                        }
+                        subjectFeature = this.featureUtils.createFeature("similarity_region", priDatabase + ":" + sections[1], organism);
+
+                        dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, priId);
+                        if (dbXRef == null) {
+                            dbXRef = new DbXRef(db,priId);
+                            this.generalDao.persist(dbXRef);
+                        }
+                        subjectFeature.setDbXRef(dbXRef);
+                        subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
+                        this.sequenceDao.persist(subjectFeature);
+
+                        DbXRef secDbXRef = null;
+                        Db secDb = this.generalDao.getDbByName(secDatabase);
+                        secDbXRef = this.generalDao.getDbXRefByDbAndAcc(secDb, secId);
+                        if (secDbXRef == null) {
+                            secDbXRef = new DbXRef(secDb,secId);
+                            this.generalDao.persist(secDbXRef);
+                        }
+                        FeatureDbXRef featureDbXRef = new FeatureDbXRef(secDbXRef,subjectFeature,true);
+                        this.sequenceDao.persist(featureDbXRef);
+                    }
+
+                    /* once the dbxrefs are set create featureprop for gene, organism and product
+                     * 
+                     */
+                    CvTerm org = this.cvDao.getCvTermByNameAndCvName("organism", cv);
+                    FeatureProp propOrganism = new FeatureProp(subjectFeature,org,si.getOrganism(),0);
+                    this.sequenceDao.persist(propOrganism);
+
+                    CvTerm pro = this.cvDao.getCvTermByNameAndCvName("product", cv);
+                    FeatureProp propProduct = new FeatureProp(subjectFeature,pro,si.getProduct(),1);
+                    this.sequenceDao.persist(propProduct);
+
+                    CvTerm gene = this.cvDao.getCvTermByNameAndCvName("gene", cv);
+                    FeatureProp propGene = new FeatureProp(subjectFeature,gene,si.getGene(),2);
+                    this.sequenceDao.persist(propGene);
+
+                }
+
+                /* create featureloc and attach 'em to matchFeature
+                 * 
+                 */
+                short strand = 1;
+                String sCoords[] = si.getSubject().split("-");
+                FeatureLoc subjectFLoc = this.featureUtils.createLocation(subjectFeature, matchFeature,Integer.parseInt(sCoords[0]) ,Integer.parseInt(sCoords[1]), strand);
+                subjectFLoc.setRank(0);
+                this.sequenceDao.persist(subjectFLoc);
+
+                String qCoords[] = si.getQuery().split("-");
+                FeatureLoc queryFLoc = this.featureUtils.createLocation(queryFeature, matchFeature,Integer.parseInt(qCoords[0]) ,Integer.parseInt(qCoords[1]), strand);
+                queryFLoc.setRank(1);
+                this.sequenceDao.persist(queryFLoc);
+
+            }
+        }
+    }
+
+    private void processClass(Feature polypeptide, Annotation an) {
+        List<String> classes = MiningUtils.getProperties("class", an);
+        if (classes != null){
+            for (String rileyClass : classes) {
                 // Remove leading zeros from RILEY numbers
-	    		String sections[] = rileyClass.split("\\.");
-				StringBuilder sb = new StringBuilder();
-				for (String string : sections) {
-					if (string.length() >= 2) {
-						if(string.charAt(0) == '0'){
-							sb.append(string.substring(1) + ".");
-						} else {
-							sb.append(string + ".");
-						}
-					} else {
-						sb.append(string + ".");
-					}
-				}
-				rileyClass = sb.toString().substring(0, sb.toString().length()-1);
-	    		Db db = this.generalDao.getDbByName("RILEY");
-	    		DbXRef dbXRef = this.generalDao.getDbXRefByDbAndAcc(db,rileyClass);
-	    		CvTerm cvTerm = this.cvDao.getCvTermByDbXRef(dbXRef);
-	    		Pub pub = DUMMY_PUB;
-	    		FeatureCvTerm fct = new FeatureCvTerm(cvTerm,polypeptide,pub,false,0);
-	    		this.sequenceDao.persist(fct);
-			}
-    	}
-	}
+                String sections[] = rileyClass.split("\\.");
+                StringBuilder sb = new StringBuilder();
+                for (String string : sections) {
+                    if (string.length() >= 2) {
+                        if(string.charAt(0) == '0'){
+                            sb.append(string.substring(1) + ".");
+                        } else {
+                            sb.append(string + ".");
+                        }
+                    } else {
+                        sb.append(string + ".");
+                    }
+                }
+                rileyClass = sb.toString().substring(0, sb.toString().length()-1);
+                Db db = this.generalDao.getDbByName("RILEY");
+                DbXRef dbXRef = this.generalDao.getDbXRefByDbAndAcc(db,rileyClass);
+                CvTerm cvTerm = this.cvDao.getCvTermByDbXRef(dbXRef);
+                Pub pub = DUMMY_PUB;
+                FeatureCvTerm fct = new FeatureCvTerm(cvTerm,polypeptide,pub,false,0);
+                this.sequenceDao.persist(fct);
+            }
+        }
+    }
 
-	private void createControlledCuration(Feature polypeptide, Annotation an, Cv controlledCuration) {
+
+    private void createControlledCuration(Feature polypeptide, Annotation an, Cv controlledCuration) {
 
         List<ControlledCurationInstance> ccs = this.ccParser.getAllControlledCurationFromAnnotation(an);
-        if (ccs == null || ccs.size() == 0) {
-                return;
+        if (ccs == null) {
+            return;
         }
+
         int rank = 0;
-        boolean breaking = false;
-        
+
         for (ControlledCurationInstance cc : ccs) {
-        		boolean other = false;
-                DbXRef dbXRef = null;
-                CvTerm cvt = this.cvDao.getCvTermByNameAndCvName(cc.getTerm(), "CC_%");
+            boolean other = false;
+            DbXRef dbXRef = null;
+            CvTerm cvt = this.cvDao.getCvTermByNameAndCvName(cc.getTerm(), "quality");
+            if (cvt == null) {
+                cvt = this.cvDao.getCvTermByNameAndCvName(cc.getTerm(), "CC_%");
 
                 if (cvt == null ) {
+                    // Got an unrecognized term
+                    if (cc.getCv() != null) {
+                        logger.error("Got an unrecognized term '"+cc.getTerm()+"' in controlled_curation but it should already exist in '"+cc.getCv()+"'");
+                        continue;
+                    }
+
                     Db db = generalDao.getDbByName("CCGEN");
                     dbXRef = new DbXRef(db, "CCGEN_" + cc.getTerm());
                     generalDao.persist(dbXRef);
-                    
-                    Cv cv = controlledCuration;
-                    if (cc.getCv() != null) {
-                        cv = this.cvDao.getCvByName("CC_" + cc.getCv()).get(0);
-                    }
-                    cvt = new CvTerm(cv, dbXRef, cc.getTerm(), cc.getTerm());
+
+                    cvt = new CvTerm(controlledCuration, dbXRef, cc.getTerm(), cc.getTerm());
                     generalDao.persist(cvt);
                 }
+            }
 
-                Pub pub = null;
-                PubProp pubProp = null;
-                List<String> list = new ArrayList<String>();
-                if (cc.getDbXRef() != null){
-                    if (cc.getDbXRef().contains("|")){
-                        StringTokenizer st = new StringTokenizer(cc.getDbXRef(),"|");
-                        while (st.hasMoreTokens()){
-                            list.add(st.nextToken());
+
+            Pub pub = null;
+            String[] list = null;
+            // Handle dbxrefs
+            if (cc.getDbXRef() != null) {
+                list = cc.getDbXRef().split("\\|");
+                for (String dbXRef2 : list) {
+                    String sections[] = dbXRef2.split(":");
+                    if (looksLikePub(sections[0])) {
+                        //findOrCreatePubFromPMID(sections[0]); // FIXME - could this be a shortcut for below
+                        DbXRef dbxref = null;
+                        Db db = this.generalDao.getDbByName("MEDLINE");
+                        dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
+                        if (dbxref == null) {
+                            dbxref = new DbXRef(db, sections[1]);
+                            generalDao.persist(dbxref);
+                        }
+                        pub = this.pubDao.getPubByUniqueName(dbXRef2);
+                        if (pub == null) {
+                            CvTerm cvterm = this.cvDao.getCvTermByNameAndCvName("Not Fetched", "genedb_literature");
+                            //logger.warn("cvterm='"+cvterm+"'");
+                            pub = new Pub(dbXRef2, cvterm);
+                            this.pubDao.persist(pub);
+                            //pubProp = new PubProp(cvt,pub,DbXRef,0);
+                            //this.pubDao.persist(pubProp);
+                            PubDbXRef pubDb = new PubDbXRef(pub, dbxref, true);
+                            this.pubDao.persist(pubDb);
                         }
                     } else {
-                        list.add(cc.getDbXRef());
+                        pub = DUMMY_PUB;
+                        other = true;
                     }
-                    for (String DbXRef : list) {
-                        String sections[] = DbXRef.split(":");
-                        if("PMID".equals(sections[0])) {
+                }
+            } else {
+                pub = DUMMY_PUB; // FIXME - probably not right!!
+            }
+
+
+            boolean not = false; // TODO - Should get from GO object
+            List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvt, not);
+            FeatureCvTerm fct;// = new FeatureCvTerm(cvt, polypeptide, pub, not);
+            //sequenceDao.persist(fct);
+
+            if (fcts == null || fcts.size()==0) {
+                fct = new FeatureCvTerm(cvt, polypeptide, pub, not,rank);
+                sequenceDao.persist(fct);
+                logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
+            } else {
+                if(fcts.size() > 1){
+                    fct = fcts.get(fcts.size() - 1);
+                } else {
+                    fct = fcts.get(0);
+                }
+                int r = fct.getRank();
+                r++;
+                fct = new FeatureCvTerm(cvt,polypeptide, pub, not, r);
+                sequenceDao.persist(fct);
+                logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
+            }
+
+            //  FIXME Pass in unix date
+            thingy("unixdate", cc.getDate(), controlledCuration, fct, null);
+            thingy("attribution", cc.getAttribution(), controlledCuration, fct, null);
+            thingy("evidence", cc.getEvidence(), controlledCuration, fct, null);
+            thingy("residue", cc.getResidue(), controlledCuration, fct, null);
+            thingy("qualifier", cc.getQualifier(), controlledCuration, fct, "\\|");
+
+
+            if (other) {
+                other = false;
+                for (String dbXRef2 : list) {
+                    String sections[] = dbXRef2.split(":");
+                    if (sections.length != 2) {
+                        logger.error("Unable to parse a dbxref from '"+dbXRef2+"'");
+                    } else {
+                        if(!looksLikePub(sections[0])) {
                             DbXRef dbxref = null;
-                            Db db = this.generalDao.getDbByName("MEDLINE");
+                            Db db = this.generalDao.getDbByName(sections[0].toUpperCase());
                             dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
                             if (dbxref == null) {
                                 dbxref = new DbXRef(db, sections[1]);
-                                generalDao.persist(dbxref);
-                            }
-                            pub = this.pubDao.getPubByUniqueName(DbXRef);
-                            if (pub == null) {
-                                CvTerm cvterm = this.cvDao.getCvTermByNameAndCvName("Not Fetched", "genedb_literature");
-                                //logger.warn("cvterm='"+cvterm+"'");
-                                pub = new Pub(DbXRef, cvterm);
-                                this.pubDao.persist(pub);
-                                //pubProp = new PubProp(cvt,pub,DbXRef,0);
-                                //this.pubDao.persist(pubProp);
-                                PubDbXRef pubDb = new PubDbXRef(pub, dbxref, true);
-                                this.pubDao.persist(pubDb);
-                            }
-                        } else {
-                            pub = DUMMY_PUB;
-                            other = true;
-                        }
-                    }
-                } else {
-                    pub = DUMMY_PUB; // FIXME - probably not right!!
-                }
-
-                boolean not = false; // TODO - Should get from GO object
-                List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvt, not);
-                FeatureCvTerm fct;// = new FeatureCvTerm(cvt, polypeptide, pub, not);
-                //sequenceDao.persist(fct);
-
-                if (fcts == null || fcts.size()==0) {
-                    fct = new FeatureCvTerm(cvt, polypeptide, pub, not,rank);
-                    sequenceDao.persist(fct);
-                    logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
-                } else {
-                    if(fcts.size() > 1){
-                    	fct = fcts.get(fcts.size() - 1);
-                    } else {
-                    	fct = fcts.get(0);
-                    }
-                    int r = fct.getRank();
-                    r++;
-                    fct = new FeatureCvTerm(cvt,polypeptide,pub,not,r);
-                    sequenceDao.persist(fct);
-                    logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
-                }
-
-                if (cc.getDate() != null) {
-                    List<CvTerm> cvtL = this.cvDao.getCvTermByNameInCv("date", controlledCuration);
-                    CvTerm cvTerm = null;
-                    if (cvtL == null || cvtL.size() == 0) {
-                        Db d = generalDao.getDbByName("GeneDB_Spombe");
-                        DbXRef dbxref = new DbXRef();
-                        dbxref.setDb(d);
-                        dbxref.setAccession("date");
-                        dbxref.setVersion("1");
-                        sequenceDao.persist(dbxref);
-                        cvTerm = new CvTerm();
-                        cvTerm.setCv(controlledCuration);
-                        cvTerm.setDbXRef(dbxref);
-                        cvTerm.setName("date");
-                        cvTerm.setDefinition("date value from controlled_curation qualifier");
-                        sequenceDao.persist(cvTerm);
-                    } else {
-                        cvTerm = cvtL.get(0);
-                    }
-                    FeatureCvTermProp fcvp = new FeatureCvTermProp(cvTerm,fct,cc.getDate(),0);
-                    sequenceDao.persist(fcvp);
-                }
-                if (cc.getAttribution() != null) {
-                    List<CvTerm> cvtL = this.cvDao.getCvTermByNameInCv("attribution", controlledCuration);
-                    CvTerm cvTerm = null;
-                    if (cvtL == null || cvtL.size() == 0) {
-                        Db d = generalDao.getDbByName("GeneDB_Spombe");
-                        DbXRef dbxref = new DbXRef();
-                        dbxref.setDb(d);
-                        dbxref.setAccession("attribution");
-                        dbxref.setVersion("1");
-                        sequenceDao.persist(dbxref);
-                        cvTerm = new CvTerm();
-                        cvTerm.setCv(controlledCuration);
-                        cvTerm.setDbXRef(dbxref);
-                        cvTerm.setName("attribution");
-                        cvTerm.setDefinition("attribution value from controlled_curation qualifier");
-                        sequenceDao.persist(cvTerm);
-                    } else {
-                        cvTerm = cvtL.get(0);
-                    }
-                    FeatureCvTermProp fcvp = new FeatureCvTermProp(cvTerm,fct,cc.getAttribution(),0);
-                    sequenceDao.persist(fcvp);
-                }
-                if (cc.getEvidence() != null) {
-                    List<CvTerm> cvtL = this.cvDao.getCvTermByNameInCv("evidence", controlledCuration);
-                    CvTerm cvTerm = null;
-                    if (cvtL == null || cvtL.size() == 0) {
-                        Db d = generalDao.getDbByName("GeneDB_Spombe");
-                        DbXRef dbxref = new DbXRef();
-                        dbxref.setDb(d);
-                        dbxref.setAccession("evidence");
-                        dbxref.setVersion("1");
-                        sequenceDao.persist(dbxref);
-                        cvTerm = new CvTerm();
-                        cvTerm.setCv(controlledCuration);
-                        cvTerm.setDbXRef(dbxref);
-                        cvTerm.setName("evidence");
-                        cvTerm.setDefinition("evidence value from controlled_curation qualifier");
-                        sequenceDao.persist(cvTerm);
-                    } else {
-                        cvTerm = cvtL.get(0);
-                    }
-                    FeatureCvTermProp fcvp = new FeatureCvTermProp(cvTerm,fct,cc.getEvidence(),0);
-                    sequenceDao.persist(fcvp);
-                }
-                if (cc.getQualifier() != null) {
-                    List<CvTerm> cvtL = this.cvDao.getCvTermByNameInCv("qualifier", controlledCuration);
-                    CvTerm cvTerm = null;
-                    if (cvtL == null || cvtL.size() == 0) {
-                        Db d = generalDao.getDbByName("GeneDB_Spombe");
-                        DbXRef dbxref = new DbXRef();
-                        dbxref.setDb(d);
-                        dbxref.setAccession("qualifier");
-                        dbxref.setVersion("1");
-                        sequenceDao.persist(dbxref);
-                        cvTerm = new CvTerm();
-                        cvTerm.setCv(controlledCuration);
-                        cvTerm.setDbXRef(dbxref);
-                        cvTerm.setName("qualifier");
-                        cvTerm.setDefinition("qualifier value from controlled_curation qualifier");
-                        sequenceDao.persist(cvTerm);
-                    } else {
-                        cvTerm = cvtL.get(0);
-                    }
-                    if(cc.getQualifier().contains("|")){
-                        StringTokenizer st = new StringTokenizer(cc.getQualifier(),"|");
-                        int i = 0;
-                        while(st.hasMoreTokens()){
-                            FeatureCvTermProp fcvp = new FeatureCvTermProp(cvTerm,fct,st.nextToken(),i);
-                            i++;
-                            sequenceDao.persist(fcvp);
-                        }
-                    } else {
-                        FeatureCvTermProp fcvp = new FeatureCvTermProp(cvTerm,fct,cc.getQualifier(),rank);
-                        sequenceDao.persist(fcvp);
-                    }
-                }
-                if (cc.getResidue() != null) {
-                    List<CvTerm> cvtL = this.cvDao.getCvTermByNameInCv("residue", controlledCuration);
-                    CvTerm cvTerm = null;
-                    if (cvtL == null || cvtL.size() == 0) {
-                        Db d = generalDao.getDbByName("GeneDB_Spombe");
-                        DbXRef dbxref = new DbXRef();
-                        dbxref.setDb(d);
-                        dbxref.setAccession("residue");
-                        dbxref.setVersion("1");
-                        sequenceDao.persist(dbxref);
-                        cvTerm = new CvTerm();
-                        cvTerm.setCv(controlledCuration);
-                        cvTerm.setDbXRef(dbxref);
-                        cvTerm.setName("residue");
-                        cvTerm.setDefinition("residue value from controlled_curation qualifier");
-                        sequenceDao.persist(cvTerm);
-                    } else {
-                        cvTerm = cvtL.get(0);
-                    }
-                    FeatureCvTermProp fcvp = new FeatureCvTermProp(cvTerm,fct,cc.getResidue(),0);
-                    sequenceDao.persist(fcvp);
-                }
-                if (other) {
-                    other = false;
-                    for (String DbXRef : list) {
-                        String sections[] = DbXRef.split(":");
-                        if (sections.length != 2) {
-                            logger.error("Unable to parse a dbxref from '"+DbXRef+"'");
-                        } else {
-                            if(!("PMID".equals(sections[0]))){
-                                DbXRef dbxref = null;
-                                Db db = this.generalDao.getDbByName(sections[0].toUpperCase());
-                                dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
-                                if (dbxref == null) {
-                                    dbxref = new DbXRef(db, sections[1]);
-                                    this.generalDao.persist(dbxref);
-                                } else {
-                                    FeatureCvTermDbXRef fcvDb = new FeatureCvTermDbXRef(dbxref,fct);
-                                    this.sequenceDao.persist(fcvDb);
-                                }
+                                this.generalDao.persist(dbxref);
+                            } else {
+                                FeatureCvTermDbXRef fcvDb = new FeatureCvTermDbXRef(dbxref,fct);
+                                this.sequenceDao.persist(fcvDb);
                             }
                         }
                     }
                 }
-                rank++;
+            }
+            rank++;
         }
-   }
+    }
 
-        public void setGoParser(GoParser goParser) {
+    private void thingy(String key, String value, Cv controlledCuration, FeatureCvTerm fct, String split) {
+        if (value != null) {
+            List<CvTerm> cvtL = this.cvDao.getCvTermByNameInCv(key, controlledCuration);
+            if (cvtL == null || cvtL.size() == 0) {
+                throw new RuntimeException("Expected cvterm '"+key+"' not found");
+            }
+            CvTerm cvTerm = cvtL.get(0);
+
+            String[] qualifiers = {value};
+            if (split != null) {
+                qualifiers = value.split(split);
+            }
+            for (int i = 0; i < qualifiers.length; i++) {
+                FeatureCvTermProp fcvp = new FeatureCvTermProp(cvTerm, fct, qualifiers[i], i);
+                sequenceDao.persist(fcvp);
+            }
+        }
+    }
+
+    public void setGoParser(GoParser goParser) {
         this.goParser = goParser;
     }
 
@@ -822,15 +730,15 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             String ref = go.getRef();
             // Reference
             Pub refPub = pub;
-            if (ref != null && ref.startsWith("PMID:")) {
+            if (ref != null && looksLikePub(ref)) {
                 // The reference is a pubmed id - usual case
                 refPub = findOrCreatePubFromPMID(ref);
                 //FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
                 //sequenceDao.persist(fctp);
             }
-            
-            
-//            logger.warn("pub is '"+pub+"'");
+
+
+//          logger.warn("pub is '"+pub+"'");
 
             boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
             List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvTerm, not);
@@ -843,20 +751,19 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             sequenceDao.persist(fct);
 
             // Reference
-//            Pub refPub = null;
-//            if (ref != null && ref.startsWith("PMID:")) {
-//                // The reference is a pubmed id - usual case
-//                refPub = findOrCreatePubFromPMID(ref);
-//                FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-//                sequenceDao.persist(fctp);
-//            }
+//          Pub refPub = null;
+//          if (ref != null && ref.startsWith("PMID:")) {
+//          // The reference is a pubmed id - usual case
+//          refPub = findOrCreatePubFromPMID(ref);
+//          FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
+//          sequenceDao.persist(fctp);
+//          }
 
             // Evidence
             FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE , fct, go.getEvidence().getDescription(), 0);
             sequenceDao.persist(fctp);
 
             // Qualifiers
-            CvTerm qualifierTerm = null;
             int qualifierRank = 0;
             List<String> qualifiers = go.getQualifierList();
             for (String qualifier : qualifiers) {
@@ -866,28 +773,28 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             }
 
             // With/From
-           String xref = go.getWithFrom();
-           if (xref != null) {
-                   int index = xref.indexOf(':');
-                   if (index == -1 ) {
-                           logger.error("Got an apparent dbxref but can't parse");
-                   } else {
-                           List<DbXRef> dbXRefs= findOrCreateDbXRefsFromString(xref);
-                           for (DbXRef dbXRef : dbXRefs) {
-                               if (dbXRef != null) {
-                                   FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
-                                   sequenceDao.persist(fcvtdbx);
-                               }
-                           }
-                   }
-           }
+            String xref = go.getWithFrom();
+            if (xref != null) {
+                int index = xref.indexOf(':');
+                if (index == -1 ) {
+                    logger.error("Got an apparent dbxref but can't parse");
+                } else {
+                    List<DbXRef> dbXRefs= findOrCreateDbXRefsFromString(xref);
+                    for (DbXRef dbXRef : dbXRefs) {
+                        if (dbXRef != null) {
+                            FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
+                            sequenceDao.persist(fcvtdbx);
+                        }
+                    }
+                }
+            }
 
             //logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
         }
 
     }
 
-    
+
     private PeptideProperties calculatePepstats(Feature polypeptide) {
 
         String seqString = FeatureUtils.getResidues(polypeptide);
@@ -914,14 +821,14 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
         DecimalFormat df = new DecimalFormat("#.##");
         pp.setIsoelectricPoint(df.format(cal));
-        
+
         CvTerm MISC_ISOELECTRIC = cvDao.getCvTermByNameAndCvName("isoelectric_point", "genedb_misc"); 
         CvTerm MISC_MASS = cvDao.getCvTermByNameAndCvName("molecular mass", "genedb_misc"); 
         CvTerm MISC_CHARGE = cvDao.getCvTermByNameAndCvName("protein_charge", "genedb_misc"); 
-        
-        
+
+
         FeatureProp fp = new FeatureProp(polypeptide, MISC_ISOELECTRIC, df.format(cal), 0); 
-        
+
         pp.setAminoAcids(Integer.toString(seqString.length()));
         MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
         try {
@@ -931,25 +838,25 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             e.printStackTrace();
         }
         pp.setMass(df.format(cal));
-        
+
         fp = new FeatureProp(polypeptide, MISC_MASS, df.format(cal), 0);
-        
+
         cal = ProteinUtils.getCharge(seq);
         pp.setCharge(df.format(cal));
-        
-        
+
+
         fp = new FeatureProp(polypeptide, MISC_CHARGE, df.format(ProteinUtils.getCharge(seq)), 0);
-        
+
         return pp;
     }
-    
+
     private boolean looksLikePub(String xref) {
         if (xref.startsWith("PMID:")) {
             return true;
         }
         return false;
     }
-    
+
     private void findPubOrDbXRefFromString(String xrefString, List<Pub> pubs, List<DbXRef> dbXRefs) {
         boolean makePubs = (pubs != null) ? true : false;
         String[] xrefs = xrefString.split("\\|");
@@ -964,7 +871,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             }
         }
     }
-    
+
     private List<DbXRef> findOrCreateDbXRefsFromString(String xref) {
         List<DbXRef> ret = new ArrayList<DbXRef>();
         StringTokenizer st = new StringTokenizer(xref, "|");
@@ -973,13 +880,13 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
         return ret;
     }
-        
-        
+
+
     private DbXRef findOrCreateDbXRefFromString(String xref) {
         int index = xref.indexOf(':');
         if (index == -1) {
-                logger.error("Can't parse '"+xref+"' as a dbxref as no colon");
-                return null;
+            logger.error("Can't parse '"+xref+"' as a dbxref as no colon");
+            return null;
         }
         String dbName = xref.substring(0, index);
         String accession = xref.substring(index+1);
@@ -1002,26 +909,26 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         int colon = ref.indexOf(":");
         String accession = ref;
         if (colon != -1) {
-                accession = ref.substring(colon+1);
+            accession = ref.substring(colon+1);
         }
         DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(DB_PUBMED, accession);
         Pub pub;
         if (dbXRef == null) {
-                dbXRef = new DbXRef(DB_PUBMED, accession);
-                generalDao.persist(dbXRef);
-                CvTerm cvTerm = cvDao.getCvTermById(1); //TODO -Hack
-                pub = new Pub("PMID:"+accession, cvTerm);
-                generalDao.persist(pub);
-                PubDbXRef pubDbXRef = new PubDbXRef(pub, dbXRef, true);
-                generalDao.persist(pubDbXRef);
+            dbXRef = new DbXRef(DB_PUBMED, accession);
+            generalDao.persist(dbXRef);
+            CvTerm cvTerm = cvDao.getCvTermById(1); //TODO -Hack
+            pub = new Pub("PMID:"+accession, cvTerm);
+            generalDao.persist(pub);
+            PubDbXRef pubDbXRef = new PubDbXRef(pub, dbXRef, true);
+            generalDao.persist(pubDbXRef);
         } else {
-                logger.warn("DbXRef wasn't null");
-                pub = pubDao.getPubByDbXRef(dbXRef);
+            logger.warn("DbXRef wasn't null");
+            pub = pubDao.getPubByDbXRef(dbXRef);
         }
-        logger.warn("returning pub='"+pub+"'");
+        logger.warn("Returning pub='"+pub+"'");
         return pub;
     }
-    
+
     private void storeNames(Names names, CvTerm SYNONYM_RESERVED,
             CvTerm SYNONYM_SYNONYM, CvTerm SYNONYM_PRIMARY,
             CvTerm SYNONYM_SYS_ID, CvTerm SYNONYM_TMP_SYS,
@@ -1039,8 +946,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     gene, true);
         }
         if (names.getReserved() != null) {
-                this.featureUtils.createSynonyms(SYNONYM_RESERVED, names.getReserved(),
-                                gene, true);
+            this.featureUtils.createSynonyms(SYNONYM_RESERVED, names.getReserved(),
+                    gene, true);
         }
         if (names.getSynonyms() != null) {
             this.featureUtils.createSynonyms(SYNONYM_SYNONYM, names.getSynonyms(),
@@ -1060,7 +967,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         return;
     }
 
-    private void createProducts(Feature f, Annotation an,String annotationKey, Cv cv) {
+    private void createProducts(Feature f, Annotation an, String annotationKey, Cv cv) {
         List<String> products = MiningUtils.getProperties(annotationKey, an);
         boolean not = false;
         if (products != null && products.size() != 0 ){
@@ -1071,17 +978,13 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     cvTerm = new CvTerm();
                     DbXRef dbXRef = new DbXRef(this.generalDao.getDbByName("PRODUCT"), product);
                     this.generalDao.persist(dbXRef);
-                    cvTerm = new CvTerm();
-                    cvTerm.setCv(cv);
-                    cvTerm.setDbXRef(dbXRef);
-                    cvTerm.setName(product);
-                    cvTerm.setDefinition(product);
+                    cvTerm = new CvTerm(cv, dbXRef, product, product);
                     this.cvDao.persist(cvTerm);
                 } else {
                     cvTerm = cvTermList.get(0);
                 }
                 Pub pub = DUMMY_PUB;
-                FeatureCvTerm fct = new FeatureCvTerm(cvTerm,f,pub,not,0);
+                FeatureCvTerm fct = new FeatureCvTerm(cvTerm, f, pub, not, 0);
                 this.sequenceDao.persist(fct);
             }
         }
@@ -1160,16 +1063,12 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         return ProcessingPhase.FIRST;
     }
 
-        public ControlledCurationParser getCcParser() {
-                return ccParser;
-        }
+    public void setCcParser(ControlledCurationParser ccParser) {
+        this.ccParser = ccParser;
+    }
 
-        public void setCcParser(ControlledCurationParser ccParser) {
-                this.ccParser = ccParser;
-        }
-
-		public void setSiParser(SimilarityParser siparser) {
-			this.siParser = siparser;
-		}
+    public void setSiParser(SimilarityParser siParser) {
+        this.siParser = siParser;
+    }
 
 }
