@@ -154,7 +154,6 @@ class LoadGeneDbPhylogeny {
 				node.children().each(
 					{createNode(it, newNodeId, tree)}
 				)
-				// TODO Pick up page attribute - anything else?
 			break
 			
 			case 'organism':
@@ -175,7 +174,7 @@ class LoadGeneDbPhylogeny {
 						)
 		 		  	 } catch (Exception exp) {
 		    			 // May be a duplicate
-		    		  	 System.err.println("Problem storing cvterm - duplicate?");
+		    		  	 System.err.println("Problem storing phylonode_organism - duplicate?");
 		   			 }
 				}
 					
@@ -213,7 +212,7 @@ class LoadGeneDbPhylogeny {
 								rank: 0)
 		 	  			 } catch (Exception exp) {
 		    			 // May be a duplicate
-		    		  	 System.err.println("Problem storing cvterm - duplicate?");
+		    		  	 System.err.println("Problem storing organism property - duplicate?");
 		   				 }
 					}
 				})
@@ -222,13 +221,14 @@ class LoadGeneDbPhylogeny {
 				if (writeBack) {
 					try {
 					    dbDataSet.add(
-							name: dbId,
-					        description: description,
-					        urlPrefix: "http://www.genedb.org/NamedFeature?org="+dbId+"&name=",
-					        url: url
+							name: dbName,
+					        description: "Database entry for GeneDB: "+temp,
+					        urlPrefix: "http://www.genedb.org/NamedFeature?org="+dbName+"&name=",
+					        url: "http://www.genedb.org/Homepage?org="+dbName
 					    )
     	  			 } catch (Exception exp) {
         				 // May be a duplicate
+        				 exp.printStackTrace();
         		  		 System.err.println("Problem storing db - duplicate?");
        			 	}
 				}
@@ -282,15 +282,25 @@ class LoadGeneDbPhylogeny {
       			)
 	 	 	 } catch (Exception exp) {
     			 // May be a duplicate
-    	 	 	 System.err.println("Problem storing cvterm - duplicate?");
+    	 	 	 System.err.println("Problem storing phylonode - duplicate?");
    			 }
 		}
 		node.attributes().remove("left");
 		node.attributes().remove("right");
 		node.attributes().remove("depth")
+		node.attributes().remove("shortName") // TODO Is this right
+		
+		Set skipAttributeNames = new HashSet();
+		skipAttributeNames.add("fullName");
+		skipAttributeNames.add("dbName");
+		skipAttributeNames.add("newOrg");
+		skipAttributeNames.add("name")
 		
       	for (attr in node.attributes()) {
       		// println "CreatePhylonodeProp: '"+attr.key+"'='"+attr.value+"'"
+      		if (skipAttributeNames.contains(attr.key)) {
+      		    continue
+      		}
       		int type_id = findCvTerm(attr.key)
 			String value = attr.value;
   			if (writeBack) {
@@ -303,7 +313,7 @@ class LoadGeneDbPhylogeny {
       				)
    	 	  		} catch (Exception exp) {
 	    			// May be a duplicate
-	    		  	System.err.println("Problem storing cvterm - duplicate?");
+	    		  	System.err.println("Problem storing phylonodeprop - duplicate?");
 	   			}
       		}
       	}
@@ -324,7 +334,7 @@ class LoadGeneDbPhylogeny {
 	
 	// Create a set of db entries when an organism node is encountered
 	void createOrganism(def node,def genus,def species) {
-		println "CreateOrganism called with '"+node.'@name'+"'"
+		//println "CreateOrganism called with '"+node.'@name'+"'"
 		String abb = node.'@name'
 		String gen = genus;
 		String sp = species;
@@ -338,36 +348,36 @@ class LoadGeneDbPhylogeny {
      	 		 )
 			} catch (Exception exp) {
 				// May be a duplicate
-				System.err.println("Problem storing cvterm - duplicate?");
+				System.err.println("Problem storing org - duplicate?");
 			}
 		}
 		
 		String accession = node.'@name'
 		//Create dbxref
-		if (writeBack) {
-             try {
-		        dbxref.add(
-    		        db_id:	dbId,
-        		    accession:		accession,
-					version:		1,
-					description:	"dbxref for organism"
-    	     	)
-    	  	 } catch (Exception exp) {
-        		 // May be a duplicate
-        	  	 System.err.println("Problem storing cvterm - duplicate?");
-       		 }
+//		if (writeBack) {
+//             try {
+//		        dbxref.add(
+//    		        db_id:	dbId,
+//        		    accession:		accession,
+//					version:		1,
+//					description:	"dbxref for organism"
+//   	     	)
+//    	  	 } catch (Exception exp) {
+//        		  May be a duplicate
+//        	  	 System.err.println("Problem storing cvterm - duplicate?");
+//       		 }
         
-	         //Create organism dbxref
-	         try {
-				organismDbXRefSet.add(
-				    organism_id: getMaxIdFromPrimaryKey("organism"),
-		 		    dbxref_id:   getMaxIdFromPrimaryKey("dbxref")
-				)
-		  	 } catch (Exception exp) {
-    			 // May be a duplicate
-    	  		 System.err.println("Problem storing cvterm - duplicate?");
-   			 }
-		}
+//	         Create organism dbxref
+//	         try {
+//				organismDbXRefSet.add(
+//				    organism_id: getMaxIdFromPrimaryKey("organism"),
+//		 		    dbxref_id:   getMaxIdFromPrimaryKey("dbxref")
+//				)
+//		  	 } catch (Exception exp) {
+//   			  May be a duplicate
+//    	  		 System.err.println("Problem storing cvterm - duplicate?");
+//   			 }
+//		}
         node.attributes().remove("name");
 	}
 	
@@ -375,6 +385,7 @@ class LoadGeneDbPhylogeny {
 	static void main(args) {
     	LoadGeneDbPhylogeny lgp = new LoadGeneDbPhylogeny()
     	lgp.process(input);
+    	System.err.println("Done");
 	}
 	
 
@@ -392,8 +403,8 @@ class LoadGeneDbPhylogeny {
 					<property name="translationTable" value="1"/>
 					<property name="mitochondrialTranslationTable" value="9"/>
 					<property name="curatorEmail" value="mb4"/>
-					<property name="htmlFullName" value="<i>Schistosoma mansoni</i>"/>
-					<property name="htmlShortName" value="<i>S. mansoni</i>"/>
+					<property name="htmlFullName" value="&lt;i&gt;Schistosoma mansoni&lt;/i&gt;"/>
+					<property name="htmlShortName" value="&lt;i&gt;S. mansoni&lt;/i&gt;"/>
 					<property name="shortName" value="S. mansoni" />
 					<property name="curatorName" value="" />
 				</organism>
@@ -410,8 +421,8 @@ class LoadGeneDbPhylogeny {
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="csp"/>
-						<property name="htmlFullName" value="<i>Leishmania braziliensis</i> MHOM/BR/75/M2904"/>
-						<property name="htmlShortName" value="<i>L. braziliensis</i> MHOM/BR/75/M2904"/>
+						<property name="htmlFullName" value="&lt;i&gt;Leishmania braziliensis&lt;/i&gt; MHOM/BR/75/M2904"/>
+						<property name="htmlShortName" value="&lt;i&gt;L. braziliensis&lt;/i&gt; MHOM/BR/75/M2904"/>
 						<property name="shortName" value="L. braziliensis MHOM/BR/75/M2904" />
 						<property name="curatorName" value="" />
 					</organism>
@@ -423,8 +434,8 @@ class LoadGeneDbPhylogeny {
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="csp"/>
-						<property name="htmlFullName" value="<i>Leishmania major</i> strain Friedlin"/>
-						<property name="htmlShortName" value="<i>L. major</i> strain Friedlin"/>
+						<property name="htmlFullName" value="&lt;i&gt;Leishmania major&lt;/i&gt; strain Friedlin"/>
+						<property name="htmlShortName" value="&lt;i&gt;L. major&lt;/i&gt; strain Friedlin"/>
 						<property name="shortName" value="L. major strain Friedlin" />
 						<property name="curatorName" value="" />
 		            </organism>
@@ -436,13 +447,13 @@ class LoadGeneDbPhylogeny {
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="csp"/>
-						<property name="htmlFullName" value="<i>Leishmania infantum</i> JPCM5"/>
-						<property name="htmlShortName" value="<i>L. infantum</i> JPCM5"/>
+						<property name="htmlFullName" value="&lt;i&gt;Leishmania infantum&lt;/i&gt; JPCM5"/>
+						<property name="htmlShortName" value="&lt;i&gt;L. infantum&lt;/i&gt; JPCM5"/>
 						<property name="shortName" value="L. infantum JPCM5" />
 						<property name="curatorName" value="" />
 	                </organism>
 	            </node>
-	            <node name="Trypanosoma" page="true">
+	            <node name="Trypanosoma" app_www_homePage="true">
 	                <organism name="Tcongolense">
 						<property name="taxonId" value="5692" />
 						<property name="fullName" value="Trypanosoma congolense" />
@@ -451,8 +462,8 @@ class LoadGeneDbPhylogeny {
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="chf"/>
-						<property name="htmlFullName" value="<i></i>"/>
-						<property name="htmlShortName" value="<i></i>"/>
+						<property name="htmlFullName" value="&lt;i&gt;&lt;/i&gt;"/>
+						<property name="htmlShortName" value="&lt;i&gt;&lt;/i&gt;"/>
 						<property name="shortName" value="" />
 						<property name="curatorName" value="" />
 					</organism>
@@ -465,7 +476,7 @@ class LoadGeneDbPhylogeny {
 						<property name="mitochondrialTranslationTable" value=""/>
 						<property name="curatorEmail" value="chf"/>
 						<property name="htmlFullName" value=""/>
-						<property name="htmlShortName" value="<i>L. infantum</i> JPCM5"/>
+						<property name="htmlShortName" value="&lt;i&gt;L. infantum&lt;/i&gt; JPCM5"/>
 						<property name="shortName" value="" />
 						<property name="curatorName" value="" />
 	                </organism>
@@ -575,7 +586,7 @@ class LoadGeneDbPhylogeny {
 						<property name="shortName" value="" />
 						<property name="curatorName" value="" />
 					</organism>
-	                <node name="Plasmodium" page="true">
+	                <node name="Plasmodium" app_www_homePage="true">
 	                    <organism name="Pfalciparum">
 	                        <property name="taxonId" value="5833" />
 	                        <property name="fullName" value="Plasmodium falciparum" />
@@ -997,7 +1008,7 @@ class LoadGeneDbPhylogeny {
 					<property name="curatorName" value="" />
 				</organism>
 			</node>
-			<node name="Salmonella" page="true">
+			<node name="Salmonella" app_www_homePage="true">
 				<organism name="Sbongori">
 					<property name="taxonId" value="54736" />
 					<property name="fullName" value="Salmonella bongori" />
