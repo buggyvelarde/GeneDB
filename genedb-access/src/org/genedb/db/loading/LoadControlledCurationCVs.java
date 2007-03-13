@@ -140,8 +140,8 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
         String str;
         while (((str = in.readLine()) != null)) {
             String sections[] = str.split("\t");
-            String cvName = sections[0];
-            if (!cvName.equalsIgnoreCase("PATO")) {
+            String rawCvName = sections[0];
+            if (!rawCvName.equalsIgnoreCase("PATO")) {
                 CvTerm cvTerm = this.cvDao.getCvTermByNameAndCvName(sections[1], "CC_%");
                 if (cvTerm == null) {
                     // Need to create a new CvTerm
@@ -152,7 +152,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
                         dbXRef = new DbXRef(db, accession);
                         generalDao.persist(dbXRef);
                     }
-                    String name = "CC_" + sections[0];
+                    String name = "CC_" + rawCvName;
                     Cv cv = this.cvDao.getCvByName(name).get(0);
                     if (cv == null) {
                         // TODO Do we want to create cvs dynamically? Or bail
