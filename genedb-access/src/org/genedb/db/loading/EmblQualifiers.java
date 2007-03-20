@@ -38,7 +38,7 @@ public class EmblQualifiers {
     public static final String QUAL_SO_TYPE       = "so_type";
     public static final String QUAL_PRIVATE       = "private";
     public static final String QUAL_PSEUDO        = "pseudo";
-    public static final String QUAL_NOTE          = "note";
+    public static final String QUAL_NOTE          = "comment";
     public static final String QUAL_CURATION      = "curation";
     public static final String QUAL_DB_XREF       = "db_xref";
     public static final String QUAL_PRODUCT       = "product";
