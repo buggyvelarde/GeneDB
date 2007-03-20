@@ -64,12 +64,15 @@
 		<property name="key" value="dataSourceMunging"/>
     </bean>
     
-    <bean id="runner" class="org.genedb.db.loading.NewRunner" init-method="afterPropertiesSet">
+    <bean id="similarityParser" class="org.genedb.db.loading.SimilarityParser" />
+    
+    <bean id="runner" class="org.genedb.db.loading.NewRunner" lazy-init="true" init-method="afterPropertiesSet">
     	<property name="sequenceDao" ref="sequenceDao" />
     	<property name="organismDao" ref="organismDao" />
     	<property name="cvDao" ref="cvDao" />
     	<property name="generalDao" ref="generalDao" />
     	<property name="pubDao" ref="pubDao" />
+    	<property name="hibernateTransactionManager" ref="transactionManager" />
     	<property name="runnerConfigParser" ref="runnerConfigParser" />
     	<property name="qualifierHandlerMap">
     		<map>
@@ -128,9 +131,9 @@
     		    <entry key="extension">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Extension_Processor" parent="baseFeatureProcessor" />
     		    </entry>
-    		    <!-- <entry key="gap">
+    		    <entry key="gap">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Gap_Processor" parent="baseFeatureProcessor" />
-    		    </entry>  -->
+    		    </entry>
     		    <entry key="gene">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Gene_Processor" parent="baseFeatureProcessor" />
     		    </entry>
@@ -149,8 +152,11 @@
     		    <entry key="misc_RNA">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Misc_RNA_Processor" parent="baseFeatureProcessor" />
     		    </entry>
-    		    <entry key="misc_feature">
+    		    <!-- <entry key="misc_feature">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Misc_feature_Processor" parent="baseFeatureProcessor" />
+    		    </entry> -->
+    		    <entry key="misc_feature">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.DummyFeatureProcessor" parent="baseFeatureProcessor" />
     		    </entry>
     		    <entry key="misc_recomb">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Misc_recomb_Processor" parent="baseFeatureProcessor" />
@@ -197,6 +203,9 @@
     		    <entry key="restriction">
     		    	<bean class="org.genedb.db.loading.featureProcessors.Restriction_Processor" parent="baseFeatureProcessor" />
     		    </entry>
+    		 	<entry key="source">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.DummyFeatureProcessor" parent="baseFeatureProcessor" />
+    		    </entry>
     		    <entry key="sRNA">
     		    	<bean class="org.genedb.db.loading.featureProcessors.SRNA_Processor" parent="baseFeatureProcessor" />
     		    </entry>	    		        		        		    
@@ -237,6 +246,12 @@
     	</property>
     </bean>
     
+   <bean id="loadControlledCuration" class="org.genedb.db.loading.LoadControlledCurationCVs">
+    	<property name="cvDao" ref="cvDao" />
+    	<property name="generalDao" ref="generalDao" />
+    	<property name="hibernateTransactionManager" ref="transactionManager" />
+    </bean>
+    
     <bean id="baseFeatureProcessor" abstract="true" init-method="afterPropertiesSet">
     	<property name="cvDao" ref="cvDao" />
 		<property name="generalDao" ref="generalDao" />
@@ -254,9 +269,10 @@
 		</property>
 	</bean> 
            
-	<bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor">
+	<bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor" lazy-init="true">
 		<property name="goParser" ref="goParser" />
-                <property name="ccParser" ref="ccParser" />
+        <property name="ccParser" ref="ccParser" />
+        <property name="similarityParser" ref="similarityParser" />
 	</bean>                                                             
     
     <bean id="runnerConfigParser" class="org.genedb.db.loading.RunnerConfigParser" />
@@ -276,7 +292,7 @@
 		 <property name="driverClassName" value="org.postgresql.Driver" />
 	 	 <!-- <property name="url" value="jdbc:postgresql:ormtest" /> -->
          <!-- <property name="username" value="art" /> -->
-        <property name="url" value="jdbc:postgresql://holly.internal.sanger.ac.uk:5432/chado" />
+        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10001/chado" />
         <!--<property name="username" value="plasmodia" />-->
         <property name="username" value="DELIBERATELY_BOGUS_NAME"/>
         <property name="password" value="WIBBLE" />
