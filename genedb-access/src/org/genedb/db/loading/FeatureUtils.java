@@ -147,7 +147,7 @@ public class FeatureUtils implements InitializingBean {
         so = cvDao.getCvByName("sequence").get(0);
         Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
         GENEDB_TOP_LEVEL = cvDao.getCvTermByNameInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
-        DUMMY_PUB = pubDao.getPubByUniqueName("NULL");
+        DUMMY_PUB = pubDao.getPubByUniqueName("null");
     }
 	
     public void markTopLevelFeature(org.gmod.schema.sequence.Feature topLevel) {
