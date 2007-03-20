@@ -145,7 +145,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             CvTerm SYNONYM_SYS_ID = cvDao.getCvTermByNameInCv(QUAL_SYS_ID, CV_NAMING).get(0);
             CvTerm SYNONYM_TMP_SYS = cvDao.getCvTermByNameInCv(QUAL_TEMP_SYS_ID, CV_NAMING).get(0);
             CvTerm SYNONYM_PROTEIN = cvDao.getCvTermByNameInCv("protein_name", CV_NAMING).get(0);
-            this.DUMMY_PUB = pubDao.getPubByUniqueName("NULL");
+            this.DUMMY_PUB = pubDao.getPubByUniqueName("null");
             this.featureUtils.setDummyPub(this.DUMMY_PUB);
 
             Cv CV_PRODUCTS = cvDao.getCvByName("genedb_products").get(0);
@@ -157,7 +157,10 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             String sharedId = MiningUtils.getProperty("shared_id", an, null);
             if (sharedId != null) {
                 // TODO Tidy
-                gene = sequenceDao.getFeaturesByUniqueName(sharedId).get(0);
+                List<Feature> featureList = sequenceDao.getFeaturesByUniqueName(sharedId);
+                if (featureList != null && featureList.size()==1) {
+                	gene = featureList.get(0);
+                }
                 altSplicing = true;
             }
 
@@ -275,7 +278,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             createProducts(polypeptide, an, "product", CV_PRODUCTS);
 
             // Store feature properties based on original annotation
-            createFeatureProp(polypeptide, an, "colour", "colour", CV_MISC);
+            //createFeatureProp(polypeptide, an, "colour", "colour", CV_GENEDB);
             //
             // Cvterm cvTerm =
             // daoFactory.getCvTermDao().findByNameInCv("note",
@@ -284,12 +287,12 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
             createDbXRefs(polypeptide, an);
 
-            createGoEntries(polypeptide, an);
+            //createGoEntries(polypeptide, an);
 
             createControlledCuration(polypeptide,an,CV_CONTROLLEDCURATION);
 
             //TODO enable this and code for it in createSimilarity method
-            createSimilarity(polypeptide,mRNA,an);
+            //createSimilarity(polypeptide,mRNA,an);
 
             processClass(polypeptide,an);
 
@@ -311,7 +314,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             for (FeatureRelationship relationship : featureRelationships) {
                 sequenceDao.persist(relationship);
             }
-            System.err.print(".");
+            //System.err.print(".");
         } catch (RuntimeException exp) {
             System.err.println("\n\nWas looking at '" + sysId + "'");
             throw exp;
@@ -323,7 +326,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
      * @param polypeptide
      * @param an
      */
-    private void createSimilarity(Feature polypeptide, Feature transcript,Annotation an) {
+    private void createSimilarity(Feature polypeptide, Feature transcript, Annotation an) {
 
         String cv = "SI_genedb_similarity";
         List<SimilarityInstance> similarities = this.siParser.getAllSimilarityInstance(an);
@@ -650,11 +653,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             }
 
             //  FIXME Pass in unix date
-            thingy("unixdate", cc.getDate(), controlledCuration, fct, null);
+            thingy("unixdate", cc.getDate(), CV_FEATURE_PROPERTY, fct, null);
             thingy("attribution", cc.getAttribution(), controlledCuration, fct, null);
-            thingy("evidence", cc.getEvidence(), controlledCuration, fct, null);
+            thingy("evidence", cc.getEvidence(), CV_GENEDB, fct, null);
             thingy("residue", cc.getResidue(), controlledCuration, fct, null);
-            thingy("qualifier", cc.getQualifier(), controlledCuration, fct, "\\|");
+            thingy("qualifier", cc.getQualifier(), CV_GENEDB, fct, "\\|");
 
 
             if (other) {
@@ -726,7 +729,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 continue;
             }
 
-            Pub pub = pubDao.getPubByUniqueName("NULL");
+            Pub pub = pubDao.getPubByUniqueName("null");
             String ref = go.getRef();
             // Reference
             Pub refPub = pub;
@@ -1067,7 +1070,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         this.ccParser = ccParser;
     }
 
-    public void setSiParser(SimilarityParser siParser) {
+    public void setSimilarityParser(SimilarityParser siParser) {
         this.siParser = siParser;
     }
 
