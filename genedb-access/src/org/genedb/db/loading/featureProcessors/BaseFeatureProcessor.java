@@ -47,6 +47,7 @@ import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
+import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeaturePropPub;
@@ -54,7 +55,6 @@ import org.gmod.schema.sequence.FeaturePropPub;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Feature;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
 import org.springframework.transaction.TransactionStatus;
@@ -95,10 +95,11 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     
     protected CvTerm REL_PART_OF;
 
-    protected Cv CV_MISC;
+//    protected Cv CV_MISC;
     protected Cv CV_GENEDB;
     protected Cv CV_CONTROLLEDCURATION;
     protected Cv CV_PRODUCT;
+    protected Cv CV_FEATURE_PROPERTY;
 
     protected CvTerm MISC_NOTE;
     protected CvTerm MISC_CURATION;
@@ -149,27 +150,28 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     public void afterPropertiesSet() {
         CV_RELATION = cvDao.getCvByName("relationship").get(0);
        
-        REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
+        REL_PART_OF = cvDao.getCvTermByNameInCv("proper_part_of", CV_RELATION).get(0); // FIXME Is this right
         CV_SO = cvDao.getCvByName("sequence").get(0);
-        CV_MISC = cvDao.getCvByName("autocreated").get(0);
+        //CV_MISC = cvDao.getCvByName("autocreated").get(0);
+        CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property").get(0);
         CV_RELATION = cvDao.getCvByName("relationship").get(0);
         CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
         CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration").get(0);
         CV_PRODUCT = cvDao.getCvByName("genedb_products").get(0);
-        REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
+        //REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
         REL_DERIVES_FROM = cvDao.getCvTermByNameInCv("derives_from", CV_SO).get(0);
-        MISC_NOTE = cvDao.getCvTermByNameInCv(QUAL_NOTE, CV_MISC).get(0);
-        MISC_CURATION = cvDao.getCvTermByNameInCv(QUAL_CURATION, CV_MISC).get(0);
-        MISC_PRIVATE = cvDao.getCvTermByNameInCv(QUAL_PRIVATE, CV_MISC).get(0);
+        MISC_NOTE = cvDao.getCvTermByNameInCv(QUAL_NOTE, CV_FEATURE_PROPERTY).get(0);
+        MISC_CURATION = cvDao.getCvTermByNameInCv(QUAL_CURATION, CV_GENEDB).get(0);
+        MISC_PRIVATE = cvDao.getCvTermByNameInCv(QUAL_PRIVATE, CV_GENEDB).get(0);
         DB_GO = generalDao.getDbByName("GO");
      
-        DUMMY_PUB = pubDao.getPubByUniqueName("NULL");
-        logger.warn("Just looked up DUMMY_PUB and it is '"+DUMMY_PUB+"'");
+        DUMMY_PUB = pubDao.getPubByUniqueName("null");
+        //logger.warn("Just looked up DUMMY_PUB and it is '"+DUMMY_PUB+"'");
         
-        Cv goKeys = cvDao.getCvByName("genedb_fcvt_prop_keys").get(0);
-        GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", goKeys).get(0);
-        GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", goKeys).get(0);
-        GO_KEY_DATE = cvDao.getCvTermByNameInCv("date", goKeys).get(0);
+        //Cv goKeys = cvDao.getCvByName("genedb_fcvt_prop_keys").get(0);
+        GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
+        GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
+        GO_KEY_DATE = cvDao.getCvTermByNameInCv("unixdate", CV_FEATURE_PROPERTY).get(0);
         
     }
 
@@ -183,7 +185,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     }
 
 
-    public void process(final org.gmod.schema.sequence.Feature parent, final Feature feat, final int offset) {
+    public void process(final Feature parent, final org.biojava.bio.seq.Feature feat, final int offset) {
         MiningUtils.sanityCheckAnnotation(feat, requiredSingle, requiredMultiple, 
                 optionalSingle , optionalMultiple, discard, false, true);
         
@@ -199,12 +201,16 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         //processStrandedFeature(parent, (StrandedFeature) feat);
     }
     
-    public abstract void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature f, int offset);
+    public abstract void processStrandedFeature(Feature parent, StrandedFeature f, int offset);
     
 
-    protected FeatureProp createFeatureProp(org.gmod.schema.sequence.Feature f, Annotation an, String annotationKey, String dbKey, Cv cv) {
-        CvTerm cvTerm = cvDao.getCvTermByNameInCv(annotationKey,cv).get(0);
-    
+    protected FeatureProp createFeatureProp(Feature f, Annotation an, String annotationKey, String dbKey, Cv cv) {
+        List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(annotationKey,cv);
+        
+        if (cvTerms == null || cvTerms.size() == 0) {
+        	throw new RuntimeException("No cvterm of name '"+annotationKey+"' in cv '"+cv.getName()+"'");
+        }
+        CvTerm cvTerm = cvTerms.get(0);
         String value = MiningUtils.getProperty(annotationKey, an, null);
         FeatureProp fp = new FeatureProp(f, cvTerm, value, 0);
     
@@ -358,8 +364,12 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                 // Hopefully the systematic name of a gene
                 String sysId = MiningUtils.getProperty(qualifier, an, null);
                 // TODO Tidy
-                ret = sequenceDao.getFeaturesByUniqueName(sysId).get(0);
-                if (ret == null) {
+                List<Feature> features = sequenceDao.getFeaturesByUniqueName(sysId);
+                if (features == null || features.size()!=1) {
+                	logger.error("Can't tie feature by name");
+                	return null;
+                }
+                ret = features.get(0);
     //                String utrName = this.gns.get5pUtr(gene.getUniquename(), 0);
     //                if ("three_prime_UTR".equals(type)) {
     //                    utrName = this.gns.get3pUtr(gene.getUniquename(), 0);
@@ -376,7 +386,6 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     //                handled = true;
     
                     // TODO Complain bitterly
-                }
             }
             return ret;
         }
