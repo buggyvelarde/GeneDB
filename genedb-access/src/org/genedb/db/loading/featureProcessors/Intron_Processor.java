@@ -31,7 +31,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
 	public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
 		// TODO Auto-generated method stub
 		int j = 1;
-		logger.info("Entering processing for intron");
+		logger.debug("Entering processing for intron");
 		Feature mrna;
 		Collection<FeatureRelationship> featureRelations;
 		Location loc = f.getLocation().translate(offset);
@@ -49,7 +49,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
         	featureRelations = mrna.getFeatureRelationshipsForObjectId();
             for (FeatureRelationship featureRelation : featureRelations) {
             	Feature feature = featureRelation.getFeatureBySubjectId();   
-            	logger.info(feature.getUniqueName());
+            	logger.debug(feature.getUniqueName());
             	if(feature.getUniqueName().contains("exon")) {
             		ex.add(feature);
             	}
@@ -77,8 +77,8 @@ public class Intron_Processor extends BaseFeatureProcessor {
 	        //featureLocs.add(pepFl);
 	        //featureRelationships.add(pepFr);
 	        
-	        FeatureProp fp = createFeatureProp(intron, an, "colour", "colour", CV_MISC);
-	        sequenceDao.persist(fp);
+	        //FeatureProp fp = createFeatureProp(intron, an, "colour", "colour", CV_GENEDB);
+	        //sequenceDao.persist(fp);
 	        createFeaturePropsFromNotes(intron, an, QUAL_NOTE, MISC_NOTE); 
         }
     }
