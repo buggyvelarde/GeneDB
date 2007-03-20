@@ -57,32 +57,32 @@ public class BLASTCDS_Processor extends BaseFeatureProcessor {
     @Override
     public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
    
-    	
+    	return; // FIXME
         // TODO - How to store these
         
-        logger.debug("Entering processing for BLASTCDS");
-        Location loc = f.getLocation();
-        Annotation an = f.getAnnotation();
-        short strand = (short)f.getStrand().getValue();
-        String systematicId = MiningUtils.getProperty("temporary_systematic_id", an, "");
-        
-        Feature blast_cds = this.featureUtils.createFeature("match", systematicId,this.organism);
-        this.sequenceDao.persist(blast_cds);
-
-        FeatureLoc blastFl = this.featureUtils.createLocation(parent,blast_cds,loc.getMin(),loc.getMax(),strand);
-        this.sequenceDao.persist(blastFl);
-
-        FeatureProp hseqname = createFeatureProp(blast_cds, an, "hseqname", "hseqname", CV_MISC);
-        this.sequenceDao.persist(hseqname);
-        
-        FeatureProp score = createFeatureProp(blast_cds, an, "score", "score", CV_MISC);
-        this.sequenceDao.persist(score);
-        
-        FeatureProp pvalue = createFeatureProp(blast_cds, an, "p_value", "p_value", CV_MISC);
-        this.sequenceDao.persist(pvalue);
-        
-        FeatureProp percent_id = createFeatureProp(blast_cds, an, "percent_similarity", "percent_id", CV_MISC);
-        this.sequenceDao.persist(percent_id);
+//        logger.debug("Entering processing for BLASTCDS");
+//        Location loc = f.getLocation();
+//        Annotation an = f.getAnnotation();
+//        short strand = (short)f.getStrand().getValue();
+//        String systematicId = MiningUtils.getProperty("temporary_systematic_id", an, "");
+//        
+//        Feature blast_cds = this.featureUtils.createFeature("match", systematicId,this.organism);
+//        this.sequenceDao.persist(blast_cds);
+//
+//        FeatureLoc blastFl = this.featureUtils.createLocation(parent,blast_cds,loc.getMin(),loc.getMax(),strand);
+//        this.sequenceDao.persist(blastFl);
+//
+//        FeatureProp hseqname = createFeatureProp(blast_cds, an, "hseqname", "hseqname", CV_GENEDB);
+//        this.sequenceDao.persist(hseqname);
+//        
+//        FeatureProp score = createFeatureProp(blast_cds, an, "score", "score", CV_GENEDB);
+//        this.sequenceDao.persist(score);
+//        
+//        FeatureProp pvalue = createFeatureProp(blast_cds, an, "p_value", "p_value", CV_GENEDB);
+//        this.sequenceDao.persist(pvalue);
+//        
+//        FeatureProp percent_id = createFeatureProp(blast_cds, an, "percent_similarity", "percent_id", CV_GENEDB);
+//        this.sequenceDao.persist(percent_id);
         
         //FeatureProp cstring = createFeatureProp(blast_cds, an, "cigar_string", "cigar_string", CV_MISC);
         //this.sequenceDao.persist(cstring);
