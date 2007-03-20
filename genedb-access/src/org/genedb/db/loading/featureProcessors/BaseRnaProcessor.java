@@ -110,8 +110,8 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
         //featureLocs.add(pepFl);
         //featureRelationships.add(pepFr);
         
-        FeatureProp fp = createFeatureProp(rna, an, "colour", "colour", CV_MISC);
-        sequenceDao.persist(fp);
+        //FeatureProp fp = createFeatureProp(rna, an, "colour", "colour", CV_GENEDB);
+        //sequenceDao.persist(fp);
         createFeaturePropsFromNotes(rna, an, QUAL_NOTE, MISC_NOTE);
         createFeaturePropsFromNotes(rna, an, QUAL_CURATION, MISC_CURATION);
         createFeaturePropsFromNotes(rna, an, QUAL_PRIVATE, MISC_PRIVATE);
