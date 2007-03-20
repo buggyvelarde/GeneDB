@@ -57,10 +57,14 @@ import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.FeatureLoc;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -108,9 +112,16 @@ public class NewRunner implements ApplicationContextAware {
     private GeneralDao generalDao;
 
     private Map<String, FeatureProcessor> qualifierHandlerMap;
+    
+    private HibernateTransactionManager hibernateTransactionManager;
 
 
-    /**
+    public void setHibernateTransactionManager(
+			HibernateTransactionManager hibernateTransactionManager) {
+		this.hibernateTransactionManager = hibernateTransactionManager;
+	}
+
+	/**
      * This is called once the ApplicationContext has set up all of this
      * beans properties. It fetches/creates beans which can't be injected
      * as they depend on command-line args
@@ -196,15 +207,17 @@ public class NewRunner implements ApplicationContextAware {
      *
      * @param f The feature to dispatch on
      */
-    private void despatchOnFeatureType(final FeatureProcessor fp, final Feature f, final org.gmod.schema.sequence.Feature parent, final int offset) {
-        TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
-        tt.execute(
-                new TransactionCallbackWithoutResult() {
-                    @Override
-                    public void doInTransactionWithoutResult(TransactionStatus status) {
+    private void despatchOnFeatureType(final FeatureProcessor fp, final Feature f, Session session, final org.gmod.schema.sequence.Feature parent, final int offset) {
+    //	TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
+     //   tt.execute(
+              //  new TransactionCallbackWithoutResult() {
+                 //   @Override
+                 //   public void doInTransactionWithoutResult(TransactionStatus status) {
+    					Transaction transaction = session.beginTransaction();
                         fp.process(parent, f, offset);
-                    }
-                });
+                        transaction.commit();
+                 //   }
+               // });
     }
 
 
@@ -230,7 +243,6 @@ public class NewRunner implements ApplicationContextAware {
      * @return the list of sequences, >1 if an EMBL stream
      */
     public List<Sequence> extractSequencesFromFile(File file) {
-        logger.info("Hello world");
         if (logger.isInfoEnabled()) {
             logger.info("Parsing file '"+file.getAbsolutePath()+"'");
         }
@@ -321,14 +333,14 @@ public class NewRunner implements ApplicationContextAware {
         for (String fileName : fileNames) {
             final File file = new File(fileName);
             for (final Sequence seq : this.extractSequencesFromFile(file)) {
-                TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
-                tt.execute(
-                        new TransactionCallbackWithoutResult() {
-                            @Override
-                            public void doInTransactionWithoutResult(TransactionStatus status) {
+                //TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
+                //tt.execute(
+                 //       new TransactionCallbackWithoutResult() {
+                 //           @Override
+                 //           public void doInTransactionWithoutResult(TransactionStatus status) {
                                 processSequence(file, seq, null, 0);
-                            }
-                        });
+                 //           }
+                 //       });
 
             }
         }
@@ -478,8 +490,10 @@ public class NewRunner implements ApplicationContextAware {
      */
     @SuppressWarnings("unchecked")
     private void processSequence(File file, Sequence seq, org.gmod.schema.sequence.Feature parent, int offset) {
-        try {
+    	Session session = hibernateTransactionManager.getSessionFactory().openSession();
+    	try {
             org.gmod.schema.sequence.Feature topLevel = this.featureHandler.process(file, seq);
+            logger.info("Processing '"+file.getAbsolutePath()+"'");
             if (parent == null) {
                 parent = topLevel;
                 // Mark all top-level features
@@ -496,12 +510,13 @@ public class NewRunner implements ApplicationContextAware {
             Iterator featureIterator = seq.features();
             while (featureIterator.hasNext()) {
                 Feature feature = (Feature) featureIterator.next();
-                System.err.println(feature);
+                logger.info("Feature is '"+feature+"'");
+                //System.err.println(feature);
                 FeatureProcessor fp = findFeatureProcessor(feature);
                 if (fp != null) {
                     ProcessingPhase pp = fp.getProcessingPhase();
                     if (pp == ProcessingPhase.FIRST) {
-                        this.despatchOnFeatureType(fp, feature, parent, offset);
+                        this.despatchOnFeatureType(fp, feature, session, parent, offset);
                     }
                     CollectionUtils.addItemToMultiValuedMap(pp, feature, processingStagesFeatureMap);
                 } else {
@@ -513,11 +528,13 @@ public class NewRunner implements ApplicationContextAware {
             // TODO Bother deleting as not looping thru' them - use index instead
             List<Feature> tmp = processingStagesFeatureMap.get(ProcessingPhase.FIRST);
             if (tmp != null) {
+            	
                 for (Feature feature : tmp) {
                         seq.removeFeature(feature);
                 }
             }
             processingStagesFeatureMap.put(ProcessingPhase.FIRST, Collections.EMPTY_LIST); // TO Keep this even if remove above & below
+        	logger.info("Removing features handled by featureProcessors at processing phase '"+ProcessingPhase.FIRST+"'");
             for (Feature feature : toRemove) {
                 seq.removeFeature(feature);
             }
@@ -533,11 +550,12 @@ public class NewRunner implements ApplicationContextAware {
                 if (features != null) {
                     for (Feature feature : features) {
                         FeatureProcessor fp = findFeatureProcessor(feature);
-                        this.despatchOnFeatureType(fp, feature, parent, offset);
+                        this.despatchOnFeatureType(fp, feature, session, parent, offset);
                     }
                     if (pp == ProcessingPhase.LAST) {
                         continue; // Rely on GC to tidy up
                     }
+                	logger.info("Removing features handled by featureProcessors at processing phase '"+pp+"'");
                     for (Feature feature : features) {
                         seq.removeFeature(feature);
                     }
@@ -552,7 +570,7 @@ public class NewRunner implements ApplicationContextAware {
             // TODO Auto-generated catch block
             exp.printStackTrace();
         }
-
+        session.close();
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
