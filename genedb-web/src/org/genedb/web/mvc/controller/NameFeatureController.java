@@ -107,6 +107,7 @@ public class NameFeatureController extends PostOrGetFormController {
         if (results == null || results.size() == 0) {
             logger.info("result is null");
             // TODO Fail page
+            return null;
         }
         if (results.size() > 1) {
             // Go to list results page
