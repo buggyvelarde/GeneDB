@@ -7,7 +7,7 @@
 	-->
 <beans>
 
-	<bean id="org-Root" class="org.genedb.domain.Organism">
+	<bean id="org-Root" class="org.genedb.domain.ExtendedOrganism">
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Root" />
 		<property name="shortName" value="" />
@@ -16,7 +16,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Kinetoplastids" class="org.genedb.domain.Organism">
+	<bean id="org-Kinetoplastids" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Root" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Kinetoplastids" />
@@ -26,7 +26,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Protozoa" class="org.genedb.domain.Organism">
+	<bean id="org-Protozoa" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Kinetoplastids" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Protozoa" />
@@ -36,7 +36,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Leishmania" class="org.genedb.domain.Organism">
+	<bean id="org-Leishmania" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Kinetoplastids" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Leishmania" />
@@ -46,7 +46,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Trypanasoma" class="org.genedb.domain.Organism">
+	<bean id="org-Trypanasoma" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Kinetoplastids" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Trypanasoma" />
@@ -56,7 +56,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Apicomplexa" class="org.genedb.domain.Organism">
+	<bean id="org-Apicomplexa" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Protozoa" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Apicomplexa" />
@@ -66,7 +66,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Plasmodia" class="org.genedb.domain.Organism">
+	<bean id="org-Plasmodia" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Apicomplexa" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Plasmodia" />
@@ -76,7 +76,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Eubacteria" class="org.genedb.domain.Organism">
+	<bean id="org-Eubacteria" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Root" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Eubacteria" />
@@ -86,7 +86,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Protobacteria" class="org.genedb.domain.Organism">
+	<bean id="org-Protobacteria" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Eubacteria" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Protobacteria" />
@@ -96,7 +96,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Gammaprotbacteria" class="org.genedb.domain.Organism">
+	<bean id="org-Gammaprotbacteria" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Protobacteria" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Gammaprotbacteria" />
@@ -106,7 +106,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Alphaprotobacteria" class="org.genedb.domain.Organism">
+	<bean id="org-Alphaprotobacteria" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Protobacteria" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Alphaprotobacteria" />
@@ -116,7 +116,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Betaprotobacteria" class="org.genedb.domain.Organism">
+	<bean id="org-Betaprotobacteria" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Protobacteria" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Betaprotobacteria" />
@@ -126,7 +126,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Delta-Epsilon-subdivisions" class="org.genedb.domain.Organism">
+	<bean id="org-Delta-Epsilon-subdivisions" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Protobacteria" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Delta-Epsilon-subdivisions" />
@@ -136,7 +136,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Actinobacteria" class="org.genedb.domain.Organism">
+	<bean id="org-Actinobacteria" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Eubacteria" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Actinobacteria" />
@@ -146,7 +146,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Bacterideter" class="org.genedb.domain.Organism">
+	<bean id="org-Bacterideter" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Eubacteria" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Bacterideter" />
@@ -156,7 +156,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Chlamydiae" class="org.genedb.domain.Organism">
+	<bean id="org-Chlamydiae" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Eubacteria" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Chlamydiae" />
@@ -166,7 +166,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Firmiates" class="org.genedb.domain.Organism">
+	<bean id="org-Firmiates" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Eubacteria" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Firmiates" />
@@ -176,7 +176,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Bacilli" class="org.genedb.domain.Organism">
+	<bean id="org-Bacilli" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Firmiates" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Bacilli" />
@@ -186,7 +186,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Clostridia" class="org.genedb.domain.Organism">
+	<bean id="org-Clostridia" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Firmiates" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="" />
@@ -196,7 +196,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Midliates" class="org.genedb.domain.Organism">
+	<bean id="org-Midliates" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Firmiates" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Midliates" />
@@ -206,7 +206,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Tbruceibrucei427" class="org.genedb.domain.Organism">
+	<bean id="org-Tbruceibrucei427" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Trypanasoma" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Trypanasoma brucei brucei, strain 427" />
@@ -216,7 +216,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Tbruceibrucei927" class="org.genedb.domain.Organism">
+	<bean id="org-Tbruceibrucei927" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Trypanasoma" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Trypanasoma brucei brucei, strain 927" />
@@ -226,7 +226,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Tbruceigambiense" class="org.genedb.domain.Organism">
+	<bean id="org-Tbruceigambiense" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Trypanasoma" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Trypanasoma brucei gambiense" />
@@ -236,7 +236,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Tvivax" class="org.genedb.domain.Organism">
+	<bean id="org-Tvivax" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Trypanasoma" />
 		<property name="taxonId" value="5693" />
 		<property name="fullName" value="Trypanasoma vivax" />
@@ -246,7 +246,7 @@
 		<property name="dbName" value="GeneDB_Tvivax" />
 	</bean>
 
-	<bean id="org-Tcruzi" class="org.genedb.domain.Organism">
+	<bean id="org-Tcruzi" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Trypanasoma" />
 		<property name="taxonId" value="5693" />
 		<property name="fullName" value="Trypanasoma cruzi" />
@@ -256,7 +256,7 @@
 		<property name="dbName" value="GeneDB_Tcruzi" />
 	</bean>
 
-	<bean id="org-Lmajor" class="org.genedb.domain.Organism">
+	<bean id="org-Lmajor" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Leishmania" />
 		<property name="taxonId" value="5664" />
 		<property name="fullName" value="Leishmania major" />
@@ -266,7 +266,7 @@
 		<property name="dbName" value="GeneDB_Linfantum" />
 	</bean>
 
-	<bean id="org-Linfantum" class="org.genedb.domain.Organism">
+	<bean id="org-Linfantum" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Leishmania" />
 		<property name="taxonId" value="5761" />
 		<property name="fullName" value="Leishmania infantum" />
@@ -276,7 +276,7 @@
 		<property name="dbName" value="GeneDB_Lmajor" />
 	</bean>
 
-	<bean id="org-Pfalciparum" class="org.genedb.domain.Organism">
+	<bean id="org-Pfalciparum" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Plasmodia" />
 		<property name="taxonId" value="5833" />
 		<property name="fullName" value="Plasmodium falciparum" />
@@ -286,7 +286,7 @@
 		<property name="dbName" value="GeneDB_Pfalciparum" />
 	</bean>
 
-	<bean id="org-Pknowlesi" class="org.genedb.domain.Organism">
+	<bean id="org-Pknowlesi" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Pknowlesi" />
 		<property name="taxonId" value="5850" />
 		<property name="fullName" value="Plasmodium knowlesi" />
@@ -296,7 +296,7 @@
 		<property name="dbName" value="GeneDB_Pknowlesi" />
 	</bean>
 
-	<bean id="org-Pberghei" class="org.genedb.domain.Organism">
+	<bean id="org-Pberghei" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Plasmodia" />
 		<property name="taxonId" value="5821" />
 		<property name="fullName" value="Plasmodium berghei" />
@@ -306,7 +306,7 @@
 		<property name="dbName" value="GeneDB_Pberghei" />
 	</bean>
 	
-	<bean id="org-Pchabaudi" class="org.genedb.domain.Organism">
+	<bean id="org-Pchabaudi" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Plasmodia" />
 		<property name="taxonId" value="5825" />
 		<property name="fullName" value="Plasmodium chabaudi" />
@@ -316,7 +316,7 @@
 		<property name="dbName" value="GeneDB_Pchabaudi" />
 	</bean>
 	
-	<bean id="org-Fungi" class="org.genedb.domain.Organism">
+	<bean id="org-Fungi" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Root" />
 		<property name="taxonId" value="" />
 		<property name="fullName" value="Fungi" />
@@ -326,7 +326,7 @@
 		<property name="dbName" value="" />
 	</bean>
 
-	<bean id="org-Scerevisiae" class="org.genedb.domain.Organism">
+	<bean id="org-Scerevisiae" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Fungi" />
 		<property name="taxonId" value="4932" />
 		<property name="fullName" value="S... cerevisiae" />
@@ -336,7 +336,7 @@
 		<property name="dbName" value="GeneDB_Scerevisiae" />
 	</bean>
 
-	<bean id="org-Spombe" class="org.genedb.domain.Organism">
+	<bean id="org-Spombe" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Fungi" />
 		<property name="taxonId" value="4896" />
 		<property name="fullName" value="S... pombe" />
@@ -346,7 +346,7 @@
 		<property name="dbName" value="GeneDB_Spombe" />
 	</bean>
 
-	<bean id="org-Afumigatus" class="org.genedb.domain.Organism">
+	<bean id="org-Afumigatus" class="org.genedb.domain.ExtendedOrganism">
 		<property name="parent" ref="org-Fungi" />
 		<property name="taxonId" value="5085" />
 		<property name="fullName" value="Aspergillus fumigatus" />
