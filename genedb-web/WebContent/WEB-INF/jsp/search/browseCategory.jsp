@@ -12,7 +12,7 @@
 
 <p>This is a page for launching browse category stuff
 
-<form:form action="/genedb-web/BrowseCategory" commandName="browseCategory">
+<form:form action="/BrowseCategory" commandName="browseCategory">
 
 <p><form:errors path="*" /></p>
 

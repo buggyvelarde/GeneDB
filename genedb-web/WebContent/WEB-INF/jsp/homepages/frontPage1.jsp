@@ -49,7 +49,7 @@
 					<a href="<c:url value="/Organism"/>">Organism List</a> (Partial)
 				</td>
 				<td width="50%">
-					<a href="http://localhost:8080/genedb-web/Genome/Trypanasoma_brucei_brucei/current">Common URL</a> (Partial)
+					<a href="./Genome/Trypanasoma_brucei_brucei/current">Common URL</a> (Partial)
 				</td>
 			</tr>
 			<tr>

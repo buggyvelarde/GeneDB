@@ -6,7 +6,7 @@
 
 </p>
 <p><a href="<c:url value="/feature.html"/>">Look at gene page</a></p>
-<p><a href="http://localhost:8080/genedb-web/genome/Trypanasoma_brucei_brucei/current">Common URL</a></p>
+<p><a href="<c:url value="/genome/Trypanasoma_brucei_brucei/current" />">Common URL</a></p>
 <p><a href="<c:url value="/dropDown.html"/>">Query drop-down</a></p>
 <p><a href="<c:url value="/example-working?taxId=12345"/>">Boolean query page</a></p>
 <p><a href="<c:url value="/pfam.html"/>">Pfam auto-complete</a></p>
