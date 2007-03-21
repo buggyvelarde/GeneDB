@@ -49,38 +49,189 @@
 	
 	<target name="load-spombe" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="spombe /nfs/pathdb/work/pathdb/pombe/spombe.config.xml"/>
+			<arg line="Spombe /nfs/pathdb/prod/data/input/pombe/Spombe.config.xml web"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
 	
 	<target name="load-twhipplei" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="twhipplei /nfs/pathdb/prod/data/input/twhipplei/twhipplei.config.xml"/>
+			<arg line="Twhipplei /nfs/pathdb/prod/data/input/twhipplei/twhipplei.config.xml web"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
 	
 	<target name="load-tbrucei" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="tbrucei /nfs/pathdb/prod/data/input/tryp/tbrucei.config.xml"/>
+			<arg line="Tbruceibrucei927 /nfs/pathdb/prod/data/input/tryp/tbrucei.config.xml web"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
 	
 	<target name="load-smansoni" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="smansoni /nfs/pathdb/prod/data/input/smansoni/smansoni.config.xml"/>
+			<arg line="Smansoni /nfs/pathdb/prod/data/input/smansoni/smansoni.config.xml web"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
 	
 	<target name="load-pfalciparum" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="pfalciparum /nfs/pathdb/prod/data/input/malaria/pfalciparum.config.xml"/>
+			<arg line="Pfalciparum /nfs/pathdb/prod/data/input/malaria/pfalciparum.config.xml web"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
 	
 	
+	<target name="load-bfragilis" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Bfragilis_NCTC9343 /nfs/pathdb/prod/data/input/bfragilis/bfragilis.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-bpseudomallei" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Bpseudomallei /nfs/pathdb/prod/data/input/bpseudomallei/bpseudomallei.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	
+	<target name="load-bronchi" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Bbronchiseptica /nfs/pathdb/prod/data/input/bronchi/bronchi.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-cabortus" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Cabortus /nfs/pathdb/prod/data/input/cabortus/cabortus.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-cdubliniensis" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Cdubliniensis /nfs/pathdb/prod/data/input/cdubliniensis/cdubliniensis.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-dicty" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Ddiscoideum /nfs/pathdb/prod/data/input/dicty/dicty.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-diphtheria" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Cdiphtheriae /nfs/pathdb/prod/data/input/diphtheria/diphtheria.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-ecarot" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Ecarotovora /nfs/pathdb/prod/data/input/ecarot/ecarot.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-ehuxleyi" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Ehuxleyi /nfs/pathdb/prod/data/input/ehuxleyi/ehuxleyi.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-mleprae" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Mleprae /nfs/pathdb/prod/data/input/mleprae/mleprae.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-parapert" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Bparapertussis /nfs/pathdb/prod/data/input/parapert/parapert.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-pert" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Bpertussis /nfs/pathdb/prod/data/input/pert/pert.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-rleguminosarum" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Rleguminosarum /nfs/pathdb/prod/data/input/rleguminosarum/rleguminosarum.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-saureusMRSA" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Saureus_MRSA252 /nfs/pathdb/prod/data/input/saureusMRSA/saureusMRSA.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-saureusMSSA" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Saureus_MSSA476 /nfs/pathdb/prod/data/input/saureusMSSA/saureusMSSA.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-scoelicolor" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Scoelicolor /nfs/pathdb/prod/data/input/scoelicolor/scoelicolor.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-spyogenes" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Spyogenes /nfs/pathdb/prod/data/input/spyogenes/spyogenes.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-suberis" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Suberis /nfs/pathdb/prod/data/input/suberis/suberis.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-ypestis" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Ypestis /nfs/pathdb/prod/data/input/ypestis/ypestis.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-asp" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Afumigatus /nfs/pathdb/prod/data/input/asp.new/asp.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-bcenocepacia" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Bcenocepacia /nfs/pathdb/prod/data/input/bcenocepacia/bcenocepacia.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	
+	<target name="load-good-data" 
+		depends="load-asp, load-twhipplei, load-bpseudomallei, load-bronchi, load-cdubliniensis, load-diphtheria, load-parapert, load-pert, load-saureusMRSA, load-saureusMSSA" />
 </project>
