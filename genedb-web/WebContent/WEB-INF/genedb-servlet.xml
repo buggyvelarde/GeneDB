@@ -166,11 +166,13 @@
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="nameLookup"/>
-		<property name="commandClass" value="org.genedb.db.helpers.NameLookup" />
+        <property name="commandClass" value="org.genedb.web.mvc.controller.NameLookup" />
+		<!-- <property name="commandClass" value="org.genedb.db.helpers.NameLookup" /> -->
 		<property name="organismDao" ref="organismDao"/>
-		<property name="sequenceDao" ref="sequenceDao"/>	
+		<property name="sequenceDao" ref="sequenceDao"/>
+		<property name="phylogenyDao" ref="phylogenyDao" />
         <property name="listResultsView" value="list/features" />
-        <property name="formInputView" value="err/lookup" />
+        <property name="formInputView" value="err/nameerr" />
         <property name="bindOnNewForm" value="true" />
     </bean>
     
