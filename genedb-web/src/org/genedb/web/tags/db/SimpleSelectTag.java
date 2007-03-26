@@ -18,15 +18,15 @@ public class SimpleSelectTag extends AbstractHomepageTag {
             nodes.add(child);
         }
         
-        out.write("<option>");
+        out.write("<select name=\"org\">");
         for (TaxonNode node : nodes) {
-            out.write("<select value=\"");
+            out.write("<option value=\"");
             out.write(node.getShortName());
-            out.write("\" name=\"");
-            out.write(node.getFullName());
             out.write("\">");
+            out.write(node.getShortName());
+            out.write("</option>");
         }
-        out.write("</option>");
+        out.write("</select>");
     }
     
     
