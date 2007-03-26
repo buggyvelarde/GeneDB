@@ -1,13 +1,10 @@
 package org.genedb.web.tags.db;
 
 import org.genedb.db.loading.TaxonNode;
-import org.genedb.db.loading.TaxonNodeManager;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class HomepageSelectTag extends AbstractHomepageTag {
     
