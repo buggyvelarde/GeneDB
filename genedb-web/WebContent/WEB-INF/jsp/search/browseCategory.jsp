@@ -1,28 +1,40 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Browse catalogues</title>
-</head>
-<body>
+<%@ taglib prefix="db" uri="db" %>
 
-<p>This is a page for launching browse category stuff
+<format:header name="Browse By Category">
+	<st:init />
+	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
+</format:header>
+
+<p>This is a page for launching a browse by category search
 
 <form:form action="/BrowseCategory" commandName="browseCategory">
+<table>
+<tr><td><form:errors path="*" /></td></tr>
+    <tr>
+      <td>Organisms:</td>
+      <td><db:simpleselect /></td>
+      <td>You can choose either an individual organism or a group of them. (Note this is a temporary select box)</td>
+    </tr>
+    <tr>
+	  <td>Browse category:</td>
+	  <td><form:select path="category" items="${categories}" /></td>
+	  <td></td>
+    </tr>
+    <!-- <tr>
+	  <td>Feature Type:</td>
+	  <td>Gene</td>
+	  <td>Restrict the type of features searched for</td>
+    </tr> -->
+    <tr>
+      <td>&nbsp;</td>
+	  <td colspan="2"><input type="submit" value="Submit" /></td>
+	  <td>&nbsp;</td>
+    </tr>
 
-<p><form:errors path="*" /></p>
-
-<input type="hidden" name="org" value="tcruzi" />
-
-<form:select path="category" items="${categories}" />
-
-<input type="submit" />
-
+</table>
 </form:form>
 
-</body>
-</html>
+<format:footer />
