@@ -16,7 +16,8 @@ public class DisplayPhylogeny extends SimpleTagSupport{
 	private PhylogenyDao phylogenyDao; 
 	private OrganismDao organismDao; 
 
-	public void doTag() throws JspException, IOException {
+	@Override
+    public void doTag() throws JspException, IOException {
 		phylogenyDao = new PhylogenyDao();
 		organismDao = new OrganismDao();
 		
