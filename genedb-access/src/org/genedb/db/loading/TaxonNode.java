@@ -8,10 +8,12 @@ package org.genedb.db.loading;
 
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
+import org.gmod.schema.phylogeny.PhylonodeOrganism;
 import org.gmod.schema.phylogeny.PhylonodeProp;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,17 +32,30 @@ public class TaxonNode {
     private TaxonNode parent;
     private String dbName;
     private String htmlName;
-    private Organism organism;
     private Phylonode phylonode;
     private List<TaxonNode> children = new ArrayList<TaxonNode>();
     private boolean webLinkable = false;
     private String nickName;
+    private boolean organism = false;
     private Map<String, Map<String, Object>> appDetails = new HashMap<String, Map<String, Object>>(0);
 
 
     public TaxonNode(Phylonode phylonode) {
         this.phylonode = phylonode;
         this.shortName = phylonode.getLabel();
+        Collection<PhylonodeOrganism> pos = phylonode.getPhylonodeOrganisms();
+		System.err.println("Looking at '"+shortName+"'");
+        if (pos != null && pos.size() > 0) {
+        	if (pos.size() > 1) {
+        		System.err.println("We have too many PhylonodeOrganisms");
+        	} else {
+        		Organism org = pos.iterator().next().getOrganism();
+        		organism = true;
+        		System.err.println("Found organism for '"+shortName+"'");
+        	}
+        } else {
+        	System.err.println("No organism for '"+shortName+"'");
+        }
     }
     
 //    public TaxonNode(TaxonNode parent, Phylonode phylonode, Organism organism) {
@@ -151,7 +166,7 @@ public class TaxonNode {
     }
     
     public boolean isOrganism() {
-    	return (organism != null);
+    	return organism;
     }
     
     private List<TaxonNode> getAllChildren() {
@@ -178,7 +193,9 @@ public class TaxonNode {
         ret.append(getFullName());
         ret.append("' shortName='");
         ret.append(getShortName());
-        ret.append("'");
+        ret.append("' organism=");
+        ret.append(organism);
+        ret.append("' ");
         return ret.toString();
     }
 
