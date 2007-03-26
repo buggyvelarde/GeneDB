@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
-<%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <format:header name="Name Search">
 	<st:init />
@@ -10,12 +10,10 @@
 
 <p>This page allows you to look up a feature by name.
 
-<sp:form commandName="nameLookup" action="NamedFeature" method="post">
+<form:form commandName="nameLookup" action="NamedFeature" method="post">
   <table>
     <tr><td colspan="3">
-      <c:forEach items="${status}" var ="errorMessage"> 
-        <font color="red"><c:out value ="${errorMessage}"/><br></font>
-      </c:forEach>
+      <font color="red"><form:errors path="*" /></font>
     </td></tr>
     <tr>
       <td>Organisms:</td>
@@ -24,7 +22,7 @@
     </tr>
     <tr>
 	  <td>Look Up:</td>
-	  <td><sp:input path="lookup"/></td>
+	  <td><form:input path="lookup"/></td>
 	  <td>The name to lookup. It can include wildcards (*) to match any series of characters</td>
     </tr>
     <tr>
@@ -38,6 +36,6 @@
 	  <td>&nbsp;</td>
     </tr>
   </table>
-</sp:form>
+</form:form>
 
 <format:footer />
