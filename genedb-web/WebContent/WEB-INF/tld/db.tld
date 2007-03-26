@@ -99,6 +99,13 @@
        <required>true</required>
     </attribute> 
  </tag>
+ 
+
+ <tag>
+   <name>simpleselect</name>
+   <tag-class>org.genedb.web.tags.db.SimpleSelectTag</tag-class>
+   <body-content>empty</body-content>
+ </tag>
 
 
  <tag>
