@@ -68,7 +68,7 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
         
         if (results == null || results.size() == 0) {
             logger.info("result is null"); // TODO Improve text
-            be.reject("No results"); // FIXME - Should be message key
+            be.reject("no.results");
             return showForm(request, response, be);
         }
         
