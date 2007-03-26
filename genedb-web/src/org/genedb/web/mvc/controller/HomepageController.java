@@ -1,10 +1,10 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.loading.TaxonNode;
-import org.genedb.db.loading.TaxonNodeArrayPropertyEditor;
-
 import static org.genedb.web.mvc.controller.WebConstants.CRUMB;
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
+
+import org.genedb.db.loading.TaxonNode;
+import org.genedb.db.loading.TaxonNodeArrayPropertyEditor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

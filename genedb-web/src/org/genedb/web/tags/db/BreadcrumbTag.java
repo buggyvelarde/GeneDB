@@ -2,12 +2,13 @@ package org.genedb.web.tags.db;
 
 import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
 import static javax.servlet.jsp.PageContext.REQUEST_SCOPE;
-import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANAGER;
+import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 
 import org.genedb.db.loading.TaxonNode;
 import org.genedb.db.loading.TaxonNodeManager;
 import org.genedb.web.mvc.controller.WebConstants;
+
 import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
