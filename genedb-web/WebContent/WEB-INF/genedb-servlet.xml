@@ -166,7 +166,7 @@
        
     <bean id="StaticController" class="org.genedb.web.mvc.controller.StaticController"/>
     
-    <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NameFeatureController">
+    <bean id="NameFeatureController" class="org.genedb.web.mvc.controller.NameFeatureController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="nameLookup"/>
@@ -177,6 +177,20 @@
 		<property name="phylogenyDao" ref="phylogenyDao" />
         <property name="listResultsView" value="list/features" />
         <property name="formInputView" value="err/nameerr" />
+        <property name="bindOnNewForm" value="true" />
+    </bean>
+    
+        
+    <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
+<!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
+        <property name="sessionForm" value="true"/>
+        <property name="commandName" value="nameLookup"/>
+        <property name="commandClass" value="org.genedb.web.mvc.controller.NameLookupBean" />
+		<property name="organismDao" ref="organismDao"/>
+		<property name="sequenceDao" ref="sequenceDao"/>
+		<property name="phylogenyDao" ref="phylogenyDao" />
+        <property name="listResultsView" value="list/features" />
+        <property name="formView" value="search/nameLookup" />
         <property name="bindOnNewForm" value="true" />
     </bean>
     
