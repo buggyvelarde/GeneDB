@@ -19,19 +19,19 @@
 
 package org.genedb.web.mvc.controller;
 
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.loading.TaxonNode;
+
+import org.gmod.schema.sequence.Feature;
+
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.loading.TaxonNode;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.utils.CountedName;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindException;
-import org.springframework.web.HttpRequestHandler;
-import org.springframework.web.servlet.ModelAndView;
 
 
 

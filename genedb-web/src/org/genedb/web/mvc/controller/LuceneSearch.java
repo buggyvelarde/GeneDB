@@ -1,6 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-import org.apache.lucene.search.Query;
 
 public class LuceneSearch {
 	
