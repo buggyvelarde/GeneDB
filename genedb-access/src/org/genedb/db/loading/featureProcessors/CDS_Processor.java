@@ -284,7 +284,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             // daoFactory.getCvTermDao().findByNameInCv("note",
             // MISC).get(0);
             createFeaturePropsFromNotes(polypeptide, an, QUAL_NOTE, MISC_NOTE);
-
+            
+            createFeatureProps(polypeptide, an);
+            
             createDbXRefs(polypeptide, an);
 
             //createGoEntries(polypeptide, an);
@@ -322,7 +324,66 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     }
 
 
-    /**
+    private void createFeatureProps(Feature polypeptide, Annotation an) {
+    	String bFile = MiningUtils.getProperty("blast_file", an, null);
+    	String bnFile = MiningUtils.getProperty("blastn_file", an, null);
+    	String bpgoFile = MiningUtils.getProperty("blastp+go_file", an, null);
+    	String bpFile = MiningUtils.getProperty("blastp_file", an, null);
+    	String bxFile = MiningUtils.getProperty("blastx_file", an, null);
+    	String fFile = MiningUtils.getProperty("fasta_file", an, null);
+    	String fxFile = MiningUtils.getProperty("fastax_file", an, null);
+    	String tbnFile = MiningUtils.getProperty("tblastn_file", an, null);
+    	String tbxFile = MiningUtils.getProperty("tblastx_file", an, null);
+    	
+    	String sections[];
+    	if(bFile != null){
+    		sections = bFile.split("=");
+    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,sections[1],0);
+    		this.sequenceDao.persist(fp);
+    	}
+    	if(bnFile != null){
+    		sections = bnFile.split("=");
+    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,sections[1],0);
+    		this.sequenceDao.persist(fp);
+    	}
+    	if(bpgoFile != null){
+    		sections = bpgoFile.split("=");
+    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,sections[1],0);
+    		this.sequenceDao.persist(fp);
+    	}
+    	if(bpFile != null){
+    		sections = bpFile.split("=");
+    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,sections[1],0);
+    		this.sequenceDao.persist(fp);
+    	}
+    	if(bxFile != null){
+    		sections = bxFile.split("=");
+    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,sections[1],0);
+    		this.sequenceDao.persist(fp);
+    	}
+    	if(fFile != null){
+    		sections = fFile.split("=");
+    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,sections[1],0);
+    		this.sequenceDao.persist(fp);
+    	}
+    	if(tbnFile != null){
+    		sections = tbnFile.split("=");
+    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,sections[1],0);
+    		this.sequenceDao.persist(fp);
+    	}
+    	if(fxFile != null){
+    		sections = fxFile.split("=");
+    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,sections[1],0);
+    		this.sequenceDao.persist(fp);
+    	}
+    	if(tbxFile != null){
+    		sections = tbxFile.split("=");
+    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,sections[1],0);
+    		this.sequenceDao.persist(fp);
+    	}
+	}
+
+	/**
      * @param polypeptide
      * @param an
      */
