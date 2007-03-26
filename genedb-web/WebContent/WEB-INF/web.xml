@@ -23,7 +23,7 @@
 	</context-param>
 	
 	<context-param>
-		<param-name>contextConfigLocation</param-name><param-value>/WEB-INF/applicationContext.xml /WEB-INF/Organisms.xml</param-value>
+		<param-name>contextConfigLocation</param-name><param-value>/WEB-INF/applicationContext.xml</param-value>
 	</context-param>
 
 	<!--
@@ -103,6 +103,10 @@
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/NameFeature</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/NamedFeature</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
