@@ -135,7 +135,7 @@ public class TaxonNode {
         return Collections.emptyMap();
     }
     
-    public String getAllChildrenNames() {
+    public List<String> getAllChildrenNames() {
     	List<TaxonNode> allChildren = getAllChildren();
     	List<String> names = new ArrayList<String>();
     	StringBuilder ret = new StringBuilder();
@@ -147,7 +147,7 @@ public class TaxonNode {
     	if (isOrganism()) {
     		names.add(getShortName());
     	}
-    	return StringUtils.collectionToDelimitedString(names, " ");
+    	return names;
     }
     
     public boolean isOrganism() {
