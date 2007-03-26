@@ -9,6 +9,7 @@ package org.genedb.db.loading;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.phylogeny.PhylonodeProp;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -134,8 +135,37 @@ public class TaxonNode {
         return Collections.emptyMap();
     }
     
+    public String getAllChildrenNames() {
+    	List<TaxonNode> allChildren = getAllChildren();
+    	List<String> names = new ArrayList<String>();
+    	StringBuilder ret = new StringBuilder();
+    	for (TaxonNode child : allChildren) {
+			if (child.isOrganism()) {
+				names.add(child.getShortName());
+			}
+		}
+    	if (isOrganism()) {
+    		names.add(getShortName());
+    	}
+    	return StringUtils.collectionToDelimitedString(names, " ");
+    }
+    
+    public boolean isOrganism() {
+    	return (organism != null);
+    }
+    
+    private List<TaxonNode> getAllChildren() {
+    	List<TaxonNode> ret = new ArrayList<TaxonNode>();
+    	
+    	List<TaxonNode> immediateChildren = getChildren();
+    	for (TaxonNode child : immediateChildren) {
+			ret.add(child);
+			ret.addAll(child.getAllChildren());
+		}
+		return ret;
+	}
 
-    /**
+	/**
      * @param detailed
      * @return
      */
