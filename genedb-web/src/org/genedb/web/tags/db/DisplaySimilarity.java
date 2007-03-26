@@ -80,29 +80,30 @@ public class DisplaySimilarity extends SimpleTagSupport {
 			for (Feature matchFeature : similarityFeatures) {
 			
 				for (FeatureProp prop : matchFeature.getFeatureProps()) {
-					if (prop.getCvTerm().getName() == "overlap") {
+					if (prop.getCvTerm().getName().equals("overlap")) {
 						overlap = prop.getValue();
 					}
 				}
 				
-				GeneralDao gd = new GeneralDao();
-				AnalysisFeature aFeature = gd.getAnalysisFeatureFromFeature(matchFeature);
+				AnalysisFeature aFeature = null;
+				for (AnalysisFeature feature : matchFeature.getAnalysisFeatures()) {
+					aFeature = feature;
+					break;
+				}
 				evalue = aFeature.getSignificance().toString();
 				id = aFeature.getIdentity().toString();
 				algorithm = aFeature.getAnalysis().getAlgorithm();
 				
 				Feature subjectFeature = null;
 				for (FeatureLoc floc : matchFeature.getFeatureLocsForFeatureId()) {
-					if (floc.getFeatureBySrcFeatureId().getCvTerm().getName() == "similarity_feature"){
+					System.out.println("subjecFeature can be : " + floc.getFeatureBySrcFeatureId().getCvTerm().getName());
+					if (floc.getFeatureBySrcFeatureId().getCvTerm().getName().equals("similarity_region")){
 						subjectFeature = floc.getFeatureBySrcFeatureId();
 					}
 				}
 				accession = subjectFeature.getDbXRef().getAccession();
-				Collection<CvTerm> cvTerms = subjectFeature.getDbXRef().getCvTerms();
+				database = subjectFeature.getDbXRef().getDb().getName();
 				
-				for (CvTerm term : cvTerms) {
-					database = term.getName();
-				}
 
 				for (FeatureProp prop : subjectFeature.getFeatureProps()) {
 					if (prop.getCvTerm().getName().equals("product")) {
@@ -116,6 +117,7 @@ public class DisplaySimilarity extends SimpleTagSupport {
 				} else {
 					out.println("<tr>");
 				}
+				count++;
 				out.println("<td>" + database + "</td>");
 				out.println("<td>" + accession + "</td>");
 				out.println("<td>" + organism + "</td>");
@@ -127,7 +129,7 @@ public class DisplaySimilarity extends SimpleTagSupport {
 				out.println("</tr>");
 			}
 			out.println("</table>");
-			out.close();
+			//out.close();
 		}
 		
 	}

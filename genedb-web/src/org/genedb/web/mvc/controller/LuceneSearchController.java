@@ -10,13 +10,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
@@ -71,7 +74,10 @@ public class LuceneSearchController extends SimpleFormController {
 		Hits hits = null;
 		
 		searcher = new IndexSearcher(ir);
-		Analyzer analyzer = new StopAnalyzer();
+		/* we had the StopAnalyzer prior to Standard, but it didnt work properly
+		 * we had to put wildcard like '*' to make some queries work
+		 */
+		Analyzer analyzer = new StandardAnalyzer();
 		String field = luceneSearch.getField();
 		String searchFields[] = new String[fields.size()];
 		QueryParser qp = null;
@@ -85,11 +91,13 @@ public class LuceneSearchController extends SimpleFormController {
 			qp = new QueryParser(field,analyzer);
 		}
 		String searchString = luceneSearch.getQuery();
-		if(searchString.matches("\\d+")) {
-			
-			StringBuffer s = new StringBuffer(11);
+		if(searchString.matches("\\d+") && searchString.length() < 11) {
+			System.out.println("search string number is : " + searchString);
+			StringBuffer s = new StringBuffer();
 			int length = 11 - searchString.length();
-			s.append("0", 0, length);
+			for(int i=0;i<length;i++){
+				s.append("0");
+			}
 			s.append(searchString);
 			searchString = s.toString();
 		}

@@ -26,6 +26,7 @@
 		<tr>
 			<td>Organisms: 
 				<sp:select path="organism">
+					<sp:option value="ALL" label="ALL"/>
 					<sp:options items="${organisms}"/>
 				</sp:select>
 			</td>

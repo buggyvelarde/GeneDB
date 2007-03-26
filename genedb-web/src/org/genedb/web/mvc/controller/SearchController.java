@@ -139,7 +139,7 @@ public class SearchController extends MultiActionController implements Initializ
 		    
 	    }
 	    Feature feat = sequenceDao.getFeaturesByUniqueName(name).get(0);
-	    Map model = new HashMap(3);
+	    Map model = new HashMap(4);
 	    model.put("feature", feat);		
 	    String viewName = "features/generic";
 	    String type = feat.getCvTerm().getName();
@@ -162,6 +162,7 @@ public class SearchController extends MultiActionController implements Initializ
                     polypeptide = f;
                 }
             }
+            model.put("transcript", mRNA);
             model.put("polypeptide", polypeptide);
             PeptideProperties pp = calculatePepstats(polypeptide);
 			model.put("polyprop", pp);

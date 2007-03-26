@@ -96,13 +96,19 @@ public class NameFeatureController extends PostOrGetFormController {
         logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
         List<String> org = new ArrayList<String>();
         String organism = nl.getOrganism();
-        if (this.organismDao.getOrganismByCommonName(organism) != null){
-        	org.add(organism);
+        List<Feature> results = new ArrayList<Feature>();
+        
+        if(organism.equals("ALL")) {
+        	results = sequenceDao.getFeaturesByAnyName(nl.getLookup(), "gene");
         } else {
-        	List<Phylonode> pNodes = this.phylogenyDao.getPhylonodesByParent(this.phylogenyDao.getPhylonodeByName(organism).get(0));
-        	org = getOrganisms(pNodes,org);
+	        if (this.organismDao.getOrganismByCommonName(organism) != null){
+	        	org.add(organism);
+	        } else {
+	        	List<Phylonode> pNodes = this.phylogenyDao.getPhylonodesByParent(this.phylogenyDao.getPhylonodeByName(organism).get(0));
+	        	org = getOrganisms(pNodes,org);
+	        }
+	        results = sequenceDao.getFeaturesByAnyNameAndOrganism(nl.getLookup(), org,"gene");
         }
-        List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(nl.getLookup(), org,"gene");
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
@@ -138,6 +144,7 @@ public class NameFeatureController extends PostOrGetFormController {
                     }
                 }
                 model.put("polypeptide", polypeptide);
+                System.out.println("transcript is " + mRNA.getDisplayName());
                 model.put("transcript", mRNA);
                 String seqString = FeatureUtils.getResidues(polypeptide);
                 Alphabet protein = ProteinTools.getAlphabet();

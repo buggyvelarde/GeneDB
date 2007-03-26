@@ -66,7 +66,7 @@ public class PhylogenyDao extends BaseDao implements PhylogenyDaoI {
 	@SuppressWarnings("unchecked")
 	public List<Phylonode> getPhylonodeByName(String name) {
 		List<Phylonode> nodes = getHibernateTemplate().findByNamedParam(
-				"from phylonode p where p.label=:name", new String("name"), 
+				"from Phylonode p where p.label=:name", new String("name"), 
 				name);
 		return nodes;
 	}
@@ -74,7 +74,7 @@ public class PhylogenyDao extends BaseDao implements PhylogenyDaoI {
 	@SuppressWarnings("unchecked")
 	public List<Phylonode> getPhylonodesByParent(Phylonode parent) {
 		List<Phylonode> nodes = getHibernateTemplate().findByNamedParam(
-				"from phylonode p where p.phylonode=:parent", new String("parent"), 
+				"from Phylonode p where p.phylonode=:parent", new String("parent"), 
 				parent);
 		return nodes;
 
