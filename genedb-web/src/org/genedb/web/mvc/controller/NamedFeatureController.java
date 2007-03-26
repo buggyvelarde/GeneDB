@@ -73,7 +73,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         
         logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
 
-        String orgNames = taxonNode.getAllChildrenNames();
+        List<String> orgNames = taxonNode.getAllChildrenNames();
         
         List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(
         		nlb.getLookup(), orgNames, nlb.getFeatureType());
