@@ -26,12 +26,16 @@ import org.genedb.db.loading.TaxonNode;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 
+import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 
@@ -47,10 +51,13 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private SequenceDao sequenceDao;
 
     @Override
-    protected ModelAndView onSubmit(Object command) throws Exception {
+    protected ModelAndView onSubmit(HttpServletRequest request, 
+    		HttpServletResponse response, Object command, 
+    		BindException be) throws Exception {
+    	
         NameLookupBean nlb = (NameLookupBean) command;
         
-        TaxonNode taxonNode = nlb.getOrganism();
+        TaxonNode[] taxonNode = nlb.getOrganism();
         
         Map<String, Object> model = new HashMap<String, Object>(4);
         String viewName = null;
@@ -72,17 +79,18 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 //		}
         
         logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
-
-        List<String> orgNames = taxonNode.getAllChildrenNames();
+        logger.info("TaxonNode[0] is '"+taxonNode[0]+"'");
+        List<String> orgNames = taxonNode[0].getAllChildrenNames(); // FIXME 
         
         List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(
         		nlb.getLookup(), orgNames, nlb.getFeatureType());
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
-            // TODO Fail page
-            return null;
+            be.reject("no.results");
+            return showForm(request, response, be);
         }
+        
         if (results.size() > 1) {
             // Go to list results page
         	viewName = listResultsView;
@@ -93,23 +101,25 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             model.put("feature", feature);
             String type = feature.getCvTerm().getName();
             if (type != null && type.equals("gene")) {
-                viewName = "features/gene";
+                viewName = "features/"+type; // TODO Check this is known else go to features/generic
                 Feature mRNA = null;
                 Collection<FeatureRelationship> frs = feature.getFeatureRelationshipsForObjectId(); 
-                for (FeatureRelationship fr : frs) {
-                    mRNA = fr.getFeatureBySubjectId();
-                    break;
-                }
-                Feature polypeptide = null;
-                Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
-                for (FeatureRelationship fr : frs2) {
-                    Feature f = fr.getFeatureBySubjectId();
-                    if ("polypeptide".equals(f.getCvTerm().getName())) {
-                        polypeptide = f;
-                    }
-                }
-//                model.put("polypeptide", polypeptide);
-//                model.put("transcript", mRNA);
+                if (frs != null) {
+                	for (FeatureRelationship fr : frs) {
+                		mRNA = fr.getFeatureBySubjectId();
+                		break;
+                	}
+                	if (mRNA != null) {
+                		Feature polypeptide = null;
+                		Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
+                		for (FeatureRelationship fr : frs2) {
+                			Feature f = fr.getFeatureBySubjectId();
+                			if ("polypeptide".equals(f.getCvTerm().getName())) {
+                				polypeptide = f;
+                			}
+                		}
+                		model.put("polypeptide", polypeptide);
+                		//                model.put("transcript", mRNA);
 //                String seqString = FeatureUtils.getResidues(polypeptide);
 //                Alphabet protein = ProteinTools.getAlphabet();
 //        		SymbolTokenization proteinToke = null;
@@ -135,8 +145,9 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 //    			cal = WebUtils.getCharge(seq);
 //    			pp.setCharge(df.format(cal));
 //    			model.put("polyprop", pp);
+                	}
+                }
             }
-
         }
 
         return new ModelAndView(viewName, model);
@@ -157,8 +168,8 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 class NameLookupBean {
     
     private String lookup; // The name to lookup, using * for wildcards
-    private TaxonNode organism;
-    private boolean addWildcard;
+    private TaxonNode[] organism;
+    private boolean addWildcard = false;
     private String featureType = "gene";
        
     public void setLookup(String lookup) {
@@ -179,11 +190,11 @@ class NameLookupBean {
     	return this.lookup;
     }
 
-	public TaxonNode getOrganism() {
+	public TaxonNode[] getOrganism() {
 		return organism;
 	}
 
-	public void setOrganism(TaxonNode organism) {
+	public void setOrganism(TaxonNode[] organism) {
 		this.organism = organism;
 	}
 

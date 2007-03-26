@@ -18,7 +18,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
             nodes.add(child);
         }
         
-        out.write("<select name=\"org\">");
+        out.write("<select name=\"organism\">");
         for (TaxonNode node : nodes) {
             out.write("<option value=\"");
             out.write(node.getShortName());

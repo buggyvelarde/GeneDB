@@ -63,7 +63,7 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
         BrowseCategoryBean bcb = (BrowseCategoryBean) command;
 
-        String taxonList = TaxonUtils.getTaxonListFromNodes(bcb.getTaxonNodes());
+        String taxonList = TaxonUtils.getTaxonListFromNodes(bcb.getOrganism());
         List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(bcb.getCategory().toString(), taxonList);
         
         if (results == null || results.size() == 0) {
@@ -88,7 +88,7 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
 
 class BrowseCategoryBean {
     
-    private TaxonNode[] taxonNodes;
+    private TaxonNode[] organism;
     private BrowseCategory category;
     
     public BrowseCategory getCategory() {
@@ -97,11 +97,11 @@ class BrowseCategoryBean {
     public void setCategory(BrowseCategory category) {
         this.category = category;
     }
-    public TaxonNode[] getTaxonNodes() {
-        return this.taxonNodes;
+    public TaxonNode[] getOrganism() {
+        return this.organism;
     }
-    public void setTaxonNodes(TaxonNode[] taxonNodes) {
-        this.taxonNodes = taxonNodes;
+    public void setOrganism(TaxonNode[] organism) {
+        this.organism = organism;
     }
     
 }
