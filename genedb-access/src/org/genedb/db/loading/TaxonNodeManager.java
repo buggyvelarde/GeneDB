@@ -25,8 +25,14 @@ import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.phylogeny.PhylonodeOrganism;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.orm.hibernate3.SessionHolder;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +46,8 @@ public class TaxonNodeManager implements InitializingBean{
     
     private PhylogenyDaoI phylogenyDao;
     
+    private HibernateTransactionManager hibernateTransactionManager;
+    
     private Map<String, TaxonNode> labelTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> taxonTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> fullNameTaxonNodeMap = new HashMap<String, TaxonNode>();
@@ -47,6 +55,11 @@ public class TaxonNodeManager implements InitializingBean{
     private Map<String, TaxonNode> nickNameTaxonNodeMap = new HashMap<String, TaxonNode>();
 
     public void afterPropertiesSet() throws Exception {
+    	SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
+    	Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+    	TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
+    	try { 
+    	//System.err.println("Session is '"+session+"'");
         Set<TaxonNode> nodes = new HashSet<TaxonNode>();
         List<Phylonode> phylonodes = phylogenyDao.getAllPhylonodes();
         if (phylonodes == null || phylonodes.size() == 0) {
@@ -84,7 +97,12 @@ public class TaxonNodeManager implements InitializingBean{
             }
             nodes = tempNodes;
         }
-        
+    	//System.err.println("Session is '"+session+"'");
+    	}
+    	finally {
+    		  TransactionSynchronizationManager.unbindResource(sessionFactory);
+    		  SessionFactoryUtils.closeSession(session);
+    		}
         
     }
     
@@ -169,5 +187,11 @@ public class TaxonNodeManager implements InitializingBean{
     public void setPhylogenyDao(PhylogenyDaoI phylogenyDao) {
         this.phylogenyDao = phylogenyDao;
     }
+    
+    @Required
+    public void setHibernateTransactionManager(
+			HibernateTransactionManager hibernateTransactionManager) {
+		this.hibernateTransactionManager = hibernateTransactionManager;
+	}
 
 }
