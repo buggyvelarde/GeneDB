@@ -22,6 +22,7 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.loading.TaxonNode;
 import org.genedb.db.loading.TaxonNodeArrayPropertyEditor;
 
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,7 @@ public class TaxonNodeBindingFormController extends PostOrGetFormController {
         srdb.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
     }
     
+    @Required
     public void setTaxonNodeArrayPropertyEditor(
             TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
         this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
