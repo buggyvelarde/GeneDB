@@ -84,24 +84,15 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
      * @see org.genedb.db.dao.SequenceDaoI#getFeatureByAnyName(org.genedb.db.helpers.NameLookup, java.lang.String)
      */
     @SuppressWarnings({ "unchecked", "cast" })
-    public List<Feature> getFeaturesByAnyName(String name,String featureType) {
-
-		// FIXME - need moving
-        if (!name.startsWith("*")) {
-            name = "*" + name;
-        }
-        if (!name.endsWith("*")) {
-            name += "*";
-        }
+    public List<Feature> getFeaturesByAnyName(String name, String featureType) {
 
         // TODO Taxon and filter
         String lookup = name.replaceAll("\\*", "%");
 
         logger.info("lookup is " + lookup);
         List<Feature> features = (List<Feature>)
-        //getHibernateTemplate().find
-        getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureSynonym fs, Synonym s, CvTerm cvt where f=fs.feature and fs.synonym=s and fs.current=true and f.cvTerm=cvt.cvTermId and cvt.name='" + featureType + "' and s.name like :lookup",
-                "lookup", lookup);
+        getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureSynonym fs, Synonym s, CvTerm cvt where f=fs.feature and fs.synonym=s and fs.current=true and f.cvTerm=cvt.cvTermId and cvt.name=:featureType and s.name like :lookup",
+                new String[]{"lookup", "featureType"}, new Object[] {lookup, featureType});
         return features;
     }
 
@@ -253,7 +244,7 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         String lookup = nl.replaceAll("\\*", "%");
         String orgNames = StringUtils.collectionToDelimitedString(orgList, " ");
          
-        logger.info("Organism list is '" + orgNames + "'");
+        logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgNames+"'");
         return getHibernateTemplate().findByNamedParam("select f from Feature f where" +
         		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in (:orgNames)", 
         		new String[]{"lookup","featureType","orgNames"}, new Object[]{lookup,featureType,orgNames});
