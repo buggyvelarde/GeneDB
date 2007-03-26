@@ -1,5 +1,8 @@
 package org.genedb.web.tags.db;
 
+import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
+import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANAGER;
+
 import org.genedb.db.loading.TaxonNode;
 import org.genedb.db.loading.TaxonNodeManager;
 
@@ -9,12 +12,9 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANAGER;
-import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
-
 public abstract class AbstractHomepageTag extends SimpleTagSupport {
 
-	private String top;
+	private String top = "Root"; // FIXME
     
 	
     @Override
