@@ -16,7 +16,11 @@
 		- but is currently just used within PetClinic's web tier.
     -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basename" value="messages"/>
+        <property name="basenames">
+            <list>
+                <value>exceptions</value>
+            </list>
+        </property>
 	</bean>
 	
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
