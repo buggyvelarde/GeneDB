@@ -186,12 +186,11 @@
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="nameLookup"/>
         <property name="commandClass" value="org.genedb.web.mvc.controller.NameLookupBean" />
-		<property name="organismDao" ref="organismDao"/>
 		<property name="sequenceDao" ref="sequenceDao"/>
-		<property name="phylogenyDao" ref="phylogenyDao" />
         <property name="listResultsView" value="list/features" />
         <property name="formView" value="search/nameLookup" />
         <property name="bindOnNewForm" value="true" />
+        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
     
     <bean id="BrowseCategoryController" class="org.genedb.web.mvc.controller.BrowseCategoryController">
@@ -202,6 +201,7 @@
         <property name="successView" value="list/features" />
         <property name="formView" value="search/browseCategory" />
         <property name="bindOnNewForm" value="true" />
+        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
     
     <bean id="BrowseTermController" class="org.genedb.web.mvc.controller.BrowseTermController">
