@@ -12,6 +12,7 @@ import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.utils.CountedName;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -241,43 +242,21 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 
 
 	@SuppressWarnings("unchecked")
-	public List<Feature> getFeaturesByAnyNameAndOrganism(String nl, List<String> ids,String featureType) {
+	public List<Feature> getFeaturesByAnyNameAndOrganism(String nl, List<String> orgList, String featureType) {
 		
 		
-		if (ids == null || ids.size()==0 ) {
+		if (orgList == null || orgList.size()==0 ) {
 			logger.info("nl.getOrglist is null therefore calling featuresbyname");
 			return(getFeaturesByAnyName(nl,featureType));
 		}
-		
-		List<Feature> features = new ArrayList<Feature>();
-
-        if (!nl.startsWith("*")) {
-            nl = "*" + nl;
-        }
-        if (!nl.endsWith("*")) {
-            nl += "*";
-        }
 
         String lookup = nl.replaceAll("\\*", "%");
-        String orglist = ids.get(0);
+        String orgNames = StringUtils.collectionToDelimitedString(orgList, " ");
          
-        /*
-        StringBuffer ids = new StringBuffer();
-        for (int i=0; i<organisms.size(); i++) {
-			if (i+1 == organisms.size()) {
-				ids.append(organisms.get(i).getOrganismId());
-			} else {
-				ids.append(organisms.get(i).getOrganismId());
-				ids.append(",");
-			}
-		}*/
-        //String id = Integer.toString(organism.getOrganismId());
-        logger.info("id is " + orglist);
-        logger.info("calling the right query...");
-        features = getHibernateTemplate().findByNamedParam("select f from Feature f where" +
-        		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in (:orglist)", 
-        		new String[]{"lookup","featureType","orglist"}, new Object[]{lookup,featureType,orglist});
-		return features;
+        logger.info("Organism list is '" + orgNames + "'");
+        return getHibernateTemplate().findByNamedParam("select f from Feature f where" +
+        		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in (:orgNames)", 
+        		new String[]{"lookup","featureType","orgNames"}, new Object[]{lookup,featureType,orgNames});
 	}
 
 	@SuppressWarnings("unchecked")
