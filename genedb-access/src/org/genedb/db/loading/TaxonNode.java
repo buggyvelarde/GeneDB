@@ -44,17 +44,15 @@ public class TaxonNode {
         this.phylonode = phylonode;
         this.shortName = phylonode.getLabel();
         Collection<PhylonodeOrganism> pos = phylonode.getPhylonodeOrganisms();
-		System.err.println("Looking at '"+shortName+"'");
+		//System.err.println("Looking at '"+shortName+"'");
         if (pos != null && pos.size() > 0) {
         	if (pos.size() > 1) {
         		System.err.println("We have too many PhylonodeOrganisms");
         	} else {
         		Organism org = pos.iterator().next().getOrganism();
         		organism = true;
-        		System.err.println("Found organism for '"+shortName+"'");
+        		//System.err.println("Found organism for '"+shortName+"'");
         	}
-        } else {
-        	System.err.println("No organism for '"+shortName+"'");
         }
     }
     
