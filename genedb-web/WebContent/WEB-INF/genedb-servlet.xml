@@ -198,7 +198,7 @@
         <property name="commandName" value="browseCategory"/>
 		<property name="commandClass" value="org.genedb.web.mvc.controller.BrowseCategoryBean" />
 		<property name="cvDao" ref="cvDao"/>	
-        <property name="successView" value="list/features" />
+        <property name="successView" value="list/categories" />
         <property name="formView" value="search/browseCategory" />
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
@@ -209,9 +209,10 @@
         <property name="commandName" value="browseTerm"/>
 		<property name="commandClass" value="org.genedb.web.mvc.controller.BrowseTermBean" />
 		<property name="sequenceDao" ref="sequenceDao"/>	
-        <property name="successView" value="list/features" />
-        <property name="formView" value="search/browseCategory" />
+        <property name="successView" value="list/features3" />
+        <property name="formView" value="search/browseTerm" />
         <property name="bindOnNewForm" value="true" />
+        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
     
     <bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
