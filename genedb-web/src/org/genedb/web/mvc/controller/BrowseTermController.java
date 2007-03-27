@@ -28,7 +28,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,24 +50,49 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
 	
 	private SequenceDao sequenceDao;
 
-
+    @SuppressWarnings("unchecked")
+	@Override
+	protected Map referenceData(HttpServletRequest request) throws Exception {
+    	Map reference = new HashMap();
+    	reference.put("categories", BrowseCategory.values());
+    	return reference;
+	}
+	
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
 
         BrowseTermBean btb = (BrowseTermBean) command;
         
-        String nodes = StringUtils.arrayToDelimitedString(btb.getTaxonNodes(), " ");
+        TaxonNode[] taxonNodes = btb.getOrganism();
+        
+        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(taxonNodes);
 
-        List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), nodes);
+        List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), orgNames);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null"); // TODO Improve text
-            be.reject("No results"); // FIXME - Should be message key
+            be.reject("no.results");
             return showForm(request, response, be);
         }
         
         ModelAndView mav = new ModelAndView(getSuccessView());
-        mav.addObject(results);
+        
+        //logger.info("The number of results before transformation is '"+results.size()+"'");
+        
+        // TODO The results are probably protein objects - change to genes
+        List<Feature> newResults = new ArrayList<Feature>(results.size());
+        for (Feature feature : results) {
+			if (!GeneUtils.isPartOfGene(feature)) {
+				newResults.add(feature);
+				//logger.info("Immediately adding '"+feature.getUniqueName()+"' as not part of gene");
+			} else {
+				//logger.info("Transforming '"+feature.getUniqueName()+"' as not part of gene");
+				newResults.add(GeneUtils.getGeneFromPart(feature));
+			}
+		}
+        //logger.info("The number of results after transformation is '"+newResults.size()+"'");
+        mav.addObject("results", newResults);
+        mav.addObject("controllerPath", "/BrowseTerm");
 
         return mav;
     }
@@ -77,7 +106,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
 
 class BrowseTermBean {
     
-    private TaxonNode[] taxonNodes;
+    private TaxonNode[] organism;
     private BrowseCategory category;
     private String term;
     
@@ -87,11 +116,11 @@ class BrowseTermBean {
     public void setCategory(BrowseCategory category) {
         this.category = category;
     }
-    public TaxonNode[] getTaxonNodes() {
-        return this.taxonNodes;
+    public TaxonNode[] getOrganism() {
+        return this.organism;
     }
-    public void setTaxonNodes(TaxonNode[] taxonNodes) {
-        this.taxonNodes = taxonNodes;
+    public void setOrganism(TaxonNode[] organism) {
+        this.organism = organism;
     }
     public String getTerm() {
         return this.term;
