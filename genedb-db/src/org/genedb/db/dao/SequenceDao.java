@@ -112,10 +112,11 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
     @SuppressWarnings("unchecked")
 	public List<Feature> getFeaturesByCvNameAndCvTermNameAndOrganisms(String cvName, 
     		String cvTermName, String orgs) {
+    	logger.info("Querying with cvName='"+cvName+"' cvTermName='"+cvTermName+"' orgs='"+orgs+"'");
         return getHibernateTemplate().findByNamedParam("select f" +
                 " from CvTerm cvt,FeatureCvTerm fct,Feature f " +
-        "where f.organism.commonName in (:orgs) and f=fct.feature and cvt=fct.cvTerm and cvt.cv.name=:cvName and cvt.name=:cvTermName",
-        new String[]{"cvName", "cvTermName", "orgs"}, new Object[]{cvName, cvTermName, orgs});
+        "where f.organism.commonName in ("+orgs+") and f=fct.feature and cvt=fct.cvTerm and cvt.cv.name=:cvName and cvt.name=:cvTermName",
+        new String[]{"cvName", "cvTermName"}, new Object[]{cvName, cvTermName});
     }
 
     /* (non-Javadoc)
@@ -242,12 +243,24 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 		}
 
         String lookup = nl.replaceAll("\\*", "%");
-        String orgNames = StringUtils.collectionToDelimitedString(orgList, " ");
+        StringBuilder orgNames = new StringBuilder();
+        boolean notFirst = false;
+        for (String orgName : orgList) {
+        	if (notFirst) {
+        		orgNames.append(", ");
+        	} else {
+        		notFirst = true;
+        	}
+			orgNames.append('\'');
+			orgNames.append(orgName);
+			orgNames.append('\'');
+		}
          
         logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgNames+"'");
+        // The list of orgs is being included literally as it didn't seem to work as a parameter
         return getHibernateTemplate().findByNamedParam("select f from Feature f where" +
-        		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in (:orgNames)", 
-        		new String[]{"lookup","featureType","orgNames"}, new Object[]{lookup,featureType,orgNames});
+        		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames.toString()+" )", 
+        		new String[]{"lookup","featureType"}, new Object[]{lookup,featureType, });
 	}
 
 	@SuppressWarnings("unchecked")
