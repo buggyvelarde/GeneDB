@@ -83,7 +83,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         List<String> orgNames = taxonNode[0].getAllChildrenNames(); // FIXME 
         
         List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(
-        		nlb.getLookup(), orgNames, nlb.getFeatureType());
+        		nlb.getName(), orgNames, nlb.getFeatureType());
         
         if (results == null || results.size() == 0) {
             logger.info("result is null");
@@ -167,18 +167,18 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
 class NameLookupBean {
     
-    private String lookup; // The name to lookup, using * for wildcards
+    private String name; // The name to lookup, using * for wildcards
     private TaxonNode[] organism;
     private boolean addWildcard = false;
     private String featureType = "gene";
        
-    public void setLookup(String lookup) {
-        this.lookup = lookup;
+    public void setName(String name) {
+        this.name = name;
     }
     
-    public String getLookup() {
+    public String getName() {
     	if (addWildcard) {
-    		StringBuilder ret = new StringBuilder(this.lookup);
+    		StringBuilder ret = new StringBuilder(this.name);
     		if (!(ret.charAt(0)=='*')) {
     			ret.insert(0, '*');
     		}
@@ -187,7 +187,7 @@ class NameLookupBean {
     		}
     		return ret.toString();
     	}
-    	return this.lookup;
+    	return this.name;
     }
 
 	public TaxonNode[] getOrganism() {

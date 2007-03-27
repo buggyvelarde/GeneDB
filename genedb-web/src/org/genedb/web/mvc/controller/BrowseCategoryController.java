@@ -63,8 +63,9 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
         BrowseCategoryBean bcb = (BrowseCategoryBean) command;
 
-        String taxonList = TaxonUtils.getTaxonListFromNodes(bcb.getOrganism());
-        List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(bcb.getCategory().toString(), taxonList);
+        TaxonNode[] taxonNodes = bcb.getOrganism();
+        List<String> orgNames = taxonNodes[0].getAllChildrenNames(); // FIXME 
+        List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(bcb.getCategory().toString(), orgNames);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null"); // TODO Improve text
@@ -74,8 +75,7 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
         
         // Go to list results page
         ModelAndView mav = new ModelAndView(getSuccessView());
-        mav.addObject(results);
-
+        mav.addObject("results", results);
         
         return mav;
     }
