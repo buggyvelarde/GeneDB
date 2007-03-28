@@ -285,8 +285,19 @@ class LoadGeneDbCv {
 				<term name="htmlFullName" description="The full name in HTML format" />                                                                                      
         </term>
     </cv>
-    
-    
+
+    <cv name="artemis_specific" db="genedb_misc">
+		<term name="blast_file"   description="Blast file location" />
+		<term name="blastn_file"   description="Blastn file location" />
+		<term name="blastpgo_file"   description="Blastp+go file location" />
+		<term name="blastp_file"   description="Blastp file location" />
+		<term name="blastx_file"   description="Blastx file location" />
+		<term name="fasta_file"   description="Fasta file location" />
+		<term name="fastax_file"   description="Fastax file location" />
+		<term name="tBlastn_file"   description="tBlastn file location" />
+		<term name="tBlastx_file"   description="tBlastx file location" />	
+	</term>
+    	
     <cv name="genedb_literature" db="genedb_misc">
         <term name="unknown"   description="unknown literature type" />
         <term name="unfetched" description="unfetched literature type" />
