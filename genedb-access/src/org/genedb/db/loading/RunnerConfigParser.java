@@ -215,7 +215,7 @@ public class RunnerConfigParser {
 	    } else {
 		directory = new File(configFile.getParentFile(), dirName);
 	    }
-	    String extension = "embl";
+	    String extension = element.getAttribute("extension").getValue();
 	    this.addFilesFromDirectory(directory, extension, ret);
 	}
 

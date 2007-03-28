@@ -115,7 +115,10 @@ public class NewRunner implements ApplicationContextAware {
     
     private HibernateTransactionManager hibernateTransactionManager;
 
-
+    Map<String,String> cdsQualifiers = new HashMap<String,String>();
+    
+	Map<String,String> handeledQualifiers = new HashMap<String,String>();
+    
     public void setHibernateTransactionManager(
 			HibernateTransactionManager hibernateTransactionManager) {
 		this.hibernateTransactionManager = hibernateTransactionManager;
@@ -196,8 +199,23 @@ public class NewRunner implements ApplicationContextAware {
      * Populate maps based on InterPro result files, GO association files etc
      */
     private void buildCaches() {
-        // TODO Auto-generated method stub
-
+    	handeledQualifiers.put("EC_number", "true");
+    	handeledQualifiers.put("primary_name", "true");
+    	handeledQualifiers.put("systematic_id", "true");
+    	handeledQualifiers.put("previous_systematic_id", "true");
+    	handeledQualifiers.put("product", "true");
+    	handeledQualifiers.put("db_xref", "true");
+    	handeledQualifiers.put("similarity", "true");
+    	handeledQualifiers.put("temporary_systematic_id", "true");
+    	handeledQualifiers.put("fasta_file", "true");
+    	handeledQualifiers.put("blast_file", "true");
+    	handeledQualifiers.put("blastn_file", "true");
+    	handeledQualifiers.put("blastpgo_file", "true");
+    	handeledQualifiers.put("blastp_file", "true");
+    	handeledQualifiers.put("blastx_file", "true");
+    	handeledQualifiers.put("fastax_file", "true");
+    	handeledQualifiers.put("tblastn_file", "true");
+    	handeledQualifiers.put("tblastx_file", "true");
     }
 
 
@@ -326,7 +344,6 @@ public class NewRunner implements ApplicationContextAware {
         long start = new Date().getTime();
 
         this.buildCaches();
-
         //loadCvTerms();
         // First process simple files ie simple EMBL files
         List<String> fileNames = this.runnerConfig.getFileNames();
@@ -474,7 +491,11 @@ public class NewRunner implements ApplicationContextAware {
          * new code ends
          */
         this.postProcess();
-
+        Set temp = cdsQualifiers.keySet();
+        for (Object key : temp) {
+			System.out.println(key + " " + cdsQualifiers.get(key));
+		}
+        
         long duration = (new Date().getTime()-start)/1000;
         logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
     }
@@ -491,6 +512,7 @@ public class NewRunner implements ApplicationContextAware {
     @SuppressWarnings("unchecked")
     private void processSequence(File file, Sequence seq, org.gmod.schema.sequence.Feature parent, int offset) {
     	Session session = hibernateTransactionManager.getSessionFactory().openSession();
+    	
     	try {
             org.gmod.schema.sequence.Feature topLevel = this.featureHandler.process(file, seq);
             logger.info("Processing '"+file.getAbsolutePath()+"'");
@@ -505,7 +527,8 @@ public class NewRunner implements ApplicationContextAware {
 
             Map<ProcessingPhase,List<Feature>> processingStagesFeatureMap =
                 new HashMap<ProcessingPhase, List<Feature>>();
-
+            
+            
             List<Feature> toRemove = new ArrayList<Feature>();
             Iterator featureIterator = seq.features();
             while (featureIterator.hasNext()) {
@@ -513,6 +536,16 @@ public class NewRunner implements ApplicationContextAware {
                 logger.info("Feature is '"+feature+"'");
                 //System.err.println(feature);
                 FeatureProcessor fp = findFeatureProcessor(feature);
+                if (feature.getType().equals("CDS")) {
+                	Set keys = feature.getAnnotation().keys();
+                	for (Object key : keys) {
+            			if(handeledQualifiers.containsKey(key)){
+            				cdsQualifiers.put((String) key, "Handeled");
+            			} else {
+            				cdsQualifiers.put((String) key, "Un-Handeled");
+            			}
+            		}
+                }
                 if (fp != null) {
                     ProcessingPhase pp = fp.getProcessingPhase();
                     if (pp == ProcessingPhase.FIRST) {
@@ -571,6 +604,8 @@ public class NewRunner implements ApplicationContextAware {
             exp.printStackTrace();
         }
         session.close();
+        
+        
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
