@@ -4,14 +4,14 @@
 <head>
 <link rel="stylesheet" href="<c:url value="/"/>includes/style/wtsi.css" type="text/css"/>
 <link rel="stylesheet" href="<c:url value="/"/>includes/style/jimmac.css" type="text/css"/>
-<link rel="stylesheet" href="<c:url value="/"/>includes/style/test.css" type="text/css"/>
+<link rel="stylesheet" href="<c:url value="/"/>includes/style/test2.css" type="text/css"/>
 <title>
 	Welcome to GeneDB
 </title>
 </head>
-<body>
+<body style="background-color: #333333;">
 <div align="center">
-	<table border="0" cellpadding="0" cellspacing="0" width="808">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 	<tr>
 		<td class="outline">
 			<div id="header_outer">
@@ -85,18 +85,18 @@
 				  					 			<table class="contentpaneopen">
 													<tr>
 														<td class="contentheading" width="100%">
-															Welcome to Genedb									
+															Welcome to Genedb	<br><br>								
 														</td>
 													</tr>
 													<tr>
 														<td><font style="font-size: 12px;">
 															The GeneDB project is a core part of the Sanger Institute Pathogen
-															Sequencing Unit's (PSU) activities. Its primary goals are:
+															Sequencing Unit's (PSU) activities. Its primary goals are:<br><br>
 															<ul>
 																<li>to provide reliable storage of, and access to the latest sequence data and
-																	annotation/curation for the whole range of organisms sequenced by the PSU.</li>
+																	annotation/curation for the whole range of organisms sequenced by the PSU.<br><br></li>
 																 <li>to develop the website and other tools to aid the community in accessing
-																     and obtaining the maximum value from this data.</li>
+																     and obtaining the maximum value from this data.<br><br></li>
 															</ul>
 														</font></td>
 													<tr>
@@ -115,19 +115,19 @@
 																	<tr>
 																		<td width="100%" style="text-align: left;">
 																			<ul id="mainlevel-nav">
-																				<li id="mainlevel-nav"><a href="<c:url value="/Organism"/>"><s>Organism List</s></a></li>
-																				<li id="mainlevel-nav"><a href="<c:url value="/examples/JSMenuTest.jsp"/>"><s>Query drop-down</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Search/DummyGeneFeature"><s>New off-line example</s></a></li>
-																				<li id="mainlevel-nav"><a href="<c:url value="/examples/goProcessScriptaculousAutoCompleteTest.jsp"/>">GO process auto-complete (scriptaculous)</a></li>
-																				<li id="mainlevel-nav"><a href="<c:url value="/examples/goProcessYUIAutoCompleteTest.jsp"/>"><s>GO process auto-complete (YUI)</s></a></li>																				<li id="mainlevel-nav"><a href="<c:url value="/dwr/test/goProcessBrowse"/>">DWR GO Process page</a></li>
-																				<li id="mainlevel-nav"><a href="<c:url value="/Genome/Trypanasoma_brucei_brucei/current"/>"><s>Common URL</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Admin/LockExaminer"><s>Lock examiner</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=SPCC1223.06"><s>New pombe example</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760"><s>New tbrucei example</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=PF08_0098"><s>New malaria example</s></a></li>
-																				<li id="mainlevel-nav"><a href="<c:url value="/Search/BooleanQuery?taxId=12345"/>"><s>Boolean query page</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Search/FindCvByName"/><s>CV Browser (check)</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760"><s>New pombe alt-splicing example</s></a></li>
+																				<li id="mainlevel-nav"><a href="<c:url value="/Organism"/>">Organism List</a></li>
+																				<li id="mainlevel-nav"><a href="<c:url value="/examples/JSMenuTest.jsp"/>">Query drop-down</a></li>
+																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760">New tbrucei example</a></li>
+																				<li id="mainlevel-nav"><a href="./Search/DummyGeneFeature">New off-line example</a></li>
+																				<li id="mainlevel-nav"><a href="<c:url value="/examples/pfamTest.jsp"/>">Pfam auto-complete</a></li>
+																				<li id="mainlevel-nav"><a href="<c:url value="/dwr/test/PfamLookup"/>">DWR Pfam page</a></li>
+																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=PF08_0098">New malaria example</a></li>
+																				<li id="mainlevel-nav"><a href="http://localhost:8080/genedb-web/Genome/Trypanasoma_brucei_brucei/current">Common URL</a></li>
+																				<li id="mainlevel-nav"><a href="./Admin/LockExaminer">Lock examiner</a></li>
+																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760">New pombe example</a></li>
+																				<li id="mainlevel-nav"><a href="<c:url value="/Search/BooleanQuery?taxId=12345"/>">Boolean query page</a></li>
+																				<li id="mainlevel-nav"><a href="./Search/FindCvByName"/>CV Browser (check)</a></li>
+																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760">New pombe alt-splicing example</a></li>
 																			</ul>
 																		</td>
 																	</tr>
@@ -137,7 +137,7 @@
 													<tr>
 												</table>
 												<span class="article_seperator">&nbsp;</span>
-												<table class="contentpaneopen">
+												<table class="contentpaneopen" width="100%">
 													<tr>
 														<td class="contentheading" width="100%">
 															Example Gene Search 
@@ -146,9 +146,10 @@
 													<tr>
 														<td>
 															<div style="width: 100%;">
-															<div class="fieldset" style="height: 200px; width: 275px;float: left; margin: 2px; background-color: #D2DDF2;display: inline;">
-															<div class="legend">Searches</div>
-																<br/>
+															<div style="width: 26%; float: left;">
+															<div class="Article">
+																<h3><p>Searches</p></h3>
+																<div class="ArticleBody">
 																<table width="100%" align="center">
 																	<tr align="center">
 																			<td align="center">
@@ -157,7 +158,7 @@
 																		    <input type="hidden" name="formType" value="navBar">
 																			<br>
 																			  <b>Search for gene by ID/description in:</b>
-																			  <br><select name="organism">
+																				<select name="organism">
 																		
 																			    <option value="All:*">All organisms
 																			      <optgroup label="Fungi">
@@ -230,21 +231,25 @@
 																		</td>
 																	</tr>
 																</table>
+																</div>
+																<div class="ArticleFooter"><p></p></div>
 															</div>
-															<div class="fieldset" style="height: 200px; width: 276px;float: left; margin: 2px; background-color: #D2DDF2;display: inline;">
-															<div class="legend">Sequence Searches</div>
+															</div>
+															<div style="width: 28%; float: left;">
+															<div class="Article">
+															<h3><p>Sequence Searches</p></h3>
+															<div class="ArticleBody">
 																<br/>
 																<table>
 																	<tr>
-																       <td align="center" width="33%"><br/><a href="/genedb/seqSearch.jsp">omniBLAST</a>
+																       <td align="center" width="33%"><br/><a href="/genedb/seqSearch.jsp">omniBLAST</a> (Multi-organism BLAST)
 																		    <form action="/genedb/Dispatcher" method="GET" name="ohm2">
 																		    <input type="hidden" name="formType" value="navBar">
-																			(Multi-organism BLAST)
+															
 																		        <br>&nbsp;
 																		        <br><hr>
 																		        <br>&nbsp;
-																			<br><input type="submit" name="pages" value="Go To"><b>&nbsp;single organism BLAST:</b>
-																			<br><br>
+																			<br><input type="submit" name="pages" value="Go To"><b>&nbsp;single organism BLAST:</b> <br><br>
 																		 <select name='ohmr'
 																		onChange="document.location.href=document.forms['ohm2'].ohmr.options[document.forms['ohm2'].ohmr.selectedIndex].value">
 																		<option selected value='/'>Choose...</option>
@@ -308,10 +313,15 @@
 																		</td>
 																	</tr>
 																</table>
+																</div>
+																<div class="ArticleFooter"><p></p></div>
+															</div>
 															</div>
 															<!-- Row 3 for going to datasets -->
-															<div class="fieldset" style="width: 569px;float: left; margin-top: 5px;margin-left: 2px; background-color: #D2DDF2;display: inline;">
-															<div class="legend">Datasets</div>
+															<div style="width: 45%; float: left;">
+															<div class="Article">
+															<h3><p>Datasets</p></h3>
+															<div class="ArticleBody">
 																<br/>
 																<table>
 																	<tr>
@@ -319,7 +329,7 @@
 																			<div>
 																		    <form action="/genedb/Dispatcher" method="GET" name="ohm3">
 																		    <input type="hidden" name="formType" value="navBar">
-																		     <div style="float: left;width: 275px;display: inline;">   
+																		     <div style="float: left;margin: 5px;">   
 																		        <b>Fungi</b>
 																		        <br><input type="submit" name="fungiHomePage" value="Go To">
 																		     	        <select name="fungiOrganism"
@@ -331,7 +341,7 @@
 																		                  <option value="/genedb/pombe/">S. pombe
 																		                </select>
 																			</div>
-																		    <div style="float: left;width: 275px;display: inline;">
+																		    <div style="float: left;margin: 5px;">
 																				<b>Protozoa</b>
 																		        <br><input type="submit" name="protozoaHomePage" value="Go To">
 																		       	        <select name="protozoaOrganism"
@@ -356,7 +366,7 @@
 																		                  <option value="/genedb/tvivax/">T. vivax
 																		                </select>
 																				</div>
-																		        <div style="float: left;width: 275px;display: inline;">
+																		        <div style="float: left;margin: 5px;">
 																		        <br><b>Parasitic Helminths</b>
 																		        <br><input type="submit" name="helminthsHomePage" value="Go To">
 																		       	        <select name="helminthsOrganism"
@@ -365,7 +375,7 @@
 																		                  <option value="/genedb/smansoni/">S. mansoni
 																		                </select>
 																				</div>
-																				<div style="float: left;width: 275px;display: inline;">
+																				<div style="float: left;margin: 5px;">
 																		        <br><b>Bacteria</b>
 																		        <br><input type="submit" name="bacteriaHomePage" value="Go To">
 																		       	        <select name="bacteriaOrganism"
@@ -388,7 +398,7 @@
 																		                  <option value='/genedb/styphi/'>S. typhi</option>
 																		                </select>
 																				</div>
-																				<div style="float: left;width: 275px;display: inline;">																		
+																				<div style="float: left;margin: 5px;">																		
 																		        <br><b>Parasite Vectors</b>
 																		        <br><input type="submit" name="parasiteVectorsHomePage" value="Go To">
 																		       	        <select name="parasiteVectorsOrganism"
@@ -397,7 +407,7 @@
 																		                  <option value='/genedb/glossina/'>G. morsitans</option>
 																		                </select>
 																				</div>
-																				<div style="float: left;width: 275px;display: inline;">
+																				<div style="float: left;margin: 5px;">
 																		        <br><b>Viruses</b>
 																		        <br><input type="submit" name="virusesHomePage" value="Go To">
 																		       	        <select name="virusesOrganism"
@@ -412,6 +422,9 @@
 																																				
 																	</tr>
 																</table>
+																</div>
+																<div class="ArticleFooter"><p></p></div>
+																</div>
 															</div>
 															</div>
 														</td>
@@ -421,17 +434,17 @@
 												<table class="contentpane">
 													<tr>
 														<td class="contentheading" width="100%">
-															Other Information 
+															Other Information
 														</td>
 													</tr>
 													<tr>
 														<td>
-															GeneDB currently provides access to 37 genomes, from various stages of the sequencing curation pipeline, from early access to partial genomes with automatic annotation through to complete genomes with extensive manual curation.  (Details correct as of May 2006)<br><br>
+															<br><br>GeneDB currently provides access to 37 genomes, from various stages of the sequencing curation pipeline, from early access to partial genomes with automatic annotation through to complete genomes with extensive manual curation.  (Details correct as of May 2006)<br><br>
 														</td>
 													</tr>
 													<tr>
 														<td>
-															<b>Note:</b>This site (data and/or code) is updated approximately weekly. If things do not appear to be working - let us know, and we will try and fix them. Please see our help page before creating links to our site. If you have any suggestions or requests about the site please contact the technical team  
+															<br><br><b>Note:</b>This site (data and/or code) is updated approximately weekly. If things do not appear to be working - let us know, and we will try and fix them. Please see our help page before creating links to our site. If you have any suggestions or requests about the site please contact the technical team <br><br> 
 														</td>
 													</tr>
 												</table>
@@ -455,9 +468,9 @@
 	</td>
 </tr>
 </table>
-<table width="808">
+<table width="100%">
       <tr>
-	<td width="50%" align="left">Hosted by the <a href="http://www.sanger.ac.uk/">Sanger Institute</a></td>
+	<td width="50%" align="left"><font color="white">Hosted by the <a href="http://www.sanger.ac.uk/">Sanger Institute</a></font></td>
 
 	<td width="50%" align="right"><p align="right"><a href="/genedb/feedback.jsp">Send us your comments on GeneDB</a></td>
       </tr>
