@@ -1,5 +1,7 @@
 package org.genedb.web.mvc.controller.cgview;
 
+import org.genedb.web.mvc.controller.BrowseCategory;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
@@ -13,8 +15,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -53,8 +56,6 @@ public class CircularGenomeFormController extends SimpleFormController implement
         orgs.put("S. pyogenes", ROOT+"spyogenes/curated/SP.embl");
         orgs.put("C. jejuni", ROOT+"cjejuni/curated/chr1/Cj.embl");
     }
-    
-    
 
 
     /**
@@ -82,7 +83,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
             String input = orgs.get(cgcb.getTaxon());
 
             // Run restrict over organism
-            String embossDir = "/nfs/disk100/pubseq/emboss";
+            String embossDir = "/software/EMBOSS-4.0.0/";
             File output = File.createTempFile("circular_genome", ".txt");
             String[] args = {embossDir+"/bin/restrict", input, "-auto", "-limit", "y", "-enzymes", "'"+cgcb.getEnzymeName()+"'", "-out", output.getCanonicalPath() };
             ProcessBuilder pb = new ProcessBuilder(args);
@@ -220,7 +221,32 @@ public class CircularGenomeFormController extends SimpleFormController implement
         return ret.toString();
     }
 
-    public String addTempTable(String in, List labelBounds) {
+    @SuppressWarnings("unchecked")
+	public String addTempTable(String in, List labelBounds) {
+    	
+    	Collections.sort(labelBounds, new Comparator<LabelBounds>() {
+    		public int compare(LabelBounds lb1, LabelBounds lb2) {
+                String label1 = lb1.getLabel();
+                int colon = label1.indexOf(":");
+                if (colon == -1) {
+                	return -1;
+                }
+                String count1 = label1.substring(0, colon);
+                
+                String label2 = lb2.getLabel();
+                if (label2 == null) {
+                	return -1;
+                }
+                colon = label2.indexOf(":");
+                if (colon == -1) {
+                	return -1;
+                }
+                String count2 = label2.substring(0, colon);
+                
+                return count1.compareTo(count2);
+    		}
+    	});
+    	
         StringBuilder ret = new StringBuilder(in);
         ret.append("<table border=\"1\">\n");
         ret.append("<tr><th>Fragment</th><th>Start</th><th>End</th><th>Length</th><th>EMBL</th><th>Artemis</th><th>Table</th></tr>");
