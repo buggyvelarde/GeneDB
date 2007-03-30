@@ -62,8 +62,8 @@ public class TaxonNode {
                 names.put(TaxonNameType.DB_NAME, getOrganismProperty(org, "dbname"));
                 names.put(TaxonNameType.HTML_SHORT, getOrganismProperty(org, "htmlShortName"));
                 names.put(TaxonNameType.HTML_FULL, getOrganismProperty(org, "htmlFullName"));
-                int translationTable = Integer.parseInt(getOrganismProperty(org, "translationTable"));
-                int mitochondrialTranslationTable = Integer.parseInt(getOrganismProperty(org, "mitochondrialTranslationTable"));
+                //int translationTable = Integer.parseInt(getOrganismProperty(org, "translationTable"));
+                //int mitochondrialTranslationTable = Integer.parseInt(getOrganismProperty(org, "mitochondrialTranslationTable"));
                 String fullName = org.getGenus() + ' ' + org.getSpecies();
                 names.put(TaxonNameType.FULL, fullName);
               
