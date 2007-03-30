@@ -71,8 +71,14 @@ public class TaxonNodeManager implements InitializingBean{
             labelTaxonNodeMap.put(tn.getLabel(), tn);
             taxonTaxonNodeMap.put(tn.getTaxonId(), tn);
             fullNameTaxonNodeMap.put(tn.getName(TaxonNameType.FULL), tn);
-            dbNameTaxonNodeMap.put(tn.getName(TaxonNameType.DB_NAME), tn);
-            nickNameTaxonNodeMap.put(tn.getName(TaxonNameType.NICKNAME), tn);
+            String tmp = tn.getName(TaxonNameType.DB_NAME);
+            if (tmp != null) {
+                dbNameTaxonNodeMap.put(tmp, tn);
+            }
+            tmp = tn.getName(TaxonNameType.NICKNAME);
+            if (tmp != null) {
+                nickNameTaxonNodeMap.put(tn.getName(TaxonNameType.NICKNAME), tn);
+            }
         }
         
         // Set up all child/parent relationships

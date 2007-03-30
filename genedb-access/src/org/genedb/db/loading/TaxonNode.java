@@ -122,11 +122,11 @@ public class TaxonNode {
     
 
     public String getName(TaxonNameType tnt) {
-        String name = names.get(tnt);
-        if (name == null) {
-            throw new RuntimeException("Name '"+tnt+"' not configured for '"+getLabel()+"'");
-        }
-        return name;
+        return names.get(tnt);
+//        if (name == null) {
+//            throw new RuntimeException("Name '"+tnt+"' not configured for '"+getLabel()+"'");
+//        }
+//        return name;
     }
 
     public String getTaxonId() {
