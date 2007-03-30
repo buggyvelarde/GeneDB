@@ -41,7 +41,7 @@ public class TaxonNodeArrayPropertyEditor extends PropertyEditorSupport {
             if (!first) {
                 builder.append(":");
             }
-            builder.append(node.getShortName());
+            builder.append(node.getLabel());
             first = false;
         }
         return builder.toString();

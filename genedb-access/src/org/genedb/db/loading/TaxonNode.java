@@ -27,22 +27,19 @@ import java.util.Map;
 public class TaxonNode {
 
     private String taxonId;
-    private String fullName;
-    private String shortName;
     private TaxonNode parent;
-    private String dbName;
-    private String htmlName;
     private Phylonode phylonode;
     private List<TaxonNode> children = new ArrayList<TaxonNode>();
     private boolean webLinkable = false;
-    private String nickName;
     private boolean organism = false;
     private Map<String, Map<String, Object>> appDetails = new HashMap<String, Map<String, Object>>(0);
-
+    private Map<TaxonNameType, String> names = new HashMap<TaxonNameType, String>(7);
+    
 
     public TaxonNode(Phylonode phylonode) {
         this.phylonode = phylonode;
-        this.shortName = phylonode.getLabel();
+        names.put(TaxonNameType.LABEL, phylonode.getLabel());
+        
         Collection<PhylonodeOrganism> pos = phylonode.getPhylonodeOrganisms();
 		//System.err.println("Looking at '"+shortName+"'");
         if (pos != null && pos.size() > 0) {
@@ -52,14 +49,16 @@ public class TaxonNode {
         		Organism org = pos.iterator().next().getOrganism();
         		organism = true;
         		//System.err.println("Found organism for '"+shortName+"'");
+                // TODO What organism props do we want?
         	}
         }
+        
+        
     }
     
 //    public TaxonNode(TaxonNode parent, Phylonode phylonode, Organism organism) {
 //        this.parent = parent;
 //        this.parent.addChild(this);
-//        this.phylonode = phylonode;
 //        this.organism = organism;
 //        this.fullName = this.organism.getGenus() + ' ' + this.organism.getSpecies();
 //        this.shortName = phylonode.getLabel();
@@ -96,12 +95,17 @@ public class TaxonNode {
     }
 
 
-    public String getDbName() {
-        return dbName;
+    public String getLabel() {
+        return getName(TaxonNameType.LABEL);
     }
+    
 
-    public String getFullName() {
-        return fullName;
+    public String getName(TaxonNameType tnt) {
+        String name = names.get(tnt);
+        if (name == null) {
+            throw new RuntimeException("Name '"+tnt+"' not configured for '"+getLabel()+"'");
+        }
+        return name;
     }
 
     public String getTaxonId() {
@@ -128,14 +132,6 @@ public class TaxonNode {
     public Phylonode getPhylonode() {
         return this.phylonode;
     }
-
-    public String getShortName() {
-        return this.shortName;
-    }
-
-    public String getHtmlName() {
-        return this.htmlName;
-    }
     
     public boolean isWebLinkable() {
         return webLinkable;
@@ -154,11 +150,11 @@ public class TaxonNode {
     	StringBuilder ret = new StringBuilder();
     	for (TaxonNode child : allChildren) {
 			if (child.isOrganism()) {
-				names.add(child.getShortName());
+				names.add(child.getLabel());
 			}
 		}
     	if (isOrganism()) {
-    		names.add(getShortName());
+    		names.add(getLabel());
     	}
     	return names;
     }
@@ -188,16 +184,13 @@ public class TaxonNode {
         ret.append("taxon id='");
         ret.append(getTaxonId());
         ret.append("' fullName='");
-        ret.append(getFullName());
-        ret.append("' shortName='");
-        ret.append(getShortName());
+        ret.append(getName(TaxonNameType.FULL));
+        ret.append("' label='");
+        ret.append(getLabel());
         ret.append("' organism=");
         ret.append(organism);
         ret.append("' ");
         return ret.toString();
     }
 
-    public String getNickName() {
-        return nickName;
-    }
 }

@@ -1,30 +1,28 @@
 package org.genedb.web.tags.db;
 
-import org.gmod.schema.utils.propinterface.PropertyI;
+import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
+import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANAGER;
+
+import org.genedb.db.loading.TaxonNameType;
+import org.genedb.db.loading.TaxonNode;
+import org.genedb.db.loading.TaxonNodeManager;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class OrganismNameTag extends SimpleTagSupport {
-	
-	private Collection<PropertyI> collection;
+
 	private String name;
-    private String var;
+    private TaxonNameType type;
 
 
-	public void setVar(String var) {
-        this.var = var;
+	public void setType(String typeString) {
+        this.type = TaxonNameType.valueOf(typeString);
     }
 
-    public void setCollection(Collection<PropertyI> collection) {
-        this.collection = collection;
-    }
 
     public void setName(String name) {
         this.name = name;
@@ -33,21 +31,18 @@ public class OrganismNameTag extends SimpleTagSupport {
     @SuppressWarnings("unchecked")
     @Override
 	public void doTag() throws JspException, IOException {
-    	List filtered = new ArrayList();
-        if (collection != null) {
-        	//String type = collection.getClass().getName();
-            for (PropertyI prop : collection) {
-            	if (name.equals(prop.getCvTerm().getName())) {
-            		filtered.add(prop);
-            	}
-            }
-        } else {
-            System.err.println("Collection is null");
+        
+        TaxonNodeManager tnm = (TaxonNodeManager) 
+        getJspContext().getAttribute(TAXON_NODE_MANAGER, APPLICATION_SCOPE);
+    
+        TaxonNode node = tnm.getTaxonNodeForLabel(name);
+    
+        if (node == null) {
+            throw new JspException("Organism Name Tag: Can't identify taxonNode for '"+name+"'");
         }
+        
 		JspWriter out = getJspContext().getOut();
-        getJspContext().setAttribute(var, filtered);
-        getJspBody().invoke(out);
-        getJspContext().removeAttribute(var);
+        out.write(node.getName(type));
 	}
 	
 //		PageContext pc = (PageContext) getJspContext();
@@ -55,3 +50,5 @@ public class OrganismNameTag extends SimpleTagSupport {
 //		String contextPath = req.getContextPath();
 
 }
+
+

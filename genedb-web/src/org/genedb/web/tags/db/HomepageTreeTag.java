@@ -1,5 +1,6 @@
 package org.genedb.web.tags.db;
 
+import org.genedb.db.loading.TaxonNameType;
 import org.genedb.db.loading.TaxonNode;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ public class HomepageTreeTag extends AbstractHomepageTag {
     protected void display(TaxonNode node, JspWriter out, int indent) throws IOException {
         out.write("<ul>");
         out.write("<li>");
-        out.write(node.getFullName());
+        out.write(node.getName(TaxonNameType.FULL));
         out.write("</li>");
         for (TaxonNode child : node.getChildren()) {
             display(child, out, indent+1);
