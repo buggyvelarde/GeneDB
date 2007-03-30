@@ -1,1 +1,2 @@
-Scriptaculous version 1.6.5
+Scriptaculous version 1.7.0
+Yahoo YUI version 2.2.0a
