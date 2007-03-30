@@ -7,6 +7,7 @@
 package org.genedb.db.loading;
 
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.organism.OrganismProp;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.phylogeny.PhylonodeOrganism;
 import org.gmod.schema.phylogeny.PhylonodeProp;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -50,6 +52,18 @@ public class TaxonNode {
         		organism = true;
         		//System.err.println("Found organism for '"+shortName+"'");
                 // TODO What organism props do we want?
+                
+                this.taxonId = getOrganismProperty(org, "taxonId");
+                String curatorName = getOrganismProperty(org, "curatorName");
+                String curatorEmail = getOrganismProperty(org, "curatorEmail");
+                String nickname = getOrganismProperty(org, "nickname");
+                //String curatorName = getOrganismProperty(org, "curatorName");
+                names.put(TaxonNameType.DB_NAME, getOrganismProperty(org, "dbname"));
+                names.put(TaxonNameType.HTML_SHORT, getOrganismProperty(org, "htmlShortName"));
+                names.put(TaxonNameType.HTML_FULL, getOrganismProperty(org, "htmlFullName"));
+                int translationTable = Integer.parseInt(getOrganismProperty(org, "translationTable"));
+                int mitochondrialTranslationTable = Integer.parseInt(getOrganismProperty(org, "mitochondrialTranslationTable"));
+                
         	}
         }
         
@@ -57,14 +71,7 @@ public class TaxonNode {
     }
     
 //    public TaxonNode(TaxonNode parent, Phylonode phylonode, Organism organism) {
-//        this.parent = parent;
-//        this.parent.addChild(this);
-//        this.organism = organism;
 //        this.fullName = this.organism.getGenus() + ' ' + this.organism.getSpecies();
-//        this.shortName = phylonode.getLabel();
-//        this.taxonId = getPhylonodeProperty("");
-//        this.dbName = getPhylonodeProperty("");
-//        this.htmlName = getPhylonodeProperty("");
 //        if (this.organism != null) {
 //            this.webLinkable = true;
 //        } else {
@@ -75,8 +82,19 @@ public class TaxonNode {
 //        }
 //    }
 
+    
     private String getPhylonodeProperty(String key) {
         for (PhylonodeProp prop : phylonode.getPhylonodeProps()) {
+            if (prop.getCvTerm().getName().equals(key)) {
+                return prop.getValue();
+            }
+        }
+        return null;
+    }
+    
+
+    private String getOrganismProperty(Organism org, String key) {
+        for (OrganismProp prop : org.getOrganismProps()) {
             if (prop.getCvTerm().getName().equals(key)) {
                 return prop.getValue();
             }
