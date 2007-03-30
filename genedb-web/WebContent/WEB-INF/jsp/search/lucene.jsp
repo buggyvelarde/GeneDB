@@ -20,7 +20,7 @@
 <c:out value ="${errorMessage}"/><br>
 </font>
 </c:forEach>
-<sp:form commandName="luceneSearch" action="LuceneSearch" method="post" onsubmit="check(this)">
+<sp:form name="lucene" commandName="luceneSearch" action="LuceneSearch" method="post" onsubmit="check(this)">
 	<table align="center" width="50%">
 		<tr>
 			<td>Fields: 
