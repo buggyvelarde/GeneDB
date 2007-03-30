@@ -10,7 +10,7 @@
 
 <p>This page allows you to look up a feature by name.
 
-<form:form commandName="nameLookup" action="NamedFeature" method="post">
+<form:form commandName="nameLookup" action="NamedFeature" method="get">
   <table>
     <tr><td colspan="3">
       <font color="red"><form:errors path="*" /></font>

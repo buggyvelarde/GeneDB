@@ -10,7 +10,7 @@
 
 <p>This is a page for a browse by term search
 
-<form:form action="." commandName="browseTerm">
+<form:form action="." commandName="browseTerm" method="get">
 <table>
 <tr><td><form:errors path="*" /></td></tr>
     <tr>
