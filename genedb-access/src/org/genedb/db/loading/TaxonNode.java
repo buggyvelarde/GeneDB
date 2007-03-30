@@ -63,7 +63,10 @@ public class TaxonNode {
                 names.put(TaxonNameType.HTML_FULL, getOrganismProperty(org, "htmlFullName"));
                 int translationTable = Integer.parseInt(getOrganismProperty(org, "translationTable"));
                 int mitochondrialTranslationTable = Integer.parseInt(getOrganismProperty(org, "mitochondrialTranslationTable"));
-                String fullName = org.getGenus() + ' ' + org.getSpecies();
+                String fullName = getLabel();
+                if (org != null) {
+                    fullName = org.getGenus() + ' ' + org.getSpecies();
+                }
                 names.put(TaxonNameType.FULL, fullName);
               
         	}
