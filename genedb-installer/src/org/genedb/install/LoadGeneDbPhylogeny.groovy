@@ -862,8 +862,8 @@ class LoadGeneDbPhylogeny {
 	            	<property name="dbName" value="GeneDB_Bparapertussis" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
-					<property name="htmlFullName" value=""/>
-					<property name="htmlShortName" value=""/>
+					<property name="htmlFullName" value="<i>Bordetella parapertussis</i>"/>
+					<property name="htmlShortName" value="<i>B. parapertussis</i>"/>
 					<property name="shortName" value="" />
 					<property name="curatorName" value="" />
 				</organism>
@@ -874,8 +874,8 @@ class LoadGeneDbPhylogeny {
 	            	<property name="dbName" value="GeneDB_Bpertussis" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
-					<property name="htmlFullName" value=""/>
-					<property name="htmlShortName" value=""/>
+					<property name="htmlFullName" value="<i>Bordetella pertussis</i>"/>
+					<property name="htmlShortName" value="<i>B. pertussis</i>"/>
 					<property name="shortName" value="" />
 					<property name="curatorName" value="" />
 				</organism>
