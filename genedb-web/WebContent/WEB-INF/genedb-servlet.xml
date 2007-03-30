@@ -25,7 +25,7 @@
 	
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
 
-<!-- 
+ 
     <bean id="goProcessBrowse" class="org.genedb.web.mvc.controller.BrowseBean">
         <dwr:remote javascript="goPBrowse">
            <dwr:include method="getPossibleMatches" />
@@ -34,7 +34,7 @@
         <property name="sequenceDaoI"  ref="sequenceDao" />
         <property name="cvName"  value="biological_process" />
     </bean>
--->
+
     <dwr:controller id="dwrController" debug="true"/>
 
     <dwr:configuration>
