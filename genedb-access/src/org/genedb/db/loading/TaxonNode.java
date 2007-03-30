@@ -41,6 +41,7 @@ public class TaxonNode {
     public TaxonNode(Phylonode phylonode) {
         this.phylonode = phylonode;
         names.put(TaxonNameType.LABEL, phylonode.getLabel());
+        names.put(TaxonNameType.FULL, phylonode.getLabel()); // will be overriden for orgs later
         
         Collection<PhylonodeOrganism> pos = phylonode.getPhylonodeOrganisms();
 		//System.err.println("Looking at '"+shortName+"'");
@@ -63,10 +64,7 @@ public class TaxonNode {
                 names.put(TaxonNameType.HTML_FULL, getOrganismProperty(org, "htmlFullName"));
                 int translationTable = Integer.parseInt(getOrganismProperty(org, "translationTable"));
                 int mitochondrialTranslationTable = Integer.parseInt(getOrganismProperty(org, "mitochondrialTranslationTable"));
-                String fullName = getLabel();
-                if (org != null) {
-                    fullName = org.getGenus() + ' ' + org.getSpecies();
-                }
+                String fullName = org.getGenus() + ' ' + org.getSpecies();
                 names.put(TaxonNameType.FULL, fullName);
               
         	}
