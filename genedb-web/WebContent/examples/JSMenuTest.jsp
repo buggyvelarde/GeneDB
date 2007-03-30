@@ -3,7 +3,6 @@
     <title>JavaScript Menu - Demo #1</title>
     <meta name="description" content="Free Cross Browser Javascript DHTML Menu Navigation">
     <meta name="keywords" content="JavaScript menu, DHTML menu, client side menu, dropdown menu, pulldown menu, popup menu, web authoring, scripting, freeware, download, shareware, free software, DHTML, Free Menu, site, navigation, html, web, netscape, explorer, IE, opera, DOM, control, cross browser, support, frames, target, download">
-    <link rel="shortcut icon" href="http://www.softcomplex.com/products/tigra_menu/favicon.ico">
     <meta name="robots" content="index,follow">
 <style>
     a, A:link, a:visited, a:active
@@ -21,7 +20,7 @@
 
 </style>
 <!-- styles for demo menu #1-->
-<link rel="stylesheet" href="/genedb-web/includes/style/menu.css">
+<link rel="stylesheet" href="/includes/style/menu.css">
 </head>
 
 <body bottommargin="15" topmargin="15" leftmargin="15" rightmargin="15" marginheight="15" marginwidth="15" bgcolor="white">
@@ -29,11 +28,11 @@
 
 
 <!-- menu script itself. you should not modify this file -->
-<script language="JavaScript" src="/genedb-web/includes/scripts/menu.js"></script>
+<script language="JavaScript" src="/includes/scripts/menu.js"></script>
 <!-- items structure. menu hierarchy and links are stored there -->
-<script language="JavaScript" src="/genedb-web/includes/scripts/menu_items.js"></script>
+<script language="JavaScript" src="/includes/scripts/menu_items.js"></script>
 <!-- files with geometry and styles structures -->
-<script language="JavaScript" src="/genedb-web/includes/scripts/menu_tpl.js"></script>
+<script language="JavaScript" src="/includes/scripts/menu_tpl.js"></script>
 <script language="JavaScript">
     <!--//
     // Note where menu initialization block is located in HTML document.
