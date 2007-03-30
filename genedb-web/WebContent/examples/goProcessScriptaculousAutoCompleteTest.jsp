@@ -12,7 +12,7 @@
 // <!CDATA[
   // the callback for the auto completer
   function populateAutocomplete(autocompleter, token) {
-      goProcessBrowse.getPossibleMatches(token, function(suggestions) {
+      goPBrowse.getPossibleMatches(token, function(suggestions) {
           autocompleter.setChoices(suggestions);
       });
   }
