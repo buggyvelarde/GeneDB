@@ -115,20 +115,21 @@
 																	<tr>
 																		<td width="100%" style="text-align: left;">
 																			<ul id="mainlevel-nav">
-																				<li id="mainlevel-nav"><a href="<c:url value="/Organism"/>"><s>Organism List</s></a></li>
-																				<li id="mainlevel-nav"><a href="<c:url value="/examples/JSMenuTest.jsp"/>"><s>Query drop-down</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Search/DummyGeneFeature"><s>New off-line example</s></a></li>
-																				<li id="mainlevel-nav"><a href="<c:url value="/examples/goProcessScriptaculousAutoCompleteTest.jsp"/>">GO process auto-complete (scriptaculous)</a></li>
+																				<!-- <li id="mainlevel-nav"><a href="<c:url value="/Organism"/>"><s>Organism List</s></a></li> -->
+																				<li id="mainlevel-nav"><a href="<c:url value="/examples/JSMenuTest.jsp"/>">Query drop-down</a></li>
+																				<!-- <li id="mainlevel-nav"><a href="./Search/DummyGeneFeature"><s>New off-line example</s></a></li> -->
+																				<li id="mainlevel-nav"><a href="<c:url value="/examples/goProcessScriptaculousAutoCompleteTest.jsp"/>"><s>GO process auto-complete (scriptaculous)</s></a></li>
 																				<li id="mainlevel-nav"><a href="<c:url value="/examples/goProcessYUIAutoCompleteTest.jsp"/>"><s>GO process auto-complete (YUI)</s></a></li>																				<li id="mainlevel-nav"><a href="<c:url value="/dwr/test/goProcessBrowse"/>">DWR GO Process page</a></li>
 																				<li id="mainlevel-nav"><a href="<c:url value="/Genome/Trypanasoma_brucei_brucei/current"/>"><s>Common URL</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Admin/LockExaminer"><s>Lock examiner</s></a></li>
+																				<li id="mainlevel-nav"><a href="./Admin/LockExaminer">Lock examiner</a></li>
+																				<li id="mainlevel-nav"><a href="./BrowseCategory">Browsable Lists</a></li>	
 																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=SPCC1223.06"><s>New pombe example</s></a></li>
 																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760"><s>New tbrucei example</s></a></li>
 																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=PF08_0098"><s>New malaria example</s></a></li>
 																				<li id="mainlevel-nav"><a href="<c:url value="/Search/BooleanQuery?taxId=12345"/>"><s>Boolean query page</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Search/FindCvByName"/><s>CV Browser (check)</s></a></li>
-																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760"><s>New pombe alt-splicing example</s></a></li>
-																			</ul>
+																				<li id="mainlevel-nav"><a href="./Search/FindCvByName"/>CV Browser</a></li>
+																				<li id="mainlevel-nav"><a href="./Search/FeatureByName?name=Tb927.2.4760"><s>New pombe alt-splicing example</s></a></li>																		
+																				</ul>
 																		</td>
 																	</tr>
 																</table>															
