@@ -4,7 +4,7 @@
 <script src="<c:url value="/includes/scripts/script.aculo.us/scriptaculous.js"/>" type="text/javascript"></script>
 <script src="<c:url value="/includes/scripts/autocomplete.js"/>" type="text/javascript"></script>
 <script src="<c:url value="/includes/scripts/spring-util.js"/>" type="text/javascript"></script>
-<script src='<c:url value="/dwr/interface/goProcessBrowse.js"/>' type="text/javascript"></script>
+<script src='<c:url value="/dwr/interface/goPBrowse.js"/>' type="text/javascript"></script>
 <script src='<c:url value="/dwr/engine.js"/>' type="text/javascript"></script>
 <script src='<c:url value="/dwr/util.js"/>' type="text/javascript"></script>
 
