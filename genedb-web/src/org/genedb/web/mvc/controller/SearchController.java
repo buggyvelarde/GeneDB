@@ -1,11 +1,16 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.PhylogenyDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.FeatureUtils;
+import org.genedb.web.menu.CompositeMenu;
+import org.genedb.web.menu.Menu;
+import org.genedb.web.menu.SimpleMenu;
 
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.utils.CountedName;
@@ -47,12 +52,17 @@ public class SearchController extends MultiActionController implements Initializ
     
     	private SequenceDao sequenceDao;
         private CvDao cvDao;
+        private PhylogenyDao phylogenyDao;
     	private FileCheckingInternalResourceViewResolver viewChecker;
     	private String listProductsView;
 	
 	public void setListProductsView(String listProductsView) {
 			this.listProductsView = listProductsView;
 		}
+
+	public void setPhylogenyDao(PhylogenyDao phylogenyDao) {
+		this.phylogenyDao = phylogenyDao;
+	}
 
 	public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
 	    this.viewChecker = viewChecker;
@@ -394,6 +404,53 @@ public class SearchController extends MultiActionController implements Initializ
 		
 	}
 
+	public ModelAndView Phylogeny(HttpServletRequest request, HttpServletResponse response) {
+		Phylonode root = this.phylogenyDao.getPhylonodeByName("Root").get(0);
+		List<Phylonode> topLevel = this.phylogenyDao.getPhylonodesByParent(root);
+		StringBuffer sb = new StringBuffer();
+		StringBuffer top = new StringBuffer();
+        int j=1;
+		for (Phylonode phylonode : topLevel) {
+			CompositeMenu menu = new CompositeMenu(Integer.toString(Menu.counter++),phylonode.getLabel(),null,true);
+			top.append(Menu.counter-1);
+			top.append(",");
+			menu.setLevelCoord(Integer.toString(j));
+			j++;
+			buildMenu(phylonode,menu);
+			sb.append(menu.render(j-1));
+		}
+		top.deleteCharAt(top.length()-1);
+		//System.out.println(sb.toString());
+		sb.append("<input type=\"hidden\" id=\"itemsLength\" value=\"" + Menu.counter + "\"/>");
+		sb.append("<input type=\"hidden\" id=\"topItems\" value=\"" + top.toString() + "\"/>");
+		Map model = new HashMap(1);
+		model.put("nodes", sb.toString());
+		Menu.counter = 0;
+		return new ModelAndView("features/phylogeny",model);
+	}
+
+	private void buildMenu(Phylonode phylonode, CompositeMenu comSrc) {
+		List<Phylonode> childs = this.phylogenyDao.getPhylonodesByParent(phylonode);
+		for (Phylonode child : childs) {
+			if (isLeaf(child)) {
+				SimpleMenu sm = new SimpleMenu(Integer.toString(Menu.counter++),child.getLabel(),null);
+				comSrc.add(sm);
+			} else {
+				CompositeMenu parentMenu = new CompositeMenu(Integer.toString(Menu.counter++),child.getLabel(),null,false);
+				comSrc.add(parentMenu);
+				buildMenu(child,parentMenu);
+			}
+		}
+		
+	}
+
+	private boolean isLeaf(Phylonode child) {
+		List<Phylonode> childs = this.phylogenyDao.getPhylonodesByParent(child);
+		if (childs == null){
+			return true;
+		}
+		return false;
+	}
 
 	public void setSequenceDao(SequenceDao sequenceDao) {
 	    this.sequenceDao = sequenceDao;
