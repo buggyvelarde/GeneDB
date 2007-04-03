@@ -269,7 +269,8 @@ class LoadGeneDbCv {
         
         <term name="feature_props" description="Keys for storing information, for any feature in general">
             <term name="curation" description="Free text note field for local curation" />
-            <term name="private" description="Free text note field for comments not to be made publicly visible" />      
+            <term name="private" description="Free text note field for comments not to be made publicly visible" />     
+ 			<term name="EC_number" description="Free text note field for EC_number" />
         </term>
 
         <term name="phylo_organism_prop" description="Parent term for CvTerms that act as keys for organism or phylonode props">
@@ -284,19 +285,20 @@ class LoadGeneDbCv {
 				<term name="htmlShortName" description="The short name in HTML format" />
 				<term name="htmlFullName" description="The full name in HTML format" />                                                                                      
         </term>
+		<term name="artemis_specific" description="cvterm for various *_file qualifiers for artemis ">
+			<term name="blast_file"   description="Blast file location" />
+			<term name="blastn_file"   description="Blastn file location" />
+			<term name="blastpgo_file"   description="Blastp+go file location" />
+			<term name="blastp_file"   description="Blastp file location" />
+			<term name="blastx_file"   description="Blastx file location" />
+			<term name="fasta_file"   description="Fasta file location" />
+			<term name="fastax_file"   description="Fastax file location" />
+			<term name="tBlastn_file"   description="tBlastn file location" />
+			<term name="tBlastx_file"   description="tBlastx file location" />	
+		</term>
     </cv>
 
-    <cv name="artemis_specific" db="genedb_misc">
-		<term name="blast_file"   description="Blast file location" />
-		<term name="blastn_file"   description="Blastn file location" />
-		<term name="blastpgo_file"   description="Blastp+go file location" />
-		<term name="blastp_file"   description="Blastp file location" />
-		<term name="blastx_file"   description="Blastx file location" />
-		<term name="fasta_file"   description="Fasta file location" />
-		<term name="fastax_file"   description="Fastax file location" />
-		<term name="tBlastn_file"   description="tBlastn file location" />
-		<term name="tBlastx_file"   description="tBlastx file location" />	
-	</term>
+    
     	
     <cv name="genedb_literature" db="genedb_misc">
         <term name="unknown"   description="unknown literature type" />
