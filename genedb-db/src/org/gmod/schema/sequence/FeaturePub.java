@@ -41,7 +41,7 @@ public class FeaturePub implements Serializable {
     }
 
     /** full constructor */
-    private FeaturePub(Feature feature, Pub pub) {
+    public FeaturePub(Feature feature, Pub pub) {
        this.feature = feature;
        this.pub = pub;
     }
