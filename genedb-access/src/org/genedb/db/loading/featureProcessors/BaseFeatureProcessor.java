@@ -29,6 +29,7 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_DB_XREF;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_D_PSU_DB_XREF;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIVATE;
+import static org.genedb.db.loading.EmblQualifiers.QUAL_EC_NUMBER;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
@@ -104,7 +105,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected CvTerm MISC_NOTE;
     protected CvTerm MISC_CURATION;
     protected CvTerm MISC_PRIVATE;
-
+    protected CvTerm MISC_EC_NUMBER;
+    
     private String[] discard = {};
     
     private String[] requiredMultiple = {};
@@ -163,6 +165,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         MISC_NOTE = cvDao.getCvTermByNameInCv(QUAL_NOTE, CV_FEATURE_PROPERTY).get(0);
         MISC_CURATION = cvDao.getCvTermByNameInCv(QUAL_CURATION, CV_GENEDB).get(0);
         MISC_PRIVATE = cvDao.getCvTermByNameInCv(QUAL_PRIVATE, CV_GENEDB).get(0);
+        MISC_EC_NUMBER = cvDao.getCvTermByNameInCv(QUAL_EC_NUMBER, CV_GENEDB).get(0);
         DB_GO = generalDao.getDbByName("GO");
      
         DUMMY_PUB = pubDao.getPubByUniqueName("null");
@@ -295,7 +298,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                 continue;
             }
             String dbName = xref.substring(0, index);
-            String acc = xref.substring(+1);
+            String acc = xref.substring(index+1);
             String description = null;
             if (acc.indexOf(";") != -1) {
                 String[] parts = acc.split(";");

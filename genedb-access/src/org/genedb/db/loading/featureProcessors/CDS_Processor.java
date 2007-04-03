@@ -89,6 +89,7 @@ import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeaturePub;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.utils.PeptideProperties;
 
@@ -304,6 +305,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             
             createEC_number(polypeptide,an);
             
+            createLiterature(polypeptide,an);
+            
+            createCuration(polypeptide,an);
+            
+            createPrivate(polypeptide,an);
             //String nucleic = parent.getResidues().substring(loc.getMin(),
             // loc.getMax());
             // String protein = translate(nucleic);
@@ -330,13 +336,54 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     }
 
 
-    private void createEC_number(Feature polypeptide, Annotation an) {
+    private void createPrivate(Feature polypeptide, Annotation an) {
+    	List<String> privates = MiningUtils.getProperties("private", an);
+    	if(privates != null) {
+    		int rank = 0;
+    		for (String pri : privates) {
+    			FeatureProp fp = new FeatureProp(polypeptide,MISC_PRIVATE,pri,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
+    	}
+	}
+
+	private void createCuration(Feature polypeptide, Annotation an) {
+		List<String> curations = MiningUtils.getProperties("curation", an);
+    	if(curations != null) {
+    		int rank = 0;
+    		for (String curation : curations) {
+    			FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,curation,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
+    	}
+	}
+
+	private void createLiterature(Feature polypeptide, Annotation an) {
+    	List<String> literatures = MiningUtils.getProperties("literature", an);
+    	if(literatures != null) {
+    		for (String literature : literatures) {
+				String sections[] = literature.split(";");
+				Pub pub = this.pubDao.getPubByUniqueName(sections[0]);
+				if (pub == null) {
+					CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
+					pub = new Pub(sections[0],cvt);
+					this.pubDao.persist(pub);
+				}
+				FeaturePub fp = new FeaturePub(polypeptide,pub);
+				this.sequenceDao.persist(fp);
+			}
+    	}
+	}
+
+	private void createEC_number(Feature polypeptide, Annotation an) {
     	List<String> ecNumber = MiningUtils.getProperties("EC_number", an);
 		
-    	if(ecNumber != null || ecNumber.size() != 0) {
+    	if(ecNumber != null) {
 			int rank=0;
 			for (String ec : ecNumber) {
-				FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,ec,rank);
+				FeatureProp fp = new FeatureProp(polypeptide,MISC_EC_NUMBER,ec,rank);
 				this.sequenceDao.persist(fp);
 				rank++;
 			}
@@ -344,52 +391,105 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 	}
 
 	private void createFeatureProps(Feature polypeptide, Annotation an) {
-    	String bFile = MiningUtils.getProperty("blast_file", an, null);
-    	String bnFile = MiningUtils.getProperty("blastn_file", an, null);
-    	String bpgoFile = MiningUtils.getProperty("blastp+go_file", an, null);
-    	String bpFile = MiningUtils.getProperty("blastp_file", an, null);
-    	String bxFile = MiningUtils.getProperty("blastx_file", an, null);
-    	String fFile = MiningUtils.getProperty("fasta_file", an, null);
-    	String fxFile = MiningUtils.getProperty("fastax_file", an, null);
-    	String tbnFile = MiningUtils.getProperty("tblastn_file", an, null);
-    	String tbxFile = MiningUtils.getProperty("tblastx_file", an, null);
+    	List<String> bFile = MiningUtils.getProperties("blast_file", an);
+    	List<String> bnFile = MiningUtils.getProperties("blastn_file", an);
+    	List<String> bpgoFile = MiningUtils.getProperties("blastp+go_file", an);
+    	List<String> bpFile = MiningUtils.getProperties("blastp_file", an);
+    	List<String> bxFile = MiningUtils.getProperties("blastx_file", an);
+    	List<String> fFile = MiningUtils.getProperties("fasta_file", an);
+    	List<String> fxFile = MiningUtils.getProperties("fastax_file", an);
+    	List<String> tbnFile = MiningUtils.getProperties("tblastn_file", an);
+    	List<String> tbxFile = MiningUtils.getProperties("tblastx_file", an);
     	
-    	String sections[];
     	if(bFile != null){
-    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,bFile,0);
-    		this.sequenceDao.persist(fp);
+    		int rank = 0;
+    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blast_file", "genedb_misc");
+    		for (String file : bFile) {
+    			file = file.replaceAll(" ", "");
+    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
     	}
     	if(bnFile != null){
-    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,bnFile,0);
-    		this.sequenceDao.persist(fp);
+    		int rank = 0;
+    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blastn_file", "genedb_misc");
+    		for (String file : bnFile) {
+    			file = file.replaceAll(" ", "");
+    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
     	}
     	if(bpgoFile != null){
-    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,bpgoFile,0);
-    		this.sequenceDao.persist(fp);
+    		int rank = 0;
+    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blastpgo_file", "genedb_misc");
+    		for (String file : bpgoFile) {
+    			file = file.replaceAll(" ", "");
+    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
     	}
     	if(bpFile != null){
-    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,bpFile,0);
-    		this.sequenceDao.persist(fp);
+    		int rank = 0;
+    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blastp_file", "genedb_misc");
+    		for (String file : bpFile) {
+    			file = file.replaceAll(" ", "");
+    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
     	}
     	if(bxFile != null){
-    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,bxFile,0);
-    		this.sequenceDao.persist(fp);
+    		int rank = 0;
+    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blastx_file", "genedb_misc");
+    		for (String file : bxFile) {
+    			file = file.replaceAll(" ", "");
+    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
     	}
     	if(fFile != null){
-    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,fFile,0);
-    		this.sequenceDao.persist(fp);
+    		int rank = 0;
+    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("fasta_file", "genedb_misc");
+    		for (String file : fFile) {
+    			file = file.replaceAll(" ", "");
+    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
     	}
     	if(tbnFile != null){
-    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,tbnFile,0);
-    		this.sequenceDao.persist(fp);
+    		int rank = 0;
+    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("tblastn_file", "genedb_misc");
+    		for (String file : tbnFile) {
+    			file = file.replaceAll(" ", "");
+    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
     	}
     	if(fxFile != null){
-    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,fxFile,0);
-    		this.sequenceDao.persist(fp);
+    		int rank = 0;
+    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("fastax_file", "genedb_misc");
+    		for (String file : fxFile) {
+    			file = file.replaceAll(" ", "");
+    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
     	}
     	if(tbxFile != null){
-    		FeatureProp fp = new FeatureProp(polypeptide,MISC_CURATION,tbxFile,0);
-    		this.sequenceDao.persist(fp);
+    		int rank = 0;
+    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("tblastx_file", "genedb_misc");
+    		for (String file : tbxFile) {
+    			file = file.replaceAll(" ", "");
+    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+    			this.sequenceDao.persist(fp);
+    			rank++;
+    		}
     	}
 	}
 
