@@ -216,6 +216,9 @@ public class NewRunner implements ApplicationContextAware {
     	handeledQualifiers.put("fastax_file", "true");
     	handeledQualifiers.put("tblastn_file", "true");
     	handeledQualifiers.put("tblastx_file", "true");
+    	handeledQualifiers.put("literature", "true");
+    	handeledQualifiers.put("curation", "true");
+    	handeledQualifiers.put("private", "true");
     }
 
 

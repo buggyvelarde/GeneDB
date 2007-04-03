@@ -45,6 +45,7 @@ public class EmblQualifiers {
     public static final String QUAL_GO            = "GO";
     public static final String QUAL_C_CURATION    = "controlled_curation";
     public static final String QUAL_EVIDENCE      = "evidence";
+    public static final String QUAL_EC_NUMBER      = "EC_number";
     
     // Naming
     public static final String QUAL_SYS_ID        = "systematic_id";
