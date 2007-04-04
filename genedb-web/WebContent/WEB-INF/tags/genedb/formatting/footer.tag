@@ -4,7 +4,7 @@
         
 <img src="<c:url value="/includes/images/purpleDot.gif"/>" width="100%" height="2" alt="----------------------">
 <br>
-<table width="100%">
+<table width="100%" background="<c:url value="/includes/images/header-bkgd.gif"/>">
   <tr>
     <td width="33%" align="left">Hosted by the <a href="http://www.sanger.ac.uk/">Sanger Institute</a></td>
     <td width="33%" align="center">Curator feedback</td>
