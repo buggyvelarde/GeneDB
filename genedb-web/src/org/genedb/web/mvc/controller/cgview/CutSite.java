@@ -28,6 +28,15 @@ public class CutSite {
             this.start = Integer.parseInt(start);
             this.end = Integer.parseInt(end);
         }
+        
+        
+
+        public CutSite(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+
 
         public int getEnd() {
             return this.end;
