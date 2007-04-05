@@ -219,6 +219,9 @@ public class NewRunner implements ApplicationContextAware {
     	handeledQualifiers.put("literature", "true");
     	handeledQualifiers.put("curation", "true");
     	handeledQualifiers.put("private", "true");
+    	handeledQualifiers.put("pseudo", "true");
+    	handeledQualifiers.put("psu_db_xref", "true");
+    	handeledQualifiers.put("note", "true");
     }
 
 
