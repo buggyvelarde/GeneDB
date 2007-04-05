@@ -118,11 +118,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     public void processStrandedFeature(final Feature parent, final StrandedFeature cds, final int offset) {
         final Annotation an = cds.getAnnotation();
 
-        if (an.containsProperty(QUAL_PSEUDO)) {
-            processPseudoGene();
-        } else {
+        //if (an.containsProperty(QUAL_PSEUDO)) {
+        //    processPseudoGene();
+        //} else {
             processCodingGene(cds, an, parent, offset);
-        }
+        //}
     }
 
     @SuppressWarnings( { "unchecked" })
@@ -131,6 +131,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     	
     	String sysId = null;
         try {
+        	
             Location loc = cds.getLocation().translate(offset);
             Names names = this.nomenclatureHandler.findNames(an);
             sysId = names.getSystematicId();
@@ -279,7 +280,16 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             // TODO store protein translation
             // calculatePepstats(polypeptide); // TODO Uncomment once checked if currently working
             sequenceDao.persist(polypeptide);
-
+            
+            if(an.containsProperty("pseudo")) {
+            	CvTerm pseudoGene = this.cvDao.getCvTermByNameAndCvName("pseudogene", "sequence");
+            	gene.setCvTerm(pseudoGene);
+            	//this.sequenceDao.merge(gene);
+            	
+            	CvTerm pseudogenicTranscript = this.cvDao.getCvTermByNameAndCvName("pseudogenic_transcript", "sequence");
+            	mRNA.setCvTerm(pseudogenicTranscript);
+            	//this.sequenceDao.merge(mRNA);
+            }
             createProducts(polypeptide, an, "product", CV_PRODUCTS);
 
             // Store feature properties based on original annotation
@@ -316,11 +326,18 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             // polypeptide.setResidues(protein);
 
             // Now persist gene heirachy
-            for (Feature feature : features) {
-                // System.err.print("Trying to persist
-                // "+feature.getUniquename());
-                sequenceDao.persist(feature);
-                // System.err.println(" ... done");
+            
+            
+        	if (an.containsProperty("pseudo")) {
+        		CvTerm pseudogenicExon = this.cvDao.getCvTermByNameAndCvName("pseudogenic_exon", "sequence");
+        		for (Feature feature : features) {
+        			feature.setCvTerm(pseudogenicExon);
+        			sequenceDao.persist(feature);
+        		}
+            } else {
+            	for (Feature feature : features) {
+        			sequenceDao.persist(feature);
+        		}
             }
             for (FeatureLoc location : featureLocs) {
                 sequenceDao.persist(location);
