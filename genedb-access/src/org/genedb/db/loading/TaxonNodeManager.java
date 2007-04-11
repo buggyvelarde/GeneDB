@@ -51,7 +51,6 @@ public class TaxonNodeManager implements InitializingBean{
     private Map<String, TaxonNode> labelTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> taxonTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> fullNameTaxonNodeMap = new HashMap<String, TaxonNode>();
-    private Map<String, TaxonNode> dbNameTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> nickNameTaxonNodeMap = new HashMap<String, TaxonNode>();
 
     public void afterPropertiesSet() throws Exception {
@@ -71,11 +70,7 @@ public class TaxonNodeManager implements InitializingBean{
             labelTaxonNodeMap.put(tn.getLabel(), tn);
             taxonTaxonNodeMap.put(tn.getTaxonId(), tn);
             fullNameTaxonNodeMap.put(tn.getName(TaxonNameType.FULL), tn);
-            String tmp = tn.getName(TaxonNameType.DB_NAME);
-            if (tmp != null) {
-                dbNameTaxonNodeMap.put(tmp, tn);
-            }
-            tmp = tn.getName(TaxonNameType.NICKNAME);
+            String tmp = tn.getName(TaxonNameType.NICKNAME);
             if (tmp != null) {
                 nickNameTaxonNodeMap.put(tn.getName(TaxonNameType.NICKNAME), tn);
             }
@@ -176,10 +171,6 @@ public class TaxonNodeManager implements InitializingBean{
             return ret;
         }
         ret = fullNameTaxonNodeMap.get(name);
-        if (ret != null) {
-            return ret;
-        }
-        ret = dbNameTaxonNodeMap.get(name);
         if (ret != null) {
             return ret;
         }

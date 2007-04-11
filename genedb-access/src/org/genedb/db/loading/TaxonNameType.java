@@ -20,5 +20,5 @@
 package org.genedb.db.loading;
 
 public enum TaxonNameType {
-    HTML_FULL, HTML_SHORT, FULL, SHORT, LABEL, DB_NAME, NICKNAME
+    HTML_FULL, HTML_SHORT, FULL, SHORT, LABEL, NICKNAME
 }
