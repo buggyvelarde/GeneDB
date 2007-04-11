@@ -43,7 +43,8 @@ public class TrackFeatureRenderDetails {
 		this.extentAngle = extentAngle;
 	}
 	
-	public String toString() {
+	@Override
+    public String toString() {
 		return "startAngle='"+startAngle+"' extentAngle='"+extentAngle+"'";
 		
 	}
