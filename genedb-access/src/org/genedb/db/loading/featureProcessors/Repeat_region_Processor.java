@@ -60,52 +60,52 @@ public class Repeat_region_Processor extends BaseFeatureProcessor {
 
     @Override
     public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
-    	return;
     	
-//        numProcessed++;
-//        //logger.info("Entering processing for repeat '"+numProcessed+"'");
-//        Location loc = f.getLocation();
-//        Annotation an = f.getAnnotation();
-//        short strand = (short)f.getStrand().getValue();
-//        
-//        if (!an.containsProperty("rpt_type")) {
-//            return;
-//        }
-//        
-//        String repeatType = (String) an.getProperty("rpt_type");
-//        String soType = repeatType;
-//        
-//        if (repeatType.equals("direct")) {
-//            soType = "direct_repeat";
-//        }
-//        
-//        String systematicId = "repeat"+(loc.getMin()-1)+"-"+loc.getMax();
-//        if (f.getStrand().equals(StrandedFeature.NEGATIVE)) {
-//        	systematicId = systematicId + "_rev"; // FIXME Temp hack
-//        }
-//        if (an.containsProperty("systematic_id")) {
-//            systematicId = (String) an.getProperty("systematic_id");
-//        }
-//        
-//        if (!cvDao.existsNameInOntology(soType, CV_SO)) {
-//        	logger.warn("Can't create repeat feature of type '"+soType+"' at location '"+loc+"'");
-//        } else {
-//            if (sequenceDao.getFeatureByUniqueName(systematicId)==null) {
-//            	Feature repeat = this.featureUtils.createFeature(soType, systematicId,
-//            			this.organism);
-//            	sequenceDao.persist(repeat);
-//            	//FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-//            	FeatureLoc repeatFl = featureUtils.createLocation(parent,repeat,loc.getMin()-1,loc.getMax(),
-//            			strand);
-//            	sequenceDao.persist(repeatFl);
-//            	//featureLocs.add(pepFl);
-//            	//featureRelationships.add(pepFr);
-//        	
-//            	//FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
-//            	//this.daoFactory.persist(fp);
-//            	//createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
-//            }
-//        }
+        numProcessed = numProcessed + 5;
+        //logger.info("Entering processing for repeat '"+numProcessed+"'");
+        Location loc = f.getLocation();
+        Annotation an = f.getAnnotation();
+        short strand = (short)f.getStrand().getValue();
+        
+        if (!an.containsProperty("rpt_type")) {
+            return;
+        }
+        
+        String repeatType = (String) an.getProperty("rpt_type");
+        String soType = repeatType;
+        
+        if (repeatType.equals("direct")) {
+            soType = "direct_repeat";
+        }
+        
+        /*String systematicId = "repeat"+(loc.getMin()-1)+"-"+loc.getMax();
+        if (f.getStrand().equals(StrandedFeature.NEGATIVE)) {
+        	systematicId = systematicId + "_rev"; // FIXME Temp hack
+        }
+        if (an.containsProperty("systematic_id")) {
+            systematicId = (String) an.getProperty("systematic_id");
+        }*/
+        String systematicId = this.organism.getAbbreviation() + "_REP_" + Integer.toString(numProcessed);
+        
+        if (!cvDao.existsNameInOntology(soType, CV_SO)) {
+        	logger.warn("Can't create repeat feature of type '"+soType+"' at location '"+loc+"'");
+        } else {
+            if (sequenceDao.getFeaturesByUniqueName(systematicId).size() == 0) {
+            	Feature repeat = this.featureUtils.createFeature(soType, systematicId,
+            			this.organism);
+            	sequenceDao.persist(repeat);
+            	//FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
+            	FeatureLoc repeatFl = featureUtils.createLocation(parent,repeat,loc.getMin()-1,loc.getMax(),
+            			strand);
+            	sequenceDao.persist(repeatFl);
+            	//featureLocs.add(pepFl);
+            	//featureRelationships.add(pepFr);
+            	createFeaturePropsFromNotes(repeat, an, QUAL_NOTE, MISC_NOTE);
+            	//FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
+            	//this.daoFactory.persist(fp);
+            	//createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
+            }
+        }
     }
 
     public ProcessingPhase getProcessingPhase() {
