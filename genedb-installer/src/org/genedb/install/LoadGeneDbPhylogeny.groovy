@@ -180,9 +180,6 @@ class LoadGeneDbPhylogeny {
 					
 				checkAttributeExists(node, "translationTable")
 				checkAttributeExists(node,"curatorEmail")
-				checkAttributeExists(node,"dbName")
-				String dbName = props.get("dbName")
-				props.remove("dbName");
 				
 				if (!props.containsKey("nickname") && !props.containsKey("newOrg")) {
 					println "No nickname for '"+node.'@name'+"'"
@@ -217,21 +214,6 @@ class LoadGeneDbPhylogeny {
 					}
 				})
 				
-				
-				if (writeBack) {
-					try {
-					    dbDataSet.add(
-							name: dbName,
-					        description: "Database entry for GeneDB: "+temp,
-					        urlPrefix: "http://www.genedb.org/NamedFeature?org="+dbName+"&name=",
-					        url: "http://www.genedb.org/Homepage?org="+dbName
-					    )
-    	  			 } catch (Exception exp) {
-        				 // May be a duplicate
-        				 exp.printStackTrace();
-        		  		 System.err.println("Problem storing db - duplicate?");
-       			 	}
-				}
 				
 /*				if (writeBack) {
 					try {
@@ -292,7 +274,6 @@ class LoadGeneDbPhylogeny {
 		
 		Set skipAttributeNames = new HashSet();
 		skipAttributeNames.add("fullName");
-		skipAttributeNames.add("dbName");
 		skipAttributeNames.add("newOrg");
 		skipAttributeNames.add("name")
 		
@@ -399,7 +380,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="6183" />
 					<property name="fullName" value="Schistosoma mansoni" />
 					<property name="nickname" value="smansoni" />
-	            	<property name="dbName" value="GeneDB_Smansoni" />
 					<property name="translationTable" value="1"/>
 					<property name="mitochondrialTranslationTable" value="9"/>
 					<property name="curatorEmail" value="mb4"/>
@@ -417,7 +397,6 @@ class LoadGeneDbPhylogeny {
 						<property name="taxonId" value="420245" />
 						<property name="fullName" value="Leishmania braziliensis MHOM/BR/75/M2904" />
 						<property name="nickname" value="lbraziliensis" />
-		                <property name="dbName" value="GeneDB_Lbraziliensis" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="csp"/>
@@ -430,7 +409,6 @@ class LoadGeneDbPhylogeny {
 		                <property name="taxonId" value="347515" />
 		                <property name="fullName" value="Leishmania major strain Friedlin" />
 		                <property name="nickname" value="leish" />
-		                <property name="dbName" value="GeneDB_Lmajor" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="csp"/>
@@ -443,7 +421,6 @@ class LoadGeneDbPhylogeny {
 	                    <property name="taxonId" value="5671" />
 	                    <property name="fullName" value="Leishmania infantum JPCM5 " />
 	                    <property name="nickname" value="linfantum" />
-	                    <property name="dbName" value="GeneDB_Linfantum" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="csp"/>
@@ -458,7 +435,6 @@ class LoadGeneDbPhylogeny {
 						<property name="taxonId" value="5692" />
 						<property name="fullName" value="Trypanosoma congolense" />
 						<property name="nickname" value="tcongolense" />
-		                <property name="dbName" value="GeneDB_Tcongolense" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="chf"/>
@@ -471,7 +447,6 @@ class LoadGeneDbPhylogeny {
 	                    <property name="taxonId" value="5761" />
 						<property name="fullName" value="Trypanosoma brucei brucei, strain 427" />
 						<property name="nickname" value="tbrucei427" />
-						<property name="dbName" value="GeneDB_Tbrucei427" />
 						<property name="translationTable" value=""/>
 						<property name="mitochondrialTranslationTable" value=""/>
 						<property name="curatorEmail" value="chf"/>
@@ -484,7 +459,6 @@ class LoadGeneDbPhylogeny {
 	                    <property name="taxonId" value="185431" />
 						<property name="fullName" value="Trypanosoma brucei brucei, strain 927" />
 						<property name="nickname" value="tryp" />
-						<property name="dbName" value="GeneDB_Tbrucei927" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="chf"/>
@@ -497,7 +471,6 @@ class LoadGeneDbPhylogeny {
 	                    <property name="taxonId" value="31285" />
 						<property name="fullName" value="Trypanosoma brucei gambiense" />
 	                    <property name="nickname" value="tgambiense" />
-						<property name="dbName" value="GeneDB_Tgambiense" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="chf"/>
@@ -510,7 +483,6 @@ class LoadGeneDbPhylogeny {
 	                    <property name="taxonId" value="5699" />
 	                    <property name="fullName" value="Trypanosoma vivax" />
 	                    <property name="nickname" value="tvivax" />
-	                    <property name="dbName" value="GeneDB_Tvivax" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="chf"/>
@@ -523,7 +495,6 @@ class LoadGeneDbPhylogeny {
 	                    <property name="taxonId" value="5693" />
 	                    <property name="fullName" value="Trypanosoma cruzi" />
 	                    <property name="nickname" value="tcruzi" />
-	                    <property name="dbName" value="GeneDB_Tcruzi" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="chf"/>
@@ -537,7 +508,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="44689" />
 					<property name="fullName" value="Dictyostelium discoideum" />
 					<property name="nickname" value="dicty" />
-	                <property name="dbName" value="GeneDB_Ddiscoideum" />
 					<property name="translationTable" value="1"/>
 					<property name="mitochondrialTranslationTable" value="1"/>
 					<property name="curatorEmail" value="mar"/>
@@ -550,7 +520,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="5759" />
 					<property name="fullName" value="Entamoeba histolytica" />
 					<property name="nickname" value="ehistolytica" />
-	                <property name="dbName" value="GeneDB_Ehistolytica" />
 					<property name="translationTable" value="1"/>
 					<property name="mitochondrialTranslationTable" value="1"/>
 					<property name="curatorEmail" value="mb4"/>
@@ -564,7 +533,6 @@ class LoadGeneDbPhylogeny {
 						<property name="taxonId" value="5802" />
 						<property name="fullName" value="Eimeria tenella" />
 						<property name="nickname" value="etenella" />
-		                <property name="dbName" value="GeneDB_Etenella" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="mar"/>
@@ -577,7 +545,6 @@ class LoadGeneDbPhylogeny {
 						<property name="taxonId" value="5874" />				
 						<property name="fullName" value="Theileria annulata" />
 						<property name="nickname" value="annulata" />
-		                <property name="dbName" value="GeneDB_Tannulata" />
 						<property name="translationTable" value="1"/>
 						<property name="mitochondrialTranslationTable" value="4"/>
 						<property name="curatorEmail" value="ap2"/>
@@ -591,7 +558,6 @@ class LoadGeneDbPhylogeny {
 	                        <property name="taxonId" value="5833" />
 	                        <property name="fullName" value="Plasmodium falciparum" />
 	                        <property name="nickname" value="malaria" />
-	                        <property name="dbName" value="GeneDB_Pfalciparum" />
 							<property name="translationTable" value="1"/>
 						    <property name="mitochondrialTranslationTable" value="4"/>
 							<property name="curatorEmail" value="aeb"/>
@@ -604,7 +570,6 @@ class LoadGeneDbPhylogeny {
 	                        <property name="taxonId" value="5850" />
 	                        <property name="fullName" value="Plasmodium knowlesi" />
 	                        <property name="nickname" value="pknowlesi" />
-	                        <property name="dbName" value="GeneDB_Pknowlesi" />
 							<property name="translationTable" value="1"/>
 							<property name="mitochondrialTranslationTable" value="4"/>
 							<property name="curatorEmail" value="aeb"/>
@@ -617,7 +582,6 @@ class LoadGeneDbPhylogeny {
 	                        <property name="taxonId" value="5821" />
 	                        <property name="fullName" value="Plasmodium berghei" />
 	                        <property name="nickname" value="pberghei" />
-	                        <property name="dbName" value="GeneDB_Pberghei" />
 							<property name="translationTable" value="1"/>
 							<property name="mitochondrialTranslationTable" value="4"/>
 							<property name="curatorEmail" value="aeb"/>
@@ -630,7 +594,6 @@ class LoadGeneDbPhylogeny {
 	                        <property name="taxonId" value="5825" />
 	                        <property name="fullName" value="Plasmodium chabaudi" />
 	                        <property name="nickname" value="pchabaudi" />
-	                        <property name="dbName" value="GeneDB_Pchabaudi" />
 							<property name="translationTable" value="1"/>
 							<property name="mitochondrialTranslationTable" value="4"/>
 							<property name="curatorEmail" value="aeb"/>
@@ -648,7 +611,6 @@ class LoadGeneDbPhylogeny {
                 <property name="taxonId" value="4932" />
                 <property name="fullName" value="Saccharomyces cerevisiae" />
                 <property name="nickname" value="cerevisiae" />
-                <property name="dbName" value="GeneDB_Scerevisiae" />
 				<property name="translationTable" value="1"/>
 				<property name="mitochondrialTranslationTable" value="3"/>
 				<property name="curatorEmail" value="val"/>
@@ -661,7 +623,6 @@ class LoadGeneDbPhylogeny {
                 <property name="taxonId" value="4896" />
                 <property name="fullName" value="Schizosaccharomyces pombe" />
                 <property name="nickname" value="pombe" />
-                <property name="dbName" value="GeneDB_Spombe" />
 				<property name="translationTable" value="1"/>
 				<property name="mitochondrialTranslationTable" value="4"/>
 				<property name="curatorEmail" value="val"/>
@@ -674,7 +635,6 @@ class LoadGeneDbPhylogeny {
                 <property name="taxonId" value="5085" />
                 <property name="fullName" value="Aspergillus fumigatus" />
                 <property name="nickname" value="asp" />
-                <property name="dbName" value="GeneDB_Afumigatus" />
 				<property name="translationTable" value="1"/>
 				<property name="mitochondrialTranslationTable" value="4"/>
 				<property name="curatorEmail" value="mb4"/>
@@ -687,7 +647,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="42374" />
 				<property name="fullName" value="Candida dubliniensis" />
 				<property name="nickname" value="cdubliniensis" />
-                <property name="dbName" value="GeneDB_Cdubliniensis" />
 				<property name="translationTable" value="12"/>
 				<property name="mitochondrialTranslationTable" value="3"/>
 				<property name="curatorEmail" value="mb4"/>
@@ -702,7 +661,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="97084" />
 				<property name="fullName" value="Bacteriovorax marinus" />
 				<property name="newOrg" value="true" />
-            	<property name="dbName" value="GeneDB_Bmarinus" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="sdb"/>
 				<property name="htmlFullName" value=""/>
@@ -714,7 +672,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="272559" />
 				<property name="fullName" value="Bacteroides fragilis NCTC 9343" />
 				<property name="nickname" value="bfragilis" />
-            	<property name="dbName" value="GeneDB_Bfragilis" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="amct"/>
 				<property name="htmlFullName" value=""/>
@@ -726,7 +683,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="197" />
 				<property name="fullName" value="Campylobacter jejuni" />
 				<property name="nickname" value="cjejuni" />
-            	<property name="dbName" value="GeneDB_Cjejuni" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="sdb"/>
 				<property name="htmlFullName" value=""/>
@@ -738,7 +694,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="813" />
 				<property name="fullName" value="Chlamydia trachomatis" />
 				<property name="nickname" value="testing" />
-            	<property name="dbName" value="GeneDB_Ctrachomatis" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="nrt"/>
 				<property name="htmlFullName" value=""/>
@@ -750,7 +705,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="83555" />
 				<property name="fullName" value="Chlamydophila abortus" />
 				<property name="nickname" value="cabortus" />
-            	<property name="dbName" value="GeneDB_Cabortus" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="nrt"/>
 				<property name="htmlFullName" value=""/>
@@ -762,7 +716,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="28447" />
 				<property name="fullName" value="Clavibacter michiganensis" />
 				<property name="newOrg" value="true" />
-            	<property name="dbName" value="GeneDB_Cmichiganensis" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="sdb"/>
 				<property name="htmlFullName" value=""/>
@@ -774,7 +727,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="1717" />
 				<property name="fullName" value="Corynebacterium diphtheriae" />
 				<property name="nickname" value="diphtheria" />
-            	<property name="dbName" value="GeneDB_Cdiphtheriae" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="amct"/>
 				<property name="htmlFullName" value=""/>
@@ -786,7 +738,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="554" />
 				<property name="fullName" value="Erwinia carotovora" />
 				<property name="nickname" value="ecarot" />
-            	<property name="dbName" value="GeneDB_Ecarotovora" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="ms5"/>
 				<property name="htmlFullName" value=""/>
@@ -798,7 +749,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="216592" />
 				<property name="fullName" value="Escherichia coli 042" />
 				<property name="nickname" value="ecoli" />
-            	<property name="dbName" value="GeneDB_Ecoli" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="net"/>
 				<property name="htmlFullName" value=""/>
@@ -810,7 +760,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="294" />
 				<property name="fullName" value="Pseudomonas fluorescens" />
 				<property name="newOrg" value="true" />
-            	<property name="dbName" value="GeneDB_Pfluorescens" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="amct"/>
 				<property name="htmlFullName" value=""/>
@@ -822,7 +771,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="384" />
 				<property name="fullName" value="Rhizobium leguminosarum" />
 				<property name="nickname" value="rleguminosarum" />
-            	<property name="dbName" value="GeneDB_Rleguminosarum" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="lcc"/>
 				<property name="htmlFullName" value=""/>
@@ -835,7 +783,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="360910" />
 					<property name="fullName" value="Bordetella avium 197N" />
 					<property name="nickname" value="bavium" />
-	            	<property name="dbName" value="GeneDB_Bavium" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
 					<property name="htmlFullName" value=""/>
@@ -847,7 +794,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="518" />
 					<property name="fullName" value="Bordetella bronchiseptica" />
 					<property name="nickname" value="bronchi" />
-	            	<property name="dbName" value="GeneDB_Bbronchiseptica" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
 					<property name="htmlFullName" value=""/>
@@ -859,7 +805,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="519" />
 					<property name="fullName" value="Bordetella parapertussis" />
 					<property name="nickname" value="parapert" />
-	            	<property name="dbName" value="GeneDB_Bparapertussis" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
 					<property name="htmlFullName" value="<i>Bordetella parapertussis</i>"/>
@@ -871,7 +816,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="520" />
 					<property name="fullName" value="Bordetella pertussis" />
 					<property name="nickname" value="pert" />
-	            	<property name="dbName" value="GeneDB_Bpertussis" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
 					<property name="htmlFullName" value="<i>Bordetella pertussis</i>"/>
@@ -885,7 +829,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="95486" />
 					<property name="fullName" value="Burkholderia cenocepacia" />
 					<property name="nickname" value="bcenocepacia" />
-	            	<property name="dbName" value="GeneDB_Bcenocepacia" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="mh3"/>
 					<property name="htmlFullName" value=""/>
@@ -897,7 +840,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="28450" />
 					<property name="fullName" value="Burkholderia pseudomallei" />
 					<property name="nickname" value="bpseudomallei" />
-	            	<property name="dbName" value="GeneDB_Bpseudomallei" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="mh3"/>
 					<property name="htmlFullName" value=""/>
@@ -911,7 +853,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="1491" />
 					<property name="fullName" value="Clostridium botulinum" />
 					<property name="nickname" value="cbotulinum" />
-	            	<property name="dbName" value="GeneDB_Cbotulinum" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
 					<property name="htmlFullName" value=""/>
@@ -923,7 +864,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="1496" />
 					<property name="fullName" value="Clostridium difficile" />
 					<property name="nickname" value="cdifficile" />
-	            	<property name="dbName" value="GeneDB_Cdifficile" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
 					<property name="htmlFullName" value=""/>
@@ -937,7 +877,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="1765" />
 					<property name="fullName" value="Mycobacterium bovis" />
 					<property name="nickname" value="mbovis" />
-	            	<property name="dbName" value="GeneDB_Mbovis" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="parkhill"/>
 					<property name="htmlFullName" value=""/>
@@ -949,7 +888,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="1769" />
 					<property name="fullName" value="Mycobacterium leprae" />
 					<property name="nickname" value="mleprae" />
-	            	<property name="dbName" value="GeneDB_Mleprae" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="parkhill"/>
 					<property name="htmlFullName" value=""/>
@@ -961,7 +899,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="1781" />
 					<property name="fullName" value="Mycobacterium marinum" />
 					<property name="nickname" value="mmarinum" />
-	            	<property name="dbName" value="GeneDB_Mmarinum" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="parkhill"/>
 					<property name="htmlFullName" value=""/>
@@ -973,7 +910,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="1773" />
 					<property name="fullName" value="Mycobacterium tuberculosis" />
 					<property name="nickname" value="mtuberculosis" />
-	            	<property name="dbName" value="GeneDB_Mtuberculosis" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="nrt"/>
 					<property name="htmlFullName" value=""/>
@@ -987,7 +923,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="487" />
 					<property name="fullName" value="Neisseria meningitidis" />
 					<property name="nickname" value="nmeningitidis" />
-	            	<property name="dbName" value="GeneDB_Nmeningitidis" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="sdb"/>
 					<property name="htmlFullName" value=""/>
@@ -999,7 +934,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="272831" />
 					<property name="fullName" value="Neisseria meningitidis C" />
 					<property name="nickname" value="nmeningitidisC" />
-	            	<property name="dbName" value="GeneDB_NmeningitidisC" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="sdb"/>
 					<property name="htmlFullName" value=""/>
@@ -1013,7 +947,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="54736" />
 					<property name="fullName" value="Salmonella bongori" />
 					<property name="newOrg" value="true" />
-	            	<property name="dbName" value="GeneDB_Sbongori" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="nrt"/>
 					<property name="htmlFullName" value=""/>
@@ -1025,7 +958,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="592" />
 					<property name="fullName" value="Salmonella enteritidis PT4" />
 					<property name="newOrg" value="true" />
-	            	<property name="dbName" value="GeneDB_Senteritidis_PT4" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="nrt"/>
 					<property name="htmlFullName" value=""/>
@@ -1038,7 +970,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="615" />
 					<property name="fullName" value="Serratia marcescens" />
 					<property name="newOrg" value="true" />
-	            	<property name="dbName" value="GeneDB_Smarcescens" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="nrt"/>
 					<property name="htmlFullName" value=""/>
@@ -1051,7 +982,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="282458" />
 					<property name="fullName" value="Staphylococcus aureus (MRSA252)" />
 					<property name="nickname" value="saureusMRSA" />
-	            	<property name="dbName" value="GeneDB_SaureusMRSA" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="mh3"/>
 					<property name="htmlFullName" value=""/>
@@ -1063,7 +993,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="282459" />
 					<property name="fullName" value="Staphylococcus aureus (MSSA476)" />
 					<property name="nickname" value="saureusMSSA476" />
-	            	<property name="dbName" value="GeneDB_SaureusMSSA" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="mh3"/>
 					<property name="htmlFullName" value=""/>
@@ -1076,7 +1005,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="40324" />
 				<property name="fullName" value="Stenotrophomonas maltophilia" />
 				<property name="newOrg" value="true" />
-            	<property name="dbName" value="GeneDB_Smaltophilia" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="lcc"/>
 				<property name="htmlFullName" value=""/>
@@ -1089,7 +1017,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="1314" />
 					<property name="fullName" value="Streptococcus pyogenes" />
 					<property name="nickname" value="spyogenes" />
-	            	<property name="dbName" value="GeneDB_Spyogenes" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="mh3"/>
 					<property name="htmlFullName" value=""/>
@@ -1101,7 +1028,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="1349" />
 					<property name="fullName" value="Streptococcus uberis" />
 					<property name="nickname" value="suberis" />
-	            	<property name="dbName" value="GeneDB_Suberis" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="mh3"/>
 					<property name="htmlFullName" value=""/>
@@ -1114,7 +1040,6 @@ class LoadGeneDbPhylogeny {
 				<property name="taxonId" value="2039" />
 				<property name="fullName" value="Tropheryma whipplei" />
 				<property name="nickname" value="twhipplei" />
-            	<property name="dbName" value="GeneDB_Twhipplei" />
 				<property name="translationTable" value="11"/>
 				<property name="curatorEmail" value="sdb"/>
 				<property name="htmlFullName" value=""/>
@@ -1127,7 +1052,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="632" />
 					<property name="fullName" value="Yersinia pestis" />
 					<property name="nickname" value="ypsetis" />
-	            	<property name="dbName" value="GeneDB_Ypestis" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="nrt"/>
 					<property name="htmlFullName" value=""/>
@@ -1139,7 +1063,6 @@ class LoadGeneDbPhylogeny {
 					<property name="taxonId" value="630" />
 					<property name="fullName" value="Yersinia enterocolitica" />
 					<property name="newOrg" value="true" />
-	            	<property name="dbName" value="GeneDB_Yenterocolitica" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="nrt"/>
 					<property name="htmlFullName" value=""/>
