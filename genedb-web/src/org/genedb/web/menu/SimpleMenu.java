@@ -19,6 +19,7 @@ public class SimpleMenu extends Menu
      * Returns the list of child menus
      * @return collection of child menus
     */
+    @Override
     public Collection listChildMenus() throws UnsupportedOperationException
     {
         throw new UnsupportedOperationException("This mehtod Cannot be invoked for simple menu item");
@@ -29,6 +30,7 @@ public class SimpleMenu extends Menu
      * @param functionid as string
      * @return the child
     */
+    @Override
     public Menu getChild(String s)
     {
         return null;
@@ -38,6 +40,7 @@ public class SimpleMenu extends Menu
      * Renders the function menus for the immediate section
      * @return String containing the function menus.
     */
+    @Override
     public String render(int j)
     {
         StringBuffer sb = new StringBuffer();
@@ -113,6 +116,7 @@ public class SimpleMenu extends Menu
      * @return boolean value for success or failure.
      * @exception NoSuchElementException
     */
+    @Override
     public  boolean add(Menu menu) throws NoSuchElementException, UnsupportedOperationException
     {
         // list.add(menu);
@@ -124,6 +128,7 @@ public class SimpleMenu extends Menu
      * @param Menu object
      * @exception NoSuchElementException
     */
+    @Override
     public void remove(Menu menu) throws NoSuchElementException, UnsupportedOperationException
     {
         throw new UnsupportedOperationException("This mehtod Cannot be invoked for simple menu item");

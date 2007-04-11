@@ -29,6 +29,7 @@ public class CompositeMenu extends Menu
      * Returns the list of child menus
      * @return collection of child menus
     */
+    @Override
     public Collection listChildMenus()
     {
         return list;
@@ -39,6 +40,7 @@ public class CompositeMenu extends Menu
      * @param functionid as string
      * @return the child
     */
+    @Override
     public Menu getChild(String s)
     {
         return null;
@@ -48,6 +50,7 @@ public class CompositeMenu extends Menu
      * Renders the section menus
      * @return String containing the section menus.
     */
+    @Override
     public String render(int j)
     {
         StringBuffer sb = new StringBuffer();
@@ -131,6 +134,7 @@ public class CompositeMenu extends Menu
      * @return boolean value for success or failure.
      * @exception NoSuchElementException
     */
+    @Override
     public  boolean add(Menu menu) throws NoSuchElementException
     {
         list.add(menu);
@@ -142,6 +146,7 @@ public class CompositeMenu extends Menu
      * @param menu object
      * @exception NoSuchElementException
     */
+    @Override
     public void remove(Menu menu) throws NoSuchElementException
     {
         list.remove(menu);
