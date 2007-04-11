@@ -271,6 +271,7 @@ class LoadGeneDbCv {
             <term name="curation" description="Free text note field for local curation" />
             <term name="private" description="Free text note field for comments not to be made publicly visible" />     
  			<term name="EC_number" description="Free text note field for EC_number" />
+ 			<term name="colour" description="Numeric key for storing a display colour" />
         </term>
 
         <term name="phylo_organism_prop" description="Parent term for CvTerms that act as keys for organism or phylonode props">
