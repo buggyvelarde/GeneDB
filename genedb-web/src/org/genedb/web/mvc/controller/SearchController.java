@@ -451,7 +451,11 @@ public class SearchController extends MultiActionController implements Initializ
 		}
 		return false;
 	}
-
+	
+	public ModelAndView Menu(HttpServletRequest request, HttpServletResponse response) {
+		return new ModelAndView("features/menu",null);
+	}
+	
 	public void setSequenceDao(SequenceDao sequenceDao) {
 	    this.sequenceDao = sequenceDao;
 	}
