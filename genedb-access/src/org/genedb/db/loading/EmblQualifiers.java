@@ -45,7 +45,8 @@ public class EmblQualifiers {
     public static final String QUAL_GO            = "GO";
     public static final String QUAL_C_CURATION    = "controlled_curation";
     public static final String QUAL_EVIDENCE      = "evidence";
-    public static final String QUAL_EC_NUMBER      = "EC_number";
+    public static final String QUAL_EC_NUMBER     = "EC_number";
+    public static final String QUAL_D_COLOUR      = "colour";
     
     // Naming
     public static final String QUAL_SYS_ID        = "systematic_id";
@@ -58,7 +59,6 @@ public class EmblQualifiers {
     public static final String QUAL_PROTEIN_NAME  = "protein_name";
     
     // Deprecated ie not output but will be read
-    public static final String QUAL_D_COLOUR      = "colour";
     public static final String QUAL_D_GENE        = "gene";
     public static final String QUAL_D_FASTA_FILE  = "fasta_file";
     public static final String QUAL_D_LITERATURE  = "literature";

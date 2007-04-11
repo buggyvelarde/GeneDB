@@ -293,7 +293,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             createProducts(polypeptide, an, "product", CV_PRODUCTS);
 
             // Store feature properties based on original annotation
-            //createFeatureProp(polypeptide, an, "colour", "colour", CV_GENEDB);
+            createFeatureProp(polypeptide, an, "colour", "colour", CV_GENEDB);
             //
             // Cvterm cvTerm =
             // daoFactory.getCvTermDao().findByNameInCv("note",
