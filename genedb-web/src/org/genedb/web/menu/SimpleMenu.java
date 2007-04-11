@@ -52,7 +52,7 @@ public class SimpleMenu extends Menu
         sb.append("\"" + getUrl() + "\",");
         sb.append("\"black\",\"FAEBD7\",\"white\",\"3366CC\",\"white\",\"3366CC\",\"font-family:Tahoma, Verdana, Arial; font-size:12px;font-weight:normal,text-decoration:none;padding: 4px\");");
 
-        sb.append("\n");*/
+        sb.append("\n");
         String sections[] = getLevelCoord().split(",");
         int left = sections.length * 154;
         int top = 0;
@@ -71,7 +71,40 @@ public class SimpleMenu extends Menu
         sb.append("<div id=\"menudivs\">" + getMenuName() + "</div>");
         sb.append("</a>");
         sb.append("\n");
+        return sb.toString(); */
+        String sections[] = getLevelCoord().split(",");
+        int left;
+        if (sections.length > 1) {
+        	left = (sections.length * 154) + 1 - (154 - Menu.left) ;
+        } else {
+        	left = sections.length * Menu.left;
+        }
+        int zindex = sections.length - 1;
+        int top = 0;
+        StringBuffer path = new StringBuffer();
+        for (int i = 0; i < sections.length; i++) {
+        	path.append(Integer.parseInt(sections[i]) - 1);
+        	path.append("_");
+        	if (i == 0) {
+        		top = Integer.parseInt(sections[i]) * 20;
+        	} else {
+        		top = top + (Integer.parseInt(sections[i]) - 1) * 20;
+        	}
+        }
+        path.deleteCharAt(path.length()-1);
+        top = top + Menu.top + (4 * j);
+               
+        String id = "mi_0_" + getMenuId();
+        
+       	sb.append("<a name=\"" + path.toString() + "\" id=\"" + id + "\" onmouseover=\"mouseover(" + getMenuId() + ");\" onmouseout=\"mouseout();\" onclick=\"return mouseclick(" + getUrl() + ");\" style=\"text-decoration:none; border:1px solid black; background: rgb(153, 153, 255) none repeat scroll 0%; position: absolute; top: " + top + "px; left: " + left + "px; width: 154px; height: 20px; visibility: hidden; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; color: white; z-index: " + zindex + ";\" href=\"null\">");
+
+        sb.append("<div id=\"menudivs\" style=\"font-family:Tahoma,Verdana,Arial;font-size:12px;padding:4px;\">" + getMenuName() + "</div>");
+        sb.append("</a>");
+        sb.append("\n");
+              
+
         return sb.toString();
+        
     }//~public String render()...
 
   /**

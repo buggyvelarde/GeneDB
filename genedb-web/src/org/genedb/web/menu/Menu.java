@@ -19,6 +19,8 @@ public abstract class Menu
     private String levelCoord;
     public static int counter=0;
     private boolean isTop = false;
+    public static int left = 154;
+    public static int top = 200;
     
     public int getCounter() {
 		return counter;

@@ -70,9 +70,9 @@ public class CompositeMenu extends Menu
         String sections[] = getLevelCoord().split(",");
         int left;
         if (sections.length > 1) {
-        	left = (sections.length * 154) + 1;
+        	left = (sections.length * 154) + 1 - (154 - Menu.left);
         } else {
-        	left = sections.length * 154;
+        	left = sections.length * Menu.left;
         }
         int zindex = sections.length - 1;
         int top = 0;
@@ -87,7 +87,7 @@ public class CompositeMenu extends Menu
         	}
         }
         path.deleteCharAt(path.length()-1);
-        top = top + 200 + (4 * j);
+        top = top + Menu.top + (4 * j);
         Iterator it = list.iterator();
         StringBuffer childs = new StringBuffer();
         
