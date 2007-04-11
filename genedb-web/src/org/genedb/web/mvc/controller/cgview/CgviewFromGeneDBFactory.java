@@ -157,6 +157,7 @@ public class CgviewFromGeneDBFactory {
         }
         f1.setMouseover("return showMenu("+coord1+","+coord2+")");
         //f1.setMouseover("<a href=\\\"www.google.com\\\">Menu 1</a>&nbsp;&nbsp;<a href=\\\"www.sanger.ac.uk\\\">Menu 2</a>");
+        f1.setLabel(""+coord1+":"+coord2);
         f1.setHyperlink(""+coord1+":"+coord2);
         new FeatureRange(f1, coord1, coord2); // Don't need to store reference
         return f1;

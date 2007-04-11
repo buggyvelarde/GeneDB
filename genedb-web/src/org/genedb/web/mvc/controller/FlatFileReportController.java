@@ -27,7 +27,9 @@ import org.biojava.bio.BioException;
 import org.biojava.bio.seq.FeatureFilter;
 import org.biojava.bio.seq.FeatureHolder;
 import org.biojava.bio.seq.Sequence;
+import org.biojava.bio.seq.SequenceIterator;
 import org.biojava.bio.seq.impl.SubSequence;
+import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojavax.bio.seq.RichSequenceIterator;
 import org.biojavax.bio.seq.RichSequence.IOTools;
 import org.springframework.validation.BindException;
@@ -113,7 +115,7 @@ public class FlatFileReportController extends PostOrGetFormController {
             SubSequence sub = extractSubSequence(ffrb);
             
             OutputStream out = response.getOutputStream();
-            IOTools.writeEMBL(out, sub, null);
+            SeqIOTools.writeEmbl(out, sub);
 
             return null;
         }
@@ -137,8 +139,7 @@ public class FlatFileReportController extends PostOrGetFormController {
         String fileName = ROOT+"styphi/chr1/St.embl";
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         
-
-        RichSequenceIterator iter = IOTools.readEMBLDNA(br, null);
+        SequenceIterator iter = SeqIOTools.readEmbl(br);
         Sequence seq = iter.nextSequence();
         
         SubSequence sub = new SubSequence(seq, ffrb.getMin(), ffrb.getMax());

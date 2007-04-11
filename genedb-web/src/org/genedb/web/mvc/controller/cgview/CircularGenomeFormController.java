@@ -8,6 +8,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
@@ -52,11 +53,19 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
     private Map<String, String> orgs = new HashMap<String, String>();
     
+    private BufferedImage overlay;
+    
     public CircularGenomeFormController() {
         String ROOT = "/nfs/team81/art/circ_genome_data/";
         orgs.put("S. typhi", ROOT+"styphi/chr1/St.art");
         orgs.put("S. pyogenes", ROOT+"spyogenes/curated/SP.embl");
         orgs.put("C. jejuni", ROOT+"cjejuni/curated/chr1/Cj.embl");
+        
+        try {
+			overlay = ImageIO.read(new File("/nfs/team81/art/circ_icon.png"));
+		} catch (IOException e) {
+			System.err.println("Unable to load overlay file");
+		}
     }
 
 
@@ -196,7 +205,16 @@ public class CircularGenomeFormController extends SimpleFormController implement
         }
     }
 
-
+    
+    
+    private void modifyImage(Graphics2D g2d, int x, int y) {
+    	System.err.println("Trying to draw overlay at x='"+x+"' y='"+y+"'");
+    	System.err.println("Overlay is width='"+overlay.getWidth(null)+"' height='"+overlay.getHeight(null)+"'");
+    	g2d.setPaint(Color.GREEN);
+    	g2d.drawRect(x, y, 20, 10);
+        g2d.drawImage(overlay, x, y, null);  
+    }
+    
     public static BufferedImage writeCgviewToImage(Cgview cgview, boolean keepLastLabels) {
 
         // TODO This is wrong if image is scaled
@@ -215,12 +233,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
         return buffImage;
     }
     
-    
-    private void modifyImage(Graphics2D g2d, int x, int y) {
-        ImageIcon ii = new ImageIcon("");
-        Image i = ii.getImage();
-        g2d.drawImage(i, x, y, null);  
-    }
+
 
 
     /**
@@ -315,26 +328,28 @@ public class CircularGenomeFormController extends SimpleFormController implement
             LabelBounds clb = (LabelBounds) i.next();
             String label = clb.getLabel();
             String href = clb.getHyperlink();
-            int colon = href.indexOf(":");
-            int start = Integer.parseInt(label.substring(0, colon));
-            int end = Integer.parseInt(label.substring(colon+1));
-
+            int colon = label.indexOf(":");
             System.err.println(label);
-            int lbr = label.indexOf("(");
-            String count = label.substring(0, lbr).trim();
-            ret.append("<tr><td>");
-            ret.append(count);
-            ret.append("</td><td>");
-            ret.append(start);
-            ret.append("</td><td>");
-            ret.append(end);
-            ret.append("</td><td>");
-            ret.append(end-start);
-            ret.append("</td><td>");
-            ret.append("<a href=\"FlatFileReport?outputFormat=EMBL&organism=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
-            ret.append("<a href=\"FlatFileReport?outputFormat=Artemis&organism=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
-            ret.append("<a href=\"FlatFileReport?outputFormat=Table&organism=wibble&min="+start+"&max="+end+"\">Link</a></td>");
-            ret.append("</tr>\n");
+            if (colon != -1) {
+            	int start = Integer.parseInt(label.substring(0, colon));
+            	int end = Integer.parseInt(label.substring(colon+1));
+
+            	//int lbr = label.indexOf("(");
+            	//String count = label.substring(0, lbr).trim();
+            	ret.append("<tr><td>-");
+            	//ret.append(count);
+            	ret.append("</td><td>");
+            	ret.append(start);
+            	ret.append("</td><td>");
+            	ret.append(end);
+            	ret.append("</td><td>");
+            	ret.append(end-start);
+            	ret.append("</td><td>");
+            	ret.append("<a href=\"FlatFileReport?outputFormat=EMBL&organism=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
+            	ret.append("<a href=\"FlatFileReport?outputFormat=Artemis&organism=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
+            	ret.append("<a href=\"FlatFileReport?outputFormat=Table&organism=wibble&min="+start+"&max="+end+"\">Link</a></td>");
+            	ret.append("</tr>\n");
+            }
         }
         ret.append("</table>" + '\n');
         return ret.toString();
