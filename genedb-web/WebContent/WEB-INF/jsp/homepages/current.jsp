@@ -1,34 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title>GeneDB</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="The main entry point to GeneDB with search facility and access 
-to BLAST servers and the datasets housed within GeneDB. Links to useful information, help pages and 
-Sanger Institute sequencing projects and software tools are also provided.">
-<link REL="SHORTCUT ICON" HREF="/favicon.ico" TYPE="image/x-ico">
-</head>
-<body bgcolor="white">
-
-<!-- main page -->
-<TABLE border="0" width="100%" cellpadding="0">
-
-<!-- title section -->
-  <TR>
-    <TD align="left" width="187px"><IMG alt="GeneDB Homepage" border="0" src="/genedb/images/genedb.gif"></TD>
-    <TD align="center" width="90%">
-
-
-<H3><font face="Arial,Helvetica,Geneva">Welcome to the <br>
-GeneDB website<br>
-Version 2.1</font></H3>
-
-  </TD>
-  <TD>
-  <a href="/genedb/search.jsp"><IMG alt="GeneDB Search Page" border="0" src="/genedb/images/PSUlogo.gif"></a>
-  </TD>
-  </TR>
-</TABLE>
+<%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
+<%@ taglib prefix="db" uri="db" %>
+<format:header name="GeneDB">
+	<st:init />
+	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
+</format:header>
 
 <p>  
 
@@ -64,75 +39,16 @@ Version 2.1</font></H3>
 
       <TR>
 	<TD bgcolor="#FAFAD2" align="center">
-    <form action="/genedb/Dispatcher" method="GET" name="ohm1">
-    <input type="hidden" name="formType" value="navBar">
+    <form action="NamedFeature" method="GET" name="ohm1">
 	<br>
 	  <b>Search for</b>
 	  <br><b>gene by</b>
 	  <br><b>ID/description in</b>
-	  <br><select name="organism">
-	    <option value="All:*">All organisms
-	      <optgroup label="Fungi">
-		<option value="asp">A. fumigatus
-		<option value="cdubliniensis">C. dubliniensis
-		<option value="cerevisiae">S. cerevisiae
-		<option value="pombe">S. pombe
-	   </optgroup>
-	   <optgroup label="Protozoa">
-      	 <option value="dicty">D. discoideum</option>
-      	 <option value="ehistolytica">E. histolytica</option>
-      	 <option value="etenella">E. tenella</option>
-      	 <option value="lbraziliensis">L. braziliensis</option>
-		 <option value="linfantum">L. infantum</option>
-	     <option value="leish">L. major</option>
-		 <option value="pberghei">P. berghei</option>
-		 <option value="pchabaudi">P. chabaudi</option>
-		 <option value="malaria">P. falciparum</option>
-	     <option value="pknowlesi">P. knowlesi</option>
-		 <option value="annulata">T. annulata</option>
-		 <option value="tryp">T. brucei</option>
-		 <option value="tbrucei427">T. brucei strain 427</option>
-		 <option value="tcongolense">T. congolense</option>
-		 <option value="tcruzi">T. cruzi</option>
-		 <option value="tgambiense">T. b. gambiense</option>
-		 <option value="tvivax">T. vivax</option>
-	   </optgroup>
-	   <optgroup label="Parasitic Helminths">
-      	 <option value="smansoni">S. mansoni
-	   </optgroup>
-	   <optgroup label="Bacteria">
-      	        <option value="bronchi">B. bronchiseptica
-      	        <option value="bfragilis">B. fragilis
-      	        <option value="parapert">B. parapertussis
-      	        <option value="pert">B. pertussis
-      	        <option value="bpseudomallei">B. pseudomallei
-      	        <option value="cabortus">C. abortus
-      	        <option value="cjejuni">C. jejuni
-      	        <option value="diphtheria">C. diphtheriae
-      	        <option value="ecarot">E. carotovora
-      	        <option value="rleguminosarum">R. leguminosarum
-      	        <option value="saureusMRSA">S. aureus MRSA
-      	        <option value="saureusMSSA">S. aureus MSSA
-      	        <option value="scoelicolor">S. coelicolor
-      	        <option value="spyogenes">S. pyogenes
-      	        <option value="styphi">S. typhi
-	      </optgroup>
-	      <optgroup label="Parasite Vectors">
-      	        <option value="glossina">G. morsitans
-      	        <option value="llongipalpis">L. longipalpis
-	      </optgroup>
-	      <optgroup label="Viruses">
-      	        <option value="ehuxleyi">E. huxleyi virus 86
-	      </optgroup>
-	      <optgroup label="Group options">
-		<option value="Yeast:pombe:cerevisiae:asp">Yeast
-		<option value="Kinetoplastids:tryp:tbrucei427:leish:linfantum">Kinetoplastids
-	      </optgroup>
-	  </select>
+	  <br><db:simpleselect />
 	<br><input type="text" size="14" name="name">
         <br>&nbsp;
 	<br><input type="checkbox" checked name="desc" value="yes">Include description in search
-	<br><input type="checkbox" name="wildcard" value="yes">Add wildcards to search term
+	<br><input type="checkbox" name="addWildcard" value="yes">Add wildcards to search term
 	<br>&nbsp;
 	<br><input type="submit" name="submit" value="Search">&nbsp&nbsp;&nbsp;<input type=reset>
 </form>
@@ -143,75 +59,7 @@ Version 2.1</font></H3>
         <td>&nbsp;</td>
 
 <!-- Column 3 -->
-        <TD bgcolor="#FAFAD2" align="center" width="33%"><a href="/genedb/seqSearch.jsp">omniBLAST</a>
-    <form action="/genedb/Dispatcher" method="GET" name="ohm2">
-    <input type="hidden" name="formType" value="navBar">
-	<br>(Multi-organism
-	<br>BLAST)
-        <br>&nbsp;
-        <br><hr>
-        <br>&nbsp;
-	<br><input type="submit" name="pages" value="Go To"><b>&nbsp;single</b>
-	<br><b>organism BLAST:</b>
-	<br>
- <select name='ohmr'
-onChange="document.location.href=document.forms['ohm2'].ohmr.options[document.forms['ohm2'].ohmr.selectedIndex].value">
-<option selected value='/'>Choose...</option>
-<optgroup label="Fungi">
-<option value='/genedb/asp/blast.jsp'>A. fumigatus</option>
-<option value='/genedb/cdubliniensis/blast.jsp'>C. dubliniensis</option>
-<option value='/genedb/cerevisiae/blast.jsp'>S. cerevisiae</option>
-<option value='/genedb/pombe/blast.jsp'>S. pombe</option>
-</optgroup>
-<optgroup label="Protozoa">
-<option value='/genedb/dicty/blast.jsp'>D. discoideum</option>
-<option value='/genedb/ehistolytica/blast.jsp'>E. histolytica</option>
-<option value='/genedb/etenella/blast.jsp'>E. tenella</option>
-<option value='/genedb/lbraziliensis/blast.jsp'>L. braziliensis</option>
-<option value='/genedb/linfantum/blast.jsp'>L. infantum</option>
-<option value='/genedb/leish/blast.jsp'>L. major</option>
-<option value='/genedb/pberghei/blast.jsp'>P. berghei</option>
-<option value='/genedb/pchabaudi/blast.jsp'>P. chabaudi</option>
-<option value='/genedb/malaria/blast.jsp'>P. falciparum</option>
-<option value='/genedb/pknowlesi/blast.jsp'>P. knowlesi</option>
-<option value='/genedb/annulata/blast.jsp'>T. annulata</option>
-<option value='/genedb/tryp/blast.jsp'>T. brucei</option>
-<option value='/genedb/tbrucei427/blast.jsp'>T. brucei strain 427</option>
-<option value='/genedb/tcongolense/blast.jsp'>T. congolense</option>
-<option value='/genedb/tcruzi/blast.jsp'>T. cruzi</option>
-<option value='/genedb/tgambiense/blast.jsp'>T. b. gambiense</option>
-<option value='/genedb/tvivax/blast.jsp'>T. vivax</option>
-</optgroup>
-<optgroup label="Parasitic Helminths">
-<option value='/genedb/smansoni/blast.jsp'>S. mansoni</option>
-</optgroup>
-<optgroup label="Bacteria">
-<option value='/genedb/bronchi/blast.jsp'>B. bronchiseptica</option>
-<option value='/genedb/bfragilis/blast.jsp'>B. fragilis</option>
-<option value='/genedb/parapert/blast.jsp'>B. parapertussis</option>
-<option value='/genedb/pert/blast.jsp'>B. pertussis</option>
-<option value='/genedb/pseudomallei/blast.jsp'>B. pseudomallei</option>
-<option value='/genedb/cabortus/blast.jsp'>C. abortus</option>
-<option value='/genedb/cjejuni/blast.jsp'>C. jejuni</option>
-<option value='/genedb/diphtheria/blast.jsp'>C. diphtheriae</option>
-<option value="/genedb/ecarot/blast.jsp">E. carotovora</option>
-<option value="/genedb/rleguminosarum/blast.jsp">R. leguminosarum</option>
-<option value='/genedb/saureusMRSA/blast.jsp'>S. aureus MRSA</option>
-<option value='/genedb/saureusMSSA/blast.jsp'>S. aureus MSSA</option>
-<option value='/genedb/scoelicolor/blast.jsp'>S. coelicolor</option>
-<option value='/genedb/spyogenes/blast.jsp'>S. pyogenes</option>
-<option value='/genedb/styphi/blast.jsp'>S. typhi</option>
-</optgroup>
-<optgroup label="Parasite Vectors">
-<option value='/genedb/glossina/blast.jsp'>G. morsitans</option>
-<option value='/genedb/llogipalpis/blast.jsp'>G. morsitans</option>
-</optgroup>
-<optgroup label="Viruses">
-<option value='/genedb/ehuxleyi/blast.jsp'>E. huxleyi</option>
-</optgroup>
-</select>
-</form>
-</td>
+<td  bgcolor="#FAFAD2" align="center">Yep, we'll still offer BLAST searches</td>
 
 
 <!-- Column 4 -->
@@ -221,96 +69,13 @@ onChange="document.location.href=document.forms['ohm2'].ohmr.options[document.fo
 <!-- Column 5 -->
 
           <TD bgcolor="#FAFAD2" align="center">
-    <form action="/genedb/Dispatcher" method="GET" name="ohm3">
-    <input type="hidden" name="formType" value="navBar">
-        <b>Fungi</b>
-        <br><input type="submit" name="fungiHomePage" value="Go To">
-     	        <select name="fungiOrganism"
-                 onChange="document.location.href=document.forms['ohm3'].fungiOrganism.options[document.forms['ohm3'].fungiOrganism.selectedIndex].value">
-                  <option selected value='/'>Choose...</option>
-                  <option value="/genedb/asp/">A. fumigatus
-                  <option value="/genedb/cdubliniensis/">C. dubliniensis
-                  <option value="/genedb/cerevisiae/">S. cerevisiae
-                  <option value="/genedb/pombe/">S. pombe
-                </select>
+<b><db:simplehomepageselect top="Fungi"/>
+<br><db:simplehomepageselect top="Protozoa"/>
+<br><db:simplehomepageselect top="Helminths"/>
+<br><db:simplehomepageselect top="bacteria" />
+<br><b>Parasite Vectors</b>
+<br><b>Viruses</b>
 
-        <br>&nbsp;
-        <br><b>Protozoa</b>
-        <br><input type="submit" name="protozoaHomePage" value="Go To">
-       	        <select name="protozoaOrganism"
-                        onChange="document.location.href=document.forms['ohm3'].protozoaOrganism.options[document.forms['ohm3'].protozoaOrganism.selectedIndex].value">
-                  <option selected value='/'>Choose...</option>
-                  <option value="/genedb/dicty/">D. discoideum
-                  <option value='/genedb/ehistolytica/'>E. histolytica
-                  <option value='/genedb/etenella/'>E. tenella
-		          <option value='/genedb/lbraziliensis/'>L. braziliensis
-		          <option value='/genedb/linfantum/'>L. infantum
-                  <option value="/genedb/leish/">L. major
-                  <option value="/genedb/pberghei/">P. berghei
-                  <option value="/genedb/pchabaudi/">P. chabaudi
-                  <option value="/genedb/malaria/">P. falciparum
-                  <option value='/genedb/pknowlesi'>P. knowlesi
-                  <option value="/genedb/annulata/">T. annulata
-                  <option value="/genedb/tryp/">T. brucei
-                  <option value="/genedb/tbrucei427/">T. brucei strain 427
-                  <option value="/genedb/tcongolense/">T. congolense
-                  <option value="/genedb/tcruzi/">T. cruzi
-                  <option value="/genedb/tgambiense/">T. b. gambiense
-                  <option value="/genedb/tvivax/">T. vivax
-                </select>
-
-        <br>&nbsp;
-        <br><b>Parasitic Helminths</b>
-        <br><input type="submit" name="helminthsHomePage" value="Go To">
-       	        <select name="helminthsOrganism"
-                 onChange="document.location.href=document.forms['ohm3'].helminthsOrganism.options[document.forms['ohm3'].helminthsOrganism.selectedIndex].value">
-                  <option selected value='/'>Choose...</option>
-                  <option value="/genedb/smansoni/">S. mansoni
-                </select>
-
-        <br>&nbsp;
-        <br><b>Bacteria</b>
-        <br><input type="submit" name="bacteriaHomePage" value="Go To">
-       	        <select name="bacteriaOrganism"
-                 onChange="document.location.href=document.forms['ohm3'].bacteriaOrganism.options[document.forms['ohm3'].bacteriaOrganism.selectedIndex].value">
-                  <option selected value='/'>Choose...</option>
-                  <option value='/genedb/bronchi/'>B. bronchiseptica</option>
-                  <option value='/genedb/bfragilis/'>B. fragilis</option>
-                  <option value='/genedb/parapert/'>B. parapertussis</option>
-                  <option value='/genedb/pert/'>B. pertussis</option>
-                  <option value='/genedb/bpseudomallei'>B. pseudomallei
-                  <option value='/genedb/cabortus/'>C. abortus</option>
-                  <option value='/genedb/cjejuni/'>C. jejuni</option>
-                  <option value='/genedb/diphtheria/'>C. diphtheriae</option>
-                  <option value='/genedb/ecarot/'>E. carotovora</option>
-                  <option value='/genedb/rleguminosarum/'>R. leguminosarum</option>
-                  <option value='/genedb/saureusMRSA/'>S. aureus MRSA</option>
-                  <option value='/genedb/saureusMSSA/'>S. aureus MSSA</option>
-                  <option value='/genedb/scoelicolor/'>S. coelicolor</option>
-                  <option value='/genedb/spyogenes/'>S. pyogenes</option>
-                  <option value='/genedb/styphi/'>S. typhi</option>
-                </select>
-
-
-        <br>&nbsp;
-        <br><b>Parasite Vectors</b>
-        <br><input type="submit" name="parasiteVectorsHomePage" value="Go To">
-       	        <select name="parasiteVectorsOrganism"
-                 onChange="document.location.href=document.forms['ohm3'].parasiteVectorsOrganism.options[document.forms['ohm3'].parasiteVectorsOrganism.selectedIndex].value">
-                  <option selected value='/'>Choose...</option>
-                  <option value='/genedb/glossina/'>G. morsitans</option>
-                  <option value='/genedb/llongipalpis/'>L. longipalpis</option>
-                </select>
-
-        <br>&nbsp;
-        <br><b>Viruses</b>
-        <br><input type="submit" name="virusesHomePage" value="Go To">
-       	        <select name="virusesOrganism"
-onChange="document.location.href=document.forms['ohm3'].virusesOrganism.options[document.forms['ohm3'].virusesOrganism.selectedIndex].value">
-                  <option selected value='/'>Choose...</option>
-                  <option value='/genedb/ehuxleyi/'>E. huxleyi virus 86</option>
-                </select>
-</form>
 	</TD>
 </tr>
 
@@ -454,17 +219,5 @@ the site please <a href="/genedb/feedback.jsp">contact the technical team</a>
     </table>
     <p>
       
-      
-      <img src="/genedb/images/orangeDot.gif" width="100%" height="2" alt="----------------------">
-      
-      <br>
-    <table width="100%">
-      <tr>
-	<td width="50%" align="left">Hosted by the <a href="http://www.sanger.ac.uk/">Sanger Institute</a></td>
-	<td width="50%" align="right"><p align="right"><a href="/genedb/feedback.jsp">Send us your comments on GeneDB</a></td>
-      </tr>
-    </table>
+    <format:footer />
     
-  </body>
-  
-</html>
