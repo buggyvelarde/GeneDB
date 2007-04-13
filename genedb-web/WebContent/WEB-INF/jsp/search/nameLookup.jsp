@@ -22,7 +22,7 @@
     </tr>
     <tr>
 	  <td>Look Up:</td>
-	  <td><form:input path="lookup"/></td>
+	  <td><form:input path="name"/></td>
 	  <td>The name to lookup. It can include wildcards (*) to match any series of characters</td>
     </tr>
     <tr>
