@@ -12,11 +12,7 @@
 </format:header>
 
 
-
-<h3>Diagram</h3>
-
 <p align="center">${settings.map}</p>
-
 
 		   
 <format:footer />
