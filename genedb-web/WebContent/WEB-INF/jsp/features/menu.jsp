@@ -7,11 +7,8 @@
 	<st:init />
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:header>
-<table>
-<tr>
-<td>
-<db:phylogeny left="200" top="76"></db:phylogeny>
+<span style="height: 2000px;">
+<db:phylogeny left="100" top="76"></db:phylogeny>
 <script type="text/javascript" src="/genedb-web/includes/scripts/phylogeny.js"/></script>
-</td>
-</tr>
-</table>
+</span>
+<format:footer/>

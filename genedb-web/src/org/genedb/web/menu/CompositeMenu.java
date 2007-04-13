@@ -54,23 +54,8 @@ public class CompositeMenu extends Menu
     public String render(int j)
     {
         StringBuffer sb = new StringBuffer();
-
-        /*
-        sb.append("addmenuitem(");
-        sb.append("\"" + getLevelCoord() + "\",");
-        sb.append("\"" + getMenuName() + "\",");
-     //   System.out.println(getUrl() + " "  + getMenuName());
-        
-        if (null == getUrl())
-            sb.append("null" + ",");
-         else
-                sb.append("\"" + getUrl() + "\",");
-
-
-        sb.append("\"black\",\"FAEBD7\",\"white\",\"3366CC\",\"white\",\"3366CC\",\"font-family:Tahoma, Verdana, Arial; font-size:12px;font-weight:normal,text-decoration:none;padding: 4px\");");
-        sb.append("\n"); */
-
         String sections[] = getLevelCoord().split(",");
+
         int left;
         if (sections.length > 1) {
         	left = (sections.length * 154) + 1 - (154 - Menu.left);

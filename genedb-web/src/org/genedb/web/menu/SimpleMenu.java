@@ -44,38 +44,8 @@ public class SimpleMenu extends Menu
     public String render(int j)
     {
         StringBuffer sb = new StringBuffer();
-
-     //   System.out.println("simple " + getMenuName() + " " + getUrl());
-        /*old code....
-         * 
-         
-        sb.append("addmenuitem(");
-        sb.append("\"" + getLevelCoord() + "\",");
-        sb.append("\"" + getMenuName() + "\",");
-        sb.append("\"" + getUrl() + "\",");
-        sb.append("\"black\",\"FAEBD7\",\"white\",\"3366CC\",\"white\",\"3366CC\",\"font-family:Tahoma, Verdana, Arial; font-size:12px;font-weight:normal,text-decoration:none;padding: 4px\");");
-
-        sb.append("\n");
         String sections[] = getLevelCoord().split(",");
-        int left = sections.length * 154;
-        int top = 0;
-        for (int i = 0; i < sections.length; i++) {
-        	if (i == 0) {
-        		top = Integer.parseInt(sections[i]) * 20 + 4;
-        	} else {
-        		top = top + (Integer.parseInt(sections[i]) - 1) * 20 + 4;
-        	}
-        }
-        top = top + 200;
-        String id = "mi_0_" + getMenuId();
-        
-        sb.append("<a id=\"" + id + "\" onmouseover=\"mouseover('"+ getMenuId() + "');\" onmouseout=\"mouseout('" + getMenuId() + "');\" onclick=\"return mouseclick();\" style=\"text-decoration:none; border:1px solid black; background: rgb(153, 153, 255) none repeat scroll 0%; position: absolute; top: " + top + "px; left: " + left + "px; width: 154px; height: 20px; visibility: hidden; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; color: white; z-index: 0;\" href=\"null\">");
-        System.out.println(sb.toString());
-        sb.append("<div id=\"menudivs\">" + getMenuName() + "</div>");
-        sb.append("</a>");
-        sb.append("\n");
-        return sb.toString(); */
-        String sections[] = getLevelCoord().split(",");
+
         int left;
         if (sections.length > 1) {
         	left = (sections.length * 154) + 1 - (154 - Menu.left) ;
