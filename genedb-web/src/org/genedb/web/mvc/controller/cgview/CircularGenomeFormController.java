@@ -139,7 +139,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
             imageMap = addImageMap(browserPath, cgview.getWidth(), 
                     cgview.getHeight(), cgview.getLabelBounds(), true);
             
-            imageMap = addTempTable(imageMap, cgview.getLabelBounds());
+            //imageMap = addTempTable(imageMap, cgview.getLabelBounds());
             
             settings.put("map", imageMap);
 
