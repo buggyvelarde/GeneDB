@@ -120,7 +120,8 @@ public class CircularGenomeFormController extends SimpleFormController implement
             
 //            Cgview cgview = factory.createCgviewFromEmbossReport("/nfs/team81/art/circular-restrict.txt");            
             //Cgview cgview = factory.createCgviewFromEmbossReport(output.getCanonicalPath());
-            Cgview cgview = factory.createCgviewFromEmbossReport("/nfs/team81/art/circ_genome_data/output1.txt");
+            ReportDetails rd = factory.findCutSitesFromEmbossReport("/nfs/team81/art/circ_genome_data/output1.txt");
+            Cgview cgview = factory.createCgviewFromReportDetails(rd);
             //            System.err.println("Got a cgview");
 //          cgview.setDesiredZoomCenter(centerBaseValue.intValue());
 //          cgview.setDesiredZoom(zoomValue.doubleValue());
@@ -139,6 +140,17 @@ public class CircularGenomeFormController extends SimpleFormController implement
             imageMap = addImageMap(browserPath, cgview.getWidth(), 
                     cgview.getHeight(), cgview.getLabelBounds(), true);
             
+            
+            VirtualDigest vDigest = new VirtualDigest();
+            vDigest.setCutSites(rd.cutSites);
+            BufferedImage bi2 = vDigest.draw();
+            CachedFile pngFile2 = cachedFileFactory.getCachedFile("organism-"+cgcb.getTaxon()+":"+"enzyme-"+cgcb.getEnzymeName()+"-gel-image");
+            
+            
+            System.err.println("Writing picture2 to " + pngFile.getFile().getAbsolutePath());
+            ImageIO.write(bi2, "PNG", pngFile2.getFile());
+            
+            imageMap += ("<img style=\"border:0\" src=\"" + StringEscapeUtils.escapeHtml(pngFile2.getBrowserPath(request)) + "\" width=\"" + Integer.toString(100) + "\" height=\"" + Integer.toString(600) + "\" />" + '\n');
             //imageMap = addTempTable(imageMap, cgview.getLabelBounds());
             
             settings.put("map", imageMap);
@@ -262,16 +274,32 @@ public class CircularGenomeFormController extends SimpleFormController implement
             LabelBounds currentLabelBounds = (LabelBounds) i.next();
             Rectangle2D bounds = currentLabelBounds.getBounds();
             if ((currentLabelBounds.getUse() == true) && ((currentLabelBounds.getMouseover() != null) || (currentLabelBounds.getHyperlink() != null))) {
+            	int left = (int) Math.floor(bounds.getX() + 0.5d);
+            	int bottom = (int) Math.floor(bounds.getY() + 0.5d);
+            	MaxMinPair pair = extractMaxMinFromLink(currentLabelBounds);
+            	String href;
+            	href= "FlatFileReport?outputFormat=Artemis&organism=S_typhi&min="+pair.min+"&max="+pair.max;
+                makeImageMapArea(ret, currentLabelBounds, left, bottom, href);
+            	href= "FlatFileReport?outputFormat=Table&organism=S_typhi&min="+pair.min+"&max="+pair.max;
+                makeImageMapArea(ret, currentLabelBounds, left+13, bottom, href);
+            }
 
-                ret.append("<area shape=\"rect\" coords=\"" + Integer.toString((int) Math.floor(bounds.getX() + 0.5d)) + "," + Integer.toString((int) Math.floor(bounds.getY() + 0.5d)) + "," + Integer.toString((int) Math.floor(bounds.getX() + 0.5d) + (int) Math.floor(bounds.getWidth() + 0.5d)) + "," + Integer.toString((int) Math.floor(bounds.getY() + 0.5d) + (int) Math.floor(bounds.getHeight() + 0.5d)) + "\" ");
+        }
+        ret.append("</map>" + '\n');
+        return ret.toString();
+    }
 
-                if (currentLabelBounds.getHyperlink() != null) {
-                    ret.append("href=\"" + currentLabelBounds.getHyperlink() + "\" ");
-                }
+
+	private void makeImageMapArea(StringBuilder ret, LabelBounds currentLabelBounds, int left, int bottom, String href) {
+		ret.append("<area shape=\"rect\" coords=\"" + left + "," + bottom + "," + (left+12) + "," + (bottom+12) + "\" ");
+		ret.append("href=\""+href+"\"");
+		if (currentLabelBounds.getHyperlink() != null) {
+		    ret.append("href=\"" + currentLabelBounds.getHyperlink() + "\" ");
+		}
 
 //                if ((currentLabelBounds.getMouseover() != null) && (!(currentLabelBounds.getMouseover().matches("\\S*")))) {
-                if (currentLabelBounds.getMouseover() != null) {
-                    
+		if (currentLabelBounds.getMouseover() != null) {
+		    
 //                    if (useOverlib) {
 //                        ret.append("onmouseover=\"return showMenu(3,5);\" ");
 ////                        ret.append("onmouseover=\"return overlib('" + currentLabelBounds.getMouseover() + "');\" ");
@@ -282,14 +310,9 @@ public class CircularGenomeFormController extends SimpleFormController implement
 //                        //ret.append("onmouseout=\"self.status=' '; return true;\" ");
 //                        ret.append("onmouseover=\""+currentLabelBounds.getMouseover() + "; return true;\" ");
 //                    }
-                }
-                ret.append("/>" + '\n');
-            }
-
-        }
-        ret.append("</map>" + '\n');
-        return ret.toString();
-    }
+		}
+		ret.append("/>" + '\n');
+	}
 
     @SuppressWarnings("unchecked")
 	public String addTempTable(String in, List labelBounds) {
@@ -325,35 +348,58 @@ public class CircularGenomeFormController extends SimpleFormController implement
         Iterator i;
         i = labelBounds.iterator();
         while (i.hasNext()) {
-            LabelBounds clb = (LabelBounds) i.next();
-            String label = clb.getLabel();
-            String href = clb.getHyperlink();
-            int colon = label.indexOf(":");
-            System.err.println(label);
-            if (colon != -1) {
-            	int start = Integer.parseInt(label.substring(0, colon));
-            	int end = Integer.parseInt(label.substring(colon+1));
+    		LabelBounds clb = (LabelBounds) i.next();
+    		String label = clb.getLabel();
+    		String href = clb.getHyperlink();
+    		if (href != null) {
+    			System.err.println("label='"+label+"' href='"+href+"'");
+    			int colon = href.indexOf(":");
+    			if (colon != -1) {
+    				int start = Integer.parseInt(href.substring(0, colon));
+    				int end = Integer.parseInt(href.substring(colon+1));
 
-            	//int lbr = label.indexOf("(");
-            	//String count = label.substring(0, lbr).trim();
-            	ret.append("<tr><td>-");
-            	//ret.append(count);
-            	ret.append("</td><td>");
-            	ret.append(start);
-            	ret.append("</td><td>");
-            	ret.append(end);
-            	ret.append("</td><td>");
-            	ret.append(end-start);
-            	ret.append("</td><td>");
-            	ret.append("<a href=\"FlatFileReport?outputFormat=EMBL&organism=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
-            	ret.append("<a href=\"FlatFileReport?outputFormat=Artemis&organism=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
-            	ret.append("<a href=\"FlatFileReport?outputFormat=Table&organism=wibble&min="+start+"&max="+end+"\">Link</a></td>");
-            	ret.append("</tr>\n");
-            }
+    				//int lbr = label.indexOf("(");
+    				//String count = label.substring(0, lbr).trim();
+    				ret.append("<tr><td>-");
+    				//ret.append(count);
+    				ret.append("</td><td>");
+    				ret.append(start);
+    				ret.append("</td><td>");
+    				ret.append(end);
+    				ret.append("</td><td>");
+    				ret.append(end-start);
+    				ret.append("</td><td>");
+    				ret.append("<a href=\"FlatFileReport?outputFormat=EMBL&organism=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
+    				ret.append("<a href=\"FlatFileReport?outputFormat=Artemis&organism=wibble&min="+start+"&max="+end+"\">Link</a></td><td>");
+    				ret.append("<a href=\"FlatFileReport?outputFormat=Table&organism=wibble&min="+start+"&max="+end+"\">Link</a></td>");
+    				ret.append("</tr>\n");
+    			}
+    		}
         }
         ret.append("</table>" + '\n');
         return ret.toString();
     }
+
+    class MaxMinPair {
+    	int min;
+    	int max;
+    }
+
+	private MaxMinPair extractMaxMinFromLink(LabelBounds clb) {
+		String label = clb.getLabel();
+		String href = clb.getHyperlink();
+		if (href != null) {
+			System.err.println("label='"+label+"' href='"+href+"'");
+			int colon = href.indexOf(":");
+			if (colon != -1) {
+				MaxMinPair pair = new MaxMinPair();
+				pair.min = Integer.parseInt(href.substring(0, colon));
+				pair.max = Integer.parseInt(href.substring(colon+1));
+				return pair;
+			}
+		}
+		return null;
+	}
     
 
     @Override

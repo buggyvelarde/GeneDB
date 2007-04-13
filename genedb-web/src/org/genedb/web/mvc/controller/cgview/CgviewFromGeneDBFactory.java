@@ -105,32 +105,30 @@ public class CgviewFromGeneDBFactory {
     }
     
     
-    public Cgview createCgviewFromEmbossReport(String fileName) {
-        //org.genedb.db.hibernate.Feature chromosome = featureDAO.findByUniqueName(id);
-        //Cgview ret = new Cgview(chromosome.getSeqlen());
-
-        //FeatureSlot forward = new FeatureSlot(ret, DIRECT_STRAND);
-        //FeatureSlot reverse = new FeatureSlot(ret, REVERSE_STRAND);
-
-
+    public ReportDetails findCutSitesFromEmbossReport(String fileName) {
         EmbossTableParser etp = new EmbossTableParser();
-        List<CutSite> sites = null;
+        ReportDetails ret = new ReportDetails();
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
-            sites = etp.parse(br);
+            ret.cutSites = etp.parse(br);
+            ret.length = etp.getLength();
         }
         catch (IOException exp) {
             throw new RuntimeException("Couldn't read, or parse results");
         }
         
-        System.err.println("Found '"+sites.size()+"' cutsites in a length of '"+etp.getLength()+"'");
-        //sites.add(new CutSite(sites.get(sites.size()-1).getEnd(), sites.get(0).getStart()));
-        Cgview ret = new Cgview(etp.getLength());
+        System.err.println("Found '"+ret.cutSites.size()+"' cutsites in a length of '"+etp.getLength()+"'");
+    	return ret;
+    }
+    
+    public Cgview createCgviewFromReportDetails(ReportDetails rd) {
+
+        Cgview ret = new Cgview(rd.length);
         ret.setHeight(600);
         FeatureSlot cutSlot = new FeatureSlot(ret, DIRECT_STRAND);
         
-        int counter = 0;
-        Iterator<CutSite> it = sites.iterator();
+        int counter = 1;
+        Iterator<CutSite> it = rd.cutSites.iterator();
         CutSite cutSite = it.next();
         int firstCutPos = cutSite.getStart();
         int lastCutPos = cutSite.getEnd();
@@ -157,11 +155,15 @@ public class CgviewFromGeneDBFactory {
         }
         f1.setMouseover("return showMenu("+coord1+","+coord2+")");
         //f1.setMouseover("<a href=\\\"www.google.com\\\">Menu 1</a>&nbsp;&nbsp;<a href=\\\"www.sanger.ac.uk\\\">Menu 2</a>");
-        f1.setLabel(""+coord1+":"+coord2);
+        f1.setLabel(".....   "+counter);
         f1.setHyperlink(""+coord1+":"+coord2);
         new FeatureRange(f1, coord1, coord2); // Don't need to store reference
         return f1;
     }
-
-    
 }
+
+    class ReportDetails {
+    	int length;
+    	List<CutSite> cutSites;
+    }
+    
