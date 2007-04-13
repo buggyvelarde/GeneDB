@@ -29,6 +29,18 @@
 <body onload="DWRUtil.useLoadingMessage(); createAutoCompleter()">
 <format:header name="DWR/Scriptaculous autocomplete test" />
 
+<style type="text/css">
+    div.auto_complete {
+      position:absolute;
+      width:250px;
+      background-color:white;
+      border:1px solid #888;
+      margin:0px;
+      padding:0px;
+    }
+    li.selected { background-color: #ffb; }
+  </style>
+
 <p>Imagine you've just chosen a "Select genes with a specific GO process"</p>
 
 <form>
