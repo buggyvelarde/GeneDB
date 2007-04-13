@@ -7,6 +7,12 @@
 --
 delete from organism;
 -- GeneDB organisms and their properties and loaded by the phylogeny script
+insert into organism (abbreviation, genus, species, common_name, comment) values (
+          'dummy',
+          'None',
+          'really',
+          'dummy',
+          'Dummy value for representing eg organisms for db hits');
 
 
 --
