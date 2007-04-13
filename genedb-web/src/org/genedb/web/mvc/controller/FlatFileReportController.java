@@ -80,7 +80,7 @@ public class FlatFileReportController extends PostOrGetFormController {
             out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             out.println("<jnlp");
             out.println("spec=\"1.0+\"");
-            out.println("codebase=\"http://www.sanger.ac.uk/Software/Artemis/v8/\">");
+            out.println("codebase=\"http://www.sanger.ac.uk/Software/Artemis/v9/v9_2/\">");
             out.println("<information>");
             out.println("<title>Artemis</title>");
             out.println("<vendor>Sanger Institute</vendor>"); 
@@ -95,10 +95,11 @@ public class FlatFileReportController extends PostOrGetFormController {
             out.println("</security>");
             out.println("<resources>");
             out.println("<j2se version=\"1.4+ 1.4.2\" initial-heap-size=\"32m\" max-heap-size=\"200m\"/>");
-            out.println("<jar href=\"http://www.sanger.ac.uk/Software/Artemis/v8/sartemis_v8.jar\"/>");
+            out.println("<jar href=\"sartemis_v9_2.jar\"/>");
+            out.println("<property name=\"offset\" value=\""+ffrb.getMin()+"\" />");
             out.println("</resources>");
             out.println("<application-desc main-class=\"uk.ac.sanger.artemis.components.ArtemisMain\">");
-            out.print("<argument>http://pathdbsrv1a:9005");
+            out.print("<argument>http://pathdbsrv1a.sanger.ac.uk:9005");
             out.print(generateLinkBackURL(ffrb.getOrganism(), ffrb.getMin(), ffrb.getMax(), "EMBL"));
             out.println("</argument>");
             out.println("</application-desc>");
@@ -112,7 +113,8 @@ public class FlatFileReportController extends PostOrGetFormController {
         if ("EMBL".equals(outputFormat)) {
             response.setContentType("text/plain");
             
-            SubSequence sub = extractSubSequence(ffrb);
+            //SubSequence sub = extractSubSequence(ffrb);
+            Sequence sub = getSequence();
             
             OutputStream out = response.getOutputStream();
             SeqIOTools.writeEmbl(out, sub);
@@ -135,16 +137,22 @@ public class FlatFileReportController extends PostOrGetFormController {
 
     
     private SubSequence extractSubSequence(FlatFileReportBean ffrb) throws FileNotFoundException, BioException {
-        String ROOT = "/nfs/team81/art/circ_genome_data/";
+        Sequence seq = getSequence();
+        
+        SubSequence sub = new SubSequence(seq, ffrb.getMin(), ffrb.getMax());
+        return sub;
+    }
+
+
+	private Sequence getSequence() throws FileNotFoundException, BioException {
+		String ROOT = "/nfs/team81/art/circ_genome_data/";
         String fileName = ROOT+"styphi/chr1/St.embl";
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         
         SequenceIterator iter = SeqIOTools.readEmbl(br);
         Sequence seq = iter.nextSequence();
-        
-        SubSequence sub = new SubSequence(seq, ffrb.getMin(), ffrb.getMax());
-        return sub;
-    }
+		return seq;
+	}
     
     private String generateLinkBackURL(String organism, int bottom, int top, String of) {
         String ret = null;
