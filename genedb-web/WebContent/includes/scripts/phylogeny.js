@@ -6,11 +6,11 @@ var ilength = items.getAttribute("value");
 
 function hideAllMenus() {
 	for(i=0;i<ilength;i++)	{
-		if (! inTops(i)) {
+		//if (! inTops(i)) {
 			var elementID = "mi_0_" + i;
 			var element = document.getElementById(elementID);
 			element.style.visibility = "hidden";
-		}
+		//}
 	}
 }
 
@@ -26,6 +26,7 @@ function inTops(i) {
 function mouseover(id){
 	this.active_item = document.getElementById("mi_0_" + id);
 	clearTimeout(this.hide_timer);
+	//doSomething(this.active_item);
 	var curr_item, visib;
 	for(i=0;i<ilength;i++)	{
 		curr_item = document.getElementById("mi_0_" + i);
@@ -42,6 +43,36 @@ function mouseover(id){
 	}
 }
 
+function showfirst() {
+		var tops;
+		var topItem = document.getElementById("topItems");
+		tops = topItem.getAttribute("value").split(',');
+		clearTimeout(this.timer);
+		for (i=0;i<tops.length;i++) {
+			var curr_item = document.getElementById("mi_0_" + tops[i]);
+			curr_item.style.visibility = 'visible';
+		}	
+	}
+
+	function hidefirst() {
+		this.timer = setTimeout('hideAllMenus();',200);
+	}
+	
+/*
+function doSomething(obj) {
+		var name = obj.getAttribute("name");
+		var curleft = curtop = 0;
+		if (obj.offsetParent) {
+			curleft = obj.offsetLeft
+			curtop = obj.offsetTop
+			while (obj = obj.offsetParent) {
+				curleft += obj.offsetLeft
+				curtop += obj.offsetTop
+			}
+		}
+		alert("left for " + name + " is " + curleft);
+		alert("top for " + name + " is " + curtop);
+}*/
 function mouseout() {
 	this.hide_timer = setTimeout('hideAllMenus();',200);			
 }
