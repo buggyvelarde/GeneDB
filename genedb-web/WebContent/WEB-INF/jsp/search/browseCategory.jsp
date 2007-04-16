@@ -10,7 +10,7 @@
 
 <p>This is a page for launching a browse by category search
 
-<form:form action="/BrowseCategory" commandName="browseCategory" method="get">
+<form:form action="BrowseCategory" commandName="browseCategory" method="get">
 <table>
 <tr><td><form:errors path="*" /></td></tr>
     <tr>
