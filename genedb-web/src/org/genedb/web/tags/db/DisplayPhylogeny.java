@@ -15,14 +15,6 @@ public class DisplayPhylogeny extends AbstractHomepageTag{
 	int top = 200;
 	int left = 154;
 	
-	public void setLeft(int left) {
-		this.left = left;
-	}
-
-	public void setTop(int top) {
-		this.top = top;
-	}
-
 	private void buildMenu(TaxonNode node, CompositeMenu comSrc) {
 		List<TaxonNode> childs = node.getChildren();
 		for (TaxonNode child : childs) {
@@ -45,6 +37,7 @@ public class DisplayPhylogeny extends AbstractHomepageTag{
 		StringBuffer sb = new StringBuffer();
 		StringBuffer top = new StringBuffer();
         int j=1;
+        sb.append("<div id=\"start\" onmouseover=\"showfirst();\" onmouseout=\"hidefirst();\" style=\"position: relative; border: 1px solid black; width: 154px; background: rgb(153, 153, 255);\"><a href=\"null\" style=\"text-decoration: none; color: white;\">Start</a>");
         for (TaxonNode tnode : nodes) {
         	CompositeMenu menu = new CompositeMenu(Integer.toString(Menu.counter++),tnode.getLabel(),null,true);
 			top.append(Menu.counter-1);
@@ -58,6 +51,7 @@ public class DisplayPhylogeny extends AbstractHomepageTag{
 		//System.out.println(sb.toString());
 		sb.append("<input type=\"hidden\" id=\"itemsLength\" value=\"" + Menu.counter + "\"/>");
 		sb.append("<input type=\"hidden\" id=\"topItems\" value=\"" + top.toString() + "\"/>");
+		sb.append("<script type=\"text/javascript\" src=\"/genedb-web/includes/scripts/phylogeny.js\"/></script>");
 		Menu.counter = 0;
 		out.print(sb.toString());
 	}
