@@ -23,6 +23,11 @@ function inTops(i) {
 	return false;
 }
 
+function boxclicked(id) {
+	element = document.getElementById("menu_" + id);
+	
+}
+
 function mouseover(id){
 	this.active_item = document.getElementById("mi_0_" + id);
 	clearTimeout(this.hide_timer);
