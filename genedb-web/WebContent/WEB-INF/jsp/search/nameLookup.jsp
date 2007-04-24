@@ -26,6 +26,11 @@
 	  <td>The name to lookup. It can include wildcards (*) to match any series of characters</td>
     </tr>
     <tr>
+	  <td>Product:</td>
+	  <td><form:checkbox path="useProduct" /></td>
+	  <td>Include the product description in the search</td>
+    </tr>
+    <tr>
 	  <td>Feature Type:</td>
 	  <td>Gene</td>
 	  <td>Restrict the type of features searched for</td>

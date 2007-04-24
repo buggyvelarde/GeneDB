@@ -262,6 +262,37 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames.toString()+" )", 
         		new String[]{"lookup","featureType"}, new Object[]{lookup,featureType, });
 	}
+	
+	// Maybe replace this with lucene query
+	@SuppressWarnings("unchecked")
+	public List<Feature> getFeaturesByAnyNameOrProductAndOrganism(String nl, List<String> orgList, String featureType) {
+		
+		
+		if (orgList == null || orgList.size()==0 ) {
+			logger.info("nl.getOrglist is null therefore calling featuresbyname");
+			return(getFeaturesByAnyName(nl,featureType));
+		}
+
+        String lookup = nl.replaceAll("\\*", "%");
+        StringBuilder orgNames = new StringBuilder();
+        boolean notFirst = false;
+        for (String orgName : orgList) {
+        	if (notFirst) {
+        		orgNames.append(", ");
+        	} else {
+        		notFirst = true;
+        	}
+			orgNames.append('\'');
+			orgNames.append(orgName);
+			orgNames.append('\'');
+		}
+         
+        logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgNames+"'");
+        // The list of orgs is being included literally as it didn't seem to work as a parameter
+        return getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureProp fp where" +
+        		" (f.uniqueName like :lookup or ( fp.cvt.cv.name == 'genedb_products' and fp.cvt.name like :lookup and fp.feature = f)) and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames.toString()+" )", 
+        		new String[]{"lookup","featureType"}, new Object[]{lookup,featureType, });
+	}
 
 	@SuppressWarnings("unchecked")
     // FIXME - Remove hard coded value - make more general?

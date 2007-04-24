@@ -81,10 +81,16 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
         logger.info("TaxonNode[0] is '"+taxonNode[0]+"'");
         List<String> orgNames = taxonNode[0].getAllChildrenNames(); // FIXME 
+        List<Feature> results = null;
         
-        List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(
-        		nlb.getName(), orgNames, nlb.getFeatureType());
-        
+        if (nlb.isUseProduct()) {
+        	results = sequenceDao.getFeaturesByAnyNameAndOrganism(
+        			nlb.getName(), orgNames, nlb.getFeatureType());
+        } else {
+        	results = sequenceDao.getFeaturesByAnyNameOrProductAndOrganism(
+        			nlb.getName(), orgNames, nlb.getFeatureType());
+        }
+        	
         if (results == null || results.size() == 0) {
             logger.info("result is null");
             be.reject("no.results");
@@ -171,6 +177,7 @@ class NameLookupBean {
     private TaxonNode[] organism;
     private boolean addWildcard = false;
     private String featureType = "gene";
+    private boolean useProduct = false;
        
     public void setName(String name) {
         this.name = name;
@@ -208,6 +215,14 @@ class NameLookupBean {
 
 	public void setAddWildcard(boolean addWildcard) {
 		this.addWildcard = addWildcard;
+	}
+
+	public boolean isUseProduct() {
+		return useProduct;
+	}
+
+	public void setUseProduct(boolean useProduct) {
+		this.useProduct = useProduct;
 	}
     
     
