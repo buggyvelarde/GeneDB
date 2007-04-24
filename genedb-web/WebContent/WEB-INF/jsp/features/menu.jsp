@@ -68,5 +68,4 @@ position: relative;
 <div id="container">
 <db:phylogeny/>
 </div>
-</div>
 <format:footer/>
