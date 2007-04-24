@@ -25,16 +25,34 @@
 	
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
 
- 
+ 	
     <bean id="goProcessBrowse" class="org.genedb.web.mvc.controller.BrowseBean">
         <dwr:remote javascript="goPBrowse">
            <dwr:include method="getPossibleMatches" />
         </dwr:remote>
         <property name="cvDaoI"  ref="cvDao" />
         <property name="sequenceDaoI"  ref="sequenceDao" />
-        <property name="cvName"  value="biological_process" />
+        <property name="cvNames">
+        	<list>
+        		<value>biological_process</value>
+        		<value>cellular_component</value>
+        		<value>molecular_function</value>
+        		<value>RILEY</value>
+        		<value>genedb_products</value>
+        		<value>CC_genedb_controlledcuration</value>
+        		<!-- <value>UNIPROT_KEYWORDS</value> -->
+        	</list>
+        </property>
     </bean>
-
+	
+	<bean id="nameBrowse" class="org.genedb.web.mvc.controller.BrowseBeanName">
+		<dwr:remote javascript="nameBrowse">
+           <dwr:include method="getPossibleMatches" />
+        </dwr:remote>
+        <property name="cvDaoI" ref="cvDao" />
+        <property name="sequenceDaoI" ref="sequenceDao"/>
+        <property name="cvTerm" value="gene"/>
+	</bean>
     <dwr:controller id="dwrController" debug="true"/>
 
     <dwr:configuration>
@@ -166,6 +184,17 @@
        
     <bean id="StaticController" class="org.genedb.web.mvc.controller.StaticController"/>
     
+    <bean id="GoFeatureController" class="org.genedb.web.mvc.controller.GoFeatureController">
+    	<property name="sessionForm" value="true"/>
+    	<property name="commandClass" value="org.genedb.web.mvc.controller.GoLookup"/>
+    	<property name="commandName" value="goLookup"/>
+    	<property name="sequenceDao" ref="sequenceDao"/>
+    	<property name="organismDao" ref="organismDao"/>
+    	<property name="listResultsView" value="features/GO"/>
+    	<property name="formInputView" value="err/goerr"/>
+    	<property name="bindOnNewForm" value="true" />
+    </bean>
+    
     <bean id="NameFeatureController" class="org.genedb.web.mvc.controller.NameFeatureController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
@@ -205,7 +234,7 @@
     </bean>
     
     <bean id="BrowseTermController" class="org.genedb.web.mvc.controller.BrowseTermController">
-        <!-- <property name="sessionForm" value="true"/> -->
+        <!--  <property name="sessionForm" value="true"/>-->
         <property name="commandName" value="browseTerm"/>
 		<property name="commandClass" value="org.genedb.web.mvc.controller.BrowseTermBean" />
 		<property name="sequenceDao" ref="sequenceDao"/>	
@@ -215,27 +244,21 @@
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
     
-    <bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
+    <!--  <bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
         <property name="embossDir" value="/nfs/disk100/pubseq/emboss" />
-    </bean>
+    </bean> -->
     
     <bean id="cachedFileFactory" class="org.genedb.web.mvc.controller.cgview.CachedFileFactory">
   
     </bean> 
-    
+    <!--  
 	<bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
 			<property name="commandClass" value="org.genedb.web.mvc.controller.cgview.CircularGenomeCommandBean" />
 			<property name="formView" value="graphics/circularGenomeForm" />
             <property name="embossDigestParser" ref="embossDigestParser" />
             <property name="cachedFileFactory" ref="cachedFileFactory" />
-               <!--  private ExecutionService restrictService;
-    
-    private ExecutionService digestService;
- -->
 
-<!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
-<!--        <property name="featureDao" ref="featureDao"/>-->
-    </bean>
+    </bean> -->
     
         <bean id="AdminController" class="org.genedb.web.mvc.controller.AdminController">
         <property name="methodNameResolver" ref="searchControllerResolver"/>
