@@ -20,11 +20,11 @@
 package org.genedb.web.mvc.controller;
 
 public enum BrowseCategory {
-    GO_BIOLOGICAL_PROCESS,
-    GO_CELLULAR_COMPONENT,
-    GO_MOLECULAR_FUNCTION,
-    PRODUCT,
-    CONTROLLED_CURATION,
+    biological_process,
+    cellular_component,
+    molecular_function,
+    genedb_products,
+    CC_genedb_controlledcuration,
     UNIPROT_KEYWORDS,
     RILEY;
 }
