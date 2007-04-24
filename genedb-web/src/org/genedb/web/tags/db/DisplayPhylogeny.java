@@ -3,7 +3,11 @@ package org.genedb.web.tags.db;
 import java.io.IOException;
 
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+
 import org.genedb.db.loading.TaxonNode;
 import org.genedb.web.menu.CompositeMenu;
 import org.genedb.web.menu.Menu;
@@ -51,7 +55,9 @@ public class DisplayPhylogeny extends AbstractHomepageTag{
 		//System.out.println(sb.toString());
 		sb.append("<input type=\"hidden\" id=\"itemsLength\" value=\"" + Menu.counter + "\"/>");
 		sb.append("<input type=\"hidden\" id=\"topItems\" value=\"" + top.toString() + "\"/>");
-		sb.append("<script type=\"text/javascript\" src=\"/genedb-web/includes/scripts/phylogeny.js\"/></script>");
+		PageContext pc = (PageContext) getJspContext();
+		String prefix = ((HttpServletRequest)pc.getRequest()).getContextPath();
+		sb.append("<script type=\"text/javascript\" src=\""+prefix+"/includes/scripts/phylogeny.js\"/></script>");
 		Menu.counter = 0;
 		out.print(sb.toString());
 	}
