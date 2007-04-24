@@ -58,6 +58,7 @@
       - Loads the root application context of this web app at startup,
       - by default from "/WEB-INF/applicationContext.xml".
     -->
+     
     <listener>
         <listener-class>org.genedb.web.mvc.controller.TaxonManagerListener</listener-class>
     </listener>
@@ -83,6 +84,10 @@
     <servlet-mapping>
 		<servlet-name>genedb</servlet-name>
 		<url-pattern>/BrowseCategory</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>genedb</servlet-name>
+		<url-pattern>/GoFeature</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>genedb</servlet-name>
