@@ -64,15 +64,16 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         BrowseTermBean btb = (BrowseTermBean) command;
         
         //TODO - convert this into HqlFormat somehow...
-        StringBuffer tmp = new StringBuffer();
-        tmp.append('\'');
-        tmp.append(btb.getOrg());
-        tmp.append('\'');
-        String orgNames = tmp.toString();
+        //StringBuffer tmp = new StringBuffer();
+        //tmp.append('\'');
+        //tmp.append(btb.getOrg());
+        //tmp.append('\'');
+        //String orgNames = tmp.toString();
         
         //TaxonNode[] taxonNodes = btb.getOrganism();
         
         //String orgNames = TaxonUtils.getOrgNamesInHqlFormat(taxonNodes);
+        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrg());
 
         List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), orgNames);
         
