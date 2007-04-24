@@ -57,7 +57,9 @@ public class GoFeatureController extends SimpleFormController{
         data = sequenceDao.getFeatureByGO(gl.getLookup());
         results = data.get(0);
         features = data.get(1);
-        goName = ((CvTerm)data.get(2).get(0)).getName();
+        if(data.get(2).size() != 0) {
+        	goName = ((CvTerm)data.get(2).get(0)).getName();
+        }
         
         if (results.size()== 0 ) {
         	logger.info("result is null");
@@ -70,7 +72,7 @@ public class GoFeatureController extends SimpleFormController{
         	return new ModelAndView(viewName,model);
             // TODO Fail page
         }
-        // Go to list results page
+        // Go to list results page features/GO.jsp
         model.put("results", results);
         viewName = listResultsView;
         model.put("termName", goName);
