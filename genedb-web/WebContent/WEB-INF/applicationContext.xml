@@ -26,11 +26,15 @@
         <property name="taxonNodeManager" ref="taxonNodeManager" />
     </bean>
     
+    
     <bean id="taxonNodeManager" class="org.genedb.db.loading.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
+    <bean id="taxonUtils" class="org.genedb.web.mvc.controller.TaxonUtils">
+    	<property name="tnm" ref="taxonNodeManager" />
+    </bean>
     
     <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -61,18 +65,18 @@
     
     
     <!-- DataSource Property -->
-    <!--
+    <!-- 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-		 <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://holly.internal.sanger.ac.uk:5432/chado" />
+		<property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:2224/chado" />
         <property name="username" value="web" />
         <property name="password" value="WIBBLE" />
 	</bean> -->
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10001/chado" />
-        <property name="username" value="web" />
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:2224/chado" />
+        <property name="username" value="linfantum" />
         <property name="password" value="chado" />
     </bean>
 	    
