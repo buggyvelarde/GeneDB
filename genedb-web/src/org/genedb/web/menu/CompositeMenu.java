@@ -69,9 +69,9 @@ public class CompositeMenu extends Menu
         	path.append(Integer.parseInt(sections[i]) - 1);
         	path.append("_");
         	if (i == 0) {
-        		top = Integer.parseInt(sections[i]) * 20;
+        		top = Integer.parseInt(sections[i]) * 25;
         	} else {
-        		top = top + (Integer.parseInt(sections[i]) - 1) * 20;
+        		top = top + (Integer.parseInt(sections[i]) - 1) * 25;
         	}
         }
         path.deleteCharAt(path.length()-1);
@@ -92,9 +92,9 @@ public class CompositeMenu extends Menu
         String menuid = "menu_" + getMenuId();
         
         if(isTop()) {
-        	sb.append("<a name=\"" + path.toString() + "\" id=\"" + id + "\" onmouseover=\"mouseover(" + getMenuId() + ");\" onmouseout=\"mouseout();\" style=\"text-decoration:none; border:1px solid black; background: rgb(153, 153, 255) none repeat scroll 0%; position: absolute; top: " + top + "px; left: " + left + "px; width: 154px; height: 20px; visibility: hidden; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; color: white; z-index: 0;\" >");
+        	sb.append("<a name=\"" + path.toString() + "\" id=\"" + id + "\" onmouseover=\"mouseover(" + getMenuId() + ");\" onmouseout=\"mouseout();\" style=\"text-decoration:none; border:1px solid black; background: rgb(153, 153, 255) none repeat scroll 0%; position: absolute; top: " + top + "px; left: " + left + "px; width: 154px; height: 25px; visibility: hidden; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; color: white; z-index: 0;\" >");
         } else {
-        	sb.append("<a name=\"" + path.toString() + "\" id=\"" + id + "\" onmouseover=\"mouseover(" + getMenuId() + ");\" onmouseout=\"mouseout();\" style=\"text-decoration:none; border:1px solid black; background: rgb(153, 153, 255) none repeat scroll 0%; position: absolute; top: " + top + "px; left: " + left + "px; width: 154px; height: 20px; visibility: hidden; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; color: white; z-index: " + zindex + ";\" >");
+        	sb.append("<a name=\"" + path.toString() + "\" id=\"" + id + "\" onmouseover=\"mouseover(" + getMenuId() + ");\" onmouseout=\"mouseout();\" style=\"text-decoration:none; border:1px solid black; background: rgb(153, 153, 255) none repeat scroll 0%; position: absolute; top: " + top + "px; left: " + left + "px; width: 154px; height: 25px; visibility: hidden; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; color: white; z-index: " + zindex + ";\" >");
         }
         sb.append("<div id=\"" + menuid + "\" onclick=\"mouseclick(" + getMenuId() + ");\" style=\"font-family:Tahoma,Verdana,Arial;font-size:12px;padding:4px;\"><input type=\"checkbox\" id=\"" + menuid + "\" onclick=\"boxclicked(" + menuid + ")\">" + getMenuName() + "</input></div>");
         sb.append("</a>");
