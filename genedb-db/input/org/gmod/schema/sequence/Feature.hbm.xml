@@ -9,9 +9,9 @@
         for more</comment>
         <id name="featureId" type="int">
             <column name="feature_id" />
-            <generator class="seqhilo">
+            <generator class="sequence">
             	<param name="sequence">feature_feature_id_seq</param>
-            	<param name="max_lo">100</param>
+            	<!-- Only used for seqhilo - not currently using <param name="max_lo">100</param>-->
             </generator>
         </id>
         <many-to-one name="organism" class="org.gmod.schema.organism.Organism" fetch="select">
