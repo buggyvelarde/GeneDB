@@ -33,7 +33,5 @@ public class EmblFeatureKeys {
 
     public static final String FT_SOURCE = "source";
     public static final String FT_CDS = "CDS";
-    
-    
 
 }
