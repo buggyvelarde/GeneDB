@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -130,6 +131,12 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             Feature parent, int offset) {
     	
     	String sysId = null;
+    	
+    	String soTypeGene = "gene";
+    	String soTypeTranscript = "mRNA";
+    	String soTypeExon = "exon";
+    	boolean pseudo = an.containsProperty(QUAL_PSEUDO);
+    	
         try {
         	
             Location loc = cds.getLocation().translate(offset);
@@ -172,13 +179,13 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
             if (gene == null) {
                 if (altSplicing) {
-                    gene = this.featureUtils.createFeature("gene", sharedId,
+                    gene = this.featureUtils.createFeature(soTypeGene, sharedId,
                             this.organism);
                     sequenceDao.persist(gene);
                     this.featureUtils.createSynonym(SYNONYM_SYS_ID, sharedId, gene,
                             true);
                 } else {
-                    gene = this.featureUtils.createFeature("gene", this.gns
+                    gene = this.featureUtils.createFeature(soTypeGene, this.gns
                             .getGene(sysId), this.organism);
                     if (names.getPrimary()!= null) {
                         gene.setName(names.getPrimary());
@@ -223,7 +230,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 baseName = mRnaName;
             }
             Feature mRNA = this.featureUtils
-            .createFeature("mRNA", mRnaName, this.organism);
+            .createFeature(soTypeTranscript, mRnaName, this.organism);
             if (!loc.isContiguous()) {
                 mRNA.setResidues(cds.getSymbols().seqString().getBytes());
             }
@@ -248,7 +255,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 exonCount++;
                 Location l = it.next();
                 Feature exon = this.featureUtils
-                .createFeature("exon", this.gns.getExon(baseName,
+                .createFeature(soTypeExon, this.gns.getExon(baseName,
                         transcriptNum, exonCount), this.organism);
                 FeatureRelationship exonFr = this.featureUtils.createRelationship(
                         exon, mRNA, REL_PART_OF, exonCount -1);
@@ -304,7 +311,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             
             createDbXRefs(polypeptide, an);
 
-            //createGoEntries(polypeptide, an);
+            createGoEntries(polypeptide, an);
 
             createControlledCuration(polypeptide,an,CV_CONTROLLEDCURATION);
 
@@ -395,16 +402,13 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 	}
 
 	private void createEC_number(Feature polypeptide, Annotation an) {
-    	List<String> ecNumber = MiningUtils.getProperties("EC_number", an);
-		
-    	if(ecNumber != null) {
-			int rank=0;
-			for (String ec : ecNumber) {
-				FeatureProp fp = new FeatureProp(polypeptide,MISC_EC_NUMBER,ec,rank);
-				this.sequenceDao.persist(fp);
-				rank++;
-			}
-		}
+    	List<String> ecNumbers = MiningUtils.getProperties("EC_number", an);
+    	int rank = 0;
+    	for (String ecNumber : ecNumbers) {
+    		FeatureProp fp = new FeatureProp(polypeptide, MISC_EC_NUMBER, ecNumber, rank);
+    		this.sequenceDao.persist(fp);
+    		rank++;
+    	}
 	}
 
 	private void createFeatureProps(Feature polypeptide, Annotation an) {
@@ -754,7 +758,15 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         if (ccs == null) {
             return;
         }
-
+        
+        Set<ControlledCurationInstance> lhs = new LinkedHashSet<ControlledCurationInstance>();
+        lhs.addAll(ccs);
+        if (lhs.size() != ccs.size()) {
+        	logger.warn("Removed '"+(ccs.size()-lhs.size())+"' controlled_curations as apparently duplicates");
+        	ccs.clear();
+        	ccs.addAll(lhs);
+        }
+        
         int rank = 0;
 
         for (ControlledCurationInstance cc : ccs) {
