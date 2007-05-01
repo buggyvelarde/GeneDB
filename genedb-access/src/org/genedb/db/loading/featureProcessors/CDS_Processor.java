@@ -307,7 +307,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             // MISC).get(0);
             createFeaturePropsFromNotes(polypeptide, an, QUAL_NOTE, MISC_NOTE);
             
-            createFeatureProps(polypeptide, an);
+            processArtemisFile(polypeptide, an);
             
             createDbXRefs(polypeptide, an);
 
@@ -411,108 +411,34 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     	}
 	}
 
-	private void createFeatureProps(Feature polypeptide, Annotation an) {
-    	List<String> bFile = MiningUtils.getProperties("blast_file", an);
-    	List<String> bnFile = MiningUtils.getProperties("blastn_file", an);
-    	List<String> bpgoFile = MiningUtils.getProperties("blastp+go_file", an);
-    	List<String> bpFile = MiningUtils.getProperties("blastp_file", an);
-    	List<String> bxFile = MiningUtils.getProperties("blastx_file", an);
-    	List<String> fFile = MiningUtils.getProperties("fasta_file", an);
-    	List<String> fxFile = MiningUtils.getProperties("fastax_file", an);
-    	List<String> tbnFile = MiningUtils.getProperties("tblastn_file", an);
-    	List<String> tbxFile = MiningUtils.getProperties("tblastx_file", an);
-    	
-    	if(bFile != null){
-    		int rank = 0;
-    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blast_file", "genedb_misc");
-    		for (String file : bFile) {
-    			file = file.replaceAll(" ", "");
-    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-    			this.sequenceDao.persist(fp);
-    			rank++;
-    		}
-    	}
-    	if(bnFile != null){
-    		int rank = 0;
-    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blastn_file", "genedb_misc");
-    		for (String file : bnFile) {
-    			file = file.replaceAll(" ", "");
-    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-    			this.sequenceDao.persist(fp);
-    			rank++;
-    		}
-    	}
-    	if(bpgoFile != null){
-    		int rank = 0;
-    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blastpgo_file", "genedb_misc");
-    		for (String file : bpgoFile) {
-    			file = file.replaceAll(" ", "");
-    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-    			this.sequenceDao.persist(fp);
-    			rank++;
-    		}
-    	}
-    	if(bpFile != null){
-    		int rank = 0;
-    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blastp_file", "genedb_misc");
-    		for (String file : bpFile) {
-    			file = file.replaceAll(" ", "");
-    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-    			this.sequenceDao.persist(fp);
-    			rank++;
-    		}
-    	}
-    	if(bxFile != null){
-    		int rank = 0;
-    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("blastx_file", "genedb_misc");
-    		for (String file : bxFile) {
-    			file = file.replaceAll(" ", "");
-    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-    			this.sequenceDao.persist(fp);
-    			rank++;
-    		}
-    	}
-    	if(fFile != null){
-    		int rank = 0;
-    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("fasta_file", "genedb_misc");
-    		for (String file : fFile) {
-    			file = file.replaceAll(" ", "");
-    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-    			this.sequenceDao.persist(fp);
-    			rank++;
-    		}
-    	}
-    	if(tbnFile != null){
-    		int rank = 0;
-    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("tblastn_file", "genedb_misc");
-    		for (String file : tbnFile) {
-    			file = file.replaceAll(" ", "");
-    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-    			this.sequenceDao.persist(fp);
-    			rank++;
-    		}
-    	}
-    	if(fxFile != null){
-    		int rank = 0;
-    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("fastax_file", "genedb_misc");
-    		for (String file : fxFile) {
-    			file = file.replaceAll(" ", "");
-    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-    			this.sequenceDao.persist(fp);
-    			rank++;
-    		}
-    	}
-    	if(tbxFile != null){
-    		int rank = 0;
-    		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("tblastx_file", "genedb_misc");
-    		for (String file : tbxFile) {
-    			file = file.replaceAll(" ", "");
-    			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-    			this.sequenceDao.persist(fp);
-    			rank++;
-    		}
-    	}
+
+	private void processIndividualArtemisFile(Feature polypeptide, Annotation an, String propertyName) {
+		processIndividualArtemisFile(polypeptide, an, propertyName, propertyName);
 	}
+	
+	private void processIndividualArtemisFile(Feature polypeptide, Annotation an, String propertyName, String cvTermName) {
+		List<String> bFile = MiningUtils.getProperties(propertyName, an);
+		int rank = 0;
+		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName(cvTermName, "genedb_misc");
+		for (String file : bFile) {
+			file = file.replaceAll(" ", ""); // FIXME - Why - looks dubious
+			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+			this.sequenceDao.persist(fp);
+			rank++;
+		}
+	}
+	
+	private void processArtemisFile(Feature polypeptide, Annotation an) {
+    	processIndividualArtemisFile(polypeptide, an, "blast_file");
+    	processIndividualArtemisFile(polypeptide, an, "blastn_file");
+    	processIndividualArtemisFile(polypeptide, an, "blastp+go_file", "blastpgo_file");
+    	processIndividualArtemisFile(polypeptide, an, "blastp_file");
+    	processIndividualArtemisFile(polypeptide, an, "blastx_file");
+    	processIndividualArtemisFile(polypeptide, an, "fasta_file");
+    	processIndividualArtemisFile(polypeptide, an, "tblastn_file");
+    	processIndividualArtemisFile(polypeptide, an, "tblastx_file");
+	}
+
 
 	/**
      * @param polypeptide
