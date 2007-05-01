@@ -419,11 +419,6 @@ public class NewRunner implements ApplicationContextAware {
         }
 */
 
-        
-        /*
-         * new code below this to try and persist the residues into the database
-         */
-        
 		List<Synthetic> synthetics = this.runnerConfig.getSynthetics();
         
         for (Synthetic synthetic : synthetics) {
@@ -493,18 +488,20 @@ public class NewRunner implements ApplicationContextAware {
 			}
             
         }  
-        /*
-         * new code ends
-         */
+        
         this.postProcess();
-        Set temp = cdsQualifiers.keySet();
-        for (Object key : temp) {
-			System.out.println(key + " " + cdsQualifiers.get(key));
-		}
+        reportUnhandledQualifiers();
         
         long duration = (new Date().getTime()-start)/1000;
         logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
     }
+
+	private void reportUnhandledQualifiers() {
+		Set temp = cdsQualifiers.keySet();
+        for (Object key : temp) {
+			System.out.println(key + " " + cdsQualifiers.get(key));
+		}
+	}
 
 
     /**

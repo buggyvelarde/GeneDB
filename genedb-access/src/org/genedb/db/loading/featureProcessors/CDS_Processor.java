@@ -300,7 +300,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             // MISC).get(0);
             createFeaturePropsFromNotes(polypeptide, an, QUAL_NOTE, MISC_NOTE);
             
-            processArtemisFile(polypeptide, an);
+            processArtemisFiles(polypeptide, an);
             
             createDbXRefs(polypeptide, an);
 
@@ -339,14 +339,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     		this.sequenceDao.persist(fp);
     		rank++;
     	}
-	}
-
-    private void createPrivate(Feature polypeptide, Annotation an) {
-    	createOtherNotes(polypeptide, an, "private", MISC_PRIVATE);
-	}
-
-	private void createCuration(Feature polypeptide, Annotation an) {
-		createOtherNotes(polypeptide, an, "curation", MISC_CURATION);
 	}
 
 	private void createLiterature(Feature polypeptide, Annotation an) {
@@ -393,7 +385,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 		}
 	}
 	
-	private void processArtemisFile(Feature polypeptide, Annotation an) {
+	private void processArtemisFiles(Feature polypeptide, Annotation an) {
     	processIndividualArtemisFile(polypeptide, an, "blast_file");
     	processIndividualArtemisFile(polypeptide, an, "blastn_file");
     	processIndividualArtemisFile(polypeptide, an, "blastp+go_file", "blastpgo_file");
