@@ -265,7 +265,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     
     protected void createDbXRefs(org.gmod.schema.sequence.Feature polypeptide, Annotation an) {
         List<String> xrefs = MiningUtils.getProperties(QUAL_DB_XREF, an);
-        if (xrefs == null) {
+        if (xrefs.size() == 0) {
             xrefs = new ArrayList<String>();
         }
             

@@ -29,7 +29,7 @@ public class StandardNomenclatureHandler implements NomenclatureHandler {
 
         String tmpId = null;
         l1 = MiningUtils.getProperties(QUAL_TEMP_SYS_ID, an);
-        if ( l1 != null) {
+        if ( l1.size() != 0) {
             if ( l1.size() > 1 ) {
                 throw new RuntimeException("StandardNomenclatureHandler: CDS has more than 1 temporary systematic id: "+l1.get(0));
             }
@@ -62,7 +62,7 @@ public class StandardNomenclatureHandler implements NomenclatureHandler {
         }
 
         l1 = MiningUtils.getProperties(QUAL_PRIMARY, an);
-        if ( l1 != null) {
+        if (l1.size() != 0) {
             if ( l1.size() > 1 ) {
                 throw new RuntimeException("GenericCDSParser: gene has more than 1 primary name: "+names.getSystematicId());
             }
