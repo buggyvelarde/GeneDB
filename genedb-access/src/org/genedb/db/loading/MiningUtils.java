@@ -29,6 +29,7 @@ import org.biojava.bio.seq.Feature;
 import org.biojava.utils.ChangeVetoException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -100,15 +101,15 @@ public class MiningUtils {
     @SuppressWarnings("unchecked")
     public static List<String> getProperties(String key, Annotation an) {
         if ( !an.containsProperty(key) ) {
-            return null;
+            return Collections.emptyList();
         }
         Object o = an.getProperty(key);
 
-        if ( o instanceof List ) {
+        if (o instanceof List ) {
             return (List<String>) o;
         }
 
-        if ( o instanceof String ) {
+        if (o instanceof String ) {
             List<String> tmp = new ArrayList<String>();
             tmp.add((String)o);
             return tmp;
