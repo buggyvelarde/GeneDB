@@ -117,7 +117,7 @@ public class NewRunner implements ApplicationContextAware {
 
     Map<String,String> cdsQualifiers = new HashMap<String,String>();
     
-	Map<String,String> handeledQualifiers = new HashMap<String,String>();
+	Set<String> handeledQualifiers = new HashSet<String>();
     
     public void setHibernateTransactionManager(
 			HibernateTransactionManager hibernateTransactionManager) {
@@ -199,29 +199,29 @@ public class NewRunner implements ApplicationContextAware {
      * Populate maps based on InterPro result files, GO association files etc
      */
     private void buildCaches() {
-    	handeledQualifiers.put("EC_number", "true");
-    	handeledQualifiers.put("primary_name", "true");
-    	handeledQualifiers.put("systematic_id", "true");
-    	handeledQualifiers.put("previous_systematic_id", "true");
-    	handeledQualifiers.put("product", "true");
-    	handeledQualifiers.put("db_xref", "true");
-    	handeledQualifiers.put("similarity", "true");
-    	handeledQualifiers.put("temporary_systematic_id", "true");
-    	handeledQualifiers.put("fasta_file", "true");
-    	handeledQualifiers.put("blast_file", "true");
-    	handeledQualifiers.put("blastn_file", "true");
-    	handeledQualifiers.put("blastpgo_file", "true");
-    	handeledQualifiers.put("blastp_file", "true");
-    	handeledQualifiers.put("blastx_file", "true");
-    	handeledQualifiers.put("fastax_file", "true");
-    	handeledQualifiers.put("tblastn_file", "true");
-    	handeledQualifiers.put("tblastx_file", "true");
-    	handeledQualifiers.put("literature", "true");
-    	handeledQualifiers.put("curation", "true");
-    	handeledQualifiers.put("private", "true");
-    	handeledQualifiers.put("pseudo", "true");
-    	handeledQualifiers.put("psu_db_xref", "true");
-    	handeledQualifiers.put("note", "true");
+    	handeledQualifiers.add("EC_number");
+    	handeledQualifiers.add("primary_name");
+    	handeledQualifiers.add("systematic_id");
+    	handeledQualifiers.add("previous_systematic_id");
+    	handeledQualifiers.add("product");
+    	handeledQualifiers.add("db_xref");
+    	handeledQualifiers.add("similarity");
+    	handeledQualifiers.add("temporary_systematic_id");
+    	handeledQualifiers.add("fasta_file");
+    	handeledQualifiers.add("blast_file");
+    	handeledQualifiers.add("blastn_file");
+    	handeledQualifiers.add("blastpgo_file");
+    	handeledQualifiers.add("blastp_file");
+    	handeledQualifiers.add("blastx_file");
+    	handeledQualifiers.add("fastax_file");
+    	handeledQualifiers.add("tblastn_file");
+    	handeledQualifiers.add("tblastx_file");
+    	handeledQualifiers.add("literature");
+    	handeledQualifiers.add("curation");
+    	handeledQualifiers.add("private");
+    	handeledQualifiers.add("pseudo");
+    	handeledQualifiers.add("psu_db_xref");
+    	handeledQualifiers.add("note");
     }
 
 
@@ -545,7 +545,7 @@ public class NewRunner implements ApplicationContextAware {
                 if (feature.getType().equals("CDS")) {
                 	Set keys = feature.getAnnotation().keys();
                 	for (Object key : keys) {
-            			if(handeledQualifiers.containsKey(key)){
+            			if(handeledQualifiers.contains(key)){
             				cdsQualifiers.put((String) key, "Handeled");
             			} else {
             				cdsQualifiers.put((String) key, "Un-Handeled");
