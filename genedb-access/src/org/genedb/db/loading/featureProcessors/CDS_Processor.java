@@ -61,6 +61,7 @@ import org.biojava.bio.symbol.SymbolPropertyTable;
 
 import org.genedb.db.loading.ControlledCurationInstance;
 import org.genedb.db.loading.ControlledCurationParser;
+import org.genedb.db.loading.EmblQualifiers;
 import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.FeatureUtils;
 import org.genedb.db.loading.GoInstance;
@@ -136,6 +137,10 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     	String soTypeTranscript = "mRNA";
     	String soTypeExon = "exon";
     	boolean pseudo = an.containsProperty(QUAL_PSEUDO);
+    	if (pseudo) {
+        	soTypeGene = "pseudogene";
+        	soTypeTranscript = "pseudogenic_transcript";
+    	}
     	
         try {
         	
@@ -288,15 +293,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             // calculatePepstats(polypeptide); // TODO Uncomment once checked if currently working
             sequenceDao.persist(polypeptide);
             
-            if(an.containsProperty("pseudo")) {
-            	CvTerm pseudoGene = this.cvDao.getCvTermByNameAndCvName("pseudogene", "sequence");
-            	gene.setCvTerm(pseudoGene);
-            	//this.sequenceDao.merge(gene);
-            	
-            	CvTerm pseudogenicTranscript = this.cvDao.getCvTermByNameAndCvName("pseudogenic_transcript", "sequence");
-            	mRNA.setCvTerm(pseudogenicTranscript);
-            	//this.sequenceDao.merge(mRNA);
-            }
             createProducts(polypeptide, an, "product", CV_PRODUCTS);
 
             // Store feature properties based on original annotation
