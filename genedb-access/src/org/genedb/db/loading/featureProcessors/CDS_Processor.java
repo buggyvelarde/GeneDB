@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
@@ -115,6 +116,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     private SimilarityParser siParser;
 
     private int count;
+    
+	Pattern PUBMED_PATTERN;
 
     public CDS_Processor() {
 		handledQualifiers = new String[]{"CDS:EC_number", "CDS:primary_name", 
@@ -127,6 +130,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 				"CDS:literature", "CDS:curation", "CDS:private", "CDS:clustalx_file",
 				"CDS:pseudo", "CDS:psu_db_xref", "CDS:note", "CDS:GO", 
 				"CDS:controlled_curation", "CDS:sigcleave_file"};
+		
+    	PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
 	}
     
     
@@ -664,8 +669,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         	ccs.clear();
         	ccs.addAll(lhs);
         }
-        
-        int rank = 0;
 
         for (ControlledCurationInstance cc : ccs) {
             boolean other = false;
@@ -734,7 +737,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             //sequenceDao.persist(fct);
 
             if (fcts == null || fcts.size()==0) {
-                fct = new FeatureCvTerm(cvt, polypeptide, pub, not,rank);
+                fct = new FeatureCvTerm(cvt, polypeptide, pub, not, 0);
                 sequenceDao.persist(fct);
                 logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
             } else {
@@ -783,7 +786,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     }
                 }
             }
-            rank++;
         }
     }
 
@@ -954,11 +956,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         return pp;
     }
 
+    
     private boolean looksLikePub(String xref) {
-        if (xref.startsWith("PMID:")) {
-            return true;
-        }
-        return false;
+    	boolean ret =  PUBMED_PATTERN.matcher(xref).lookingAt();
+    	logger.warn("Returning '"+ret+"' for '"+xref+"' for looks like pubmed");
+    	return ret;
     }
 
     private void findPubOrDbXRefFromString(String xrefString, List<Pub> pubs, List<DbXRef> dbXRefs) {
