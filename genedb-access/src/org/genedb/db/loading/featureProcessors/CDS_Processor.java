@@ -116,6 +116,20 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
     private int count;
 
+    public CDS_Processor() {
+		handledQualifiers = new String[]{"CDS:EC_number", "CDS:primary_name", 
+				"CDS:systematic_id", "CDS:previous_systematic_id", "CDS:product", 
+				"CDS:db_xref", "CDS:similarity", "CDS:temporary_systematic_id", 
+				"CDS:fasta_file", "CDS:blast_file", "CDS:blastn_file", "CDS:colour", 
+				"CDS:blastpgo_file", "CDS:blastp_file", "CDS:blastx_file", 
+				"CDS:obsolete_name", "CDS:synonym", "CDS:reserved_name", 
+				"CDS:fastax_file", "CDS:tblastn_file", "CDS:tblastx_file", 
+				"CDS:literature", "CDS:curation", "CDS:private", "CDS:clustalx_file",
+				"CDS:pseudo", "CDS:psu_db_xref", "CDS:note", "CDS:GO", 
+				"CDS:controlled_curation", "CDS:sigcleave_file"};
+	}
+    
+    
     @Override
     public void processStrandedFeature(final Feature parent, final StrandedFeature cds, final int offset) {
         final Annotation an = cds.getAnnotation();
@@ -392,8 +406,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     	processIndividualArtemisFile(polypeptide, an, "blastp_file");
     	processIndividualArtemisFile(polypeptide, an, "blastx_file");
     	processIndividualArtemisFile(polypeptide, an, "fasta_file");
-    	processIndividualArtemisFile(polypeptide, an, "tblastn_file");
-    	processIndividualArtemisFile(polypeptide, an, "tblastx_file");
+    	processIndividualArtemisFile(polypeptide, an, "tblastn_file", "tBlastn_file");
+    	processIndividualArtemisFile(polypeptide, an, "tblastx_file", "tBlastx_file");
+    	processIndividualArtemisFile(polypeptide, an, "clustalx_file");
+    	processIndividualArtemisFile(polypeptide, an, "pepstats_file");
+    	processIndividualArtemisFile(polypeptide, an, "sigcleave_file");
 	}
 
 
@@ -751,13 +768,16 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                         if(!looksLikePub(sections[0])) {
                             DbXRef dbxref = null;
                             Db db = this.generalDao.getDbByName(sections[0].toUpperCase());
+                            if (db == null) {
+                            	logger.error("Can't find db by name of '"+db+"' when persisting controlled curation so skipping");
+                            }
                             dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
                             if (dbxref == null) {
-                                dbxref = new DbXRef(db, sections[1]);
-                                this.generalDao.persist(dbxref);
+                            	dbxref = new DbXRef(db, sections[1]);
+                            	this.generalDao.persist(dbxref);
                             } else {
-                                FeatureCvTermDbXRef fcvDb = new FeatureCvTermDbXRef(dbxref,fct);
-                                this.sequenceDao.persist(fcvDb);
+                            	FeatureCvTermDbXRef fcvDb = new FeatureCvTermDbXRef(dbxref,fct);
+                            	this.sequenceDao.persist(fcvDb);
                             }
                         }
                     }
