@@ -34,19 +34,19 @@ public enum GoEvidenceCode {
     static EnumMap<GoEvidenceCode, String> descriptions = new EnumMap<GoEvidenceCode, String>(GoEvidenceCode.class);
 
     static {
-        descriptions.put(GoEvidenceCode.IC,"inferred by curator");
-        descriptions.put(GoEvidenceCode.IDA,"inferred from direct assay");
-        descriptions.put(GoEvidenceCode.IEA,"inferred from electronic annotation");
-        descriptions.put(GoEvidenceCode.IEP,"inferred from expression pattern");
-        descriptions.put(GoEvidenceCode.IGI,"inferred from genetic interaction");
-        descriptions.put(GoEvidenceCode.IMP,"inferred from mutant phenotype");
-        descriptions.put(GoEvidenceCode.IPI,"inferred from physical interaction");
-        descriptions.put(GoEvidenceCode.ISS,"inferred from sequence or structural similarity");
-        descriptions.put(GoEvidenceCode.NAS,"non-traceable author statement");
-        descriptions.put(GoEvidenceCode.ND,"no biological data available");
-        descriptions.put(GoEvidenceCode.TAS,"traceable author statement");
-        descriptions.put(GoEvidenceCode.NR,"not recorded");
-        descriptions.put(GoEvidenceCode.RCA, "reviewed computational analysis");
+        descriptions.put(GoEvidenceCode.IC,"Inferred by Curator");
+        descriptions.put(GoEvidenceCode.IDA,"Inferred from Direct Assay");
+        descriptions.put(GoEvidenceCode.IEA,"Inferred from Electronic Annotation");
+        descriptions.put(GoEvidenceCode.IEP,"Inferred from Expression Pattern");
+        descriptions.put(GoEvidenceCode.IGI,"Inferred from Genetic Interaction");
+        descriptions.put(GoEvidenceCode.IMP,"Inferred from Mutant Phenotype");
+        descriptions.put(GoEvidenceCode.IPI,"Inferred from Physical Interaction");
+        descriptions.put(GoEvidenceCode.ISS,"Inferred from Sequence or Structural Similarity");
+        descriptions.put(GoEvidenceCode.NAS,"Non-traceable Author Statement");
+        descriptions.put(GoEvidenceCode.ND,"No biological Data available");
+        descriptions.put(GoEvidenceCode.TAS,"Traceable Author Statement");
+        descriptions.put(GoEvidenceCode.NR,"Not Recorded");
+        descriptions.put(GoEvidenceCode.RCA, "inferred from Reviewed Computational Analysis");
     }
 
     public String getDescription() {
