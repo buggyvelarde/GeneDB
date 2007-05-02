@@ -25,6 +25,8 @@ import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.organism.Organism;
 
+import java.util.Map;
+
 public interface FeatureProcessor {
 
     public void process(org.gmod.schema.sequence.Feature parent, org.biojava.bio.seq.Feature feat, int offset);
@@ -44,5 +46,7 @@ public interface FeatureProcessor {
     public void setPubDao(PubDao pubDao);
     
     public ProcessingPhase getProcessingPhase();
+    
+    public Map<String, Boolean> getQualifierHandlingStatus();
     
 }

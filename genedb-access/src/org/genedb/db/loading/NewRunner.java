@@ -497,10 +497,36 @@ public class NewRunner implements ApplicationContextAware {
     }
 
 	private void reportUnhandledQualifiers() {
-		Set temp = cdsQualifiers.keySet();
-        for (Object key : temp) {
-			System.out.println(key + " " + cdsQualifiers.get(key));
+		Map<String, Boolean> merged = new HashMap<String, Boolean>();
+		for (FeatureProcessor processor : qualifierHandlerMap.values()) {
+			merged.putAll(processor.getQualifierHandlingStatus());
 		}
+		List<String> keys = new ArrayList<String>();
+		keys.addAll(merged.keySet());
+		Collections.sort(keys);
+		
+		StringBuilder out = new StringBuilder();
+		out.append("\n\nHandled qualifiers\n");
+		for (String key : keys) {
+			if (merged.get(key) == Boolean.TRUE) {
+				out.append(key);
+				out.append('\n');
+			}
+		}
+		out.append("\n\nUnhandled qualifiers\n");
+		for (String key : keys) {
+			if (merged.get(key) == Boolean.FALSE) {
+				out.append(key);
+				out.append('\n');
+			}
+		}
+		logger.warn(out.toString());
+		
+		
+//		Set temp = cdsQualifiers.keySet();
+//        for (Object key : temp) {
+//			System.out.println(key + " " + cdsQualifiers.get(key));
+//		}
 	}
 
 

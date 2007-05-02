@@ -55,6 +55,8 @@ public class LTR_Processor extends BaseFeatureProcessor {
                 new String[]{QUAL_D_COLOUR},
                 new String[]{QUAL_NOTE},
                 new String[]{});
+        
+		handledQualifiers = new String[]{"LTR:colour", "LTR:note"};
     }
 
     @Override
@@ -74,8 +76,8 @@ public class LTR_Processor extends BaseFeatureProcessor {
                                                         strand);
         sequenceDao.persist(ltrFl);
       
-        //FeatureProp fp = createFeatureProp(ltr, an, "colour", "colour", CV_GENEDB);
-        //sequenceDao.persist(fp);
+        FeatureProp fp = createFeatureProp(ltr, an, "colour", "colour", CV_GENEDB);
+        sequenceDao.persist(fp);
         createFeaturePropsFromNotes(ltr, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE);
     }
 

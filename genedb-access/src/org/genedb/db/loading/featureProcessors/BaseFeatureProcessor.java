@@ -41,6 +41,7 @@ import org.genedb.db.loading.FeatureUtils;
 import org.genedb.db.loading.GeneDbGeneNamingStrategy;
 import org.genedb.db.loading.GeneNamingStrategy;
 import org.genedb.db.loading.MiningUtils;
+import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
@@ -63,8 +64,10 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -134,6 +137,9 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected GeneralDao generalDao;
     
     protected PubDao pubDao;
+    
+	protected Set<String> seenQualifiers = new HashSet<String>();
+	String[] handledQualifiers = {};
 
     public BaseFeatureProcessor() {
         // Deliberately empty
@@ -195,8 +201,15 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
       TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
       tt.execute(
               new TransactionCallbackWithoutResult() {
-                  @Override
+				@Override
                   public void doInTransactionWithoutResult(TransactionStatus status) {
+	                  @SuppressWarnings("unchecked") Set<String> keySet = feat.getAnnotation().asMap().keySet();
+	                  for (String key : keySet) {
+	                	  if ("internal_data".equals(key)) {
+	                		  continue; // Don't store internal data - a biojava artifact
+	                	  }
+	                	  seenQualifiers.add(feat.getType()+":"+key);
+	                  }
                       processStrandedFeature(parent, (StrandedFeature) feat, offset);
                   }
               });
@@ -401,6 +414,27 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 		this.dbUtilsBean = dbUtilsBean;
 	}
 
+	
+	public Map<String, Boolean> getQualifierHandlingStatus() {
+		Map<String, Boolean> ret = new HashMap<String, Boolean>();
+		for (String seenQualifier : seenQualifiers) {
+			ret.put(seenQualifier, false);
+		}
+		for (String handledQualifier : handledQualifiers) {
+			if (ret.containsKey(handledQualifier)) {
+				ret.put(handledQualifier, true);
+			} else {
+				logger.warn("'"+this.getClass().getSimpleName()+"' can handle '"+handledQualifier+"' but has never seen one");
+			}
+		}
+		return ret;
+	}
+
+	public ProcessingPhase getProcessingPhase() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 //    private ParsedString parseDbXref(String in, String prefix) {
 //            ParsedString ret;
 //            String lookFor = "(" + prefix;
@@ -583,5 +617,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     //            // TODO
     //        }
     //    }
+	
+	
 
 }
