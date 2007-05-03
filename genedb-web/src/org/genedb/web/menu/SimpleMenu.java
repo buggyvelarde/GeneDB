@@ -69,10 +69,11 @@ public class SimpleMenu extends Menu
                
         String id = "mi_0_" + getMenuId();
         String menuid = "menu_" + getMenuId();
+        String checkid = "check_" + getMenuId();
         
        	sb.append("<a name=\"" + path.toString() + "\" id=\"" + id + "\" onmouseover=\"mouseover(" + getMenuId() + ");\" onmouseout=\"mouseout();\" style=\"text-decoration:none; border:1px solid black; background: rgb(153, 153, 255) none repeat scroll 0%; position: absolute; top: " + top + "px; left: " + left + "px; width: 154px; height: 25px; visibility: hidden; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; color: white; z-index: " + zindex + ";\" >");
 
-       	sb.append("<div id=\"" + menuid + "\" onclick=\"mouseclick(" + getMenuId() + ");\" style=\"font-family:Tahoma,Verdana,Arial;font-size:12px;padding:4px;\"><input type=\"checkbox\" id=\"" + menuid + "\" onclick=\"boxclicked(" + menuid + ")\">" + getMenuName() + "</input></div>");
+       	sb.append("<div id=\"" + menuid + "\" onclick=\"mouseclick(" + getMenuId() + ");\" style=\"font-family:Tahoma,Verdana,Arial;font-size:12px;padding:4px;\"><input style=\"z-index: " + zindex + "\" name=\"" + path.toString() + "\" type=\"checkbox\" id=\"" + checkid + "\" onclick=\"boxclicked(" + getMenuId() + ")\">" + getMenuName() + "</input></div>");
         sb.append("</a>");
         sb.append("\n");
               
