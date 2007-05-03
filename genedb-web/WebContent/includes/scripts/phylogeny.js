@@ -24,8 +24,24 @@ function inTops(i) {
 }
 
 function boxclicked(id) {
-	element = document.getElementById("menu_" + id);
-	
+	var active_element = document.getElementById("check_" + id);
+	var curr_item;
+
+	var active = active_element.getAttribute("name").split('_');
+	for(i=0;i<ilength;i++)	{
+		curr_item = document.getElementById("check_" + i);
+		var curr = curr_item.getAttribute("name").split('_');
+		var visib = true;
+		for(j=0;j<active.length;j++) {
+			if(active[j] != curr[j]) {
+				visib = false;
+				break;
+			}
+		}
+		if(visib && !(inTops(i))) {
+	        curr_item.checked = active_element.checked;
+		}
+	}
 }
 
 function mouseover(id){
