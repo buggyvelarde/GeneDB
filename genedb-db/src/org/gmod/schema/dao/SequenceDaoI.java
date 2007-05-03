@@ -217,4 +217,25 @@ public interface SequenceDaoI extends BaseDaoI {
     public List<Feature> getTopLevelFeatures();
     
     public List<CountedName> getProducts();
+    
+    /**
+     * Return a list of feature uniquename based on cvterm for auto-completion 
+     * 
+     * @param name the Feature uniquename
+     * @param cvTerm the CvTerm
+     * @param limit the number of maximum results to return
+     * @return a (possibly empty) List<String> of feature uniquename
+     */
+    public List<String> getPossibleMatches(String name,CvTerm cvTerm, int limit);
+    
+    /**
+     * Return a list of feature uniquename based on cvterm for auto-completion 
+     * 
+     * @param name the Feature uniquename
+     * @param orgNames the comma seperated organism common names
+     * @param featureType the type of Features to return e.g gene
+     * @param limit the number of maximum results to return
+     * @return a (possibly empty) List<Feature> of Feature
+     */
+    public List<Feature> getFeaturesByAnyNameAndOrganism(String name,String orgNames,String featureType);
 }
