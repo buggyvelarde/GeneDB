@@ -491,11 +491,19 @@ public class NewRunner implements ApplicationContextAware {
         
         this.postProcess();
         reportUnhandledQualifiers();
-        
+        reportUnknownRileyClass();
         long duration = (new Date().getTime()-start)/1000;
         logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
     }
-
+    
+    private void reportUnknownRileyClass() {
+    	System.out.println("Unknown Riley class are...");
+    	List<String> rileys = qualifierHandlerMap.get("CDS").getUnknownRileyClass();
+    	for (String riley : rileys) {
+			System.out.println(riley);
+		}
+    }
+    
 	private void reportUnhandledQualifiers() {
 		Map<String, Boolean> merged = new HashMap<String, Boolean>();
 		for (FeatureProcessor processor : qualifierHandlerMap.values()) {

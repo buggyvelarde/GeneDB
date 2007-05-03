@@ -130,7 +130,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 				"CDS:literature", "CDS:curation", "CDS:private", "CDS:clustalx_file",
 				"CDS:pseudo", "CDS:psu_db_xref", "CDS:note", "CDS:GO", 
 				"CDS:controlled_curation", "CDS:sigcleave_file"};
-		
+		unknownRileyClass = new ArrayList<String>();
     	PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
 	}
     
@@ -649,10 +649,14 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         	}
         	Db db = this.generalDao.getDbByName("RILEY");
         	DbXRef dbXRef = this.generalDao.getDbXRefByDbAndAcc(db,rileyClass);
-        	CvTerm cvTerm = this.cvDao.getCvTermByDbXRef(dbXRef);
-        	Pub pub = DUMMY_PUB;
-        	FeatureCvTerm fct = new FeatureCvTerm(cvTerm,polypeptide,pub,false,0);
-        	this.sequenceDao.persist(fct);
+        	if (dbXRef == null) {
+        		unknownRileyClass.add(rileyClass);
+        	} else {
+	        	CvTerm cvTerm = this.cvDao.getCvTermByDbXRef(dbXRef);
+	        	Pub pub = DUMMY_PUB;
+	        	FeatureCvTerm fct = new FeatureCvTerm(cvTerm,polypeptide,pub,false,0);
+	        	this.sequenceDao.persist(fct);
+        	}
         }
     }
 

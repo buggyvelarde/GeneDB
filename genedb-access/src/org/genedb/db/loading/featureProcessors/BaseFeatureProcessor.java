@@ -140,7 +140,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     
 	protected Set<String> seenQualifiers = new HashSet<String>();
 	String[] handledQualifiers = {};
-
+	List<String> unknownRileyClass;
+	
     public BaseFeatureProcessor() {
         // Deliberately empty
     }
@@ -413,7 +414,10 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 	public void setDbUtilsBean(DbUtilsBean dbUtilsBean) {
 		this.dbUtilsBean = dbUtilsBean;
 	}
-
+	
+	public List<String> getUnknownRileyClass() {
+		return unknownRileyClass;
+	}
 	
 	public Map<String, Boolean> getQualifierHandlingStatus() {
 		Map<String, Boolean> ret = new HashMap<String, Boolean>();

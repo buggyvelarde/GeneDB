@@ -25,6 +25,7 @@ import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.organism.Organism;
 
+import java.util.List;
 import java.util.Map;
 
 public interface FeatureProcessor {
@@ -49,4 +50,5 @@ public interface FeatureProcessor {
     
     public Map<String, Boolean> getQualifierHandlingStatus();
     
+    public List<String> getUnknownRileyClass();
 }
