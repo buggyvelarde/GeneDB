@@ -650,7 +650,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         	Db db = this.generalDao.getDbByName("RILEY");
         	DbXRef dbXRef = this.generalDao.getDbXRefByDbAndAcc(db,rileyClass);
         	if (dbXRef == null) {
-        		unknownRileyClass.add(rileyClass);
+        		if (!unknownRileyClass.contains(rileyClass)) {
+        			unknownRileyClass.add(rileyClass);
+        		}
         	} else {
 	        	CvTerm cvTerm = this.cvDao.getCvTermByDbXRef(dbXRef);
 	        	Pub pub = DUMMY_PUB;
