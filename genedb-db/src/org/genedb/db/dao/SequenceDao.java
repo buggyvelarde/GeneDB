@@ -12,6 +12,7 @@ import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.utils.CountedName;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -234,7 +235,20 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 
 
 	@SuppressWarnings("unchecked")
-	public List<Feature> getFeaturesByAnyNameAndOrganism(String nl, List<String> orgList, String featureType) {
+	public List<Feature> getFeaturesByAnyNameAndOrganism(String nl, String orgNames, String featureType) {
+
+        String lookup = nl.replaceAll("\\*", "%");
+        
+        logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgNames+"'");
+        // The list of orgs is being included literally as it didn't seem to work as a parameter
+        return getHibernateTemplate().findByNamedParam("select f from Feature f where" +
+        		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames+" )", 
+        		new String[]{"lookup","featureType"}, new Object[]{lookup,featureType, });
+	}
+	
+	// Maybe replace this with lucene query
+	@SuppressWarnings("unchecked")
+	public List<Feature> getFeaturesByAnyNameOrProductAndOrganism(String nl, List<String> orgList, String featureType) {
 		
 		
 		if (orgList == null || orgList.size()==0 ) {
@@ -258,8 +272,8 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
          
         logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgNames+"'");
         // The list of orgs is being included literally as it didn't seem to work as a parameter
-        return getHibernateTemplate().findByNamedParam("select f from Feature f where" +
-        		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames.toString()+" )", 
+        return getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureProp fp where" +
+        		" (f.uniqueName like :lookup or ( fp.cvt.cv.name == 'genedb_products' and fp.cvt.name like :lookup and fp.feature = f)) and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames.toString()+" )", 
         		new String[]{"lookup","featureType"}, new Object[]{lookup,featureType, });
 	}
 	
@@ -349,4 +363,13 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         // TODO Auto-generated method stub
         return null;
     }
+
+	public List<String> getPossibleMatches(String name, CvTerm cvTerm, int limit) {
+		HibernateTemplate ht = getHibernateTemplate();
+        ht.setMaxResults(limit);
+        return ht.findByNamedParam(
+                "select f.uniqueName from Feature f where lower(f.uniqueName) like lower(:name) and f.cvTerm = :cvTerm",
+                new String[]{"name", "cvTerm"}, new Object[]{"%"+name+"%", cvTerm});
+	}
+
 }
