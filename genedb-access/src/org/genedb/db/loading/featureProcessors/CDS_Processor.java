@@ -631,20 +631,22 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         List<String> classes = MiningUtils.getProperties("class", an);
         for (String rileyClass : classes) {
         	// Remove leading zeros from RILEY numbers
-        	String sections[] = rileyClass.split("\\.");
-        	StringBuilder sb = new StringBuilder();
-        	for (String string : sections) {
-        		if (string.length() >= 2) {
-        			if(string.charAt(0) == '0'){
-        				sb.append(string.substring(1) + ".");
-        			} else {
-        				sb.append(string + ".");
-        			}
-        		} else {
-        			sb.append(string + ".");
-        		}
+        	if (rileyClass.contains(".")) {
+	        	String sections[] = rileyClass.split("\\.");
+	        	StringBuilder sb = new StringBuilder();
+	        	for (String string : sections) {
+	        		if (string.length() >= 2) {
+	        			if(string.charAt(0) == '0'){
+	        				sb.append(string.substring(1) + ".");
+	        			} else {
+	        				sb.append(string + ".");
+	        			}
+	        		} else {
+	        			sb.append(string + ".");
+	        		}
+	        	}
+	        	rileyClass = sb.toString().substring(0, sb.toString().length()-1);
         	}
-        	rileyClass = sb.toString().substring(0, sb.toString().length()-1);
         	Db db = this.generalDao.getDbByName("RILEY");
         	DbXRef dbXRef = this.generalDao.getDbXRefByDbAndAcc(db,rileyClass);
         	CvTerm cvTerm = this.cvDao.getCvTermByDbXRef(dbXRef);
