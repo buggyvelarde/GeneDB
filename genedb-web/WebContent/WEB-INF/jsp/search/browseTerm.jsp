@@ -53,26 +53,21 @@
 		//alert(curleft);
 		//alert(curtop);
 	}
+
 	
-	function fillBox() {
+	function mouseclick(id) {
 		var selected = document.getElementById("selected");
 		selected.value = '';
 		for (var i=0; i< this.ilength; i++) {
-			if (this.checked[i]) {
-				var element = document.getElementById("menu_" + i);	
+			var element = document.getElementById("check_" + i);
+			if(element.checked) {
 				if (selected.value == '') {
-					selected.value = element.textContent;
+					selected.value = document.getElementById("menu_" + i).textContent;
 				} else {	
-					selected.value = selected.value + ',' + element.textContent;
+					selected.value = selected.value + ',' + document.getElementById("menu_" + i).textContent;
 				}
-			}
+			}	
 		}
-		
-	}
-	
-	function mouseclick(id) {
-		this.checked[id] = !(this.checked[id]);
-		fillBox();
 	}
 	
 	function resetall() {
