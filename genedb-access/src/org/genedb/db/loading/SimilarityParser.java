@@ -37,10 +37,11 @@ public class SimilarityParser {
 							temp = temp.replaceAll("\\s+$", "");
 							String values[] = temp.split(" ");
 							si.setPriDatabase(values[0]);
-							
-							temp = values[1].replaceAll("^\\W", "");
-							temp = temp.replaceAll("\\W$", "");
-							si.setSecDatabase(temp);
+							if(values.length > 1) {
+								temp = values[1].replaceAll("^\\W", "");
+								temp = temp.replaceAll("\\W$", "");
+								si.setSecDatabase(temp);
+							}
 						}
 						break;
 					case 3:
