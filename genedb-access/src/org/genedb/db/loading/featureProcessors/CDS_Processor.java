@@ -328,7 +328,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             createControlledCuration(polypeptide,an,CV_CONTROLLEDCURATION);
 
             //TODO enable this and code for it in createSimilarity method
-            //createSimilarity(polypeptide,mRNA,an);
+            createSimilarity(polypeptide,mRNA,an);
 
             processClass(polypeptide,an);
             
