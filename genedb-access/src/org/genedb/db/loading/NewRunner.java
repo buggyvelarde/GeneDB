@@ -497,10 +497,10 @@ public class NewRunner implements ApplicationContextAware {
     }
     
     private void reportUnknownRileyClass() {
-    	System.out.println("Unknown Riley class are...");
+    	logger.warn("Unknown Riley class are...");
     	List<String> rileys = qualifierHandlerMap.get("CDS").getUnknownRileyClass();
     	for (String riley : rileys) {
-			System.out.println(riley);
+			logger.warn(riley);
 		}
     }
     
