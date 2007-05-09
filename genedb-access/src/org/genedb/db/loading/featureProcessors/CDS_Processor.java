@@ -709,7 +709,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 list = cc.getDbXRef().split("\\|");
                 for (String dbXRef2 : list) {
                     String sections[] = dbXRef2.split(":");
-                    if (looksLikePub(sections[0])) {
+                    if (looksLikePub(dbXRef2)) {
                         //findOrCreatePubFromPMID(sections[0]); // FIXME - could this be a shortcut for below
                         DbXRef dbxref = null;
                         Db db = this.generalDao.getDbByName("MEDLINE");
@@ -720,7 +720,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                         }
                         pub = this.pubDao.getPubByUniqueName(dbXRef2);
                         if (pub == null) {
-                            CvTerm cvterm = this.cvDao.getCvTermByNameAndCvName("Not Fetched", "genedb_literature");
+                            CvTerm cvterm = this.cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
                             //logger.warn("cvterm='"+cvterm+"'");
                             pub = new Pub(dbXRef2, cvterm);
                             this.pubDao.persist(pub);
@@ -965,6 +965,12 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     }
 
     
+    /**
+     * Does a string look likes it's a PubMed reference
+     * 
+     * @param xref The string to examine
+     * @return true if it looks like a PubMed reference
+     */
     private boolean looksLikePub(String xref) {
     	boolean ret =  PUBMED_PATTERN.matcher(xref).lookingAt();
     	logger.warn("Returning '"+ret+"' for '"+xref+"' for looks like pubmed");
@@ -986,6 +992,13 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
     }
 
+    /**
+     * Take a pipe-seperated string and split them up,  
+     * then lookup or create them 
+     * 
+     * @param xref A list of pipe seperated dbxrefs strings
+     * @return A list of DbXrefs
+     */
     private List<DbXRef> findOrCreateDbXRefsFromString(String xref) {
         List<DbXRef> ret = new ArrayList<DbXRef>();
         StringTokenizer st = new StringTokenizer(xref, "|");
@@ -996,6 +1009,12 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     }
 
 
+    /**
+     * Take a db reference and look it up, or create it if it doesn't exist
+     * 
+     * @param xref the reference ie db:id
+     * @return the created or looked-up DbXref
+     */
     private DbXRef findOrCreateDbXRefFromString(String xref) {
         int index = xref.indexOf(':');
         if (index == -1) {
@@ -1017,6 +1036,13 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         return dbXRef;
     }
 
+    /**
+     * Create, or lookup a Pub object from a PMID:acc style input, although the 
+     * prefix is ignored
+     * 
+     * @param ref the reference
+     * @return the Pub object
+     */
     protected Pub findOrCreatePubFromPMID(String ref) {
         logger.warn("Looking for '"+ref+"'");
         Db DB_PUBMED = generalDao.getDbByName("MEDLINE");
