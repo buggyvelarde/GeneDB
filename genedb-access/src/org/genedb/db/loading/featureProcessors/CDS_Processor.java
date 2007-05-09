@@ -122,7 +122,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     public CDS_Processor() {
 		handledQualifiers = new String[]{"CDS:EC_number", "CDS:primary_name", 
 				"CDS:systematic_id", "CDS:previous_systematic_id", "CDS:product", 
-				"CDS:db_xref", "CDS:similarity", "CDS:temporary_systematic_id", 
+				"CDS:db_xref", //"CDS:similarity", 
+				"CDS:temporary_systematic_id",
 				"CDS:fasta_file", "CDS:blast_file", "CDS:blastn_file", "CDS:colour", 
 				"CDS:blastpgo_file", "CDS:blastp_file", "CDS:blastx_file", 
 				"CDS:obsolete_name", "CDS:synonym", "CDS:reserved_name", 
