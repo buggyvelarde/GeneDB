@@ -85,10 +85,10 @@
       <tr>
 	<td colspan="5" align="left" bgcolor="#FAFAD2">
 	  <b><font face="Arial,Helvetica,Geneva">Go to our <a
-href="/genedb/search.jsp">main search page</a>, <a
-href="/gusapp/servlet?page=boolq">complex querying page</a>, <a
-href="http://www.genedb.org/amigo/perl/go.cgi">AmiGO</a> or <a
-href="/genedb/idListForm.jsp">List Download</a></font></b>
+href="/BrowseCategory">browsable list page</a>, <a href="/???">full-text search page</a>, <a
+href="/gusapp/Complex">complex querying page</a>, <a
+href="/amigo/perl/go.cgi">AmiGO</a> or <a
+href="/genedb/History">History/Custom Downloads</a></font></b>
 	</TD>
       </TR>
 
