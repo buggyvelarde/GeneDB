@@ -169,7 +169,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         CV_PRODUCT = cvDao.getCvByName("genedb_products").get(0);
         //REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
         REL_DERIVES_FROM = cvDao.getCvTermByNameInCv("derives_from", CV_SO).get(0);
-        MISC_NOTE = cvDao.getCvTermByNameInCv(QUAL_NOTE, CV_FEATURE_PROPERTY).get(0);
+        MISC_NOTE = cvDao.getCvTermByNameInCv("comment", CV_FEATURE_PROPERTY).get(0);
         MISC_CURATION = cvDao.getCvTermByNameInCv(QUAL_CURATION, CV_GENEDB).get(0);
         MISC_PRIVATE = cvDao.getCvTermByNameInCv(QUAL_PRIVATE, CV_GENEDB).get(0);
         MISC_EC_NUMBER = cvDao.getCvTermByNameInCv(QUAL_EC_NUMBER, CV_GENEDB).get(0);
