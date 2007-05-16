@@ -268,9 +268,9 @@
             <property name="embossDigestParser" ref="embossDigestParser" />
             <property name="cachedFileFactory" ref="cachedFileFactory" />
               --> <!--  private ExecutionService restrictService;
-    <!--
+    
     private ExecutionService digestService;
- -->
+
 
     </bean> -->
     
