@@ -31,6 +31,9 @@
     <bean id="sPombeNomenclatureHandler" class="org.genedb.db.loading.SpombeNomenclatureHandler">
 		<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
     </bean>
+        <bean id="locusTagNomenclatureHandler" class="org.genedb.db.loading.LocusTagNomenclatureHandler">
+		<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
+    </bean>
     <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="platformTransactionManager" ref="transactionManager" />
