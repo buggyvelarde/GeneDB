@@ -35,6 +35,7 @@ public class HistoryController extends MultiActionController implements Initiali
     
     	private SequenceDao sequenceDao;
     	private FileCheckingInternalResourceViewResolver viewChecker;
+    	private HistoryManagerFactory historyManagerFactory;
 	
 	public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
 	    this.viewChecker = viewChecker;
@@ -69,19 +70,15 @@ public class HistoryController extends MultiActionController implements Initiali
             session = request.getSession(true);
             return new ModelAndView("redirect:"+"/History/View?sessionTest=true");
         }
-        History history = (History) session.getAttribute(GENEDB_HISTORY);
-        if (history == null) {
-            history = new SimpleHistory();
-            session.setAttribute(GENEDB_HISTORY, history);
-        }
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
         
         Map model = new HashMap();
-        model.put("history", history);
+        model.put("items", historyManager.getHistoryItems());
         
-	    int id = ServletRequestUtils.getIntParameter(request, "id", -1);
-	    if (id == -1) {
-		    
-	    }
+//	    int id = ServletRequestUtils.getIntParameter(request, "id", -1);
+//	    if (id == -1) {
+//		    
+//	    }
 
 	    return new ModelAndView("history/historyIndex", model);
 	}
@@ -331,6 +328,11 @@ public class HistoryController extends MultiActionController implements Initiali
 
 	public void setSequenceDao(SequenceDao sequenceDao) {
 	    this.sequenceDao = sequenceDao;
+	}
+
+	public void setHistoryManagerFactory(
+			HistoryManagerFactory historyManagerFactory) {
+		this.historyManagerFactory = historyManagerFactory;
 	}
 
 //	public void setPubHome(PubHome pubHome) {

@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 public class TaxonNodeBindingFormController extends PostOrGetFormController {
 
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
+    private HistoryManagerFactory historyManagerFactory;
 
     @Override
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder srdb) throws Exception {
@@ -50,5 +51,13 @@ public class TaxonNodeBindingFormController extends PostOrGetFormController {
             TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
         this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
     }
+
+	public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
+		this.historyManagerFactory = historyManagerFactory;
+	}
+
+	protected HistoryManagerFactory getHistoryManagerFactory() {
+		return historyManagerFactory;
+	}
 
 }

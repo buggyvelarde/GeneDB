@@ -25,7 +25,7 @@
 	
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
 
- 	
+ 
     <bean id="goProcessBrowse" class="org.genedb.web.mvc.controller.BrowseBean">
         <dwr:remote javascript="goPBrowse">
            <dwr:include method="getPossibleMatches" />
@@ -95,6 +95,13 @@
 				<prop key="org.springframework.transaction.TransactionException">dataAccessFailure</prop>
 			</props>
 		</property>
+	</bean>
+
+	<bean id="multipartResolver"
+   	 class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
+    	<!-- one of the properties available; the maximum file size in bytes -->
+   		 <property name="maxUploadSize" value="20000000"/>
 	</bean>
 
 	<!--
@@ -172,6 +179,7 @@
     
     <bean id="HistoryController" class="org.genedb.web.mvc.controller.HistoryController">
         <property name="methodNameResolver" ref="historyControllerResolver"/>
+        <property name="historyManagerFactory" ref="historyManagerFactory" />
     </bean>
     
         
@@ -209,6 +217,7 @@
         <property name="bindOnNewForm" value="true" />
     </bean>
     
+    <bean name="historyManagerFactory" class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
         
     <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
@@ -220,6 +229,7 @@
         <property name="formView" value="search/nameLookup" />
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+        <property name="historyManagerFactory" ref="historyManagerFactory" />
     </bean>
     
     <bean id="BrowseCategoryController" class="org.genedb.web.mvc.controller.BrowseCategoryController">
@@ -234,7 +244,7 @@
     </bean>
     
     <bean id="BrowseTermController" class="org.genedb.web.mvc.controller.BrowseTermController">
-        <!--  <property name="sessionForm" value="true"/>-->
+        <!-- <property name="sessionForm" value="true"/> -->
         <property name="commandName" value="browseTerm"/>
 		<property name="commandClass" value="org.genedb.web.mvc.controller.BrowseTermBean" />
 		<property name="sequenceDao" ref="sequenceDao"/>	
@@ -257,6 +267,10 @@
 			<property name="formView" value="graphics/circularGenomeForm" />
             <property name="embossDigestParser" ref="embossDigestParser" />
             <property name="cachedFileFactory" ref="cachedFileFactory" />
+              --> <!--  private ExecutionService restrictService;
+    <!--
+    private ExecutionService digestService;
+ -->
 
     </bean> -->
     

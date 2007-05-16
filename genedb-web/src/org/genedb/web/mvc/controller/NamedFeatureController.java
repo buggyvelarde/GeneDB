@@ -29,8 +29,10 @@ import org.gmod.schema.sequence.FeatureRelationship;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -83,9 +85,21 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         List<String> orgNames = taxonNode[0].getAllChildrenNames(); // FIXME 
         List<Feature> results = null;
         
-        if (nlb.isUseProduct()) {
+        if (!nlb.isUseProduct()) {
+            StringBuilder orgNames2 = new StringBuilder();
+            boolean notFirst = false;
+            for (String orgName : orgNames) {
+            	if (notFirst) {
+            		orgNames2.append(", ");
+            	} else {
+            		notFirst = true;
+            	}
+    			orgNames2.append('\'');
+    			orgNames2.append(orgName);
+    			orgNames2.append('\'');
+    		}
         	results = sequenceDao.getFeaturesByAnyNameAndOrganism(
-        			nlb.getName(), orgNames, nlb.getFeatureType());
+        			nlb.getName(), orgNames2.toString(), nlb.getFeatureType());
         } else {
         	results = sequenceDao.getFeaturesByAnyNameOrProductAndOrganism(
         			nlb.getName(), orgNames, nlb.getFeatureType());
@@ -100,8 +114,19 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         if (results.size() > 1) {
             // Go to list results page
         	viewName = listResultsView;
-            //model.put("nameLookup", nl);
-            model.put("results", results);
+        	if (nlb.isHistory()) {
+        		List<String> ids = new ArrayList<String>(results.size());
+        		for (Feature feature : results) {
+					ids.add(feature.getUniqueName());
+				}
+        		HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
+        		historyManager.addHistoryItems("name lookup '"+nlb+"'", ids);
+        		logger.info("Trying to save history item and redirect");
+        		viewName = "redirect:/History/View";
+        	} else {
+        		//model.put("nameLookup", nl);
+        		model.put("results", results);
+        	}
         } else {
             Feature feature = results.get(0);
             model.put("feature", feature);
@@ -125,32 +150,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
                 			}
                 		}
                 		model.put("polypeptide", polypeptide);
-                		//                model.put("transcript", mRNA);
-//                String seqString = FeatureUtils.getResidues(polypeptide);
-//                Alphabet protein = ProteinTools.getAlphabet();
-//        		SymbolTokenization proteinToke = null;
-//        		SymbolList seq = null;
-//        		PeptideProperties pp = new PeptideProperties();
-//        		try {
-//        			proteinToke = protein.getTokenization("token");
-//        			seq = new SimpleSymbolList(proteinToke, seqString);
-//        			System.out.println("symbol list is : " + seq);
-//        		} catch (BioException e) {
-//        			System.out.println("in exception : " );
-//        			e.printStackTrace();
-//        		}
-//    			IsoelectricPointCalc ipc = new IsoelectricPointCalc();
-//    			Double cal = ipc.getPI(seq, true, true);
-//    			DecimalFormat df = new DecimalFormat("#.##");
-//    			pp.setIsoelectricPoint(df.format(cal));
-//    			pp.setAminoAcids(Integer.toString(seqString.length()));
-//    			MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
-//    			cal = mc.getMass(seq) / 1000;
-//    			pp.setMass(df.format(cal));
-//    			
-//    			cal = WebUtils.getCharge(seq);
-//    			pp.setCharge(df.format(cal));
-//    			model.put("polyprop", pp);
                 	}
                 }
             }
@@ -178,6 +177,7 @@ class NameLookupBean {
     private boolean addWildcard = false;
     private String featureType = "gene";
     private boolean useProduct = false;
+    private boolean history = false;
        
     public void setName(String name) {
         this.name = name;
@@ -224,6 +224,17 @@ class NameLookupBean {
 	public void setUseProduct(boolean useProduct) {
 		this.useProduct = useProduct;
 	}
+
+	public boolean isHistory() {
+		return history;
+	}
+
+	public void setHistory(boolean history) {
+		this.history = history;
+	}
     
+	public String toString() {
+		return getName()+","+getOrganism();
+	}
     
 }
