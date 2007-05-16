@@ -295,7 +295,9 @@ class LoadGeneDbCv {
 			<term name="fasta_file"   description="Fasta file location" />
 			<term name="fastax_file"   description="Fastax file location" />
 			<term name="tBlastn_file"   description="tBlastn file location" />
-			<term name="tBlastx_file"   description="tBlastx file location" />	
+			<term name="tBlastx_file"   description="tBlastx file location" />
+			<term name="clustalx_file"   description="Clustalx file location" />
+			<term name="sigcleave_file"   description="Sigcleave file location" />
 		</term>
     </cv>
 
