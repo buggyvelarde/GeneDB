@@ -13,11 +13,15 @@
 </font>
 </c:forEach>
 
-<sp:form action="CircularGenomeForm" method="post">
+<sp:form action="CircularGenomeForm" method="post" enctype="multipart/form-data">
 	<table align="center" width="50%">
 		<tr>
 			<td>Organism :</td>
 			<td><sp:select items="${organisms}" path="taxon"/></td>
+		</tr>
+		<tr>
+			<td>File upload :</td>
+			<td><input type="file" name="file"/></td>
 		</tr>
 		<tr>
 			<td>Restriction Enzyme :</td>
