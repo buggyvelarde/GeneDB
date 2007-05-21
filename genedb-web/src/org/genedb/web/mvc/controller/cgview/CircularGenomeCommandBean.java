@@ -8,6 +8,8 @@ public class CircularGenomeCommandBean {
     private String taxon;
     
     private String uniqueName;
+    
+    private String file;
 
     public String getEnzymeName() {
         return this.enzymeName;
@@ -32,6 +34,14 @@ public class CircularGenomeCommandBean {
     public void setUniqueName(String uniqueName) {
         this.uniqueName = uniqueName;
     }
+
+	public String getFile() {
+		return file;
+	}
+
+	public void setFile(String file) {
+		this.file = file;
+	}
     
     
 }

@@ -5,6 +5,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.multipart.support.StringMultipartFileEditor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -13,15 +15,23 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,12 +101,50 @@ public class CircularGenomeFormController extends SimpleFormController implement
         try {
             Map settings = new HashMap();
             
-            String input = orgs.get(cgcb.getTaxon());
-
+            String fileName = null;
+            if (!cgcb.getTaxon().equals("User uploaded file")) {
+            	System.err.println("Processing a built-in data file");
+            	fileName = orgs.get(cgcb.getTaxon());
+            } else {
+            	String file = cgcb.getFile();
+            	if (file == null) {
+            		// hmm, that's strange, the user did not upload anything
+            		// otherwise save to a temp file
+            		
+            		System.err.println("Tried to upload file but empty");
+            	} else {
+            		System.err.println("Received an upload file");
+            		Writer fw = null;
+            		BufferedReader r = null;
+            		try {
+            			File outFile = File.createTempFile("cg_input", ".embl");
+            			// Save to a temp file
+            			fw = new FileWriter(outFile);
+            			r = new BufferedReader(new StringReader(file));
+            			String line;
+            			while ((line = r.readLine()) != null) {
+            				fw.write(line);
+            				fw.write('\n');
+            			}
+            			fileName = outFile.getCanonicalPath();
+            		}
+            		finally {
+            			if (fw != null) {
+            				fw.close();
+            			}
+            			if (r != null) {
+            				r.close();
+            			}
+            		}
+            	}
+            }
+            
+            	
             // Run restrict over organism
             String embossDir = "/software/EMBOSS-4.0.0/";
             File output = File.createTempFile("circular_genome", ".txt");
-            String[] args = {embossDir+"/bin/restrict", input, "-auto", "-limit", "y", "-enzymes", "'"+cgcb.getEnzymeName()+"'", "-out", output.getCanonicalPath() };
+            String[] args = {embossDir+"/bin/restrict", fileName, "-auto", "-limit", "y", "-enzymes", cgcb.getEnzymeName(), "-out", output.getCanonicalPath() };
+            System.err.println(Arrays.toString(args));
             ProcessBuilder pb = new ProcessBuilder(args);
             pb.redirectErrorStream(true);
             Process p = pb.start();
@@ -116,11 +164,12 @@ public class CircularGenomeFormController extends SimpleFormController implement
                 exp.printStackTrace();
                 return null;
             }
-            System.err.println("Written output to '"+output.getCanonicalPath()+"' but not using it!");
+            //System.err.println("Written output to '"+output.getCanonicalPath()+"' but not using it!");
             
 //            Cgview cgview = factory.createCgviewFromEmbossReport("/nfs/team81/art/circular-restrict.txt");            
             //Cgview cgview = factory.createCgviewFromEmbossReport(output.getCanonicalPath());
-            ReportDetails rd = factory.findCutSitesFromEmbossReport("/nfs/team81/art/circ_genome_data/output1.txt");
+            ReportDetails rd = factory.findCutSitesFromEmbossReport(output.getCanonicalPath());
+            //ReportDetails rd = factory.findCutSitesFromEmbossReport("/nfs/team81/art/circ_genome_data/output1.txt");
             Cgview cgview = factory.createCgviewFromReportDetails(rd);
             //            System.err.println("Got a cgview");
 //          cgview.setDesiredZoomCenter(centerBaseValue.intValue());
@@ -405,8 +454,11 @@ public class CircularGenomeFormController extends SimpleFormController implement
     @Override
     protected Map referenceData(HttpServletRequest req) throws Exception {
         Map<String, Collection> ret = new HashMap<String, Collection>();
+        Map<String, String> orgMappings = new LinkedHashMap<String, String>(orgs.size());
+        orgMappings.put("User uploaded file", "user-file");
+        orgMappings.putAll(orgs);
         ret.put("digestNames", digestNames);
-        ret.put("organisms", orgs.keySet());
+        ret.put("organisms", orgMappings.keySet());
         return ret;
     }
 
@@ -434,6 +486,13 @@ public class CircularGenomeFormController extends SimpleFormController implement
     public void setCachedFileFactory(CachedFileFactory cachedFileFactory) {
         this.cachedFileFactory = cachedFileFactory;
     }
+
+
+	@Override
+	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+		super.initBinder(request, binder);
+        binder.registerCustomEditor(String.class, new StringMultipartFileEditor());
+	}
 
     
     
