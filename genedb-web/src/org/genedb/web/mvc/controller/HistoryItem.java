@@ -9,6 +9,8 @@ public class HistoryItem {
 	
 	private List<String> ids;
 	
+	private HistoryType historyType = HistoryType.QUERY;
+	
 	public HistoryItem(String name, List<String> ids) {
 		this.name = name;
 		this.ids = ids;
@@ -49,12 +51,15 @@ public class HistoryItem {
 		ids.add(id);
 	}
 
-    public void union(HistoryItem i) {
+	public HistoryType getHistoryType() {
+		return historyType;
+	}
+	
+  public void union(HistoryItem i) {
         this.ids.addAll(i.getIds());
     }
 
     public void intersect(HistoryItem i) {
         this.ids.retainAll(i.getIds());
     }
-
 }
