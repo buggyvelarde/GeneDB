@@ -6,7 +6,7 @@
 
 
 <c:if test="${empty items}">
-<p>There are no entries in your history yet (or your session has expired)</p>
+<p>There are no entries in your history yet (or your session has expired). <a href="/History/FillHistory">Add some for testing</a></p>
 </c:if>
 <c:if test="${!empty items}">
 
