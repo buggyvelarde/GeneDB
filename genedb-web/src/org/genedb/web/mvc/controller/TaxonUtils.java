@@ -69,7 +69,7 @@ public class TaxonUtils {
 	}
 
 	public void setTnm(TaxonNodeManager tnm) {
-		this.tnm = tnm;
+		this.tnm = tnm; // FIXME - Something very bizarre here
 	}
 
 }
