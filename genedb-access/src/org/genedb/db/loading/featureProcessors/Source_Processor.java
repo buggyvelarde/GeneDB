@@ -13,7 +13,8 @@ public class Source_Processor extends BaseFeatureProcessor implements FeaturePro
 		
 	}
 
-	public ProcessingPhase getProcessingPhase() {
+	@Override
+    public ProcessingPhase getProcessingPhase() {
 		// TODO Auto-generated method stub
 		return null;
 	}

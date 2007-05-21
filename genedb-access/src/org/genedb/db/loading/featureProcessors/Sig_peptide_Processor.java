@@ -77,6 +77,7 @@ public class Sig_peptide_Processor extends BaseFeatureProcessor {
     }
 
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SIXTH;
     }

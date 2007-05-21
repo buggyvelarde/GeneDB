@@ -77,6 +77,7 @@ public class Stem_loop_Processor extends BaseFeatureProcessor {
     }
 
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SIXTH;
     }

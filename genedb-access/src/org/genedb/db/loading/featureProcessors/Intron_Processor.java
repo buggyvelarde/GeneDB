@@ -138,6 +138,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
         return false;
     }
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.THIRD;
     }

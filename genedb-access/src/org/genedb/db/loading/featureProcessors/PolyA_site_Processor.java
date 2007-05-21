@@ -133,6 +133,7 @@ public class PolyA_site_Processor extends BaseFeatureProcessor {
     }
 
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SIXTH;
     }

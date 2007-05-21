@@ -72,6 +72,7 @@ public abstract class Misc_feature_Processor extends BasePossibleHandlerProcesso
         return "misc_feature";
     }
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SIXTH;
     }

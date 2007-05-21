@@ -13,7 +13,8 @@ public class Gap_Processor extends BaseFeatureProcessor implements FeatureProces
 		
 	}
 
-	public ProcessingPhase getProcessingPhase() {
+	@Override
+    public ProcessingPhase getProcessingPhase() {
 		// TODO Auto-generated method stub
 		return null;
 	}

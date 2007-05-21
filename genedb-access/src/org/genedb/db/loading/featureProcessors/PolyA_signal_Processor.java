@@ -156,6 +156,7 @@ public class PolyA_signal_Processor extends BaseFeatureProcessor {
     }
 
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.FIFTH;
     }

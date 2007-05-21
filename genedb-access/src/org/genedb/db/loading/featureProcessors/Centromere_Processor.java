@@ -13,7 +13,8 @@ public class Centromere_Processor extends BaseFeatureProcessor implements Featur
 		
 	}
 
-	public ProcessingPhase getProcessingPhase() {
+	@Override
+    public ProcessingPhase getProcessingPhase() {
 		// TODO Auto-generated method stub
 		return null;
 	}

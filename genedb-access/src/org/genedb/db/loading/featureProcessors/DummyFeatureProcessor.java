@@ -13,7 +13,8 @@ public class DummyFeatureProcessor extends BaseFeatureProcessor {
 
 	}
 
-	public ProcessingPhase getProcessingPhase() {
+	@Override
+    public ProcessingPhase getProcessingPhase() {
 		return ProcessingPhase.LAST;
 	}
 

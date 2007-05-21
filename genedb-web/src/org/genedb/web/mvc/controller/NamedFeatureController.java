@@ -233,7 +233,8 @@ class NameLookupBean {
 		this.history = history;
 	}
     
-	public String toString() {
+	@Override
+    public String toString() {
 		return getName()+","+getOrganism();
 	}
     

@@ -77,6 +77,7 @@ public class Misc_signal_Processor extends BaseFeatureProcessor {
     }
 
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SIXTH;
     }

@@ -224,6 +224,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
         }
     }
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.FOURTH;
     }

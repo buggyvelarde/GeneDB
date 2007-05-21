@@ -131,6 +131,7 @@ public abstract class BaseFeatureHandler extends BaseFeatureProcessor implements
     }
 
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.FIRST;
     }

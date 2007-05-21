@@ -150,6 +150,7 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
         return null;
     }
     
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SECOND;
     }
