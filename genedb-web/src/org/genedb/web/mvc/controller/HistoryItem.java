@@ -20,7 +20,10 @@ public class HistoryItem {
 		this.ids.add(id);
 	}
 
-	
+    public HistoryItem(HistoryItem historyItem) {
+        this.name = historyItem.name;
+        this.ids = new ArrayList<String>(historyItem.getIds());
+    }
 	
 	public List<String> getIds() {
 		return ids;
@@ -45,5 +48,13 @@ public class HistoryItem {
 	public void addResult(String id) {
 		ids.add(id);
 	}
+
+    public void union(HistoryItem i) {
+        this.ids.addAll(i.getIds());
+    }
+
+    public void intersect(HistoryItem i) {
+        this.ids.retainAll(i.getIds());
+    }
 
 }
