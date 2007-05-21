@@ -10,13 +10,19 @@ import org.genedb.query.bool.BooleanOp;
 import org.genedb.query.bool.BooleanQuery;
 import org.genedb.query.history.History;
 import org.genedb.query.history.SimpleHistory;
+import org.genedb.web.mvc.history.commandline.HistoryParser;
+import org.genedb.web.mvc.history.commandline.HistoryParserConstants;
+import org.genedb.web.mvc.history.commandline.ParseException;
 import org.genedb.web.tags.bool.QueryTreeWalker;
+
+import org.gmod.schema.sequence.Feature;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -338,5 +344,71 @@ public class HistoryController extends MultiActionController implements Initiali
 //	public void setPubHome(PubHome pubHome) {
 //	    this.pubHome = pubHome;
 //	}
+    
+    public ModelAndView ParseCommand(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            // No session
+            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest", "false");
+            if ("true".equals(secondTry)) {
+                // TODO Maybe use built in error handling
+                return new ModelAndView("history/noSession");
+            }
+            // Try and create session and return here
+            session = request.getSession(true);
+            return new ModelAndView("redirect:"+"/History/View?sessionTest=true");
+        }
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+        
+        String command = null;
+        HistoryParser historyParser = new HistoryParser(new StringReader(command));
+        historyParser.setHistoryManager(historyManager);
+        
+        HistoryItem historyItem = null;
+        try {
+            historyItem = historyParser.Start();
+        } catch (NumberFormatException exp) {
+            // TODO Auto-generated catch block
+            exp.printStackTrace();
+        } catch (ParseException exp) {
+            // TODO Auto-generated catch block
+            exp.printStackTrace();
+        }
+        
+        historyManager.addHistoryItems("merged", historyItem.getIds());
 
+        return new ModelAndView("redirect:/History/View");
+    }
+    
+    public ModelAndView FillHistory(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            // No session
+            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest", "false");
+            if ("true".equals(secondTry)) {
+                // TODO Maybe use built in error handling
+                return new ModelAndView("history/noSession");
+            }
+            // Try and create session and return here
+            session = request.getSession(true);
+            return new ModelAndView("redirect:"+"/History/View?sessionTest=true");
+        }
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+        
+        tempNameSearch("Afu3*", "Afumigatus", historyManager);
+        tempNameSearch("Afu8*", "Afumigatus", historyManager);
+
+        return new ModelAndView("redirect:/History/View");
+    }
+    
+    private void tempNameSearch(String name, String org, HistoryManager historyManager) {
+        List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(
+                name, org, "gene");
+        List<String> ids = new ArrayList<String>(results.size());
+        for (Feature feature : results) {
+            ids.add(feature.getUniqueName());
+        }
+        historyManager.addHistoryItems("name lookup '"+name+"'", ids);
+    }
+    
 }
