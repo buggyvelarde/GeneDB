@@ -11,5 +11,13 @@ public interface HistoryManager {
 	public abstract void addHistoryItem(String name, String id);
 	
 	public abstract String getCartName();
+	
+	public abstract String getNextName();
+	
+	public abstract int getVersion();
+
+	public abstract void removeItem(int item, int version);
+
+	public abstract int getNumHistoryItems();
 
 }

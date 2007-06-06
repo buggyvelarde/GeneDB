@@ -33,7 +33,12 @@ import javax.servlet.http.HttpSession;
  * @author Adrian Tivey
  */
 public class HttpSessionHistoryManager implements HistoryManager {
+	// TODO use map for storage
+	// Synch
     
+	private int nextNumber = 1;
+	private int version = 1;
+	
 	private static final String HISTORY_LIST = "_HISTORY_LIST";
 	private static final String DEFAULT_CART_NAME = "Feature Basket";
 	
@@ -88,6 +93,30 @@ public class HttpSessionHistoryManager implements HistoryManager {
 		return cartName;
 	}
 
-	
-	
+	public void removeItem(int index, int version) {
+		List<HistoryItem> history = getHistoryItems();
+		if (version != this.version) {
+			throw new RuntimeException("Version mismatch");
+		}
+		if (index < 0 || index > history.size()) {
+			throw new IllegalArgumentException("Index is out of range");
+		}
+		history.remove(index);
+		version++;
+	}
+
+	public String getNextName() {
+		String ret = NumberNameConverter.convert(nextNumber);
+		nextNumber++;
+		return ret;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public int getNumHistoryItems() {
+		return getHistoryItems().size();
+	}
+
 }
