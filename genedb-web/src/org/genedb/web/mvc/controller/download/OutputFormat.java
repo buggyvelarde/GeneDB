@@ -17,7 +17,7 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.web.mvc.controller;
+package org.genedb.web.mvc.controller.download;
 
 public enum OutputFormat {
     CSV, EXCEL, ODF, HTML, FASTA;

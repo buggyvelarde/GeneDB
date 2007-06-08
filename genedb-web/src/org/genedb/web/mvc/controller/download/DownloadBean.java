@@ -17,38 +17,18 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.web.mvc.controller;
+package org.genedb.web.mvc.controller.download;
+
 
 import java.util.List;
 
 public class DownloadBean {
     
-    private String lookup; // The name to lookup, using * for wildcards
-    private String organism;
+    private int historyItem;
+    private int version;
 	private OutputDestination outputDestination = OutputDestination.TO_BROWSER;
 	private OutputFormat outputFormat;
-	private List<OutputOption> outputOption; 
-       
-    public String getLookup() {
-        return this.lookup;
-    }
-    
-    public void setLookup(String lookup) {
-        this.lookup = lookup;
-    }
-
-	public String getOrganism() {
-		return organism;
-	}
-
-	public void setOrganism(String organism) {
-		this.organism = organism;
-	}
-	
-	public String getMethod() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	private List<OutputOption> outputOption;
 
 	public OutputDestination getOutputDestination() {
 		return outputDestination;
@@ -73,6 +53,22 @@ public class DownloadBean {
 	public void setOutputOption(List<OutputOption> outputOption) {
 		this.outputOption = outputOption;
 	}
+
+    public int getHistoryItem() {
+        return this.historyItem;
+    }
+
+    public void setHistoryItem(int historyItem) {
+        this.historyItem = historyItem;
+    }
+
+    public int getVersion() {
+        return this.version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
     
     
 }

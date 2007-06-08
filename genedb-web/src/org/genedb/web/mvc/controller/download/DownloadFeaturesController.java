@@ -17,11 +17,12 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.web.mvc.controller;
+package org.genedb.web.mvc.controller.download;
 
 
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.TaxonNode;
+import org.genedb.web.mvc.controller.HistoryManagerFactory;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
@@ -83,37 +84,21 @@ public class DownloadFeaturesController extends SimpleFormController {
     	
         DownloadBean db = (DownloadBean) command;
         
+        
+        
         Writer w = response.getWriter();
-        w.write("destination="+db.getOutputDestination().name()+"<br>");
-        w.write("format="+db.getOutputDestination().name()+"<br>");
-        w.write("options="+db.getOutputOption()+"<br>");
+        w.write("destination="+db.getOutputDestination().name()+"\n");
+        w.write("format="+db.getOutputDestination().name()+"\n");
+        w.write("history="+db.getHistoryItem()+"\n");
+        w.write("version="+db.getVersion()+"\n");
+        w.write("options="+db.getOutputOption()+"\n");
         w.close();
         return null;
-//        String sequenceOrFeature = db.getMethod();
-//        
-//        if ("Sequence".equalsIgnoreCase(sequenceOrFeature)) {
-//        	return sequenceDownload(db, response);
-//        }
-//        if ("Annotation".equalsIgnoreCase(sequenceOrFeature)) {
-//        	return annotationDownload(db, response);
-//        }
 //        
 //        // Problem - report FIXME
 //        
 //		return new ModelAndView(getFormView());
     }
-
-	private ModelAndView annotationDownload(DownloadBean db, HttpServletResponse response) throws IOException {
-		Writer out = response.getWriter();
-		out.write("Downloading annotation");
-		return null;
-	}
-
-	private ModelAndView sequenceDownload(DownloadBean db, HttpServletResponse response) throws IOException {
-		Writer out = response.getWriter();
-		out.write("Downloading sequence");
-		return null;
-	}
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
