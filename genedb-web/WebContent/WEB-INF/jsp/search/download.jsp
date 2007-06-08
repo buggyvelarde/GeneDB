@@ -24,7 +24,12 @@ function showSection(sectionId) {
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:header>
 
+<p>Please note: not all options shown are possible depending upon which output format 
+is chosen (further below).
+
 <form:form commandName="downloadOptions" action="DownloadFeatures" method="POST">
+<form:hidden path="historyItem" />
+<form:hidden path="version" />
 
 <div class='informationMacroPadding' align="center">
 <table cellpadding='5' width='90%' cellspacing='0' class='infoMacro' border='0'>
@@ -68,16 +73,16 @@ function showSection(sectionId) {
 </div>
 <p><b>Sequence Options</b>
 <table width="100%">
-<tr><td><INPUT type="checkbox" NAME="sequenceType" VALUE="3">Protein sequence</td></tr>
-<tr><td><INPUT type="checkbox" NAME="sequenceType" checked VALUE="1">Nucleotide sequence of CDS (and introns)</td></tr>
+<tr><td><form:checkbox path="outputOption" value="SEQ_PROTEIN"/>Protein sequence</td></tr>
+<tr><td><form:checkbox path="outputOption" value="SEQ_UNSPLICED"/>Nucleotide sequence of CDS (and introns)</td></tr>
 </table>
 <div id="sequenceOptionsOpener"><a href="javascript:showSection('sequenceOptions');hideSection('sequenceOptionsOpener')">Extra sequence options</a></div>
 <div id="sequenceOptions" style="visibility: hidden; display: none">
 <table width="100%">
-<tr><td colspan="3"><INPUT type="checkbox" NAME="sequenceType" VALUE="2">Nucleotide (without introns)</td></tr>
-<tr><td colspan="3"><INPUT type="checkbox" NAME="sequenceType" VALUE="2">5' UTR</td></tr>
-<tr><td colspan="3"><INPUT type="checkbox" NAME="sequenceType" VALUE="2">3' UTR</td></tr>
-<tr bgcolor="FAFAD2"><td><INPUT type="checkbox" NAME="sequenceType" VALUE="6">Intergenic Sequence (5'&nbsp;)</td>
+<tr><td colspan="3"><form:checkbox path="outputOption" value="SEQ_SPLICED"/>Nucleotide (without introns)</td></tr>
+<tr><td colspan="3"><form:checkbox path="outputOption" value="SEQ_5P_UTR"/>5' UTR</td></tr>
+<tr><td colspan="3"><form:checkbox path="outputOption" value="SEQ_3P_UTR"/>3' UTR</td></tr>
+<tr bgcolor="FAFAD2"><td><form:checkbox path="outputOption" value="SEQ_5P_INTERGENIC"/>Intergenic Sequence (5'&nbsp;)</td>
 <td rowspan="3" align="left">
 <input type="hidden" name="includeRNA" value="false">
 &nbsp;&nbsp;&nbsp;Number of bases: 
@@ -98,10 +103,10 @@ function showSection(sectionId) {
 <tr bgcolor="FAFAD2">
 <td>
 <input type="hidden" name="includeRNA" value="false">
-<INPUT type="checkbox" NAME="sequenceType" VALUE="5">Intergenic Sequence (3' )</td>
+<form:checkbox path="outputOption" value="SEQ_3P_INTERGENIC"/>Intergenic Sequence (3' )</td>
 </tr>
 
-<tr><td><INPUT type="checkbox" NAME="sequenceType" VALUE="4">CDS/RNA with 5'/3' flanking sequence</td>
+<tr><td><form:checkbox path="outputOption" value="SEQ_INTERGENIC"/>CDS/RNA with 5'/3' flanking sequence</td>
 
 <td align="left">
 <input type="hidden" name="includeRNA" value="true">
@@ -134,7 +139,7 @@ function showSection(sectionId) {
 <option value="-1">To next CDS/RNA</option>
 </select>
 </td></tr>
-<tr bgcolor="FAFAD2"><td colspan="3"><INPUT type="checkbox" NAME="sequenceType" VALUE="98">Intron sequence</td></tr>
+<tr bgcolor="FAFAD2"><td colspan="3"><form:checkbox path="outputOption" value="SEQ_INTRON"/>Intron sequence</td></tr>
 <tr><td><a href="javascript:showSection('sequenceOptionsOpener');hideSection('sequenceOptions')">Hide extra sequence options</a></td></tr></table>
 </td></tr></table></div>
 
