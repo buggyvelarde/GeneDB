@@ -1,5 +1,7 @@
 package org.genedb.web.mvc.controller;
 
+import org.genedb.query.Query;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,4 +64,9 @@ public class HistoryItem {
     public void intersect(HistoryItem i) {
         this.ids.retainAll(i.getIds());
     }
+
+	public Query getQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
