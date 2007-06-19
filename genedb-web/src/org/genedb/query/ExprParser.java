@@ -1,12 +1,21 @@
+package org.genedb.query;
+
 // $ANTLR 3.0 Expr.g 2007-06-19 14:34:36
 
-import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
-
-
-import org.antlr.runtime.tree.*;
+import org.antlr.runtime.BitSet;
+import org.antlr.runtime.EarlyExitException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.Parser;
+import org.antlr.runtime.ParserRuleReturnScope;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.TokenStream;
+import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.CommonTreeAdaptor;
+import org.antlr.runtime.tree.RewriteEarlyExitException;
+import org.antlr.runtime.tree.RewriteRuleSubtreeStream;
+import org.antlr.runtime.tree.RewriteRuleTokenStream;
+import org.antlr.runtime.tree.TreeAdaptor;
 
 public class ExprParser extends Parser {
     public static final String[] tokenNames = new String[] {
@@ -41,12 +50,15 @@ public class ExprParser extends Parser {
         return adaptor;
     }
 
+    @Override
     public String[] getTokenNames() { return tokenNames; }
+    @Override
     public String getGrammarFileName() { return "Expr.g"; }
 
 
     public static class prog_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 
@@ -123,6 +135,7 @@ public class ExprParser extends Parser {
 
     public static class expr_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 
@@ -208,6 +221,7 @@ public class ExprParser extends Parser {
 
     public static class atom_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 
@@ -397,6 +411,7 @@ public class ExprParser extends Parser {
 
     public static class bean_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 
@@ -490,6 +505,7 @@ public class ExprParser extends Parser {
 
     public static class params_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 
@@ -606,6 +622,7 @@ public class ExprParser extends Parser {
 
     public static class param_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 
@@ -692,6 +709,7 @@ public class ExprParser extends Parser {
 
     public static class operator_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 
@@ -800,6 +818,7 @@ public class ExprParser extends Parser {
 
     public static class union_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 
@@ -925,6 +944,7 @@ public class ExprParser extends Parser {
 
     public static class intersect_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 
@@ -1050,6 +1070,7 @@ public class ExprParser extends Parser {
 
     public static class subtract_return extends ParserRuleReturnScope {
         CommonTree tree;
+        @Override
         public Object getTree() { return tree; }
     };
 

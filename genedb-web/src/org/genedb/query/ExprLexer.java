@@ -1,9 +1,13 @@
+package org.genedb.query;
+
 // $ANTLR 3.0 Expr.g 2007-06-19 14:34:38
 
-import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.EarlyExitException;
+import org.antlr.runtime.Lexer;
+import org.antlr.runtime.MismatchedSetException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.RecognitionException;
 
 public class ExprLexer extends Lexer {
     public static final int T21=21;
@@ -38,6 +42,7 @@ public class ExprLexer extends Lexer {
     public ExprLexer(CharStream input) {
         super(input);
     }
+    @Override
     public String getGrammarFileName() { return "Expr.g"; }
 
     // $ANTLR start T18
@@ -817,6 +822,7 @@ public class ExprLexer extends Lexer {
     }
     // $ANTLR end UCA
 
+    @Override
     public void mTokens() throws RecognitionException {
         // Expr.g:1:10: ( T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | T27 | T28 | T29 | UNION | INTERSECT | SUBTRACT | NAME | STRING | INT | WS )
         int alt5=19;
