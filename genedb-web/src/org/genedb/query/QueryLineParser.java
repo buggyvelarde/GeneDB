@@ -1,18 +1,28 @@
 package org.genedb.query;
 
-import org.antlr.runtime.*; 
-import org.antlr.runtime.tree.*;
+import org.genedb.web.mvc.controller.HistoryItem;
+import org.genedb.web.mvc.controller.HistoryManager;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTree;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.validation.DataBinder;
+
 import java.util.HashMap;
+import java.util.Map;
 
-public class QueryLineParser { 
-    public static void main(String[] args) throws Exception { 
+public class QueryLineParser implements ApplicationContextAware {
+	
+	private ApplicationContext applicationContext;
+	private DataBinder dataBinder;
+	
+	public Query parse(String line, HistoryManager historyManager) throws RecognitionException {
         // Create an input character stream from standard in 
-        String line = "3 union geneByNonsense{wibble=\"fred\"; wobble=\"weeble\"; big=\"small\"} not ( geneByUri{ url=\"http://www.genedb.org/Things?a=1&b=2\"} intersect result)";
+        line = "3 union geneByNonsense{wibble=\"fred\"; wobble=\"weeble\"; big=\"small\"} not ( geneByUri{ url=\"http://www.genedb.org/Things?a=1&b=2\"} intersect result)";
         // Create an ExprLexer that feeds from that stream
         ANTLRStringStream input = new ANTLRStringStream(line);
         //ANTLRInputStream input = new ANTLRInputStream(System.in); 
@@ -28,70 +38,98 @@ public class QueryLineParser {
         // WALK RESULTING TREE
         CommonTree t = (CommonTree)r.getTree(); // get tree from parser
 
-        showNode(t, 0);
-        List<String> answer = processTree(t);
+        //showNode(t, 0);
+        return processTree(t, historyManager);
+	}
+	
+    public static void main(String[] args) throws Exception { 
+        // Create an input character stream from standard in 
+        String line = "3 union geneByNonsense{wibble=\"fred\"; wobble=\"weeble\"; big=\"small\"} not ( geneByUri{ url=\"http://www.genedb.org/Things?a=1&b=2\"} intersect result)";
+        QueryLineParser qlp = new QueryLineParser();
+        Query q = qlp.parse(line, null);
+        System.out.println(q.getResults());
     } 
     
-    private static void showNode(CommonTree t, int depth) {
-        for (int i = 0; i < depth; i++) {
-            System.err.print("\t");
-        }
-        System.err.println(t);
-        for (int i = 0; i < t.getChildCount(); i++) {
-            showNode((CommonTree) t.getChild(i), depth+1);
-        }
-    }
+//    private void showNode(CommonTree t, int depth) {
+//        for (int i = 0; i < depth; i++) {
+//            System.err.print("\t");
+//        }
+//        System.err.println(t);
+//        for (int i = 0; i < t.getChildCount(); i++) {
+//            showNode((CommonTree) t.getChild(i), depth+1);
+//        }
+//    }
     
-    private static List<String> processTree(CommonTree t) {
-        List<String> results = null;
-        List<String> right = null;
-        System.err.println(t);
+    private Query processTree(CommonTree t, HistoryManager historyManager) {
+        Query results = null;
         switch (t.getType()) {
             case ExprParser.SUBTRACT:
-                results = processTree((CommonTree)t.getChild(0));
-                right = processTree((CommonTree)t.getChild(1));
-                results.removeAll(right); 
+                results = operator(t, BooleanQueryMode.SUBTRACT, historyManager);
                 break;
             case ExprParser.UNION:
-                results = processTree((CommonTree)t.getChild(0));
-                right = processTree((CommonTree)t.getChild(1));
-                results.addAll(right); 
+                results = operator(t, BooleanQueryMode.UNION, historyManager);
                 break;
             case ExprParser.INTERSECT:
-                results = processTree((CommonTree)t.getChild(0));
-                right = processTree((CommonTree)t.getChild(1));
-                results.retainAll(right); 
+                results = operator(t, BooleanQueryMode.INTERSECT, historyManager);
                 break;
             case ExprParser.QUERY:
-                Map<String, String> map = new HashMap<String, String>();
-                String queryName =  ((CommonTree)t.getChild(0)).getText();
-                if (t.getChildCount()>1) {
-                    CommonTree params = (CommonTree)t.getChild(1);
-                    for (int i = 0; i < params.getChildCount(); i++) {
-                        CommonTree param = (CommonTree)params.getChild(i);
-                        String key = ((CommonTree)param.getChild(0)).getText();
-                        String value = ((CommonTree)param.getChild(1)).getText();
-                        map.put(key, value);
-                    }
-                }
-                // Run query
-                System.err.println("QUERY: '"+queryName+"' with '"+map+"'");
-                results = new ArrayList<String>();
+                results = findQuery(t);
                 break;
             case ExprParser.HISTORY_BY_NUM:
                 String number =  ((CommonTree)t.getChild(0)).getText();
                 int num = Integer.parseInt(number);
                 System.err.println("H_NUM: '"+(CommonTree)t.getChild(0)+"'");
-                results = new ArrayList<String>();
+                results = historyManager.getHistoryItems().get(num).getQuery();
                 break;
             case ExprParser.HISTORY_BY_NAME:
                 String name =  ((CommonTree)t.getChild(0)).getText();
                 System.err.println("H_NAME: '"+(CommonTree)t.getChild(0)+"'");
-                results = new ArrayList<String>();
+                for (HistoryItem item : historyManager.getHistoryItems()) {
+					if (name.equals(item.getName())) {
+		                results = item.getQuery();
+					}
+				}
                 break;
             default:
                 throw new RuntimeException("Unhandled tree node '"+t+"', token index '"+t.token.getTokenIndex()+"'"); 
         }
         return results;
     }
+
+	private Query findQuery(CommonTree t) {
+		Map<String, String> map = new HashMap<String, String>();
+		String queryName =  ((CommonTree)t.getChild(0)).getText();
+		
+		Query query = (Query) applicationContext.getBean(queryName, Query.class);
+		
+		if (t.getChildCount()>1) {
+		    CommonTree params = (CommonTree)t.getChild(1);
+		    for (int i = 0; i < params.getChildCount(); i++) {
+		        CommonTree param = (CommonTree)params.getChild(i);
+		        String key = ((CommonTree)param.getChild(0)).getText();
+		        String value = ((CommonTree)param.getChild(1)).getText();
+		        map.put(key, value);
+		    }
+		}
+		// Run query
+		System.err.println("QUERY: '"+queryName+"' with '"+map+"'");
+		return query;
+	}
+
+	private Query operator(CommonTree t, BooleanQueryMode mode, HistoryManager historyManager) {
+		Query results;
+		Query left = processTree((CommonTree)t.getChild(0), historyManager);
+		Query right = processTree((CommonTree)t.getChild(1), historyManager);
+		results = new BooleanQuery(mode, left, right);
+		return results;
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
+	public void setDataBinder(DataBinder dataBinder) {
+		this.dataBinder = dataBinder;
+	}
+
 } 
