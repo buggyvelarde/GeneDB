@@ -2,6 +2,8 @@ package org.genedb.query;
 
 public interface Query {
 
-	Object getResults();
+	Object getResults() throws QueryException;
+    
+    String getParseableDescription();
 
 }
