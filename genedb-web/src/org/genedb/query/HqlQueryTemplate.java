@@ -19,14 +19,29 @@
 
 package org.genedb.query;
 
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+
+
 public class HqlQueryTemplate extends QueryTemplate {
     
     private String hql;
+    private String sessionFactory;
 
     @Override
-    public void processNewPrototype(Query query) {
-        HqlQuery q = (HqlQuery) query;
-        q.setHql(hql);
+    public void processNewPrototype(BeanDefinitionBuilder bdb) {
+    	bdb.addPropertyValue("hql", hql);
+        bdb.addPropertyReference("sessionFactory", sessionFactory);
     }
+
+    @Required
+	public void setHql(String hql) {
+		this.hql = hql;
+	}
+
+    @Required
+	public void setSessionFactory(String sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 }

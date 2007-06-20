@@ -15,21 +15,34 @@ public class BooleanQuery implements Query {
 		this.right = right;
 	}
 
-	public Object getResults() {
+	@SuppressWarnings("unchecked")
+	public List<String> getResults() throws QueryException {
 		List<String> results = new ArrayList(left.getResults());
-		List<String> right = new ArrayList(right.getResults());
+		List<String> rightResults = new ArrayList(right.getResults());
 		switch (mode) {
 		case INTERSECT:
-			results.retainAll(right);
+			results.retainAll(rightResults);
 			return results;
 		case SUBTRACT:
-			results.removeAll(right);
+			results.removeAll(rightResults);
 			return results;
 		case UNION:
-			results.addAll(right);
+			results.addAll(rightResults);
 			return results;
 		}
 		return null;
+	}
+
+	public String getParseableDescription() {
+		StringBuilder sb = new StringBuilder();
+		sb.append('(');
+		sb.append(left.getParseableDescription());
+		sb.append(' ');
+		sb.append(mode);
+		sb.append(' ');
+		sb.append(right.getParseableDescription());
+		sb.append(')');
+		return sb.toString();
 	}
 
 }

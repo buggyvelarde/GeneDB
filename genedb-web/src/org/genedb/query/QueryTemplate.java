@@ -19,6 +19,8 @@
 
 package org.genedb.query;
 
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+
 import java.util.List;
 
 public abstract class QueryTemplate {
@@ -27,7 +29,7 @@ public abstract class QueryTemplate {
     Class baseClass;
     List<Parameter> params;
     
-    public abstract void processNewPrototype(Query query); 
+    public abstract void processNewPrototype(BeanDefinitionBuilder bdb); 
     
     public List<Parameter> getParams() {
         return this.params;

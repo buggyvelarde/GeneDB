@@ -9,7 +9,18 @@
 	default-init-method="postConstruction">
 
 
-	<bean id="GeneByURI" class="org.genedb.query.QueryByURI" />
+	<!-- Register a bean factory post processor to convert query templates into query objects-->
+	<bean id="queryBeanGenerator" class="org.genedb.query.QueryBeanGenerator" />
+
+	<!-- HQL Query templates -->
+
+
+
+
+	
+	
+	<!-- Manually written query beans -->
+	<bean id="GeneByURI" class="org.genedb.query.GenesByURI" />
 	
 
 </beans>

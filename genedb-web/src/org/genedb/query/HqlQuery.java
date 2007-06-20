@@ -33,7 +33,7 @@ public abstract class HqlQuery extends HibernateDaoSupport implements Query {
         return QueryUtils.makeParseableDescription(name, paramNames, getParamValues());
     }
     
-    protected Object runQuery() {
+    protected List<String> runQuery() {
         @SuppressWarnings({"unchecked","cast"})
         List<String> ret = (List<String>) getHibernateTemplate().findByNamedParam(
                 hql,
@@ -43,7 +43,7 @@ public abstract class HqlQuery extends HibernateDaoSupport implements Query {
     
     abstract Object[] getParamValues();
 
-    public Object getResults() throws QueryException {
+    public List<String> getResults() throws QueryException {
         return runQuery();
     }
 

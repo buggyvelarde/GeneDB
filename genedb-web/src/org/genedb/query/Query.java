@@ -1,8 +1,10 @@
 package org.genedb.query;
 
+import java.util.List;
+
 public interface Query {
 
-	Object getResults() throws QueryException;
+	List<String> getResults() throws QueryException;
     
     String getParseableDescription();
 

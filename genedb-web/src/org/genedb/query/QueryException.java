@@ -19,7 +19,6 @@
 
 package org.genedb.query;
 
-import java.io.IOException;
 
 public class QueryException extends Exception {
 

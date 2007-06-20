@@ -7,6 +7,7 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -97,22 +98,21 @@ public class QueryLineParser implements ApplicationContextAware {
     }
 
 	private Query findQuery(CommonTree t) {
-		Map<String, String> map = new HashMap<String, String>();
 		String queryName =  ((CommonTree)t.getChild(0)).getText();
 		
 		Query query = (Query) applicationContext.getBean(queryName, Query.class);
 		
+		BeanWrapperImpl bw = new BeanWrapperImpl(query);
 		if (t.getChildCount()>1) {
 		    CommonTree params = (CommonTree)t.getChild(1);
 		    for (int i = 0; i < params.getChildCount(); i++) {
 		        CommonTree param = (CommonTree)params.getChild(i);
 		        String key = ((CommonTree)param.getChild(0)).getText();
 		        String value = ((CommonTree)param.getChild(1)).getText();
-		        map.put(key, value);
+		        bw.setPropertyValue(key, value);
 		    }
 		}
-		// Run query
-		System.err.println("QUERY: '"+queryName+"' with '"+map+"'");
+		//System.err.println("QUERY: '"+queryName+"' with '"+map+"'");
 		return query;
 	}
 

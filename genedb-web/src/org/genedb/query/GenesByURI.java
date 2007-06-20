@@ -7,13 +7,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URI;
 import java.net.URLConnection;
 import java.util.List;
-
-import com.sun.corba.se.spi.orbutil.fsm.Input;
 
 public class GenesByURI implements Query {
 
@@ -21,7 +17,7 @@ public class GenesByURI implements Query {
     private URI uri;
 	private List<String> results = null;
 	
-	public Object getResults() throws QueryException {
+	public List<String> getResults() throws QueryException {
 		if (results != null) {
 			return results;
 		}

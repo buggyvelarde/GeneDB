@@ -19,23 +19,18 @@
 
 package org.genedb.query;
 
+import net.sf.cglib.beans.BeanGenerator;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionReader;
-import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,25 +39,36 @@ public class QueryBeanGenerator implements BeanFactoryPostProcessor,
     
     private ApplicationContext applicationContext;
 
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory factory)
+
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory factory)
             throws BeansException {
         
         List<String> templateNames = new ArrayList<String>();
         
+        @SuppressWarnings("unchecked")
         Map<String, QueryTemplate> map = (Map<String, QueryTemplate>) factory.getBeansOfType(QueryTemplate.class);
-        //Collection<QueryTemplate> templates = map.values().getClass().cast(Collection<QueryTemplate>.class);
+
         for (Map.Entry<String, QueryTemplate> entry : map.entrySet()) {
-            templateNames.add(entry.getKey());
+        	String beanName = entry.getKey();
+            templateNames.add(beanName);
             QueryTemplate template = entry.getValue();
-            Class baseClass = template.getBaseClass();
+            
+            BeanGenerator bg = new BeanGenerator();
+            bg.setSuperclass(template.getBaseClass());
             // Extend with properties
             for (Parameter parameter : template.getParams()) {
-                
+            	bg.addProperty(parameter.name, parameter.getClass());
             }
+            Query bean = (Query) bg.create();
+            Class newClass = bean.getClass();
             
-            template.processNewPrototype(clone());
-            BeanDefinition bd;
+            BeanDefinitionBuilder bdb = BeanDefinitionBuilder.rootBeanDefinition(newClass);
+            bdb.setScope(BeanDefinition.SCOPE_PROTOTYPE);
+            template.processNewPrototype(bdb);
+            
             // Store back as prototype bean
+            BeanDefinition bd = bdb.getBeanDefinition();
+            ((GenericApplicationContext)applicationContext).registerBeanDefinition(beanName, bd);
             
         }
         for (String name : templateNames) {
