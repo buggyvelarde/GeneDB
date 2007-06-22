@@ -17,38 +17,53 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.query;
+package org.genedb.query.jdbc;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.genedb.query.core.Query;
+import org.genedb.query.core.QueryException;
+import org.genedb.query.core.QueryUtils;
 
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
-public abstract class HqlQuery extends HibernateDaoSupport implements Query {
+public abstract class JdbcQuery extends NamedParameterJdbcDaoSupport implements Query {
     
-    private String hql;
+    private String sql;
     protected String[] paramNames;
     protected String name;
 
     public String getParseableDescription() {
-        return QueryUtils.makeParseableDescription(name, paramNames, getParamValues());
+        return QueryUtils.makeParseableDescription(name, paramNames, this);
     }
     
+    
+
     protected List<String> runQuery() {
-        @SuppressWarnings({"unchecked","cast"})
-        List<String> ret = (List<String>) getHibernateTemplate().findByNamedParam(
-                hql,
-                paramNames, getParamValues());
+        
+        List results = getNamedParameterJdbcTemplate().query(sql, 
+                new BeanPropertySqlParameterSource(this),
+                new RowMapper() {
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        return rs.getString(0);
+                    }
+        });
+        
+        @SuppressWarnings("unchecked")
+        List<String> ret = results;
         return ret;
     }
-    
-    abstract Object[] getParamValues();
 
     public List<String> getResults() throws QueryException {
         return runQuery();
     }
 
-    public void setHql(String hql) {
-        this.hql = hql;
+    public void setSql(String sql) {
+        this.sql = sql;
     }
 
     public void setName(String name) {

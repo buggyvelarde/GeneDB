@@ -1,4 +1,5 @@
-package org.genedb.query;
+package org.genedb.query.core;
+
 
 import java.util.ArrayList;
 import java.util.List;

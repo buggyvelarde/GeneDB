@@ -1,4 +1,4 @@
-package org.genedb.query;
+package org.genedb.query.core;
 
 import org.genedb.web.mvc.controller.HistoryItem;
 import org.genedb.web.mvc.controller.HistoryManager;

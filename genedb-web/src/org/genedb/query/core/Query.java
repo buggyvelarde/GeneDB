@@ -1,4 +1,4 @@
-package org.genedb.query;
+package org.genedb.query.core;
 
 import java.util.List;
 

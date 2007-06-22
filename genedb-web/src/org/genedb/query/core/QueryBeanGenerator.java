@@ -17,7 +17,7 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.query;
+package org.genedb.query.core;
 
 import net.sf.cglib.beans.BeanGenerator;
 
@@ -31,6 +31,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -55,15 +58,18 @@ public class QueryBeanGenerator implements BeanFactoryPostProcessor,
             
             BeanGenerator bg = new BeanGenerator();
             bg.setSuperclass(template.getBaseClass());
+            List<String> paramNames = new ArrayList<String>();
             // Extend with properties
             for (Parameter parameter : template.getParams()) {
             	bg.addProperty(parameter.name, parameter.getClass());
+                paramNames.add(parameter.name);
             }
             Query bean = (Query) bg.create();
             Class newClass = bean.getClass();
             
             BeanDefinitionBuilder bdb = BeanDefinitionBuilder.rootBeanDefinition(newClass);
             bdb.setScope(BeanDefinition.SCOPE_PROTOTYPE);
+            bdb.addPropertyValue("paramNames", paramNames.toArray(new String[]{}));
             template.processNewPrototype(bdb);
             
             // Store back as prototype bean

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006 Genome Research Limited.
+ * Copyright (c) 2007 Genome Research Limited.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published
@@ -17,23 +17,33 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.query;
+package org.genedb.query.hql;
 
-public class GeneByNumExons extends HqlQuery implements Query {
-    private Integer min;
-    private Integer max;
-    private String[] PARAM_NAMES = {"min", "max"};
+import org.genedb.query.core.QueryTemplate;
+
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+
+
+public class HqlQueryTemplate extends QueryTemplate {
     
-    
-    public GeneByNumExons() {
-        super();
-        setHql("");
-        setParamNames(PARAM_NAMES);
-    }
+    private String hql;
+    private String sessionFactory;
 
     @Override
-    Object[] getParamValues() {
-        return new Object[]{min, max};
+    public void processNewPrototype(BeanDefinitionBuilder bdb) {
+    	bdb.addPropertyValue("hql", hql);
+        bdb.addPropertyReference("sessionFactory", sessionFactory);
     }
+
+    @Required
+	public void setHql(String hql) {
+		this.hql = hql;
+	}
+
+    @Required
+	public void setSessionFactory(String sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 }

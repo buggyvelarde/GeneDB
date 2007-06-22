@@ -1,4 +1,4 @@
-package org.genedb.query;
+package org.genedb.query.core;
 
 // $ANTLR 3.0 Expr.g 2007-06-19 14:34:38
 

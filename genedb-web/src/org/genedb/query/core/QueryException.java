@@ -17,31 +17,13 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.query;
-
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+package org.genedb.query.core;
 
 
-public class HqlQueryTemplate extends QueryTemplate {
-    
-    private String hql;
-    private String sessionFactory;
+public class QueryException extends Exception {
 
-    @Override
-    public void processNewPrototype(BeanDefinitionBuilder bdb) {
-    	bdb.addPropertyValue("hql", hql);
-        bdb.addPropertyReference("sessionFactory", sessionFactory);
+    public QueryException(Exception exp) {
+        super(exp);
     }
-
-    @Required
-	public void setHql(String hql) {
-		this.hql = hql;
-	}
-
-    @Required
-	public void setSessionFactory(String sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
 
 }

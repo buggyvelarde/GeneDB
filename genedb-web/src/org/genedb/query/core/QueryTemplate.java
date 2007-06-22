@@ -17,11 +17,42 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.query;
+package org.genedb.query.core;
 
-public class Parameter {
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+
+import java.util.List;
+
+public abstract class QueryTemplate {
     
     String name;
-    Class clazz;
+    Class baseClass;
+    List<Parameter> params;
+    
+    public abstract void processNewPrototype(BeanDefinitionBuilder bdb); 
+    
+    public List<Parameter> getParams() {
+        return this.params;
+    }
+
+    public void setParams(List<Parameter> params) {
+        this.params = params;
+    }
+
+    public Class getBaseClass() {
+        return this.baseClass;
+    }
+
+    public void setBaseClass(Class baseClass) {
+        this.baseClass = baseClass;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

@@ -1,4 +1,7 @@
-package org.genedb.query;
+package org.genedb.query.custom;
+
+import org.genedb.query.core.Query;
+import org.genedb.query.core.QueryException;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Required;

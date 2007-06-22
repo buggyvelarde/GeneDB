@@ -17,7 +17,9 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.query;
+package org.genedb.query.core;
+
+import org.springframework.beans.BeanWrapperImpl;
 
 public class QueryUtils {
 
@@ -37,6 +39,20 @@ public class QueryUtils {
         }
         ret.append('}');
         return ret.toString();
+    }
+    
+    public static String makeParseableDescription(String name, String[] paramNames, Object target) {
+        return makeParseableDescription(name, paramNames, getParamValues(target, paramNames));
+    }
+    
+    public static Object[] getParamValues(Object target, String[] paramNames) {
+        Object[] ret = new Object[paramNames.length];
+        BeanWrapperImpl wrapper = new BeanWrapperImpl(target);
+        for (int i = 0; i < paramNames.length; i++) {
+            String name = paramNames[i];
+            ret[i] = wrapper.getPropertyValue(name);
+        }
+        return ret;
     }
 
 }

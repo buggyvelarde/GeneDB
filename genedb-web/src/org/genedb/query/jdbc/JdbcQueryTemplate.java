@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006 Genome Research Limited.
+ * Copyright (c) 2007 Genome Research Limited.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published
@@ -17,13 +17,33 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.query;
+package org.genedb.query.jdbc;
+
+import org.genedb.query.core.QueryTemplate;
+
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 
-public class QueryException extends Exception {
+public class JdbcQueryTemplate extends QueryTemplate {
+    
+    private String sql;
+    private String dataSource;
 
-    public QueryException(Exception exp) {
-        super(exp);
+    @Override
+    public void processNewPrototype(BeanDefinitionBuilder bdb) {
+    	bdb.addPropertyValue("sql", sql);
+        bdb.addPropertyReference("dataSource", dataSource);
     }
+
+    @Required
+	public void setSql(String sql) {
+		this.sql = sql;
+	}
+
+    @Required
+	public void setDataSource(String dataSource) {
+		this.dataSource = dataSource;
+	}
 
 }
