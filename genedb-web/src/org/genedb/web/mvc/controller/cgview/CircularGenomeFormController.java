@@ -187,7 +187,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
             String browserPath = pngFile.getBrowserPath(request);
             
             imageMap = addImageMap(browserPath, cgview.getWidth(), 
-                    cgview.getHeight(), cgview.getLabelBounds(), true);
+                    cgview.getHeight(), cgview.getLabelBounds(), true, fileName);
             
             
             VirtualDigest vDigest = new VirtualDigest();
@@ -309,7 +309,8 @@ public class CircularGenomeFormController extends SimpleFormController implement
      *                    {@link Cgview#getLabelBounds()} method.
      * @param useOverlib whether or not to use the overlib.js JavaScript library for PNG and JPG image maps.
      */
-    public String addImageMap(String imageFile, int width, int height, List labelBounds, boolean useOverlib) {
+    public String addImageMap(String imageFile, int width, int height, List labelBounds, 
+    		boolean useOverlib, String fileName) {
         StringBuilder ret = new StringBuilder();
 
         ret.append("<img style=\"border:0\" src=\"" + StringEscapeUtils.escapeHtml(imageFile) + "\" width=\"" + Integer.toString(width) + "\" height=\"" + Integer.toString(height) + "\" usemap=\"#cgviewmap\" />" + '\n');
@@ -326,10 +327,14 @@ public class CircularGenomeFormController extends SimpleFormController implement
             	int left = (int) Math.floor(bounds.getX() + 0.5d);
             	int bottom = (int) Math.floor(bounds.getY() + 0.5d);
             	MaxMinPair pair = extractMaxMinFromLink(currentLabelBounds);
+            	String orgOrFileLink = "organism=S_typhi";
+            	if (fileName != null) {
+            		orgOrFileLink = "taxon=User uploaded file&file="+fileName;
+            	}
             	String href;
-            	href= "FlatFileReport?outputFormat=Artemis&organism=S_typhi&min="+pair.min+"&max="+pair.max;
+            	href= "FlatFileReport?outputFormat=Artemis&"+orgOrFileLink+"&min="+pair.min+"&max="+pair.max;
                 makeImageMapArea(ret, currentLabelBounds, left, bottom, href);
-            	href= "FlatFileReport?outputFormat=Table&organism=S_typhi&min="+pair.min+"&max="+pair.max;
+            	href= "FlatFileReport?outputFormat=Table&"+orgOrFileLink+"&min="+pair.min+"&max="+pair.max;
                 makeImageMapArea(ret, currentLabelBounds, left+13, bottom, href);
             }
 

@@ -37,52 +37,52 @@ is chosen (further below).
 <h3>Select data for download</h3>
 <table width="100%" border="0">
 <tr bgcolor="FAFAD2">
-<td width="33%"><form:checkbox path="outputOption" value="ORGANISM"/>Organism</td>
-<td width="33%"><form:checkbox path="outputOption" value="SYS_ID"/>Systematic ID</td>
-<td width="33%"><form:checkbox path="outputOption" value="PRIMARY_NAME"/>Primary Name</td>
+<td width="33%"><form:checkbox path="outputOption" value="ORGANISM"/>Organism<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="SYS_ID"/>Systematic ID<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="PRIMARY_NAME"/>Primary Name<font color="red">(Not implemented)</font></td>
 </tr>
 <tr>
-<td width="33%"><form:checkbox path="outputOption" value="PRODUCT"/>Product</td>
-<td width="33%"><form:checkbox path="outputOption" value="SYNONYMS"/>Synonyms</td>
+<td width="33%"><form:checkbox path="outputOption" value="PRODUCT"/>Product<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="SYNONYMS"/>Synonyms<font color="red">(Not implemented)</font></td>
 <td width="33%"><span id="fieldOptionsOpener"><a href="javascript:showSection('fieldOptions');hideSection('fieldOptionsOpener')">See more options</a></span></td>
 </tr>
 </table>
 <div id="fieldOptions" style="visibility: hidden; display: none">
 <table width="100%">
 <tr bgcolor="FAFAD2">
-<td width="33%"><form:checkbox path="outputOption" value="PREV_SYS_ID"/>Previous Systematic ID</td>
-<td width="33%"><form:checkbox path="outputOption" value="CHROMOSOME"/>Chromosome</td>
-<td width="33%"><form:checkbox path="outputOption" value="LOCATION"/>Location (coordinates)</td>
+<td width="33%"><form:checkbox path="outputOption" value="PREV_SYS_ID"/>Previous Systematic ID<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="CHROMOSOME"/>Chromosome<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="LOCATION"/>Location (coordinates)<font color="red">(Not implemented)</font></td>
 </tr>
 <tr>
-<td width="33%"><form:checkbox path="outputOption" value="EC_NUMBERS"/>EC Numbers</td>
-<td width="33%"><form:checkbox path="outputOption" value="NUM_TM_DOMAINS"/>No. of TM domains</td>
-<td width="33%"><form:checkbox path="outputOption" value="SIG_P"/>Presence of signal peptide</td>
+<td width="33%"><form:checkbox path="outputOption" value="EC_NUMBERS"/>EC Numbers<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="NUM_TM_DOMAINS"/>No. of TM domains<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="SIG_P"/>Presence of signal peptide<font color="red">(Not implemented)</font></td>
 </tr>
 <tr bgcolor="FAFAD2">
-<td width="33%"><form:checkbox path="outputOption" value="GPI_ANCHOR"/>Presence of GPI anchor</td>
-<td width="33%"><form:checkbox path="outputOption" value="MOL_WEIGHT"/>Molecular weight</td>
-<td width="33%"><form:checkbox path="outputOption" value="ISOELECTRIC_POINT"/>Isoelectric point</td>
+<td width="33%"><form:checkbox path="outputOption" value="GPI_ANCHOR"/>Presence of GPI anchor<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="MOL_WEIGHT"/>Molecular weight<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="ISOELECTRIC_POINT"/>Isoelectric point<font color="red">(Not implemented)</font></td>
 <tr>
-<td width="33%"><form:checkbox path="outputOption" value="GO_IDS"/>GO IDs</td>
-<td width="33%"><form:checkbox path="outputOption" value="PFAM_IDS"/>Pfam IDs</td>
-<td width="33%"><form:checkbox path="outputOption" value="INTERPRO_IDS"/>Interpro IDs</td>
+<td width="33%"><form:checkbox path="outputOption" value="GO_IDS"/>GO IDs<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="PFAM_IDS"/>Pfam IDs<font color="red">(Not implemented)</font></td>
+<td width="33%"><form:checkbox path="outputOption" value="INTERPRO_IDS"/>Interpro IDs<font color="red">(Not implemented)</font></td>
 </tr>
 </table>
 <span id="fieldOptionsOpener"><a href="javascript:showSection('fieldOptionsOpener');hideSection('fieldOptions')">Hide extra options</a></span>
 </div>
 <p><b>Sequence Options</b>
 <table width="100%">
-<tr><td><form:checkbox path="outputOption" value="SEQ_PROTEIN"/>Protein sequence</td></tr>
-<tr><td><form:checkbox path="outputOption" value="SEQ_UNSPLICED"/>Nucleotide sequence of CDS (and introns)</td></tr>
+<tr><td><form:checkbox path="outputOption" value="SEQ_PROTEIN"/>Protein sequence<font color="red">(Not implemented)</font></td></tr>
+<tr><td><form:checkbox path="outputOption" value="SEQ_UNSPLICED"/>Nucleotide sequence of CDS (and introns)<font color="red">(Not implemented)</font></td></tr>
 </table>
 <div id="sequenceOptionsOpener"><a href="javascript:showSection('sequenceOptions');hideSection('sequenceOptionsOpener')">Extra sequence options</a></div>
 <div id="sequenceOptions" style="visibility: hidden; display: none">
 <table width="100%">
-<tr><td colspan="3"><form:checkbox path="outputOption" value="SEQ_SPLICED"/>Nucleotide (without introns)</td></tr>
-<tr><td colspan="3"><form:checkbox path="outputOption" value="SEQ_5P_UTR"/>5' UTR</td></tr>
-<tr><td colspan="3"><form:checkbox path="outputOption" value="SEQ_3P_UTR"/>3' UTR</td></tr>
-<tr bgcolor="FAFAD2"><td><form:checkbox path="outputOption" value="SEQ_5P_INTERGENIC"/>Intergenic Sequence (5'&nbsp;)</td>
+<tr><td colspan="3"><form:checkbox path="outputOption" value="SEQ_SPLICED"/>Nucleotide (without introns)<font color="red">(Not implemented)</font></td></tr>
+<tr><td colspan="3"><form:checkbox path="outputOption" value="SEQ_5P_UTR"/>5' UTR<font color="red">(Not implemented)</font></td></tr>
+<tr><td colspan="3"><form:checkbox path="outputOption" value="SEQ_3P_UTR"/>3' UTR<font color="red">(Not implemented)</font></td></tr>
+<tr bgcolor="FAFAD2"><td><form:checkbox path="outputOption" value="SEQ_5P_INTERGENIC"/>Intergenic Sequence (5'&nbsp;)<font color="red">(Not implemented)</font></td>
 <td rowspan="3" align="left">
 <input type="hidden" name="includeRNA" value="false">
 &nbsp;&nbsp;&nbsp;Number of bases: 
@@ -103,10 +103,10 @@ is chosen (further below).
 <tr bgcolor="FAFAD2">
 <td>
 <input type="hidden" name="includeRNA" value="false">
-<form:checkbox path="outputOption" value="SEQ_3P_INTERGENIC"/>Intergenic Sequence (3' )</td>
+<form:checkbox path="outputOption" value="SEQ_3P_INTERGENIC"/>Intergenic Sequence (3' )<font color="red">(Not implemented)</font></td>
 </tr>
 
-<tr><td><form:checkbox path="outputOption" value="SEQ_INTERGENIC"/>CDS/RNA with 5'/3' flanking sequence</td>
+<tr><td><form:checkbox path="outputOption" value="SEQ_INTERGENIC"/>CDS/RNA with 5'/3' flanking sequence<font color="red">(Not implemented)</font></td>
 
 <td align="left">
 <input type="hidden" name="includeRNA" value="true">
@@ -139,7 +139,7 @@ is chosen (further below).
 <option value="-1">To next CDS/RNA</option>
 </select>
 </td></tr>
-<tr bgcolor="FAFAD2"><td colspan="3"><form:checkbox path="outputOption" value="SEQ_INTRON"/>Intron sequence</td></tr>
+<tr bgcolor="FAFAD2"><td colspan="3"><form:checkbox path="outputOption" value="SEQ_INTRON"/>Intron sequence<font color="red">(Not implemented)</font></td></tr>
 <tr><td><a href="javascript:showSection('sequenceOptionsOpener');hideSection('sequenceOptions')">Hide extra sequence options</a></td></tr></table>
 </td></tr></table></div>
 
@@ -149,11 +149,14 @@ is chosen (further below).
 <h3>Output Format</h3>
 <table width="100%">
 <tr>
-<td><form:radiobutton path="outputFormat" value="CSV" />"Tab"-delimited file</td>
-<td><form:radiobutton path="outputFormat" value="EXCEL" />Excel (.XLS) format</td>
-<td><form:radiobutton path="outputFormat" value="ODF" />OpenDocument spreadsheet format</td>
-<td><form:radiobutton path="outputFormat" value="HTML" />HTML Table</td>
-<td><form:radiobutton path="outputFormat" value="FASTA" />FASTA</td>
+<td><form:radiobutton path="outputFormat" value="CSV" />"Tab"-delimited file<font color="red">(Not implemented)</font></td>
+<td><form:radiobutton path="outputFormat" value="EXCEL" />Excel (.XLS) format<font color="red">(Not implemented)</font></td>
+<td><form:radiobutton path="outputFormat" value="ODF" />OpenDocument spreadsheet format<font color="red">(Not implemented)</font></td>
+</tr>
+<tr>
+<td><form:radiobutton path="outputFormat" value="HTML" />HTML Table<font color="red">(Not implemented)</font></td>
+<td><form:radiobutton path="outputFormat" value="GO_ASSOC" />GO association file<font color="red">(Not implemented)</font></td>
+<td><form:radiobutton path="outputFormat" value="FASTA" />FASTA<font color="red">(Not implemented)</font></td>
 </tr>
 </table>
 </td></tr></table></div>
@@ -170,14 +173,14 @@ of the output separators etc, <a href="javascript:showSection('displayOptions');
 <p><a href="javascript:showSection('displayOptionsOpener');hideSection('displayOptions')">Hide this section</a></p>
 <table width="100%">
 <tr bgcolor="FAFAD2">
-<td>Column Headers:</td>
+<td>Column Headers:<font color="red">(Not implemented)</font></td>
 
 <td><input type="radio" name="cust_header" value="yes">Yes</td>
 <td><input type="radio" name="cust_header" value="no" checked>No</td>
 <td><small>Applies to tab-delimited and HTML formats</small></td>
 </tr>
 <tr>
-<td>Separator between columns</td>
+<td>Separator between columns<font color="red">(Not implemented)</font></td>
 <td colspan="2"><select name="field_sep">
 <option value="default" selected>Default</option>
 <option value="tab">TAB</option>
@@ -188,7 +191,7 @@ of the output separators etc, <a href="javascript:showSection('displayOptions');
 <td><small>Applies to tab-delimited (default TAB) and FASTA (default |) formats</small></td>
 </tr>
 <tr bgcolor="FAFAD2">
-<td>Empty columns:</td>
+<td>Empty columns:<font color="red">(Not implemented)</font></td>
 <td colspan="2"><select name="field_blank">
 <option value="blank" selected>EMPTY</option>
 <option value="-">-</option>
@@ -197,7 +200,7 @@ of the output separators etc, <a href="javascript:showSection('displayOptions');
 
 </tr>
 <tr>
-<td>Separator within columns:</td>
+<td>Separator within columns:<font color="red">(Not implemented)</font></td>
 <td colspan="2"><select name="field_intsep">
 <option value="," selected>,</option>
 <option value="|">|</option>
@@ -221,10 +224,10 @@ of the output separators etc, <a href="javascript:showSection('displayOptions');
 <td><form:radiobutton path="outputDestination" value="TO_BROWSER" />&nbsp;To Browser</td>
 </tr>
 <tr>
-<td><form:radiobutton path="outputDestination" value="TO_FILE" />&nbsp;To File...</td>
+<td><form:radiobutton path="outputDestination" value="TO_FILE" />&nbsp;To File...<font color="red">(Not implemented)</font></td>
 </tr>
 <tr bgcolor="FAFAD2">
-<td><form:radiobutton path="outputDestination" value="TO_EMAIL" />&nbsp;To e-mail</td>
+<td><form:radiobutton path="outputDestination" value="TO_EMAIL" />&nbsp;To e-mail<font color="red">(Not implemented)</font></td>
 </tr>
 </table>
 </td></tr></table></div>

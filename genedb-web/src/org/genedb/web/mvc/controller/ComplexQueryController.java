@@ -60,7 +60,7 @@ public class ComplexQueryController extends MultiActionController implements Ini
 	public ModelAndView BooleanQuery(HttpServletRequest request, HttpServletResponse response) {
 		List<String> answers = new ArrayList<String>();
 		if (!WebUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
-			return new ModelAndView("chooseTaxonContextView");
+			return new ModelAndView("chooseTaxon");
 		}
 		
 		QueryForm qf = parseQueryForm(0, request);

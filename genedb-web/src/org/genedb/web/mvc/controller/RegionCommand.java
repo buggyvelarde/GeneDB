@@ -19,6 +19,8 @@
 
 package org.genedb.web.mvc.controller;
 
+import org.genedb.web.mvc.controller.download.OutputFormat;
+
 public class RegionCommand {
     String name;
     Taxon organism;

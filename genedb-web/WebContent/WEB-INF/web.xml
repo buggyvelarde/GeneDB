@@ -96,6 +96,14 @@
 		<servlet-name>genedb</servlet-name>
 		<url-pattern>/CircularGenomeForm</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/ComplexQuery/*</url-pattern>
+    </servlet-mapping>
+    	<servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/DownloadFeatures</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Search/*</url-pattern>

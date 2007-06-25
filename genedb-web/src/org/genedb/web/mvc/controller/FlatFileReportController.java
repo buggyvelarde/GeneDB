@@ -23,13 +23,17 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
 
+import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
+import org.biojava.bio.seq.Feature;
 import org.biojava.bio.seq.FeatureFilter;
 import org.biojava.bio.seq.FeatureHolder;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
+import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.seq.impl.SubSequence;
 import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.symbol.Location;
 import org.biojavax.bio.seq.RichSequenceIterator;
 import org.biojavax.bio.seq.RichSequence.IOTools;
 import org.springframework.validation.BindException;
@@ -42,7 +46,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -127,8 +134,14 @@ public class FlatFileReportController extends PostOrGetFormController {
             SubSequence sub = extractSubSequence(ffrb);
             FeatureHolder fh = sub.filter(new FeatureFilter.ByType("CDS"));
             Map<String, Object> model = new HashMap<String, Object>(3);
-            model.put("features", fh.features());
-            String viewName = null;
+            Iterator it = fh.features();
+            List<FeatureSummary> ret = new ArrayList<FeatureSummary>();
+            while (it.hasNext()) {
+            	Feature feat = (Feature) it.next();
+            	ret.add(new FeatureSummary(feat));
+            }
+            model.put("features", ret);
+            String viewName = "flatFileTable";
             return new ModelAndView(viewName, model);
         }
         
@@ -185,6 +198,7 @@ public class FlatFileReportController extends PostOrGetFormController {
 
     class FlatFileReportBean {
         private String organism;
+        private String file;
         private String outputFormat;
         private int min;
         private int max;
@@ -213,8 +227,13 @@ public class FlatFileReportController extends PostOrGetFormController {
         public void setMin(int min) {
             this.min = min;
         }
+		protected String getFile() {
+			return file;
+		}
+		protected void setFile(String file) {
+			this.file = file;
+		}
         
         
     }
     
- 

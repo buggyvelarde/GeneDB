@@ -75,9 +75,9 @@
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://localhost:2224/chado" />
-        <property name="username" value="linfantum" />
-        <property name="password" value="chado" />
+        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10001/chado" />
+        <property name="username" value="web" />
+        <property name="password" value="---" />
     </bean>
 	    
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
