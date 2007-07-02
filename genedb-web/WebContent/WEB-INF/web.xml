@@ -23,7 +23,7 @@
 	</context-param>
 	
 	<context-param>
-		<param-name>contextConfigLocation</param-name><param-value>/WEB-INF/applicationContext.xml</param-value>
+		<param-name>contextConfigLocation</param-name><param-value>/WEB-INF/applicationContext.xml, /WEB-INF/queryContext.xml</param-value>
 	</context-param>
 
 	<!--
@@ -55,8 +55,8 @@
 	</listener>
 
     <!--
-      - Loads the root application context of this web app at startup,
-      - by default from "/WEB-INF/applicationContext.xml".
+      - 
+      - 
     -->
     <listener>
         <listener-class>org.genedb.web.mvc.controller.TaxonManagerListener</listener-class>
