@@ -117,7 +117,10 @@ public class NewRunner implements ApplicationContextAware {
 
     Map<String,String> cdsQualifiers = new HashMap<String,String>();
     
-	Set<String> handeledQualifiers = new HashSet<String>();
+	private Set<String> handeledQualifiers = new HashSet<String>();
+    
+    private OrthologueStorage orthologueStorage = new OrthologueStorage();
+    
     
     public void setHibernateTransactionManager(
 			HibernateTransactionManager hibernateTransactionManager) {
