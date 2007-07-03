@@ -42,6 +42,7 @@ import org.genedb.db.loading.GeneDbGeneNamingStrategy;
 import org.genedb.db.loading.GeneNamingStrategy;
 import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.ProcessingPhase;
+import org.genedb.db.loading.TaxonNode;
 
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
@@ -57,8 +58,11 @@ import org.gmod.schema.sequence.FeaturePropPub;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.GeneticCodes;
+import org.biojava.bio.seq.RNATools;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
+import org.biojava.bio.symbol.TranslationTable;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -454,54 +458,49 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 //            return ret;
 //        }
     //
-    //    // private String translate(String nucleic) {
-    //    // if (translation != null && translation.length() > 0 ) {
-    //    // this.setSequence(SequenceType.SEQ_PROTEIN, translation);
-    //    // return;
-    //    // }
-    //
-    //    // if ( table != null) {
-    //    // try {
-    //    // int num = Integer.parseInt(table);
-    //    // if (GeneticCodes.isValidTransTable(num)) {
-    //    // setTranslationTableNum(num);
-    //    // } else {
-    //    // System.err.println("WARN: Attempted to set unrecognized translation
-    //    // table ("+table+") in "+getId());
-    //    // }
-    //    // }
-    //    // catch (NumberFormatException exp) {
-    //    // System.err.println("WARN: Attempted to set unrecognized translation
-    //    // table ("+table+") in "+getId());
-    //    // }
-    //    // }
-    //
-    //    // int cdStartNum = 1;
-    //    // if (cdStart != null && cdStart.length() != 0) {
-    //    // cdStartNum = Integer.parseInt(cdStart);
-    //    // }
-    //    // if (cdStartNum < 1 || cdStartNum > 3) {
-    //    // LogUtils.bprintln("WARN: Ignoring unexpected value of codon_start ("
-    //    // + cdStart + ") in " + getId());
-    //    // cdStartNum = 1;
-    //    // }
-    //    // if (cdStartNum != 1 && !isPartial()) {
-    //    // LogUtils.bprintln("WARN: Got non '1' value for codon_start ("
-    //    // + cdStart + ") but no /partial in " + getId());
-    //    // setPartial(true);
-    //    // }
-    //
-    //    // if (cdStartNum != 1) {
-    //    // setCodonStart(cdStartNum);
-    //    // }
-    //
-    //    // SeqTrans.SeqTransResult result =
-    //    // SeqTrans.getInstance().translate(this, getTranslationTableNumber(),
-    //    // getCodonStart().intValue(), codon, except);
-    //    // setProteinWarning(result.getWarning());
-    //    // setSequence(SequenceType.SEQ_PROTEIN, result.getSeq());
-    //
-    //    // }
+//	protected String translate(String nucleic, Annotation an, TaxonNode tn) {
+//		if (translation != null && translation.length() > 0 ) {
+//			this.setSequence(SequenceType.SEQ_PROTEIN, translation);
+//			return;
+//		}
+//		//tn.
+//		
+//		
+//		Map translationDetails = tn.getAppDetails("translation");
+//		String table = (String) translationDetails.get("table");
+//		if ( table != null) {
+//			TranslationTable tt = RNATools.getGeneticCode(table);
+//			if (tt == null) {
+//				throw new RuntimeException("WARN: Attempted to set unrecognized translation table '"+table+"'");
+//			}
+//		}
+//
+//		int cdStartNum = 1;
+//		if (cdStart != null && cdStart.length() != 0) {
+//			cdStartNum = Integer.parseInt(cdStart);
+//		}
+//		if (cdStartNum < 1 || cdStartNum > 3) {
+//			LogUtils.bprintln("WARN: Ignoring unexpected value of codon_start ("
+//					+ cdStart + ") in " + getId());
+//			cdStartNum = 1;
+//		}
+//		if (cdStartNum != 1 && !isPartial()) {
+//			LogUtils.bprintln("WARN: Got non '1' value for codon_start ("
+//					+ cdStart + ") but no /partial in " + getId());
+//			setPartial(true);
+//		}
+//
+//		if (cdStartNum != 1) {
+//			setCodonStart(cdStartNum);
+//		}
+//
+//		SeqTrans.SeqTransResult result =
+//		SeqTrans.getInstance().translate(this, getTranslationTableNumber(),
+//		getCodonStart().intValue(), codon, except);
+//		setProteinWarning(result.getWarning());
+//		setSequence(SequenceType.SEQ_PROTEIN, result.getSeq());
+//
+//	}
     //
     //    /*
     //     * (non-Javadoc)

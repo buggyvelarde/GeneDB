@@ -339,10 +339,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             
             createOtherNotes(polypeptide, an, "private", MISC_PRIVATE);
             createOtherNotes(polypeptide, an, "curation", MISC_CURATION);
-            //String nucleic = parent.getResidues().substring(loc.getMin(),
-            // loc.getMax());
-            // String protein = translate(nucleic);
-            // polypeptide.setResidues(protein);
+            
+            createTranslation(parent, polypeptide, an, loc);
 
             //System.err.print(".");
         } catch (RuntimeException exp) {
@@ -351,7 +349,14 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
     }
 
-    private void createOtherNotes(Feature polypeptide, Annotation an, String key, CvTerm cvTerm) {
+    private void createTranslation(Feature parent, Feature polypeptide, Annotation an, Location loc) {
+        String nucleic = new String(parent.getResidues(), loc.getMin(), loc.getMax()-loc.getMin()); // TODO Check offsets
+        String protein =null;//= translate(nucleic, an); FIXME
+        polypeptide.setResidues(protein.getBytes());
+	}
+
+
+	private void createOtherNotes(Feature polypeptide, Annotation an, String key, CvTerm cvTerm) {
     	List<String> notes = MiningUtils.getProperties(key, an);
     	int rank = 0;
     	for (String note : notes) {
