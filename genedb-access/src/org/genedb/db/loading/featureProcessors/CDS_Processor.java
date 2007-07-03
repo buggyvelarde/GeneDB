@@ -70,6 +70,7 @@ import org.genedb.db.loading.GoParser;
 import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.Names;
 import org.genedb.db.loading.NomenclatureHandler;
+import org.genedb.db.loading.OrthologueStorage;
 import org.genedb.db.loading.ProcessingPhase;
 import org.genedb.db.loading.ProteinUtils;
 import org.genedb.db.loading.RankableUtils;
@@ -117,7 +118,15 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
     private int count;
     
+
+    
+    private OrthologueStorage orthologueStorage;
+    
 	Pattern PUBMED_PATTERN;
+
+    public void setOrthologueStorage(OrthologueStorage orthologueStorage) {
+        this.orthologueStorage = orthologueStorage;
+    }
 
     public CDS_Processor() {
 		handledQualifiers = new String[]{"CDS:EC_number", "CDS:primary_name", 
@@ -342,6 +351,10 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             
             createTranslation(parent, polypeptide, an, loc);
 
+            // Now persist gene heirachy
+            
+            processOrthologue(an);
+            
             //System.err.print(".");
         } catch (RuntimeException exp) {
             System.err.println("\n\nWas looking at '" + sysId + "'");
@@ -349,11 +362,42 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
     }
 
+    private String extractFromId(String in) {
+        if (in.contains(":")) {
+            in.substring(in.indexOf(":"));
+        }
+        return in;
+    }
+
     private void createTranslation(Feature parent, Feature polypeptide, Annotation an, Location loc) {
         String nucleic = new String(parent.getResidues(), loc.getMin(), loc.getMax()-loc.getMin()); // TODO Check offsets
         String protein =null;//= translate(nucleic, an); FIXME
         polypeptide.setResidues(protein.getBytes());
 	}
+
+    private void processOrthologue(Annotation an) {
+        List<String> orthologues = MiningUtils.getProperties("orthologue", an);
+        for (String entry : orthologues) {
+            String id = extractFromId(entry);
+            orthologueStorage.addOrthologue(id);
+        }
+        List<String> paralogues = MiningUtils.getProperties("paralogue", an);
+        for (String entry : paralogues) {
+            String id = extractFromId(entry);
+            orthologueStorage.addParalogue(id);
+        }
+        List<String> curatedOrthologues = MiningUtils.getProperties("curated_orthologue", an);
+        for (String entry : curatedOrthologues) {
+            String id = extractFromId(entry);
+            orthologueStorage.addCuratedOrthologue(id);
+        }
+        List<String> clusters = MiningUtils.getProperties("cluster", an);
+        for (String entry : clusters) {
+            String id = extractFromId(entry);
+            String key = null;
+            orthologueStorage.addCluster(key, id);
+        }
+    }
 
 
 	private void createOtherNotes(Feature polypeptide, Annotation an, String key, CvTerm cvTerm) {
@@ -684,6 +728,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         	ccs.addAll(lhs);
         }
 
+        int rank = 0;
+
         for (ControlledCurationInstance cc : ccs) {
             boolean other = false;
             DbXRef dbXRef = null;
@@ -751,7 +797,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             //sequenceDao.persist(fct);
 
             if (fcts == null || fcts.size()==0) {
-                fct = new FeatureCvTerm(cvt, polypeptide, pub, not, 0);
+                fct = new FeatureCvTerm(cvt, polypeptide, pub, not,rank);
                 sequenceDao.persist(fct);
                 logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
             } else {
@@ -800,6 +846,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     }
                 }
             }
+            rank++;
         }
     }
 
@@ -1108,6 +1155,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
     }
 
+    private void processPseudoGene() {
+        // TODO Pseudogenes
+        return;
+    }
+
     private void createProducts(Feature f, Annotation an, String annotationKey, Cv cv) {
         List<String> products = MiningUtils.getProperties(annotationKey, an);
         boolean not = false;
@@ -1200,6 +1252,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         this.nomenclatureHandler = nomenclatureHandler;
     }
 
+    @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.FIRST;
     }
