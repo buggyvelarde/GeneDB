@@ -88,14 +88,14 @@ public class FeatureRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipI#getFeatureRelationshipId()
      */
-    private int getFeatureRelationshipId() {
+    public int getFeatureRelationshipId() {
         return this.featureRelationshipId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipI#setFeatureRelationshipId(int)
      */
-    private void setFeatureRelationshipId(int featureRelationshipId) {
+    public void setFeatureRelationshipId(int featureRelationshipId) {
         this.featureRelationshipId = featureRelationshipId;
     }
 
