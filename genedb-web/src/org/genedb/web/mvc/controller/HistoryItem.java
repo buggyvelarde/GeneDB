@@ -1,6 +1,6 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.query.Query;
+import org.genedb.query.core.Query;
 
 import java.util.ArrayList;
 import java.util.List;
