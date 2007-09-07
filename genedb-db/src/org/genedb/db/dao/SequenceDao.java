@@ -4,6 +4,7 @@ package org.genedb.db.dao;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.SequenceDaoI;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
@@ -241,70 +242,24 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         
         logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgNames+"'");
         // The list of orgs is being included literally as it didn't seem to work as a parameter
-        return getHibernateTemplate().findByNamedParam("select f from Feature f where" +
+        List<Feature> features = getHibernateTemplate().findByNamedParam("select f from Feature f where" +
         		" f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames+" )", 
         		new String[]{"lookup","featureType"}, new Object[]{lookup,featureType, });
+        
+        System.out.println("Size in DAO " + features.size());
+        return features;
 	}
 	
 	// Maybe replace this with lucene query
 	@SuppressWarnings("unchecked")
-	public List<Feature> getFeaturesByAnyNameOrProductAndOrganism(String nl, List<String> orgList, String featureType) {
+	public List<Feature> getFeaturesByAnyNameOrProductAndOrganism(String nl, String orgs, String featureType) {
 		
-		
-		if (orgList == null || orgList.size()==0 ) {
-			logger.info("nl.getOrglist is null therefore calling featuresbyname");
-			return(getFeaturesByAnyName(nl,featureType));
-		}
-
         String lookup = nl.replaceAll("\\*", "%");
-        StringBuilder orgNames = new StringBuilder();
-        boolean notFirst = false;
-        for (String orgName : orgList) {
-        	if (notFirst) {
-        		orgNames.append(", ");
-        	} else {
-        		notFirst = true;
-        	}
-			orgNames.append('\'');
-			orgNames.append(orgName);
-			orgNames.append('\'');
-		}
          
-        logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgNames+"'");
+        logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgs+"'");
         // The list of orgs is being included literally as it didn't seem to work as a parameter
         return getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureProp fp where" +
-        		" (f.uniqueName like :lookup or ( fp.cvt.cv.name == 'genedb_products' and fp.cvt.name like :lookup and fp.feature = f)) and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames.toString()+" )", 
-        		new String[]{"lookup","featureType"}, new Object[]{lookup,featureType, });
-	}
-	
-	// Maybe replace this with lucene query
-	@SuppressWarnings("unchecked")
-	public List<Feature> getFeaturesByAnyNameOrProductAndOrganism(String nl, List<String> orgList, String featureType) {
-		
-		
-		if (orgList == null || orgList.size()==0 ) {
-			logger.info("nl.getOrglist is null therefore calling featuresbyname");
-			return(getFeaturesByAnyName(nl,featureType));
-		}
-
-        String lookup = nl.replaceAll("\\*", "%");
-        StringBuilder orgNames = new StringBuilder();
-        boolean notFirst = false;
-        for (String orgName : orgList) {
-        	if (notFirst) {
-        		orgNames.append(", ");
-        	} else {
-        		notFirst = true;
-        	}
-			orgNames.append('\'');
-			orgNames.append(orgName);
-			orgNames.append('\'');
-		}
-         
-        logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgNames+"'");
-        // The list of orgs is being included literally as it didn't seem to work as a parameter
-        return getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureProp fp where" +
-        		" (f.uniqueName like :lookup or ( fp.cvt.cv.name == 'genedb_products' and fp.cvt.name like :lookup and fp.feature = f)) and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames.toString()+" )", 
+        		" (f.uniqueName like :lookup or ( fp.cvt.cv.name == 'genedb_products' and fp.cvt.name like :lookup and fp.feature = f)) and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgs+" )", 
         		new String[]{"lookup","featureType"}, new Object[]{lookup,featureType, });
 	}
 
@@ -365,11 +320,36 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
     }
 
 	public List<String> getPossibleMatches(String name, CvTerm cvTerm, int limit) {
-		HibernateTemplate ht = getHibernateTemplate();
+		HibernateTemplate ht = new HibernateTemplate(getSessionFactory());
         ht.setMaxResults(limit);
         return ht.findByNamedParam(
                 "select f.uniqueName from Feature f where lower(f.uniqueName) like lower(:name) and f.cvTerm = :cvTerm",
                 new String[]{"name", "cvTerm"}, new Object[]{"%"+name+"%", cvTerm});
+	}
+
+	public List<Feature> getFeaturesByOrganism(Organism org) {
+		List<Feature> features = getHibernateTemplate().findByNamedParam(
+				"from Feature f where f.organism=:org", "org", org);
+		return features;
+	}
+
+	public List<Feature> getFeaturesByUniqueNames(List<String> names) {
+		boolean notFirst = false;
+		StringBuilder featureIds = new StringBuilder();
+		for (String name : names) {
+			if (notFirst) {
+        		featureIds.append(", ");
+        	} else {
+        		notFirst = true;
+        	}
+			featureIds.append('\'');
+			featureIds.append(name);
+			featureIds.append('\'');
+		}
+		String query = "from Feature f where f.uniqueName in (" + featureIds.toString() + ")";
+		List<Feature> features = getHibernateTemplate().find(query);
+		
+		return features;
 	}
 
 }
