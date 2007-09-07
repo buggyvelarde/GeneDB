@@ -22,6 +22,7 @@ package org.gmod.schema.dao;
 
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
@@ -238,4 +239,21 @@ public interface SequenceDaoI extends BaseDaoI {
      * @return a (possibly empty) List<Feature> of Feature
      */
     public List<Feature> getFeaturesByAnyNameAndOrganism(String name,String orgNames,String featureType);
+    
+    /**
+     * Return a list of feature based on organism 
+     * 
+     * @param organism the Organism
+     * @return a (possibly empty) List<String> of feature
+     */
+    public List<Feature> getFeaturesByOrganism(Organism org);
+    
+    /**
+     * Return the features corresponding to uniquenames in the list
+     * 
+     * @param names the list of uniquenames
+     * @return the list of Features, or null
+     */
+    public List<Feature> getFeaturesByUniqueNames(List<String> names);
+
 }
