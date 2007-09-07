@@ -22,13 +22,18 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.TaxonNode;
+import org.genedb.db.loading.TaxonNodeManager;
 
+import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,47 +64,18 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     	
         NameLookupBean nlb = (NameLookupBean) command;
         
-        TaxonNode[] taxonNode = nlb.getOrganism();
-        
+        String orgs = nlb.getOrgs();
         Map<String, Object> model = new HashMap<String, Object>(4);
         String viewName = null;
         
-//        if (queryString == "Please enter search text ..."){
-//			List <String> err = new ArrayList <String> ();
-//			err.add("No search String found");
-//        	err.add("please use the form below to search again");
-//        	model.put("status", err);
-//        	model.put("organisms", organisms);
-//        	model.put("nameLookup", nl);
-//        	viewName = getFormView();
-//        	return new ModelAndView(viewName,model);
-//		} else if (queryString == null){
-//			viewName = getFormView();
-//			model.put("organisms", organisms);
-//			model.put("nameLookup", nl);
-//        	return new ModelAndView(viewName,model);
-//		}
-        
         logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
-        logger.info("TaxonNode[0] is '"+taxonNode[0]+"'");
-        List<String> orgNames = taxonNode[0].getAllChildrenNames(); // FIXME 
+        //logger.info("TaxonNode[0] is '"+taxonNode[0]+"'");
+        //List<String> orgNames = taxonNode[0].getAllChildrenNames(); // FIXME 
         List<Feature> results = null;
-        
+        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(orgs);
         if (!nlb.isUseProduct()) {
-            StringBuilder orgNames2 = new StringBuilder();
-            boolean notFirst = false;
-            for (String orgName : orgNames) {
-            	if (notFirst) {
-            		orgNames2.append(", ");
-            	} else {
-            		notFirst = true;
-            	}
-    			orgNames2.append('\'');
-    			orgNames2.append(orgName);
-    			orgNames2.append('\'');
-    		}
         	results = sequenceDao.getFeaturesByAnyNameAndOrganism(
-        			nlb.getName(), orgNames2.toString(), nlb.getFeatureType());
+        			nlb.getName(), orgNames.toString(), nlb.getFeatureType());
         } else {
         	results = sequenceDao.getFeaturesByAnyNameOrProductAndOrganism(
         			nlb.getName(), orgNames, nlb.getFeatureType());
@@ -173,13 +149,21 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 class NameLookupBean {
     
     private String name; // The name to lookup, using * for wildcards
-    private TaxonNode[] organism;
     private boolean addWildcard = false;
     private String featureType = "gene";
     private boolean useProduct = false;
     private boolean history = false;
-       
-    public void setName(String name) {
+    private String orgs;
+    
+	public String getOrgs() {
+		return orgs;
+	}
+
+	public void setOrgs(String orgs) {
+		this.orgs = orgs;
+	}
+
+	public void setName(String name) {
         this.name = name;
     }
     
@@ -196,14 +180,6 @@ class NameLookupBean {
     	}
     	return this.name;
     }
-
-	public TaxonNode[] getOrganism() {
-		return organism;
-	}
-
-	public void setOrganism(TaxonNode[] organism) {
-		this.organism = organism;
-	}
 
 	public String getFeatureType() {
 		return featureType;
@@ -235,7 +211,7 @@ class NameLookupBean {
     
 	@Override
     public String toString() {
-		return getName()+","+getOrganism();
+		return getName()+","+getOrgs();
 	}
     
 }
