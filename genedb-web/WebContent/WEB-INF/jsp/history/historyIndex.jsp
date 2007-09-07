@@ -21,7 +21,7 @@
    	<display:column property="numberItems" title="No. of results"/>
    	<display:column title="View/Edit"><a href="/History/Edit?item=${row_rowNum}&version=${version}">View/Edit</a></display:column>
    	<display:column title="Tools">Orthologues</display:column>
-   	<display:column title="Download"><a href="/DownloadFeatures?historyItem=${row_rowNum}&version=${version}">Download</a></display:column>
+   	<display:column title="Download"><a href="/genedb-web/DownloadFeatures?historyItem=${row_rowNum}&version=1">Download</a></display:column>
    	<display:column title="Delete"><input type="submit" name="__submit_delete_${row_rowNum}" value="Delete" ></display:column>
 </display:table>
 </form>
