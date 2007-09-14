@@ -1,13 +1,21 @@
 package org.genedb.web.mvc.controller;
 
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -41,8 +49,8 @@ public class ExtController extends TaxonNodeBindingFormController {
 		if (end > total) {
 			end = total;
 		}
-		List<String> ids = historyItem.getIds().subList(start, end);
 		
+		List<String> ids = historyItem.getIds().subList(start, end);
 		List<Feature> features = sequenceDao.getFeaturesByUniqueNames(ids);
 		JSONArray array = new JSONArray();
 		for (Feature feature : features) {
@@ -59,10 +67,10 @@ public class ExtController extends TaxonNodeBindingFormController {
     			Iterator<FeatureRelationship> frs = fr.getFeatureBySubjectId().getFeatureRelationshipsForObjectId().iterator();
     			while(frs.hasNext()) {
     				FeatureRelationship frel = frs.next();
-    				logger.info("Type = " + frel.getFeatureBySubjectId().getCvTerm().getName());
+    				//logger.info("Type = " + frel.getFeatureBySubjectId().getCvTerm().getName());
     				if(frel.getFeatureBySubjectId().getCvTerm().getName().equals("polypeptide")) {
     					Feature f = frel.getFeatureBySubjectId();
-    					logger.info("Polypeptide is " + f.getUniqueName());
+    					//logger.info("Polypeptide is " + f.getUniqueName());
     					Iterator<FeatureCvTerm> fcts = f.getFeatureCvTerms().iterator();
     					while(fcts.hasNext()) {
     						FeatureCvTerm fct = fcts.next();
@@ -96,7 +104,7 @@ public class ExtController extends TaxonNodeBindingFormController {
 
 		return null;
 	}
-
+	
 	public HistoryManagerFactory getHistoryManagerFactory() {
 		return historyManagerFactory;
 	}
