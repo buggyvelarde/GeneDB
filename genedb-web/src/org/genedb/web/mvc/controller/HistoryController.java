@@ -16,12 +16,16 @@ import org.genedb.web.mvc.history.commandline.ParseException;
 import org.genedb.web.tags.bool.QueryTreeWalker;
 
 import org.gmod.schema.sequence.Feature;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,6 +91,58 @@ public class HistoryController extends MultiActionController implements Initiali
 //	    }
 
 	    return new ModelAndView("history/historyIndex", model);
+	}
+	
+	public ModelAndView Data(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession(false);
+        if (session == null) {
+            // No session
+            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest", "false");
+            if ("true".equals(secondTry)) {
+                // TODO Maybe use built in error handling
+                return new ModelAndView("history/noSession");
+            }
+            // Try and create session and return here
+            session = request.getSession(true);
+            return new ModelAndView("redirect:"+"/History/View?sessionTest=true");
+        }
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+        List<HistoryItem> items = historyManager.getHistoryItems();
+        String change = request.getParameter("change");
+        if(change.equals("true")) {
+        	int row = Integer.parseInt((request.getParameter("row")));
+        	String value = request.getParameter("value");
+        	
+        	items.get(row).setName(value);
+        }
+        
+        int count = 1;
+        JSONArray array = new JSONArray();
+        for (HistoryItem item : items) {
+        	JSONObject obj = new JSONObject();
+        	obj.put("index", count);
+        	obj.put("name", item.getName());
+        	obj.put("type", item.getQuery());
+        	obj.put("noresults", item.getNumberItems());
+        	obj.put("tools", "orthologs");
+        	obj.put("download", "http://localhost:8080/genedb-web/DownloadFeatures?historyItem=" + count);
+        	array.add(obj);
+        	count++;
+		}
+        JSONObject obj = new JSONObject();
+    	obj.put("total", items.size());
+    	obj.put("queries", array);
+    	PrintWriter out = null;
+		try {
+			out = response.getWriter();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	out.print(obj);
+    	out.close();
+    	
+		return new ModelAndView("history/historyIndex");
 	}
 	
 	private static final String GENEDB_HISTORY = "_GeneDB_History_List";
