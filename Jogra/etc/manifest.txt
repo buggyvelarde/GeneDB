@@ -1,0 +1,2 @@
+Main-Class: org.genedb.zfexpression.phugushop.drawing.Phugushop
+Class-Path: EventBus.jar spring-2.0M4.jar commons-logging.jar commons-dbcp.jar commons-pool.jar poi-2.5.1-final-20040804.jar

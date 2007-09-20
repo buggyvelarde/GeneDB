@@ -1,0 +1,31 @@
+To Do
+=====
+What should be options for generate? Composite and individual by colour
+Ask how many negatives at end, to work out how many screened
+Be able to restart with new element
+Rubber banding for lines
+Where to store default files?
+Change save to choose directory
+
+Display details/save state in title bar?
+Better exiting handling
+Better save handling
+Write/retrieve username from spreadsheet
+Write/retrieve slide labels from spreadsheet
+Album window wrong when first brought up
+
+
+
+
+
+Done
+=====
+Make slide navigator work
+New splash screen
+Family album
+Tag not showing in album
+Load and save spreadsheet
+Off-by-1 error in num slides in experiment?
+Should unkept points be round-tripped? No
+UK date on front
+Users and initials - editable, default list

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+		
+	<bean id="anatomyDao" class="org.genedb.jogra.domain.ExpressionZoneDao" />
+		
+	<bean id="elementDao" class="org.genedb.jogra.domain.ElementDao" />
+            
+<!--     <bean id="loginForm" class="org.genedb.jogra.drawing.JograLogin">
+        <property name="name" value="jogra.jpg" />
+    </bean> -->
+    	
+	<bean id="newSessionStartForm" class="org.genedb.jogra.drawing.NewSessionStartForm" />
+	
+	<bean id="primerSelectionForm" class="org.genedb.jogra.drawing.PrimerSelectionForm"/>
+	
+    <bean name="expressionZoneSelector" class="org.genedb.jogra.drawing.ClickableImageArea">
+        <property name="expressionZoneDao" ref="anatomyDao" />
+    </bean>
+	
+	    <!-- DataSource Property -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		 <property name="driverClassName" value="org.postgresql.Driver" />
+<!--	 	 <property name="url" value="jdbc:postgresql:ormtest" /> -->
+<!--         <property name="username" value="art" />-->
+        <property name="url" value="jdbc:postgresql://holly.internal.sanger.ac.uk:5432/chado" />
+        <!--<property name="username" value="plasmodia" />-->
+<!--        <property name="username" value="pfalciparum"/>-->
+        <!-- <property name="username" value="tbrucei"/> -->
+        <!-- <property name="username" value="spombe" /> -->
+        <property name="username" value="web" />
+        <property name="password" value="WIBBLE" />
+	</bean> 
+
+	<!-- Database Property -->
+	<bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+ 	<property name="properties">
+  	<props>
+  		<prop key="hibernate.hbm2dll.auto">validate</prop>
+ 	    <!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
+<!--	  	<prop key="hibernate.query.substitutions">true 'T', false 'F'</prop>-->
+<!--  		<prop key="hibernate.show_sql">false</prop>-->
+<!--  		<prop key="hibernate.c3p0.minPoolSize">5</prop>-->
+<!--  		<prop key="hibernate.c3p0.maxPoolSize">20</prop>-->
+<!--  		<prop key="hibernate.c3p0.timeout">600</prop>-->
+<!--  		<prop key="hibernate.c3p0.max_statement">50</prop>-->
+<!--		<prop key="hibernate.bytecode.use_reflection_optimizer">false</prop>-->
+        <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+<!--	  	<prop key="hibernate.c3p0.testConnectionOnCheckout">false</prop> -->
+ 	 </props>
+	 </property>
+	</bean>
+    
+</beans>

@@ -1,0 +1,54 @@
+<project name="Phugushop" default="jar" basedir=".">
+
+    <!-- edit the following lines to your needs -->
+    <target name="init">
+    <property name="project_name" value="Phugushop"/>
+    <property name="srcDir" value="src"/>
+    <property name="build.dir" value="ant-build"/>
+    <property name="jar" value="${project_name}.jar"/>
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${build.dir}/classes" />
+    </target>
+
+	<path id="classpath">
+		<fileset dir="WebContent/WEB-INF/lib" id="id">
+    		<include name="*.jar"/>
+		</fileset>
+		<fileset dir="/Users/art/Software/UnixApp/apache-tomcat-5.5.15/common/lib">
+    		<include name="*.jar"/>
+		</fileset>
+	</path>
+
+    <!-- compile -->
+    <target name="compile" depends="init">
+      <javac srcdir="${srcDir}" includes="**/*.java" debug="true"
+        destdir="${build.dir}/classes" classpathref="classpath">
+      </javac>
+    </target>
+
+    <!-- create .jar -->
+    <target name="jar" depends="compile">
+    	<delete file="${build.dir}/${jar}" />
+    	<copy todir="${build.dir}">
+    		<fileset dir="WebContent/WEB-INF/lib" />
+    	</copy>
+      <jar jarfile="${build.dir}/${jar}"
+        basedir="${build.dir}/classes"
+      	manifest="etc/manifest.txt">
+      	<fileset dir="WebContent/WEB-INF">
+      		<include name="applicationContext.xml" />
+     		<include name="*.jpg" />
+     		<include name="*.png" />
+     		<include name="*.xls" />
+      	</fileset>
+      </jar>
+    </target>
+
+
+    <!-- removes all that has been built -->
+    <target name="clean" depends="init">
+      <delete dir="${build.dir}" includeEmptyDirs="true" />
+    </target>
+  </project>
+
+  <!-- end file build.xml -->
