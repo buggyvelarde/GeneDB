@@ -19,9 +19,16 @@
 
 package org.genedb.jogra.drawing;
 
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureProp;
+
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -33,13 +40,19 @@ public class TestServiceImpl implements TestService {
         this.sessionFactory = sessionFactory;
     }
 
-    public void doSomething1() {
-        // TODO Auto-generated method stub
-        
+    public List<Feature> doSomething1() {
+        Query q = sessionFactory.getCurrentSession().createQuery("");
+        List<Feature> features = (List<Feature>) q.list();
+        return features;
     }
 
     public void doSomething2() {
-        doSomething1();
+        List<Feature> features = doSomething1();
+        Feature f = features.get(0);
+        Collection<FeatureProp> props = f.getFeatureProps();
+        for (FeatureProp featureProp : props) {
+            System.err.println(featureProp.getCvTerm().getName()+"  :  "+featureProp.getValue());
+        }
     }
 
 }

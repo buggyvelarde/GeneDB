@@ -19,9 +19,13 @@
 
 package org.genedb.jogra.drawing;
 
+import org.gmod.schema.sequence.Feature;
+
+import java.util.List;
+
 public interface TestService {
     
-    void doSomething1();
+    List<Feature> doSomething1();
 
     
     void doSomething2();

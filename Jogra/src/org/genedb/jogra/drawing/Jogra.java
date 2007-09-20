@@ -69,6 +69,8 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
     
     private JMenu windowMenu;
     
+    private TestService testService;
+    
 //    public void setDirty(boolean dirty) {
 //        if (dirty == this.dirty) {
 //            return;
@@ -92,7 +94,7 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
     
     public static void main(String[] args) throws Exception {
         
-        Jogra application  = new Jogra();
+        Jogra application  = Jogra.instantiate();
         
         application.testTransactions();
         
@@ -119,15 +121,24 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
     private void testTransactions() {
         // TODO Auto-generated method stub
         //Feature f = fetchFeature("idXXX");
-        
+        testService.doSomething2();
     }
 
+    
+    public static Jogra instantiate() {
+        AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
+                new String[] {"classpath:applicationContext.xml"});
+        
+        Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
+        ctx.registerShutdownHook();
+        return application;
+    }
 
     public Jogra() throws IOException {
         
-        ctx = new ClassPathXmlApplicationContext(
-                new String[] {"classpath:applicationContext.xml"});
-        ctx.registerShutdownHook();
+//        ctx = new ClassPathXmlApplicationContext(
+//                new String[] {"classpath:applicationContext.xml"});
+//        ctx.registerShutdownHook();
         
         EventBus.subscribe(ApplicationClosingEvent.class, new EventSubscriber() {
             public void onEvent(EventServiceEvent ese) {
@@ -240,6 +251,11 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
                 frame.setVisible(true);
             }
         });
+    }
+
+
+    public void setTestService(TestService testService) {
+        this.testService = testService;
     }
 }
 
