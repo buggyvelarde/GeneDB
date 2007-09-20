@@ -26,6 +26,10 @@
     </bean>
         
    <bean id="application" class="org.genedb.jogra.drawing.Jogra">
+   <property name="jograBusiness" ref="jograBusiness" />
+   </bean>
+   
+   <bean id="jograBusiness" class="org.genedb.jogra.drawing.JograBusinessImpl">
    <property name="testService" ref="testService" />
    </bean>
         

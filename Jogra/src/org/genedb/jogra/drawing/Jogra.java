@@ -69,7 +69,8 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
     
     private JMenu windowMenu;
     
-    private TestService testService;
+    private JograBusiness jograBusiness;
+ //   private TestService testService;
     
 //    public void setDirty(boolean dirty) {
 //        if (dirty == this.dirty) {
@@ -118,14 +119,18 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
 //        });
     }
 
-    private void testTransactions() {
+    /* (non-Javadoc)
+	 * @see org.genedb.jogra.drawing.JograApplication#testTransactions()
+	 */
+    public void testTransactions() {
         // TODO Auto-generated method stub
         //Feature f = fetchFeature("idXXX");
-        testService.doSomething2();
+        jograBusiness.testTransactions();
+        //testService.doSomething2();
     }
 
     
-    public static Jogra instantiate() {
+    public static Jogra instantiate() throws IOException {
         AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"classpath:applicationContext.xml"});
         
@@ -254,8 +259,13 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
     }
 
 
-    public void setTestService(TestService testService) {
-        this.testService = testService;
-    }
+//    public void setTestService(TestService testService) {
+//        this.testService = testService;
+//    }
+
+
+	public void setJograBusiness(JograBusiness jograBusiness) {
+		this.jograBusiness = jograBusiness;
+	}
 }
 
