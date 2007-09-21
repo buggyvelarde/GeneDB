@@ -372,7 +372,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     private void createTranslation(Feature parent, Feature polypeptide, Annotation an, Location loc) {
         String nucleic = new String(parent.getResidues(), loc.getMin(), loc.getMax()-loc.getMin()); // TODO Check offsets
         String protein =null;//= translate(nucleic, an); FIXME
-        polypeptide.setResidues(protein.getBytes());
+        polypeptide.setResidues(nucleic.getBytes());
 	}
 
     private void processOrthologue(Annotation an) {
