@@ -114,7 +114,12 @@ public class MiningUtils {
             tmp.add((String)o);
             return tmp;
         }
-        return null;
+        if (o instanceof Boolean) {
+            List<String> tmp = new ArrayList<String>();
+            tmp.add(((Boolean)o).toString());
+            return tmp;
+        }
+        throw new RuntimeException("Internal error: Couldn't process properties for '"+key+"', got '"+o.getClass()+"'");
     }
 
     @SuppressWarnings("unchecked")

@@ -701,7 +701,7 @@ public class NewRunner implements ApplicationContextAware {
         // Override properties in Spring config file (using a
         // BeanFactoryPostProcessor) based on command-line args
         Properties overrideProps = new Properties();
-        overrideProps.setProperty("dataSource.username", loginName);
+        overrideProps.setProperty("dataSource.username", "chado");
         overrideProps.setProperty("runner.organismCommonName", organismCommonName);
         overrideProps.setProperty("runnerConfigParser.organismCommonName", organismCommonName);
 

@@ -19,7 +19,7 @@ public class StandardNomenclatureHandler implements NomenclatureHandler {
         Names names = new Names();
         String sysId = null;
         List<String> l1 = MiningUtils.getProperties(QUAL_SYS_ID, an);
-        if ( l1 != null) {
+        if ( l1.size() != 0) {
             if ( l1.size() > 1 ) {
                 throw new RuntimeException("StandardNomenclatureHandler: CDS has more than 1 systematic id: "+l1.get(0));
             }
