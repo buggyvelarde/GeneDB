@@ -2,10 +2,13 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="misc" uri="misc" %>
+
 <format:header name="Lucene General Search">
 	<st:init />
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:header>
+<a href="<misc:history />">Add query to history</a><br><br>
 <a href="./LuceneSearch">Back to Search Page</a>
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
