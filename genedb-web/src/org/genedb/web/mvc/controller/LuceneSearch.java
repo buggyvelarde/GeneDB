@@ -6,6 +6,16 @@ public class LuceneSearch {
 	private String query;
 	
 	private String field;
+	
+	private boolean history = false;
+
+	public boolean isHistory() {
+		return history;
+	}
+
+	public void setHistory(boolean history) {
+		this.history = history;
+	}
 
 	public String getField() {
 		return field;
