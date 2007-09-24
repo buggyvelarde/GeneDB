@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
@@ -23,49 +24,36 @@ import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
+import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
-public class LuceneSearchController extends SimpleFormController {
+public class LuceneSearchController extends TaxonNodeBindingFormController {
 	
 	private String listResultsView;
-    private String formInputView;
-	private SequenceDao sequenceDao;
-    private OrganismDao organismDao;
     
     @Override
-    protected boolean isFormSubmission(HttpServletRequest request) {
-        //System.out.println("called first time : " + request.getAttribute("query"));
-    	return true;
-    }
-    
-    @Override
-    protected ModelAndView onSubmit(Object command) throws Exception {
-		LuceneSearch luceneSearch = (LuceneSearch) command;
-		String queryString = luceneSearch.getQuery();
+    protected ModelAndView onSubmit(HttpServletRequest request, 
+    		HttpServletResponse response, Object command, 
+    		BindException be) throws Exception {
+		
+    	LuceneSearch luceneSearch = (LuceneSearch) command;
+		String queryString = null;
+		queryString = luceneSearch.getQuery();
+		
 		Map<String, Object> model = new HashMap<String, Object>(4);
 		String viewName = null;
 				
-		IndexReader ir = IndexReader.open("/nfs/team81/cp2/lucene/index/gff/");
+		IndexReader ir = IndexReader.open("/Users/cp2/external/lucene/index/gff/");
 		Collection<String> c = ir.getFieldNames(IndexReader.FieldOption.INDEXED);
 		List<String> fields = new ArrayList<String>();
 		for (String object : c) {
 			fields.add(object);
 		}
-		if (queryString == "Please enter search text ..."){
-			List <String> err = new ArrayList <String> ();
-			err.add("No search String found");
-        	err.add("please use the form below to search again");
-        	model.put("status", err);
-        	model.put("fields", fields);
-        	model.put("luceneSearch", luceneSearch);
-        	viewName = formInputView;
-        	return new ModelAndView(viewName,model);
-		} else if (queryString == null){
-			viewName = formInputView;
-			model.put("fields", fields);
-			model.put("luceneSearch", luceneSearch);
-        	return new ModelAndView(viewName,model);
+		
+		if (queryString.equals("")){
+			be.reject("no.results");
+        	return showForm(request,response,be);
 		}
 		
 		Query query = null;
@@ -82,7 +70,6 @@ public class LuceneSearchController extends SimpleFormController {
 		String searchFields[] = new String[fields.size()];
 		QueryParser qp = null;
 		if ("ALL".equals(field)){
-			System.out.println("searching all fields ...");
 			for(int i=0; i<fields.size();i++){
 				searchFields[i] = fields.get(i);
 			}
@@ -92,7 +79,6 @@ public class LuceneSearchController extends SimpleFormController {
 		}
 		String searchString = luceneSearch.getQuery();
 		if(searchString.matches("\\d+") && searchString.length() < 11) {
-			System.out.println("search string number is : " + searchString);
 			StringBuffer s = new StringBuffer();
 			int length = 11 - searchString.length();
 			for(int i=0;i<length;i++){
@@ -105,16 +91,21 @@ public class LuceneSearchController extends SimpleFormController {
 		
 		hits = searcher.search(query);
 		if (hits.length() == 0) {
-			List <String> err = new ArrayList <String> ();
-			err.add("Your search string did not return any results");
-        	err.add("Please try again ...");
-        	model.put("status", err);
-        	model.put("fields", fields);
-        	model.put("luceneSearch", luceneSearch);
-        	viewName = formInputView;
-        	return new ModelAndView(viewName,model);
+        	be.reject("no.results");
+        	return showForm(request, response, be);
 		}
         
+		if(luceneSearch.isHistory()) {
+			List<String> ids = new ArrayList<String>(hits.length());
+			for (int i=0;i<hits.length();i++) {
+			    Document doc = hits.doc(i);
+			    ids.add(doc.get("ID"));
+			}
+			HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
+    		historyManager.addHistoryItems("lucene search '"+luceneSearch+"'", ids);
+    		
+    		return new ModelAndView("redirect:/History/View",null);
+		}
 		List<SearchHit> results = new ArrayList<SearchHit>();
 		
 		for (int i=0;i<hits.length();i++) {
@@ -128,36 +119,19 @@ public class LuceneSearchController extends SimpleFormController {
 		    sh.setStrand(doc.get("strand"));
 		    results.add(sh);
 		}
+		
+		
 		model.put("results", results);
 		viewName = listResultsView;
 		return new ModelAndView(viewName,model);
     }
 
-    	
-	public String getFormInputView() {
-		return formInputView;
-	}
-	public void setFormInputView(String formInputView) {
-		this.formInputView = formInputView;
-	}
+  
 	public String getListResultsView() {
 		return listResultsView;
 	}
 	public void setListResultsView(String listResultsView) {
 		this.listResultsView = listResultsView;
 	}
-	public OrganismDao getOrganismDao() {
-		return organismDao;
-	}
-	public void setOrganismDao(OrganismDao organismDao) {
-		this.organismDao = organismDao;
-	}
-	public SequenceDao getSequenceDao() {
-		return sequenceDao;
-	}
-	public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
-	}
-    
     
 }
