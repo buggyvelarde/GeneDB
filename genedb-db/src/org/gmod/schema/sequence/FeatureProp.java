@@ -153,12 +153,10 @@ public class FeatureProp implements Serializable, PropertyI {
         this.featurePropPubs = featurePropPubs;
     }
 
-    @SuppressWarnings("unused")
     public int getFeaturePropId() {
         return this.featurePropId;
     }
 
-    @SuppressWarnings("unused")
     public void setFeaturePropId(final int featurePropId) {
         this.featurePropId = featurePropId;
     }
