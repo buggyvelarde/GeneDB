@@ -37,7 +37,7 @@ class LoadGeneDbCv {
     
     LoadGeneDbCv() {
 		db = Sql.newInstance(
-			'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10001/chado',
+			'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10301/chado',
 			'chado',
 			'chado',
 			'org.postgresql.Driver')
@@ -298,6 +298,7 @@ class LoadGeneDbCv {
 			<term name="tBlastx_file"   description="tBlastx file location" />
 			<term name="clustalx_file"   description="Clustalx file location" />
 			<term name="sigcleave_file"   description="Sigcleave file location" />
+			<term name="pepstats_file"   description="Peptide statistics file location" />
 		</term>
     </cv>
 

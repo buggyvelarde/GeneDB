@@ -44,7 +44,7 @@ class LoadGeneDbPhylogeny {
     
     LoadGeneDbPhylogeny() {
 		db = Sql.newInstance(
-			'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10001/chado',
+			'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10301/chado',
 			'chado',
 			'chado',
 			'org.postgresql.Driver')
@@ -807,8 +807,8 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="parapert" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
-					<property name="htmlFullName" value="<i>Bordetella parapertussis</i>"/>
-					<property name="htmlShortName" value="<i>B. parapertussis</i>"/>
+					<property name="htmlFullName" value="&lt;i&gt;Bordetella parapertussis&lt;/i&gt;"/>
+					<property name="htmlShortName" value="&lt;i&gt;B. parapertussis&lt;/i&gt;"/>
 					<property name="shortName" value="" />
 					<property name="curatorName" value="" />
 				</organism>
@@ -818,8 +818,8 @@ class LoadGeneDbPhylogeny {
 					<property name="nickname" value="pert" />
 					<property name="translationTable" value="11"/>
 					<property name="curatorEmail" value="ms5"/>
-					<property name="htmlFullName" value="<i>Bordetella pertussis</i>"/>
-					<property name="htmlShortName" value="<i>B. pertussis</i>"/>
+					<property name="htmlFullName" value="&lt;i&gt;Bordetella pertussis&lt;/i&gt;"/>
+					<property name="htmlShortName" value="&lt;i&gt;B. pertussis&lt;/i&gt;"/>
 					<property name="shortName" value="" />
 					<property name="curatorName" value="" />
 				</organism>
