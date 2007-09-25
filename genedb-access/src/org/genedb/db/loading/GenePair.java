@@ -36,6 +36,16 @@ public class GenePair implements Comparable {
 	public String getFirst() {
 		return id1;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj.hashCode()==hashCode();
+	}
+
+	@Override
+	public int hashCode() {
+		return (id1 + ":" + id2).hashCode();
+	}
 	
 	
 	

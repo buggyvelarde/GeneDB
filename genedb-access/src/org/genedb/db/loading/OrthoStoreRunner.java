@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Date;
 import java.util.Properties;
 
@@ -90,15 +91,12 @@ public class OrthoStoreRunner {
 
         OrthologueStorer ostore = (OrthologueStorer) ctx.getBean("ostore", OrthologueStorer.class);
         ostore.afterPropertiesSet();
+        File[] files = new File[filePaths.length];
         long start = new Date().getTime();
         for (int i = 0; i < filePaths.length; i++) {
-			File input = new File(filePaths[i]);
-	        ostore.afterPropertiesSet();
-			ostore.process(input);
+			files[i] = new File(filePaths[i]);
 		}
-        ostore.writeToDb();
-//      long duration = (new Date().getTime()-start)/1000;
-//      logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
+        ostore.process(files);
     }
 	
 
