@@ -13,11 +13,11 @@
 			<classpath path="lib/chado-interface.jar"/>
 			<classpath path="lib/biojava-1.4.jar"/>
 			<classpath path="lib/commons-logging.jar"/>
-			<classpath path="lib/ejb3-persistence.jar"/>
+			<classpath path="lib/persistence.jar"/>
 			<classpath path="lib/hibernate-annotations.jar"/>
 			<classpath path="lib/hibernate3.jar"/>
 			<classpath path="lib/genedb-hibernate.jar"/>
-			<classpath path="lib/spring-2.0RC3.jar"/>
+			<classpath path="lib/spring-2.1-m3.jar"/>
 			<classpath path="lib/saxon8.jar"/>
 			<classpath path="lib/saxon8-xom.jar"/>
 			<classpath path="lib/xom-1.0.jar"/>
@@ -43,13 +43,13 @@
 	</target>
 	
 	<path id="exec-classpath">
-		<fileset dir="lib" />
+		<fileset file="lib/*.jar" />
 		<fileset file="genedb-access.jar" />
 	</path>
 	
 	<target name="load-spombe" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="Spombe /nfs/pathdb/prod/data/input/pombe/Spombe.config.xml web"/>
+			<arg line="Spombe /nfs/pathdbdev/work/art/chado_data/pombe/Spombe.config.xml"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
@@ -63,7 +63,42 @@
 	
 	<target name="load-tbrucei" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="Tbruceibrucei927 /nfs/pathdb/prod/data/input/tryp/tbrucei.config.xml web"/>
+			<arg line="Tbruceibrucei927 /nfs/pathdbdev/work/art/chado_data/tryp/tbrucei.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="ortho-tbrucei" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
+			<arg line="Tbruceibrucei927 /nfs/pathdbdev/work/art/chado_data/tryp/tbrucei.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-tcruzi" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Tcruzi /nfs/pathdbdev/work/art/chado_data/tcruzi/tcruzi.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="ortho-tcruzi" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
+			<arg line="Tcruzi /nfs/pathdbdev/work/art/chado_data/tcruzi/tcruzi.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-lmajor" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Lmajor /nfs/pathdbdev/work/art/chado_data/lmajor/lmajor.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="ortho-lmajor" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
+			<arg line="Lmajor /nfs/pathdbdev/work/art/chado_data/lmajor/lmajor.config.xml"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
@@ -77,7 +112,35 @@
 	
 	<target name="load-pfalciparum" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="Pfalciparum /nfs/pathdb/prod/data/input/malaria/pfalciparum.config.xml web"/>
+			<arg line="Pfalciparum /nfs/pathdb/prod/data/input/malaria/pfalciparum.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="ortho-pfalciparum" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
+			<arg line="Pfalciparum /nfs/pathdb/prod/data/input/malaria/pfalciparum.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-pberghei" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Pberghei /nfs/pathdb/prod/data/input/pberghei/pberghei.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-pknowlesi" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Pknowlesi /nfs/pathdb/prod/data/input/pknowlesi/pknowlesi.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="ortho-pknowlesi" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
+			<arg line="Pknowlesi /nfs/pathdb/prod/data/input/pknowlesi/pknowlesi.config.xml"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
@@ -115,6 +178,13 @@
 	<target name="load-cdubliniensis" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
 			<arg line="Cdubliniensis /nfs/pathdb/prod/data/input/cdubliniensis/cdubliniensis.config.xml web"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-cjejuni" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Cjejuni /nfs/pathdbdev/work/art/chado_data/cjejuni/cjejuni.config.xml web"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
@@ -234,4 +304,26 @@
 	
 	<target name="load-good-data" 
 		depends="load-asp, load-twhipplei, load-bpseudomallei, load-bronchi, load-cdubliniensis, load-diphtheria, load-parapert, load-pert, load-saureusMRSA, load-saureusMSSA" />
+
+	<target name="load-orthologues-from-xml" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.OrthoStoreRunner">
+			<arg line="Lmajor.orthologue.xml Tbruceibrucei927.orthologue.xml Pfalciparum.orthologue.xml  Tcruzi.orthologue.xml Pknowlesi.orthologue.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-orthologues-from-tab" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.OrthoStoreRunner">
+			<arg line="upenn.orthologue.tab"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+
+	<target name="load-malaria-orthologues" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.OrthoStoreRunner">
+			<arg line="all_orthomcl.out Pfalciparum.orthologue.xml Pknowlesi.orthologue.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
 </project>
