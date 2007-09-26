@@ -122,7 +122,7 @@ public class MergedRawParser {
 
 
 
-	public MergedRawParser(Map cache, String filename) {//, double score) {
+	public MergedRawParser(Map cache, String filename) {
 
 		this.cache = cache;
 
