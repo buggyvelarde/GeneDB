@@ -45,6 +45,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,7 +58,7 @@ public class MergedRawParser {
 
 
 	protected static final Log logger = LogFactory.getLog(MergedRawParser.class);
-	private Map cache;
+
 	private int count;
 	private boolean mungeCase;
 	private Map uniprotSysId;
@@ -122,9 +124,7 @@ public class MergedRawParser {
 
 
 
-	public MergedRawParser(Map cache, String filename) {
-
-		this.cache = cache;
+	public void parseFileOrDir(String filename) {
 
 		//System.err.println("Filename is  "+filename);
 		File fl = new File(filename);
@@ -143,11 +143,10 @@ public class MergedRawParser {
 				}
 			});
 			for (int i=0; i < fls.length; i++) {
-				new MergedRawParser(cache, filename+"/"+fls[i]);
+				parseFileOrDir(filename+File.separatorChar+fls[i]);
 			}
 			return;
 		}
-
 
 		System.err.println("Reading interpro from "+filename);
 
@@ -168,21 +167,21 @@ public class MergedRawParser {
 			// Go through the results and pull the rows into the
 			// hashmap genes, keyed on gene names, where the values
 			// are ArrayLists of String[]
-			Map genes = new HashMap();
-			List col = new ArrayList();
+			Map<String, List<MergedRawLine>> genes = new HashMap<String, List<MergedRawLine>>();
+			List<MergedRawLine> col = null;
 			for ( int i = 0; i < ret.length; i++ ) {
 				String id = ret[i][COL_ID];
 				if ( genes.containsKey(id) ) {
-					col = (ArrayList) genes.get(id);
+					col = genes.get(id);
 				} else {
-					col = new ArrayList();
+					col = new ArrayList<MergedRawLine>();
 					genes.put(id, col);
 				}
-				col.add(ret[i]);
+				col.add(new MergedRawLine(ret[i]));
 			}
 			ret = null;
 
-			Set strangeProgram = new HashSet();
+			Set<String> strangeProgram = new HashSet<String>();
 			sub1(genes, col, strangeProgram);
 
 			Iterator it = strangeProgram.iterator();
@@ -201,8 +200,15 @@ public class MergedRawParser {
 	}
 
 
-	private void sub1(Map genes, List col, Set strangeProgram) {
+	private void sub1(Map<String, List<MergedRawLine>> genes, List<MergedRawLine> col, Set<String> strangeProgram) {
 		// Go through each key and sort the ArrayLists
+
+		for (Map.Entry<String, List<MergedRawLine>> entry : genes.entrySet()) {
+			String geneId = entry.getKey();
+			Collections.sort(entry.getValue());
+		}
+		// col is now sorted by interpro, then program
+		
 		Iterator geneIterator = genes.keySet().iterator();
 
 		Feature feature; // TODO lookup
@@ -218,36 +224,36 @@ public class MergedRawParser {
 //		}
 		Set goIdsLinked = new HashSet();
 		col = (ArrayList) genes.get(id);
-		boolean swap = true;
-		while (swap) {
-			swap = false;
-			for (int i = 0; i < col.size() - 1; i++) {
-				String[] a = (String[]) col.get(i);
-				String[] b = (String[]) col.get(i + 1);
-				String aAccNum = "NULL";
-				String bAccNum = "NULL";
-				if ( a.length > COL_ACC) {
-					aAccNum = a[COL_ACC];
-				}
-				if ( b.length > COL_ACC) {
-					bAccNum = b[COL_ACC];
-				}
-				int cmp = aAccNum.compareTo(bAccNum);
-				if ( cmp > 0 ) {
-					col.set(i + 1, a);
-					col.set(i, b);
-					swap = true;
-				} else {
-					if ( cmp == 0 ) {
-						if ( a[COL_NATIVE_PROG].compareTo(b[COL_NATIVE_PROG]) > 0 ) {
-							col.set(i + 1, a);
-							col.set(i, b);
-							swap = true;
-						}
-					}
-				}
-			}
-		}
+//		boolean swap = true;
+//		while (swap) {
+//			swap = false;
+//			for (int i = 0; i < col.size() - 1; i++) {
+//				String[] a = (String[]) col.get(i);
+//				String[] b = (String[]) col.get(i + 1);
+//				String aAccNum = "NULL";
+//				String bAccNum = "NULL";
+//				if ( a.length > COL_ACC) {
+//					aAccNum = a[COL_ACC];
+//				}
+//				if ( b.length > COL_ACC) {
+//					bAccNum = b[COL_ACC];
+//				}
+//				int cmp = aAccNum.compareTo(bAccNum);
+//				if ( cmp > 0 ) {
+//					col.set(i + 1, a);
+//					col.set(i, b);
+//					swap = true;
+//				} else {
+//					if ( cmp == 0 ) {
+//						if ( a[COL_NATIVE_PROG].compareTo(b[COL_NATIVE_PROG]) > 0 ) {
+//							col.set(i + 1, a);
+//							col.set(i, b);
+//							swap = true;
+//						}
+//					}
+//				}
+//			}
+//		}
 
 		// col is now sorted by interpro, then program
 		HashSet ip = new HashSet();
@@ -445,5 +451,34 @@ public class MergedRawParser {
 //	}
 
 
+	class MergedRawLine implements Comparable<MergedRawLine> {
+		public String iprDescription;
+		public String iprId;
+		public String goDetails;
+		public String program;
+		public String nativeId;
+		public String nativeDescription;
+		
+		public MergedRawLine(String[] in) {
+			//MergedRawLine ret = new MergedRawLine();
+			this.iprDescription = in[Columns.IPOR_DESC.ordinal()];
+			this.iprId = in[Columns.IPR_ACC.ordinal()];
+			this.goDetails = in[Columns.GO_DETAILS.ordinal()];
+			this.program = in[Columns.PROG.ordinal()];
+			this.nativeId = in[Columns.NATIVE_ACC.ordinal()];
+			this.nativeDescription = in[Columns.NATIVE_DESC.ordinal()];
+			//return ret;
+		}
 
+		public int compareTo(MergedRawLine other) {
+			int ids = iprId.compareTo(other.iprId);
+			if (ids != 0) {
+				return ids;
+			}
+			return program.compareTo(other.program);
+		}
+		
+	}
+	
+	
 }
