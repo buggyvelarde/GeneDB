@@ -31,7 +31,6 @@ import java.io.FileReader;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.xml.stream.XMLStreamException;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
@@ -88,10 +87,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 
 /**
@@ -200,7 +195,7 @@ public class Goa2GeneDB implements Goa2GeneDBI{
          * @throws XMLStreamException 
          * @throws FileNotFoundException 
          */
-        public static void main (String[] args) throws FileNotFoundException, XMLStreamException {
+        public static void main (String[] args) throws FileNotFoundException {
     
             String[] filePaths = args;
     
