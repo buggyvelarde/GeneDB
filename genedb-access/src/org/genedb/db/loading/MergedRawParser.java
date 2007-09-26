@@ -62,6 +62,12 @@ public class MergedRawParser {
 	private Map uniprotSysId;
 	private boolean discardDupNodes;
 
+	private enum  Columns {
+	    GENE_SYS_ID, COL1, COL2, NATIVE, PROG, 
+	    NATIVE_ACC, NATIVE_DESC, COL6, COL7, COL8,
+	    COL9, COL10, IPR_ACC, IPOR_DESC, GO_DETAILS
+	}
+	
 	//    0     1 2       3          4          5      6
 	// GeneACC  ? ? NATIVE_PROG NATIVE_ACC NATIVE_DESC ?
 
@@ -116,7 +122,7 @@ public class MergedRawParser {
 
 
 
-	public MergedRawParser(Map cache, String filename, double score) {
+	public MergedRawParser(Map cache, String filename) {//, double score) {
 
 		this.cache = cache;
 
@@ -137,7 +143,7 @@ public class MergedRawParser {
 				}
 			});
 			for (int i=0; i < fls.length; i++) {
-				new MergedRawParser(cache, filename+"/"+fls[i], score);
+				new MergedRawParser(cache, filename+"/"+fls[i]);
 			}
 			return;
 		}
