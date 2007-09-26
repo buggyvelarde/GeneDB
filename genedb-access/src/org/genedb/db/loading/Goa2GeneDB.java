@@ -111,54 +111,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     protected static final Log logger = LogFactory.getLog(Goa2GeneDB.class);
     
     private FeatureUtils featureUtils;
-
-
-
-	/**
-     * Main entry point. It uses a BeanPostProcessor to apply a set of overrides
-     * based on a Properties file, based on the organism. This is passed in on
-     * the command-line.
-     *
-     * @param args organism_common_name, [conf file path]
-     * @throws XMLStreamException 
-     * @throws FileNotFoundException 
-     */
-    public static void main (String[] args) throws FileNotFoundException, XMLStreamException {
-
-        String[] filePaths = args;
-
-        if (filePaths.length == 0) {
-        	System.err.println("No input files specified");
-        	System.exit(-1);
-        }
-        
-        // Override properties in Spring config file (using a
-        // BeanFactoryPostProcessor) based on command-line args
-        Properties overrideProps = new Properties();
-        overrideProps.setProperty("dataSource.username", "chado");
-        //overrideProps.setProperty("runner.organismCommonName", organismCommonName);
-        //overrideProps.setProperty("runnerConfigParser.organismCommonName", organismCommonName);
-
-//        if (configFilePath != null) {
-//            overrideProps.setProperty("runnerConfigParser.configFilePath", configFilePath);
-//        }
-
-
-        PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
-
-
-        ApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"NewRunner.xml"});
-
-        OrthologueStorer ostore = (OrthologueStorer) ctx.getBean("ostore", OrthologueStorer.class);
-        ostore.afterPropertiesSet();
-        File[] files = new File[filePaths.length];
-        long start = new Date().getTime();
-        for (int i = 0; i < filePaths.length; i++) {
-			files[i] = new File(filePaths[i]);
-		}
-        ostore.process(files);
-    }
 	
     
     
@@ -177,48 +129,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 //        DUMMY_ORG = organismDao.getOrganismByCommonName("dummy");
 //    }
  
-    
-    
-    
-    
-    
-    /*
-     * Copyright (c) 2006 Genome Research Limited.
-     *
-     * This program is free software; you can redistribute it and/or modify
-     * it under the terms of the GNU Library General Public License as published
-     * by  the Free Software Foundation; either version 2 of the License or
-     * (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful, but
-     * WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     * GNU Library General Public License for more details.
-     *
-     * You should have received a copy of the GNU Library General Public License
-     * along with this program; see the file COPYING.LIB.  If not, write to
-     * the Free Software Foundation Inc., 59 Temple Place - Suite 330,
-     * Boston, MA  02111-1307 USA
-     */
-
-
-
-
-
-    /**
-     * This class is the loads up orthologue data into GeneDB.
-     *
-     * Usage: OrthologueStorer orthologue_file [orthologue_file ...]
-     *
-     *
-     * @author Adrian Tivey (art)
-     */
-    @Repository
-    @Transactional
-
-        private static String usage="OrthologueStorer orthologue_file";
-
-        protected static final Log logger = LogFactory.getLog(OrthologueStorerImpl.class);
 
     	private static CvTerm PARALOGOUS_RELATIONSHIP;
 
@@ -234,7 +144,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     //
 //        private Set<String> noInstance = new HashSet<String>();
     //
-        private FeatureUtils featureUtils;
     //
 //        private Organism organism;
     //
@@ -318,17 +227,17 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             ApplicationContext ctx = new ClassPathXmlApplicationContext(
                     new String[] {"NewRunner.xml"});
     
-            OrthologueStorerImpl ostore = (OrthologueStorerImpl) ctx.getBean("ostore", OrthologueStorerImpl.class);
-            ostore.afterPropertiesSet();
+            Goa2GeneDBI application = (Goa2GeneDBI) ctx.getBean("goa2genedb", Goa2GeneDBI.class);
+            application.afterPropertiesSet();
+            File[] inputs = new File[filePaths.length];
             long start = new Date().getTime();
             for (int i = 0; i < filePaths.length; i++) {
-    			File input = new File(filePaths[i]);
-    	        ostore.afterPropertiesSet();
-    			ostore.process(input);
+            	inputs[i] = new File(filePaths[i]);
     		}
-            ostore.writeToDb();
-//          long duration = (new Date().getTime()-start)/1000;
-//          logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
+			application.process(inputs);
+            application.writeToDb();
+          long duration = (new Date().getTime()-start)/1000;
+          logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
         }
 
         public void writeToDb() {
