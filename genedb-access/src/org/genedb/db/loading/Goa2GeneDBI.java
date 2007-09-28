@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.util.List;
 
 
 public interface Goa2GeneDBI {
@@ -13,7 +14,7 @@ public interface Goa2GeneDBI {
 	void process(File[] files);
 
 	@Transactional
-	void writeToDb();
+	void writeToDb(List<GoInstance> goInstances);
 	
 	
 	
