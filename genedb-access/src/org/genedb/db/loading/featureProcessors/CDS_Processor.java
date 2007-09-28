@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -118,15 +119,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
     private int count;
     
-
-    
-    private OrthologueStorage orthologueStorage;
-    
 	Pattern PUBMED_PATTERN;
-
-    public void setOrthologueStorage(OrthologueStorage orthologueStorage) {
-        this.orthologueStorage = orthologueStorage;
-    }
 
     public CDS_Processor() {
 		handledQualifiers = new String[]{"CDS:EC_number", "CDS:primary_name", 
@@ -322,7 +315,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             createProducts(polypeptide, an, "product", CV_PRODUCTS);
 
             // Store feature properties based on original annotation
-            createFeatureProp(polypeptide, an, "colour", "colour", CV_GENEDB);
+            sequenceDao.persist(createFeatureProp(polypeptide, an, "colour", "colour", CV_GENEDB));
             //
             // Cvterm cvTerm =
             // daoFactory.getCvTermDao().findByNameInCv("note",
@@ -351,10 +344,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             
             createTranslation(parent, polypeptide, an, loc);
 
-            // Now persist gene heirachy
-            
-            processOrthologue(an);
-            
             //System.err.print(".");
         } catch (RuntimeException exp) {
             System.err.println("\n\nWas looking at '" + sysId + "'");
@@ -375,29 +364,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         polypeptide.setResidues(nucleic.getBytes());
 	}
 
-    private void processOrthologue(Annotation an) {
-        List<String> orthologues = MiningUtils.getProperties("orthologue", an);
-        for (String entry : orthologues) {
-            String id = extractFromId(entry);
-            orthologueStorage.addOrthologue(id);
-        }
-        List<String> paralogues = MiningUtils.getProperties("paralogue", an);
-        for (String entry : paralogues) {
-            String id = extractFromId(entry);
-            orthologueStorage.addParalogue(id);
-        }
-        List<String> curatedOrthologues = MiningUtils.getProperties("curated_orthologue", an);
-        for (String entry : curatedOrthologues) {
-            String id = extractFromId(entry);
-            orthologueStorage.addCuratedOrthologue(id);
-        }
-        List<String> clusters = MiningUtils.getProperties("cluster", an);
-        for (String entry : clusters) {
-            String id = extractFromId(entry);
-            String key = null;
-            orthologueStorage.addCluster(key, id);
-        }
-    }
 
 
 	private void createOtherNotes(Feature polypeptide, Annotation an, String key, CvTerm cvTerm) {
@@ -413,17 +379,24 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 	private void createLiterature(Feature polypeptide, Annotation an) {
     	List<String> literatures = MiningUtils.getProperties("literature", an);
     	if(literatures != null) {
+    		Set<String> ids = new HashSet<String>();
     		for (String literature : literatures) {
 				String sections[] = literature.split(";");
-				Pub pub = this.pubDao.getPubByUniqueName(sections[0]);
-				if (pub == null) {
-					CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
-					pub = new Pub(sections[0],cvt);
-					this.pubDao.persist(pub);
+				String id = sections[0];
+				if (ids.contains(id)) {
+					logger.warn("Ignoring duplicate /literature of '"+id+"'");
+				} else {
+					ids.add(id);
+					Pub pub = this.pubDao.getPubByUniqueName(id);
+					if (pub == null) {
+						CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
+						pub = new Pub(id, cvt);
+						this.pubDao.persist(pub);
+					}
+					FeaturePub fp = new FeaturePub(polypeptide,pub);
+					this.sequenceDao.persist(fp);
 				}
-				FeaturePub fp = new FeaturePub(polypeptide,pub);
-				this.sequenceDao.persist(fp);
-			}
+    		}
     	}
 	}
 
@@ -493,7 +466,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     queryFeature = transcript;
                     cvTerm = "nucleotide_match";
                 }
-                /* look for analysis and create new if one does not already exsists */
+                /* look for analysis and create new if one does not already exists */
 
                 Analysis analysis = null;
                 analysis = this.generalDao.getAnalysisByProgram(si.getAlgorithm());
@@ -557,9 +530,10 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                  * of featureloc to 0. 
                  */
                 Feature subjectFeature = null;
-                String sections[] = si.getPriDatabase().split(":");
-                String values[] = si.getSecDatabase().split(":");
-                if(sections[0].equals("SWALL") && sections[1].contains("_")) {
+                
+                String sections[] = parseDbString(si.getPriDatabase());
+                String values[] = parseDbString(si.getSecDatabase());
+                if (sections[0].equals("SWALL") && sections[1].contains("_")) {
                     subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+values[1],"region");
                 } else if(sections[0].equals("SWALL")){
                     subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+sections[1],"region");
@@ -677,6 +651,14 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
     }
 
+    private String[] parseDbString(String db) {
+    	String[] ret = db.split(":");
+    	if (ret.length != 2) {
+    		throw new RuntimeException("Unable to parse '"+db+"' as a database");
+    	}
+    	return ret;
+    }
+    
     private void processClass(Feature polypeptide, Annotation an) {
         List<String> classes = MiningUtils.getProperties("class", an);
         for (String rileyClass : classes) {
@@ -713,7 +695,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     }
 
 
-    private void createControlledCuration(Feature polypeptide, Annotation an, Cv controlledCuration) {
+    public void createControlledCuration(Feature polypeptide, Annotation an, Cv controlledCuration) {
 
         List<ControlledCurationInstance> ccs = this.ccParser.getAllControlledCurationFromAnnotation(an);
         if (ccs == null) {
@@ -815,9 +797,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
             //  FIXME Pass in unix date
             thingy("unixdate", cc.getDate(), CV_FEATURE_PROPERTY, fct, null);
-            thingy("attribution", cc.getAttribution(), controlledCuration, fct, null);
+            thingy("attribution", cc.getAttribution(), CV_GENEDB, fct, null);
             thingy("evidence", cc.getEvidence(), CV_GENEDB, fct, null);
-            thingy("residue", cc.getResidue(), controlledCuration, fct, null);
+            thingy("residue", cc.getResidue(), CV_GENEDB, fct, null);
             thingy("qualifier", cc.getQualifier(), CV_GENEDB, fct, "\\|");
 
 
@@ -1155,15 +1137,17 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
     }
 
-    private void processPseudoGene() {
-        // TODO Pseudogenes
-        return;
-    }
-
     private void createProducts(Feature f, Annotation an, String annotationKey, Cv cv) {
         List<String> products = MiningUtils.getProperties(annotationKey, an);
         boolean not = false;
-        if (products != null && products.size() != 0 ){
+        if (products != null && products.size() != 0 ) {
+        	Set<String> unique = new HashSet<String>();
+        	unique.addAll(products);
+        	if (unique.size() != products.size()) {
+        		logger.warn("Removed duplicate products");
+        		products.clear();
+        		products.addAll(unique);
+        	}
             for (String product : products) {
                 CvTerm cvTerm = null;
                 List<CvTerm> cvTermList = this.cvDao.getCvTermByNameInCv(product, cv);
