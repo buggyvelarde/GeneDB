@@ -48,6 +48,7 @@ public class GoInstance {
     private String date;
     private String attribution;
     private boolean fromEMBL = false;
+    private String geneName;
 
     protected static final Log logger = LogFactory.getLog(GoInstance.class);
     
@@ -343,6 +344,14 @@ public class GoInstance {
 
 	public String getWithFrom() {
 	    return this.withFrom;
+	}
+
+	public String getGeneName() {
+		return geneName;
+	}
+
+	public void setGeneName(String geneName) {
+		this.geneName = geneName;
 	}
 
 }
