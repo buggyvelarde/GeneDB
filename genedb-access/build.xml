@@ -47,6 +47,13 @@
 		<fileset file="genedb-access.jar" />
 	</path>
 	
+	<target name="load-goAssociation" depends="genedb-access.jar">
+			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.Goa2GeneDB">
+				<arg line="path-to-GOAssociationFile"/>
+				<jvmarg line="-server"/>
+			</java>
+	</target>
+	
 	<target name="load-spombe" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
 			<arg line="Spombe /nfs/pathdbdev/work/art/chado_data/pombe/Spombe.config.xml"/>
