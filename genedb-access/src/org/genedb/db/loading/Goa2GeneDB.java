@@ -40,11 +40,17 @@ import org.genedb.db.dao.SequenceDao;
 
 import org.gmod.schema.analysis.Analysis;
 import org.gmod.schema.analysis.AnalysisFeature;
+import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.pub.Pub;
+import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermDbXRef;
+import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
@@ -71,10 +77,12 @@ import org.springframework.transaction.support.SimpleTransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -86,98 +94,58 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 
 
 /**
- * This class is the loads up orthologue data into GeneDB.
+ * This class is the loads up GO association data into GeneDB.
  *
- * Usage: OrthologueStorer orthologue_file [orthologue_file ...]
+ * Usage: Goa2GeneDB GOAssociation_file [GOAssociation_file ...]
  *
  *
  * @author Adrian Tivey (art)
+ * @author Chinmay Patel (cp2)
  */
 @Repository
 @Transactional
 public class Goa2GeneDB implements Goa2GeneDBI{
 
-    private static String usage="OrthologueStorer orthologue_file";
+    private static String usage="Goa2GeneDB GOAssociation_file";
 
     protected static final Log logger = LogFactory.getLog(Goa2GeneDB.class);
     
     private FeatureUtils featureUtils;
 	
+    private SequenceDao sequenceDao;
+
+    private OrganismDao organismDao;
+
+    private CvDao cvDao;
     
+    private PubDao pubDao;
+
+    private GeneralDao generalDao;
     
+    private HibernateTransactionManager hibernateTransactionManager;
     
-
+    private SessionFactory sessionFactory;
     
+    private Organism DUMMY_ORG;
 
-//	public void afterPropertiesSet() {
-//		System.err.println("In aps cvDao='"+cvDao+"'");
-//        featureUtils = new FeatureUtils();
-//        featureUtils.setCvDao(cvDao);
-//        featureUtils.setSequenceDao(sequenceDao);
-//        featureUtils.setPubDao(pubDao);
-//        featureUtils.afterPropertiesSet();
-//		System.err.println("In aps cvDao='"+cvDao+"', class is '"+cvDao.getClass()+"'");
-//        DUMMY_ORG = organismDao.getOrganismByCommonName("dummy");
-//    }
- 
-
-    	private static CvTerm PARALOGOUS_RELATIONSHIP;
-
-    	private static CvTerm ORTHOLOGOUS_RELATIONSHIP;
-    	
-    	private List<String> clusterNames = new ArrayList<String>();
-
-//        private FeatureHandler featureHandler;
-    //
-//        private RunnerConfig runnerConfig;
-    //
-//        private RunnerConfigParser runnerConfigParser;
-    //
-//        private Set<String> noInstance = new HashSet<String>();
-    //
-    //
-//        private Organism organism;
-    //
-//        private ApplicationContext applicationContext;
-    //
-        private SequenceDao sequenceDao;
-
-        private OrganismDao organismDao;
-
-        private CvDao cvDao;
-//        
-        private PubDao pubDao;
-
-        private GeneralDao generalDao;
-        
-        private HibernateTransactionManager hibernateTransactionManager;
-        
-        private SessionFactory sessionFactory;
-        
-        private Organism DUMMY_ORG;
-        
-        private OrthologueRelationsParser xmlParser;
-        
-        private OrthologueRelationsParser orthoMclParser;
-    //
-//        Map<String,String> cdsQualifiers = new HashMap<String,String>();
-//        
-//    	private Set<String> handeledQualifiers = new HashSet<String>();
-//        
-//        private OrthologueStorage orthologueStorage = new OrthologueStorage();
-        
+	private Pattern PUBMED_PATTERN;
+    
+	protected CvTerm GO_KEY_EVIDENCE;
+    protected CvTerm GO_KEY_DATE;
+    protected CvTerm GO_KEY_QUALIFIER;
+    
+    private Session session;
         
         public void setHibernateTransactionManager(
     			HibernateTransactionManager hibernateTransactionManager) {
     		this.hibernateTransactionManager = hibernateTransactionManager;
     	}
-
-
-
 
         public void setSessionFactory(SessionFactory sessionFactory) {
     		this.sessionFactory = sessionFactory;
@@ -230,385 +198,212 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             	inputs[i] = new File(filePaths[i]);
     		}
 			application.process(inputs);
-            application.writeToDb();
-          long duration = (new Date().getTime()-start)/1000;
-          logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
+			long duration = (new Date().getTime()-start)/1000;
+			logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
         }
-
-        public void writeToDb() {
-        	
-        	System.err.println("orthologues='"+orthologues.size()+"' paralogues='"+paralogues.size()+"' cluster keys='"+clusters.keySet().size()+"'");
-        	System.err.println("cvDao is '"+this.cvDao+"'");
-        	
-        	CvTerm ORTHOLOGOUS_TO = cvDao.getCvTermByNameAndCvName("orthologous_to", "sequence");
-        	CvTerm PARALOGOUS_TO = cvDao.getCvTermByNameAndCvName("paralogous_to", "sequence");
-        	ORTHOLOGOUS_RELATIONSHIP = ORTHOLOGOUS_TO;
-        	
-        	logger.info("About to store '"+orthologues.size()+"' orthologues");
-    		for (GenePair pair : orthologues) {
-    			storePairs(pair, ORTHOLOGOUS_TO);
-    		}
-        	logger.info("About to store '"+paralogues.size()+"' paralogues");
-    		for (GenePair pair : paralogues) {
-    			storePairs(pair, PARALOGOUS_TO);
-    		}
-    		int clusterSize = clusters.keySet().size();
-        	logger.info("About to store '"+clusterSize+"' clusters");
-        	int clusterCount = 0;
-    		for (Map.Entry<String, List<String>> cluster : clusters.entrySet()) {
-    			logger.info("About to store cluster '"+cluster.getKey()+"' which is '"+clusterCount+"' of '"+clusterSize+"'");
-    			storeCluster(cluster, ORTHOLOGOUS_TO);
-    			clusterCount++;
-    		}
-    		
-    		finishClusterHandling();
-    		
-    		
-//    		TransactionTemplate tt = hibernateTransactionManager.
-//          tt.execute(
-//    		  new TransactionCallbackWithoutResult() {
-//    			  @Override
-//    			  public void doInTransactionWithoutResult(TransactionStatus status) {
-//    				  finishClusterHandling();
-//    			  }
-//    		  });
-    		
-    	}
-
-
-    	private void storePairs(GenePair pair, CvTerm relationship) {
-        	if (pair.getFirst().equals(pair.getSecond())) {
-        		System.err.println("Skipping storing '"+pair.getFirst()+"' as an ortho/paralogue of itself");
-        		return;
-        	}
-        	Feature gene1 = sequenceDao.getFeatureByUniqueName(pair.getFirst()+":pep", "polypeptide");
-        	if (gene1 == null) {
-        		System.err.println("Failing lookup for '"+pair.getFirst()+"'");
-        		return;
-        	}
-        	Feature gene2 = sequenceDao.getFeatureByUniqueName(pair.getSecond()+":pep", "polypeptide");
-        	if (gene2 == null) {
-        		System.err.println("Failing lookup for '"+pair.getSecond()+"'");
-        		return;
-        	}
-        	System.err.println("About to persist FeatureRelationship for '"+pair.getFirst()+"' and '"+pair.getSecond()+"' as a '"+relationship.getName()+"'");
-        	FeatureRelationship fr = new FeatureRelationship(gene1, gene2, relationship, 0);
-        	sequenceDao.persist(fr);
-        	
-        	// Need to store camouflage - a parent feature so it looks like a cluster
-        	String uniqueName = "ORTHO_PARA_" +pair.getFirst() + "_" + pair.getSecond();
-
-        	Feature matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
-        	sequenceDao.persist(matchFeature);
-        	fr = new FeatureRelationship(gene1, matchFeature, relationship, 0);
-        	sequenceDao.persist(fr);
-        	fr = new FeatureRelationship(gene2, matchFeature, relationship, 0);
-        	sequenceDao.persist(fr);
-    	}
-
-//    	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-        public void finishClusterHandling() {
-//    		Session session = sessionFactory.openSession();
-    		//Session session = SessionFactoryUtils.getSession(sessionFactory, false);
-    		//System.err.println(session);
-    		//hibernateTransactionManager.getTransaction(new SimpleTransactionStatus());
-    		//Transaction transaction = session.beginTransaction();
-        	//System.err.println(session);
-        	//StatelessSession session = sessionFactory.openStatelessSession();
-        	//Transaction transaction = session.beginTransaction();
-        	System.err.println("Orthologous_relationship is '"+ORTHOLOGOUS_RELATIONSHIP+"'");
-    		for (String clusterName : clusterNames) {
-    			//System.err.println(clusterName);
-    	    	Feature matchFeature = sequenceDao.getFeatureByUniqueName(clusterName, "protein_match");
-    			Collection<FeatureRelationship> frs = matchFeature.getFeatureRelationshipsForObjectId();
-    			System.err.println("There are '"+frs.size()+"' members for cluster '"+clusterName+"'");
-    			List<Feature> features = new ArrayList<Feature>(frs.size());
-    			for (FeatureRelationship relationship : frs) {
-    				//System.err.println("  "+relationship.getFeatureBySubjectId().getUniqueName());
-    				features.add(relationship.getFeatureBySubjectId());
-    			}
-    			for (int i = 0; i < features.size()-1; i++) {
-    				Feature f1 = features.get(i);
-    				for (int j=i+1; j < features.size(); j++) {
-    					Feature f2 = features.get(j);
-    					FeatureRelationship fr = new FeatureRelationship(f1, f2, ORTHOLOGOUS_RELATIONSHIP, 0);
-    			    	sequenceDao.persist(fr);
-    				}
-    			}
-    		}
-    		//transaction.commit();
-//    		session.close();
-    	}
-    	
-        private void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship) {
-        	String clusterName = entry.getKey();
-        	String uniqueName = "CLUSTER_" +clusterName;
-
-
-        	Feature matchFeature = sequenceDao.getFeatureByUniqueName(uniqueName, "protein_match");
-        	if (matchFeature == null) {
-        		matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
-        		sequenceDao.persist(matchFeature);
-        		clusterNames.add(uniqueName);
-
-        		Analysis analysis = generalDao.getAnalysisByProgram("TRIBE");
-        		if (analysis == null){
-        			analysis = new Analysis();
-        			analysis.setAlgorithm("OrthoMCL");
-        			analysis.setProgram("OrthoMCL");
-        			analysis.setProgramVersion("1.0");
-        			//analysis.setSourceName(si.getAlgorithm());
-        			Date today = new Date();
-        			analysis.setTimeExecuted(today);
-        			generalDao.persist(analysis);
-
-        			// create analysisfeature 
-        			Double score = null;
-//      			if (si.getScore() != null) {
-//      			score = Double.parseDouble(si.getScore());
-//      			} 
-
-        			Double evalue = null;
-//      			if (si.getEvalue() != null) {
-//      			evalue = Double.parseDouble(si.getEvalue());
-//      			} 
-
-        			Double id = null;
-//      			if (si.getId() != null) {
-//      			id = Double.parseDouble(si.getId());
-//      			} 
-
-        			AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
-        			generalDao.persist(analysisFeature);
-
-
-
-
-        		}
-        	}
-        	clusterNames.add(uniqueName);
-        	List<String> genes = entry.getValue();
-        	for (String geneName : genes) {
-        		Feature gene = sequenceDao.getFeatureByUniqueName(geneName+":pep", "polypeptide");
-        		if (gene == null) {
-        			System.err.println("Failing lookup for '"+geneName+"'");
-        			return;
-        		}
-        		FeatureRelationship fr = new FeatureRelationship(gene, matchFeature, relationship, 0);
-        		sequenceDao.persist(fr);
-        	}
-
-        }
-
-//        private void createSimilarity(Feature polypeptide, Feature transcript, Annotation an) {
-    //
-//            String cv = "genedb_misc";
-//            List<SimilarityInstance> similarities = this.siParser.getAllSimilarityInstance(an);
-//            int count = 0;
-//            if (similarities.size() > 0)  {
-//                for (SimilarityInstance si : similarities) {
-    //
-//                    count++;
-    //
-//                    Feature queryFeature = null;
-//                    String cvTerm = null;
-    //
-//                        queryFeature = polypeptide;
-//                        cvTerm = "protein_match";
-//                    /* look for analysis and create new if one does not already exists */
-    //
-//                    Analysis analysis = null;
-//                    analysis = generalDao.getAnalysisByProgram(si.getAlgorithm());
-//                    if (analysis == null){
-//                        analysis = new Analysis();
-//                        analysis.setAlgorithm(si.getAlgorithm());
-//                        analysis.setProgram(si.getAlgorithm());
-//                        analysis.setProgramVersion("1.0");
-//                        analysis.setSourceName(si.getAlgorithm());
-//                        Date epoch = new Date(0);
-//                        analysis.setTimeExecuted(epoch);
-//                        generalDao.persist(analysis);
-//                    }
-    //
-//                    /* create match feature 
-//                     * create new dbxref for match feature if one does not already exsists 
-//                     */ 
-//                    Feature matchFeature = null;
-//                    String uniqueName = null;
-    //
-//                    uniqueName = "MATCH_" + queryFeature.getUniqueName() + "_" + count;
-    //
-//                    matchFeature = this.featureUtils.createFeature(cvTerm, uniqueName, organism);
-//                    this.sequenceDao.persist(matchFeature);
-    //
-//                    CvTerm uId = this.cvDao.getCvTermByNameAndCvName("ungapped id",cv );
-//                    FeatureProp ungappedId = new FeatureProp(matchFeature,uId,si.getUngappedId(),0);
-//                    this.sequenceDao.persist(ungappedId);
-    //
-//                    CvTerm olap = this.cvDao.getCvTermByNameAndCvName("overlap", cv);
-//                    FeatureProp overlap = new FeatureProp(matchFeature,olap,si.getOverlap(),0);
-//                    this.sequenceDao.persist(overlap);
-    //
-//                    /* create analysisfeature 
-//                     * 
-//                     */
-//                    Double score = null;
-//                    if (si.getScore() != null) {
-//                        score = Double.parseDouble(si.getScore());
-//                    } 
-    //
-//                    Double evalue = null;
-//                    if (si.getEvalue() != null) {
-//                        evalue = Double.parseDouble(si.getEvalue());
-//                    } 
-    //
-//                    Double id = null;
-//                    if (si.getId() != null) {
-//                        id = Double.parseDouble(si.getId());
-//                    } 
-    //
-//                    AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
-//                    this.generalDao.persist(analysisFeature);
-    //
-//                    /* create subject feature if one does not already exists. If two database are 
-//                     * referenced; seperate the primary and the secondary. Create feature.dbxref 
-//                     * for primary and featuredbxref for secondary. Also add organism, product, gene, 
-//                     * overlap and ungappedid as featureprop to this feature. Create featureloc from 
-//                     * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id 
-//                     * of featureloc to 0. 
-//                     */
-//                    Feature subjectFeature = null;
-//                    
-//                    String sections[] = parseDbString(si.getPriDatabase());
-//                    String values[] = parseDbString(si.getSecDatabase());
-//                    if (sections[0].equals("SWALL") && sections[1].contains("_")) {
-//                        subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+values[1],"region");
-//                    } else if(sections[0].equals("SWALL")){
-//                        subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+sections[1],"region");
-//                    } else {
-//                        subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getPriDatabase(),"region");
-//                    }
-//                    if (subjectFeature == null) {
-//                        subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getSecDatabase(),"region");
-//                    }
-    //
-//                    if (subjectFeature == null) {
-    //
-//                        /* hmm...looks like encountered this for the first time so create
-//                         * subject feature
-//                         */
-    //
-//                        DbXRef dbXRef = null;
-    //
-    //
-    //
-//                        String priDatabase = sections[0];
-//                        String priId = sections[1];
-    //
-//                        String secDatabase = values[0];
-//                        String secId = values[1];
-    //
-//                        String accession = null;
-//                        uniqueName = null;
-    //
-//                        Db db = null;
-//                        if (priDatabase.equals("SWALL")){
-//                            db = this.generalDao.getDbByName("UniProt");
-//                        } else {
-//                            db = this.generalDao.getDbByName(priDatabase);
-//                        }
-    //
-//                        if (priDatabase.equals(secDatabase)) {
-//                            if (priId.contains("_")) {
-//                                accession = secId;
-//                            } else {
-//                                accession = priId;
-//                            }
-//                            if (priDatabase.equals("SWALL")) {
-//                                priDatabase = "UniProt";
-//                            }
-//                            uniqueName = priDatabase + ":" + accession;
-//                            subjectFeature = this.featureUtils.createFeature("region", uniqueName, organism);
-    //
-//                            dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, accession);
-//                            if (dbXRef == null) {
-//                                dbXRef = new DbXRef(db,accession);
-//                                this.generalDao.persist(dbXRef);
-//                            }
-//                            subjectFeature.setDbXRef(dbXRef);
-//                            subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
-//                            this.sequenceDao.persist(subjectFeature);
-//                        }  else {
-//                            if (priDatabase.equals("SWALL")) {
-//                                priDatabase = "UniProt";
-//                            }
-//                            subjectFeature = this.featureUtils.createFeature("region", priDatabase + ":" + sections[1], organism);
-    //
-//                            dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, priId);
-//                            if (dbXRef == null) {
-//                                dbXRef = new DbXRef(db,priId);
-//                                this.generalDao.persist(dbXRef);
-//                            }
-//                            subjectFeature.setDbXRef(dbXRef);
-//                            subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
-//                            this.sequenceDao.persist(subjectFeature);
-    //
-//                            DbXRef secDbXRef = null;
-//                            Db secDb = this.generalDao.getDbByName(secDatabase);
-//                            secDbXRef = this.generalDao.getDbXRefByDbAndAcc(secDb, secId);
-//                            if (secDbXRef == null) {
-//                                secDbXRef = new DbXRef(secDb,secId);
-//                                this.generalDao.persist(secDbXRef);
-//                            }
-//                            FeatureDbXRef featureDbXRef = new FeatureDbXRef(secDbXRef,subjectFeature,true);
-//                            this.sequenceDao.persist(featureDbXRef);
-//                        }
-    //
-//                        /* once the dbxrefs are set create featureprop for gene, organism and product
-//                         * 
-//                         */
-//                        CvTerm org = this.cvDao.getCvTermByNameAndCvName("organism", cv);
-//                        FeatureProp propOrganism = new FeatureProp(subjectFeature,org,si.getOrganism(),0);
-//                        this.sequenceDao.persist(propOrganism);
-    //
-//                        CvTerm pro = this.cvDao.getCvTermByNameAndCvName("product", cv);
-//                        FeatureProp propProduct = new FeatureProp(subjectFeature,pro,si.getProduct(),1);
-//                        this.sequenceDao.persist(propProduct);
-    //
-//                        CvTerm gene = this.cvDao.getCvTermByNameAndCvName("gene", cv);
-//                        FeatureProp propGene = new FeatureProp(subjectFeature,gene,si.getGene(),2);
-//                        this.sequenceDao.persist(propGene);
-    //
-//                    }
-    //
-//                    /* create featureloc and attach 'em to matchFeature
-//                     * 
-//                     */
-//                    short strand = 1;
-//                    String sCoords[] = si.getSubject().split("-");
-//                    FeatureLoc subjectFLoc = this.featureUtils.createLocation(subjectFeature, matchFeature,Integer.parseInt(sCoords[0]) ,Integer.parseInt(sCoords[1]), strand);
-//                    subjectFLoc.setRank(0);
-//                    this.sequenceDao.persist(subjectFLoc);
-    //
-//                    String qCoords[] = si.getQuery().split("-");
-//                    FeatureLoc queryFLoc = this.featureUtils.createLocation(queryFeature, matchFeature,Integer.parseInt(qCoords[0]) ,Integer.parseInt(qCoords[1]), strand);
-//                    queryFLoc.setRank(1);
-//                    this.sequenceDao.persist(queryFLoc);
-    //
-//                }
-//            }
-//        }
         
+        /**
+         * Does a string look likes it's a PubMed reference
+         * 
+         * @param xref The string to examine
+         * @return true if it looks like a PubMed reference
+         */
+        private boolean looksLikePub(String xref) {
+        	boolean ret =  PUBMED_PATTERN.matcher(xref).lookingAt();
+        	logger.warn("Returning '"+ret+"' for '"+xref+"' for looks like pubmed");
+        	return ret;
+        }
+        
+        /**
+         * Create, or lookup a Pub object from a PMID:acc style input, although the 
+         * prefix is ignored
+         * 
+         * @param ref the reference
+         * @return the Pub object
+         */
+        protected Pub findOrCreatePubFromPMID(String ref) {
+            logger.warn("Looking for '"+ref+"'");
+            Db DB_PUBMED = generalDao.getDbByName("MEDLINE");
+            int colon = ref.indexOf(":");
+            String accession = ref;
+            if (colon != -1) {
+                accession = ref.substring(colon+1);
+            }
+            DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(DB_PUBMED, accession);
+            Pub pub;
+            if (dbXRef == null) {
+                dbXRef = new DbXRef(DB_PUBMED, accession);
+                generalDao.persist(dbXRef);
+                CvTerm cvTerm = cvDao.getCvTermById(1); //TODO -Hack
+                pub = new Pub("PMID:"+accession, cvTerm);
+                generalDao.persist(pub);
+                PubDbXRef pubDbXRef = new PubDbXRef(pub, dbXRef, true);
+                generalDao.persist(pubDbXRef);
+            } else {
+                logger.warn("DbXRef wasn't null");
+                pub = pubDao.getPubByDbXRef(dbXRef);
+            }
+            logger.warn("Returning pub='"+pub+"'");
+            return pub;
+        }
+
+        public void writeToDb(List<GoInstance> goInstances) {
+        	for (GoInstance go : goInstances) {
+        		
+        		Feature polypeptide = getPolypeptide(go.getGeneName());
+        		
+        		if(polypeptide != null) {
+        		
+        		String id = go.getId();
+                //logger.debug("Investigating storing GO '"+id+"' on '"+polypeptide.getUniquename()+"'");
+
+                CvTerm cvTerm = cvDao.getGoCvTermByAccViaDb(id);
+                if (cvTerm == null) {
+                    logger.warn("Unable to find a CvTerm for the GO id of '"+id+"'. Skipping");
+                    continue;
+                }
+
+                Pub pub = pubDao.getPubByUniqueName("null");
+                String ref = go.getRef();
+                // Reference
+                Pub refPub = pub;
+                if (ref != null && looksLikePub(ref)) {
+                    // The reference is a pubmed id - usual case
+                    refPub = findOrCreatePubFromPMID(ref);
+                    //FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
+                    //sequenceDao.persist(fctp);
+                }
+
+
+//              logger.warn("pub is '"+pub+"'");
+
+                boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
+                //logger.warn("gene is " + go.getGeneName() + " Polypeptide is " + polypeptide.getUniqueName());
+                List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvTerm, not);
+                int rank = 0;
+                if (fcts.size() != 0) {
+                    rank = RankableUtils.getNextRank(fcts);
+                }
+                //logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
+                FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
+                sequenceDao.persist(fct);
+
+                // Reference
+//              Pub refPub = null;
+//              if (ref != null && ref.startsWith("PMID:")) {
+//              // The reference is a pubmed id - usual case
+//              refPub = findOrCreatePubFromPMID(ref);
+//              FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
+//              sequenceDao.persist(fctp);
+//              }
+
+                // Evidence
+                FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE , fct, go.getEvidence().getDescription(), 0);
+                sequenceDao.persist(fctp);
+
+                // Qualifiers
+                int qualifierRank = 0;
+                List<String> qualifiers = go.getQualifierList();
+                for (String qualifier : qualifiers) {
+                    fctp = new FeatureCvTermProp(GO_KEY_QUALIFIER , fct, qualifier, qualifierRank);
+                    qualifierRank++;
+                    sequenceDao.persist(fctp);
+                }
+
+                // With/From
+                String xref = go.getWithFrom();
+                if (xref != null) {
+                    int index = xref.indexOf(':');
+                    if (index == -1 ) {
+                        logger.error("Got an apparent dbxref but can't parse");
+                    } else {
+                        List<DbXRef> dbXRefs= findOrCreateDbXRefsFromString(xref);
+                        for (DbXRef dbXRef : dbXRefs) {
+                            if (dbXRef != null) {
+                                FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
+                                sequenceDao.persist(fcvtdbx);
+                            }
+                        }
+                    }
+                }
+        		} else {
+        			logger.error("Gene Name " + go.getGeneName() + " does not exist in database");
+        		}
+			}
+    	}
+
+        /**
+         * Take a pipe-seperated string and split them up,  
+         * then lookup or create them 
+         * 
+         * @param xref A list of pipe seperated dbxrefs strings
+         * @return A list of DbXrefs
+         */
+        private List<DbXRef> findOrCreateDbXRefsFromString(String xref) {
+            List<DbXRef> ret = new ArrayList<DbXRef>();
+            StringTokenizer st = new StringTokenizer(xref, "|");
+            while (st.hasMoreTokens()) {
+                ret.add(findOrCreateDbXRefFromString(st.nextToken()));
+            }
+            return ret;
+        }
+        
+        /**
+         * Take a db reference and look it up, or create it if it doesn't exist
+         * 
+         * @param xref the reference ie db:id
+         * @return the created or looked-up DbXref
+         */
+        private DbXRef findOrCreateDbXRefFromString(String xref) {
+            int index = xref.indexOf(':');
+            if (index == -1) {
+                logger.error("Can't parse '"+xref+"' as a dbxref as no colon");
+                return null;
+            }
+            String dbName = xref.substring(0, index);
+            String accession = xref.substring(index+1);
+            Db db = generalDao.getDbByName(dbName);
+            if (db == null) {
+                logger.error("Can't find database named '"+dbName+"'");
+                return null;
+            }
+            DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, accession);
+            if (dbXRef == null) {
+                dbXRef = new DbXRef(db, accession);
+                sequenceDao.persist(dbXRef);
+            }
+            return dbXRef;
+        }
+
+        
+        private Feature getPolypeptide(String geneName) {
+        	geneName = geneName.concat(":pep");
+        	Feature polypeptide = sequenceDao.getFeatureByUniqueName(geneName, "polypeptide");
+        	if(polypeptide == null) {
+        		return null;
+        	}
+        	logger.warn("polypeptide is " + polypeptide + "gene name is " + geneName);
+        	int id = polypeptide.getFeatureId();
+        	polypeptide = (Feature)session.load(Feature.class,new Integer(id));
+        	return polypeptide;
+		}
 
     	public void afterPropertiesSet() {
     		System.err.println("In aps cvDao='"+cvDao+"'");
-            featureUtils = new FeatureUtils();
+    		session = sessionFactory.openSession();
+    		PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
+    		Cv CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property").get(0);
+            Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
+            /*featureUtils = new FeatureUtils();
             featureUtils.setCvDao(cvDao);
             featureUtils.setSequenceDao(sequenceDao);
             featureUtils.setPubDao(pubDao);
             featureUtils.afterPropertiesSet();
     		System.err.println("In aps cvDao='"+cvDao+"', class is '"+cvDao.getClass()+"'");
-            DUMMY_ORG = organismDao.getOrganismByCommonName("dummy");
+            DUMMY_ORG = organismDao.getOrganismByCommonName("dummy");*/
+    		GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
+            GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
+            GO_KEY_DATE = cvDao.getCvTermByNameInCv("unixdate", CV_FEATURE_PROPERTY).get(0);
         }
 
 
@@ -616,30 +411,82 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 
     		for (File file : files) {
     			System.err.println("Processing '"+file.getName()+"'");
+        		List<GoInstance> goInstances = null;
     			Reader r = null;
     			try {
     				r = new FileReader(file);
+    				goInstances = parseFile(r);
+    				
     			} catch (FileNotFoundException e) {
     				e.printStackTrace();
     				System.exit(-1);
     			}
-    			OrthologueRelationsParser parser = xmlParser;
-    			if (!file.getName().endsWith("xml")) {
-    				parser = orthoMclParser;
-    			}
-    			parser.parseInput(r, orthologues, paralogues, clusters);
+    			writeToDb(goInstances);
     		}
     		
-    		writeToDb();
+    		
     	}
         
-        private boolean checkOrgs(File input) {
-        	return true; // FIXME Should go through orgs to check all loaded
-        }
-        
-        private Set<GenePair> orthologues = new HashSet<GenePair>();
-        private Set<GenePair> paralogues = new HashSet<GenePair>();
-        private Map<String,List<String>> clusters = new HashMap<String,List<String>>();
+    	private List<GoInstance> parseFile(Reader r) {
+    		BufferedReader input = new BufferedReader(r);
+    		String line = null;
+    		List<GoInstance> goInstances = new ArrayList<GoInstance>();
+			try {
+				while((line = input.readLine()) != null) {
+
+		    		String terms[] = line.split("\t");
+		    		
+		    		GoInstance goi = new GoInstance();
+		    		
+					goi.setGeneName(terms[1].trim());
+					
+					String qualifier = terms[3];
+			        if ( qualifier != null && qualifier.length()>0) {
+			            goi.addQualifier(qualifier);
+			        }
+			        
+			        String id = terms[4];
+			        if (!id.startsWith("GO:")) {
+			            System.err.println("WARN: GO id doesn't start with GO: *"+id+"*");
+			            return null;
+			        }
+			        goi.setId( terms[4].substring(3) );
+			        
+			        goi.setRef(terms[5]);
+			        goi.setEvidence(GoEvidenceCode.valueOf(terms[6].trim()));
+			        goi.setWithFrom(terms[7]);
+			        
+			        String aspect = terms[8].substring(0,1).toUpperCase();
+		
+			        if( "P".equals(aspect) ){
+			            goi.setSubtype("process");
+			        } else {
+			            if( "C".equals(aspect) ){
+			                goi.setSubtype("component");
+			            } else {
+			                if( "F".equals(aspect) ){
+			                    goi.setSubtype("function");
+			                } else {
+			                    logger.warn("WARN: Unexpected aspect *"+goi.getAspect()+"* in GO association file");
+			                    return null;
+			                }
+			            }
+			        }
+			        
+			        goi.setDate(terms[13]);
+			        
+			        if (terms.length > 13) {
+			        		goi.setAttribution(terms[14]);
+			        }
+			        
+			        goInstances.add(goi);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			return goInstances;
+    	}
 
         public void setOrganismDao(OrganismDao organismDao) {
             this.organismDao = organismDao;
@@ -661,23 +508,5 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     	public void setPubDao(PubDao pubDao) {
     		this.pubDao = pubDao;
     	}
-
-
-
-
-    	public void setOrthoMclParser(OrthologueRelationsParser orthoMclParser) {
-    		this.orthoMclParser = orthoMclParser;
-    	}
-
-
-
-
-    	public void setXmlParser(OrthologueRelationsParser xmlParser) {
-    		this.xmlParser = xmlParser;
-    	}
-
-//        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-//            this.applicationContext = applicationContext;
-//        }
         
     }
