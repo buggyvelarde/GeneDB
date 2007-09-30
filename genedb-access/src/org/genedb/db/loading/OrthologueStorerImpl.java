@@ -101,7 +101,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 
 	private static CvTerm ORTHOLOGOUS_RELATIONSHIP;
 	
-	private List<String> clusterNames = new ArrayList<String>();
+	Set<String> clusterNames = new HashSet<String>();
 
 //    private FeatureHandler featureHandler;
 //
@@ -111,13 +111,13 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //
 //    private Set<String> noInstance = new HashSet<String>();
 //
-    private FeatureUtils featureUtils;
+    FeatureUtils featureUtils;
 //
 //    private Organism organism;
 //
 //    private ApplicationContext applicationContext;
 //
-    private SequenceDao sequenceDao;
+    SequenceDao sequenceDao;
 
     private OrganismDao organismDao;
 
@@ -131,7 +131,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
     
     private SessionFactory sessionFactory;
     
-    private Organism DUMMY_ORG;
+    Organism DUMMY_ORG;
     
     private OrthologueRelationsParser xmlParser;
     
@@ -249,7 +249,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 	}
 
 
-	private void storePairs(GenePair pair, CvTerm relationship) {
+	public void storePairs(GenePair pair, CvTerm relationship) {
     	if (pair.getFirst().equals(pair.getSecond())) {
     		System.err.println("Skipping storing '"+pair.getFirst()+"' as an ortho/paralogue of itself");
     		return;
@@ -313,7 +313,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //		session.close();
 	}
 	
-    private void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship) {
+    public void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship) {
     	String clusterName = entry.getKey();
     	String uniqueName = "CLUSTER_" +clusterName;
 
@@ -372,6 +372,13 @@ public class OrthologueStorerImpl implements OrthologueStorer {
     	}
 
     }
+    
+    
+//    private void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship) {
+//    	String clusterName = entry.getKey();
+//    	String uniqueName = "CLUSTER_" +clusterName;
+//    	clusterNames.add(uniqueName);
+//    }
 
 //    private void createSimilarity(Feature polypeptide, Feature transcript, Annotation an) {
 //
