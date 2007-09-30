@@ -101,6 +101,9 @@
     		    	<bean class="org.genedb.db.loading.featureProcessors.BLASTN_HIT_Processor" parent="baseFeatureProcessor" />
     		    </entry>
     		    <entry key="CDS" value-ref="cdsProcessor" />
+    		    <entry key="cDNA_match">
+    		    	<bean class="org.genedb.db.loading.featureProcessors.cDNA_match_Processor" parent="baseFeatureProcessor" />
+    		    </entry>
     		    <entry key="CDS_motif">
     		    	<bean class="org.genedb.db.loading.featureProcessors.CDS_motif_Processor" parent="baseFeatureProcessor" />
     		    </entry>
