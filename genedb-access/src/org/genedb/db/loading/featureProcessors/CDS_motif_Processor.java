@@ -24,11 +24,15 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
+import org.genedb.db.loading.EmblQualifiers;
 import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureLoc;
 
+import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
+import org.biojava.bio.symbol.Location;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -51,26 +55,20 @@ public class CDS_motif_Processor extends BaseFeatureProcessor {
 
     @Override
     public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
-//        logger.debug("Entering processing for repeat");
-//        Location loc = f.getLocation();
-//        Annotation an = f.getAnnotation();
-//        short strand = (short)f.getStrand().getValue();
-//        String systematicId = "repeat"+loc.getMin()+"-"+loc.getMax(); 
-//        
-//        org.genedb.db.jpa.Feature repeat = this.featureUtils.createFeature("repeat", systematicId,
-//                this.organism);
-//        this.daoFactory.persist(repeat);
-//        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-//        FeatureLoc trnaFl = featureUtils.createLocation(parent,repeat,loc.getMin(),loc.getMax(),
-//                                                        strand);
-//        this.daoFactory.persist(trnaFl);
-//        //featureLocs.add(pepFl);
-//        //featureRelationships.add(pepFr);
-//        
-//        FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
-//        this.daoFactory.persist(fp);
-//        createFeaturePropsFromNotes(repeat, an, MISC_NOTE);
+        logger.debug("Entering processing for CDS_motif");
+        Location loc = f.getLocation();
+        Annotation an = f.getAnnotation();
+        short strand = (short)f.getStrand().getValue();
+        String systematicId = "cdsMotif"+loc.getMin()+"-"+loc.getMax(); 
+        
+        Feature cdsMotif = this.featureUtils.createFeature("polypeptide_domain", systematicId,
+                this.organism);
+        this.sequenceDao.persist(cdsMotif);
 
+        FeatureLoc trnaFl = featureUtils.createLocation(parent,cdsMotif,loc.getMin(),loc.getMax(),
+                                                        strand);
+        this.sequenceDao.persist(trnaFl);
+        createFeaturePropsFromNotes(cdsMotif, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE, 0);
     }
 
 
