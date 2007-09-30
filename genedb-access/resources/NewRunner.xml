@@ -28,7 +28,10 @@
     <bean id="sPombeNomenclatureHandler" class="org.genedb.db.loading.SpombeNomenclatureHandler">
 		<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
     </bean>
-        <bean id="locusTagNomenclatureHandler" class="org.genedb.db.loading.LocusTagNomenclatureHandler">
+    <bean id="noteMungingNomenclatureHandler" class="org.genedb.db.loading.NoteMungingNomenclatureHandler">
+		<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
+    </bean>
+    <bean id="locusTagNomenclatureHandler" class="org.genedb.db.loading.LocusTagNomenclatureHandler">
 		<property name="standardNomenclatureHandler" ref="standardNomenclatureHandler" />
     </bean>
     <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
@@ -298,6 +301,7 @@
 		<property name="sequenceDao" ref="sequenceDao" />
 		<property name="pubDao" ref="pubDao" />
 		<property name="dbUtilsBean" ref="dbUtilsBean" />
+		<property name="ccParser" ref="ccParser" />
     </bean>
            
 	<bean id="dbUtilsBean" class="org.genedb.db.loading.DbUtilsBean">
@@ -311,7 +315,6 @@
            
 	<bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor" lazy-init="true">
 		<property name="goParser" ref="goParser" />
-        <property name="ccParser" ref="ccParser" />
         <property name="similarityParser" ref="similarityParser" />
 	</bean>                                                             
     
@@ -332,10 +335,10 @@
 		 <property name="driverClassName" value="org.postgresql.Driver" />
 	 	 <!-- <property name="url" value="jdbc:postgresql:ormtest" /> -->
          <!-- <property name="username" value="art" /> -->
-        <property name="url" value="jdbc:postgresql://localhost:2225/chado" />
+        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10303/chado" />
         <!--<property name="username" value="plasmodia" />-->
         <property name="username" value="chado"/>
-        <property name="password" value="chado" />
+        <property name="password" value="" />
 	</bean> 
 
 	<!-- Database Property -->
