@@ -88,7 +88,7 @@ public class Promoter_Processor extends BaseFeatureProcessor {
         sequenceDao.persist(promoterFr);
         sequenceDao.persist(promoterFl);
         
-        createFeaturePropsFromNotes(promoter, an, QUAL_NOTE, MISC_CURATION);
+        createFeaturePropsFromNotes(promoter, an, QUAL_NOTE, MISC_CURATION, 0);
         
     }
 

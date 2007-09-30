@@ -78,7 +78,7 @@ public class LTR_Processor extends BaseFeatureProcessor {
       
         FeatureProp fp = createFeatureProp(ltr, an, "colour", "colour", CV_GENEDB);
         sequenceDao.persist(fp);
-        createFeaturePropsFromNotes(ltr, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE);
+        createFeaturePropsFromNotes(ltr, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE, 0);
     }
 
 

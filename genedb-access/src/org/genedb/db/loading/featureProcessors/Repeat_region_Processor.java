@@ -67,16 +67,17 @@ public class Repeat_region_Processor extends BaseFeatureProcessor {
         Annotation an = f.getAnnotation();
         short strand = (short)f.getStrand().getValue();
         
-        if (!an.containsProperty("rpt_type")) {
-            return;
+        String soType = "repeat_region";
+        if (an.containsProperty("rpt_type")) {
+            String repeatType = (String) an.getProperty("rpt_type");
+            soType = (repeatType == null) ? "repeat_region" : repeatType;
+            if ("direct".equals(repeatType)) {
+                soType = "direct_repeat";
+            }
         }
         
-        String repeatType = (String) an.getProperty("rpt_type");
-        String soType = repeatType;
-        
-        if (repeatType.equals("direct")) {
-            soType = "direct_repeat";
-        }
+
+
         
         /*String systematicId = "repeat"+(loc.getMin()-1)+"-"+loc.getMax();
         if (f.getStrand().equals(StrandedFeature.NEGATIVE)) {
@@ -100,7 +101,7 @@ public class Repeat_region_Processor extends BaseFeatureProcessor {
             	sequenceDao.persist(repeatFl);
             	//featureLocs.add(pepFl);
             	//featureRelationships.add(pepFr);
-            	createFeaturePropsFromNotes(repeat, an, QUAL_NOTE, MISC_NOTE);
+            	createFeaturePropsFromNotes(repeat, an, QUAL_NOTE, MISC_NOTE, 0);
             	//FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
             	//this.daoFactory.persist(fp);
             	//createFeaturePropsFromNotes(repeat, an, MISC_NOTE);

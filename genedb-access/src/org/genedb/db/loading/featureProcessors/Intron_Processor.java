@@ -79,7 +79,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
 	        
 	        //FeatureProp fp = createFeatureProp(intron, an, "colour", "colour", CV_GENEDB);
 	        //sequenceDao.persist(fp);
-	        createFeaturePropsFromNotes(intron, an, QUAL_NOTE, MISC_NOTE); 
+	        createFeaturePropsFromNotes(intron, an, QUAL_NOTE, MISC_NOTE, 0); 
         }
     }
     
