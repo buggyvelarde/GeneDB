@@ -110,6 +110,27 @@
 		</java>
 	</target>
 	
+	<target name="load-pchabaudi" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Pchabaudi /nfs/pathdbdev/work/art/chado_data/pchabaudi/pchabaudi.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-pyoelii" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Pyoelii /nfs/pathdbdev/work/art/chado_data/pyoelii/pyoelii.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
+	<target name="load-pvivax" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Pvivax /nfs/pathdbdev/work/art/chado_data/pvivax/pvivax.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+	
 	<target name="ortho-lmajor" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
 			<arg line="Lmajor /nfs/pathdbdev/work/art/chado_data/lmajor/lmajor.config.xml"/>
