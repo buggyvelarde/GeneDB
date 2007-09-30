@@ -54,6 +54,13 @@
 			</java>
 	</target>
 	
+	<target name="load-UPenn-data" depends="genedb-access.jar">
+				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.Cluster2GeneDB">
+					<arg line="path-to-UPenn-file"/>
+					<jvmarg line="-server"/>
+				</java>
+	</target>
+	
 	<target name="load-spombe" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
 			<arg line="Spombe /nfs/pathdbdev/work/art/chado_data/pombe/Spombe.config.xml"/>
