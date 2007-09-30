@@ -259,7 +259,14 @@
     	<property name="sessionFactory" ref="sessionFactory"></property>
    </bean>
     
-       <bean id="extractOrtho" class="org.genedb.db.loading.ExtractOrthologueData" lazy-init="true" init-method="afterPropertiesSet">
+    <bean id="cluster2genedb" class="org.genedb.db.loading.Cluster2GeneDB" lazy-init="true" init-method="afterPropertiesSet">
+   		<property name="sequenceDao" ref="sequenceDao" />
+    	<property name="generalDao" ref="generalDao" />
+    	<property name="hibernateTransactionManager" ref="transactionManager" />
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+   </bean>
+   
+   <bean id="extractOrtho" class="org.genedb.db.loading.ExtractOrthologueData" lazy-init="true" init-method="afterPropertiesSet">
     	<property name="runnerConfigParser" ref="runnerConfigParser" />
     </bean>
     
