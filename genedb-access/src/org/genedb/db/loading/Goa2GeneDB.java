@@ -130,8 +130,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     
     private HibernateTransactionManager hibernateTransactionManager;
     
-    private SessionFactory sessionFactory;
-    
     private Organism DUMMY_ORG;
 
 	private Pattern PUBMED_PATTERN;
@@ -142,17 +140,10 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     
     private Session session;
         
-        public void setHibernateTransactionManager(
-    			HibernateTransactionManager hibernateTransactionManager) {
-    		this.hibernateTransactionManager = hibernateTransactionManager;
-    	}
-
-        public void setSessionFactory(SessionFactory sessionFactory) {
-    		this.sessionFactory = sessionFactory;
-    	}
-
-
-
+    public void setHibernateTransactionManager(
+			HibernateTransactionManager hibernateTransactionManager) {
+		this.hibernateTransactionManager = hibernateTransactionManager;
+	}
 
     	/**
          * Main entry point. It uses a BeanPostProcessor to apply a set of overrides
@@ -197,6 +188,7 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             for (int i = 0; i < filePaths.length; i++) {
             	inputs[i] = new File(filePaths[i]);
     		}
+            
 			application.process(inputs);
 			long duration = (new Date().getTime()-start)/1000;
 			logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
@@ -390,17 +382,10 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 
     	public void afterPropertiesSet() {
     		System.err.println("In aps cvDao='"+cvDao+"'");
-    		session = sessionFactory.openSession();
+    		session = hibernateTransactionManager.getSessionFactory().openSession();
     		PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
     		Cv CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property").get(0);
             Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
-            /*featureUtils = new FeatureUtils();
-            featureUtils.setCvDao(cvDao);
-            featureUtils.setSequenceDao(sequenceDao);
-            featureUtils.setPubDao(pubDao);
-            featureUtils.afterPropertiesSet();
-    		System.err.println("In aps cvDao='"+cvDao+"', class is '"+cvDao.getClass()+"'");
-            DUMMY_ORG = organismDao.getOrganismByCommonName("dummy");*/
     		GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
             GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
             GO_KEY_DATE = cvDao.getCvTermByNameInCv("unixdate", CV_FEATURE_PROPERTY).get(0);
@@ -408,7 +393,7 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 
 
     	public void process(final File[] files) {
-
+    		Transaction transaction = this.session.beginTransaction();
     		for (File file : files) {
     			System.err.println("Processing '"+file.getName()+"'");
         		List<GoInstance> goInstances = null;
@@ -422,6 +407,7 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     				System.exit(-1);
     			}
     			writeToDb(goInstances);
+    			transaction.commit();
     		}
     		
     		

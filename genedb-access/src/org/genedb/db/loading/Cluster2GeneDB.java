@@ -21,6 +21,7 @@ import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
@@ -34,8 +35,6 @@ public class Cluster2GeneDB {
     private GeneralDao generalDao;
     
     private HibernateTransactionManager hibernateTransactionManager;
-    
-    private SessionFactory sessionFactory;
     
     private Session session;
     
@@ -72,12 +71,13 @@ public class Cluster2GeneDB {
     }
     
     public void afterPropertiesSet() {
-		session = sessionFactory.openSession();
+		session = hibernateTransactionManager.getSessionFactory().openSession();
 		GENEDB_MISC = generalDao.getDbByName("genedb_misc");
     }
 
 
 	public void process(final File[] files) {
+		Transaction transaction = session.beginTransaction();
 		for (File file : files) {
 			System.err.println("Processing '"+file.getName()+"'");
     		Map<String,String> map = null;
@@ -91,6 +91,7 @@ public class Cluster2GeneDB {
 				System.exit(-1);
 			}
 			writeToDb(map);
+			transaction.commit();
 		}
 	}
     
@@ -171,13 +172,4 @@ public class Cluster2GeneDB {
 		this.sequenceDao = sequenceDao;
 	}
 
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-    
-    
 }
