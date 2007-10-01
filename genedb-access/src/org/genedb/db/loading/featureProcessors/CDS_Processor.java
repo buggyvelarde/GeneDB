@@ -127,7 +127,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 				"CDS:pseudo", "CDS:psu_db_xref", "CDS:note", "CDS:GO", 
 				"CDS:controlled_curation", "CDS:sigcleave_file"};
 		unknownRileyClass = new ArrayList<String>();
-    	PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
 	}
     
     
@@ -716,9 +715,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             String ref = go.getRef();
             // Reference
             Pub refPub = pub;
-            if (ref != null && looksLikePub(ref)) {
+            if (ref != null && featureUtils.looksLikePub(ref)) {
                 // The reference is a pubmed id - usual case
-                refPub = findOrCreatePubFromPMID(ref);
+                refPub = featureUtils.findOrCreatePubFromPMID(ref);
                 //FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
                 //sequenceDao.persist(fctp);
             }
@@ -765,7 +764,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 if (index == -1 ) {
                     logger.error("Got an apparent dbxref but can't parse");
                 } else {
-                    List<DbXRef> dbXRefs= findOrCreateDbXRefsFromString(xref);
+                    List<DbXRef> dbXRefs= featureUtils.findOrCreateDbXRefsFromString(xref);
                     for (DbXRef dbXRef : dbXRefs) {
                         if (dbXRef != null) {
                             FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
@@ -778,155 +777,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             //logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
         }
 
-    }
-
-
-    private PeptideProperties calculatePepstats(Feature polypeptide) {
-
-        String seqString = FeatureUtils.getResidues(polypeptide);
-        Alphabet protein = ProteinTools.getAlphabet();
-        SymbolTokenization proteinToke = null;
-        SymbolList seq = null;
-        PeptideProperties pp = new PeptideProperties();
-        try {
-            proteinToke = protein.getTokenization("token");
-            seq = new SimpleSymbolList(proteinToke, seqString);
-        } catch (BioException e) {
-
-        }
-        IsoelectricPointCalc ipc = new IsoelectricPointCalc();
-        Double cal = 0.0;
-        try {
-            cal = ipc.getPI(seq, false, false);
-        } catch (IllegalAlphabetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (BioException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        DecimalFormat df = new DecimalFormat("#.##");
-        pp.setIsoelectricPoint(df.format(cal));
-
-        CvTerm MISC_ISOELECTRIC = cvDao.getCvTermByNameAndCvName("isoelectric_point", "genedb_misc"); 
-        CvTerm MISC_MASS = cvDao.getCvTermByNameAndCvName("molecular mass", "genedb_misc"); 
-        CvTerm MISC_CHARGE = cvDao.getCvTermByNameAndCvName("protein_charge", "genedb_misc"); 
-
-
-        FeatureProp fp = new FeatureProp(polypeptide, MISC_ISOELECTRIC, df.format(cal), 0); 
-
-        pp.setAminoAcids(Integer.toString(seqString.length()));
-        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
-        try {
-            cal = mc.getMass(seq)/1000;
-        } catch (IllegalSymbolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        pp.setMass(df.format(cal));
-
-        fp = new FeatureProp(polypeptide, MISC_MASS, df.format(cal), 0);
-
-        cal = ProteinUtils.getCharge(seq);
-        pp.setCharge(df.format(cal));
-
-
-        fp = new FeatureProp(polypeptide, MISC_CHARGE, df.format(ProteinUtils.getCharge(seq)), 0);
-
-        return pp;
-    }
-
-    
-    private void findPubOrDbXRefFromString(String xrefString, List<Pub> pubs, List<DbXRef> dbXRefs) {
-        boolean makePubs = (pubs != null) ? true : false;
-        String[] xrefs = xrefString.split("\\|");
-        for (String xref : xrefs) {
-            if (makePubs && looksLikePub(xref)) {
-                pubs.add(findOrCreatePubFromPMID(xref));
-            } else {
-                DbXRef dbXRef = findOrCreateDbXRefFromString(xref);
-                if (dbXRef != null) {
-                    dbXRefs.add(dbXRef);
-                }
-            }
-        }
-    }
-
-    /**
-     * Take a pipe-seperated string and split them up,  
-     * then lookup or create them 
-     * 
-     * @param xref A list of pipe seperated dbxrefs strings
-     * @return A list of DbXrefs
-     */
-    private List<DbXRef> findOrCreateDbXRefsFromString(String xref) {
-        List<DbXRef> ret = new ArrayList<DbXRef>();
-        StringTokenizer st = new StringTokenizer(xref, "|");
-        while (st.hasMoreTokens()) {
-            ret.add(findOrCreateDbXRefFromString(st.nextToken()));
-        }
-        return ret;
-    }
-
-
-    /**
-     * Take a db reference and look it up, or create it if it doesn't exist
-     * 
-     * @param xref the reference ie db:id
-     * @return the created or looked-up DbXref
-     */
-    private DbXRef findOrCreateDbXRefFromString(String xref) {
-        int index = xref.indexOf(':');
-        if (index == -1) {
-            logger.error("Can't parse '"+xref+"' as a dbxref as no colon");
-            return null;
-        }
-        String dbName = xref.substring(0, index);
-        String accession = xref.substring(index+1);
-        Db db = generalDao.getDbByName(dbName);
-        if (db == null) {
-            logger.error("Can't find database named '"+dbName+"'");
-            return null;
-        }
-        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, accession);
-        if (dbXRef == null) {
-            dbXRef = new DbXRef(db, accession);
-            sequenceDao.persist(dbXRef);
-        }
-        return dbXRef;
-    }
-
-    /**
-     * Create, or lookup a Pub object from a PMID:acc style input, although the 
-     * prefix is ignored
-     * 
-     * @param ref the reference
-     * @return the Pub object
-     */
-    protected Pub findOrCreatePubFromPMID(String ref) {
-        logger.warn("Looking for '"+ref+"'");
-        Db DB_PUBMED = generalDao.getDbByName("MEDLINE");
-        int colon = ref.indexOf(":");
-        String accession = ref;
-        if (colon != -1) {
-            accession = ref.substring(colon+1);
-        }
-        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(DB_PUBMED, accession);
-        Pub pub;
-        if (dbXRef == null) {
-            dbXRef = new DbXRef(DB_PUBMED, accession);
-            generalDao.persist(dbXRef);
-            CvTerm cvTerm = cvDao.getCvTermById(1); //TODO -Hack
-            pub = new Pub("PMID:"+accession, cvTerm);
-            generalDao.persist(pub);
-            PubDbXRef pubDbXRef = new PubDbXRef(pub, dbXRef, true);
-            generalDao.persist(pubDbXRef);
-        } else {
-            logger.warn("DbXRef wasn't null");
-            pub = pubDao.getPubByDbXRef(dbXRef);
-        }
-        logger.warn("Returning pub='"+pub+"'");
-        return pub;
     }
 
     private void storeNames(Names names, CvTerm SYNONYM_RESERVED,

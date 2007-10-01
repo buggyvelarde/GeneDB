@@ -155,8 +155,6 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 	List<String> unknownRileyClass;
 
 	protected ControlledCurationParser ccParser;
-
-	protected Pattern PUBMED_PATTERN;
 	
     public BaseFeatureProcessor() {
         // Deliberately empty
@@ -503,7 +501,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 	            list = cc.getDbXRef().split("\\|");
 	            for (String dbXRef2 : list) {
 	                String sections[] = dbXRef2.split(":");
-	                if (looksLikePub(dbXRef2)) {
+	                if (featureUtils.looksLikePub(dbXRef2)) {
 	                    //findOrCreatePubFromPMID(sections[0]); // FIXME - could this be a shortcut for below
 	                    DbXRef dbxref = null;
 	                    Db db = this.generalDao.getDbByName("MEDLINE");
@@ -570,7 +568,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 	                if (sections.length != 2) {
 	                    logger.error("Unable to parse a dbxref from '"+dbXRef2+"'");
 	                } else {
-	                    if(!looksLikePub(sections[0])) {
+	                    if(!featureUtils.looksLikePub(sections[0])) {
 	                        DbXRef dbxref = null;
 	                        Db db = this.generalDao.getDbByName(sections[0].toUpperCase());
 	                        if (db == null) {
@@ -609,18 +607,6 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 	            sequenceDao.persist(fcvp);
 	        }
 	    }
-	}
-
-	/**
-	 * Does a string look likes it's a PubMed reference
-	 * 
-	 * @param xref The string to examine
-	 * @return true if it looks like a PubMed reference
-	 */
-	protected boolean looksLikePub(String xref) {
-		boolean ret =  PUBMED_PATTERN.matcher(xref).lookingAt();
-		logger.warn("Returning '"+ret+"' for '"+xref+"' for looks like pubmed");
-		return ret;
 	}
 
 	public void setCcParser(ControlledCurationParser ccParser) {
