@@ -4,27 +4,46 @@ package org.genedb.db.loading;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_TOP_LEVEL;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
+import org.biojava.bio.BioException;
+import org.biojava.bio.proteomics.IsoelectricPointCalc;
+import org.biojava.bio.proteomics.MassCalc;
+import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.seq.StrandedFeature;
+import org.biojava.bio.seq.io.SymbolTokenization;
+import org.biojava.bio.symbol.Alphabet;
+import org.biojava.bio.symbol.IllegalAlphabetException;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.bio.symbol.SimpleSymbolList;
+import org.biojava.bio.symbol.SymbolList;
+import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.Db;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
+import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
+import org.gmod.schema.utils.PeptideProperties;
 import org.springframework.beans.factory.InitializingBean;
 
 public class FeatureUtils implements InitializingBean {
@@ -32,10 +51,12 @@ public class FeatureUtils implements InitializingBean {
 	private CvDao cvDao;
 	private PubDao pubDao;
     private SequenceDao sequenceDao;
+    private GeneralDao generalDao;
     private Cv so;
     protected CvTerm GENEDB_TOP_LEVEL;
 	private Pub DUMMY_PUB;
-    
+
+	protected Pattern PUBMED_PATTERN;
     
     
 	public Feature createFeature(String typeName, String uniqueName, Organism organism) {
@@ -148,6 +169,7 @@ public class FeatureUtils implements InitializingBean {
         Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
         GENEDB_TOP_LEVEL = cvDao.getCvTermByNameInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
         DUMMY_PUB = pubDao.getPubByUniqueName("null");
+        PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
     }
 	
     public void markTopLevelFeature(org.gmod.schema.sequence.Feature topLevel) {
@@ -234,4 +256,156 @@ public class FeatureUtils implements InitializingBean {
     	return residues;
     }
     
+    /**
+     * Create, or lookup a Pub object from a PMID:acc style input, although the 
+     * prefix is ignored
+     * 
+     * @param ref the reference
+     * @return the Pub object
+     */
+    public Pub findOrCreatePubFromPMID(String ref) {
+        Db DB_PUBMED = generalDao.getDbByName("MEDLINE");
+        int colon = ref.indexOf(":");
+        String accession = ref;
+        if (colon != -1) {
+            accession = ref.substring(colon+1);
+        }
+        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(DB_PUBMED, accession);
+        Pub pub;
+        if (dbXRef == null) {
+            dbXRef = new DbXRef(DB_PUBMED, accession);
+            generalDao.persist(dbXRef);
+            CvTerm cvTerm = cvDao.getCvTermById(1); //TODO -Hack
+            pub = new Pub("PMID:"+accession, cvTerm);
+            generalDao.persist(pub);
+            PubDbXRef pubDbXRef = new PubDbXRef(pub, dbXRef, true);
+            generalDao.persist(pubDbXRef);
+        } else {
+            pub = pubDao.getPubByDbXRef(dbXRef);
+        }
+        return pub;
+    }
+    
+    /**
+     * Take a pipe-seperated string and split them up,  
+     * then lookup or create them 
+     * 
+     * @param xref A list of pipe seperated dbxrefs strings
+     * @return A list of DbXrefs
+     */
+    public List<DbXRef> findOrCreateDbXRefsFromString(String xref) {
+        List<DbXRef> ret = new ArrayList<DbXRef>();
+        StringTokenizer st = new StringTokenizer(xref, "|");
+        while (st.hasMoreTokens()) {
+            ret.add(findOrCreateDbXRefFromString(st.nextToken()));
+        }
+        return ret;
+    }
+    
+    /**
+     * Take a db reference and look it up, or create it if it doesn't exist
+     * 
+     * @param xref the reference ie db:id
+     * @return the created or looked-up DbXref
+     */
+    public DbXRef findOrCreateDbXRefFromString(String xref) {
+        int index = xref.indexOf(':');
+        if (index == -1) {
+            return null;
+        }
+        String dbName = xref.substring(0, index);
+        String accession = xref.substring(index+1);
+        Db db = generalDao.getDbByName(dbName);
+        if (db == null) {
+            return null;
+        }
+        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, accession);
+        if (dbXRef == null) {
+            dbXRef = new DbXRef(db, accession);
+            sequenceDao.persist(dbXRef);
+        }
+        return dbXRef;
+    }
+    
+    public void findPubOrDbXRefFromString(String xrefString, List<Pub> pubs, List<DbXRef> dbXRefs) {
+        boolean makePubs = (pubs != null) ? true : false;
+        String[] xrefs = xrefString.split("\\|");
+        for (String xref : xrefs) {
+            if (makePubs && looksLikePub(xref)) {
+                pubs.add(findOrCreatePubFromPMID(xref));
+            } else {
+                DbXRef dbXRef = findOrCreateDbXRefFromString(xref);
+                if (dbXRef != null) {
+                    dbXRefs.add(dbXRef);
+                }
+            }
+        }
+    }
+    
+    /**
+	 * Does a string look likes it's a PubMed reference
+	 * 
+	 * @param xref The string to examine
+	 * @return true if it looks like a PubMed reference
+	 */
+	public boolean looksLikePub(String xref) {
+		boolean ret =  PUBMED_PATTERN.matcher(xref).lookingAt();
+		return ret;
+	}
+	
+
+    public PeptideProperties calculatePepstats(Feature polypeptide) {
+
+        String seqString = FeatureUtils.getResidues(polypeptide);
+        Alphabet protein = ProteinTools.getAlphabet();
+        SymbolTokenization proteinToke = null;
+        SymbolList seq = null;
+        PeptideProperties pp = new PeptideProperties();
+        try {
+            proteinToke = protein.getTokenization("token");
+            seq = new SimpleSymbolList(proteinToke, seqString);
+        } catch (BioException e) {
+
+        }
+        IsoelectricPointCalc ipc = new IsoelectricPointCalc();
+        Double cal = 0.0;
+        try {
+            cal = ipc.getPI(seq, false, false);
+        } catch (IllegalAlphabetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (BioException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        DecimalFormat df = new DecimalFormat("#.##");
+        pp.setIsoelectricPoint(df.format(cal));
+
+        CvTerm MISC_ISOELECTRIC = cvDao.getCvTermByNameAndCvName("isoelectric_point", "genedb_misc"); 
+        CvTerm MISC_MASS = cvDao.getCvTermByNameAndCvName("molecular mass", "genedb_misc"); 
+        CvTerm MISC_CHARGE = cvDao.getCvTermByNameAndCvName("protein_charge", "genedb_misc"); 
+
+
+        FeatureProp fp = new FeatureProp(polypeptide, MISC_ISOELECTRIC, df.format(cal), 0); 
+
+        pp.setAminoAcids(Integer.toString(seqString.length()));
+        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
+        try {
+            cal = mc.getMass(seq)/1000;
+        } catch (IllegalSymbolException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        pp.setMass(df.format(cal));
+
+        fp = new FeatureProp(polypeptide, MISC_MASS, df.format(cal), 0);
+
+        cal = ProteinUtils.getCharge(seq);
+        pp.setCharge(df.format(cal));
+
+
+        fp = new FeatureProp(polypeptide, MISC_CHARGE, df.format(ProteinUtils.getCharge(seq)), 0);
+
+        return pp;
+    }
 }
