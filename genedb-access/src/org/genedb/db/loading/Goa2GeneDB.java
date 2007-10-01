@@ -33,68 +33,27 @@ import java.util.Properties;
 
 
 import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.GeneralDao;
-import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
-
-import org.gmod.schema.analysis.Analysis;
-import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
-import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermProp;
-import org.gmod.schema.sequence.FeatureDbXRef;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
-import org.gmod.schema.sequence.FeatureRelationship;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.biojava.bio.Annotation;
-import org.biojava.bio.gui.sequence.PairwiseOverlayRenderer;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.SimpleTransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 
@@ -112,25 +71,17 @@ import java.util.regex.Pattern;
 @Transactional
 public class Goa2GeneDB implements Goa2GeneDBI{
 
-    private static String usage="Goa2GeneDB GOAssociation_file";
-
     protected static final Log logger = LogFactory.getLog(Goa2GeneDB.class);
     
     private FeatureUtils featureUtils;
 	
     private SequenceDao sequenceDao;
 
-    private OrganismDao organismDao;
-
     private CvDao cvDao;
     
     private PubDao pubDao;
-
-    private GeneralDao generalDao;
     
     private HibernateTransactionManager hibernateTransactionManager;
-    
-    private Organism DUMMY_ORG;
 
 	private Pattern PUBMED_PATTERN;
     
@@ -162,19 +113,9 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             	System.err.println("No input files specified");
             	System.exit(-1);
             }
-            
-            // Override properties in Spring config file (using a
-            // BeanFactoryPostProcessor) based on command-line args
+
             Properties overrideProps = new Properties();
             overrideProps.setProperty("dataSource.username", "chado");
-            //overrideProps.setProperty("runner.organismCommonName", organismCommonName);
-            //overrideProps.setProperty("runnerConfigParser.organismCommonName", organismCommonName);
-    
-//            if (configFilePath != null) {
-//                overrideProps.setProperty("runnerConfigParser.configFilePath", configFilePath);
-//            }
-    
-    
             PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
     
     
@@ -205,39 +146,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
         	logger.warn("Returning '"+ret+"' for '"+xref+"' for looks like pubmed");
         	return ret;
         }
-        
-        /**
-         * Create, or lookup a Pub object from a PMID:acc style input, although the 
-         * prefix is ignored
-         * 
-         * @param ref the reference
-         * @return the Pub object
-         */
-        protected Pub findOrCreatePubFromPMID(String ref) {
-            logger.warn("Looking for '"+ref+"'");
-            Db DB_PUBMED = generalDao.getDbByName("MEDLINE");
-            int colon = ref.indexOf(":");
-            String accession = ref;
-            if (colon != -1) {
-                accession = ref.substring(colon+1);
-            }
-            DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(DB_PUBMED, accession);
-            Pub pub;
-            if (dbXRef == null) {
-                dbXRef = new DbXRef(DB_PUBMED, accession);
-                generalDao.persist(dbXRef);
-                CvTerm cvTerm = cvDao.getCvTermById(1); //TODO -Hack
-                pub = new Pub("PMID:"+accession, cvTerm);
-                generalDao.persist(pub);
-                PubDbXRef pubDbXRef = new PubDbXRef(pub, dbXRef, true);
-                generalDao.persist(pubDbXRef);
-            } else {
-                logger.warn("DbXRef wasn't null");
-                pub = pubDao.getPubByDbXRef(dbXRef);
-            }
-            logger.warn("Returning pub='"+pub+"'");
-            return pub;
-        }
 
         public void writeToDb(List<GoInstance> goInstances) {
         	for (GoInstance go : goInstances) {
@@ -247,7 +155,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
         		if(polypeptide != null) {
         		
         		String id = go.getId();
-                //logger.debug("Investigating storing GO '"+id+"' on '"+polypeptide.getUniquename()+"'");
 
                 CvTerm cvTerm = cvDao.getGoCvTermByAccViaDb(id);
                 if (cvTerm == null) {
@@ -257,37 +164,20 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 
                 Pub pub = pubDao.getPubByUniqueName("null");
                 String ref = go.getRef();
-                // Reference
+
                 Pub refPub = pub;
                 if (ref != null && looksLikePub(ref)) {
-                    // The reference is a pubmed id - usual case
-                    refPub = findOrCreatePubFromPMID(ref);
-                    //FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-                    //sequenceDao.persist(fctp);
+                    refPub = featureUtils.findOrCreatePubFromPMID(ref);
                 }
 
-
-//              logger.warn("pub is '"+pub+"'");
-
                 boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
-                //logger.warn("gene is " + go.getGeneName() + " Polypeptide is " + polypeptide.getUniqueName());
                 List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvTerm, not);
                 int rank = 0;
                 if (fcts.size() != 0) {
                     rank = RankableUtils.getNextRank(fcts);
                 }
-                //logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
                 FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
                 sequenceDao.persist(fct);
-
-                // Reference
-//              Pub refPub = null;
-//              if (ref != null && ref.startsWith("PMID:")) {
-//              // The reference is a pubmed id - usual case
-//              refPub = findOrCreatePubFromPMID(ref);
-//              FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-//              sequenceDao.persist(fctp);
-//              }
 
                 // Evidence
                 FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE , fct, go.getEvidence().getDescription(), 0);
@@ -309,7 +199,7 @@ public class Goa2GeneDB implements Goa2GeneDBI{
                     if (index == -1 ) {
                         logger.error("Got an apparent dbxref but can't parse");
                     } else {
-                        List<DbXRef> dbXRefs= findOrCreateDbXRefsFromString(xref);
+                        List<DbXRef> dbXRefs= featureUtils.findOrCreateDbXRefsFromString(xref);
                         for (DbXRef dbXRef : dbXRefs) {
                             if (dbXRef != null) {
                                 FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
@@ -324,50 +214,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 			}
     	}
 
-        /**
-         * Take a pipe-seperated string and split them up,  
-         * then lookup or create them 
-         * 
-         * @param xref A list of pipe seperated dbxrefs strings
-         * @return A list of DbXrefs
-         */
-        private List<DbXRef> findOrCreateDbXRefsFromString(String xref) {
-            List<DbXRef> ret = new ArrayList<DbXRef>();
-            StringTokenizer st = new StringTokenizer(xref, "|");
-            while (st.hasMoreTokens()) {
-                ret.add(findOrCreateDbXRefFromString(st.nextToken()));
-            }
-            return ret;
-        }
-        
-        /**
-         * Take a db reference and look it up, or create it if it doesn't exist
-         * 
-         * @param xref the reference ie db:id
-         * @return the created or looked-up DbXref
-         */
-        private DbXRef findOrCreateDbXRefFromString(String xref) {
-            int index = xref.indexOf(':');
-            if (index == -1) {
-                logger.error("Can't parse '"+xref+"' as a dbxref as no colon");
-                return null;
-            }
-            String dbName = xref.substring(0, index);
-            String accession = xref.substring(index+1);
-            Db db = generalDao.getDbByName(dbName);
-            if (db == null) {
-                logger.error("Can't find database named '"+dbName+"'");
-                return null;
-            }
-            DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, accession);
-            if (dbXRef == null) {
-                dbXRef = new DbXRef(db, accession);
-                sequenceDao.persist(dbXRef);
-            }
-            return dbXRef;
-        }
-
-        
         private Feature getPolypeptide(String geneName) {
         	geneName = geneName.concat(":pep");
         	Feature polypeptide = sequenceDao.getFeatureByUniqueName(geneName, "polypeptide");
@@ -409,8 +255,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     			writeToDb(goInstances);
     			transaction.commit();
     		}
-    		
-    		
     	}
         
     	private List<GoInstance> parseFile(Reader r) {
@@ -474,10 +318,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 			return goInstances;
     	}
 
-        public void setOrganismDao(OrganismDao organismDao) {
-            this.organismDao = organismDao;
-        }
-
         public void setSequenceDao(SequenceDao sequenceDao) {
             this.sequenceDao = sequenceDao;
         }
@@ -485,10 +325,6 @@ public class Goa2GeneDB implements Goa2GeneDBI{
         public void setCvDao(CvDao cvDao) {
         	System.err.println("Changing cvDao to '"+cvDao+"'");
             this.cvDao = cvDao;
-        }
-
-        public void setGeneralDao(GeneralDao generalDao) {
-            this.generalDao = generalDao;
         }
 
     	public void setPubDao(PubDao pubDao) {
