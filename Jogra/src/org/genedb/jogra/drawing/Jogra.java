@@ -88,11 +88,6 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
 
         // EventBus.subscribe(ApplicationClosingEvent.class, new
         // VetoEventListener {});
-        pluginList.add(new GeneEditor());
-        pluginList.add(new GeneList());
-        pluginList.add(new OrganismEditor());
-        pluginList.add(new CvEditor());
-        pluginList.add(new OrganismTree());
 
         EventBus.subscribe(OpenWindowEvent.class, this);
 
@@ -286,4 +281,8 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
         // }
         // });
     }
+
+	public void setPluginList(List<JograPlugin> pluginList) {
+		this.pluginList.addAll(pluginList);
+	}
 }

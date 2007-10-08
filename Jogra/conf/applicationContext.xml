@@ -15,12 +15,44 @@
     </bean> -->
     	
             
-<!--     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
-    </bean> -->
+    </bean>
+        
+   <bean name="sequenceDao" class="org.genedb.db.dao.SequenceDao">
+   	<property name="sessionFactory" ref="sessionFactory" />
+   </bean>
+        
+	<bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
+	</bean>
+	        
+	<bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor">
+		<property name="sequenceDao" ref="sequenceDao" />
+		<property name="hibernateTransactionManager" ref="transactionManager" />
+	</bean> 
+	        
+	<bean name="geneList" class="org.genedb.jogra.plugins.GeneList">
+	</bean> 
+	     
+	<bean name="organismTree" class="org.genedb.jogra.plugins.OrganismTree">
+	<property name="organismManager" ref="organismManager" />
+	</bean> 
+	  
+	<bean name="organismEditor" class="org.genedb.jogra.plugins.OrganismEditor" />
+	        
+	<bean name="organismManager" class="org.genedb.db.domain.ExtendedOrganismManager"/>
         
    <bean id="application" class="org.genedb.jogra.drawing.Jogra">
-   <property name="jograBusiness" ref="jograBusiness" />
+	   <property name="jograBusiness" ref="jograBusiness" />
+	   <property name="pluginList">
+	  	 <list>
+		  	 <ref bean="geneEditor" />
+		  	 <ref bean="geneList" />
+		     <ref bean="cvEditor" />
+		  	 <ref bean="organismTree" />
+		  	 <ref bean="organismEditor" />
+	  	 </list>
+	   </property>
    </bean>
    
    <bean id="jograBusiness" class="org.genedb.jogra.drawing.JograBusinessImpl">
@@ -42,7 +74,7 @@
 		 <property name="driverClassName" value="org.postgresql.Driver" />
 <!--	 	 <property name="url" value="jdbc:postgresql:ormtest" /> -->
 <!--         <property name="username" value="art" />-->
-        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10001/chado" />
+        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10303/chado" />
         <property name="username" value="chado" />
         <property name="password" value="chado"/>
         <!-- <property name="username" value="tbrucei"/> -->
@@ -69,10 +101,10 @@
 	</bean>
     
         <!-- Hibernate SessionFactory -->
-<!--     <bean id="sessionFactory" 
+     <bean id="sessionFactory" 
      class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-     <property name="dataSource" ref="dataSource" /> -->
-     <!--  <property name="hibernateProperties" ref="hibernateProperties" /> --><!--
+     <property name="dataSource" ref="dataSource" />
+     <!--  <property name="hibernateProperties" ref="hibernateProperties" /> -->
     <property name="mappingResources">
       <list>
         <value>org/gmod/schema/analysis/AnalysisFeature.hbm.xml</value>
@@ -130,6 +162,6 @@
         <value>org/gmod/schema/sequence/FeatureRelationship.hbm.xml</value>
      </list>
     </property>
-    </bean> -->
+    </bean>
     
 </beans>
