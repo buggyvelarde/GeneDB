@@ -19,12 +19,20 @@
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.domain.Gene;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
 
+import org.gmod.schema.sequence.Feature;
+
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceEvent;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -43,11 +51,17 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class GeneEditor implements JograPlugin {
+	
+	private SequenceDao sequenceDao;
+	private HibernateTransactionManager hibernateTransactionManager;
 
-    public JFrame getMainPanel(final String title) {
+    public JFrame getMainPanel(final Gene gene) {
 
+		Session session = hibernateTransactionManager.getSessionFactory().openSession();
+		Transaction transaction = session.beginTransaction();
+    	
         final JFrame ret = new JFrame();
-        ret.setTitle(title);
+        ret.setTitle(gene.getSystematicId());
         final FormLayout fl = new FormLayout("pref 4dlu pref",
                 "pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref");
         ret.setLayout(fl);
@@ -56,15 +70,16 @@ public class GeneEditor implements JograPlugin {
         // ret.add(new JLabel("World"));
         final CellConstraints cc = new CellConstraints();
 
-        final JTextField instance = new JTextField("wibble");
+        final JTextField instance = new JTextField(gene.getSystematicId());
         ret.add(new JLabel("Systematic id"), cc.xy(1, 1));
         ret.add(instance, cc.xy(3, 1));
 
-        final JLabel organism = new JLabel("<html><i>Plasmodium falciparum</i> 3D7</html>");
+        String org = gene.gene.getOrganism().getFullName();
+        final JLabel organism = new JLabel(org);
         ret.add(new JLabel("Organism"), cc.xy(1, 3));
         ret.add(organism, cc.xy(3, 3));
 
-        final JTextField username = new JTextField("wobble");
+        final JTextField username = new JTextField(gene.gene.getName());
         ret.add(new JLabel("Name"), cc.xy(1, 5));
         ret.add(username, cc.xy(3, 5));
 
@@ -82,6 +97,8 @@ public class GeneEditor implements JograPlugin {
         ret.add(new JLabel("Clusters"), cc.xy(1, 13));
         ret.add(new JButton("Show others in cluster"), cc.xy(3, 13));
         ret.pack();
+        
+        transaction.commit();
         return ret;
     }
 
@@ -148,11 +165,21 @@ public class GeneEditor implements JograPlugin {
     private JFrame makeWindow(final String search) {
         System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "'  x");
         final String title = "Gene: " + search;
+        Feature f = sequenceDao.getFeatureByUniqueName(search, "gene");
+        Gene gene = new Gene(f);
         JFrame lookup = Jogra.findNamedWindow(title);
         if (lookup == null) {
-            lookup = getMainPanel(title);
+            lookup = getMainPanel(gene);
         }
         return lookup;
     }
+
+	public void setSequenceDao(SequenceDao sequenceDao) {
+		this.sequenceDao = sequenceDao;
+	}
+
+	public void setHibernateTransactionManager(HibernateTransactionManager hibernateTransactionManager) {
+		this.hibernateTransactionManager = hibernateTransactionManager;
+	}
 
 }
