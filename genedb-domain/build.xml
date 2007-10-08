@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<project name="genedb-domain" default="fulljar" basedir=".">
+
+
+	<target name="fulljar" depends="" description="Create full JAR file with all Spring classes">
+
+		<delete file="genedb-domain.jar"/>
+
+		<jar jarfile="genedb-domain.jar">
+			<fileset dir="bin" />
+			<manifest>
+				<attribute name="Implementation-Title" value="GeneDB Domain"/>
+				<attribute name="Implementation-Version" value="0.1"/>
+			</manifest>
+		</jar>
+
+	</target>
+
+</project>
