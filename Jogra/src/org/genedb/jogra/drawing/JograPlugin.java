@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 
 public interface JograPlugin extends Ordered {
 
-    JFrame getMainPanel(String name);
+    //JFrame getMainPanel(String name);
 
     JPanel getMainWindowPlugin();
 
