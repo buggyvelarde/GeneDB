@@ -5,6 +5,7 @@ import org.genedb.jogra.controller.ImageUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -16,21 +17,24 @@ import java.awt.image.BufferedImage;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class JograLogin extends BaseForm implements InitializingBean {
 
+public class JograLogin extends BaseForm implements InitializingBean {
+    
     public JograLogin() throws Exception {
         super();
         setResizable(false);
         setModal(true);
         setTitle("Jogra Login");
-
+        
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(final WindowEvent arg0) {
@@ -53,12 +57,13 @@ public class JograLogin extends BaseForm implements InitializingBean {
                 getBackground()));
 
         add("North", imagePanel);
-
-        final FormLayout layout = new FormLayout("pref, 3dlu, pref", // 1st major column
-                ""); // add rows
-                                                                // dynamically
-        final JPanel loginDetails = new JPanel(layout);
-        final DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+        
+        FormLayout layout = new FormLayout(
+                "pref, 3dlu, pref", // 1st major column
+                "");                                         // add rows dynamically
+        JPanel loginDetails = new JPanel(layout);
+        loginDetails.setBackground(Color.GREEN);
+        DefaultFormBuilder builder = new DefaultFormBuilder(layout);
         builder.setDefaultDialogBorder();
 
         final JTextField instance = new JTextField("build2");
@@ -87,25 +92,26 @@ public class JograLogin extends BaseForm implements InitializingBean {
                 System.exit(0);
             }
         });
-
-        final Box form = Box.createVerticalBox();
+        
+        Box form = Box.createVerticalBox();
+        form.add(new JLabel("before"));
         form.add(loginDetails);
-        final Box buttons = Box.createHorizontalBox();
+        form.add(new JLabel("after"));
+        Box buttons = Box.createHorizontalBox();
         buttons.add(Box.createHorizontalGlue());
         buttons.add(login);
         buttons.add(Box.createHorizontalStrut(40));
         buttons.add(cancel);
         buttons.add(Box.createHorizontalGlue());
         form.add(buttons);
-
+        
         add("South", form);
-
+        
         pack();
-
-        final Dimension screen = getToolkit().getScreenSize();
-        setLocation((screen.width - getWidth()) / 2,
-                (screen.height - getHeight()) / 2);
-
+        
+        Dimension screen = getToolkit().getScreenSize();
+        setLocation((screen.width-getWidth())/2, (screen.height-getHeight())/2);
+        
     }
 
     protected void processLogin() {
@@ -113,3 +119,5 @@ public class JograLogin extends BaseForm implements InitializingBean {
     }
 
 }
+
+
