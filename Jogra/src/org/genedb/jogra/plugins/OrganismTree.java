@@ -97,7 +97,6 @@ public class OrganismTree implements JograPlugin {
                 return null;
             }
 
-            @Override
             protected void process(final Pair<MutableTreeNode, MutableTreeNode>... pairs) {
                 for (final Pair<MutableTreeNode, MutableTreeNode> pair : pairs) {
                     final int index = pair.getSecond().getChildCount();

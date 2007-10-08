@@ -97,8 +97,7 @@ public class CvEditor implements JograPlugin {
         final JComboBox comboBox = new JComboBox(comboBoxModel);
         ret.add(comboBox);
         comboBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(final ItemEvent ie) {
+            public void itemStateChanged(ItemEvent ie) {
                 if (ie.getStateChange() == ItemEvent.DESELECTED) {
                     return;
                 }
