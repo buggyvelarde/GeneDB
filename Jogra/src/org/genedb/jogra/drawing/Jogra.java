@@ -32,6 +32,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 public class Jogra implements PropertyChangeListener, EventSubscriber {
@@ -78,6 +79,12 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
                 shutdown();
             }
         });
+
+        try {
+            UIManager.setLookAndFeel("org.jdesktop.swingx.plaf.nimbus.NimbusLookAndFeel");
+        } catch (final Exception exp) {
+            exp.printStackTrace();
+        }
 
         // EventBus.subscribe(ApplicationClosingEvent.class, new
         // VetoEventListener {});
@@ -141,8 +148,8 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         // pane.setOpaque(true);
 
-        final Border border = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,
-                2, 2, 2), BorderFactory.createEtchedBorder());
+        final Border border = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2),
+                BorderFactory.createEtchedBorder());
 
         for (final JograPlugin plugin : pluginList) {
             if (plugin.getMainWindowPlugin() != null) {
@@ -202,8 +209,8 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
 
     private void shutdown() {
         System.err.println("Shutdown called");
-        final int check = JOptionPane.showConfirmDialog(mainFrame, "Really finish this experiment",
-                "Caution", JOptionPane.YES_NO_OPTION);
+        final int check = JOptionPane.showConfirmDialog(mainFrame, "Really finish this experiment", "Caution",
+                JOptionPane.YES_NO_OPTION);
         if (check == JOptionPane.NO_OPTION) {
             return;
         }
