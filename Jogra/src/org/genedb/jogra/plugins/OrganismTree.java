@@ -52,7 +52,7 @@ public class OrganismTree implements JograPlugin {
 
     private MutableTreeNode root;
 
-    private ExtendedOrganismManager manager;
+    private ExtendedOrganismManager organismManager;
 
     @SuppressWarnings("unchecked")
     public JFrame getMainPanel(final String title) {
@@ -89,7 +89,7 @@ public class OrganismTree implements JograPlugin {
         new SwingWorker<Void, Pair<MutableTreeNode, MutableTreeNode>>() {
             @Override
             protected Void doInBackground() throws Exception {
-                final ExtendedOrganism rootOrg = manager.getByName("root");
+                final ExtendedOrganism rootOrg = organismManager.getByName("Home");
                 // TODO Set user object of root node to root of extended org.
                 // heirachy
                 traverseNodes(rootOrg, root);
@@ -182,8 +182,8 @@ public class OrganismTree implements JograPlugin {
         return lookup;
     }
 
-    public void setManager(final ExtendedOrganismManager manager) {
-        this.manager = manager;
+    public void setOrganismManager(final ExtendedOrganismManager manager) {
+        this.organismManager = manager;
     }
 
 }
