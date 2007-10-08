@@ -1,6 +1,10 @@
 package org.genedb.jogra.drawing;
 
-import org.genedb.zfexpression.domain.Stage;
+import org.genedb.jogra.plugins.CvEditor;
+import org.genedb.jogra.plugins.GeneEditor;
+import org.genedb.jogra.plugins.GeneList;
+import org.genedb.jogra.plugins.OrganismEditor;
+import org.genedb.jogra.plugins.OrganismTree;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceEvent;
@@ -8,235 +12,149 @@ import org.bushe.swing.event.EventSubscriber;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.beans.FeatureDescriptor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSpinner;
-import javax.swing.KeyStroke;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.border.Border;
 
 public class Jogra implements PropertyChangeListener, EventSubscriber {
-    
-    private List<JograPlugin> pluginList = new ArrayList<JograPlugin>();
-    
-    private List<JFrame> windowList = new ArrayList<JFrame>();
-    
-    private JFrame frame = new JFrame();
+
+    private final List<JograPlugin> pluginList = new ArrayList<JograPlugin>();
+
+    // private List<JFrame> windowList = new ArrayList<JFrame>();
+
+    private final JFrame mainFrame = new JFrame();
+
     private AbstractApplicationContext ctx;
-    //private boolean audio = true;
+
+    // private boolean audio = true;
     private JButton edit;
+
     private JButton album;
+
     private String secondStep;
-    private String defaultDir = "/Users/art/Desktop";
-    
+
+    private final String defaultDir = "/Users/art/Desktop";
+
     private JMenu windowMenu;
-    
+
     private JograBusiness jograBusiness;
- //   private TestService testService;
-    
-//    public void setDirty(boolean dirty) {
-//        if (dirty == this.dirty) {
-//            return;
-//        }
-//        this.dirty = dirty;
-//        updateTitle();
-//    }
 
+    // private TestService testService;
 
-    public void setSecondStep(String secondStep) {
-        this.secondStep = secondStep;
-    }
-
-    
-    public void init() throws Exception {
-        JograLogin loginWindow = new JograLogin();
-        //loginWindow.setUser(user);
-        loginWindow.pack();
-        loginWindow.setVisible(true);
-    }
-    
-    public static void main(String[] args) throws Exception {
-        
-        Jogra application  = Jogra.instantiate();
-        
-        application.testTransactions();
-        
-        application.init();
-        //application.logon();
-        application.makeMain();
-        application.showMain();
-        
-        //ps.showSplash();
-
-//        EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                try {
-//                    ps.makeMain();
-//                    ps.showMain();
-//                } catch (IOException exp) {
-//                    // TODO Auto-generated catch block
-//                    exp.printStackTrace();
-//                }
-//            }
-//        });
-    }
-
-    /* (non-Javadoc)
-	 * @see org.genedb.jogra.drawing.JograApplication#testTransactions()
-	 */
-    public void testTransactions() {
-        // TODO Auto-generated method stub
-        //Feature f = fetchFeature("idXXX");
-        jograBusiness.testTransactions();
-        //testService.doSomething2();
-    }
-
-    
-    public static Jogra instantiate() throws IOException {
-        AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"classpath:applicationContext.xml"});
-        
-        Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
-        ctx.registerShutdownHook();
-        return application;
-    }
+    // public void setDirty(boolean dirty) {
+    // if (dirty == this.dirty) {
+    // return;
+    // }
+    // this.dirty = dirty;
+    // updateTitle();
+    // }
 
     public Jogra() throws IOException {
-        
-//        ctx = new ClassPathXmlApplicationContext(
-//                new String[] {"classpath:applicationContext.xml"});
-//        ctx.registerShutdownHook();
-        
+
+        // ctx = new ClassPathXmlApplicationContext(
+        // new String[] {"classpath:applicationContext.xml"});
+        // ctx.registerShutdownHook();
+
         EventBus.subscribe(ApplicationClosingEvent.class, new EventSubscriber() {
-            public void onEvent(EventServiceEvent ese) {
+            public void onEvent(final EventServiceEvent ese) {
                 shutdown();
             }
         });
-        
-        //EventBus.subscribe(ApplicationClosingEvent.class, new VetoEventListener {});
+
+        // EventBus.subscribe(ApplicationClosingEvent.class, new
+        // VetoEventListener {});
         pluginList.add(new GeneEditor());
         pluginList.add(new GeneList());
-        
+        pluginList.add(new OrganismEditor());
+        pluginList.add(new CvEditor());
+        pluginList.add(new OrganismTree());
+
         EventBus.subscribe(OpenWindowEvent.class, this);
-        
+
     }
-    
-    
-    private void shutdown() {
-        System.err.println("Shutdown called");
-        int check = JOptionPane.showConfirmDialog(frame,
-                "Really finish this experiment",
-                "Caution",
-                JOptionPane.YES_NO_OPTION);
-        if (check == JOptionPane.NO_OPTION) {
-            return;
-        }
-        System.exit(0);
+
+    protected void finishUp() {
+        // TODO Auto-generated method stub
     }
-    
-    
+
+    public void init() throws Exception {
+        final JograLogin loginWindow = new JograLogin();
+        // loginWindow.setUser(user);
+        loginWindow.pack();
+        loginWindow.setVisible(true);
+    }
+
     public void makeMain() throws IOException {
-        
-        frame.setResizable(false);
-        //slide.setDirty(false);
-        //updateTitle(); // To make sure title bar is updated even if dirty hasn't changed
-        
-        frame.addWindowListener(new WindowAdapter() {
+
+        mainFrame.setResizable(false);
+        // slide.setDirty(false);
+        // updateTitle(); // To make sure title bar is updated even if dirty
+        // hasn't changed
+
+        mainFrame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent arg0) {
+            public void windowClosing(final WindowEvent arg0) {
                 System.err.println("About to publish ace");
                 EventBus.publish(new ApplicationClosingEvent());
                 System.err.println("Just published ace");
-                //System.exit(0);
+                // System.exit(0);
             }
         });
-        
-        JMenuBar menu = new JMenuBar();
-        
-        JMenu pluginMenu = new JMenu("Plugins");
-        for (JograPlugin plugin : pluginList) {
+        mainFrame.setTitle("Jogra");
+
+        final JMenuBar menu = new JMenuBar();
+
+        final JMenu pluginMenu = new JMenu("Plugins");
+        for (final JograPlugin plugin : pluginList) {
             pluginMenu.add(new JMenuItem(plugin.getName()));
         }
         menu.add(pluginMenu);
-        
+
         windowMenu = new JMenu("Window");
         menu.add(windowMenu);
-        
-        JMenu helpMenu = new JMenu("Help");
+
+        final JMenu helpMenu = new JMenu("Help");
         helpMenu.add(new JMenuItem("About"));
         menu.add(helpMenu);
-        
-        frame.setJMenuBar(menu);
-        
-        Container pane = frame.getContentPane();
+
+        mainFrame.setJMenuBar(menu);
+
+        final Container pane = mainFrame.getContentPane();
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-        //pane.setOpaque(true);
-        
-        for (JograPlugin plugin : pluginList) {
+        // pane.setOpaque(true);
+
+        final Border border = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,
+                2, 2, 2), BorderFactory.createEtchedBorder());
+
+        for (final JograPlugin plugin : pluginList) {
             if (plugin.getMainWindowPlugin() != null) {
-                pane.add(plugin.getMainWindowPlugin());
+                final JComponent panel = plugin.getMainWindowPlugin();
+                panel.setBorder(border);
+                pane.add(panel);
             }
         }
-        
+
     }
 
-   protected void finishUp() {
-        // TODO Auto-generated method stub
-    }
-
-   public void showMain() throws IOException {
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    
-    private void restart() {
-        // TODO Auto-generated method stub
-    }    
-
-    public void propertyChange(PropertyChangeEvent evt) {
-        //updateTitle();
-    }
-
-    public void onEvent(EventServiceEvent event) {
+    public void onEvent(final EventServiceEvent event) {
         if (event.getClass().isAssignableFrom(OpenWindowEvent.class)) {
             this.onEvent((OpenWindowEvent) event);
             return;
@@ -249,23 +167,116 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 // TODO Auto-generated method stub
-                JFrame frame = new JFrame();
-                frame.add(event.getPanel());
-                frame.pack();
-                windowList.add(frame);
-                frame.setVisible(true);
+                final JFrame frame = event.getJFrame();
+                if (!frame.isVisible()) {
+                    frame.setVisible(true);
+                } else {
+                    // frame.pack();
+                    // windowList.add(frame);
+                    frame.toFront();
+                }
             }
         });
     }
 
+    public void propertyChange(final PropertyChangeEvent evt) {
+        // updateTitle();
+    }
 
-//    public void setTestService(TestService testService) {
-//        this.testService = testService;
-//    }
+    private void restart() {
+        // TODO Auto-generated method stub
+    }
 
+    public void setJograBusiness(final JograBusiness jograBusiness) {
+        this.jograBusiness = jograBusiness;
+    }
 
-	public void setJograBusiness(JograBusiness jograBusiness) {
-		this.jograBusiness = jograBusiness;
-	}
+    public void setSecondStep(final String secondStep) {
+        this.secondStep = secondStep;
+    }
+
+    public void showMain() throws IOException {
+        mainFrame.pack();
+        mainFrame.setVisible(true);
+    }
+
+    private void shutdown() {
+        System.err.println("Shutdown called");
+        final int check = JOptionPane.showConfirmDialog(mainFrame, "Really finish this experiment",
+                "Caution", JOptionPane.YES_NO_OPTION);
+        if (check == JOptionPane.NO_OPTION) {
+            return;
+        }
+        System.exit(0);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.genedb.jogra.drawing.JograApplication#testTransactions()
+     */
+    public void testTransactions() {
+        // TODO Auto-generated method stub
+        // Feature f = fetchFeature("idXXX");
+        jograBusiness.testTransactions();
+        // testService.doSomething2();
+    }
+
+    public static JFrame findNamedWindow(final String name) {
+        final Frame[] frames = Frame.getFrames();
+        for (final Frame frame : frames) {
+            if (!(frame instanceof JFrame)) {
+                continue;
+            }
+            final String title = frame.getTitle();
+            System.err.println("Comparing '" + name + "' and '" + title + "'");
+            // Possible match
+            if (title.equals(name)) {
+                return (JFrame) frame;
+            }
+            if (title.equals(name + " *")) {
+                return (JFrame) frame;
+            }
+        }
+        return null;
+    }
+
+    public static Jogra instantiate() throws IOException {
+        final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
+                new String[] { "classpath:applicationContext.xml" });
+
+        final Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
+        ctx.registerShutdownHook();
+        return application;
+    }
+
+    // public void setTestService(TestService testService) {
+    // this.testService = testService;
+    // }
+
+    public static void main(final String[] args) throws Exception {
+
+        final Jogra application = Jogra.instantiate();
+
+        application.testTransactions();
+
+        application.init();
+        // application.logon();
+        application.makeMain();
+        application.showMain();
+
+        // ps.showSplash();
+
+        // EventQueue.invokeLater(new Runnable() {
+        // public void run() {
+        // try {
+        // ps.makeMain();
+        // ps.showMain();
+        // } catch (IOException exp) {
+        // // TODO Auto-generated catch block
+        // exp.printStackTrace();
+        // }
+        // }
+        // });
+    }
 }
-

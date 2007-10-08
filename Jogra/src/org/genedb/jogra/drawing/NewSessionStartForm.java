@@ -1,7 +1,5 @@
 package org.genedb.jogra.drawing;
 
-import org.genedb.jogra.domain.Element;
-
 import org.springframework.beans.factory.InitializingBean;
 
 import java.awt.Dimension;
@@ -27,7 +25,6 @@ public class NewSessionStartForm extends BaseForm implements InitializingBean {
     private boolean embryoOK = true;
     private final JButton login = new JButton("Login");
     private boolean elementOK = true; // FIXME - Make false once stopped testing and field is blank
-    private Element element = null;
     
     
     public NewSessionStartForm() {

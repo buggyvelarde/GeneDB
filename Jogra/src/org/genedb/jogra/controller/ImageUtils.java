@@ -3,13 +3,6 @@ package org.genedb.jogra.controller;
 import static java.awt.BasicStroke.CAP_ROUND;
 import static java.awt.BasicStroke.JOIN_MITER;
 
-import org.genedb.jogra.drawing.StageEvent;
-import org.genedb.zfexpression.domain.Stage;
-
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventServiceEvent;
-import org.bushe.swing.event.EventSubscriber;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -39,8 +32,6 @@ public class ImageUtils {
     //private String localFileName;
     private Map<String, Color> colourMap = new HashMap<String, Color>();
     
-    private Map<Stage, BufferedImage> backgroundImages;
-    
     public void setScale(int scale) {
         this.scale = scale;
     }
@@ -50,21 +41,21 @@ public class ImageUtils {
     }
     
     public ImageUtils() {
-        EventBus.subscribeStrongly(StageEvent.class, new EventSubscriber() {
-            public void onEvent(EventServiceEvent event) {
-                StageEvent se = (StageEvent) event;
-                Stage stage = se.getEventObject();
-                if (invert) {
-                    stage = se.getAlternateStage();
-                }
-                background = backgroundImages.get(stage);
-                //System.err.println("Set a background image '"+background+"'");
-            }
-        });
+//        EventBus.subscribeStrongly(StageEvent.class, new EventSubscriber() {
+//            public void onEvent(EventServiceEvent event) {
+//                StageEvent se = (StageEvent) event;
+//                Stage stage = se.getEventObject();
+//                if (invert) {
+//                    stage = se.getAlternateStage();
+//                }
+//                background = backgroundImages.get(stage);
+//                //System.err.println("Set a background image '"+background+"'");
+//            }
+//        });
     }
 
     public void setBackgroundImageNames(Map<String, String> backgroundImageNames) throws IOException {
-        this.backgroundImages = new HashMap<Stage, BufferedImage>(backgroundImageNames.size());
+        //this.backgroundImages = new HashMap<Stage, BufferedImage>(backgroundImageNames.size());
         BufferedImage bi = null;
 //        for (Map.Entry<String, String> entry : backgroundImageNames.entrySet()) {
 //            bi = makeBackgroundFromClasspath(entry.getValue());

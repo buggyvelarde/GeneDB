@@ -18,24 +18,22 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-
 public class JograLogin extends BaseForm implements InitializingBean {
-    
+
     public JograLogin() throws Exception {
         super();
         setResizable(false);
         setModal(true);
         setTitle("Jogra Login");
-        
+
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent arg0) {
+            public void windowClosing(final WindowEvent arg0) {
                 System.exit(0);
             }
         });
@@ -44,68 +42,70 @@ public class JograLogin extends BaseForm implements InitializingBean {
     }
 
     public void afterPropertiesSet() throws Exception {
-        JPanel panel = new JPanel();
+        final JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
-        
-        BufferedImage bi = ImageUtils.makeBackgroundFromClasspath("jogra.jpg");
-        ImagePanel imagePanel = new ImagePanel(bi);
-        
-        panel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 20, getBackground()));
-        
+
+        final BufferedImage bi = ImageUtils
+                .makeBackgroundFromClasspath("jogra.jpg");
+        final ImagePanel imagePanel = new ImagePanel(bi);
+
+        panel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 20,
+                getBackground()));
+
         add("North", imagePanel);
-        
-        FormLayout layout = new FormLayout(
-                "pref, 3dlu, pref", // 1st major column
-                "");                                         // add rows dynamically
-        JPanel loginDetails = new JPanel(layout);
-        DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+
+        final FormLayout layout = new FormLayout("pref, 3dlu, pref", // 1st major column
+                ""); // add rows
+                                                                // dynamically
+        final JPanel loginDetails = new JPanel(layout);
+        final DefaultFormBuilder builder = new DefaultFormBuilder(layout);
         builder.setDefaultDialogBorder();
-        
-        JTextField instance = new JTextField("build2");
+
+        final JTextField instance = new JTextField("build2");
         builder.append("GeneDB Instance", instance);
         builder.nextLine();
-        
-        JTextField username = new JTextField(System.getProperty("user.name"));  
-        builder.append("Username",   username);
+
+        final JTextField username = new JTextField(System
+                .getProperty("user.name"));
+        builder.append("Username", username);
         builder.nextLine();
 
-        JPasswordField password = new JPasswordField(12);
-        builder.append("Password",   password);
-        //builder.nextLine();
-            
+        final JPasswordField password = new JPasswordField(12);
+        builder.append("Password", password);
+        // builder.nextLine();
 
-        
-        JButton login = new JButton("Login");
+        final JButton login = new JButton("Login");
         login.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
+            public void actionPerformed(final ActionEvent arg0) {
                 processLogin();
                 setVisible(false);
             }
         });
-        JButton cancel = new JButton("Cancel");
+        final JButton cancel = new JButton("Cancel");
         cancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
+            public void actionPerformed(final ActionEvent arg0) {
                 System.exit(0);
             }
         });
-        
-        Box form = Box.createVerticalBox();
+
+        final Box form = Box.createVerticalBox();
         form.add(loginDetails);
-        Box buttons = Box.createHorizontalBox();
+        final Box buttons = Box.createHorizontalBox();
         buttons.add(Box.createHorizontalGlue());
         buttons.add(login);
         buttons.add(Box.createHorizontalStrut(40));
         buttons.add(cancel);
         buttons.add(Box.createHorizontalGlue());
         form.add(buttons);
-        
+
         add("South", form);
-        
+
         pack();
-        
-        Dimension screen = getToolkit().getScreenSize();
-        setLocation((screen.width-getWidth())/2, (screen.height-getHeight())/2);
-        
+
+        final Dimension screen = getToolkit().getScreenSize();
+        setLocation((screen.width - getWidth()) / 2,
+                (screen.height - getHeight()) / 2);
+
     }
 
     protected void processLogin() {
@@ -113,5 +113,3 @@ public class JograLogin extends BaseForm implements InitializingBean {
     }
 
 }
-
-

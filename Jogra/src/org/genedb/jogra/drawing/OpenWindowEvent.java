@@ -21,24 +21,24 @@ package org.genedb.jogra.drawing;
 
 import org.bushe.swing.event.EventServiceEvent;
 
-import javax.swing.JPanel;
+import javax.swing.JFrame;
 
 public class OpenWindowEvent implements EventServiceEvent {
 
     private JograPlugin source;
-    private JPanel panel;
+    private JFrame jframe;
     
-    public OpenWindowEvent(JograPlugin source, JPanel panel) {
+    public OpenWindowEvent(JograPlugin source, JFrame jframe) {
         this.source = source;
-        this.panel = panel;
+        this.jframe = jframe;
     }
 
     public Object getSource() {
         return source;
     }
 
-    public JPanel getPanel() {
-        return this.panel;
+    public JFrame getJFrame() {
+        return this.jframe;
     }
 
 }

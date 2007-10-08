@@ -19,21 +19,23 @@
 
 package org.genedb.jogra.drawing;
 
-import org.springframework.core.Ordered;
+public class Pair<T, V> {
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+    private final T first;
 
-public interface JograPlugin extends Ordered {
+    private final V second;
 
-    JFrame getMainPanel(String name);
+    public Pair(final T first, final V second) {
+        this.first = first;
+        this.second = second;
+    }
 
-    JPanel getMainWindowPlugin();
+    public T getFirst() {
+        return this.first;
+    }
 
-    String getName();
-
-    boolean isSingletonByDefault();
-
-    boolean isUnsaved();
+    public V getSecond() {
+        return this.second;
+    }
 
 }
