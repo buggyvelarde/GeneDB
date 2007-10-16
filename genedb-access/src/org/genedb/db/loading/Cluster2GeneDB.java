@@ -38,7 +38,7 @@ public class Cluster2GeneDB {
     
     private Session session;
     
-    protected Db GENEDB_MISC;
+    protected Db ORTHOMCLDB;
     
     public static void main (String[] args) throws FileNotFoundException {
         
@@ -72,7 +72,7 @@ public class Cluster2GeneDB {
     
     public void afterPropertiesSet() {
 		session = hibernateTransactionManager.getSessionFactory().openSession();
-		GENEDB_MISC = generalDao.getDbByName("genedb_misc");
+		ORTHOMCLDB = generalDao.getDbByName("ORTHOMCLDB");
     }
 
 
@@ -106,9 +106,9 @@ public class Cluster2GeneDB {
 	        if(value != "") {
 		        Feature polypeptide = getPolypeptide(key);
 		        
-		        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(GENEDB_MISC,value);
+		        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(ORTHOMCLDB, value);
 		        if(dbXRef == null) {
-		        	dbXRef = new DbXRef(GENEDB_MISC,key);
+		        	dbXRef = new DbXRef(ORTHOMCLDB, key);
 		        	generalDao.persist(dbXRef);
 		        }
 		        
