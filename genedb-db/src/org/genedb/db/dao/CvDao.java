@@ -24,7 +24,7 @@ public class CvDao extends BaseDao implements CvDaoI {
      * @see org.genedb.db.dao.CvDaoI#getCvById(int)
      */
     public Cv getCvById(int id) {
-	return (Cv) getHibernateTemplate().load(Cv.class, id);
+    	return (Cv) getHibernateTemplate().load(Cv.class, id);
     }
 
     /* (non-Javadoc)
@@ -49,9 +49,15 @@ public class CvDao extends BaseDao implements CvDaoI {
          */
         @SuppressWarnings("unchecked")
         public List<CvTerm> getCvTermByNameInCv(String cvTermName, Cv cv) {
-        return getHibernateTemplate().findByNamedParam(
-            "from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv = :cv",
-            new String[]{"cvTermName", "cv"}, new Object[]{cvTermName, cv});
+        	
+			List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
+		            "from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv = :cv",
+		            new String[]{"cvTermName", "cv"}, new Object[]{cvTermName, cv});
+			if (cvTermList == null || cvTermList.size() == 0) {
+				logger.warn("No cvterms found for '"+cvTermName+"' in '"+cv.getName()+"'");
+				return null;
+			}
+			return cvTermList;
         }
 
         
@@ -103,7 +109,11 @@ public class CvDao extends BaseDao implements CvDaoI {
         }
 
 		public boolean existsNameInOntology(String name, Cv ontology) {
-			return this.getCvTermByNameInCv(name, ontology).size() > 0;
+			List<CvTerm> tmp = this.getCvTermByNameInCv(name, ontology);
+			if (tmp == null || tmp.size()==0) {
+				return false;
+			}
+			return true;
 		}
 
 
@@ -118,6 +128,7 @@ public class CvDao extends BaseDao implements CvDaoI {
 		            "from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv.name like :name",
 		            new String[]{"cvTermName", "name"}, new Object[]{cvTermName, name});
 			if (cvTermList == null || cvTermList.size() == 0) {
+				logger.warn("No cvterms found for '"+cvTermName+"' in '"+name+"'");
 				return null;
 			} else {
 				return cvTermList.get(0);
@@ -128,6 +139,19 @@ public class CvDao extends BaseDao implements CvDaoI {
 		public CvTerm getCvTermByDbXRef(DbXRef dbXRef) {
 			List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
 					"from CvTerm cvt where cvt.dbXRef = :dbXRef","dbXRef" , dbXRef);
+			if (cvTermList == null || cvTermList.size() == 0) {
+				return null;
+			} else {
+				return cvTermList.get(0);
+			}
+		}
+		
+        
+		public CvTerm getCvTermByDbAcc(String db, String acc) {
+			List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
+					"cvt from CvTerm cvt, DbXRef dbx where cvt.dbXRef = dbx and dbx.db.name= :db and dbx.accession = :acc",
+					new String[]{db, acc}, 
+					new Object[]{db, acc});
 			if (cvTermList == null || cvTermList.size() == 0) {
 				return null;
 			} else {
