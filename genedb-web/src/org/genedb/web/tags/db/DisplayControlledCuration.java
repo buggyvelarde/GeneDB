@@ -86,7 +86,7 @@ public class DisplayControlledCuration extends SimpleTagSupport{
 				
 	
 					String pub = fct.getPub().getUniqueName();
-					if("NULL".equals(pub)){
+					if(pub.equals("null")){
 						if(fct.getFeatureCvTermDbXRefs() == null || fct.getFeatureCvTermDbXRefs().size() == 0){
 							out.println(startTag + endTag);
 						} else {
