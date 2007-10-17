@@ -190,9 +190,8 @@ public class CvDao extends BaseDao implements CvDaoI {
         }
 
 
-        // TODO Use limit
         public List<String> getPossibleMatches(String search, Cv cv, int limit) {
-            HibernateTemplate ht = getHibernateTemplate();
+            HibernateTemplate ht = new HibernateTemplate(getSessionFactory());
             ht.setMaxResults(limit);
             return ht.findByNamedParam(
             "select cvTerm.name from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv = :cv",
