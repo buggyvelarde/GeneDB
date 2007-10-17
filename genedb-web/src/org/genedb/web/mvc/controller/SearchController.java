@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -301,6 +303,58 @@ public class SearchController extends MultiActionController implements Initializ
 	    return new ModelAndView(viewName, model);
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+    public ModelAndView GenesByCvTermAndCvName(HttpServletRequest request, HttpServletResponse response) {
+	    String cvName = ServletRequestUtils.getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
+	    String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", NO_VALUE_SUPPLIED);
+	    String viewName = "list/features";
+	    List<Feature> features = sequenceDao.getFeaturesByCvTermNameAndCvName(cvTermName, cvName);
+	    
+	    if (features == null || features.size() == 0) {
+            logger.info("result is null");
+            try {
+				ServletOutputStream out = response.getOutputStream();
+				out.print("There is no Gene in the database coresponding to CvTerm " + cvTermName);
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            
+        }
+	    
+	    Map model = new HashMap();
+	    List<Feature> results = new ArrayList<Feature>();
+	    for (Feature feature : features) {
+			if("gene".equals(feature.getCvTerm().getName())) {
+				results.add(feature);
+			} else {
+				Feature mRNA = null;
+                Collection<FeatureRelationship> frs = feature.getFeatureRelationshipsForSubjectId(); 
+                if (frs != null) {
+                	for (FeatureRelationship fr : frs) {
+                		mRNA = fr.getFeatureByObjectId();
+                		break;
+                	}
+                	if (mRNA != null) {
+                		Feature gene = null;
+                		Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForSubjectId(); 
+                		for (FeatureRelationship fr : frs2) {
+                			Feature f = fr.getFeatureByObjectId();
+                			if ("gene".equals(f.getCvTerm().getName())) {
+                				gene = f;
+                			}
+                		}
+                		results.add(gene);
+                	}
+                }
+			}
+		}
+	    model.put("results", results);
+	    
+	    
+	    return new ModelAndView(viewName, model);
+	}
 //	public ModelAndView PublicationById(HttpServletRequest request, HttpServletResponse response) {
 //	    int id = ServletRequestUtils.getIntParameter(request, "id", -1);
 //	    if (id == -1) {
