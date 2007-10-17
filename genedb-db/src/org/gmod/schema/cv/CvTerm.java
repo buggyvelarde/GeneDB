@@ -492,14 +492,14 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermRelationshipsForObjectId()
      */
-    private Collection<CvTermRelationship> getCvTermRelationshipsForObjectId() {
+    public Collection<CvTermRelationship> getCvTermRelationshipsForObjectId() {
         return this.cvTermRelationshipsForObjectId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setCvTermRelationshipsForObjectId(java.util.Set)
      */
-    private void setCvTermRelationshipsForObjectId(Collection<CvTermRelationship> cvTermRelationshipsForObjectId) {
+    public void setCvTermRelationshipsForObjectId(Collection<CvTermRelationship> cvTermRelationshipsForObjectId) {
         this.cvTermRelationshipsForObjectId = cvTermRelationshipsForObjectId;
     }
 
@@ -534,14 +534,14 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getCvTermRelationshipsForSubjectId()
      */
-    private Collection<CvTermRelationship> getCvTermRelationshipsForSubjectId() {
+    public Collection<CvTermRelationship> getCvTermRelationshipsForSubjectId() {
         return this.cvTermRelationshipsForSubjectId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setCvTermRelationshipsForSubjectId(java.util.Set)
      */
-    private void setCvTermRelationshipsForSubjectId(Collection<CvTermRelationship> cvTermRelationshipsForSubjectId) {
+    public void setCvTermRelationshipsForSubjectId(Collection<CvTermRelationship> cvTermRelationshipsForSubjectId) {
         this.cvTermRelationshipsForSubjectId = cvTermRelationshipsForSubjectId;
     }
 
