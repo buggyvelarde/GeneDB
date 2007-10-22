@@ -50,7 +50,7 @@ public class Cluster2GeneDB {
         }
         
         Properties overrideProps = new Properties();
-        overrideProps.setProperty("dataSource.username", "chado");
+        overrideProps.setProperty("dataSource.username", "pathdb");
      
         PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
 
@@ -105,15 +105,19 @@ public class Cluster2GeneDB {
 	        
 	        if(value != "") {
 		        Feature polypeptide = getPolypeptide(key);
+		        if (polypeptide == null) {
+		        	logger.warn("Can't find gene for '"+key+"'");
+		        } else {
+		        	
+		        	DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(ORTHOMCLDB, value);
+		        	if(dbXRef == null) {
+		        		dbXRef = new DbXRef(ORTHOMCLDB, key);
+		        		generalDao.persist(dbXRef);
+		        	}
 		        
-		        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(ORTHOMCLDB, value);
-		        if(dbXRef == null) {
-		        	dbXRef = new DbXRef(ORTHOMCLDB, key);
-		        	generalDao.persist(dbXRef);
+		        	FeatureDbXRef fDbXRef = new FeatureDbXRef(dbXRef,polypeptide,true);
+		        	sequenceDao.persist(fDbXRef);
 		        }
-		        
-		        FeatureDbXRef fDbXRef = new FeatureDbXRef(dbXRef,polypeptide,true);
-		        sequenceDao.persist(fDbXRef);
 	        }
 	    }
 		
