@@ -317,12 +317,13 @@ public class SearchController extends MultiActionController implements Initializ
 				ServletOutputStream out = response.getOutputStream();
 				out.print("There is no Gene in the database coresponding to CvTerm " + cvTermName);
 				out.close();
+				return null;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
             
         }
-	    
+	    logger.info("Features size is " + features.size());
 	    Map model = new HashMap();
 	    List<Feature> results = new ArrayList<Feature>();
 	    for (Feature feature : features) {
@@ -343,13 +344,14 @@ public class SearchController extends MultiActionController implements Initializ
                 			Feature f = fr.getFeatureByObjectId();
                 			if ("gene".equals(f.getCvTerm().getName())) {
                 				gene = f;
+                        		results.add(gene);
                 			}
                 		}
-                		results.add(gene);
                 	}
                 }
 			}
 		}
+	    logger.info("results size is " + results.size());
 	    model.put("results", results);
 	    
 	    
