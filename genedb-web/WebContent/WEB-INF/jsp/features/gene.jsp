@@ -98,7 +98,7 @@
      		  <tr><td>${featRel.rank}</td><td>${featRel.value}</td>
      		  <td>this</td>
      		  <td> is ${featRel.cvTerm.name}</td>
-     		  <td><a href="./FeatureByName?name=${featRel.featureByObjectId.uniqueName}">${featRel.featureByObjectId.displayNameame}</a> [${featRel.featureByObjectId.cvTerm.name}]</td></tr>
+     		  <td><a href="./FeatureByName?name=${featRel.featureByObjectId.uniqueName}">${featRel.featureByObjectId.displayName}</a> [${featRel.featureByObjectId.cvTerm.name}]</td></tr>
 
 		   </c:forEach>
         	</table>
@@ -187,6 +187,10 @@
 <h3>Database X-refs</h3>
 
 
-
+<st:section name="Modified" collapsed="false" collapsible="true" hideIfEmpty="true">
+	<c:forEach items="${modified}" var="line">
+		<b>${line}</b><br/>
+	</c:forEach>
+</st:section>
 		   
 <format:footer />

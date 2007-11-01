@@ -5,7 +5,7 @@
 
 <h3>Naming</h3>
 			<c:forEach items="${feature.featureSynonyms}" var="featSyn">
-     			  <p><b>${featSyn.synonym.cvterm.name}</b> ${featSyn.synonym.name} <c:if test="!${featSyn.current}">{Obsolete}</c:if></p>
+     			  <p><b>${featSyn.synonym.cvTerm.name}</b> ${featSyn.synonym.name} <c:if test="!${featSyn.current}">{Obsolete}</c:if></p>
 			</c:forEach>
         	
         	<dl>
@@ -38,7 +38,7 @@
         	
         	<table>
            <c:forEach items="${feature.featureProps}" var="featProp">
-     		  <tr><td>[${featProp.rank}]</td><td>&nbsp;&nbsp;&nbsp;&nbsp;${featProp.cvterm.name}</td><td>&nbsp;&nbsp;&nbsp;&nbsp;${featProp.value}</td></tr>
+     		  <tr><td>[${featProp.rank}]</td><td>&nbsp;&nbsp;&nbsp;&nbsp;${featProp.cvTerm.name}</td><td>&nbsp;&nbsp;&nbsp;&nbsp;${featProp.value}</td></tr>
 		   </c:forEach>
 </table>
 

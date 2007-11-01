@@ -16,7 +16,7 @@
 	<dd>${cvTerm.definition}</dd>
 
 	<dt><b>Primary Db-Xref:</b></dt>
-	<dd>${cvTerm.dbxref.db.name}:${cvTerm.dbxref.accession}&nbsp;&nbsp;&nbsp;&nbsp;${cvTerm.dbxref.description}
+	<dd>${cvTerm.dbXRef.db.name}:${cvTerm.dbXRef.accession}&nbsp;&nbsp;&nbsp;&nbsp;${cvTerm.dbXRef.description}
 	<dt><b>Obsolete?:</b></dt>
 	<dd>${cvTerm.isObsolete}</dd>
 </dl>
@@ -27,12 +27,12 @@
 <h5>This feature is subject</h5>
 
 <table>
-	<c:forEach items="${cvTerm.cvtermRelationshipsForSubjectId}"
+	<c:forEach items="${cvTerm.cvTermRelationshipsForSubjectId}"
 		var="cvTermRel">
 		<tr>
 			<td>this</td>
-			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvtermByTypeId.name}&cvName=${cvTermRel.cvtermByTypeId.cv.name}">${cvTermRel.cvtermByTypeId.name}</a></td>
-			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvtermByObjectId.name}&cvName=${cvTermRel.cvtermByObjectId.cv.name}">${cvTermRel.cvtermByObjectId.name}</a></td>
+			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvTermByTypeId.name}&cvName=${cvTermRel.cvTermByTypeId.cv.name}">${cvTermRel.cvTermByTypeId.name}</a></td>
+			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvTermByObjectId.name}&cvName=${cvTermRel.cvTermByObjectId.cv.name}">${cvTermRel.cvTermByObjectId.name}</a></td>
 		</tr>
 
 	</c:forEach>
@@ -40,11 +40,11 @@
 
 		<h5>This feature is object</h5>
 <table>
-	<c:forEach items="${cvTerm.cvtermRelationshipsForObjectId}"
+	<c:forEach items="${cvTerm.cvTermRelationshipsForObjectId}"
 		var="cvTermRel">
 		<tr>
-			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvtermBySubjectId.name}&cvName=${cvTermRel.cvtermBySubjectId.cv.name}">${cvTermRel.cvtermBySubjectId.name}</a></td>
-			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvtermByTypeId.name}&cvName=${cvTermRel.cvtermByTypeId.cv.name}">${cvTermRel.cvtermByTypeId.name}</a></td>
+			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvTermBySubjectId.name}&cvName=${cvTermRel.cvTermBySubjectId.cv.name}">${cvTermRel.cvTermBySubjectId.name}</a></td>
+			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvTermByTypeId.name}&cvName=${cvTermRel.cvTermByTypeId.cv.name}">${cvTermRel.cvTermByTypeId.name}</a></td>
 			<td>this</td>
 		</tr>
 
