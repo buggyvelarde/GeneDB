@@ -75,9 +75,9 @@
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10001/chado" />
-        <property name="username" value="web" />
-        <property name="password" value="---" />
+        <property name="url" value="jdbc:postgresql://localhost:2225/malaria_workshop" />
+        <property name="username" value="pathdb" />
+        <property name="password" value="chado" />
     </bean>
 	    
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
@@ -91,7 +91,7 @@
   		<prop key="hibernate.hbm2dll.auto">validate</prop>
  	    <!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
 <!--	  	<prop key="hibernate.query.substitutions">true 'T', false 'F'</prop>-->
-<!--  		<prop key="hibernate.show_sql">false</prop>-->
+			<prop key="hibernate.show_sql">false</prop>
 <!--  		<prop key="hibernate.c3p0.minPoolSize">5</prop>-->
 <!--  		<prop key="hibernate.c3p0.maxPoolSize">20</prop>-->
 <!--  		<prop key="hibernate.c3p0.timeout">600</prop>-->
