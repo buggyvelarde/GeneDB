@@ -12,9 +12,14 @@
  </tag>
 
  <tag>
-   <name>history</name>
-   <tag-class>org.genedb.web.tags.misc.HistoryTag</tag-class>
-   <body-content>empty</body-content>
+ 	<name>history</name>
+ 	<tag-class>org.genedb.web.tags.misc.HistoryTag</tag-class>
+ 	<body-content>empty</body-content>
  </tag>
  
+ <tag>
+ 	<name>luceneFields</name>
+ 	<tag-class>org.genedb.web.tags.misc.LuceneFieldsTag</tag-class>
+ 	<body-content>empty</body-content>
+ </tag>
 </taglib>
