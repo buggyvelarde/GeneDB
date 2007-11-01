@@ -23,6 +23,7 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.TaxonNode;
 import org.genedb.db.loading.TaxonNodeManager;
+import org.genedb.web.utils.Grep;
 
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.sequence.Feature;
@@ -56,6 +57,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
     private String listResultsView;
     private SequenceDao sequenceDao;
+    private Grep grep;
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, 
@@ -105,6 +107,11 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         	}
         } else {
             Feature feature = results.get(0);
+            List<String> out = null;
+            String pattern = "ID=" + feature.getUniqueName();
+            grep.compile(pattern);
+            out = grep.grep();
+            model.put("modified", out);
             model.put("feature", feature);
             String type = feature.getCvTerm().getName();
             if (type != null && type.equals("gene")) {
@@ -141,6 +148,10 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
+
+	public void setGrep(Grep grep) {
+		this.grep = grep;
+	}
 
 	
 }
