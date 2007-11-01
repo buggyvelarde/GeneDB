@@ -5,6 +5,46 @@
 <script src="<c:url value="/includes/scripts/script.aculo.us/prototype.js"/>" type="text/javascript"></script>
 <script src="<c:url value="/includes/scripts/script.aculo.us/scriptaculous.js"/>" type="text/javascript"></script>
 <style type="text/css">.infoMacro { border-style: solid; border-width: 1px; border-color: #c0c0c0; background-color: #ffffff; text-align:left;}.informationMacroPadding { padding: 5px 0 0 5px; }</style>
+<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-base.js"/>"></script>     <!-- ENDLIBS -->
+    <script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-all.js"/>"></script>
+	 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/ext-all.css"/>" />
+	 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/grid.css"/>" />
+	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/download.js"/>"></script>
+	<style id="topic-grid-cssrules" type="text/css">
+		#topic-grid .x-grid-col-topic {
+		white-space:normal;width:489px;
+		}
+		#topic-grid .x-grid-hd-topic {
+		width:489px;}
+		#topic-grid .x-grid-td-topic {
+		
+		}
+		#topic-grid .x-grid-split-topic {
+		
+		}
+		#topic-grid .x-grid-col-1 {
+		width:99px;
+		}
+		#topic-grid .x-grid-hd-1 {
+		width:99px;}
+		#topic-grid .x-grid-td-1 {
+		display:none;
+		}
+		#topic-grid .x-grid-split-1 {
+		display:none;
+		}
+		#topic-grid .x-grid-col-last {
+		width:149px;
+		}
+		#topic-grid .x-grid-hd-last {
+		width:149px;}
+		#topic-grid .x-grid-td-last {
+		
+		}
+		#topic-grid .x-grid-split-last {
+		
+		}
+	</style>
 <script type="text/javascript">
 <!--
 function hideSection(sectionId) {
@@ -23,6 +63,7 @@ function showSection(sectionId) {
 	<st:init />
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:header>
+
 
 <p>Please note: not all options shown are possible depending upon which output format 
 is chosen (further below).

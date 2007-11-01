@@ -3,6 +3,7 @@
 <%@ taglib prefix="misc" uri="misc" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="misc" uri="misc" %>
 
 <format:header name="Gene Results List">
 	<st:init />
@@ -14,6 +15,10 @@
 		}
 	</script>
 </format:header>
+	<img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
+<!--  <p><a href="<misc:history />">Store these results in my history</a></p> -->
+<img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
+	<!--  
 	<table align="center" border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr><td colspan="3"><img src="<c:url value="/" />/includes/images/blank.gif" width="100%" height="1" alt="--------"/>
 	</tr>
@@ -30,14 +35,14 @@
 	</tr> -->
 	<tr><td colspan="3"><img src="<c:url value="/" />/includes/blank.gif" width="100%" height="1" alt="--------"/>
 	</tr>
-	</table>
+	</table> -->
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
 <p><a href="<misc:history />">Store these results in my history</a></p>
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
 <display:table name="results" uid="tmp" pagesize="30" requestURI="/NamedFeature" class="simple" cellspacing="0" cellpadding="4">
    	<display:column property="organism.abbreviation" title="Organism"/>
-   	<display:column property="cvTerm.name" title="Type"/>
-	<display:column property="uniqueName" href="./NamedFeature" paramId="name"/>
+   	<display:column property="cvTerm.name" title="Type"/> 
+	<display:column property="uniqueName" href="../Search/FeatureByName" paramId="name"/>
 </display:table>
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
 <format:footer />

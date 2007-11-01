@@ -2,32 +2,20 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="misc" uri="misc" %>
 
 <format:header name="Lucene Search">
 	<st:init />
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
-	<script type="text/javascript">
-		function check(form) {
-			if(form.query.value == ""){
-			//document.writeln("look up is ...");
-			form.query.value = "Please enter search text ...";
-			}
-		}
-	</script>
 </format:header>
-<c:forEach items="${status}" var ="errorMessage"> 
-<font color="red">
-<c:out value ="${errorMessage}"/><br>
-</font>
-</c:forEach>
-<sp:form name="lucene" commandName="luceneSearch" action="LuceneSearch" method="post" onsubmit="check(this)">
+<sp:form name="lucene" commandName="luceneSearch" action="LuceneSearch" method="get">
 	<table align="center" width="50%">
+		<tr><td colspan="3">
+      		<font color="red"><sp:errors path="*" /></font>
+    	</td></tr>
 		<tr>
 			<td>Fields: 
-				<sp:select path="field">
-					<sp:option value="ALL" label="ALL"/>
-					<sp:options items="${fields}"/>
-				</sp:select>
+				<misc:luceneFields/>
 			</td>
 			<td>Search String: <sp:input path="query" /></td>
 			<td><input type="submit" value="Submit" /></td>
