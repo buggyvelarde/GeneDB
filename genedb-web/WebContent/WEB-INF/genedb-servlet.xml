@@ -45,6 +45,10 @@
         </property>
     </bean>
 	
+	<bean id="grep" class="org.genedb.web.utils.Grep">
+		<property name="file" value="/Users/cp2/artemis-log/combinedAll"/>
+	</bean>
+	
 	<bean id="nameBrowse" class="org.genedb.web.mvc.controller.BrowseBeanName">
 		<dwr:remote javascript="nameBrowse">
            <dwr:include method="getPossibleMatches" />
@@ -186,11 +190,10 @@
     <bean id="HistoryController" class="org.genedb.web.mvc.controller.HistoryController">
         <property name="methodNameResolver" ref="historyControllerResolver"/>
         <property name="historyManagerFactory" ref="historyManagerFactory" />
-        <property name="listResultsView" value="list/features" />
         <property name="sequenceDao" ref="sequenceDao"/>
     </bean>
      
-  <bean id="DownloadController" class="org.genedb.web.mvc.controller.download.DownloadFeaturesController">
+  <bean id="DownloadFeaturesController" class="org.genedb.web.mvc.controller.download.DownloadFeaturesController">
         <property name="historyManagerFactory" ref="historyManagerFactory" />
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="downloadOptions"/>
@@ -220,22 +223,21 @@
     	<property name="bindOnNewForm" value="true" />
     </bean>
     
-    <bean id="NameFeatureController" class="org.genedb.web.mvc.controller.NameFeatureController">
-<!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
-        <property name="sessionForm" value="true"/>
-        <property name="commandName" value="nameLookup"/>
-        <property name="commandClass" value="org.genedb.web.mvc.controller.NameLookup" />
-		<!-- <property name="commandClass" value="org.genedb.db.helpers.NameLookup" /> -->
-		<property name="organismDao" ref="organismDao"/>
-		<property name="sequenceDao" ref="sequenceDao"/>
-		<property name="phylogenyDao" ref="phylogenyDao" />
-        <property name="listResultsView" value="list/features" />
-        <property name="formInputView" value="err/nameerr" />
-        <property name="bindOnNewForm" value="true" />
+    <bean id="LuceneSearchController" class="org.genedb.web.mvc.controller.LuceneSearchController">
+    	<property name="sessionForm" value="true"/>
+    	<property name="commandClass" value="org.genedb.web.mvc.controller.LuceneSearch"/>
+    	<property name="commandName" value="luceneSearch"/>
+    	<property name="listResultsView" value="features/results"/>
+    	<property name="formView" value="search/lucene"/>
+    	<property name="bindOnNewForm" value="true" />
+    	<property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+        <property name="historyManagerFactory" ref="historyManagerFactory" />
     </bean>
     
     <bean name="historyManagerFactory" class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
-        
+    <bean name="webUtils" class="org.genedb.web.mvc.controller.WebUtils">
+		<property name="sequenceDao" ref="sequenceDao"/>
+	</bean>
     <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
@@ -246,6 +248,16 @@
         <property name="formView" value="search/nameLookup" />
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+        <property name="historyManagerFactory" ref="historyManagerFactory" />
+		<property name="grep" ref="grep"/>
+    </bean>
+    
+    <bean id="ExtController" class="org.genedb.web.mvc.controller.ExtController">
+        <property name="sessionForm" value="true"/>
+        <property name="commandName" value="ext"/>
+        <property name="commandClass" value="org.genedb.web.mvc.controller.ExtBean" />
+		<property name="sequenceDao" ref="sequenceDao"/>
+        <property name="bindOnNewForm" value="true" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
     </bean>
     
@@ -271,25 +283,25 @@
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
     
-      <bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
+      <!-- <bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
         <property name="embossDir" value="/nfs/disk100/pubseq/emboss" />
-    </bean>
+    </bean> -->
     
     <bean id="cachedFileFactory" class="org.genedb.web.mvc.controller.cgview.CachedFileFactory">
   
     </bean> 
      
-	<bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
+	<!--  <bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
 			<property name="commandClass" value="org.genedb.web.mvc.controller.cgview.CircularGenomeCommandBean" />
 			<property name="formView" value="graphics/circularGenomeForm" />
             <property name="embossDigestParser" ref="embossDigestParser" />
             <property name="cachedFileFactory" ref="cachedFileFactory" />
-              <!--  private ExecutionService restrictService;
+                private ExecutionService restrictService;
     
-    private ExecutionService digestService; -->
+    private ExecutionService digestService; 
 
 
-    </bean>
+    </bean> -->
     
         <bean id="AdminController" class="org.genedb.web.mvc.controller.AdminController">
         <property name="methodNameResolver" ref="searchControllerResolver"/>
