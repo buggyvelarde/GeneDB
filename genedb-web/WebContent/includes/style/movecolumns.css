@@ -1,0 +1,16 @@
+   
+      /* estilo geral da tabela */
+   
+      table {border-collapse:collapse}
+   
+      table td {border:1px solid #000; padding:2px 5px; text-align:center; cursor:pointer; width:100px}
+   
+       
+   
+      /* classe das cores utilizadas na movimentação */
+   
+      .hover {background:lightblue}
+   
+      .selecionado {background:lightgreen}
+
+      .hide {display:none}
