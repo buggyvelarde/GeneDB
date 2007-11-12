@@ -89,10 +89,12 @@
     </target>
 	
 	<target name="deploy">
+		<filter token="@webAppRootKey@" value="${webAppRootKey}" />
 		<delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
 		<copy todir="${finaldest.webapps}.tmp">
-			<fileset dir="WebContent" casesensitive="false" followSymLinks="false" />
+			<fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
 		</copy>
+		<copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
 		<copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
 			<fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
 		</copy>
