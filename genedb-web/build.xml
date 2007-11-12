@@ -92,7 +92,7 @@
 		<filter token="webAppRootKey" value="${webAppRootKey}" />
 		<delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
 		<copy todir="${finaldest.webapps}.tmp">
-			<fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
+			<fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="web.xml"/>
 		</copy>
 		<echo message="About to filter web.xml" />
 		<copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
