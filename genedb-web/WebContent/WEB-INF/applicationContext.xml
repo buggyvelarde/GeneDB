@@ -19,6 +19,10 @@
 		<property name="basename" value="messages"/>
 	</bean>
 	
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:project.properties" />
+	</bean>
+	
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
 
 
@@ -75,9 +79,9 @@
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://${dbhost}:${dbport}/${dbname}" />
-        <property name="username" value="${dbuser}" />
-        <property name="password" value="${dbpassword}" />
+        <property><name>url</name><value>jdbc:postgresql://${dbhost}:${dbport}/${dbname}</value></property>
+        <property><name>username</name><value>"${dbuser}"</value></property>
+        <property><name>password</name><value>${dbpassword}</value></property>
     </bean>
 	    
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
