@@ -89,23 +89,20 @@
     </target>
 	
 	<target name="deploy">
-	   <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
-	   <copy todir="${finaldest.webapps}.tmp">
-	      <fileset dir="WebContent" casesensitive="false" followSymLinks="false" />
-	   </copy>
-	   <copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
-	      <fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
-	   </copy>
-<echo>About to delete ${finaldest.webapps}.old</echo>
-	   <delete dir="${finaldest.webapps}.old" failonerror="false"/>
-	   <move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
-	   <move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
-	   <delete dir="${finaldest.webapps}.old" failonerror="false"/> <!-- temp hack -->
+		<delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
+		<copy todir="${finaldest.webapps}.tmp">
+			<fileset dir="WebContent" casesensitive="false" followSymLinks="false" />
+		</copy>
+		<copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
+			<fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
+		</copy>
+		<copy file="property-file.${deploy}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" />
+		<echo>About to delete ${finaldest.webapps}.old</echo>
+		<delete dir="${finaldest.webapps}.old" failonerror="false"/>
+		<move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
+		<move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
+		<delete dir="${finaldest.webapps}.old" failonerror="false"/> <!-- temp hack -->
 
-	</target>
-	
-	<target name="deploy-new" >
-		
 	</target>
 	
 </project>
