@@ -75,9 +75,9 @@
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://localhost:2225/malaria_workshop" />
-        <property name="username" value="pathdb" />
-        <property name="password" value="chado" />
+        <property name="url" value="jdbc:postgresql://${dbhost}:${dbport}/${dbname}" />
+        <property name="username" value="${dbuser}" />
+        <property name="password" value="${dbpassword}" />
     </bean>
 	    
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
