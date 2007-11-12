@@ -4,6 +4,8 @@
 
 	<!-- Paths/Properties you may have to change -->
 	
+	<property file="property-file.${deploy}" />
+	
 	<property name="version" value="0.2"/>
 	<property name="jar-build" value="ant-build/jar-build"/>
 	<property name="lib-dir" value="WebContent/WEB-INF/lib"/>
@@ -100,6 +102,10 @@
 	   <move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
 	   <delete dir="${finaldest.webapps}.old" failonerror="false"/> <!-- temp hack -->
 
+	</target>
+	
+	<target name="deploy-new" >
+		
 	</target>
 	
 </project>
