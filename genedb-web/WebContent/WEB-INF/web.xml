@@ -11,7 +11,7 @@
       - web app. Applied by WebAppRootListener or Log4jConfigListener.
 	-->
 	<context-param>
-		<param-name>webAppRootKey</param-name><param-value>genedb.root</param-value>
+		<param-name>webAppRootKey</param-name><param-value>@webAppRootKey@</param-value>
 	</context-param>
 	
 	<!--

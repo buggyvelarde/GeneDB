@@ -1,4 +1,5 @@
 finaldest.webapps=/software/pathogen/projects/genedb/tomcat_workshop/tomcat/webapps/new
+webAppRootKey=genedb.new.root
 dbhost=pathdbsrv1a
 dbport=10101
 dbname=malaria_workshop
