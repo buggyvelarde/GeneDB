@@ -95,7 +95,8 @@
 			<fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
 		</copy>
 		<echo message="About to filter web.xml" />
-		<!-- <copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" /> -->
+		<delete file="${finaldest.webapps}.tmp/WEB-INF/web.xml" failonerror="false" />
+		<copy file="WebContent/WEB-INF/web.xml" tofile="${finaldest.webapps}.tmp/WEB-INF/web.xml" filtering="true" />
 		<echo message="Done filtering web.xml" />
 		<copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
 			<fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
