@@ -1,1 +1,6 @@
 finaldest.webapps=/software/pathogen/projects/genedb/tomcat_workshop/tomcat/webapps/new
+dbhost=pathdbsrv1a
+dbport=10101
+dbname=malaria_workshop
+dbuser=art@sanger.ac.uk
+dbpassword=Eetie9sh
