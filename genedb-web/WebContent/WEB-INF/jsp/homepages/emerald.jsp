@@ -52,7 +52,7 @@
 	    </div>
 	    <div id="main">
 	    	<div id="maininner">
-		    	<h3>Welcome to Malaria Annotation Workshop </h3>
+		    	<h3>Welcome to the Malaria Re-Annotation (Continuing) Workshop </h3>
 		    	<h4>Other websites</h4>
 		    	<ul>
 		    		<li><a href="http://www.genedb.org/">GeneDB</a></li>
