@@ -12,28 +12,25 @@
 	</c:if>
 	<title>${pageTitle}</title>
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/site.css"/>" />
+	<link type="text/css" rel="stylesheet" href="<c:url value="/"/>includes/style/emerald.css">
     <jsp:doBody />
 </head>    
 <body>
-<TABLE border="0" width="100%" cellpadding="0" >
-  <TR>
-    <TD align="left" width="187px">
-      <a href="<c:url value="/"/>"><IMG alt="GeneDB Homepage" border="0" src="<c:url value="/includes/images/genedb.gif"/>"></a>
-    
-    </TD>
-    <TD align="center" width="90%" background="<c:url value="/includes/images/header-bkgd.gif"/>">
-      <h1>${name}</h1>
-  </TD>
-  <TD align="right" width="178px">
-    <a href="<c:url value="/search.jsp"/>"><img alt="PSU logo" border="0" src="<c:url value="/includes/images/psu.gif"/>"></a>
-  </TD>  
-  </TR>
-  <tr>
-  	<td colspan="3">
-  		<img src="<c:url value="/includes/images/purpleDot.gif"/>" width="100%" height="2" alt="----------------------">
-  	</td>
-  </tr>
-</TABLE>
+<div id="header" align="right">
+			<div id="floating-right">
+				<img src="<c:url value="/"/>includes/images/fg.jpg"/>
+				<img src="<c:url value="/"/>includes/images/he.jpg"/>
+				<img src="<c:url value="/"/>includes/images/pl.jpg"/>
+				<img src="<c:url value="/"/>includes/images/ve.gif"/>
+			</div>
+			<h2>${name}</h2>
+			<div id="floating-left">
+				<img src="<c:url value="/"/>includes/images/vi.jpg"/>
+				<img src="<c:url value="/"/>includes/images/ba.jpg"/>
+				<img src="<c:url value="/"/>includes/images/nm.gif"/>
+				<img src="<c:url value="/"/>includes/images/bg.jpg"/>
+			</div>
+		</div>
 <ul><c:forEach var="line" items="${ERROR_MSG}">
 <li>${line}
 </c:forEach></ul>
