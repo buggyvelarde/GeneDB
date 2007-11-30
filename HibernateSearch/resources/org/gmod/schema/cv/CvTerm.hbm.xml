@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.cv.CvTerm" table="cvterm">
+        <comment>A term, class or concept within an ontology or controlled vocabulary. Also used for relationship types. A cvterm can also be thought of as a node in a
+        graph</comment>
+        <id name="cvTermId" type="int">
+            <column name="cvterm_id" />
+            <generator class="sequence">
+            	<param name="sequence">cvterm_cvterm_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="dbXRef" class="org.gmod.schema.general.DbXRef" fetch="select">
+            <column name="dbxref_id" not-null="true" unique="true">
+                <comment>Primary dbxref - The unique global OBO identifier for this cvterm. Note that a cvterm may have multiple secondary dbxrefs - see also table:
+                cvterm_dbxref</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="cv" class="org.gmod.schema.cv.Cv" fetch="select">
+            <column name="cv_id" not-null="true">
+                <comment>The cv/ontology/namespace to which this cvterm belongs</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" length="1024" not-null="true">
+                <comment>A concise human-readable name describing the meaning of the cvterm</comment>
+            </column>
+        </property>
+        <property name="definition" type="string">
+            <column name="definition">
+                <comment>A human-readable text definition</comment>
+            </column>
+        </property>
+        <property name="isObsolete" type="int">
+            <column name="is_obsolete" not-null="true">
+                <comment>Boolean 0=false,1=true; see GO documentation for details of obsoletion. note that two terms with different primary dbxrefs may exist if one is
+                obsolete</comment>
+            </column>
+        </property>
+        <property name="isRelationshipType" type="int">
+            <column name="is_relationshiptype" not-null="true">
+                <comment>Boolean 0=false,1=true Relationship types (also known as Typedefs in OBO format, or as properties or slots) form a cv/ontology in themselves. We use this
+                flag to indicate whether this cvterm is an actual term/concept or a relationship type</comment>
+            </column>
+        </property>
+        <set name="phylotrees" inverse="true">
+            <key>
+                <column name="type_id" />
+            </key>
+            <one-to-many class="org.gmod.schema.phylogeny.Phylotree" />
+        </set>
+        <set name="dbXRefProps" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.cv.DbXRefProp" />
+        </set>
+        <set name="cvTermPropsForCvTermId" inverse="true">
+            <key>
+                <column name="cvterm_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermProp" />
+        </set>
+        <set name="synonyms" inverse="true">
+            <key>
+                <column name="type_id" not-null="true">
+                    <comment>types would be symbol and fullname for now</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.Synonym" />
+        </set>
+        <set name="cvTermPathsForTypeId" inverse="true">
+            <key>
+                <column name="type_id">
+                    <comment>The relationship type that this is a closure over. If null, then this is a closure over ALL relationship types. If non-null, then this references a
+                    relationship cvterm - note that the closure will apply to both this relationship AND the OBO_REL:is_a (subclass) relationship</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermPath" />
+        </set>
+        <set name="cvTermDbXRefs" inverse="true">
+            <key>
+                <column name="cvterm_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermDbXRef" />
+        </set>
+        <set name="phylonodeProps" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.phylogeny.PhylonodeProp" />
+        </set>
+        <set name="cvTermRelationshipsForTypeId" inverse="true">
+            <key>
+                <column name="type_id" not-null="true">
+                    <comment>relationship type between subject and object. This is a cvterm, typically from the OBO relationship ontology, although other relationship types are
+                    allowed</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermRelationship" />
+        </set>
+        <set name="cvTermRelationshipsForObjectId" inverse="true">
+            <key>
+                <column name="object_id" not-null="true">
+                    <comment>the object of the subj-predicate-obj sentence. In a DAG, this corresponds to the parent node</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermRelationship" />
+        </set>
+        <set name="pubProps" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.pub.PubProp" />
+        </set>
+        <set name="cvTermRelationshipsForSubjectId" inverse="true">
+            <key>
+                <column name="subject_id" not-null="true">
+                    <comment>the subject of the subj-predicate-obj sentence. In a DAG, this corresponds to the child node</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermRelationship" />
+        </set>
+        <set name="organismProps" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.organism.OrganismProp" />
+        </set>
+        <set name="cvTermPathsForSubjectId" inverse="true">
+            <key>
+                <column name="subject_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermPath" />
+        </set>
+        <set name="featureProps" inverse="true">
+            <key>
+                <column name="type_id" not-null="true">
+                    <comment>The name of the property/slot is a cvterm. The meaning of the property is defined in that cvterm. Certain properties will only apply to certain
+                    feature types; this will be handled by the Sequence Ontology</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureProp" />
+        </set>
+        <set name="cvTermPathsForObjectId" inverse="true">
+            <key>
+                <column name="object_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermPath" />
+        </set>
+        <set name="cvTermSynonymsForTypeId" inverse="true">
+            <key>
+                <column name="type_id">
+                    <comment>A synonym can be exact, narrow or borader than</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermSynonym" />
+        </set>
+        <set name="pubs" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.pub.Pub" />
+        </set>
+        <set name="features" inverse="true">
+            <key>
+                <column name="type_id" not-null="true">
+                    <comment>A required reference to a table:cvterm giving the feature type. This will typically be a Sequence Ontology identifier. This column is thus used to
+                    subclass the feature table</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.Feature" />
+        </set>
+        <set name="pubRelationships" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.pub.PubRelationship" />
+        </set>
+        <set name="cvTermPropsForTypeId" inverse="true">
+            <key>
+                <column name="type_id" not-null="true">
+                    <comment>The name of the property/slot is a cvterm. The meaning of the property is defined in that cvterm</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermProp" />
+        </set>
+        <set name="analysisProps" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.analysis.AnalysisProp" />
+        </set>
+        <set name="phylonodeRelationships" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.phylogeny.PhylonodeRelationship" />
+        </set>
+        <set name="featureCvTermProps" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureCvTermProp" />
+        </set>
+        <set name="featureCvTerms" inverse="true">
+            <key>
+                <column name="cvterm_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureCvTerm" />
+        </set>
+        <set name="cvTermSynonymsForCvTermId" inverse="true">
+            <key>
+                <column name="cvterm_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermSynonym" />
+        </set>
+        <set name="featureRelationshipProps" inverse="true">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureRelationshipProp" />
+        </set>
+        <set name="featureRelationships" inverse="true">
+            <key>
+                <column name="type_id" not-null="true">
+                    <comment>relationship type between subject and object. This is a cvterm, typically from the OBO relationship ontology, although other relationship types are
+                    allowed. The most common relationship type is OBO_REL:part_of. Valid relationship types are constrained by the Sequence Ontology</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureRelationship" />
+        </set>
+        <set name="phylonodes" inverse="true">
+            <key>
+                <column name="type_id" />
+            </key>
+            <one-to-many class="org.gmod.schema.phylogeny.Phylonode" />
+        </set>
+    </class>
+</hibernate-mapping>

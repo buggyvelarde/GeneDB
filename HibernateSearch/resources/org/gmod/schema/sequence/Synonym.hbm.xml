@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.sequence.Synonym" table="synonym">
+        <comment>A synonym for a feature. One feature can have multiple synonyms, and the same synonym can apply to multiple features</comment>
+        <id name="synonymId" type="int">
+            <column name="synonym_id" />
+            <generator class="sequence">
+            	<param name="sequence">synonym_synonym_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="type_id" not-null="true">
+                <comment>types would be symbol and fullname for now</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" not-null="true">
+                <comment>The synonym itself. Should be human-readable machine-searchable ascii text</comment>
+            </column>
+        </property>
+        <property name="synonymSgml" type="string">
+            <column name="synonym_sgml" not-null="true">
+                <comment>The fully specified synonym, with any non-ascii characters encoded in SGML</comment>
+            </column>
+        </property>
+        <set name="featureSynonyms" inverse="true">
+            <key>
+                <column name="synonym_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureSynonym" />
+        </set>
+    </class>
+</hibernate-mapping>

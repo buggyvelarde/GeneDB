@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.cv.CvTermSynonym" table="cvtermsynonym">
+        <comment>A cvterm actually represents a distinct class or concept. A concept can be refered to by different phrases or names. In addition to the primary name (cvterm.name)
+        there can be a number of alternative aliases or synonyms. For example, -T cell- as a synonym for -T lymphocyte-</comment>
+        <id name="cvTermSynonymId" type="int">
+            <column name="cvtermsynonym_id" />
+            <generator class="sequence">
+            	<param name="sequence">cvtermsynonym_cvtermsynonym_id_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="cvTermByCvTermId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="cvterm_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="cvTermByTypeId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="type_id">
+                <comment>A synonym can be exact, narrow or borader than</comment>
+            </column>
+        </many-to-one>
+        <property name="synonym" type="string">
+            <column name="synonym" length="1024" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

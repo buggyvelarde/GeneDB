@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.cv.Cv" table="cv">
+        <comment>A controlled vocabulary or ontology. A cv is composed of cvterms (aka terms, classes, concepts, frames) and the relationships between them</comment>
+        <id name="cvId" type="int">
+            <column name="cv_id" />
+            <generator class="sequence">
+            	<param name="sequence">cv_cv_id_seq</param>
+            </generator>
+        </id>
+        <property name="name" type="string">
+            <column name="name" not-null="true" unique="true">
+                <comment>The name of the ontology. This corresponds to the obo-format -namespace-. cv names are unique</comment>
+            </column>
+        </property>
+        <property name="definition" type="string">
+            <column name="definition">
+                <comment>A description of the criteria for membership of this ontology</comment>
+            </column>
+        </property>
+        <set name="cvTermPaths" inverse="true">
+            <key>
+                <column name="cv_id" not-null="true">
+                    <comment>Closures will mostly be within one cv. If the closure of a relationship traverses a cv, then this refers to the cv of the object_id cvterm</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTermPath" />
+        </set>
+        <set name="cvTerms" inverse="true">
+            <key>
+                <column name="cv_id" not-null="true">
+                    <comment>The cv/ontology/namespace to which this cvterm belongs</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.cv.CvTerm" />
+        </set>
+    </class>
+</hibernate-mapping>

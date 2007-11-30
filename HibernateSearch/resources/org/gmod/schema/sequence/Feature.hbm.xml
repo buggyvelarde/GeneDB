@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
+<hibernate-mapping>
+    <class name="org.gmod.schema.sequence.Feature" table="feature" lazy="false">
+        <comment>A feature is a biological sequence or a section of a biological sequence, or a collection of such sections. Examples include genes, exons, transcripts, regulatory
+        regions, polypeptides, protein domains, chromosome sequences, sequence variations, cross-genome match regions such as hits and HSPs and so on; see the Sequence Ontology
+        for more</comment>
+        <id name="featureId" type="int">
+            <column name="feature_id" />
+            <generator class="sequence">
+            	<param name="sequence">feature_feature_id_seq</param>
+            	<!-- Only used for seqhilo - not currently using <param name="max_lo">100</param>-->
+            </generator>
+        </id>
+        <many-to-one name="organism" class="org.gmod.schema.organism.Organism" fetch="select">
+            <column name="organism_id" not-null="true">
+                <comment>The organism to which this feature belongs. This column is mandatory</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+            <column name="type_id" not-null="true">
+                <comment>A required reference to a table:cvterm giving the feature type. This will typically be a Sequence Ontology identifier. This column is thus used to
+                subclass the feature table</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="dbXRef" class="org.gmod.schema.general.DbXRef" fetch="select">
+            <column name="dbxref_id">
+                <comment>An optional primary public stable identifier for this feature. Secondary identifiers and external dbxrefs go in table:feature_dbxref</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name">
+                <comment>The optional human-readable common name for a feature, for display purposes</comment>
+            </column>
+        </property>
+        <property name="uniqueName" type="string">
+            <column name="uniquename" not-null="true">
+                <comment>The unique name for a feature; may not be necessarily be particularly human-readable, although this is prefered. This name must be unique for this type of
+                feature within this organism</comment>
+            </column>
+        </property>
+        <property name="residues" type="org.genedb.db.helpers.TextByteType">
+            <column name="residues">
+                <comment>A sequence of alphabetic characters representing biological residues (nucleic acids, amino acids). This column does not need to be manifested for all
+                features; it is optional for features such as exons where the residues can be derived from the featureloc. It is recommended that the value for this column be
+                manifested for features which may may non-contiguous sublocations (eg transcripts), since derivation at query time is non-trivial. For expressed sequence, the DNA
+                sequence should be used rather than the RNA sequence</comment>
+            </column>
+        </property>
+        <property name="seqLen" type="java.lang.Integer">
+            <column name="seqlen">
+                <comment>The length of the residue feature. See column:residues. This column is partially redundant with the residues column, and also with featureloc. This column
+                is required because the location may be unknown and the residue sequence may not be manifested, yet it may be desirable to store and query the length of the
+                feature. The seqlen should always be manifested where the length of the sequence is known</comment>
+            </column>
+        </property>
+        <property name="md5Checksum" type="string">
+            <column name="md5checksum" length="32">
+                <comment>The 32-character checksum of the sequence, calculated using the MD5 algorithm. This is practically guaranteed to be unique for any feature. This column
+                thus acts as a unique identifier on the mathematical sequence</comment>
+            </column>
+        </property>
+        <property name="analysis" type="boolean">
+            <column name="is_analysis" not-null="true">
+                <comment>Boolean indicating whether this feature is annotated or the result of an automated analysis. Analysis results also use the companalysis module. Note that
+                the dividing line between analysis/annotation may be fuzzy, this should be determined on a per-project basis in a consistent manner. One requirement is that there
+                should only be one non-analysis version of each wild-type gene feature in a genome, whereas the same gene feature can be predicted multiple times in different
+                analyses</comment>
+            </column>
+        </property>
+        <property name="obsolete" type="boolean">
+            <column name="is_obsolete" not-null="true">
+                <comment>Boolean indicating whether this feature has been obsoleted. Some chado instances may choose to simply remove the feature altogether, others may choose to
+                keep an obsolete row in the table</comment>
+            </column>
+        </property>
+        <property name="timeAccessioned" type="timestamp">
+            <column name="timeaccessioned" length="29" not-null="true">
+                <comment>for handling object accession/modification timestamps (as opposed to db auditing info, handled elsewhere). The expectation is that these fields would be
+                available to software interacting with chado</comment>
+            </column>
+        </property>
+        <property name="timeLastModified" type="timestamp">
+            <column name="timelastmodified" length="29" not-null="true">
+                <comment>for handling object accession/modification timestamps (as opposed to db auditing info, handled elsewhere). The expectation is that these fields would be
+                available to software interacting with chado</comment>
+            </column>
+        </property>
+        <set name="featureLocsForSrcFeatureId" inverse="true" cascade="all,delete-orphan" lazy="false">
+            <key>
+                <column name="srcfeature_id">
+                    <comment>The source feature which this location is relative to. Every location is relative to another feature (however, this column is nullable, because the
+                    srcfeature may not be known). All locations are -proper- that is, nothing should be located relative to itself. No cycles are allowed in the featureloc
+                    graph</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureLoc" />
+        </set>
+        <set name="featureRelationshipsForObjectId" inverse="true" lazy="false">
+            <key>
+                <column name="object_id" not-null="true">
+                    <comment>the object of the subj-predicate-obj sentence. This is typically the container feature</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureRelationship" />
+        </set>
+        <set name="featureRelationshipsForSubjectId" inverse="true" lazy="false">
+            <key>
+                <column name="subject_id" not-null="true">
+                    <comment>the subject of the subj-predicate-obj sentence. This is typically the subfeature</comment>
+                </column>
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureRelationship" />
+        </set>
+        <set name="featureDbXRefs" inverse="true" cascade="all,delete-orphan" lazy="false">
+            <key>
+                <column name="feature_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureDbXRef" />
+        </set>
+        <set name="featureLocsForFeatureId" inverse="true" lazy="false">
+            <key>
+                <column name="feature_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureLoc" />
+        </set>
+        <set name="featureCvTerms" inverse="true" cascade="all,delete-orphan" lazy="false">
+            <key>
+                <column name="feature_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureCvTerm" />
+        </set>
+        <set name="featureProps" inverse="true" cascade="all,delete-orphan" lazy="false">
+            <key>
+                <column name="feature_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureProp" />
+        </set>
+        <set name="featurePubs" inverse="true" cascade="all,delete-orphan" lazy="false">
+            <key>
+                <column name="feature_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeaturePub" />
+        </set>
+        <set name="analysisFeatures" inverse="true" cascade="all,delete-orphan" lazy="false">
+            <key>
+                <column name="feature_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.analysis.AnalysisFeature" />
+        </set>
+        <set name="featureSynonyms" inverse="true" cascade="all,delete-orphan" lazy="false">
+            <key>
+                <column name="feature_id" not-null="true" />
+            </key>
+            <one-to-many class="org.gmod.schema.sequence.FeatureSynonym" />
+        </set>
+        <set name="phylonodes" inverse="true" lazy="false">
+            <key>
+                <column name="feature_id" />
+            </key>
+            <one-to-many class="org.gmod.schema.phylogeny.Phylonode" />
+        </set>
+    </class>
+</hibernate-mapping>
