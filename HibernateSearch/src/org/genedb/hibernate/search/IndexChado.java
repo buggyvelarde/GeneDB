@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -25,10 +23,6 @@ import org.hibernate.search.event.*;
 public class IndexChado {
 	
 	private HibernateTransactionManager hibernateTransactionManager;
-	
-	private SequenceDao sequenceDao;
-	
-	private CvDao cvDao;
 	
 	public HibernateTransactionManager getHibernateTransactionManager() {
 		return hibernateTransactionManager;
@@ -76,21 +70,5 @@ public class IndexChado {
 		long end = new Date().getTime();
 		long duration = (end - start) / 1000;
 		System.err.println("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
-	}
-
-	public SequenceDao getSequenceDao() {
-		return sequenceDao;
-	}
-
-	public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
-	}
-
-	public CvDao getCvDao() {
-		return cvDao;
-	}
-
-	public void setCvDao(CvDao cvDao) {
-		this.cvDao = cvDao;
 	}
 }
