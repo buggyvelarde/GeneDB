@@ -1,12 +1,17 @@
 package org.genedb.hibernate.search;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.sequence.Gene;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -44,26 +49,33 @@ public class IndexChado {
 		cfg.setProperty("hibernate.connection.username", "pathdb");
 		cfg.setProperty("hibernate.connection.password", "Pyrate_1");
 		cfg.setProperty("hibernate.connection.url", "jdbc:postgresql://pathdbsrv1a:10101/malaria_workshop");
-		//cfg.setProperty("hibernate.search.default.directory_provider", "org.hibernate.search.store.FSDirectoryProvider");
-		//cfg.setProperty("hibernate.search.worker.batch_size", "2");
-		//cfg.setProperty("hibernate.search.default.indexBase", "/Users/cp2/hibernate/search/indexes");
-		//FullTextIndexEventListener ft = new FullTextIndexEventListener();
-		//cfg.setListener("post-insert", ft);
-		//cfg.setListener("post-update", ft);
-		//cfg.setListener("post-delete",ft);
+		cfg.setProperty("hibernate.search.default.directory_provider", "org.hibernate.search.store.FSDirectoryProvider");
+		//cfg.setProperty("hibernate.search.worker.batch_size", "1");
+		cfg.setProperty("hibernate.search.default.indexBase", "/Users/cp2/hibernate/search/indexes");
+		FullTextIndexEventListener ft = new FullTextIndexEventListener();
+		cfg.setListener("post-insert", ft);
+		cfg.setListener("post-update", ft);
+		cfg.setListener("post-delete",ft);
         SessionFactory sf = cfg.buildSessionFactory();
         Session session = sf.openSession();
         FullTextSession fullTextSession = Search.createFullTextSession(session);
 		Transaction tx = fullTextSession.beginTransaction();
-		Query q = session.createQuery("from Feature f where f.uniqueName like 'MAL13%'");
-		System.err.println("query ran successfully...");
+		Query q = session.createQuery("from Gene g");
+		q.setMaxResults(50);
+		//System.err.println("query ran successfully...");
 		
-		List<Feature> features = q.list();
-		System.err.println("Name of Features is " + features.size());
-		/*for (CvTerm feature : features) {
+		List<Gene> features = q.list();
+		//System.err.println("Name of Features is " + features.size());
+		long start = new Date().getTime();
+		for (Gene feature : features) {
+			//System.err.println(feature.getFeatureId());
 			fullTextSession.index(feature);
-		}*/
+		}
 		tx.commit();
+		fullTextSession.close();
+		long end = new Date().getTime();
+		long duration = (end - start) / 1000;
+		System.err.println("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
 	}
 
 	public SequenceDao getSequenceDao() {

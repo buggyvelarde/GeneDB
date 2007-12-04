@@ -9,10 +9,59 @@
         <property name="hibernate.connection.username">pathdb</property>
         <property name="hibernate.connection.password">Pyrate_1</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-        <property name="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</property>
-        <property name="hibernate.search.default.indexBase">/Users/cp2/hibernate/search/indexes</property>
-        <event type="post-update"><listener class="org.hibernate.search.event.FullTextIndexEventListener"/></event>
-        <event type="post-insert"><listener class="org.hibernate.search.event.FullTextIndexEventListener"/></event>
-        <event type="post-delete"><listener class="org.hibernate.search.event.FullTextIndexEventListener"/></event>
+  	  	<!-- Analysis module -->
+  	    <mapping resource="org/gmod/schema/analysis/AnalysisFeature.hbm.xml"/>
+        <mapping resource="org/gmod/schema/analysis/Analysis.hbm.xml"/>
+        <mapping resource="org/gmod/schema/analysis/AnalysisProp.hbm.xml"/>
+        <!-- CV module -->
+    	<mapping resource="org/gmod/schema/cv/CvTermPath.hbm.xml"/>
+        <mapping resource="org/gmod/schema/cv/CvTermRelationship.hbm.xml"/>
+        <mapping resource="org/gmod/schema/cv/CvTermProp.hbm.xml"/>
+        <mapping resource="org/gmod/schema/cv/Cv.hbm.xml"/>
+        <mapping resource="org/gmod/schema/cv/CvTermSynonym.hbm.xml"/>
+        <mapping resource="org/gmod/schema/cv/CvTermDbXRef.hbm.xml"/>
+        <mapping resource="org/gmod/schema/cv/CvTerm.hbm.xml"/>
+        <mapping resource="org/gmod/schema/cv/DbXRefProp.hbm.xml"/>
+        <!-- General module -->
+        <mapping resource="org/gmod/schema/general/Project.hbm.xml"/>
+        <mapping resource="org/gmod/schema/general/Db.hbm.xml"/>
+        <mapping resource="org/gmod/schema/general/Tableinfo.hbm.xml"/>
+        <mapping resource="org/gmod/schema/general/DbXRef.hbm.xml"/>
+        <!-- Organism module -->
+        <mapping resource="org/gmod/schema/organism/Organism.hbm.xml"/>
+        <mapping resource="org/gmod/schema/organism/OrganismProp.hbm.xml"/>   
+        <mapping resource="org/gmod/schema/organism/OrganismDbXRef.hbm.xml"/>
+        <!-- Phylogeny module -->
+        <mapping resource="org/gmod/schema/phylogeny/PhylotreePub.hbm.xml"/>
+		<mapping resource="org/gmod/schema/phylogeny/Phylotree.hbm.xml"/>
+		<mapping resource="org/gmod/schema/phylogeny/PhylonodeRelationship.hbm.xml"/>
+		<mapping resource="org/gmod/schema/phylogeny/PhylonodePub.hbm.xml"/>
+		<mapping resource="org/gmod/schema/phylogeny/PhylonodeProp.hbm.xml"/>
+		<mapping resource="org/gmod/schema/phylogeny/PhylonodeOrganism.hbm.xml"/>
+		<mapping resource="org/gmod/schema/phylogeny/PhylonodeDbXRef.hbm.xml"/>
+		<mapping resource="org/gmod/schema/phylogeny/Phylonode.hbm.xml"/>
+		<!-- Pub module -->
+        <mapping resource="org/gmod/schema/pub/PubProp.hbm.xml"/>
+        <mapping resource="org/gmod/schema/pub/Pub.hbm.xml"/>
+        <mapping resource="org/gmod/schema/pub/PubAuthor.hbm.xml"/>
+        <mapping resource="org/gmod/schema/pub/PubDbXRef.hbm.xml"/>
+        <mapping resource="org/gmod/schema/pub/PubRelationship.hbm.xml"/>
+        <!-- Sequence module -->
+        <mapping resource="org/gmod/schema/sequence/Feature.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeaturePub.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeaturePropPub.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureDbXRef.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureSynonym.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureRelationshipPub.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureCvTermDbXRef.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureLoc.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureCvTermPub.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureRelationshipProp.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureCvTerm.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureCvTermProp.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureProp.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/Synonym.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureRelationshipPropPub.hbm.xml"/>
+        <mapping resource="org/gmod/schema/sequence/FeatureRelationship.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

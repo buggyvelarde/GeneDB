@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+
+<project name="hibernate-index" default="index.jar" basedir=".">
+	
+	<target name="index.jar" depends="compile">
+		<delete file="index.jar"/>
+
+		<copy todir="ant-build/jar">
+			<fileset dir="ant-build/classes" />
+			<fileset dir="resources" />
+		</copy>
+		
+		<jar jarfile="index.jar">
+			<fileset dir="ant-build/jar" />
+			<manifest>
+				<attribute name="Implementation-Title" value="Hibernate Search Indexing"/>
+				<attribute name="Implementation-Version" value="0.1"/>
+				<attribute name="Main-class" value="org.genedb.hibernate.search.IndexChado" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="compile">
+		<javac srcdir="src" destdir="ant-build/classes" debug="true">
+			<classpath><fileset file="lib/*.jar"/></classpath>
+		</javac>
+	</target>
+	
+	<path id="exec-classpath">
+		<fileset file="lib/*.jar" />
+		<fileset file="index.jar" />
+	</path>
+	
+	<target name="IndexChado" depends="index.jar">
+				<java fork="true" classpathref="exec-classpath" classname="org.genedb.hibernate.search.IndexChado">
+					<jvmarg line="-server"/>
+				</java>
+	</target>
+	
+</project>
+
