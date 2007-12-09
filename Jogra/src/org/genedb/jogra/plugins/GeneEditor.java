@@ -74,12 +74,12 @@ public class GeneEditor implements JograPlugin {
         ret.add(new JLabel("Systematic id"), cc.xy(1, 1));
         ret.add(instance, cc.xy(3, 1));
 
-        String org = gene.gene.getOrganism().getFullName();
+        String org = gene.getOrganism();
         final JLabel organism = new JLabel(org);
         ret.add(new JLabel("Organism"), cc.xy(1, 3));
         ret.add(organism, cc.xy(3, 3));
 
-        final JTextField username = new JTextField(gene.gene.getName());
+        final JTextField username = new JTextField(gene.getName());
         ret.add(new JLabel("Name"), cc.xy(1, 5));
         ret.add(username, cc.xy(3, 5));
 
@@ -166,7 +166,8 @@ public class GeneEditor implements JograPlugin {
         System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "'  x");
         final String title = "Gene: " + search;
         Feature f = sequenceDao.getFeatureByUniqueName(search, "gene");
-        Gene gene = new Gene(f);
+        //Gene gene = new Gene(f);
+        Gene gene = new Gene();
         JFrame lookup = Jogra.findNamedWindow(title);
         if (lookup == null) {
             lookup = getMainPanel(gene);

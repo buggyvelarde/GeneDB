@@ -96,7 +96,6 @@ public class OrganismEditor implements JograPlugin {
         final JComboBox comboBox = new JComboBox(comboBoxModel);
         ret.add(comboBox);
         comboBox.addItemListener(new ItemListener() {
-            @Override
             public void itemStateChanged(final ItemEvent ie) {
                 if (ie.getStateChange() == ItemEvent.DESELECTED) {
                     return;
