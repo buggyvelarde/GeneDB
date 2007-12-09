@@ -13,23 +13,11 @@
 <!--     <bean id="loginForm" class="org.genedb.jogra.drawing.JograLogin">
         <property name="name" value="jogra.jpg" />
     </bean> -->
-    	
-            
-     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-        
-   <bean name="sequenceDao" class="org.genedb.db.dao.SequenceDao">
-   	<property name="sessionFactory" ref="sessionFactory" />
-   </bean>
         
 	<bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
 	</bean>
 	        
-	<bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor">
-		<property name="sequenceDao" ref="sequenceDao" />
-		<property name="hibernateTransactionManager" ref="transactionManager" />
-	</bean> 
+	<bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor" />
 	        
 	<bean name="geneList" class="org.genedb.jogra.plugins.GeneList">
 	</bean> 
@@ -68,100 +56,5 @@
 	<bean id="newSessionStartForm" class="org.genedb.jogra.drawing.NewSessionStartForm" />
 	
 	<bean id="primerSelectionForm" class="org.genedb.jogra.drawing.PrimerSelectionForm"/>
-	
-	    <!-- DataSource Property -->
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-		 <property name="driverClassName" value="org.postgresql.Driver" />
-<!--	 	 <property name="url" value="jdbc:postgresql:ormtest" /> -->
-<!--         <property name="username" value="art" />-->
-        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10303/chado" />
-        <property name="username" value="chado" />
-        <property name="password" value="chado"/>
-        <!-- <property name="username" value="tbrucei"/> -->
-        <!-- <property name="username" value="spombe" /> -->
-	</bean> 
-
-	<!-- Database Property -->
-	<bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
- 	<property name="properties">
-  	<props>
-  		<prop key="hibernate.hbm2dll.auto">validate</prop>
- 	    <!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
-<!--	  	<prop key="hibernate.query.substitutions">true 'T', false 'F'</prop>-->
-<!--  		<prop key="hibernate.show_sql">false</prop>-->
-<!--  		<prop key="hibernate.c3p0.minPoolSize">5</prop>-->
-<!--  		<prop key="hibernate.c3p0.maxPoolSize">20</prop>-->
-<!--  		<prop key="hibernate.c3p0.timeout">600</prop>-->
-<!--  		<prop key="hibernate.c3p0.max_statement">50</prop>-->
-<!--		<prop key="hibernate.bytecode.use_reflection_optimizer">false</prop>-->
-        <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
-<!--	  	<prop key="hibernate.c3p0.testConnectionOnCheckout">false</prop> -->
- 	 </props>
-	 </property>
-	</bean>
-    
-        <!-- Hibernate SessionFactory -->
-     <bean id="sessionFactory" 
-     class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-     <property name="dataSource" ref="dataSource" />
-     <!--  <property name="hibernateProperties" ref="hibernateProperties" /> -->
-    <property name="mappingResources">
-      <list>
-        <value>org/gmod/schema/analysis/AnalysisFeature.hbm.xml</value>
-        <value>org/gmod/schema/analysis/Analysis.hbm.xml</value>
-        <value>org/gmod/schema/analysis/AnalysisProp.hbm.xml</value>
-
-        <value>org/gmod/schema/cv/CvTermPath.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTermRelationship.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTermProp.hbm.xml</value>
-        <value>org/gmod/schema/cv/Cv.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTermSynonym.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTermDbXRef.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTerm.hbm.xml</value>
-        <value>org/gmod/schema/cv/DbXRefProp.hbm.xml</value>
-
-        <value>org/gmod/schema/general/Project.hbm.xml</value>
-        <value>org/gmod/schema/general/Db.hbm.xml</value>
-        <value>org/gmod/schema/general/Tableinfo.hbm.xml</value>
-        <value>org/gmod/schema/general/DbXRef.hbm.xml</value>
-
-        <value>org/gmod/schema/organism/Organism.hbm.xml</value>
-        <value>org/gmod/schema/organism/OrganismProp.hbm.xml</value>   
-        <value>org/gmod/schema/organism/OrganismDbXRef.hbm.xml</value>
-
-        <value>org/gmod/schema/phylogeny/PhylotreePub.hbm.xml</value>
-        <value>org/gmod/schema/phylogeny/Phylotree.hbm.xml</value>
-        <value>org/gmod/schema/phylogeny/PhylonodeRelationship.hbm.xml</value>
-        <value>org/gmod/schema/phylogeny/PhylonodePub.hbm.xml</value>
-        <value>org/gmod/schema/phylogeny/PhylonodeProp.hbm.xml</value>
-        <value>org/gmod/schema/phylogeny/PhylonodeOrganism.hbm.xml</value>
-        <value>org/gmod/schema/phylogeny/PhylonodeDbXRef.hbm.xml</value>
-        <value>org/gmod/schema/phylogeny/Phylonode.hbm.xml</value>
-
-        <value>org/gmod/schema/pub/PubProp.hbm.xml</value>
-        <value>org/gmod/schema/pub/Pub.hbm.xml</value>
-        <value>org/gmod/schema/pub/PubAuthor.hbm.xml</value>
-        <value>org/gmod/schema/pub/PubDbXRef.hbm.xml</value>
-        <value>org/gmod/schema/pub/PubRelationship.hbm.xml</value>
-
-        <value>org/gmod/schema/sequence/Feature.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeaturePub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeaturePropPub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureDbXRef.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureSynonym.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureRelationshipPub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureCvTermDbXRef.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureLoc.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureCvTermPub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureRelationshipProp.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureCvTerm.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureCvTermProp.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureProp.hbm.xml</value>
-        <value>org/gmod/schema/sequence/Synonym.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureRelationshipPropPub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureRelationship.hbm.xml</value>
-     </list>
-    </property>
-    </bean>
     
 </beans>
