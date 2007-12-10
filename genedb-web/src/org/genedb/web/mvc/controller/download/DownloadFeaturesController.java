@@ -350,7 +350,7 @@ public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 				e1.printStackTrace();
 			}
 			
-			out.write(" Ext.onReady(function(){ \n" +
+			/*out.write(" Ext.onReady(function(){ \n" +
 						" var ds = new Ext.data.Store({ \n" +
 				        " proxy: new Ext.data.HttpProxy({ \n" +
 				        " url: 'http://localhost:8080/genedb-web/Ext?history=" + historyItem + "'\n" +
@@ -369,8 +369,29 @@ public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 				        " {name: 'pname', mapping: 'pname'} \n" +
 				        " ]), \n" +
 				        " remoteSort: true \n" +
-	    				" });\n\n");
-	
+	    				" });\n\n"); -- working */ 
+			//new ext2.0
+			out.write(" Ext.onReady(function(){ \n" +
+					" var ds = new Ext.data.Store({ \n" +
+			        " proxy: new Ext.data.HttpProxy({ \n" +
+			        " url: 'http://localhost:8080/genedb-web/Ext?history=" + historyItem + "'\n" +
+			        " }), \n" +
+			        " reader: new Ext.data.JsonReader({ \n" +
+			        " root: 'features', \n" +
+			        " totalProperty: 'total', \n" +
+			        " id: 'id', \n" +
+			        " fields: [ \n" +
+			        " {name: 'organism', mapping: 'organism'}, \n" +
+			        " {name: 'type', mapping: 'type'}, \n" +
+			        " {name: 'name', mapping: 'name'}, \n" +
+			        " {name: 'chromosome', mapping: 'chromosome'}, \n" +
+			        " {name: 'location', mapping: 'location'}, \n" +
+			        " {name: 'product', mapping: 'product'}, \n" +
+			        " {name: 'pname', mapping: 'pname'} \n" +
+			        " ]}), \n" +
+			        " remoteSort: true \n" +
+    				" });\n\n");
+			
 			out.write("var cm = new Ext.grid.ColumnModel([{ \n" +
 	                  " id: 'organism', \n" + 
 	                  " header: \"Organism\", \n" +
@@ -411,37 +432,41 @@ public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 	                  " dataIndex: 'name', \n" +
 	                  " width: 150 " + "}]);\n\n");
 			
-			out.write("var grid = new Ext.grid.Grid('topic-grid', { \n" +
-	                  " ds: ds, \n" +
+			out.write("var grid = new Ext.grid.GridPanel({ \n" +
+	                  " store: ds, \n" +
 	                  " cm: cm, \n" +
 	                  " selModel: new Ext.grid.RowSelectionModel({singleSelect:true}), \n" +
-	                  " enableColLock:false, \n" +
-	                  " loadMask: true \n" +
+	                  " renderTo:'download-grid', \n" +
+	                  " autoHeight : true, \n" +
+	                  " height: 'auto', \n" +
+	                  " enableColumnHide : true, \n" +
+	                  " enableColumnMove : true, \n" +
+	                  " enableHdMenu : true, \n" +
+	                  " stripeRows: true, \n" +
+	                  " loadMask: true, \n" +
+	                  " bbar: new Ext.PagingToolbar({ \n" +
+	                  "   pageSize: 25, \n" +
+	                  "    store: ds, \n" +
+	                  "    displayInfo: true, \n" +
+	                  "    displayMsg: 'Displaying history items {0} - {1} of {2}', \n" +
+	                  "    emptyMsg: \"No history items to display\" ,\n" +
+	                  "   items:[  \n" +
+	                  "       '-', { \n" +
+	                  "      pressed: false, \n" +
+	                  "      enableToggle:true, \n" +
+	                  "      text: 'Excel', \n" +
+	                  "       cls: 'x-btn-text-icon details', \n" +
+	                  "       toggleHandler: toggleExcel \n" +
+	                  "   },'-',{ \n" +
+	                  "      pressed: true, \n" +
+	                  "      enableToggle:false, \n" +
+	                  "      text: 'CSV', \n" +
+	                  "       cls: 'x-btn-text-icon details', \n" +
+	                  "       toggleHandler: toggleTab \n" +
+	                  "   }] \n" +
+	                  " }) \n" +
 	    			  " });\n\n");
 			
-			out.write("var rz = new Ext.Resizable('topic-grid', { \n" +
-					  " wrap:true, \n" +
-					  " minHeight:300, \n" +
-					  " pinned:true, \n" +
-					  " handles: 's' \n" +
-	    			  " }); \n" +
-	    			  " \n rz.on('resize', grid.autoSize, grid); \n" +
-	    			  " grid.render(); \n" +
-	    			  " var gridFoot = grid.getView().getFooterPanel(true);\n\n");
-			
-			out.write("var paging = new Ext.PagingToolbar(gridFoot, ds, { \n" +
-					  " pageSize: 25, \n" +
-					  " displayInfo: true, \n"+
-					  " displayMsg: 'Displaying topics {0} - {1} of {2}', \n" +
-					  " emptyMsg: \"No results to display\" \n" +
-	    			  " });\n\n");
-			
-			out.write("paging.add('-', { \n" +
-					  " pressed: false, \n" +
-					  " enableToggle:true, \n" +
-					  " text: 'Excel', \n" +
-					  " cls: 'x-btn-text-icon details', \n" +
-					  " toggleHandler: toggleExcel });\n\n");
 			int h = historyItem + 1;
 			out.write("function toggleExcel(btn, pressed){ \n" +
 					  "if (pressed) { \n" +
@@ -460,13 +485,6 @@ public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 					  //"	 ds.load({params:{start:0, limit:25,excel:true,columns:hidden.join(',')}}); \n" +
 					  "} \n" +
 					  "}\n\n");
-			
-			out.write("paging.add('-', { \n" +
-					  " pressed: false, \n" +
-					  " enableToggle:true, \n" +
-					  " text: 'CSV', \n" +
-					  " cls: 'x-btn-text-icon details', \n" +
-					  " toggleHandler: toggleTab });\n\n");
 			
 			out.write("function toggleTab(btn, pressed){ \n" +
 					  "if (pressed) { \n" +
