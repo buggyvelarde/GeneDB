@@ -58,7 +58,74 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private String listResultsView;
     private SequenceDao sequenceDao;
     private Grep grep;
-
+    
+    
+    @Override
+    protected ModelAndView onSubmit(HttpServletRequest request, 
+    		HttpServletResponse response, Object command, 
+    		BindException be) throws Exception {
+    	
+    	int start = Integer.parseInt(request.getParameter("start"));
+		int limit = Integer.parseInt(request.getParameter("limit"));
+		
+		if(start == 0) {
+			NameLookupBean nlb = (NameLookupBean) command;
+			String orgs = nlb.getOrgs();
+			List<Feature> results = null;
+	        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(orgs);
+	        if (!nlb.isUseProduct()) {
+	        	results = sequenceDao.getFeaturesByAnyNameAndOrganism(
+	        			nlb.getName(), orgNames.toString(), nlb.getFeatureType());
+	        } else {
+	        	results = sequenceDao.getFeaturesByAnyNameOrProductAndOrganism(
+	        			nlb.getName(), orgNames, nlb.getFeatureType());
+	        }
+	        
+	        if (results == null) {
+	        	
+	        } else {
+	        	request.getSession().setAttribute("results", results);
+	        	JSONArray array = new JSONArray();
+	        	
+	    		for (int i=0;i<limit;i++) {
+	    			JSONObject obj = new JSONObject();
+	    			obj.put("organism", results.get(i).getOrganism().getCommonName());
+	    			obj.put("name", results.get(i).getUniqueName());
+	    			obj.put("type", results.get(i).getCvTerm().getName());
+	    			array.add(obj);
+	    		}
+	    		JSONObject obj = new JSONObject();
+	        	obj.put("total", results.size());
+	        	obj.put("results", array);
+	        	PrintWriter out = response.getWriter();
+	        	out.print(obj);
+	        	out.close();
+	        }
+ 		} else {
+ 			List<Feature> results = (List<Feature>) request.getSession().getAttribute("results");
+ 			JSONArray array = new JSONArray();
+ 			int end = limit + start;
+ 			if (end > results.size())
+ 				end = results.size();
+    		for (int i=start;i<end;i++) {
+    			JSONObject obj = new JSONObject();
+    			obj.put("organism", results.get(i).getOrganism().getCommonName());
+    			obj.put("name", results.get(i).getUniqueName());
+    			obj.put("type", results.get(i).getCvTerm().getName());
+    			array.add(obj);
+    		}
+    		JSONObject obj = new JSONObject();
+        	obj.put("total", results.size());
+        	obj.put("results", array);
+        	PrintWriter out = response.getWriter();
+        	out.print(obj);
+        	out.close();
+ 		}
+		
+    	return null;
+    }
+    
+    /*
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, 
     		HttpServletResponse response, Object command, 
@@ -139,7 +206,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         }
 
         return new ModelAndView(viewName, model);
-    }
+    }*/
 
 	public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;

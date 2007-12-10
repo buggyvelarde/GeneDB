@@ -171,6 +171,31 @@ public class HistoryController extends MultiActionController implements Initiali
         return new ModelAndView("redirect:/History/View"+sessionTest);
 	}
 	
+	public ModelAndView Test(HttpServletRequest request, HttpServletResponse response) {
+		JSONArray array = new JSONArray();
+        	JSONObject obj = new JSONObject();
+        	obj.put("index", 1);
+        	//obj.put("name", "Query 1");
+        	//obj.put("type", "query 1");
+        	obj.put("noresults", 378);
+        	//obj.put("tools", "orthologs");
+        	//obj.put("download", "http://localhost:8080/genedb-web/DownloadFeatures?historyItem=1");
+        	array.add(obj);
+        JSONObject obj1 = new JSONObject();
+    	obj1.put("total", 1);
+    	obj1.put("queries", array);
+    	PrintWriter out = null;
+		try {
+			out = response.getWriter();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	out.print(obj1);
+    	out.close();
+    	return new ModelAndView("history/historyIndex",obj1);
+	}
+	
 //	public ModelAndView RenameItem(HttpServletRequest request, HttpServletResponse response) {
 ////	    String name = ServletRequestUtils.getStringParameter(request, "name", NO_VALUE_SUPPLIED);
 ////	    if (name.equals(NO_VALUE_SUPPLIED)) {
@@ -262,7 +287,7 @@ public class HistoryController extends MultiActionController implements Initiali
 	 * @return a ModelAndView to render the response
 	 */
 	@SuppressWarnings("unchecked")
-	public ModelAndView BooleanQuery(HttpServletRequest request, HttpServletResponse response) {
+	/*public ModelAndView BooleanQuery(HttpServletRequest request, HttpServletResponse response) {
 		List<String> answers = new ArrayList<String>();
 		if (!WebUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
 			return new ModelAndView("chooseTaxonContextView");
@@ -303,19 +328,19 @@ public class HistoryController extends MultiActionController implements Initiali
 		model.put(WebConstants.QUERY_FORM, qf);
 		model.put(WebConstants.TAX_ID, answers.get(0));
 		return new ModelAndView("queryWorking", WebConstants.MODEL_MAP, model );
-	}
+	}*/
 
 	
-	private NumberedQueryI replaceNode(NumberedQueryI q, int q1, BooleanOp op) {	
+	/*private NumberedQueryI replaceNode(NumberedQueryI q, int q1, BooleanOp op) {	
 		if (q1 == 0) {
 			return new BooleanQuery(op, q, new QueryPlaceHolder());
 		}
 		recurseTree(q, q1, op);
 		return q;
-	}
+	}*/
 		
 		
-	private boolean recurseTree(BasicQueryI q, int q1, BooleanOp op) {
+	/*private boolean recurseTree(BasicQueryI q, int q1, BooleanOp op) {
 		// Looking for parent...
 		if (!(q instanceof BooleanQuery)) {
 			return false;
@@ -341,7 +366,7 @@ public class HistoryController extends MultiActionController implements Initiali
 		}
 		return recurseTree(bool.getSecondQuery(), q1, op);
 		
-	}
+	}*/
 
 
 	/**
@@ -349,19 +374,19 @@ public class HistoryController extends MultiActionController implements Initiali
 	 * @param request
 	 * @return
      */
-	private QueryForm parseQueryForm(int index, HttpServletRequest request) {
+	/*private QueryForm parseQueryForm(int index, HttpServletRequest request) {
 		QueryForm qf = new QueryForm();
 		qf.setNumberedQuery(parseQuery(index, request));
 		return qf;
 		
-	}
+	}*/
 	
 	/**
 	 * @param index
 	 * @param request
 	 * @return
 	 */
-	private NumberedQueryI parseQuery(int index, HttpServletRequest request) {
+	/*private NumberedQueryI parseQuery(int index, HttpServletRequest request) {
 		String value = request.getParameter("node."+index);
 		if (value == null) {
 			return null;
@@ -386,7 +411,7 @@ public class HistoryController extends MultiActionController implements Initiali
 		
 		return qph;
 		
-	}
+	}*/
 
 	public void setSequenceDao(SequenceDao sequenceDao) {
 	    this.sequenceDao = sequenceDao;
