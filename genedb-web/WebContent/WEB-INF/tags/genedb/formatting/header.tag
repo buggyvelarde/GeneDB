@@ -16,21 +16,37 @@
     <jsp:doBody />
 </head>    
 <body>
-<div id="header" align="right">
-			<div id="floating-right">
-				<img src="<c:url value="/"/>includes/images/fg.jpg"/>
-				<img src="<c:url value="/"/>includes/images/he.jpg"/>
-				<img src="<c:url value="/"/>includes/images/pl.jpg"/>
-				<img src="<c:url value="/"/>includes/images/ve.gif"/>
-			</div>
-			<h2>${name}</h2>
-			<div id="floating-left">
-				<img src="<c:url value="/"/>includes/images/vi.jpg"/>
-				<img src="<c:url value="/"/>includes/images/ba.jpg"/>
-				<img src="<c:url value="/"/>includes/images/nm.gif"/>
-				<img src="<c:url value="/"/>includes/images/bg.jpg"/>
-			</div>
-		</div>
+	<table align="center" width="100%" height="138px" style="background-image: url('includes/images/a2.gif'); background-repeat: repeat-x;">
+		<tr>
+			<td align="right" valign="bottom">
+				<table align="left">
+					<tr>
+						<td width="55px"><img src="<c:url value="/"/>includes/images/fg.jpg" style="border: 3px solid #FFFFFF;"/></td>
+						<td width="55px"><img src="<c:url value="/"/>includes/images/he.jpg" style="border: 3px solid #FFFFFF;"/></td>
+						<td width="55px"><img src="<c:url value="/"/>includes/images/pl.jpg" style="border: 3px solid #FFFFFF;"/></td>
+						<td width="55px"><img src="<c:url value="/"/>includes/images/ve.gif" style="border: 3px solid #FFFFFF;"/></td>
+					</tr>
+				</table>
+			</td>
+			<td align="center">
+				<table align="center">
+					<tr align="center">
+						<td><h2 style="padding-top: 30px;">${name}</h2></td>
+					</tr>
+				</table>
+			</td>
+			<td align="left" valign="top">
+				<table align="right">
+					<tr align="left">
+						<td width="55px"><img src="<c:url value="/"/>includes/images/vi.jpg" style="border: 3px solid #FFFFFF;"/></td>
+						<td width="55px"><img src="<c:url value="/"/>includes/images/ba.jpg" style="border: 3px solid #FFFFFF;"/></td>
+						<td width="55px"><img src="<c:url value="/"/>includes/images/nm.gif" style="border: 3px solid #FFFFFF;"/></td>
+						<td width="55px"><img src="<c:url value="/"/>includes/images/bg.jpg" style="border: 3px solid #FFFFFF;"/></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
 <ul><c:forEach var="line" items="${ERROR_MSG}">
 <li>${line}
 </c:forEach></ul>
