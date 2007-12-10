@@ -110,13 +110,13 @@
 		<tr>
 		<td width="50%">
 		<a href="http://www.sanger.ac.uk/Projects/Microbes/">Bacteria</a>:
-		<a href="http://www.sanger.ac.uk/Projects/Microbes/"><img class="img-nb" src="<c:url value="/includes/images/N_meningitidis_55.gif"/>" alt="Bacteria" title="Bacteria" style="height: 55px; width: 55px; float: right;"></a>
+		<a href="http://www.sanger.ac.uk/Projects/Microbes/"><img class="img-nb" src="<c:url value="/includes/images/nm.gif"/>" alt="Bacteria" title="Bacteria" style="height: 55px; width: 55px; float: right;"></a>
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
 		<td width="50%">
 		<a href="http://www.sanger.ac.uk/Projects/Protozoa/">Protozoa</a>:
-		<a href="http://www.sanger.ac.uk/Projects/Protozoa/"><img class="img-nb" src="<c:url value="/includes/images/protozoa_55.jpg"/>" alt="Protozoa" title="Protozoa" style="height: 55px; width: 55px; float: right;"></a>
+		<a href="http://www.sanger.ac.uk/Projects/Protozoa/"><img class="img-nb" src="<c:url value="/includes/images/pr.jpg"/>" alt="Protozoa" title="Protozoa" style="height: 55px; width: 55px; float: right;"></a>
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
@@ -124,13 +124,13 @@
 		<tr>
 		<td width="50%">
 		<a href="http://www.sanger.ac.uk/Projects/Fungi/">Fungi</a>:
-		<a href="http://www.sanger.ac.uk/Projects/Fungi/"><img class="img-nb" src="<c:url value="/includes/images/fungi_55.jpg"/>" alt="Fungi" title="Fungi" style="height: 55px; width: 55px; float: right;"></a>
+		<a href="http://www.sanger.ac.uk/Projects/Fungi/"><img class="img-nb" src="<c:url value="/includes/images/fg.jpg"/>" alt="Fungi" title="Fungi" style="height: 55px; width: 55px; float: right;"></a>
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
 		<td width="50%">
 		<a href="http://www.sanger.ac.uk/Projects/Helminths/">Helminths</a>:
-		<a href="http://www.sanger.ac.uk/Projects/Helminths/"><img class="img-nb" src="<c:url value="/includes/images/helminths_55.jpg"/>" alt="Helminths" title="Helminths" style="height: 55px; width: 55px; float: right;"></a>
+		<a href="http://www.sanger.ac.uk/Projects/Helminths/"><img class="img-nb" src="<c:url value="/includes/images/he.jpg"/>" alt="Helminths" title="Helminths" style="height: 55px; width: 55px; float: right;"></a>
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
@@ -138,13 +138,13 @@
 		<tr>
 		<td width="50%">
 		<a href="http://www.sanger.ac.uk/Projects/Plasmids/">Plasmids</a>:
-		<a href="http://www.sanger.ac.uk/Projects/Plasmids/"><img class="img-nb" src="<c:url value="/includes/images/plasmid_55.jpg"/>" alt="Plasmids" title="Plasmids" style="height: 55px; width: 55px; float: right;"></a>
+		<a href="http://www.sanger.ac.uk/Projects/Plasmids/"><img class="img-nb" src="<c:url value="/includes/images/pl.jpg"/>" alt="Plasmids" title="Plasmids" style="height: 55px; width: 55px; float: right;"></a>
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
 		<td width="50%"><!--run from /bin-offline/Website/lists/-->
 		<a href="http://www.sanger.ac.uk/Projects/Vectors/">Vectors</a>:
-		<a href="http://www.sanger.ac.uk/Projects/Vectors/"><img class="img-nb" src="<c:url value="/includes/images/vectors_55.gif"/>" alt="Vectors" title="Vectors" style="height: 55px; width: 55px; float: right;"></a>
+		<a href="http://www.sanger.ac.uk/Projects/Vectors/"><img class="img-nb" src="<c:url value="/includes/images/ve.gif"/>" alt="Vectors" title="Vectors" style="height: 55px; width: 55px; float: right;"></a>
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
@@ -152,7 +152,7 @@
 		<tr>
 		<td width="50%">
 		<a href="http://www.sanger.ac.uk/Projects/Phage/">Bacteriophage</a>:
-		<a href="http://www.sanger.ac.uk/Projects/Phage/"><img class="img-nb" src="<c:url value="/includes/images/bacteriophage_55.jpg"/>" alt="Bacteriophage" title="Bacteriophage" style="height: 55px; width: 55px; float: right;"></a>
+		<a href="http://www.sanger.ac.uk/Projects/Phage/"><img class="img-nb" src="<c:url value="/includes/images/ba.jpg"/>" alt="Bacteriophage" title="Bacteriophage" style="height: 55px; width: 55px; float: right;"></a>
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
