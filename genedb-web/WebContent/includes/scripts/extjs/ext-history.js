@@ -20,62 +20,55 @@ Ext.onReady(function(){
         reader: new Ext.data.JsonReader({
         	root: 'queries',
         	totalProperty: 'total',
-        	id: 'id'
-        }, [
-            {name: 'index',mapping: 'index'},
+        	id: 'id',
+        	fields: [
+            {name: 'index',mapping: 'index', type: 'int'},
             {name: 'name', mapping: 'name'},
             {name: 'type', mapping: 'type'},
-            {name: 'noresults',mapping: 'noresults'},
+            {name: 'noresults',mapping: 'noresults',type: 'int'},
             {name: 'tools',mapping:'tools'},
             {name: 'download',mapping:'download'}
-        ]),
+        ]}),
 
         // turn on remote sorting
         remoteSort: true
     });
 	
-	
-	var fm = Ext.form, Ed = Ext.grid.GridEditor;
-	
+
     // the column model has information about grid columns
     // dataIndex maps the column to the specific data field in
     // the data store
     var cm = new Ext.grid.ColumnModel([{
            id: 'index', // id assigned so we can apply custom css (e.g. .x-grid-col-topic b { color:#333 })
            header: "Index",
-           dataIndex: 'index',
-           width: 50,
-           css: 'white-space:normal;'
+           dataIndex: 'index'
         },{
            id: 'name',
            header: "Name",
            dataIndex: 'name',
-           editor: new Ed(new fm.TextField({
+           editor: new Ext.form.TextField({
                allowBlank: false
-           })),
-           width: 300
+           }),
         },{
         	id: 'type',
         	header: "Type",
-        	dataIndex: 'type',
-        	width: 75
+        	dataIndex: 'type'
         },{
         	id: 'results',
         	header: "No. Of Results",
-        	dataIndex: 'noresults',
-        	width: 75
+        	dataIndex: 'noresults'
         },{
         	id: 'tools',
         	header: "Tools",
-        	dataIndex: 'tools',
-        	width: 75
+        	dataIndex: 'tools'
         },{
         	id: 'download',
         	header: "Download",
         	dataIndex: 'download',
-        	renderer: link,
-        	width: 75
+        	renderer: link
         }]);
+	
+	cm.defaultSortable = true;
 	
 	function link(value) {
 		return String.format('<a href="{0}">Download</a>',value);
@@ -84,12 +77,26 @@ Ext.onReady(function(){
         return value ? 'Yes' : 'No';  
     }
     // create the editor grid
-    var grid = new Ext.grid.EditorGrid('topic-grid', {
-        ds: ds,
+    var grid = new Ext.grid.EditorGridPanel({
+        store: ds,
         cm: cm,
+        title: 'History View',
+        renderTo: 'topic-grid',
+        autoHeight : true,
+        height: 'auto',
+        enableColumnHide : true,
+        enableColumnMove : true,
+        enableHdMenu : true,
+        stripeRows: true,
         selModel: new Ext.grid.CellSelectionModel({singleSelect:true}),
-        enableColLock:false,
-        loadMask: true
+        loadMask: true,
+        bbar: new Ext.PagingToolbar({
+            pageSize: 25,
+            store: ds,
+            displayInfo: true,
+            displayMsg: 'Displaying history items {0} - {1} of {2}',
+            emptyMsg: "No history items to display"
+        })
     });
 	
 	grid.on('afteredit',function(e){
@@ -103,22 +110,14 @@ Ext.onReady(function(){
 		} else {
 			ds.load({params:{change:true,row:row,value:value}});
 		}
-	})
-    // make the grid resizable, do before render for better performance
-    var rz = new Ext.Resizable('topic-grid', {
-        wrap:true,
-        minHeight:100,
-        pinned:true,
-        handles: 's'
-    });
-    rz.on('resize', grid.autoSize, grid);
+	});
 
     // render it
     grid.render();
-
-    var gridFoot = grid.getView().getFooterPanel(true);
     
     // trigger the data store load
-    ds.load({params:{change:'false'}});
-
+    ds.load({params:{change:'false',start:0,limit:25}});
+    
 });
+
+    

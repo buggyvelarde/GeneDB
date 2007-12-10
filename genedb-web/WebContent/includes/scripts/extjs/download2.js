@@ -91,6 +91,16 @@ Ext.onReady(function(){
     ds.load({params:{start:0, limit:2}});
 
     function toggleDetails(btn, pressed){
+        var count = cm.getColumnCount();
+        var hidden = new Array();
+        var i=0;
+        for(var index=0; index<count; index++) {
+        	var id = cm.getColumnId(index);
+        	if(!cm.getColumnById(id).isHidden()) {
+        		hidden[i] = id;
+        	}
+        }
+        ds.load({params:{start:0, limit:25,columns:hidden.join(',')}});
         cm.getColumnById('topic').renderer = pressed ? renderTopic : renderTopicPlain;
         cm.getColumnById('last').renderer = pressed ? renderLast : renderLastPlain;
         grid.getView().refresh();
