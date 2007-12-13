@@ -13,7 +13,12 @@
 <!--     <bean id="loginForm" class="org.genedb.jogra.drawing.JograLogin">
         <property name="name" value="jogra.jpg" />
     </bean> -->
-        
+        <bean id="httpInvokerProxy" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+<property name="serviceUrl" value="http://remotehost:8080/remoting/AccountService"/>
+<property name="serviceInterface" value="example.AccountService"/>
+</bean>
+
+
 	<bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
 	</bean>
 	        

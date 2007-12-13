@@ -13,6 +13,11 @@
 <!--     <bean id="loginForm" class="org.genedb.jogra.drawing.JograLogin">
         <property name="name" value="jogra.jpg" />
     </bean> -->
+      
+      <bean name="/AccountService" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+<property name="service" ref="accountService"/>
+<property name="serviceInterface" value="example.AccountService"/>
+</bean>
         
 	<bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
 	</bean>
