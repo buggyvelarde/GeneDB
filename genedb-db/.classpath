@@ -8,6 +8,6 @@
 	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-tools.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
-	<classpathentry sourcepath="/Users/art/Documents/eclipse-workspace/repository/springframework/spring-framework-2.0-rc3/dist/spring-src.zip" kind="lib" path="lib/spring-2.0RC3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/genedb-libs"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
