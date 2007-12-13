@@ -4,9 +4,8 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.genedb.db.domain;
+package org.genedb.db.domain.objects;
 
-import org.gmod.schema.sequence.Feature;
 
 import java.util.List;
 
@@ -20,8 +19,21 @@ import java.util.List;
 public class Gene {
     
     private List<Transcript> transcripts;
-    private Feature gene;
+    private String geneFeatureId;
+    private String systematicId;
+    private String name;
+    private String organism;
     
+    public String getSystematicId() {
+    	return systematicId;
+    }
 
+	public String getName() {
+		return name;
+	}
+
+	public String getOrganism() {
+		return organism;
+	}
     
 }

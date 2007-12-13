@@ -17,7 +17,7 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.db.domain;
+package org.genedb.db.domain.objects;
 
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
