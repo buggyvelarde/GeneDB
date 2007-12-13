@@ -7,4 +7,16 @@ public class Product implements Serializable {
 	private int id;
 	private String description;
 
+	public Product(String description, int id) {
+		this.description = description;
+		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return description;
+	}
+	
+	
+	
 }

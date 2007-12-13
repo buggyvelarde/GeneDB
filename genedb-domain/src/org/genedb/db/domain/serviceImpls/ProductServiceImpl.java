@@ -1,5 +1,8 @@
 package org.genedb.db.domain.serviceImpls;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.genedb.db.domain.misc.MethodResult;
@@ -19,8 +22,12 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<Product> getProductList() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Product> products = new ArrayList<Product>();
+		products.add(new Product("peri", 1));
+		products.add(new Product("rose", 2));
+		products.add(new Product("donna", 3));
+		products.add(new Product("martha", 4));
+		return products;
 	}
 
 }
