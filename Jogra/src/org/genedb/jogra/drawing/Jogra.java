@@ -246,7 +246,7 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
 
     public static Jogra instantiate() throws IOException {
         final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] { "classpath:applicationContext.xml" });
+                new String[] { "classpath:applicationContext.xml", "classpath:domain-client-applicationContext.xml" });
 
         final Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
         ctx.registerShutdownHook();
