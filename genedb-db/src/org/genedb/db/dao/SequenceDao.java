@@ -259,7 +259,7 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         logger.info("Lookup='"+lookup+"' featureType='"+featureType+"' orgs='"+orgs+"'");
         // The list of orgs is being included literally as it didn't seem to work as a parameter
         return getHibernateTemplate().findByNamedParam("select f from Feature f, FeatureProp fp where" +
-        		" (f.uniqueName like :lookup or ( fp.cvTerm.cv.name = 'genedb_products' and fp.cvTerm.name like :lookup and fp.feature = f)) and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgNames.toString()+" )", 
+        		" (f.uniqueName like :lookup or ( fp.cvTerm.cv.name = 'genedb_products' and fp.cvTerm.name like :lookup and fp.feature = f)) and f.cvTerm.name=:featureType and f.organism.commonName in ( "+orgs+" )", 
         		new String[]{"lookup","featureType"}, new Object[]{lookup,featureType, });
 	}
 
