@@ -20,133 +20,143 @@
 package org.genedb.jogra.plugins;
 
 import org.genedb.db.domain.objects.Gene;
+import org.genedb.db.domain.objects.Product;
+import org.genedb.db.domain.services.ProductService;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceEvent;
+import org.springframework.jms.listener.serversession.ListenerSessionManager;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class GeneEditor implements JograPlugin {
+public class ProductRationaliser implements JograPlugin {
+	
+	private static final String WINDOW_TITLE = "Product Rationalisation";
+	private ProductService productService;
+	JList fromList;
+	JList toList; 
+	
+	private void initModels() {
+		List<Product> products = productService.getProductList();
+		Product[] productArray = new Product[products.size()];
+		int i=0;
+		for (Product product : products) {
+			productArray[i] = product;
+			i++;
+		}
+		fromList.setListData(productArray);
+	}
+	
+    public JFrame getMainPanel() {
 
-    public JFrame getMainPanel(final Gene gene) {
-
-		//Session session = hibernateTransactionManager.getSessionFactory().openSession();
-		//Transaction transaction = session.beginTransaction();
+        fromList = new JList();
+        fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        toList = new JList();
+        toList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    	initModels();
+    	
     	
         final JFrame ret = new JFrame();
-        ret.setTitle(gene.getSystematicId());
-        final FormLayout fl = new FormLayout("pref 4dlu pref",
-                "pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref");
-        ret.setLayout(fl);
-        // JPanel ret = new JPanel(fl);
-        // ret.add(new JLabel("Hello"));
-        // ret.add(new JLabel("World"));
-        final CellConstraints cc = new CellConstraints();
+        ret.setTitle(WINDOW_TITLE);
+        ret.setLayout(new BorderLayout());
+        
 
-        final JTextField instance = new JTextField(gene.getSystematicId());
-        ret.add(new JLabel("Systematic id"), cc.xy(1, 1));
-        ret.add(instance, cc.xy(3, 1));
-
-        String org = gene.getOrganism();
-        final JLabel organism = new JLabel(org);
-        ret.add(new JLabel("Organism"), cc.xy(1, 3));
-        ret.add(organism, cc.xy(3, 3));
-
-        final JTextField username = new JTextField(gene.getName());
-        ret.add(new JLabel("Name"), cc.xy(1, 5));
-        ret.add(username, cc.xy(3, 5));
-
-        final JTextField password = new JTextField("hypothetical protein");
-        ret.add(new JLabel("Product"), cc.xy(1, 7));
-        ret.add(password, cc.xy(3, 7));
-
-        final JTextField blank = new JTextField(" ");
-        ret.add(new JLabel("Orthologues"), cc.xy(1, 9));
-        ret.add(blank, cc.xy(3, 9));
-
-        ret.add(new JLabel("Paralogues"), cc.xy(1, 11));
-        ret.add(blank, cc.xy(3, 11));
-
-        ret.add(new JLabel("Clusters"), cc.xy(1, 13));
-        ret.add(new JButton("Show others in cluster"), cc.xy(3, 13));
+        
+        Box center = Box.createHorizontalBox();
+        center.add(Box.createHorizontalStrut(5));
+        center.add(new JScrollPane(fromList));
+        center.add(Box.createHorizontalStrut(3));
+        center.add(new JScrollPane(toList));
+        center.add(Box.createHorizontalStrut(5));
+        
+        ret.add(center, BorderLayout.CENTER);
+        
+        Box buttons = Box.createHorizontalBox();
+        buttons.add(Box.createHorizontalGlue());
+        JButton refresh = new JButton("Refresh");
+        buttons.add(refresh);
+        buttons.add(Box.createHorizontalStrut(10));
+        JButton go = new JButton("Go");
+        buttons.add(go);
+        buttons.add(Box.createHorizontalGlue());
+        ret.add(buttons, BorderLayout.SOUTH);
+        
         ret.pack();
         
-        //transaction.commit();
         return ret;
     }
 
     public JPanel getMainWindowPlugin() {
         final JPanel ret = new JPanel();
-        final Box box = Box.createVerticalBox();
-        final JLabel label = new JLabel("Gene Editor Search");
-        box.add(label);
-
-        final Box row = Box.createHorizontalBox();
-
-        final JTextField query = new JTextField();
-        row.add(query);
-        final JButton search = new JButton("Search");
-        row.add(search);
-        search.addActionListener(new ActionListener() {
+        final JButton temp = new JButton("Load Product Rationaliser");
+        temp.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent ae) {
                 System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "' 1");
                 new SwingWorker<JFrame, Void>() {
 
                     @Override
                     protected JFrame doInBackground() throws Exception {
-                        return makeWindow(query.getText());
+                        return getMainPanel();
                     }
 
                     @Override
-                    protected void done() {
+                    public void done() {
                         try {
-                            final JFrame result = get();
-                            final EventServiceEvent e = new OpenWindowEvent(GeneEditor.this, result);
+                            final EventServiceEvent e = new OpenWindowEvent(ProductRationaliser.this, get());
                             EventBus.publish(e);
                         } catch (final InterruptedException exp) {
                             exp.printStackTrace();
                         } catch (final ExecutionException exp) {
                             exp.printStackTrace();
                         }
-
                     }
                 }.execute();
             }
         });
-        box.add(row);
-        ret.add(box);
+        ret.add(temp);
         return ret;
     }
 
     public String getName() {
-        return "Gene Editor";
+        return "Product Rationaliser";
     }
 
     public int getOrder() {
-        return 1;
+        return 7;
     }
 
     public boolean isSingletonByDefault() {
-        return false;
+        return true;
     }
 
     public boolean isUnsaved() {
@@ -154,17 +164,17 @@ public class GeneEditor implements JograPlugin {
         return false;
     }
 
-    private JFrame makeWindow(final String search) {
+    private JFrame makeWindow() {
         System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "'  x");
-        final String title = "Gene: " + search;
-        //Feature f = sequenceDao.getFeatureByUniqueName(search, "gene");
-        //Gene gene = new Gene(f);
-        Gene gene = new Gene();
-        JFrame lookup = Jogra.findNamedWindow(title);
+        JFrame lookup = Jogra.findNamedWindow("Product Rationaliser");
         if (lookup == null) {
-            lookup = getMainPanel(gene);
+            lookup = getMainPanel();
         }
         return lookup;
     }
+
+	public void setProductService(ProductService productService) {
+		this.productService = productService;
+	}
 
 }

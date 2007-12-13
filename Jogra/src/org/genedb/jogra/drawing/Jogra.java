@@ -81,7 +81,8 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
         });
 
         try {
-            UIManager.setLookAndFeel("org.jdesktop.swingx.plaf.nimbus.NimbusLookAndFeel");
+        	UIManager.setLookAndFeel("sun.swing.plaf.nimbus.NimbusLookAndFeel");
+            //UIManager.setLookAndFeel("org.jdesktop.swingx.plaf.nimbus.NimbusLookAndFeel");
         } catch (final Exception exp) {
             exp.printStackTrace();
         }

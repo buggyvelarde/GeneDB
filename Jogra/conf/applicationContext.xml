@@ -19,6 +19,8 @@
 	        
 	<bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor" />
 	        
+	<bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser" />
+		        
 	<bean name="geneList" class="org.genedb.jogra.plugins.GeneList">
 	</bean> 
 	     
@@ -28,7 +30,7 @@
 	  
 	<bean name="organismEditor" class="org.genedb.jogra.plugins.OrganismEditor" />
 	        
-	<bean name="organismManager" class="org.genedb.db.domain.ExtendedOrganismManager"/>
+	<bean name="organismManager" class="org.genedb.db.domain.objects.ExtendedOrganismManager"/>
         
    <bean id="application" class="org.genedb.jogra.drawing.Jogra">
 	   <property name="jograBusiness" ref="jograBusiness" />
@@ -39,6 +41,7 @@
 		     <ref bean="cvEditor" />
 		  	 <ref bean="organismTree" />
 		  	 <ref bean="organismEditor" />
+		  	 <ref bean="productRationaliser" />
 	  	 </list>
 	   </property>
    </bean>

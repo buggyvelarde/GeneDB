@@ -19,8 +19,8 @@
 
 package org.genedb.jogra.plugins;
 
-import org.genedb.db.domain.ExtendedOrganism;
-import org.genedb.db.domain.ExtendedOrganismManager;
+import org.genedb.db.domain.objects.ExtendedOrganism;
+import org.genedb.db.domain.objects.ExtendedOrganismManager;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
