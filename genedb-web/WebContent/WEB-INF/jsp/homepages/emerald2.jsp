@@ -3,7 +3,6 @@
 <%@ taglib prefix="misc" uri="misc" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="misc" uri="misc" %>
 
 <format:header name="HomePage">
 	<st:init />
