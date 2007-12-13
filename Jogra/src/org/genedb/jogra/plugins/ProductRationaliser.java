@@ -53,7 +53,7 @@ import javax.swing.WindowConstants;
 
 public class ProductRationaliser implements JograPlugin {
 	
-	private static final String WINDOW_TITLE = "Product Rationalisation";
+	private static final String WINDOW_TITLE = "Product Rationaliser";
 	private ProductService productService;
 	JList fromList;
 	JList toList; 
@@ -160,7 +160,7 @@ public class ProductRationaliser implements JograPlugin {
     }
 
     public String getName() {
-        return "Product Rationaliser";
+        return WINDOW_TITLE;
     }
 
     public int getOrder() {
@@ -178,7 +178,7 @@ public class ProductRationaliser implements JograPlugin {
 
     private JFrame makeWindow() {
         System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "'  x");
-        JFrame lookup = Jogra.findNamedWindow("Product Rationaliser");
+        JFrame lookup = Jogra.findNamedWindow(WINDOW_TITLE);
         if (lookup == null) {
             lookup = getMainPanel();
         }
