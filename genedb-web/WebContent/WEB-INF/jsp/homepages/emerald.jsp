@@ -52,9 +52,20 @@
 	    </div>
 	    <div id="main">
 	    	<div id="maininner">
-		    	<h3>Welcome to Malaria Annotation Workshop </h3>
+		    	<h3>Welcome to the Malaria Re-Annotation (Continuing) Workshop </h3>
+		    	<h4>Other websites</h4>
+		    	<ul>
+		    		<li><a href="http://www.genedb.org/">GeneDB</a></li>
+		    		<li><a href="http://www.plasmodb.org/">PlasmoDB</a></li>
+		    		<!-- <li><a href="">OPI</a></li>-->
+		    	</ul>
+		    	
+		    	
+		    	<h4>Reports</h4>
 				<ul>
-					<li><a href="./Search/FindCvByName">Browse Cv Terms</a>
+					<li><a href="./Search/FindCvByName">Browse Cv Terms</a></li>
+					<li><a href="./Search/CvTermByCvName?cvName=genedb_products">Product lists</a></li>
+					<li><a href="./TopLevelFeatures">Gene lists ordered by location</a></li>
 			</div>
 	    </div>
 	    <div id="footer">
