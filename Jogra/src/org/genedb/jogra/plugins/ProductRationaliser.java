@@ -19,6 +19,7 @@
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.domain.misc.MethodResult;
 import org.genedb.db.domain.objects.Product;
 import org.genedb.db.domain.services.ProductService;
 import org.genedb.jogra.drawing.Jogra;
@@ -32,9 +33,13 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -43,6 +48,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 
 
 public class ProductRationaliser implements JograPlugin {
@@ -75,6 +81,7 @@ public class ProductRationaliser implements JograPlugin {
     	
         final JFrame ret = new JFrame();
         ret.setTitle(WINDOW_TITLE);
+        ret.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         ret.setLayout(new BorderLayout());
         
 
@@ -91,9 +98,27 @@ public class ProductRationaliser implements JograPlugin {
         Box buttons = Box.createHorizontalBox();
         buttons.add(Box.createHorizontalGlue());
         JButton refresh = new JButton("Refresh");
+        refresh.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent evt) {
+        		initModels(); // FIXME
+        	}
+        });
         buttons.add(refresh);
         buttons.add(Box.createHorizontalStrut(10));
         JButton go = new JButton("Go");
+        go.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		Product to = (Product) toList.getSelectedValue();
+        		Object[] from = fromList.getSelectedValues();
+        		List<Product> old = new ArrayList<Product>();
+        		for (Object o : from) {
+					old.add((Product)o);
+				}
+        		MethodResult result = productService.rationaliseProduct(to, old);
+        		// TODO Check results
+        		initModels();
+        	}
+        });
         buttons.add(go);
         buttons.add(Box.createHorizontalGlue());
         ret.add(buttons, BorderLayout.SOUTH);
