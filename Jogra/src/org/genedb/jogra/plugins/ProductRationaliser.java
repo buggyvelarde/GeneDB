@@ -19,7 +19,6 @@
 
 package org.genedb.jogra.plugins;
 
-import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.objects.Product;
 import org.genedb.db.domain.services.ProductService;
 import org.genedb.jogra.drawing.Jogra;
@@ -28,36 +27,23 @@ import org.genedb.jogra.drawing.OpenWindowEvent;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceEvent;
-import org.springframework.jms.listener.serversession.ListenerSessionManager;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 public class ProductRationaliser implements JograPlugin {
 	
@@ -126,7 +112,7 @@ public class ProductRationaliser implements JograPlugin {
 
                     @Override
                     protected JFrame doInBackground() throws Exception {
-                        return getMainPanel();
+                        return makeWindow();
                     }
 
                     @Override
