@@ -9,7 +9,7 @@
     default-init-method="postConstruction">
             
         <bean id="productService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-			<property name="serviceUrl" value="http://developer.genedb.org/new/remoting/AccountService"/>
+			<property name="serviceUrl" value="http://developer.genedb.org/new/remoting/ProductService"/>
 			<property name="serviceInterface" value="org.genedb.db.domain.services.ProductService"/>
 		</bean>
 
