@@ -61,6 +61,7 @@ public class ProductRationaliser implements JograPlugin {
 			i++;
 		}
 		fromList.setListData(productArray);
+		toList.setListData(productArray);
 	}
 	
     public JFrame getMainPanel() {
