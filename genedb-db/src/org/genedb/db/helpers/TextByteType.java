@@ -63,7 +63,7 @@ public class TextByteType implements UserType{
 		return null;
 	}
 
-	public Class returnedClass() {
+	public Class<Byte> returnedClass() {
 		return byte.class;
 	}
 
