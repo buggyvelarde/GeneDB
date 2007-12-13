@@ -5,9 +5,9 @@
     xmlns:util="http://www.springframework.org/schema/util"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xsi:schemaLocation="
-    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.1.xsd
-    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.1.xsd
-    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.1.xsd"
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
     default-init-method="postConstruction">
             
 <!--     <bean id="loginForm" class="org.genedb.jogra.drawing.JograLogin">
@@ -19,7 +19,9 @@
 	        
 	<bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor" />
 	        
-	<bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser" />
+	<bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
+		<property name="productService" ref="productService" />
+	</bean>
 		        
 	<bean name="geneList" class="org.genedb.jogra.plugins.GeneList">
 	</bean> 
