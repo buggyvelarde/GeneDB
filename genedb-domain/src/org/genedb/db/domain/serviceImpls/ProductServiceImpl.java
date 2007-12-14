@@ -9,6 +9,7 @@ import org.genedb.db.domain.objects.Product;
 import org.genedb.db.domain.services.ProductService;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 @Repository
 public class ProductServiceImpl implements ProductService {
@@ -38,21 +39,46 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public MethodResult rationaliseProduct(Product newProduct,
 			List<Product> oldProducts) {
 		
-		boolean success = true;
-		for (Product product : oldProducts) {
-			success &= products.remove(product);
+		List<String> problems = new ArrayList<String>();
+		checkProduct(newProduct, problems);
+		for (Product p : oldProducts) {
+			checkProduct(p, problems);
 		}
-		if (success) {
-			return MethodResult.SUCCESS;
+		if (problems.size() > 0) {
+			return new MethodResult(StringUtils.collectionToCommaDelimitedString(problems));
 		}
-		return new MethodResult("Failed");
+		
+		for (Product p : oldProducts) {
+			List<String> genes = sessionFactory.getCurrentSession().createQuery("select f.uniqueName" +
+			        " from CvTerm cvt,FeatureCvTerm fct, Feature f" +
+					"where f=fct.feature and cvt=fct.cvTerm and cvt.id="+p.getId()).list();
+			// FIXME Check for locks
+			for (String geneName : genes) {
+				int count = sessionFactory.getCurrentSession().createQuery(
+						"update FeatureCvTerm fct set fct.cvtTerm.id="+p.getId()+" where fct.feature.uniqueName= :geneName").executeUpdate();
+				if (count != 1) {
+					problems.add("Unable to update product for '"+geneName+"'");
+				}
+			}
+		}
+		if (problems.size() > 0) {
+			return new MethodResult(StringUtils.collectionToCommaDelimitedString(problems));
+		}
+		return MethodResult.SUCCESS;
 	}
 
 	
+	private void checkProduct(Product newProduct, List<String> problems) {
+		// TODO Auto-generated method stub
+		return;
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Product> getProductList() {
 		return sessionFactory.getCurrentSession().createQuery("select new Product(cvt.name,cvt.id)" +
