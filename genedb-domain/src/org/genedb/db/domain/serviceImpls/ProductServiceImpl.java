@@ -1,17 +1,25 @@
 package org.genedb.db.domain.serviceImpls;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
+import org.genedb.db.domain.misc.GeneListReservations;
 import org.genedb.db.domain.misc.MethodResult;
 import org.genedb.db.domain.objects.Product;
 import org.genedb.db.domain.services.ProductService;
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ProductServiceImpl implements ProductService {
 
 	private List<Product> products = new ArrayList<Product>();
+	private GeneListReservations geneListReservations;
+	private SessionFactory sessionFactory;
+	
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 	
 	public ProductServiceImpl() {
 		products.add(new Product("peri", 1));
@@ -47,8 +55,13 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public List<Product> getProductList() {
-		System.err.println("The number of products is '"+products.size()+"'");
-		return products;
+		return sessionFactory.getCurrentSession().createQuery("select new Product(cvt.name,cvt.id)" +
+        " from CvTerm cvt,FeatureCvTerm fct" +
+		"where cvt=fct.cvTerm and cvt.cv.name='genedb_products' group by cvt.name").list();
+	}
+
+	public void setGeneListReservations(GeneListReservations geneListReservations) {
+		this.geneListReservations = geneListReservations;
 	}
 
 }
