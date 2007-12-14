@@ -47,5 +47,9 @@ public class Product implements Serializable {
 		}
 		return true;
 	}
+
+	public int getId() {
+		return id;
+	}
 	
 }
