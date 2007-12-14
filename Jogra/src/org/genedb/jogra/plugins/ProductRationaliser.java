@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -49,6 +50,8 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 public class ProductRationaliser implements JograPlugin {
@@ -105,20 +108,10 @@ public class ProductRationaliser implements JograPlugin {
         });
         buttons.add(refresh);
         buttons.add(Box.createHorizontalStrut(10));
-        JButton go = new JButton("Go");
-        go.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		Product to = (Product) toList.getSelectedValue();
-        		Object[] from = fromList.getSelectedValues();
-        		List<Product> old = new ArrayList<Product>();
-        		for (Object o : from) {
-					old.add((Product)o);
-				}
-        		MethodResult result = productService.rationaliseProduct(to, old);
-        		// TODO Check results
-        		initModels();
-        	}
-        });
+
+        RationaliserAction ra = new RationaliserAction();
+        JButton go = new JButton(ra);
+
         buttons.add(go);
         buttons.add(Box.createHorizontalGlue());
         ret.add(buttons, BorderLayout.SOUTH);
@@ -187,6 +180,45 @@ public class ProductRationaliser implements JograPlugin {
 
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
+	}
+
+
+
+	class RationaliserAction extends AbstractAction implements ListSelectionListener {
+		
+		public RationaliserAction() {
+			putValue(AbstractAction.NAME, "Rationalise Products");
+			fromList.addListSelectionListener(this);
+			toList.addListSelectionListener(this);
+			enableBasedOnSelection();
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Product to = (Product) toList.getSelectedValue();
+			Object[] from = fromList.getSelectedValues();
+			List<Product> old = new ArrayList<Product>();
+			for (Object o : from) {	
+				old.add((Product)o);
+			}
+			MethodResult result = productService.rationaliseProduct(to, old);
+			// TODO Check results
+			initModels();
+		}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			enableBasedOnSelection();
+		}
+
+		private void enableBasedOnSelection() {
+			boolean selection = (fromList.getMinSelectionIndex()!=-1) 
+				&& (toList.getMinSelectionIndex()!=-1);
+			if (this.isEnabled() != selection) {
+				this.setEnabled(selection);
+			}
+		}
+		
 	}
 
 }
