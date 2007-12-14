@@ -4,5 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
 	<classpathentry kind="lib" path="conf"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle/hibernate/hibernate3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
