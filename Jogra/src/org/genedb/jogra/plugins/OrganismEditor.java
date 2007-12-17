@@ -76,7 +76,7 @@ public class OrganismEditor implements JograPlugin {
         ret.add(new JLabel("Mitochondrial trans. table"), cc.xy(1, 7));
         ret.add(password, cc.xy(3, 7));
 
-        final JTextField curator = new JTextField("yummy mummy");
+        final JTextField curator = new JTextField("");
         ret.add(new JLabel("Curator"), cc.xy(1, 9));
         ret.add(curator, cc.xy(3, 9));
 
