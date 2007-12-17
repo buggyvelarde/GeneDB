@@ -11,6 +11,8 @@
     default-init-method="postConstruction">
 
 	<bean name="productService" class="org.genedb.db.domain.serviceImpls.ProductServiceImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="cvDao" ref="cvDao" />
 	</bean>
     
 </beans>
