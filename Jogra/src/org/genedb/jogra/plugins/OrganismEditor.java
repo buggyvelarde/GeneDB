@@ -45,8 +45,8 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class OrganismEditor implements JograPlugin {
 
-    private final ComboBoxModel comboBoxModel = new DefaultComboBoxModel(new String[] { "Choose", "T. brucei",
-            "L. major", "P. falciparum" });
+    private final ComboBoxModel comboBoxModel = 
+    	new DefaultComboBoxModel(new String[] { "Please wait..." });
 
     public JFrame getMainPanel(final String title) {
 
