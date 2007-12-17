@@ -25,6 +25,7 @@ import org.genedb.db.domain.services.ProductService;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
+import org.springframework.util.StringUtils;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceEvent;
@@ -57,6 +58,7 @@ import javax.swing.event.ListSelectionListener;
 public class ProductRationaliser implements JograPlugin {
 	
 	private static final String WINDOW_TITLE = "Product Rationaliser";
+	private static final String A_LONG_STRING = "This is the maximum product width we show";
 	private ProductService productService;
 	JList fromList;
 	JList toList; 
@@ -77,10 +79,11 @@ public class ProductRationaliser implements JograPlugin {
 
         fromList = new JList();
         fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        fromList.setPrototypeCellValue(A_LONG_STRING);
         toList = new JList();
         toList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        toList.setPrototypeCellValue(A_LONG_STRING);
     	initModels();
-    	
     	
         final JFrame ret = new JFrame();
         ret.setTitle(WINDOW_TITLE);
