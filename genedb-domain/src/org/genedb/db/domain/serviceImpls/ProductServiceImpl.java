@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Repository
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
 	private GeneListReservations geneListReservations;
@@ -35,27 +36,30 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	public MethodResult rationaliseProduct(Product newProduct,
 			List<Product> oldProducts) {
-		Session session = SessionFactoryUtils.getSession(sessionFactory, true);
+		//Session session = SessionFactoryUtils.getSession(sessionFactory, true);
 		List<String> problems = new ArrayList<String>();
 		checkProduct(newProduct, problems);
 		for (Product p : oldProducts) {
 			checkProduct(p, problems);
 		}
 		if (problems.size() > 0) {
-			session.close();
+			//session.close();
 			return new MethodResult(StringUtils.collectionToCommaDelimitedString(problems));
 		}
 
-		CvTerm newCvTerm = cvDao.getCvTermById(newProduct.getId());
+		//CvTerm newCvTerm = cvDao.getCvTermById(newProduct.getId());
+		CvTerm nct = (CvTerm) sessionFactory.getCurrentSession()
+		.createQuery("from CvTerm cvt where cvt.id = ?").setInteger(0, newProduct.getId()).uniqueResult();	
 		
 		for (Product p : oldProducts) {
-			List<FeatureCvTerm> fcts = session.createQuery("select fct" +
+			List<FeatureCvTerm> fcts = sessionFactory.getCurrentSession().createQuery("select fct" +
 			        " from CvTerm cvt,FeatureCvTerm fct, Feature f" +
 					" where f=fct.feature and cvt=fct.cvTerm and cvt.id="+p.getId()).list();
 			// FIXME Check for locks
 			for (FeatureCvTerm fct : fcts) {
-				System.err.println("Found a fct '"+fct+"' for product '"+newCvTerm.getName()+"'");
-				//fct.setCvTerm(newCvTerm);
+				System.err.println("Found a fct '"+fct+"' for product '"+nct.getName()+"'");
+				fct.setCvTerm(nct);
+				
 //				cvDao.update(fct);
 				//int count = session.createQuery(
 				//		"update FeatureCvTerm fct set fct.cvtTerm.id="+p.getId()+" where fct.feature.uniqueName="+geneName").executeUpdate();
@@ -65,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 		
-		session.close();
+		//session.close();
 		if (problems.size() > 0) {
 			return new MethodResult(StringUtils.collectionToCommaDelimitedString(problems));
 		}
@@ -81,12 +85,12 @@ public class ProductServiceImpl implements ProductService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Product> getProductList() {
-		Session session = SessionFactoryUtils.getSession(sessionFactory, true);
-		Query q = session.createQuery("select distinct new org.genedb.db.domain.objects.Product(cvt.name, cvt.id)" +
+		//Session session = SessionFactoryUtils.getSession(sessionFactory, true);
+		Query q = sessionFactory.getCurrentSession().createQuery("select distinct new org.genedb.db.domain.objects.Product(cvt.name, cvt.id)" +
         " from CvTerm cvt, FeatureCvTerm fct" +
 		" where cvt=fct.cvTerm and cvt.cv.name='genedb_products' order by cvt.name");
 		List<Product> products = (List<Product>) q.list();
-		session.close();
+		//session.close();
 		return products;
 	}
 
