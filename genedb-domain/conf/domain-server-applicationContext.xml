@@ -10,6 +10,8 @@
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
     default-init-method="postConstruction">
 
+  <tx:annotation-driven />
+
 	<bean name="productService" class="org.genedb.db.domain.serviceImpls.ProductServiceImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="cvDao" ref="cvDao" />
