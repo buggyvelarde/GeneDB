@@ -22,6 +22,9 @@ public class Gene {
     private String geneFeatureId;
     private String systematicId;
     private String name;
+    private List<String> synonyms;
+    private String previousSystematicId;
+    
     private String organism;
     
     public String getSystematicId() {
