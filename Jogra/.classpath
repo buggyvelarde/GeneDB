@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.jar"/>
 	<classpathentry kind="lib" path="conf"/>
 	<classpathentry kind="lib" path="lib/EventBus.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
@@ -11,6 +11,7 @@
 	<classpathentry kind="lib" path="lib/ehcache-1.2.4.jar"/>
 	<classpathentry kind="lib" path="lib/cglib-nodep-2.1_3.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/myswing.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-domain"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-libs"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
