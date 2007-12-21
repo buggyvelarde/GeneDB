@@ -29,13 +29,16 @@ import org.genedb.jogra.drawing.Pair;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceEvent;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -58,9 +61,10 @@ public class OrganismTree implements JograPlugin {
     public JFrame getMainPanel(final String title) {
 
         final JFrame ret = new JFrame();
+        ret.setLayout(new BorderLayout());
         ret.setTitle(title);
 
-        final Dimension size = new Dimension(100, 200);
+        final Dimension size = new Dimension(200, 250);
         ret.setMinimumSize(size);
 
         root = new DefaultMutableTreeNode("GeneDB");
@@ -84,8 +88,20 @@ public class OrganismTree implements JograPlugin {
         final JTree tree = new JTree(model);
 
         final JScrollPane scrollPane = new JScrollPane(tree);
-        ret.getContentPane().add(scrollPane);
-
+        //ret.getContentPane().add(scrollPane);
+        ret.add(scrollPane, BorderLayout.CENTER);
+        
+        Box buttons = Box.createHorizontalBox();
+        buttons.add(Box.createHorizontalGlue());
+        JCheckBox box1 = new JCheckBox("Loaded", true);
+        buttons.add(box1);
+        buttons.add(Box.createHorizontalStrut(10));
+        JCheckBox box2 = new JCheckBox("Heirachy", false);
+        buttons.add(box2);
+        buttons.add(Box.createHorizontalGlue());
+        
+        ret.add(buttons, BorderLayout.SOUTH);
+        
         new SwingWorker<Void, Pair<MutableTreeNode, MutableTreeNode>>() {
             @Override
             protected Void doInBackground() throws Exception {
