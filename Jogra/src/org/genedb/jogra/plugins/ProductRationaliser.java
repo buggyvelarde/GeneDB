@@ -53,6 +53,7 @@ import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -60,6 +61,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
@@ -74,10 +76,13 @@ public class ProductRationaliser implements JograPlugin {
 	private ProductService productService;
 	JList fromList;
 	JList toList; 
+    JCheckBox filterBox;
+    JLabel productCountLabel;
 	
 	private void initModels() {
-		List<Product> products = productService.getProductList();
+		List<Product> products = productService.getProductList(filterBox.isSelected());
 		Product[] productArray = new Product[products.size()];
+		//System.err.println("The number of products is '"+products.size()+"'");
 		int i=0;
 		for (Product product : products) {
 			productArray[i] = product;
@@ -85,12 +90,16 @@ public class ProductRationaliser implements JograPlugin {
 		}
 		fromList.setListData(productArray);
 		toList.setListData(productArray);
+		productCountLabel.setText(products.size()+" Products");
 	}
+	
 	
     public JFrame getMainPanel() {
 
         fromList = new JList();
         toList = new JList();
+        filterBox = new JCheckBox("Only products annotated to genes", true);
+        productCountLabel = new JLabel("No. of products");
         
         fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         fromList.setPrototypeCellValue(A_LONG_STRING);
@@ -114,7 +123,7 @@ public class ProductRationaliser implements JograPlugin {
         toList.addKeyListener(new IncrementalSearchKeyListener(findAction));
         InputMap map = toList.getInputMap(JComponent.WHEN_FOCUSED);
         // List keystrokes in the component and in all parent input maps
-        list(map, map.allKeys());
+        //list(map, map.allKeys());
     	initModels();
     	
         final JFrame ret = new JFrame();
@@ -141,15 +150,23 @@ public class ProductRationaliser implements JograPlugin {
         
         Box buttons = Box.createVerticalBox();
         
-//        Box localButtons = Box.createHorizontalBox();
+        Box localButtons = Box.createHorizontalBox();
 //        localButtons.add(Box.createHorizontalGlue());
+        filterBox.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		initModels();	
+        	}
+        });
+        localButtons.add(filterBox);
+        localButtons.add(Box.createHorizontalStrut(10));
+        localButtons.add(productCountLabel);
 //        JButton syncLeftToRight = new JButton(">>");
 //        localButtons.add(syncLeftToRight);
 //        localButtons.add(Box.createHorizontalStrut(5));
 //        JButton syncRightToLeft = new JButton("<<");
 //        localButtons.add(syncRightToLeft);
-//        localButtons.add(Box.createHorizontalGlue());
-        //buttons.add(localButtons);
+        localButtons.add(Box.createHorizontalGlue());
+        buttons.add(localButtons);
         
         Box actionButtons = Box.createHorizontalBox();
         actionButtons.add(Box.createHorizontalGlue());
@@ -162,6 +179,10 @@ public class ProductRationaliser implements JograPlugin {
         actionButtons.add(refresh);
         actionButtons.add(Box.createHorizontalStrut(10));
 
+        JButton speeling = new JButton(new FindClosestMatchAction());
+        actionButtons.add(speeling);
+        actionButtons.add(Box.createHorizontalStrut(10));
+        
         RationaliserAction ra = new RationaliserAction();
         JButton go = new JButton(ra);
 
@@ -245,6 +266,65 @@ public class ProductRationaliser implements JograPlugin {
 		this.productService = productService;
 	}
 
+	class FindClosestMatchAction extends AbstractAction implements ListSelectionListener {
+		
+		public FindClosestMatchAction() {
+			putValue(AbstractAction.NAME, "Find possible fix");
+			fromList.addListSelectionListener(this);
+			enableBasedOnSelection();
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Product from = (Product) fromList.getSelectedValue();
+			
+			int match = findClosestMatch(from.toString(), fromList.getSelectedIndex(), toList.getModel());
+			if (match != -1) {
+				toList.setSelectedIndex(match);
+				toList.ensureIndexIsVisible(match);
+			}
+		}
+		
+		int findClosestMatch(String in, int fromIndex, ListModel list) {
+			//System.err.println("Looking for match for '"+in+"'");
+			int current = -1;
+			int distance = Integer.MAX_VALUE;
+			for (int i = 0; i < list.getSize(); i++) {
+				if (i == fromIndex) {
+					continue;
+				}
+				String element = ((Product)list.getElementAt(i)).toString();
+				if (in.equalsIgnoreCase(element)) {
+					System.err.println("Found identical except case at '"+i+"'");
+					return i;
+				}
+				int d = org.apache.commons.lang.StringUtils.getLevenshteinDistance(in, element);
+				if (d==1) {
+					//System.err.println("Found 1 away at '"+i+"'");
+					return i;
+				}
+				if ( d < distance) {
+					//System.err.println("Found distance '"+d+"' at '"+i+"'");
+					distance = d;
+					current = i;
+				}
+			}
+			return current;
+		}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			enableBasedOnSelection();
+		}
+
+		private void enableBasedOnSelection() {
+			boolean selection = (fromList.getMinSelectionIndex()!=-1);
+			if (this.isEnabled() != selection) {
+				this.setEnabled(selection);
+			}
+		}
+		
+	}
 
 
 	class RationaliserAction extends AbstractAction implements ListSelectionListener {
