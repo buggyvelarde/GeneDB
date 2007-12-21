@@ -15,6 +15,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -31,7 +32,6 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public MethodResult rationaliseProduct(Product newProduct,
@@ -51,29 +51,51 @@ public class ProductServiceImpl implements ProductService {
 		CvTerm nct = (CvTerm) sessionFactory.getCurrentSession()
 		.createQuery("from CvTerm cvt where cvt.id = ?").setInteger(0, newProduct.getId()).uniqueResult();	
 		
+		
 		for (Product p : oldProducts) {
-			List<FeatureCvTerm> fcts = sessionFactory.getCurrentSession().createQuery("select fct" +
-			        " from CvTerm cvt,FeatureCvTerm fct, Feature f" +
-					" where f=fct.feature and cvt=fct.cvTerm and cvt.id="+p.getId()).list();
-			// FIXME Check for locks
-			for (FeatureCvTerm fct : fcts) {
-				System.err.println("Found a fct '"+fct+"' for product '"+nct.getName()+"'");
-				fct.setCvTerm(nct);
-				
-//				cvDao.update(fct);
-				//int count = session.createQuery(
-				//		"update FeatureCvTerm fct set fct.cvtTerm.id="+p.getId()+" where fct.feature.uniqueName="+geneName").executeUpdate();
-				//if (count != 1) {
-				//	problems.add("Unable to update product for '"+geneName+"'");
-				//}
-			}
+			CvTerm oldProduct = (CvTerm) sessionFactory.getCurrentSession()
+			.createQuery("from CvTerm cvt where cvt.id = ?").setInteger(0, newProduct.getId()).uniqueResult();	
+			changeProductInFeatureCvTerms(p, nct);
+			deleteProduct(oldProduct);
 		}
 		
 		//session.close();
 		if (problems.size() > 0) {
 			return new MethodResult(StringUtils.collectionToCommaDelimitedString(problems));
 		}
+		// Remove product itself
+		
 		return MethodResult.SUCCESS;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	private void changeProductInFeatureCvTerms(Product p, CvTerm nct) {
+		List<FeatureCvTerm> fcts = sessionFactory.getCurrentSession().createQuery("select fct" +
+		        " from CvTerm cvt,FeatureCvTerm fct, Feature f" +
+				" where f=fct.feature and cvt=fct.cvTerm and cvt.id="+p.getId()).list();
+		// FIXME Check for locks
+		System.err.println("Found '"+fcts.size()+"' fcts for the product '"+p.toString()+"'");
+		for (FeatureCvTerm fct : fcts) {
+			System.err.println("Found a fct '"+fct+"' for product '"+nct.getName()+"'");
+			fct.setCvTerm(nct);
+			
+//				cvDao.update(fct);
+			//int count = session.createQuery(
+			//		"update FeatureCvTerm fct set fct.cvtTerm.id="+p.getId()+" where fct.feature.uniqueName="+geneName").executeUpdate();
+			//if (count != 1) {
+			//	problems.add("Unable to update product for '"+geneName+"'");
+			//}
+		}
+	}
+
+
+	private void deleteProduct(CvTerm p) {
+		sessionFactory.getCurrentSession().delete(p);
+//		if (del != 1) {
+//			problems.add("Tried to delete '"+p.toString()+"' but affected '"+del+"' rows");
+//		}
 	}
 
 	
@@ -84,12 +106,22 @@ public class ProductServiceImpl implements ProductService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Product> getProductList() {
+	public List<Product> getProductList(boolean restrictToGeneLinked) {
 		//Session session = SessionFactoryUtils.getSession(sessionFactory, true);
-		Query q = sessionFactory.getCurrentSession().createQuery("select distinct new org.genedb.db.domain.objects.Product(cvt.name, cvt.id)" +
-        " from CvTerm cvt, FeatureCvTerm fct" +
-		" where cvt=fct.cvTerm and cvt.cv.name='genedb_products' order by cvt.name");
-		List<Product> products = (List<Product>) q.list();
+		Query q;
+		if (restrictToGeneLinked) {
+//			q = sessionFactory.getCurrentSession().createQuery("select distinct new org.genedb.db.domain.objects.Product(cvt.name, cvt.id)" +
+//					" from CvTerm cvt, FeatureCvTerm fct" +
+//			" where cvt=fct.cvTerm and cvt.cv.name='genedb_products' order by cvt.name");
+			q = sessionFactory.getCurrentSession().createQuery("select distinct new org.genedb.db.domain.objects.Product(cvt.name, cvt.id)" +
+					" from CvTerm cvt, FeatureCvTerm fct" +
+			" where cvt=fct.cvTerm and cvt.cv.name='genedb_products' order by cvt.name");
+		} else {
+			q = sessionFactory.getCurrentSession().createQuery("select distinct new org.genedb.db.domain.objects.Product(cvt.name, cvt.id)" +
+					" from CvTerm cvt" +
+			" where cvt.cv.name='genedb_products' order by cvt.name");
+		}
+			List<Product> products = (List<Product>) q.list();
 		//session.close();
 		return products;
 	}
