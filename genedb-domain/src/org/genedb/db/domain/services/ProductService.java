@@ -7,7 +7,7 @@ import org.genedb.db.domain.objects.Product;
 
 public interface ProductService {
 	
-	List<Product> getProductList();
+	List<Product> getProductList(boolean restrictToGeneLinked);
 	
 	MethodResult rationaliseProduct(Product newProduct, List<Product> products);
 
