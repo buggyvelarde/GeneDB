@@ -17,4 +17,9 @@
 		<property name="cvDao" ref="cvDao" />
 	</bean>
     
+    	<bean name="geneService" class="org.genedb.db.domain.serviceImpls.GeneServiceImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<!-- <property name="cvDao" ref="cvDao" /> -->
+	</bean>
+    
 </beans>
