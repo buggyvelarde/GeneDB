@@ -20,6 +20,8 @@
 package org.genedb.jogra.plugins;
 
 import org.genedb.db.domain.objects.Gene;
+import org.genedb.db.domain.services.GeneService;
+import org.genedb.db.domain.services.ProductService;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
@@ -28,17 +30,24 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceEvent;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.util.StringUtils;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
@@ -46,55 +55,97 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class GeneEditor implements JograPlugin {
+	
+	private GeneService geneService;
 
     public JFrame getMainPanel(final Gene gene) {
 
+    	boolean conflict = false;
+    	
 		//Session session = hibernateTransactionManager.getSessionFactory().openSession();
 		//Transaction transaction = session.beginTransaction();
     	
         final JFrame ret = new JFrame();
         ret.setTitle(gene.getSystematicId());
-        final FormLayout fl = new FormLayout("pref 4dlu pref",
-                "pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref");
-        ret.setLayout(fl);
+        ret.setLayout(new BorderLayout());
+        
+        final FormLayout fl = new FormLayout("pref 4dlu pref 2dlu pref",
+                "pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref 2dlu pref");
+        JPanel main = new JPanel(fl);
         // JPanel ret = new JPanel(fl);
         // ret.add(new JLabel("Hello"));
         // ret.add(new JLabel("World"));
         final CellConstraints cc = new CellConstraints();
 
+        Box topBar = Box.createHorizontalBox();
+        topBar.add(new JLabel(ConflictComponentFactory.getConflictString(conflict)), cc.xy(3, 1));
+        topBar.add(new JLabel(getConflictIcon(conflict)), cc.xy(1, 1));
+        topBar.add(Box.createHorizontalGlue());
+        ret.add(topBar, BorderLayout.NORTH);
+        
         final JTextField instance = new JTextField(gene.getSystematicId());
-        ret.add(new JLabel("Systematic id"), cc.xy(1, 1));
-        ret.add(instance, cc.xy(3, 1));
+        main.add(new JLabel("Systematic id"), cc.xy(1, 3));
+        main.add(instance, cc.xy(3, 3));
 
         String org = gene.getOrganism();
         final JLabel organism = new JLabel(org);
-        ret.add(new JLabel("Organism"), cc.xy(1, 3));
-        ret.add(organism, cc.xy(3, 3));
+        main.add(new JLabel("Organism"), cc.xy(1, 5));
+        main.add(organism, cc.xy(3, 5));
 
         final JTextField username = new JTextField(gene.getName());
-        ret.add(new JLabel("Name"), cc.xy(1, 5));
-        ret.add(username, cc.xy(3, 5));
+        main.add(new JLabel("Name"), cc.xy(1, 7));
+        main.add(username, cc.xy(3, 7));
 
-        final JTextField password = new JTextField("hypothetical protein");
-        ret.add(new JLabel("Product"), cc.xy(1, 7));
-        ret.add(password, cc.xy(3, 7));
+        final JTextField synonyms = new JTextField(StringUtils.collectionToCommaDelimitedString(gene.getSynonyms()));
+        main.add(new JLabel("Synonyms"), cc.xy(1, 9));
+        main.add(synonyms, cc.xy(3, 9));
 
-        final JTextField blank = new JTextField(" ");
-        ret.add(new JLabel("Orthologues"), cc.xy(1, 9));
-        ret.add(blank, cc.xy(3, 9));
+        int ypos = 11;
+        final JTextField reservedName = new JTextField(gene.getReservedName());
+        main.add(new JLabel("Reserved Name"), cc.xy(1, ypos));
+        main.add(reservedName, cc.xy(3, ypos));
+        
+        ypos += 2;
+        final JTextField product = new JTextField(StringUtils.collectionToCommaDelimitedString(gene.getProducts()));
+        main.add(new JLabel("Product"), cc.xy(1, ypos));
+        main.add(product, cc.xy(3, ypos));
 
-        ret.add(new JLabel("Paralogues"), cc.xy(1, 11));
-        ret.add(blank, cc.xy(3, 11));
+        ypos += 2;
+        //final JTextField orthologues = new JTextField(StringUtils.collectionToCommaDelimitedString(gene.getOrthologues()));
+        final JTextField orthologues = new JTextField(""+gene.getOrthologues().size());
+        main.add(new JLabel("Orthologues"), cc.xy(1, ypos));
+        main.add(orthologues, cc.xy(3, ypos));
+        main.add(new JButton("List"), cc.xy(5, ypos));
 
-        ret.add(new JLabel("Clusters"), cc.xy(1, 13));
-        ret.add(new JButton("Show others in cluster"), cc.xy(3, 13));
+        ypos += 2;
+//        final JTextField paralogues = new JTextField(StringUtils.collectionToCommaDelimitedString(gene.getParalogues()));
+        final JTextField paralogues = new JTextField(""+gene.getParalogues().size());
+        main.add(new JLabel("Paralogues"), cc.xy(1, ypos));
+        main.add(paralogues, cc.xy(3, ypos));
+        main.add(new JButton("List"), cc.xy(5, ypos));
+
+        ypos += 2;
+        final JTextField clusters = new JTextField(""+gene.getClusters().size());
+        main.add(new JLabel("Clusters"), cc.xy(1, ypos));
+        main.add(clusters, cc.xy(3, ypos));
+        main.add(new JButton("List"), cc.xy(5, ypos));
+        
+        ret.add(new JScrollPane(main), BorderLayout.CENTER);
+        
+        ret.add(new JButton("Close"), BorderLayout.SOUTH);
         ret.pack();
+        
+        
         
         //transaction.commit();
         return ret;
     }
 
-    public JPanel getMainWindowPlugin() {
+    private Icon getConflictIcon(boolean conflict) {
+		return ConflictComponentFactory.getConflictIcon(conflict);
+	}
+
+	public JPanel getMainWindowPlugin() {
         final JPanel ret = new JPanel();
         final Box box = Box.createVerticalBox();
         final JLabel label = new JLabel("Gene Editor Search");
@@ -102,7 +153,7 @@ public class GeneEditor implements JograPlugin {
 
         final Box row = Box.createHorizontalBox();
 
-        final JTextField query = new JTextField();
+        final JTextField query = new JTextField("PFA0760w");
         row.add(query);
         final JButton search = new JButton("Search");
         row.add(search);
@@ -159,12 +210,20 @@ public class GeneEditor implements JograPlugin {
         final String title = "Gene: " + search;
         //Feature f = sequenceDao.getFeatureByUniqueName(search, "gene");
         //Gene gene = new Gene(f);
-        Gene gene = new Gene();
+        Gene gene = geneService.findGeneByUniqueName(search);
+        if (gene==null) {
+        	System.err.println("Can't find gene called '"+search+"'");
+        	return null;
+        }
         JFrame lookup = Jogra.findNamedWindow(title);
         if (lookup == null) {
             lookup = getMainPanel(gene);
         }
         return lookup;
     }
+
+	public void setGeneService(GeneService geneService) {
+		this.geneService = geneService;
+	}
 
 }
