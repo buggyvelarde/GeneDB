@@ -17,7 +17,9 @@
 	<bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
 	</bean>
 	        
-	<bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor" />
+	<bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor">
+		<property name="geneService" ref="geneService" />
+	</bean>
 	        
 	<bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
 		<property name="productService" ref="productService" />
