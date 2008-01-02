@@ -290,7 +290,7 @@ public class Feature implements java.io.Serializable {
      */
     public void setSeqLen(Integer seqLen) {
     	if (seqLen == null) {
-    		throw new IllegalArgumentException("Length attempted to be set to null");
+    		throw new IllegalArgumentException("Length of '"+uniqueName+"' attempted to be set to null");
     	}
         this.seqLen = seqLen;
     }
