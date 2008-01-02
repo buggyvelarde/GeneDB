@@ -20,14 +20,35 @@
 package org.genedb.db.domain.objects;
 
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureRelationship;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Transcript {
+public class Transcript implements Serializable {
     
-    private Feature feature;
-    private List<Feature> exons;
-    private Feature polypeptide;
+    public static Transcript makeTranscript(Feature feature) {
+    	Transcript ret = new Transcript();
+		for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
+			Feature otherFeat = fr.getFeatureBySubjectId();
+			if (otherFeat.getCvTerm().getName().equals("polypeptide")) {
+				ret.setProtein(otherFeat);
+			}
+		}
+    	return ret;
+    }
+    
+	//private Feature feature;
+    //private List<Feature> exons;
+    private transient Feature protein;
+    
+	public Feature getProtein() {
+		return protein;
+	}
+
+	public void setProtein(Feature protein) {
+		this.protein = protein;
+	}
     
     
 
