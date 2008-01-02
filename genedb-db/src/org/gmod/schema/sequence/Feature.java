@@ -289,6 +289,9 @@ public class Feature implements java.io.Serializable {
      * @see org.genedb.db.jpa.FeatureI#setSeqlen(java.lang.Integer)
      */
     public void setSeqLen(Integer seqLen) {
+    	if (seqLen == null) {
+    		throw new IllegalArgumentException("Length attempted to be set to null");
+    	}
         this.seqLen = seqLen;
     }
     
