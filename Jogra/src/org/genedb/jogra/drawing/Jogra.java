@@ -171,6 +171,9 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
             public void run() {
                 // TODO Auto-generated method stub
                 final JFrame frame = event.getJFrame();
+                if (frame==null) {
+                	return; // Assume plugin will report why
+                }
                 if (!frame.isVisible()) {
                     frame.setVisible(true);
                 } else {
