@@ -25,6 +25,7 @@ import org.genedb.jogra.drawing.OpenWindowEvent;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceEvent;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,14 +33,27 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 
 public class GeneList implements JograPlugin {
 
     public JFrame getMainPanel(final String title) {
-        // TODO Auto-generated method stub
-        return null;
+        JFrame ret = new JFrame();
+        ret.setTitle("Gene List");
+        
+        ret.setLayout(new BorderLayout());
+        
+        JList main = new JList();
+        main.setVisibleRowCount(15);
+        //main.getPreferredScrollableViewportSize()
+        JScrollPane mainPane = new JScrollPane(main);
+        
+        ret.add(mainPane, BorderLayout.CENTER);
+        
+        return ret;
     }
 
     public JPanel getMainWindowPlugin() {
