@@ -1,8 +1,8 @@
-<project name="Phugushop" default="jar" basedir=".">
+<project name="Jogra" default="jar" basedir=".">
 
     <!-- edit the following lines to your needs -->
     <target name="init">
-    <property name="project_name" value="Phugushop"/>
+    <property name="project_name" value="Jogra"/>
     <property name="srcDir" value="src"/>
     <property name="build.dir" value="ant-build"/>
     <property name="jar" value="${project_name}.jar"/>
@@ -11,10 +11,14 @@
     </target>
 
 	<path id="classpath">
-		<fileset dir="WebContent/WEB-INF/lib" id="id">
+		<fileset dir="lib" id="id">
     		<include name="*.jar"/>
 		</fileset>
-		<fileset dir="/Users/art/Software/UnixApp/apache-tomcat-5.5.15/common/lib">
+		<!--<fileset dir="/Users/art/Software/UnixApp/apache-tomcat-5.5.15/common/lib">
+    		<include name="*.jar"/>
+		</fileset>-->
+		<fileset file="../genedb-domain/genedb-domain.jar" />
+		<fileset dir="../genedb-libs/lib" id="id">
     		<include name="*.jar"/>
 		</fileset>
 	</path>
@@ -29,18 +33,15 @@
     <!-- create .jar -->
     <target name="jar" depends="compile">
     	<delete file="${build.dir}/${jar}" />
-    	<copy todir="${build.dir}">
-    		<fileset dir="WebContent/WEB-INF/lib" />
-    	</copy>
       <jar jarfile="${build.dir}/${jar}"
         basedir="${build.dir}/classes"
       	manifest="etc/manifest.txt">
-      	<fileset dir="WebContent/WEB-INF">
+      	<!--<fileset dir="WebContent/WEB-INF">
       		<include name="applicationContext.xml" />
      		<include name="*.jpg" />
      		<include name="*.png" />
      		<include name="*.xls" />
-      	</fileset>
+      	</fileset>-->
       </jar>
     </target>
 
