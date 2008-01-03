@@ -21,6 +21,8 @@ package org.genedb.jogra.plugins;
 
 import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.services.GeneService;
+import org.genedb.db.domain.services.LockStatus;
+import org.genedb.db.domain.services.LockingService;
 import org.genedb.db.domain.services.ProductService;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
@@ -38,6 +40,10 @@ import java.awt.EventQueue;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
@@ -50,6 +56,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -57,15 +64,24 @@ import com.jgoodies.forms.layout.FormLayout;
 public class GeneEditor implements JograPlugin {
 	
 	private GeneService geneService;
+	private LockingService lockingService;
 
     public JFrame getMainPanel(final Gene gene) {
 
     	boolean conflict = false;
+    	LockStatus lockStatus = lockingService.lockGene(gene.getSystematicId());
+    	if (lockStatus == null) {
+    		conflict = true;
+    	}
+
     	
 		//Session session = hibernateTransactionManager.getSessionFactory().openSession();
 		//Transaction transaction = session.beginTransaction();
     	
-        final JFrame ret = new JFrame();
+        final GeneEditorFrame ret = new GeneEditorFrame();
+        ret.setLockStatus(lockStatus);
+        ret.setGene(gene);
+        
         ret.setTitle(gene.getSystematicId());
         ret.setLayout(new BorderLayout());
         
@@ -111,21 +127,33 @@ public class GeneEditor implements JograPlugin {
         main.add(product, cc.xy(3, ypos));
 
         ypos += 2;
-        //final JTextField orthologues = new JTextField(StringUtils.collectionToCommaDelimitedString(gene.getOrthologues()));
-        final JTextField orthologues = new JTextField(""+gene.getOrthologues().size());
+        //final JTextField orthologues = new JTextField();
+        String text = ""+gene.getOrthologues().size()+" orthologues";
+        if (gene.getOrthologues().size()< 3 ) {
+        	text = StringUtils.collectionToCommaDelimitedString(gene.getOrthologues());
+        }
+        final JTextField orthologues = new JTextField(text);
         main.add(new JLabel("Orthologues"), cc.xy(1, ypos));
         main.add(orthologues, cc.xy(3, ypos));
         main.add(new JButton("List"), cc.xy(5, ypos));
 
         ypos += 2;
-//        final JTextField paralogues = new JTextField(StringUtils.collectionToCommaDelimitedString(gene.getParalogues()));
-        final JTextField paralogues = new JTextField(""+gene.getParalogues().size());
+        text = ""+gene.getParalogues().size()+" paralogues";
+        if (gene.getParalogues().size() < 3 ) {
+        	text = StringUtils.collectionToCommaDelimitedString(gene.getParalogues());
+        }
+//        final JTextField paralogues = new JTextField();
+        final JTextField paralogues = new JTextField(text);
         main.add(new JLabel("Paralogues"), cc.xy(1, ypos));
         main.add(paralogues, cc.xy(3, ypos));
         main.add(new JButton("List"), cc.xy(5, ypos));
 
         ypos += 2;
-        final JTextField clusters = new JTextField(""+gene.getClusters().size());
+        text = ""+gene.getClusters().size()+" clusters";
+        if (gene.getClusters().size()< 3 ) {
+        	text = StringUtils.collectionToCommaDelimitedString(gene.getClusters());
+        }
+        final JTextField clusters = new JTextField(text);
         main.add(new JLabel("Clusters"), cc.xy(1, ypos));
         main.add(clusters, cc.xy(3, ypos));
         main.add(new JButton("List"), cc.xy(5, ypos));
@@ -135,7 +163,27 @@ public class GeneEditor implements JograPlugin {
         ret.add(new JButton("Close"), BorderLayout.SOUTH);
         ret.pack();
         
-        
+        ret.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        ret.addWindowListener(new WindowAdapter() {
+
+			public void windowClosing(WindowEvent e) {
+				System.err.println("Window closed");
+				GeneEditorFrame source = (GeneEditorFrame) e.getWindow();
+				if (source.getLockStatus() != null) {
+					System.err.println("Trying to unlock gene");
+					lockingService.unlockGene(source.getGene().getSystematicId());
+					source.setGene(null);
+					source.setLockStatus(null);
+				}
+				//source.dispose();
+			}
+
+//			public void windowClosing(WindowEvent e) {
+//				// TODO Auto-generated method stub
+//				System.err.println("Window about to close");
+//			}
+        	
+        });
         
         //transaction.commit();
         return ret;
@@ -226,4 +274,34 @@ public class GeneEditor implements JograPlugin {
 		this.geneService = geneService;
 	}
 
+	public void setLockingService(LockingService lockingService) {
+		this.lockingService = lockingService;
+	}
+	
 }
+
+class GeneEditorFrame extends JFrame {
+	private LockStatus lockStatus;
+	private Gene gene;
+
+	public LockStatus getLockStatus() {
+		return lockStatus;
+	}
+
+	public void setLockStatus(LockStatus lockStatus) {
+		this.lockStatus = lockStatus;
+	}
+
+	public Gene getGene() {
+		return gene;
+	}
+
+	public void setGene(Gene gene) {
+		this.gene = gene;
+	}
+	
+	
+	
+}
+
+
