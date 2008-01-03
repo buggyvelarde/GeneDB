@@ -18,4 +18,9 @@
 			<property name="serviceInterface" value="org.genedb.db.domain.services.GeneService"/>
 		</bean>
 
+       
+        <bean id="lockingService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+			<property name="serviceUrl" value="http://developer.genedb.org/new/remoting/LockingService"/>
+			<property name="serviceInterface" value="org.genedb.db.domain.services.LockingService"/>
+		</bean>
 </beans>

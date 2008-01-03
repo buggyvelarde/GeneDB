@@ -22,4 +22,9 @@
 		<!-- <property name="cvDao" ref="cvDao" /> -->
 	</bean>
     
+        
+    <bean name="lockingService" class="org.genedb.db.domain.serviceImpls.LockingServiceImpl">
+		<!-- <property name="sessionFactory" ref="sessionFactory" /> -->
+		<!-- <property name="cvDao" ref="cvDao" /> -->
+	</bean>
 </beans>
