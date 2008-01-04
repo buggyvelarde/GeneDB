@@ -44,6 +44,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
@@ -258,17 +259,33 @@ public class GeneEditor implements JograPlugin {
         final String title = "Gene: " + search;
         //Feature f = sequenceDao.getFeatureByUniqueName(search, "gene");
         //Gene gene = new Gene(f);
-        Gene gene = geneService.findGeneByUniqueName(search);
-        if (gene==null) {
-        	System.err.println("Can't find gene called '"+search+"'");
-        	return null;
+        List<String> geneNames = geneService.findGeneNamesByPartialName(search);
+        if (geneNames.size()==0) {
+        	//return displayGenes(search, title);
         }
-        JFrame lookup = Jogra.findNamedWindow(title);
-        if (lookup == null) {
-            lookup = getMainPanel(gene);
+        if (geneNames.size()==1) {
+        	return displayGenes(geneNames.get(0), title);
         }
-        return lookup;
+        return displayGeneNameList(geneNames, title);
     }
+
+	private JFrame displayGenes(final String search, final String title) {
+		Gene gene = geneService.findGeneByUniqueName(search);
+		if (gene==null) {
+			System.err.println("Can't find gene called '"+search+"'");
+			return null;
+		}
+		JFrame lookup = Jogra.findNamedWindow(title);
+		if (lookup == null) {
+			lookup = getMainPanel(gene);
+		}
+		return lookup;
+	}
+	
+	private JFrame displayGeneNameList(final List<String> geneNames, final String title) {
+		GeneList gl = new GeneList(); // FIXME
+		return gl.getMainPanel(title, geneNames);
+	}
 
 	public void setGeneService(GeneService geneService) {
 		this.geneService = geneService;

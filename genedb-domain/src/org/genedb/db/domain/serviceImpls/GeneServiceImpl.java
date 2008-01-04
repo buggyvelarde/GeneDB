@@ -3,6 +3,7 @@ package org.genedb.db.domain.serviceImpls;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.genedb.db.dao.SequenceDao;
@@ -128,6 +129,16 @@ public class GeneServiceImpl implements GeneService {
 
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+
+	public List<String> findGeneNamesByPartialName(String search) {
+		List<String> names = (List<String>) sessionFactory.getCurrentSession().createQuery(
+        "select f.uniqueName from Feature f where f.uniqueName like '%"+search+"%' and f.cvTerm.name='gene'")
+        .list();
+		if (names.size() == 0) {
+			return Collections.<String>emptyList();
+		}
+		return names;
 	}
 
 }
