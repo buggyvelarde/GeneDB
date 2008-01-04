@@ -21,6 +21,7 @@ package org.genedb.jogra.plugins;
 
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
+import org.jdesktop.swingx.JXList;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceEvent;
@@ -29,6 +30,10 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
@@ -40,19 +45,33 @@ import javax.swing.SwingWorker;
 
 public class GeneList implements JograPlugin {
 
-    public JFrame getMainPanel(final String title) {
+    public JFrame getMainPanel(final String title, List<String> uniqueNames) {
         JFrame ret = new JFrame();
         ret.setTitle("Gene List");
         
         ret.setLayout(new BorderLayout());
         
-        JList main = new JList();
+        JXList main = new JXList();
         main.setVisibleRowCount(15);
-        //main.getPreferredScrollableViewportSize()
+        main.setPrototypeCellValue("123456789012345678901234567890");
+        //main.
+//        String[] temp = new String[100];
+//        for(int i=0; i < 100; i++) {
+//        	temp[i]= "Line "+i;
+//        }
+        String[] names = uniqueNames.toArray(new String[uniqueNames.size()]);
+        main.setListData(names);
+        //main.setMinimumSize(main.getPreferredScrollableViewportSize());
         JScrollPane mainPane = new JScrollPane(main);
         
         ret.add(mainPane, BorderLayout.CENTER);
         
+        JPanel controls = new JPanel();
+        controls.add(new JButton("wibble"));
+        
+        ret.add(controls, BorderLayout.SOUTH);
+        
+        ret.pack();
         return ret;
     }
 
@@ -66,7 +85,7 @@ public class GeneList implements JograPlugin {
 
                     @Override
                     protected JFrame doInBackground() throws Exception {
-                        return getMainPanel("wibble");
+                        return getMainPanel("wibble", Collections.<String>emptyList());
                     }
 
                     @Override
