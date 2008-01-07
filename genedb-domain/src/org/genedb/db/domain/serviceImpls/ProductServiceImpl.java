@@ -3,6 +3,7 @@ package org.genedb.db.domain.serviceImpls;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.domain.misc.GeneListReservations;
 import org.genedb.db.domain.misc.MethodResult;
@@ -23,6 +24,7 @@ import org.springframework.util.StringUtils;
 @Transactional
 public class ProductServiceImpl implements ProductService {
 
+	private Logger semantic = Logger.getLogger("semanticLogger");
 	private GeneListReservations geneListReservations;
 	private SessionFactory sessionFactory;
 	private CvDao cvDao;
@@ -47,6 +49,7 @@ public class ProductServiceImpl implements ProductService {
 			return new MethodResult(StringUtils.collectionToCommaDelimitedString(problems));
 		}
 
+		semantic.info("New product rationalisation");
 		//CvTerm newCvTerm = cvDao.getCvTermById(newProduct.getId());
 		CvTerm nct = (CvTerm) sessionFactory.getCurrentSession()
 		.createQuery("from CvTerm cvt where cvt.id = ?").setInteger(0, newProduct.getId()).uniqueResult();	
