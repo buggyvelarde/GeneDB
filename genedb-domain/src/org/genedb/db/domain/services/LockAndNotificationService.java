@@ -8,4 +8,6 @@ public interface LockAndNotificationService {
 	
 	void unlockGene(String systematicId);
 
+	void notifyGene(String uniqueName, String string);
+
 }
