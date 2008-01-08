@@ -19,9 +19,9 @@
 		<property name="serviceInterface" value="org.genedb.db.domain.services.GeneService"/>
 	</bean>
       
-	<bean name="/LockingService" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-		<property name="service" ref="lockingService"/>
-		<property name="serviceInterface" value="org.genedb.db.domain.services.LockingService"/>
+	<bean name="/LockAndNotificationService" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+		<property name="service" ref="lockAndNotificationService"/>
+		<property name="serviceInterface" value="org.genedb.db.domain.services.LockAndNotificationService"/>
 	</bean>
 	
 </beans>
