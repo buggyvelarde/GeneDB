@@ -22,7 +22,7 @@ package org.genedb.jogra.plugins;
 import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.services.GeneService;
 import org.genedb.db.domain.services.LockStatus;
-import org.genedb.db.domain.services.LockingService;
+import org.genedb.db.domain.services.LockAndNotificationService;
 import org.genedb.db.domain.services.ProductService;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
@@ -65,12 +65,12 @@ import com.jgoodies.forms.layout.FormLayout;
 public class GeneEditor implements JograPlugin {
 	
 	private GeneService geneService;
-	private LockingService lockingService;
+	private LockAndNotificationService lockAndNotificationService;
 
     public JFrame getMainPanel(final Gene gene) {
 
     	boolean conflict = false;
-    	LockStatus lockStatus = lockingService.lockGene(gene.getSystematicId());
+    	LockStatus lockStatus = lockAndNotificationService.lockGene(gene.getSystematicId());
     	if (lockStatus == null) {
     		conflict = true;
     	}
@@ -172,7 +172,7 @@ public class GeneEditor implements JograPlugin {
 				GeneEditorFrame source = (GeneEditorFrame) e.getWindow();
 				if (source.getLockStatus() != null) {
 					System.err.println("Trying to unlock gene");
-					lockingService.unlockGene(source.getGene().getSystematicId());
+					lockAndNotificationService.unlockGene(source.getGene().getSystematicId());
 					source.setGene(null);
 					source.setLockStatus(null);
 				}
@@ -291,8 +291,8 @@ public class GeneEditor implements JograPlugin {
 		this.geneService = geneService;
 	}
 
-	public void setLockingService(LockingService lockingService) {
-		this.lockingService = lockingService;
+	public void setLockAndNotificationService(LockAndNotificationService lockAndNotificationService) {
+		this.lockAndNotificationService = lockAndNotificationService;
 	}
 	
 }

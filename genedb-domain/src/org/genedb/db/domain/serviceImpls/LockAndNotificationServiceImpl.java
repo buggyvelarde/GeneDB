@@ -4,9 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.genedb.db.domain.services.LockStatus;
-import org.genedb.db.domain.services.LockingService;
+import org.genedb.db.domain.services.LockAndNotificationService;
 
-public class LockingServiceImpl implements LockingService {
+public class LockAndNotificationServiceImpl implements LockAndNotificationService {
 
 	private Set<String> locks = new HashSet<String>();
 	

@@ -1,6 +1,6 @@
 package org.genedb.db.domain.services;
 
-public interface LockingService {
+public interface LockAndNotificationService {
 	
 	//LockStatus findLockStatus(String systematicId);
 	

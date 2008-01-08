@@ -19,7 +19,7 @@
 	        
 	<bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor">
 		<property name="geneService" ref="geneService" />
-		<property name="lockingService" ref="lockingService" />
+		<property name="lockAndNotificationService" ref="lockAndNotificationService" />
 	</bean>
 	        
 	<bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">

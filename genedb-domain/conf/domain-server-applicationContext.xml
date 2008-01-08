@@ -23,7 +23,7 @@
 	</bean>
     
         
-    <bean name="lockingService" class="org.genedb.db.domain.serviceImpls.LockingServiceImpl">
+    <bean name="lockAndNotificationService" class="org.genedb.db.domain.serviceImpls.LockAndNotificationServiceImpl">
 		<!-- <property name="sessionFactory" ref="sessionFactory" /> -->
 		<!-- <property name="cvDao" ref="cvDao" /> -->
 	</bean>
