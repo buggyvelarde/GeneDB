@@ -12,9 +12,12 @@
 
   <tx:annotation-driven />
 
+	<bean name="semanticLog" class="org.genedb.db.domain.misc.SemanticLog" />
+
 	<bean name="productService" class="org.genedb.db.domain.serviceImpls.ProductServiceImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="cvDao" ref="cvDao" />
+		<property name="semanticLog" ref="semanticLog" />
 	</bean>
     
     	<bean name="geneService" class="org.genedb.db.domain.serviceImpls.GeneServiceImpl">
