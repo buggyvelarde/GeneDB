@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.domain.misc.GeneListReservations;
 import org.genedb.db.domain.misc.MethodResult;
+import org.genedb.db.domain.misc.SemanticLog;
 import org.genedb.db.domain.objects.Product;
 import org.genedb.db.domain.services.ProductService;
 import org.gmod.schema.cv.CvTerm;
@@ -24,7 +25,7 @@ import org.springframework.util.StringUtils;
 @Transactional
 public class ProductServiceImpl implements ProductService {
 
-	private Logger semantic = Logger.getLogger("semanticLogger");
+	private SemanticLog semantic;
 	private GeneListReservations geneListReservations;
 	private SessionFactory sessionFactory;
 	private CvDao cvDao;
@@ -49,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
 			return new MethodResult(StringUtils.collectionToCommaDelimitedString(problems));
 		}
 
-		semantic.info("New product rationalisation");
+		semantic.log("New product rationalisation");
 		//CvTerm newCvTerm = cvDao.getCvTermById(newProduct.getId());
 		CvTerm nct = (CvTerm) sessionFactory.getCurrentSession()
 		.createQuery("from CvTerm cvt where cvt.id = ?").setInteger(0, newProduct.getId()).uniqueResult();	
@@ -83,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
 		for (FeatureCvTerm fct : fcts) {
 			System.err.println("Found a fct '"+fct+"' for product '"+nct.getName()+"'");
 			fct.setCvTerm(nct);
-			
+			semantic.log("Changing product of '%s' from '%s' to '%s'", fct.getFeature().getUniqueName(), p.toString(), nct.getName());
 //				cvDao.update(fct);
 			//int count = session.createQuery(
 			//		"update FeatureCvTerm fct set fct.cvtTerm.id="+p.getId()+" where fct.feature.uniqueName="+geneName").executeUpdate();
@@ -96,6 +97,7 @@ public class ProductServiceImpl implements ProductService {
 
 	private void deleteProduct(CvTerm p) {
 		sessionFactory.getCurrentSession().delete(p);
+		semantic.log("Deleting unused product '%s'", p.getName());
 //		if (del != 1) {
 //			problems.add("Tried to delete '"+p.toString()+"' but affected '"+del+"' rows");
 //		}
