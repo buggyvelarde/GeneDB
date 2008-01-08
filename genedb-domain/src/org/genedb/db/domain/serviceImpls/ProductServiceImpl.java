@@ -9,6 +9,8 @@ import org.genedb.db.domain.misc.GeneListReservations;
 import org.genedb.db.domain.misc.MethodResult;
 import org.genedb.db.domain.misc.SemanticLog;
 import org.genedb.db.domain.objects.Product;
+import org.genedb.db.domain.services.LockAndNotificationService;
+import org.genedb.db.domain.services.LockStatus;
 import org.genedb.db.domain.services.ProductService;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -26,7 +28,7 @@ import org.springframework.util.StringUtils;
 public class ProductServiceImpl implements ProductService {
 
 	private SemanticLog semantic;
-	private GeneListReservations geneListReservations;
+	private LockAndNotificationService lockAndNotificationService;
 	private SessionFactory sessionFactory;
 	private CvDao cvDao;
 	
@@ -42,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
 		//Session session = SessionFactoryUtils.getSession(sessionFactory, true);
 		List<String> problems = new ArrayList<String>();
 		checkProduct(newProduct, problems);
+		oldProducts.remove(newProduct);
 		for (Product p : oldProducts) {
 			checkProduct(p, problems);
 		}
@@ -59,15 +62,15 @@ public class ProductServiceImpl implements ProductService {
 		for (Product p : oldProducts) {
 			CvTerm oldProduct = (CvTerm) sessionFactory.getCurrentSession()
 			.createQuery("from CvTerm cvt where cvt.id = ?").setInteger(0, newProduct.getId()).uniqueResult();	
-			changeProductInFeatureCvTerms(p, nct);
-			deleteProduct(oldProduct);
+			if (changeProductInFeatureCvTerms(p, nct)) {
+				deleteProduct(oldProduct);
+			}
 		}
 		
 		//session.close();
 		if (problems.size() > 0) {
 			return new MethodResult(StringUtils.collectionToCommaDelimitedString(problems));
 		}
-		// Remove product itself
 		
 		return MethodResult.SUCCESS;
 	}
@@ -75,23 +78,33 @@ public class ProductServiceImpl implements ProductService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
-	private void changeProductInFeatureCvTerms(Product p, CvTerm nct) {
+	private boolean changeProductInFeatureCvTerms(Product p, CvTerm nct) {
+		boolean allWorked = true;
 		List<FeatureCvTerm> fcts = sessionFactory.getCurrentSession().createQuery("select fct" +
 		        " from CvTerm cvt,FeatureCvTerm fct, Feature f" +
 				" where f=fct.feature and cvt=fct.cvTerm and cvt.id="+p.getId()).list();
 		// FIXME Check for locks
 		System.err.println("Found '"+fcts.size()+"' fcts for the product '"+p.toString()+"'");
 		for (FeatureCvTerm fct : fcts) {
-			System.err.println("Found a fct '"+fct+"' for product '"+nct.getName()+"'");
-			fct.setCvTerm(nct);
-			semantic.log("Changing product of '%s' from '%s' to '%s'", fct.getFeature().getUniqueName(), p.toString(), nct.getName());
+			LockStatus ls = lockAndNotificationService.lockGene(fct.getFeature().getUniqueName());
+			if (ls != null) {
+				System.err.println("Found a fct '"+fct+"' for product '"+nct.getName()+"'");
+				fct.setCvTerm(nct);
+				semantic.log("Changing product of '%s' from '%s' to '%s'", fct.getFeature().getUniqueName(), p.toString(), nct.getName());
+				lockAndNotificationService.unlockGene(fct.getFeature().getUniqueName());
+				lockAndNotificationService.notifyGene(fct.getFeature().getUniqueName(), "product");
 //				cvDao.update(fct);
 			//int count = session.createQuery(
 			//		"update FeatureCvTerm fct set fct.cvtTerm.id="+p.getId()+" where fct.feature.uniqueName="+geneName").executeUpdate();
 			//if (count != 1) {
 			//	problems.add("Unable to update product for '"+geneName+"'");
 			//}
+			} else {
+				// log problem
+				allWorked = false;
+			}
 		}
+		return allWorked;
 	}
 
 
@@ -131,12 +144,13 @@ public class ProductServiceImpl implements ProductService {
 		return products;
 	}
 
-	public void setGeneListReservations(GeneListReservations geneListReservations) {
-		this.geneListReservations = geneListReservations;
-	}
-
 	public void setCvDao(CvDao cvDao) {
 		this.cvDao = cvDao;
+	}
+
+
+	public void setSemanticLog(SemanticLog semanticLog) {
+		this.semantic = semanticLog;
 	}
 
 }
