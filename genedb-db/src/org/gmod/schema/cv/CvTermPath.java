@@ -49,9 +49,9 @@ public class CvTermPath implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#getCvTermPathId()
      */
-    private int getCvTermPathId() {
-        return this.cvTermPathId;
-    }
+//    private int getCvTermPathId() {
+//        return this.cvTermPathId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCvTermPathId(int)
@@ -63,9 +63,9 @@ public class CvTermPath implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#getCvTermBySubjectId()
      */
-    private CvTerm getCvTermBySubjectId() {
-        return this.cvTermBySubjectId;
-    }
+//    private CvTerm getCvTermBySubjectId() {
+//        return this.cvTermBySubjectId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCvTermBySubjectId(org.gmod.schema.cv.CvTermI)
@@ -77,9 +77,9 @@ public class CvTermPath implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#getCvTermByObjectId()
      */
-    private CvTerm getCvTermByObjectId() {
-        return this.cvTermByObjectId;
-    }
+//    private CvTerm getCvTermByObjectId() {
+//        return this.cvTermByObjectId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCvTermByObjectId(org.gmod.schema.cv.CvTermI)
@@ -91,9 +91,9 @@ public class CvTermPath implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#getCvTermByTypeId()
      */
-    private CvTerm getCvTermByTypeId() {
-        return this.cvTermByTypeId;
-    }
+//    private CvTerm getCvTermByTypeId() {
+//        return this.cvTermByTypeId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCvTermByTypeId(org.gmod.schema.cv.CvTermI)
@@ -105,9 +105,9 @@ public class CvTermPath implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#getCv()
      */
-    private Cv getCv() {
-        return this.cv;
-    }
+//    private Cv getCv() {
+//        return this.cv;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCv(org.gmod.schema.cv.CvI)

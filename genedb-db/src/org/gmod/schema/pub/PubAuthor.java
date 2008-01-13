@@ -91,9 +91,9 @@ public class PubAuthor implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#getEditor()
      */
-    private Boolean getEditor() {
-        return this.editor;
-    }
+//    private Boolean getEditor() {
+//        return this.editor;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#setEditor(java.lang.Boolean)

@@ -60,9 +60,9 @@ public class Project implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.ProjectI#getDescription()
      */
-    private String getDescription() {
-        return this.description;
-    }
+//    private String getDescription() {
+//        return this.description;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.ProjectI#setDescription(java.lang.String)

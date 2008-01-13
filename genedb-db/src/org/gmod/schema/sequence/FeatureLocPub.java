@@ -37,9 +37,9 @@ public class FeatureLocPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocPubI#getFeatureLocPubId()
      */
-    private int getFeatureLocPubId() {
-        return this.featureLocPubId;
-    }
+//    private int getFeatureLocPubId() {
+//        return this.featureLocPubId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocPubI#setFeatureLocPubId(int)
@@ -51,9 +51,9 @@ public class FeatureLocPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocPubI#getFeatureloc()
      */
-    private FeatureLoc getFeatureloc() {
-        return this.featureLoc;
-    }
+//    private FeatureLoc getFeatureloc() {
+//        return this.featureLoc;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureLocPubI#setFeatureloc(org.gmod.schema.sequence.FeatureLocI)

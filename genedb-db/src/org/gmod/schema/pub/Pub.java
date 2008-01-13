@@ -413,9 +413,9 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureCvTerms()
      */
-    private Collection<FeatureCvTerm> getFeatureCvTerms() {
-        return this.featureCvTerms;
-    }
+//    private Collection<FeatureCvTerm> getFeatureCvTerms() {
+//        return this.featureCvTerms;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setFeatureCvTerms(java.util.Set)
@@ -483,9 +483,9 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureCvTermPubs()
      */
-    private Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
-        return this.featureCvTermPubs;
-    }
+//    private Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
+//        return this.featureCvTermPubs;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setFeatureCvTermPubs(java.util.Set)

@@ -85,9 +85,9 @@ public class PubRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubRelationshipI#getCvTerm()
      */
-    private CvTerm getCvTerm() {
-        return this.cvTerm;
-    }
+//    private CvTerm getCvTerm() {
+//        return this.cvTerm;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubRelationshipI#setCvTerm(org.gmod.schema.cv.CvTermI)

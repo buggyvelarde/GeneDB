@@ -41,9 +41,9 @@ public class CvTermProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#getCvTermpropId()
      */
-    private int getCvTermPropId() {
-        return this.cvTermPropId;
-    }
+//    private int getCvTermPropId() {
+//        return this.cvTermPropId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#setCvTermpropId(int)
@@ -55,9 +55,9 @@ public class CvTermProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#getCvTermByCvTermId()
      */
-    private CvTerm getCvTermByCvTermId() {
-        return this.cvTermByCvTermId;
-    }
+//    private CvTerm getCvTermByCvTermId() {
+//        return this.cvTermByCvTermId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#setCvTermByCvTermId(org.gmod.schema.cv.CvTermI)
@@ -69,9 +69,9 @@ public class CvTermProp implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#getCvTermByTypeId()
      */
-    private CvTerm getCvTermByTypeId() {
-        return this.cvTermByTypeId;
-    }
+//    private CvTerm getCvTermByTypeId() {
+//        return this.cvTermByTypeId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#setCvTermByTypeId(org.gmod.schema.cv.CvTermI)
