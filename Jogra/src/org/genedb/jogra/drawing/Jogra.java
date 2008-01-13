@@ -25,7 +25,6 @@ import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -46,15 +45,6 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
     private final JFrame mainFrame = new JFrame();
 
     private AbstractApplicationContext ctx;
-
-    // private boolean audio = true;
-    private JButton edit;
-
-    private JButton album;
-
-    private String secondStep;
-
-    private final String defaultDir = "/Users/art/Desktop";
 
     private JMenu windowMenu;
 
@@ -214,10 +204,6 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
 
     public void setJograBusiness(final JograBusiness jograBusiness) {
         this.jograBusiness = jograBusiness;
-    }
-
-    public void setSecondStep(final String secondStep) {
-        this.secondStep = secondStep;
     }
 
     public void showMain() throws IOException {
