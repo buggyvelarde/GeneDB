@@ -14,7 +14,6 @@ import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.utils.CountedName;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,7 +5,6 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.utils.CountedName;
 
 import org.springframework.orm.hibernate3.HibernateTemplate;

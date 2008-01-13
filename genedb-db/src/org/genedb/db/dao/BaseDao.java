@@ -2,7 +2,6 @@ package org.genedb.db.dao;
 
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
 
 import java.util.List;
 
