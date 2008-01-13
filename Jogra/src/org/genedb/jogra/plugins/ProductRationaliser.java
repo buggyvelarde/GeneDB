@@ -49,7 +49,6 @@ import javax.swing.Box;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -116,7 +115,7 @@ public class ProductRationaliser implements JograPlugin {
                 new ListFindAction(false)
             });
         toList.addKeyListener(new IncrementalSearchKeyListener(findAction));
-        InputMap map = toList.getInputMap(JComponent.WHEN_FOCUSED);
+        //InputMap map = toList.getInputMap(JComponent.WHEN_FOCUSED);
         // List keystrokes in the component and in all parent input maps
         //list(map, map.allKeys());
     	initModels();

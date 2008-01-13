@@ -50,9 +50,9 @@ public class FeatureRelationshipProp implements Serializable, PropertyI {
    
     // Property accessors
 
-    private int getFeatureRelationshipPropId() {
-        return this.featureRelationshipPropId;
-    }
+//    private int getFeatureRelationshipPropId() {
+//        return this.featureRelationshipPropId;
+//    }
     
     private void setFeatureRelationshipPropId(int featureRelationshipPropId) {
         this.featureRelationshipPropId = featureRelationshipPropId;
@@ -66,9 +66,9 @@ public class FeatureRelationshipProp implements Serializable, PropertyI {
         this.cvTerm = cvTerm;
     }
 
-    private FeatureRelationship getFeatureRelationship() {
-        return this.featureRelationship;
-    }
+//    private FeatureRelationship getFeatureRelationship() {
+//        return this.featureRelationship;
+//    }
     
     private void setFeatureRelationship(FeatureRelationship featureRelationship) {
         this.featureRelationship = featureRelationship;
