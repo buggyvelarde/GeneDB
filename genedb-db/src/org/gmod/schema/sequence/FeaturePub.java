@@ -53,9 +53,9 @@ public class FeaturePub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePubI#getFeaturePubId()
      */
-    private int getFeaturePubId() {
-        return this.featurePubId;
-    }
+//    private int getFeaturePubId() {
+//        return this.featurePubId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePubI#setFeaturePubId(int)

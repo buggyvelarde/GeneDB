@@ -128,9 +128,9 @@ public class FeatureProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePropI#getFeaturepropPubs()
      */
-    private Set<FeaturePropPub> getFeaturePropPubs() {
-        return this.featurePropPubs;
-    }
+//    private Set<FeaturePropPub> getFeaturePropPubs() {
+//        return this.featurePropPubs;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePropI#setFeaturepropPubs(java.util.Set)

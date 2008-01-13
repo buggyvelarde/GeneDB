@@ -520,9 +520,9 @@ public class CvTerm implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#getFeatureProps()
      */
-    private Collection<FeatureProp> getFeatureProps() {
-        return this.featureProps;
-    }
+//    private Collection<FeatureProp> getFeatureProps() {
+//        return this.featureProps;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermI#setFeatureProps(java.util.Set)

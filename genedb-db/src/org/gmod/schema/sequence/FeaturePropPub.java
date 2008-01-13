@@ -38,9 +38,9 @@ public class FeaturePropPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePropPubI#getFeaturePropPubId()
      */
-    private int getFeaturePropPubId() {
-        return this.featurePropPubId;
-    }
+//    private int getFeaturePropPubId() {
+//        return this.featurePropPubId;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePropPubI#setFeaturePropPubId(int)
@@ -52,9 +52,9 @@ public class FeaturePropPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePropPubI#getFeatureprop()
      */
-    private FeatureProp getFeatureProp() {
-        return this.featureProp;
-    }
+//    private FeatureProp getFeatureProp() {
+//        return this.featureProp;
+//    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeaturePropPubI#setFeatureprop(org.genedb.db.jpa.FeatureProp)
