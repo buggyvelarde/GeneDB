@@ -3,14 +3,8 @@ package org.genedb.jogra.drawing;
 import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.db.domain.misc.Message;
 import org.genedb.db.domain.services.MessageService;
-import org.genedb.jogra.plugins.CvEditor;
-import org.genedb.jogra.plugins.GeneEditor;
-import org.genedb.jogra.plugins.GeneList;
-import org.genedb.jogra.plugins.OrganismEditor;
-import org.genedb.jogra.plugins.OrganismTree;
 
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventServiceEvent;
 import org.bushe.swing.event.EventSubscriber;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

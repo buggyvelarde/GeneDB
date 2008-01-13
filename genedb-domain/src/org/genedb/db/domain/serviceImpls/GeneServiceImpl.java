@@ -1,17 +1,10 @@
 package org.genedb.db.domain.serviceImpls;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.domain.objects.Gene;
-import org.genedb.db.domain.objects.Product;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.services.GeneService;
 import org.genedb.db.domain.services.ProductService;
+
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -21,6 +14,11 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 @Transactional

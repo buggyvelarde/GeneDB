@@ -1,15 +1,15 @@
 package org.genedb.db.domain.serviceImpls;
 
+import org.genedb.db.domain.services.LockAndNotificationService;
+import org.genedb.db.domain.services.LockStatus;
+import org.genedb.db.domain.services.MessageService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.genedb.db.domain.services.LockStatus;
-import org.genedb.db.domain.services.LockAndNotificationService;
-import org.genedb.db.domain.services.MessageService;
 
 public class LockAndNotificationServiceImpl implements LockAndNotificationService {
 

@@ -19,7 +19,6 @@
 
 package org.genedb.jogra.drawing;
 
-import org.bushe.swing.event.EventServiceEvent;
 import org.genedb.db.domain.misc.GeneDBMessage;
 
 import javax.swing.JFrame;

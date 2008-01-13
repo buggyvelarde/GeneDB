@@ -28,10 +28,8 @@ import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
 
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventServiceEvent;
 
 import skt.swing.SwingUtil;
-import skt.swing.search.FindAction;
 import skt.swing.search.IncrementalSearchKeyListener;
 import skt.swing.search.ListFindAction;
 
@@ -40,12 +38,8 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 

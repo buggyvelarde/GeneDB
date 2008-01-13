@@ -25,7 +25,6 @@ import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
 
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventServiceEvent;
 
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;

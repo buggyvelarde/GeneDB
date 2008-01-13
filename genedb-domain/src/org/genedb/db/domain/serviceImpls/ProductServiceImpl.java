@@ -1,27 +1,23 @@
 package org.genedb.db.domain.serviceImpls;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.genedb.db.dao.CvDao;
-import org.genedb.db.domain.misc.GeneListReservations;
 import org.genedb.db.domain.misc.MethodResult;
 import org.genedb.db.domain.misc.SemanticLog;
 import org.genedb.db.domain.objects.Product;
 import org.genedb.db.domain.services.LockAndNotificationService;
 import org.genedb.db.domain.services.LockStatus;
 import org.genedb.db.domain.services.ProductService;
+
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 @Transactional

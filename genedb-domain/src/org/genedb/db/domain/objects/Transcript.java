@@ -23,7 +23,6 @@ import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class Transcript implements Serializable {
     

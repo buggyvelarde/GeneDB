@@ -1,8 +1,8 @@
 package org.genedb.db.domain.services;
 
-import java.util.Deque;
-
 import org.genedb.db.domain.misc.Message;
+
+import java.util.Deque;
 
 public interface MessageService {
 

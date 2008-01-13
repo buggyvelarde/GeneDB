@@ -28,7 +28,6 @@ import org.genedb.jogra.drawing.OpenWindowEvent;
 import org.genedb.jogra.drawing.Pair;
 
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventServiceEvent;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

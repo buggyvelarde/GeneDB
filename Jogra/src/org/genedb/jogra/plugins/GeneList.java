@@ -22,10 +22,9 @@ package org.genedb.jogra.plugins;
 import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
-import org.jdesktop.swingx.JXList;
 
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventServiceEvent;
+import org.jdesktop.swingx.JXList;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;

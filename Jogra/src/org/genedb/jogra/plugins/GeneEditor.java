@@ -22,35 +22,26 @@ package org.genedb.jogra.plugins;
 import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.services.GeneService;
-import org.genedb.db.domain.services.LockStatus;
 import org.genedb.db.domain.services.LockAndNotificationService;
-import org.genedb.db.domain.services.ProductService;
+import org.genedb.db.domain.services.LockStatus;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
 
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventServiceEvent;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.util.StringUtils;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.EventQueue;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.event.WindowStateListener;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;

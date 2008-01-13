@@ -1,9 +1,9 @@
 package org.genedb.db.domain.services;
 
-import java.util.List;
-
 import org.genedb.db.domain.misc.MethodResult;
 import org.genedb.db.domain.objects.Product;
+
+import java.util.List;
 
 public interface ProductService {
 	

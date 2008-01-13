@@ -1,15 +1,12 @@
 package org.genedb.db.domain.serviceImpls;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.genedb.db.domain.misc.Message;
 import org.genedb.db.domain.services.MessageService;
-import org.gmod.schema.utils.CollectionUtils;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MessageServiceImpl implements MessageService {
 	
