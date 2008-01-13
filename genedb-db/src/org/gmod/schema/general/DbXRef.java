@@ -115,22 +115,6 @@ public class DbXRef implements Serializable {
         this.accession = accession;
     }
     
-    /** full constructor */
-    private DbXRef(String version, Db db, String accession, String description, Set<DbXRefProp> dbXRefProps, Set<FeatureCvTermDbXRef> featureCvTermDbXRefs, Set<Feature> features, Set<FeatureDbXRef> featureDbXRefs, Set<CvTerm> cvTerms, Set<PubDbXRef> pubDbXRefs, Set<OrganismDbXRef> organismDbXRefs, Set<CvTermDbXRef> cvTermDbXRefs) {
-       this.version = version;
-       this.db = db;
-       this.accession = accession;
-       this.description = description;
-       this.dbXRefProps = dbXRefProps;
-       this.featureCvTermDbXRefs = featureCvTermDbXRefs;
-       this.features = features;
-       this.featureDbXRefs = featureDbXRefs;
-       this.cvTerms = cvTerms;
-       this.pubDbXRefs = pubDbXRefs;
-       this.organismDbXRefs = organismDbXRefs;
-       this.cvTermDbXRefs = cvTermDbXRefs;
-    }
-    
    
     // Property accessors
     /* (non-Javadoc)

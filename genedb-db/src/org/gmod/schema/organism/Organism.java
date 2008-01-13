@@ -61,30 +61,6 @@ public class Organism implements Serializable {
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="organism")
      private Set<OrganismDbXRef> organismDbXRefs = new HashSet<OrganismDbXRef>(0);
-
-     // Constructors
-
-    /** default constructor */
-    public Organism() {
-    }
-
-	/** minimal constructor */
-    private Organism(String genus, String species) {
-        this.genus = genus;
-        this.species = species;
-    }
-    
-    /** full constructor */
-    private Organism(String abbreviation, String genus, String species, String commonName, String comment, Set<OrganismProp> organismProps, Set<Feature> features, Set<OrganismDbXRef> organismDbXRefs) {
-       this.abbreviation = abbreviation;
-       this.genus = genus;
-       this.species = species;
-       this.commonName = commonName;
-       this.comment = comment;
-       this.organismProps = organismProps;
-       this.features = features;
-       this.organismDbXRefs = organismDbXRefs;
-    }
     
    
     // Property accessors

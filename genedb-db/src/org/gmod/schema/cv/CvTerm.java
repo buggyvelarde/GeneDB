@@ -193,15 +193,6 @@ public class CvTerm implements Serializable {
     /** default constructor */
     public CvTerm() {
     }
-
-	/** minimal constructor */
-    private CvTerm(DbXRef dbXRef, Cv cv, String name, int isObsolete, int isRelationshipType) {
-        this.dbXRef = dbXRef;
-        this.cv = cv;
-        this.name = name;
-        this.isObsolete = isObsolete;
-        this.isRelationshipType = isRelationshipType;
-    }
     
     /** useful constructor! */
     public CvTerm(Cv cv, DbXRef dbXRef, String name, String definition) {
@@ -209,40 +200,6 @@ public class CvTerm implements Serializable {
        this.cv = cv;
        this.name = name;
        this.definition = definition;
-    }
-    
-    /** full constructor */
-    private CvTerm(DbXRef dbXRef, Cv cv, String name, String definition, int isObsolete, int isRelationshipType, Collection<AnalysisProp> analysisProps, Collection<CvTermProp> cvTermPropsForTypeId, Collection<CvTermProp> cvTermPropsForCvTermId, Collection<DbXRefProp> dbXRefProps, Collection<Synonym> synonyms, Collection<CvTermDbXRef> cvTermDbXRefs, Collection<CvTermPath> cvTermPathsForTypeId, Collection<FeatureCvTermProp> featureCvTermProps, Collection<FeatureCvTerm> featureCvTerms, Collection<CvTermRelationship> cvTermRelationshipsForTypeId, Collection<CvTermRelationship> cvTermRelationshipsForObjectId, Collection<PubProp> pubProps, Collection<OrganismProp> organismProps, Collection<CvTermRelationship> cvTermRelationshipsForSubjectId, Collection<CvTermSynonym> cvTermSynonymsForCvTermId, Collection<FeatureProp> featureProps, Collection<CvTermPath> cvTermPathsForSubjectId, Collection<CvTermPath> cvTermPathsForObjectId, Collection<CvTermSynonym> cvTermSynonymsForTypeId, Collection<Pub> pubs, Collection<FeatureRelationshipProp> featureRelationshipProps, Collection<Feature> features, Collection<PubRelationship> pubRelationships, Collection<FeatureRelationship> featureRelationships) {
-       this.dbXRef = dbXRef;
-       this.cv = cv;
-       this.name = name;
-       this.definition = definition;
-       this.isObsolete = isObsolete;
-       this.isRelationshipType = isRelationshipType;
-       this.analysisProps = analysisProps;
-       this.cvTermPropsForTypeId = cvTermPropsForTypeId;
-       this.cvTermPropsForCvTermId = cvTermPropsForCvTermId;
-       this.dbXRefProps = dbXRefProps;
-       this.synonyms = synonyms;
-       this.cvTermDbXRefs = cvTermDbXRefs;
-       this.cvTermPathsForTypeId = cvTermPathsForTypeId;
-       this.featureCvTermProps = featureCvTermProps;
-       this.featureCvTerms = featureCvTerms;
-       this.cvTermRelationshipsForTypeId = cvTermRelationshipsForTypeId;
-       this.cvTermRelationshipsForObjectId = cvTermRelationshipsForObjectId;
-       this.pubProps = pubProps;
-       this.organismProps = organismProps;
-       this.cvTermRelationshipsForSubjectId = cvTermRelationshipsForSubjectId;
-       this.cvTermSynonymsForCvTermId = cvTermSynonymsForCvTermId;
-       this.featureProps = featureProps;
-       this.cvTermPathsForSubjectId = cvTermPathsForSubjectId;
-       this.cvTermPathsForObjectId = cvTermPathsForObjectId;
-       this.cvTermSynonymsForTypeId = cvTermSynonymsForTypeId;
-       this.pubs = pubs;
-       this.featureRelationshipProps = featureRelationshipProps;
-       this.features = features;
-       this.pubRelationships = pubRelationships;
-       this.featureRelationships = featureRelationships;
     }
     
    

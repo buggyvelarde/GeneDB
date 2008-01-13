@@ -37,26 +37,6 @@ public class Db implements Serializable {
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="db")
      private Set<DbXRef> dbXRefs = new HashSet<DbXRef>(0);
-
-     // Constructors
-
-    /** default constructor */
-    public Db() {
-    }
-
-	/** minimal constructor */
-    private Db(String name) {
-        this.name = name;
-    }
-    
-    /** full constructor */
-    private Db(String name, String description, String urlPrefix, String url, Set<DbXRef> dbXRefs) {
-       this.name = name;
-       this.description = description;
-       this.urlPrefix = urlPrefix;
-       this.url = url;
-       this.dbXRefs = dbXRefs;
-    }
     
    
     // Property accessors

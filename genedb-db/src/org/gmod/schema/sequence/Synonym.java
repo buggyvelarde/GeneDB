@@ -58,13 +58,6 @@ public class Synonym implements Serializable {
         this.name = name;
         this.synonymSgml = synonymSgml;
     }
-    /** full constructor */
-    private Synonym(CvTerm cvTerm, String name, String synonymSgml, Set<FeatureSynonym> featureSynonyms) {
-       this.cvTerm = cvTerm;
-       this.name = name;
-       this.synonymSgml = synonymSgml;
-       this.featureSynonyms = featureSynonyms;
-    }
     
    
     // Property accessors

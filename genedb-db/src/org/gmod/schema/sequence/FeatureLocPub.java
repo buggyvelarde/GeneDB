@@ -31,16 +31,6 @@ public class FeatureLocPub implements Serializable {
     @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
 
-     // Constructors
-
-    /** default constructor */
-    public FeatureLocPub() {}
-
-    /** full constructor */
-    private FeatureLocPub(FeatureLoc featureLoc, Pub pub) {
-       this.featureLoc = featureLoc;
-       this.pub = pub;
-    }
     
    
     // Property accessors

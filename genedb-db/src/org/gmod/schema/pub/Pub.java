@@ -156,44 +156,6 @@ public class Pub implements Serializable {
         this.uniqueName = uniqueName;
     }
     
-    /** full constructor */
-    private Pub(CvTerm cvTerm, String title, String volumeTitle, String volume, String seriesName, 
-            String issue, String pyear, String pages, String miniRef, String uniqueName, 
-            Boolean obsolete, String publisher, String pubPlace, Set<PubAuthor> pubAuthors, 
-            Set<PubRelationship> pubRelationshipsForObjectId, Set<PubDbXRef> pubDbXRefs, 
-            Set<FeatureCvTerm> featureCvTerms, Set<FeatureRelationshipPub> featureRelationshipPubs, 
-            Set<FeaturePub> featurePubs, Set<FeaturePropPub> featurePropPubs, 
-            Set<FeatureSynonym> featureSynonyms, Set<FeatureCvTermPub> featureCvTermPubs, 
-            Set<FeatureRelationshipPropPub> featureRelationshipPropPubs, Set<PubProp> pubProps, 
-            Set<PubRelationship> pubRelationshipsForSubjectId, Set<FeatureLocPub> featureLocPubs) {
-       this.cvTerm = cvTerm;
-       this.title = title;
-       this.volumeTitle = volumeTitle;
-       this.volume = volume;
-       this.seriesName = seriesName;
-       this.issue = issue;
-       this.pyear = pyear;
-       this.pages = pages;
-       this.miniRef = miniRef;
-       this.uniqueName = uniqueName;
-       this.obsolete = obsolete;
-       this.publisher = publisher;
-       this.pubPlace = pubPlace;
-       this.pubAuthors = pubAuthors;
-       this.pubRelationshipsForObjectId = pubRelationshipsForObjectId;
-       this.pubDbXRefs = pubDbXRefs;
-       this.featureCvTerms = featureCvTerms;
-       this.featureRelationshipPubs = featureRelationshipPubs;
-       this.featurePubs = featurePubs;
-       this.featurePropPubs = featurePropPubs;
-       this.featureSynonyms = featureSynonyms;
-       this.featureCvTermPubs = featureCvTermPubs;
-       this.featureRelationshipPropPubs = featureRelationshipPropPubs;
-       this.pubProps = pubProps;
-       this.pubRelationshipsForSubjectId = pubRelationshipsForSubjectId;
-       this.featureLocPubs = featureLocPubs;
-    }
-    
    
     // Property accessors
 

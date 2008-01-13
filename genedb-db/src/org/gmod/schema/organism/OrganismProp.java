@@ -40,27 +40,6 @@ public class OrganismProp implements Serializable, PropertyI {
      
      @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
      private int rank;
-
-     // Constructors
-
-    /** default constructor */
-    public OrganismProp() {
-    }
-
-	/** minimal constructor */
-    private OrganismProp(Organism organism, CvTerm cvTerm, int rank) {
-        this.organism = organism;
-        this.cvTerm = cvTerm;
-        this.rank = rank;
-    }
-    
-    /** full constructor */
-    private OrganismProp(Organism organism, CvTerm cvTerm, String value, int rank) {
-       this.organism = organism;
-       this.cvTerm = cvTerm;
-       this.value = value;
-       this.rank = rank;
-    }
     
    
     // Property accessors

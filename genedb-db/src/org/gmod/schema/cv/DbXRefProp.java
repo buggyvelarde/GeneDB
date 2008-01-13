@@ -38,21 +38,6 @@ public class DbXRefProp implements Serializable, PropertyI {
      
     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
      private int rank;
-
-     // Constructors
-
-    /** default constructor */
-    public DbXRefProp() {
-    }
-
-    /** full constructor */
-    private DbXRefProp(CvTerm cvTerm, DbXRef dbXRef, String value, int rank) {
-       this.cvTerm = cvTerm;
-       this.dbXRef = dbXRef;
-       this.value = value;
-       this.rank = rank;
-    }
-    
    
     // Property accessors
     /* (non-Javadoc)

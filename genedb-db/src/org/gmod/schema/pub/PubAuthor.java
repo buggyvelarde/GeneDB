@@ -41,28 +41,6 @@ public class PubAuthor implements Serializable {
      @Column(name="suffix", unique=false, nullable=true, insertable=true, updatable=true, length=100)     
      private String suffix;
 
-     // Constructors
-
-    /** default constructor */
-    public PubAuthor() {
-    }
-
-	/** minimal constructor */
-    private PubAuthor(Pub pub, int rank, String surname) {
-        this.pub = pub;
-        this.rank = rank;
-        this.surname = surname;
-    }
-    /** full constructor */
-    private PubAuthor(Pub pub, int rank, Boolean editor, String surname, String givenNames, String suffix) {
-       this.pub = pub;
-       this.rank = rank;
-       this.editor = editor;
-       this.surname = surname;
-       this.givenNames = givenNames;
-       this.suffix = suffix;
-    }
-    
    
     // Property accessors
 

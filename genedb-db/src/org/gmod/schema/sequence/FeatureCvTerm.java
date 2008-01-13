@@ -77,17 +77,6 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
         this.not = not;
         this.rank = rank;
     }
-    /** full constructor */
-    private FeatureCvTerm(CvTerm cvTerm, Feature feature, Pub pub, boolean not, int rank,Set<FeatureCvTermProp> featureCvTermProps, Set<FeatureCvTermPub> featureCvTermPubs, Set<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
-       this.cvTerm = cvTerm;
-       this.feature = feature;
-       this.pub = pub;
-       this.not = not;
-       this.featureCvTermProps = featureCvTermProps;
-       this.featureCvTermPubs = featureCvTermPubs;
-       this.featureCvTermDbXRefs = featureCvTermDbXRefs;
-       this.rank = rank;
-    }
     
    
     // Property accessors

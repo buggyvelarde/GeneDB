@@ -42,27 +42,6 @@ public class CvTermPath implements Serializable {
      
     @Column(name="pathdistance", unique=false, nullable=true, insertable=true, updatable=true)
      private Integer pathDistance;
-
-     // Constructors
-
-    /** default constructor */
-    public CvTermPath() {
-    }
-
-	/** minimal constructor */
-    private CvTermPath(CvTerm cvTermBySubjectId, CvTerm cvTermByObjectId, Cv cv) {
-        this.cvTermBySubjectId = cvTermBySubjectId;
-        this.cvTermByObjectId = cvTermByObjectId;
-        this.cv = cv;
-    }
-    /** full constructor */
-    private CvTermPath(CvTerm cvTermBySubjectId, CvTerm cvTermByObjectId, CvTerm cvTermByTypeId, Cv cv, Integer pathDistance) {
-       this.cvTermBySubjectId = cvTermBySubjectId;
-       this.cvTermByObjectId = cvTermByObjectId;
-       this.cvTermByTypeId = cvTermByTypeId;
-       this.cv = cv;
-       this.pathDistance = pathDistance;
-    }
     
    
     // Property accessors

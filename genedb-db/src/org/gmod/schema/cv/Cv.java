@@ -34,24 +34,6 @@ public class Cv implements Serializable {
     
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cv")
      private Set<CvTerm> cvTerms = new HashSet<CvTerm>(0);
-
-     // Constructors
-
-    /** default constructor */
-    public Cv() {
-    }
-
-	/** minimal constructor */
-    private Cv(String name) {
-        this.name = name;
-    }
-    /** full constructor */
-    private Cv(String name, String definition, Set<CvTermPath> cvTermPaths, Set<CvTerm> cvTerms) {
-       this.name = name;
-       this.definition = definition;
-       this.cvTermPaths = cvTermPaths;
-       this.cvTerms = cvTerms;
-    }
     
    
     // Property accessors

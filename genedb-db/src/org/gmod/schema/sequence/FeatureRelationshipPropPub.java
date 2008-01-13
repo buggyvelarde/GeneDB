@@ -34,18 +34,6 @@ public class FeatureRelationshipPropPub implements Serializable {
          
          @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
-
-     // Constructors
-
-    /** default constructor */
-    public FeatureRelationshipPropPub() {
-    }
-
-    /** full constructor */
-    private FeatureRelationshipPropPub(FeatureRelationshipProp featureRelationshipProp, Pub pub) {
-       this.featureRelationshipProp = featureRelationshipProp;
-       this.pub = pub;
-    }
     
    
     // Property accessors

@@ -23,18 +23,6 @@ public class Project implements Serializable {
      
      @Column(name="description", unique=false, nullable=false, insertable=true, updatable=true)
      private String description;
-
-     // Constructors
-
-    /** default constructor */
-    public Project() {
-    }
-
-    /** full constructor */
-    private Project(String name, String description) {
-       this.name = name;
-       this.description = description;
-    }
     
    
     // Property accessors

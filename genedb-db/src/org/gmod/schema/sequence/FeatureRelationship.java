@@ -70,16 +70,6 @@ public class FeatureRelationship implements Serializable {
         this.cvTerm = cvTerm;
         this.rank = rank;
     }
-    /** full constructor */
-    private FeatureRelationship(Feature featureBySubjectId, Feature featureByObjectId, CvTerm cvTerm, String value, int rank, Set<FeatureRelationshipProp> featureRelationshipProps, Set<FeatureRelationshipPub> featureRelationshipPubs) {
-       this.featureBySubjectId = featureBySubjectId;
-       this.featureByObjectId = featureByObjectId;
-       this.cvTerm = cvTerm;
-       this.value = value;
-       this.rank = rank;
-       this.featureRelationshipProps = featureRelationshipProps;
-       this.featureRelationshipPubs = featureRelationshipPubs;
-    }
     
    
     // Property accessors

@@ -31,18 +31,6 @@ public class OrganismDbXRef implements Serializable {
          
          @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
-
-     // Constructors
-
-    /** default constructor */
-    public OrganismDbXRef() {
-    }
-
-    /** full constructor */
-    private OrganismDbXRef(Organism organism, DbXRef dbXRef) {
-       this.organism = organism;
-       this.dbXRef = dbXRef;
-    }
     
    
     // Property accessors

@@ -36,24 +36,6 @@ public class AnalysisProp implements Serializable, PropertyI {
     
     @Column(name="value", unique=false, nullable=true, insertable=true, updatable=true)
      private String value;
-
-     // Constructors
-
-    /** default constructor */
-    public AnalysisProp() {
-    }
-
-	/** minimal constructor */
-    private AnalysisProp(Analysis analysis, CvTerm cvTerm) {
-        this.analysis = analysis;
-        this.cvTerm = cvTerm;
-    }
-    /** full constructor */
-    private AnalysisProp(Analysis analysis, CvTerm cvTerm, String value) {
-       this.analysis = analysis;
-       this.cvTerm = cvTerm;
-       this.value = value;
-    }
     
    
     // Property accessors

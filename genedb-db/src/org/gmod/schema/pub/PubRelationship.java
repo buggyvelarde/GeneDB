@@ -36,19 +36,6 @@ public class PubRelationship implements Serializable {
          
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
-
-     // Constructors
-
-    /** default constructor */
-    public PubRelationship() {
-    }
-
-    /** full constructor */
-    private PubRelationship(Pub pubBySubjectId, Pub pubByObjectId, CvTerm cvTerm) {
-       this.pubBySubjectId = pubBySubjectId;
-       this.pubByObjectId = pubByObjectId;
-       this.cvTerm = cvTerm;
-    }
     
    
     // Property accessors

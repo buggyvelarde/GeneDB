@@ -35,20 +35,6 @@ public class CvTermProp implements Serializable {
      
      @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
      private int rank;
-
-     // Constructors
-
-    /** default constructor */
-    public CvTermProp() {
-    }
-
-    /** full constructor */
-    private CvTermProp(CvTerm cvTermByCvTermId, CvTerm cvTermByTypeId, String value, int rank) {
-       this.cvTermByCvTermId = cvTermByCvTermId;
-       this.cvTermByTypeId = cvTermByTypeId;
-       this.value = value;
-       this.rank = rank;
-    }
     
    
     // Property accessors

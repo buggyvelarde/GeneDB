@@ -46,27 +46,6 @@ public class FeatureRelationshipProp implements Serializable, PropertyI {
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureRelationshipprop")     
      private Set<FeatureRelationshipPropPub> featureRelationshipPropPubs = new HashSet<FeatureRelationshipPropPub>(0);
-
-     // Constructors
-
-    /** default constructor */
-    public FeatureRelationshipProp() {
-    }
-
-	/** minimal constructor */
-    private FeatureRelationshipProp(CvTerm cvTerm, FeatureRelationship featureRelationship, int rank) {
-        this.cvTerm = cvTerm;
-        this.featureRelationship = featureRelationship;
-        this.rank = rank;
-    }
-    /** full constructor */
-    private FeatureRelationshipProp(CvTerm cvTerm, FeatureRelationship featureRelationship, String value, int rank, Set<FeatureRelationshipPropPub> featureRelationshipPropPubs) {
-       this.cvTerm = cvTerm;
-       this.featureRelationship = featureRelationship;
-       this.value = value;
-       this.rank = rank;
-       this.featureRelationshipPropPubs = featureRelationshipPropPubs;
-    }
     
    
     // Property accessors

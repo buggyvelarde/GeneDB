@@ -32,25 +32,6 @@ public class CvTermSynonym implements Serializable {
      
      @Column(name="synonym", unique=false, nullable=false, insertable=true, updatable=true, length=1024)
      private String synonym;
-
-     // Constructors
-
-    /** default constructor */
-    public CvTermSynonym() {
-    }
-
-	/** minimal constructor */
-    private CvTermSynonym(CvTerm cvTermByCvTermId, String synonym) {
-        this.cvTermByCvTermId = cvTermByCvTermId;
-        this.synonym = synonym;
-    }
-    
-    /** full constructor */
-    private CvTermSynonym(CvTerm cvTermByCvTermId, CvTerm cvTermByTypeId, String synonym) {
-       this.cvTermByCvTermId = cvTermByCvTermId;
-       this.cvTermByTypeId = cvTermByTypeId;
-       this.synonym = synonym;
-    }
     
    
     // Property accessors

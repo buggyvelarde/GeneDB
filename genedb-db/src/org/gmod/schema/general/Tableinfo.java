@@ -41,31 +41,6 @@ public class Tableinfo implements Serializable {
     @Temporal(TemporalType.DATE)
     @Column(name="modification_date", unique=false, nullable=false, insertable=true, updatable=true, length=13)
      private Date modificationDate;
-
-     // Constructors
-
-    /** default constructor */
-    public Tableinfo() {
-    }
-
-	/** minimal constructor */
-    private Tableinfo(String name, int isView, int isUpdateable, Date modificationDate) {
-        this.name = name;
-        this.isView = isView;
-        this.isUpdateable = isUpdateable;
-        this.modificationDate = modificationDate;
-    }
-    
-    /** full constructor */
-    private Tableinfo(String name, String primaryKeyColumn, int isView, Integer viewOnTableId, Integer superclassTableId, int isUpdateable, Date modificationDate) {
-       this.name = name;
-       this.primaryKeyColumn = primaryKeyColumn;
-       this.isView = isView;
-       this.viewOnTableId = viewOnTableId;
-       this.superclassTableId = superclassTableId;
-       this.isUpdateable = isUpdateable;
-       this.modificationDate = modificationDate;
-    }
     
    
     // Property accessors

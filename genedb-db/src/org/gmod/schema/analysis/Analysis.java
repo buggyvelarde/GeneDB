@@ -55,36 +55,6 @@ public class Analysis implements Serializable {
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="analysis")
      private Set<AnalysisProp> analysisProps = new HashSet<AnalysisProp>(0);
-
-     // Constructors
-
-    /** default constructor */
-    public Analysis() {
-    }
-
-	/** minimal constructor */
-    private Analysis(String program, String programVersion, Date timeExecuted) {
-        this.program = program;
-        this.programVersion = programVersion;
-        this.timeExecuted = timeExecuted;
-    }
-    
-    /** full constructor */
-    private Analysis(String name, String description, String program, String programVersion, 
-            String algorithm, String sourceName, String sourceVersion, String sourceUri, 
-            Date timeExecuted, Set<AnalysisFeature> analysisFeatures, Set<AnalysisProp> analysisProps) {
-       this.name = name;
-       this.description = description;
-       this.program = program;
-       this.programVersion = programVersion;
-       this.algorithm = algorithm;
-       this.sourceName = sourceName;
-       this.sourceVersion = sourceVersion;
-       this.sourceUri = sourceUri;
-       this.timeExecuted = timeExecuted;
-       this.analysisFeatures = analysisFeatures;
-       this.analysisProps = analysisProps;
-    }
     
    
     // Property accessors

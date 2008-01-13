@@ -34,19 +34,6 @@ public class CvTermDbXRef implements Serializable {
      
     @Column(name="is_for_definition", unique=false, nullable=false, insertable=true, updatable=true)
      private int isForDefinition;
-
-     // Constructors
-
-    /** default constructor */
-    public CvTermDbXRef() {
-    }
-
-    /** full constructor */
-    private CvTermDbXRef(CvTerm cvTerm, DbXRef dbXRef, int isForDefinition) {
-       this.cvTerm = cvTerm;
-       this.dbXRef = dbXRef;
-       this.isForDefinition = isForDefinition;
-    }
     
    
     // Property accessors
