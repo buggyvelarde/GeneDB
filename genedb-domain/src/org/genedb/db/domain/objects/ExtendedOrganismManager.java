@@ -34,7 +34,7 @@ import java.util.Map;
 
 public class ExtendedOrganismManager {
     
-    private OrganismDaoI organismDao;
+    //private OrganismDaoI organismDao;
     private PhylogenyDaoI phylogenyDao;
     private CvDaoI cvDao;
     
