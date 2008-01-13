@@ -20,6 +20,8 @@
 package org.gmod.schema.dao;
 
 
+import org.gmod.schema.sequence.Feature;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public interface SchemaDaoI extends BaseDaoI {
      * @return the <code>List</code> of <code>Feature</code> objects
      * @throws SQLException
      */
-    public List getResidueFeatures() throws SQLException;
+    public List<Feature> getResidueFeatures() throws SQLException;
 
 
     /**
@@ -39,7 +41,7 @@ public interface SchemaDaoI extends BaseDaoI {
      * @return the <code>List</code> of type_id's as <code>String</code> objects
      * @throws SQLException
      */
-    public List getResidueType(String schema) throws SQLException;
+    public List<String> getResidueType(String schema) throws SQLException;
 
     /**
      * Get available schemas (as a <code>List</code> of <code>String</code>
@@ -47,7 +49,7 @@ public interface SchemaDaoI extends BaseDaoI {
      * @return the available schemas
      * @throws SQLException
      */
-    public List getSchema() throws SQLException;
+    public List<String> getSchema() throws SQLException;
 
 
 }
