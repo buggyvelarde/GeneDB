@@ -97,6 +97,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
 
     /** default constructor */
     public FeatureCvTermProp() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

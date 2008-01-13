@@ -50,6 +50,7 @@ public class Synonym implements Serializable {
 
     /** default constructor */
     public Synonym() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

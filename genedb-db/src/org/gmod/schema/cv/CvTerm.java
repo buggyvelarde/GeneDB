@@ -192,6 +192,7 @@ public class CvTerm implements Serializable {
 
     /** default constructor */
     public CvTerm() {
+    	// Deliberately empty default constructor
     }
     
     /** useful constructor! */

@@ -38,6 +38,7 @@ public class FeaturePub implements Serializable {
 
     /** default constructor */
     public FeaturePub() {
+    	// Deliberately empty default constructor
     }
 
     /** full constructor */

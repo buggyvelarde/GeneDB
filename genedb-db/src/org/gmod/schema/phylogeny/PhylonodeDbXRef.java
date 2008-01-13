@@ -30,6 +30,7 @@ public class PhylonodeDbXRef  implements java.io.Serializable {
 
     /** default constructor */
     public PhylonodeDbXRef() {
+    	// Deliberately empty default constructor
     }
 
     /** full constructor */

@@ -53,6 +53,7 @@ public class FeatureProp implements Serializable, PropertyI {
      // Constructors
     /** default constructor */
     public FeatureProp() {
+    	// Deliberately empty default constructor
     }
     
     /** useful constructor ! */

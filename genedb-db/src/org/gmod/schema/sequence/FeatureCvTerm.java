@@ -67,6 +67,7 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
 
     /** default constructor */
     public FeatureCvTerm() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

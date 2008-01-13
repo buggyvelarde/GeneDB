@@ -45,6 +45,7 @@ public class PubProp implements Serializable, PropertyI {
 
     /** default constructor */
     public PubProp() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

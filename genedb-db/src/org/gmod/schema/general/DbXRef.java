@@ -106,6 +106,7 @@ public class DbXRef implements Serializable {
 
     /** default constructor */
     public DbXRef() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

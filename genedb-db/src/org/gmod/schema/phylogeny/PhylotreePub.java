@@ -30,6 +30,7 @@ public class PhylotreePub  implements java.io.Serializable {
 
     /** default constructor */
     public PhylotreePub() {
+    	// Deliberately empty default constructor
     }
 
     /** full constructor */

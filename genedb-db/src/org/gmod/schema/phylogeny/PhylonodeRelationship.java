@@ -32,6 +32,7 @@ public class PhylonodeRelationship  implements java.io.Serializable {
 
     /** default constructor */
     public PhylonodeRelationship() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

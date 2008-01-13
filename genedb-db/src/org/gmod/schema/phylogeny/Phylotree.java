@@ -40,6 +40,7 @@ public class Phylotree  implements java.io.Serializable {
 
     /** default constructor */
     public Phylotree() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

@@ -75,6 +75,7 @@ public class FeatureLoc implements Serializable {
 
     /** default constructor */
     public FeatureLoc() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

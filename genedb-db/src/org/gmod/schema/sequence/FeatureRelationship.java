@@ -61,6 +61,7 @@ public class FeatureRelationship implements Serializable {
 
     /** default constructor */
     public FeatureRelationship() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

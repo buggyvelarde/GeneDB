@@ -50,6 +50,7 @@ public class Phylonode  implements java.io.Serializable {
 
     /** default constructor */
     public Phylonode() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

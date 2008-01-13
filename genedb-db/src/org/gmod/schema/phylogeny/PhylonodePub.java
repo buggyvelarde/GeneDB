@@ -30,6 +30,7 @@ public class PhylonodePub  implements java.io.Serializable {
 
     /** default constructor */
     public PhylonodePub() {
+    	// Deliberately empty default constructor
     }
 
     /** full constructor */

@@ -34,6 +34,7 @@ public class PhylonodeProp  implements java.io.Serializable, PropertyI {
 
     /** default constructor */
     public PhylonodeProp() {
+    	// Deliberately empty default constructor
     }
 
     /** full constructor */

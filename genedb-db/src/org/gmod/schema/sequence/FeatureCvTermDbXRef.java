@@ -36,6 +36,7 @@ public class FeatureCvTermDbXRef implements Serializable {
 
     /** default constructor */
     public FeatureCvTermDbXRef() {
+    	// Deliberately empty default constructor
     }
 
     /** full constructor */

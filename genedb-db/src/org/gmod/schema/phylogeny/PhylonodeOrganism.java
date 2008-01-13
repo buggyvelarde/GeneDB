@@ -30,6 +30,7 @@ public class PhylonodeOrganism  implements java.io.Serializable {
 
     /** default constructor */
     public PhylonodeOrganism() {
+    	// Deliberately empty default constructor
     }
 
     /** full constructor */

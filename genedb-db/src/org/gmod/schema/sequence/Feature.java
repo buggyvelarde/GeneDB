@@ -125,6 +125,7 @@ public class Feature implements java.io.Serializable {
 
     /** default constructor */
     public Feature() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

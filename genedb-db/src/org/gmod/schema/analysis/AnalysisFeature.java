@@ -46,6 +46,7 @@ public class AnalysisFeature implements Serializable {
 
     /** default constructor */
     public AnalysisFeature() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */

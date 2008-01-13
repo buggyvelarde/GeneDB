@@ -144,6 +144,7 @@ public class Pub implements Serializable {
 
     /** default constructor */
     public Pub() {
+    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */
