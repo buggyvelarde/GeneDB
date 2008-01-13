@@ -1,5 +1,8 @@
 package org.genedb.jogra.drawing;
 
+import org.genedb.db.domain.misc.GeneDBMessage;
+import org.genedb.db.domain.misc.Message;
+import org.genedb.db.domain.services.MessageService;
 import org.genedb.jogra.plugins.CvEditor;
 import org.genedb.jogra.plugins.GeneEditor;
 import org.genedb.jogra.plugins.GeneList;
@@ -21,7 +24,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -35,7 +41,9 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-public class Jogra implements PropertyChangeListener, EventSubscriber {
+public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMessage> {
+	
+	private static int TIMER_DELAY = 10*1000;
 
     private final List<JograPlugin> pluginList = new ArrayList<JograPlugin>();
 
@@ -58,6 +66,10 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
 
     private JograBusiness jograBusiness;
 
+    private Timer timer;
+    
+    private MessageService messageService;
+    
     // private TestService testService;
 
     // public void setDirty(boolean dirty) {
@@ -74,8 +86,8 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
         // new String[] {"classpath:applicationContext.xml"});
         // ctx.registerShutdownHook();
 
-        EventBus.subscribe(ApplicationClosingEvent.class, new EventSubscriber() {
-            public void onEvent(final EventServiceEvent ese) {
+        EventBus.subscribe(ApplicationClosingEvent.class, new EventSubscriber<GeneDBMessage>() {
+            public void onEvent(final GeneDBMessage ese) {
                 shutdown();
             }
         });
@@ -91,6 +103,19 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
         // VetoEventListener {});
 
         EventBus.subscribe(OpenWindowEvent.class, this);
+        
+        TimerTask fetchMessage = new TimerTask() {
+        	@Override
+        	public void run() {
+        	
+        		String clientName = "dummy"; // FIXME
+				Deque<Message> messages = messageService.checkMessages(clientName);
+        		for (Message message : messages) {
+					EventBus.publish(message);
+				}
+        	}
+        };
+        timer.scheduleAtFixedRate(fetchMessage, TIMER_DELAY, TIMER_DELAY);
 
     }
 
@@ -157,7 +182,7 @@ public class Jogra implements PropertyChangeListener, EventSubscriber {
 
     }
 
-    public void onEvent(final EventServiceEvent event) {
+    public void onEvent(final GeneDBMessage event) {
         if (event.getClass().isAssignableFrom(OpenWindowEvent.class)) {
             this.onEvent((OpenWindowEvent) event);
             return;

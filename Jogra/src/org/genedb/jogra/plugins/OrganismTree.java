@@ -19,6 +19,7 @@
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.db.domain.objects.ExtendedOrganism;
 import org.genedb.db.domain.objects.ExtendedOrganismManager;
 import org.genedb.jogra.drawing.Jogra;
@@ -155,7 +156,7 @@ public class OrganismTree implements JograPlugin {
                     protected void done() {
                         try {
                             final JFrame result = get();
-                            final EventServiceEvent e = new OpenWindowEvent(OrganismTree.this, result);
+                            final GeneDBMessage e = new OpenWindowEvent(OrganismTree.this, result);
                             EventBus.publish(e);
                         } catch (final InterruptedException exp) {
                             exp.printStackTrace();

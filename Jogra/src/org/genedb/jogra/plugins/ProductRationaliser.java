@@ -19,6 +19,7 @@
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.db.domain.misc.MethodResult;
 import org.genedb.db.domain.objects.Product;
 import org.genedb.db.domain.services.ProductService;
@@ -221,7 +222,7 @@ public class ProductRationaliser implements JograPlugin {
                     @Override
                     public void done() {
                         try {
-                            final EventServiceEvent e = new OpenWindowEvent(ProductRationaliser.this, get());
+                            final GeneDBMessage e = new OpenWindowEvent(ProductRationaliser.this, get());
                             EventBus.publish(e);
                         } catch (final InterruptedException exp) {
                             exp.printStackTrace();

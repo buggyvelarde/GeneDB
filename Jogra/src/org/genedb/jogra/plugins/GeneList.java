@@ -19,6 +19,7 @@
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
 import org.jdesktop.swingx.JXList;
@@ -88,7 +89,7 @@ public class GeneList implements JograPlugin {
                     @Override
                     public void done() {
                         try {
-                            final EventServiceEvent e = new OpenWindowEvent(GeneList.this, get());
+                            final GeneDBMessage e = new OpenWindowEvent(GeneList.this, get());
                             EventBus.publish(e);
                         } catch (final InterruptedException exp) {
                             exp.printStackTrace();

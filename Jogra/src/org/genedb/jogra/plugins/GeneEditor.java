@@ -19,6 +19,7 @@
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.services.GeneService;
 import org.genedb.db.domain.services.LockStatus;
@@ -220,7 +221,7 @@ public class GeneEditor implements JograPlugin {
                     protected void done() {
                         try {
                             final JFrame result = get();
-                            final EventServiceEvent e = new OpenWindowEvent(GeneEditor.this, result);
+                            final GeneDBMessage e = new OpenWindowEvent(GeneEditor.this, result);
                             EventBus.publish(e);
                         } catch (final InterruptedException exp) {
                             exp.printStackTrace();

@@ -19,6 +19,7 @@
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
@@ -118,7 +119,7 @@ public class OrganismEditor implements JograPlugin {
                     public void done() {
                         try {
                             final JFrame result = get();
-                            final EventServiceEvent e = new OpenWindowEvent(OrganismEditor.this, result);
+                            final GeneDBMessage e = new OpenWindowEvent(OrganismEditor.this, result);
                             EventBus.publish(e);
                         } catch (final InterruptedException exp) {
                             exp.printStackTrace();

@@ -85,7 +85,9 @@ public class SplashWindow extends Window {
         mt.addImage(image,0);
         try {
             mt.waitForID(0);
-        } catch(InterruptedException ie){}
+        } catch(InterruptedException ie){
+        	// TODO - uncaught exception
+        }
         
         // Center the window on the screen
         int imgWidth = image.getWidth(this);
@@ -169,7 +171,9 @@ public class SplashWindow extends Window {
             && Runtime.getRuntime().availableProcessors() == 1) {
                 synchronized (instance) {
                     while (! instance.paintCalled) {
-                        try { instance.wait(); } catch (InterruptedException e) {}
+                        try { instance.wait(); } catch (InterruptedException e) {
+                        	// TODO - uncaught exception
+                        }
                     }
                 }
             }

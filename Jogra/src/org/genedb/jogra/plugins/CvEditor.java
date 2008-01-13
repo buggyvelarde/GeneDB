@@ -19,6 +19,7 @@
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
@@ -119,7 +120,7 @@ public class CvEditor implements JograPlugin {
                     @Override
                     public void done() {
                         try {
-                            final EventServiceEvent e = new OpenWindowEvent(CvEditor.this, get());
+                            final GeneDBMessage e = new OpenWindowEvent(CvEditor.this, get());
                             EventBus.publish(e);
                         } catch (final InterruptedException exp) {
                             exp.printStackTrace();

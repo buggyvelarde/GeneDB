@@ -20,10 +20,11 @@
 package org.genedb.jogra.drawing;
 
 import org.bushe.swing.event.EventServiceEvent;
+import org.genedb.db.domain.misc.GeneDBMessage;
 
 import javax.swing.JFrame;
 
-public class OpenWindowEvent implements EventServiceEvent {
+public class OpenWindowEvent implements GeneDBMessage {
 
     private JograPlugin source;
     private JFrame jframe;
