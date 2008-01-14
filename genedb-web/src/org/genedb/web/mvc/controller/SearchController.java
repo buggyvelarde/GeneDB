@@ -34,6 +34,7 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspWriter;
 
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
@@ -152,6 +154,7 @@ public class SearchController extends MultiActionController implements Initializ
 	    }
 	    Feature feat = sequenceDao.getFeaturesByUniqueName(name).get(0);
 	    Map model = new HashMap(4);
+	    //WebUtils.drawContextMap(feat);
 	    model.put("feature", feat);		
 	    String viewName = "features/generic";
 	    String type = feat.getCvTerm().getName();
@@ -181,11 +184,21 @@ public class SearchController extends MultiActionController implements Initializ
             //System.err.println("The value of pp is '"+polypeptide+"'");
         }
 	    return new ModelAndView(viewName, model);
+        /*try {
+			PrintWriter out = response.getWriter();
+			out.write("feature name is " + feat.getUniqueName());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return null;*/
 	}
 
     private PeptideProperties calculatePepstats(Feature polypeptide) {
 
-        String seqString = FeatureUtils.getResidues(polypeptide);
+        //String seqString = FeatureUtils.getResidues(polypeptide);
+        String seqString = new String(polypeptide.getResidues());
+    	//System.err.println(seqString);
         Alphabet protein = ProteinTools.getAlphabet();
         SymbolTokenization proteinToke = null;
         SymbolList seq = null;
