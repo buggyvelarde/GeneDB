@@ -18,6 +18,17 @@
  </tag>
  
  <tag>
+   <name>contextmap</name>
+   <tag-class>org.genedb.web.tags.misc.ContextMap</tag-class>
+   <body-content>scriptless</body-content>
+   <attribute>
+       <name>gene</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
+ </tag>
+ 
+ <tag>
  	<name>luceneFields</name>
  	<tag-class>org.genedb.web.tags.misc.LuceneFieldsTag</tag-class>
  	<body-content>empty</body-content>
