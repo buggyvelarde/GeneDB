@@ -4,44 +4,64 @@
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
 
-<format:header name="Gene Results List">
+<format:header1 name="Gene Results List">
 	<st:init />
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
-	<script type="text/javascript">
-		function forward() {
-			var myList = document.getElementById("tmp")
-			document.location.href="../genedb-web/NameFeature?lookup=SPA*&orglist=" + myList.options[myList.selectedIndex].text
-		}
-	</script>
-</format:header>
-	<img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
-<!--  <p><a href="<misc:history />">Store these results in my history</a></p> -->
-<img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
-	<!--  
-	<table align="center" border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr><td colspan="3"><img src="<c:url value="/" />/includes/images/blank.gif" width="100%" height="1" alt="--------"/>
-	</tr>
-	<!-- 
-	<tr>
-		<td width="40%" bgcolor="#E2E2FF" align="center">
-			<form action="NameFeature">
-			Search String :
-			<input type="input" name="lookup" />
-			<input type="hidden" name="orglist" value="spombe"/>
-			<input type="submit" value="Submit"/> 
+	<link rel="stylesheet" href="<c:url value="/"/>includes/style/wtsi.css" type="text/css"/>
+	<link rel="stylesheet" href="<c:url value="/"/>includes/style/jimmac.css" type="text/css"/>
+	<link rel="stylesheet" href="<c:url value="/"/>includes/style/frontpage1.css" type="text/css"/>
+	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-base.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-all.js"/>"></script>
+	 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/extjs/ext-all.css"/>" />
+	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-history.js"/>"></script>
+</format:header1>
+<table width="100%">
+<tr>
+	<td width="20%">
+		<div class="fieldset">
+		<div class="legend">Quick Search</div>
+			<br>
+			<form name="query" action="NamedFeature" method="get">
+			<table>
+				<tr>
+					<td>Gene Name: </td>
+					<td><input id="query" name="name" type="text" size="12"/></td>
+				</tr>
+				<tr>
+					<td><input type="submit" value="submit"/></td>
+					<td><br></td>
+				</tr>
+			</table>
 			</form>
-		</td>
-	</tr> -->
-	<tr><td colspan="3"><img src="<c:url value="/" />/includes/blank.gif" width="100%" height="1" alt="--------"/>
-	</tr>
-	</table> -->
-<img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
-<p><a href="<misc:history />">Store these results in my history</a></p>
-<img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
-<display:table name="results" uid="tmp" pagesize="30" requestURI="/NamedFeature" class="simple" cellspacing="0" cellpadding="4">
-   	<display:column property="organism.abbreviation" title="Organism"/>
-   	<display:column property="cvTerm.name" title="Type"/> 
-	<display:column property="uniqueName" href="../Search/FeatureByName" paramId="name"/>
-</display:table>
-<img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
+		</div>
+		<div class="fieldset">
+		<div class="legend">Navigation</div>
+			<br>
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr align="left"><td><a href="www.genedb.org" class="mainlevel" id="active_menu">Home</a></td></tr>
+				<tr align="left"><td><a href="www.genedb.org" class="mainlevel">News</a></td></tr>
+				<tr align="left"><td><a href="www.genedb.org" class="mainlevel" >Links</a></td></tr>
+				<tr align="left"><td><a href="www.genedb.org" class="mainlevel" >Search</a></td></tr>
+				<tr align="left"><td><a href="www.genedb.org" class="mainlevel" >FAQs</a></td></tr>
+			</table>
+		</div>
+		<div class="fieldset">
+		<div class="legend">History</div>
+			<br>
+			<div id="topic-grid"/>
+		</div>
+	</td>
+	<td width="100%">
+		<div class="fieldset" align="center" style="width: 98%;">
+		<div class="legend">Results</div>
+			<p><a href="<misc:history />">Store these results in my history</a></p>
+			<img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
+			<display:table name="results" uid="tmp" pagesize="30" requestURI="/NamedFeature" class="simple" cellspacing="0" cellpadding="4">
+   				<display:column property="organism" title="Organism"/>
+   				<display:column property="type" title="Type"/> 
+				<display:column property="name" href="./Search/FeatureByName" paramId="name"/>
+			</display:table>
+	</td>
+</tr>
+</table>
 <format:footer />
