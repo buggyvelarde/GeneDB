@@ -15,7 +15,7 @@
 	
 	<path id="compile-lib">
 			<path location="${lib-dir}/spring-2.0.2.jar" />
-			<path location="${lib-dir}/lucene-core-2.0.1-dev.jar" />
+			<path location="${lib-dir}/lucene-core-2.2.0.jar" />
 	        <path location="${lib-dir}/genedb-hibernate.jar" />
 	        <path location="${lib-dir}/genedb-access.jar" />
 	        <path location="${lib-dir}/chado-interface.jar" />
@@ -36,6 +36,9 @@
 			<path location="${lib-dir}/commons-io.jar"/>
 			<path location="${lib-dir}/poi-3.0.1.jar"/>
 			<path location="${lib-dir}/json_simple.jar"/>
+			<path location="${lib-dir}/jakarta-oro-2.0.8.jar"/>
+			<path location="${lib-dir}/classes.jar"/>
+			<path location="${lib-dir}/hibernate-search.jar"/>
 	</path>
 	
 	<target name="wrong-setup" >
