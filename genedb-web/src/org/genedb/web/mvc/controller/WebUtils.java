@@ -1,23 +1,41 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.web.gui.ContextMap;
+import org.genedb.web.gui.ImageInfo;
+import org.genedb.web.gui.MinimalSymbolList;
+import org.genedb.web.gui.RNASummary;
+import org.genedb.web.gui.TransientSequence;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureRelationship;
 
+import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
+import org.biojava.bio.SimpleAnnotation;
+import org.biojava.bio.seq.FeatureHolder;
 import org.biojava.bio.seq.ProteinTools;
+import org.biojava.bio.seq.Sequence;
+import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojava.bio.symbol.Alphabet;
+import org.biojava.bio.symbol.AlphabetManager;
+import org.biojava.bio.symbol.FiniteAlphabet;
 import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.bio.symbol.Location;
+import org.biojava.bio.symbol.RangeLocation;
 import org.biojava.bio.symbol.Symbol;
 import org.biojava.bio.symbol.SymbolList;
+import org.biojava.utils.ChangeVetoException;
 import org.biojava.utils.SmallMap;
+import org.biojavax.bio.seq.CompoundRichLocation;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -78,8 +96,179 @@ public class WebUtils {
         // TODO check if ids for which we have data - need new flag
         return true;
     }
+    
+    public static ImageInfo drawContextMap(Feature gene) {
+    	
+    	StrandedFeature.Strand f = null;
+    	ImageInfo info = null;
+    	FeatureLoc location = gene.getFeatureLocsForFeatureId().iterator().next();
+    	if( location.getStrand() == 1) {
+    		f = StrandedFeature.POSITIVE;
+    	} else {
+    		f = StrandedFeature.NEGATIVE;
+    	}
+    	
+    	Collection<Location> locs = null;
+    	locs = getExonLocations(gene);
+    	Location location2 = new CompoundRichLocation(locs);
+    	
+    	RNASummary target = new RNASummary(gene.getDisplayName(),gene.getUniqueName(),location2,
+    			"CDS",f,gene.getOrganism().getCommonName(),"",5);
+    	
+    	List<RNASummary> rnas = getNeighbours(gene,target);
+   
+    	int bottomIndex = 0;
+        int topIndex = rnas.size()-1;
+        
+        int min = ((RNASummary)rnas.get(bottomIndex)).getLocation().getMin();
+        int max = ((RNASummary)rnas.get(topIndex)).getLocation().getMax();
 
-    private static String validateTaxons(List<String> idsAndNames) {
+
+        Sequence seq = null;
+
+        try {
+            FiniteAlphabet peptide =
+                (FiniteAlphabet) AlphabetManager.alphabetForName("DNA");
+            //SymbolTokenization tkizer = peptide.getTokenization("token");
+
+//            String aaString = StringUtils.repeat("A", rna.getContigLength());
+            SymbolList sl = new MinimalSymbolList(peptide, getContigLength(gene));
+
+
+            seq = new TransientSequence(sl, "URN", target.getId(), null);
+            try {
+				seq.getAnnotation().setProperty("organism", target.getOrganism());
+			} catch (IllegalArgumentException e) {
+				// Should never happen
+				e.printStackTrace();
+			} catch (ChangeVetoException e) {
+				// Should never happen
+				e.printStackTrace();
+			}
+
+
+            // Need to add features to sequence...
+            for (int i= bottomIndex; i <= topIndex; i++) {
+                RNASummary rs = (RNASummary) rnas.get(i);
+                
+                StrandedFeature.Template ft = new StrandedFeature.Template();
+                ft.type = "CDS";
+                ft.location = rs.getLocation();
+                ft.strand = rs.getStrand();
+                Annotation an = new SimpleAnnotation();
+                an.setProperty("Tooltip", rs.getDescription());
+    			an.setProperty("name", rs.getName());
+    			an.setProperty("systematic_id", rs.getId());
+    			an.setProperty("colour", rs.getColour());
+    			ft.annotation = an;
+                seq.createFeature(ft);
+            }
+            
+            File file = new File("/Users/cp2/cmap.gif");
+            OutputStream out = null;
+			try {
+				out = new FileOutputStream(file);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            ContextMap contextMap = new ContextMap();
+            ImageInfo ii = new ImageInfo();
+            
+            info = contextMap.drawMap(seq,ii,min,max,target.getId(),false,out);
+            
+        }
+        catch (BioException exp) {
+            System.err.println("Bioexception");
+        }
+        
+        return info;
+    }	
+    
+    private static Collection<Location> getExonLocations(Feature gene) {
+    	Collection<Location> locs = new ArrayList<Location>();
+	    	
+		Feature mRNA = gene.getFeatureRelationshipsForObjectId().iterator().next().getFeatureBySubjectId();
+		Iterator i = mRNA.getFeatureRelationshipsForObjectId().iterator();
+		while(i.hasNext()) {
+			FeatureRelationship fr = (FeatureRelationship) i.next();
+			if(fr.getCvTerm().getName().equals("part_of")) {
+				Iterator it = fr.getFeatureBySubjectId().getFeatureLocsForFeatureId().iterator();
+				FeatureLoc loc = (FeatureLoc)it.next();
+				int min = loc.getFmin();
+				int max = loc.getFmax();
+				Location location = new RangeLocation(min,max);
+				locs.add(location);
+			}	
+		}
+    	
+		if(locs.size() == 1) {
+			Location loc = (Location)locs.iterator().next();
+			locs.add(loc);
+		}
+    	return locs;
+	}
+
+	private static int getContigLength(Feature gene) {
+    	FeatureLoc loc = gene.getFeatureLocsForFeatureId().iterator().next();
+    	int len = loc.getFeatureBySrcFeatureId().getSeqLen();
+		return len;
+	}
+
+	private static List<RNASummary> getNeighbours(Feature gene,RNASummary target) {
+
+    	List<RNASummary> rnas = new ArrayList<RNASummary>();
+    	FeatureLoc location = gene.getFeatureLocsForFeatureId().iterator().next();
+    	int min = location.getFmin();
+    	int newMin = min - 13000;
+    	if (newMin < 0) newMin = 0;
+    	int max = location.getFmax();
+    	System.err.println("min and max are " + min + " " + newMin);
+    	Feature parent = location.getFeatureBySrcFeatureId();
+    	List<Feature> features = sequenceDao.getFeaturesByLocation(newMin, min - 1, "gene",gene.getOrganism().getCommonName(),parent);
+    	for (Feature feature : features) {
+    		
+    		StrandedFeature.Strand t = null;
+    		FeatureLoc loc = feature.getFeatureLocsForFeatureId().iterator().next();
+    		if(loc.getStrand() == 1) {
+        		t = StrandedFeature.POSITIVE;
+        	} else {
+        		t = StrandedFeature.NEGATIVE;
+        	}
+    		
+    		Collection<Location> locs = null;
+        	locs = getExonLocations(feature);
+        	Location location2 = new CompoundRichLocation(locs);
+        	
+    		RNASummary temp = new RNASummary(feature.getDisplayName(),feature.getUniqueName(),location2,
+        			"CDS",t,feature.getOrganism().getCommonName(),"",5);
+    		rnas.add(temp);
+		}
+    	rnas.add(target);
+    	int newMax = max + 13000;
+    	features = sequenceDao.getFeaturesByLocation(max + 1, newMax, "gene",gene.getOrganism().getCommonName(),parent);
+    	for (Feature feature : features) {
+    		
+    		StrandedFeature.Strand t = null;
+    		FeatureLoc loc2 = feature.getFeatureLocsForFeatureId().iterator().next();
+    		if(loc2.getStrand() == 1) {
+        		t = StrandedFeature.POSITIVE;
+        	} else {
+        		t = StrandedFeature.NEGATIVE;
+        	}
+    		
+    		Collection<Location> locs = null;
+        	locs = getExonLocations(feature);
+        	Location location2 = new CompoundRichLocation(locs);
+        	
+    		RNASummary temp = new RNASummary(feature.getDisplayName(),feature.getUniqueName(),location2,
+        			"CDS",t,feature.getOrganism().getCommonName(),"",5);
+    		rnas.add(temp);
+		}
+    	return rnas;
+	}
+
+	private static String validateTaxons(List<String> idsAndNames) {
         // TODO 
         return null;
     }
