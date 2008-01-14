@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="db" uri="db" %>
+<%@ taglib prefix="misc" uri="misc" %>
 <format:header name="Gene: ${feature.displayName}">
 	<st:init />
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
@@ -49,8 +50,9 @@
 			
   </table>	
 </st:section>
-
-
+<st:section name="Context Map" id="context_map" collapsed="false" collapsible="true" hideIfEmpty="false">
+	<misc:contextmap gene="${feature}"></misc:contextmap>
+</st:section>
 <st:section name="Location" id="gene_location" collapsed="false" collapsible="true" hideIfEmpty="true">
 	<c:forEach items="${feature.featureLocsForFeatureId}" var="featLoc">
 		<p>[${featLoc.rank}]&nbsp;&nbsp;${featLoc.strand}&nbsp;&nbsp;${featLoc.fmin}...${featLoc.fmax} on <i>to be done</i></p>
