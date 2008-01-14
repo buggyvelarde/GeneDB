@@ -20,6 +20,10 @@
 package org.genedb.web.mvc.controller;
 
 
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.Hits;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.TaxonNode;
 import org.genedb.db.loading.TaxonNodeManager;
@@ -56,10 +60,60 @@ import javax.servlet.http.HttpServletResponse;
 public class NamedFeatureController extends TaxonNodeBindingFormController {
 
     private String listResultsView;
-    private SequenceDao sequenceDao;
+    //private SequenceDao sequenceDao;
     private Grep grep;
+    private LuceneDao luceneDao;
     
-    
+    @Override
+    protected ModelAndView onSubmit(HttpServletRequest request, 
+    		HttpServletResponse response, Object command, 
+    		BindException be) throws Exception {
+    	
+    	NameLookupBean nlb = (NameLookupBean) command;
+    	String orgs = nlb.getOrgs();
+    	String name = nlb.getName();
+    	String type = nlb.getFeatureType();
+    	Map<String,Object> model = new HashMap<String,Object>(2);
+    	String viewName = listResultsView;
+    	List<ResultHit> results = new ArrayList<ResultHit>();
+    	
+    	IndexReader ir = luceneDao.openIndex("/Users/cp2/hibernate/search/indexes/org.gmod.schema.sequence.Feature/");
+    	List<String> fields = new ArrayList<String>();
+    	String query = null;
+    	if(orgs == null) {
+    		fields.add("uniqueName");
+    		fields.add("cvTerm.name");
+    		query = "uniqueName:" + name + " AND cvTerm.name:gene";
+    		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), fields, query);
+    		if (hits.length() == 0) {
+    			be.reject("No Result");
+    			return showForm(request, response, be);
+    			//return new ModelAndView(viewName,null);
+    		} else {
+    			for (int i=0;i<hits.length();i++) {
+    				Document doc = hits.doc(i);
+    				ResultHit rh = new ResultHit();
+    				rh.setName(doc.get("uniqueName"));
+    				rh.setType("gene");
+    				rh.setOrganism(doc.get("organism.commonName"));
+    				results.add(rh);
+    			}
+    			model.put("results", results);
+    			if(nlb.isHistory()) {
+    				List<String> ids = new ArrayList<String>(results.size());
+            		for (ResultHit feature : results) {
+    					ids.add(feature.getName());
+    				}
+            		HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
+            		historyManager.addHistoryItems("name lookup '"+nlb+"'", ids);
+    			}
+    			return new ModelAndView(viewName,model);
+    		}
+    	} 
+    	
+    	return null;
+    }
+    /*
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, 
     		HttpServletResponse response, Object command, 
@@ -125,7 +179,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     	return null;
     }
     
-    /*
+    
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, 
     		HttpServletResponse response, Object command, 
@@ -136,11 +190,15 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         String orgs = nlb.getOrgs();
         Map<String, Object> model = new HashMap<String, Object>(4);
         String viewName = null;
+        List<Feature> results = null;
+        if(orgs == null) {
+
+        }
         
         logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
         //logger.info("TaxonNode[0] is '"+taxonNode[0]+"'");
         //List<String> orgNames = taxonNode[0].getAllChildrenNames(); // FIXME 
-        List<Feature> results = null;
+        
         String orgNames = TaxonUtils.getOrgNamesInHqlFormat(orgs);
         if (!nlb.isUseProduct()) {
         	results = sequenceDao.getFeaturesByAnyNameAndOrganism(
@@ -208,13 +266,17 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         return new ModelAndView(viewName, model);
     }*/
 
+	public void setLuceneDao(LuceneDao luceneDao) {
+		this.luceneDao = luceneDao;
+	}
+
 	public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;
     }
 
-    public void setSequenceDao(SequenceDao sequenceDao) {
+    /*public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
-    }
+    }*/
 
 	public void setGrep(Grep grep) {
 		this.grep = grep;
@@ -293,3 +355,4 @@ class NameLookupBean {
 	}
     
 }
+
