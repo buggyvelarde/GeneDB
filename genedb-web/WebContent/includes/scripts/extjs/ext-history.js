@@ -24,9 +24,6 @@ Ext.onReady(function(){
         	fields: [
             {name: 'index',mapping: 'index', type: 'int'},
             {name: 'name', mapping: 'name'},
-            {name: 'type', mapping: 'type'},
-            {name: 'noresults',mapping: 'noresults',type: 'int'},
-            {name: 'tools',mapping:'tools'},
             {name: 'download',mapping:'download'}
         ]}),
 
@@ -49,18 +46,6 @@ Ext.onReady(function(){
            editor: new Ext.form.TextField({
                allowBlank: false
            }),
-        },{
-        	id: 'type',
-        	header: "Type",
-        	dataIndex: 'type'
-        },{
-        	id: 'results',
-        	header: "No. Of Results",
-        	dataIndex: 'noresults'
-        },{
-        	id: 'tools',
-        	header: "Tools",
-        	dataIndex: 'tools'
         },{
         	id: 'download',
         	header: "Download",

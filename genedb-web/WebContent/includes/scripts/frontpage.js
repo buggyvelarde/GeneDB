@@ -32,7 +32,11 @@ Ext.onReady(function(){
         },{
            id: 'name',
            header: "Name",
-           dataIndex: 'name'
+           dataIndex: 'name',
+           editor: new Ext.Button({
+           		handler : clicked(),
+           }),
+           renderer: link
         },{
         	id: 'type',
         	header: "Type",
@@ -40,8 +44,16 @@ Ext.onReady(function(){
         }]);
 	
 	cm.defaultSortable = true;
-       
-    var grid = new Ext.grid.GridPanel({
+    
+    function clicked(value) {
+    	Ext.MessageBox.alert('Status', value);
+    }
+    
+    function link(value) {
+		return String.format('<a href="./Search/FeatureByName?name={0}">{0}</a>',value);
+	}
+	
+    var grid = new Ext.grid.EditorGridPanel({
         store: ds,
         cm: cm,
         renderTo: 'results-grid',
@@ -62,6 +74,22 @@ Ext.onReady(function(){
         })
     });
     
+    grid.on('cellclick',function(grid, rowIndex, columnIndex, e){
+    	if(columnIndex == 1) {
+    		var record = grid.getStore().getAt(rowIndex);  // Get the Record
+        	var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
+        	var data = record.get(fieldName);
+        	//Ext.MessageBox.alert('Data', data);
+        	var result = document.getElementById("results-grid");
+        	result.style.display = 'none';
+        	var query = document.getElementById("query-form");
+        	query.style.display = 'none';
+        	var show = document.getElementById("gene-page");
+        	show.innerHTML = '<iframe src="./Search/FeatureByName?name=' + data + '" width="100%" height="100%" />';
+        	show.style.visibility = 'visible';
+    	}
+    });
+    
     grid.render();
     
     
@@ -71,7 +99,7 @@ Ext.onReady(function(){
                 new Ext.BoxComponent({ // raw
                     region:'north',
                     el: 'north',
-                    height:140
+                    height: 140
                 }),{
                     region:'south',
                     contentEl: 'south',
