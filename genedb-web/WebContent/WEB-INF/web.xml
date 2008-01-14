@@ -11,7 +11,7 @@
       - web app. Applied by WebAppRootListener or Log4jConfigListener.
 	-->
 	<context-param>
-		<param-name>webAppRootKey</param-name><param-value>@webAppRootKey@</param-value>
+		<param-name>webAppRootKey</param-name><param-value>genedb.root</param-value>
 	</context-param>
 	
 	<!--
@@ -23,8 +23,7 @@
 	</context-param>
 	
 	<context-param>
-		<!-- <param-name>contextConfigLocation</param-name><param-value>/WEB-INF/applicationContext.xml, /WEB-INF/queryContext.xml</param-value> -->
-		<param-name>contextConfigLocation</param-name><param-value>/WEB-INF/applicationContext.xml, classpath:domain-server-applicationContext.xml</param-value>
+		<param-name>contextConfigLocation</param-name><param-value>/WEB-INF/applicationContext.xml</param-value>
 	</context-param>
 
 	<!--
@@ -69,16 +68,6 @@
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 
-	<servlet>
-		<servlet-name>remoting</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>remoting</servlet-name>
-		<url-pattern>/remoting/*</url-pattern>
-	</servlet-mapping>
 <!--  <servlet-mapping>
 		<servlet-name>genedb</servlet-name>
 		<url-pattern>/public/*</url-pattern>
@@ -107,10 +96,6 @@
 		<servlet-name>genedb</servlet-name>
 		<url-pattern>/CircularGenomeForm</url-pattern>
 	</servlet-mapping>
-	<servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/ComplexQuery/*</url-pattern>
-    </servlet-mapping>
     	<servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/DownloadFeatures</url-pattern>
@@ -146,6 +131,18 @@
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/LuceneSearch</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/SearchAll</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/Curation</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/ProductSearch</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
