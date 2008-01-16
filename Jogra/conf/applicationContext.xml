@@ -39,6 +39,7 @@
         
    <bean id="application" class="org.genedb.jogra.drawing.Jogra">
 	   <property name="jograBusiness" ref="jograBusiness" />
+	   <property name="messageService" ref="messageService"/>
 	   <property name="pluginList">
 	  	 <list>
 		  	 <ref bean="geneEditor" />
@@ -61,8 +62,8 @@
     <property name="sessionFactory" ref="sessionFactory" />
    </bean> -->
         
-	<bean id="newSessionStartForm" class="org.genedb.jogra.drawing.NewSessionStartForm" />
+	<!--  <bean id="newSessionStartForm" class="org.genedb.jogra.drawing.NewSessionStartForm" />
 	
-	<bean id="primerSelectionForm" class="org.genedb.jogra.drawing.PrimerSelectionForm"/>
+	<bean id="primerSelectionForm" class="org.genedb.jogra.drawing.PrimerSelectionForm"/> -->
     
 </beans>
