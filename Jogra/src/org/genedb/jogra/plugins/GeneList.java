@@ -34,10 +34,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
 public class GeneList implements JograPlugin {
@@ -63,7 +72,37 @@ public class GeneList implements JograPlugin {
         
         ret.add(mainPane, BorderLayout.CENTER);
         
-        JPanel controls = new JPanel();
+        Box controls = Box.createVerticalBox();
+        JTabbedPane transferTab = new JTabbedPane();
+        transferTab.setBorder(BorderFactory.createEtchedBorder());
+        
+        JPanel temp = new JPanel();
+        temp.add(new JLabel("stuff"));
+        temp.add(new JTextField("wibble"));
+        transferTab.addTab("name", temp);
+        
+        JPanel goPanel = new JPanel();
+        goPanel.add(new JLabel("Evidence code"));
+        goPanel.add(new JComboBox(new String[]{"ISS", "IPP", "IDA"}));
+        goPanel.add(new JTextField("wibble"));
+        transferTab.addTab("go", goPanel);
+        
+        JPanel ec = new JPanel();
+        ec.add(new JLabel("stuff"));
+        ec.add(new JTextField("wibble"));
+        transferTab.addTab("EC", ec);
+        
+        JPanel cc = new JPanel();
+        cc.add(new JLabel("Evidence code"));
+        cc.add(new JTextField("wibble"));
+        transferTab.addTab("controlled_curation", cc);
+        
+        JPanel note = new JPanel();
+        note.add(new JLabel("Note:"));
+        note.add(new JTextArea());
+        transferTab.addTab("note", note);
+
+        controls.add(transferTab);
         controls.add(new JButton("wibble"));
         
         ret.add(controls, BorderLayout.SOUTH);
