@@ -50,7 +50,7 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
 
     private JograBusiness jograBusiness;
 
-    private Timer timer;
+    private Timer timer = new Timer();
     
     private MessageService messageService;
     
@@ -94,8 +94,10 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
         	
         		String clientName = "dummy"; // FIXME
 				Deque<Message> messages = messageService.checkMessages(clientName);
-        		for (Message message : messages) {
-					EventBus.publish(message);
+				if (messages != null) {
+					for (Message message : messages) {
+						EventBus.publish(message);
+					}
 				}
         	}
         };
@@ -253,9 +255,10 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
     }
 
     public static Jogra instantiate() throws IOException {
+        //final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
+          //      new String[] { "classpath:applicationContext.xml", "classpath:domain-client-applicationContext.xml" });
         final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] { "classpath:applicationContext.xml", "classpath:domain-client-applicationContext.xml" });
-
+                new String[] { "classpath:domain-client-applicationContext.xml", "classpath:applicationContext.xml" });
         final Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
         ctx.registerShutdownHook();
         return application;
@@ -293,5 +296,9 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
 
 	public void setPluginList(List<JograPlugin> pluginList) {
 		this.pluginList.addAll(pluginList);
+	}
+
+	public void setMessageService(MessageService messageService) {
+		this.messageService = messageService;
 	}
 }
