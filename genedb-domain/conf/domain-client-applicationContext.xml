@@ -23,4 +23,6 @@
 			<property name="serviceUrl" value="http://developer.genedb.org/new/remoting/LockAndNotificationService"/>
 			<property name="serviceInterface" value="org.genedb.db.domain.services.LockAndNotificationService"/>
 		</bean>
+		
+			<bean name="messageService" class="org.genedb.db.domain.serviceImpls.MessageServiceImpl" />
 </beans>

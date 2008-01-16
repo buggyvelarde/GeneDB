@@ -30,4 +30,7 @@
 		<!-- <property name="sessionFactory" ref="sessionFactory" /> -->
 		<!-- <property name="cvDao" ref="cvDao" /> -->
 	</bean>
+
+	<bean name="messageService" class="org.genedb.db.domain.serviceImpls.MessageServiceImpl" />
+
 </beans>
