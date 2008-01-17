@@ -77,7 +77,7 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
         });
 
         try {
-        	UIManager.setLookAndFeel("sun.swing.plaf.nimbus.NimbusLookAndFeel");
+        	UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             //UIManager.setLookAndFeel("org.jdesktop.swingx.plaf.nimbus.NimbusLookAndFeel");
         } catch (final Exception exp) {
             exp.printStackTrace();
