@@ -413,9 +413,9 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureCvTerms()
      */
-//    private Collection<FeatureCvTerm> getFeatureCvTerms() {
-//        return this.featureCvTerms;
-//    }
+    private Collection<FeatureCvTerm> getFeatureCvTerms() {
+        return this.featureCvTerms;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setFeatureCvTerms(java.util.Set)
@@ -441,9 +441,9 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeaturePubs()
      */
-//    private Collection<FeaturePub> getFeaturePubs() {
-//        return this.featurePubs;
-//    }
+    private Collection<FeaturePub> getFeaturePubs() {
+        return this.featurePubs;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setFeaturePubs(java.util.Set)
@@ -455,9 +455,9 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeaturePropPubs()
      */
-//    private Collection<FeaturePropPub> getFeaturePropPubs() {
-//        return this.featurePropPubs;
-//    }
+    private Collection<FeaturePropPub> getFeaturePropPubs() {
+        return this.featurePropPubs;
+    }
 //    
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setFeaturePropPubs(java.util.Set)
@@ -483,9 +483,9 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureCvTermPubs()
      */
-//    private Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
-//        return this.featureCvTermPubs;
-//    }
+    private Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
+        return this.featureCvTermPubs;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setFeatureCvTermPubs(java.util.Set)
@@ -539,9 +539,9 @@ public class Pub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#getFeatureLocPubs()
      */
-//    private Collection<FeatureLocPub> getFeatureLocPubs() {
-//        return this.featureLocPubs;
-//    }
+    private Collection<FeatureLocPub> getFeatureLocPubs() {
+        return this.featureLocPubs;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubI#setFeatureLocPubs(java.util.Set)
@@ -549,9 +549,6 @@ public class Pub implements Serializable {
     private void setFeatureLocPubs(Set<FeatureLocPub> featureLocPubs) {
         this.featureLocPubs = featureLocPubs;
     }
-
-
-
 
 }
 

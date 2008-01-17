@@ -120,9 +120,9 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#getFeatureCvTermpropId()
      */
-//    private int getFeatureCvTermPropId() {
-//        return this.featureCvTermPropId;
-//    }
+    private int getFeatureCvTermPropId() {
+        return this.featureCvTermPropId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPropI#setFeatureCvTermpropId(int)

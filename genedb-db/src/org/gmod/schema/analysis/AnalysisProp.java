@@ -43,9 +43,9 @@ public class AnalysisProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#getAnalysispropId()
      */
-//    private int getAnalysisPropId() {
-//        return this.analysisPropId;
-//    }
+    private int getAnalysisPropId() {
+        return this.analysisPropId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#setAnalysispropId(int)
@@ -57,9 +57,9 @@ public class AnalysisProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#getAnalysis()
      */
-//    private Analysis getAnalysis() {
-//        return this.analysis;
-//    }
+    private Analysis getAnalysis() {
+        return this.analysis;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#setAnalysis(org.genedb.db.jpa.Analysis)

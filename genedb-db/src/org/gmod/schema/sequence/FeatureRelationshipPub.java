@@ -68,9 +68,9 @@ public class FeatureRelationshipPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipPubI#getFeatureRelationship()
      */
-//    private FeatureRelationship getFeatureRelationship() {
-//        return this.featureRelationship;
-//    }
+    private FeatureRelationship getFeatureRelationship() {
+        return this.featureRelationship;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipPubI#setFeatureRelationship(org.genedb.db.jpa.FeatureRelationship)

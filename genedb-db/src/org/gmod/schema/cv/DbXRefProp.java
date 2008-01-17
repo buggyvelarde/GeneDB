@@ -43,9 +43,9 @@ public class DbXRefProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#getDbXRefpropId()
      */
-//    private int getDbXRefPropId() {
-//        return this.dbXRefPropId;
-//    }
+    private int getDbXRefPropId() {
+        return this.dbXRefPropId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#setDbXRefpropId(int)
@@ -71,9 +71,9 @@ public class DbXRefProp implements Serializable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#getDbXRef()
      */
-//    private DbXRef getDbXRef() {
-//        return this.dbXRef;
-//    }
+    private DbXRef getDbXRef() {
+        return this.dbXRef;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#setDbXRef(org.gmod.schema.general.DbXRefI)

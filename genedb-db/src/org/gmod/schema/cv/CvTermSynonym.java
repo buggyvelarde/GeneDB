@@ -39,9 +39,9 @@ public class CvTermSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#getCvTermSynonymId()
      */
-//    private int getCvTermSynonymId() {
-//        return this.cvTermSynonymId;
-//    }
+    private int getCvTermSynonymId() {
+        return this.cvTermSynonymId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#setCvTermSynonymId(int)
@@ -53,9 +53,9 @@ public class CvTermSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#getCvTermByCvTermId()
      */
-//    private CvTerm getCvTermByCvTermId() {
-//        return this.cvTermByCvTermId;
-//    }
+    private CvTerm getCvTermByCvTermId() {
+        return this.cvTermByCvTermId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#setCvTermByCvTermId(org.gmod.schema.cv.CvTermI)
@@ -67,9 +67,9 @@ public class CvTermSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#getCvTermByTypeId()
      */
-//    private CvTerm getCvTermByTypeId() {
-//        return this.cvTermByTypeId;
-//    }
+    private CvTerm getCvTermByTypeId() {
+        return this.cvTermByTypeId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#setCvTermByTypeId(org.gmod.schema.cv.CvTermI)

@@ -66,9 +66,9 @@ public class OrganismDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismDbXRefI#getDbXRef()
      */
-//    private DbXRef getDbXRef() {
-//        return this.dbXRef;
-//    }
+    private DbXRef getDbXRef() {
+        return this.dbXRef;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismDbXRefI#setDbXRef(org.gmod.schema.general.DbXRefI)

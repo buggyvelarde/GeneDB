@@ -52,9 +52,9 @@ public class CvTermRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#getCvTermRelationshipId()
      */
-//    private int getCvTermRelationshipId() {
-//        return this.cvTermRelationshipId;
-//    }
+    private int getCvTermRelationshipId() {
+        return this.cvTermRelationshipId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#setCvTermRelationshipId(int)
@@ -66,9 +66,9 @@ public class CvTermRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#getCvTermBySubjectId()
      */
-//    private CvTerm getCvTermBySubjectId() {
-//        return this.cvTermBySubjectId;
-//    }
+    private CvTerm getCvTermBySubjectId() {
+        return this.cvTermBySubjectId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#setCvTermBySubjectId(org.gmod.schema.cv.CvTermI)
@@ -80,9 +80,9 @@ public class CvTermRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#getCvTermByObjectId()
      */
-//    private CvTerm getCvTermByObjectId() {
-//        return this.cvTermByObjectId;
-//    }
+    private CvTerm getCvTermByObjectId() {
+        return this.cvTermByObjectId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#setCvTermByObjectId(org.gmod.schema.cv.CvTermI)
@@ -94,9 +94,9 @@ public class CvTermRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#getCvTermByTypeId()
      */
-//    private CvTerm getCvTermByTypeId() {
-//        return this.cvTermByTypeId;
-//    }
+    private CvTerm getCvTermByTypeId() {
+        return this.cvTermByTypeId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#setCvTermByTypeId(org.gmod.schema.cv.CvTermI)

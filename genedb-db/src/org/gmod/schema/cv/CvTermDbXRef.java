@@ -41,9 +41,9 @@ public class CvTermDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermDbXRefI#getCvTermDbXRefId()
      */
-//    private int getCvTermDbXRefId() {
-//        return this.cvTermDbXRefId;
-//    }
+    private int getCvTermDbXRefId() {
+        return this.cvTermDbXRefId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermDbXRefI#setCvTermDbXRefId(int)
@@ -55,9 +55,9 @@ public class CvTermDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermDbXRefI#getCvTerm()
      */
-//    private CvTerm getCvTerm() {
-//        return this.cvTerm;
-//    }
+    private CvTerm getCvTerm() {
+        return this.cvTerm;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermDbXRefI#setCvTerm(org.gmod.schema.cv.CvTermI)
@@ -69,9 +69,9 @@ public class CvTermDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermDbXRefI#getDbXRef()
      */
-//    private DbXRef getDbXRef() {
-//        return this.dbXRef;
-//    }
+    private DbXRef getDbXRef() {
+        return this.dbXRef;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermDbXRefI#setDbXRef(org.gmod.schema.general.DbXRefI)

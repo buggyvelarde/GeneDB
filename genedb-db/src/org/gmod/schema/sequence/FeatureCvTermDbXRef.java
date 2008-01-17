@@ -50,9 +50,9 @@ public class FeatureCvTermDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermDbXRefI#getFeatureCvTermDbXrefId()
      */
-//    private int getFeatureCvTermDbXRefId() {
-//        return this.featureCvTermDbXRefId;
-//    }
+    private int getFeatureCvTermDbXRefId() {
+        return this.featureCvTermDbXRefId;
+    }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermDbXRefI#setFeatureCvTermDbXrefId(int)
