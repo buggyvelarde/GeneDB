@@ -14,8 +14,10 @@
 	<!-- Classpaths -->
 	
 	<path id="compile-lib">
-			<path location="${lib-dir}/spring-2.0.2.jar" />
-			<path location="${lib-dir}/lucene-core-2.2.0.jar" />
+		<path location="${lib-dir}/GifEncoder.jar" />
+		<path location="${lib-dir}/spring-2.5.jar" />
+		<path location="${lib-dir}/spring-webmvc.jar" />
+		<path location="${lib-dir}/lucene-core-2.2.0.jar" />
 	        <path location="${lib-dir}/genedb-hibernate.jar" />
 	        <path location="${lib-dir}/genedb-access.jar" />
 	        <path location="${lib-dir}/chado-interface.jar" />
@@ -28,17 +30,16 @@
 	        <path location="${lib-dir}/displaytag-1.1.jar" />
 	        <path location="${lib-dir}/commons-logging.jar" />
 	        <path location="${lib-dir}/ejb3-persistence.jar" />
-			<path location="${lib-dir}/hibernate-annotations.jar" />
-			<path location="lib/servlet-api.jar" />
-			<path location="lib/jsp-api.jar" />
-			<path location="${lib-dir}/antlr-runtime-3.0.jar"/>
-			<path location="${lib-dir}/cglib-2.1.3.jar"/>
-			<path location="${lib-dir}/commons-io.jar"/>
-			<path location="${lib-dir}/poi-3.0.1.jar"/>
-			<path location="${lib-dir}/json_simple.jar"/>
-			<path location="${lib-dir}/jakarta-oro-2.0.8.jar"/>
-			<path location="${lib-dir}/classes.jar"/>
-			<path location="${lib-dir}/hibernate-search.jar"/>
+		<path location="${lib-dir}/hibernate-annotations.jar" />
+		<path location="lib/servlet-api.jar" />
+		<path location="lib/jsp-api.jar" />
+		<path location="${lib-dir}/antlr-runtime-3.0.jar"/>
+		<path location="${lib-dir}/cglib-2.1.3.jar"/>
+		<path location="${lib-dir}/commons-io.jar"/>
+		<path location="${lib-dir}/poi-3.0.1.jar"/>
+		<path location="${lib-dir}/json_simple.jar"/>
+		<path location="${lib-dir}/jakarta-oro-2.0.8.jar"/>
+		<path location="${lib-dir}/hibernate-search.jar"/>
 	</path>
 	
 	<target name="wrong-setup" >
