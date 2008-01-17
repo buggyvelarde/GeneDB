@@ -36,12 +36,10 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -59,7 +57,7 @@ public class GeneList implements JograPlugin {
         
         JXList main = new JXList();
         main.setVisibleRowCount(15);
-        main.setPrototypeCellValue("123456789012345678901234567890");
+        main.setPrototypeCellValue("123456789012345678901234567890123456789012345678901234567890");
         //main.
 //        String[] temp = new String[100];
 //        for(int i=0; i < 100; i++) {
