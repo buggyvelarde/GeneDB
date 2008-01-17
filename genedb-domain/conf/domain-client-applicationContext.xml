@@ -24,5 +24,8 @@
 			<property name="serviceInterface" value="org.genedb.db.domain.services.LockAndNotificationService"/>
 		</bean>
 		
-			<bean name="messageService" class="org.genedb.db.domain.serviceImpls.MessageServiceImpl" />
+		<bean id="messageService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+			<property name="serviceUrl" value="http://developer.genedb.org/new/remoting/MessageService"/>
+			<property name="serviceInterface" value="org.genedb.db.domain.services.MessageService"/>
+		</bean>
 </beans>

@@ -26,6 +26,6 @@
 	
 	<bean name="/MessageService" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
 		<property name="service" ref="messageService" />
-		<property name="serviceInterface" value="org.genedb.db.domain.serviceImpls.MessageServiceImpl" />
+		<property name="serviceInterface" value="org.genedb.db.domain.services.MessageService" />
 	</bean>
 </beans>
