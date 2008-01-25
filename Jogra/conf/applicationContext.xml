@@ -28,6 +28,8 @@
 		        
 	<bean name="geneList" class="org.genedb.jogra.plugins.GeneList">
 	</bean> 
+	     	        
+	<bean name="integrityChecker" class="org.genedb.jogra.plugins.RunIntegrityCheck" />
 	     
 	<bean name="organismTree" class="org.genedb.jogra.plugins.OrganismTree">
 	<property name="organismManager" ref="organismManager" />
@@ -36,6 +38,7 @@
 	<bean name="organismEditor" class="org.genedb.jogra.plugins.OrganismEditor" />
 	        
 	<bean name="organismManager" class="org.genedb.db.domain.objects.ExtendedOrganismManager"/>
+     
         
    <bean id="application" class="org.genedb.jogra.drawing.Jogra">
 	   <property name="jograBusiness" ref="jograBusiness" />
@@ -48,6 +51,7 @@
 		  	 <ref bean="organismTree" />
 		  	 <ref bean="organismEditor" />
 		  	 <ref bean="productRationaliser" />
+		  	 <ref bean="integrityChecker" />
 	  	 </list>
 	   </property>
    </bean>
