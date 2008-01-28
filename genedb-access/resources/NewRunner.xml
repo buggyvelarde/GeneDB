@@ -292,6 +292,18 @@
     	<property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
     
+    <bean id="ipparser" class="org.genedb.db.loading.InterProParser" init-method="afterPropertiesSet">
+    	<property name="fUtils" ref="featureUtils" />
+    	<property name="hibernateTransactionManager" ref="transactionManager" />
+    </bean>
+    
+    <bean id="featureUtils" class="org.genedb.db.loading.FeatureUtils">
+    	<property name="cvDao" ref="cvDao" />
+		<property name="generalDao" ref="generalDao" />
+		<property name="sequenceDao" ref="sequenceDao" />
+		<property name="pubDao" ref="pubDao" />
+    </bean>
+    
     <bean id="xmlOrthologueRelationshipParser" class="org.genedb.db.loading.XmlOrthologueRelationsParser" />
     <bean id="allOrthoMclRelationshipParser" class="org.genedb.db.loading.AllOrthoMclRelationsParser" />
     
