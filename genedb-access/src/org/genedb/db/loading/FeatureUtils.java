@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
+import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
 import org.biojava.bio.proteomics.IsoelectricPointCalc;
 import org.biojava.bio.proteomics.MassCalc;
@@ -38,6 +39,9 @@ import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermDbXRef;
+import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
@@ -407,5 +411,95 @@ public class FeatureUtils implements InitializingBean {
         fp = new FeatureProp(polypeptide, MISC_CHARGE, df.format(ProteinUtils.getCharge(seq)), 0);
 
         return pp;
+    }
+    
+    /**
+     * Take a polypeptide feature and GoInstance object to create GO entries
+     * 
+     * @param polypeptide the polypeptide Feature to which GO entries are to be attached
+     * @param go a GoInstance object
+     * 
+     */
+    public void createGoEntries(Feature polypeptide, GoInstance go) {
+
+        // Find db_xref for go id
+        String id = go.getId();
+        //logger.debug("Investigating storing GO '"+id+"' on '"+polypeptide.getUniquename()+"'");
+
+        CvTerm cvTerm = cvDao.getGoCvTermByAccViaDb(id);
+        if (cvTerm == null) {
+            System.err.println("Unable to find a CvTerm for the GO id of '"+id+"'. Skipping");
+            return;
+        }
+
+        Pub pub = pubDao.getPubByUniqueName("null");
+        String ref = go.getRef();
+        // Reference
+        Pub refPub = pub;
+        if (ref != null && looksLikePub(ref)) {
+            // The reference is a pubmed id - usual case
+            refPub = findOrCreatePubFromPMID(ref);
+            //FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
+            //sequenceDao.persist(fctp);
+        }
+
+
+//          logger.warn("pub is '"+pub+"'");
+
+        boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
+        List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvTerm, not);
+        int rank = 0;
+        if (fcts.size() != 0) {
+            rank = RankableUtils.getNextRank(fcts);
+        }
+        //logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
+        FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
+        sequenceDao.persist(fct);
+
+        // Reference
+//          Pub refPub = null;
+//          if (ref != null && ref.startsWith("PMID:")) {
+//          // The reference is a pubmed id - usual case
+//          refPub = findOrCreatePubFromPMID(ref);
+//          FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
+//          sequenceDao.persist(fctp);
+//          }
+        Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
+        CvTerm GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
+        CvTerm GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
+        //GO_KEY_DATE = cvDao.getCvTermByNameInCv("unixdate", CV_FEATURE_PROPERTY).get(0);
+
+        // Evidence
+        FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE , fct, go.getEvidence().getDescription(), 0);
+        sequenceDao.persist(fctp);
+
+        // Qualifiers
+        int qualifierRank = 0;
+        List<String> qualifiers = go.getQualifierList();
+        for (String qualifier : qualifiers) {
+            fctp = new FeatureCvTermProp(GO_KEY_QUALIFIER , fct, qualifier, qualifierRank);
+            qualifierRank++;
+            sequenceDao.persist(fctp);
+        }
+
+        // With/From
+        String xref = go.getWithFrom();
+        if (xref != null) {
+            int index = xref.indexOf(':');
+            if (index == -1 ) {
+                System.err.println("Got an apparent dbxref but can't parse");
+            } else {
+                List<DbXRef> dbXRefs= findOrCreateDbXRefsFromString(xref);
+                for (DbXRef dbXRef : dbXRefs) {
+                    if (dbXRef != null) {
+                        FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
+                        sequenceDao.persist(fcvtdbx);
+                    }
+                }
+            }
+        }
+
+        //logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
+
     }
 }
