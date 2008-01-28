@@ -7,11 +7,14 @@ import java.util.Properties;
 import org.genedb.db.dao.SequenceDao;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
 
 public class LoadInterPro {
 
 	
 	private static SequenceDao sequenceDao;
+	
+	private HibernateTransactionManager hibernateTransactionManager;
 	
 	/**
 	 * @param args
@@ -23,7 +26,10 @@ public class LoadInterPro {
         	System.err.println("No input files specified");
         	System.exit(-1);
         }
-
+        
+        Properties overrideProps = new Properties();
+        PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
+        
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"NewRunner.xml"});
 
@@ -61,5 +67,16 @@ public class LoadInterPro {
 
 	public void setSequenceDao(SequenceDao sequenceDao) {
 		this.sequenceDao = sequenceDao;
+	}
+
+
+	public HibernateTransactionManager getHibernateTransactionManager() {
+		return hibernateTransactionManager;
+	}
+
+
+	public void setHibernateTransactionManager(
+			HibernateTransactionManager hibernateTransactionManager) {
+		this.hibernateTransactionManager = hibernateTransactionManager;
 	}
 }
