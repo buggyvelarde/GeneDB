@@ -27,12 +27,19 @@ public class LoadInterPro {
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"NewRunner.xml"});
 
-        LoadInterPro runner = (LoadInterPro) ctx.getBean("iploader", NewRunner.class);
+        LoadInterPro runner = (LoadInterPro) ctx.getBean("iploader", LoadInterPro.class);
+        runner.afterPropertiesSet();
         runner.process(args);
 
         
     }
 	
+
+	private void afterPropertiesSet() {
+
+		
+	}
+
 
 	private void process(String[] args) {
 		String[] filePaths = args;
