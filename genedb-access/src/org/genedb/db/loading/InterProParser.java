@@ -74,7 +74,7 @@ public class InterProParser {
 
 
 
-    public InterProParser(SequenceDao sequenceDao, String filename, double score) {
+    public InterProParser(SequenceDao sequenceDao, String filename) {
 
         this.sequenceDao = sequenceDao;
 
@@ -95,7 +95,7 @@ public class InterProParser {
                     }
                 });
             for (int i=0; i < fls.length; i++) {
-                new InterProParser(sequenceDao, filename+"/"+fls[i], score);
+                new InterProParser(sequenceDao, filename+"/"+fls[i]);
             }
             return;
         }
