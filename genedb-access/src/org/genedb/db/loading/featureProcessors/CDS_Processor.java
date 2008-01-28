@@ -343,7 +343,20 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
     }
 
-    private String extractFromId(String in) {
+    private void createGoEntries(Feature polypeptide,Annotation an) {
+    	List<GoInstance> gos = goParser.getNewStyleGoTerm(an);
+        if (gos.size() == 0) {
+            return;
+        }
+
+        for (GoInstance go : gos) {
+        	featureUtils.createGoEntries(polypeptide, go);
+        }
+		
+	}
+
+
+	private String extractFromId(String in) {
         if (in.contains(":")) {
             in.substring(in.indexOf(":"));
         }
@@ -691,93 +704,6 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         this.goParser = goParser;
     }
 
-
-
-
-    private void createGoEntries(Feature polypeptide, Annotation an) {
-        List<GoInstance> gos = this.goParser.getNewStyleGoTerm(an);
-        if (gos.size() == 0) {
-            return;
-        }
-
-        for (GoInstance go : gos) {
-            // Find db_xref for go id
-            String id = go.getId();
-            //logger.debug("Investigating storing GO '"+id+"' on '"+polypeptide.getUniquename()+"'");
-
-            CvTerm cvTerm = cvDao.getGoCvTermByAccViaDb(id);
-            if (cvTerm == null) {
-                logger.warn("Unable to find a CvTerm for the GO id of '"+id+"'. Skipping");
-                continue;
-            }
-
-            Pub pub = pubDao.getPubByUniqueName("null");
-            String ref = go.getRef();
-            // Reference
-            Pub refPub = pub;
-            if (ref != null && featureUtils.looksLikePub(ref)) {
-                // The reference is a pubmed id - usual case
-                refPub = featureUtils.findOrCreatePubFromPMID(ref);
-                //FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-                //sequenceDao.persist(fctp);
-            }
-
-
-//          logger.warn("pub is '"+pub+"'");
-
-            boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
-            List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvTerm, not);
-            int rank = 0;
-            if (fcts.size() != 0) {
-                rank = RankableUtils.getNextRank(fcts);
-            }
-            //logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
-            FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
-            sequenceDao.persist(fct);
-
-            // Reference
-//          Pub refPub = null;
-//          if (ref != null && ref.startsWith("PMID:")) {
-//          // The reference is a pubmed id - usual case
-//          refPub = findOrCreatePubFromPMID(ref);
-//          FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-//          sequenceDao.persist(fctp);
-//          }
-
-            // Evidence
-            FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE , fct, go.getEvidence().getDescription(), 0);
-            sequenceDao.persist(fctp);
-
-            // Qualifiers
-            int qualifierRank = 0;
-            List<String> qualifiers = go.getQualifierList();
-            for (String qualifier : qualifiers) {
-                fctp = new FeatureCvTermProp(GO_KEY_QUALIFIER , fct, qualifier, qualifierRank);
-                qualifierRank++;
-                sequenceDao.persist(fctp);
-            }
-
-            // With/From
-            String xref = go.getWithFrom();
-            if (xref != null) {
-                int index = xref.indexOf(':');
-                if (index == -1 ) {
-                    logger.error("Got an apparent dbxref but can't parse");
-                } else {
-                    List<DbXRef> dbXRefs= featureUtils.findOrCreateDbXRefsFromString(xref);
-                    for (DbXRef dbXRef : dbXRefs) {
-                        if (dbXRef != null) {
-                            FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
-                            sequenceDao.persist(fcvtdbx);
-                        }
-                    }
-                }
-            }
-
-            //logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
-        }
-
-    }
 
     private void storeNames(Names names, CvTerm SYNONYM_RESERVED,
             CvTerm SYNONYM_SYNONYM, CvTerm SYNONYM_PRIMARY,
