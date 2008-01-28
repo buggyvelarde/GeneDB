@@ -33,31 +33,26 @@ public class LoadInterPro {
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"NewRunner.xml"});
 
-        LoadInterPro runner = (LoadInterPro) ctx.getBean("iploader", LoadInterPro.class);
-        runner.afterPropertiesSet();
-        runner.process(args);
-
+        InterProParser runner = (InterProParser) ctx.getBean("ipparser", InterProParser.class);
         
-    }
-	
-
-	private void afterPropertiesSet() {
-
-		
-	}
-
-
-	private void process(String[] args) {
-		String[] filePaths = args;
+        runner.afterPropertiesSet();
+        
+        String[] filePaths = args;
 		
 		long start = new Date().getTime();
         for (int i = 0; i < filePaths.length; i++) {
-			InterProParser ipp = new InterProParser(sequenceDao,filePaths[i]);
+            runner.Parse(sequenceDao,filePaths[i]);
 		}
         
         long stop = new Date().getTime();
         
         System.err.println("Total time taken - " + (stop - start)/60000 + " min" );
+        
+    }
+	
+
+	private void process(String[] args) {
+		
 	}
 
 
