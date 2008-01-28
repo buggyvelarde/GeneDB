@@ -287,6 +287,10 @@
     	<property name="xmlParser" ref="xmlOrthologueRelationshipParser" />
     </bean>
     
+    <bean id="iploader" class="org.genedb.db.loading.LoadInterPro">
+    	<property name="sequenceDao" ref="sequenceDao" />
+    </bean>
+    
     <bean id="xmlOrthologueRelationshipParser" class="org.genedb.db.loading.XmlOrthologueRelationsParser" />
     <bean id="allOrthoMclRelationshipParser" class="org.genedb.db.loading.AllOrthoMclRelationsParser" />
     
