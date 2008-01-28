@@ -39,8 +39,7 @@ public class InterProParser {
     private static final int COL_GO=13;
 
     private SequenceDao sequenceDao;
-	private CvDao cvDao;
-	private PubDao pubDao;
+    private FeatureUtils fUtils;
     private static Map months = new HashMap(12);
     
     private static HashMap dbs;
@@ -74,7 +73,7 @@ public class InterProParser {
 
 
 
-    public InterProParser(SequenceDao sequenceDao, String filename) {
+    public void Parse(SequenceDao sequenceDao, String filename) {
 
         this.sequenceDao = sequenceDao;
 
@@ -95,7 +94,7 @@ public class InterProParser {
                     }
                 });
             for (int i=0; i < fls.length; i++) {
-                new InterProParser(sequenceDao, filename+"/"+fls[i]);
+                Parse(sequenceDao, filename+"/"+fls[i]);
             }
             return;
         }
@@ -152,7 +151,11 @@ public class InterProParser {
 
     }
 
+	public void afterPropertiesSet() {
 
+		
+	}
+    
     private void sub1(Map genes, List col, Set strangeProgram) {
         // Go through each key and sort the ArrayLists
         Iterator geneIterator = genes.keySet().iterator();
@@ -405,10 +408,14 @@ public class InterProParser {
                 //String name = GoQualifierDictionary.getName( acc );
                 c.setName( acc );
                 c.setGeneName(polypeptide.getUniqueName().split(":")[0]);
-                
-                FeatureUtils fUtils = new FeatureUtils();
+               
                 fUtils.createGoEntries(polypeptide,c);
             }
         }
     }
+
+
+	public void setFUtils(FeatureUtils utils) {
+		fUtils = utils;
+	}
 }
