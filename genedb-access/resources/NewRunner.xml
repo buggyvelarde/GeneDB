@@ -289,6 +289,7 @@
     
     <bean id="iploader" class="org.genedb.db.loading.LoadInterPro" init-method="afterPropertiesSet">
     	<property name="sequenceDao" ref="sequenceDao" />
+    	<property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
     
     <bean id="xmlOrthologueRelationshipParser" class="org.genedb.db.loading.XmlOrthologueRelationsParser" />
