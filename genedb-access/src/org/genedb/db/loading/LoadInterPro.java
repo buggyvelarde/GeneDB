@@ -17,9 +17,9 @@ public class LoadInterPro {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String[] filePaths = args;
+		
 
-        if (filePaths.length == 0) {
+        if (args.length == 0) {
         	System.err.println("No input files specified");
         	System.exit(-1);
         }
@@ -27,7 +27,17 @@ public class LoadInterPro {
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"NewRunner.xml"});
 
-        long start = new Date().getTime();
+        LoadInterPro runner = (LoadInterPro) ctx.getBean("iploader", NewRunner.class);
+        runner.process(args);
+
+        
+    }
+	
+
+	private void process(String[] args) {
+		String[] filePaths = args;
+		
+		long start = new Date().getTime();
         for (int i = 0; i < filePaths.length; i++) {
 			InterProParser ipp = new InterProParser(sequenceDao,filePaths[i]);
 		}
@@ -35,8 +45,8 @@ public class LoadInterPro {
         long stop = new Date().getTime();
         
         System.err.println("Total time taken - " + (stop - start)/60000 + " min" );
-    }
-	
+	}
+
 
 	public SequenceDao getSequenceDao() {
 		return sequenceDao;
