@@ -322,8 +322,21 @@ public class ExtractOrthologueData implements ApplicationContextAware {
 
     private void processCDS(Feature feature) {
 		Annotation an = feature.getAnnotation();
+		List<String> qualifiers = new ArrayList();
+		Iterator it = an.keys().iterator();
+		while(it.hasNext()) {
+			Object o = it.next();
+			String qualifier = o.toString();
+			if(qualifier.contains("ortholog")) {
+				qualifiers.add(qualifier);
+			}
+		}
 		String id = findId(an);
-    	List<String> curatedOrthologues = MiningUtils.getProperties("ortholog", an);
+		List<String> curatedOrthologues = new ArrayList<String>();
+		for (String qualifier : qualifiers) {
+			curatedOrthologues.addAll(MiningUtils.getProperties(qualifier, an));
+		}
+    	
     	stripGeneDBPrefix(curatedOrthologues);
     	for (String otherId : curatedOrthologues) {
 			GenePair pair = new GenePair(id, otherId);
