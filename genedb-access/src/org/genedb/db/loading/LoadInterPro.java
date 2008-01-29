@@ -51,7 +51,8 @@ public class LoadInterPro {
     }
 	
 
-	private void process(String[] args) {
+	public void afterPropertiesSet() {
+
 		
 	}
 
