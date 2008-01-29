@@ -331,6 +331,48 @@ public class FeatureUtils implements InitializingBean {
         return dbXRef;
     }
     
+    /**
+     * Take a feature and find its parent
+     * 
+     * @param feature the feature whose parent is to be found
+     * @return the parent feature
+     */
+    public Feature getParentFeature(Feature feature) {
+    	if(feature.getFeatureLocsForFeatureId() == null) {
+    		if(feature.getFeatureLocsForSrcFeatureId().size() > 1) {
+    			return feature; //itself is a parent
+    		} else {
+    			return null; //some error occured
+    		}
+    	}
+    	return feature.getFeatureLocsForFeatureId().iterator().next().getFeatureBySrcFeatureId();
+    }
+    
+    /**
+     * Take a cv and cvterm and look it up, or create it if it doesn't exist
+     * 
+     * @param cv the cv
+     * @param cvTerm the cvTerm to find/create
+     * @return the created or looked-up CvTerm
+     */
+    public CvTerm findOrCreateCvTermFromString(String cv,String cvTerm) {
+    	List<Cv> cvList = cvDao.getCvByName(cv);
+    	if(cvList == null || cvList.size() == 0 ) {
+    		return null;
+    	}
+    	
+    	List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(cvTerm, cvList.get(0));
+    	if(cvTerms == null || cvTerms.size() == 0 ) {
+    		Db db = generalDao.getDbByName("null");
+    		DbXRef dbXRef = new DbXRef(db,cvTerm);
+    		generalDao.persist(dbXRef);
+    		CvTerm cvterm = new CvTerm(cvList.get(0),dbXRef,cvTerm,cvTerm);
+    		cvDao.persist(cvterm);
+    		return cvterm;
+    	}
+    	return cvTerms.get(0);
+    }
+    
     public void findPubOrDbXRefFromString(String xrefString, List<Pub> pubs, List<DbXRef> dbXRefs) {
         boolean makePubs = (pubs != null) ? true : false;
         String[] xrefs = xrefString.split("\\|");
@@ -502,4 +544,9 @@ public class FeatureUtils implements InitializingBean {
         //logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniquename()+"' with a cvterm of '"+cvTerm.getName()+"'");
 
     }
+
+
+	public void setGeneralDao(GeneralDao generalDao) {
+		this.generalDao = generalDao;
+	}
 }
