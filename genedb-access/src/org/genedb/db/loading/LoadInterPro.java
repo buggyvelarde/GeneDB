@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.genedb.db.dao.SequenceDao;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
@@ -14,7 +16,7 @@ public class LoadInterPro {
 	
 	private static SequenceDao sequenceDao;
 	
-	private HibernateTransactionManager hibernateTransactionManager;
+	private static HibernateTransactionManager hibernateTransactionManager;
 	
 	/**
 	 * @param args
@@ -40,10 +42,13 @@ public class LoadInterPro {
         String[] filePaths = args;
 		
 		long start = new Date().getTime();
+		Session session = hibernateTransactionManager.getSessionFactory().openSession();
         for (int i = 0; i < filePaths.length; i++) {
+        	Transaction transaction = session.beginTransaction();
             runner.Parse(sequenceDao,filePaths[i]);
+            transaction.commit();
 		}
-        
+        session.close();
         long stop = new Date().getTime();
         
         System.err.println("Total time taken - " + (stop - start)/60000 + " min" );
