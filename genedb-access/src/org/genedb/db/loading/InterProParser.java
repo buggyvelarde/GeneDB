@@ -9,6 +9,9 @@ import org.gmod.schema.pub.Pub;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,7 +46,7 @@ public class InterProParser {
     private SequenceDao sequenceDao;
     private FeatureUtils featureUtils;
     private static Map months = new HashMap(12);
-    
+    private HibernateTransactionManager hibernateTransactionManager;
     private static HashMap dbs;
 
     static {
@@ -160,7 +163,8 @@ public class InterProParser {
     
     private void sub1(Map genes, List col, Set strangeProgram) {
         // Go through each key and sort the ArrayLists
-        Iterator geneIterator = genes.keySet().iterator();
+    	Session session = hibernateTransactionManager.getSessionFactory().openSession();
+    	Iterator geneIterator = genes.keySet().iterator();
         Feature polypeptide = null;
 
         
@@ -171,6 +175,7 @@ public class InterProParser {
                 System.err.println("WARN: Database doesn't contain id of :" + id);
                 continue;
             }
+            Hibernate.initialize(polypeptide);
             Set goIdsLinked = new HashSet();
             col = (ArrayList) genes.get(id);
             boolean swap = true;
@@ -352,7 +357,9 @@ public class InterProParser {
                     	}	
                     	FeatureLoc floc = featureUtils.createLocation(polypeptide, domain, start, end, strand);
                     	sequenceDao.persist(floc);
-                    	Feature parent = polypeptide.getFeatureLocsForFeatureId().iterator().next().getFeatureBySrcFeatureId();
+                    	Iterator iter = polypeptide.getFeatureLocsForFeatureId().iterator();
+                    	FeatureLoc featureLoc = (FeatureLoc)iter.next();
+                    	Feature parent = featureLoc.getFeatureBySrcFeatureId();
                     	int start2 = ( start * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
                     	int end2 = ( end * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmax();
                     	FeatureLoc floc2 = featureUtils.createLocation(parent,domain, start2, end2, strand);
@@ -374,7 +381,7 @@ public class InterProParser {
             }
 
         } // Got all the interpro numbers
-
+        session.close();
     }
 
 
@@ -453,5 +460,10 @@ public class InterProParser {
 
 	public void setFeatureUtils(FeatureUtils utils) {
 		featureUtils = utils;
+	}
+
+	public void setHibernateTransactionManager(
+			HibernateTransactionManager hibernateTransactionManager) {
+		this.hibernateTransactionManager = hibernateTransactionManager;
 	}
 }
