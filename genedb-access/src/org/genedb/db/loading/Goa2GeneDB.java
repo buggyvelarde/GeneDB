@@ -234,7 +234,7 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
     		GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
             GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
-            GO_KEY_DATE = cvDao.getCvTermByNameInCv("unixdate", CV_FEATURE_PROPERTY).get(0);
+            GO_KEY_DATE = cvDao.getCvTermByNameInCv("date", CV_FEATURE_PROPERTY).get(0);
         }
 
 
