@@ -342,9 +342,12 @@ public class InterProParser {
                     } else {
                         // Hack for superfamily as InterPro reports acc as SF12345 rather than 12345
                     	String uniqueName = polypeptide.getUniqueName() + ":" + dbacc;
+                    	System.err.println("creating feature with uniquename -> " + uniqueName);
+                    	
                     	Feature domain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
                     	DbXRef dbxref = featureUtils.findOrCreateDbXRefFromString(nativeProg + ":" + dbacc);
                     	domain.setDbXRef(dbxref);
+                    	
                     	sequenceDao.persist(domain);
                     	
                     	CvTerm scoreTerm = featureUtils.findOrCreateCvTermFromString("null", "score");
@@ -363,6 +366,7 @@ public class InterProParser {
                     		start = Integer.parseInt(coord[0]);
                     		end = Integer.parseInt(coord[1]);
                     	}	
+                    	System.err.println("creating featureloc with " + polypeptide.getUniqueName() + " " + domain.getUniqueName() + " rank " + rank);
                     	FeatureLoc floc = featureUtils.createLocation(polypeptide, domain, start, end, strand);
                     	floc.setRank(rank);
                     	sequenceDao.persist(floc);
@@ -372,15 +376,18 @@ public class InterProParser {
                     	Feature parent = featureLoc.getFeatureBySrcFeatureId();
                     	int start2 = ( start * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
                     	int end2 = ( end * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
+                    	System.err.println("creating featureloc with " + parent.getUniqueName() + " " + domain.getUniqueName() + " rank " + rank);
                     	FeatureLoc floc2 = featureUtils.createLocation(parent,domain, start2, end2, strand);
                     	floc2.setRank(rank);
                     	rank++;
                     	sequenceDao.persist(floc2);
                     	if (ipDomain != null) {
+                    		System.err.println("creating featureloc with " + polypeptide.getUniqueName() + " " + ipDomain.getUniqueName() + " rank " + rank2);
                     		FeatureLoc fl = featureUtils.createLocation(polypeptide, ipDomain, start, end, strand);
                     		fl.setRank(rank2);
                     		sequenceDao.persist(fl);
                     		rank2++;
+                    		System.err.println("creating featureloc with " + parent.getUniqueName() + " " + ipDomain.getUniqueName() + " rank " + rank);
                     		FeatureLoc fl2 = featureUtils.createLocation(parent, ipDomain, start2, end2, strand);
                     		fl2.setRank(rank2);
                     		sequenceDao.persist(fl2);
