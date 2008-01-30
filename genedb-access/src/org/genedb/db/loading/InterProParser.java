@@ -290,10 +290,9 @@ public class InterProParser {
                 }
                 // Now go thru' individual hits even if InterPro is null
                 Iterator it2 = progs.iterator();
-
+                int rank2 = 0;
                 while ( it2.hasNext() ) {
                     int rank = 0;
-                    int rank2 = 0;
                 	String prog = (String) it2.next();
                     ArrayList coords = new ArrayList();
                     List coordinates = new ArrayList();
@@ -387,7 +386,7 @@ public class InterProParser {
                     		fl.setRank(rank2);
                     		sequenceDao.persist(fl);
                     		rank2++;
-                    		System.err.println("creating featureloc with " + parent.getUniqueName() + " " + ipDomain.getUniqueName() + " rank " + rank);
+                    		System.err.println("creating featureloc with " + parent.getUniqueName() + " " + ipDomain.getUniqueName() + " rank " + rank2);
                     		FeatureLoc fl2 = featureUtils.createLocation(parent, ipDomain, start2, end2, strand);
                     		fl2.setRank(rank2);
                     		sequenceDao.persist(fl2);
