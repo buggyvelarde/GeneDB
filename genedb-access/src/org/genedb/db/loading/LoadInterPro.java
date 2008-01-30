@@ -28,7 +28,7 @@ public class LoadInterPro {
         	System.err.println("No input files specified");
         	System.exit(-1);
         }
-		Session session = hibernateTransactionManager.getSessionFactory().openSession();
+
         Properties overrideProps = new Properties();
         PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
         
@@ -44,11 +44,11 @@ public class LoadInterPro {
 		long start = new Date().getTime();
 
         for (int i = 0; i < filePaths.length; i++) {
-        	Transaction transaction = session.beginTransaction();
+
             runner.Parse(sequenceDao,filePaths[i]);
-            transaction.commit();
+
 		}
-        session.close();
+
         long stop = new Date().getTime();
         
         System.err.println("Total time taken - " + (stop - start)/60000 + " min" );
