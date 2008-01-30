@@ -11,6 +11,7 @@ import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 
 import java.io.BufferedReader;
@@ -164,6 +165,7 @@ public class InterProParser {
     private void sub1(Map genes, List col, Set strangeProgram) {
         // Go through each key and sort the ArrayLists
     	Session session = hibernateTransactionManager.getSessionFactory().openSession();
+    	Transaction transaction = session.beginTransaction();
     	Iterator geneIterator = genes.keySet().iterator();
         Feature polypeptide = null;
 
@@ -381,6 +383,7 @@ public class InterProParser {
             }
 
         } // Got all the interpro numbers
+        transaction.commit();
         session.close();
     }
 
