@@ -45,7 +45,7 @@ public class LoadInterPro {
 
         for (int i = 0; i < filePaths.length; i++) {
 
-            runner.Parse(sequenceDao,filePaths[i]);
+            runner.Parse(filePaths[i]);
 
 		}
 

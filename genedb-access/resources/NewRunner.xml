@@ -294,6 +294,7 @@
     
     <bean id="ipparser" class="org.genedb.db.loading.InterProParser" init-method="afterPropertiesSet">
     	<property name="featureUtils" ref="featureUtils" />
+    	<property name="sequenceDao" ref="sequenceDao" />
     	<property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
     

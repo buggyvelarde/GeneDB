@@ -79,9 +79,7 @@ public class InterProParser {
 
 
 
-    public void Parse(SequenceDao sequenceDao, String filename) {
-
-        this.sequenceDao = sequenceDao;
+    public void Parse(String filename) {
 
         //System.err.println("Filename is  "+filename);
         File fl = new File(filename);
@@ -100,7 +98,7 @@ public class InterProParser {
                     }
                 });
             for (int i=0; i < fls.length; i++) {
-                Parse(sequenceDao, filename+"/"+fls[i]);
+                Parse(filename+"/"+fls[i]);
             }
             return;
         }
@@ -468,5 +466,9 @@ public class InterProParser {
 	public void setHibernateTransactionManager(
 			HibernateTransactionManager hibernateTransactionManager) {
 		this.hibernateTransactionManager = hibernateTransactionManager;
+	}
+
+	public void setSequenceDao(SequenceDao sequenceDao) {
+		this.sequenceDao = sequenceDao;
 	}
 }
