@@ -367,7 +367,7 @@ public class InterProParser {
                     	FeatureLoc featureLoc = (FeatureLoc)iter.next();
                     	Feature parent = featureLoc.getFeatureBySrcFeatureId();
                     	int start2 = ( start * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
-                    	int end2 = ( end * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmax();
+                    	int end2 = ( end * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
                     	FeatureLoc floc2 = featureUtils.createLocation(parent,domain, start2, end2, strand);
                     	sequenceDao.persist(floc2);
                     	if (ipDomain != null) {
