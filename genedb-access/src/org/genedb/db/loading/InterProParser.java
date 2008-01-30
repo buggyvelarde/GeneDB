@@ -11,8 +11,12 @@ import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.orm.hibernate3.SessionHolder;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -162,7 +166,9 @@ public class InterProParser {
     
     private void sub1(Map genes, List col, Set strangeProgram) {
         // Go through each key and sort the ArrayLists
-    	Session session = hibernateTransactionManager.getSessionFactory().openSession();
+    	SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
+    	Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+    	TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
     	Transaction transaction = session.beginTransaction();
     	Iterator geneIterator = genes.keySet().iterator();
         Feature polypeptide = null;
@@ -382,7 +388,8 @@ public class InterProParser {
 
         } // Got all the interpro numbers
         transaction.commit();
-        session.close();
+        TransactionSynchronizationManager.unbindResource(sessionFactory);
+		SessionFactoryUtils.closeSession(session);
     }
 
 
