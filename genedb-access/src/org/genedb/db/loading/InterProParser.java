@@ -290,9 +290,11 @@ public class InterProParser {
                 }
                 // Now go thru' individual hits even if InterPro is null
                 Iterator it2 = progs.iterator();
-                int rank = 0;
+
                 while ( it2.hasNext() ) {
-                    String prog = (String) it2.next();
+                    int rank = 0;
+                    int rank2 = 0;
+                	String prog = (String) it2.next();
                     ArrayList coords = new ArrayList();
                     List coordinates = new ArrayList();
                     String dbacc = null;
@@ -362,23 +364,27 @@ public class InterProParser {
                     		end = Integer.parseInt(coord[1]);
                     	}	
                     	FeatureLoc floc = featureUtils.createLocation(polypeptide, domain, start, end, strand);
+                    	floc.setRank(rank);
                     	sequenceDao.persist(floc);
+                    	rank++;
                     	Iterator iter = polypeptide.getFeatureLocsForFeatureId().iterator();
                     	FeatureLoc featureLoc = (FeatureLoc)iter.next();
                     	Feature parent = featureLoc.getFeatureBySrcFeatureId();
                     	int start2 = ( start * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
                     	int end2 = ( end * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
                     	FeatureLoc floc2 = featureUtils.createLocation(parent,domain, start2, end2, strand);
+                    	floc2.setRank(rank);
+                    	rank++;
                     	sequenceDao.persist(floc2);
                     	if (ipDomain != null) {
                     		FeatureLoc fl = featureUtils.createLocation(polypeptide, ipDomain, start, end, strand);
-                    		fl.setRank(rank);
+                    		fl.setRank(rank2);
                     		sequenceDao.persist(fl);
-                    		rank++;
-                    		FeatureLoc fl2 = featureUtils.createLocation(polypeptide, parent, start2, end2, strand);
-                    		fl2.setRank(rank);
+                    		rank2++;
+                    		FeatureLoc fl2 = featureUtils.createLocation(parent, ipDomain, start2, end2, strand);
+                    		fl2.setRank(rank2);
                     		sequenceDao.persist(fl2);
-                    		rank++;
+                    		rank2++;
                     	}
                     	if ("Superfamily".equalsIgnoreCase(db) && dbacc.startsWith("SF")) {
                             dbacc = dbacc.substring(2);
