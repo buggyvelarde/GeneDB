@@ -374,6 +374,7 @@ public class InterProParser {
                     		FeatureLoc fl = featureUtils.createLocation(polypeptide, ipDomain, start, end, strand);
                     		fl.setRank(rank);
                     		sequenceDao.persist(fl);
+                    		rank++;
                     		FeatureLoc fl2 = featureUtils.createLocation(polypeptide, parent, start2, end2, strand);
                     		fl2.setRank(rank);
                     		sequenceDao.persist(fl2);
