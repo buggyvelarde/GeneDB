@@ -195,7 +195,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         //Cv goKeys = cvDao.getCvByName("genedb_fcvt_prop_keys").get(0);
         GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
         GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
-        GO_KEY_DATE = cvDao.getCvTermByNameInCv("unixdate", CV_FEATURE_PROPERTY).get(0);
+        GO_KEY_DATE = cvDao.getCvTermByNameInCv("date", CV_FEATURE_PROPERTY).get(0);
         
     }
 
@@ -554,7 +554,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 	        }
 	
 	        //  FIXME Pass in unix date
-	        thingy("unixdate", cc.getDate(), CV_FEATURE_PROPERTY, fct, null);
+	        thingy("date", cc.getDate(), CV_FEATURE_PROPERTY, fct, null);
 	        thingy("attribution", cc.getAttribution(), CV_GENEDB, fct, null);
 	        thingy("evidence", cc.getEvidence(), CV_GENEDB, fct, null);
 	        thingy("residue", cc.getResidue(), CV_GENEDB, fct, null);
