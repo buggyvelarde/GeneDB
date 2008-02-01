@@ -172,7 +172,7 @@ public class WebUtils {
 				}
             }
             
-            File file = new File("/Users/cp2/" + gene.getUniqueName() + ".gif");
+            File file = new File("/software/pathogen/projects/tomcat_workshop/tomcat/webapps/old/includes/images/cmap/" + gene.getUniqueName() + ".gif");
             OutputStream out = null;
 			try {
 				out = new FileOutputStream(file);
