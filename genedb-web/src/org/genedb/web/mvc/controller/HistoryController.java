@@ -122,7 +122,7 @@ public class HistoryController extends MultiActionController implements Initiali
         	JSONObject obj = new JSONObject();
         	obj.put("index", count);
         	obj.put("name", item.getName());
-        	obj.put("download", "http://localhost:8080/genedb-web/DownloadFeatures?historyItem=" + count);
+        	obj.put("download", "http://developer.genedb.org/old/DownloadFeatures?historyItem=" + count);
         	array.add(obj);
         	count++;
 		}
