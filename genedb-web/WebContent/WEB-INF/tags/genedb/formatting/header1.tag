@@ -14,7 +14,7 @@
     <jsp:doBody />
 </head>    
 <body onload="doSomething();">
-	<table align="center" width="100%" height="100px" style="background-image: url('includes/images/header-bkgd.gif'); background-repeat: repeat-x;">
+	<table align="center" width="100%" height="100px" style="background-image: url('<c:url value="/"/>includes/images/header-bkgd.gif'); background-repeat: repeat-x;">
 		<tr>
 			<td align="right" valign="bottom">
 				<table align="left">
