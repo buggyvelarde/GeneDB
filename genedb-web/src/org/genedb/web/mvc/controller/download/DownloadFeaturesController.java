@@ -374,7 +374,7 @@ public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 			out.write(" Ext.onReady(function(){ \n" +
 					" var ds = new Ext.data.Store({ \n" +
 			        " proxy: new Ext.data.HttpProxy({ \n" +
-			        " url: 'http://localhost:8080/genedb-web/Ext?history=" + historyItem + "'\n" +
+			        " url: 'http://developer.genedb.org/old/Ext?history=" + historyItem + "'\n" +
 			        " }), \n" +
 			        " reader: new Ext.data.JsonReader({ \n" +
 			        " root: 'features', \n" +
@@ -430,11 +430,12 @@ public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 	        		  " id: 'name', \n" +
 	                  " header: \"name\", \n" +
 	                  " dataIndex: 'name', \n" +
-	                  " width: 150 " + "}]);\n\n");
+	                  " width: 150 " + "}]);\n\ncm.defaultSortable = true;\n\n");
 			
-			out.write("var grid = new Ext.grid.GridPanel({ \n" +
+			out.write("var grid = new Ext.grid.EditorGridPanel({ \n" +
 	                  " store: ds, \n" +
 	                  " cm: cm, \n" +
+	                  " title: 'Download', \n" +
 	                  " selModel: new Ext.grid.RowSelectionModel({singleSelect:true}), \n" +
 	                  " renderTo:'download-grid', \n" +
 	                  " autoHeight : true, \n" +
@@ -481,7 +482,7 @@ public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 					  "		}\n" +
 					  "	 }\n"+
 					  " var cols = hidden.join(',')\n"+
-					  " window.location=\"http://localhost:8080/genedb-web/DownloadFeatures?historyItem=" + h + "&outputFormat=EXCEL&columns=\" + cols + \"\";\n" +
+					  " window.location=\"http://developer.genedb.org/old/DownloadFeatures?historyItem=" + h + "&outputFormat=EXCEL&columns=\" + cols + \"\";\n" +
 					  //"	 ds.load({params:{start:0, limit:25,excel:true,columns:hidden.join(',')}}); \n" +
 					  "} \n" +
 					  "}\n\n");
@@ -499,7 +500,7 @@ public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 					  "		}\n" +
 					  "	 }\n"+
 					  " var cols = hidden.join(',')\n"+
-					  " window.location=\"http://localhost:8080/genedb-web/DownloadFeatures?historyItem=" + h + "&outputFormat=CSV&columns=\" + cols + \"\";\n" +
+					  " window.location=\"http://developer.genedb.org/old/DownloadFeatures?historyItem=" + h + "&outputFormat=CSV&columns=\" + cols + \"\";\n" +
 					  //"	 ds.load({params:{start:0, limit:25,excel:true,columns:hidden.join(',')}}); \n" +
 					  "} \n" +
 					  "}\n\n");
