@@ -37,7 +37,7 @@ public class ArtemisLaunchController extends AbstractController{
 		String argument = organism + ":" + chromosome + ":" + start + ".." + end;
 		Map<String,Object> model = new HashMap<String,Object>();
 		model.put("argument", argument);
-		model.put("offset", start);
+		model.put("offset", s);
 		//FreeMarkerView fmv = new FreeMarkerView();
 		//fmv.setContentType("application/x-java-jnlp-file");
 		//fmv.setUrl("artemis");
