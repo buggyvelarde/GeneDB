@@ -149,6 +149,26 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/SearchAll</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/Curation</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/OrganismChooser</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/ArtemisLaunch</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/ProductSearch</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/Ext</url-pattern>
      </servlet-mapping>
     <servlet-mapping>
