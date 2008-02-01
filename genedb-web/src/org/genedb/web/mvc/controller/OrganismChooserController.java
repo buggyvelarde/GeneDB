@@ -20,15 +20,22 @@
 package org.genedb.web.mvc.controller;
 
 
+import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
+import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANAGER;
+
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.TaxonNode;
+import org.genedb.db.loading.TaxonNodeManager;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractCommandController;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -44,45 +51,77 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author Adrian Tivey (art)
  */
-public class OrganismChooserController extends TaxonNodeBindingFormController {
+public class OrganismChooserController extends AbstractCommandController {
 
-    private String listResultsView;
-    private SequenceDao sequenceDao;
 
-    @Override
-    protected ModelAndView onSubmit(Object command, 
-    		BindException be) throws Exception {
+    protected ModelAndView onSubmit(HttpServletRequest request, 
+    		HttpServletResponse response) throws Exception {
     	
-        OrganismChooserBean ocb = (OrganismChooserBean) command;
+    	String organism = ServletRequestUtils.getStringParameter(request, "organism");
+    	TaxonNodeManager tnm = (TaxonNodeManager)getServletContext().getAttribute(TAXON_NODE_MANAGER);
+    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(organism);
+    	//OrganismChooserBean ocb = (OrganismChooserBean) command;
         
-        TaxonNode[] taxonNode = ocb.getOrganism();
+        //TaxonNode taxonNode = ocb.getOrganism();
         
         Map<String, Object> model = new HashMap<String, Object>(4);
         String viewName = null;
         
+        if(taxonNode.getChildren().size() >=1 ) {
+        	List<String> nodes = new ArrayList<String>();
+        	List<TaxonNode> childrens = taxonNode.getChildren();
+        	for (TaxonNode node : childrens) {
+				nodes.add(node.getLabel());
+			}
+        	model.put("nodes", nodes);
+        	model.put("parent", taxonNode.getLabel());
+        	return new ModelAndView("organism/intermediate",model);
+        }
+        
+        model.put("organism", taxonNode.getLabel());
 
-        return new ModelAndView(viewName, model);
+        return new ModelAndView("organism/organism", model);
     }
 
-	public void setListResultsView(String listResultsView) {
-        this.listResultsView = listResultsView;
-    }
+	@Override
+	protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException arg3) throws Exception {
+		
+		OrganismChooserBean ocb = (OrganismChooserBean) command;
+        
+        //TaxonNode taxonNode = ocb.getOrganism();
+		String organism = ServletRequestUtils.getStringParameter(request, "organism");
+    	TaxonNodeManager tnm = (TaxonNodeManager)getServletContext().getAttribute(TAXON_NODE_MANAGER);
+    	TaxonNode taxonNode = tnm.getTaxonNodeForLabel(organism);
+        
+        Map<String, Object> model = new HashMap<String, Object>(4);
+        String viewName = null;
+        
+        if(taxonNode.getChildren().size() >=1 ) {
+        	List<String> nodes = new ArrayList<String>();
+        	List<TaxonNode> childrens = taxonNode.getChildren();
+        	for (TaxonNode node : childrens) {
+				nodes.add(node.getLabel());
+			}
+        	model.put("nodes", nodes);
+        	model.put("parent", taxonNode.getLabel());
+        	return new ModelAndView("organism/intermediate",model);
+        }
+        
+        model.put("organism", taxonNode.getLabel());
 
-    public void setSequenceDao(SequenceDao sequenceDao) {
-        this.sequenceDao = sequenceDao;
-    }
-
-	
+        return new ModelAndView("organism/organism", model);
+        
+	}
 }
 
 class OrganismChooserBean {
     
-    private TaxonNode[] organism;
+    private TaxonNode organism;
     
-    public TaxonNode[] getOrganism() {
+    public TaxonNode getOrganism() {
         return this.organism;
     }
-    public void setOrganism(TaxonNode[] organism) {
+    public void setOrganism(TaxonNode organism) {
         this.organism = organism;
     }
     
