@@ -9,6 +9,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import org.genedb.web.gui.ImageInfo;
 import org.genedb.web.mvc.controller.WebUtils;
 import org.gmod.schema.sequence.Feature;
+import org.springframework.context.ApplicationContext;
 
 public class ContextMap extends SimpleTagSupport {
 	
@@ -17,9 +18,6 @@ public class ContextMap extends SimpleTagSupport {
 	@Override
     public void doTag() throws JspException, IOException {
 		ImageInfo info = WebUtils.drawContextMap(gene);
-		JspWriter out = getJspContext().getOut();
-		
-		out.print("<img src=\"" + info.contextMapData + "\"/>");
 	}
 
 	public void setGene(Feature gene) {
