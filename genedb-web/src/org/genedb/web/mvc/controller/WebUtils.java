@@ -14,7 +14,6 @@ import org.gmod.schema.sequence.FeatureRelationship;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
 import org.biojava.bio.SimpleAnnotation;
-import org.biojava.bio.seq.FeatureHolder;
 import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.StrandedFeature;
@@ -29,13 +28,11 @@ import org.biojava.bio.symbol.Symbol;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.utils.ChangeVetoException;
 import org.biojava.utils.SmallMap;
-import org.biojavax.bio.seq.CompoundRichLocation;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -110,8 +107,8 @@ public class WebUtils {
     	
     	Collection<Location> locs = null;
     	locs = getExonLocations(gene);
-    	Location location2 = new CompoundRichLocation(locs);
-    	
+    	//Location location2 = new CompoundLocation(locs);
+    	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
     	RNASummary target = new RNASummary(gene.getDisplayName(),gene.getUniqueName(),location2,
     			"CDS",f,gene.getOrganism().getCommonName(),"",5);
     	
@@ -156,15 +153,26 @@ public class WebUtils {
                 ft.location = rs.getLocation();
                 ft.strand = rs.getStrand();
                 Annotation an = new SimpleAnnotation();
-                an.setProperty("Tooltip", rs.getDescription());
-    			an.setProperty("name", rs.getName());
-    			an.setProperty("systematic_id", rs.getId());
-    			an.setProperty("colour", rs.getColour());
+                try {
+					an.setProperty("Tooltip", rs.getDescription());
+					an.setProperty("name", rs.getName());
+	    			an.setProperty("systematic_id", rs.getId());
+	    			an.setProperty("colour", rs.getColour());
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (ChangeVetoException e) {
+					e.printStackTrace();
+				}
+    			
     			ft.annotation = an;
-                seq.createFeature(ft);
+                try {
+					seq.createFeature(ft);
+				} catch (ChangeVetoException e) {
+					e.printStackTrace();
+				}
             }
             
-            File file = new File("/Users/cp2/cmap.gif");
+            File file = new File("/Users/cp2/" + gene.getUniqueName() + ".gif");
             OutputStream out = null;
 			try {
 				out = new FileOutputStream(file);
@@ -238,8 +246,8 @@ public class WebUtils {
     		
     		Collection<Location> locs = null;
         	locs = getExonLocations(feature);
-        	Location location2 = new CompoundRichLocation(locs);
-        	
+        	//Location location2 = new CompoundRichLocation(locs);
+        	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
     		RNASummary temp = new RNASummary(feature.getDisplayName(),feature.getUniqueName(),location2,
         			"CDS",t,feature.getOrganism().getCommonName(),"",5);
     		rnas.add(temp);
@@ -259,8 +267,8 @@ public class WebUtils {
     		
     		Collection<Location> locs = null;
         	locs = getExonLocations(feature);
-        	Location location2 = new CompoundRichLocation(locs);
-        	
+        	//Location location2 = new CompoundRichLocation(locs);
+        	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
     		RNASummary temp = new RNASummary(feature.getDisplayName(),feature.getUniqueName(),location2,
         			"CDS",t,feature.getOrganism().getCommonName(),"",5);
     		rnas.add(temp);
@@ -362,7 +370,7 @@ public class WebUtils {
 			type.setText("gene");
 			color.setText("ox79cc3d");
 			label.setText(feature.getUniqueName());
-			link.setText("http://holly.internal.sanger.ac.uk:8080/genedb-web/NameFeature?lookup="+feature.getUniqueName());
+			link.setText("http://developer.genedb.org/new/NameFeature?lookup="+feature.getUniqueName());
 			
 			XMLfeature.addContent(chromosome);
 			XMLfeature.addContent(chrstart);
