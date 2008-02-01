@@ -38,6 +38,7 @@ import org.json.simple.JSONObject;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,8 +77,8 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     	Map<String,Object> model = new HashMap<String,Object>(2);
     	String viewName = listResultsView;
     	List<ResultHit> results = new ArrayList<ResultHit>();
-    	
-    	IndexReader ir = luceneDao.openIndex("/Users/cp2/hibernate/search/indexes/org.gmod.schema.sequence.Feature/");
+    	File tmpDir = new File(getServletContext().getRealPath("/index/hibernate/search/indexes/org.gmod.schema.sequence.Feature/"));
+    	IndexReader ir = luceneDao.openIndex(tmpDir.getAbsolutePath());
     	List<String> fields = new ArrayList<String>();
     	String query = null;
     	if(orgs == null) {
