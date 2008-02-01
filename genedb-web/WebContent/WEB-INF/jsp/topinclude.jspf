@@ -7,3 +7,6 @@
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/genedb/formatting" %>
 <%@ taglib prefix="st" tagdir="/WEB-INF/tags/genedb/structure" %>
 <%@ taglib prefix="query" tagdir="/WEB-INF/tags/genedb/query" %>
+
+<%@ taglib prefix="db" uri="db" %>
+<%@ taglib prefix="misc" uri="misc" %>
