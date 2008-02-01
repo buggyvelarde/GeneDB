@@ -228,12 +228,7 @@ public class TransientSequence
 
     public void removeFeature(Feature f)
     throws ChangeVetoException {
-      try {
-		getFeatureHolder().removeFeature(f);
-	} catch (BioException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+      getFeatureHolder().removeFeature(f);
     }
 
     public void edit(Edit edit) throws ChangeVetoException {
