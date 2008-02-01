@@ -124,6 +124,7 @@
 		</st:section>
 		
 		<st:section name="Curation" id="gene_curation" collapsed="false" collapsible="true" hideIfEmpty="true">
+		<db:comment polypeptide="${polypeptide}"></db:comment>
 		-- Controlled curation --
 		<db:curation polypeptide="${polypeptide}"></db:curation>
 		<br>-- Curation --
