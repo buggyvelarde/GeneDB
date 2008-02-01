@@ -13,7 +13,7 @@ Ext.onReady(function(){
         // load using script tags for cross domain, if the data in on the same domain as
         // this page, an HttpProxy would be better
         proxy: new Ext.data.HttpProxy({
-            url: 'http://localhost:8080/genedb-web/History/Data'
+            url: 'http://pathdbsrv1a:8080/History/Data'
         }),
 
         // create reader that reads the Topic records
@@ -91,7 +91,7 @@ Ext.onReady(function(){
 		var value = e.value;
 		if(field=="download") {
 			row++;
-			window.location="http://localhost:8080/genedb-web/DownloadFeatures?historyItem=" + row;	
+			window.location="http://pathdbsrv1a:8080/DownloadFeatures?historyItem=" + row;	
 		} else {
 			ds.load({params:{change:true,row:row,value:value}});
 		}
