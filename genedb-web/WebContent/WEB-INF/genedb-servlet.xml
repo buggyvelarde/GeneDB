@@ -86,7 +86,26 @@
 		<property name="suffix" value=".jsp" />
 		<property name="order" value="3" />
 	</bean>
+	
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+  		<property name="templateLoaderPath" value="/WEB-INF/freemarker/artemis/"/>
+	</bean>
+	
+	<!-- <bean id="freemarkerviewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+	  <property name="cache" value="true"/>
+	  <property name="contentType" value="application/x-java-jnlp-file"/>
+	  <property name="prefix" value=""/>
+	  <property name="suffix" value=".jnlp"/> 
+	  
 
+	  <property name="exposeSpringMacroHelpers" value="true"/>
+	
+	</bean> -->
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+    	<property name="basename" value="views"/>
+    	<property name="order" value="0"/>
+	</bean>
 	<!--
 	  - This bean resolves specific types of exception to corresponding error views.
 		- The default behaviour of DispatcherServlet is to propagate all exceptions to the
@@ -196,11 +215,6 @@
         <property name="formView" value="search/download" />
         <property name="bindOnNewForm" value="true" />
     </bean>
-        
-    <bean id="FlatFileReportController" class="org.genedb.web.mvc.controller.FlatFileReportController">
-            <property name="commandClass" value="org.genedb.web.mvc.controller.FlatFileReportBean" />
-            <property name="successView" value="list/features" />
-    </bean>
        
     <bean id="pfamLookup" class="org.genedb.web.mvc.controller.PfamLookup" /> 
        
@@ -226,6 +240,13 @@
     	<property name="bindOnNewForm" value="true" />
     	<property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
+    </bean>
+    
+    <bean id="OrganismChooserController" class="org.genedb.web.mvc.controller.OrganismChooserController">
+    	<property name="commandClass" value="org.genedb.web.mvc.controller.OrganismChooserBean"/>
+    </bean>
+    
+    <bean id="ArtemisLaunchController" class="org.genedb.web.mvc.controller.ArtemisLaunchController">
     </bean>
     
     <bean id="ProductSearchController" class="org.genedb.web.mvc.controller.ProductSearchController">
