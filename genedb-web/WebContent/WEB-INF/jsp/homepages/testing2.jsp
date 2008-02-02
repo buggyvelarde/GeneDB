@@ -226,7 +226,7 @@
 																			<br><input type="checkbox" checked name="desc" value="yes">Include description in search
 																			<br><input type="checkbox" name="wildcard" value="yes">Add wildcards to search term
 																			<br>&nbsp;
-																			<br><input type="submit" name="submit" value="Search">&nbsp&nbsp;&nbsp;<input type=reset>
+																			<br><input type="submit" name="submit" value="Search">&nbsp;&nbsp;&nbsp;<input type=reset>
 																		</form>
 																		</td>
 																	</tr>
