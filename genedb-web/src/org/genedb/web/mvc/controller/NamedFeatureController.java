@@ -20,17 +20,35 @@
 package org.genedb.web.mvc.controller;
 
 
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Hits;
+import org.biojava.bio.BioException;
+import org.biojava.bio.proteomics.IsoelectricPointCalc;
+import org.biojava.bio.proteomics.MassCalc;
+import org.biojava.bio.seq.ProteinTools;
+import org.biojava.bio.seq.io.SymbolTokenization;
+import org.biojava.bio.symbol.Alphabet;
+import org.biojava.bio.symbol.IllegalAlphabetException;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.bio.symbol.SimpleSymbolList;
+import org.biojava.bio.symbol.SymbolList;
+import org.biojava.bio.symbol.SymbolPropertyTable;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.utils.PeptideProperties;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +67,7 @@ import javax.servlet.http.HttpServletResponse;
 public class NamedFeatureController extends TaxonNodeBindingFormController {
 
     private String listResultsView;
-    //private SequenceDao sequenceDao;
+    private SequenceDao sequenceDao;
     private Grep grep;
     private LuceneDao luceneDao;
     
@@ -74,11 +92,15 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     		fields.add("cvTerm.name");
     		query = "uniqueName:" + name + " AND cvTerm.name:gene";
     		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), fields, query);
-    		if (hits.length() == 0) {
+    		switch (hits.length()) {
+    		case 0:
     			be.reject("No Result");
     			return showForm(request, response, be);
     			//return new ModelAndView(viewName,null);
-    		} else {
+    		case 1:
+    			prepareGene(hits.doc(0).get("uniqueName"), model);
+    			viewName = getSuccessView();
+    		default:
     			for (int i=0;i<hits.length();i++) {
     				Document doc = hits.doc(i);
     				ResultHit rh = new ResultHit();
@@ -87,22 +109,101 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     				rh.setOrganism(doc.get("organism.commonName"));
     				results.add(rh);
     			}
+    			viewName = listResultsView;
     			model.put("results", results);
-    			if(nlb.isHistory()) {
-    				List<String> ids = new ArrayList<String>(results.size());
-            		for (ResultHit feature : results) {
-    					ids.add(feature.getName());
-    				}
-            		HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
-            		historyManager.addHistoryItems("name lookup '"+nlb+"'", ids);
-    			}
-    			return new ModelAndView(viewName,model);
     		}
-    	} 
-    	
-    	return null;
+    		
+    		if(nlb.isHistory()) {
+    			List<String> ids = new ArrayList<String>(results.size());
+    			for (ResultHit feature : results) {
+    				ids.add(feature.getName());
+    			}
+    			HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
+    			historyManager.addHistoryItems("name lookup '"+nlb+"'", ids);
+    		}
+    	}
+    	return new ModelAndView(viewName,model);
     }
-    /*
+    
+    private void prepareGene(String systematicId, Map<String, Object> model) throws IOException {
+    	String type = "gene";
+		Feature gene = sequenceDao.getFeatureByUniqueName(systematicId, type);
+        grep.compile("ID=" + systematicId);
+        List<String> out = grep.grep();
+        model.put("modified", out);
+        model.put("feature", gene);
+
+        Feature mRNA = null;
+        Collection<FeatureRelationship> frs = gene.getFeatureRelationshipsForObjectId(); 
+        if (frs != null) {
+        	for (FeatureRelationship fr : frs) {
+        		mRNA = fr.getFeatureBySubjectId();
+        		break;
+        	}
+        	if (mRNA != null) {
+        		Feature polypeptide = null;
+        		Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
+        		for (FeatureRelationship fr : frs2) {
+        			Feature f = fr.getFeatureBySubjectId();
+        			if ("polypeptide".equals(f.getCvTerm().getName())) {
+        				polypeptide = f;
+        			}
+        		}
+        		model.put("transcript", mRNA);
+        		model.put("polypeptide", polypeptide);
+                PeptideProperties pp = calculatePepstats(polypeptide);
+    			model.put("polyprop", pp);
+        	}
+        }
+    }
+    
+
+    private PeptideProperties calculatePepstats(Feature polypeptide) {
+
+        //String seqString = FeatureUtils.getResidues(polypeptide);
+        String seqString = new String(polypeptide.getResidues());
+    	//System.err.println(seqString);
+        Alphabet protein = ProteinTools.getAlphabet();
+        SymbolTokenization proteinToke = null;
+        SymbolList seq = null;
+        PeptideProperties pp = new PeptideProperties();
+        try {
+        	proteinToke = protein.getTokenization("token");
+        	seq = new SimpleSymbolList(proteinToke, seqString);
+        } catch (BioException e) {
+        	logger.error("Can't translate into a protein sequence");
+        	//pp.setWarning("Unable to translate protein"); // FIXME
+        	return pp;
+        }
+        IsoelectricPointCalc ipc = new IsoelectricPointCalc();
+        Double cal = 0.0;
+        try {
+        	cal = ipc.getPI(seq, false, false);
+        } catch (IllegalAlphabetException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+        } catch (BioException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+        }
+        DecimalFormat df = new DecimalFormat("#.##");
+        pp.setIsoelectricPoint(df.format(cal));
+        pp.setAminoAcids(Integer.toString(seqString.length()));
+        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
+        try {
+        	cal = mc.getMass(seq)/1000;
+        } catch (IllegalSymbolException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+        }
+        pp.setMass(df.format(cal));
+        
+        //cal = WebUtils.getCharge(seq);
+        pp.setCharge(df.format(cal));
+        return pp;
+    }
+    
+	/*
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, 
     		HttpServletResponse response, Object command, 
