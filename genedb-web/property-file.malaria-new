@@ -3,5 +3,5 @@ webAppRootKey=genedb.new.root
 dbhost=pathdbsrv1a
 dbport=10101
 dbname=malaria_workshop
-dbuser=art@sanger.ac.uk
-dbpassword=Eetie9sh
+dbuser=pathdb
+dbpassword=Pyrate_1
