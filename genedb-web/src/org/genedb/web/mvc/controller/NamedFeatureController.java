@@ -136,8 +136,9 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         	s = s.trim();
 			s = s.replace("uk.ac.sanger.artemis.chado.ChadoTransactionManager", "artemis");
 			s = s.replace("[AWT-EventQueue-0]", "[AWT-EQ0]");
-			//s = s.replaceAll("\\d\\.\\d+\\.\\d+.\\d+\\s+\\d", "");
-			//s = s.replaceAll("\\S+@\\S+", "username");
+			s = s.replaceAll("\\d\\.\\d+\\.\\d+\\.\\d+\\s+\\d", "");
+			s = s.replaceAll("\\S+@\\S+", "username");
+			s = " "+s;
 			filtered.add(s);
 		}
         model.put("modified", filtered);
