@@ -272,6 +272,7 @@
         <property name="commandName" value="nameLookup"/>
         <property name="commandClass" value="org.genedb.web.mvc.controller.NameLookupBean" />
 		<property name="luceneDao" ref="luceneDao"/>
+		<property name="sequenceDao" ref="sequenceDao" />
         <property name="listResultsView" value="list/features" />
         <property name="formView" value="search/nameLookup" />
         <property name="bindOnNewForm" value="true" />

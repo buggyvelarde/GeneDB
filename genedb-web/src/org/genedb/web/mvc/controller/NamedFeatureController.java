@@ -364,9 +364,9 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         this.listResultsView = listResultsView;
     }
 
-    /*public void setSequenceDao(SequenceDao sequenceDao) {
+    public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
-    }*/
+    }
 
 	public void setGrep(Grep grep) {
 		this.grep = grep;
