@@ -262,7 +262,7 @@
     
     <bean name="historyManagerFactory" class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
     
-    <bean name="webUtils" class="org.genedb.web.mvc.controller.WebUtils">
+    <bean name="webUtils" class="org.genedb.web.mvc.controller.GeneDBWebUtils">
 		<property name="sequenceDao" ref="sequenceDao"/>
 	</bean>
 	
