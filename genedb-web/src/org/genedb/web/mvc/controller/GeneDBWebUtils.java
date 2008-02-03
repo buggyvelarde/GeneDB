@@ -170,7 +170,7 @@ public class GeneDBWebUtils {
 				}
             }
             
-            File file = new File("/software/pathogen/projects/tomcat_workshop/tomcat/webapps/"+prefix+"includes/images/cmap/" + gene.getUniqueName() + ".gif");
+            File file = new File("/software/pathogen/projects/genedb/tomcat_workshop/tomcat/webapps/"+prefix+"includes/images/cmap/" + gene.getUniqueName() + ".gif");
             System.err.println("Writing image to '"+file.getAbsolutePath()+"'");
             OutputStream out = null;
 			try {
@@ -182,7 +182,7 @@ public class GeneDBWebUtils {
             ContextMap contextMap = new ContextMap();
             ImageInfo ii = new ImageInfo();
             
-            info = contextMap.drawMap(seq,ii,min,max,target.getId(),false,out);
+            info = contextMap.drawMap(seq, ii, min,max,target.getId(),false,out);
             
         }
         catch (BioException exp) {
@@ -222,7 +222,7 @@ public class GeneDBWebUtils {
 		return len;
 	}
 
-	private static List<RNASummary> getNeighbours(Feature gene,RNASummary target) {
+	private static List<RNASummary> getNeighbours(Feature gene, RNASummary target) {
 
     	List<RNASummary> rnas = new ArrayList<RNASummary>();
     	FeatureLoc location = gene.getFeatureLocsForFeatureId().iterator().next();
