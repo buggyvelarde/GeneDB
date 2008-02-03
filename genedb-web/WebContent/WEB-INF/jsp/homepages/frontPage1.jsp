@@ -76,8 +76,8 @@
 		<tbody>
 		<tr>
 		<td width="50%">
-		<a href="./OrganismChooser?organism=Bacteria">Bacteria</a>:
-		<a href="./OrganismChooser?organism=Bacteria"><img class="img-nb" src="<c:url value="/includes/images/nm.gif"/>" alt="Bacteria" title="Bacteria" style="height: 55px; width: 55px; float: right;"></a>
+		Bacteria:
+		<img class="img-nb" src="<c:url value="/includes/images/nm.gif"/>" alt="Bacteria" title="Bacteria" style="height: 55px; width: 55px; float: right;">
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
@@ -90,41 +90,41 @@
 		</tr>
 		<tr>
 		<td width="50%">
-		<a href="./OrganismChooser?organism=Fungi">Fungi</a>:
-		<a href="./OrganismChooser?organism=Fungi"><img class="img-nb" src="<c:url value="/includes/images/fg.jpg"/>" alt="Fungi" title="Fungi" style="height: 55px; width: 55px; float: right;"></a>
+		Fungi:
+		<img class="img-nb" src="<c:url value="/includes/images/fg.jpg"/>" alt="Fungi" title="Fungi" style="height: 55px; width: 55px; float: right;">
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
 		<td width="50%">
-		<a href="./OrganismChooser?organism=Helminths">Helminths</a>:
-		<a href="./OrganismChooser?organism=Helminths"><img class="img-nb" src="<c:url value="/includes/images/he.jpg"/>" alt="Helminths" title="Helminths" style="height: 55px; width: 55px; float: right;"></a>
+		Helminths:
+		<img class="img-nb" src="<c:url value="/includes/images/he.jpg"/>" alt="Helminths" title="Helminths" style="height: 55px; width: 55px; float: right;">
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
 		</tr>
 		<tr>
 		<td width="50%">
-		<a href="./OrganismChooser?organism=Plasmids">Plasmids</a>:
-		<a href="./OrganismChooser?organism=Plasmids"><img class="img-nb" src="<c:url value="/includes/images/pl.jpg"/>" alt="Plasmids" title="Plasmids" style="height: 55px; width: 55px; float: right;"></a>
+		Plasmids:
+		<img class="img-nb" src="<c:url value="/includes/images/pl.jpg"/>" alt="Plasmids" title="Plasmids" style="height: 55px; width: 55px; float: right;">
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
 		<td width="50%"><!--run from /bin-offline/Website/lists/-->
-		<a href="./OrganismChooser?organism=Vectors">Vectors</a>:
-		<a href="./OrganismChooser?organism=Vectors"><img class="img-nb" src="<c:url value="/includes/images/ve.gif"/>" alt="Vectors" title="Vectors" style="height: 55px; width: 55px; float: right;"></a>
+		Vectors:
+		<img class="img-nb" src="<c:url value="/includes/images/ve.gif"/>" alt="Vectors" title="Vectors" style="height: 55px; width: 55px; float: right;">
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
 		</tr>
 		<tr>
 		<td width="50%">
-		<a href="./OrganismChooser?organism=Phage">Bacteriophage</a>:
-		<a href="./OrganismChooser?organism=Phage"><img class="img-nb" src="<c:url value="/includes/images/ba.jpg"/>" alt="Bacteriophage" title="Bacteriophage" style="height: 55px; width: 55px; float: right;"></a>
+		Bacteriophage:
+		<img class="img-nb" src="<c:url value="/includes/images/ba.jpg"/>" alt="Bacteriophage" title="Bacteriophage" style="height: 55px; width: 55px; float: right;">
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
-		<td width="50%"><a href="./OrganismChooser?organism=Virus">Virus</a>:
-		<a href="./OrganismChooser?organism=Virus"><img class="img-nb" src="<c:url value="/includes/images/vi.jpg"/>" alt="Virus" title="Virus" style="height: 55px; width: 55px; float: right;"></a>
+		<td width="50%">Virus:
+		<img class="img-nb" src="<c:url value="/includes/images/vi.jpg"/>" alt="Virus" title="Virus" style="height: 55px; width: 55px; float: right;">
 		<p>All data from these projects are immediately and freely
 		available.</p>
 		</td>
