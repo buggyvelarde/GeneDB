@@ -131,7 +131,15 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 		Feature gene = sequenceDao.getFeatureByUniqueName(systematicId, type);
         grep.compile("ID=" + systematicId);
         List<String> out = grep.grep();
-        model.put("modified", out);
+        List<String> filtered = new ArrayList<String>(out.size());
+        for (String s : out) {
+			s = s.replace("uk.ac.sanger.artemis.chado.ChadoTransactionManager", "artemis");
+			s = s.replace("[AWT-EventQueue-0]", "[AWT-EQ0]");
+
+			s = s.replaceAll("\\S+@\\S+", "<username>");
+			filtered.add(s);
+		}
+        model.put("modified", filtered);
         model.put("feature", gene);
 
         Feature mRNA = null;
