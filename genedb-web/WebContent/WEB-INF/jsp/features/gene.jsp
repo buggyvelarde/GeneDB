@@ -98,18 +98,17 @@
 			  <c:set var="end" value="${featLoc.fmax}"/>
 			  <c:set var="chromosome" value="${featLoc.featureBySrcFeatureId.uniqueName}"/>
 		  </c:forEach>
-		  <a href="../ArtemisLaunch?organism=${feature.organism.commonName}&chromosome=${chromosome}&start=${start}&end=${end}">Show region in Artemis</a>
+		  <a href="ArtemisLaunch?organism=${feature.organism.commonName}&chromosome=${chromosome}&start=${start}&end=${end}">Show region in Artemis</a>
 		</st:section>
 		<st:section name="Context Map" id="context_map" collapsed="false" collapsible="true" hideIfEmpty="false">
 			<misc:contextmap gene="${feature}"></misc:contextmap>
+			 <img src="<c:url value="/"/>includes/images/cmap/${feature.uniqueName}.gif"/>
 		</st:section>
 		<st:section name="Location" id="gene_location" collapsed="false" collapsible="true" hideIfEmpty="true">
 			<c:forEach items="${feature.featureLocsForFeatureId}" var="featLoc">
 				<p>[${featLoc.rank}]&nbsp;&nbsp;${featLoc.strand}&nbsp;&nbsp;${featLoc.fmin}...${featLoc.fmax} on <i>to be done</i></p>
 			</c:forEach>
-		
-		
-		<p align="center">I'm a pretty graphic</p>
+	
 		
 		</st:section>
 		
@@ -134,6 +133,7 @@
 		  </db:propByName>
 		</st:section>
 		
+		<%--
 		<st:section name="Structure - wouldn't necessarily be shown" id="gene_structure" collapsed="false" collapsible="true" hideIfEmpty="true">
 		  <h5>This feature is object</h5>
 		    <table>
@@ -157,7 +157,7 @@
 		        	</table>
 		
 		</st:section>
-		
+		--%>
 		<st:section name="Predicted Peptide Properties" id="gene_pepprop" collapsed="false" collapsible="true" hideIfEmpty="true">
 		<table class="simple">
 			<tr>
