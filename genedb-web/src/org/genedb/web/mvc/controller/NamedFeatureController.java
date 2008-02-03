@@ -100,6 +100,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     		case 1:
     			prepareGene(hits.doc(0).get("uniqueName"), model);
     			viewName = "features/gene";
+    			break;
     		default:
     			for (int i=0;i<hits.length();i++) {
     				Document doc = hits.doc(i);
