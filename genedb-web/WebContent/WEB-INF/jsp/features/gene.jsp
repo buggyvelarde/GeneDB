@@ -17,7 +17,7 @@
 		<div class="fieldset">
 		<div class="legend">Quick Search</div>
 			<br>
-			<form name="query" action="/NamedFeature" method="get">
+			<form name="query" action="<c:url value="/"/>/NamedFeature" method="get">
 			<table>
 				<tr>
 					<td>Gene Name: </td>
