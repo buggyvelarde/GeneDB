@@ -268,8 +268,9 @@ public class GeneDBWebUtils {
     		Collection<Location> locs = getExonLocations(feature);
         	//Location location2 = new CompoundRichLocation(locs);
         	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
-    		RNASummary temp = new RNASummary(feature.getDisplayName(),feature.getUniqueName(),location2,
-        			"CDS",t,feature.getOrganism().getCommonName(),"",5);
+        	int colour = 5;
+    		RNASummary temp = new RNASummary(feature.getDisplayName(), feature.getUniqueName(), location2,
+        			"CDS", t, feature.getOrganism().getCommonName(), "", colour);
     		rnas.add(temp);
 		}
     	return rnas;

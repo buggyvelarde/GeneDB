@@ -102,7 +102,6 @@
 		</st:section>
 		<st:section name="Context Map" id="context_map" collapsed="false" collapsible="true" hideIfEmpty="false">
 			<misc:contextmap gene="${feature}"></misc:contextmap>
-			<img src="<c:url value="/"/>includes/images/cmap/${feature.uniqueName}.gif"/>
 		</st:section>
 		<st:section name="Location" id="gene_location" collapsed="false" collapsible="true" hideIfEmpty="true">
 			<c:forEach items="${feature.featureLocsForFeatureId}" var="featLoc">

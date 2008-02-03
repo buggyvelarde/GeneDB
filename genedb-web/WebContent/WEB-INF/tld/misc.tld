@@ -19,7 +19,7 @@
  
  <tag>
    <name>contextmap</name>
-   <tag-class>org.genedb.web.tags.misc.ContextMap</tag-class>
+   <tag-class>org.genedb.web.tags.misc.ContextMapTag</tag-class>
    <body-content>scriptless</body-content>
    <attribute>
        <name>gene</name>
