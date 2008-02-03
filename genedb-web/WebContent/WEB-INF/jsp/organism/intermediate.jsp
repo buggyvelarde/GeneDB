@@ -77,7 +77,7 @@
 		<c:forEach items="${nodes}" var="orgs">	
 			<tr>
 				<td width="100%">
-				<a href="http://localhost:8080/genedb-web/OrganismChooser?organism=${orgs}">${orgs}</a>
+				<a href="<c:url value="/"/>OrganismChooser?organism=${orgs}">${orgs}</a>
 				</td>
 			</tr>
 		</c:forEach>
