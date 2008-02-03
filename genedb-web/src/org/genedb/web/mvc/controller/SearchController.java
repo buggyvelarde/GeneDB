@@ -459,12 +459,12 @@ public class SearchController extends MultiActionController implements Initializ
 				}
 				model.put("features", feats);
 				File tmpDir = new File(getServletContext().getRealPath("/GViewer/data"));
-				length = WebUtils.buildGViewerXMLFiles(feats, tmpDir);
+				length = GeneDBWebUtils.buildGViewerXMLFiles(feats, tmpDir);
 				model.put("length", length);
 			} else {
 				model.put("features", features);
 				File tmpDir = new File(getServletContext().getRealPath("/GViewer/data"));
-				length = WebUtils.buildGViewerXMLFiles(features, tmpDir);
+				length = GeneDBWebUtils.buildGViewerXMLFiles(features, tmpDir);
 				model.put("length", length);
 			}
 			viewName = "list/features1";

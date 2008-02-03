@@ -1,6 +1,6 @@
 package org.genedb.web.tags.db;
 
-import org.genedb.web.mvc.controller.WebUtils;
+import org.genedb.web.mvc.controller.GeneDBWebUtils;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -104,7 +104,7 @@ public class DisplayControlledCuration extends SimpleTagSupport{
 					}
 					//System.out.println(sequenceDao.toString());
 					int size;
-					size = WebUtils.featureListSize(fct.getCvTerm().getName(),"CC_genedb_controlledcuration");
+					size = GeneDBWebUtils.featureListSize(fct.getCvTerm().getName(),"CC_genedb_controlledcuration");
 					if(size > 1) {
 						size = size - 1;
 						out.println(startTag + "<a href=\"http://holly.internal.sanger.ac.uk:8080/genedb-web/Search/FeatureByCvTermNameAndCvName?name=" + fct.getCvTerm().getName() + "&cvName=" + fct.getCvTerm().getCv().getName() + "\">" + "(" + size + " others)" + "</a>" + endTag );

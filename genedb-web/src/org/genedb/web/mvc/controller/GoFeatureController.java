@@ -78,7 +78,7 @@ public class GoFeatureController extends SimpleFormController{
         model.put("termName", goName);
         model.put("goNumber", gl.getLookup());
         File tmpDir = new File(getServletContext().getRealPath("/GViewer/data"));
-        String length = WebUtils.buildGViewerXMLFiles(results, tmpDir);
+        String length = GeneDBWebUtils.buildGViewerXMLFiles(results, tmpDir);
         model.put("length", length);
         
         

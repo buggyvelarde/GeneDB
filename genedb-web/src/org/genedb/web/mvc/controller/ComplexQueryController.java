@@ -59,7 +59,7 @@ public class ComplexQueryController extends MultiActionController implements Ini
 	@SuppressWarnings("unchecked")
 	public ModelAndView BooleanQuery(HttpServletRequest request, HttpServletResponse response) {
 		List<String> answers = new ArrayList<String>();
-		if (!WebUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
+		if (!GeneDBWebUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
 			return new ModelAndView("chooseTaxon");
 		}
 		

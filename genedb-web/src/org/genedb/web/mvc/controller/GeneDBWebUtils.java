@@ -47,12 +47,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class WebUtils {
+public class GeneDBWebUtils {
 	
 	private static SequenceDao sequenceDao;
 	
     public void setSequenceDao(SequenceDao sequenceDao) {
-		WebUtils.sequenceDao = sequenceDao;
+		GeneDBWebUtils.sequenceDao = sequenceDao;
 	}
 
     public static boolean extractTaxonNodesFromRequest(HttpServletRequest request, List<String> answers, boolean required, boolean onlyOne) {
@@ -68,7 +68,7 @@ public class WebUtils {
             }
         }
 
-        String msg = WebUtils.validateTaxons(idsAndNames);
+        String msg = GeneDBWebUtils.validateTaxons(idsAndNames);
         
         int length = idsAndNames.size();
         if (required && length==0) {
@@ -94,19 +94,17 @@ public class WebUtils {
         return true;
     }
     
-    public static ImageInfo drawContextMap(Feature gene) {
-    	
-    	StrandedFeature.Strand f = null;
+    public static ImageInfo drawContextMap(Feature gene, String prefix) {
+
     	ImageInfo info = null;
     	FeatureLoc location = gene.getFeatureLocsForFeatureId().iterator().next();
+
+    	StrandedFeature.Strand f = StrandedFeature.NEGATIVE;
     	if( location.getStrand() == 1) {
     		f = StrandedFeature.POSITIVE;
-    	} else {
-    		f = StrandedFeature.NEGATIVE;
     	}
     	
-    	Collection<Location> locs = null;
-    	locs = getExonLocations(gene);
+    	Collection<Location> locs = getExonLocations(gene);
     	//Location location2 = new CompoundLocation(locs);
     	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
     	RNASummary target = new RNASummary(gene.getDisplayName(),gene.getUniqueName(),location2,
@@ -172,7 +170,8 @@ public class WebUtils {
 				}
             }
             
-            File file = new File("/software/pathogen/projects/tomcat_workshop/tomcat/webapps/old/includes/images/cmap/" + gene.getUniqueName() + ".gif");
+            File file = new File("/software/pathogen/projects/tomcat_workshop/tomcat/webapps/"+prefix+"includes/images/cmap/" + gene.getUniqueName() + ".gif");
+            System.err.println("Writing image to '"+file.getAbsolutePath()+"'");
             OutputStream out = null;
 			try {
 				out = new FileOutputStream(file);
@@ -233,7 +232,8 @@ public class WebUtils {
     	int max = location.getFmax();
     	System.err.println("min and max are " + min + " " + newMin);
     	Feature parent = location.getFeatureBySrcFeatureId();
-    	List<Feature> features = sequenceDao.getFeaturesByLocation(newMin, min - 1, "gene",gene.getOrganism().getCommonName(),parent);
+    	List<Feature> features = sequenceDao.getFeaturesByLocation(newMin, min - 1, "gene", 
+    			gene.getOrganism().getCommonName(), parent);
     	for (Feature feature : features) {
     		
     		StrandedFeature.Strand t = null;
@@ -248,25 +248,24 @@ public class WebUtils {
         	locs = getExonLocations(feature);
         	//Location location2 = new CompoundRichLocation(locs);
         	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
-    		RNASummary temp = new RNASummary(feature.getDisplayName(),feature.getUniqueName(),location2,
-        			"CDS",t,feature.getOrganism().getCommonName(),"",5);
+    		RNASummary temp = new RNASummary(feature.getDisplayName(), feature.getUniqueName(), 
+    				location2, "CDS", t, feature.getOrganism().getCommonName(), "", 5);
     		rnas.add(temp);
 		}
     	rnas.add(target);
     	int newMax = max + 13000;
-    	features = sequenceDao.getFeaturesByLocation(max + 1, newMax, "gene",gene.getOrganism().getCommonName(),parent);
+    	features = sequenceDao.getFeaturesByLocation(max + 1, newMax, "gene" , 
+    			gene.getOrganism().getCommonName(), parent);
     	for (Feature feature : features) {
     		
-    		StrandedFeature.Strand t = null;
+
     		FeatureLoc loc2 = feature.getFeatureLocsForFeatureId().iterator().next();
+    		StrandedFeature.Strand t = StrandedFeature.NEGATIVE;
     		if(loc2.getStrand() == 1) {
         		t = StrandedFeature.POSITIVE;
-        	} else {
-        		t = StrandedFeature.NEGATIVE;
         	}
     		
-    		Collection<Location> locs = null;
-        	locs = getExonLocations(feature);
+    		Collection<Location> locs = getExonLocations(feature);
         	//Location location2 = new CompoundRichLocation(locs);
         	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
     		RNASummary temp = new RNASummary(feature.getDisplayName(),feature.getUniqueName(),location2,
