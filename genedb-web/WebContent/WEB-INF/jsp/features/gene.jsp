@@ -236,9 +236,11 @@
 		<st:section name="Modified" collapsed="false" collapsible="true" hideIfEmpty="true">
 			<b>Date created:</b>         ${feature.timeAccessioned}<br>  
 			<b>Date last modified:</b>   ${feature.timeLastModified}<br>
+			<ul>
 			<c:forEach items="${modified}" var="line">
-				<b>${line}</b><br/>
+				<li>${line}</li>
 			</c:forEach>
+			</ul>
 		</st:section>
 	</td>
 </tr>
