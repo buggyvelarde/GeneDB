@@ -33,18 +33,17 @@ public class FilteredPropertyLoopTag extends LoopTagSupport {
 
 	@Override
 	protected void prepare() throws JspTagException {
-		// Filter the values list based on the cv 
-		// and possibly the cvterm
+		// Filter the values list based on the cv and possibly the cvterm
 		List<PropertyI> passed = new ArrayList<PropertyI>();
 		for (PropertyI propertyI : items) {
-			System.err.println(propertyI.getCvTerm().getCv().getName());
-			if (!propertyI.getCvTerm().getCv().getName().equals(cvName)) {
-				continue;
+//			System.err.println(propertyI.getCvTerm().getCv().getName());
+			if (propertyI.getCvTerm().getCv().getName().equals(cvName)) {
+				if (cvTermName == null || propertyI.getCvTerm().getName().equals(cvTermName)) {
+					passed.add(propertyI);
+				}
 			}
-			// TODO cvTerm filtering
-			passed.add(propertyI);
+			
 		}
-		//items = passed;
 		it = passed.iterator();
 	}
 
