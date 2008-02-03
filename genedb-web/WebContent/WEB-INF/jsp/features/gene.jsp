@@ -17,15 +17,15 @@
 		<div class="fieldset">
 		<div class="legend">Quick Search</div>
 			<br>
-			<form name="query" action="NamedFeature" method="get">
+			<form name="query" action="/NamedFeature" method="get">
 			<table>
 				<tr>
 					<td>Gene Name: </td>
 					<td><input id="query" name="name" type="text" size="12"/></td>
 				</tr>
-				<tr>
+				<%--<tr>
 					<td><input type="hidden" name="orgs" value="${organism}"/></td>
-				</tr>
+				</tr> --%>
 				<tr>
 					<td><input type="submit" value="submit"/></td>
 					<td><br></td>
@@ -44,11 +44,11 @@
 				<tr align="left"><td><a href="www.genedb.org" class="mainlevel" >FAQs</a></td></tr>
 			</table>
 		</div>
-		<!--   <div class="fieldset">	
+		<%--   <div class="fieldset">	
 		<div class="legend">History</div>
 			<br>
 			<div id="topic-grid"/>
-		</div> -->
+		</div> --%>
 	</td>
 	<td width="100%">
 		<div class="fieldset" align="center" style="width: 98%;">
