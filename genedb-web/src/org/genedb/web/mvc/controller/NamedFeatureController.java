@@ -133,10 +133,11 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         List<String> out = grep.grep();
         List<String> filtered = new ArrayList<String>(out.size());
         for (String s : out) {
+        	s = s.trim();
 			s = s.replace("uk.ac.sanger.artemis.chado.ChadoTransactionManager", "artemis");
 			s = s.replace("[AWT-EventQueue-0]", "[AWT-EQ0]");
-
-			s = s.replaceAll("\\S+@\\S+", "<username>");
+			s = s.replaceAll("\\d\\.\\d+\\.\\d+.\\d+\\s+\\d", "");
+			s = s.replaceAll("\\S+@\\S+", "username");
 			filtered.add(s);
 		}
         model.put("modified", filtered);
