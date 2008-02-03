@@ -46,7 +46,7 @@
     </bean>
 	
 	<bean id="grep" class="org.genedb.web.utils.Grep">
-		<property name="file" value="/Users/cp2/artemis-log/combinedAll"/>
+		<property name="file" value="/software/pathogen/projects/genedb/artemis-logs/remote_logs/combinedAll"/>
 	</bean>
 	
 	<bean id="nameBrowse" class="org.genedb.web.mvc.controller.BrowseBeanName">
