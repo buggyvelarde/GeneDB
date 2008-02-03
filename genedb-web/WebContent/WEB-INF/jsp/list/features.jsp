@@ -45,11 +45,11 @@
 				<tr align="left"><td><a href="www.genedb.org" class="mainlevel" >FAQs</a></td></tr>
 			</table>
 		</div>
-		<!--  <div class="fieldset">
+		<%--  <div class="fieldset">
 		<div class="legend">History</div>
 			<br>
 			<div id="topic-grid"/>
-		</div> -->
+		</div> --%>
 	</td>
 	<td width="100%">
 		<div class="fieldset" align="center" style="width: 98%;">
