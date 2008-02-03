@@ -48,7 +48,7 @@ import javax.swing.border.Border;
 public class ContextMap {
 
     public static final int DEFAULT_WINDOW_WIDTH = 600;
-    public static final int DEFAULT_WINDOW_HEIGHT = 175;
+    public static final int DEFAULT_WINDOW_HEIGHT = 75;
     public static final int DEFAULT_RANGE = 27000;
     public static final float DEFAULT_SCALE = 1.0f * DEFAULT_WINDOW_WIDTH/DEFAULT_RANGE;
 
