@@ -20,30 +20,18 @@
 package org.genedb.web.mvc.controller;
 
 
+import org.genedb.web.utils.Grep;
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Hits;
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.loading.TaxonNode;
-import org.genedb.db.loading.TaxonNodeManager;
-import org.genedb.web.utils.Grep;
-
-import org.gmod.schema.phylogeny.Phylonode;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
