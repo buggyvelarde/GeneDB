@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp
         spec="1.0+"
-        codebase="http://wwwdev.sanger.ac.uk/Software/Artemis/v9/chado/new/"
-        href="Artemis-test.jnlp">
+        codebase="http://www.sanger.ac.uk/Software/Artemis/v9/chado/new/"
+        href="Artemis.jnlp">
          <information>
            <title>Artemis</title>
            <vendor>Sanger Institute</vendor> 
