@@ -25,6 +25,7 @@ public class DisplayComment extends SimpleTagSupport {
 			if (fprops != null) {
 				List<String> comments = new ArrayList<String>();
 				
+				// Need to check CV
 				for (FeatureProp prop : fprops) {
 					if (prop.getCvTerm().getName() == "comment") {
 						comments.add(prop.getValue());
@@ -47,5 +48,9 @@ public class DisplayComment extends SimpleTagSupport {
 				}
 			}
 		}
+	}
+
+	public void setPolypeptide(Feature polypeptide) {
+		this.polypeptide = polypeptide;
 	}
 }
