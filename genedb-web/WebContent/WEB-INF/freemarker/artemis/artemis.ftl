@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp
         spec="1.0+"
-        codebase="http://www.sanger.ac.uk/Software/Artemis/v9/chado/new/"
+        codebase="http://www.sanger.ac.uk/Software/Artemis/v9/chado/"
         href="Artemis.jnlp">
          <information>
            <title>Artemis</title>
@@ -31,4 +31,4 @@
          <application-desc main-class="uk.ac.sanger.artemis.components.ArtemisMain">
           <argument>${argument}</argument>
          </application-desc>
-       </jnlp>
+</jnlp>
