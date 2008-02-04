@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp
         spec="1.0+"
-        codebase="http://www.sanger.ac.uk/Software/Artemis/v9/chado/"
-        href="Artemis.jnlp">
+        codebase="http://www.sanger.ac.uk/Software/Artemis/v9/chado/new/">
          <information>
            <title>Artemis</title>
            <vendor>Sanger Institute</vendor> 
-           <homepage href="http://www.sanger.ac.uk/Software/Artemis/"/>
+           <homepage href="http://www.sanger.ac.uk/Software/Artemis/v9/chado/new/"/>
            <description>Artemis</description>
            <description kind="short">DNA sequence viewer and annotation tool.
            </description>
