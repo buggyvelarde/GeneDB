@@ -108,7 +108,7 @@ public class GeneDBWebUtils {
     	//Location location2 = new CompoundLocation(locs);
     	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
     	RNASummary target = new RNASummary(gene.getDisplayName(),gene.getUniqueName(),location2,
-    			"CDS",f,gene.getOrganism().getCommonName(),"",5);
+    			"CDS",f,gene.getOrganism().getCommonName(),"",getColour(gene));
     	
     	List<RNASummary> rnas = getNeighbours(gene,target);
    
@@ -249,7 +249,7 @@ public class GeneDBWebUtils {
         	//Location location2 = new CompoundRichLocation(locs);
         	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
     		RNASummary temp = new RNASummary(feature.getDisplayName(), feature.getUniqueName(), 
-    				location2, "CDS", t, feature.getOrganism().getCommonName(), "", 5);
+    				location2, "CDS", t, feature.getOrganism().getCommonName(), "", getColour(feature));
     		rnas.add(temp);
 		}
     	rnas.add(target);
@@ -268,14 +268,19 @@ public class GeneDBWebUtils {
     		Collection<Location> locs = getExonLocations(feature);
         	//Location location2 = new CompoundRichLocation(locs);
         	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
-        	int colour = 5;
     		RNASummary temp = new RNASummary(feature.getDisplayName(), feature.getUniqueName(), location2,
-        			"CDS", t, feature.getOrganism().getCommonName(), "", colour);
+        			"CDS", t, feature.getOrganism().getCommonName(), "", getColour(feature));
     		rnas.add(temp);
 		}
     	return rnas;
 	}
 
+	private static int getColour(Feature feature) {
+		
+		return 5;
+	}
+	
+	
 	private static String validateTaxons(List<String> idsAndNames) {
         // TODO 
         return null;
