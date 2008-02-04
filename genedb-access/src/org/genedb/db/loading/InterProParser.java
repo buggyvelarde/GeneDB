@@ -347,6 +347,7 @@ public class InterProParser {
                     	
                     	Feature domain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
                     	DbXRef dbxref = featureUtils.findOrCreateDbXRefFromString(nativeProg + ":" + dbacc);
+                    	session.flush();
                     	domain.setDbXRef(dbxref);
                     	
                     	sequenceDao.persist(domain);
