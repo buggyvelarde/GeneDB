@@ -25,10 +25,10 @@ public class ArtemisLaunchController extends AbstractController{
 		String e = ServletRequestUtils.getStringParameter(request, "end");
 		
 		int start = Integer.parseInt(s);
-		int end = Integer.parseInt(e) + 1500;
+		int end = Integer.parseInt(e) + 13000;
 		
-		if (start > 1500) {
-			start = start - 1500;
+		if (start > 13000) {
+			start = start - 13000;
 		} else {
 			start = 0;
 		}
