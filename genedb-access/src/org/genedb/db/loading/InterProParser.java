@@ -287,9 +287,9 @@ public class InterProParser {
                     CvTerm description = featureUtils.findOrCreateCvTermFromString("feature_property", "description");
                     FeatureProp fp = new FeatureProp(ipDomain,description,note.toString(),0);
                     sequenceDao.persist(fp);
-                    session.flush();
                     //GeneUtils.addLink(brna, "InterPro", ipNum, note.toString());
                 }
+                session.flush();
                 // Now go thru' individual hits even if InterPro is null
                 Iterator it2 = progs.iterator();
                 int rank2 = 0;
@@ -395,6 +395,7 @@ public class InterProParser {
                     		sequenceDao.persist(fl2);
                     		rank2++;
                     	}
+                    	session.flush();
                     	if ("Superfamily".equalsIgnoreCase(db) && dbacc.startsWith("SF")) {
                             dbacc = dbacc.substring(2);
                         }
