@@ -17,6 +17,5 @@
     <c:forEach items="${evidence}" var="ev">${ev.value}</c:forEach></db:propByName>&nbsp;
     <c:forEach items="${featCvTerm.featureCvTermPubs}" var="fctp">(${fctp.pub.uniqueName})</c:forEach></td>
     <td><c:forEach items="${featCvTerm.featureCvTermDbXRefs}" var="fctdbx">${fctdbx.dbXRef.db.name}${fctdbx.dbXRef.accession}</c:forEach></td>
-    <td>n others</td>
   </tr>
 </db:filtered-loop>
