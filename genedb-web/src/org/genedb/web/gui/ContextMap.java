@@ -81,8 +81,8 @@ public class ContextMap {
 
     private boolean haveBiojavaBorder=false;
 
-    public static final int   LEAD_BORDER          = 14;
-    public static final int   TRAIL_BORDER         = 14;
+    public static final int LEAD_BORDER          = 14;
+    public static final int TRAIL_BORDER         = 14;
 
 
 
