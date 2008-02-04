@@ -46,6 +46,8 @@ public class DisplayComment extends SimpleTagSupport {
 					out.println("</tr>");
 					count++;
 				}
+				
+				out.println("</table>");
 			}
 		}
 	}
