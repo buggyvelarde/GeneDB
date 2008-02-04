@@ -260,7 +260,7 @@ public class InterProParser {
                     String[] thisRow = (String[]) col.get(i);
                     if (thisRow.length >= COL_GO+1) {
                         //System.err.println("Adding GO terms for "+gene.getId());
-                        addGoTerms(polypeptide, thisRow, goIdsLinked);
+                        addGoTerms(polypeptide, thisRow, goIdsLinked,session);
                     }
                 }
                 
@@ -413,7 +413,7 @@ public class InterProParser {
     //Molecular Function: protein kinase (GO:0004672),
     //Molecular Function: ATP binding (GO:0005524),
     //Biological Process: protein amino acid phosphorylation (GO:0006468)
-    private void addGoTerms(Feature polypeptide, String[] row, Set goIdsLinked) {
+    private void addGoTerms(Feature polypeptide, String[] row, Set goIdsLinked, Session session) {
     	String goTerms = row[COL_GO];
         if ( goTerms == null || "".equals(goTerms)) {
             return;
@@ -478,6 +478,7 @@ public class InterProParser {
                 c.setGeneName(polypeptide.getUniqueName().split(":")[0]);
                
                 featureUtils.createGoEntries(polypeptide,c);
+                session.flush();
             }
         }
     }
