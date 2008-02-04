@@ -281,11 +281,13 @@ public class InterProParser {
                     String uniqueName = polypeptide.getUniqueName() + ":" + ipNum;
                     ipDomain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
                     DbXRef dbXRef = featureUtils.findOrCreateDbXRefFromString("InterPro:" + ipNum);
+                    session.flush();
                     ipDomain.setDbXRef(dbXRef);
                     sequenceDao.persist(ipDomain);
                     CvTerm description = featureUtils.findOrCreateCvTermFromString("feature_property", "description");
                     FeatureProp fp = new FeatureProp(ipDomain,description,note.toString(),0);
                     sequenceDao.persist(fp);
+                    session.flush();
                     //GeneUtils.addLink(brna, "InterPro", ipNum, note.toString());
                 }
                 // Now go thru' individual hits even if InterPro is null
