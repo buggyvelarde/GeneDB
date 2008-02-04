@@ -27,7 +27,7 @@ public class DisplayComment extends SimpleTagSupport {
 				
 				// Need to check CV
 				for (FeatureProp prop : fprops) {
-					if (prop.getCvTerm().getName() == "comment") {
+					if (prop.getCvTerm().getName().equals("comment")) {
 						comments.add(prop.getValue());
 					}
 				}
