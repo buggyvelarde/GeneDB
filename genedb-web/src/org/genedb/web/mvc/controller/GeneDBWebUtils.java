@@ -182,8 +182,8 @@ public class GeneDBWebUtils {
             ContextMap contextMap = new ContextMap();
             ImageInfo ii = new ImageInfo();
             
+            //info = contextMap.drawMap(seq, ii, min,max,target.getId(),false,out);
             info = contextMap.drawMap(seq, ii, min,max,target.getId(),false,out);
-            
         }
         catch (BioException exp) {
         	exp.printStackTrace();
