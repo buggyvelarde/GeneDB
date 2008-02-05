@@ -101,7 +101,7 @@
 		  <a href="ArtemisLaunch?organism=${feature.organism.commonName}&chromosome=${chromosome}&start=${start}&end=${end}">Show region in Artemis</a>
 		</st:section>
 		<st:section name="Context Map" id="context_map" collapsed="false" collapsible="true" hideIfEmpty="false">
-			<%--<misc:contextmap gene="${feature}"></misc:contextmap> --%>
+			<misc:contextmap gene="${feature}"></misc:contextmap>
 			 <img src="<c:url value="/"/>includes/images/cmap/${feature.uniqueName}.gif"/>
 		</st:section>
 		<st:section name="Location" id="gene_location" collapsed="false" collapsible="true" hideIfEmpty="true">
