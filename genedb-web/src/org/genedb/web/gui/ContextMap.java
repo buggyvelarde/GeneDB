@@ -248,6 +248,7 @@ public class ContextMap {
         }
 
         if (!imageMapSet) {
+        	System.err.println("### Setting imagemap");
             imageMap = new GeneDbClientSide("context");
         }
         try {
@@ -317,6 +318,9 @@ public class ContextMap {
 
             if ( info != null) {
                 info.contextMapData = imageMap.toString();
+            	System.err.println("### Setting data to '"+imageMap.toString()+"'");
+            } else {
+            	System.err.println("### Not setting imagemap data as info is null");
             }
 
 
