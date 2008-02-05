@@ -3,12 +3,14 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.gui.ContextMap;
 import org.genedb.web.gui.ImageInfo;
+import org.genedb.web.gui.LocationColourPair;
 import org.genedb.web.gui.MinimalSymbolList;
 import org.genedb.web.gui.RNASummary;
 import org.genedb.web.gui.TransientSequence;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 
 import org.biojava.bio.Annotation;
@@ -23,6 +25,7 @@ import org.biojava.bio.symbol.AlphabetManager;
 import org.biojava.bio.symbol.FiniteAlphabet;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.Location;
+import org.biojava.bio.symbol.LocationTools;
 import org.biojava.bio.symbol.RangeLocation;
 import org.biojava.bio.symbol.Symbol;
 import org.biojava.bio.symbol.SymbolList;
@@ -104,11 +107,9 @@ public class GeneDBWebUtils {
     		f = StrandedFeature.POSITIVE;
     	}
     	
-    	Collection<Location> locs = getExonLocations(gene);
-    	//Location location2 = new CompoundLocation(locs);
-    	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
-    	RNASummary target = new RNASummary(gene.getDisplayName(),gene.getUniqueName(),location2,
-    			"CDS",f,gene.getOrganism().getCommonName(),"",getColour(gene));
+    	LocationColourPair lcp = getExonLocations(gene);
+    	RNASummary target = new RNASummary(gene.getDisplayName(),gene.getUniqueName(), lcp.location,
+    			"CDS",f,gene.getOrganism().getCommonName(),"", lcp.colour);
     	
     	List<RNASummary> rnas = getNeighbours(gene,target);
    
@@ -194,7 +195,9 @@ public class GeneDBWebUtils {
         return info;
     }	
     
-    private static Collection<Location> getExonLocations(Feature gene) {
+    private static LocationColourPair getExonLocations(Feature gene) {
+    	LocationColourPair ret = new LocationColourPair();
+    	ret.colour = 5;
     	Collection<Location> locs = new ArrayList<Location>();
 	    	
 		Feature mRNA = gene.getFeatureRelationshipsForObjectId().iterator().next().getFeatureBySubjectId();
@@ -208,17 +211,30 @@ public class GeneDBWebUtils {
 				int max = loc.getFmax();
 				Location location = new RangeLocation(min,max);
 				locs.add(location);
+			}
+			if(fr.getCvTerm().getName().equals("derives_from")) {
+				Feature polypeptide = fr.getFeatureBySubjectId();
+				for (FeatureProp fp: polypeptide.getFeatureProps()) {
+					if (fp.getCvTerm().getName().equals("colour")) {
+						//try {
+						ret.colour = Integer.parseInt(fp.getValue());
+						break;
+						//}
+					}
+				}
 			}	
 		}
     	
-		if(locs.size() == 1) {
-			Location loc = (Location)locs.iterator().next();
-			locs.add(loc);
-		}
-		if(locs.size() == 0) {
+		switch (locs.size()) {
+		case 0:
 			throw new RuntimeException("Data problem - no exons found for '"+gene.getUniqueName()+"'");
+		case 1:
+			Location loc = (Location)locs.iterator().next();
+			ret.location = loc;
+		default:
+			ret.location = LocationTools.union(locs);
 		}
-    	return locs;
+    	return ret;
 	}
 
 	private static int getContigLength(Feature gene) {
@@ -249,11 +265,9 @@ public class GeneDBWebUtils {
         		t = StrandedFeature.NEGATIVE;
         	}
     		
-    		Collection<Location> locs = getExonLocations(feature);
-        	//Location location2 = new CompoundRichLocation(locs);
-        	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
+    		LocationColourPair lcp = getExonLocations(feature);
     		RNASummary temp = new RNASummary(feature.getDisplayName(), feature.getUniqueName(), 
-    				location2, "CDS", t, feature.getOrganism().getCommonName(), "", getColour(feature));
+    				lcp.location, "CDS", t, feature.getOrganism().getCommonName(), "", lcp.colour);
     		rnas.add(temp);
 		}
     	rnas.add(target);
@@ -269,19 +283,12 @@ public class GeneDBWebUtils {
         		t = StrandedFeature.POSITIVE;
         	}
     		
-    		Collection<Location> locs = getExonLocations(feature);
-        	//Location location2 = new CompoundRichLocation(locs);
-        	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
-    		RNASummary temp = new RNASummary(feature.getDisplayName(), feature.getUniqueName(), location2,
-        			"CDS", t, feature.getOrganism().getCommonName(), "", getColour(feature));
+    		LocationColourPair lcp = getExonLocations(feature);
+    		RNASummary temp = new RNASummary(feature.getDisplayName(), feature.getUniqueName(), lcp.location,
+        			"CDS", t, feature.getOrganism().getCommonName(), "", lcp.colour);
     		rnas.add(temp);
 		}
     	return rnas;
-	}
-
-	private static int getColour(Feature feature) {
-		
-		return 5;
 	}
 	
 	
