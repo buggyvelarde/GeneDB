@@ -215,6 +215,9 @@ public class GeneDBWebUtils {
 			Location loc = (Location)locs.iterator().next();
 			locs.add(loc);
 		}
+		if(locs.size() == 0) {
+			throw new RuntimeException("Data problem - no exons found for '"+gene.getUniqueName()+"'");
+		}
     	return locs;
 	}
 
@@ -246,8 +249,7 @@ public class GeneDBWebUtils {
         		t = StrandedFeature.NEGATIVE;
         	}
     		
-    		Collection<Location> locs = null;
-        	locs = getExonLocations(feature);
+    		Collection<Location> locs = getExonLocations(feature);
         	//Location location2 = new CompoundRichLocation(locs);
         	Location location2 = org.biojava.bio.symbol.LocationTools.union(locs);
     		RNASummary temp = new RNASummary(feature.getDisplayName(), feature.getUniqueName(), 
