@@ -186,7 +186,7 @@ public class GeneDBWebUtils {
             
         }
         catch (BioException exp) {
-            System.err.println("Bioexception");
+        	exp.printStackTrace();
         }
         
         return info;
