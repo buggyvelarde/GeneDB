@@ -34,7 +34,7 @@ import java.net.URL;
 class FeaturePageURLFactory implements URLFactory {
 
     private static final String bogusSite = "http://www.deliberatelybogusaddress.com";
-    private static final String SEARCH_PREFIX = "/genedb/Search?name=";
+    private static final String SEARCH_PREFIX = "/genedb/NamedFeature?name=";
     private URL baseURL;
 
     FeaturePageURLFactory() throws MalformedURLException {
@@ -52,8 +52,8 @@ class FeaturePageURLFactory implements URLFactory {
             RNASummary rna = (RNASummary) feat;
             StringBuffer url = new StringBuffer( SEARCH_PREFIX );
             url.append(rna.getId());
-            url.append("&organism=");
-            url.append(rna.getOrganism());
+            //url.append("&organism=");
+            //url.append(rna.getOrganism());
             try {
                 return new URL(baseURL, url.toString() );
             } catch (MalformedURLException exp) {

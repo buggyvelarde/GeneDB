@@ -47,11 +47,11 @@ public class GeneDbClientSide implements ImageMap, Serializable {
     public GeneDbClientSide(String name) {
         this.name = name;
         hotSpots = new ArrayList();
-        //      System.err.println("I'm a new HotSpot collector");
+        System.err.println("I'm a new HotSpot collector");
     }
 
     public void addHotSpot(HotSpot hotSpot) {
-        //System.err.println("I've got a new hotspot added");
+        System.err.println("I've got a new hotspot added");
         hotSpots.add(hotSpot);
     }
 
