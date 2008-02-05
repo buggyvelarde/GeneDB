@@ -191,7 +191,7 @@ public class GeneDBWebUtils {
         catch (BioException exp) {
         	exp.printStackTrace();
         }
-        
+        System.err.println("### The imagrmap just before return is '"+info.contextMapData+"'");
         return info;
     }	
     

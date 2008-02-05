@@ -217,21 +217,21 @@ public class ContextMap {
     }
 
 
-    public void drawMap(Sequence seq, ImageInfo info, RNASummary bottomRna, RNASummary targetRna,
-                        RNASummary topRna, OutputStream out ) {
-        int seqMin = bottomRna.getLocation().getMin();
-        int seqMax = topRna.getLocation().getMax();
-        //Sequence contextSeq = new SubSequence(seq, seqMin, seqMax);
-        //seqMin = 1;
-        //seqMax -= seqMin;
-
-        //      System.err.println("  ");
-        //System.err.println("IMAP: "+targetRna.getId());
-        //System.err.println(" from: "+bottomRna.getId()+" : "+bottomRna.getLocation());
-        //System.err.println("   to: "+topRna.getId()+" : "+topRna.getLocation());
-
-        drawMap(seq, info, seqMin, seqMax, targetRna.getId(), true, out);
-    }
+//    public void drawMap(Sequence seq, ImageInfo info, RNASummary bottomRna, RNASummary targetRna,
+//                        RNASummary topRna, OutputStream out ) {
+//        int seqMin = bottomRna.getLocation().getMin();
+//        int seqMax = topRna.getLocation().getMax();
+//        //Sequence contextSeq = new SubSequence(seq, seqMin, seqMax);
+//        //seqMin = 1;
+//        //seqMax -= seqMin;
+//
+//        //      System.err.println("  ");
+//        //System.err.println("IMAP: "+targetRna.getId());
+//        //System.err.println(" from: "+bottomRna.getId()+" : "+bottomRna.getLocation());
+//        //System.err.println("   to: "+topRna.getId()+" : "+topRna.getLocation());
+//
+//        drawMap(seq, info, seqMin, seqMax, targetRna.getId(), true, out);
+//    }
 
 
     public ImageInfo drawMap(Sequence seq2, ImageInfo info, int seqMin, int seqMax, String targetId,
