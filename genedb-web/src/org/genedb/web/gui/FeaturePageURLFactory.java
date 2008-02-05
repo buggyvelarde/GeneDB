@@ -49,10 +49,10 @@ class FeaturePageURLFactory implements URLFactory {
         }
         Feature  feat = (Feature) o;
 
-        if ( feat instanceof RNASummary) {
-            RNASummary rna = (RNASummary) feat;
+        //if ( feat instanceof RNASummary) {
+            //RNASummary rna = (RNASummary) feat;
             StringBuffer url = new StringBuffer( SEARCH_PREFIX );
-            url.append(rna.getId());
+            url.append(feat.getAnnotation().getProperty("systematic_id"));
             //url.append("&organism=");
             //url.append(rna.getOrganism());
             try {
@@ -61,8 +61,8 @@ class FeaturePageURLFactory implements URLFactory {
             	exp.printStackTrace();
                 return null;
             }
-        }
-        return null;
+        //}
+        //return null;
     }
 
 }
