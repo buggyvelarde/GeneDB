@@ -28,7 +28,7 @@ public class ContextMapTag extends SimpleTagSupport {
 		
 		//out.print("<img src=\""+info.contextUrl+"\">");
 		out.print("<!-- cm -->");
-		out.print(info.contextMap);
+		out.print(info.contextMapData);
 		out.print("<!-- cm -->");
 	}
 	
