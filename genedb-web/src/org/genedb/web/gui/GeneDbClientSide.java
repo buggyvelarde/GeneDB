@@ -70,6 +70,9 @@ public class GeneDbClientSide implements ImageMap, Serializable {
         for (Iterator hi = hotSpots.iterator(); hi.hasNext();) {
             HotSpot hs = (HotSpot) hi.next();
             Integer [] coords = hs.getCoordinates();
+            if ( hs.getURL() == null) {
+            	System.err.println("URL is null");
+            }
             if ( hs.getURL() != null ) {
 
                 sb.append("<area shape=\"");

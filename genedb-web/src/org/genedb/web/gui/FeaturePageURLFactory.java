@@ -34,7 +34,7 @@ import java.net.URL;
 class FeaturePageURLFactory implements URLFactory {
 
     private static final String bogusSite = "http://www.deliberatelybogusaddress.com";
-    private static final String SEARCH_PREFIX = "/genedb/NamedFeature?name=";
+    private static final String SEARCH_PREFIX = "/new/NamedFeature?name=";
     private URL baseURL;
 
     FeaturePageURLFactory() throws MalformedURLException {
@@ -43,6 +43,7 @@ class FeaturePageURLFactory implements URLFactory {
 
 
     public java.net.URL createURL(java.lang.Object o) {
+    	System.err.println("Asked to fetch URL for '"+o+"'");
         if ( !(o instanceof Feature)) {
             return null;
         }
@@ -57,6 +58,7 @@ class FeaturePageURLFactory implements URLFactory {
             try {
                 return new URL(baseURL, url.toString() );
             } catch (MalformedURLException exp) {
+            	exp.printStackTrace();
                 return null;
             }
         }
