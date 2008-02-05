@@ -24,10 +24,12 @@ public class ContextMapTag extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
         String prefix = getContextPathFromJspContext(getJspContext());
 		ImageInfo info = GeneDBWebUtils.drawContextMap(gene, prefix);
-		//JspWriter out = getJspContext().getOut();
+		JspWriter out = getJspContext().getOut();
 		
 		//out.print("<img src=\""+info.contextUrl+"\">");
-		//out.print(info.contextMap);
+		out.print("<!-- cm -->");
+		out.print(info.contextMap);
+		out.print("<!-- cm -->");
 	}
 	
 	private String getContextPathFromJspContext(JspContext context) {
