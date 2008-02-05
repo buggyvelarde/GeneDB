@@ -149,6 +149,7 @@ public class GeneDBWebUtils {
                 StrandedFeature.Template ft = new StrandedFeature.Template();
                 ft.type = "CDS";
                 ft.location = rs.getLocation();
+                System.err.println(rs.getId()+"\t"+rs.getLocation().getMin()+"..."+rs.getLocation().getMax());
                 ft.strand = rs.getStrand();
                 Annotation an = new SimpleAnnotation();
                 try {
@@ -171,7 +172,8 @@ public class GeneDBWebUtils {
             }
             
             File file = new File("/software/pathogen/projects/genedb/tomcat_workshop/tomcat/webapps/"+prefix+"includes/images/cmap/" + gene.getUniqueName() + ".gif");
-            System.err.println("Writing image to '"+file.getAbsolutePath()+"'");
+            //System.err.println("Writing image to '"+file.getAbsolutePath()+"'");
+
             OutputStream out = null;
 			try {
 				out = new FileOutputStream(file);
