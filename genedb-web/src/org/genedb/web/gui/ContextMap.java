@@ -272,6 +272,7 @@ public class ContextMap {
                 panel.getTrailingBorder().setSize(TRAIL_BORDER);
             }
 
+            System.err.println("Trying to set symbol translation to '"+(seqMin-1)+"' but '"+seq.length()+"'" );
             if (seqMin > 1) {
                 panel.setSymbolTranslation(seqMin-1);
             } else {
