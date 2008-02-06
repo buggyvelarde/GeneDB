@@ -94,6 +94,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), fields, query);
     		switch (hits.length()) {
     		case 0:
+    			// Temporary check as the Lucene db isn't automatically up-to-date
     			if (directDbCheck(name)) {
     				prepareGene(name, model);
         			viewName = "features/gene";
@@ -101,7 +102,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     			}
     			be.reject("No Result");
     			return showForm(request, response, be);
-    			//return new ModelAndView(viewName,null);
     		case 1:
     			prepareGene(hits.doc(0).get("uniqueName"), model);
     			viewName = "features/gene";
@@ -131,6 +131,13 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     	return new ModelAndView(viewName,model);
     }
     
+    /**
+     * Look up a featurename directly in the database, as the Lucene 
+     * indices aren't automatically up-to-date
+     * 
+     * @param name the uniquename of the gene
+     * @return whether it exists in the db 
+     */
     private boolean directDbCheck(String name) {
     	Feature f = sequenceDao.getFeatureByUniqueName(name, "gene");
     	if (f!=null) {
@@ -142,19 +149,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 	private void prepareGene(String systematicId, Map<String, Object> model) throws IOException {
     	String type = "gene";
 		Feature gene = sequenceDao.getFeatureByUniqueName(systematicId, type);
-        grep.compile("ID=" + systematicId);
-        List<String> out = grep.grep();
-        List<String> filtered = new ArrayList<String>(out.size());
-        for (String s : out) {
-        	s = s.trim();
-			s = s.replace("uk.ac.sanger.artemis.chado.ChadoTransactionManager", "");
-			s = s.replace("[AWT-EventQueue-0]", "");
-			s = s.replaceAll("\\d+\\.\\d+\\.\\d+\\.\\d+\\s+\\d+", "");
-			s = s.replaceAll("\\S+@\\S+", "uname");
-			s = "&nbsp;&nbsp;&nbsp;"+s;
-			filtered.add(s);
-		}
-        model.put("modified", filtered);
+        prepareArtemisHistory(systematicId, model);
         model.put("feature", gene);
 
         Feature mRNA = null;
@@ -180,6 +175,30 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         	}
         }
     }
+
+	/**
+	 * Grep all references to the given id from a logfile, and
+	 * remove usernames etc and verbose info
+	 * 
+	 * @param systematicId the genename
+	 * @param model the model returned to the view
+	 * @throws IOException if the log file can't be read
+	 */
+	private void prepareArtemisHistory(String systematicId, Map<String, Object> model) throws IOException {
+		grep.compile("ID=" + systematicId);
+        List<String> out = grep.grep();
+        List<String> filtered = new ArrayList<String>(out.size());
+        for (String s : out) {
+        	s = s.trim();
+			s = s.replace("uk.ac.sanger.artemis.chado.ChadoTransactionManager", "");
+			s = s.replace("[AWT-EventQueue-0]", "");
+			s = s.replaceAll("\\d+\\.\\d+\\.\\d+\\.\\d+\\s+\\d+", "");
+			s = s.replaceAll("\\S+@\\S+", "uname");
+			s = "&nbsp;&nbsp;&nbsp;"+s;
+			filtered.add(s);
+		}
+        model.put("modified", filtered);
+	}
     
 
     private PeptideProperties calculatePepstats(Feature polypeptide) {
@@ -230,159 +249,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         pp.setCharge(df.format(cal));
         return pp;
     }
-    
-	/*
-    @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, 
-    		HttpServletResponse response, Object command, 
-    		BindException be) throws Exception {
-    	
-    	int start = Integer.parseInt(request.getParameter("start"));
-		int limit = Integer.parseInt(request.getParameter("limit"));
-		
-		if(start == 0) {
-			NameLookupBean nlb = (NameLookupBean) command;
-			String orgs = nlb.getOrgs();
-			List<Feature> results = null;
-	        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(orgs);
-	        if (!nlb.isUseProduct()) {
-	        	results = sequenceDao.getFeaturesByAnyNameAndOrganism(
-	        			nlb.getName(), orgNames.toString(), nlb.getFeatureType());
-	        } else {
-	        	results = sequenceDao.getFeaturesByAnyNameOrProductAndOrganism(
-	        			nlb.getName(), orgNames, nlb.getFeatureType());
-	        }
-	        
-	        if (results == null) {
-	        	
-	        } else {
-	        	request.getSession().setAttribute("results", results);
-	        	JSONArray array = new JSONArray();
-	        	
-	    		for (int i=0;i<limit;i++) {
-	    			JSONObject obj = new JSONObject();
-	    			obj.put("organism", results.get(i).getOrganism().getCommonName());
-	    			obj.put("name", results.get(i).getUniqueName());
-	    			obj.put("type", results.get(i).getCvTerm().getName());
-	    			array.add(obj);
-	    		}
-	    		JSONObject obj = new JSONObject();
-	        	obj.put("total", results.size());
-	        	obj.put("results", array);
-	        	PrintWriter out = response.getWriter();
-	        	out.print(obj);
-	        	out.close();
-	        }
- 		} else {
- 			List<Feature> results = (List<Feature>) request.getSession().getAttribute("results");
- 			JSONArray array = new JSONArray();
- 			int end = limit + start;
- 			if (end > results.size())
- 				end = results.size();
-    		for (int i=start;i<end;i++) {
-    			JSONObject obj = new JSONObject();
-    			obj.put("organism", results.get(i).getOrganism().getCommonName());
-    			obj.put("name", results.get(i).getUniqueName());
-    			obj.put("type", results.get(i).getCvTerm().getName());
-    			array.add(obj);
-    		}
-    		JSONObject obj = new JSONObject();
-        	obj.put("total", results.size());
-        	obj.put("results", array);
-        	PrintWriter out = response.getWriter();
-        	out.print(obj);
-        	out.close();
- 		}
-		
-    	return null;
-    }
-    
-    
-    @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, 
-    		HttpServletResponse response, Object command, 
-    		BindException be) throws Exception {
-    	
-        NameLookupBean nlb = (NameLookupBean) command;
-        
-        String orgs = nlb.getOrgs();
-        Map<String, Object> model = new HashMap<String, Object>(4);
-        String viewName = null;
-        List<Feature> results = null;
-        if(orgs == null) {
-
-        }
-        
-        logger.info("Look up is not null calling getFeaturesByAnyNameAndOrganism");
-        //logger.info("TaxonNode[0] is '"+taxonNode[0]+"'");
-        //List<String> orgNames = taxonNode[0].getAllChildrenNames(); // FIXME 
-        
-        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(orgs);
-        if (!nlb.isUseProduct()) {
-        	results = sequenceDao.getFeaturesByAnyNameAndOrganism(
-        			nlb.getName(), orgNames.toString(), nlb.getFeatureType());
-        } else {
-        	results = sequenceDao.getFeaturesByAnyNameOrProductAndOrganism(
-        			nlb.getName(), orgNames, nlb.getFeatureType());
-        }
-        	
-        if (results == null || results.size() == 0) {
-            logger.info("result is null");
-            be.reject("no.results");
-            return showForm(request, response, be);
-        }
-        
-        if (results.size() > 1) {
-            // Go to list results page
-        	viewName = listResultsView;
-        	if (nlb.isHistory()) {
-        		List<String> ids = new ArrayList<String>(results.size());
-        		for (Feature feature : results) {
-					ids.add(feature.getUniqueName());
-				}
-        		HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
-        		historyManager.addHistoryItems("name lookup '"+nlb+"'", ids);
-        		logger.info("Trying to save history item and redirect");
-        		viewName = "redirect:/History/View";
-        	} else {
-        		//model.put("nameLookup", nl);
-        		model.put("results", results);
-        	}
-        } else {
-            Feature feature = results.get(0);
-            List<String> out = null;
-            String pattern = "ID=" + feature.getUniqueName();
-            grep.compile(pattern);
-            out = grep.grep();
-            model.put("modified", out);
-            model.put("feature", feature);
-            String type = feature.getCvTerm().getName();
-            if (type != null && type.equals("gene")) {
-                viewName = "features/"+type; // TODO Check this is known else go to features/generic
-                Feature mRNA = null;
-                Collection<FeatureRelationship> frs = feature.getFeatureRelationshipsForObjectId(); 
-                if (frs != null) {
-                	for (FeatureRelationship fr : frs) {
-                		mRNA = fr.getFeatureBySubjectId();
-                		break;
-                	}
-                	if (mRNA != null) {
-                		Feature polypeptide = null;
-                		Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
-                		for (FeatureRelationship fr : frs2) {
-                			Feature f = fr.getFeatureBySubjectId();
-                			if ("polypeptide".equals(f.getCvTerm().getName())) {
-                				polypeptide = f;
-                			}
-                		}
-                		model.put("polypeptide", polypeptide);
-                	}
-                }
-            }
-        }
-
-        return new ModelAndView(viewName, model);
-    }*/
 
 	public void setLuceneDao(LuceneDao luceneDao) {
 		this.luceneDao = luceneDao;
