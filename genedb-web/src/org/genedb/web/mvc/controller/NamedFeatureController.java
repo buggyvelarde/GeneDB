@@ -185,6 +185,10 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private PeptideProperties calculatePepstats(Feature polypeptide) {
 
         //String seqString = FeatureUtils.getResidues(polypeptide);
+    	if (polypeptide.getResidues() == null) {
+    		logger.warn("No residues for '"+polypeptide.getUniqueName()+"'");
+    		return null;
+    	}
         String seqString = new String(polypeptide.getResidues());
     	//System.err.println(seqString);
         Alphabet protein = ProteinTools.getAlphabet();
