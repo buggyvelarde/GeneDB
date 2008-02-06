@@ -70,40 +70,41 @@ public class GeneList implements JograPlugin {
         
         ret.add(mainPane, BorderLayout.CENTER);
         
-        Box controls = Box.createVerticalBox();
+        //Box controls = Box.createVerticalBox();
         JTabbedPane transferTab = new JTabbedPane();
         transferTab.setBorder(BorderFactory.createEtchedBorder());
         
-        JPanel temp = new JPanel();
-        temp.add(new JLabel("stuff"));
-        temp.add(new JTextField("wibble"));
-        transferTab.addTab("name", temp);
+//        JPanel temp = new JPanel();
+//        temp.add(new JLabel("stuff"));
+//        temp.add(new JTextField("wibble"));
+        JPanel name = new NameNotePanel();
+        transferTab.addTab("name", name);
         
-        JPanel goPanel = new JPanel();
-        goPanel.add(new JLabel("Evidence code"));
-        goPanel.add(new JComboBox(new String[]{"ISS", "IPP", "IDA"}));
-        goPanel.add(new JTextField("wibble"));
+        JPanel goPanel = new GoPanel();
+        //goPanel.add(new JLabel("Evidence code"));
+        //goPanel.add(new JComboBox(new String[]{"ISS", "IPP", "IDA"}));
+        //goPanel.add(new JTextField("wibble"));
         transferTab.addTab("go", goPanel);
         
-        JPanel ec = new JPanel();
-        ec.add(new JLabel("stuff"));
-        ec.add(new JTextField("wibble"));
-        transferTab.addTab("EC", ec);
+//        JPanel ec = new JPanel();
+//        ec.add(new JLabel("stuff"));
+//        ec.add(new JTextField("wibble"));
+//        transferTab.addTab("EC", ec);
         
-        JPanel cc = new JPanel();
-        cc.add(new JLabel("Evidence code"));
-        cc.add(new JTextField("wibble"));
+        JPanel cc = new CCPanel();
+        //cc.add(new JLabel("Evidence code"));
+        //cc.add(new JTextField("wibble"));
         transferTab.addTab("controlled_curation", cc);
         
-        JPanel note = new JPanel();
-        note.add(new JLabel("Note:"));
-        note.add(new JTextArea());
-        transferTab.addTab("note", note);
+//        JPanel note = new JPanel();
+//        note.add(new JLabel("Note:"));
+//        note.add(new JTextArea());
+//        transferTab.addTab("note", note);
 
-        controls.add(transferTab);
-        controls.add(new JButton("wibble"));
+        //controls.add(transferTab);
+        //controls.add(new JButton("wibble"));
         
-        ret.add(controls, BorderLayout.SOUTH);
+        ret.add(transferTab, BorderLayout.SOUTH);
         
         ret.pack();
         return ret;
