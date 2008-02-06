@@ -94,6 +94,11 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), fields, query);
     		switch (hits.length()) {
     		case 0:
+    			if (directDbCheck(name)) {
+    				prepareGene(name, model);
+        			viewName = "features/gene";
+        			break;
+    			}
     			be.reject("No Result");
     			return showForm(request, response, be);
     			//return new ModelAndView(viewName,null);
@@ -126,7 +131,15 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     	return new ModelAndView(viewName,model);
     }
     
-    private void prepareGene(String systematicId, Map<String, Object> model) throws IOException {
+    private boolean directDbCheck(String name) {
+    	Feature f = sequenceDao.getFeatureByUniqueName(name, "gene");
+    	if (f!=null) {
+    		return true;
+    	}
+		return false;
+	}
+
+	private void prepareGene(String systematicId, Map<String, Object> model) throws IOException {
     	String type = "gene";
 		Feature gene = sequenceDao.getFeatureByUniqueName(systematicId, type);
         grep.compile("ID=" + systematicId);
