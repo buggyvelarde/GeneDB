@@ -61,14 +61,14 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#getAnalysisId()
      */
-    private int getAnalysisId() {
+     public int getAnalysisId() {
         return this.analysisId;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setAnalysisId(int)
      */
-    private void setAnalysisId(int analysisId) {
+    public void setAnalysisId(int analysisId) {
         this.analysisId = analysisId;
     }
     
