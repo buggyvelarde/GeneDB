@@ -4,6 +4,8 @@ import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.db.domain.misc.Message;
 import org.genedb.db.domain.services.MessageService;
 
+import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -19,10 +21,17 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.jnlp.ServiceManager;
+import javax.jnlp.SingleInstanceListener;
+import javax.jnlp.SingleInstanceService;
+import javax.jnlp.UnavailableServiceException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -34,12 +43,16 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMessage> {
+public class Jogra implements SingleInstanceListener, PropertyChangeListener, EventSubscriber<GeneDBMessage> {
 	
 	private static int TIMER_DELAY = 10*1000;
 
-    private final List<JograPlugin> pluginList = new ArrayList<JograPlugin>();
+	private static final Logger logger = Logger.getLogger(Jogra.class);
+	
+    private Map<String, JograPlugin> pluginMap;
 
+    private SingleInstanceService sis;
+    
     // private List<JFrame> windowList = new ArrayList<JFrame>();
 
     private final JFrame mainFrame = new JFrame();
@@ -110,6 +123,14 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
     }
 
     public void init() throws Exception {
+        try { 
+        	sis = 
+        		(SingleInstanceService)ServiceManager.lookup("javax.jnlp.SingleInstanceService");
+        	sis.addSingleInstanceListener(this);
+        }
+        catch (UnavailableServiceException e) {
+        	sis=null; // Not running under JNLP
+        }
         final JograLogin loginWindow = new JograLogin();
         // loginWindow.setUser(user);
         loginWindow.pack();
@@ -137,8 +158,8 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
         final JMenuBar menu = new JMenuBar();
 
         final JMenu pluginMenu = new JMenu("Plugins");
-        for (final JograPlugin plugin : pluginList) {
-            pluginMenu.add(new JMenuItem(plugin.getName()));
+        for (final String plugin : pluginMap.keySet()) {
+            pluginMenu.add(new JMenuItem(plugin));
         }
         menu.add(pluginMenu);
 
@@ -158,7 +179,8 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
         final Border border = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2),
                 BorderFactory.createEtchedBorder());
 
-        for (final JograPlugin plugin : pluginList) {
+        for (final JograPlugin plugin : pluginMap.values()) {
+        	logger.warn("Trying to get main window plugin for '"+plugin.getClass()+"'");
             if (plugin.getMainWindowPlugin() != null) {
                 final JComponent panel = plugin.getMainWindowPlugin();
                 panel.setBorder(border);
@@ -220,6 +242,9 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
         if (check == JOptionPane.NO_OPTION) {
             return;
         }
+        if (sis != null) {
+        	sis.removeSingleInstanceListener(this);
+        }
         System.exit(0);
     }
 
@@ -261,6 +286,7 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
                 new String[] { "classpath:domain-client-applicationContext.xml", "classpath:applicationContext.xml" });
         final Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
         ctx.registerShutdownHook();
+        
         return application;
     }
 
@@ -273,11 +299,14 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
         final Jogra application = Jogra.instantiate();
 
         application.testTransactions();
-
+        
         application.init();
         // application.logon();
         application.makeMain();
         application.showMain();
+        if (args.length > 0) {
+        	application.newActivation(args);
+        }
 
         // ps.showSplash();
 
@@ -295,10 +324,34 @@ public class Jogra implements PropertyChangeListener, EventSubscriber<GeneDBMess
     }
 
 	public void setPluginList(List<JograPlugin> pluginList) {
-		this.pluginList.addAll(pluginList);
+		this.pluginMap = new LinkedHashMap<String, JograPlugin>(pluginList.size());
+		for (JograPlugin plugin : pluginList) {
+			logger.error("Registering plugin '"+plugin+"' under name '"+plugin.getName()+"' in map");
+			pluginMap.put(plugin.getName(), plugin);
+		}
 	}
 
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
+	}
+
+	public void newActivation(String[] args) {
+		if (args.length==0) {
+			mainFrame.toFront();
+			return;
+		}
+		String target = args[0];
+		if (!pluginMap.containsKey(target)) {
+			logger.error("Unable to find a plugin to handle command '"+target+"'");
+			return;
+		}
+		JograPlugin jp = pluginMap.get(target);
+		List<String> newArgs = new ArrayList<String>();
+		for (int i = 1; i < args.length; i++) {
+			newArgs.add(args[i]);
+		}
+		jp.process(newArgs);
+		
+		
 	}
 }
