@@ -140,7 +140,7 @@
 	
 	<target name="load-smansoni" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="Smansoni /nfs/pathdb/prod/data/input/smansoni/smansoni.config.xml web"/>
+			<arg line="Smansoni /nfs/pathdbdev/work/art/chado_data/smansoni/smansoni.config.xml"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
