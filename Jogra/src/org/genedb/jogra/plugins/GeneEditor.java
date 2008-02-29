@@ -28,6 +28,7 @@ import org.genedb.jogra.drawing.Jogra;
 import org.genedb.jogra.drawing.JograPlugin;
 import org.genedb.jogra.drawing.OpenWindowEvent;
 
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.springframework.util.StringUtils;
 
@@ -55,6 +56,8 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class GeneEditor implements JograPlugin {
+	
+	private static final Logger logger = Logger.getLogger(GeneEditor.class);
 	
 	private GeneService geneService;
 	private LockAndNotificationService lockAndNotificationService;
@@ -187,6 +190,7 @@ public class GeneEditor implements JograPlugin {
 	}
 
 	public JPanel getMainWindowPlugin() {
+        logger.error("Looking for plugin for the main window");
         final JPanel ret = new JPanel();
         final Box box = Box.createVerticalBox();
         final JLabel label = new JLabel("Gene Editor Search");
@@ -226,6 +230,7 @@ public class GeneEditor implements JograPlugin {
         });
         box.add(row);
         ret.add(box);
+        logger.error("Returning a plugin for the main window");
         return ret;
     }
 
@@ -285,6 +290,31 @@ public class GeneEditor implements JograPlugin {
 
 	public void setLockAndNotificationService(LockAndNotificationService lockAndNotificationService) {
 		this.lockAndNotificationService = lockAndNotificationService;
+	}
+
+	public void process(List<String> newArgs) {
+		final String query = newArgs.get(0);
+        new SwingWorker<JFrame, Void>() {
+
+            @Override
+            protected JFrame doInBackground() throws Exception {
+                return makeWindow(query);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    final JFrame result = get();
+                    final GeneDBMessage e = new OpenWindowEvent(GeneEditor.this, result);
+                    EventBus.publish(e);
+                } catch (final InterruptedException exp) {
+                    exp.printStackTrace();
+                } catch (final ExecutionException exp) {
+                    exp.printStackTrace();
+                }
+
+            }
+        }.execute();
 	}
 	
 }

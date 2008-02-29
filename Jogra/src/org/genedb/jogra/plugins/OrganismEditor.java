@@ -29,6 +29,7 @@ import org.bushe.swing.event.EventBus;
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.ComboBoxModel;
@@ -133,7 +134,7 @@ public class OrganismEditor implements JograPlugin {
     }
 
     public String getName() {
-        return "Gene Editor";
+        return "Organism Editor";
     }
 
     public int getOrder() {
@@ -158,5 +159,10 @@ public class OrganismEditor implements JograPlugin {
         }
         return lookup;
     }
+
+	public void process(List<String> newArgs) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

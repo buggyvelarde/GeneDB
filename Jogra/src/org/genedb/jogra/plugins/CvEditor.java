@@ -29,6 +29,7 @@ import org.bushe.swing.event.EventBus;
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.ComboBoxModel;
@@ -159,5 +160,10 @@ public class CvEditor implements JograPlugin {
         }
         return lookup;
     }
+
+	public void process(List<String> newArgs) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

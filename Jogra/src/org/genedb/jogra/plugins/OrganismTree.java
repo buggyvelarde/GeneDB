@@ -34,6 +34,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
@@ -201,5 +202,10 @@ public class OrganismTree implements JograPlugin {
     public void setOrganismManager(final ExtendedOrganismManager manager) {
         this.organismManager = manager;
     }
+
+	public void process(List<String> newArgs) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

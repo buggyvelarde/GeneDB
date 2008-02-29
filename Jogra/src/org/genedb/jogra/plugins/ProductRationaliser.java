@@ -614,6 +614,12 @@ public class ProductRationaliser implements JograPlugin {
     
         return "unknown(0x" + Integer.toString(keyCode, 16) + ")";
     }
+
+
+	public void process(List<String> newArgs) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 }

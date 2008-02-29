@@ -158,4 +158,9 @@ public class GeneList implements JograPlugin {
         return false;
     }
 
+	public void process(List<String> newArgs) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
