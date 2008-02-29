@@ -19,6 +19,8 @@
 
 package org.genedb.jogra.drawing;
 
+import java.util.List;
+
 import org.springframework.core.Ordered;
 
 import javax.swing.JPanel;
@@ -34,5 +36,7 @@ public interface JograPlugin extends Ordered {
     boolean isSingletonByDefault();
 
     boolean isUnsaved();
+
+	void process(List<String> newArgs);
 
 }
