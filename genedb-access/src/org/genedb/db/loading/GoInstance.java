@@ -85,7 +85,7 @@ public class GoInstance {
         if ( v != null && v.length() == 8) {
             this.date = v;
         } else {
-            throw new IllegalArgumentException("Date is null or longer than 8 characters ("+v+")");
+            throw new IllegalArgumentException("Date is null or not 8 characters ("+v+")");
         }
     }
 
