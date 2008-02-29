@@ -573,14 +573,15 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 	                        Db db = this.generalDao.getDbByName(sections[0].toUpperCase());
 	                        if (db == null) {
 	                        	logger.error("Can't find db by name of '"+db+"' when persisting controlled curation so skipping");
-	                        }
-	                        dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
-	                        if (dbxref == null) {
-	                        	dbxref = new DbXRef(db, sections[1]);
-	                        	this.generalDao.persist(dbxref);
 	                        } else {
-	                        	FeatureCvTermDbXRef fcvDb = new FeatureCvTermDbXRef(dbxref,fct);
-	                        	this.sequenceDao.persist(fcvDb);
+	                        	dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
+	                        	if (dbxref == null) {
+	                        		dbxref = new DbXRef(db, sections[1]);
+	                        		this.generalDao.persist(dbxref);
+	                        	} else {
+	                        		FeatureCvTermDbXRef fcvDb = new FeatureCvTermDbXRef(dbxref,fct);
+	                        		this.sequenceDao.persist(fcvDb);
+	                        	}
 	                        }
 	                    }
 	                }
