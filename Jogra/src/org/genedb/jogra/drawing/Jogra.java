@@ -150,7 +150,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
                 System.err.println("About to publish ace");
                 EventBus.publish(new ApplicationClosingEvent());
                 System.err.println("Just published ace");
-                // System.exit(0);
+                System.exit(0);  // FIXME - should we be catching the above event?
             }
         });
         mainFrame.setTitle("Jogra");
