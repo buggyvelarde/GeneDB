@@ -99,6 +99,7 @@
 			  <c:set var="chromosome" value="${featLoc.featureBySrcFeatureId.uniqueName}"/>
 		  </c:forEach>
 		  <a href="ArtemisLaunch?organism=${feature.organism.commonName}&chromosome=${chromosome}&start=${start}&end=${end}">Show region in Artemis</a>
+		  <a href="JograLaunch?cmd=Gene%20Editor&gene=${feature.uniqueName}">..</a>
 		</st:section>
 		<st:section name="Context Map" id="context_map" collapsed="false" collapsible="true" hideIfEmpty="false">
 			<misc:contextmap gene="${feature}"></misc:contextmap>
