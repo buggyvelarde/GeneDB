@@ -283,7 +283,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         //final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
           //      new String[] { "classpath:applicationContext.xml", "classpath:domain-client-applicationContext.xml" });
         final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] { "classpath:domain-client-applicationContext.xml", "classpath:applicationContext.xml" });
+                new String[] { "classpath:domain-client-applicationContext.xml", "classpath:/applicationContext.xml" });
         final Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
         ctx.registerShutdownHook();
         
