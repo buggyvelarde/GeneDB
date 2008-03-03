@@ -165,6 +165,10 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/JograLaunch</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/ProductSearch</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
