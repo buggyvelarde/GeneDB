@@ -43,7 +43,8 @@
 	<target name="signed-jar" depends="jar">
 		<jar destfile="Jogra-tmp.jar">
 		    <zipgroupfileset dir="${build.dir}" includes="${jar}"/>
-		    <zipgroupfileset dir="lib" includes="EventBus-1.1.jar, log4j-1.2.9.jar, commons-logging.jar,myswing.jar,swingx-0.9.2.jar,forms-1.1.0.jar"/>
+		    <zipgroupfileset dir="lib" 
+		    	includes="EventBus-1.1.jar, log4j-1.2.9.jar, commons-logging.jar,myswing.jar,swingx-0.9.2.jar,forms-1.1.0.jar"/>
 			<zipgroupfileset dir="../genedb-libs/lib/" includes="spring-2.5.jar" />
 			<zipgroupfileset dir="../genedb-domain/" includes="genedb-domain.jar" />
 			<zipgroupfileset dir="../genedb-db/ant-build/jars" includes="chado-interface.jar" />
