@@ -96,6 +96,7 @@
 	<target name="deploy">
 		<filter token="webAppRootKey" value="${webAppRootKey}" />
 		<delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
+		<mkdir dir="${finaldest.webapps}.tmp"/>
 		<copy todir="${finaldest.webapps}.tmp">
 			<fileset dir="WebContent" casesensitive="false" followSymLinks="false" excludesfile="WebContent/WEB-INF/web.xml"/>
 		</copy>
