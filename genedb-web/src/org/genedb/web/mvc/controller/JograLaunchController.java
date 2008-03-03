@@ -17,15 +17,15 @@ public class JograLaunchController extends AbstractController {
 	@Override
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		String cmd = ServletRequestUtils.getStringParameter(request, "organism");
-		String gene = ServletRequestUtils.getStringParameter(request, "chromosome");
+		String cmd = ServletRequestUtils.getStringParameter(request, "cmd");
+		String gene = ServletRequestUtils.getStringParameter(request, "gene");
 		
 		List<String> args = new ArrayList<String>();
 		args.add(gene);
 		Map<String,Object> model = new HashMap<String,Object>();
 		model.put("command", cmd);
 		model.put("args", args);
-		return new ModelAndView("Jogra", model);
+		return new ModelAndView("jogra", model);
 	}
 
 }
