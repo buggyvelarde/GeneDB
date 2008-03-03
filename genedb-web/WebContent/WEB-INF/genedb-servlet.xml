@@ -88,7 +88,7 @@
 	</bean>
 	
 	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-  		<property name="templateLoaderPath" value="/WEB-INF/freemarker/artemis/"/>
+  		<property name="templateLoaderPath" value="/WEB-INF/freemarker/"/>
 	</bean>
 	
 	<!-- <bean id="freemarkerviewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
@@ -248,6 +248,10 @@
     
     <bean id="ArtemisLaunchController" class="org.genedb.web.mvc.controller.ArtemisLaunchController">
     </bean>
+    
+        
+    <bean id="JograLaunchController" class="org.genedb.web.mvc.controller.JograLaunchController">
+	</bean>
     
     <bean id="ProductSearchController" class="org.genedb.web.mvc.controller.ProductSearchController">
     	<property name="sessionForm" value="true"/>
