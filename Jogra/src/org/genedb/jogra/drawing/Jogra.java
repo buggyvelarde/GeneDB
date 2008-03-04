@@ -3,8 +3,11 @@ package org.genedb.jogra.drawing;
 import org.genedb.db.domain.misc.GeneDBMessage;
 import org.genedb.db.domain.misc.Message;
 import org.genedb.db.domain.services.MessageService;
+import org.genedb.jogra.controller.ImageUtils;
+import org.jdesktop.swingx.JXLoginPane;
+import org.jdesktop.swingx.JXLoginPane.Status;
+import org.jdesktop.swingx.auth.LoginService;
 
-import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
@@ -16,12 +19,12 @@ import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,6 +126,17 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     }
 
     public void init() throws Exception {
+    	
+        LoginService ls = new JograLoginService();
+        JXLoginPane loginPane = new JXLoginPane(ls);
+        loginPane.setBannerText("Jogra Login");
+        final BufferedImage bi = ImageUtils.makeBackgroundFromClasspath("jogra.jpg");
+        loginPane.setBanner(bi);
+        Status status = JXLoginPane.showLoginDialog(null, loginPane);
+        if (status != Status.SUCCEEDED) {
+        	finalShutdown();
+        }
+        
         try { 
         	sis = 
         		(SingleInstanceService)ServiceManager.lookup("javax.jnlp.SingleInstanceService");
@@ -131,10 +145,6 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         catch (UnavailableServiceException e) {
         	sis=null; // Not running under JNLP
         }
-        final JograLogin loginWindow = new JograLogin();
-        // loginWindow.setUser(user);
-        loginWindow.pack();
-        loginWindow.setVisible(true);
     }
 
     public void makeMain() throws IOException {
@@ -242,11 +252,15 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         if (check == JOptionPane.NO_OPTION) {
             return;
         }
-        if (sis != null) {
+        finalShutdown();
+    }
+
+	private void finalShutdown() {
+		if (sis != null) {
         	sis.removeSingleInstanceListener(this);
         }
         System.exit(0);
-    }
+	}
 
     /*
      * (non-Javadoc)
