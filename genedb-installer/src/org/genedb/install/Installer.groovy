@@ -1,15 +1,16 @@
 package org.genedb.install;
 
-class Installer {
+public class Installer {
 
-    //String root = '/software/pathogen/projects/genedb/tmp/'
-    String root = "/Users/art/Scratch/genedb-installer/"
-    String repository = "${root}/downloaded/"
-    String target = "${root}/test"
+    String root = '/software/pathogen/projects/genedb/installation_material/'
+    //String root = "/Users/art/Scratch/genedb-installer/"
+    //String repository = "${root}/downloaded/"
+    //String target = "${root}/test"
+    String target = "/tmp"
     
     def ant = new AntBuilder()
     
-  static void main(args) {
+  public static void main(args) {
         Installer installer = new Installer()
     	installer.install()
   }
@@ -22,11 +23,11 @@ class Installer {
       
       Server servletEngine = new Tomcat5()
       //Server servletEngine = new Jetty6()
-      servletEngine.install(ant, repository, target, '9005')
+      servletEngine.install(ant, root, target, '9005')
       
-      //DbServer db = new PostgreSql8()
-      DbServer db = new Derby10()
-      db.install(ant, repository, target, '9007')
+      DbServer db = new PostgreSql8()
+      //DbServer db = new Derby10()
+      db.install(ant, root, target, '9007')
 
       prepareJars(ant)
       
