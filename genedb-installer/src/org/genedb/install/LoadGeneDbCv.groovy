@@ -37,9 +37,9 @@ class LoadGeneDbCv {
     
     LoadGeneDbCv() {
 		db = Sql.newInstance(
-			'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10301/chado',
-			'chado',
-			'chado',
+			'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10120/pathdb',
+			'xxx',
+			'xxx',
 			'org.postgresql.Driver')
 			
      	cvDataSet = db.dataSet("cv")
