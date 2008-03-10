@@ -1,9 +1,9 @@
 package org.genedb.install;
 
-class PostgreSql8 implements Server {
+class PostgreSql8 implements DbServer {
     
-    String postgresql = "postgresql-8.2.0.tar.bz2"
-    String version = "postgresql-8.2.0"
+    String postgresql = "postgresql-8.3RC2.tar.bz2"
+    String version = "postgresql-8.3RC2"
     String archive = ".tar.bz2"
     
     private void install(AntBuilder ant, String repository, String target, String port) {
@@ -57,6 +57,9 @@ class PostgreSql8 implements Server {
     
     void loadSchema() {
         List modules = ("general");
+    }
+    
+    void loadBootstrapData() {
     }
     
 }
