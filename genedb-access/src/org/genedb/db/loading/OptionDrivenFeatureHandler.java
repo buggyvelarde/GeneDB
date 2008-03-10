@@ -30,8 +30,6 @@ import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.utils.ChangeVetoException;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -44,7 +42,7 @@ import java.util.List;
  */
 public class OptionDrivenFeatureHandler extends BaseFeatureHandler implements FeatureHandler {
 
-    private List<FeatureListener> listeners = new ArrayList<FeatureListener>(0);
+    //private List<FeatureListener> listeners = new ArrayList<FeatureListener>(0);
     /*
      * (non-Javadoc)
      * 
@@ -75,11 +73,11 @@ public class OptionDrivenFeatureHandler extends BaseFeatureHandler implements Fe
             
     }
 
-    private void fireEvent(FeatureEvent fe) {
-        for (FeatureListener fl : listeners) {
-            // TODO
-        }
-    }
+//    private void fireEvent(FeatureEvent fe) {
+//        for (FeatureListener fl : listeners) {
+//            // TODO
+//        }
+//    }
 
     @Override
     public void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature feat, int offset) {

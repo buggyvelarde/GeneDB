@@ -24,8 +24,6 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import org.genedb.db.loading.ProcessingPhase;
-
 import org.gmod.schema.sequence.Feature;
 
 import org.biojava.bio.seq.StrandedFeature;

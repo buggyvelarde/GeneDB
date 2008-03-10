@@ -50,11 +50,6 @@ import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.featureProcessors.CDS_Processor;
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.cv.CvTermRelationship;
-import org.gmod.schema.general.Db;
-import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.hibernate.Session;
@@ -64,17 +59,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 
 
 /**
- * This class is the main entry point for the new GeneDB data miners. It's designed to be
- * called from the command-line. It looks for a config. file which specifies which files
- * to process.
+ * This class is the main entry point for the new GeneDB data miners. 
+ * It's designed to be called from the command-line. It looks for a 
+ * config. file which specifies which files to process.
  *
  * Usage: NewRunner common_nane [config_file]
  *
@@ -119,7 +110,7 @@ public class NewRunner implements ApplicationContextAware {
     
 	private Set<String> handeledQualifiers = new HashSet<String>();
     
-    private OrthologueStorage orthologueStorage = new OrthologueStorage();
+    //private OrthologueStorage orthologueStorage = new OrthologueStorage();
     
     
     public void setHibernateTransactionManager(
@@ -672,7 +663,7 @@ public class NewRunner implements ApplicationContextAware {
     public static void main (String[] args) {
 
         String organismCommonName = null;
-        String loginName = null;
+        //String loginName = null;
         String configFilePath = null;
 
         switch (args.length) {
@@ -682,17 +673,17 @@ public class NewRunner implements ApplicationContextAware {
                 break; // To prevent fall-through warning
             case 1:
                 organismCommonName = args[0];
-                loginName = organismCommonName;
+                //loginName = organismCommonName;
                 break;
             case 2:
                 organismCommonName = args[0];
-                loginName = organismCommonName;
+                //loginName = organismCommonName;
                 configFilePath = args[1];
                 break;
             case 3:
                 organismCommonName = args[0];
                 configFilePath = args[1];
-                loginName = args[2];
+                //loginName = args[2];
                 break;
             default:
                 System.err.println("Too many arguments\n"+usage);

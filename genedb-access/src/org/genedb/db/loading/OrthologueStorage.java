@@ -19,10 +19,8 @@
 
 package org.genedb.db.loading;
 
-import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
-import nu.xom.NodeFactory;
 import nu.xom.Serializer;
 
 import java.util.ArrayList;
@@ -31,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -40,22 +37,22 @@ public class OrthologueStorage {
     private List<String> paralogues = new ArrayList<String>();
     private List<String> curatedOrthologues = new ArrayList<String>();
     private Map<String, List<String>> clusters = new HashMap<String, List<String>>();
-    private boolean full = false;
+    //private boolean full = false;
     
     public void addOrthologue(String s) {
         this.orthologues.add(s);
-        full = true;
+        //full = true;
     }
     
     
     public void addParalogue(String s) {
         this.paralogues.add(s);
-        full = true;
+        //full = true;
     }
     
     public void addCuratedOrthologue(String s) {
         this.curatedOrthologues.add(s);
-        full = true;
+        //full = true;
     }
     
     public void addCluster(String key, String s) {
@@ -67,7 +64,7 @@ public class OrthologueStorage {
             clusters.put(key, list);
         }
         list.add(s);
-        full = true;
+        //full = true;
     }
     
     public void serialize(File f) throws IOException {

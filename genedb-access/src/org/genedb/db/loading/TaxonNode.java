@@ -10,8 +10,6 @@ import org.gmod.schema.organism.Organism;
 import org.gmod.schema.organism.OrganismProp;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.phylogeny.PhylonodeOrganism;
-import org.gmod.schema.phylogeny.PhylonodeProp;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -55,9 +52,9 @@ public class TaxonNode {
                 // TODO What organism props do we want?
                 
                 this.taxonId = getOrganismProperty(org, "taxonId");
-                String curatorName = getOrganismProperty(org, "curatorName");
-                String curatorEmail = getOrganismProperty(org, "curatorEmail");
-                String nickname = getOrganismProperty(org, "nickname");
+                //String curatorName = getOrganismProperty(org, "curatorName");
+                //String curatorEmail = getOrganismProperty(org, "curatorEmail");
+                //String nickname = getOrganismProperty(org, "nickname");
                 //String curatorName = getOrganismProperty(org, "curatorName");
                 names.put(TaxonNameType.HTML_SHORT, getOrganismProperty(org, "htmlShortName"));
                 names.put(TaxonNameType.HTML_FULL, getOrganismProperty(org, "htmlFullName"));
@@ -85,14 +82,14 @@ public class TaxonNode {
 //    }
 
     
-    private String getPhylonodeProperty(String key) {
-        for (PhylonodeProp prop : phylonode.getPhylonodeProps()) {
-            if (prop.getCvTerm().getName().equals(key)) {
-                return prop.getValue();
-            }
-        }
-        return null;
-    }
+//    private String getPhylonodeProperty(String key) {
+//        for (PhylonodeProp prop : phylonode.getPhylonodeProps()) {
+//            if (prop.getCvTerm().getName().equals(key)) {
+//                return prop.getValue();
+//            }
+//        }
+//        return null;
+//    }
     
 
     private String getOrganismProperty(Organism org, String key) {
@@ -167,7 +164,7 @@ public class TaxonNode {
     public List<String> getAllChildrenNames() {
     	List<TaxonNode> allChildren = getAllChildren();
     	List<String> names = new ArrayList<String>();
-    	StringBuilder ret = new StringBuilder();
+//    	StringBuilder ret = new StringBuilder();
     	for (TaxonNode child : allChildren) {
 			if (child.isOrganism()) {
 				names.add(child.getLabel());

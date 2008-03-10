@@ -20,7 +20,6 @@ import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

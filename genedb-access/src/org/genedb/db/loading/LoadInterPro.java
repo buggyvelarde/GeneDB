@@ -1,12 +1,9 @@
 package org.genedb.db.loading;
 
-import java.io.File;
 import java.util.Date;
 import java.util.Properties;
 
 import org.genedb.db.dao.SequenceDao;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
@@ -66,9 +63,9 @@ public class LoadInterPro {
 		return sequenceDao;
 	}
 
-	public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
-	}
+//	public void setSequenceDao(SequenceDao sequenceDao) {
+//		this.sequenceDao = sequenceDao;
+//	}
 
 
 	public HibernateTransactionManager getHibernateTransactionManager() {
@@ -76,8 +73,8 @@ public class LoadInterPro {
 	}
 
 
-	public void setHibernateTransactionManager(
-			HibernateTransactionManager hibernateTransactionManager) {
-		this.hibernateTransactionManager = hibernateTransactionManager;
-	}
+//	public void setHibernateTransactionManager(
+//			HibernateTransactionManager hibernateTransactionManager) {
+//		this.hibernateTransactionManager = hibernateTransactionManager;
+//	}
 }

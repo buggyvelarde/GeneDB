@@ -21,9 +21,7 @@ package org.genedb.db.loading;
 
 
 import org.gmod.schema.dao.PhylogenyDaoI;
-import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
-import org.gmod.schema.phylogeny.PhylonodeOrganism;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -139,14 +137,14 @@ public class TaxonNodeManager implements InitializingBean{
         return ret;
     }
     
-    private Phylonode getPhlyonodeForOrganism(Organism org) {
-        Set<PhylonodeOrganism> pos = org.getPhylonodeOrganisms();
-        if (pos.size() != 1) {
-            throw new RuntimeException("Found more than one phylonodeOrganism for '"+org.getCommonName()+"'");
-        }
-        PhylonodeOrganism po = pos.iterator().next();
-        return po.getPhylonode(); 
-    }
+//    private Phylonode getPhlyonodeForOrganism(Organism org) {
+//        Set<PhylonodeOrganism> pos = org.getPhylonodeOrganisms();
+//        if (pos.size() != 1) {
+//            throw new RuntimeException("Found more than one phylonodeOrganism for '"+org.getCommonName()+"'");
+//        }
+//        PhylonodeOrganism po = pos.iterator().next();
+//        return po.getPhylonode(); 
+//    }
     
     boolean validateTaxon(String taxon) {
         return false; // FIXME

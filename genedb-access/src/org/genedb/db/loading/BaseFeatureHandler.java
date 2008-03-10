@@ -118,12 +118,12 @@ public abstract class BaseFeatureHandler extends BaseFeatureProcessor implements
         listeners.remove(fl);
     }
 
-    private void fireEvent(FeatureEvent fe) {
-        for (@SuppressWarnings("unused")
-        FeatureListener fl : listeners) {
-            // TODO
-        }
-    }
+//    private void fireEvent(FeatureEvent fe) {
+//        for (@SuppressWarnings("unused")
+//        FeatureListener fl : listeners) {
+//            // TODO
+//        }
+//    }
 
     @Override
     public void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature feat, int offset) {

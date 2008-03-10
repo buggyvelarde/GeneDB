@@ -6,7 +6,6 @@ import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 
 import org.biojava.bio.Annotation;

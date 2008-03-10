@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.hibernate3.HibernateAccessor;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 
 import java.io.BufferedReader;
@@ -78,13 +77,13 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
 
 
 
-	private CharSequence blankString(char c, int size) {
-        StringBuilder buf = new StringBuilder(size);
-        for (int i =0; i < size; i++) {
-            buf.append(c);
-        }
-        return buf;
-    }
+//	private CharSequence blankString(char c, int size) {
+//        StringBuilder buf = new StringBuilder(size);
+//        for (int i =0; i < size; i++) {
+//            buf.append(c);
+//        }
+//        return buf;
+//    }
 
 
 

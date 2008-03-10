@@ -37,12 +37,6 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.sequence.Feature;
-
-import org.biojava.bio.seq.StrandedFeature;
-
-import java.util.List;
-
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
  * be called from the command-line, or a Makefile.
@@ -54,7 +48,7 @@ import java.util.List;
  */
 public abstract class Misc_feature_Processor extends BasePossibleHandlerProcessor {
 
-    private List<PossibleHandler> possibleHandlers;
+    //private List<PossibleHandler> possibleHandlers;
     
     public Misc_feature_Processor() {
         super(new String[]{}, 

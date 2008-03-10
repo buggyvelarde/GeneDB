@@ -24,16 +24,11 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
 
-import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to

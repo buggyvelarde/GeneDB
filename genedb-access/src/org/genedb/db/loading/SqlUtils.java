@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 
 public class SqlUtils {
     
-    private void executeSql(Reader r, DataSource ds, boolean includeDrop) throws IOException, SQLException {
+    public void executeSql(Reader r, DataSource ds, boolean includeDrop) throws IOException, SQLException {
         BufferedReader in = new BufferedReader(r);
         StringBuffer cmd = new StringBuffer();
         String line;

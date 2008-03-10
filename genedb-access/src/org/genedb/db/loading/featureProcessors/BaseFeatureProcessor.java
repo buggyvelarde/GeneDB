@@ -27,7 +27,6 @@ package org.genedb.db.loading.featureProcessors;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_CURATION;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_DB_XREF;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_D_PSU_DB_XREF;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIVATE;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_EC_NUMBER;
 
@@ -44,7 +43,6 @@ import org.genedb.db.loading.GeneDbGeneNamingStrategy;
 import org.genedb.db.loading.GeneNamingStrategy;
 import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.ProcessingPhase;
-import org.genedb.db.loading.TaxonNode;
 
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
@@ -64,11 +62,8 @@ import org.gmod.schema.sequence.FeaturePropPub;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.GeneticCodes;
-import org.biojava.bio.seq.RNATools;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
-import org.biojava.bio.symbol.TranslationTable;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -80,7 +75,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -327,7 +321,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
             }
             String dbName = xref.substring(0, index);
             String acc = xref.substring(index+1);
-            String description = null;
+            //String description = null;
             if (acc.indexOf(";") != -1) {
                 String[] parts = acc.split(";");
                 if (parts.length>0) {
@@ -337,7 +331,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                     continue;
                 }
                 if (parts.length>1) {
-                    description = parts[1];
+                    //description = parts[1];
                 }
             }
             

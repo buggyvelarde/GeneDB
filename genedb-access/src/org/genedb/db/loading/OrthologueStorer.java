@@ -1,10 +1,7 @@
 package org.genedb.db.loading;
 
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
 
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -27,8 +27,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Date;
 import java.util.Properties;
 
 import javax.xml.stream.XMLStreamException;
@@ -45,11 +43,7 @@ import javax.xml.stream.XMLStreamException;
  */
 public class OrthoStoreRunner {
 
-    private static String usage="OrthologueStorer orthologue_file";
-
     protected static final Log logger = LogFactory.getLog(OrthoStoreRunner.class);
-    
-    private FeatureUtils featureUtils;
 
 
 
@@ -92,7 +86,7 @@ public class OrthoStoreRunner {
         OrthologueStorer ostore = (OrthologueStorer) ctx.getBean("ostore", OrthologueStorer.class);
         ostore.afterPropertiesSet();
         File[] files = new File[filePaths.length];
-        long start = new Date().getTime();
+        //long start = new Date().getTime();
         for (int i = 0; i < filePaths.length; i++) {
 			files[i] = new File(filePaths[i]);
 		}

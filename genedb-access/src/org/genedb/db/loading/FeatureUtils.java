@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
 import org.biojava.bio.proteomics.IsoelectricPointCalc;
 import org.biojava.bio.proteomics.MassCalc;
@@ -427,12 +426,12 @@ public class FeatureUtils implements InitializingBean {
         DecimalFormat df = new DecimalFormat("#.##");
         pp.setIsoelectricPoint(df.format(cal));
 
-        CvTerm MISC_ISOELECTRIC = cvDao.getCvTermByNameAndCvName("isoelectric_point", "genedb_misc"); 
-        CvTerm MISC_MASS = cvDao.getCvTermByNameAndCvName("molecular mass", "genedb_misc"); 
-        CvTerm MISC_CHARGE = cvDao.getCvTermByNameAndCvName("protein_charge", "genedb_misc"); 
+        //CvTerm MISC_ISOELECTRIC = cvDao.getCvTermByNameAndCvName("isoelectric_point", "genedb_misc"); 
+        //CvTerm MISC_MASS = cvDao.getCvTermByNameAndCvName("molecular mass", "genedb_misc"); 
+        //CvTerm MISC_CHARGE = cvDao.getCvTermByNameAndCvName("protein_charge", "genedb_misc"); 
 
 
-        FeatureProp fp = new FeatureProp(polypeptide, MISC_ISOELECTRIC, df.format(cal), 0); 
+        //FeatureProp fp = new FeatureProp(polypeptide, MISC_ISOELECTRIC, df.format(cal), 0); 
 
         pp.setAminoAcids(Integer.toString(seqString.length()));
         MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
@@ -444,13 +443,13 @@ public class FeatureUtils implements InitializingBean {
         }
         pp.setMass(df.format(cal));
 
-        fp = new FeatureProp(polypeptide, MISC_MASS, df.format(cal), 0);
+        //fp = new FeatureProp(polypeptide, MISC_MASS, df.format(cal), 0);
 
         cal = ProteinUtils.getCharge(seq);
         pp.setCharge(df.format(cal));
 
 
-        fp = new FeatureProp(polypeptide, MISC_CHARGE, df.format(ProteinUtils.getCharge(seq)), 0);
+        //fp = new FeatureProp(polypeptide, MISC_CHARGE, df.format(ProteinUtils.getCharge(seq)), 0);
 
         return pp;
     }

@@ -1,16 +1,10 @@
 package org.genedb.db.loading;
 
 
+import java.util.List;
+
 import org.biojava.bio.Annotation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class NoteMungingNomenclatureHandler extends BaseNomenclatureHandler implements NomenclatureHandler {
     

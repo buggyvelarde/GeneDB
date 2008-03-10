@@ -1,11 +1,8 @@
 package org.genedb.db.loading;
 
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.pub.Pub;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
@@ -25,7 +22,6 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,12 +46,12 @@ public class InterProParser {
 
     private SequenceDao sequenceDao;
     private FeatureUtils featureUtils;
-    private static Map months = new HashMap(12);
+    private static Map<String, String> months = new HashMap<String, String>(12);
     private HibernateTransactionManager hibernateTransactionManager;
-    private static HashMap dbs;
+    private static HashMap<String, String> dbs;
 
     static {
-        dbs = new HashMap();
+        dbs = new HashMap<String, String>();
         dbs.put("HMMPfam", "Pfam");
         dbs.put("ScanProsite", "PROSITE");
         dbs.put("FPrintScan", "PRINTS");
@@ -127,21 +123,21 @@ public class InterProParser {
             // Go through the results and pull the rows into the
             // hashmap genes, keyed on gene names, where the values
             // are ArrayLists of String[]
-            Map genes = new HashMap();
-            List col = new ArrayList();
+            Map<String, List<String[]>> genes = new HashMap<String, List<String[]>>();
+            List<String[]> col = new ArrayList<String[]>();
             for ( int i = 0; i < ret.length; i++ ) {
                 String id = ret[i][COL_ID];
                 if ( genes.containsKey(id) ) {
-                    col = (ArrayList) genes.get(id);
+                    col = genes.get(id);
                 } else {
-                    col = new ArrayList();
+                    col = new ArrayList<String[]>();
                     genes.put(id, col);
                 }
                 col.add(ret[i]);
             }
             ret = null;
 
-            Set strangeProgram = new HashSet();
+            Set<String> strangeProgram = new HashSet<String>();
             sub1(genes, col, strangeProgram);
 
             Iterator it = strangeProgram.iterator();
@@ -164,7 +160,7 @@ public class InterProParser {
 		
 	}
     
-    private void sub1(Map genes, List col, Set strangeProgram) {
+    private void sub1(Map<String, List<String[]>> genes, List<String[]> col, Set<String> strangeProgram) {
         // Go through each key and sort the ArrayLists
     	SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
     	Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
@@ -182,8 +178,8 @@ public class InterProParser {
                 continue;
             }
             Hibernate.initialize(polypeptide);
-            Set goIdsLinked = new HashSet();
-            col = (ArrayList) genes.get(id);
+            Set<String> goIdsLinked = new HashSet<String>();
+            col = genes.get(id);
             boolean swap = true;
             while (swap) {
                 swap = false;
@@ -216,7 +212,7 @@ public class InterProParser {
             }
 
             // col is now sorted by interpro, then program
-            HashSet ip = new HashSet();
+            HashSet<String> ip = new HashSet<String>();
             for ( int i = 0; i < col.size(); i++) {
                 String[] a = (String[]) col.get(i);
                 String aAccNum = "NULL";
@@ -248,7 +244,7 @@ public class InterProParser {
                     }
                 }
                 // Now know upper and lower bound of this interpro num
-                HashSet progs = new HashSet();
+                HashSet<String> progs = new HashSet<String>();
                 for ( int i = min; i <= max ; i++) {
                     String prog = (( String[]) col.get(i))[COL_NATIVE_PROG];
                     String db = (String) dbs.get(prog);
@@ -296,8 +292,8 @@ public class InterProParser {
                 while ( it2.hasNext() ) {
                     int rank = 0;
                 	String prog = (String) it2.next();
-                    ArrayList coords = new ArrayList();
-                    List coordinates = new ArrayList();
+                    ArrayList<String> coords = new ArrayList<String>();
+                    List<String[]> coordinates = new ArrayList<String[]>();
                     String dbacc = null;
                     String nativeProg = null;
                     String score = null;
@@ -413,12 +409,12 @@ public class InterProParser {
     //Molecular Function: protein kinase (GO:0004672),
     //Molecular Function: ATP binding (GO:0005524),
     //Biological Process: protein amino acid phosphorylation (GO:0006468)
-    private void addGoTerms(Feature polypeptide, String[] row, Set goIdsLinked, Session session) {
+    private void addGoTerms(Feature polypeptide, String[] row, Set<String> goIdsLinked, Session session) {
     	String goTerms = row[COL_GO];
         if ( goTerms == null || "".equals(goTerms)) {
             return;
         }
-        List terms = new ArrayList();
+        List<String> terms = new ArrayList<String>();
         int start=0;
         int end=0;
         while (end != -1) {

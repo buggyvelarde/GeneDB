@@ -24,8 +24,6 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
-import static org.genedb.db.loading.EmblQualifiers.QUAL_D_COLOUR;
-import static org.genedb.db.loading.EmblQualifiers.QUAL_D_GENE;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 
 import org.genedb.db.loading.ProcessingPhase;

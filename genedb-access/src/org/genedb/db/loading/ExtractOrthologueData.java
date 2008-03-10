@@ -19,8 +19,6 @@
 
 package org.genedb.db.loading;
 
-import static org.genedb.db.loading.EmblQualifiers.QUAL_PSEUDO;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,17 +27,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,32 +43,11 @@ import org.biojava.bio.seq.Feature;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
 import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.symbol.Location;
-import org.biojava.utils.ChangeVetoException;
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.GeneralDao;
-import org.genedb.db.dao.OrganismDao;
-import org.genedb.db.dao.PubDao;
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.loading.featureProcessors.CDS_Processor;
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.cv.CvTermRelationship;
-import org.gmod.schema.general.Db;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
+
 
 
 
@@ -105,7 +78,7 @@ public class ExtractOrthologueData implements ApplicationContextAware {
 
     Map<String,String> cdsQualifiers = new HashMap<String,String>();
     
-    private OrthologueStorage orthologueStorage = new OrthologueStorage();
+    //private OrthologueStorage orthologueStorage = new OrthologueStorage();
     
     private Map<String, List<String>> globalCuratedOrthologues = new HashMap<String, List<String>>();
     
@@ -300,11 +273,11 @@ public class ExtractOrthologueData implements ApplicationContextAware {
             // Loop over all features, setting up feature processors and index them by ProcessingPhase
             // Deal with any ProcessingPhase.FIRST on this loop. Note any features we can't process
 
-            Map<ProcessingPhase,List<Feature>> processingStagesFeatureMap =
-                new HashMap<ProcessingPhase, List<Feature>>();
+//            Map<ProcessingPhase,List<Feature>> processingStagesFeatureMap =
+//                new HashMap<ProcessingPhase, List<Feature>>();
             
             
-            List<Feature> toRemove = new ArrayList<Feature>();
+            //List<Feature> toRemove = new ArrayList<Feature>();
             Iterator featureIterator = seq.features();
             while (featureIterator.hasNext()) {
                 Feature feature = (Feature) featureIterator.next();
@@ -322,7 +295,7 @@ public class ExtractOrthologueData implements ApplicationContextAware {
 
     private void processCDS(Feature feature) {
 		Annotation an = feature.getAnnotation();
-		List<String> qualifiers = new ArrayList();
+		List<String> qualifiers = new ArrayList<String>();
 		Iterator it = an.keys().iterator();
 		while(it.hasNext()) {
 			Object o = it.next();

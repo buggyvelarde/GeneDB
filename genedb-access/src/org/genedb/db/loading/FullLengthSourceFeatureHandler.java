@@ -30,8 +30,6 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_PRIVATE;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_SO_TYPE;
 import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 
-import org.genedb.db.loading.featureProcessors.BaseFeatureProcessor;
-
 import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Feature;
@@ -59,7 +57,7 @@ import java.util.List;
  */
 public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implements FeatureHandler {
 
-    private List<FeatureListener> listeners = new ArrayList<FeatureListener>(0);
+    //private List<FeatureListener> listeners = new ArrayList<FeatureListener>(0);
     
     
  //   public void afterPropertiesSet() {
@@ -196,11 +194,11 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
     }
 
 
-    private void fireEvent(FeatureEvent fe) {
-        for (FeatureListener fl : listeners) {
-            // TODO
-        }
-    }
+//    private void fireEvent(FeatureEvent fe) {
+//        for (FeatureListener fl : listeners) {
+//            // TODO
+//        }
+//    }
 
     @Override
     public void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature feat, int offset) {
