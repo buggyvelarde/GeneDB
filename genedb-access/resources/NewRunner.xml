@@ -280,16 +280,16 @@
     	<property name="cvDao" ref="cvDao" />
     	<property name="generalDao" ref="generalDao" />
     	<property name="pubDao" ref="pubDao" />
-    	<property name="hibernateTransactionManager" ref="transactionManager" />
-    	<property name="sessionFactory" ref="sessionFactory" />
+    	<!-- <property name="hibernateTransactionManager" ref="transactionManager" /> -->
+    	<!-- <property name="sessionFactory" ref="sessionFactory" /> -->
     	<!-- <property name="runnerConfigParser" ref="runnerConfigParser" /> -->
     	<property name="orthoMclParser" ref="allOrthoMclRelationshipParser" />
     	<property name="xmlParser" ref="xmlOrthologueRelationshipParser" />
     </bean>
     
     <bean id="iploader" class="org.genedb.db.loading.LoadInterPro" init-method="afterPropertiesSet">
-    	<property name="sequenceDao" ref="sequenceDao" />
-    	<property name="hibernateTransactionManager" ref="transactionManager" />
+    	<!-- <property name="sequenceDao" ref="sequenceDao" /> -->
+    	<!-- <property name="hibernateTransactionManager" ref="transactionManager" /> -->
     </bean>
     
     <bean id="ipparser" class="org.genedb.db.loading.InterProParser" init-method="afterPropertiesSet">
@@ -334,7 +334,7 @@
            
 	<bean name="cdsProcessor" class="org.genedb.db.loading.featureProcessors.CDS_Processor" parent="baseFeatureProcessor" lazy-init="true">
 		<property name="goParser" ref="goParser" />
-        <property name="similarityParser" ref="similarityParser" />
+        <!-- <property name="similarityParser" ref="similarityParser" /> -->
 	</bean>                                                             
     
     <bean id="runnerConfigParser" class="org.genedb.db.loading.RunnerConfigParser" />
@@ -354,9 +354,9 @@
 		 <property name="driverClassName" value="org.postgresql.Driver" />
 	 	 <!-- <property name="url" value="jdbc:postgresql:ormtest" /> -->
          <!-- <property name="username" value="art" /> -->
-        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10303/chado" />
+        <property name="url" value="jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10120/pathdb" />
         <!--<property name="username" value="plasmodia" />-->
-        <property name="username" value="chado"/>
+        <property name="username" value="xxx"/>
         <property name="password" value="" />
 	</bean> 
 
