@@ -2,7 +2,7 @@ package org.genedb.install;
 
 public class Tomcat5 implements Server {
     
-    String version = "apache-tomcat-6.0.2"
+    String version = "apache-tomcat-6.0.14"
     String archive = ".tar.gz"
     
     void install(AntBuilder ant, String repository, String target, String port) {
