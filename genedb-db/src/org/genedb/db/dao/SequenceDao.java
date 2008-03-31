@@ -203,7 +203,9 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 					"and f1.featureByObjectId=f",
 					new String[]{"polypep"},
 					new Object[]{polypep});
-			features.add(genes.get(0));
+			if(genes.size() > 0) {
+				features.add(genes.get(0));
+			}
 		}
 		goName = getHibernateTemplate().findByNamedParam("select cv " +
 				"from CvTerm cv where cv.dbXRef.accession=:number", new String[]{"number"}, new Object[]{number});
@@ -347,6 +349,19 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 		}
 		String query = "from Feature f where f.uniqueName in (" + featureIds.toString() + ")";
 		List<Feature> features = getHibernateTemplate().find(query);
+		
+		return features;
+	}
+
+	public List<Feature> getFeaturesByLocation(int min, int max, String type, String organism, Feature parent) {
+		
+		List<Feature> features = null;
+		features = getHibernateTemplate().findByNamedParam("select f from Feature f , FeatureLoc fl " +
+				"where fl.fmin>=:min " +
+				"and fl.fmax<=:max and fl.featureByFeatureId=f.featureId " +
+				"and fl.featureBySrcFeatureId=:parent and f.cvTerm.name=:type " +
+				"and f.organism.commonName=:organism", 
+				new String[]{"min","max","type","organism","parent"}, new Object[]{min,max,type,organism,parent});
 		
 		return features;
 	}

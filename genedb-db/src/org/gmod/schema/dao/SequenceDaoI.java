@@ -92,6 +92,18 @@ public interface SequenceDaoI extends BaseDaoI {
      */
     public List<Feature> getFeaturesByRange(int min, int max, int strand,
             Feature parent, String type);
+    
+    /**
+     * Return a list of features located within a given range
+     *  
+     * @param min the minimum (interbase) coordinate
+     * @param max the maximum (interbase) coordinate
+     * @param type (gene, protein, mRNA etc)
+     * @param organism
+     * @param parent (chromosome or contig)
+     * @return a List<Feature> which ??? this range
+     */
+    public List<Feature> getFeaturesByLocation(int min, int max, String type, String organism, Feature parent);
 
     /**
      * Return a list of features located on a source Feature 
