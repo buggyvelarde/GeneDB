@@ -10,6 +10,7 @@ import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.utils.CountedName;
@@ -364,6 +365,20 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 				new String[]{"min","max","type","organism","parent"}, new Object[]{min,max,type,organism,parent});
 		
 		return features;
+	}
+
+	public FeatureRelationship getFeatureRelationshipBySubjectObjectAndRelation(
+			Feature subject, Feature object, CvTerm relation) {
+		List<FeatureRelationship> frs = new ArrayList<FeatureRelationship>();
+		frs = getHibernateTemplate().findByNamedParam("from FeatureRelationship fr " +
+				"where fr.featureBySubjectId=:subject and fr.featureByObjectId=:object " +
+				"and fr.cvTerm=:relation", new String[]{"subject","object","relation"}, 
+				new Object[]{subject,object,relation});
+		
+		if (!frs.isEmpty()) {
+			return frs.get(0);
+		}
+		return null;
 	}
 
 }

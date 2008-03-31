@@ -28,6 +28,7 @@ import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.utils.CountedName;
@@ -267,5 +268,16 @@ public interface SequenceDaoI extends BaseDaoI {
      * @return the list of Features, or null
      */
     public List<Feature> getFeaturesByUniqueNames(List<String> names);
+    
+    /**
+     * Return the FeatureRelationship containing a particular subject, object and the relation 
+     * 
+     * @param subject the subject Feature
+     * @param object the object Feature
+     * @param relation the cvterm corresponding to the relation
+     * @return the FeatureRelationship, or null
+     */
+    public FeatureRelationship getFeatureRelationshipBySubjectObjectAndRelation(Feature subject,
+    		Feature object, CvTerm relation);
 
 }
