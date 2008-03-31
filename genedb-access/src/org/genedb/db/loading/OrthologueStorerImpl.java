@@ -28,18 +28,41 @@ import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.analysis.Analysis;
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.Db;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.biojava.bio.Annotation;
+import org.biojava.bio.gui.sequence.PairwiseOverlayRenderer;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
+import org.hibernate.Transaction;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.SimpleTransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,9 +71,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 
 
@@ -66,11 +93,11 @@ import javax.xml.stream.XMLStreamException;
 @Transactional
 public class OrthologueStorerImpl implements OrthologueStorer {
 
-//    private static String usage="OrthologueStorer orthologue_file";
+    private static String usage="OrthologueStorer orthologue_file";
 
     protected static final Log logger = LogFactory.getLog(OrthologueStorerImpl.class);
 
-//	private static CvTerm PARALOGOUS_RELATIONSHIP;
+	private static CvTerm PARALOGOUS_RELATIONSHIP;
 
 	private static CvTerm ORTHOLOGOUS_RELATIONSHIP;
 	
@@ -100,9 +127,9 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 
     private GeneralDao generalDao;
     
-//    private HibernateTransactionManager hibernateTransactionManager;
+    private HibernateTransactionManager hibernateTransactionManager;
     
-//    private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
     
     Organism DUMMY_ORG;
     
@@ -117,17 +144,17 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //    private OrthologueStorage orthologueStorage = new OrthologueStorage();
     
     
-//    public void setHibernateTransactionManager(
-//			HibernateTransactionManager hibernateTransactionManager) {
-//		this.hibernateTransactionManager = hibernateTransactionManager;
-//	}
+    public void setHibernateTransactionManager(
+			HibernateTransactionManager hibernateTransactionManager) {
+		this.hibernateTransactionManager = hibernateTransactionManager;
+	}
 
 
 
 
-//    public void setSessionFactory(SessionFactory sessionFactory) {
-//		this.sessionFactory = sessionFactory;
-//	}
+    public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 
 
@@ -238,18 +265,27 @@ public class OrthologueStorerImpl implements OrthologueStorer {
     		return;
     	}
     	System.err.println("About to persist FeatureRelationship for '"+pair.getFirst()+"' and '"+pair.getSecond()+"' as a '"+relationship.getName()+"'");
-    	FeatureRelationship fr = new FeatureRelationship(gene1, gene2, relationship, 0);
-    	sequenceDao.persist(fr);
-    	
-    	// Need to store camouflage - a parent feature so it looks like a cluster
-    	String uniqueName = "ORTHO_PARA_" +pair.getFirst() + "_" + pair.getSecond();
+    	FeatureRelationship frExists = null;
+    	frExists = sequenceDao.getFeatureRelationshipBySubjectObjectAndRelation(gene1, gene2, relationship);
+    	if (frExists == null) { //check whether or not the featureRelationship already exists
+    		frExists = sequenceDao.getFeatureRelationshipBySubjectObjectAndRelation(gene2, gene1, relationship);
+    		if (frExists == null) { //if not check the same thing using subject as object and object as subject
+    			FeatureRelationship fr = new FeatureRelationship(gene1, gene2, relationship, 0); //create one if it does not already exist
+    			sequenceDao.persist(fr);
+    			// Need to store camouflage - a parent feature so it looks like a cluster
+    	    	String uniqueName = "ORTHO_PARA_" +pair.getFirst() + "_" + pair.getSecond();
 
-    	Feature matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
-    	sequenceDao.persist(matchFeature);
-    	fr = new FeatureRelationship(gene1, matchFeature, relationship, 0);
-    	sequenceDao.persist(fr);
-    	fr = new FeatureRelationship(gene2, matchFeature, relationship, 0);
-    	sequenceDao.persist(fr);
+    	    	Feature matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
+    	    	sequenceDao.persist(matchFeature);
+    	    	fr = new FeatureRelationship(gene1, matchFeature, relationship, 0);
+    	    	sequenceDao.persist(fr);
+    	    	fr = new FeatureRelationship(gene2, matchFeature, relationship, 0);
+    	    	sequenceDao.persist(fr);
+    		}
+    	}
+    	
+    	
+    	
 	}
 
 //	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
@@ -586,9 +622,9 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 		writeToDb();
 	}
     
-//    private boolean checkOrgs(File input) {
-//    	return true; // FIXME Should go through orgs to check all loaded
-//    }
+    private boolean checkOrgs(File input) {
+    	return true; // FIXME Should go through orgs to check all loaded
+    }
     
     private Set<GenePair> orthologues = new HashSet<GenePair>();
     private Set<GenePair> paralogues = new HashSet<GenePair>();

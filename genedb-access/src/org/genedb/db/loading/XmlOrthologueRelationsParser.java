@@ -135,7 +135,7 @@ public class XmlOrthologueRelationsParser implements OrthologueRelationsParser {
     
     private void processCluster(XMLStreamReader parser, Map<String,List<String>> clusters) throws XMLStreamException {
     		String name = findIdFromAttribute(parser);
-        	List<String> ids = getChildren(parser, "cluster");
+        	List<String> ids = getChildren(parser, "cluster",name);
         	for (String id : ids) {
             	CollectionUtils.addItemToMultiValuedMap(name, id, clusters);
 			}
@@ -145,7 +145,7 @@ public class XmlOrthologueRelationsParser implements OrthologueRelationsParser {
     		String name = findIdFromAttribute(parser);
     		//Feature gene = sequenceDao.getFeatureByUniqueName(name, "gene");
         	//event = parser.next();
-        	List<String> ids = getChildren(parser, element);
+        	List<String> ids = getChildren(parser, element, name);
         	for (String id : ids) {
 				GenePair pair = new GenePair(name, id);
 				set.add(pair);
@@ -153,12 +153,17 @@ public class XmlOrthologueRelationsParser implements OrthologueRelationsParser {
     	}
 
 
-	private List<String> getChildren(XMLStreamReader parser, String element) throws XMLStreamException {
+	private List<String> getChildren(XMLStreamReader parser, String element, String parent) throws XMLStreamException {
 		List<String> ret = new ArrayList<String>();
 		int event = parser.next();
 		while (!(event == XMLStreamConstants.END_ELEMENT && parser.getLocalName().equals(element))) {
 			if (event == XMLStreamConstants.START_ELEMENT) {
-				ret.add(findIdFromAttribute(parser));
+				String name = findIdFromAttribute(parser);
+				if(ret.contains(name)) {
+					System.err.println("duplicate id " + name + " exists in cluster " + parent);
+				} else {
+					ret.add(name);
+				}
 			}
 			event = parser.next();
 		}
