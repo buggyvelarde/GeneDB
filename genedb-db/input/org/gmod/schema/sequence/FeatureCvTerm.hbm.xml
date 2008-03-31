@@ -26,19 +26,19 @@
         <property name="rank" type="int">
             <column name="rank" not-null="true" />
         </property>
-        <set name="featureCvTermProps" inverse="true">
+        <set name="featureCvTermProps" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_cvterm_id" not-null="true" />
             </key>
             <one-to-many class="org.gmod.schema.sequence.FeatureCvTermProp" />
         </set>
-        <set name="featureCvTermPubs" inverse="true">
+        <set name="featureCvTermPubs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_cvterm_id" not-null="true" />
             </key>
             <one-to-many class="org.gmod.schema.sequence.FeatureCvTermPub" />
         </set>
-        <set name="featureCvTermDbXRefs" inverse="true">
+        <set name="featureCvTermDbXRefs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_cvterm_id" not-null="true" />
             </key>
