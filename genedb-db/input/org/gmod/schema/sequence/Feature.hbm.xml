@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.Feature" table="feature">
+    <class name="org.gmod.schema.sequence.Feature" table="feature" lazy="false" discriminator-value="not null">
         <comment>A feature is a biological sequence or a section of a biological sequence, or a collection of such sections. Examples include genes, exons, transcripts, regulatory
         regions, polypeptides, protein domains, chromosome sequences, sequence variations, cross-genome match regions such as hits and HSPs and so on; see the Sequence Ontology
         for more</comment>
@@ -14,6 +14,7 @@
             	<!-- Only used for seqhilo - not currently using <param name="max_lo">100</param>-->
             </generator>
         </id>
+        <discriminator column="type_id" type="integer" insert="false"/>
         <many-to-one name="organism" class="org.gmod.schema.organism.Organism" fetch="select">
             <column name="organism_id" not-null="true">
                 <comment>The organism to which this feature belongs. This column is mandatory</comment>
@@ -88,7 +89,7 @@
                 available to software interacting with chado</comment>
             </column>
         </property>
-        <set name="featureLocsForSrcFeatureId" inverse="true">
+        <set name="featureLocsForSrcFeatureId" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="srcfeature_id">
                     <comment>The source feature which this location is relative to. Every location is relative to another feature (however, this column is nullable, because the
@@ -114,7 +115,7 @@
             </key>
             <one-to-many class="org.gmod.schema.sequence.FeatureRelationship" />
         </set>
-        <set name="featureDbXRefs" inverse="true">
+        <set name="featureDbXRefs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
@@ -126,31 +127,31 @@
             </key>
             <one-to-many class="org.gmod.schema.sequence.FeatureLoc" />
         </set>
-        <set name="featureCvTerms" inverse="true">
+        <set name="featureCvTerms" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
             <one-to-many class="org.gmod.schema.sequence.FeatureCvTerm" />
         </set>
-        <set name="featureProps" inverse="true">
+        <set name="featureProps" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
             <one-to-many class="org.gmod.schema.sequence.FeatureProp" />
         </set>
-        <set name="featurePubs" inverse="true">
+        <set name="featurePubs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
             <one-to-many class="org.gmod.schema.sequence.FeaturePub" />
         </set>
-        <set name="analysisFeatures" inverse="true">
+        <set name="analysisFeatures" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
             <one-to-many class="org.gmod.schema.analysis.AnalysisFeature" />
         </set>
-        <set name="featureSynonyms" inverse="true">
+        <set name="featureSynonyms" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
@@ -162,5 +163,7 @@
             </key>
             <one-to-many class="org.gmod.schema.phylogeny.Phylonode" />
         </set>
+        <subclass name="org.gmod.schema.sequence.Gene" extends="org.gmod.schema.sequence.Feature" discriminator-value="792" >
+        </subclass>
     </class>
 </hibernate-mapping>
