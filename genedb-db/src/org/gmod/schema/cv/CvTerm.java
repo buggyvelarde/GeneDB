@@ -1,6 +1,7 @@
 package org.gmod.schema.cv;
 
 
+
 import org.gmod.schema.analysis.AnalysisProp;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.OrganismProp;
@@ -18,6 +19,12 @@ import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureRelationshipProp;
 import org.gmod.schema.sequence.Synonym;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -94,6 +101,7 @@ public class CvTerm implements Serializable {
     // Fields    
     @Id
     @Column(name="cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
+    @DocumentId
      private int cvTermId;
     
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
@@ -105,6 +113,7 @@ public class CvTerm implements Serializable {
      private Cv cv;
      
     @Column(name="name", unique=false, nullable=false, insertable=true, updatable=true, length=1024)
+    @Field(index = Index.TOKENIZED,store=Store.YES)
      private String name;
      
     @Column(name="definition", unique=false, nullable=true, insertable=true, updatable=true)
@@ -642,6 +651,8 @@ public class CvTerm implements Serializable {
     private void setFeatureRelationships(Collection<FeatureRelationship> featureRelationships) {
         this.featureRelationships = featureRelationships;
     }
+
+
 
 
 }

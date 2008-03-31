@@ -1,6 +1,7 @@
 package org.gmod.schema.sequence;
 
 
+
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
@@ -10,6 +11,12 @@ import org.gmod.schema.utils.CollectionUtils;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,27 +38,33 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature")
+@Indexed
 public class Feature implements java.io.Serializable {
 
     @GenericGenerator(name="generator", strategy="seqhilo", parameters = {  @Parameter(name="max_lo", value="100"), @Parameter(name="sequence", value="feature_feature_id_seq") } )
     @Id @GeneratedValue(generator="generator")
     @Column(name="feature_id", unique=false, nullable=false, insertable=true, updatable=true)
+    @DocumentId
     private int featureId;
 
     @ManyToOne(cascade={})
     @JoinColumn(name="organism_id", unique=false, nullable=false, insertable=true, updatable=true)
+    @IndexedEmbedded(depth=1)
     private Organism organism;
 
 
     @ManyToOne(cascade={})
     @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
+    @IndexedEmbedded(depth=2)
     private CvTerm cvTerm;
 
 
     @Column(name="name", unique=false, nullable=true, insertable=true, updatable=true)
+    @Field(index = Index.TOKENIZED,store=Store.YES)
     private String name;
 
     @Column(name="uniquename", unique=false, nullable=false, insertable=true, updatable=true)
+    @Field(index = Index.TOKENIZED,store=Store.YES)
     private String uniqueName;
 
     @Column(name="seqlen", unique=false, nullable=true, insertable=true, updatable=true)
@@ -75,10 +88,10 @@ public class Feature implements java.io.Serializable {
     // -------------------------------------------------------------------------------
     // Unsorted properties below here
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="feature")
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="feature")
     private Collection<Phylonode> phylonodes;
 
-    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.EAGER)
     @JoinColumn(name="dbxref_id", unique=false, nullable=true, insertable=true, updatable=true)
     private DbXRef dbXRef;
 
@@ -88,35 +101,35 @@ public class Feature implements java.io.Serializable {
 
 
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureBySrcfeatureId")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureBySrcfeatureId")
     private Collection<FeatureLoc> featureLocsForSrcFeatureId;
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureByObjectId")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureByObjectId")
     private Collection<FeatureRelationship> featureRelationshipsForObjectId;
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureBySubjectId")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureBySubjectId")
     private Collection<FeatureRelationship> featureRelationshipsForSubjectId;
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
     private Collection<FeatureDbXRef> featureDbXRefs;
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureByFeatureId")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureByFeatureId")
     private Collection<FeatureLoc> featureLocsForFeatureId;
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
     private Collection<FeatureCvTerm> featureCvTerms;
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
     //@Cascade( {CascadeType.ALL, CascadeType.DELETE_ORPHAN} )
     private Collection<FeatureProp> featureProps;
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
     private Collection<FeaturePub> featurePubs;
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
     private Collection<AnalysisFeature> analysisFeatures;
 
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
     private Collection<FeatureSynonym> featureSynonyms;
     
     private FeatureLoc featureLoc;
@@ -125,7 +138,6 @@ public class Feature implements java.io.Serializable {
 
     /** default constructor */
     public Feature() {
-    	// Deliberately empty default constructor
     }
 
 	/** minimal constructor */
@@ -290,9 +302,6 @@ public class Feature implements java.io.Serializable {
      * @see org.genedb.db.jpa.FeatureI#setSeqlen(java.lang.Integer)
      */
     public void setSeqLen(Integer seqLen) {
-    	if (seqLen == null) {
-    		throw new IllegalArgumentException("Length of '"+uniqueName+"' attempted to be set to null");
-    	}
         this.seqLen = seqLen;
     }
     

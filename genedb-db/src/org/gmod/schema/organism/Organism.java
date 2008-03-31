@@ -4,6 +4,9 @@ package org.gmod.schema.organism;
 
 import org.gmod.schema.phylogeny.PhylonodeOrganism;
 import org.gmod.schema.sequence.Feature;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -36,18 +39,23 @@ public class Organism implements Serializable {
      @Id
     
     @Column(name="organism_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private int organismId;
+    @DocumentId 
+    private int organismId;
      
      @Column(name="abbreviation", unique=false, nullable=true, insertable=true, updatable=true)
+     @Field(index = Index.TOKENIZED)
      private String abbreviation;
      
      @Column(name="genus", unique=false, nullable=false, insertable=true, updatable=true)
+     @Field(index = Index.TOKENIZED)
      private String genus;
      
      @Column(name="species", unique=false, nullable=false, insertable=true, updatable=true)
+     @Field(index = Index.TOKENIZED)
      private String species;
      
      @Column(name="common_name", unique=false, nullable=true, insertable=true, updatable=true)
+     @Field(index = Index.TOKENIZED)
      private String commonName;
      
      @Column(name="comment", unique=false, nullable=true, insertable=true, updatable=true)
