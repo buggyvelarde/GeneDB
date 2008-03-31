@@ -37,13 +37,13 @@
         <property name="timeExecuted" type="timestamp">
             <column name="timeexecuted" length="29" not-null="true" />
         </property>
-        <set name="analysisFeatures" inverse="true">
+        <set name="analysisFeatures" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="analysis_id" not-null="true" />
             </key>
             <one-to-many class="org.gmod.schema.analysis.AnalysisFeature" />
         </set>
-        <set name="analysisProps" inverse="true">
+        <set name="analysisProps" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="analysis_id" not-null="true" />
             </key>
