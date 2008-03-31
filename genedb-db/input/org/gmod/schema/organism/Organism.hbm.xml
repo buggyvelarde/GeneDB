@@ -28,7 +28,7 @@
         <property name="comment" type="string">
             <column name="comment" />
         </property>
-        <set name="organismProps" inverse="true">
+        <set name="organismProps" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="organism_id" not-null="true" />
             </key>
@@ -40,7 +40,7 @@
             </key>
             <one-to-many class="org.gmod.schema.phylogeny.PhylonodeOrganism" />
         </set>
-        <set name="features" inverse="true">
+        <set name="features" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="organism_id" not-null="true">
                     <comment>The organism to which this feature belongs. This column is mandatory</comment>
@@ -48,7 +48,7 @@
             </key>
             <one-to-many class="org.gmod.schema.sequence.Feature" />
         </set>
-        <set name="organismDbXRefs" inverse="true">
+        <set name="organismDbXRefs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="organism_id" not-null="true" />
             </key>
