@@ -50,7 +50,7 @@ public class CvTerm implements Serializable {
    
     
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
     public Collection<Phylotree> getPhylotrees() {
         return this.phylotrees;
     }
@@ -59,7 +59,7 @@ public class CvTerm implements Serializable {
         this.phylotrees = phylotrees;
     }
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
     public Collection<PhylonodeProp> getPhylonodeProps() {
         return this.phylonodeProps;
     }
@@ -70,7 +70,7 @@ public class CvTerm implements Serializable {
 
 
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
     public Collection<PhylonodeRelationship> getPhylonodeRelationships() {
         return this.phylonodeRelationships;
     }
@@ -79,7 +79,7 @@ public class CvTerm implements Serializable {
         this.phylonodeRelationships = phylonodeRelationships;
     }
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
     public Collection<Phylonode> getPhylonodes() {
         return this.phylonodes;
     }
@@ -125,76 +125,76 @@ public class CvTerm implements Serializable {
     @Column(name="is_relationshiptype", unique=false, nullable=false, insertable=true, updatable=true)
      private int isRelationshipType;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<AnalysisProp> analysisProps;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermByTypeId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByTypeId")
      private Collection<CvTermProp> cvTermPropsForTypeId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermByCvtermId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByCvtermId")
      private Collection<CvTermProp> cvTermPropsForCvTermId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<DbXRefProp> dbXRefProps;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<Synonym> synonyms;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<CvTermDbXRef> cvTermDbXRefs;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermByTypeId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByTypeId")
      private Collection<CvTermPath> cvTermPathsForTypeId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<FeatureCvTermProp> featureCvTermProps;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<FeatureCvTerm> featureCvTerms;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermByTypeId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByTypeId")
      private Collection<CvTermRelationship> cvTermRelationshipsForTypeId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermByObjectId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByObjectId")
      private Collection<CvTermRelationship> cvTermRelationshipsForObjectId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<PubProp> pubProps;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<OrganismProp> organismProps;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermBySubjectId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermBySubjectId")
      private Collection<CvTermRelationship> cvTermRelationshipsForSubjectId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermByCvtermId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByCvtermId")
      private Collection<CvTermSynonym> cvTermSynonymsForCvTermId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<FeatureProp> featureProps;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermBySubjectId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermBySubjectId")
      private Collection<CvTermPath> cvTermPathsForSubjectId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermByObjectId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByObjectId")
      private Collection<CvTermPath> cvTermPathsForObjectId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvtermByTypeId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByTypeId")
      private Collection<CvTermSynonym> cvTermSynonymsForTypeId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<Pub> pubs;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<FeatureRelationshipProp> featureRelationshipProps;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<Feature> features;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<PubRelationship> pubRelationships;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
      private Collection<FeatureRelationship> featureRelationships;
 
      // Constructors
