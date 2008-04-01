@@ -131,7 +131,7 @@ public class CvTerm implements Serializable {
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByTypeId")
      private Collection<CvTermProp> cvTermPropsForTypeId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByCvtermId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByCvTermId")
      private Collection<CvTermProp> cvTermPropsForCvTermId;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")
