@@ -182,7 +182,7 @@
 			    </tr>
 			    <tr>
 				  <td>Look Up:</td>
-				  <td><form:input id="textInput" path="name"/><div style="background-color: #2C5F93;" id="suggestions"></div></td>
+				  <td><form:input id="textInput" path="name"/><div style="background-color: #2C5F93; text-align: left;" id="suggestions"></div></td>
 				  <td>The name to lookup. It can include wildcards (*) to match any series of characters</td>
 			    </tr>
 			    <tr>
