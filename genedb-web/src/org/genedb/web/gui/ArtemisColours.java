@@ -2,6 +2,11 @@ package org.genedb.web.gui;
 
 import java.awt.Color;
 
+/**
+ * Traditional mapping from internal colour numbers to real Color
+ * 
+ * @author kmr
+ */
 public class ArtemisColours {
 
 

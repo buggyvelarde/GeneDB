@@ -41,7 +41,8 @@ import javax.swing.border.Border;
 
 
 /**
- *
+ * 
+ * Draws a context map based upon a biojava sequence object
  *
  * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
 */
@@ -234,8 +235,22 @@ public class ContextMap {
 //    }
 
 
-    public ImageInfo drawMap(Sequence seq2, ImageInfo info, int seqMin, int seqMax, String targetId,
-                        boolean makeSubSequence, OutputStream out) {
+    /**
+     * Generate a context map based (possibly on a subsequence) of 
+     * another sequence.
+     * 
+     * @param seq2 The seguence object to be drawn
+     * @param info the ImageInfo to be filled in, may be null
+     * @param seqMin the minimum location for drawing between
+     * @param seqMax the maximum location for drawing between
+     * @param targetId the name of the central feature
+     * @param makeSubSequence whether to create a subsequence
+     * @param out an output stream for the image data to be written to 
+     * @return the ImageInfo object filled out
+     */
+    public ImageInfo drawMap(Sequence seq2, ImageInfo info, int seqMin, 
+    		int seqMax, String targetId, boolean makeSubSequence, 
+    		OutputStream out) {
 
         Sequence seq = seq2;
         if ( makeSubSequence) {

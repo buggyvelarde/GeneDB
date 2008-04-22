@@ -13,10 +13,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A no-frills implementation of FeatureHolder.
+ * A simple implementation of FeatureHolder that doesn't 
+ * serialise its features for memory reasons. 
  *
- * @author Matthew Pocock
- * @author Thomas Down
  */
 public class TransientFeatureHolder extends AbstractFeatureHolder
     implements java.io.Serializable {
