@@ -44,6 +44,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
 public class Jogra implements SingleInstanceListener, PropertyChangeListener, EventSubscriber<GeneDBMessage> {
@@ -164,6 +165,8 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
             }
         });
         mainFrame.setTitle("Jogra");
+        
+        mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         final JMenuBar menu = new JMenuBar();
 
