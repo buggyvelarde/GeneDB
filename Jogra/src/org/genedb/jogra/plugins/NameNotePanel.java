@@ -25,21 +25,22 @@ public class NameNotePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         clearButton = new javax.swing.JButton();
         transferButton = new javax.swing.JButton();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        NoteButton = new javax.swing.JRadioButton();
+        commentButton = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jTextField1 = new javax.swing.JTextField();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
-        jRadioButton5 = new javax.swing.JRadioButton();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        primaryNameField = new javax.swing.JTextField();
+        primaryNameButton = new javax.swing.JRadioButton();
+        productButton = new javax.swing.JRadioButton();
+        ecButton = new javax.swing.JRadioButton();
+        productField = new javax.swing.JTextField();
+        ecField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        jRadioButton6 = new javax.swing.JRadioButton();
+        privateButton = new javax.swing.JRadioButton();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Name/Note"));
 
@@ -57,17 +58,19 @@ public class NameNotePanel extends javax.swing.JPanel {
             }
         });
 
-        jRadioButton1.setText("Note");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup1.add(NoteButton);
+        NoteButton.setText("Note");
+        NoteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
+                NoteButtonActionPerformed(evt);
             }
         });
 
-        jRadioButton2.setText("Comment");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup1.add(commentButton);
+        commentButton.setText("Comment");
+        commentButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
+                commentButtonActionPerformed(evt);
             }
         });
 
@@ -75,36 +78,38 @@ public class NameNotePanel extends javax.swing.JPanel {
         jTextArea1.setRows(3);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jTextField1.setText("jTextField1");
-
-        jRadioButton3.setText("Primary Name");
-
-        jRadioButton4.setText("Product");
-        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+        primaryNameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton4ActionPerformed(evt);
+                primaryNameFieldActionPerformed(evt);
             }
         });
 
-        jRadioButton5.setText("E.C. Number");
-        jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
+        primaryNameButton.setText("Primary Name");
+
+        productButton.setText("Product");
+        productButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton5ActionPerformed(evt);
+                productButtonActionPerformed(evt);
             }
         });
 
-        jTextField2.setText("jTextField2");
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        ecButton.setText("E.C. Number");
+        ecButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                ecButtonActionPerformed(evt);
             }
         });
 
-        jTextField3.setText("jTextField3");
+        productField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                productFieldActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Comment");
 
-        jRadioButton6.setText("Private");
+        buttonGroup1.add(privateButton);
+        privateButton.setText("Private");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -120,23 +125,23 @@ public class NameNotePanel extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton5)
-                            .addComponent(jRadioButton4)
-                            .addComponent(jRadioButton3))
+                            .addComponent(ecButton)
+                            .addComponent(productButton)
+                            .addComponent(primaryNameButton))
                         .addGap(16, 16, 16)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)))
+                            .addComponent(ecField, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                            .addComponent(productField, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                            .addComponent(primaryNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(jRadioButton1)
+                        .addComponent(NoteButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jRadioButton2)
+                        .addComponent(commentButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jRadioButton6))
+                        .addComponent(privateButton))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -144,22 +149,22 @@ public class NameNotePanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRadioButton3))
+                    .addComponent(primaryNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(primaryNameButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton4)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(productButton)
+                    .addComponent(productField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton5)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ecButton)
+                    .addComponent(ecField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton6))
+                    .addComponent(NoteButton)
+                    .addComponent(commentButton)
+                    .addComponent(privateButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -195,42 +200,47 @@ public class NameNotePanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_transferButtonActionPerformed
 
-    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
+    private void productButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton4ActionPerformed
+}//GEN-LAST:event_productButtonActionPerformed
 
-    private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
+    private void ecButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ecButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton5ActionPerformed
+}//GEN-LAST:event_ecButtonActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void productFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+}//GEN-LAST:event_productFieldActionPerformed
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+    private void NoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NoteButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+}//GEN-LAST:event_NoteButtonActionPerformed
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+    private void commentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commentButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+}//GEN-LAST:event_commentButtonActionPerformed
+
+    private void primaryNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_primaryNameFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_primaryNameFieldActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton NoteButton;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton clearButton;
+    private javax.swing.JRadioButton commentButton;
+    private javax.swing.JRadioButton ecButton;
+    private javax.swing.JTextField ecField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
-    private javax.swing.JRadioButton jRadioButton5;
-    private javax.swing.JRadioButton jRadioButton6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JRadioButton primaryNameButton;
+    private javax.swing.JTextField primaryNameField;
+    private javax.swing.JRadioButton privateButton;
+    private javax.swing.JRadioButton productButton;
+    private javax.swing.JTextField productField;
     private javax.swing.JButton transferButton;
     // End of variables declaration//GEN-END:variables
     

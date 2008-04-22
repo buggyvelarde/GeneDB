@@ -81,21 +81,23 @@ public class GoPanel extends javax.swing.JPanel {
 
         attributionLabel.setText("Attribution");
 
-        urlField.setText("jTextField3");
         urlField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 urlFieldActionPerformed(evt);
             }
         });
 
-        attributionField.setText("jTextField2");
         attributionField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 attributionFieldActionPerformed(evt);
             }
         });
 
-        withField.setText("jTextField4");
+        withField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                withFieldActionPerformed(evt);
+            }
+        });
 
         jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -141,7 +143,7 @@ public class GoPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(termLabel, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(withFromLabel, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -216,6 +218,10 @@ public class GoPanel extends javax.swing.JPanel {
     private void transferButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transferButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_transferButtonActionPerformed
+
+    private void withFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_withFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_withFieldActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
