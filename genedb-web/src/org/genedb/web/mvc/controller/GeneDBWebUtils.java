@@ -50,6 +50,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author art
+ *
+ */
 public class GeneDBWebUtils {
 	
 	private static SequenceDao sequenceDao;
@@ -97,6 +101,15 @@ public class GeneDBWebUtils {
         return true;
     }
     
+    /**
+     * Generate a context image and imagemap. It fetches a summary of all 
+     * the neighbouring genes, creates a dummy sequence, and biojava 
+     * features on it, the passes this into ContextMap 
+     * 
+     * @param gene the gene around which the context is based
+     * @param prefix a string representing the web path
+     * @return a completed ImageInfo structure
+     */
     public static ImageInfo drawContextMap(Feature gene, String prefix) {
 
     	ImageInfo info = null;
