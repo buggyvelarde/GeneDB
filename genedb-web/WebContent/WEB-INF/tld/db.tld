@@ -145,6 +145,11 @@
        <rtexprvalue>true</rtexprvalue>
        <required>true</required>
     </attribute>
+    <attribute>
+       <name>url</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
  </tag>
  
  <tag>
