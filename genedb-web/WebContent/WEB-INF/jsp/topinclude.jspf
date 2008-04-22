@@ -10,3 +10,5 @@
 
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="misc" uri="misc" %>
+
+<%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
