@@ -24,7 +24,7 @@ table.simple thead tr th {
 }
 
 table.simple tr.even {
-	background-color: #FAFAD2;
+	background-color: rgb(155, 209, 250);
 }
 
 table.simple {
@@ -55,7 +55,6 @@ table.report th {
 	border-width: 1px;
 	border-style: solid;
 	border-color: threedhighlight threedshadow threedshadow threedhighlight;
-	cursor: hand;
 }
 
 table.report idcol {
