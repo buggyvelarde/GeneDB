@@ -52,7 +52,6 @@ import javax.swing.SwingConstants;
  * this version is only a few lines different.
  *
  * @author <a href="mailto:kdj@sanger.ac.uk">Keith James</a>
- * @author Adrian Tivey
  */
 public class GeneDbZiggyImapRenderer implements ImageMapRenderer, Serializable
 {

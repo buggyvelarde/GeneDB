@@ -21,17 +21,20 @@ package org.genedb.web.gui;
 
 
 /**
- *
+ * Data structure for passing around where a map and its imagemap
+ * is, in terms of real data and web URL
  *
  * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
 */
 public class ImageInfo {
 
+	// Fields for protein map
     public String protStructUrl;
     public String protStructMap;
     public String protStructMapData;
     public String protStructMsg;
 
+    // Fields for context map
     public String contextUrl;
     public String contextMap;
     public String contextMapData;
