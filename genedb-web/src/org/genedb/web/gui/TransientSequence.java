@@ -30,6 +30,9 @@ import java.util.List;
 
 /**
  * A basic implementation of the <code>Sequence</code> interface.
+ * 
+ * This sequence is designed to use a transient FeatureHolder
+ * 
  * <p>
  * This class now implements all methods in the SymbolList
  * interface by delegating to another SymbolList object.  This
