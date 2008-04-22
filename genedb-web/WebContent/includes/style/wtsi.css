@@ -25,15 +25,12 @@ vibrants
 #8d0017 vibrant3	pantone 194
 #7c004f vibrant4	pantone 2612
 */
-/*body { 
-  font-family:      Arial, Helvetica, Sans-serif;
-  font-size:        76%;
-  color:            #808080;
+body { 
   margin:           0;
   padding:          0;
   text-decoration:  none;
   background-color: #ffffff;
-}*/
+}
 /*
 div.main {
   position:         absolute;
@@ -54,7 +51,6 @@ tr {
 p, td {
   font-family: Arial, Helvetica, Sans-serif;
   font-size:   0.9em;
-  color:       #2f4f4f;
 }
 
 /* IMAGES START */
@@ -156,3 +152,93 @@ div.fieldset div.content img  {
 /** html div.fieldset div.legend { width: 100px; }*/
 
 /* end cross-browser coloured fake-fieldsets */
+
+/*nav 2*/
+ul.vert-one {
+	margin:0;
+	padding:0;
+	list-style-type:none;
+	display:block;
+	font:16px Helvetica, Verdana, Arial, sans-serif;
+	line-height:165%;
+	width:97%;
+}
+
+ul.vert-one li{
+	margin:1px;
+	padding:0;
+	border-top:1px solid #9bd1fa;
+	border-bottom:1px solid #377cb1;
+}
+
+ul.vert-one li a {
+	text-align:left;
+	padding: 0 0 0 20px; 
+	display:block;
+	text-decoration:none;
+	color:#fff;
+	background:#377cb1;
+	width:92%;
+}
+		
+ul.vert-one li a:hover {
+	background:#9bd1fa url("../images/vert-one_arrow.gif") no-repeat 0 9px;
+}
+		
+ul.vert-one li a.current,ul.vert-one li a.current:hover {
+	background:#9bd1fa url("../images/vert-one_arrow.gif") no-repeat 0 9px;
+}
+
+/* Section for gene pages */
+
+P.section {
+	text-align: left;
+	font-weight: bold;
+	background-color: #9bd1fa;
+	border-top: 1px solid lightgray;
+}
+
+div.section-body {
+ padding-left: 3px;
+ padding-right: 3px;
+}
+
+/* ÑÑÑÑÑÑÑ- Greenslate nav ÑÑÑÑÑÑÑ- */	
+#demo-container{padding:15px 5px 0 5px;margin:0 0 5px 0;background-color:rgb(55, 124, 177);}
+ul#simple-menu{list-style-type:none;width:100%;position:relative;height:27px;font-family:"Trebuchet MS",Arial,sans-serif;font-size:13px;font-weight:bold;margin:0;padding:11px 0 0 0;}
+ul#simple-menu li{display:block;float:left;margin:0 0 0 4px;height:27px;}
+ul#simple-menu li.left{margin:0;}
+ul#simple-menu li a{display:block;float:left;color:#fff;background:#9bd1fa;line-height:27px;text-decoration:none;padding:0 17px 0 18px;height:27px;}
+ul#simple-menu li a.right{padding-right:19px;}
+ul#simple-menu li a:hover{background:#2E4560;}
+ul#simple-menu li a.current{color:#2E4560;background:#fff;}
+ul#simple-menu li a.current:hover{color:#2E4560;background:#fff;}
+/* ÑÑÑÑÑÑÑ- Greenslate nav ÑÑÑÑÑÑÑ- */
+
+/* ÑÑÑÑÑÑÑ- nav for frontpage ÑÑÑÑÑÑÑ- */
+#nav{text-align:center;width:100%;background:rgb(55, 124, 177);padding-bottom:0.6em;}
+
+a#skip{display:block;width:100%;position:absolute;top:0;left:0;padding:0.2em 0 0.3em 0;font: 900 0.7em verdana,sans-serif;text-transform:uppercase;text-decoration:none;}
+a#skip:link,a#skip:visited{color:#f6f6f6;background:transparent;}
+a#skip:hover,a#skip:focus,a#skip:active{color:#cdecf3;background:#666;}
+
+#goggles{display:inline;width:14em;}
+#goggles form div{display:inline;}
+#goggles form{display:inline;margin:0;padding:0;}
+#goggles form label{position:absolute;left:-9999px;}
+#goggles form input{margin:0.66em 0.1em 0 0;color:#444;font-size:0.9em;font-weight:300;width:12em;padding:0.1em 0.1em 0 0.1em;border-top:1px solid #666;border-right:1px solid #899;border-bottom:1px solid #788;border-left:1px solid #666;}
+#goggles form input.button{margin:0.4em 1em -0.5em -0.7em;padding:0;font-size:0.9em;height:auto;width:auto;border:0;background:transparent;}
+
+
+#menu{display:inline;margin-left:0.5em;}
+#menu ul{display:inline;list-style:none;margin:0;padding:0;text-align:center;}
+#menu ul li{display:inline;font-size:1em;font-weight:900;line-height:1.5em;margin:0;padding:0.2em 0.66em;border-right:0px solid #777;text-align:center; vertical-align: middle;}
+#menu ul li.last{border-right:0;}
+#menu a{color:#cdecf3;text-decoration:none;}
+#menu a:active, #menu a:hover{color:#fff;}
+#menu li.live{border-top:1px solid #666;border-right:1px solid #899;border-bottom:1px solid #788;border-left:1px solid #666;}
+#menu li.live a{color:#fff;}
+
+#masthead{width:100%;height:100px;margin-top:0;font-size: 2em;text-align: center; line-height: 1em; font-size-adjust: none; font-stretch: normal; color: rgb(55, 124, 177); font-family: Georgia; font-variant: small-caps; font-weight: bold; vertical-align: bottom;border-bottom:1px solid #688;}
+#masthead a img{border:0;}
+#masthead a:focus, #menu a:focus{background:transparent;}	
