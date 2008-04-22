@@ -55,20 +55,25 @@ public class GeneList implements JograPlugin {
         
         ret.setLayout(new BorderLayout());
         
+        JPanel center = new JPanel();
+        center.setLayout(new BorderLayout());
+        center.add(new JLabel("Targets"), BorderLayout.NORTH);
+        
         JXList main = new JXList();
         main.setVisibleRowCount(15);
         main.setPrototypeCellValue("123456789012345678901234567890123456789012345678901234567890");
         //main.
-//        String[] temp = new String[100];
-//        for(int i=0; i < 100; i++) {
-//        	temp[i]= "Line "+i;
-//        }
-        String[] names = uniqueNames.toArray(new String[uniqueNames.size()]);
-        main.setListData(names);
+        String[] temp = new String[15];
+        for(int i=0; i < 15; i++) {
+        	temp[i]= " ";
+        }
+//        String[] names = uniqueNames.toArray(new String[uniqueNames.size()]);
+        main.setListData(temp);
         //main.setMinimumSize(main.getPreferredScrollableViewportSize());
         JScrollPane mainPane = new JScrollPane(main);
         
-        ret.add(mainPane, BorderLayout.CENTER);
+        center.add(main, BorderLayout.CENTER);
+        ret.add(center, BorderLayout.CENTER);
         
         //Box controls = Box.createVerticalBox();
         JTabbedPane transferTab = new JTabbedPane();
@@ -78,13 +83,13 @@ public class GeneList implements JograPlugin {
 //        temp.add(new JLabel("stuff"));
 //        temp.add(new JTextField("wibble"));
         JPanel name = new NameNotePanel();
-        transferTab.addTab("name", name);
+        transferTab.addTab("Name/Misc", name);
         
         JPanel goPanel = new GoPanel();
         //goPanel.add(new JLabel("Evidence code"));
         //goPanel.add(new JComboBox(new String[]{"ISS", "IPP", "IDA"}));
         //goPanel.add(new JTextField("wibble"));
-        transferTab.addTab("go", goPanel);
+        transferTab.addTab("GO", goPanel);
         
 //        JPanel ec = new JPanel();
 //        ec.add(new JLabel("stuff"));
@@ -94,7 +99,7 @@ public class GeneList implements JograPlugin {
         JPanel cc = new CCPanel();
         //cc.add(new JLabel("Evidence code"));
         //cc.add(new JTextField("wibble"));
-        transferTab.addTab("controlled_curation", cc);
+        transferTab.addTab("Controlled Curation", cc);
         
 //        JPanel note = new JPanel();
 //        note.add(new JLabel("Note:"));
