@@ -2,14 +2,14 @@ package org.genedb.web.gui;
 
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
-import org.gmod.schema.sequence.FeatureLoc;
 
 import java.io.Serializable;
 
 
 /**
  * Represents a gene or RNA. Stores enough info to
- * represent it on an imagemap ie name, colour, location
+ * represent it on an imagemap ie name, colour, 
+ * location.
  * 
  * @author art
  */
