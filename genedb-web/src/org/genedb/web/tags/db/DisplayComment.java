@@ -31,23 +31,16 @@ public class DisplayComment extends SimpleTagSupport {
 						comments.add(prop.getValue());
 					}
 				}
-				JspWriter out = getJspContext().getOut();
-				out.println("<table width=\"100%\" style=\"border: 1px solid;\">");
-				out.println("<tr>");
-				out.println("<th style=\"border: 1px solid;\">No.</th>");
-				out.println("<th style=\"border: 1px solid;\">Comment</th>");
-				out.println("</tr>");
-				
-				int count = 1;
-				for (String comment : comments) {
-					out.println("<tr>");
-					out.println("<td style=\"border: 1px solid;\">" + count + "</td>");
-					out.println("<td style=\"border: 1px solid;\">" + comment + "</td>");
-					out.println("</tr>");
-					count++;
+				if(comments.size() > 0) {
+	 				JspWriter out = getJspContext().getOut();
+					out.println("<font style=\"align: center;\">Comment</font>");
+					out.println("<ul style=\"text-align: left;\">");
+					for (String comment : comments) {
+						out.println("<li>" + comment + "</li>");
+					}
+					
+					out.println("</ul>");
 				}
-				
-				out.println("</table>");
 			}
 		}
 	}

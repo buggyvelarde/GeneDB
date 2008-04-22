@@ -19,7 +19,12 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 public class DisplayControlledCuration extends SimpleTagSupport{
 	
 	Feature polypeptide;
+	String url;
 	
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
 	@Override
     public void doTag() throws JspException, IOException {
 		if (polypeptide != null) {
@@ -63,7 +68,7 @@ public class DisplayControlledCuration extends SimpleTagSupport{
 				out.println("<th>Term</th>");
 				out.println("<th>DbXRef/URL</th>");
 				out.println("<th>Qualifier</th>");
-				out.println("<th>Other genes annatoted to this term</th>");
+				out.println("<th>Other genes annotated to this term</th>");
 				out.println("</tr>");
 				System.out.println("total rows is " + totalRows);
 				for (int i=0;i<totalRows;i++) {
@@ -107,7 +112,7 @@ public class DisplayControlledCuration extends SimpleTagSupport{
 					size = GeneDBWebUtils.featureListSize(fct.getCvTerm().getName(),"CC_genedb_controlledcuration");
 					if(size > 1) {
 						size = size - 1;
-						out.println(startTag + "<a href=\"http://holly.internal.sanger.ac.uk:8080/genedb-web/Search/FeatureByCvTermNameAndCvName?name=" + fct.getCvTerm().getName() + "&cvName=" + fct.getCvTerm().getCv().getName() + "\">" + "(" + size + " others)" + "</a>" + endTag );
+						out.println(startTag + "<a href=\"" + url + "Search/FeatureByCvTermNameAndCvName?name=" + fct.getCvTerm().getName() + "&cvName=" + fct.getCvTerm().getCv().getName() + "\">" + "(" + size + " others)" + "</a>" + endTag );
 					} else {
 						out.println(startTag + "( 0 others )" + endTag);
 					}
