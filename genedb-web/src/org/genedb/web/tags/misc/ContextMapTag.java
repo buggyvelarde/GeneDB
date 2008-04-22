@@ -16,6 +16,12 @@ import org.gmod.schema.sequence.Feature;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.util.WebUtils;
 
+/**
+ * Simple tag for inserting a context map into the page
+ * Expects a gene (Feature) object to be specified.
+ * 
+ * @author art
+ */
 public class ContextMapTag extends SimpleTagSupport {
 	
 	private Feature gene;
@@ -26,7 +32,6 @@ public class ContextMapTag extends SimpleTagSupport {
 		ImageInfo info = GeneDBWebUtils.drawContextMap(gene, prefix);
 		JspWriter out = getJspContext().getOut();
 		
-		//out.print("<img src=\""+info.contextUrl+"\">");
 		out.print("<!-- cm -->");
 		out.print(info.contextMapData);
 		out.print("<!-- cm -->");
