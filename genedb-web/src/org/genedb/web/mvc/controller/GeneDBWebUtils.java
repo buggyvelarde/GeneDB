@@ -47,6 +47,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -99,6 +100,19 @@ public class GeneDBWebUtils {
         // TODO store error message if necessary
         // TODO check if ids for which we have data - need new flag
         return true;
+    }
+    
+    private static final String PROP_CONTEXT_MAP_FILE_FORMAT = "contextMap.fileFormat";
+    private static final ResourceBundle projectProperties = ResourceBundle.getBundle("project");
+    private static final String contextMapFileFormat = projectProperties.getString(PROP_CONTEXT_MAP_FILE_FORMAT);
+    /**
+     * The path to the file used to store this context map.
+     * 
+     */
+    private static File contextMapFile(String prefix, String geneUniqueName)
+    {
+    	String path = String.format(contextMapFileFormat, prefix, geneUniqueName);
+    	return new File(path);
     }
     
     /**
@@ -185,7 +199,7 @@ public class GeneDBWebUtils {
 				}
             }
             
-            File file = new File("/software/pathogen/projects/genedb/tomcat_workshop/tomcat/webapps/"+prefix+"includes/images/cmap/" + gene.getUniqueName() + ".gif");
+            File file = contextMapFile(prefix, gene.getUniqueName());
             //System.err.println("Writing image to '"+file.getAbsolutePath()+"'");
 
             OutputStream out = null;
@@ -229,10 +243,10 @@ public class GeneDBWebUtils {
 				Feature polypeptide = fr.getFeatureBySubjectId();
 				for (FeatureProp fp: polypeptide.getFeatureProps()) {
 					if (fp.getCvTerm().getName().equals("colour")) {
-						//try {
-						ret.colour = Integer.parseInt(fp.getValue());
+						String colourString = fp.getValue();
+						if (colourString != null)
+							ret.colour = Integer.parseInt(colourString);
 						break;
-						//}
 					}
 				}
 			}	
