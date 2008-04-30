@@ -180,7 +180,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
            exonCount++;
            Location exonLoc = it.next();      
            System.out.println("creating utr with name " + "exon:"+(exonCount-1)+":"+utrName);
-           Feature utr = this.featureUtils.createFeature("exon", "exon:"+(exonCount-1)+":"+utrName, this.organism);
+           Feature utr = this.featureUtils.createFeature(type, "exon:"+(exonCount-1)+":"+utrName, this.organism);
            FeatureRelationship utrFr = this.featureUtils.createRelationship(utr, transcript, REL_PART_OF, exonCount-1);
            FeatureLoc utrFl = this.featureUtils.createLocation(parent, utr, 
                    exonLoc.getMin()-1, exonLoc.getMax(), (short)feat.getStrand().getValue());
@@ -189,18 +189,6 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
            sequenceDao.persist(utrFr);
            sequenceDao.persist(utrFl);
        }
-        
-       String utrName = this.gns.get5pUtr(transcript.getUniqueName(), 0);
-       if ("three_prime_UTR".equals(type)) {
-           utrName = this.gns.get3pUtr(transcript.getUniqueName(), 0);
-       }
-       Feature utr = this.featureUtils.createFeature(type, utrName, this.organism);
-       FeatureRelationship utrFr = this.featureUtils.createRelationship(utr, transcript, REL_PART_OF, 0);
-       FeatureLoc utrFl = this.featureUtils.createLocation(parent, utr, 
-                loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());
-        sequenceDao.persist(utr);
-        sequenceDao.persist(utrFr);
-        sequenceDao.persist(utrFl);
         
         changeFeatureBounds(loc, gene);
         changeFeatureBounds(loc, transcript);
