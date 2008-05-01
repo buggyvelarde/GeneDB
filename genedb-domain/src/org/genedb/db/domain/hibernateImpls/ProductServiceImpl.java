@@ -1,4 +1,4 @@
-package org.genedb.db.domain.serviceImpls;
+package org.genedb.db.domain.hibernateImpls;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.domain.misc.MethodResult;

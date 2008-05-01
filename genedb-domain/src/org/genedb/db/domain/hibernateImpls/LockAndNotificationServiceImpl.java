@@ -1,4 +1,4 @@
-package org.genedb.db.domain.serviceImpls;
+package org.genedb.db.domain.hibernateImpls;
 
 import org.genedb.db.domain.services.LockAndNotificationService;
 import org.genedb.db.domain.services.LockStatus;

@@ -2,10 +2,6 @@ package org.genedb.db.domain.services;
 
 import org.genedb.db.domain.objects.Gene;
 
-import java.util.List;
-
-public interface GeneService {
+public interface GeneService extends BasicGeneService {
     Gene findGeneByUniqueName(String name);
-
-    List<String> findGeneNamesByPartialName(String search);
 }
