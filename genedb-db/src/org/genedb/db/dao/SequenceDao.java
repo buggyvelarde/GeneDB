@@ -321,15 +321,18 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return null;
     }
 
+    @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
 	public List<String> getPossibleMatches(String name, CvTerm cvTerm, int limit) {
 		HibernateTemplate ht = new HibernateTemplate(getSessionFactory());
         ht.setMaxResults(limit);
+
         return ht.findByNamedParam(
                 "select f.uniqueName from Feature f where lower(f.uniqueName) like lower(:name) and f.cvTerm = :cvTerm",
                 new String[]{"name", "cvTerm"}, new Object[]{"%"+name+"%", cvTerm});
 	}
 
 	public List<Feature> getFeaturesByOrganism(Organism org) {
+		@SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
 		List<Feature> features = getHibernateTemplate().findByNamedParam(
 				"from Feature f where f.organism=:org", "org", org);
 		return features;
@@ -349,15 +352,17 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 			featureIds.append('\'');
 		}
 		String query = "from Feature f where f.uniqueName in (" + featureIds.toString() + ")";
+
+		@SuppressWarnings("unchecked") // find(query) returns a bare List
 		List<Feature> features = getHibernateTemplate().find(query);
 		
 		return features;
 	}
 
 	public List<Feature> getFeaturesByLocation(int min, int max, String type, String organism, Feature parent) {
-		
-		List<Feature> features = null;
-		features = getHibernateTemplate().findByNamedParam("select f from Feature f , FeatureLoc fl " +
+		@SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
+		List<Feature> features
+			= getHibernateTemplate().findByNamedParam("select f from Feature f , FeatureLoc fl " +
 				"where fl.fmin>=:min " +
 				"and fl.fmax<=:max and fl.featureByFeatureId=f.featureId " +
 				"and fl.featureBySrcFeatureId=:parent and f.cvTerm.name=:type " +
@@ -369,8 +374,9 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
 
 	public FeatureRelationship getFeatureRelationshipBySubjectObjectAndRelation(
 			Feature subject, Feature object, CvTerm relation) {
-		List<FeatureRelationship> frs = new ArrayList<FeatureRelationship>();
-		frs = getHibernateTemplate().findByNamedParam("from FeatureRelationship fr " +
+		@SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
+		List<FeatureRelationship> frs
+			= getHibernateTemplate().findByNamedParam("from FeatureRelationship fr " +
 				"where fr.featureBySubjectId=:subject and fr.featureByObjectId=:object " +
 				"and fr.cvTerm=:relation", new String[]{"subject","object","relation"}, 
 				new Object[]{subject,object,relation});
