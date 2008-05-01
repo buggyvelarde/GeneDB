@@ -1,11 +1,11 @@
 package org.genedb.web.mvc.controller;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
@@ -14,44 +14,48 @@ import org.apache.lucene.search.Query;
 
 public class LuceneDao {
 	
-	public IndexReader openIndex(String indexDir) {
-		try {
-			return IndexReader.open(indexDir);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
+	private static final Logger log = Logger.getLogger(LuceneDao.class);
+	
+	private static final String PROP_LUCENE_INDEX_DIRECTORY = "lucene.indexDirectory";
+	
+	private static final ResourceBundle projectProperties = ResourceBundle.getBundle("project");
+	private static final String luceneIndexDirectory = projectProperties.getString(PROP_LUCENE_INDEX_DIRECTORY);
+	
+	/**
+	 * Open the named Lucene index from the default location.
+	 * (The default location is specifed by lucene.indexDirectory in project.properties.)
+	 * 
+	 * @param indexName The name of the index
+	 * @return
+	 * @throws IOException
+	 */
+	public IndexReader openIndex(String indexName) throws IOException {
+		String indexDir = String.format("%s/%s", luceneIndexDirectory, indexName);
+		return IndexReader.open(indexDir);
 	}
 	
-	public Hits search(IndexReader ir, Analyzer analyzer,List<String> fields,String queryString) {
-		
+	/**
+	 * Perform a Lucene search
+	 * @param ir           A Lucene index, as returned by #openIndex
+	 * @param analyzer     An analyzer, used to parse the query
+	 * @param defaultField The name of the field to use as the default for the query
+	 * @param queryString  The actual query
+	 * @return
+	 */
+	public Hits search(IndexReader ir, Analyzer analyzer, String defaultField, String queryString) {
 		Query query = null;
 		IndexSearcher searcher = new IndexSearcher(ir);
-		System.err.println("searcher is -> " + searcher.toString());
-		Hits hits = null;
-		QueryParser qp = null;
-		String searchFields[] = new String[fields.size()];
-		if(fields.size() > 1) {
-			for(int i=0; i<fields.size();i++){
-				searchFields[i] = fields.get(i);
-			}
-			qp = new QueryParser(fields.get(0),analyzer);
-		} else {
-			qp = new QueryParser(fields.get(0),analyzer);
-		}
+		log.debug("searcher is -> " + searcher.toString());
+		QueryParser qp = new QueryParser(defaultField, analyzer);
 		
 		try {
 			query = qp.parse(queryString);
-			System.err.println("query is -> " + query.toString());
-			hits = searcher.search(query);
+			log.debug("query is -> " + query.toString());
+			return searcher.search(query);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			throw new RuntimeException(String.format("Lucene failed to parse query '%s'", queryString), e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(String.format("I/O error during Lucene query '%s'", queryString), e);
 		}
-		
-		
-		return hits;
 	}
 }

@@ -50,9 +50,7 @@ private String listResultsView;
 		List<CurationHits> results = new ArrayList<CurationHits>();
 		String viewName = listResultsView;
 		
-		IndexReader ir = luceneDao.openIndex("/Users/cp2/hibernate/search/indexes/org.gmod.schema.sequence.FeatureProp/");
-		List<String> fields = new ArrayList<String>();
-		fields.add("cvTerm.name");
+		IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.FeatureProp");
 		String query = "";
 		
 		if(field.equals("ALL")) {
@@ -61,7 +59,7 @@ private String listResultsView;
 			query = "value:" + input + " AND cvTerm.name:" + field + " AND feature.organism.commonName:" + orgs;
 		}
 		
-		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), fields, query);
+		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), "cvTerm.name", query);
 		if (hits.length() == 0) {
 			be.reject("No Result");
 			return showForm(request, response, be);

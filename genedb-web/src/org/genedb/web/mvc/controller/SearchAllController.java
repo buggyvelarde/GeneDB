@@ -49,10 +49,7 @@ public class SearchAllController extends TaxonNodeBindingFormController {
 		List<SearchAllHits> results = new ArrayList<SearchAllHits>();
 		String viewName = listResultsView;
 		
-		IndexReader ir = luceneDao.openIndex("/Users/cp2/hibernate/search/indexes/org.gmod.schema.sequence.FeatureCvTerm/");
-		List<String> fields = new ArrayList<String>();
-		fields.add("cvTerm.name");
-		fields.add("cvTerm.cv.name");
+		IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.FeatureCvTerm");
 		String query = "";
 		
 		if(field.equals("ALL")) {
@@ -61,7 +58,7 @@ public class SearchAllController extends TaxonNodeBindingFormController {
 			query = "cvTerm.name:" + input + " AND cvTerm.cv.name:" + field + " AND feature.organism.commonName:" + orgs;
 		}
 		
-		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), fields, query);
+		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), "cvTerm.name", query);
 		if (hits.length() == 0) {
 			be.reject("No Result");
 			return showForm(request, response, be);

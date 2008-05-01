@@ -19,7 +19,6 @@
 
 package org.genedb.web.mvc.controller;
 
-
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
 
@@ -44,7 +43,6 @@ import org.gmod.schema.utils.PeptideProperties;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -55,8 +53,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-
 
 /**
  * Looks up a feature by uniquename, and possibly synonyms
@@ -70,191 +66,194 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private SequenceDao sequenceDao;
     private Grep grep;
     private LuceneDao luceneDao;
-    
+
     @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, 
-    		HttpServletResponse response, Object command, 
-    		BindException be) throws Exception {
-    	
-    	NameLookupBean nlb = (NameLookupBean) command;
-    	String orgs = nlb.getOrgs();
-    	String name = nlb.getName();
-    	String type = nlb.getFeatureType();
-    	Map<String,Object> model = new HashMap<String,Object>(2);
-    	String viewName = listResultsView;
-    	List<ResultHit> results = new ArrayList<ResultHit>();
-    	File tmpDir = new File(getServletContext().getRealPath("/index/hibernate/search/indexes/org.gmod.schema.sequence.Feature/"));
-    	IndexReader ir = luceneDao.openIndex(tmpDir.getAbsolutePath());
-    	List<String> fields = new ArrayList<String>();
-    	String query = null;
-    	if(orgs == null) {
-    		fields.add("uniqueName");
-    		fields.add("cvTerm.name");
-    		query = "uniqueName:" + name + " AND cvTerm.name:gene";
-    		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), fields, query);
-    		switch (hits.length()) {
-    		case 0:
-    			// Temporary check as the Lucene db isn't automatically up-to-date
-    			if (directDbCheck(name)) {
-    				prepareGene(name, model);
-        			viewName = "features/gene";
-        			break;
-    			}
-    			be.reject("No Result");
-    			return showForm(request, response, be);
-    		case 1:
-    			prepareGene(hits.doc(0).get("uniqueName"), model);
-    			viewName = "features/gene";
-    			break;
-    		default:
-    			for (int i=0;i<hits.length();i++) {
-    				Document doc = hits.doc(i);
-    				ResultHit rh = new ResultHit();
-    				rh.setName(doc.get("uniqueName"));
-    				rh.setType("gene");
-    				rh.setOrganism(doc.get("organism.commonName"));
-    				results.add(rh);
-    			}
-    			viewName = listResultsView;
-    			model.put("results", results);
-    		}
-    		
-    		if(nlb.isHistory()) {
-    			List<String> ids = new ArrayList<String>(results.size());
-    			for (ResultHit feature : results) {
-    				ids.add(feature.getName());
-    			}
-    			HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
-    			historyManager.addHistoryItems("name lookup '"+nlb+"'", ids);
-    		}
-    	}
-    	return new ModelAndView(viewName,model);
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
+            Object command, BindException be) throws Exception {
+
+        NameLookupBean nlb = (NameLookupBean) command;
+        String orgs = nlb.getOrgs();
+        String name = nlb.getName();
+        String type = nlb.getFeatureType();
+        Map<String, Object> model = new HashMap<String, Object>(2);
+        String viewName = listResultsView;
+        List<ResultHit> results = new ArrayList<ResultHit>();
+
+        IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
+        String query = null;
+        if (orgs == null) {
+            query = "uniqueName:" + name + " AND cvTerm.name:gene";
+            Hits hits = luceneDao.search(ir, new StandardAnalyzer(), "uniqueName", query);
+            switch (hits.length()) {
+            case 0:
+                // Temporary check as the Lucene db isn't automatically
+                // up-to-date
+                if (directDbCheck(name)) {
+                    prepareGene(name, model);
+                    viewName = "features/gene";
+                    break;
+                }
+                be.reject("No Result");
+                return showForm(request, response, be);
+            case 1:
+                prepareGene(hits.doc(0).get("uniqueName"), model);
+                viewName = "features/gene";
+                break;
+            default:
+                for (int i = 0; i < hits.length(); i++) {
+                    Document doc = hits.doc(i);
+                    ResultHit rh = new ResultHit();
+                    rh.setName(doc.get("uniqueName"));
+                    rh.setType("gene");
+                    rh.setOrganism(doc.get("organism.commonName"));
+                    results.add(rh);
+                }
+                viewName = listResultsView;
+                model.put("results", results);
+            }
+
+            if (nlb.isHistory()) {
+                List<String> ids = new ArrayList<String>(results.size());
+                for (ResultHit feature : results) {
+                    ids.add(feature.getName());
+                }
+                HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(
+                        request.getSession());
+                historyManager.addHistoryItems("name lookup '" + nlb + "'", ids);
+            }
+        }
+        return new ModelAndView(viewName, model);
     }
-    
+
     /**
-     * Look up a featurename directly in the database, as the Lucene 
-     * indices aren't automatically up-to-date
+     * Look up a featurename directly in the database, as the Lucene indices
+     * aren't automatically up-to-date
      * 
-     * @param name the uniquename of the gene
-     * @return whether it exists in the db 
+     * @param name
+     *                the uniquename of the gene
+     * @return whether it exists in the db
      */
     private boolean directDbCheck(String name) {
-    	Feature f = sequenceDao.getFeatureByUniqueName(name, "gene");
-    	if (f!=null) {
-    		return true;
-    	}
-		return false;
-	}
+        Feature f = sequenceDao.getFeatureByUniqueName(name, "gene");
+        if (f != null) {
+            return true;
+        }
+        return false;
+    }
 
-	private void prepareGene(String systematicId, Map<String, Object> model) throws IOException {
-    	String type = "gene";
-		Feature gene = sequenceDao.getFeatureByUniqueName(systematicId, type);
+    private void prepareGene(String systematicId, Map<String, Object> model) throws IOException {
+        String type = "gene";
+        Feature gene = sequenceDao.getFeatureByUniqueName(systematicId, type);
         prepareArtemisHistory(systematicId, model);
         model.put("feature", gene);
+        model.put("luceneDao", luceneDao); // FIXME Really part of model? -rh11
 
         Feature mRNA = null;
-        Collection<FeatureRelationship> frs = gene.getFeatureRelationshipsForObjectId(); 
+        Collection<FeatureRelationship> frs = gene.getFeatureRelationshipsForObjectId();
         if (frs != null) {
-        	for (FeatureRelationship fr : frs) {
-        		mRNA = fr.getFeatureBySubjectId();
-        		break;
-        	}
-        	if (mRNA != null) {
-        		Feature polypeptide = null;
-        		Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId(); 
-        		for (FeatureRelationship fr : frs2) {
-        			Feature f = fr.getFeatureBySubjectId();
-        			if ("polypeptide".equals(f.getCvTerm().getName())) {
-        				polypeptide = f;
-        			}
-        		}
-        		model.put("transcript", mRNA);
-        		model.put("polypeptide", polypeptide);
+            for (FeatureRelationship fr : frs) {
+                mRNA = fr.getFeatureBySubjectId();
+                break;
+            }
+            if (mRNA != null) {
+                Feature polypeptide = null;
+                Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId();
+                for (FeatureRelationship fr : frs2) {
+                    Feature f = fr.getFeatureBySubjectId();
+                    if ("polypeptide".equals(f.getCvTerm().getName())) {
+                        polypeptide = f;
+                    }
+                }
+                model.put("transcript", mRNA);
+                model.put("polypeptide", polypeptide);
                 PeptideProperties pp = calculatePepstats(polypeptide);
-    			model.put("polyprop", pp);
-        	}
+                model.put("polyprop", pp);
+            }
         }
     }
 
-	/**
-	 * Grep all references to the given id from a logfile, and
-	 * remove usernames etc and verbose info
-	 * 
-	 * @param systematicId the genename
-	 * @param model the model returned to the view
-	 * @throws IOException if the log file can't be read
-	 */
-	private void prepareArtemisHistory(String systematicId, Map<String, Object> model) throws IOException {
-		grep.compile("ID=" + systematicId);
+    /**
+     * Grep all references to the given id from a logfile, and remove usernames
+     * etc and verbose info
+     * 
+     * @param systematicId
+     *                the genename
+     * @param model
+     *                the model returned to the view
+     * @throws IOException
+     *                 if the log file can't be read
+     */
+    private void prepareArtemisHistory(String systematicId, Map<String, Object> model)
+            throws IOException {
+        grep.compile("ID=" + systematicId);
         List<String> out = grep.grep();
         List<String> filtered = new ArrayList<String>(out.size());
         for (String s : out) {
-        	s = s.trim();
-			s = s.replace("uk.ac.sanger.artemis.chado.ChadoTransactionManager", "");
-			s = s.replace("[AWT-EventQueue-0]", "");
-			s = s.replaceAll("\\d+\\.\\d+\\.\\d+\\.\\d+\\s+\\d+", "");
-			s = s.replaceAll("\\S+@\\S+", "uname");
-			s = "&nbsp;&nbsp;&nbsp;"+s;
-			filtered.add(s);
-		}
+            s = s.trim();
+            s = s.replace("uk.ac.sanger.artemis.chado.ChadoTransactionManager", "");
+            s = s.replace("[AWT-EventQueue-0]", "");
+            s = s.replaceAll("\\d+\\.\\d+\\.\\d+\\.\\d+\\s+\\d+", "");
+            s = s.replaceAll("\\S+@\\S+", "uname");
+            s = "&nbsp;&nbsp;&nbsp;" + s;
+            filtered.add(s);
+        }
         model.put("modified", filtered);
-	}
-    
+    }
 
     private PeptideProperties calculatePepstats(Feature polypeptide) {
 
-        //String seqString = FeatureUtils.getResidues(polypeptide);
-    	if (polypeptide.getResidues() == null) {
-    		logger.warn("No residues for '"+polypeptide.getUniqueName()+"'");
-    		return null;
-    	}
+        // String seqString = FeatureUtils.getResidues(polypeptide);
+        if (polypeptide.getResidues() == null) {
+            logger.warn("No residues for '" + polypeptide.getUniqueName() + "'");
+            return null;
+        }
         String seqString = new String(polypeptide.getResidues());
-    	//System.err.println(seqString);
+        // System.err.println(seqString);
         Alphabet protein = ProteinTools.getAlphabet();
         SymbolTokenization proteinToke = null;
         SymbolList seq = null;
         PeptideProperties pp = new PeptideProperties();
         try {
-        	proteinToke = protein.getTokenization("token");
-        	seq = new SimpleSymbolList(proteinToke, seqString);
+            proteinToke = protein.getTokenization("token");
+            seq = new SimpleSymbolList(proteinToke, seqString);
         } catch (BioException e) {
-        	logger.error("Can't translate into a protein sequence");
-        	//pp.setWarning("Unable to translate protein"); // FIXME
-        	return pp;
+            logger.error("Can't translate into a protein sequence");
+            // pp.setWarning("Unable to translate protein"); // FIXME
+            return pp;
         }
         IsoelectricPointCalc ipc = new IsoelectricPointCalc();
         Double cal = 0.0;
         try {
-        	cal = ipc.getPI(seq, false, false);
+            cal = ipc.getPI(seq, false, false);
         } catch (IllegalAlphabetException e) {
-        	// TODO Auto-generated catch block
-        	e.printStackTrace();
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         } catch (BioException e) {
-        	// TODO Auto-generated catch block
-        	e.printStackTrace();
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         DecimalFormat df = new DecimalFormat("#.##");
         pp.setIsoelectricPoint(df.format(cal));
         pp.setAminoAcids(Integer.toString(seqString.length()));
-        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS,false);
+        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS, false);
         try {
-        	cal = mc.getMass(seq)/1000;
+            cal = mc.getMass(seq) / 1000;
         } catch (IllegalSymbolException e) {
-        	// TODO Auto-generated catch block
-        	e.printStackTrace();
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         pp.setMass(df.format(cal));
-        
-        //cal = WebUtils.getCharge(seq);
+
+        // cal = WebUtils.getCharge(seq);
         pp.setCharge(df.format(cal));
         return pp;
     }
 
-	public void setLuceneDao(LuceneDao luceneDao) {
-		this.luceneDao = luceneDao;
-	}
+    public void setLuceneDao(LuceneDao luceneDao) {
+        this.luceneDao = luceneDao;
+    }
 
-	public void setListResultsView(String listResultsView) {
+    public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;
     }
 
@@ -262,81 +261,77 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         this.sequenceDao = sequenceDao;
     }
 
-	public void setGrep(Grep grep) {
-		this.grep = grep;
-	}
-
-	
+    public void setGrep(Grep grep) {
+        this.grep = grep;
+    }
 }
 
-
 class NameLookupBean {
-    
+
     private String name; // The name to lookup, using * for wildcards
     private boolean addWildcard = false;
     private String featureType = "gene";
     private boolean useProduct = false;
     private boolean history = false;
     private String orgs;
-    
-	public String getOrgs() {
-		return orgs;
-	}
 
-	public void setOrgs(String orgs) {
-		this.orgs = orgs;
-	}
+    public String getOrgs() {
+        return orgs;
+    }
 
-	public void setName(String name) {
+    public void setOrgs(String orgs) {
+        this.orgs = orgs;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getName() {
-    	if (addWildcard) {
-    		StringBuilder ret = new StringBuilder(this.name);
-    		if (!(ret.charAt(0)=='*')) {
-    			ret.insert(0, '*');
-    		}
-    		if (!(ret.charAt(ret.length()-1)=='*')) {
-    			ret.append('*');
-    		}
-    		return ret.toString();
-    	}
-    	return this.name;
+        if (addWildcard) {
+            StringBuilder ret = new StringBuilder(this.name);
+            if (!(ret.charAt(0) == '*')) {
+                ret.insert(0, '*');
+            }
+            if (!(ret.charAt(ret.length() - 1) == '*')) {
+                ret.append('*');
+            }
+            return ret.toString();
+        }
+        return this.name;
     }
 
-	public String getFeatureType() {
-		return featureType;
-	}
+    public String getFeatureType() {
+        return featureType;
+    }
 
-	public void setFeatureType(String featureType) {
-		this.featureType = featureType;
-	}
+    public void setFeatureType(String featureType) {
+        this.featureType = featureType;
+    }
 
-	public void setAddWildcard(boolean addWildcard) {
-		this.addWildcard = addWildcard;
-	}
+    public void setAddWildcard(boolean addWildcard) {
+        this.addWildcard = addWildcard;
+    }
 
-	public boolean isUseProduct() {
-		return useProduct;
-	}
+    public boolean isUseProduct() {
+        return useProduct;
+    }
 
-	public void setUseProduct(boolean useProduct) {
-		this.useProduct = useProduct;
-	}
+    public void setUseProduct(boolean useProduct) {
+        this.useProduct = useProduct;
+    }
 
-	public boolean isHistory() {
-		return history;
-	}
+    public boolean isHistory() {
+        return history;
+    }
 
-	public void setHistory(boolean history) {
-		this.history = history;
-	}
-    
-	@Override
+    public void setHistory(boolean history) {
+        this.history = history;
+    }
+
+    @Override
     public String toString() {
-		return getName()+","+getOrgs();
-	}
-    
-}
+        return getName() + "," + getOrgs();
+    }
 
+}
