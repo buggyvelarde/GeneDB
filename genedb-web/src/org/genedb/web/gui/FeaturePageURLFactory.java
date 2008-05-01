@@ -34,7 +34,7 @@ import java.net.URL;
 class FeaturePageURLFactory implements URLFactory {
 
     private static final String bogusSite = "http://www.deliberatelybogusaddress.com";
-    private static final String SEARCH_PREFIX = "/new/NamedFeature?name=";
+    private static final String SEARCH_PREFIX = "NamedFeature?name=";
     private URL baseURL;
 
     FeaturePageURLFactory() throws MalformedURLException {
