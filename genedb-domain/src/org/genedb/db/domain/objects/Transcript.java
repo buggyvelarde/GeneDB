@@ -25,30 +25,28 @@ import org.gmod.schema.sequence.FeatureRelationship;
 import java.io.Serializable;
 
 public class Transcript implements Serializable {
-    
-    public static Transcript makeTranscript(Feature feature) {
-    	Transcript ret = new Transcript();
-		for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
-			Feature otherFeat = fr.getFeatureBySubjectId();
-			if (otherFeat.getCvTerm().getName().equals("polypeptide")) {
-				ret.setProtein(otherFeat);
-			}
-		}
-    	return ret;
-    }
-    
-	//private Feature feature;
-    //private List<Feature> exons;
-    private transient Feature protein;
-    
-	public Feature getProtein() {
-		return protein;
-	}
 
-	public void setProtein(Feature protein) {
-		this.protein = protein;
-	}
-    
-    
+    public static Transcript makeTranscript(Feature feature) {
+        Transcript ret = new Transcript();
+        for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
+            Feature otherFeat = fr.getFeatureBySubjectId();
+            if (otherFeat.getCvTerm().getName().equals("polypeptide")) {
+                ret.setProtein(otherFeat);
+            }
+        }
+        return ret;
+    }
+
+    // private Feature feature;
+    // private List<Feature> exons;
+    private transient Feature protein;
+
+    public Feature getProtein() {
+        return protein;
+    }
+
+    public void setProtein(Feature protein) {
+        this.protein = protein;
+    }
 
 }

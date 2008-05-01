@@ -6,15 +6,15 @@
 	<target name="fulljar" depends="" description="Create full JAR file with all Spring classes">
 
 		<delete dir="ant-build" />
-		<delete file="genedb-domain.jar"/>
+		<delete file="genedb-domain.jar" />
 		<copydir dest="ant-build" src="bin" />
 		<copydir dest="ant-build" src="conf" />
-		
+
 		<jar jarfile="genedb-domain.jar">
 			<fileset dir="ant-build" />
 			<manifest>
-				<attribute name="Implementation-Title" value="GeneDB Domain"/>
-				<attribute name="Implementation-Version" value="0.1"/>
+				<attribute name="Implementation-Title" value="GeneDB Domain" />
+				<attribute name="Implementation-Version" value="0.1" />
 			</manifest>
 		</jar>
 

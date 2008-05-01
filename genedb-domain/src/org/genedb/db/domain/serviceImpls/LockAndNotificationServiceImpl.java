@@ -13,29 +13,29 @@ import java.util.Set;
 
 public class LockAndNotificationServiceImpl implements LockAndNotificationService {
 
-	private MessageService messageService;
-	private Set<String> locks = new HashSet<String>();
-	private Map<String, ArrayList<String>> interested = new HashMap<String, ArrayList<String>>();
-	
-	public LockStatus lockGene(String systematicId) {
-		if (!(locks.contains(systematicId))) {
-			locks.add(systematicId);
-			return new LockStatus(true);
-		}
-		return null;
-	}
+    private MessageService messageService;
+    private Set<String> locks = new HashSet<String>();
+    private Map<String, ArrayList<String>> interested = new HashMap<String, ArrayList<String>>();
 
-	public void unlockGene(String systematicId) {
-		locks.remove(systematicId);
-	}
+    public LockStatus lockGene(String systematicId) {
+        if (!(locks.contains(systematicId))) {
+            locks.add(systematicId);
+            return new LockStatus(true);
+        }
+        return null;
+    }
 
-	public void notifyGene(String uniqueName, String string) {
-		if (interested.containsKey(uniqueName)) {
-			List<String> clients = new ArrayList<String>();
-			for (String clientName : clients) {
-				messageService.addNotification(clientName, "Gene Updated", string);
-			}
-		}
-	}
+    public void unlockGene(String systematicId) {
+        locks.remove(systematicId);
+    }
+
+    public void notifyGene(String uniqueName, String string) {
+        if (interested.containsKey(uniqueName)) {
+            List<String> clients = new ArrayList<String>();
+            for (String clientName : clients) {
+                messageService.addNotification(clientName, "Gene Updated", string);
+            }
+        }
+    }
 
 }

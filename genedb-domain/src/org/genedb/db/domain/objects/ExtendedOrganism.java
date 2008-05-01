@@ -9,15 +9,14 @@ package org.genedb.db.domain.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * @author art
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * 
+ * TODO To change the template for this generated type comment go to Window -
+ * Preferences - Java - Code Generation - Code and Comments
  */
 public class ExtendedOrganism {
-    
+
     private String taxonId;
     private String fullName;
     private String shortName;
@@ -26,13 +25,10 @@ public class ExtendedOrganism {
     private String dbName;
     private String htmlName;
     private List<ExtendedOrganism> children = new ArrayList<ExtendedOrganism>();
-    
-    
-    
+
     public ExtendedOrganism() {
         super();
     }
-
 
     public ExtendedOrganism(String shortName, ExtendedOrganism parent) {
         this.shortName = shortName;
@@ -40,36 +36,33 @@ public class ExtendedOrganism {
         this.parent.addChild(this);
     }
 
-
     public boolean isLeaf() {
-	return children.size() == 0;
+        return children.size() == 0;
     }
-    
-    
+
     public String getDbName() {
         return dbName;
     }
-    
+
     public void setDbName(String dbName) {
         this.dbName = dbName;
     }
-     
-    
+
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
+
     public String getFullName() {
         return fullName;
     }
-    
+
     public String getNickname() {
         return nickname;
     }
-    
+
     public String getTaxonId() {
         return taxonId;
     }
-
 
     public void setTaxonId(String taxonId) {
         this.taxonId = taxonId;
@@ -87,9 +80,9 @@ public class ExtendedOrganism {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
-    
+
     void addChild(ExtendedOrganism child) {
-	this.children.add(child);
+        this.children.add(child);
     }
 
     /**
