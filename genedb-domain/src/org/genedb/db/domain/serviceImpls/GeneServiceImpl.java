@@ -3,7 +3,6 @@ package org.genedb.db.domain.serviceImpls;
 import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.services.GeneService;
-import org.genedb.db.domain.services.ProductService;
 
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.sequence.Feature;
@@ -25,7 +24,6 @@ import java.util.List;
 public class GeneServiceImpl implements GeneService {
 
     private SessionFactory sessionFactory;
-    private ProductService productService;
 
     @SuppressWarnings("unchecked")
     @Transactional
@@ -134,7 +132,8 @@ public class GeneServiceImpl implements GeneService {
     }
 
     public List<String> findGeneNamesByPartialName(String search) {
-        List<String> names = (List<String>) sessionFactory.getCurrentSession().createQuery(
+        @SuppressWarnings("unchecked")
+        List<String> names = sessionFactory.getCurrentSession().createQuery(
                 "select f.uniqueName from Feature f where f.uniqueName like '%" + search
                         + "%' and f.cvTerm.name='gene'").list();
         if (names.size() == 0) {
