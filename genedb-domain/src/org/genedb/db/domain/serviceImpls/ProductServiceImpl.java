@@ -119,7 +119,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public List<Product> getProductList(boolean restrictToGeneLinked) {
         // Session session = SessionFactoryUtils.getSession(sessionFactory,
         // true);
