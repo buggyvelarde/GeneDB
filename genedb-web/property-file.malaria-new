@@ -5,3 +5,6 @@ dbport=10101
 dbname=malaria_workshop
 dbuser=pathdb
 dbpassword=Pyrate_1
+
+lucene.indexDirectory=/Users/cp2/hibernate/search/indexes/
+contextMap.fileFormat=/software/pathogen/projects/genedb/tomcat_workshop/tomcat/webapps/%sincludes/images/cmap/%s.gif
