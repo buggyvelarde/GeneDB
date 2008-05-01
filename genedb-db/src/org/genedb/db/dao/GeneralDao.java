@@ -15,7 +15,7 @@ import java.util.List;
 public class GeneralDao extends BaseDao implements GeneralDaoI {
 
     /* (non-Javadoc)
-     * @see org.genedb.db.dao.GeneralDaoI#getDbByName(java.lang.String)
+     * @see org.gmod.schema.dao.GeneralDaoI#getDbByName(java.lang.String)
      */
     @SuppressWarnings("unchecked")
     public Db getDbByName(String name) {
@@ -26,7 +26,7 @@ public class GeneralDao extends BaseDao implements GeneralDaoI {
     }
     
     /* (non-Javadoc)
-     * @see org.genedb.db.dao.GeneralDaoI#getDbXRefByDbAndAcc(org.genedb.db.hibernate3gen.Db, java.lang.String)
+     * @see org.gmod.schema.dao.GeneralDaoI#getDbXRefByDbAndAcc(org.genedb.db.hibernate3gen.Db, java.lang.String)
      */
     @SuppressWarnings("unchecked")
     public DbXRef getDbXRefByDbAndAcc(Db db, String accession) {
