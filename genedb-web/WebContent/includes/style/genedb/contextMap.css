@@ -1,0 +1,13 @@
+#contextMapImage {
+	border: 1px solid black;
+	overflow: hidden;
+	position: relative;
+	width: 800px;
+	height: 50px;
+}
+
+img#contextMapLoadingImage {
+	position:absolute;
+	top:50%;
+	margin-top: -8px;
+}
