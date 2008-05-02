@@ -154,58 +154,34 @@ public class Feature implements java.io.Serializable {
    
     // Property accessors
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeatureId()
-     */
     public int getFeatureId() {
         return this.featureId;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setFeatureId(int)
-     */
     public void setFeatureId(int featureId) {
         this.featureId = featureId;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getOrganism()
-     */
     public Organism getOrganism() {
         return this.organism;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setOrganism(org.gmod.schema.organism.OrganismI)
-     */
     public void setOrganism(Organism organism) {
         this.organism = organism;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getCvTerm()
-     */
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setCvTerm(org.gmod.schema.cv.CvTermI)
-     */
     public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getDbxref()
-     */
     public DbXRef getDbXRef() {
         return this.dbXRef;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setDbxref(org.gmod.schema.general.DbXRefI)
-     */
     public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
@@ -243,16 +219,10 @@ public class Feature implements java.io.Serializable {
         return this.uniqueName;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setUniquename(java.lang.String)
-     */
     public void setUniqueName(String uniqueName) {
         this.uniqueName = uniqueName;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getResidues()
-     */
     public byte[] getResidues() {
         return this.residues;
     }
@@ -270,9 +240,6 @@ public class Feature implements java.io.Serializable {
         return results;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setResidues(java.lang.String)
-     */
     public void setResidues(byte[] residues) {
         this.residues = residues;
         if (residues == null) {
@@ -298,126 +265,75 @@ public class Feature implements java.io.Serializable {
     }
     
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setSeqlen(java.lang.Integer)
-     */
     public void setSeqLen(Integer seqLen) {
         this.seqLen = seqLen;
     }
     
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getMd5Checksum()
-     */
     public String getMd5Checksum() {
         return this.md5Checksum;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setMd5Checksum(java.lang.String)
-     */
     public void setMd5Checksum(String md5Checksum) {
         this.md5Checksum = md5Checksum;
     }
     
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#isAnalysis()
-     */
     public boolean isAnalysis() {
         return this.analysis;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setAnalysis(boolean)
-     */
     public void setAnalysis(boolean analysis) {
         this.analysis = analysis;
     }
     
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#isObsolete()
-     */
     public boolean isObsolete() {
         return this.obsolete;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setObsolete(boolean)
-     */
     public void setObsolete(boolean obsolete) {
         this.obsolete = obsolete;
     }
     
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getTimeAccessioned()
-     */
     public Date getTimeAccessioned() {
         return this.timeAccessioned;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setTimeAccessioned(java.util.Date)
-     */
     public void setTimeAccessioned(Timestamp timeAccessioned) {
         this.timeAccessioned = timeAccessioned;
     }
     
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getTimeLastModified()
-     */
     public Timestamp getTimeLastModified() {
         return this.timeLastModified;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setTimeLastModified(java.util.Date)
-     */
     public void setTimeLastModified(Timestamp timeLastModified) {
         this.timeLastModified = timeLastModified;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeaturelocsForSrcfeatureId()
-     */
     public Collection<FeatureLoc> getFeatureLocsForSrcFeatureId() {
         return (featureLocsForSrcFeatureId = CollectionUtils.safeGetter(featureLocsForSrcFeatureId));
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setFeaturelocsForSrcfeatureId(java.util.Set)
-     */
     public void setFeatureLocsForSrcFeatureId(Collection<FeatureLoc> featureLocsForSrcFeatureId) {
         this.featureLocsForSrcFeatureId = featureLocsForSrcFeatureId;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeatureRelationshipsForObjectId()
-     */
     public Collection<FeatureRelationship> getFeatureRelationshipsForObjectId() {
         return (featureRelationshipsForObjectId = CollectionUtils.safeGetter(featureRelationshipsForObjectId));
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setFeatureRelationshipsForObjectId(java.util.Set)
-     */
     public void setFeatureRelationshipsForObjectId(Collection<FeatureRelationship> featureRelationshipsForObjectId) {
         this.featureRelationshipsForObjectId = featureRelationshipsForObjectId;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeatureRelationshipsForSubjectId()
-     */
     public Collection<FeatureRelationship> getFeatureRelationshipsForSubjectId() {
         return (featureRelationshipsForSubjectId = CollectionUtils.safeGetter(featureRelationshipsForSubjectId));
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setFeatureRelationshipsForSubjectId(java.util.Set)
-     */
     public void setFeatureRelationshipsForSubjectId(Collection<FeatureRelationship> featureRelationshipsForSubjectId) {
         this.featureRelationshipsForSubjectId = featureRelationshipsForSubjectId;
     }
@@ -427,67 +343,40 @@ public class Feature implements java.io.Serializable {
       this.featureRelationshipsForSubjectId.add(featureRelationshipForSubjectId);
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeatureDbxrefs()
-     */
     public Collection<FeatureDbXRef> getFeatureDbXRefs() {
         return this.featureDbXRefs;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setFeatureDbxrefs(java.util.Set)
-     */
     public void setFeatureDbXRefs(Collection<FeatureDbXRef> featureDbXRefs) {
         this.featureDbXRefs = featureDbXRefs;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeaturelocsForFeatureId()
-     */
     public Collection<FeatureLoc> getFeatureLocsForFeatureId() {
         return (featureLocsForFeatureId = CollectionUtils.safeGetter(featureLocsForFeatureId));
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setFeaturelocsForFeatureId(java.util.Set)
-     */
     public void addFeatureLocsForFeatureId(FeatureLoc featureLocForFeatureId) {
         featureLocForFeatureId.setFeatureByFeatureId(this);
         getFeatureLocsForFeatureId().add(featureLocForFeatureId);
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeatureCvterms()
-     */
     public Collection<FeatureCvTerm> getFeatureCvTerms() {
         return this.featureCvTerms;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setFeatureCvterms(java.util.Set)
-     */
     public void setFeatureCvTerms(Collection<FeatureCvTerm> featureCvTerms) {
         this.featureCvTerms = featureCvTerms;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeatureProps()
-     */
     public Collection<FeatureProp> getFeatureProps() {
         return (featureProps = CollectionUtils.safeGetter(featureProps));
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setFeatureProps(java.util.Set)
-     */
     public void addFeatureProp(FeatureProp featureProp) {
         featureProp.setFeature(this);
         getFeatureProps().add(featureProp);
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeaturePubs()
-     */
     public Collection<FeaturePub> getFeaturePubs() {
         return this.featurePubs;
     }
@@ -496,30 +385,18 @@ public class Feature implements java.io.Serializable {
         this.featurePubs = featurePubs;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getAnalysisfeatures()
-     */
     public Collection<AnalysisFeature> getAnalysisFeatures() {
         return this.analysisFeatures;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setAnalysisfeatures(java.util.Set)
-     */
     public void setAnalysisFeatures(Collection<AnalysisFeature> analysisFeatures) {
         this.analysisFeatures = analysisFeatures;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#getFeatureSynonyms()
-     */
     public Collection<FeatureSynonym> getFeatureSynonyms() {
         return (featureSynonyms = CollectionUtils.safeGetter(featureSynonyms));
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureI#setFeatureSynonyms(java.util.Set)
-     */
     public void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
         this.featureSynonyms = featureSynonyms;
     }

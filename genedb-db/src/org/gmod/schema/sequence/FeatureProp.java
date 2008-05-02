@@ -67,74 +67,42 @@ public class FeatureProp implements Serializable, PropertyI {
    
     // Property accessors
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#getCvterm()
-     */
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#setCvterm(org.gmod.schema.cv.CvTermI)
-     */
     public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#getFeature()
-     */
     public Feature getFeature() {
         return this.feature;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#setFeature(org.genedb.db.jpa.Feature)
-     */
     public void setFeature(Feature feature) {
         this.feature = feature;
     }
     
-
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#getValue()
-     */
     public String getValue() {
         return this.value;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#setValue(java.lang.String)
-     */
     public void setValue(String value) {
         this.value = value;
     }
     
-
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#getRank()
-     */
     public int getRank() {
         return this.rank;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#setRank(int)
-     */
     public void setRank(int rank) {
         this.rank = rank;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#getFeaturepropPubs()
-     */
     private Set<FeaturePropPub> getFeaturePropPubs() {
         return this.featurePropPubs;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeaturePropI#setFeaturepropPubs(java.util.Set)
-     */
     public void setFeaturePropPubs(Set<FeaturePropPub> featurePropPubs) {
         this.featurePropPubs = featurePropPubs;
     }
