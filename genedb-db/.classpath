@@ -9,5 +9,16 @@
 	<classpathentry kind="lib" path="lib/hibernate-tools.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-libs"/>
+	<classpathentry kind="lib" path="lib/asm.jar"/>
+	<classpathentry kind="lib" path="lib/backport-util-concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/freemarker.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-commons-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-search.jar"/>
+	<classpathentry kind="lib" path="lib/jms.jar"/>
+	<classpathentry kind="lib" path="lib/jtidy-r8-21122004.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-2.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/spring.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
