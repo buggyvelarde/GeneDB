@@ -1,6 +1,7 @@
 package org.genedb.db.domain.hibernateImpls;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,7 +13,9 @@ import org.genedb.db.domain.services.BasicGeneService;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.util.StringUtils;
 
@@ -21,10 +24,11 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     protected static final Logger log = Logger.getLogger(BasicGeneServiceImpl.class);
 
     protected Feature findGeneFeatureByUniqueName(String name) {
+        Query query = sessionFactory.getCurrentSession().createQuery(
+                "from Feature f"
+                +" where f.uniqueName=:name and f.cvTerm.name='gene'");
         @SuppressWarnings("unchecked")
-        List<Feature> features = sessionFactory.getCurrentSession().createQuery(
-                "from Feature f where f.uniqueName=:name and f.cvTerm.name='gene'").setString(
-                "name", name).list();
+        List<Feature> features = query.setString("name", name).list();
 
         if (features.size() == 0)
             return null;
@@ -40,6 +44,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         BasicGene ret = new Gene();
 
         ret.setSystematicId(feat.getUniqueName());
+        ret.setFeatureId(feat.getFeatureId());
 
         if (StringUtils.hasText(feat.getName())) {
             ret.setName(feat.getName());
@@ -68,6 +73,10 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         ret.setProducts(products);
         ret.setOrganism(feat.getOrganism().getFullName());
 
+        FeatureLoc loc = feat.getFeatureLoc();
+        ret.setFmin(loc.getFmin());
+        ret.setFmax(loc.getFmax());
+
         return ret;
     }
 
@@ -82,6 +91,29 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         else
             return names;
     }
+ 
+    public Collection<BasicGene> findGenesOverlappingRange(String organismCommonName,
+            String chromosomeUniqueName, int strand, long locMin, long locMax) {
+
+        assert strand == 1 || strand == -1;
+        @SuppressWarnings("unchecked")
+        List<BasicGene> ret = sessionFactory.getCurrentSession().createQuery(
+                "select f from Feature f"
+                +" join f.featureLoc fl"
+                +" join f.organism o"
+                +" where fl.fmax > :locMin and fl.fmin < :locMax"
+                +" and fl.strand = :strand"
+                +" and o.commonName = :org"
+                +" and f.cvTerm.name='gene'")
+                .setLong   ("locMin", locMin)
+                .setLong   ("locMax", locMax)
+                .setInteger("strand", strand)
+                .setString ("chr", chromosomeUniqueName)
+                .setString ("org", organismCommonName)
+                .list();
+        return ret;
+    }
+
 
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

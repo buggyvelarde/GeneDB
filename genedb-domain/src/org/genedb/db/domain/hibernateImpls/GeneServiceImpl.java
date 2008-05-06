@@ -56,7 +56,6 @@ public class GeneServiceImpl extends BasicGeneServiceImpl implements GeneService
         ret.setClusters(clusters);
 
         ret.setOrganism(feat.getOrganism().getFullName());
-        // ret.setOrganism("Not fetched");
 
         return ret;
     }

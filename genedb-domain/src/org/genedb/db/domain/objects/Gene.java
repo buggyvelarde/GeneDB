@@ -27,6 +27,7 @@ public class Gene extends BasicGene {
     private List<String> clusters;
 
     private String reservedName;
+    private String previousSystematicId;
 
     public void setSynonyms(List<String> synonyms) {
         this.synonyms = synonyms;
@@ -66,6 +67,12 @@ public class Gene extends BasicGene {
 
     public String getReservedName() {
         return reservedName;
+    }
+    public void setPreviousSystematicId(String previousSystematicId) {
+        this.previousSystematicId = previousSystematicId;
+    }
+    public String getPreviousSystematicId() {
+        return previousSystematicId;
     }
 
 }
