@@ -132,6 +132,12 @@ public class Feature implements java.io.Serializable {
     @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
     private Collection<FeatureSynonym> featureSynonyms;
     
+    /**
+     * This featureLoc field does not participate in the Hibernate mapping.
+     * It's provided as a convenience for the client, and can be used to
+     * cache a FeatureLoc of interest, but is neither automatically populated
+     * nor persisted. In particular, it is (at the time of writing) used by Artemis.
+     */
     private FeatureLoc featureLoc;
     
      // Constructors
@@ -411,12 +417,10 @@ public class Feature implements java.io.Serializable {
         return (getName() != null) ? getName() : getUniqueName(); 
     }
 
-    @SuppressWarnings("unused")
     public void setFeatureLocsForFeatureId(Collection<FeatureLoc> featureLocsForFeatureId) {
         this.featureLocsForFeatureId = featureLocsForFeatureId;
     }
 
-    @SuppressWarnings("unused")
     public void setFeatureProps(Collection<FeatureProp> featureProps) {
         this.featureProps = featureProps;
     }
@@ -451,13 +455,27 @@ public class Feature implements java.io.Serializable {
         return null;
     }
     
-    public FeatureLoc getFeatureLoc()
-    {
+    /**
+     * Returns the value of the featureLoc field.
+     * 
+     * This featureLoc field does not participate in the Hibernate mapping.
+     * It's provided as a convenience for the client, and can be used to
+     * cache a FeatureLoc of interest, but is neither automatically populated
+     * nor persisted. In particular, it is (at the time of writing) used by Artemis.
+     */
+    public FeatureLoc getFeatureLoc() {
       return featureLoc;
     }
 
-    public void setFeatureLoc(FeatureLoc featureLoc)
-    {
+    /**
+     * Sets the value of the featureLoc field.
+     * 
+     * This featureLoc field does not participate in the Hibernate mapping.
+     * It's provided as a convenience for the client, and can be used to
+     * cache a FeatureLoc of interest, but is neither automatically populated
+     * nor persisted. In particular, it is (at the time of writing) used by Artemis.
+     */
+    public void setFeatureLoc(FeatureLoc featureLoc) {
       this.featureLoc = featureLoc;
     }
 
