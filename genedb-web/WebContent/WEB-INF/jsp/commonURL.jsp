@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<format:header>${pageTitle}</format:header>
+<format:header name="commonURL">${pageTitle}</format:header>
 
 <ul>
 <c:forEach items="${list}" var="item">
