@@ -21,17 +21,12 @@ public class Gene extends BasicGene {
         super(basis);
     }
 
-    private List<String> synonyms;
     private List<String> orthologues;
     private List<String> paralogues;
     private List<String> clusters;
 
     private String reservedName;
     private String previousSystematicId;
-
-    public void setSynonyms(List<String> synonyms) {
-        this.synonyms = synonyms;
-    }
 
     public List<String> getClusters() {
         return clusters;
@@ -55,10 +50,6 @@ public class Gene extends BasicGene {
 
     public void setParalogues(List<String> paralogues) {
         this.paralogues = paralogues;
-    }
-
-    public List<String> getSynonyms() {
-        return synonyms;
     }
 
     public void setReservedName(String reservedName) {

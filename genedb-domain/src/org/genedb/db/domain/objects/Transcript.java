@@ -19,34 +19,47 @@
 
 package org.genedb.db.domain.objects;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
-
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Set;
+
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureProp;
 
 public class Transcript implements Serializable {
+    private transient Feature protein;
+    private Integer colourId; // May be null
+    private Set<Exon> exons = Collections.emptySet();
 
-    public static Transcript makeTranscript(Feature feature) {
-        Transcript ret = new Transcript();
-        for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
-            Feature otherFeat = fr.getFeatureBySubjectId();
-            if (otherFeat.getCvTerm().getName().equals("polypeptide")) {
-                ret.setProtein(otherFeat);
-            }
-        }
-        return ret;
+    public Set<Exon> getExons() {
+        return exons;
+    }
+    public void setExons(Set<Exon> exons) {
+        this.exons = exons;
     }
 
-    // private Feature feature;
-    // private List<Feature> exons;
-    private transient Feature protein;
+    public Integer getColourId() {
+        return colourId;
+    }
+    public void setColourId(Integer colourId) {
+        this.colourId = colourId;
+    }
 
     public Feature getProtein() {
         return protein;
     }
 
+    /**
+     * Sets the protein property, and also updates the colourId from the protein.
+     * 
+     * @param protein
+     */
     public void setProtein(Feature protein) {
         this.protein = protein;
+        for (FeatureProp proteinProp: protein.getFeatureProps()) {
+            if (proteinProp.getCvTerm().getName().equals("colour"))
+                setColourId(Integer.parseInt(proteinProp.getValue()));
+        }
     }
 
 }

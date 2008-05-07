@@ -22,17 +22,12 @@ public class GeneServiceImpl extends BasicGeneServiceImpl implements GeneService
     protected Gene geneFromFeature(Feature feat) {
         Gene ret = new Gene(super.geneFromFeature(feat));
 
-        List<String> synonyms = new ArrayList<String>();
         for (FeatureSynonym fs : feat.getFeatureSynonyms()) {
             String type = fs.getSynonym().getCvTerm().getName();
-            if (type.equals("synonym")) {
-                synonyms.add(fs.getSynonym().getName());
-            }
             if (type.equals("reserved_name")) {
                 ret.setReservedName(fs.getSynonym().getName());
             }
         }
-        ret.setSynonyms(synonyms);
 
         Transcript transcript = ret.getTranscripts().get(0);
         Feature protein = transcript.getProtein();
