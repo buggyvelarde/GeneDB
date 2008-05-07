@@ -20,6 +20,7 @@
 package org.genedb.jogra.plugins;
 
 import org.genedb.db.domain.misc.GeneDBMessage;
+import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.services.GeneService;
 import org.genedb.db.domain.services.LockAndNotificationService;
@@ -321,7 +322,7 @@ public class GeneEditor implements JograPlugin {
 
 class GeneEditorFrame extends JFrame {
 	private LockStatus lockStatus;
-	private Gene gene;
+	private BasicGene gene;
 
 	public LockStatus getLockStatus() {
 		return lockStatus;
@@ -331,11 +332,11 @@ class GeneEditorFrame extends JFrame {
 		this.lockStatus = lockStatus;
 	}
 
-	public Gene getGene() {
+	public BasicGene getGene() {
 		return gene;
 	}
 
-	public void setGene(Gene gene) {
+	public void setGene(BasicGene gene) {
 		this.gene = gene;
 	}
 	
