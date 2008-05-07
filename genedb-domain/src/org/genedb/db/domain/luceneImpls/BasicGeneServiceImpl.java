@@ -1,7 +1,8 @@
-package org.genedb.db.domain.luceneImpls;
+    package org.genedb.db.domain.luceneImpls;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -33,27 +34,37 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     private static Analyzer luceneAnalyzer = new StandardAnalyzer();
     private static Logger log = Logger.getLogger(BasicGeneService.class);
 
-    BasicGeneServiceImpl(IndexReader luceneIndex) {
+    public BasicGeneServiceImpl(IndexReader luceneIndex) {
         this.luceneIndex = luceneIndex;
     }
 
     /**
-     * This interface defines a conversion from a Lucene Document to some other
-     * class of object.
+     * Defines a conversion from a Lucene Document to some other
+     * class of object. A DocumentConverter can also function as a filter if
+     * desired, by returning <code>null</code> from the convert method to
+     * indicate that a particular document should be ignored.
      * 
      * @author rh11
      * 
      * @param <T> The return type of the conversion
      */
     private interface DocumentConverter<T> {
+        /**
+         * Convert the document to the desired form.
+         * 
+         * @param doc  the document to convert
+         * @return     the result of the conversion, or null if this document should be ignored
+         */
         T convert(Document doc);
     }
-
+    
     /**
      * This DocumentConverter populates a BasicGene object using the Lucene
-     * Document.
+     * Document. Currently it makes a new Lucene query for every gene to pull
+     * back the associated transcripts. Should this prove unacceptable, the
+     * associated transcripts could be all loaded together instead.
      */
-    private static final DocumentConverter<BasicGene> convertToGene = new DocumentConverter<BasicGene>() {
+    private final DocumentConverter<BasicGene> convertToGene = new DocumentConverter<BasicGene>() {
         public BasicGene convert(Document doc) {
             BasicGene ret = new BasicGene();
 
@@ -63,14 +74,17 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             ret.setOrganism(doc.get("organism.commonName"));
             ret.setFmin(Integer.parseInt(doc.get("start")));
             ret.setFmax(Integer.parseInt(doc.get("stop")));
-            
+            ret.setSynonyms(Arrays.asList(doc.get("synonym").split("\t")));
+                
             return ret;
         }
     };
 
     /**
      * Finds all documents matching the query, and makes a list of matches. Each
-     * document is converted to an object of type T using the converter.
+     * document is converted to an object of type T using the converter. This 
+     * method parses the query text, using a StandardAnalyzer, and then calls
+     * findGenesWithQuery(Query, DocumentConverter<T>).
      * 
      * @param <T> The return type
      * @param defaultField The default Lucene field
@@ -78,7 +92,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
      * @param converter Result converter
      * @return
      */
-    private <T> List<T> findGenesWithQuery(String defaultField, String queryText,
+    private <T> List<T> findWithQuery(String defaultField, String queryText,
             DocumentConverter<T> converter) {
         QueryParser qp = new QueryParser(defaultField, luceneAnalyzer);
         if (queryText.startsWith("*"))
@@ -90,7 +104,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             throw new RuntimeException(String
                     .format("Failed to parse Lucene query '%s'", queryText), e);
         }
-        return findGenesWithQuery(query, converter);
+        return findWithQuery(query, converter);
     }
 
     /**
@@ -102,7 +116,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
      * @param converter Result converter
      * @return
      */
-    private <T> List<T> findGenesWithQuery(Query query, DocumentConverter<T> converter) {
+    private <T> List<T> findWithQuery(Query query, DocumentConverter<T> converter) {
         List<T> ret = new ArrayList<T>();
 
         IndexSearcher searcher = new IndexSearcher(luceneIndex);
@@ -126,14 +140,16 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             } catch (IOException e) {
                 throw new RuntimeException("IOException while fetching results of Lucene query", e);
             }
-            ret.add(converter.convert(doc));
+            T convertedDocument = converter.convert(doc);
+            if (convertedDocument != null)
+                ret.add(convertedDocument);
         }
         return ret;
     }
 
-    private <T> T findUniqueGeneWithQuery(String defaultField, String queryText,
+    private <T> T findUniqueWithQuery(String defaultField, String queryText,
             DocumentConverter<T> converter) {
-        List<T> results = findGenesWithQuery(defaultField, queryText, converter);
+        List<T> results = findWithQuery(defaultField, queryText, converter);
         int numberOfResults = results.size();
         if (numberOfResults == 0) {
             log.info(String.format("Failed to find gene matching Lucene query '%s'", queryText));
@@ -149,29 +165,29 @@ public class BasicGeneServiceImpl implements BasicGeneService {
      * This method is not actually used at present; the code is here in case
      * anyone needs it in future. Ñrh11
      */
-//    private <T> T findUniqueGeneWithQuery(Query query, DocumentConverter<T> converter) {
-//        List<T> results = findGenesWithQuery(query, converter);
-//        int numberOfResults = results.size();
-//        if (numberOfResults == 0) {
-//            log.info(String.format("Failed to find gene matching Lucene query '%s'", query));
-//            return null;
-//        } else if (numberOfResults > 1) {
-//            log.error(String.format("Found %d genes matching query '%s'; expected only one!",
-//                numberOfResults, query));
-//        }
-//        return results.get(0);
-//    }
+    private <T> T findUniqueWithQuery(Query query, DocumentConverter<T> converter) {
+        List<T> results = findWithQuery(query, converter);
+        int numberOfResults = results.size();
+        if (numberOfResults == 0) {
+            log.info(String.format("Failed to find gene matching Lucene query '%s'", query));
+            return null;
+        } else if (numberOfResults > 1) {
+            log.error(String.format("Found %d genes matching query '%s'; expected only one!",
+                numberOfResults, query));
+        }
+        return results.get(0);
+    }
 
     public BasicGene findGeneByUniqueName(String name) {
-        return findUniqueGeneWithQuery("uniqueName", name, convertToGene);
+        return findUniqueWithQuery(new TermQuery(new Term("uniqueName", name)), convertToGene);
     }
 
     /**
      * Warning: this method is liable to be very slow, because it results
-     * in a Lucene query of the form 
+     * in a Lucene query of the form *foo*: the problem is the initial wildcard.
      */
     public List<String> findGeneNamesByPartialName(String search) {
-        return findGenesWithQuery(new WildcardQuery(new Term("uniqueName", String.format("*%s*", search))),
+        return findWithQuery(new WildcardQuery(new Term("uniqueName", String.format("*%s*", search))),
             new DocumentConverter<String>() {
                 public String convert(Document doc) {
                     return doc.get("uniqueName");
@@ -182,6 +198,8 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     public Collection<BasicGene> findGenesOverlappingRange(String organismCommonName,
             String chromosomeUniqueName, int strand, long locMin, long locMax) {
         BooleanQuery query = new BooleanQuery();
+//        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.Gene")),
+//            BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("chr", chromosomeUniqueName)),
@@ -190,9 +208,9 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             BooleanClause.Occur.MUST);
         query.add(new ConstantScoreRangeQuery("stop", String.format("%09d", locMin), null, false, false),
             BooleanClause.Occur.MUST);
-        
-        // FIXME check the strand as well!
+        query.add(new TermQuery(new Term("strand", String.valueOf(strand))),
+            BooleanClause.Occur.MUST);
 
-        return findGenesWithQuery(query, convertToGene);
+        return findWithQuery(query, convertToGene);
     }
 }
