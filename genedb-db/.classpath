@@ -3,22 +3,76 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="input"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/hibernate-annotations.jar"/>
-	<classpathentry kind="lib" path="lib/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-tools.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/ejb3-persistence.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://commons.apache.org/logging/apidocs"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-libs"/>
 	<classpathentry kind="lib" path="lib/asm.jar"/>
 	<classpathentry kind="lib" path="lib/backport-util-concurrent.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-2.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-2.1.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://commons.apache.org/collections/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.dom4j.org/apidocs"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/freemarker.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-commons-annotations.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-search.jar"/>
-	<classpathentry kind="lib" path="lib/jms.jar"/>
-	<classpathentry kind="lib" path="lib/jtidy-r8-21122004.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-core-2.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/spring.jar"/>
+	<classpathentry kind="lib" path="lib/jms.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jtidy-r8-21122004.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://jtidy.sourceforge.net/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/lucene-core-2.2.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://lucene.apache.org/java/2_3_1/api/core"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.4.jar" sourcepath="/genedb-libs/lib-src/spring-sources-2.5.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.5.x/api"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/v3/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/annotations/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/entitymanager/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-search.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/search/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-tools.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://logging.apache.org/log4j/1.2/apidocs"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
