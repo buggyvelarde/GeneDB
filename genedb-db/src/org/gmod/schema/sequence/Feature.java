@@ -2,27 +2,12 @@ package org.gmod.schema.sequence;
 
 
 
-import org.gmod.schema.analysis.AnalysisFeature;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.phylogeny.Phylonode;
-import org.gmod.schema.utils.CollectionUtils;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
-import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,7 +18,24 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
+
+import org.apache.log4j.Logger;
+import org.gmod.schema.analysis.AnalysisFeature;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
+import org.gmod.schema.phylogeny.Phylonode;
+import org.gmod.schema.utils.CollectionUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
 
 
 @Entity
@@ -52,19 +54,17 @@ public class Feature implements java.io.Serializable {
     @IndexedEmbedded(depth=1)
     private Organism organism;
 
-
     @ManyToOne(cascade={})
     @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
     @IndexedEmbedded(depth=2)
     private CvTerm cvTerm;
 
-
     @Column(name="name", unique=false, nullable=true, insertable=true, updatable=true)
-    @Field(index = Index.TOKENIZED,store=Store.YES)
+    @Field(index=Index.TOKENIZED, store=Store.YES)
     private String name;
 
     @Column(name="uniquename", unique=false, nullable=false, insertable=true, updatable=true)
-    @Field(index = Index.TOKENIZED,store=Store.YES)
+    @Field(index=Index.TOKENIZED, store=Store.YES)
     private String uniqueName;
 
     @Column(name="seqlen", unique=false, nullable=true, insertable=true, updatable=true)
@@ -95,14 +95,12 @@ public class Feature implements java.io.Serializable {
     @JoinColumn(name="dbxref_id", unique=false, nullable=true, insertable=true, updatable=true)
     private DbXRef dbXRef;
 
-
     @Column(name="residues", unique=false, nullable=true, insertable=true, updatable=true)
     private byte residues[];
 
-
-
     @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureBySrcfeatureId")
-    private Collection<FeatureLoc> featureLocsForSrcFeatureId;
+    @OrderBy("rank ASC")
+    private List<FeatureLoc> featureLocsForSrcFeatureId;
 
     @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureByObjectId")
     private Collection<FeatureRelationship> featureRelationshipsForObjectId;
@@ -136,11 +134,13 @@ public class Feature implements java.io.Serializable {
      * This featureLoc field does not participate in the Hibernate mapping.
      * It's provided as a convenience for the client, and can be used to
      * cache a FeatureLoc of interest, but is neither automatically populated
-     * nor persisted. In particular, it is (at the time of writing) used by Artemis.
+     * nor persisted. It is (at the time of writing) used only by Artemis.
      */
     private FeatureLoc featureLoc;
-    
-     // Constructors
+
+    private Logger logger = Logger.getLogger(Feature.class);
+
+    // Constructors
 
     /** default constructor */
     public Feature() {
@@ -156,8 +156,8 @@ public class Feature implements java.io.Serializable {
         this.timeAccessioned = timeAccessioned;
         this.timeLastModified = timeLastModified;
     }
+
     
-   
     // Property accessors
 
     public int getFeatureId() {
@@ -191,7 +191,6 @@ public class Feature implements java.io.Serializable {
     public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
-    
 
     /**
      * Get the human-readable form of the feature eg the gene name
@@ -202,7 +201,6 @@ public class Feature implements java.io.Serializable {
         return this.name;
     }
     
-    
     /**
      * Set the human-readable form of the feature eg the gene name
      * 
@@ -211,21 +209,24 @@ public class Feature implements java.io.Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
 
     /**
      * Fetch the unique name (systematic id) for the feature 
      * 
      * @return the unique name, not null
      */
-    /**
-     * @return
-     */
     public String getUniqueName() {
         return this.uniqueName;
     }
     
+    /**
+     * Set the unique name (systematic id) for the feature
+     * 
+     * @param uniqueName the unique name, not null
+     */
     public void setUniqueName(String uniqueName) {
+        if (uniqueName  == null)
+            throw new IllegalArgumentException("setUniqueName: the unique name cannot be null");
         this.uniqueName = uniqueName;
     }
     
@@ -320,11 +321,28 @@ public class Feature implements java.io.Serializable {
         this.timeLastModified = timeLastModified;
     }
     
-    public Collection<FeatureLoc> getFeatureLocsForSrcFeatureId() {
+    public List<FeatureLoc> getFeatureLocsForSrcFeatureId() {
         return (featureLocsForSrcFeatureId = CollectionUtils.safeGetter(featureLocsForSrcFeatureId));
     }
     
-    public void setFeatureLocsForSrcFeatureId(Collection<FeatureLoc> featureLocsForSrcFeatureId) {
+    /**
+     * Returns the unique rank=0 FeatureLoc associated with this feature.
+     * Every feature should have one, so this method will not return null
+     * unless something is wrong in the database.
+     * 
+     * @return the unique rank=0 FeatureLoc associated with this feature
+     */
+    public FeatureLoc getRankZeroFeatureLoc()
+    {
+        List<FeatureLoc> featureLocs = getFeatureLocsForSrcFeatureId();
+        if (featureLocs.size() == 0) {
+            logger.error(String.format("getRankZeroFeatureLoc: Feature '%s' has no FeatureLocs", uniqueName));
+            return null;
+        }
+        return featureLocs.get(0);
+    }
+    
+    public void setFeatureLocsForSrcFeatureId(List<FeatureLoc> featureLocsForSrcFeatureId) {
         this.featureLocsForSrcFeatureId = featureLocsForSrcFeatureId;
     }
 
@@ -447,12 +465,11 @@ public class Feature implements java.io.Serializable {
                 hexValue.append(Integer.toHexString(val));
             }
             return hexValue.toString();
-
         }
         catch (NoSuchAlgorithmException exp) {
-            exp.printStackTrace(); // Shouldn't happen - MD5 is supported algorithm
+            // Shouldn't happen - MD5 is a supported algorithm
+            throw new RuntimeException("Could not find MD5 algorithm", exp);
         }
-        return null;
     }
     
     /**

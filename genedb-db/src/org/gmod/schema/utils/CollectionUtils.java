@@ -1,7 +1,9 @@
 package org.gmod.schema.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Static utility class for miscellaneous collection handling
@@ -11,7 +13,8 @@ import java.util.HashSet;
 public class CollectionUtils {
 
     /**
-     * 
+     * Returns its argument if not null, or a new empty collection (in fact a HashSet<T>)
+     * if the given one is null.
      * 
      * @param <T> 
      * @param collection 
@@ -21,7 +24,21 @@ public class CollectionUtils {
         if (collection != null) {
             return collection;
         }
-        return new HashSet<T>(0);
+        return new HashSet<T>();
     }
-    
+
+    /**
+     * Returns its argument if not null, or a new empty collection (in fact an ArrayList<T>)
+     * if the given one is null.
+     * 
+     * @param <T> 
+     * @param collection 
+     * @return the original collection, or an empty collection
+     */
+   public static <T> List<T> safeGetter(List<T> list) {
+        if (list != null) {
+            return list;
+        }
+        return new ArrayList<T>();
+    }
 }

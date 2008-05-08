@@ -68,7 +68,12 @@ public class FeatureLoc implements Serializable {
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureloc")
      private Set<FeatureLocPub> featureLocPubs = new HashSet<FeatureLocPub>(0);
 
-    // used by artemis
+    /**
+     * This field does not participate in the Hibernate mapping, and is neither
+     * automatically populated nor persisted. It may be explicitly assigned
+     * using setSrcFeatureId(int). It's currently used by Artemis to cache
+     * the equivalent of getFeatureBySrcFeatureId().getFeatureId().
+     */
     private int srcFeatureId;
     
      // Constructors
@@ -105,199 +110,132 @@ public class FeatureLoc implements Serializable {
     // Property accessors
 
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getFeatureBySrcfeatureId()
-     */
     public Feature getFeatureBySrcFeatureId() {
         return this.featureBySrcFeatureId;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setFeatureBySrcfeatureId(org.genedb.db.jpa.Feature)
-     */
     public void setFeatureBySrcFeatureId(Feature featureBySrcFeatureId) {
         this.featureBySrcFeatureId = featureBySrcFeatureId;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getFeatureByFeatureId()
-     */
     public Feature getFeatureByFeatureId() {
         return this.featureByFeatureId;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setFeatureByFeatureId(org.genedb.db.jpa.Feature)
-     */
     public void setFeatureByFeatureId(Feature featureByFeatureId) {
         this.featureByFeatureId = featureByFeatureId;
     }
     
-
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getFmin()
-     */
     public Integer getFmin() {
         return this.fmin;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setFmin(java.lang.Integer)
-     */
     public void setFmin(Integer fmin) {
         this.fmin = fmin;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#isFminPartial()
-     */
     public boolean isFminPartial() {
         return this.fminPartial;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setFminPartial(boolean)
-     */
     public void setFminPartial(boolean fminPartial) {
         this.fminPartial = fminPartial;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getFmax()
-     */
     public Integer getFmax() {
         return this.fmax;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setFmax(java.lang.Integer)
-     */
     public void setFmax(Integer fmax) {
         this.fmax = fmax;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#isFmaxPartial()
-     */
     public boolean isFmaxPartial() {
         return this.fmaxPartial;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setFmaxPartial(boolean)
-     */
     public void setFmaxPartial(boolean fmaxPartial) {
         this.fmaxPartial = fmaxPartial;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getStrand()
-     */
     public Short getStrand() {
         return this.strand;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setStrand(java.lang.Short)
-     */
     public void setStrand(Short strand) {
         this.strand = strand;
     }
     
-
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getPhase()
-     */
     public Integer getPhase() {
         return this.phase;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setPhase(java.lang.Integer)
-     */
     public void setPhase(Integer phase) {
         this.phase = phase;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getResidueInfo()
-     */
     public String getResidueInfo() {
         return this.residueInfo;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setResidueInfo(java.lang.String)
-     */
     public void setResidueInfo(String residueInfo) {
         this.residueInfo = residueInfo;
     }
     
-
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getLocgroup()
-     */
     public int getLocGroup() {
         return this.locGroup;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setLocgroup(int)
-     */
     public void setLocGroup(int locGroup) {
         this.locGroup = locGroup;
     }
     
- 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getRank()
-     */
     public int getRank() {
         return this.rank;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setRank(int)
-     */
     public void setRank(int rank) {
         this.rank = rank;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#getFeaturelocPubs()
-     */
     public Set<FeatureLocPub> getFeatureLocPubs() {
         return this.featureLocPubs;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureLocI#setFeaturelocPubs(java.util.Set)
-     */
     public void setFeaturelocPubs(Set<FeatureLocPub> featureLocPubs) {
         this.featureLocPubs = featureLocPubs;
     }
 
-    @SuppressWarnings("unused")
     public int getFeatureLocId() {
         return this.featureLocId;
     }
 
-    @SuppressWarnings("unused")
     public void setFeatureLocId(int featureLocId) {
         this.featureLocId = featureLocId;
     }
 
+    /**
+     * Return the (unmapped) srcFeatureId property. This must be explicitly populated
+     * beforehand using setSrcFeatureId(int); it is not automatically populated by Hibernate.
+     * 
+     * Perhaps you really wanted getFeatureBySrcFeatureId().getFeatureId()?
+     * 
+     * @return The value of the srcFeatureId property
+     */
     public int getSrcFeatureId() {
-      return srcFeatureId;
+        return srcFeatureId;
     }
-
+    
+    /**
+     * Set the value of the (unmapped) srcFeatureId property. This is not
+     * automatically populated by Hibernate, and must be set explicitly
+     * if it is used. Currently used only by Artemis.
+     * 
+     * @param srcFeatureId
+     */
     public void setSrcFeatureId(int srcFeatureId) {
-      this.srcFeatureId = srcFeatureId;
+        this.srcFeatureId = srcFeatureId;
     }
-
-
-
-
 }
 
 
