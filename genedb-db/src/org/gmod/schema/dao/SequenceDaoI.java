@@ -202,7 +202,7 @@ public interface SequenceDaoI extends BaseDaoI {
      * @param go the GO number
      * @return a (possibly empty) List<Feature> of matching genes
      */
-    public List<List> getFeatureByGO(final String go);
+    public List<List<?>> getFeatureByGO(final String go);
     
      /**
      * Return a list of features that have this particular cvterm 
