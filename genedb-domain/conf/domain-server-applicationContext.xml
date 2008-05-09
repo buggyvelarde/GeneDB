@@ -16,7 +16,6 @@
 
 	<bean name="productService" class="org.genedb.db.domain.serviceImpls.ProductServiceImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="cvDao" ref="cvDao" />
 		<property name="semanticLog" ref="semanticLog" />
 	</bean>
     

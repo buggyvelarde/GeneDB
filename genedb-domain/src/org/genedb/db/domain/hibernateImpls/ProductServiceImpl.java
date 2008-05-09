@@ -26,7 +26,6 @@ public class ProductServiceImpl implements ProductService {
     private SemanticLog semantic;
     private LockAndNotificationService lockAndNotificationService;
     private SessionFactory sessionFactory;
-    private CvDao cvDao;
 
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -145,10 +144,6 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = (List<Product>) q.list();
         // session.close();
         return products;
-    }
-
-    public void setCvDao(CvDao cvDao) {
-        this.cvDao = cvDao;
     }
 
     public void setSemanticLog(SemanticLog semanticLog) {
