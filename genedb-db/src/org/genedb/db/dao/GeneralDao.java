@@ -1,8 +1,5 @@
 package org.genedb.db.dao;
 
-
-
-
 import org.gmod.schema.analysis.Analysis;
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.dao.GeneralDaoI;
@@ -14,22 +11,16 @@ import java.util.List;
 
 public class GeneralDao extends BaseDao implements GeneralDaoI {
 
-    /* (non-Javadoc)
-     * @see org.gmod.schema.dao.GeneralDaoI#getDbByName(java.lang.String)
-     */
-    @SuppressWarnings("unchecked")
     public Db getDbByName(String name) {
+        @SuppressWarnings("unchecked")
         List<Db> results = getHibernateTemplate().findByNamedParam(
 		"from Db db where upper(db.name)=:name",
         "name", name.toUpperCase());
         return firstFromList(results, "name", name);
     }
     
-    /* (non-Javadoc)
-     * @see org.gmod.schema.dao.GeneralDaoI#getDbXRefByDbAndAcc(org.genedb.db.hibernate3gen.Db, java.lang.String)
-     */
-    @SuppressWarnings("unchecked")
     public DbXRef getDbXRefByDbAndAcc(Db db, String accession) {
+        @SuppressWarnings("unchecked")
         List<DbXRef> xrefs = getHibernateTemplate().findByNamedParam(
                 "from DbXRef dbXRef where dbXRef.db=:db and dbXRef.accession=:accession", 
                 new String[]{"db", "accession"},
@@ -37,19 +28,20 @@ public class GeneralDao extends BaseDao implements GeneralDaoI {
         return firstFromList(xrefs, "db", db, "accession", accession);
     }
     
-    @SuppressWarnings("unchecked")
-	public Analysis getAnalysisByProgram(String program) {
-    	List<Analysis> temp = getHibernateTemplate().findByNamedParam("from Analysis a where a.program=:program","program",program);
+    public Analysis getAnalysisByProgram(String program) {
+        @SuppressWarnings("unchecked")
+    	List<Analysis> temp = getHibernateTemplate().findByNamedParam("from Analysis where program=:program","program",program);
     	if (temp.size() > 0) {
-    		return temp.get(0);
+    	    return temp.get(0);
     	} 
     	return null;
     }
 
-	@SuppressWarnings("unchecked")
-	public AnalysisFeature getAnalysisFeatureFromFeature(Feature feature) {
-		List<AnalysisFeature> results = getHibernateTemplate().findByNamedParam("from analysisfeature where feature =: feature", 
-					"feature", feature);
-		return firstFromList(results,"feature",feature);
-	}
+    public AnalysisFeature getAnalysisFeatureFromFeature(Feature feature) {
+        @SuppressWarnings("unchecked")
+        List<AnalysisFeature> results = getHibernateTemplate().findByNamedParam("from AnalysisFeature where feature = :feature", 
+            "feature", feature);
+        return firstFromList(results,"feature",feature);
+    }
+
 }
