@@ -33,8 +33,8 @@ public class Phylotree  implements java.io.Serializable {
      private DbXRef dbXRef;
      private String name;
      private String comment;
-     private Set<Phylonode> phylonodes = new HashSet<Phylonode>(0);
-     private Set<PhylotreePub> phylotreePubs = new HashSet<PhylotreePub>(0);
+     private Collection<Phylonode> phylonodes;
+     private Collection<PhylotreePub> phylotreePubs;
 
      // Constructors
 
@@ -48,7 +48,7 @@ public class Phylotree  implements java.io.Serializable {
         this.dbXRef = dbXRef;
     }
     /** full constructor */
-    public Phylotree(CvTerm cvTerm, DbXRef dbXRef, String name, String comment, Set<Phylonode> phylonodes, Set<PhylotreePub> phylotreePubs) {
+    public Phylotree(CvTerm cvTerm, DbXRef dbXRef, String name, String comment, Collection<Phylonode> phylonodes, Collection<PhylotreePub> phylotreePubs) {
        this.cvTerm = cvTerm;
        this.dbXRef = dbXRef;
        this.name = name;
@@ -111,7 +111,7 @@ public class Phylotree  implements java.io.Serializable {
         return this.phylonodes;
     }
     
-    public void setPhylonodes(Set<Phylonode> phylonodes) {
+    public void setPhylonodes(Collection<Phylonode> phylonodes) {
         this.phylonodes = phylonodes;
     }
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylotree")
@@ -119,7 +119,7 @@ public class Phylotree  implements java.io.Serializable {
         return this.phylotreePubs;
     }
     
-    public void setPhylotreePubs(Set<PhylotreePub> phylotreePubs) {
+    public void setPhylotreePubs(Collection<PhylotreePub> phylotreePubs) {
         this.phylotreePubs = phylotreePubs;
     }
 

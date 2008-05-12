@@ -36,10 +36,10 @@ public class Cv implements Serializable {
      private String definition;
     
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cv")
-     private Set<CvTermPath> cvTermPaths = new HashSet<CvTermPath>(0);
+     private Collection<CvTermPath> cvTermPaths;
     
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cv")
-     private Set<CvTerm> cvTerms = new HashSet<CvTerm>(0);
+     private Collection<CvTerm> cvTerms;
     
    
     // Property accessors
@@ -93,7 +93,7 @@ public class Cv implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#setCvTermPaths(java.util.Set)
      */
-    public void setCvTermPaths(Set<CvTermPath> cvTermPaths) {
+    public void setCvTermPaths(Collection<CvTermPath> cvTermPaths) {
         this.cvTermPaths = cvTermPaths;
     }
     
@@ -108,7 +108,7 @@ public class Cv implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvI#setCvTerms(java.util.Set)
      */
-    public void setCvTerms(Set<CvTerm> cvTerms) {
+    public void setCvTerms(Collection<CvTerm> cvTerms) {
         this.cvTerms = cvTerms;
     }
 

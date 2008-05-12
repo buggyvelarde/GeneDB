@@ -38,13 +38,13 @@ public class Phylonode  implements java.io.Serializable {
      private int rightIdx;
      private String label;
      private Double distance;
-     private Set<PhylonodeRelationship> phylonodeRelationshipsForObjectId = new HashSet<PhylonodeRelationship>(0);
-     private Set<PhylonodeOrganism> phylonodeOrganisms = new HashSet<PhylonodeOrganism>(0);
-     private Set<PhylonodePub> phylonodePubs = new HashSet<PhylonodePub>(0);
-     private Set<Phylonode> phylonodes = new HashSet<Phylonode>(0);
-     private Set<PhylonodeRelationship> phylonodeRelationshipsForSubjectId = new HashSet<PhylonodeRelationship>(0);
-     private Set<PhylonodeDbXRef> phylonodeDbXRefs = new HashSet<PhylonodeDbXRef>(0);
-     private Set<PhylonodeProp> phylonodeProps = new HashSet<PhylonodeProp>(0);
+     private Collection<PhylonodeRelationship> phylonodeRelationshipsForObjectId;
+     private Collection<PhylonodeOrganism> phylonodeOrganisms;
+     private Collection<PhylonodePub> phylonodePubs;
+     private Collection<Phylonode> phylonodes;
+     private Collection<PhylonodeRelationship> phylonodeRelationshipsForSubjectId;
+     private Collection<PhylonodeDbXRef> phylonodeDbXRefs;
+     private Collection<PhylonodeProp> phylonodeProps;
 
      // Constructors
 
@@ -170,7 +170,7 @@ public class Phylonode  implements java.io.Serializable {
         return this.phylonodeRelationshipsForObjectId;
     }
     
-    public void setPhylonodeRelationshipsForObjectId(Set<PhylonodeRelationship> phylonodeRelationshipsForObjectId) {
+    public void setPhylonodeRelationshipsForObjectId(Collection<PhylonodeRelationship> phylonodeRelationshipsForObjectId) {
         this.phylonodeRelationshipsForObjectId = phylonodeRelationshipsForObjectId;
     }
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylonode")
@@ -178,7 +178,7 @@ public class Phylonode  implements java.io.Serializable {
         return this.phylonodeOrganisms;
     }
     
-    public void setPhylonodeOrganisms(Set<PhylonodeOrganism> phylonodeOrganisms) {
+    public void setPhylonodeOrganisms(Collection<PhylonodeOrganism> phylonodeOrganisms) {
         this.phylonodeOrganisms = phylonodeOrganisms;
     }
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylonode")
@@ -186,23 +186,16 @@ public class Phylonode  implements java.io.Serializable {
         return this.phylonodePubs;
     }
     
-    public void setPhylonodePubs(Set<PhylonodePub> phylonodePubs) {
+    public void setPhylonodePubs(Collection<PhylonodePub> phylonodePubs) {
         this.phylonodePubs = phylonodePubs;
     }
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylonode")
-    public Collection<Phylonode> getPhylonodes() {
-        return this.phylonodes;
-    }
-    
-    public void setPhylonodes(Set<Phylonode> phylonodes) {
-        this.phylonodes = phylonodes;
-    }
+
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylonodeBySubjectId")
     public Collection<PhylonodeRelationship> getPhylonodeRelationshipsForSubjectId() {
         return this.phylonodeRelationshipsForSubjectId;
     }
     
-    public void setPhylonodeRelationshipsForSubjectId(Set<PhylonodeRelationship> phylonodeRelationshipsForSubjectId) {
+    public void setPhylonodeRelationshipsForSubjectId(Collection<PhylonodeRelationship> phylonodeRelationshipsForSubjectId) {
         this.phylonodeRelationshipsForSubjectId = phylonodeRelationshipsForSubjectId;
     }
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylonode")
@@ -210,7 +203,7 @@ public class Phylonode  implements java.io.Serializable {
         return this.phylonodeDbXRefs;
     }
     
-    public void setPhylonodeDbXRefs(Set<PhylonodeDbXRef> phylonodeDbXRefs) {
+    public void setPhylonodeDbXRefs(Collection<PhylonodeDbXRef> phylonodeDbXRefs) {
         this.phylonodeDbXRefs = phylonodeDbXRefs;
     }
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylonode")
@@ -218,7 +211,7 @@ public class Phylonode  implements java.io.Serializable {
         return this.phylonodeProps;
     }
     
-    public void setPhylonodeProps(Set<PhylonodeProp> phylonodeProps) {
+    public void setPhylonodeProps(Collection<PhylonodeProp> phylonodeProps) {
         this.phylonodeProps = phylonodeProps;
     }
 

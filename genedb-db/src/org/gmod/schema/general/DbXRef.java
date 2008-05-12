@@ -36,24 +36,27 @@ import javax.persistence.Table;
 @Entity
 @Table(name="dbxref")
 public class DbXRef implements Serializable {
+	
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+    private Collection<PhylonodeDbXRef> phylonodeDbXRefs;
+	
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+    private Collection<Phylotree> phylotrees;
     
-    private Set<PhylonodeDbXRef> phylonodeDbXRefs = new HashSet<PhylonodeDbXRef>(0);
-    private Set<Phylotree> phylotrees = new HashSet<Phylotree>(0);
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbxref")
-    public Set<PhylonodeDbXRef> getPhylonodeDbXRefs() {
+    public Collection<PhylonodeDbXRef> getPhylonodeDbXRefs() {
         return this.phylonodeDbXRefs;
     }
     
-    public void setPhylonodeDbXRefs(Set<PhylonodeDbXRef> phylonodeDbXRefs) {
+    public void setPhylonodeDbXRefs(Collection<PhylonodeDbXRef> phylonodeDbXRefs) {
         this.phylonodeDbXRefs = phylonodeDbXRefs;
     }
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbxref")
-    public Set<Phylotree> getPhylotrees() {
+    
+    public Collection<Phylotree> getPhylotrees() {
         return this.phylotrees;
     }
     
-    public void setPhylotrees(Set<Phylotree> phylotrees) {
+    public void setPhylotrees(Collection<Phylotree> phylotrees) {
         this.phylotrees = phylotrees;
     }
 
@@ -78,29 +81,29 @@ public class DbXRef implements Serializable {
     @Column(name="description", unique=false, nullable=true, insertable=true, updatable=true)
      private String description;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbxref")
-     private Set<DbXRefProp> dbXRefProps = new HashSet<DbXRefProp>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+     private Collection<DbXRefProp> dbXRefProps = new HashSet<DbXRefProp>(0);
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbxref")
-     private Set<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+     private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbxref")
-     private Set<Feature> features = new HashSet<Feature>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+     private Collection<Feature> features = new HashSet<Feature>(0);
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbxref")
-     private Set<FeatureDbXRef> featureDbXRefs = new HashSet<FeatureDbXRef>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+     private Collection<FeatureDbXRef> featureDbXRefs = new HashSet<FeatureDbXRef>(0);
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbxref")
-     private Set<CvTerm> cvTerms = new HashSet<CvTerm>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+     private Collection<CvTerm> cvTerms = new HashSet<CvTerm>(0);
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbxref")
-     private Set<PubDbXRef> pubDbXRefs = new HashSet<PubDbXRef>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+     private Collection<PubDbXRef> pubDbXRefs = new HashSet<PubDbXRef>(0);
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbxref")
-     private Set<OrganismDbXRef> organismDbXRefs = new HashSet<OrganismDbXRef>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+     private Collection<OrganismDbXRef> organismDbXRefs = new HashSet<OrganismDbXRef>(0);
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbxref")
-     private Set<CvTermDbXRef> cvTermDbXRefs = new HashSet<CvTermDbXRef>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
+     private Collection<CvTermDbXRef> cvTermDbXRefs = new HashSet<CvTermDbXRef>(0);
 
      // Constructors
 
@@ -200,7 +203,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setDbXRefProps(java.util.Set)
      */
-    private void setDbXRefProps(Set<DbXRefProp> dbXRefProps) {
+    private void setDbXRefProps(Collection<DbXRefProp> dbXRefProps) {
         this.dbXRefProps = dbXRefProps;
     }
 
@@ -214,7 +217,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setFeatureCvTermDbXRefs(java.util.Set)
      */
-    private void setFeatureCvTermDbXRefs(Set<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
+    private void setFeatureCvTermDbXRefs(Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
         this.featureCvTermDbXRefs = featureCvTermDbXRefs;
     }
 
@@ -228,7 +231,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setFeatures(java.util.Set)
      */
-    private void setFeatures(Set<Feature> features) {
+    private void setFeatures(Collection<Feature> features) {
         this.features = features;
     }
 
@@ -242,7 +245,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setFeatureDbXRefs(java.util.Set)
      */
-    private void setFeatureDbXRefs(Set<FeatureDbXRef> featureDbXRefs) {
+    private void setFeatureDbXRefs(Collection<FeatureDbXRef> featureDbXRefs) {
         this.featureDbXRefs = featureDbXRefs;
     }
 
@@ -256,7 +259,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setCvTerms(java.util.Set)
      */
-    private void setCvTerms(Set<CvTerm> cvTerms) {
+    private void setCvTerms(Collection<CvTerm> cvTerms) {
         this.cvTerms = cvTerms;
     }
 
@@ -270,7 +273,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setPubDbXRefs(java.util.Set)
      */
-    private void setPubDbXRefs(Set<PubDbXRef> pubDbXRefs) {
+    private void setPubDbXRefs(Collection<PubDbXRef> pubDbXRefs) {
         this.pubDbXRefs = pubDbXRefs;
     }
 
@@ -284,7 +287,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setOrganismDbXRefs(java.util.Set)
      */
-    private void setOrganismDbXRefs(Set<OrganismDbXRef> organismDbXRefs) {
+    private void setOrganismDbXRefs(Collection<OrganismDbXRef> organismDbXRefs) {
         this.organismDbXRefs = organismDbXRefs;
     }
 
@@ -298,7 +301,7 @@ public class DbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefI#setCvTermDbXRefs(java.util.Set)
      */
-    private void setCvTermDbXRefs(Set<CvTermDbXRef> cvTermDbXRefs) {
+    private void setCvTermDbXRefs(Collection<CvTermDbXRef> cvTermDbXRefs) {
         this.cvTermDbXRefs = cvTermDbXRefs;
     }
 

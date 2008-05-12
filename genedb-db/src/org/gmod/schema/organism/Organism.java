@@ -2,6 +2,8 @@ package org.gmod.schema.organism;
 
 
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import org.gmod.schema.phylogeny.PhylonodeOrganism;
 import org.gmod.schema.sequence.Feature;
 import org.hibernate.search.annotations.DocumentId;
@@ -17,27 +19,31 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="organism")
 public class Organism implements Serializable {
     
-    private Set<PhylonodeOrganism> phylonodeOrganisms = new HashSet<PhylonodeOrganism>(0);
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="organism")
-    public Set<PhylonodeOrganism> getPhylonodeOrganisms() {
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="organism")
+	private Collection<PhylonodeOrganism> phylonodeOrganisms;
+    
+    
+    public Collection<PhylonodeOrganism> getPhylonodeOrganisms() {
         return this.phylonodeOrganisms;
     }
     
-    public void setPhylonodeOrganisms(Set<PhylonodeOrganism> phylonodeOrganisms) {
+    public void setPhylonodeOrganisms(Collection<PhylonodeOrganism> phylonodeOrganisms) {
         this.phylonodeOrganisms = phylonodeOrganisms;
     }
 
     // Fields    
-     @Id
-    
+    @SequenceGenerator(name="generator", sequenceName="organism_organism_id_seq")
+    @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="organism_id", unique=false, nullable=false, insertable=true, updatable=true)
     @DocumentId 
     private int organismId;
@@ -62,13 +68,13 @@ public class Organism implements Serializable {
      private String comment;
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="organism")
-     private Set<OrganismProp> organismProps = new HashSet<OrganismProp>(0);
+     private Collection<OrganismProp> organismProps = new HashSet<OrganismProp>(0);
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="organism")
-     private Set<Feature> features = new HashSet<Feature>(0);
+     private Collection<Feature> features = new HashSet<Feature>(0);
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="organism")
-     private Set<OrganismDbXRef> organismDbXRefs = new HashSet<OrganismDbXRef>(0);
+     private Collection<OrganismDbXRef> organismDbXRefs = new HashSet<OrganismDbXRef>(0);
     
    
     // Property accessors
@@ -168,14 +174,14 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#getOrganismProps()
      */
-    public Set<OrganismProp> getOrganismProps() {
+    public Collection<OrganismProp> getOrganismProps() {
         return this.organismProps;
     }
     
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#setOrganismProps(java.util.Set)
      */
-    private void setOrganismProps(Set<OrganismProp> organismProps) {
+    private void setOrganismProps(Collection<OrganismProp> organismProps) {
         this.organismProps = organismProps;
     }
 
@@ -189,7 +195,7 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#setFeatures(java.util.Set)
      */
-    private void setFeatures(Set<Feature> features) {
+    private void setFeatures(Collection<Feature> features) {
         this.features = features;
     }
 
@@ -203,7 +209,7 @@ public class Organism implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismI#setOrganismDbXRefs(java.util.Set)
      */
-    private void setOrganismDbXRefs(Set<OrganismDbXRef> organismDbXRefs) {
+    private void setOrganismDbXRefs(Collection<OrganismDbXRef> organismDbXRefs) {
         this.organismDbXRefs = organismDbXRefs;
     }
 

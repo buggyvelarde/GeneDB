@@ -1,6 +1,8 @@
 package org.gmod.schema.general;
 
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -9,8 +11,10 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -18,8 +22,8 @@ import javax.persistence.Table;
 public class Db implements Serializable {
 
     // Fields    
-    @Id
-    
+	@SequenceGenerator(name="generator", sequenceName="db_db_id_seq")
+    @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="db_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int dbId;
      
@@ -36,7 +40,7 @@ public class Db implements Serializable {
      private String url;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="db")
-     private Set<DbXRef> dbXRefs = new HashSet<DbXRef>(0);
+     private Collection<DbXRef> dbXRefs;
     
    
     // Property accessors
@@ -124,7 +128,7 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDbXRefs(java.util.Set)
      */
-    public void setDbXRefs(Set<DbXRef> dbXRefs) {
+    public void setDbXRefs(Collection<DbXRef> dbXRefs) {
         this.dbXRefs = dbXRefs;
     }
 

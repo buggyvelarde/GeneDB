@@ -1,5 +1,7 @@
 package org.gmod.schema.organism;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import org.gmod.schema.general.DbXRef;
 
 import java.io.Serializable;
@@ -7,9 +9,11 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -17,8 +21,8 @@ import javax.persistence.Table;
 public class OrganismDbXRef implements Serializable {
 
     // Fields    
-     @Id
-    
+	@SequenceGenerator(name="generator", sequenceName="organism_dbxref_organism_dbxref_id_seq")
+    @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="organism_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int organismDbXRefId;
      

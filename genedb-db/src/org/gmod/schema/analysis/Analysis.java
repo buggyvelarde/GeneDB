@@ -10,8 +10,10 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -19,7 +21,8 @@ import javax.persistence.Table;
 public class Analysis implements Serializable {
 
     // Fields    
-     @Id
+	@SequenceGenerator(name="generator",sequenceName="analysis_analysis_id_seq" )
+    @Id @GeneratedValue(generator="generator")
     @Column(name="analysis_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int analysisId;
      
@@ -51,10 +54,10 @@ public class Analysis implements Serializable {
      private Date timeExecuted;
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="analysis")
-     private Set<AnalysisFeature> analysisFeatures = new HashSet<AnalysisFeature>(0);
+     private Collection<AnalysisFeature> analysisFeatures;
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="analysis")
-     private Set<AnalysisProp> analysisProps = new HashSet<AnalysisProp>(0);
+     private Collection<AnalysisProp> analysisProps;
     
    
     // Property accessors
@@ -216,7 +219,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setAnalysisfeatures(java.util.Set)
      */
-    public void setAnalysisFeatures(Set<AnalysisFeature> analysisFeatures) {
+    public void setAnalysisFeatures(Collection<AnalysisFeature> analysisFeatures) {
         this.analysisFeatures = analysisFeatures;
     }
 
@@ -230,7 +233,7 @@ public class Analysis implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisI#setAnalysisprops(java.util.Set)
      */
-    private void setAnalysisProps(Set<AnalysisProp> analysisProps) {
+    private void setAnalysisProps(Collection<AnalysisProp> analysisProps) {
         this.analysisProps = analysisProps;
     }
 

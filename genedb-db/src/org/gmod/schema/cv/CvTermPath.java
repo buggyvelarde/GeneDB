@@ -2,14 +2,18 @@ package org.gmod.schema.cv;
 
 
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -17,7 +21,8 @@ import javax.persistence.Table;
 public class CvTermPath implements Serializable {
 
     // Fields    
-    @Id
+	@SequenceGenerator(name="generator", sequenceName="cvtermpath_cvtermpath_id_seq")
+    @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="cvtermpath_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int cvTermPathId;
     

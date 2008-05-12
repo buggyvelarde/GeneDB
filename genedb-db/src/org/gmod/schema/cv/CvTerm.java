@@ -19,6 +19,8 @@ import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureRelationshipProp;
 import org.gmod.schema.sequence.Synonym;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
@@ -33,24 +35,30 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="cvterm")
 public class CvTerm implements Serializable {
 
-    private Collection<Phylotree> phylotrees;
-    private Collection<PhylonodeProp> phylonodeProps;
-    private Collection<PhylonodeRelationship> phylonodeRelationships;
-    private Collection<Phylonode> phylonodes;
-   
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
+	private Collection<Phylotree> phylotrees;
     
-
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
+    private Collection<PhylonodeProp> phylonodeProps;
+    
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
+    private Collection<PhylonodeRelationship> phylonodeRelationships;
+    
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
+    private Collection<Phylonode> phylonodes;
+       
     public Collection<Phylotree> getPhylotrees() {
         return this.phylotrees;
     }
@@ -59,7 +67,7 @@ public class CvTerm implements Serializable {
         this.phylotrees = phylotrees;
     }
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
+    
     public Collection<PhylonodeProp> getPhylonodeProps() {
         return this.phylonodeProps;
     }
@@ -67,10 +75,7 @@ public class CvTerm implements Serializable {
     public void setPhylonodeProps(Collection<PhylonodeProp> phylonodeProps) {
         this.phylonodeProps = phylonodeProps;
     }
-
-
-
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
+    
     public Collection<PhylonodeRelationship> getPhylonodeRelationships() {
         return this.phylonodeRelationships;
     }
@@ -79,7 +84,6 @@ public class CvTerm implements Serializable {
         this.phylonodeRelationships = phylonodeRelationships;
     }
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="cvTerm")
     public Collection<Phylonode> getPhylonodes() {
         return this.phylonodes;
     }
@@ -99,7 +103,8 @@ public class CvTerm implements Serializable {
     
     
     // Fields    
-    @Id
+    @SequenceGenerator(name="generator",sequenceName="cvterm_cvterm_id_seq" )
+    @Id @GeneratedValue(generator="generator")
     @Column(name="cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
     @DocumentId
      private int cvTermId;
@@ -167,7 +172,7 @@ public class CvTerm implements Serializable {
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermBySubjectId")
      private Collection<CvTermRelationship> cvTermRelationshipsForSubjectId;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByCvtermId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTermByCvTermId")
      private Collection<CvTermSynonym> cvTermSynonymsForCvTermId;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cvTerm")

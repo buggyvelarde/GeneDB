@@ -7,9 +7,11 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -18,7 +20,8 @@ public class AnalysisFeature implements Serializable {
 
     // Fields    
 
-    @Id
+	@SequenceGenerator(name="generator",sequenceName="analysisfeature_analysisfeature_id_seq" )
+    @Id @GeneratedValue(generator="generator")
     @Column(name="analysisfeature_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int analysisFeatureId;
     
