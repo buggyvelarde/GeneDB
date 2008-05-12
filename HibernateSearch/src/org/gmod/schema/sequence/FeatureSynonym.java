@@ -24,7 +24,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_synonym")
-@Indexed
+//@Indexed
 public class FeatureSynonym implements Serializable {
 
     // Fields    

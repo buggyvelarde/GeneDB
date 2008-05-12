@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="organism_dbxref")
-@Indexed
+//@Indexed
 public class OrganismDbXRef implements Serializable {
 
     // Fields    

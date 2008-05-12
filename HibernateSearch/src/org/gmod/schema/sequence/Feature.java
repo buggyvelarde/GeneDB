@@ -21,8 +21,10 @@ import org.hibernate.search.annotations.Store;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.sql.Timestamp;
 
 import javax.persistence.CascadeType;
@@ -35,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -86,6 +89,7 @@ public class Feature implements java.io.Serializable {
     @Column(name="timelastmodified", unique=false, nullable=false, insertable=true, updatable=true, length=29)
     private Timestamp timeLastModified;
 
+    
     // -------------------------------------------------------------------------------
     // Unsorted properties below here
 
@@ -301,10 +305,13 @@ public class Feature implements java.io.Serializable {
      * @return the length
      */
     public int getSeqLen() {
-        if (this.seqLen.intValue() == -1 && residues != null) {
-            return getResidues().length;
+        if (this.cvTerm.getName().equals("mitochondrial_chromosome") || this.cvTerm.getName().equals("contig") || this.cvTerm.getName().equals("chromosome") || this.cvTerm.getName().equals("linear_double_stranded_DNA_chromosome")) {
+        	if (this.seqLen.intValue() == -1 && residues != null) {
+        		return getResidues().length;
+        	}
+        	return this.seqLen.intValue();
         }
-        return this.seqLen.intValue();
+        return 0;
     }
     
     

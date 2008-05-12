@@ -22,7 +22,7 @@ import org.hibernate.search.annotations.Store;
 
 @Entity
 @Table(name="cvtermsynonym")
-@Indexed
+//@Indexed
 public class CvTermSynonym implements Serializable {
 
     // Fields    

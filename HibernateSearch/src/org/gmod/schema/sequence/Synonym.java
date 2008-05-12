@@ -29,7 +29,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="synonym")
-@Indexed
+//@Indexed
 public class Synonym implements Serializable {
 
     // Fields    

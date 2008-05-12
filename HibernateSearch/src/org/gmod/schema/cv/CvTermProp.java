@@ -22,7 +22,7 @@ import org.hibernate.search.annotations.Store;
 
 @Entity
 @Table(name="cvtermprop")
-@Indexed
+//@Indexed
 public class CvTermProp implements Serializable {
 
     // Fields    

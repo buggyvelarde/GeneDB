@@ -3,11 +3,18 @@ package org.gmod.schema.sequence;
 import java.util.Collection;
 import java.util.HashSet;
 
+import javax.persistence.Transient;
+
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+
 public class Protein extends Feature {
 	
-	public Collection<Feature> gene;
 
-	public Collection<Feature> getGene() {
+	public Gene gene;
+
+	public Gene getGene() {
 		Collection<Feature> gene = new HashSet<Feature>();
 		Collection<FeatureRelationship> objects = this.getFeatureRelationshipsForSubjectId();
 		for (FeatureRelationship relationship : objects) {
@@ -16,13 +23,13 @@ public class Protein extends Feature {
 			for (FeatureRelationship relation : temps) {
 				Feature tmp = relation.getFeatureByObjectId();
 				if (tmp.getCvTerm().getCvTermId() == 792)
-					gene.add(tmp);
+					return (Gene)tmp;
 			}
 		}
-		return gene;
+		return null;
 	}
 
-	public void setGene(Collection<Feature> gene) {
+	public void setGene(Gene gene) {
 		this.gene = gene;
 	}
 }

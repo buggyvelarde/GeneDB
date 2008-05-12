@@ -26,7 +26,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_relationshipprop")
-@Indexed
+//@Indexed
 public class FeatureRelationshipProp implements Serializable, PropertyI {
 
     // Fields    

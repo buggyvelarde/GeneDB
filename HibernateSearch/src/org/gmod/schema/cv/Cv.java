@@ -23,7 +23,7 @@ import org.hibernate.search.annotations.Store;
 
 @Entity
 @Table(name="cv")
-@Indexed
+//@Indexed
 public class Cv implements Serializable {
 
     // Fields    

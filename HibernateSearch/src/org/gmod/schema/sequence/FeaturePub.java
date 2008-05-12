@@ -19,7 +19,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_pub")
-@Indexed
+//@Indexed
 public class FeaturePub implements Serializable {
 
     // Fields    

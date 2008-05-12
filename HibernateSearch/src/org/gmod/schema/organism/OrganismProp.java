@@ -23,7 +23,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="organismprop")
-@Indexed
+//@Indexed
 public class OrganismProp implements Serializable, PropertyI {
 
     // Fields    

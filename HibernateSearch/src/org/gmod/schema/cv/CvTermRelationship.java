@@ -18,7 +18,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 
 @Entity
 @Table(name="cvterm_relationship")
-@Indexed
+//@Indexed
 public class CvTermRelationship implements Serializable {
 
     // Fields    

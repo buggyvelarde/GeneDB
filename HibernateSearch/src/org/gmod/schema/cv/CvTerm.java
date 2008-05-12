@@ -43,8 +43,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="cvterm")
-@Indexed
-@Analyzer(impl = StandardAnalyzer.class)
+//@Indexed
+//@Analyzer(impl = StandardAnalyzer.class)
 public class CvTerm implements Serializable {
 
     private Collection<Phylotree> phylotrees;

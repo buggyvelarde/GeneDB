@@ -24,7 +24,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="dbxrefprop")
-@Indexed
+//@Indexed
 public class DbXRefProp implements Serializable, PropertyI {
 
     // Fields    

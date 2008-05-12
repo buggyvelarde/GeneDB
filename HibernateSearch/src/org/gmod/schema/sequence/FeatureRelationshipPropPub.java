@@ -20,7 +20,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_relationshipprop_pub")
-@Indexed
+//@Indexed
 public class FeatureRelationshipPropPub implements Serializable {
 
     // Fields    

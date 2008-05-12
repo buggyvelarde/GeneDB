@@ -20,7 +20,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="cvterm_dbxref")
-@Indexed
+//@Indexed
 public class CvTermDbXRef implements Serializable {
 
     // Fields    

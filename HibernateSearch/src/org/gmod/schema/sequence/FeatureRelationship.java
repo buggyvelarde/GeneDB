@@ -29,7 +29,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_relationship")
-@Indexed
+//@Indexed
 public class FeatureRelationship implements Serializable {
 
     // Fields    

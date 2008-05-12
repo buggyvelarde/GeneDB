@@ -18,7 +18,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 
 @Entity
 @Table(name="cvtermpath")
-@Indexed
+//@Indexed
 public class CvTermPath implements Serializable {
 
     // Fields    

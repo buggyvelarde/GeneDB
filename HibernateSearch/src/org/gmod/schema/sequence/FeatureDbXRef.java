@@ -22,7 +22,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_dbxref")
-@Indexed
+//@Indexed
 public class FeatureDbXRef implements Serializable {
 
     // Fields    

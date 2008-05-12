@@ -26,7 +26,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="organism")
-@Indexed
+//@Indexed
 public class Organism implements Serializable {
     
     private Set<PhylonodeOrganism> phylonodeOrganisms = new HashSet<PhylonodeOrganism>(0);

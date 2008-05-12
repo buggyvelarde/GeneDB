@@ -28,7 +28,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 
 @Entity
 @Table(name="featureloc")
-@Indexed
+//@Indexed
 public class FeatureLoc implements Serializable {
 
     // Fields 

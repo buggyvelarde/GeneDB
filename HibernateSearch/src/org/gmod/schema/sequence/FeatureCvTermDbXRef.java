@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_cvterm_dbxref")
-@Indexed
+//@Indexed
 public class FeatureCvTermDbXRef implements Serializable {
 
     // Fields    
