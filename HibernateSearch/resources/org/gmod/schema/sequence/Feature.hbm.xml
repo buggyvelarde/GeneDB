@@ -4,6 +4,7 @@
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
     <class name="org.gmod.schema.sequence.Feature" table="feature" discriminator-value="not null">
+        
         <comment>A feature is a biological sequence or a section of a biological sequence, or a collection of such sections. Examples include genes, exons, transcripts, regulatory
         regions, polypeptides, protein domains, chromosome sequences, sequence variations, cross-genome match regions such as hits and HSPs and so on; see the Sequence Ontology
         for more</comment>
@@ -165,7 +166,7 @@
         </set>
         <subclass name="org.gmod.schema.sequence.Gene" extends="org.gmod.schema.sequence.Feature" discriminator-value="792" >
         </subclass>
-        <subclass name="org.gmod.schema.sequence.Protein" extends="org.gmod.schema.sequence.Feature" discriminator-value="191" >
+        <subclass name="org.gmod.schema.sequence.Mrna" extends="org.gmod.schema.sequence.Feature" discriminator-value="321" >
         </subclass>
     </class>
 </hibernate-mapping>
