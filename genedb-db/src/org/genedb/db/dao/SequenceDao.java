@@ -11,6 +11,7 @@ import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.sequence.Gene;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.utils.CountedName;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -25,8 +26,18 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
     }
 
     public Feature getFeatureByUniqueName(String name, String featureType) {
-        @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate().findByNamedParam(
+    	if(featureType.equals("gene")) {
+    		@SuppressWarnings("unchecked")
+        	List<Gene> features = (List<Gene>) getHibernateTemplate().findByNamedParam(
+                    "from Gene f where f.uniqueName=:name and f.cvTerm.name=:featureType",
+                    new String[]{"name","featureType"},new Object[]{name,featureType});
+            System.err.println("features size is " + features.size());
+    		if (features.size() > 0) {
+                return (Feature)features.get(0);
+            }
+    	}
+    	@SuppressWarnings("unchecked")
+    	List<Feature> features = (List<Feature>) getHibernateTemplate().findByNamedParam(
                 "from Feature f where f.uniqueName=:name and f.cvTerm.name=:featureType",
                 new String[] { "name", "featureType" }, new Object[] { name, featureType });
         if (features.size() > 0) {
