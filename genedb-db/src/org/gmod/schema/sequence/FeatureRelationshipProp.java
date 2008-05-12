@@ -1,6 +1,8 @@
 package org.gmod.schema.sequence;
 
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.utils.propinterface.PropertyI;
 
@@ -12,10 +14,12 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -23,8 +27,8 @@ import javax.persistence.Table;
 public class FeatureRelationshipProp implements Serializable, PropertyI {
 
     // Fields    
-     @Id
-    
+	@SequenceGenerator(name="generator", sequenceName="feature_relationshipprop_feature_relationshipprop_id_seq")
+    @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="feature_relationshipprop_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureRelationshipPropId;
      
@@ -44,8 +48,8 @@ public class FeatureRelationshipProp implements Serializable, PropertyI {
      @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)     
      private int rank;
      
-     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureRelationshipprop")     
-     private Set<FeatureRelationshipPropPub> featureRelationshipPropPubs = new HashSet<FeatureRelationshipPropPub>(0);
+     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureRelationshipProp")     
+     private Collection<FeatureRelationshipPropPub> featureRelationshipPropPubs;
     
    
     // Property accessors
@@ -96,7 +100,7 @@ public class FeatureRelationshipProp implements Serializable, PropertyI {
         return this.featureRelationshipPropPubs;
     }
     
-    private void setFeatureRelationshipPropPubs(Set<FeatureRelationshipPropPub> featureRelationshipPropPubs) {
+    private void setFeatureRelationshipPropPubs(Collection<FeatureRelationshipPropPub> featureRelationshipPropPubs) {
         this.featureRelationshipPropPubs = featureRelationshipPropPubs;
     }
 

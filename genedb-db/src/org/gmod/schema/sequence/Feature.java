@@ -39,6 +39,10 @@ import org.hibernate.search.annotations.Store;
 
 
 @Entity
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="type_id",discriminatorType=DiscriminatorType.INTEGER)
+@DiscriminatorValue(value="42")
+@DiscriminatorFormula(value="case when type_id != 792 then 42 else 792 end")
 @Table(name="feature")
 @Indexed
 public class Feature implements java.io.Serializable {
@@ -88,46 +92,46 @@ public class Feature implements java.io.Serializable {
     // -------------------------------------------------------------------------------
     // Unsorted properties below here
 
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, mappedBy="feature")
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="feature")
     private Collection<Phylonode> phylonodes;
 
-    @ManyToOne(cascade={}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="dbxref_id", unique=false, nullable=true, insertable=true, updatable=true)
     private DbXRef dbXRef;
 
     @Column(name="residues", unique=false, nullable=true, insertable=true, updatable=true)
     private byte residues[];
 
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureBySrcfeatureId")
+    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureBySrcFeatureId")
     @OrderBy("rank ASC")
-    private List<FeatureLoc> featureLocsForSrcFeatureId;
-
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureByObjectId")
+    private Collection<FeatureLoc> featureLocsForSrcFeatureId;   
+    
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureByObjectId")
     private Collection<FeatureRelationship> featureRelationshipsForObjectId;
 
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureBySubjectId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureBySubjectId")
     private Collection<FeatureRelationship> featureRelationshipsForSubjectId;
 
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
     private Collection<FeatureDbXRef> featureDbXRefs;
 
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="featureByFeatureId")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureByFeatureId")
     private Collection<FeatureLoc> featureLocsForFeatureId;
 
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
     private Collection<FeatureCvTerm> featureCvTerms;
 
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
     //@Cascade( {CascadeType.ALL, CascadeType.DELETE_ORPHAN} )
     private Collection<FeatureProp> featureProps;
 
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
     private Collection<FeaturePub> featurePubs;
 
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
     private Collection<AnalysisFeature> analysisFeatures;
 
-    @OneToMany(cascade={}, fetch=FetchType.EAGER, mappedBy="feature")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="feature")
     private Collection<FeatureSynonym> featureSynonyms;
     
     /**
@@ -321,7 +325,7 @@ public class Feature implements java.io.Serializable {
         this.timeLastModified = timeLastModified;
     }
     
-    public List<FeatureLoc> getFeatureLocsForSrcFeatureId() {
+    public Collection<FeatureLoc> getFeatureLocsForSrcFeatureId() {
         return (featureLocsForSrcFeatureId = CollectionUtils.safeGetter(featureLocsForSrcFeatureId));
     }
     
@@ -388,6 +392,15 @@ public class Feature implements java.io.Serializable {
         return this.featureCvTerms;
     }
     
+    public void addFeatureCvTerm(FeatureCvTerm featureCvTerm) {
+    	if(this.featureCvTerms == null) {
+    		featureCvTerms = new HashSet<FeatureCvTerm>();
+    	}
+    	featureCvTerms.add(featureCvTerm);
+    }
+    /* (non-Javadoc)
+     * @see org.genedb.db.jpa.FeatureI#setFeatureCvterms(java.util.Set)
+     */
     public void setFeatureCvTerms(Collection<FeatureCvTerm> featureCvTerms) {
         this.featureCvTerms = featureCvTerms;
     }

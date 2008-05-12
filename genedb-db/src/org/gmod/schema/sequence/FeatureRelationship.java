@@ -52,10 +52,10 @@ public class FeatureRelationship implements Serializable {
      private int rank;
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureRelationship")
-     private Set<FeatureRelationshipProp> featureRelationshipProps = new HashSet<FeatureRelationshipProp>(0);
+     private Collection<FeatureRelationshipProp> featureRelationshipProps;
      
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureRelationship")
-     private Set<FeatureRelationshipPub> featureRelationshipPubs = new HashSet<FeatureRelationshipPub>(0);
+     private Collection<FeatureRelationshipPub> featureRelationshipPubs;
 
      // Constructors
 
@@ -172,7 +172,7 @@ public class FeatureRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipI#setFeatureRelationshipprops(java.util.Set)
      */
-    private void setFeatureRelationshipProps(Set<FeatureRelationshipProp> featureRelationshipProps) {
+    private void setFeatureRelationshipProps(Collection<FeatureRelationshipProp> featureRelationshipProps) {
         this.featureRelationshipProps = featureRelationshipProps;
     }
 
@@ -186,7 +186,7 @@ public class FeatureRelationship implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureRelationshipI#setFeatureRelationshipPubs(java.util.Set)
      */
-    private void setFeatureRelationshipPubs(Set<FeatureRelationshipPub> featureRelationshipPubs) {
+    private void setFeatureRelationshipPubs(Collection<FeatureRelationshipPub> featureRelationshipPubs) {
         this.featureRelationshipPubs = featureRelationshipPubs;
     }
 

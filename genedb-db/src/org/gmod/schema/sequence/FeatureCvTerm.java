@@ -53,13 +53,13 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
     private int rank;
     
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvTerm")
      private Collection<FeatureCvTermProp> featureCvTermProps = new HashSet<FeatureCvTermProp>(0);
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvTerm")
      private Collection<FeatureCvTermPub> featureCvTermPubs = new HashSet<FeatureCvTermPub>(0);
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvterm")
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureCvTerm")
      private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
 
      // Constructors

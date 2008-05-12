@@ -5,6 +5,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="featureloc")
@@ -65,8 +67,8 @@ public class FeatureLoc implements Serializable {
     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
     private int rank;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureloc")
-     private Set<FeatureLocPub> featureLocPubs = new HashSet<FeatureLocPub>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureLoc")
+     private Collection<FeatureLocPub> featureLocPubs;
 
     /**
      * This field does not participate in the Hibernate mapping, and is neither
@@ -74,6 +76,7 @@ public class FeatureLoc implements Serializable {
      * using setSrcFeatureId(int). It's currently used by Artemis to cache
      * the equivalent of getFeatureBySrcFeatureId().getFeatureId().
      */
+     @Transient
     private int srcFeatureId;
     
      // Constructors
@@ -198,11 +201,11 @@ public class FeatureLoc implements Serializable {
         this.rank = rank;
     }
 
-    public Set<FeatureLocPub> getFeatureLocPubs() {
+    public Collection<FeatureLocPub> getFeatureLocPubs() {
         return this.featureLocPubs;
     }
     
-    public void setFeaturelocPubs(Set<FeatureLocPub> featureLocPubs) {
+    public void setFeaturelocPubs(Collection<FeatureLocPub> featureLocPubs) {
         this.featureLocPubs = featureLocPubs;
     }
 

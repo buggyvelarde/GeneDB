@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,8 +48,8 @@ public class FeatureProp implements Serializable, PropertyI {
     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
     private int rank;
      
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureprop")
-    private Set<FeaturePropPub> featurePropPubs = new HashSet<FeaturePropPub>(0);
+    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureProp")
+    private Collection<FeaturePropPub> featurePropPubs;
 
      // Constructors
     /** default constructor */
@@ -99,11 +100,12 @@ public class FeatureProp implements Serializable, PropertyI {
         this.rank = rank;
     }
 
-    private Set<FeaturePropPub> getFeaturePropPubs() {
+    
+    private Collection<FeaturePropPub> getFeaturePropPubs() {
         return this.featurePropPubs;
     }
     
-    public void setFeaturePropPubs(Set<FeaturePropPub> featurePropPubs) {
+    public void setFeaturePropPubs(Collection<FeaturePropPub> featurePropPubs) {
         this.featurePropPubs = featurePropPubs;
     }
 

@@ -44,7 +44,7 @@ public class Synonym implements Serializable {
      private String synonymSgml;
      
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="synonym")
-     private Set<FeatureSynonym> featureSynonyms = new HashSet<FeatureSynonym>(0);
+     private Collection<FeatureSynonym> featureSynonyms;
 
      // Constructors
 
@@ -131,7 +131,7 @@ public class Synonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.SynonymI#setFeatureSynonyms(java.util.Set)
      */
-    private void setFeatureSynonyms(Set<FeatureSynonym> featureSynonyms) {
+    private void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
         this.featureSynonyms = featureSynonyms;
     }
 
