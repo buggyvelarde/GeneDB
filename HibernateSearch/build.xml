@@ -73,7 +73,7 @@
 	<target name="IndexChado" depends="anttasks,index.jar">
 	    <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="ant-build/tasks"/>
 	    
-	    <property name="database.url"  value="jdbc:postgresql://localhost:11111/malaria_workshop"/>
+	    <property name="database.url"  value="jdbc:postgresql://localhost:10101/malaria_workshop"/>
 	    <property name="database.user" value="pathdb"/>
 	    <password name="database.password" prompt="Password for ${database.user}@${database.url}"/>
 	    <property name="index.base"    value="/tmp"/>
