@@ -122,16 +122,10 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
    
     // Property accessors
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureCvTermPropI#getFeatureCvTermpropId()
-     */
     private int getFeatureCvTermPropId() {
         return this.featureCvTermPropId;
     }
     
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureCvTermPropI#setFeatureCvTermpropId(int)
-     */
     private void setFeatureCvTermPropId(int featureCvTermPropId) {
         this.featureCvTermPropId = featureCvTermPropId;
     }
@@ -163,7 +157,6 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
         return this.featureCvTerm;
     }
     
-
     /**
      * Accessor for featureCvTerm
      * 
@@ -192,7 +185,6 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
         this.value = value;
     }
     
-
     /**
      * Accessor for rank
      * 
@@ -210,10 +202,6 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
     public void setRank(int rank) {
         this.rank = rank;
     }
-
-
-
-
 }
 
 

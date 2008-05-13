@@ -22,7 +22,7 @@ import javax.persistence.Table;
 @Table(name="feature_cvterm_pub")
 public class FeatureCvTermPub implements Serializable {
 
-    // Fields 
+    // Fields    
 	@SequenceGenerator(name="generator", sequenceName="feature_cvterm_pub_feature_cvterm_pub_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator") 
     @Column(name="feature_cvterm_pub_id", unique=false, nullable=false, insertable=true, updatable=true)

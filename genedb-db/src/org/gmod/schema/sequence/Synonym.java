@@ -1,14 +1,9 @@
 package org.gmod.schema.sequence;
 
-
 import static javax.persistence.GenerationType.SEQUENCE;
-
-import org.gmod.schema.cv.CvTerm;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,123 +16,85 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.gmod.schema.cv.CvTerm;
+
 @Entity
-@Table(name="synonym")
+@Table(name = "synonym")
 public class Synonym implements Serializable {
 
-    // Fields    
-    @SequenceGenerator(name="generator", sequenceName="synonym_synonym_id_seq")
-    @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
-    
-    @Column(name="synonym_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private int synonymId;
-     
-    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-        
-        @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private CvTerm cvTerm;
-     
-    @Column(name="name", unique=false, nullable=false, insertable=true, updatable=true)
-     private String name;
-     
-    @Column(name="synonym_sgml", unique=false, nullable=false, insertable=true, updatable=true)
-     private String synonymSgml;
-     
-    @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="synonym")
-     private Collection<FeatureSynonym> featureSynonyms;
+    // Fields
+    @SequenceGenerator(name = "generator", sequenceName = "synonym_synonym_id_seq")
+    @Id
+    @GeneratedValue(strategy = SEQUENCE, generator = "generator")
+    @Column(name = "synonym_id", unique = false, nullable = false, insertable = true, updatable = true)
+    private int synonymId;
 
-     // Constructors
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_id", unique = false, nullable = false, insertable = true, updatable = true)
+    private CvTerm cvTerm;
+
+    @Column(name = "name", unique = false, nullable = false, insertable = true, updatable = true)
+    private String name;
+
+    @Column(name = "synonym_sgml", unique = false, nullable = false, insertable = true, updatable = true)
+    private String synonymSgml;
+
+    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "synonym")
+    private Collection<FeatureSynonym> featureSynonyms;
+
+    // Constructors
 
     /** default constructor */
     public Synonym() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
-	/** minimal constructor */
+    /** minimal constructor */
     public Synonym(CvTerm cvTerm, String name, String synonymSgml) {
         this.cvTerm = cvTerm;
         this.name = name;
         this.synonymSgml = synonymSgml;
     }
-    
-   
+
     // Property accessors
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#getSynonymId()
-     */
     public int getSynonymId() {
         return this.synonymId;
     }
-    
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#setSynonymId(int)
-     */
+
     public void setSynonymId(int synonymId) {
         this.synonymId = synonymId;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#getCvterm()
-     */
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#setCvterm(org.gmod.schema.cv.CvTermI)
-     */
+
     public void setCvTerm(CvTerm cvterm) {
         this.cvTerm = cvterm;
     }
-    
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#getName()
-     */
     public String getName() {
         return this.name;
     }
-    
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#setName(java.lang.String)
-     */
+
     public void setName(String name) {
         this.name = name;
     }
-    
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#getSynonymSgml()
-     */
-    private String getSynonymSgml() {
+    public String getSynonymSgml() {
         return this.synonymSgml;
     }
-    
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#setSynonymSgml(java.lang.String)
-     */
+
     public void setSynonymSgml(String synonymSgml) {
         this.synonymSgml = synonymSgml;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#getFeatureSynonyms()
-     */
-    private Collection<FeatureSynonym> getFeatureSynonyms() {
+    public Collection<FeatureSynonym> getFeatureSynonyms() {
         return this.featureSynonyms;
     }
-    
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.SynonymI#setFeatureSynonyms(java.util.Set)
-     */
-    private void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
+
+    public void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
         this.featureSynonyms = featureSynonyms;
     }
-
-
-
-
 }
-
-

@@ -1,8 +1,5 @@
 package org.gmod.schema.sequence;
 
-
-
-
 import static javax.persistence.GenerationType.SEQUENCE;
 
 import org.gmod.schema.pub.Pub;
@@ -20,73 +17,47 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="feature_relationshipprop_pub")
+@Table(name = "feature_relationshipprop_pub")
 public class FeatureRelationshipPropPub implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="feature_relationshipprop_pub_feature_relationshipprop_pub_id_seq")
-    @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
-    @Column(name="feature_relationshipprop_pub_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private int featureRelationshipPropPubId;
-     
-     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-         
-         @JoinColumn(name="feature_relationshipprop_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private FeatureRelationshipProp featureRelationshipProp;
-     
-     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-         
-         @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private Pub pub;
-    
-   
+    // Fields
+    @SequenceGenerator(name = "generator", sequenceName = "feature_relationshipprop_pub_feature_relationshipprop_pub_id_seq")
+    @Id
+    @GeneratedValue(strategy = SEQUENCE, generator = "generator")
+    @Column(name = "feature_relationshipprop_pub_id", unique = false, nullable = false, insertable = true, updatable = true)
+    private int featureRelationshipPropPubId;
+
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "feature_relationshipprop_id", unique = false, nullable = false, insertable = true, updatable = true)
+    private FeatureRelationshipProp featureRelationshipProp;
+
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "pub_id", unique = false, nullable = false, insertable = true, updatable = true)
+    private Pub pub;
+
     // Property accessors
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureRelationshipPropPubI#getFeatureRelationshipPropPubId()
-     */
-    private int getFeatureRelationshipPropPubId() {
+    public int getFeatureRelationshipPropPubId() {
         return this.featureRelationshipPropPubId;
     }
-    
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureRelationshipPropPubI#setFeatureRelationshipPropPubId(int)
-     */
-    private void setFeatureRelationshipPropPubId(int featureRelationshipPropPubId) {
+
+    public void setFeatureRelationshipPropPubId(int featureRelationshipPropPubId) {
         this.featureRelationshipPropPubId = featureRelationshipPropPubId;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureRelationshipPropPubI#getFeatureRelationshipprop()
-     */
-    private FeatureRelationshipProp getFeatureRelationshipProp() {
+    public FeatureRelationshipProp getFeatureRelationshipProp() {
         return this.featureRelationshipProp;
     }
-    
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureRelationshipPropPubI#setFeatureRelationshipprop(org.genedb.db.jpa.FeatureRelationshipProp)
-     */
-    private void setFeatureRelationshipProp(FeatureRelationshipProp featureRelationshipProp) {
+
+    public void setFeatureRelationshipProp(FeatureRelationshipProp featureRelationshipProp) {
         this.featureRelationshipProp = featureRelationshipProp;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureRelationshipPropPubI#getPub()
-     */
-    private Pub getPub() {
+    public Pub getPub() {
         return this.pub;
     }
-    
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureRelationshipPropPubI#setPub(org.gmod.schema.pub.PubI)
-     */
-    private void setPub(Pub pub) {
+
+    public void setPub(Pub pub) {
         this.pub = pub;
     }
-
-
-
-
 }
-
-
