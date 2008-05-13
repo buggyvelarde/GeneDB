@@ -1,74 +1,108 @@
 package org.genedb.hibernate.search;
 
+import java.io.Console;
 import java.io.File;
-import java.util.Date;
-import java.util.List;
 
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureProp;
-import org.gmod.schema.sequence.FeatureRelationship;
+import org.apache.log4j.Logger;
 import org.gmod.schema.sequence.Gene;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.CacheMode;
+import org.hibernate.FlushMode;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.hibernate.search.event.*;
+import org.hibernate.search.event.FullTextIndexEventListener;
 
 public class IndexChado {
-	
-	private HibernateTransactionManager hibernateTransactionManager;
-	
-	public HibernateTransactionManager getHibernateTransactionManager() {
-		return hibernateTransactionManager;
-	}
+    private static Logger logger = Logger.getLogger(org.genedb.hibernate.search.IndexChado.class);
 
-	public void setHibernateTransactionManager(
-			HibernateTransactionManager hibernateTransactionManager) {
-		this.hibernateTransactionManager = hibernateTransactionManager;
-	}
+    private static void die(String message) {
+        System.err.println(message);
+        System.err.println();
+        System.exit(1);
+    }
+    
+    private static final int BATCH_SIZE = 50;
 
-	public static void main(String[] args) {
-        
+    private static SessionFactory getSessionFactory(String databaseUrl, String databaseUsername,
+            String databasePassword, String indexBaseDirectory) {
         Configuration cfg = new Configuration();
-        File f = new File("resources/");
-        cfg.addDirectory(f);
+        cfg.addDirectory(new File("../genedb-db/input"));
         cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-		cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-		cfg.setProperty("hibernate.connection.username", "pathdb");
-		cfg.setProperty("hibernate.connection.password", "Pyrate_1");
-		cfg.setProperty("hibernate.connection.url", "jdbc:postgresql://pathdbsrv1a:10101/malaria_workshop");
-		cfg.setProperty("hibernate.search.default.directory_provider", "org.hibernate.search.store.FSDirectoryProvider");
-		//cfg.setProperty("hibernate.search.worker.batch_size", "1");
-		cfg.setProperty("hibernate.search.default.indexBase", "/Users/cp2/hibernate/search/indexes");
-		FullTextIndexEventListener ft = new FullTextIndexEventListener();
-		cfg.setListener("post-insert", ft);
-		cfg.setListener("post-update", ft);
-		cfg.setListener("post-delete",ft);
-        SessionFactory sf = cfg.buildSessionFactory();
-        Session session = sf.openSession();
-        FullTextSession fullTextSession = Search.createFullTextSession(session);
-		Transaction tx = fullTextSession.beginTransaction();
-		Query q = session.createQuery("from Gene g");
-		q.setMaxResults(50);
-		//System.err.println("query ran successfully...");
-		
-		List<Gene> features = q.list();
-		//System.err.println("Name of Features is " + features.size());
-		long start = new Date().getTime();
-		for (Gene feature : features) {
-			//System.err.println(feature.getFeatureId());
-			fullTextSession.index(feature);
-		}
-		tx.commit();
-		fullTextSession.close();
-		long end = new Date().getTime();
-		long duration = (end - start) / 1000;
-		System.err.println("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
-	}
+        cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
+        cfg.setProperty("hibernate.connection.username", databaseUsername);
+        cfg.setProperty("hibernate.connection.password", databasePassword);
+        cfg.setProperty("hibernate.connection.url",      databaseUrl);
+        cfg.setProperty("hibernate.search.default.directory_provider",
+            "org.hibernate.search.store.FSDirectoryProvider");
+        cfg.setProperty("hibernate.search.worker.batch_size", String.valueOf(BATCH_SIZE));
+        cfg.setProperty("hibernate.search.default.indexBase", indexBaseDirectory);
+        
+        FullTextIndexEventListener ft = new FullTextIndexEventListener();
+        cfg.setListener("post-insert", ft);
+        cfg.setListener("post-update", ft);
+        cfg.setListener("post-delete", ft);
+        
+        return cfg.buildSessionFactory();
+    }
+    
+    private static String promptForPassword(String databaseUrl, String databaseUsername) {
+        Console console = System.console();
+        if (console == null)
+            die("No password has been supplied, and no console found");
+        
+        char[] password = null;
+        while (password == null)
+            password = console.readPassword("Password for %s@%s: ", databaseUsername, databaseUrl);
+        return new String(password);
+    }
+    
+    private static SessionFactory getSessionFactory() {
+        String databaseUrl = System.getProperty("database.url");
+        if (databaseUrl == null)
+            die("The property database.url must be supplied, "+
+                "e.g. -Ddatabase.url=jdbc:postgres://localhost:10101/malaria_workshop");
+        String databaseUsername = System.getProperty("database.user");
+        if (databaseUsername == null)
+            die("The property database.user must be supplied, "+
+                "e.g. -Ddatabase.user=pathdb");
+        
+        String databasePassword = System.getProperty("database.password");
+        if (databasePassword == null)
+            databasePassword = promptForPassword(databaseUrl, databaseUsername);
+        
+        String indexBaseDirectory = System.getProperty("index.base");
+        if (indexBaseDirectory == null)
+            die("The property index.base must be supplied, "+
+                "e.g. -Dindex.base=/software/pathogen/genedb/indexes");
+        
+        return getSessionFactory(databaseUrl, databaseUsername, databasePassword, indexBaseDirectory);
+    }
+
+    public static void main(String[] args) {
+        SessionFactory sf = getSessionFactory();
+        FullTextSession session = Search.createFullTextSession(sf.openSession());
+
+        session.setFlushMode(FlushMode.MANUAL);
+        session.setCacheMode(CacheMode.IGNORE);
+        Transaction transaction = session.beginTransaction();
+
+        ScrollableResults results = session.createCriteria(Gene.class).scroll(
+            ScrollMode.FORWARD_ONLY);
+
+        logger.info("Indexing genes");
+        for (int i = 1; results.next(); i++) {
+            Gene gene = (Gene) results.get(0);
+            logger.debug(String.format("Indexing gene '%s'", gene.getUniqueName()));
+            session.index(gene);
+            if (i % BATCH_SIZE == 0) {
+                logger.info(String.format("Indexed %d genes", i));
+                session.clear();
+            }
+        }
+        transaction.commit();
+    }
 }
