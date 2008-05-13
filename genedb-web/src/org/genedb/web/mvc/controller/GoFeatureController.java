@@ -20,56 +20,54 @@ import javax.servlet.http.HttpServletRequest;
 
 public class GoFeatureController extends SimpleFormController{
 	
-	private String listResultsView;
+    private String listResultsView;
     private String formInputView;
-	private SequenceDao sequenceDao;
+    private SequenceDao sequenceDao;
     private OrganismDao organismDao;
-
   	
-	@Override
+    @Override
+    @SuppressWarnings("unused")
     protected boolean isFormSubmission(HttpServletRequest request) {
         return true;
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     protected ModelAndView onSubmit(Object command) throws Exception {
         GoLookup gl = (GoLookup) command;
         Map<String, Object> model = new HashMap<String, Object>(4);
         String viewName = null;
         if(gl.getLookup() == "" || gl.getLookup() == null || !(gl.getLookup().contains(":"))) {
-        	List <String> err = new ArrayList <String> ();
-        	logger.info("Look up is null");
-        	err.add("No search String found or the search string was not in the format 'GO:somenumber'");
-        	err.add("please use the form below to search again");
-        	model.put("status", err);
-        	model.put("goLookup", gl);
-        	viewName = formInputView;
-        	return new ModelAndView(viewName,model);
+            List <String> err = new ArrayList <String> ();
+            logger.info("Look up is null");
+            err.add("No search String found or the search string was not in the format 'GO:somenumber'");
+            err.add("please use the form below to search again");
+            model.put("status", err);
+            model.put("goLookup", gl);
+            viewName = formInputView;
+            return new ModelAndView(viewName,model);
         }
         List<List> data;
         List<Feature> results;
         List<Feature> features;
-        @SuppressWarnings("unused")
-		String goName = new String();
-        @SuppressWarnings("unused")
-		List<FeatureLoc> featlocs = new ArrayList<FeatureLoc>();
+        String goName = new String();
+        List<FeatureLoc> featlocs = new ArrayList<FeatureLoc>();
         data = sequenceDao.getFeatureByGO(gl.getLookup());
         results = data.get(0);
         features = data.get(1);
         if(data.get(2).size() != 0) {
-        	goName = ((CvTerm)data.get(2).get(0)).getName();
+            goName = ((CvTerm)data.get(2).get(0)).getName();
         }
         
         if (results.size()== 0 ) {
-        	logger.info("result is null");
+            logger.info("result is null");
             List <String> err = new ArrayList <String> ();
             err.add("No Results found");
-        	err.add("please use the form below to search again");
-        	model.put("status", err);
-        	model.put("goLookup", gl);
-        	viewName = formInputView;
-        	return new ModelAndView(viewName,model);
+            err.add("please use the form below to search again");
+            model.put("status", err);
+            model.put("goLookup", gl);
+            viewName = formInputView;
+            return new ModelAndView(viewName,model);
             // TODO Fail page
         }
         // Go to list results page features/GO.jsp
@@ -94,19 +92,19 @@ public class GoFeatureController extends SimpleFormController{
         this.sequenceDao = sequenceDao;
     }
 
-	public String getFormInputView() {
-		return formInputView;
-	}
+    public String getFormInputView() {
+        return formInputView;
+    }
 
-	public void setFormInputView(String formInputView) {
-		this.formInputView = formInputView;
-	}
+    public void setFormInputView(String formInputView) {
+        this.formInputView = formInputView;
+    }
 
-	public String getListResultsView() {
-		return listResultsView;
-	}
+    public String getListResultsView() {
+        return listResultsView;
+    }
 
-	public void setListResultsView(String listResultsView) {
-		this.listResultsView = listResultsView;
-	}
+    public void setListResultsView(String listResultsView) {
+        this.listResultsView = listResultsView;
+    }
 }
