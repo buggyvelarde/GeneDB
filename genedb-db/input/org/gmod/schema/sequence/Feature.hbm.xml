@@ -121,12 +121,13 @@
             </key>
             <one-to-many class="org.gmod.schema.sequence.FeatureDbXRef" />
         </set>
-        <set name="featureLocsForFeatureId" inverse="true">
+        <list name="featureLocsForFeatureId" inverse="true">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
+            <list-index column="rank"/>
             <one-to-many class="org.gmod.schema.sequence.FeatureLoc" />
-        </set>
+        </list>
         <set name="featureCvTerms" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
