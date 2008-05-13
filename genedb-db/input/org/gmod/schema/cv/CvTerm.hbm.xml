@@ -153,7 +153,7 @@
         <set name="cvTermSynonymsForTypeId" inverse="true">
             <key>
                 <column name="type_id">
-                    <comment>A synonym can be exact, narrow or borader than</comment>
+                    <comment>A synonym can be exact, narrow or broader than</comment>
                 </column>
             </key>
             <one-to-many class="org.gmod.schema.cv.CvTermSynonym" />
