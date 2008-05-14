@@ -6,15 +6,25 @@
 	properties</description>
 	
 	<!-- Paths/Properties -->
-	<property name="spring-version" value="2.5.4"/>
-	<property name="build.dir" value="./ant-build"/>
-	<dirname property="imported.basedir" file="${ant.file.imported}"/>
-    <property name="libDir" value="${imported.basedir}/lib" 
+	<property name="spring-version" value="2.5.4" />
+	<property name="build.dir" value="./ant-build" />
+	<dirname property="imported.basedir" file="${ant.file.imported}" />
+    <property name="libDir" value="${imported.basedir}/lib" />
 
 	<!-- Classpaths -->
 	<path id="core-libs">
-		<path location="${libDir}/spring-${version}.jar">
-		<path location="${libDir}/spring-bundle-${version}/log4j/log4j-1.2.15.jar"/>
+		<path location="${libDir}/spring-${version}.jar" />
+		<path location="${libDir}/spring-bundle-${version}/log4j/log4j-1.2.15.jar" />
 	</path>
 
+	<!-- Generate targets -->
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+	</target>
+	
+	<target name="clean">
+		<deltree dir="${build-dir}" />
+	</target>
+	
+		
 </project>
