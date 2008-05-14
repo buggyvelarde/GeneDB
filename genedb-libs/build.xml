@@ -5,6 +5,7 @@
 	classpaths "exported" from this project, and common 
 	properties</description>
 	
+	
 	<!-- Paths/Properties -->
 	<property name="spring-version" value="2.5.4" />
 	<property name="build.dir" value="./ant-build" />
@@ -14,6 +15,7 @@
 	<dirname property="imported.basedir" file="${ant.file.genedb-libs}" />
     <property name="libDir" value="${imported.basedir}/lib" />
 
+	
 	<!-- Classpaths -->
 	<path id="core-libs">
 		<path location="${libDir}/spring-${spring-version}.jar" />
@@ -30,16 +32,16 @@
 		<path location="${libDir}/spring-bundle-${spring-version}/jakarta-commons/commons-lang.jar" />
 	</path>
 	
-	<!-- Generate targets -->
+	
+	<!-- General targets -->
 	<target name="init" description="Create initial build structure">
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${dist.dir}" />
 		<mkdir dir="${classes.dir}" />
 	</target>
 	
-    <target name="clean" description="Remove all build artifacts">
-      <delete dir="${build.dir}" includeEmptyDirs="true" />
-    </target>
-	
+	<target name="clean" description="Remove all build artifacts">
+		<delete dir="${build.dir}" includeEmptyDirs="true" />
+	</target>
 		
 </project>
