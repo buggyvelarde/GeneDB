@@ -2,31 +2,15 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="conf"/>
-	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/forms-1.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections.jar"/>
-	<classpathentry kind="lib" path="lib/ehcache-1.2.4.jar"/>
-	<classpathentry kind="lib" path="lib/cglib-nodep-2.1_3.jar"/>
-	<classpathentry kind="lib" path="lib/antlr-2.7.6.jar"/>
-	<classpathentry kind="lib" path="lib/myswing.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/EventBus-1.1.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/Jogra/lib/EventBus-doc-1.1.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-domain"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-libs"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/swingx-0.9.2.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.9.jar"/>
-	<classpathentry kind="lib" path="lib/javaws.jar"/>
-	<classpathentry kind="lib" path="lib/swing-worker.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.3.jar" sourcepath="/genedb-libs/lib-src/spring-2.5.3-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.5.x/api/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/gui/beansbinding-1.2.1.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/gui/EventBus-1.1.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/gui/javaws.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/gui/myswing.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/gui/swingx-0.9.2.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/gui/forms-1.1.0.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-lang.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
