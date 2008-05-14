@@ -14,12 +14,13 @@
 	
 	<dirname property="imported.basedir" file="${ant.file.genedb-libs}" />
     <property name="libDir" value="${imported.basedir}/lib" />
+	<property name="spring-bundle" value="${libDir}/spring-bundle-${spring-version}" />
 
 	
 	<!-- Classpaths -->
 	<path id="core-libs">
 		<path location="${libDir}/spring-${spring-version}.jar" />
-		<path location="${libDir}/spring-bundle-${spring-version}/log4j/log4j-1.2.15.jar" />
+		<path location="${spring-bundle}/log4j/log4j-1.2.15.jar" />
 	</path>
 
 	<path id="misc-gui-libs">
@@ -29,7 +30,7 @@
 	</path>
 	
 	<path id="jakarta-commons-lang">
-		<path location="${libDir}/spring-bundle-${spring-version}/jakarta-commons/commons-lang.jar" />
+		<path location="${spring-bundle}/jakarta-commons/commons-lang.jar" />
 	</path>
 	
 	
