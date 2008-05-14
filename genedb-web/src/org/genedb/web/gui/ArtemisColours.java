@@ -26,7 +26,6 @@ public class ArtemisColours {
     private static String[] colNames = new String[numCols];
 
     static {
-
         colNames[0] = "white";
         cols[0] = new Color(255, 255, 255);
 
@@ -92,6 +91,7 @@ public class ArtemisColours {
         cols[103] = new Color(255, 248, 220);
     }
 
+    private static final int DEFAULT_INDEX = 5;
 
     /**
      * Return the <code>Color</code> corresponding to the given status number
@@ -102,6 +102,15 @@ public class ArtemisColours {
     public static Color getColour(int i) {
         return cols[i];
     }
+    
+    /**
+     * Return the <code>Color</code> used by default, if no explicit value is assigned
+     * 
+     * @return the default colour
+     */
+    public static Color getDefaultColour() {
+        return cols[DEFAULT_INDEX];
+    }
 
     /**
      * Return the colour name corresponding to the given status number
@@ -111,6 +120,15 @@ public class ArtemisColours {
      */
     public static String getColourName(int i) {
         return colNames[i];
+    }
+    
+    /**
+     * Return the name of the colour used by default, if no explicit value is assigned
+     * 
+     * @return the name of the default colour
+     */
+    public static String getDefaultColourName() {
+        return colNames[DEFAULT_INDEX];
     }
 
     /**
