@@ -8,7 +8,10 @@
 	<!-- Paths/Properties -->
 	<property name="spring-version" value="2.5.4" />
 	<property name="build.dir" value="./ant-build" />
+	<property name="dist.dir" value="${build.dir}/dist" />
+	
 	<dirname property="imported.basedir" file="${ant.file.imported}" />
+
     <property name="libDir" value="${imported.basedir}/lib" />
 
 	<!-- Classpaths -->
@@ -17,9 +20,14 @@
 		<path location="${libDir}/spring-bundle-${version}/log4j/log4j-1.2.15.jar" />
 	</path>
 
+	<path id="misc-gui-libs">
+		<path path="${libDir}/gui" />
+	</path>
+	
 	<!-- Generate targets -->
 	<target name="init">
 		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
 	</target>
 	
 	<target name="clean">
