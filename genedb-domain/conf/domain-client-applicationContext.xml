@@ -9,23 +9,23 @@
     default-init-method="postConstruction">
             
         <bean id="productService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-			<property name="serviceUrl" value="http://developer.genedb.org/new/remoting/ProductService"/>
+			<property name="serviceUrl" value="http://pathdbsrv1b.internal.sanger.ac.uk:9005/new/remoting/ProductService"/>
 			<property name="serviceInterface" value="org.genedb.db.domain.services.ProductService"/>
 		</bean>
        
         <bean id="geneService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-			<property name="serviceUrl" value="http://developer.genedb.org/new/remoting/GeneService"/>
+			<property name="serviceUrl" value="http://pathdbsrv1b.internal.sanger.ac.uk:9005/new/remoting/GeneService"/>
 			<property name="serviceInterface" value="org.genedb.db.domain.services.GeneService"/>
 		</bean>
 
        
         <bean id="lockAndNotificationService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-			<property name="serviceUrl" value="http://developer.genedb.org/new/remoting/LockAndNotificationService"/>
+			<property name="serviceUrl" value="http://pathdbsrv1b.internal.sanger.ac.uk:9005/new/remoting/LockAndNotificationService"/>
 			<property name="serviceInterface" value="org.genedb.db.domain.services.LockAndNotificationService"/>
 		</bean>
 		
 		<bean id="messageService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-			<property name="serviceUrl" value="http://developer.genedb.org/new/remoting/MessageService"/>
+			<property name="serviceUrl" value="http://pathdbsrv1b.internal.sanger.ac.uk:9005/new/remoting/MessageService"/>
 			<property name="serviceInterface" value="org.genedb.db.domain.services.MessageService"/>
 		</bean>
 </beans>
