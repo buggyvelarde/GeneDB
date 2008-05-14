@@ -4,6 +4,6 @@
 	<classpathentry kind="src" path="conf"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-domain"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/genedb-libs"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
