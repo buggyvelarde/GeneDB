@@ -52,7 +52,7 @@
 	</target>
 	
 	<!-- The dependent target "make-hibernate3-implementation" is defined in genedb-db/build.xml -->
-	<target name="compile" depends="make-hibernate3-implementation">
+	<target name="compile" depends="genedb-db.make-hibernate3-implementation">
 		<javac srcdir="src" destdir="ant-build/classes" debug="true">
 			<classpath refid="jars"/>
 		</javac>
