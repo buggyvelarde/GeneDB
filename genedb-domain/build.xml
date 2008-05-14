@@ -4,9 +4,6 @@
 
 	<import file="../genedb-libs/build.xml" />
 
-	<target name="init" depends="genedb-libs.init">
-		<echo message="Should have just created ant-build" />
-	</target>
 	
 	
 	<target name="fulljar" depends="" description="Create full JAR file with all Spring classes">
