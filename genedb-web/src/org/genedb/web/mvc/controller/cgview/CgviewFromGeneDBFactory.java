@@ -3,7 +3,7 @@ package org.genedb.web.mvc.controller.cgview;
 import static ca.ualberta.stothard.cgview.CgviewConstants.DIRECT_STRAND;
 
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.web.mvc.controller.ArtemisColours;
+import org.genedb.web.gui.ArtemisColours;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

@@ -1,6 +1,8 @@
 package org.genedb.web.gui;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Traditional mapping from internal colour numbers to real Color
@@ -139,6 +141,29 @@ public class ArtemisColours {
     public static int getNumCols() {
         return numCols;
     }
+    
+    private static Map<String,Color> colorsByName;
+    
+    /**
+     * Get the colour with the given name
+     * 
+     * @param lookup The colour name (case-insensitive)
+     * @return The corresponding <code>Color</code> object
+     */
+    public static Color getByName(String lookup) {
+        if (colorsByName == null) {
+            colorsByName = new HashMap<String,Color> ();
+            for (int i = 0; i < numCols; i++)
+                if (cols[i] != null)
+                    colorsByName.put(colNames[i].toLowerCase(), cols[i]);
+        }
+        
+        Color color = colorsByName.get(lookup.toLowerCase());
+        if (color == null)
+            return getDefaultColour();
+        return color;
+    }
+
 
 
 // colour_of_CDS = 5
