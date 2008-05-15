@@ -12,7 +12,7 @@
 	    <filelist dir="../genedb-libs/lib">
 	    	<file name="postgresql-8.2dev-501.jdbc3.jar"/>
             <file name="spring-bundle-2.5.4/ant/ant.jar"/>
-            <file name="lucene-core-2.3.0.jar"/>
+            <file name="lucene-core-2.3.2.jar"/>
             <file name="hibernate-extras/hibernate-search-3.0.1GA.jar"/>
             <file name="spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
             <file name="spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar"/>
@@ -73,7 +73,7 @@
 	<target name="IndexChado" depends="anttasks,index.jar">
 	    <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="ant-build/tasks"/>
 	    
-	    <property name="database.url"  value="jdbc:postgresql://localhost:10101/malaria_workshop"/>
+	    <property name="database.url"  value="jdbc:postgresql://localhost:11111/malaria_workshop"/>
 	    <property name="database.user" value="pathdb"/>
 	    <password name="database.password" prompt="Password for ${database.user}@${database.url}"/>
 	    <property name="index.base"    value="/tmp"/>
