@@ -36,15 +36,24 @@
 			<attribute name="javadoc_location" value="http://logging.apache.org/log4j/1.2/apidocs"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://tools.hibernate.org/hib_docs/search/api/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="/genedb-libs/lib/hibernate-extras/hibernate-tools.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.0.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/asm/asm-2.2.3.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/freemarker/freemarker.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/j2ee/jms.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -112,7 +112,7 @@
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/xom-1.0.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/lucene-core-2.3.0.jar">
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/lucene-core-2.3.2.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
         <property name="java-output-path" value="/build/classes/"/>
