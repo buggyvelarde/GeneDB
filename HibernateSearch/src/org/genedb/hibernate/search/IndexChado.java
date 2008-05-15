@@ -83,6 +83,10 @@ public class IndexChado {
     }
 
     public static void main(String[] args) {
+        Integer batches = null;
+        if (args.length > 0)
+            batches = new Integer(args[0]);
+        
         SessionFactory sf = getSessionFactory();
         FullTextSession session = Search.createFullTextSession(sf.openSession());
 
@@ -101,6 +105,10 @@ public class IndexChado {
             if (i % BATCH_SIZE == 0) {
                 logger.info(String.format("Indexed %d genes", i));
                 session.clear();
+                if (batches != null && batches.intValue() * BATCH_SIZE == i) {
+                    logger.warn("Stopping after "+batches+" batches, as instructed");
+                    break;
+                }
             }
         }
         transaction.commit();
