@@ -43,6 +43,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/ant/ant.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.0.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.2.jar" sourcepath="/genedb-libs/lib-src/lucene-2.3.2-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://lucene.apache.org/java/2_3_2/api/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
