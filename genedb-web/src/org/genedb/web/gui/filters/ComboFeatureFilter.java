@@ -3,7 +3,6 @@ package org.genedb.web.gui.filters;
 import org.biojava.bio.seq.Feature;
 import org.biojava.bio.seq.FeatureFilter;
 import org.biojava.bio.seq.StrandedFeature;
-import org.genedb.web.gui.RNASummary;
 
 
 /**
