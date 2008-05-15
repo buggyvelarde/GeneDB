@@ -107,7 +107,7 @@
     <target name="make-interface" depends="setup" 
     	description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
-		<copy todir="ant-build/src-interface">
+		<copy todir="${imported.basedir}/ant-build/src-interface">
 			<fileset dir="${imported.basedir}/src">
 			    <include name="org/gmod/schema/**/*.java"/>
 			</fileset>
