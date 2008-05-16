@@ -223,6 +223,22 @@ public class MockBasicGeneService implements BasicGeneService {
         genes.add(factory.simpleGene(uniqueName, name, fmin, fmax, colourId));
     }
     
+    /**
+     * Add a gene with no transcripts. This is used to generate alternatively-spliced
+     * test genes in conjunction with {@link BasicGeneHelper#transcript(String,int,int)}.
+     * 
+     * For example,
+     * <code>
+     *     mockBasicGeneService.addAltGene("gene1", 100, 200)
+     *          .transcript("rna1", 100, 150)
+     *          .transcript("rna2", 120, 200);
+     * </code>
+     * 
+     * @param uniqueName
+     * @param fmin
+     * @param fmax
+     * @return
+     */
     public BasicGeneHelper addAltGene(String uniqueName, int fmin, int fmax) {
         BasicGeneHelper gene = new BasicGeneHelper(factory.nakedGene(uniqueName, fmin, fmax));
         genes.add(gene);
