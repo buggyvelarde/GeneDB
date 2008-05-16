@@ -33,7 +33,6 @@ import org.gmod.schema.phylogeny.Phylotree;
 
 public class ExtendedOrganismManager {
 
-    // private OrganismDaoI organismDao;
     private PhylogenyDaoI phylogenyDao;
     private CvDaoI cvDao;
 

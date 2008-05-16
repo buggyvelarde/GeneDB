@@ -18,7 +18,7 @@ public class BasicGene {
     private String systematicId;
     private String name;
     private String organism;
-    private String chromosome;
+    private Chromosome chromosome;
     private List<String> products;
     private int fmin, fmax;
     private int strand;
@@ -52,9 +52,24 @@ public class BasicGene {
         this.systematicId = basis.systematicId;
         this.name = basis.name;
         this.organism = basis.organism;
+        this.chromosome = basis.chromosome;
         this.products = basis.products;
         this.fmin = basis.fmin;
         this.fmax = basis.fmax;
+        this.strand = basis.strand;
+        this.synonyms = basis.synonyms;
+    }
+    
+    /**
+     * The display name is the name if there is one, or the systematic ID if not.
+     * 
+     * @return the display name
+     */
+    public String displayName() {
+        if (name != null)
+            return name;
+        else
+            return systematicId;
     }
 
     public String getSystematicId() {
@@ -91,9 +106,13 @@ public class BasicGene {
     public void addTranscript(Transcript transcript) {
         if (this.transcripts == null)
             this.transcripts = new ArrayList<Transcript> ();
+        transcript.setGene(this);
         this.transcripts.add(transcript);
     }
     public void setTranscripts(List<Transcript> transcripts) {
+        for (Transcript transcript: transcripts)
+            transcript.setGene(this);
+
         this.transcripts = transcripts;
     }
 
@@ -125,16 +144,23 @@ public class BasicGene {
         this.synonyms = synonyms;
     }
 
-    public String getChromosome() {
-        return chromosome;
-    }
-    public void setChromosome(String chromosome) {
-        this.chromosome = chromosome;
-    }
     public int getStrand() {
         return strand;
     }
     public void setStrand(int strand) {
         this.strand = strand;
+    }
+
+    public Chromosome getChromosome() {
+        return chromosome;
+    }
+    public void setChromosome(Chromosome chromosome) {
+        this.chromosome = chromosome;
+    }
+    
+    public String getChromosomeName() {
+        if (chromosome == null)
+            return null;
+        return chromosome.getName();
     }
 }

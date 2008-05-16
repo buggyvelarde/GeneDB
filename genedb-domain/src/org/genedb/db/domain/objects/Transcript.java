@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006 Genome Research Limited.
+ * Copyright (c) 2006-2008 Genome Research Limited.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published
@@ -20,22 +20,49 @@
 package org.genedb.db.domain.objects;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureProp;
 
 public class Transcript implements Serializable {
     private transient Feature protein;
+    private String name;
     private Integer colourId; // May be null
-    private Set<Exon> exons = Collections.emptySet();
+    private BasicGene gene;
+    private SortedSet<Exon> exons;
+    private int fmin, fmax;
 
-    public Set<Exon> getExons() {
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getFmin() {
+        return fmin;
+    }
+    public void setFmin(int fmin) {
+        this.fmin = fmin;
+    }
+    
+    public int getFmax() {
+        return fmax;
+    }
+    public void setFmax(int fmax) {
+        this.fmax = fmax;
+    }
+    
+    public SortedSet<Exon> getExons() {
         return exons;
     }
     public void setExons(Set<Exon> exons) {
-        this.exons = exons;
+        if (exons instanceof SortedSet)
+            this.exons = (SortedSet<Exon>) exons;
+        this.exons = new TreeSet<Exon> (exons);
     }
 
     public Integer getColourId() {
@@ -61,5 +88,11 @@ public class Transcript implements Serializable {
                 setColourId(Integer.parseInt(proteinProp.getValue()));
         }
     }
-
+    
+    public BasicGene getGene() {
+        return gene;
+    }
+    public void setGene(BasicGene gene) {
+        this.gene = gene;
+    }
 }
