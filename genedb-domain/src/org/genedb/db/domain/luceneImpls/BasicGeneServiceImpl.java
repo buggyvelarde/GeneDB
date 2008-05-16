@@ -24,6 +24,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.genedb.db.domain.objects.BasicGene;
+import org.genedb.db.domain.objects.Chromosome;
 import org.genedb.db.domain.objects.Exon;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.services.BasicGeneService;
@@ -72,6 +73,15 @@ public class BasicGeneServiceImpl implements BasicGeneService {
                 transcript.setColourId(null);
             else
                 transcript.setColourId(Integer.parseInt(colourString));
+            
+            String transcriptName = doc.get("name");
+            if (transcriptName != null)
+                transcript.setName(transcriptName);
+            else
+                transcript.setName(doc.get("uniqueName"));
+
+            transcript.setFmin(Integer.parseInt(doc.get("fmin")));
+            transcript.setFmin(Integer.parseInt(doc.get("fmax")));
             transcript.setExons(parseExonLocs(doc.get("exonlocs")));
             
             return transcript;
@@ -95,23 +105,25 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             BasicGene ret = new BasicGene();
 
             String geneUniqueName = doc.get("uniqueName");
+            ret.setOrganism(doc.get("organism.commonName"));
             ret.setFeatureId(Integer.parseInt(doc.get("featureId")));
             ret.setSystematicId(geneUniqueName);
             ret.setName(doc.get("name"));
+            ret.setChromosome(new Chromosome(doc.get("chr"), Integer.parseInt(doc.get("chrlen"))));
             ret.setOrganism(doc.get("organism.commonName"));
             ret.setFmin(Integer.parseInt(doc.get("start")));
             ret.setFmax(Integer.parseInt(doc.get("stop")));
             ret.setSynonyms(Arrays.asList(doc.get("synonym").split("\t")));
-            
+
             BooleanQuery transcriptQuery = new BooleanQuery();
             transcriptQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.Mrna")),
                 BooleanClause.Occur.MUST);
             transcriptQuery.add(new TermQuery(new Term("gene", geneUniqueName)),
                 BooleanClause.Occur.MUST);            
-            
+
             List<Transcript> transcripts = findWithQuery(transcriptQuery, convertToTranscript);
             ret.setTranscripts(transcripts);
-                
+
             return ret;
         }
     };
@@ -192,7 +204,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     }
 
     public BasicGene findGeneByUniqueName(String name) {
-        return findUniqueWithQuery(new TermQuery(new Term("uniqueName", name)), convertToGene);
+        return findUniqueWithQuery(new TermQuery(new Term("uniqueName", name.toLowerCase())), convertToGene);
     }
 
     /**
@@ -200,7 +212,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
      * in a Lucene query of the form *foo*: the problem is the initial wildcard.
      */
     public List<String> findGeneNamesByPartialName(String search) {
-        return findWithQuery(new WildcardQuery(new Term("uniqueName", String.format("*%s*", search))),
+        return findWithQuery(new WildcardQuery(new Term("uniqueName", String.format("*%s*", search.toLowerCase()))),
             new DocumentConverter<String>() {
                 public String convert(Document doc) {
                     return doc.get("uniqueName");
@@ -219,7 +231,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             BooleanClause.Occur.MUST);
         query.add(new ConstantScoreRangeQuery("start", null, String.format("%09d", locMax), false, false),
             BooleanClause.Occur.MUST);
-        query.add(new ConstantScoreRangeQuery("stop", String.format("%09d", locMin), null, false, false),
+        query.add(new ConstantScoreRangeQuery("stop", String.format("%09d", locMin), null, true, false),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("strand", String.valueOf(strand))),
             BooleanClause.Occur.MUST);
@@ -236,9 +248,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("chr", chromosomeUniqueName)),
             BooleanClause.Occur.MUST);
-        query.add(new ConstantScoreRangeQuery("start", null, String.format("%09d", locMin), false, false),
-            BooleanClause.Occur.MUST);
-        query.add(new ConstantScoreRangeQuery("stop", String.format("%09d", locMin), String.format("%09d", locMax), false, true),
+        query.add(new ConstantScoreRangeQuery("stop", String.format("%09d", locMin), String.format("%09d", locMax), true, false),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("strand", String.valueOf(strand))),
             BooleanClause.Occur.MUST);

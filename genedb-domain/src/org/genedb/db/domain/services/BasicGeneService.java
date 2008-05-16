@@ -9,8 +9,10 @@ public interface BasicGeneService {
     BasicGene findGeneByUniqueName(String name);
 
     /**
-     * Find all genes any part of which is contained in the specified range.
-     * Should NOT include genes whose <code>fmax</code> is exactly equal to <code>locMax</code>.
+     * Find all genes either end of which is in the range [<code>locMin</code>, <code>locMax</code>)
+     * specified in interbase co-ordinates. This amounts to finding all genes any part of which
+     * lies between the specified interbase locations, as well as any gene whose 3' end lies
+     * precisely at <code>locMin</code>.
      * 
      * @param organismCommonName
      * @param chromosomeUniqueName
@@ -23,10 +25,10 @@ public interface BasicGeneService {
             String chromosomeUniqueName, int strand, long locMin, long locMax);
 
     /**
-     * Find all genes whose 3' end is contained in the specified range but whose 5' end is not.
-     * SHOULD include genes whose <code>fmax</code> is exactly equal to <code>locMax</code>,
-     * provided that their <code>fmin</code> is less that <code>locMin</code>.
-     * 
+     * Find all genes whose 3' end is contained in the range [<code>locMin</code>, <code>locMax</code>).
+     * I.e. includes genes that stop precisely at <code>locMin</code>, but not those that stop
+     * precisely at <code>locMax</code>.
+     *
      * @param organismCommonName
      * @param chromosomeUniqueName
      * @param strand
