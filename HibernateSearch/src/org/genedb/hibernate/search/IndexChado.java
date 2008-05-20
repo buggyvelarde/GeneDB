@@ -4,8 +4,11 @@ import java.io.Console;
 import java.io.File;
 
 import org.apache.log4j.Logger;
+import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.Gene;
+import org.gmod.schema.sequence.Mrna;
 import org.hibernate.CacheMode;
+import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -17,7 +20,7 @@ import org.hibernate.search.Search;
 import org.hibernate.search.event.FullTextIndexEventListener;
 
 public class IndexChado {
-    private static Logger logger = Logger.getLogger(org.genedb.hibernate.search.IndexChado.class);
+    private static Logger logger = Logger.getLogger(IndexChado.class);
 
     private static void die(String message) {
         System.err.println(message);
@@ -25,7 +28,18 @@ public class IndexChado {
         System.exit(1);
     }
     
-    private static final int BATCH_SIZE = 50;
+    /**
+     * The number of features to be processed in a single batch.
+     * If it's set too high, we run out of heap space.
+     * 
+     * Also, if indexing of a feature fails then the whole batch will
+     * fail to be indexed. At present (2008-05-20) there are some
+     * failures on <code>Mrna</code> caused by transcripts having no associated
+     * gene. To avoid collateral damage, we set BATCH_SIZE to 1
+     * until this problem is resolved, which unfortunately makes
+     * indexing very slow.
+     */
+    private static final int BATCH_SIZE = 1;
 
     private static SessionFactory getSessionFactory(String databaseUrl, String databaseUsername,
             String databasePassword, String indexBaseDirectory) {
@@ -83,34 +97,53 @@ public class IndexChado {
     }
 
     public static void main(String[] args) {
-        Integer batches = null;
-        if (args.length > 0)
-            batches = new Integer(args[0]);
-        
+        // The numBatches argument is only useful for quick-and-dirty testing
+        int numBatches = -1;
+        if (args.length == 1)
+            numBatches = Integer.parseInt(args[0]);
+        else if (args.length != 0)
+            throw new IllegalArgumentException("Unexpected command-line arguments");
+
         SessionFactory sf = getSessionFactory();
         FullTextSession session = Search.createFullTextSession(sf.openSession());
 
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
-        Transaction transaction = session.beginTransaction();
+        
+        Transaction transaction;
+        
+        transaction = session.beginTransaction();
+        indexFeatures(Gene.class, numBatches, session);
+        transaction.commit();
 
-        ScrollableResults results = session.createCriteria(Gene.class).scroll(
+        transaction = session.beginTransaction();
+        indexFeatures(Mrna.class, numBatches, session);
+        transaction.commit();
+    }
+    
+    private static void indexFeatures(Class<? extends Feature> featureClass, int numBatches, FullTextSession session) {
+       Criteria criterion = session.createCriteria(featureClass);
+       if (numBatches > 0)
+           criterion.setMaxResults(numBatches * BATCH_SIZE);
+            
+       ScrollableResults results = criterion.scroll(
             ScrollMode.FORWARD_ONLY);
 
-        logger.info("Indexing genes");
+        logger.info(String.format("Indexing %s", featureClass));
         for (int i = 1; results.next(); i++) {
-            Gene gene = (Gene) results.get(0);
-            logger.debug(String.format("Indexing gene '%s'", gene.getUniqueName()));
-            session.index(gene);
+            Feature feature = (Feature) results.get(0);
+            try {
+                logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(), featureClass));
+                session.index(feature);
+            }
+            catch (Exception e) {
+                logger.error(String.format("Failed while indexing feature '%s' (%s)", feature.getUniqueName(), featureClass), e);
+            }
             if (i % BATCH_SIZE == 0) {
-                logger.info(String.format("Indexed %d genes", i));
+                logger.info(String.format("Indexed %d of %s", i, featureClass));
                 session.clear();
-                if (batches != null && batches.intValue() * BATCH_SIZE == i) {
-                    logger.warn("Stopping after "+batches+" batches, as instructed");
-                    break;
-                }
             }
         }
-        transaction.commit();
+        results.close();
     }
 }
