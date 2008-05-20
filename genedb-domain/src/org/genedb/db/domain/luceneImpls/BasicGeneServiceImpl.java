@@ -32,7 +32,7 @@ import org.genedb.db.domain.services.BasicGeneService;
 public class BasicGeneServiceImpl implements BasicGeneService {
 
     private IndexReader luceneIndex;
-    private static Logger log = Logger.getLogger(BasicGeneService.class);
+    private static Logger logger = Logger.getLogger(BasicGeneServiceImpl.class);
 
     public BasicGeneServiceImpl(IndexReader luceneIndex) {
         this.luceneIndex = luceneIndex;
@@ -80,8 +80,8 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             else
                 transcript.setName(doc.get("uniqueName"));
 
-            transcript.setFmin(Integer.parseInt(doc.get("fmin")));
-            transcript.setFmin(Integer.parseInt(doc.get("fmax")));
+            transcript.setFmin(Integer.parseInt(doc.get("start")));
+            transcript.setFmax(Integer.parseInt(doc.get("stop")));
             transcript.setExons(parseExonLocs(doc.get("exonlocs")));
             
             return transcript;
@@ -122,6 +122,8 @@ public class BasicGeneServiceImpl implements BasicGeneService {
                 BooleanClause.Occur.MUST);            
 
             List<Transcript> transcripts = findWithQuery(transcriptQuery, convertToTranscript);
+            if (transcripts.size() == 0)
+                logger.warn(String.format("No mRNA transcripts found for gene '%s'", geneUniqueName));
             ret.setTranscripts(transcripts);
 
             return ret;
@@ -163,7 +165,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         List<T> ret = new ArrayList<T>();
 
         IndexSearcher searcher = new IndexSearcher(luceneIndex);
-        log.debug("searcher is -> " + searcher.toString());
+        logger.debug("Running Lucene query: "+query);
 
         Hits hits;
         try {
@@ -194,10 +196,10 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         List<T> results = findWithQuery(query, converter);
         int numberOfResults = results.size();
         if (numberOfResults == 0) {
-            log.info(String.format("Failed to find gene matching Lucene query '%s'", query));
+            logger.info(String.format("Failed to find gene matching Lucene query '%s'", query));
             return null;
         } else if (numberOfResults > 1) {
-            log.error(String.format("Found %d genes matching query '%s'; expected only one!",
+            logger.error(String.format("Found %d genes matching query '%s'; expected only one!",
                 numberOfResults, query));
         }
         return results.get(0);
