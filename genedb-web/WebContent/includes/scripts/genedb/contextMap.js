@@ -3,8 +3,8 @@ var loaded = false;
 var dragStartX;
 var response;
 
-function getContextMapInfo(gene) {
-	var url = "ContextMap?gene="+gene;
+function getContextMapInfo(base, gene) {
+	var url = base + "ContextMap?gene="+gene;
 	var req = new XMLHttpRequest();
 	req.open( "GET", url, true );
 
@@ -22,9 +22,9 @@ function getContextMapInfo(gene) {
     req.send(null);
 }
 
-function initContextMap(gene) {
+function initContextMap(base, gene) {
 	var contextMapImage = document.getElementById("contextMapImage");
-	var contextMapInfo = getContextMapInfo(gene);
+	var contextMapInfo = getContextMapInfo(base, gene);
 	
 	contextMapImage.onmousedown = startMove;
 	contextMapImage.onmousemove = doMove;
