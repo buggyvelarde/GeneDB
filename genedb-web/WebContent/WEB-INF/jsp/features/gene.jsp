@@ -1,11 +1,18 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<format:headerRound name="Gene: ${feature.displayName}" title="Gene Page ${feature.displayName}">
+<c:url value="/" var="base"/>
+<format:headerRound name="Gene: ${feature.displayName}" title="Gene Page ${feature.displayName}"
+		onLoad="initContextMap('${base}', '${feature.uniqueName}')">
+	<base href="<c:url value="/"/>">
 	<st:init />
 	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-base.js"/>"></script>
     <script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-all.js"/>"></script>
-	 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/extjs/ext-all.css"/>" />
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/extjs/ext-all.css"/>" />
 	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-history.js"/>"></script>
+	
+	<%-- The next two are used by the scrollable context map --%>
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/contextMap.css"/>" />
+	<script type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
 </format:headerRound>
 <table width="100%">
 <tr>
@@ -63,10 +70,13 @@
 		  </c:forEach>
 		  <a href="ArtemisLaunch?organism=${feature.organism.commonName}&chromosome=${chromosome}&start=${start}&end=${end}">Show region in Artemis</a>
 		</st:section>
+		
 		<st:section name="Context Map" id="context_map" collapsed="false" collapsible="true" hideIfEmpty="false">
-			<misc:contextmap gene="${feature}"></misc:contextmap>
-			 <img src="<c:url value="/"/>includes/images/cmap/${feature.uniqueName}.gif"/>
+			<div id="contextMapImage">
+				<img src="<c:url value="/includes/images/default/grid/loading.gif"/>" id="contextMapLoadingImage">
+			</div>
 		</st:section>
+		
 		<st:section name="Location" id="gene_location" collapsed="false" collapsible="true" hideIfEmpty="true">
 			<c:forEach items="${feature.featureLocsForFeatureId}" var="featLoc">
 				<p>[${featLoc.rank}]&nbsp;&nbsp;${featLoc.strand}&nbsp;&nbsp;${featLoc.fmin}...${featLoc.fmax} on <i>to be done</i></p>
@@ -207,6 +217,7 @@
 			</ul>
 			</div> --%>
 		</st:section>
+	</div>
 	</td>
 </tr>
 </table>

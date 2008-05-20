@@ -98,6 +98,7 @@ public class ContextMapDiagram {
     }
 
     private int start, end;
+    private String organism, chromosome;
     private Half positiveHalf, negativeHalf;
     
     public int numberOfPositiveTracks() {
@@ -105,6 +106,9 @@ public class ContextMapDiagram {
     }
     public int numberOfNegativeTracks() {
         return negativeHalf.numTracks;
+    }
+    public int numberOfTracks() {
+        return numberOfPositiveTracks() + numberOfNegativeTracks();
     }
     /**
      * The track number should be between -1 and <code>-numberOfNegativeTracks()</code>
@@ -127,7 +131,9 @@ public class ContextMapDiagram {
      * Users should not call this constructor directly, but use one of the
      * static methods defined below.
      */
-    private ContextMapDiagram(int start, int end) {
+    private ContextMapDiagram(String organism, String chromosome, int start, int end) {
+        this.organism = organism;
+        this.chromosome = chromosome;
         this.start = start;
         this.end = end;
     }
@@ -188,7 +194,7 @@ public class ContextMapDiagram {
      */
     public static ContextMapDiagram forRegion(BasicGeneService basicGeneService,
             String organismName, String chromosomeName, int start, int end) {
-        ContextMapDiagram diagram = new ContextMapDiagram(start, end);
+        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, start, end);
                 
         diagram.positiveHalf = diagram.createHalf(basicGeneService, organismName, chromosomeName, +1, start, end);
         diagram.negativeHalf = diagram.createHalf(basicGeneService, organismName, chromosomeName, -1, start, end);
@@ -337,6 +343,11 @@ public class ContextMapDiagram {
         for(GeneBoundary boundary: boundaries) {
             BasicGene gene = boundary.gene;
             int numTranscripts = gene.getTranscripts().size();
+            if (numTranscripts == 0) {
+                logger.error(String.format("The gene '%s' has no transcripts!", gene.getName()));
+                continue;
+            }
+            
             int track, lastUsedTrack;
             switch (boundary.type) {
             case START:
@@ -395,11 +406,43 @@ public class ContextMapDiagram {
         }
     }
 
+    /**
+     * Get the location (interbase coordinates) of the start of the diagram.
+     * @return the start location
+     */
     public int getStart() {
         return start;
     }
 
+    /**
+     * Get the location (interbase coordinates) of the end of the diagram.
+     * @return the end location
+     */
     public int getEnd() {
         return end;
+    }
+    
+    /**
+     * Get the size of the diagram in bases, equivalent to <code>(getEnd() - getStart())</code>.
+     * @return the size of the diagram
+     */
+    public int getSize() {
+        return end - start;
+    }
+    
+    /**
+     * Get the common name of the organism of whose genome this map represents part.
+     * @return the common name of the organism
+     */
+    public String getOrganism() {
+        return organism;
+    }
+
+    /**
+     * Get the name of the chromosome of which this map represents part.
+     * @return the name of the chromosome
+     */
+    public String getChromosome() {
+        return chromosome;
     }
 }

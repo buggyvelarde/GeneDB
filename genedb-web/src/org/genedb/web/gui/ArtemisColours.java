@@ -96,12 +96,15 @@ public class ArtemisColours {
     private static final int DEFAULT_INDEX = 5;
 
     /**
-     * Return the <code>Color</code> corresponding to the given status number
+     * Return the <code>Color</code> corresponding to the given status number.
+     * If the index is null, returns the default colour.
      * 
      * @param i the index to look up
      * @return the corresponding colour
      */
-    public static Color getColour(int i) {
+    public static Color getColour(Integer i) {
+        if (i == null)
+            return getDefaultColour();
         return cols[i];
     }
     
