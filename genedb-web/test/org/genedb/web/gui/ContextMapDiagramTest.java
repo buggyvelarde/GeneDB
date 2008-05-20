@@ -168,7 +168,7 @@ public class ContextMapDiagramTest {
         for (Exon exon: exons) {
             assertNotNull(exon);
             assertEquals(90,  exon.getStart());
-            assertEquals(110, exon.getStop());
+            assertEquals(110, exon.getEnd());
         }
     }
     
