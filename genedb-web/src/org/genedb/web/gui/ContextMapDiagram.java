@@ -75,7 +75,7 @@ public class ContextMapDiagram {
      * map, we need to find all the genes that overlap with it to establish
      * which track it should be in. This procedure may need to be iterated -- in
      * the theoretical worst-case, all the way to the 5' end of the chromosome
-     * or contig. (In practice it is usual that the procedure ever needs to be
+     * or contig. (In practice it is unusual that the procedure ever needs to be
      * iterated at all, because overlaps are relatively rare.)
      */
     
