@@ -8,11 +8,9 @@ package org.genedb.jogra.plugins;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.DefaultListModel;
+
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
 
 /**
  *
@@ -81,7 +79,7 @@ public class GeneView extends javax.swing.JPanel {
 
         sysIdLabel.setText("Systematic Id");
 
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${gene.systematicId}"), sysIdField, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${gene.uniqueName}"), sysIdField, org.jdesktop.beansbinding.BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
         nameLabel.setText("Name");

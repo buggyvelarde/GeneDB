@@ -77,7 +77,7 @@ public class GeneEditor implements JograPlugin {
 //    public JFrame getMainPanel(final Gene gene) {
 //
 //    	boolean conflict = false;
-//    	LockStatus lockStatus = lockAndNotificationService.lockGene(gene.getSystematicId());
+//    	LockStatus lockStatus = lockAndNotificationService.lockGene(gene.getUniqueName());
 //    	if (lockStatus == null) {
 //    		conflict = true;
 //    	}
@@ -90,7 +90,7 @@ public class GeneEditor implements JograPlugin {
 //        ret.setLockStatus(lockStatus);
 //        ret.setGene(gene);
 //        
-//        ret.setTitle(gene.getSystematicId());
+//        ret.setTitle(gene.getUniqueName());
 //        ret.setLayout(new BorderLayout());
 //        
 //        final FormLayout fl = new FormLayout("pref 4dlu pref 2dlu pref",
@@ -107,7 +107,7 @@ public class GeneEditor implements JograPlugin {
 //        topBar.add(Box.createHorizontalGlue());
 //        ret.add(topBar, BorderLayout.NORTH);
 //        
-//        final JTextField instance = new JTextField(gene.getSystematicId());
+//        final JTextField instance = new JTextField(gene.getUniqueName());
 //        main.add(new JLabel("Systematic id"), cc.xy(1, 3));
 //        main.add(instance, cc.xy(3, 3));
 //
@@ -179,7 +179,7 @@ public class GeneEditor implements JograPlugin {
 //				GeneEditorFrame source = (GeneEditorFrame) e.getWindow();
 //				if (source.getLockStatus() != null) {
 //					System.err.println("Trying to unlock gene");
-//					lockAndNotificationService.unlockGene(source.getGene().getSystematicId());
+//					lockAndNotificationService.unlockGene(source.getGene().getUniqueName());
 //					source.setGene(null);
 //					source.setLockStatus(null);
 //				}
