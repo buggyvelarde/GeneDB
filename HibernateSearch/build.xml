@@ -1,94 +1,101 @@
 <?xml version="1.0"?>
 
 <project name="hibernate-index" default="index.jar" basedir=".">
-	
-	<import file="../genedb-db/build.xml"/>
 
-	<path id="jars">
-		<filelist dir="../genedb-db/ant-build/jars/">
-			<file name="chado-interface.jar"/>
-			<file name="genedb-hibernate.jar"/>
-		</filelist>
-	    <filelist dir="../genedb-libs/lib">
-	    	<file name="postgresql-8.2dev-501.jdbc3.jar"/>
-            <file name="spring-bundle-2.5.4/ant/ant.jar"/>
-            <file name="lucene-core-2.3.2.jar"/>
-            <file name="hibernate-extras/hibernate-search-3.0.1GA.jar"/>
-            <file name="spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
-            <file name="spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar"/>
-            <file name="spring-bundle-2.5.4/j2ee/jta.jar"/>
-            <file name="spring-2.5.4.jar"/>
-            <file name="spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
-            <file name="spring-bundle-2.5.4/asm/asm-2.2.3.jar"/>
-            <file name="spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
-            <file name="spring-bundle-2.5.4/jakarta-commons/commons-collections.jar"/>
-            <file name="spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar"/>
-            <file name="spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
-            <file name="spring-bundle-2.5.4/jakarta-commons/commons-pool.jar"/>
-            <file name="spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar"/>
-            <file name="spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar"/>
-            <file name="spring-bundle-2.5.4/j2ee/persistence.jar"/>
-            <file name="postgresql-8.2dev-501.jdbc3.jar"/>
-            <file name="spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
-            <file name="spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
-    	</filelist>
+    <import file="../genedb-db/build.xml" />
+
+    <path id="jars">
+        <filelist dir="../genedb-db/ant-build/jars/">
+            <file name="chado-interface.jar" />
+            <file name="genedb-hibernate.jar" />
+        </filelist>
+        <filelist dir="../genedb-libs/lib">
+            <file name="postgresql-8.2dev-501.jdbc3.jar" />
+            <file name="spring-bundle-2.5.4/ant/ant.jar" />
+            <file name="lucene-core-2.3.2.jar" />
+            <file name="hibernate-extras/hibernate-search-3.0.1GA.jar" />
+            <file name="spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
+            <file name="spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+            <file name="spring-bundle-2.5.4/j2ee/jta.jar" />
+            <file name="spring-2.5.4.jar" />
+            <file name="spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
+            <file name="spring-bundle-2.5.4/asm/asm-2.2.3.jar" />
+            <file name="spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar" />
+            <file name="spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
+            <file name="spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar" />
+            <file name="spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
+            <file name="spring-bundle-2.5.4/jakarta-commons/commons-pool.jar" />
+            <file name="spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" />
+            <file name="spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar" />
+            <file name="spring-bundle-2.5.4/j2ee/persistence.jar" />
+            <file name="postgresql-8.2dev-501.jdbc3.jar" />
+            <file name="spring-bundle-2.5.4/hibernate/hibernate3.jar" />
+            <file name="spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" />
+        </filelist>
     </path>
-	
-	<target name="index.jar" depends="compile">
-		<delete file="index.jar"/>
+    
+    <target name="destdir">
+        <mkdir dir="ant-build"/>
+        <mkdir dir="ant-build/jar"/>
+        <mkdir dir="ant-build/classes"/>
+        <mkdir dir="ant-build/tasks"/>
+    </target>
 
-		<copy todir="ant-build/jar">
-			<fileset dir="ant-build/classes" />
-		</copy>
-		
-		<jar jarfile="index.jar">
-			<fileset dir="ant-build/jar" />
-			<manifest>
-				<attribute name="Implementation-Title" value="Hibernate Search Indexing"/>
-				<attribute name="Implementation-Version" value="0.1"/>
-				<attribute name="Main-class" value="org.genedb.hibernate.search.IndexChado" />
-			</manifest>
-		</jar>
-	</target>
-	
-	<!-- The dependent target "make-hibernate3-implementation" is defined in genedb-db/build.xml -->
-	<target name="compile" depends="genedb-db.make-hibernate3-implementation">
-		<javac srcdir="src" destdir="ant-build/classes" debug="true">
-			<classpath refid="jars"/>
-		</javac>
-		<copy todir="ant-build/classes" file="log4j.properties"/>
-	</target>
+    <target name="index.jar" depends="compile">
+        <delete file="index.jar" />
 
-	   <target name="anttasks">
-	        <javac srcdir="anttasks" destdir="ant-build/tasks" debug="true">
-	            <classpath path="jars"/>
-	        </javac>
-	    </target>
+        <copy todir="ant-build/jar">
+            <fileset dir="ant-build/classes" />
+        </copy>
 
-	<path id="exec-classpath">
-		<path refid="jars" />
-		<pathelement location="index.jar" />
-	</path>
-	
-	<target name="IndexChado" depends="anttasks,index.jar">
-	    <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="ant-build/tasks"/>
-	    
-	    <property name="database.url"  value="jdbc:postgresql://localhost:11111/malaria_workshop"/>
-	    <property name="database.user" value="pathdb"/>
-	    <password name="database.password" prompt="Password for ${database.user}@${database.url}"/>
-	    <property name="index.base"    value="/tmp"/>
-	    <propertyset id="indexProperties">
-	        <propertyref name="database.url"/>
-	        <propertyref name="database.user"/>
-            <propertyref name="database.password"/>
-	        <propertyref name="password"/>
-	        <propertyref name="index.base"/>
-	    </propertyset>
-		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.hibernate.search.IndexChado">
+        <jar jarfile="index.jar">
+            <fileset dir="ant-build/jar" />
+            <manifest>
+                <attribute name="Implementation-Title" value="Hibernate Search Indexing" />
+                <attribute name="Implementation-Version" value="0.1" />
+                <attribute name="Main-class" value="org.genedb.hibernate.search.IndexChado" />
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- The dependent target "make-hibernate3-implementation" is defined in genedb-db/build.xml -->
+    <target name="compile" depends="destdir,genedb-db.make-hibernate3-implementation">
+        <javac srcdir="src" destdir="ant-build/classes" debug="true">
+            <classpath refid="jars" />
+        </javac>
+        <copy todir="ant-build/classes" file="log4j.properties" />
+    </target>
+
+    <target name="anttasks" depends="destdir">
+        <javac srcdir="anttasks" destdir="ant-build/tasks" debug="true">
+            <classpath path="jars" />
+        </javac>
+    </target>
+
+    <path id="exec-classpath">
+        <path refid="jars" />
+        <pathelement location="index.jar" />
+    </path>
+
+    <target name="IndexChado" depends="anttasks,index.jar">
+        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="ant-build/tasks" />
+
+        <property name="database.url" value="jdbc:postgresql://localhost:11111/malaria_workshop" />
+        <property name="database.user" value="pathdb" />
+        <password name="database.password" prompt="Password for ${database.user}@${database.url}" />
+        <property name="index.base" value="/tmp" />
+        <propertyset id="indexProperties">
+            <propertyref name="database.url" />
+            <propertyref name="database.user" />
+            <propertyref name="database.password" />
+            <propertyref name="password" />
+            <propertyref name="index.base" />
+        </propertyset>
+        <java fork="true" maxmemory="128m" failonerror="true" classpathref="exec-classpath" classname="org.genedb.hibernate.search.IndexChado">
             <syspropertyset refid="indexProperties" />
-			<jvmarg line="-server"/>
-		</java>
-	</target>
-	
+            <jvmarg line="-server" />
+        </java>
+    </target>
+
 </project>
 
