@@ -230,7 +230,7 @@ public class ContextMapDiagram {
                 if (ret != 0)
                     return ret;
             }
-            return this.gene.getSystematicId().compareTo(other.gene.getSystematicId());
+            return this.gene.getUniqueName().compareTo(other.gene.getUniqueName());
         }
         
         /**
@@ -270,7 +270,7 @@ public class ContextMapDiagram {
 
         @Override
         public String toString() {
-            return String.format("%s of %s (%d..%d)", type, gene.displayName(), gene.getFmin(), gene.getFmax());
+            return String.format("%s of %s (%d..%d)", type, gene.getDisplayName(), gene.getFmin(), gene.getFmax());
         }
     }
     
@@ -344,7 +344,7 @@ public class ContextMapDiagram {
             BasicGene gene = boundary.gene;
             int numTranscripts = gene.getTranscripts().size();
             if (numTranscripts == 0) {
-                logger.error(String.format("The gene '%s' has no transcripts!", gene.getName()));
+                logger.error(String.format("The gene '%s' has no transcripts!", gene.getUniqueName()));
                 continue;
             }
             
@@ -379,7 +379,7 @@ public class ContextMapDiagram {
      * Find the first gap large enough to contain <code>gapSize</code> entries.
      * 
      * @param filled    the set of unavailable indices
-     * @param gapSize   the size of the required gap, ³ 1
+     * @param gapSize   the size of the required gap, â‰¥ 1
      * @return          the index of the start of the first sufficiently-large gap
      */
     private static int findGap(Set<Integer> filled, int gapSize) {
@@ -393,7 +393,7 @@ public class ContextMapDiagram {
          */
         if (gapSize < 1)
             throw new IllegalArgumentException(String
-                .format("gapSize is %d, must be ³1", gapSize));
+                .format("gapSize is %d, must be â‰¥1", gapSize));
 
         int currentGapSize = 0;
         for (int i=0; ; i++) {
