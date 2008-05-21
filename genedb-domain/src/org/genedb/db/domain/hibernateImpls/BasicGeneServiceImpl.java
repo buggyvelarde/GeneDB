@@ -59,7 +59,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     protected BasicGene geneFromFeature(Feature feat) {
         BasicGene ret = new Gene();
 
-        ret.setSystematicId(feat.getUniqueName());
+        ret.setUniqueName(feat.getUniqueName());
         ret.setFeatureId(feat.getFeatureId());
         
         List<String> synonyms = new ArrayList<String>();

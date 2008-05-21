@@ -69,7 +69,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             
             Transcript transcript = new Transcript();
             String colourString = doc.get("colour");
-            if (colourString.equals("null"))
+            if (colourString == null || colourString.equals("null"))
                 transcript.setColourId(null);
             else
                 transcript.setColourId(Integer.parseInt(colourString));
@@ -107,13 +107,16 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             String geneUniqueName = doc.get("uniqueName");
             ret.setOrganism(doc.get("organism.commonName"));
             ret.setFeatureId(Integer.parseInt(doc.get("featureId")));
-            ret.setSystematicId(geneUniqueName);
+            ret.setUniqueName(geneUniqueName);
             ret.setName(doc.get("name"));
             ret.setChromosome(new Chromosome(doc.get("chr"), Integer.parseInt(doc.get("chrlen"))));
             ret.setOrganism(doc.get("organism.commonName"));
             ret.setFmin(Integer.parseInt(doc.get("start")));
             ret.setFmax(Integer.parseInt(doc.get("stop")));
-            ret.setSynonyms(Arrays.asList(doc.get("synonym").split("\t")));
+            
+            String synonyms = doc.get("synonym");
+            if (synonyms != null)
+                ret.setSynonyms(Arrays.asList(synonyms.split("\t")));
 
             BooleanQuery transcriptQuery = new BooleanQuery();
             transcriptQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.Mrna")),

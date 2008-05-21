@@ -15,7 +15,7 @@ public class BasicGene {
 
     private List<Transcript> transcripts;
     private int featureId;
-    private String systematicId;
+    private String uniqueName;
     private String name;
     private String organism;
     private Chromosome chromosome;
@@ -31,7 +31,7 @@ public class BasicGene {
     public boolean equals(Object obj) {
         if (obj instanceof BasicGene) {
             BasicGene other = (BasicGene) obj;
-            return (this.systematicId.equals(other.systematicId));
+            return (this.uniqueName.equals(other.uniqueName));
         }
         else
             return false;
@@ -49,7 +49,7 @@ public class BasicGene {
     protected BasicGene (BasicGene basis) {
         this.transcripts = basis.transcripts;
         this.featureId = basis.featureId;
-        this.systematicId = basis.systematicId;
+        this.uniqueName = basis.uniqueName;
         this.name = basis.name;
         this.organism = basis.organism;
         this.chromosome = basis.chromosome;
@@ -65,18 +65,18 @@ public class BasicGene {
      * 
      * @return the display name
      */
-    public String displayName() {
+    public String getDisplayName() {
         if (name != null)
             return name;
         else
-            return systematicId;
+            return uniqueName;
     }
 
-    public String getSystematicId() {
-        return systematicId;
+    public String getUniqueName() {
+        return uniqueName;
     }
-    public void setSystematicId(String systematicId) {
-        this.systematicId = systematicId;
+    public void setUniqueName(String systematicId) {
+        this.uniqueName = systematicId;
     }
 
     public String getName() {
