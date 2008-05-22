@@ -24,7 +24,7 @@
 	
 	<target name="fulljar-query" depends="clean-build-query,setup-query,genedb-util.fulljar" description="Create full JAR file with all Spring classes">
 		
-		<copy todir="ant-build/src">
+		<copy todir="${imported.basedir.query}/ant-build/src">
 			<fileset dir="${imported.basedir.query}/src">
 			    <include name="org/genedb/query/**/*.java"/>
 				<include name="org/genedb/query/*.java"/>
