@@ -52,7 +52,7 @@ public class CaseSensitiveControllerClassNameHandlerMapping extends ControllerCl
          */
         @SuppressWarnings("unchecked")
         @Override
-        protected String generatePathMapping(Class controllerClass) {
+        protected String[] generatePathMappings(Class controllerClass) {
                 StringBuffer pathMapping = new StringBuffer("/");
 
                 String className = ClassUtils.getShortName(controllerClass.getName());
@@ -66,7 +66,7 @@ public class CaseSensitiveControllerClassNameHandlerMapping extends ControllerCl
                 }
 
                 System.err.println("ART:: "+pathMapping.toString());
-                return pathMapping.toString();
+                return new String[] { pathMapping.toString() };
         }
 
 }
