@@ -75,12 +75,15 @@ public class ContextMapDiagram {
      * map, we need to find all the genes that overlap with it to establish
      * which track it should be in. This procedure may need to be iterated -- in
      * the theoretical worst-case, all the way to the 5' end of the chromosome
-     * or contig. (In practice it is unusual that the procedure ever needs to be
+     * or contig. (In practice it is unusual for the procedure to be
      * iterated at all, because overlaps are relatively rare.)
      */
     
-    private static Logger logger = Logger.getLogger(ContextMapDiagram.class);
+    private static final Logger logger = Logger.getLogger(ContextMapDiagram.class);
 
+    /**
+     * Represents half a diagram: either the positive or the negative half.
+     */
     private class Half {
         public int numTracks = 0;
         private Map<Integer,List<Transcript>> tracks = new HashMap<Integer,List<Transcript>>();
@@ -97,7 +100,7 @@ public class ContextMapDiagram {
         }
     }
 
-    private int start, end;
+    private int start, end, locus;
     private String organism, chromosome;
     private Half positiveHalf, negativeHalf;
     
@@ -131,11 +134,12 @@ public class ContextMapDiagram {
      * Users should not call this constructor directly, but use one of the
      * static methods defined below.
      */
-    private ContextMapDiagram(String organism, String chromosome, int start, int end) {
+    private ContextMapDiagram(String organism, String chromosome, int start, int end, int locus) {
         this.organism = organism;
         this.chromosome = chromosome;
         this.start = start;
         this.end = end;
+        this.locus = locus;
     }
 
     /**
@@ -154,13 +158,13 @@ public class ContextMapDiagram {
         int chromosomeLength = gene.getChromosome().getLength();
         
         int start, end;
+        int geneCentre = (gene.getFmin() + gene.getFmax()) / 2;
         if (size > chromosomeLength) {
             logger.info(String.format("Trying to create diagram of size %d for a chromosome of length %d", size, chromosomeLength));
             start = 0;
             end = chromosomeLength;
         }
         else {
-            int geneCentre = (gene.getFmin() + gene.getFmax()) / 2;
             start = geneCentre - (size / 2);
             end = start + size;
             
@@ -177,7 +181,11 @@ public class ContextMapDiagram {
         String organismName = gene.getOrganism();
         String chromosomeName = gene.getChromosomeName();
 
-        return forRegion(basicGeneService, organismName, chromosomeName, start, end);
+        return forRegion(basicGeneService, organismName, chromosomeName, start, end, geneCentre);
+    }
+    
+    public static ContextMapDiagram forChromosome(BasicGeneService basicGeneService, String organismName, String chromosomeName) {
+        return forRegion(basicGeneService, organismName, chromosomeName, 0, Integer.MAX_VALUE, 0);
     }
 
     /**
@@ -194,7 +202,27 @@ public class ContextMapDiagram {
      */
     public static ContextMapDiagram forRegion(BasicGeneService basicGeneService,
             String organismName, String chromosomeName, int start, int end) {
-        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, start, end);
+        return forRegion(basicGeneService, organismName, chromosomeName, start, end, (end - start)/2);
+    }
+    
+    /**
+     * Create a context map diagram for the specified region of the specified
+     * chromosome, with the specified locus.
+     * 
+     * @param basicGeneService A BasicGeneService, used to fetch the genes from
+     *                a data store
+     * @param organismName The common name of the organism
+     * @param chromosomeName The name of the chromosome
+     * @param start The start position (measured in bases from the 5' end)
+     * @param end The end position
+     * @return
+     */
+    public static ContextMapDiagram forRegion(BasicGeneService basicGeneService,
+            String organismName, String chromosomeName, int start, int end, int locus) {
+        
+        assert start <= locus && locus <= end;
+        
+        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, start, end, locus);
                 
         diagram.positiveHalf = diagram.createHalf(basicGeneService, organismName, chromosomeName, +1, start, end);
         diagram.negativeHalf = diagram.createHalf(basicGeneService, organismName, chromosomeName, -1, start, end);
@@ -379,7 +407,7 @@ public class ContextMapDiagram {
      * Find the first gap large enough to contain <code>gapSize</code> entries.
      * 
      * @param filled    the set of unavailable indices
-     * @param gapSize   the size of the required gap, ≥ 1
+     * @param gapSize   the size of the required gap, >= 1
      * @return          the index of the start of the first sufficiently-large gap
      */
     private static int findGap(Set<Integer> filled, int gapSize) {
@@ -393,7 +421,7 @@ public class ContextMapDiagram {
          */
         if (gapSize < 1)
             throw new IllegalArgumentException(String
-                .format("gapSize is %d, must be ≥1", gapSize));
+                .format("gapSize is %d, must be >=1", gapSize));
 
         int currentGapSize = 0;
         for (int i=0; ; i++) {
@@ -420,6 +448,17 @@ public class ContextMapDiagram {
      */
     public int getEnd() {
         return end;
+    }
+    
+    /**
+     * Get the locus of this diagram, i.e. the point of primary interest.
+     * Usually this is the centre of the gene about which the diagram was
+     * created using {@link #forGene}, or the centre of the region created
+     * using {@link #forRegion}
+     * @return the locus location
+     */
+    public int getLocus() {
+        return locus;
     }
     
     /**
