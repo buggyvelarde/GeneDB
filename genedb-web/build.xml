@@ -20,7 +20,7 @@
             <path location="${imported.basedir}/../genedb-access/genedb-access.jar" />
             <path location="${imported.basedir}/../genedb-db/ant-build/jars/chado-interface.jar" />
             <path location="${imported.basedir}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
-            <path location="${imported.basedir}/../genedb-domain/genedb-domain.jar"/>
+            <path location="${imported.basedir}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
             <path location="${imported.basedir}/../genedb-query/ant-build/jars/genedb-query.jar" />
 
             <path location="${lib-dir}/antlr-runtime-3.0.jar"/>
