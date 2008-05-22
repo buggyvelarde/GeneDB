@@ -5,42 +5,46 @@
 	<!-- Paths/Properties you may have to change -->
 	
 	<property file="property-file.${deploy}" />
-	
+	<dirname property="imported.basedir" file="${ant.file.genedb-web}"/>
 	<property name="version" value="0.2"/>
 	<property name="jar-build" value="ant-build/jar-build"/>
-	<property name="lib-dir" value="WebContent/WEB-INF/lib"/>
-	<property name="finaldest.webapps" value="/Users/cp2/tomcat/ROOT"/>
+	<property name="lib-dir" value="${imported.basedir}/../genedb-libs/lib/"/>
+	<property name="in-lib-dir" value="WebContent/WEB-INF/lib"/>
+	<property name="finaldest.webapps" value="/software/pathogen/projects/genedb/cp2/tomcat6/webapps/"/>
 	
 	<!-- Classpaths -->
 	
 	<path id="compile-lib">
-			<path location="${lib-dir}/spring-2.5.jar" />
-			<path location="${lib-dir}/spring-webmvc.jar" />
-			<path location="${lib-dir}/lucene-core-2.2.0.jar" />
-	        <path location="${lib-dir}/genedb-hibernate.jar" />
-	        <path location="${lib-dir}/genedb-access.jar" />
-	        <path location="${lib-dir}/chado-interface.jar" />
-	        <path location="${lib-dir}/genedb-query.jar" />
-	        <path location="${lib-dir}/jstl.jar" />
-	        <path location="${lib-dir}/jdom.jar" />
-	        <path location="${lib-dir}/cgview.jar" />
-	        <path location="${lib-dir}/commons-lang-2.1.jar" />
-	        <path location="${lib-dir}/biojava-psu-1.3-2003-11-04_200041210.jar" />
-	        <path location="${lib-dir}/displaytag-1.1.jar" />
-	        <path location="${lib-dir}/commons-logging.jar" />
-	        <path location="${lib-dir}/ejb3-persistence.jar" />
-			<path location="${lib-dir}/hibernate-annotations.jar" />
-			<path location="lib/servlet-api.jar" />
-			<path location="lib/jsp-api.jar" />
+			<path location="${imported.basedir}/../genedb-domain/genedb-domain.jar"/>
+			<path location="${lib-dir}/spring-2.5.4.jar" />
+			<path location="${lib-dir}/spring-webmvc-2.5.4.jar" />
+			<path location="${lib-dir}/lucene-core-2.3.2.jar" />
+	        <path location="${imported.basedir}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
+	        <path location="${imported.basedir}/../genedb-access/genedb-access.jar" />
+	        <path location="${imported.basedir}/../genedb-db/ant-build/jars/chado-interface.jar" />
+	        <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jstl.jar" />
+			<path location="${lib-dir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" />
+	        <path location="${in-lib-dir}/jdom.jar" />
+	        <path location="${in-lib-dir}/cgview.jar" />
+	        <path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-lang.jar" />
+	        <path location="${in-lib-dir}/biojava-psu-1.3-2003-11-04_200041210.jar" />
+	        <path location="${in-lib-dir}/displaytag-1.1.jar" />
+	        <path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
+	        <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar" />
+			<path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
+			<path location="${lib-dir}/spring-bundle-2.5.4/j2ee/servlet-api.jar" />
+			<path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jsp-api.jar" />
 			<path location="${lib-dir}/antlr-runtime-3.0.jar"/>
-			<path location="${lib-dir}/cglib-2.1.3.jar"/>
-			<path location="${lib-dir}/commons-io.jar"/>
-			<path location="${lib-dir}/poi-3.0.1.jar"/>
-			<path location="${lib-dir}/json_simple.jar"/>
-			<path location="${lib-dir}/jakarta-oro-2.0.8.jar"/>
-			<path location="${lib-dir}/GifEncoder.jar"/>
-			<path location="${lib-dir}/hibernate-search.jar"/>
-			<path location="${lib-dir}/freemarker.jar"/>
+			<path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
+			<path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-io.jar"/>
+			<path location="${lib-dir}/spring-bundle-2.5.4/poi/poi-3.0.1.jar"/>
+			<path location="${in-lib-dir}/jakarta-oro-2.0.8.jar"/>
+			<path location="${in-lib-dir}/GifEncoder.jar"/>
+			<path location="${in-lib-dir}/json_simple.jar"/>
+			<path location="${in-lib-dir}/dwr-2.0rc1.jar"/>
+			<path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
+			<path location="${lib-dir}/spring-bundle-2.5.4/freemarker/freemarker.jar"/>
+			<!-- <path location="${lib-dir}/biojava-1.5-beta2.jar"/> -->
 	</path>
 	
 	<target name="wrong-setup" >
@@ -56,11 +60,44 @@
 	</target>
 	
 
-	<target name="get-latest-jars" depends="" 
-		description="Copy over JAR files from other projects">
-		<copy file="../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="WebContent/WEB-INF/lib" />
-		<copy file="../genedb-db/ant-build/jars/chado-interface.jar" todir="WebContent/WEB-INF/lib" />
-		<copy file="../genedb-access/genedb-access.jar" todir="WebContent/WEB-INF/lib" />
+	<target name="get-latest-jars" description="Copy over JAR files from other projects">
+		<copy file="${imported.basedir}/../genedb-access/genedb-access.jar" todir="${finaldest.webapps}/WEB-INF/lib" />
+		<copy file="${imported.basedir}/../genedb-domain/genedb-domain.jar" todir="${finaldest.webapps}/WEB-INF/lib" />
+		<copy file="${imported.basedir}/../genedb-query/ant-build/jars/genedb-query.jar" todir="${finaldest.webapps}/WEB-INF/lib" />
+		<copy file="${lib-dir}/spring-2.5.4.jar" todir="${finaldest.webapps}/WEB-INF/lib" />
+		<copy file="${lib-dir}/postgresql-8.2dev-501.jdbc3.jar" todir="${finaldest.webapps}/WEB-INF/lib" />
+		<copy file="${lib-dir}/spring-webmvc-2.5.4.jar" todir="${finaldest.webapps}/WEB-INF/lib" />
+		<copy file="${lib-dir}/lucene-core-2.3.2.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/dom4j/jaxen-1.1-beta-7.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+        <copy file="${lib-dir}/spring-bundle-2.5.4/j2ee/jstl.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/jakarta-taglibs/standard.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/j2ee/jta.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+        <copy file="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-lang.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-fileupload.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+        <copy file="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-pool.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+        <copy file="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar" todir="${finaldest.webapps}/WEB-INF/lib" />
+		<copy file="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate3.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/antlr-runtime-3.0.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-io.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/poi/poi-3.0.1.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/spring-bundle-2.5.4/freemarker/freemarker.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${imported.basedir}/../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${imported.basedir}/../genedb-db/ant-build/jars/chado-interface.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/jakarta-oro/jakarta-oro-2.0.8.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/json/json_simple.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/dwr/dwr-2.0rc1.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/displaytag/displaytag-1.1.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/jdom/jdom.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
 	</target>
 	
 	<target name="make-other-projects">
@@ -70,7 +107,7 @@
 		<antcall target="get-latest-jars"/>
 	</target>
 	
-	<target name="make-all-and-deploy" depends="compile, deploy"/>
+	<target name="make-all-and-deploy" depends="compile, deploy,get-latest-jars"/>
 	
 	<!-- ================================= 
           target: compile             
