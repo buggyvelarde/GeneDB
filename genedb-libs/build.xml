@@ -11,6 +11,7 @@
 	<property name="build.dir" value="./ant-build" />
 	<property name="dist.dir" value="${build.dir}/dist" />
 	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="src.dir" value="${build.dir}/src" />
 	
 	<dirname property="imported.basedir" file="${ant.file.genedb-libs}" />
     <property name="libDir" value="${imported.basedir}/lib" />
@@ -45,4 +46,19 @@
 		<delete dir="${build.dir}" includeEmptyDirs="true" />
 	</target>
 		
+    <target name="jar" depends="compile" description="Create an unsigned JAR">
+    	<delete file="${jar-file}" />
+      	<jar jarfile="${jar-file}"
+			basedir="${classes.dir}"
+			manifest="etc/manifest.txt">
+      		<fileset dir="conf" />
+		</jar>
+    </target>
+	
+    <target name="compile" depends="init" description="Compile project">
+      <javac srcdir="${srcDir}" includes="**/*.java" debug="true"
+        destdir="${classes.dir}" classpathref="compilepath">
+      </javac>
+    </target>
+	
 </project>
