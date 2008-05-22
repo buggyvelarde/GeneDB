@@ -5,7 +5,7 @@
 	
 	<!-- If this file is imported into another build.xml, resolve filenames
 	     relative to here rather than the importing project. -->
-	<dirname property="imported.basedir" file="${ant.file.genedb-db}"/>
+	<dirname property="imported.basedir.db" file="${ant.file.genedb-db}"/>
 
 	<!-- Paths/Properties you may have to change -->
 	
@@ -18,50 +18,52 @@
 	<!-- Classpaths -->
 	
 	<path id="tools-interface-compile-lib">
-		<path location="${imported.basedir}/../genedb-libs/lib/hibernate-extras/hibernate-tools.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar"/>
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
+		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-tools.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar"/>
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
 	</path>
 	
 	<path id="tools-hibernate-compile-lib">
 		<path refid="tools-interface-compile-lib" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-2.5.4.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/postgresql-8.2dev-501.jdbc3.jar"/>
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-2.5.4.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/postgresql-8.2dev-501.jdbc3.jar"/>
 	</path>
 	  
 	
 	<path id="tools-hibernate-reveng-lib">
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/freemarker/freemarker.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
-		<path location="${imported.basedir}/lib/jtidy-r8-21122004.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-tools.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/freemarker/freemarker.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
+		<path location="${imported.basedir.db}/lib/jtidy-r8-21122004.jar" />
 	</path>
 	
 	<path id="tools-translate-lib">
-		<path location="${imported.basedir}/lib/retrotranslator-transformer-1.1.0.jar" />
-		<path location="${imported.basedir}/lib/retrotranslator-runtime-1.1.0.jar" />
-		<path location="${imported.basedir}/lib/backport-util-concurrent.jar" />
-		<path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
+		<path location="${imported.basedir.db}/lib/retrotranslator-transformer-1.1.0.jar" />
+		<path location="${imported.basedir.db}/lib/retrotranslator-runtime-1.1.0.jar" />
+		<path location="${imported.basedir.db}/lib/backport-util-concurrent.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
 	</path>
 	
-    <!-- Define extra tasks -->
+    <!-- Define extra tasks 
     <taskdef name="hibernatetool" 
              classname="org.hibernate.tool.ant.HibernateToolTask" 
-             classpathref="tools-hibernate-reveng-lib" />
+             classpathref="tools-hibernate-reveng-lib" /> -->
     
     <taskdef name="retrotranslator"
              classpathref="tools-translate-lib" 
@@ -74,9 +76,9 @@
 	<!-- General building, cleaning, JARing type targets -->
 	
 	<target name="cleanGenerated" >
-		<delete quiet="true" dir="${imported.basedir}/ant-build"/>
+		<delete quiet="true" dir="${imported.basedir.db}/ant-build"/>
 		<delete quiet="true">
-			<fileset dir="${imported.basedir}/out-beta7">
+			<fileset dir="${imported.basedir.db}/out-beta7">
 				<include name="org/genedb/**/*.java"/>
 				<exclude name="**/Feature.java"/>
 			</fileset>
@@ -84,39 +86,40 @@
 	</target>
 	
 	
-	<target name="clean-build" >
-		<delete dir="${imported.basedir}/ant-build"/>
+	<target name="clean-build-db" >
+		<delete dir="${imported.basedir.db}/ant-build"/>
 	</target>
 	
-	<target name="setup" >
-		<mkdir dir="${imported.basedir}/ant-build" />
-		<mkdir dir="${imported.basedir}/ant-build/src-interface" />
-		<mkdir dir="${imported.basedir}/ant-build/classes-interface" />
-		<mkdir dir="${imported.basedir}/ant-build/src-implementation" />
-		<mkdir dir="${imported.basedir}/ant-build/classes-implementation" />
-		<mkdir dir="${imported.basedir}/ant-build/src-1.4-interface" />
-		<mkdir dir="${imported.basedir}/ant-build/classes-1.4-interface-pre" />
-		<mkdir dir="${imported.basedir}/ant-build/classes-1.4-interface-post" />
-		<mkdir dir="${imported.basedir}/ant-build/jars" />
+	<target name="setup-db" >
+		<mkdir dir="${imported.basedir.db}/ant-build" />
+		<mkdir dir="${imported.basedir.db}/ant-build/src-interface" />
+		<mkdir dir="${imported.basedir.db}/ant-build/classes-interface" />
+		<mkdir dir="${imported.basedir.db}/ant-build/src-implementation" />
+		<mkdir dir="${imported.basedir.db}/ant-build/classes-implementation" />
+		<mkdir dir="${imported.basedir.db}/ant-build/src-1.4-interface" />
+		<mkdir dir="${imported.basedir.db}/ant-build/classes-1.4-interface-pre" />
+		<mkdir dir="${imported.basedir.db}/ant-build/classes-1.4-interface-post" />
+		<mkdir dir="${imported.basedir.db}/ant-build/jars" />
 	</target>
 	
 	
 	<!-- ================================= 
           target: make-interface              
          ================================= -->
-    <target name="make-interface" depends="setup" 
+    <target name="make-interface" depends="setup-db" 
     	description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
-		<copy todir="${imported.basedir}/ant-build/src-interface">
-			<fileset dir="${imported.basedir}/src">
+		<copy todir="${imported.basedir.db}/ant-build/src-interface">
+			<fileset dir="${imported.basedir.db}/src">
 			    <include name="org/gmod/schema/**/*.java"/>
+				<include name="org/genedb/db/helpers/LocationBridge.java"/>
 			</fileset>
 		</copy>
     	
-		<javac srcdir="${imported.basedir}/ant-build/src-interface" classpathref="tools-interface-compile-lib" destdir="${imported.basedir}/ant-build/classes-interface" debug="on" />
+		<javac srcdir="${imported.basedir.db}/ant-build/src-interface" classpathref="tools-interface-compile-lib" destdir="${imported.basedir.db}/ant-build/classes-interface" debug="on" />
     	
-		<jar jarfile="${imported.basedir}/ant-build/jars/chado-interface.jar">
-			<fileset dir="${imported.basedir}/ant-build/classes-interface" />
+		<jar jarfile="${imported.basedir.db}/ant-build/jars/chado-interface.jar">
+			<fileset dir="${imported.basedir.db}/ant-build/classes-interface" />
 			<manifest>
 				<attribute name="Implementation-Title" value="Chado Interface"/>
 				<attribute name="Implementation-Version" value="${version}"/>
@@ -132,22 +135,22 @@
     <target name="make-hibernate3-implementation" depends="make-interface" 
     	description="--> Make JAR file with a Hibernate3.2 implementation of the chado/JDK1.5+ interface">
 
-		<copy todir="${imported.basedir}/ant-build/src-implementation">
-			<fileset dir="${imported.basedir}/src">
+		<copy todir="${imported.basedir.db}/ant-build/src-implementation">
+			<fileset dir="${imported.basedir.db}/src">
 			    <include name="org/genedb/**/*.java"/>
 			</fileset>
 		</copy>
 		
-		<javac srcdir="${imported.basedir}/ant-build/src-implementation" destdir="${imported.basedir}/ant-build/classes-implementation" debug="on">
+		<javac srcdir="${imported.basedir.db}/ant-build/src-implementation" destdir="${imported.basedir.db}/ant-build/classes-implementation" debug="on">
 			<classpath refid="tools-hibernate-compile-lib" />
-			<classpath path="${imported.basedir}/ant-build/classes-interface" />	
+			<classpath path="${imported.basedir.db}/ant-build/classes-interface" />	
 		</javac>
     	
-		<jar jarfile="${imported.basedir}/ant-build/jars/genedb-hibernate.jar">
-			<fileset dir="${imported.basedir}/ant-build/classes-implementation">
+		<jar jarfile="${imported.basedir.db}/ant-build/jars/genedb-hibernate.jar">
+			<fileset dir="${imported.basedir.db}/ant-build/classes-implementation">
 				<include name="**/*.class"/>
 			</fileset>
-			<fileset dir="${imported.basedir}/input">
+			<fileset dir="${imported.basedir.db}/input">
 			    <include name="org/gmod/**/*.hbm.xml" />
 			</fileset>
 			<manifest>
@@ -162,35 +165,35 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: make-1.4-interface-jar                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="make-1.4-interface-jar" depends="setup" 
+    <target name="make-1.4-interface-jar" depends="setup-db" 
     	description="Prepare a JDK1.4 compatible version of the chado/Java interface" >
     	
-		<copy todir="${imported.basedir}/ant-build/src-1.4-interface">
-			<fileset dir="${imported.basedir}/src">
+		<copy todir="${imported.basedir.db}/ant-build/src-1.4-interface">
+			<fileset dir="${imported.basedir.db}/src">
 			    <include name="org/gmod/schema/**/*.java"/>
+				<exclude name="org/gmod/schema/**/Gene.java"/>
 			</fileset>
 		</copy>
 
 		<replaceregexp byline="true">
 			<regexp pattern="^\s*@[A-Z].*$|^import( static)? javax.persistence.*$|^import org.hibernate.*$" />
 			<substitution expression="" />
-			<fileset dir="${imported.basedir}/ant-build/src-1.4-interface" />
+			<fileset dir="${imported.basedir.db}/ant-build/src-1.4-interface" />
 		</replaceregexp>
-    	
 
-		<javac srcdir="${imported.basedir}/ant-build/src-1.4-interface" destdir="${imported.basedir}/ant-build/classes-1.4-interface-pre" debug="on">
+		<javac srcdir="${imported.basedir.db}/ant-build/src-1.4-interface" destdir="${imported.basedir.db}/ant-build/classes-1.4-interface-pre" debug="on">
 			<classpath refid="tools-interface-compile-lib"/>
 		</javac>
     	
- 	    <retrotranslator destdir="${imported.basedir}/ant-build/classes-1.4-interface-post" verify="true">
-	        <src path="${imported.basedir}/ant-build/classes-1.4-interface-pre"/>
-	        <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/>
-	        <!--<classpath location="/software/pathogen/external/applications/java/jdk1.6.0/jre/lib/rt.jar"/>-->
+ 	    <retrotranslator destdir="${imported.basedir.db}/ant-build/classes-1.4-interface-post" verify="true">
+	        <src path="${imported.basedir.db}/ant-build/classes-1.4-interface-pre"/>
+ 	    	<!--<classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Classes/classes.jar"/>-->
+	        <classpath location="/software/pathogen/external/applications/java/jdk1.6.0/jre/lib/rt.jar"/>
 	        <classpath refid="tools-translate-lib"/>
 	    </retrotranslator>
     	
-		<jar jarfile="${imported.basedir}/ant-build/jars/chado-14-interface.jar">
-			<fileset dir="${imported.basedir}/ant-build/classes-1.4-interface-post" />
+		<jar jarfile="${imported.basedir.db}/ant-build/jars/chado-14-interface.jar">
+			<fileset dir="${imported.basedir.db}/ant-build/classes-1.4-interface-post" />
 			<manifest>
 				<attribute name="Implementation-Title" value="Chado 1.4 Interface"/>
 				<attribute name="Implementation-Version" value="0.3"/>
@@ -199,20 +202,20 @@
     </target>	
     
 	
-	<!-- Hibernate reverse engineering targets -->
+	<!-- Hibernate reverse engineering targets 
 	
 	<target name="generate-classes">
-	<hibernatetool destdir="${imported.basedir}/out-beta7">
-	 <!--<classpath>
-	  <path location="${imported.basedir}/input"/>
+	<hibernatetool destdir="${imported.basedir.db}/out-beta7">
+	 <<classpath>
+	  <path location="${imported.basedir.db}/input"/>
 	 	<path location="input/org/genedb/db/hibernate3gen" />
-	 </classpath>-->
+	 </classpath>>
 		 <classpath>
-	      <path location="${imported.basedir}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
-		  <path location="${imported.basedir}/bin"/>
+	      <path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
+		  <path location="${imported.basedir.db}/bin"/>
 		 </classpath>
 		<jdbcconfiguration
-			configurationfile="${imported.basedir}/out-beta7/hibernate.cfg.xml"
+			configurationfile="${imported.basedir.db}/out-beta7/hibernate.cfg.xml"
 		  packagename="org.genedb.db.beta7"
 		  revengfile="hibernate.reveng.xml"
 		  reversestrategy="org.genedb.db.hibernate2.MyStrategy"
@@ -220,12 +223,12 @@
 		  detectoptimisticlock="false" 
 		>
 		</jdbcconfiguration>
-	 <!--<configuration configurationfile="input/org/genedb/db/hibernate3gen/hibernate.cfg.xml"/> -->
-		<hbm2hbmxml destdir="${imported.basedir}/out-beta7/hbm" />
+	 <!<configuration configurationfile="input/org/genedb/db/hibernate3gen/hibernate.cfg.xml"/> >
+		<hbm2hbmxml destdir="${imported.basedir.db}/out-beta7/hbm" />
 	 <hbm2ddl export="false" outputfilename="sql.dll" />
 	 <hbm2java jdk5="true" ejb3="true" />
 	</hibernatetool>
-   	</target>
+   	</target> -->
 	
 
 	
@@ -233,13 +236,13 @@
 	
 
 	
-	<target name="fulljar" depends="cleanGenerated,generate-classes" 
+	<target name="fulljar" depends="cleanGenerated" 
 		description="Create full JAR file with all Hibernate classes">
 
 		<delete file="genedb-hibernate.jar"/>
 
 		<jar jarfile="genedb-hibernate.jar">
-			<fileset dir="${imported.basedir}/bin" />
+			<fileset dir="${imported.basedir.db}/bin" />
 			<manifest>
 				<attribute name="Implementation-Title" value="GeneDB Hibernate"/>
 				<attribute name="Implementation-Version" value="0.1"/>
@@ -331,7 +334,7 @@
 	
 	
 	<target name="alljars" description="Create all 1.4/1.5+ JAR files with interface/implementation split"
-		depends="clean-build,make-interface, make-hibernate3-implementation, make-1.4-interface-jar">
+		depends="clean-build-db,make-interface, make-hibernate3-implementation, make-1.4-interface-jar">
 		
 	</target>
 	
