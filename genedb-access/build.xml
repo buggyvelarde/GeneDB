@@ -1,45 +1,60 @@
 <?xml version="1.0"?>
 
 <project name="genedb-access" default="genedb-access.jar" basedir=".">
+
+        <!-- If this file is imported into another build.xml, resolve filenames
+             relative to here rather than the importing project. -->
+        <dirname property="imported.basedir.access" file="${ant.file.genedb-access}"/>
 	
 	<property file="property-file.${load}" />
 	
+	<path id="libs">
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/asm/asm-2.2.3.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-pool.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/j2ee/jta.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/postgresql-8.2dev-501.jdbc3.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/spring-2.5.4.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/biojava-1.4.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/bytecode-0.91.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/dom4j-1.6.1.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/saxon8.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/saxon8-xom.jar"/>
+        <path location="${imported.basedir.access}/../genedb-libs/lib/xom-1.0.jar"/>
+	</path>
+	
 	<target name="get-latest-jars" depends="" 
 		description="Copy over JAR files from other projects">
-		<copy file="../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="lib" />
-		<copy file="../genedb-db/ant-build/jars/chado-interface.jar" todir="lib" />
+		<copy file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="lib" />
+		<copy file="${imported.basedir.access}/../genedb-db/ant-build/jars/chado-interface.jar" todir="lib" />
 	</target>
 	
 	<target name="compile">
-		<javac srcdir="src" destdir="ant-build/classes" debug="true">
-			<classpath path="lib/chado-interface.jar"/>
-			<classpath path="lib/biojava-1.4.jar"/>
-			<classpath path="lib/commons-logging.jar"/>
-			<classpath path="lib/persistence.jar"/>
-			<classpath path="lib/hibernate-annotations.jar"/>
-			<classpath path="lib/hibernate3.jar"/>
-			<classpath path="lib/genedb-hibernate.jar"/>
-			<classpath path="lib/spring-2.1-m3.jar"/>
-			<classpath path="lib/saxon8.jar"/>
-			<classpath path="lib/saxon8-xom.jar"/>
-			<classpath path="lib/xom-1.0.jar"/>
-		</javac>
+		<javac srcdir="src" destdir="${imported.basedir.access}/ant-build/classes" debug="true" classpathref="libs"/>
 	</target>
 	
 	<target name="replace">
-		<copy file="property-file.${load}" tofile="resources/project.properties" />
+		<copy file="property-file.${load}" tofile="${imported.basedir.access}/resources/project.properties" />
 	</target>
 	
 	<target name="genedb-access.jar" depends="compile" description="Create JAR file">
-		<delete file="genedb-access.jar"/>
+		<delete file="${imported.basedir.access}/genedb-access.jar"/>
 		
-		<copy todir="ant-build/jar">
-			<fileset dir="ant-build/classes" />
-			<fileset dir="resources" />
+		<copy todir="${imported.basedir.access}/ant-build/jar">
+			<fileset dir="${imported.basedir.access}/ant-build/classes" />
+			<fileset dir="${imported.basedir.access}/resources" />
 		</copy>
 		
-		<jar jarfile="genedb-access.jar">
-			<fileset dir="ant-build/jar" />
+		<jar jarfile="${imported.basedir.access}/genedb-access.jar">
+			<fileset dir="${imported.basedir.access}/ant-build/jar" />
 			<manifest>
 				<attribute name="Implementation-Title" value="GeneDB Loading"/>
 				<attribute name="Implementation-Version" value="0.1"/>
@@ -49,9 +64,9 @@
 	</target>
 	
 	<path id="exec-classpath">
-		<fileset file="lib/*.jar" />
-		<fileset file="genedb-access.jar" />
-		<fileset dir="resources/"/>
+		<fileset file="${imported.basedir.access}/lib/*.jar" />
+		<fileset file="${imported.basedir.access}/genedb-access.jar" />
+		<fileset dir="${imported.basedir.access}/resources/"/>
 	</path>
 	
 	<target name="load-goAssociation" depends="genedb-access.jar">
