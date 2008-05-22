@@ -6,6 +6,9 @@
 	
 	<property file="property-file.${deploy}" />
 	<dirname property="imported.basedir" file="${ant.file.genedb-web}"/>
+	<import file="${imported.basedir}/../genedb-access/build.xml"/>
+	<import file="${imported.basedir}/../genedb-query/build.xml"/>
+	<import file="${imported.basedir}/../genedb-domain/build.xml"/>
 	<property name="version" value="0.2"/>
 	<property name="jar-build" value="ant-build/jar-build"/>
 	<property name="lib-dir" value="${imported.basedir}/../genedb-libs/lib/"/>
@@ -24,11 +27,8 @@
 	        <path location="${imported.basedir}/../genedb-db/ant-build/jars/chado-interface.jar" />
 	        <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jstl.jar" />
 			<path location="${lib-dir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" />
-	        <path location="${in-lib-dir}/jdom.jar" />
-	        <path location="${in-lib-dir}/cgview.jar" />
 	        <path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-lang.jar" />
-	        <path location="${in-lib-dir}/biojava-psu-1.3-2003-11-04_200041210.jar" />
-	        <path location="${in-lib-dir}/displaytag-1.1.jar" />
+	        <path location="${lib-dir}/displaytag-1.1.jar" />
 	        <path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
 	        <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar" />
 			<path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
@@ -38,10 +38,6 @@
 			<path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
 			<path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-io.jar"/>
 			<path location="${lib-dir}/spring-bundle-2.5.4/poi/poi-3.0.1.jar"/>
-			<path location="${in-lib-dir}/jakarta-oro-2.0.8.jar"/>
-			<path location="${in-lib-dir}/GifEncoder.jar"/>
-			<path location="${in-lib-dir}/json_simple.jar"/>
-			<path location="${in-lib-dir}/dwr-2.0rc1.jar"/>
 			<path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
 			<path location="${lib-dir}/spring-bundle-2.5.4/freemarker/freemarker.jar"/>
 			<!-- <path location="${lib-dir}/biojava-1.5-beta2.jar"/> -->
@@ -93,21 +89,21 @@
 		<copy file="${lib-dir}/spring-bundle-2.5.4/freemarker/freemarker.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
 		<copy file="${imported.basedir}/../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
 		<copy file="${imported.basedir}/../genedb-db/ant-build/jars/chado-interface.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
-		<copy file="${lib-dir}/jakarta-oro/jakarta-oro-2.0.8.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
-		<copy file="${lib-dir}/json/json_simple.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
-		<copy file="${lib-dir}/dwr/dwr-2.0rc1.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
-		<copy file="${lib-dir}/displaytag/displaytag-1.1.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
-		<copy file="${lib-dir}/jdom/jdom.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/jakarta-oro-2.0.8.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/json_simple.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/dwr-2.0rc1.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/displaytag-1.1.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
+		<copy file="${lib-dir}/jdom.jar" todir="${finaldest.webapps}/WEB-INF/lib"/>
 	</target>
 	
 	<target name="make-other-projects">
-		<ant dir="../genedb-db" target="alljars" />
-		<ant dir="../genedb-access" target="get-latest-jars" />
-		<ant dir="../genedb-access" target="genedb-access.jar" />
+		<antcall target="genedb-access.genedb-access.jar"/>
+		<antcall target="genedb-query.fulljar-query"/>
+		<antcall target="genedb-query.fulljar-query"/>
 		<antcall target="get-latest-jars"/>
 	</target>
 	
-	<target name="make-all-and-deploy" depends="compile, deploy,get-latest-jars"/>
+	<target name="make-all-and-deploy" depends="make-other-projects,compile, deploy,get-latest-jars"/>
 	
 	<!-- ================================= 
           target: compile             
