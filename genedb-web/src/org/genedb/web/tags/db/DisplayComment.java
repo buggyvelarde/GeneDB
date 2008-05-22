@@ -33,8 +33,7 @@ public class DisplayComment extends SimpleTagSupport {
 				}
 				if(comments.size() > 0) {
 	 				JspWriter out = getJspContext().getOut();
-					out.println("<font style=\"align: center;\">Comment</font>");
-					out.println("<ul style=\"text-align: left;\">");
+					out.println("<ul style=\"display: block;text-align: left;\">");
 					for (String comment : comments) {
 						out.println("<li>" + comment + "</li>");
 					}

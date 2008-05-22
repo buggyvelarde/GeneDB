@@ -29,7 +29,7 @@ public class DisplayControlledCuration extends SimpleTagSupport{
     public void doTag() throws JspException, IOException {
 		if (polypeptide != null) {
 			Collection<FeatureCvTerm> listFeatCvTerm = polypeptide.getFeatureCvTerms();	
-			System.out.println("featureCvTerm Collection size is " + listFeatCvTerm.size());
+			//System.out.println("featureCvTerm Collection size is " + listFeatCvTerm.size());
 			JspWriter out = getJspContext().getOut();
 			int totalRows = 0;
 			List<FeatureCvTerm> controlledCuration = new ArrayList<FeatureCvTerm>();
@@ -38,15 +38,15 @@ public class DisplayControlledCuration extends SimpleTagSupport{
 			List<Integer> otherGenes = new ArrayList<Integer>();
 			for (FeatureCvTerm featCvTerm : listFeatCvTerm) {
 				if("CC_genedb_controlledcuration".equals(featCvTerm.getCvTerm().getCv().getName())){
-					System.out.println(featCvTerm.getCvTerm().getName());
+					//System.out.println(featCvTerm.getCvTerm().getName());
 					controlledCuration.add(totalRows, featCvTerm);
 					int totalQualifier = 0;
 					HashMap<Integer,FeatureCvTermProp> props = new HashMap<Integer,FeatureCvTermProp>();
 					for(FeatureCvTermProp featCvTermProp : featCvTerm.getFeatureCvTermProps()){
-						System.out.println("prop value is : " + featCvTermProp.getValue());
+						//System.out.println("prop value is : " + featCvTermProp.getValue());
 						if("qualifier".equals(featCvTermProp.getCvTerm().getName())){
 							props.put(1 + totalQualifier,featCvTermProp);
-							System.out.println("count " + totalQualifier + " value " + featCvTermProp.getValue());
+							//System.out.println("count " + totalQualifier + " value " + featCvTermProp.getValue());
 							totalQualifier++;
 						}
 					
@@ -65,10 +65,10 @@ public class DisplayControlledCuration extends SimpleTagSupport{
 			if (totalRows > 0){
 				out.println("<table width=\"100%\" cellpadding=\"2\" cellspacing=\"2\">");
 				out.println("<tr>");
-				out.println("<th>Term</th>");
-				out.println("<th>DbXRef/URL</th>");
-				out.println("<th>Qualifier</th>");
-				out.println("<th>Other genes annotated to this term</th>");
+				out.println("<th class=\"c\">Term</th>");
+				out.println("<th class=\"c\">DbXRef/URL</th>");
+				out.println("<th class=\"c\">Qualifier</th>");
+				out.println("<th class=\"c\">Other genes annotated to this term</th>");
 				out.println("</tr>");
 				System.out.println("total rows is " + totalRows);
 				for (int i=0;i<totalRows;i++) {
