@@ -22,6 +22,7 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -61,10 +62,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author Adrian Tivey (art)
  */
 public class NamedFeatureController extends TaxonNodeBindingFormController {
-
+	
+	private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
+	
     private String listResultsView;
     private SequenceDao sequenceDao;
-    private Grep grep;
     private LuceneDao luceneDao;
 
     @Override
@@ -89,14 +91,14 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
                 // Temporary check as the Lucene db isn't automatically
                 // up-to-date
                 if (directDbCheck(name)) {
-                    prepareGene(name, model);
+                    model = GeneDBWebUtils.prepareGene(name, model);
                     viewName = "features/gene";
                     break;
                 }
                 be.reject("No Result");
                 return showForm(request, response, be);
             case 1:
-                prepareGene(hits.doc(0).get("uniqueName"), model);
+            	model = GeneDBWebUtils.prepareGene(hits.doc(0).get("uniqueName"), model);
                 viewName = "features/gene";
                 break;
             default:
@@ -141,113 +143,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         return false;
     }
 
-    private void prepareGene(String systematicId, Map<String, Object> model) throws IOException {
-        String type = "gene";
-        Feature gene = sequenceDao.getFeatureByUniqueName(systematicId, type);
-        prepareArtemisHistory(systematicId, model);
-        model.put("feature", gene);
-        model.put("luceneDao", luceneDao); // FIXME Really part of model? -rh11
-
-        Feature mRNA = null;
-        Collection<FeatureRelationship> frs = gene.getFeatureRelationshipsForObjectId();
-        if (frs != null) {
-            for (FeatureRelationship fr : frs) {
-                mRNA = fr.getFeatureBySubjectId();
-                break;
-            }
-            if (mRNA != null) {
-                Feature polypeptide = null;
-                Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId();
-                for (FeatureRelationship fr : frs2) {
-                    Feature f = fr.getFeatureBySubjectId();
-                    if ("polypeptide".equals(f.getCvTerm().getName())) {
-                        polypeptide = f;
-                    }
-                }
-                model.put("transcript", mRNA);
-                model.put("polypeptide", polypeptide);
-                PeptideProperties pp = calculatePepstats(polypeptide);
-                model.put("polyprop", pp);
-            }
-        }
-    }
-
-    /**
-     * Grep all references to the given id from a logfile, and remove usernames
-     * etc and verbose info
-     * 
-     * @param systematicId
-     *                the genename
-     * @param model
-     *                the model returned to the view
-     * @throws IOException
-     *                 if the log file can't be read
-     */
-    private void prepareArtemisHistory(String systematicId, Map<String, Object> model)
-            throws IOException {
-        grep.compile("ID=" + systematicId);
-        List<String> out = grep.grep();
-        List<String> filtered = new ArrayList<String>(out.size());
-        for (String s : out) {
-            s = s.trim();
-            s = s.replace("uk.ac.sanger.artemis.chado.ChadoTransactionManager", "");
-            s = s.replace("[AWT-EventQueue-0]", "");
-            s = s.replaceAll("\\d+\\.\\d+\\.\\d+\\.\\d+\\s+\\d+", "");
-            s = s.replaceAll("\\S+@\\S+", "uname");
-            s = "&nbsp;&nbsp;&nbsp;" + s;
-            filtered.add(s);
-        }
-        model.put("modified", filtered);
-    }
-
-    private PeptideProperties calculatePepstats(Feature polypeptide) {
-
-        // String seqString = FeatureUtils.getResidues(polypeptide);
-        if (polypeptide.getResidues() == null) {
-            logger.warn("No residues for '" + polypeptide.getUniqueName() + "'");
-            return null;
-        }
-        String seqString = new String(polypeptide.getResidues());
-        // System.err.println(seqString);
-        Alphabet protein = ProteinTools.getAlphabet();
-        SymbolTokenization proteinToke = null;
-        SymbolList seq = null;
-        PeptideProperties pp = new PeptideProperties();
-        try {
-            proteinToke = protein.getTokenization("token");
-            seq = new SimpleSymbolList(proteinToke, seqString);
-        } catch (BioException e) {
-            logger.error("Can't translate into a protein sequence");
-            // pp.setWarning("Unable to translate protein"); // FIXME
-            return pp;
-        }
-        IsoelectricPointCalc ipc = new IsoelectricPointCalc();
-        Double cal = 0.0;
-        try {
-            cal = ipc.getPI(seq, false, false);
-        } catch (IllegalAlphabetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (BioException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        DecimalFormat df = new DecimalFormat("#.##");
-        pp.setIsoelectricPoint(df.format(cal));
-        pp.setAminoAcids(Integer.toString(seqString.length()));
-        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS, false);
-        try {
-            cal = mc.getMass(seq) / 1000;
-        } catch (IllegalSymbolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        pp.setMass(df.format(cal));
-
-        // cal = WebUtils.getCharge(seq);
-        pp.setCharge(df.format(cal));
-        return pp;
-    }
+    
 
     public void setLuceneDao(LuceneDao luceneDao) {
         this.luceneDao = luceneDao;
@@ -259,10 +155,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
-    }
-
-    public void setGrep(Grep grep) {
-        this.grep = grep;
     }
 }
 
