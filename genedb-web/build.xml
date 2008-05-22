@@ -13,7 +13,6 @@
     <property name="jar-build" value="ant-build/jar-build"/>
     <property name="lib-dir" value="${imported.basedir}/../genedb-libs/lib/"/>
     <property name="in-lib-dir" value="WebContent/WEB-INF/lib"/>
-    <property name="finaldest.webapps" value="/software/pathogen/projects/genedb/cp2/tomcat6/webapps/"/>
     
     <!-- Classpaths -->
     
@@ -87,8 +86,7 @@
     <target name="make-other-projects">
         <antcall target="genedb-access.genedb-access.jar"/>
         <antcall target="genedb-query.fulljar-query"/>
-        <antcall target="genedb-query.fulljar-query"/>
-        <antcall target="get-latest-jars"/>
+        <antcall target="genedb-domain.fulljar-domain"/>
     </target>
     
     <target name="make-all-and-deploy" depends="make-other-projects,compile, deploy,get-latest-jars"/>
