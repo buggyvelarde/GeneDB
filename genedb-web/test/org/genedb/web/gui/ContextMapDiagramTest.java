@@ -200,7 +200,7 @@ public class ContextMapDiagramTest {
                     
                     assertEquals(expectedTranscriptName, transcript.getName());
                 }
-                assertEquals(expectedGeneName, transcript.getGene().displayName());
+                assertEquals(expectedGeneName, transcript.getGene().getDisplayName());
             }
         }
     }
