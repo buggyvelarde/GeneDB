@@ -3,11 +3,10 @@ package org.genedb.web.mvc.controller;
 import static org.genedb.web.mvc.controller.WebConstants.CRUMB;
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 
+import org.apache.log4j.Logger;
 import org.genedb.db.loading.TaxonNode;
 import org.genedb.db.loading.TaxonNodeArrayPropertyEditor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -30,14 +29,14 @@ import javax.servlet.http.HttpServletResponse;
  * @author Adrian Tivey
  */
 public class HomepageController extends AbstractController {
-
+	
     private static String HOMEPAGE = "homepages/";
     private static String DEFAULT_HOMEPAGE = HOMEPAGE + "frontPage1";
     private static String DEFAULT_STYLE = "childListing"; // FIXME
    
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
     
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = Logger.getLogger(this.getClass());
 
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
