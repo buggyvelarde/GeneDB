@@ -3,7 +3,7 @@
 	<dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
 	
 	<target name="clean-build-util" >
-		<delete dir="${imported.basedir.util}/ant-build"/>
+		<delete dir="${imported.basedir.util}/ant-build" quiet="true"/>
 	</target>
 		
 	<target name="setup-util" >
