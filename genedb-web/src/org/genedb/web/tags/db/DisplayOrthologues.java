@@ -28,49 +28,47 @@ public class DisplayOrthologues extends SimpleTagSupport {
 
     @Override
     public void doTag() throws JspException, IOException {
-        if (polypeptide != null) {
-            Map<String, Integer> clusters = new HashMap<String, Integer>();
-            Map<String, String> orthologs = new HashMap<String, String>();
-            Collection<FeatureRelationship> featureRels = polypeptide
-                    .getFeatureRelationshipsForSubjectId();
-            for (FeatureRelationship featRel : featureRels) {
-                if ("orthologous_to".equals(featRel.getCvTerm().getName())) {
-                    Feature feat = featRel.getFeatureByObjectId();
-                    if ("protein_match".equals(feat.getCvTerm().getName())) {
-                        int cluster = feat.getFeatureRelationshipsForObjectId().size();
-                        clusters.put(feat.getUniqueName(), cluster);
-                        logger.info(String.format("cluster name - %s  %d others", feat.getUniqueName(), cluster));
-                    } else {
-                        String name = feat.getUniqueName();
-                        Collection<FeatureCvTerm> featCVTerms = feat.getFeatureCvTerms();
-                        for (FeatureCvTerm featureCvt : featCVTerms) {
-                            CvTerm cvTerm = featureCvt.getCvTerm();
-                            if ("genedb_products".equals(cvTerm.getCv().getName())) {
-                                String product = cvTerm.getName();
-                                orthologs.put(name, product);
-                            }
+        if (polypeptide == null)
+            return;
+        
+        Map<String, Integer> clusterSizes = new HashMap<String, Integer>();
+        Map<String, String> orthologs = new HashMap<String, String>();
+        Collection<FeatureRelationship> featureRels = polypeptide
+                .getFeatureRelationshipsForSubjectId();
+        for (FeatureRelationship featRel : featureRels) {
+            if ("orthologous_to".equals(featRel.getCvTerm().getName())) {
+                Feature feat = featRel.getFeatureByObjectId();
+                if ("protein_match".equals(feat.getCvTerm().getName())) {
+                    int clusterSize = feat.getFeatureRelationshipsForObjectId().size();
+                    clusterSizes.put(feat.getUniqueName(), clusterSize);
+                    logger.info(String.format("cluster name - %s  %d others", feat.getUniqueName(),
+                        clusterSize));
+                } else {
+                    for (FeatureCvTerm featureCvt : feat.getFeatureCvTerms()) {
+                        CvTerm cvTerm = featureCvt.getCvTerm();
+                        if ("genedb_products".equals(cvTerm.getCv().getName())) {
+                            String product = cvTerm.getName();
+                            orthologs.put(feat.getUniqueName(), product);
                         }
                     }
                 }
             }
-            PrintWriter out = new PrintWriter(getJspContext().getOut(), true);
-            out.println("<ul style=\"display: block;text-align: left;\">");
-            for (Map.Entry<String,Integer> entry: clusters.entrySet()) {
-                String name = entry.getKey();
-                int size = entry.getValue();
-                out.printf("<li> %s <a href=\"./Orthologs?cluster=%1$s\"> %d others </a>",
-                    name, size);
-            }
-            out.println("</ul>");
-            out.println("<ul style=\"display: block;text-align: left;\">");
-            for (Map.Entry<String, String> entry : orthologs.entrySet()) {
-                String name = entry.getKey();
-                String product = entry.getValue();
-                out.printf("<li> <a href=\"./NamedFeature?name=%s\"> %1$s </a> %s",
-                    name, product);
-            }
-            out.println("</ul>");
         }
+        PrintWriter out = new PrintWriter(getJspContext().getOut(), true);
+        out.println("<ul style=\"display: block;text-align: left;\">");
+        for (Map.Entry<String, Integer> entry : clusterSizes.entrySet()) {
+            String name = entry.getKey();
+            int size = entry.getValue();
+            out.printf("<li> %s <a href=\"./Orthologs?cluster=%1$s\"> %d others </a>", name, size);
+        }
+        out.println("</ul>");
+        out.println("<ul style=\"display: block;text-align: left;\">");
+        for (Map.Entry<String, String> entry : orthologs.entrySet()) {
+            String name = entry.getKey();
+            String product = entry.getValue();
+            out.printf("<li> <a href=\"./NamedFeature?name=%s\"> %1$s </a> %s", name, product);
+        }
+        out.println("</ul>");
     }
 
     public void setPolypeptide(Feature polypeptide) {
