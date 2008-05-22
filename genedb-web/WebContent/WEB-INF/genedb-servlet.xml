@@ -46,7 +46,7 @@
     </bean>
 	
 	<bean id="grep" class="org.genedb.web.utils.Grep">
-		<property name="file" value="/software/pathogen/projects/genedb/artemis-logs/remote_logs/combinedAll"/>
+		<property name="file" value="/dev/null"/>
 	</bean>
 	
 	<bean id="nameBrowse" class="org.genedb.web.mvc.controller.BrowseBeanName">
@@ -59,12 +59,6 @@
 	</bean>
     <dwr:controller id="dwrController" debug="true"/>
 
-    <dwr:configuration>
-       <!-- <dwr:create type="new" javascript="AjaxHelper" class="com.interface21.springone.AjaxHelper"/>
-        <dwr:convert type="bean" class="com.interface21.springone.data.Person"/> -->
-    </dwr:configuration>
-
-
 	<!--
 	  - This bean provides explicit View mappings in a resource bundle instead of the
 	  - default InternalResourceViewResolver. It fetches the view mappings from
@@ -75,11 +69,6 @@
 	  - using the respective properties file, which defines arbitrary mappings between
 	  - view names and resources.
 	  -->
-<!--	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">-->
-<!--		<property name="basename" value="views"/>-->
-<!--		<property name="order" value="5" />-->
-<!--	</bean>-->
-
 	<bean id="checkingViewResolver" class="org.genedb.web.mvc.controller.FileCheckingInternalResourceViewResolver" init-method="postConstruction">
 		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
 		<property name="prefix" value="/WEB-INF/jsp/" />
@@ -134,11 +123,11 @@
 	 -->
 	<bean id="urlMapping" class="org.genedb.web.mvc.controller.CaseSensitiveControllerClassNameHandlerMapping">
 		<property name="alwaysUseFullPath" value="true" />
-		 <property name="interceptors">
-      <list>
-        <ref bean="openSessionInView"/>
-      </list>
-    </property>
+		<property name="interceptors">
+	      <list>
+	        <ref bean="openSessionInView"/>
+	      </list>
+	    </property>
 	</bean>
 
 
@@ -217,7 +206,7 @@
     </bean>
        
     <bean id="pfamLookup" class="org.genedb.web.mvc.controller.PfamLookup" /> 
-       
+    
     <bean id="StaticController" class="org.genedb.web.mvc.controller.StaticController"/>
     
     <bean id="GoFeatureController" class="org.genedb.web.mvc.controller.GoFeatureController">
@@ -265,11 +254,7 @@
     </bean>
     
     <bean name="historyManagerFactory" class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
-    
-    <bean name="webUtils" class="org.genedb.web.mvc.controller.GeneDBWebUtils">
-		<property name="sequenceDao" ref="sequenceDao"/>
-	</bean>
-	
+    	
     <bean id="NamedFeatureController" class="org.genedb.web.mvc.controller.NamedFeatureController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
@@ -341,7 +326,18 @@
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
+
+    <bean id="ContextMapController" class="org.genedb.web.mvc.controller.ContextMapController">
+        <property name="commandName" value="contextMap"/>
+		<property name="commandClass" value="org.genedb.web.mvc.controller.ContextMapController$Command" />
+		<property name="luceneDao" ref="luceneDao"/>
+		<property name="view" value="features/contextMap"/>
+		<property name="validator" ref="contextMapFormValidator"/>
+    </bean>
     
+    <bean id="contextMapFormValidator" class="org.genedb.web.mvc.validators.ContextMapFormValidator"/>
+    
+
       <!-- <bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
         <property name="embossDir" value="/nfs/disk100/pubseq/emboss" />
     </bean> -->
@@ -390,71 +386,4 @@
       <bean id="searchControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver" />
       <bean id="historyControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver" />
       <bean id="complexControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver" />
-
-	<!--
-	  - This bean is a SimpleFormController that manages the editOwner use case.
-	  - It uses the "ownerValidator" and "clinic" beans.
-	  --><!--
-	<bean id="editOwnerForm" class="org.springframework.samples.petclinic.web.EditOwnerForm">
-		<property name="formView" value="ownerForm"/>
-		<property name="successView" value="ownerRedirect"/>
-		<property name="validator" ref="ownerValidator"/>
-		 <property name="clinic" ref="clinic"/> 
-	</bean>
-
-	-->
-	<!--
-		- Validator for owner forms, implementing Spring's Validator interface.
-		- Could also reside in the root application context, as it is generic,
-		- but is currently just used within PetClinic's web tier.
-	  --><!--
-	<bean id="ownerValidator" class="org.springframework.samples.petclinic.validation.OwnerValidator"/>
-
-	--><!--
-	  - This bean is a SimpleFormController that manages the addPet use case.
-	  - It uses the "petValidator" and "clinic" beans.
-	  --><!--
-	<bean id="addPetForm" class="org.springframework.samples.petclinic.web.AddPetForm">
-		<property name="formView" value="petForm"/>
-		<property name="successView" value="ownerRedirect"/>
-		<property name="validator" ref="petValidator"/>
-		<property name="clinic" ref="clinic"/>
-	</bean>
-
-	--><!--
-	  - This bean is a SimpleFormController that manages the editPet use case.
-	  - It uses the "petValidator" and "clinic" beans.
-	  --><!--
-	<bean id="editPetForm" class="org.springframework.samples.petclinic.web.EditPetForm">
-		<property name="formView" value="petForm"/>
-		<property name="successView" value="ownerRedirect"/>
-		<property name="validator" ref="petValidator"/>
-		<property name="clinic" ref="clinic"/>
-	</bean>
-
-	--><!--
-		- Validator for pet forms, implementing Spring's Validator interface.
-		- Could also reside in the root application context, as it is generic,
-		- but is currently just used within PetClinic's web tier.
- 		--><!--
-	<bean id="petValidator" class="org.springframework.samples.petclinic.validation.PetValidator"/>
-
-	--><!--
-	  - This bean is a SimpleFormController that manages the addVisit use case.
-	  - It uses the "visitValidator" and "clinic" beans.
-	  --><!--
-	<bean id="addVisitForm" class="org.springframework.samples.petclinic.web.AddVisitForm">
-		<property name="formView" value="visitForm"/>
-		<property name="successView" value="ownerRedirect"/>
-		<property name="validator" ref="visitValidator"/>
-		<property name="clinic" ref="clinic"/>
-	</bean>
-
-	--><!--
-		- Validator for visit forms, implementing Spring's Validator interface.
-		- Could also reside in the root application context, as it is generic,
-		- but is currently just used within PetClinic's web tier.
- 		--><!--
-	<bean id="visitValidator" class="org.springframework.samples.petclinic.validation.VisitValidator"/>
-
---></beans>
+</beans>

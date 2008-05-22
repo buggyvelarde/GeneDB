@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<format:header>Welcome to the GeneDB website<br />Version 4.0</format:header>
+<format:header name="GeneDB">Welcome to the GeneDB website<br />Version 4.0</format:header>
 
 <p>  
 

@@ -43,36 +43,39 @@ public class RenderedContextMap {
     private static final String FILE_FORMAT = "png";
     static final String FILE_EXT = "png";
 
-    private static final int BASES_PER_PIXEL = 10;
+    /**
+     * The scale at which this diagram is drawn, in bases per pixel.
+     */
+    private int basesPerPixel = 10;
 
     /**
      * The height of a gene track, in pixels.
      */
-    private static final int GENE_TRACK_HEIGHT = 20;
+    private int geneTrackHeight = 20;
     /**
      * The height of the rectangle representing an exon
      */
-    private static final int EXON_RECT_HEIGHT = 12;
+    private int exonRectHeght = 12;
     /**
      * The height of the rectangle representing an intron
      */
-    private static final int INTRON_RECT_HEIGHT = 2;
-
+    private int intronRectHeight = 2;
+    
     /**
      * The height of the scale track.
      */
-    private static final int SCALE_TRACK_HEIGHT = 20;
+    private int scaleTrackHeight = 20;
         
     /**
      * Distance between minor scale ticks, in bases
      */
-    private static final int MINOR_TICK_DISTANCE = 200;
+    private int minorTickDistance = 200;
     
     /**
      * Distance between major scale ticks, in bases.
      * Must be a multiple of <code>MINOR_TICK_DISTANCE</code>.
      */
-    private static final int MAJOR_TICK_DISTANCE = 1000;
+    private int majorTickDistance = 1000;
     
     /**
      * Height of each minor scale tick, in pixels
@@ -109,21 +112,152 @@ public class RenderedContextMap {
 
     public RenderedContextMap(ContextMapDiagram diagram) {
         this.diagram = diagram;
-        this.width = diagram.getSize() / BASES_PER_PIXEL;
-        this.height = SCALE_TRACK_HEIGHT + diagram.numberOfTracks() * GENE_TRACK_HEIGHT;
-
-        logger.debug(String.format("RenderedContextMap has dimensions %dx%d", width, height));
+        this.width = diagram.getSize() / basesPerPixel;
+        this.height = scaleTrackHeight + diagram.numberOfTracks() * geneTrackHeight;
     }
 
     public ContextMapDiagram getDiagram() {
         return this.diagram;
     }
     
+    /**
+     * Get the width in pixels
+     * @return the width in pixels of this rendered diagram
+     */
+    public int getWidth() {
+        return width;
+    }
+    
+    /**
+     * Constrain the diagram to fit within a fixed width,
+     * by adjusting the scale. The resulting width will
+     * be as close as possible to maxWidth, but no larger.
+     * 
+     * @param maxWidth the maximum allowed width, in pixels
+     * @return the actual width of the diagram
+     */
+    public int setMaxWidth(int maxWidth) {
+        if (this.width % maxWidth == 0)
+            setBasesPerPixel(this.width / maxWidth);
+        else
+            setBasesPerPixel((this.width / maxWidth) + 1);
+
+        assert this.width <= maxWidth;
+        return this.width;
+    }
+    
+    /**
+     * Get the height in pixels
+     * @return the height in pixels of this rendered diagram
+     */
     public int getHeight() {
         return this.height;
     }
+        
+    /**
+     * Get the height of the gene tracks of this diagram.
+     * @return the height in pixels
+     */
+    public int getGeneTrackHeight() {
+        return geneTrackHeight;
+    }
+
+    /**
+     * Set the height of the gene tracks of this diagram.
+     * @param geneTrackHeight the height in pixels
+     */
+    public void setGeneTrackHeight(int geneTrackHeight) {
+        this.geneTrackHeight = geneTrackHeight;
+    }
+
+    /**
+     * Get the height of the rectangles used to represent exons in this diagram.
+     * @return the height in pixels
+     */
+    public int getExonRectHeght() {
+        return exonRectHeght;
+    }
+
+    /**
+     * Set the height of the rectangles used to represent exons in this diagram
+     * @param exonRectHeght the height in pixels
+     */
+    public void setExonRectHeght(int exonRectHeght) {
+        this.exonRectHeght = exonRectHeght;
+    }
+
+    /**
+     * Get the height of the rectangles used to represent introns in this diagram.
+     * @return the height in pixels
+     */
+   public int getIntronRectHeight() {
+        return intronRectHeight;
+    }
+
+   /**
+    * Set the height of the rectangles used to represent introns in this diagram
+    * @param exonRectHeght the height in pixels
+    */
+    public void setIntronRectHeight(int intronRectHeight) {
+        this.intronRectHeight = intronRectHeight;
+    }
+
+    /**
+     * Get the height of the scale track of this diagram.
+     * @return the height in pixels
+     */
+    public int getScaleTrackHeight() {
+        return scaleTrackHeight;
+    }
+
+    /**
+     * Set the height of the scale track.
+     * @param scaleTrackHeight the height in pixels
+     */
+    public void setScaleTrackHeight(int scaleTrackHeight) {
+        this.scaleTrackHeight = scaleTrackHeight;
+    }
+
+    /**
+     * Get the distance between minor (unlabelled) ticks on the
+     * scale track of this diagram.
+     * @return the distance in bases
+     */
+    public int getMinorTickDistance() {
+        return minorTickDistance;
+    }
+
+    /**
+     * Set the distance between major (labelled) and minor (unlabelled) ticks on
+     * the scale track of this diagram. The <code>majorTickDistance</code>
+     * must be a multiple of the <code>minorTickDistance</code>.
+     * 
+     * @param majorTickDistance the distance in bases
+     * @param minorTickDistance the distance in bases
+     */
+    public void setTickDistances(int majorTickDistance, int minorTickDistance) {
+        if (majorTickDistance % minorTickDistance != 0)
+            throw new IllegalArgumentException(String.format(
+                "Major tick distance %d is not a multiple of minor tick distance %d",
+                majorTickDistance, minorTickDistance));
+
+        this.majorTickDistance = majorTickDistance;
+        this.minorTickDistance = minorTickDistance;
+    }
+
+    /**
+     * Get the distance between major (labelled) ticks on the scale
+     * track of this diagram. Always a multiple of the minor tick distance.
+     * @return
+     */
+    public int getMajorTickDistance() {
+        return majorTickDistance;
+    }
 
     public void writeTo(OutputStream out) throws IOException {
+
+        logger.debug(String.format("Drawing RenderedContextMap with dimensions %dx%d", width, height));
+        
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
         graf = (Graphics2D) image.getGraphics();
 
@@ -148,9 +282,27 @@ public class RenderedContextMap {
      * @return
      */
     public int getBasesPerPixel() {
-        return BASES_PER_PIXEL;
+        return basesPerPixel;
     }
     
+    /**
+     * Set the scale at which this diagram should be drawn. Will adjust the
+     * width appropriately.
+     * 
+     * @param basesPerPixel the new scale, in bases per pixel
+     */
+    public void setBasesPerPixel(int basesPerPixel) {
+        if (basesPerPixel <= 0)
+            throw new IllegalArgumentException(String.format("Cannot have %d bases per pixel!",
+                basesPerPixel));
+
+        this.basesPerPixel = basesPerPixel;
+        this.width = diagram.getSize() / basesPerPixel;
+    }
+    
+    
+    
+
     private int yCoordinateOfAxis() {
         return topOfTrack(0) + SCALE_VERTICAL_POS;
     }
@@ -160,13 +312,18 @@ public class RenderedContextMap {
         graf.drawLine(xCoordinate(diagram.getStart()), yCoordinateOfAxis(),
             xCoordinate(diagram.getEnd()), yCoordinateOfAxis());
         
-        int majorTicksEvery = (MAJOR_TICK_DISTANCE / MINOR_TICK_DISTANCE);
+        if (minorTickDistance == 0 || majorTickDistance == 0)
+            return;
+        
+        int majorTicksEvery = (majorTickDistance / minorTickDistance);
         int tickNumber = 0;
-        for(int pos=diagram.getStart(); pos < diagram.getEnd(); pos += MINOR_TICK_DISTANCE) {
+        int pos = majorTickDistance * (diagram.getStart() / majorTickDistance);
+        while (pos < diagram.getEnd()) {
             if (tickNumber++ % majorTicksEvery == 0)
                 drawMajorScaleTick(pos);
             else
                 drawMinorScaleTick(pos);
+            pos += minorTickDistance;
         }
     }
     
@@ -227,7 +384,7 @@ public class RenderedContextMap {
         }
         int x = xCoordinate(start), y = topOfIntron(trackNumber);
         int width = pixelWidth(start, end);
-        graf.fillRect(x, y, width, INTRON_RECT_HEIGHT);
+        graf.fillRect(x, y, width, intronRectHeight);
     }
 
     private void drawExon(int trackNumber, int start, int end) {
@@ -237,7 +394,7 @@ public class RenderedContextMap {
         }
         int x = xCoordinate(start), y = topOfExon(trackNumber);
         int width = pixelWidth(start, end);
-        graf.fillRect(x, y, width, EXON_RECT_HEIGHT);
+        graf.fillRect(x, y, width, exonRectHeght);
     }
 
     /**
@@ -252,14 +409,15 @@ public class RenderedContextMap {
     }
 
     /**
-     * Convert a width in bases to a width in pixels.
+     * Calculate the width in pixels of a segment of the diagram.
      * 
-     * @param baseWidth the width in bases
+     * @param start the start location, in interbase coordinates
+     * @param end the end location, in interbase coordinates
      * @return the width in pixels
      */
     private int pixelWidth(int start, int end) {
-        return (int) (Math.round((double) end / BASES_PER_PIXEL) - Math.round((double) start
-                / BASES_PER_PIXEL));
+        return (int) (Math.round((double) end / basesPerPixel) - Math.round((double) start
+                / basesPerPixel));
     }
 
     /**
@@ -269,25 +427,25 @@ public class RenderedContextMap {
      * @return
      */
     private int topOfTrack(int trackNumber) {
-        int firstGuess = (diagram.numberOfPositiveTracks() - trackNumber) * GENE_TRACK_HEIGHT;
+        int firstGuess = (diagram.numberOfPositiveTracks() - trackNumber) * geneTrackHeight;
 
         // The first guess is right for non-negative tracks.
         // Also, it's always right as long as the scale track is the same height
         // as the gene tracks.
         // (The compiler should be able to optimise this away completely in that
         // case.)
-        if (SCALE_TRACK_HEIGHT == GENE_TRACK_HEIGHT || trackNumber >= 0)
+        if (scaleTrackHeight == geneTrackHeight || trackNumber >= 0)
             return firstGuess;
 
         // Otherwise, correct for the differing height of the scale track.
-        return firstGuess - GENE_TRACK_HEIGHT + SCALE_TRACK_HEIGHT;
+        return firstGuess - geneTrackHeight + scaleTrackHeight;
     }
 
     private int topOfIntron(int trackNumber) {
-        return topOfTrack(trackNumber) + (GENE_TRACK_HEIGHT - INTRON_RECT_HEIGHT) / 2;
+        return topOfTrack(trackNumber) + (geneTrackHeight - intronRectHeight) / 2;
     }
 
     private int topOfExon(int trackNumber) {
-        return topOfTrack(trackNumber) + (GENE_TRACK_HEIGHT - EXON_RECT_HEIGHT) / 2;
+        return topOfTrack(trackNumber) + (geneTrackHeight - exonRectHeght) / 2;
     }
 }

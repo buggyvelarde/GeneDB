@@ -1,8 +1,7 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
-<format:header><i>Schizosaccharomyces pombe</i> GeneDB</format:header>
+<format:header name="Schizosaccharomyces pombe"><i>Schizosaccharomyces pombe</i> GeneDB</format:header>
 
-    
     <table align="center" border="0" cellspacing="0"
       cellpadding="2" width="90%">
       

@@ -7,11 +7,12 @@ import org.apache.lucene.index.IndexReader;
 import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
 import org.genedb.db.domain.services.BasicGeneService;
 import org.genedb.web.gui.ContextMapDiagram;
+import org.genedb.web.gui.RenderedContextMap;
 import org.springframework.web.servlet.ModelAndView;
 
 public class ContextMapController extends PostOrGetFormController {
-    private static final int DIAGRAM_WIDTH = 120000; // The diagram should be 4kb
-                                                   // long
+    private static final int DIAGRAM_WIDTH = 300000; // in bases
+    private static final int THUMBNAIL_WIDTH = 500; // in pixels
 
     private LuceneDao luceneDao; // Injected by Spring
     private String view; // Defined in genedb-servlet.xml
@@ -91,7 +92,16 @@ public class ContextMapController extends PostOrGetFormController {
             contextMapDiagram = ContextMapDiagram.forRegion(basicGeneService, command.getOrganism(),
                 command.getChromosome(), command.getStart(), command.getEnd());
         }
-        model.put("diagram", contextMapDiagram);
+        model.put("renderedContextMap", new RenderedContextMap(contextMapDiagram));
+        
+        ContextMapDiagram chromosomeThumbnail = ContextMapDiagram.forChromosome(basicGeneService, command.getOrganism(), command.getChromosome());
+        RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeThumbnail);
+        renderedChromosomeThumbnail.setMaxWidth(THUMBNAIL_WIDTH);
+        renderedChromosomeThumbnail.setScaleTrackHeight(3);
+        renderedChromosomeThumbnail.setGeneTrackHeight(2);
+        renderedChromosomeThumbnail.setExonRectHeght(2);
+        renderedChromosomeThumbnail.setIntronRectHeight(2);
+        model.put("chromosomeThumbnailMap", renderedChromosomeThumbnail);
 
         return new ModelAndView(view, model);
     }

@@ -1,8 +1,12 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf"%>
 
 <c:url value="/" var="base"/>
+
+<c:set var="primaryLoc" value="${feature.rankZeroFeatureLoc}" />
+<c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
+
 <format:headerRound name="Gene: ${feature.displayName}" title="Gene Page ${feature.displayName}"
-		onLoad="initContextMap('${base}', '${feature.uniqueName}')">
+		onLoad="initContextMap('${base}', '${feature.organism.commonName}', '${chromosome.uniqueName}', '${feature.uniqueName}')">
 	<base href="<c:url value="/"/>">
 	<st:init />
 	<script type="text/javascript"
@@ -18,7 +22,7 @@
 <table width="100%">
 	<tr align="center">
 		<td align="center">
-			<div id="contextMapImage">
+			<div id="contextMapDiv">
 				<img src="<c:url value="/includes/images/default/grid/loading.gif"/>" id="contextMapLoadingImage">
 			</div>
 		</td>
@@ -52,7 +56,7 @@
 			<db:synonym name="obsolete_name" var="name"
 				collection="${feature.featureSynonyms}">
 				<tr>
-					<td><b>Obselete Name</b></td>
+					<td><b>Obsolete Name</b></td>
 					<td><db:list-string collection="${name}" /></td>
 				</tr>
 			</db:synonym>
@@ -65,7 +69,7 @@
 			</db:synonym>
 			<tr>
 				<td><b>Type</b></td>
-				<td><span><uc>${feature.cvTerm.name}</uc></span></td>
+				<td><span>${feature.cvTerm.name}</span></td>
 			</tr>
 			<tr>
 				<td><b>Product</b></td>
@@ -73,7 +77,7 @@
 					var="featCvTerm">
 					<c:if test="${featCvTerm.cvTerm.cv.name == 'genedb_products'}">
 						<span>
-						<dd>${featCvTerm.cvTerm.name}</dd>
+						${featCvTerm.cvTerm.name}
 						</span>
 					</c:if>
 				</c:forEach></td>
@@ -81,8 +85,7 @@
 		</table>
 		</div>
 		<div style="float: right;">
-		<div style="background-color: #9bd1fa;"><span>Genomic
-		Locations</span></div>
+		<div style="background-color: #9bd1fa;"><span>Genomic Locations</span></div>
 		<table class="info" id="loc" cellspacing="0">
 			<tr>
 				<td><b>Sequence Location</b></td>
@@ -257,6 +260,7 @@
 			<option value="fasta">FASTA</option>
 			<option value="embl">EMBL</option>
 		</select>
+		</form>
 		</div>
 		</td>
 	</tr>

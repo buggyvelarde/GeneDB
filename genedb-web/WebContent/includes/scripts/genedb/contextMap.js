@@ -1,17 +1,17 @@
 var dragging = false; // Are we currently dragging the image?
 var loaded = false;
-var dragStartX;
 var response;
 
-function getContextMapInfo(base, gene) {
-	var url = base + "ContextMap?gene="+gene;
+function getContextMapInfo(base, organism, chromosome, gene) {
+	var url = base + "ContextMap?organism="+organism+"&chromosome="+chromosome+"&gene="+gene;
 	var req = new XMLHttpRequest();
 	req.open( "GET", url, true );
 
 	req.onreadystatechange = function () {
 	    if ( req.readyState == 4 ) {
 	        if ( req.status == 200 ) {
-	            response = eval( "(" + http_request.responseText + ")" );
+	            response = eval( "(" + req.responseText + ")" );
+	            loadTile(response);
 	        } else {
 	            alert( "Request failed." );
 	        }
@@ -22,18 +22,46 @@ function getContextMapInfo(base, gene) {
     req.send(null);
 }
 
-function initContextMap(base, gene) {
-	var contextMapImage = document.getElementById("contextMapImage");
-	var contextMapInfo = getContextMapInfo(base, gene);
+var organism;
+var chromosome;
+function loadTile(tileData) {
+    organism = tileData.organism;
+    chromosome = tileData.chromosome;
+
+    var contextMapDiv = document.getElementById("contextMapDiv");
+    var loadingImage = document.getElementById("contextMapLoadingImage");
+    contextMapDiv.removeChild(loadingImage);
+    var contextMapImage = document.createElement("img");
+    contextMapImage.id = "contextMapImage";
+    contextMapImage.src = tileData.imageSrc;
+    contextMapImage.style.left = ((tileData.start - tileData.locus) / tileData.basesPerPixel + contextMapDiv.getWidth() / 2)+"px";
+    contextMapDiv.appendChild(contextMapImage);
+    
+    var chromosomeThumbnailImage = document.createElement("img");
+    chromosomeThumbnailImage.id = "chromosomeThumbnailImage";
+    chromosomeThumbnailImage.src = tileData.chromosomeThumbnailSrc;
+    contextMapDiv.appendChild(chromosomeThumbnailImage);
+
+    contextMapDiv.style.height = tileData.imageHeight + 10;
+}
+
+function initContextMap(base, organism, chromosome, gene) {
+	var contextMapDiv = document.getElementById("contextMapDiv");
+	var contextMapInfo = getContextMapInfo(base, organism, chromosome, gene);
 	
-	contextMapImage.onmousedown = startMove;
-	contextMapImage.onmousemove = doMove;
+	contextMapDiv.onmousedown = startMove;
+	//contextMapDiv.onmousemove = doMove;
+	document.onmousemove = doMove;
 	document.onmouseup          = endMove; // Even if the mouse is released outside the image,
 										   // we still want to know about it! (Though if the mouse
 										   // is released outside the window, we're still screwed.)
 	
-	contextMapImage.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
+	contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
 }
+
+var beforeDragPos;
+var dragStartX;
+var dragImage;
 
 function startMove(event) {
 	// If the mouse button was released outside the document window,
@@ -43,10 +71,17 @@ function startMove(event) {
 	// context map, we don't want to start a new drag.
 	if (dragging) return false;
 
-	dragging = true;
 	if (!event) event = window.event; // IE is so broken
 	dragStartX = event.clientX;
-	window.status = "Move started (" + dragStartX + ")";
+	dragImage = document.getElementById("contextMapImage");
+	if (dragImage != null) {
+	    dragging = true;
+	    if (dragImage.style.left == "")
+	       beforeDragPos = 0;
+	    else
+    	    beforeDragPos = parseFloat(dragImage.style.left);
+    	window.status = "Move started (" + dragStartX + ")";
+    }
 	return false;
 }
 
@@ -55,6 +90,7 @@ function doMove(event) {
 
 	if (!event) event = window.event; // IE is so broken
 
+    dragImage.style.left = beforeDragPos + event.clientX - dragStartX;
 	window.status = event.clientX;
 }
 

@@ -18,6 +18,16 @@ public class ContextMapCache {
     private static final String renderDirectory = projectProperties
             .getString(PROP_CONTEXT_RENDER_DIRECTORY);
 
+    /**
+     * Get the path of a file containing an image representing this diagram,
+     * relative to the document root. If the relevant file does not already
+     * exist, it is created before returning.
+     *  
+     * @param renderedContextMap
+     * @param servletContext
+     * @return
+     * @throws IOException
+     */
     public static String fileForDiagram(RenderedContextMap renderedContextMap,
             ServletContext servletContext) throws IOException {
 
