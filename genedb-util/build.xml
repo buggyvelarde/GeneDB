@@ -1,0 +1,35 @@
+<project name="genedb-util" default="fulljar" basedir=".">
+	
+	<dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
+	
+	<target name="clean-build-util" >
+		<delete dir="${imported.basedir.util}/ant-build"/>
+	</target>
+		
+	<target name="setup-util" >
+		<mkdir dir="${imported.basedir.util}/ant-build" />
+		<mkdir dir="${imported.basedir.util}/ant-build/src" />
+		<mkdir dir="${imported.basedir.util}/ant-build/classes" />
+		<mkdir dir="${imported.basedir.util}/ant-build/jars" />
+	</target>
+	
+	<target name="fulljar" depends="clean-build-util,setup-util" description="Create full JAR file">
+		
+		<copy todir="${imported.basedir.util}/ant-build/src">
+			<fileset dir="${imported.basedir.util}/src">
+			    <include name="org/genedb/util/*.java"/>
+			</fileset>
+		</copy>
+		    	
+		<javac srcdir="${imported.basedir.util}/ant-build/src" destdir="${imported.basedir.util}/ant-build/classes" debug="on" />
+    	
+		<jar jarfile="${imported.basedir.util}/ant-build/jars/genedb-util.jar">
+			<fileset dir="${imported.basedir.util}/ant-build/classes" />
+			<manifest>
+				<attribute name="Implementation-Title" value="GeneDB Util"/>
+				<attribute name="Implementation-Version" value="0.1"/>
+			</manifest>
+		</jar>
+	</target>
+
+</project>
