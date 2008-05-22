@@ -18,7 +18,6 @@ public class FileCheckingInternalResourceViewResolver extends
     private Set<String> validViews = new HashSet<String>();
     private boolean valid = false;
     
-    
     public void postConstruction() {
 	String prefix = getPrefix().substring(1);
 	final String suffix = getSuffix();
@@ -27,6 +26,7 @@ public class FileCheckingInternalResourceViewResolver extends
 	try {
 	    File viewRootDir = viewRoot.getFile();
 	    String[] fileNames = viewRootDir.list(new FilenameFilter() {
+	        @SuppressWarnings("unused")
 		public boolean accept(File file, String arg1) {
 		    if (file.getName().endsWith(suffix)) {
 			return true;
@@ -53,7 +53,4 @@ public class FileCheckingInternalResourceViewResolver extends
 	}
 	return super.resolveViewName(viewName, locale);
     }
-    
-    
-
 }

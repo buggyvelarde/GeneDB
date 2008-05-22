@@ -47,14 +47,14 @@ public class GoFeatureController extends SimpleFormController{
             viewName = formInputView;
             return new ModelAndView(viewName,model);
         }
-        List<List> data;
+        List<List<?>> data;
         List<Feature> results;
         List<Feature> features;
         String goName = new String();
         List<FeatureLoc> featlocs = new ArrayList<FeatureLoc>();
         data = sequenceDao.getFeatureByGO(gl.getLookup());
-        results = data.get(0);
-        features = data.get(1);
+        results  = (List<Feature>) data.get(0);
+        features = (List<Feature>) data.get(1);
         if(data.get(2).size() != 0) {
             goName = ((CvTerm)data.get(2).get(0)).getName();
         }
