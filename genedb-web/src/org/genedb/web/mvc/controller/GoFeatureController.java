@@ -9,7 +9,7 @@ import org.gmod.schema.sequence.FeatureLoc;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
-
+import org.apache.log4j.Logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class GoFeatureController extends SimpleFormController{
 	
+	private static final Logger logger = Logger.getLogger(GoFeatureController.class);
     private String listResultsView;
     private String formInputView;
     private SequenceDao sequenceDao;
@@ -53,7 +54,7 @@ public class GoFeatureController extends SimpleFormController{
         String goName = new String();
         List<FeatureLoc> featlocs = new ArrayList<FeatureLoc>();
         data = sequenceDao.getFeatureByGO(gl.getLookup());
-        results  = (List<Feature>) data.get(0);
+        results = (List<Feature>) data.get(0);
         features = (List<Feature>) data.get(1);
         if(data.get(2).size() != 0) {
             goName = ((CvTerm)data.get(2).get(0)).getName();

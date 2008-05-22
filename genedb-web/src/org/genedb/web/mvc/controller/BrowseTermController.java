@@ -19,6 +19,7 @@
 
 package org.genedb.web.mvc.controller;
 
+import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.TaxonNode;
 
@@ -48,6 +49,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BrowseTermController extends TaxonNodeBindingFormController {
 	
+	private static final Logger logger = Logger.getLogger(BrowseTermController.class);
 	private SequenceDao sequenceDao;
 
     @SuppressWarnings("unchecked")
