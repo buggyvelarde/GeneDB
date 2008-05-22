@@ -1,20 +1,45 @@
 <?xml version="1.0"?>
 
-<project name="spring-core" default="fulljar" basedir=".">
-
-
-	<target name="fulljar" depends="" description="Create full JAR file with all Spring classes">
-
-		<delete file="genedb-query.jar"/>
-
-		<jar jarfile="genedb-query.jar">
-			<fileset dir="bin" />
+<project name="genedb-query" default="fulljar" basedir=".">
+	
+	<dirname property="imported.basedir.query" file="${ant.file.genedb-query}"/>
+	
+	<import file="${imported.basedir.query}/../genedb-util/build.xml" />
+	
+	<target name="clean-build-query" >
+		<delete dir="${imported.basedir.query}/ant-build"/>
+	</target>
+		
+	<target name="setup-query" >
+		<mkdir dir="${imported.basedir.query}/ant-build" />
+		<mkdir dir="${imported.basedir.query}/ant-build/src" />
+		<mkdir dir="${imported.basedir.query}/ant-build/classes" />
+		<mkdir dir="${imported.basedir.query}/ant-build/jars" />
+	</target>
+	
+	<path id="compile-lib-query">
+		<path location="${imported.basedir.query}/../genedb-libs/lib/spring-2.5.4.jar" />
+		<path location="${imported.basedir.query}/../genedb-util/ant-build/jars/genedb-util.jar" />
+	</path>
+	
+	<target name="fulljar-query" depends="clean-build-query,setup-query,genedb-util.fulljar" description="Create full JAR file with all Spring classes">
+		
+		<copy todir="ant-build/src">
+			<fileset dir="${imported.basedir.query}/src">
+			    <include name="org/genedb/query/**/*.java"/>
+				<include name="org/genedb/query/*.java"/>
+			</fileset>
+		</copy>
+		    	
+		<javac srcdir="${imported.basedir.query}/ant-build/src" classpathref="compile-lib-query" destdir="${imported.basedir.query}/ant-build/classes" debug="on" />
+    	
+		<jar jarfile="${imported.basedir.query}/ant-build/jars/genedb-query.jar">
+			<fileset dir="${imported.basedir.query}/ant-build/classes" />
 			<manifest>
 				<attribute name="Implementation-Title" value="GeneDB Query"/>
 				<attribute name="Implementation-Version" value="0.1"/>
 			</manifest>
 		</jar>
-
 	</target>
 
 </project>
