@@ -1,21 +1,12 @@
 package org.genedb.web.mvc.controller;
 
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -28,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class ExtController extends TaxonNodeBindingFormController {
 	
+	private static final Logger logger = Logger.getLogger(ExtController.class);
 	private SequenceDao sequenceDao;
 	private HistoryManagerFactory historyManagerFactory;
 	
