@@ -25,6 +25,7 @@
             <path location="${imported.basedir}/../genedb-query/ant-build/jars/genedb-query.jar" />
 
             <path location="${lib-dir}/antlr-runtime-3.0.jar"/>
+            <path location="${lib-dir}/biojava-1.4.jar"/>
             <path location="${lib-dir}/displaytag-1.1.jar"/>
             <path location="${lib-dir}/dwr-2.0rc1.jar"/>
             <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
