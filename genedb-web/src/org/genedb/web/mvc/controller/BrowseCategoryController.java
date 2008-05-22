@@ -20,6 +20,7 @@
 package org.genedb.web.mvc.controller;
 
 
+import org.apache.log4j.Logger;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.loading.TaxonNode;
 
@@ -46,6 +47,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BrowseCategoryController extends TaxonNodeBindingFormController {
     
+	private static final Logger logger = Logger.getLogger(BrowseCategoryController.class);
+	
     private CvDao cvDao;
     private String cvName;
 
@@ -62,10 +65,10 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
 	@Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
         BrowseCategoryBean bcb = (BrowseCategoryBean) command;
-
+        String category = bcb.getCategory().toString();
         TaxonNode[] taxonNodes = bcb.getOrganism();
         List<String> orgNames = taxonNodes[0].getAllChildrenNames(); // FIXME 
-        List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(bcb.getCategory().toString(), orgNames);
+        List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null"); // TODO Improve text
@@ -76,7 +79,18 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
         // Go to list results page
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject("results", results);
-        
+        mav.addObject("category", category);
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (String org : orgNames) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(",");
+			}
+			sb.append(org);
+		}
+        mav.addObject("organism",sb.toString());
         return mav;
     }
 
