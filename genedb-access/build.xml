@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 
 <project name="genedb-access" default="genedb-access.jar" basedir=".">
-
+	
+	<property file="property-file.${load}" />
+	
 	<target name="get-latest-jars" depends="" 
 		description="Copy over JAR files from other projects">
 		<copy file="../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="lib" />
@@ -24,9 +26,13 @@
 		</javac>
 	</target>
 	
+	<target name="replace">
+		<copy file="property-file.${load}" tofile="resources/project.properties" />
+	</target>
+	
 	<target name="genedb-access.jar" depends="compile" description="Create JAR file">
 		<delete file="genedb-access.jar"/>
-
+		
 		<copy todir="ant-build/jar">
 			<fileset dir="ant-build/classes" />
 			<fileset dir="resources" />
@@ -45,6 +51,7 @@
 	<path id="exec-classpath">
 		<fileset file="lib/*.jar" />
 		<fileset file="genedb-access.jar" />
+		<fileset dir="resources/"/>
 	</path>
 	
 	<target name="load-goAssociation" depends="genedb-access.jar">
@@ -80,6 +87,62 @@
 			<arg line="Tbruceibrucei927 /nfs/pathdbdev/work/art/chado_data/tryp/tbrucei.config.xml"/>
 			<jvmarg line="-server"/>
 		</java>
+	</target>
+	
+	<target name="load-senteritidisPT4" depends="genedb-access.jar">
+			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+				<arg line="Senteritidis_PT4 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SEN.config.xml"/>
+				<jvmarg line="-server"/>
+			</java>
+	</target>
+	
+	<target name="ortho-senteritidisPT4" depends="genedb-access.jar">
+			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
+				<arg line="Senteritidis_PT4 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SEN.config.xml"/>
+				<jvmarg line="-server"/>
+			</java>
+	</target>
+	
+	<target name="ortho-load-sept4" depends="genedb-access.jar">
+			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.OrthoStoreRunner">
+				<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/Senteritidis_PT4.orthologue.xml"/>
+				<jvmarg line="-server"/>
+			</java>
+	</target>
+	
+	<target name="interpro-sept4" depends="genedb-access.jar">
+			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadInterPro">
+				<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/merged_SEN.raw"/>
+				<jvmarg line="-server"/>
+			</java>
+	</target>
+	
+	<target name="load-sgallinarum287" depends="genedb-access.jar">
+				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+					<arg line="Sgallinarum287 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SGAL.config.xml"/>
+					<jvmarg line="-server"/>
+				</java>
+	</target>
+	
+	<target name="ortho-sgallinarum287" depends="genedb-access.jar">
+				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
+					<arg line="Sgallinarum287 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SGAL.config.xml"/>
+					<jvmarg line="-server"/>
+				</java>
+	</target>
+	
+	<target name="ortho-load-sgallinarum287" depends="genedb-access.jar">
+				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.OrthoStoreRunner">
+					<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/Sgallinarum287.orthologue.xml"/>
+					<jvmarg line="-server"/>
+				</java>
+	</target>
+	
+	<target name="interpro-sgal287" depends="genedb-access.jar">
+				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadInterPro">
+					<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/merged_SGAL.raw"/>
+					<jvmarg line="-server"/>
+				</java>
 	</target>
 	
 	<target name="ortho-tbrucei" depends="genedb-access.jar">
@@ -138,9 +201,9 @@
 		</java>
 	</target>
 	
-	<target name="load-smansoni" depends="genedb-access.jar">
+	<target name="load-smansoni" depends="replace,genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="Smansoni /nfs/pathdbdev/work/art/chado_data/smansoni/smansoni.config.xml"/>
+			<arg line="Smansoni /nfs/pathdb/prod/data/input/smansoni/smansoni.config.xml"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
@@ -308,6 +371,13 @@
 		</java>
 	</target>
 	
+	<target name="load-SE" depends="genedb-access.jar">
+			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+				<arg line="Sequi /software/pathogen/projects/genedb/cp2/mh3Data/Strep_Chado/SE.config.xml"/>
+				<jvmarg line="-server"/>
+			</java>
+	</target>
+	
 	<target name="load-suberis" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
 			<arg line="Suberis /nfs/pathdb/prod/data/input/suberis/suberis.config.xml web"/>
@@ -336,6 +406,12 @@
 		</java>
 	</target>
 	
+	<target name="load-etenella" depends="genedb-access.jar">
+			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+				<arg line="Etenella /nfs/pathdb/prod/data/input/etenella/etenella.auto.config.xml"/>
+				<jvmarg line="-server"/>
+			</java>
+	</target>
 	
 	<target name="load-good-data" 
 		depends="load-asp, load-twhipplei, load-bpseudomallei, load-bronchi, load-cdubliniensis, load-diphtheria, load-parapert, load-pert, load-saureusMRSA, load-saureusMSSA" />
