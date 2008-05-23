@@ -164,7 +164,13 @@
             </key>
             <one-to-many class="org.gmod.schema.phylogeny.Phylonode" />
         </set>
-        <subclass name="org.gmod.schema.sequence.Gene" extends="org.gmod.schema.sequence.Feature" discriminator-value="792" >
-        </subclass>
+        <subclass name="org.gmod.schema.sequence.feature.MRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="321" />
+        <subclass name="org.gmod.schema.sequence.feature.SnRNA"           extends="org.gmod.schema.sequence.Feature" discriminator-value="361" />
+        <subclass name="org.gmod.schema.sequence.feature.TRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="340" />
+        <subclass name="org.gmod.schema.sequence.feature.RRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="339" />
+        <subclass name="org.gmod.schema.sequence.feature.Gene"            extends="org.gmod.schema.sequence.Feature" discriminator-value="792" />
+        <subclass name="org.gmod.schema.sequence.feature.Pseudogene"      extends="org.gmod.schema.sequence.Feature" discriminator-value="423" />
+        <subclass name="org.gmod.schema.sequence.feature.Exon"            extends="org.gmod.schema.sequence.Feature" discriminator-value="234" />
+        <subclass name="org.gmod.schema.sequence.feature.PseudogenicExon" extends="org.gmod.schema.sequence.Feature" discriminator-value="595" />
     </class>
 </hibernate-mapping>
