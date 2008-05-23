@@ -116,7 +116,7 @@
 			</fileset>
 		</copy>
     	
-		<javac srcdir="${imported.basedir.db}/ant-build/src-interface" classpathref="tools-interface-compile-lib" destdir="${imported.basedir.db}/ant-build/classes-interface" debug="on" />
+		<javac srcdir="${imported.basedir.db}/ant-build/src-interface" classpathref="tools-interface-compile-lib" destdir="${imported.basedir.db}/ant-build/classes-interface" encoding="utf-8" debug="on" />
     	
 		<jar jarfile="${imported.basedir.db}/ant-build/jars/chado-interface.jar">
 			<fileset dir="${imported.basedir.db}/ant-build/classes-interface" />
@@ -141,7 +141,7 @@
 			</fileset>
 		</copy>
 		
-		<javac srcdir="${imported.basedir.db}/ant-build/src-implementation" destdir="${imported.basedir.db}/ant-build/classes-implementation" debug="on">
+		<javac srcdir="${imported.basedir.db}/ant-build/src-implementation" destdir="${imported.basedir.db}/ant-build/classes-implementation" encoding="utf-8" debug="on">
 			<classpath refid="tools-hibernate-compile-lib" />
 			<classpath path="${imported.basedir.db}/ant-build/classes-interface" />	
 		</javac>
@@ -180,7 +180,7 @@
 			<fileset dir="${imported.basedir.db}/ant-build/src-1.4-interface" />
 		</replaceregexp>
 
-		<javac srcdir="${imported.basedir.db}/ant-build/src-1.4-interface" destdir="${imported.basedir.db}/ant-build/classes-1.4-interface-pre" debug="on">
+		<javac srcdir="${imported.basedir.db}/ant-build/src-1.4-interface" destdir="${imported.basedir.db}/ant-build/classes-1.4-interface-pre" encoding="utf-8" debug="on">
 			<classpath refid="tools-interface-compile-lib"/>
 		</javac>
     	
