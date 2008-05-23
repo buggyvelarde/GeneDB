@@ -115,6 +115,18 @@
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/lucene-core-2.3.2.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/displaytag-1.1.jar">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/json_simple.jar">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/jdom.jar">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/dwr-2.0rc1.jar">
+<dependency-type>uses</dependency-type>
+</dependent-module>
         <property name="java-output-path" value="/build/classes/"/>
 <property name="context-root" value="genedb-web"/>
     </wb-module>
