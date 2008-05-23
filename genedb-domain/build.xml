@@ -32,18 +32,26 @@
 		<path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar"/>
 		<path location="${lib-dir}/lucene-core-2.3.2.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jta.jar"/>
+		<path location="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
+		<path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
 	</path>
 	
-	<target name="fulljar-domain" depends="clean-build-domain,setup-domain" description="Create full JAR file with all Spring classes">
+	<target name="fulljar-domain" depends="genedb-db.alljars,clean-build-domain,setup-domain" description="Create full JAR file with all Spring classes">
 		
 		<copy todir="${imported.basedir.domain}/ant-build/src">
 			<fileset dir="${imported.basedir.domain}/src">
 			    <include name="org/genedb/db/domain/**/*.java"/>
 			</fileset>
 		</copy>
-		    	
+		
+		<copy todir="${imported.basedir.domain}/ant-build/classes">
+			<fileset dir="${imported.basedir.domain}/conf">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+		
 		<javac srcdir="${imported.basedir.domain}/ant-build/src" classpathref="compile-lib-domain" destdir="${imported.basedir.domain}/ant-build/classes" debug="on" />
     	
 		<jar jarfile="${imported.basedir.domain}/ant-build/jars/genedb-domain.jar">
