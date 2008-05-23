@@ -1,23 +1,21 @@
 package org.genedb.db.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.SequenceDaoI;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureCvTermDbXRef;
-import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
-import org.gmod.schema.sequence.Gene;
 import org.gmod.schema.sequence.Synonym;
+import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.utils.CountedName;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SequenceDao extends BaseDao implements SequenceDaoI {
     
@@ -28,16 +26,16 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
     public Feature getFeatureByUniqueName(String name, String featureType) {
     	if(featureType.equals("gene")) {
     		@SuppressWarnings("unchecked")
-        	List<Gene> features = (List<Gene>) getHibernateTemplate().findByNamedParam(
+        	List<Gene> features = getHibernateTemplate().findByNamedParam(
                     "from Gene f where f.uniqueName=:name and f.cvTerm.name=:featureType",
                     new String[]{"name","featureType"},new Object[]{name,featureType});
             System.err.println("features size is " + features.size());
     		if (features.size() > 0) {
-                return (Feature)features.get(0);
+                return features.get(0);
             }
     	}
     	@SuppressWarnings("unchecked")
-    	List<Feature> features = (List<Feature>) getHibernateTemplate().findByNamedParam(
+    	List<Feature> features = getHibernateTemplate().findByNamedParam(
                 "from Feature f where f.uniqueName=:name and f.cvTerm.name=:featureType",
                 new String[] { "name", "featureType" }, new Object[] { name, featureType });
         if (features.size() > 0) {
@@ -295,26 +293,6 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                         new Object[] { cvTermName, cvName });
         return features;
 
-    }
-
-    public List<Feature> getAllFeatureSynonymsAsFeature() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public List<FeatureCvTermDbXRef> getFeatureCvTermDbXRefByFeature(Feature feature) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public List<FeatureCvTermPub> getFeatureCvTermPubByFeature(Feature feature) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public List<FeatureCvTerm> getFeatureCvTermsByFeature(Feature feature) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List

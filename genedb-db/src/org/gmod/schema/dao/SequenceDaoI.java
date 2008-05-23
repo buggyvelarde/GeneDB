@@ -20,20 +20,18 @@
 package org.gmod.schema.dao;
 
 
+import java.util.List;
+
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureCvTermDbXRef;
-import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.utils.CountedName;
-
-import java.util.List;
 
 public interface SequenceDaoI extends BaseDaoI {
 
@@ -126,30 +124,6 @@ public interface SequenceDaoI extends BaseDaoI {
             CvTerm cvTerm, boolean not);
 
     /**
-     * Return a list of FeatureCvterm's for a Feature, or a list
-     * of all FeatureCvTerm's if Feature is null.
-     * @param feature the Feature to retrieve associated FeatureCvTerm's
-     * @return the FeatureCvTerm's
-     */
-    public List<FeatureCvTerm> getFeatureCvTermsByFeature(Feature feature);
-    
-    /**
-     * Get a list of all FeatureCvTermDbXRef's for a Feature, or a list
-     * of all FeatureCvTermDbXRef's if Feature is null.
-     * @param feature the Feature to retrieve associated FeatureCvTermDbXRef's
-     * @return the FeatureCvTermDbXRef's
-     */
-    public List<FeatureCvTermDbXRef> getFeatureCvTermDbXRefByFeature(Feature feature);
-    
-    /**
-     * Get a list of all FeatureCvTermPub's for a Feature, or a list
-     * of all FeatureCvTermPub's if Feature is null.
-     * @param feature the Feature to retrieve associated FeatureCvTermPub's
-     * @return the FeatureCvTermPub's
-     */
-    public List<FeatureCvTermPub> getFeatureCvTermPubByFeature(Feature feature);
-    
-    /**
      * Return a synonym of the given name and type if it exists
      * 
      * @param name the name to lookup
@@ -187,13 +161,6 @@ public interface SequenceDaoI extends BaseDaoI {
      * @return a (possibly empty) List<FeatureSynonymI> of matching synonyms
      */
     public List<FeatureSynonym> getFeatureSynonymsByFeatureUniquename(final String uniqueName);
-    
-    /**
-     * Return the list of all feature_synonyms as Feature.featureSynonyms 
-     * 
-     * @return a (possibly empty) List<Features> of matching synonyms
-     */
-    public List<Feature> getAllFeatureSynonymsAsFeature();
     
     /**
      * Return the list of Features for a given GO number 

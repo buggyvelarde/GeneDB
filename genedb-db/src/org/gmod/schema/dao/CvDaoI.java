@@ -19,7 +19,6 @@
 
 package org.gmod.schema.dao;
 
-
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
@@ -74,7 +73,6 @@ public interface CvDaoI extends BaseDaoI {
      */
     public abstract CvTerm getGoCvTermByAcc(String value);
 
-
     /**
      * Retrieve a CvTerm from the Gene Ontology via it's database entry
      * 
@@ -82,7 +80,6 @@ public interface CvDaoI extends BaseDaoI {
      * @return the corresponding CvTerm, or null
      */
     public abstract CvTerm getGoCvTermByAccViaDb(final String id);
-
 
     /**
      * Retrieve all CvTerms
@@ -109,9 +106,7 @@ public interface CvDaoI extends BaseDaoI {
 
     public boolean existsNameInOntology(String name, Cv ontology);
 
-
     public List<String> getPossibleMatches(String search, Cv cv, int limit);
 
     public List<CountedName> getAllTermsInCvWithCount(Cv cv);
-
 }
