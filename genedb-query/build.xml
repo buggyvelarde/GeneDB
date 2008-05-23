@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="genedb-query" default="fulljar" basedir=".">
+<project name="genedb-query" default="fulljar-query" basedir=".">
 	
 	<dirname property="imported.basedir.query" file="${ant.file.genedb-query}"/>
 	
