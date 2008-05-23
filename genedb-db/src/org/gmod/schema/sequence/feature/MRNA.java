@@ -97,7 +97,7 @@ public class MRNA extends Transcript {
         /* Sometimes there is no colour property at all,
            and sometimes there is a colour property with a null value.
         
-           I don't know why this inconsistency exists. Ñrh11 */
+           I don't know why this inconsistency exists. â€”rh11 */
 
         for (FeatureProp featureProp : getProtein().getFeatureProps()) {
             if (featureProp.getCvTerm().getName().equals("colour")) {
