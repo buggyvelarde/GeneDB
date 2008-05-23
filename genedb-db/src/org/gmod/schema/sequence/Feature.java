@@ -12,6 +12,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -33,6 +34,7 @@ import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.utils.CollectionUtils;
+import org.hibernate.annotations.DiscriminatorFormula;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.search.annotations.DocumentId;
@@ -146,8 +148,10 @@ public class Feature implements java.io.Serializable {
      * FeatureLoc of interest, but is neither automatically populated nor
      * persisted. It is (at the time of writing) used only by Artemis.
      */
+    @Transient
     private FeatureLoc featureLoc;
-
+    
+    @Transient
     private Logger logger = Logger.getLogger(Feature.class);
 
     // Constructors
@@ -334,7 +338,7 @@ public class Feature implements java.io.Serializable {
      * something is wrong in the database.
      * 
      * @return the unique rank=0 FeatureLoc associated with this feature
-     */
+     */   
     public FeatureLoc getRankZeroFeatureLoc() {
         List<FeatureLoc> featureLocs = getFeatureLocsForFeatureId();
         if (featureLocs.size() == 0) {
