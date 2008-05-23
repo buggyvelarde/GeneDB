@@ -5,25 +5,27 @@
     <!-- Paths/Properties you may have to change -->
     
     <property file="property-file.${deploy}" />
-    <dirname property="imported.basedir" file="${ant.file.genedb-web}"/>
-    <import file="${imported.basedir}/../genedb-access/build.xml"/>
-    <import file="${imported.basedir}/../genedb-query/build.xml"/>
-    <import file="${imported.basedir}/../genedb-domain/build.xml"/>
+    <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
+    <import file="${imported.basedir.web}/../genedb-access/build.xml"/>
+    <import file="${imported.basedir.web}/../genedb-query/build.xml"/>
+    <import file="${imported.basedir.web}/../genedb-domain/build.xml"/>
     <property name="version" value="0.2"/>
     <property name="jar-build" value="ant-build/jar-build"/>
-    <property name="lib-dir" value="${imported.basedir}/../genedb-libs/lib/"/>
+    <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
     <property name="in-lib-dir" value="WebContent/WEB-INF/lib"/>
     
     <!-- Classpaths -->
     
     <path id="libs">
-            <path location="${imported.basedir}/../genedb-access/genedb-access.jar" />
-            <path location="${imported.basedir}/../genedb-db/ant-build/jars/chado-interface.jar" />
-            <path location="${imported.basedir}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
-            <path location="${imported.basedir}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
-            <path location="${imported.basedir}/../genedb-query/ant-build/jars/genedb-query.jar" />
-
-            <path location="${lib-dir}/antlr-runtime-3.0.jar"/>
+            <path location="${imported.basedir.web}/../genedb-access/genedb-access.jar" />
+            <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/chado-interface.jar" />
+            <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
+            <path location="${imported.basedir.web}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
+            <path location="${imported.basedir.web}/../genedb-query/ant-build/jars/genedb-query.jar" />
+    		
+    		<path location="${in-lib-dir}/cgview.jar"/>
+            
+    		<path location="${lib-dir}/antlr-runtime-3.0.jar"/>
             <path location="${lib-dir}/biojava-1.4.jar"/>
             <path location="${lib-dir}/displaytag-1.1.jar"/>
             <path location="${lib-dir}/dwr-2.0rc1.jar"/>
@@ -60,8 +62,8 @@
     
     <path id="compile-libs">
         <path refid="libs"/>
-        <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jsp-api.jar" />
-        <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/servlet-api.jar" />
+        <path location="${imported.basedir.web}/lib/jsp-api.jar" />
+        <path location="${imported.basedir.web}/lib/servlet-api.jar" />
     </path>
     
     <target name="wrong-setup" >
@@ -83,10 +85,7 @@
         </copy>
     </target>
     
-    <target name="make-other-projects">
-        <antcall target="genedb-access.genedb-access.jar"/>
-        <antcall target="genedb-query.fulljar-query"/>
-        <antcall target="genedb-domain.fulljar-domain"/>
+    <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-access.genedb-access.jar">
     </target>
     
     <target name="make-all-and-deploy" depends="make-other-projects,compile, deploy,get-latest-jars"/>
