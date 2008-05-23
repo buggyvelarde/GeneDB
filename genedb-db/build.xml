@@ -23,6 +23,7 @@
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar"/>
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
 	</path>
@@ -35,6 +36,7 @@
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/postgresql-8.2dev-501.jdbc3.jar"/>
 	</path>
@@ -45,6 +47,7 @@
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-tools.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/freemarker/freemarker.jar" />
 		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />

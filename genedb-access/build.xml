@@ -12,7 +12,7 @@
 	
 	<property name="lib-dir" value="${imported.basedir.access}/../genedb-libs/lib/"/>
 	
-	<path id="libs">
+	<path id="genedb-access.libs">
         <path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/asm/asm-2.2.3.jar"/>
@@ -23,6 +23,7 @@
         <path location="${lib-dir}/spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
+	<path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jta.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar"/>
         <path location="${lib-dir}/postgresql-8.2dev-501.jdbc3.jar"/>
@@ -37,22 +38,24 @@
 		<path location="${imported.basedir.access}/lib/chado-interface.jar"/>
 	</path>
 	
-	<target name="get-latest-jars" depends="genedb-db.alljars" 
+	<target name="genedb-access.get-latest-jars" depends="genedb-db.alljars" 
 		description="Copy over JAR files from other projects">
 		<copy file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="${imported.basedir.access}/lib" />
 		<copy file="${imported.basedir.access}/../genedb-db/ant-build/jars/chado-interface.jar" todir="${imported.basedir.access}/lib" />
 	</target>
 	
-	<target name="compile" depends="get-latest-jars">
-		<javac srcdir="src" destdir="${imported.basedir.access}/ant-build/classes" debug="true" classpathref="libs"/>
+	<target name="compile-access" depends="genedb-access.get-latest-jars">
+		<mkdir dir="${imported.basedir.access}/ant-build/classes"/>
+		<javac srcdir="${imported.basedir.access}/src" destdir="${imported.basedir.access}/ant-build/classes" debug="true" classpathref="genedb-access.libs"/>
 	</target>
 	
 	<target name="replace">
 		<copy file="property-file.${load}" tofile="${imported.basedir.access}/resources/project.properties" />
 	</target>
 	
-	<target name="genedb-access.jar" depends="compile" description="Create JAR file">
+	<target name="genedb-access.jar" depends="compile-access" description="Create JAR file">
 		<delete file="${imported.basedir.access}/genedb-access.jar"/>
+		<mkdir dir="${imported.basedir.access}/ant-build/jar"/>
 		
 		<copy todir="${imported.basedir.access}/ant-build/jar">
 			<fileset dir="${imported.basedir.access}/ant-build/classes" />
