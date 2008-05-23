@@ -23,8 +23,7 @@
             <path location="${imported.basedir.web}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
             <path location="${imported.basedir.web}/../genedb-query/ant-build/jars/genedb-query.jar" />
     		
-    		<path location="${in-lib-dir}/cgview.jar"/>
-            
+    		<path location="${lib-dir}/cgview.jar"/>
     		<path location="${lib-dir}/antlr-runtime-3.0.jar"/>
             <path location="${lib-dir}/biojava-1.4.jar"/>
             <path location="${lib-dir}/displaytag-1.1.jar"/>
@@ -88,7 +87,7 @@
     <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-access.genedb-access.jar">
     </target>
     
-    <target name="make-all-and-deploy" depends="make-other-projects,compile, deploy,get-latest-jars"/>
+    <target name="make-all-and-deploy" depends="compile, deploy,get-latest-jars"/>
     
     <!-- ================================= 
           target: compile             
