@@ -10,18 +10,9 @@
 		<fileset file="../genedb-domain/genedb-domain.jar" />
 	</path>
 	
-    <!-- edit the following lines to your needs -->
 	<property name="project_name" value="Jogra" />
 	<property name="srcDir" value="src" />
 	<property name="jar-file" value="${dist.dir}/${project_name}.jar" />
-
-
-    <!-- compile -->
-    <target name="compile" depends="init" description="Compile project">
-      <javac srcdir="${srcDir}" includes="**/*.java" debug="true"
-        destdir="${classes.dir}" classpathref="compilepath">
-      </javac>
-    </target>
 
 	
     <!-- create .jar -->
