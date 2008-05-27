@@ -1,5 +1,6 @@
 package org.genedb.web.tags.db;
 
+import org.apache.log4j.Logger;
 import org.genedb.web.mvc.controller.GeneDBWebUtils;
 
 import org.gmod.schema.sequence.Feature;
@@ -17,7 +18,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class DisplayControlledCuration extends SimpleTagSupport{
-	
+	private Logger logger = Logger.getLogger(DisplayControlledCuration.class); 
 	Feature polypeptide;
 	String url;
 	
@@ -29,7 +30,7 @@ public class DisplayControlledCuration extends SimpleTagSupport{
     public void doTag() throws JspException, IOException {
 		if (polypeptide != null) {
 			Collection<FeatureCvTerm> listFeatCvTerm = polypeptide.getFeatureCvTerms();	
-			//System.out.println("featureCvTerm Collection size is " + listFeatCvTerm.size());
+			logger.info("featureCvTerm Collection size is " + listFeatCvTerm.size());
 			JspWriter out = getJspContext().getOut();
 			int totalRows = 0;
 			List<FeatureCvTerm> controlledCuration = new ArrayList<FeatureCvTerm>();
@@ -38,15 +39,15 @@ public class DisplayControlledCuration extends SimpleTagSupport{
 			List<Integer> otherGenes = new ArrayList<Integer>();
 			for (FeatureCvTerm featCvTerm : listFeatCvTerm) {
 				if("CC_genedb_controlledcuration".equals(featCvTerm.getCvTerm().getCv().getName())){
-					//System.out.println(featCvTerm.getCvTerm().getName());
+					logger.info(featCvTerm.getCvTerm().getName());
 					controlledCuration.add(totalRows, featCvTerm);
 					int totalQualifier = 0;
 					HashMap<Integer,FeatureCvTermProp> props = new HashMap<Integer,FeatureCvTermProp>();
 					for(FeatureCvTermProp featCvTermProp : featCvTerm.getFeatureCvTermProps()){
-						//System.out.println("prop value is : " + featCvTermProp.getValue());
+						logger.info("prop value is : " + featCvTermProp.getValue());
 						if("qualifier".equals(featCvTermProp.getCvTerm().getName())){
 							props.put(1 + totalQualifier,featCvTermProp);
-							//System.out.println("count " + totalQualifier + " value " + featCvTermProp.getValue());
+							logger.info("count " + totalQualifier + " value " + featCvTermProp.getValue());
 							totalQualifier++;
 						}
 					
