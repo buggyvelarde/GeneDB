@@ -52,7 +52,6 @@ public class SearchController extends MultiActionController implements Initializ
     private SequenceDao sequenceDao;
     private CvDao cvDao;
     private PhylogenyDao phylogenyDao;
-    private FileCheckingInternalResourceViewResolver viewChecker;
     private String listProductsView;
 
     public void setListProductsView(String listProductsView) {
@@ -63,10 +62,10 @@ public class SearchController extends MultiActionController implements Initializ
         this.phylogenyDao = phylogenyDao;
     }
 
-    public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
+/*    public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
         this.viewChecker = viewChecker;
     }
-
+*/
     public void afterPropertiesSet() throws Exception {
         // if (clinic == null) {
         // throw new ApplicationContextException("Must set clinic bean property
@@ -112,8 +111,7 @@ public class SearchController extends MultiActionController implements Initializ
         return new ModelAndView("examplesView");
     }
 
-    @SuppressWarnings("unused")
-    public ModelAndView FeatureById(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView FeatureById(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         int id = ServletRequestUtils.getIntParameter(request, "id", -1);
         if (id == -1) {
 
@@ -132,8 +130,7 @@ public class SearchController extends MultiActionController implements Initializ
 
     private static final String NO_VALUE_SUPPLIED = "_NO_VALUE_SUPPLIED";
 
-    @SuppressWarnings("unused")
-    public ModelAndView DummyGeneFeature(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView DummyGeneFeature(@SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         Feature feat = new Feature();
         feat.setName("dummy_name");
         feat.setUniqueName("dummy_id");
@@ -146,15 +143,19 @@ public class SearchController extends MultiActionController implements Initializ
         return new ModelAndView(viewName, model);
     }
 
-    @SuppressWarnings("unused")
-    public ModelAndView FeatureByName(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView FeatureByName(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         String name = ServletRequestUtils.getStringParameter(request, "name", NO_VALUE_SUPPLIED);
         if (name.equals(NO_VALUE_SUPPLIED)) {
 
         }
-        Feature feat = sequenceDao.getFeaturesByUniqueName(name).get(0);
+        List<Feature> features = sequenceDao.getFeaturesByUniqueName(name);
+        if (features.size() == 0)
+            throw new RuntimeException(String.format("Could not find feature with unique name '%s'", name));
+        else if (features.size() > 1)
+            logger.error(String.format("Found more than one feature with uniqueName LIKE '%s'", name));
+            
+        Feature feat = features.get(0);
         Map<String,Object> model = new HashMap<String,Object>(4);
-        // WebUtils.drawContextMap(feat);
         model.put("feature", feat);
         String viewName = "features/generic";
         String type = feat.getCvTerm().getName();
@@ -181,7 +182,6 @@ public class SearchController extends MultiActionController implements Initializ
             model.put("polypeptide", polypeptide);
             PeptideProperties pp = calculatePepstats(polypeptide);
             model.put("polyprop", pp);
-            // System.err.println("The value of pp is '"+polypeptide+"'");
         }
         return new ModelAndView(viewName, model);
         /*
@@ -266,8 +266,7 @@ public class SearchController extends MultiActionController implements Initializ
         return new ModelAndView(viewName, model);
     }
 
-    @SuppressWarnings("unused")
-    public ModelAndView Products(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView Products(@SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         Map<String, Object> model = new HashMap<String, Object>(1);
         String viewName = listProductsView;
         /*
@@ -288,8 +287,7 @@ public class SearchController extends MultiActionController implements Initializ
         return new ModelAndView(viewName, model);
     }
 
-    @SuppressWarnings({"unused"})
-    public ModelAndView CvTermByCvName(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView CvTermByCvName(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         String cvName = ServletRequestUtils
                 .getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
         String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", "*");
@@ -381,11 +379,11 @@ public class SearchController extends MultiActionController implements Initializ
     // return new ModelAndView("db/pub", model);
     // }
 
-    @SuppressWarnings("unchecked")
+   // @SuppressWarnings("unchecked")
     public ModelAndView FeatureByCvTermNameAndCvName(HttpServletRequest request,
-            HttpServletResponse response) {
+            @SuppressWarnings("unused") HttpServletResponse response) {
         String viewName = null;
-        Map model = null;
+        Map<String,Object> model = null;
         String name = ServletRequestUtils.getStringParameter(request, "name", NO_VALUE_SUPPLIED);
         String cvName = ServletRequestUtils
                 .getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
@@ -394,7 +392,7 @@ public class SearchController extends MultiActionController implements Initializ
         String length = null;
         if (features.size() == 1) {
             Feature feat = features.get(0);
-            model = new HashMap(3);
+            model = new HashMap<String,Object>(3);
             String type = feat.getCvTerm().getName();
             if (type != null && type.equals("gene")) {
                 model.put("feature", feat);
@@ -435,7 +433,7 @@ public class SearchController extends MultiActionController implements Initializ
             }
         } else {
             boolean polypep = false;
-            model = new HashMap(2);
+            model = new HashMap<String,Object>(2);
             for (Feature feature : features) {
                 if ("polypeptide".equals(feature.getCvTerm().getName())) {
                     polypep = true;
@@ -477,7 +475,7 @@ public class SearchController extends MultiActionController implements Initializ
 
     }
 
-    public ModelAndView Phylogeny(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView Phylogeny(@SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         Phylonode root = this.phylogenyDao.getPhylonodeByName("Root").get(0);
         List<Phylonode> topLevel = this.phylogenyDao.getPhylonodesByParent(root);
         StringBuffer sb = new StringBuffer();
@@ -528,7 +526,7 @@ public class SearchController extends MultiActionController implements Initializ
         return false;
     }
 
-    public ModelAndView Menu(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView Menu(@SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         return new ModelAndView("features/menu", null);
     }
 
