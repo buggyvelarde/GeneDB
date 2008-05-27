@@ -19,14 +19,17 @@
     <target name="jar" depends="compile" description="Create an unsigned JAR">
     	<delete file="${jar-file}" />
       	<jar jarfile="${jar-file}"
-			basedir="${classes.dir}"
-			manifest="etc/manifest.txt">
+			basedir="${classes.dir}">
       		<fileset dir="conf" />
+      		<manifest id="">
+      			<attribute name="Version" value="0.1"/>
+      		</manifest>
 		</jar>
     </target>
 	
 	<target name="signed-jar" depends="jar" description="Create a signed JAR">
-		<jar destfile="Jogra-tmp.jar">
+		
+		<jar destfile="Jogra-tmp.jar" duplicate="preserve">
 		    <zipgroupfileset dir="${build.dir}" includes="${jar}"/>
 		    <zipgroupfileset dir="lib" 
 		    	includes="EventBus-1.1.jar, log4j-1.2.9.jar, commons-logging.jar,myswing.jar,swingx-0.9.2.jar,swing-worker.jar,forms-1.1.0.jar,beansbinding-1.2.1.jar,commons-lang-2.3.jar"/>
@@ -35,9 +38,8 @@
 			<zipgroupfileset dir="../genedb-db/ant-build/jars" includes="chado-interface.jar" />
 		</jar>
 		
-		<signjar jar="Jogra-tmp.jar" signedjar="Jogra-signed.jar" alias="Jogra" storepass="Jogra-pw"/>
+		<signjar jar="Jogra-tmp.jar" signedjar="${dist-dir}/Jogra-signed.jar" alias="Jogra" storepass="Jogra-pw"/>
 		<delete file="Jogra-tmp.jar" />
-		<copy file="Jogra-signed.jar" todir="../genedb-web/WebContent/Jogra/Jogra.jar"></copy>
     </target>
 
 
