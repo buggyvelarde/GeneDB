@@ -11,10 +11,10 @@
 			</table> -->
 			<ul class="vert-one">
 				<li><a href="./Curation" title="Blast">Blast</a></li>
-				<li><a href="./Curation" title="Browse">Browse</a></li>
-				<li><a href="./Curation" title="Boolean Query">Boolean Query</a></li>
-				<li><a href="./Curation" title="Search Proteins with Curation">Proteins with Curation</a></li>
-				<li><a href="./SearchAll" title="Genes with GO">Genes with specific GO</a></li>
-				<li><a href="./SearchAll" title="Search Proteins with product">Proteins with Product</a></li>
+				<li><a href="BrowseCategory" title="Browse">Browse</a></li>
+				<li><a href="Curation" title="Boolean Query">Boolean Query</a></li>
+				<li><a href="Curation" title="Search Proteins with Curation">Proteins with Curation</a></li>
+				<li><a href="SearchAll" title="Genes with GO">Genes with specific GO</a></li>
+				<li><a href="SearchAll" title="Search Proteins with product">Proteins with Product</a></li>
 			</ul>
 		</div>
