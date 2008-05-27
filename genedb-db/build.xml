@@ -90,7 +90,7 @@
 	
 	
 	<target name="clean-build-db" >
-		<delete dir="${imported.basedir.db}/ant-build"/>
+		<delete dir="${imported.basedir.db}/ant-build" includeemptydirs="true" defaultexcludes="no" />
 	</target>
 	
 	<target name="setup-db" >
