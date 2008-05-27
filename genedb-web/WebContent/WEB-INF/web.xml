@@ -75,22 +75,19 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+    <servlet>
+        <servlet-name>contextMapWindow</servlet-name>
+        <servlet-class>org.genedb.web.gui.ContextMapWindowServlet</servlet-class>
+    </servlet>
+
 	<servlet-mapping>
 		<servlet-name>remoting</servlet-name>
 		<url-pattern>/remoting/*</url-pattern>
 	</servlet-mapping>
-<!--  <servlet-mapping>
-		<servlet-name>genedb</servlet-name>
-		<url-pattern>/public/*</url-pattern>
-	</servlet-mapping>-->
 	<servlet-mapping>
 		<servlet-name>genedb</servlet-name>
 		<url-pattern>/Homepage</url-pattern>
-	</servlet-mapping> <!--
-    <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
-        <url-pattern>/examples</url-pattern>
-    </servlet-mapping> -->
+	</servlet-mapping>
     <servlet-mapping>
 		<servlet-name>genedb</servlet-name>
 		<url-pattern>/BrowseCategory</url-pattern>
@@ -178,6 +175,10 @@
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ContextMap</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>contextMapWindow</servlet-name>
+        <url-pattern>/ContextMapWindow</url-pattern>
      </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
