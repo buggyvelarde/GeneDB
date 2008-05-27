@@ -59,14 +59,12 @@ public class DisplayOrthologues extends SimpleTagSupport {
         for (Map.Entry<String, Integer> entry : clusterSizes.entrySet()) {
             String name = entry.getKey();
             int size = entry.getValue();
-            out.printf("<li> %s <a href=\"./Orthologs?cluster=%1$s\"> %d others </a>", name, size);
+            out.printf("<li> %s <a href=\"./Orthologs?cluster=%1$s\">   %d others </a>", name, size);
         }
-        out.println("</ul>");
-        out.println("<ul style=\"display: block;text-align: left;\">");
         for (Map.Entry<String, String> entry : orthologs.entrySet()) {
             String name = entry.getKey();
             String product = entry.getValue();
-            out.printf("<li> <a href=\"./NamedFeature?name=%s\"> %1$s </a> %s", name, product);
+            out.printf("<li> <a href=\"./NamedFeature?name=%s\"> %1$s </a>   %s", name, product);
         }
         out.println("</ul>");
     }
