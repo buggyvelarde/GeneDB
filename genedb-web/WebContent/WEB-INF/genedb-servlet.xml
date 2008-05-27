@@ -264,6 +264,7 @@
 		<property name="sequenceDao" ref="sequenceDao" />
         <property name="listResultsView" value="list/features" />
         <property name="formView" value="search/nameLookup" />
+        <property name="geneView" value="features/geneNew"/>
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
@@ -331,7 +332,11 @@
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
-
+	
+	<bean id="GeneDBWebUtils" class="org.genedb.web.mvc.controller.GeneDBWebUtils">
+		<property name="sequenceDao" ref="sequenceDao"/>
+		<property name="grep" ref="grep"/>
+	</bean>
 
     <bean id="ContextMapController" class="org.genedb.web.mvc.controller.ContextMapController">
         <property name="commandName" value="contextMap"/>
