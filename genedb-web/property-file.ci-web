@@ -5,3 +5,4 @@ dbport=10101
 dbname=malaria_workshop
 dbuser=pathdb
 dbpassword=Pyrate_1
+lucene.indexDirectory=/software/pathogen/projects/genedb/indexes/
