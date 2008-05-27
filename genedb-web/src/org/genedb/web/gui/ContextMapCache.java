@@ -55,8 +55,7 @@ public class ContextMapCache {
                 throw new IOException("Failed to create directory: " + chromosomeDir);
         }
 
-        String cacheFileName = String.format("%09d-%09d.%s", diagram.getStart(), diagram.getEnd(),
-            RenderedContextMap.FILE_EXT);
+        String cacheFileName = renderedContextMap.getPreferredFilename();
 
         File cacheFile = new File(chromosomeDir, cacheFileName);
         String cacheFileRelativePath = servletContext.getContextPath() + renderDirectory + '/'

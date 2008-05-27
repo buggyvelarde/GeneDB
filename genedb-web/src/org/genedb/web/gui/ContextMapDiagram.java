@@ -184,10 +184,22 @@ public class ContextMapDiagram {
         return forRegion(basicGeneService, organismName, chromosomeName, start, end, geneCentre);
     }
     
-    public static ContextMapDiagram forChromosome(BasicGeneService basicGeneService, String organismName, String chromosomeName) {
+    /**
+     * Create a context map diagram for the whole of the specified chromosome.
+     * 
+     * @param basicGeneService A BasicGeneService, used to fetch the genes from
+     *                a data store
+     * @param organismName The common name of the organism
+     * @param chromosomeName The name of the chromosome
+     * @return
+     */
+/*
+ * FIXME
+ * Does not work! See comment below.
+       public static ContextMapDiagram forChromosome(BasicGeneService basicGeneService, String organismName, String chromosomeName) {
         return forRegion(basicGeneService, organismName, chromosomeName, 0, Integer.MAX_VALUE, 0);
     }
-
+*/
     /**
      * Create a context map diagram for the specified region of the specified
      * chromosome.
@@ -202,6 +214,14 @@ public class ContextMapDiagram {
      */
     public static ContextMapDiagram forRegion(BasicGeneService basicGeneService,
             String organismName, String chromosomeName, int start, int end) {
+        /*
+         * FIXME
+         * We have a bit of a problem here! There's currently no way to
+         * retrieve the details of a chromosome using the genedb-domain
+         * machinery, so we can't constrain the specified region to the
+         * actual bounds of the chromosome. This is a particular problem
+         * when called via forChromosome, obviously.
+         */
         return forRegion(basicGeneService, organismName, chromosomeName, start, end, (end - start)/2);
     }
     

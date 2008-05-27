@@ -6,7 +6,7 @@
 <c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
 
 <format:headerRound name="Gene: ${feature.displayName}" title="Gene Page ${feature.displayName}"
-		onLoad="initContextMap('${base}', '${feature.organism.commonName}', '${chromosome.uniqueName}', '${feature.uniqueName}')">
+		onLoad="initContextMap('${base}', '${feature.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, '${feature.uniqueName}')">
 	<base href="<c:url value="/"/>">
 	<st:init />
 	<script type="text/javascript"
@@ -25,6 +25,7 @@
 			<div id="contextMapDiv">
 				<img src="<c:url value="/includes/images/default/grid/loading.gif"/>" id="contextMapLoadingImage">
 			</div>
+			<div id="contextMapThumbnailDiv"></div>
 		</td>
 	</tr>
 	<tr>

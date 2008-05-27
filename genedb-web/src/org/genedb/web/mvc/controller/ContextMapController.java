@@ -1,26 +1,30 @@
 package org.genedb.web.mvc.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.lucene.index.IndexReader;
 import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
 import org.genedb.db.domain.services.BasicGeneService;
+import org.genedb.web.gui.ContextMapCache;
 import org.genedb.web.gui.ContextMapDiagram;
 import org.genedb.web.gui.RenderedContextMap;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 public class ContextMapController extends PostOrGetFormController {
     private static final int DIAGRAM_WIDTH = 300000; // in bases
-    private static final int THUMBNAIL_WIDTH = 500; // in pixels
 
     private LuceneDao luceneDao; // Injected by Spring
-    private String view; // Defined in genedb-servlet.xml
+    private View view; // Defined in genedb-servlet.xml
 
     public static class Command {
         private String gene;
         private String organism, chromosome;
+        private int chromosomeLength;
         private int start, end;
+        private int displayWidth;
         private boolean hasStart = false, hasEnd = false;
 
         public boolean isGeneCommand() {
@@ -73,12 +77,54 @@ public class ContextMapController extends PostOrGetFormController {
         public void setChromosome(String chromosome) {
             this.chromosome = chromosome;
         }
+
+        public int getChromosomeLength() {
+            return chromosomeLength;
+        }
+
+        public void setChromosomeLength(int chromosomeLength) {
+            this.chromosomeLength = chromosomeLength;
+        }
+
+        public int getDisplayWidth() {
+            return displayWidth;
+        }
+
+        public void setDisplayWidth(int displayWidth) {
+            this.displayWidth = displayWidth;
+        }
+    }
+
+    private Map<String,Object> populateModel(RenderedContextMap renderedContextMap, RenderedContextMap chromosomeThumbnail) throws IOException {
+        String contextMapURI = ContextMapCache.fileForDiagram(renderedContextMap, getServletContext());
+        String chromosomeThumbnailURI = ContextMapCache.fileForDiagram(chromosomeThumbnail, getServletContext());
+
+        ContextMapDiagram diagram = renderedContextMap.getDiagram();
+        
+        Map<String,Object> model = new HashMap<String,Object>();
+        
+        model.put("organism", diagram.getOrganism());
+        model.put("chromosome", diagram.getChromosome());
+        model.put("start", diagram.getStart());
+        model.put("end", diagram.getEnd());
+        model.put("locus", diagram.getLocus());
+        model.put("basesPerPixel", renderedContextMap.getBasesPerPixel());
+
+        model.put("imageSrc", contextMapURI);
+        model.put("imageWidth", renderedContextMap.getWidth());
+        model.put("imageHeight", renderedContextMap.getHeight());
+        
+        Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
+        chromosomeThumbnailModel.put("src", chromosomeThumbnailURI);
+        chromosomeThumbnailModel.put("basesPerPixel", chromosomeThumbnail.getBasesPerPixel());
+        model.put("chromosomeThumbnail", chromosomeThumbnailModel);
+        
+        return model;
     }
 
     @Override
     protected ModelAndView onSubmit(Object rawCommand) throws Exception {
         Command command = (Command) rawCommand;
-        Map<String, Object> model = new HashMap<String, Object>();
         
         IndexReader indexReader = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
         BasicGeneService basicGeneService = new BasicGeneServiceImpl(indexReader);
@@ -92,18 +138,12 @@ public class ContextMapController extends PostOrGetFormController {
             contextMapDiagram = ContextMapDiagram.forRegion(basicGeneService, command.getOrganism(),
                 command.getChromosome(), command.getStart(), command.getEnd());
         }
-        model.put("renderedContextMap", new RenderedContextMap(contextMapDiagram));
+        RenderedContextMap renderedContextMap = new RenderedContextMap(contextMapDiagram);
         
-        ContextMapDiagram chromosomeThumbnail = ContextMapDiagram.forChromosome(basicGeneService, command.getOrganism(), command.getChromosome());
-        RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeThumbnail);
-        renderedChromosomeThumbnail.setMaxWidth(THUMBNAIL_WIDTH);
-        renderedChromosomeThumbnail.setScaleTrackHeight(3);
-        renderedChromosomeThumbnail.setGeneTrackHeight(2);
-        renderedChromosomeThumbnail.setExonRectHeght(2);
-        renderedChromosomeThumbnail.setIntronRectHeight(2);
-        model.put("chromosomeThumbnailMap", renderedChromosomeThumbnail);
-
-        return new ModelAndView(view, model);
+        ContextMapDiagram chromosomeThumbnail = ContextMapDiagram.forRegion(basicGeneService, command.getOrganism(), command.getChromosome(), 0, command.getChromosomeLength());
+        RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeThumbnail).asThumbnail(command.getDisplayWidth());
+        
+        return new ModelAndView(view, populateModel(renderedContextMap, renderedChromosomeThumbnail));
     }
 
     public LuceneDao getLuceneDao() {
@@ -114,11 +154,11 @@ public class ContextMapController extends PostOrGetFormController {
         this.luceneDao = luceneDao;
     }
 
-    public String getView() {
+    public View getView() {
         return view;
     }
 
-    public void setView(String view) {
+    public void setView(View view) {
         this.view = view;
     }
 }

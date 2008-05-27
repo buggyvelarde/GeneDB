@@ -16,7 +16,28 @@ img#contextMapLoadingImage {
     margin-left: -8px;
 }
 
+div#contextMapContent {
+	position: absolute;
+	left: 0px;
+}
+
 img#contextMapImage {
     position:absolute;
-    left: 0px;
+}
+
+#contextMapThumbnailDiv {
+	position: relative;
+    width: 800px;
+    height: 17px;
+}
+
+img#chromosomeThumbnailImage {
+    margin-top: 9px;
+}
+
+img#chromosomeThumbnailWindow {
+    position: absolute;
+    top: 4px;
+    margin-left: -2px;
+    cursor: move;
 }

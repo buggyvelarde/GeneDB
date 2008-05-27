@@ -39,6 +39,8 @@ import org.genedb.db.domain.objects.Transcript;
  */
 public class RenderedContextMap {
     private static final Logger logger = Logger.getLogger(RenderedContextMap.class);
+    
+    private String filenamePrefix = "";
 
     private static final String FILE_FORMAT = "png";
     static final String FILE_EXT = "png";
@@ -65,7 +67,28 @@ public class RenderedContextMap {
      * The height of the scale track.
      */
     private int scaleTrackHeight = 20;
+    
+    /**
+     * The colour of the scale.
+     */
+    private Color scaleColor = Color.BLACK;
+    
+    /**
+     * The colour of the labels.
+     */
+    private Color labelColor = Color.BLACK;
         
+    /**
+     * The colour of the label background. If <code>null</code>, no label background is printed.
+     * (LCD text antialiasing doesn't work on a transparent background.)
+     */
+    private Color labelBackgroundColor = Color.WHITE;
+    
+    /**
+     * The anti-aliasing mode used to draw label text.
+     */
+    private Object labelAntialiasingMode = RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB;
+    
     /**
      * Distance between minor scale ticks, in bases
      */
@@ -105,7 +128,7 @@ public class RenderedContextMap {
 
 
     private ContextMapDiagram diagram;
-    private int width, height;
+    private int width;
 
     private BufferedImage image;
     private Graphics2D graf;
@@ -113,11 +136,33 @@ public class RenderedContextMap {
     public RenderedContextMap(ContextMapDiagram diagram) {
         this.diagram = diagram;
         this.width = diagram.getSize() / basesPerPixel;
-        this.height = scaleTrackHeight + diagram.numberOfTracks() * geneTrackHeight;
+    }
+    
+    public String getPreferredFilename () {
+        return String.format("%s%09d-%09ds%d.%s", filenamePrefix, diagram.getStart(), diagram.getEnd(),
+            getBasesPerPixel(), FILE_EXT);
     }
 
     public ContextMapDiagram getDiagram() {
         return this.diagram;
+    }
+    
+    /**
+     * Configure this diagram to render as a thumbnail
+     * 
+     * @param maxWidth the maximum width, in pixels, of the rendered thumbnail
+     * @return this object
+     */
+    public RenderedContextMap asThumbnail(int maxWidth) {
+        setMaxWidth(maxWidth);
+        setScaleTrackHeight(1);
+        setGeneTrackHeight(2);
+        setExonRectHeght(2);
+        setIntronRectHeight(2);
+        setTickDistances(0, 0);
+        setScaleColor(Color.GRAY);
+        filenamePrefix = "thumb-";
+        return this;
     }
     
     /**
@@ -137,10 +182,10 @@ public class RenderedContextMap {
      * @return the actual width of the diagram
      */
     public int setMaxWidth(int maxWidth) {
-        if (this.width % maxWidth == 0)
-            setBasesPerPixel(this.width / maxWidth);
+        if (diagram.getSize() % maxWidth == 0)
+            setBasesPerPixel(diagram.getSize() / maxWidth);
         else
-            setBasesPerPixel((this.width / maxWidth) + 1);
+            setBasesPerPixel((diagram.getSize() / maxWidth) + 1);
 
         assert this.width <= maxWidth;
         return this.width;
@@ -151,7 +196,7 @@ public class RenderedContextMap {
      * @return the height in pixels of this rendered diagram
      */
     public int getHeight() {
-        return this.height;
+        return scaleTrackHeight + diagram.numberOfTracks() * geneTrackHeight;
     }
         
     /**
@@ -217,6 +262,38 @@ public class RenderedContextMap {
     public void setScaleTrackHeight(int scaleTrackHeight) {
         this.scaleTrackHeight = scaleTrackHeight;
     }
+    
+    /**
+     * Get the colour of the scale.
+     * @return the colour of the scale
+     */
+    public Color getScaleColor() {
+        return scaleColor;
+    }
+
+    /**
+     * Set the colour of the scale.
+     * @param scaleColor the colour of the scale
+     */
+    public void setScaleColor(Color scaleColor) {
+        this.scaleColor = scaleColor;
+    }
+
+    /**
+     * Get the colour of the labels on the scale track.
+     * @return the colour of the labels
+     */
+    public Color getLabelColor() {
+        return labelColor;
+    }
+
+    /**
+     * Set the colour of the labels on the scale track.
+     * @param labelColor the colour of the labels
+     */
+    public void setLabelColor(Color labelColor) {
+        this.labelColor = labelColor;
+    }
 
     /**
      * Get the distance between minor (unlabelled) ticks on the
@@ -236,7 +313,7 @@ public class RenderedContextMap {
      * @param minorTickDistance the distance in bases
      */
     public void setTickDistances(int majorTickDistance, int minorTickDistance) {
-        if (majorTickDistance % minorTickDistance != 0)
+        if (minorTickDistance != 0 && majorTickDistance % minorTickDistance != 0)
             throw new IllegalArgumentException(String.format(
                 "Major tick distance %d is not a multiple of minor tick distance %d",
                 majorTickDistance, minorTickDistance));
@@ -256,9 +333,9 @@ public class RenderedContextMap {
 
     public void writeTo(OutputStream out) throws IOException {
 
-        logger.debug(String.format("Drawing RenderedContextMap with dimensions %dx%d", width, height));
+        logger.debug(String.format("Drawing RenderedContextMap with dimensions %dx%d", width, getHeight()));
         
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
+        image = new BufferedImage(width, getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
         graf = (Graphics2D) image.getGraphics();
 
         drawScaleTrack();
@@ -301,14 +378,15 @@ public class RenderedContextMap {
     }
     
     
-    
 
     private int yCoordinateOfAxis() {
+        if (majorTickDistance == 0)
+            return topOfTrack(0) + scaleTrackHeight / 2;
         return topOfTrack(0) + SCALE_VERTICAL_POS;
     }
 
     private void drawScaleTrack() {
-        graf.setColor(Color.BLACK);
+        graf.setColor(scaleColor);
         graf.drawLine(xCoordinate(diagram.getStart()), yCoordinateOfAxis(),
             xCoordinate(diagram.getEnd()), yCoordinateOfAxis());
         
@@ -335,7 +413,10 @@ public class RenderedContextMap {
         drawScaleTick(pos, MAJOR_TICK_HEIGHT);
         
         graf.setFont(LABEL_FONT);
-        graf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+        
+        Color previousColor = graf.getColor();
+        
+        graf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, labelAntialiasingMode);
         FontRenderContext fontRenderContext = graf.getFontRenderContext();
         
         Font font = graf.getFont();
@@ -345,7 +426,15 @@ public class RenderedContextMap {
         
         int x = xCoordinate(pos) - posHalfWidth;
         int y = yCoordinateOfAxis() + (MAJOR_TICK_HEIGHT / 2) + LABEL_SEP + (int) posMetrics.getAscent();
+        if (labelBackgroundColor != null) {
+            graf.setColor(labelBackgroundColor);
+            graf.fillRect(x, yCoordinateOfAxis() + (MAJOR_TICK_HEIGHT / 2) + LABEL_SEP, posHalfWidth * 2, (int) posMetrics.getHeight());
+        }
+        
+        graf.setColor(labelColor);
         graf.drawString(posString, x, y);
+        
+        graf.setColor(previousColor);
     }
     
     private void drawScaleTick(int pos, int tickHeight) {
@@ -432,8 +521,6 @@ public class RenderedContextMap {
         // The first guess is right for non-negative tracks.
         // Also, it's always right as long as the scale track is the same height
         // as the gene tracks.
-        // (The compiler should be able to optimise this away completely in that
-        // case.)
         if (scaleTrackHeight == geneTrackHeight || trackNumber >= 0)
             return firstGuess;
 
