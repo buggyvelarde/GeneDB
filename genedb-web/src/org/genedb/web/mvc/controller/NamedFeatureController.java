@@ -68,8 +68,9 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private String listResultsView;
     private SequenceDao sequenceDao;
     private LuceneDao luceneDao;
+    private String geneView;
 
-    @Override
+	@Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
             Object command, BindException be) throws Exception {
 
@@ -92,14 +93,14 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
                 // up-to-date
                 if (directDbCheck(name)) {
                     model = GeneDBWebUtils.prepareGene(name, model);
-                    viewName = "features/gene";
+                    viewName = geneView;
                     break;
                 }
                 be.reject("No Result");
                 return showForm(request, response, be);
             case 1:
             	model = GeneDBWebUtils.prepareGene(hits.doc(0).get("uniqueName"), model);
-                viewName = "features/gene";
+                viewName = geneView;
                 break;
             default:
                 for (int i = 0; i < hits.length(); i++) {
@@ -156,6 +157,10 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
+    
+    public void setGeneView(String geneView) {
+		this.geneView = geneView;
+	}
 }
 
 class NameLookupBean {
