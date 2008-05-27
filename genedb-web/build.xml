@@ -47,6 +47,7 @@
 		<path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jstl.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jta.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar" />
+		<path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-beanutils.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-fileupload.jar"/>
