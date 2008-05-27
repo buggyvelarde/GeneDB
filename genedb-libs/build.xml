@@ -2,7 +2,7 @@
 
 <project name="genedb-libs" basedir=".">
 	<description>This build file simply describe a set of 
-	classpaths "exported" from this project, and common 
+	classpaths and targets "exported" from this project, and common 
 	properties</description>
 	
 	
