@@ -42,22 +42,22 @@
   <b class="round1"><b></b></b></b>
  </div>
  <div id="one">
- <b class="white">
-  <b class="white1"><b></b></b>
-  <b class="white2"><b></b></b>
-  <b class="white3"></b>
-  <b class="white4"></b>
-  <b class="white5"></b></b>
-  <div style="background:#FFFFFF;height:160px;border: 1px solid black;">
+ <b class="round">
+  <b class="round1"><b></b></b>
+  <b class="round2"><b></b></b>
+  <b class="round3"></b>
+  <b class="round4"></b>
+  <b class="round5"></b></b>
+  <div class="inner" style="height:160px;">
   	<span><b>Protein Map</b></span><br></br>
   	<div align="center">	
    		<img src="<c:url value="/includes/images/protein.gif"/>" id="ProteinMap">
    	</div>
   </div>
-  <b class="white">
-  <b class="white5"></b>
-  <b class="white4"></b>
-  <b class="white3"></b>
-  <b class="white2"><b></b></b>
-  <b class="white1"><b></b></b></b>
+  <b class="round">
+  <b class="round5"></b>
+  <b class="round4"></b>
+  <b class="round3"></b>
+  <b class="round2"><b></b></b>
+  <b class="round1"><b></b></b></b>
  </div>
