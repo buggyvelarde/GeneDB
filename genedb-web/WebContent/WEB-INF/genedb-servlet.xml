@@ -184,7 +184,6 @@
       -->
     <bean id="SearchController" class="org.genedb.web.mvc.controller.SearchController">
         <property name="methodNameResolver" ref="searchControllerResolver"/>
-        <property name="viewChecker" ref="checkingViewResolver"/>
         <property name="sequenceDao" ref="sequenceDao"/>
         <property name="cvDao" ref="cvDao"/>
     </bean>
@@ -332,17 +331,22 @@
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
-	
+
 	<bean id="GeneDBWebUtils" class="org.genedb.web.mvc.controller.GeneDBWebUtils">
 		<property name="sequenceDao" ref="sequenceDao"/>
 		<property name="grep" ref="grep"/>
 	</bean>
 
+    <bean id="jsonConfig" class="net.sf.json.JsonConfig"/>
+    <bean id="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView">
+        <property name="jsonConfig" ref="jsonConfig"/>
+    </bean>
+
     <bean id="ContextMapController" class="org.genedb.web.mvc.controller.ContextMapController">
         <property name="commandName" value="contextMap"/>
 		<property name="commandClass" value="org.genedb.web.mvc.controller.ContextMapController$Command" />
 		<property name="luceneDao" ref="luceneDao"/>
-		<property name="view" value="features/contextMap"/>
+		<property name="view" ref="jsonView"/>
 		<property name="validator" ref="contextMapFormValidator"/>
     </bean>
     
