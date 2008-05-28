@@ -19,41 +19,22 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.web.utils.Grep;
-
-import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Hits;
-import org.biojava.bio.BioException;
-import org.biojava.bio.proteomics.IsoelectricPointCalc;
-import org.biojava.bio.proteomics.MassCalc;
-import org.biojava.bio.seq.ProteinTools;
-import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.Alphabet;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.bio.symbol.SimpleSymbolList;
-import org.biojava.bio.symbol.SymbolList;
-import org.biojava.bio.symbol.SymbolPropertyTable;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.utils.PeptideProperties;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.Hits;
+import org.genedb.db.dao.SequenceDao;
+import org.gmod.schema.sequence.Feature;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Looks up a feature by uniquename, and possibly synonyms
@@ -62,22 +43,21 @@ import javax.servlet.http.HttpServletResponse;
  * @author Adrian Tivey (art)
  */
 public class NamedFeatureController extends TaxonNodeBindingFormController {
-	
-	private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
-	
+
+    //private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
+
     private String listResultsView;
     private SequenceDao sequenceDao;
     private LuceneDao luceneDao;
     private String geneView;
 
-	@Override
+    @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
             Object command, BindException be) throws Exception {
 
         NameLookupBean nlb = (NameLookupBean) command;
         String orgs = nlb.getOrgs();
         String name = nlb.getName();
-        String type = nlb.getFeatureType();
         Map<String, Object> model = new HashMap<String, Object>(2);
         String viewName = listResultsView;
         List<ResultHit> results = new ArrayList<ResultHit>();
@@ -99,7 +79,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
                 be.reject("No Result");
                 return showForm(request, response, be);
             case 1:
-            	model = GeneDBWebUtils.prepareGene(hits.doc(0).get("uniqueName"), model);
+                model = GeneDBWebUtils.prepareGene(hits.doc(0).get("uniqueName"), model);
                 viewName = geneView;
                 break;
             default:
@@ -121,7 +101,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
                     ids.add(feature.getName());
                 }
                 HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(
-                        request.getSession());
+                    request.getSession());
                 historyManager.addHistoryItems("name lookup '" + nlb + "'", ids);
             }
         }
@@ -132,8 +112,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
      * Look up a featurename directly in the database, as the Lucene indices
      * aren't automatically up-to-date
      * 
-     * @param name
-     *                the uniquename of the gene
+     * @param name the uniquename of the gene
      * @return whether it exists in the db
      */
     private boolean directDbCheck(String name) {
@@ -143,8 +122,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         }
         return false;
     }
-
-    
 
     public void setLuceneDao(LuceneDao luceneDao) {
         this.luceneDao = luceneDao;
@@ -157,10 +134,10 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
-    
+
     public void setGeneView(String geneView) {
-		this.geneView = geneView;
-	}
+        this.geneView = geneView;
+    }
 }
 
 class NameLookupBean {
