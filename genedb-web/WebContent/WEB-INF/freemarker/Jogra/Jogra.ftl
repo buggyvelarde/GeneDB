@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="http://developer.genedb.org/test/Jogra/">
+<jnlp spec="1.0+" codebase="https://www.genedb.org/ci-web/Jogra/">
   <information>
     <title>Jogra</title>
     <vendor>Wellcome Trust Sanger Institute</vendor> 
@@ -21,6 +21,6 @@
     <argument>${command}</argument>
     <#list args as x>
     <argument>${x}</argument>
-    </#list>  
+    </#list>
   </application-desc>
 </jnlp>
