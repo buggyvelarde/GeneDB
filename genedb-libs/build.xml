@@ -46,6 +46,7 @@
 		<delete dir="${build.dir}" includeEmptyDirs="true" />
 	</target>
 		
+	<!--
     <target name="jar" depends="compile" description="Create an unsigned JAR">
     	<delete file="${jar-file}" />
       	<jar jarfile="${jar-file}"
@@ -54,12 +55,25 @@
       		<fileset dir="conf" />
 		</jar>
     </target>
+	-->
 	
+	<macrodef name="compile" description="Compile a module">
+		<attribute name="path" />
+		<attribute name="classpath-ref" />
+		<sequential>
+	    	<echo message="genedb-libs.compile: srcDir is '${path}/${srcDir}', output is '${path}/${classes.dir}'" />
+			<javac srcdir="${path}/${srcDir}" includes="**/*.java" debug="true"
+		        destdir="${path}/${classes.dir}" classpathref="${classpath-ref}">
+			</javac>
+		</sequential>
+	</macrodef>
+	
+	<!--
     <target name="compile" depends="init" description="Compile project">
-    	<echo message="genedb-libs.compile: srcDir is '${srcDir}', output is 'classes.dir'" />
+    	<echo message="genedb-libs.compile: srcDir is '${srcDir}', output is '${classes.dir}'" />
       <javac srcdir="${srcDir}" includes="**/*.java" debug="true"
         destdir="${classes.dir}" classpathref="compilepath">
       </javac>
     </target>
-	
+	-->
 </project>
