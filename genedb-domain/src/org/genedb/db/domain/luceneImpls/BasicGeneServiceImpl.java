@@ -84,6 +84,10 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             transcript.setFmax(Integer.parseInt(doc.get("stop")));
             transcript.setExons(parseExonLocs(doc.get("exonlocs")));
             
+            String productsTabSeparated = doc.get("product");
+            if (productsTabSeparated != null)
+                transcript.setProducts(Arrays.asList(productsTabSeparated.split("\t")));
+            
             return transcript;
         }
     };

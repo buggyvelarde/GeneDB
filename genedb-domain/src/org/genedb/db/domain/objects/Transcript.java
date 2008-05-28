@@ -20,6 +20,7 @@
 package org.genedb.db.domain.objects;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -33,6 +34,7 @@ public class Transcript implements Serializable {
     private Integer colourId; // May be null
     private BasicGene gene;
     private SortedSet<Exon> exons;
+    private List<String> products;
     private int fmin, fmax;
 
     public String getName() {
@@ -59,9 +61,10 @@ public class Transcript implements Serializable {
     public SortedSet<Exon> getExons() {
         return exons;
     }
+    public void setExons(SortedSet<Exon> exons) {
+        this.exons = exons;
+    }
     public void setExons(Set<Exon> exons) {
-        if (exons instanceof SortedSet)
-            this.exons = (SortedSet<Exon>) exons;
         this.exons = new TreeSet<Exon> (exons);
     }
 
@@ -94,5 +97,11 @@ public class Transcript implements Serializable {
     }
     public void setGene(BasicGene gene) {
         this.gene = gene;
+    }
+    public List<String> getProducts() {
+        return products;
+    }
+    public void setProducts(List<String> products) {
+        this.products = products;
     }
 }

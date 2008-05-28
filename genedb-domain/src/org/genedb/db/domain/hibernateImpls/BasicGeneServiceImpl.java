@@ -135,6 +135,8 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             }
         }
         ret.setExons(exons);
+        // TODO ret.setProducts
+        
         return ret;
     }
 
