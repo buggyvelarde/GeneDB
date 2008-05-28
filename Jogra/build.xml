@@ -18,7 +18,7 @@
 
 	
     <!-- create .jar -->
-    <target name="jar" depends="compile" description="Create an unsigned JAR">
+    <target name="jar" depends="genedb-libs.compile" description="Create an unsigned JAR">
     	<delete file="${imported.basedir.Jogra}/${jar-file}" />
       	<jar jarfile="${imported.basedir.Jogra}/${jar-file}"
 			basedir="${imported.basedir.Jogra}/${classes.dir}">
