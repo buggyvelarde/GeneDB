@@ -50,7 +50,7 @@ public class ArtemisColours {
         cols[6] = new Color(255, 0, 255);
 
         colNames[7] = "yellow";
-        cols[7] = new Color(245, 245, 0);
+        cols[7] = new Color(224, 208, 0); // previously: new Color(245, 245, 0);
 
         colNames[8] = "pale green";
         cols[8] = new Color(152, 251, 152);

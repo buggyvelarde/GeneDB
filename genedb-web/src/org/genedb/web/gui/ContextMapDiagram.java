@@ -86,17 +86,22 @@ public class ContextMapDiagram {
      */
     private class Half {
         public int numTracks = 0;
-        private Map<Integer,List<Transcript>> tracks = new HashMap<Integer,List<Transcript>>();
+        private List<List<Transcript>> tracks = new ArrayList<List<Transcript>>();
         public void addGene(BasicGene gene, int track) {
             for (Transcript transcript: gene.getTranscripts()) {
-                if (!tracks.containsKey(track))
-                    tracks.put(track, new ArrayList<Transcript>());
+                while (track >= tracks.size())
+                    tracks.add(new ArrayList<Transcript>());
                 tracks.get(track).add(transcript);
                 track++;
             }
         }
         public List<Transcript> getTrack(int track) {
-            return tracks.get(track);
+            try {
+                return tracks.get(track);
+            }
+            catch (IndexOutOfBoundsException e) {
+                return null;
+            }
         }
     }
 
@@ -128,6 +133,14 @@ public class ContextMapDiagram {
             return negativeHalf.getTrack(-track-1);
         else
             return positiveHalf.getTrack(track-1);
+    }
+    
+    public List<List<Transcript>> getPositiveTracks() {
+        return positiveHalf.tracks;
+    }
+
+    public List<List<Transcript>> getNegativeTracks() {
+        return negativeHalf.tracks;
     }
 
     /**

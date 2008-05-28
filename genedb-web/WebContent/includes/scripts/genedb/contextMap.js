@@ -1,10 +1,13 @@
 var loaded = false;
 var response;
-var contextMapDiv;
+var contextMapDiv, contextMapThumbnailDiv, contextMapGeneInfo;
 
-function initContextMap(base, organism, chromosome, chrlen, gene) {
+function initContextMap(base, organism, chromosome, chrlen, fmin, fmax) {
     contextMapDiv = document.getElementById("contextMapDiv");
-    var contextMapInfo = getContextMapInfo(base, organism, chromosome, chrlen, gene);
+    contextMapThumbnailDiv = document.getElementById("contextMapThumbnailDiv");
+    contextMapGeneInfo = document.getElementById("contextMapGeneInfo");
+
+    var contextMapInfo = getContextMapInfo(base, organism, chromosome, chrlen, fmin, fmax);
     
     contextMapDiv.onmousedown = startMove;
     document.onmousemove = doMove;
@@ -16,9 +19,9 @@ function initContextMap(base, organism, chromosome, chrlen, gene) {
 }
 
 
-function getContextMapInfo(base, organism, chromosome, chrlen, gene) {
+function getContextMapInfo(base, organism, chromosome, chrlen, fmin, fmax) {
 	var url = base + "ContextMap?organism="+organism+"&chromosome="+chromosome+"&chromosomeLength="+chrlen+
-	                   "&gene="+gene+"&displayWidth="+contextMapDiv.clientWidth;
+	                   "&thumbnailDisplayWidth="+contextMapThumbnailDiv.clientWidth;
 	var req = new XMLHttpRequest();
 	req.open( "GET", url, true );
 
@@ -26,7 +29,7 @@ function getContextMapInfo(base, organism, chromosome, chrlen, gene) {
 	    if ( req.readyState == 4 ) {
 	        if ( req.status == 200 ) {
 	            response = eval( "(" + req.responseText + ")" );
-	            loadTile(base, chrlen, response);
+	            loadTile(base, chrlen, (fmin+fmax)/2, response);
 	        } else {
 	            alert( "Request failed." );
 	        }
@@ -42,7 +45,7 @@ var chromosome;
 var contextMapContent, chromosomeThumbnailWindow;
 var basesPerPixel, thumbnailBasesPerPixel;
 
-function loadTile(base, chrlen, tileData) {
+function loadTile(base, chrlen, locus, tileData) {
     organism = tileData.organism;
     chromosome = tileData.chromosome;
     basesPerPixel = tileData.basesPerPixel;
@@ -53,16 +56,25 @@ function loadTile(base, chrlen, tileData) {
     contextMapContent = document.createElement("div");
     contextMapContent.id = "contextMapContent";
     contextMapContent.style.width = Math.floor(chrlen / basesPerPixel)+"px";
-    contextMapContent.style.left = - (tileData.locus / basesPerPixel + contextMapDiv.getWidth() / 2)+"px";
+    contextMapContent.style.left = (contextMapDiv.getWidth() / 2 - locus / basesPerPixel)+"px";
 
-    var contextMapImage = document.createElement("img");
-    contextMapImage.id = "contextMapImage";
-    contextMapImage.src = tileData.imageSrc;
-    contextMapImage.style.left = (tileData.start / basesPerPixel) + "px";
-    contextMapContent.appendChild(contextMapImage);
-    contextMapDiv.appendChild(contextMapContent);
+    var geneTrackHeight = tileData.geneTrackHeight;
+    var scaleTrackHeight = tileData.scaleTrackHeight;
+    var exonRectHeight = tileData.exonRectHeight;
     
-    var contextMapThumbnailDiv = document.getElementById("contextMapThumbnailDiv");
+    for (var tileIndex = 0; tileIndex < tileData.tiles.length; tileIndex++) {
+        var tile = tileData.tiles[tileIndex];
+        
+	    var contextMapImage = document.createElement("img");
+	    contextMapImage.id     = "contextMapImage";
+	    contextMapImage.src    = tile.src;
+	    contextMapImage.width  = tile.width;
+	    contextMapImage.style.left = (tile.start / basesPerPixel) + "px";
+	    contextMapContent.appendChild(contextMapImage);
+	    contextMapDiv.appendChild(contextMapContent);
+	}
+	contextMapDiv.style.height = tileData.tileHeight + "px";
+    
     var chromosomeThumbnailImage = document.createElement("img");
     chromosomeThumbnailImage.id = "chromosomeThumbnailImage";
     chromosomeThumbnailImage.src = tileData.chromosomeThumbnail.src;
@@ -81,6 +93,44 @@ function loadTile(base, chrlen, tileData) {
     chromosomeThumbnailWindow.style.left = Math.round(-parseFloat(contextMapContent.style.left) * basesPerPixel / thumbnailBasesPerPixel)+"px";
 
     contextMapDiv.style.height = tileData.imageHeight + "px";
+    
+    var numPositiveTracks = tileData.positiveTracks.length;
+    for (var trackIndex = 0; trackIndex < tileData.positiveTracks.length; trackIndex++) {
+       var track = tileData.positiveTracks[trackIndex];
+       for (var transcriptIndex = 0; transcriptIndex < track.length; transcriptIndex++) {
+           var transcript = track[transcriptIndex];
+           var topPx = (numPositiveTracks - trackIndex - 1) * geneTrackHeight
+                        + (geneTrackHeight - exonRectHeight) / 2;
+           createArea(transcript, topPx, geneTrackHeight);
+        }
+    }
+
+    var topHalf = numPositiveTracks * geneTrackHeight + scaleTrackHeight;
+    for (var trackIndex = 0; trackIndex < tileData.negativeTracks.length; trackIndex++) {
+       var track = tileData.negativeTracks[trackIndex];
+       for (var transcriptIndex = 0; transcriptIndex < track.length; transcriptIndex++) {
+           var transcript = track[transcriptIndex];
+           var topPx = topHalf + trackIndex * geneTrackHeight + (geneTrackHeight - exonRectHeight) / 2;
+           createArea(transcript, topPx, geneTrackHeight);
+        }
+    }
+}
+
+function createArea(transcript, topPx, heightPx) {
+    var area = document.createElement("div");
+    area.style.position = "absolute";
+    var leftPx = transcript.fmin / basesPerPixel;
+    area.style.left = leftPx + "px";
+    area.style.width = (transcript.fmax / basesPerPixel - leftPx) + "px";
+    area.style.top = topPx + "px";
+    area.style.height = heightPx + "px";
+    area.style.cursor = "pointer";
+    area.onmouseover = function() {
+        contextMapGeneInfo.textContent = transcript.name
+            + " (" + transcript.products + ")";
+    };
+    
+    contextMapContent.appendChild(area);
 }
 
 var beforeDragPos;
@@ -93,10 +143,12 @@ var animationTimer;
 
 var dragging = false;       // Are we currently dragging the image?
 var draggingWindow = false; // Are we dragging the window?
+var velocity = 0;
 
 function startDragWindow(event) {
     dragging = false;
     draggingWindow = true;
+    velocity = 0;
     dragStartX = event.clientX;
     beforeDragPos = parseFloat(chromosomeThumbnailWindow.style.left);
     
@@ -105,36 +157,27 @@ function startDragWindow(event) {
 
 function startMove(event) {
 	// If the mouse button was released outside the document window,
-	// we are unable to detect that it's been released. Therefore
-	// dragging behaviour continues when the mouse pointer is moved
-	// back into the document. If the user then clicks again on the
-	// context map, we don't want to start a new drag.
+	// we are unable to detect that it's been released (in Firefox).
+    // Therefore dragging behaviour continues when the mouse pointer
+    // is moved back into the document. If the user then clicks again
+    // on the context map, we don't want to start a new drag.
 	if (dragging) return false;
 	
-	if (animationTimer != null) {
-    	clearInterval(animationTimer);
-	   animationTimer = null;
-	}
-
 	if (!event) event = window.event; // IE is so broken
 	dragStartX = event.clientX;
-	dragImage = document.getElementById("contextMapContent");
-	if (dragImage != null) {
-	    dragging = true;
-	    draggingWindow = false;
-	    if (dragImage.style.left == "")
-	       beforeDragPos = 0;
-	    else
-    	    beforeDragPos = parseFloat(dragImage.style.left);
-    	window.status = "Move started (" + dragStartX + ")";
-    	prevX = dragStartX;
-    	prevTimeStamp = event.timeStamp;
-    	velocity = 0;
-    }
+    dragging = true;
+    draggingWindow = false;
+    if (contextMapContent.style.left == "")
+       beforeDragPos = 0;
+    else
+   	    beforeDragPos = parseFloat(contextMapContent.style.left);
+   	prevX = dragStartX;
+   	prevTimeStamp = event.timeStamp;
+   	velocity = 0;
+
 	return false;
 }
 
-var velocity;
 function doMove(event) {
 	if (!dragging && !draggingWindow) return;
 
@@ -146,14 +189,13 @@ function doMove(event) {
 	    newPos = Math.round(newWindowPos * thumbnailBasesPerPixel / basesPerPixel);
     }
     else {
-      newPos = Math.round(dragStartX - beforeDragPos - event.clientX);
+        newPos = Math.round(dragStartX - beforeDragPos - event.clientX);
+        velocity = (event.clientX - prevX) / (event.timeStamp - prevTimeStamp);
+        prevTimeStamp = event.timeStamp;
     }
     
     moveTo(newPos);
-	
-	velocity = (event.clientX - prevX) / (event.timeStamp - prevTimeStamp);
 	prevX = event.clientX;
-	prevTimeStamp = event.timeStamp;
 }
 
 function moveTo(newPos) {

@@ -71,7 +71,7 @@ public class RenderedContextMap {
     /**
      * The colour of the scale.
      */
-    private Color scaleColor = Color.BLACK;
+    private Color scaleColor = Color.GRAY;
     
     /**
      * The colour of the labels.
@@ -82,13 +82,18 @@ public class RenderedContextMap {
      * The colour of the label background. If <code>null</code>, no label background is printed.
      * (LCD text antialiasing doesn't work on a transparent background.)
      */
-    private Color labelBackgroundColor = Color.WHITE;
+    private Color labelBackgroundColor = new Color(0xF0, 0xF0, 0xE4);
     
     /**
      * The anti-aliasing mode used to draw label text.
      */
     private Object labelAntialiasingMode = RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB;
-    
+
+    /**
+     * Font used for printing figures on the scale track
+     */
+    private Font labelFont = new Font("Dialog", Font.PLAIN, 10);
+
     /**
      * Distance between minor scale ticks, in bases
      */
@@ -117,29 +122,76 @@ public class RenderedContextMap {
     private static final int SCALE_VERTICAL_POS = MAJOR_TICK_HEIGHT / 2;
     
     /**
-     * Font used for printing figures on the scale track
-     */
-    private static final Font LABEL_FONT = new Font("Lucida Sans", Font.PLAIN, 10);
-    
-    /**
      * How much space to leave between a major scale tick and the label below, in pixels.
      */
     private static final int LABEL_SEP = 2;
 
 
     private ContextMapDiagram diagram;
+    private int start, end;
     private int width;
 
     private BufferedImage image;
     private Graphics2D graf;
 
     public RenderedContextMap(ContextMapDiagram diagram) {
+        logger.info(labelFont.getFontName());
         this.diagram = diagram;
         this.width = diagram.getSize() / basesPerPixel;
+        this.start = diagram.getStart();
+        this.end = diagram.getEnd();
+    }
+    
+    public RenderedContextMap restrict(int start, int end) {
+        if (start < diagram.getStart()) {
+            logger.warn(String.format("Start of diagram is %d, start of restriction is %d",
+                diagram.getStart(), start));
+            this.start = diagram.getStart();
+        }
+        else
+            this.start = start;
+        
+        if (end > diagram.getEnd()) {
+            logger.warn(String.format("End of diagram is %d, end of restriction is %d",
+                diagram.getEnd(), end));
+            this.end = diagram.getEnd();
+        }
+        else
+            this.end = end;
+        
+        this.width = getSize() / basesPerPixel;
+        return this;
+    }
+    
+    /**
+     * Get the location of the start of the diagram.
+     * 
+     * @return the start of the diagram, in interbase coordinates
+     */
+    public int getStart() {
+        return start;
+    }
+    
+    /**
+     * Get the location of the end of the diagram.
+     * 
+     * @return the end of the diagram, in interbase coordinates
+     */
+    public int getEnd() {
+        return end;
+    }
+    
+    /**
+     * Get the size of the diagram.
+     * 
+     * @return the size of the diagram, in bases
+     */
+    private int getSize() {
+        return end - start;
     }
     
     public String getPreferredFilename () {
-        return String.format("%s%09d-%09ds%d.%s", filenamePrefix, diagram.getStart(), diagram.getEnd(),
+        return String.format("%s%09d-%09ds%d.%s", filenamePrefix, getStart(), getEnd(),
             getBasesPerPixel(), FILE_EXT);
     }
 
@@ -182,10 +234,10 @@ public class RenderedContextMap {
      * @return the actual width of the diagram
      */
     public int setMaxWidth(int maxWidth) {
-        if (diagram.getSize() % maxWidth == 0)
-            setBasesPerPixel(diagram.getSize() / maxWidth);
+        if (getSize() % maxWidth == 0)
+            setBasesPerPixel(getSize() / maxWidth);
         else
-            setBasesPerPixel((diagram.getSize() / maxWidth) + 1);
+            setBasesPerPixel((getSize() / maxWidth) + 1);
 
         assert this.width <= maxWidth;
         return this.width;
@@ -374,7 +426,7 @@ public class RenderedContextMap {
                 basesPerPixel));
 
         this.basesPerPixel = basesPerPixel;
-        this.width = diagram.getSize() / basesPerPixel;
+        this.width = getSize() / basesPerPixel;
     }
     
     
@@ -387,15 +439,15 @@ public class RenderedContextMap {
 
     private void drawScaleTrack() {
         graf.setColor(scaleColor);
-        graf.drawLine(xCoordinate(diagram.getStart()), yCoordinateOfAxis(),
-            xCoordinate(diagram.getEnd()), yCoordinateOfAxis());
+        graf.drawLine(xCoordinate(getStart()), yCoordinateOfAxis(),
+            xCoordinate(getEnd()), yCoordinateOfAxis());
         
         if (minorTickDistance == 0 || majorTickDistance == 0)
             return;
         
         int majorTicksEvery = (majorTickDistance / minorTickDistance);
         int tickNumber = 0;
-        int pos = majorTickDistance * (diagram.getStart() / majorTickDistance);
+        int pos = majorTickDistance * (getStart() / majorTickDistance);
         while (pos < diagram.getEnd()) {
             if (tickNumber++ % majorTicksEvery == 0)
                 drawMajorScaleTick(pos);
@@ -412,7 +464,7 @@ public class RenderedContextMap {
     private void drawMajorScaleTick(int pos) {
         drawScaleTick(pos, MAJOR_TICK_HEIGHT);
         
-        graf.setFont(LABEL_FONT);
+        graf.setFont(labelFont);
         
         Color previousColor = graf.getColor();
         
@@ -494,7 +546,7 @@ public class RenderedContextMap {
      * @return the corresponding x position
      */
     private int xCoordinate(int loc) {
-        return pixelWidth(diagram.getStart(), loc);
+        return pixelWidth(getStart(), loc);
     }
 
     /**

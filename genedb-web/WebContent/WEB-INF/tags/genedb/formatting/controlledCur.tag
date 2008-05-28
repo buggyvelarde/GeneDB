@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/genedb/formatting" %>
+
 <c:forEach var="f" begin="0" items="${cMap}">
 		<c:set var="polypeptide" value="${f.value}" />	
 </c:forEach>
