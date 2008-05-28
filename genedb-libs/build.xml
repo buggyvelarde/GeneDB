@@ -42,9 +42,12 @@
 		<mkdir dir="${classes.dir}" />
 	</target>
 	
-	<target name="clean" description="Remove all build artifacts">
-		<delete dir="${build.dir}" includeEmptyDirs="true" />
-	</target>
+	<macrodef name="clean-target" description="Remove all build artifacts">
+		<attribute name="path" />
+		<sequential>
+			<delete dir="@{path}" includeEmptyDirs="true" />
+		</sequential>
+	</macrodef>
 		
 	<!--
     <target name="jar" depends="compile" description="Create an unsigned JAR">
@@ -57,7 +60,7 @@
     </target>
 	-->
 	
-	<macrodef name="compile" description="Compile a module">
+	<macrodef name="compile-task" description="Compile a module">
 		<attribute name="path" />
 		<attribute name="classpath-ref" />
 		<sequential>
