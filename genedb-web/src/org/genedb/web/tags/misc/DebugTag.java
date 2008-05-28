@@ -35,9 +35,9 @@ public class DebugTag extends SimpleTagSupport {
         ret.append(scopeName+ " ("+scope+")");
         ret.append("</h2>");
         ret.append("<table border=\"1\">");
-        Enumeration e = pc.getAttributeNamesInScope(scope);
+        Enumeration<String> e = pc.getAttributeNamesInScope(scope);
         while (e.hasMoreElements()) {
-            String key = (String) e.nextElement();
+            String key = e.nextElement();
             toRow(ret, key, pc.getAttribute(key, scope));
         }
         ret.append("</table>");

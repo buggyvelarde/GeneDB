@@ -1,9 +1,7 @@
 package org.genedb.web.tags.misc;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -16,6 +14,7 @@ public class LuceneFieldsTag extends SimpleTagSupport {
 	@Override
     public void doTag() throws JspException, IOException {
 		IndexReader ir = IndexReader.open("/Users/cp2/external/lucene/index/gff/");
+		@SuppressWarnings("unchecked")
 		Collection<String> c = ir.getFieldNames(IndexReader.FieldOption.INDEXED);
 		JspWriter out = getJspContext().getOut();
 		out.write("<select name=\"field\">");

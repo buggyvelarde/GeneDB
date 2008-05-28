@@ -22,6 +22,6 @@ package org.genedb.query.core;
 public class Parameter {
     
     String name;
-    Class clazz;
+    Class<?> clazz;
 
 }

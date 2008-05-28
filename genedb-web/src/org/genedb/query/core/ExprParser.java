@@ -17,6 +17,7 @@ import org.antlr.runtime.tree.RewriteRuleSubtreeStream;
 import org.antlr.runtime.tree.RewriteRuleTokenStream;
 import org.antlr.runtime.tree.TreeAdaptor;
 
+@SuppressWarnings("all")
 public class ExprParser extends Parser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "INT", "NAME", "STRING", "UNION", "INTERSECT", "SUBTRACT", "LCA", "UCA", "WS", "PARAM", "PARAMS", "QUERY", "HISTORY_BY_NAME", "HISTORY_BY_NUM", "'('", "')'", "'{'", "'}'", "';'", "'='", "'union'", "'or'", "'intersect'", "'and'", "'subtract'", "'not'"

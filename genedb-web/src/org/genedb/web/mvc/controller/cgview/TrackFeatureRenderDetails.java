@@ -1,11 +1,8 @@
 package org.genedb.web.mvc.controller.cgview;
 
 import java.awt.Paint;
-import java.awt.Rectangle;
 
 public class TrackFeatureRenderDetails {
-	
-	private Rectangle labelRect;
 	
 	private Paint foreground;
 	

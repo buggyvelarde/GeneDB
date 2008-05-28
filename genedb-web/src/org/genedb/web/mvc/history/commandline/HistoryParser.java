@@ -106,7 +106,7 @@ public class HistoryParser implements HistoryParserConstants {
     case NUMBER:
       t = jj_consume_token(NUMBER);
           int i = Integer.parseInt( t.image ) ;
-        {if (true) return (HistoryItem) historyManager.getHistoryItems().get(i-1);}
+        {if (true) return historyManager.getHistoryItems().get(i-1);}
       break;
     case PREVIOUS:
       jj_consume_token(PREVIOUS);
@@ -230,7 +230,7 @@ public class HistoryParser implements HistoryParserConstants {
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.Vector jj_expentries = new java.util.Vector();
+  private java.util.Vector<int[]> jj_expentries = new java.util.Vector<int[]>();
   private int[] jj_expentry;
   private int jj_kind = -1;
 
@@ -262,7 +262,7 @@ public class HistoryParser implements HistoryParserConstants {
     }
     int[][] exptokseq = new int[jj_expentries.size()][];
     for (int i = 0; i < jj_expentries.size(); i++) {
-      exptokseq[i] = (int[])jj_expentries.elementAt(i);
+      exptokseq[i] = jj_expentries.elementAt(i);
     }
     return new ParseException(token, exptokseq, tokenImage);
   }

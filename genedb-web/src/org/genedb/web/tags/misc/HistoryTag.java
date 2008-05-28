@@ -1,11 +1,8 @@
 package org.genedb.web.tags.misc;
 
-import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
-import static javax.servlet.jsp.PageContext.PAGE_SCOPE;
 import static javax.servlet.jsp.PageContext.REQUEST_SCOPE;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;

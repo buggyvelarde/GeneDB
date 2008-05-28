@@ -2,14 +2,12 @@ package org.genedb.web.menu;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Vector;
 
 public class CompositeMenu extends Menu
 {
-    private Vector list = new Vector();
+    private List<Menu> list = new ArrayList<Menu>();
 
     /** @link aggregationByValue */
     /*# Menu lnkMenu; */
@@ -30,20 +28,9 @@ public class CompositeMenu extends Menu
      * @return collection of child menus
     */
     @Override
-    public Collection listChildMenus()
+    public Collection<Menu> listChildMenus()
     {
         return list;
-    }
-
-    /**
-     * Returns the child
-     * @param functionid as string
-     * @return the child
-    */
-    @Override
-    public Menu getChild(String s)
-    {
-        return null;
     }
 
   /**
@@ -76,11 +63,9 @@ public class CompositeMenu extends Menu
         }
         path.deleteCharAt(path.length()-1);
         top = top + Menu.top + (4 * j);
-        Iterator it = list.iterator();
         StringBuffer childs = new StringBuffer();
         
-        while(it.hasNext()){
-        	Menu menu = (Menu)it.next();
+        for(Menu menu: list) {
         	childs.append(menu.getMenuId());
         	childs.append(",");
         }
@@ -100,12 +85,10 @@ public class CompositeMenu extends Menu
         sb.append("<div id=\"" + menuid + "\" onclick=\"mouseclick(" + getMenuId() + ");\" style=\"font-family:Tahoma,Verdana,Arial;font-size:12px;padding:4px;\"><input style=\"z-index: " + zindex + "\" name=\"" + path.toString() + "\" type=\"checkbox\" id=\"" + checkid + "\" onclick=\"boxclicked(" + getMenuId() + ")\">" + getMenuName() + "</input></div>");
         sb.append("</a>");
         sb.append("\n");
-        it = list.iterator();
-        int i=1;
-        while(it.hasNext())
-        {
-            Menu menu = (Menu)it.next();
 
+        int i=1;
+        for(Menu menu: list)
+        {
             //menu.setLevelCoord(getLevelCoord()+ i);
             menu.setLevelCoord(getLevelCoord() + "," + i);
             sb.append(menu.render(i+j-1));

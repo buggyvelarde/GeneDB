@@ -1,13 +1,12 @@
 package org.genedb.web.mvc.controller.cgview;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.web.context.ServletConfigAware;
-
 import java.io.File;
-import java.io.IOException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.context.ServletConfigAware;
 
 /**
  * 
@@ -28,7 +27,7 @@ public class CachedFileFactory implements ServletConfigAware, InitializingBean {
     
     
     
-    public CachedFile getCachedFile(String name) throws IOException {
+    public CachedFile getCachedFile(String name) {
         File parent = tmpDir;
         if (useSubDirs) {
             String nameWithoutExtension = name;

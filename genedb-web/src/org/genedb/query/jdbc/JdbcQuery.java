@@ -45,17 +45,16 @@ public abstract class JdbcQuery extends NamedParameterJdbcDaoSupport implements 
 
     protected List<String> runQuery() {
         
-        List results = getNamedParameterJdbcTemplate().query(sql, 
+        @SuppressWarnings("unchecked")        
+        List<String> results = getNamedParameterJdbcTemplate().query(sql, 
                 new BeanPropertySqlParameterSource(this),
                 new RowMapper() {
-                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    public Object mapRow(ResultSet rs, @SuppressWarnings("unused") int rowNum) throws SQLException {
                         return rs.getString(0);
                     }
         });
         
-        @SuppressWarnings("unchecked")
-        List<String> ret = results;
-        return ret;
+        return results;
     }
 
     public List<String> getResults() throws QueryException {

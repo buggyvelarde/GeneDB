@@ -20,37 +20,12 @@
 package org.genedb.web.mvc.controller.download;
 
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.loading.TaxonNode;
-import org.genedb.web.mvc.controller.HistoryItem;
-import org.genedb.web.mvc.controller.HistoryManager;
-import org.genedb.web.mvc.controller.HistoryManagerFactory;
-import org.genedb.web.mvc.controller.TaxonNodeBindingFormController;
-
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
-
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -58,7 +33,22 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.web.mvc.controller.HistoryItem;
+import org.genedb.web.mvc.controller.HistoryManager;
+import org.genedb.web.mvc.controller.HistoryManagerFactory;
+import org.genedb.web.mvc.controller.TaxonNodeBindingFormController;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureRelationship;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
 
 
 

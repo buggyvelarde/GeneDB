@@ -35,8 +35,6 @@ public class ExecutionService {
     
     private ExecutionEnvironment executionEnvironment;
     
-    private ExecutionFilter executionFilter;
-    
     public Process start(Map<String, String> arguments) throws IOException {
         // TODO Substitute into cmd line from arguments
         ProcessBuilder pb = createProcessBuilder(arguments);

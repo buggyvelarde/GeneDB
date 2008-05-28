@@ -26,7 +26,7 @@ import java.util.List;
 public abstract class QueryTemplate {
     
     String name;
-    Class baseClass;
+    Class<?> baseClass;
     List<Parameter> params;
     
     public abstract void processNewPrototype(BeanDefinitionBuilder bdb); 
@@ -39,11 +39,11 @@ public abstract class QueryTemplate {
         this.params = params;
     }
 
-    public Class getBaseClass() {
+    public Class<?> getBaseClass() {
         return this.baseClass;
     }
 
-    public void setBaseClass(Class baseClass) {
+    public void setBaseClass(Class<?> baseClass) {
         this.baseClass = baseClass;
     }
 

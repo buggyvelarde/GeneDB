@@ -46,7 +46,7 @@ public class QueryBeanGenerator implements BeanFactoryPostProcessor,
         List<String> templateNames = new ArrayList<String>();
         
         @SuppressWarnings("unchecked")
-        Map<String, QueryTemplate> map = (Map<String, QueryTemplate>) factory.getBeansOfType(QueryTemplate.class);
+        Map<String, QueryTemplate> map = factory.getBeansOfType(QueryTemplate.class);
 
         for (Map.Entry<String, QueryTemplate> entry : map.entrySet()) {
         	String beanName = entry.getKey();
@@ -62,7 +62,7 @@ public class QueryBeanGenerator implements BeanFactoryPostProcessor,
                 paramNames.add(parameter.name);
             }
             Query bean = (Query) bg.create();
-            Class newClass = bean.getClass();
+            Class<?> newClass = bean.getClass();
             
             BeanDefinitionBuilder bdb = BeanDefinitionBuilder.rootBeanDefinition(newClass);
             bdb.setScope(BeanDefinition.SCOPE_PROTOTYPE);

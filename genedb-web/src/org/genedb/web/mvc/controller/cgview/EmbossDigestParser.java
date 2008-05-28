@@ -33,7 +33,7 @@ public class EmbossDigestParser implements InitializingBean {
 
     String embossDir; 
     
-    private List<String> digests = (List<String>) Collections.EMPTY_LIST;
+    private List<String> digests = Collections.emptyList();
         
     public List<String> getDigests() {
         return digests;
