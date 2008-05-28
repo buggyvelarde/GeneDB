@@ -99,7 +99,7 @@
     
     <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-access.genedb-access.jar,genedb-db.alljars" />
     
-    <target name="make-all-and-deploy" depends="make-other-projects, compile, deploy, get-latest-jars"/>
+    <target name="make-all-and-deploy" depends="make-other-projects, compile, final-deploy, get-latest-jars"/>
     
     <!-- ================================= 
           target: compile             
