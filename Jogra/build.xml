@@ -18,7 +18,7 @@
 
 	<target name="compile2">
 		<echo>I'm called</echo>
-		<compile classpath-ref="${Jogra.compilepath}" path="${imported.basedir.Jogra}" />
+		<compile classpath-ref="compilepath" path="${imported.basedir.Jogra}" />
 	</target>
 	
     <!-- create .jar -->
