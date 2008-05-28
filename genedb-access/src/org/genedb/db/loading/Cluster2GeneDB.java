@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.genedb.db.dao.GeneralDao;
@@ -26,153 +26,150 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 
 public class Cluster2GeneDB {
-	
-	protected static final Log logger = LogFactory.getLog(Cluster2GeneDB.class);
-	
+
+    protected static final Log logger = LogFactory.getLog(Cluster2GeneDB.class);
+
     private SequenceDao sequenceDao;
 
     private GeneralDao generalDao;
-    
+
     private HibernateTransactionManager hibernateTransactionManager;
-    
+
     private Session session;
-    
+
     protected Db ORTHOMCLDB;
-    
-    public static void main (String[] args) throws FileNotFoundException {
-        
+
+    public static void main(String[] args) {
+
         String[] filePaths = args;
 
         if (filePaths.length == 0) {
-        	System.err.println("No input files specified");
-        	System.exit(-1);
+            System.err.println("No input files specified");
+            System.exit(-1);
         }
-        
+
         Properties overrideProps = new Properties();
         overrideProps.setProperty("dataSource.username", "pathdb");
-     
+
         PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
 
-
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"NewRunner.xml"});
+                new String[] { "NewRunner.xml" });
 
-        Cluster2GeneDB application = (Cluster2GeneDB) ctx.getBean("cluster2genedb", Cluster2GeneDB.class);
+        Cluster2GeneDB application = (Cluster2GeneDB) ctx.getBean("cluster2genedb",
+            Cluster2GeneDB.class);
         application.afterPropertiesSet();
         File[] inputs = new File[filePaths.length];
         long start = new Date().getTime();
         for (int i = 0; i < filePaths.length; i++) {
-        	inputs[i] = new File(filePaths[i]);
-		}
-		application.process(inputs);
-		long duration = (new Date().getTime()-start)/1000;
-		logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
+            inputs[i] = new File(filePaths[i]);
+        }
+        application.process(inputs);
+        long duration = (new Date().getTime() - start) / 1000;
+        logger.info("Processing completed: " + duration / 60 + " min " + duration % 60 + " sec.");
     }
-    
+
     public void afterPropertiesSet() {
-		session = hibernateTransactionManager.getSessionFactory().openSession();
-		ORTHOMCLDB = generalDao.getDbByName("ORTHOMCLDB");
+        session = hibernateTransactionManager.getSessionFactory().openSession();
+        ORTHOMCLDB = generalDao.getDbByName("ORTHOMCLDB");
     }
 
+    public void process(final File[] files) {
+        Transaction transaction = session.beginTransaction();
+        for (File file : files) {
+            System.err.println("Processing '" + file.getName() + "'");
+            Map<String, String> map = null;
+            Reader r = null;
+            try {
+                r = new FileReader(file);
+                map = parseFile(r);
 
-	public void process(final File[] files) {
-		Transaction transaction = session.beginTransaction();
-		for (File file : files) {
-			System.err.println("Processing '"+file.getName()+"'");
-    		Map<String,String> map = null;
-			Reader r = null;
-			try {
-				r = new FileReader(file);
-				map = parseFile(r);
-				
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			writeToDb(map);
-			transaction.commit();
-		}
-	}
-    
-	private void writeToDb(Map<String, String> map) {
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+            writeToDb(map);
+            transaction.commit();
+        }
+    }
 
-		Iterator it = map.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry pairs = (Map.Entry)it.next();
-	        String key = (String)pairs.getKey();
-	        String value = (String)pairs.getValue();
-	        
-	        if(value != "") {
-		        Feature polypeptide = getPolypeptide(key);
-		        if (polypeptide == null) {
-		        	logger.warn("Can't find gene for '"+key+"'");
-		        } else {
-		        	
-		        	DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(ORTHOMCLDB, value);
-		        	if(dbXRef == null) {
-		        		dbXRef = new DbXRef(ORTHOMCLDB, key);
-		        		generalDao.persist(dbXRef);
-		        	}
-		        
-		        	FeatureDbXRef fDbXRef = new FeatureDbXRef(dbXRef,polypeptide,true);
-		        	sequenceDao.persist(fDbXRef);
-		        }
-	        }
-	    }
-		
-	}
+    private void writeToDb(Map<String, String> map) {
 
-	private Feature getPolypeptide(String geneName) {
-    	geneName = geneName.concat(":pep");
-    	Feature polypeptide = sequenceDao.getFeatureByUniqueName(geneName, "polypeptide");
-    	if(polypeptide == null) {
-    		return null;
-    	}
-    	logger.warn("polypeptide is " + polypeptide + "gene name is " + geneName);
-    	int id = polypeptide.getFeatureId();
-    	polypeptide = (Feature)session.load(Feature.class,new Integer(id));
-    	return polypeptide;
-	}
-	
-	private Map<String,String> parseFile(Reader r) {
-		BufferedReader input = new BufferedReader(r);
-		String line = null;
-		Map<String,String> map = new HashMap<String,String>();
-		try {
-			while((line = input.readLine()) != null) {
+        for (Map.Entry<String,String> entry: map.entrySet()) {
+            String key   = entry.getKey();
+            String value = entry.getValue();
 
-	    		String terms[] = line.split("\t");
-	    		map.put(terms[0], terms[1]);
-			}
-		} catch (IOException e) {
-				e.printStackTrace();
-		}
-		return map;
-	}
+            if (value != null && value.length() > 0) {
+                Feature polypeptide = getPolypeptide(key);
+                if (polypeptide == null) {
+                    logger.warn("Can't find gene for '" + key + "'");
+                } else {
+                    
+                    DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(ORTHOMCLDB, value);
+                    if (dbXRef == null) {
+                        dbXRef = new DbXRef(ORTHOMCLDB, key);
+                        generalDao.persist(dbXRef);
+                    }
 
-	public GeneralDao getGeneralDao() {
-		return generalDao;
-	}
+                    FeatureDbXRef fDbXRef = new FeatureDbXRef(dbXRef, polypeptide, true);
+                    sequenceDao.persist(fDbXRef);
+                }
+            }
+        }
+        
+    }
 
-	public void setGeneralDao(GeneralDao generalDao) {
-		this.generalDao = generalDao;
-	}
+    private Feature getPolypeptide(String geneName) {
+        geneName = geneName.concat(":pep");
+        Feature polypeptide = sequenceDao.getFeatureByUniqueName(geneName, "polypeptide");
+        if (polypeptide == null) {
+            return null;
+        }
+        logger.warn("polypeptide is " + polypeptide + ", gene name is " + geneName);
+        int id = polypeptide.getFeatureId();
+        polypeptide = (Feature) session.load(Feature.class, new Integer(id));
+        return polypeptide;
+    }
 
-	public HibernateTransactionManager getHibernateTransactionManager() {
-		return hibernateTransactionManager;
-	}
+    private Map<String, String> parseFile(Reader r) {
+        BufferedReader input = new BufferedReader(r);
+        String line = null;
+        Map<String, String> map = new HashMap<String, String>();
+        try {
+            while ((line = input.readLine()) != null) {
 
-	public void setHibernateTransactionManager(
-			HibernateTransactionManager hibernateTransactionManager) {
-		this.hibernateTransactionManager = hibernateTransactionManager;
-	}
+                String terms[] = line.split("\t");
+                map.put(terms[0], terms[1]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
 
-	public SequenceDao getSequenceDao() {
-		return sequenceDao;
-	}
+    public GeneralDao getGeneralDao() {
+        return generalDao;
+    }
 
-	public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
-	}
+    public void setGeneralDao(GeneralDao generalDao) {
+        this.generalDao = generalDao;
+    }
+
+    public HibernateTransactionManager getHibernateTransactionManager() {
+        return hibernateTransactionManager;
+    }
+
+    public void setHibernateTransactionManager(
+            HibernateTransactionManager hibernateTransactionManager) {
+        this.hibernateTransactionManager = hibernateTransactionManager;
+    }
+
+    public SequenceDao getSequenceDao() {
+        return sequenceDao;
+    }
+
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
 
 }
