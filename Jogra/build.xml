@@ -16,12 +16,13 @@
 	<property name="srcDir" value="src" />
 	<property name="jar-file" value="${dist.dir}/${project_name}.jar" />
 
-	<target name="compile">
-		<compile classpath-ref="Jogra.compilepath" path="${imported.basedir.Jogra}" />
+	<target name="compile2">
+		<echo>I'm called</echo>
+		<compile classpath-ref="${Jogra.compilepath}" path="${imported.basedir.Jogra}" />
 	</target>
 	
     <!-- create .jar -->
-    <target name="jar" depends="compile" description="Create an unsigned JAR">
+    <target name="jar" depends="compile2" description="Create an unsigned JAR">
     	<delete file="${imported.basedir.Jogra}/${jar-file}" />
       	<jar jarfile="${imported.basedir.Jogra}/${jar-file}"
 			basedir="${imported.basedir.Jogra}/${classes.dir}">

@@ -61,9 +61,9 @@
 		<attribute name="path" />
 		<attribute name="classpath-ref" />
 		<sequential>
-	    	<echo message="genedb-libs.compile: srcDir is '${path}/${srcDir}', output is '${path}/${classes.dir}'" />
-			<javac srcdir="${path}/${srcDir}" includes="**/*.java" debug="true"
-		        destdir="${path}/${classes.dir}" classpathref="${classpath-ref}">
+	    	<echo message="genedb-libs.compile: srcDir is '@{path}/${srcDir}', output is '@{path}/${classes.dir}', classpathref is '@{classpath-ref}'" />
+			<javac srcdir="@{path}/${srcDir}" includes="**/*.java" debug="true"
+		        destdir="@{path}/${classes.dir}" classpathref="@{classpath-ref}">
 			</javac>
 		</sequential>
 	</macrodef>
