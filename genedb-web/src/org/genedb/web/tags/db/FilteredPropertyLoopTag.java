@@ -21,7 +21,7 @@ public class FilteredPropertyLoopTag extends LoopTagSupport {
 	
 	private Iterator<PropertyI> it;
 	
-	private Logger logger = Logger.getLogger(FilteredPropertyLoopTag.class);
+	//private Logger logger = Logger.getLogger(FilteredPropertyLoopTag.class);
 	
 	@Override
 	protected boolean hasNext() throws JspTagException {
@@ -38,7 +38,7 @@ public class FilteredPropertyLoopTag extends LoopTagSupport {
 		// Filter the values list based on the cv and possibly the cvterm
 		List<PropertyI> passed = new ArrayList<PropertyI>();
 		for (PropertyI propertyI : items) {
-			logger.info(propertyI.getCvTerm().getCv().getName());
+			//logger.info(propertyI.getCvTerm().getCv().getName());
 			if (propertyI.getCvTerm().getCv().getName().equals(cvName)) {
 				if (cvTermName == null || propertyI.getCvTerm().getName().equals(cvTermName)) {
 					passed.add(propertyI);
