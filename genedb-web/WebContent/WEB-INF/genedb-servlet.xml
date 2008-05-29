@@ -275,6 +275,12 @@
         <property name="genePage" value="features/gene" />
     </bean>
     
+    <bean id="GenesByCvTermAndCvController" class="org.genedb.web.mvc.controller.GenesByCvTermAndCvController">
+		<property name="sequenceDao" ref="sequenceDao" />
+        <property name="listResultsView" value="list/features" />
+        <property name="genePage" value="features/gene" />
+    </bean>
+    
     <bean id="SearchAllController" class="org.genedb.web.mvc.controller.SearchAllController">
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
