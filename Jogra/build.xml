@@ -1,4 +1,4 @@
-<project name="Jogra" default="jar" basedir=".">
+<project name="Jogra" default="jogra-jar" basedir=".">
 
 	<dirname property="imported.basedir.Jogra" file="${ant.file.Jogra}"/>
 	
@@ -20,13 +20,13 @@
 		<clean-target path="ant-build" />
 	</target>
 	
-	<target name="compile" depends="clean, init">
+	<target name="jogra-compile" depends="clean, init">
 		<echo>I'm called</echo>
 		<compile-task classpath-ref="compilepath" path="${imported.basedir.Jogra}" />
 	</target>
 	
     <!-- create .jar -->
-    <target name="jar" depends="compile" description="Create an unsigned JAR">
+    <target name="jogra-jar" depends="jogra-compile" description="Create an unsigned JAR">
     	<delete file="${imported.basedir.Jogra}/${jar-file}" />
       	<jar jarfile="${imported.basedir.Jogra}/${jar-file}"
 			basedir="${imported.basedir.Jogra}/${classes.dir}">
@@ -37,7 +37,7 @@
 		</jar>
     </target>
 	
-	<target name="signed-jar" depends="jar" description="Create a signed JAR">
+	<target name="signed-jar" depends="jogra-jar" description="Create a signed JAR">
 		
 		<jar destfile="${imported.basedir.Jogra}/Jogra-tmp.jar" duplicate="preserve">
 		    <zipgroupfileset dir="${build.dir}" includes="${jar}"/>
