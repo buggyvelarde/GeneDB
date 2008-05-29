@@ -89,9 +89,9 @@
         </copy>
     </target>
     
-	<target name="make-Jogra" depends="Jogra.signed-jar" if="jogra"/>
+	<target name="make-Jogra" depends="Jogra.signed-jar" if="${jogra}"/>
 	
-	<target name="deploy-Jogra" depends="make-Jogra" if="jogra">
+	<target name="deploy-Jogra" depends="make-Jogra" if="${jogra}">
 		<mkdir dir="${finaldest.webapps}.tmp/Jogra" />
 		<copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/Jogra" />
 		<copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/WEB-INF/lib" />
