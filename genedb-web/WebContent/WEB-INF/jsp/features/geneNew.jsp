@@ -13,7 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/contextMap.css"/>" />
 	<script type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
 </format:headerRound>
-
+<!-- Context Map -->
 <div id="contextMapOuterDiv">
 	<div id="contextMapTopPanel">
 	    <div id="contextMapThumbnailDiv"></div>
@@ -24,27 +24,206 @@
 	</div>
 </div>
 
+<!-- General Information -->
 <div id="genInfo">
-    <format:geninfo f1="${polypeptide}" f2="${feature}"/>
+    <div id="one">
+	<format:roundStart/>
+  <div class="inner" style="height:160px;">
+   <span><b>General Information</b></span><br><br>
+   <table cellpadding="3px;" width="100%">
+     <tr>
+       <th>Gene Name</th>
+       <td>${feature.displayName}</td>
+       <db:synonym name="synonym" var="name"
+				collection="${feature.featureSynonyms}">
+					<th>Synonym</th>
+					<td><db:list-string collection="${name}" /></td>
+			</db:synonym>
+     </tr>
+     <tr>
+       <th>Systematic Name</th>
+       <td>${feature.uniqueName}</td>
+       <db:synonym name="obsolete_name" var="name"
+				collection="${feature.featureSynonyms}">
+					<th>Previous IDs</th>
+					<td><db:list-string collection="${name}" /></td>
+		</db:synonym>
+     </tr>
+     <tr>
+       <th>Protein names</th>
+				<td><c:forEach items="${polypeptide.featureCvTerms}"
+					var="featCvTerm">
+					<c:if test="${featCvTerm.cvTerm.cv.name == 'genedb_products'}">
+						<span>
+						${featCvTerm.cvTerm.name}
+						</span><br>
+					</c:if>
+				</c:forEach></td>
+     </tr>
+     <tr>
+       <th>Location</th>
+		<td><c:forEach items="${feature.featureLocsForFeatureId}"
+			var="featLoc">
+			<c:set var="start" value="${featLoc.fmin}" />
+			<c:set var="end" value="${featLoc.fmax}" />
+			<c:set var="chromosome"
+				value="${featLoc.featureBySrcFeatureId.uniqueName}" />
+			<span>${start}..${end}</span>
+		</c:forEach></td>
+		<th>Chromosome</th>
+		<td><span>${chromosome}</span></td>		
+     </tr>
+   </table>
+  </div>
+  <format:roundEnd/>
+</div>
+<div id="two">
+<format:roundStart/>
+  <div class="inner" style="height:160px;" align="center">
+		<span>Send</span>
+		<br>
+		<form name="" action=""><select name="type">
+			<option value="dna">Nucleotide</option>
+			<option value="protein">Protein</option>
+		</select> to <select name="analysis">
+			<option value="blast">Blast</option>
+			<option value="omni">omniBlast</option>
+		</select></form>
+		<br><br>
+		<span>Download Region</span>
+		<br>
+		<form name="" action="">as <select name="type">
+			<option value="fasta">FASTA</option>
+			<option value="embl">EMBL</option>
+		</select>
+		</form><br>
+		<a href="">GBrowse</a>&nbsp;&nbsp;&nbsp;<a href="">Synview</a>
+  </div>
+  <format:roundEnd/>
+</div>
 </div>
 
 <div id="controlCur" style="clear: both;">
-    <format:controlledCur c1="${polypeptide}"/>
+  <div class="outer">
+  <format:roundStart/>
+  <div class="inner">
+  	<span><b>Controlled Curation</b></span>
+   	<table>
+		<format:go-section title="Controlled Curation"
+				cvName="CC_genedb_controlledcuration" feature="${polypeptide}" />
+	</table>
+  </div>
+  <format:roundEnd/>
+ </div>
 </div>
 
+<!-- Gene Ontology Section -->
 <div id="go" style="clear: both;">
-    <format:go g1="${polypeptide}"/>
+  <div class="outer">
+  <format:roundStart/>
+  <div class="inner">
+  	<span><b>Gene Ontology</b></span>
+   	<table>
+   		<tr>
+   			<th><b>Biological Process</b></th>
+   			<td>
+   				<table>
+				<format:go-section title="Biological Process"
+					cvName="biological_process" feature="${polypeptide}" />
+				</table>
+			</td>
+		</tr>
+	</table>
+	<table>
+		<tr>
+   			<th><b>Cellular Component</b></th>
+   			<td>
+   				<table>
+				<format:go-section title="Cellular Component"
+					cvName="cellular_component" feature="${polypeptide}" />
+				</table>
+			</td>
+		</tr>
+	</table>
+	<table>
+		<tr>
+   			<th><b>Molecular Function</b></th>
+   			<td>
+   				<table>
+				<format:go-section title="Molecular Function"
+					cvName="molecular_function" feature="${polypeptide}" />
+				</table>
+			</td>
+		</tr>
+	</table>
+  </div>
+  <format:roundEnd/>
+  </div>
 </div>
 
+<!-- Predicted Peptide Section -->
 <div id="predictedpep" style="clear: both;">
-    <format:predictedpep p1="${polyprop}"/>
+    <div id="two">
+	<format:roundStart/>
+  <div class="inner" style="height:160px">
+  	<span><b>Predicted Peptide Properties</b></span>
+   	<table class="simple">
+		<tr>
+			<td><b>Isoelectric Point</b></td>
+			<td>pH ${polyprop.isoelectricPoint}</td>
+		</tr>
+		<tr>
+			<td><b>Mass</b></td>
+			<td>${polyprop.mass} kDa</td>
+		</tr>
+		<tr>
+			<td><b>Charge</b></td>
+			<td>${polyprop.charge}</td>
+		</tr>
+		<tr>
+			<td><b>Amino Acids</b></td>
+			<td>${polyprop.aminoAcids}</td>
+		</tr>
+	</table>
+  </div>
+  <format:roundEnd/>
+ </div>
+ <div id="one">
+ <format:roundStart/>
+  <div class="inner" style="height:160px;">
+  	<span><b>Protein Map</b></span><br></br>
+  	<div align="center">	
+   		<img src="<c:url value="/includes/images/protein.gif"/>" id="ProteinMap">
+   	</div>
+  </div>
+  <format:roundEnd/>
+ </div>
 </div>
 
+<!-- Domain Information -->
 <div id="domainInfo" style="clear: both;">
 </div>
 
+<!-- Ortholog / Paralog Section -->
 <div id="orthologs" style="clear: both;">
-    <format:orthologs o1="${polypeptide}"/>
+    <div class="outer">
+	<format:roundStart/>
+  <div class="inner">
+  	<span><b>Orthologs / Paralogs</b></span>
+   	<table>
+   		<tr>
+   		<td><db:ortholog polypeptide="${polypeptide}"/></td>
+   		</tr>
+	</table>
+  </div>
+  <b class="round">
+  <b class="round5"></b>
+  <b class="round4"></b>
+  <b class="round3"></b>
+  <b class="round2"><b></b></b>
+  <b class="round1"><b></b></b></b>
+ </div>
+ <format:roundEnd/>
 </div>
 
 <format:footer />
