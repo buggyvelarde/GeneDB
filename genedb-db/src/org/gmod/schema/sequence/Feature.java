@@ -108,10 +108,10 @@ public class Feature implements java.io.Serializable {
     @Column(name = "residues", unique = false, nullable = true, insertable = true, updatable = true)
     private byte[] residues;
 
-    @OneToMany(cascade = {}, fetch = FetchType.EAGER, mappedBy = "featureBySrcfeatureId")
+    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureBySrcFeatureId")
     private Collection<FeatureLoc> featureLocsForSrcFeatureId;
 
-    @OneToMany(cascade = {}, fetch = FetchType.EAGER, mappedBy = "featureByObjectId")
+    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureByObjectId")
     private Collection<FeatureRelationship> featureRelationshipsForObjectId;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureBySubjectId")
@@ -120,7 +120,7 @@ public class Feature implements java.io.Serializable {
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<FeatureDbXRef> featureDbXRefs;
 
-    @OneToMany(cascade = {}, fetch = FetchType.EAGER, mappedBy = "featureByFeatureId")
+    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureByFeatureId")
     @OrderBy("rank ASC")
     private List<FeatureLoc> featureLocsForFeatureId;
 
