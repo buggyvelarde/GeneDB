@@ -48,7 +48,31 @@ public class DisplayOrthologues extends SimpleTagSupport {
                         CvTerm cvTerm = featureCvt.getCvTerm();
                         if ("genedb_products".equals(cvTerm.getCv().getName())) {
                             String product = cvTerm.getName();
-                            orthologs.put(feat.getUniqueName(), product);
+                            /*The below code gets Gene names from the corresponding polypeptides
+                			- this isn't the right approach and needs to be changed so that
+                			something like polypeptide.getGene() can be used either*/
+                			Feature mRNA = null;
+                		    Collection<FeatureRelationship> frs = feat.getFeatureRelationshipsForSubjectId();
+                		    if (frs != null) {
+                		        for (FeatureRelationship fr : frs) {
+                		            if(fr.getCvTerm().getName().equals("derives_from")) {
+                		            	mRNA = fr.getFeatureByObjectId();
+                		            	break;
+                		            }
+                		        }
+                		        if (mRNA != null) {
+                		            Feature gene = null;
+                		            Collection<FeatureRelationship> frs2 = mRNA
+                		                    .getFeatureRelationshipsForSubjectId();
+                		            for (FeatureRelationship fr : frs2) {
+                		            	if(fr.getCvTerm().getName().equals("part_of")) {
+                			            	gene = fr.getFeatureByObjectId();
+                			            	break;
+                			            }
+                		             }
+                	                 if (gene != null) orthologs.put(feat.getUniqueName(), product);
+                		            }
+                		        } 
                         }
                     }
                 }

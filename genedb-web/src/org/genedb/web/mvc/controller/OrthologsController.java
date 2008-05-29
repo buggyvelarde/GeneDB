@@ -59,8 +59,33 @@ public class OrthologsController extends AbstractController{
 		Feature cluster = sequenceDao.getFeatureByUniqueName(clusterName, type);
 		Collection<FeatureRelationship> relations = cluster.getFeatureRelationshipsForObjectId();
 		orthologs = new ArrayList<Feature>();
+		/*The below code gets Gene names from the corresponding polypeptides
+		this isn't the right approach and needs to be changed so that
+		something like polypeptide.getGene() can be used either*/
 		for (FeatureRelationship featureRel : relations) {
-			orthologs.add(featureRel.getFeatureBySubjectId());
+			Feature protein = featureRel.getFeatureBySubjectId();
+			Feature mRNA = null;
+		    Collection<FeatureRelationship> frs = protein.getFeatureRelationshipsForSubjectId();
+		    if (frs != null) {
+		        for (FeatureRelationship fr : frs) {
+		            if(fr.getCvTerm().getName().equals("derives_from")) {
+		            	mRNA = fr.getFeatureByObjectId();
+		            	break;
+		            }
+		        }
+		        if (mRNA != null) {
+		            Feature gene = null;
+		            Collection<FeatureRelationship> frs2 = mRNA
+		                    .getFeatureRelationshipsForSubjectId();
+		            for (FeatureRelationship fr : frs2) {
+		            	if(fr.getCvTerm().getName().equals("part_of")) {
+			            	gene = fr.getFeatureByObjectId();
+			            	break;
+			            }
+		             }
+	                 if (gene != null) orthologs.add(gene);
+		            }
+		        }
 		}
 		model = new HashMap<String,Object>(1);
 		
@@ -73,7 +98,7 @@ public class OrthologsController extends AbstractController{
             viewName = genePage;
             break;
 		default:
-			model.put("orthologs", orthologs);
+			model.put("results", orthologs);
 		}
 		return new ModelAndView(viewName,model);
 	}
