@@ -326,7 +326,7 @@ public class CvTerm implements Serializable {
         this.featureCvTermProps = featureCvTermProps;
     }
 
-    private Collection<FeatureCvTerm> getFeatureCvTerms() {
+    public Collection<FeatureCvTerm> getFeatureCvTerms() {
         return this.featureCvTerms;
     }
     
