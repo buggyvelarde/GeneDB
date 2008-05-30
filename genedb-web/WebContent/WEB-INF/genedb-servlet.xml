@@ -18,8 +18,6 @@
 	<!-- <context:component-scan base-package="org.genedb.web.mvc.controller.download" /> -->
 
 	<bean id="sequenceDownload" class="org.genedb.web.mvc.controller.download.SequenceDownloadController" />
-		
-	</bean>
 
 	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
