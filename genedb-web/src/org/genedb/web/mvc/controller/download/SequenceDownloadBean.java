@@ -23,6 +23,7 @@ public class SequenceDownloadBean {
     
 	OutputDestination outputDestination = OutputDestination.TO_BROWSER;
 	OutputFormat outputFormat;
-    
+    String topLevelFeature;
+	
 }
 
