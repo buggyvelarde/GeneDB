@@ -5,12 +5,16 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 @Controller
@@ -24,9 +28,10 @@ public class SequenceDownloadController {
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public String processSubmit(
-		@ModelAttribute("seq") SequenceDownloadBean bean, 
+		@RequestParam("topLevelFeature") String tlf, 
 		BindingResult result, 
 		SessionStatus status,
+		NativeWebRequest nwr,
 		Writer writer
 	) {
 		
@@ -41,9 +46,12 @@ public class SequenceDownloadController {
 			out = new PrintWriter(writer);
 		}
 		
+		HttpServletResponse hsr = (HttpServletResponse) nwr.getNativeResponse();
+		hsr.setContentType("text/plain");
+		
 		Map<String, String> attributes = new HashMap<String, String>();
 		attributes.put("systematic_id", "fred");
-		writeEmblEntry(out, bean.topLevelFeature, true, 1, 10000, attributes);
+		writeEmblEntry(out, tlf, true, 1, 10000, attributes);
 		writeEmblEntry(out, "CDS", true, 1, 100, attributes);
 		writeEmblEntry(out, "misc_feature", true, 100, 200, attributes);
 		writeEmblEntry(out, "wibble", false, 1, 10, attributes);
@@ -63,7 +71,7 @@ public class SequenceDownloadController {
 			out.print("complement(");
 		}
 		
-		out.print(min+"..."+max);
+		out.print(min+".."+max);
 		
 		if (!strand) {
 			out.print(")");
