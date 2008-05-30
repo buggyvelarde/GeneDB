@@ -65,7 +65,6 @@ public class CaseSensitiveControllerClassNameHandlerMapping extends ControllerCl
                         pathMapping.append("/*");
                 }
 
-                System.err.println("ART:: "+pathMapping.toString());
                 return new String[] { pathMapping.toString() };
         }
 
