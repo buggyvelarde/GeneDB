@@ -185,6 +185,10 @@
         <url-pattern>/ContextMap</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/SequenceDownload</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
         <servlet-name>contextMapWindow</servlet-name>
         <url-pattern>/ContextMapWindow</url-pattern>
      </servlet-mapping>
