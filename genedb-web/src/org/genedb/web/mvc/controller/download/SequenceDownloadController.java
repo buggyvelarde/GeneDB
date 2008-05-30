@@ -18,7 +18,7 @@ public class SequenceDownloadController {
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public String processSubmit(
-		@ModelAttribute("seqDownloadBean") SequenceDownloadBean bean, 
+		@ModelAttribute("seq") SequenceDownloadBean bean, 
 		BindingResult result, 
 		SessionStatus status 
 	) {
