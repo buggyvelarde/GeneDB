@@ -103,12 +103,13 @@
 </div>
 </div>
 
+<!-- Controlled Curation Section -->
 <div id="controlCur" style="clear: both;">
   <div class="outer">
   <format:roundStart/>
   <div class="inner">
   	<span><b>Controlled Curation</b></span>
-   	<table>
+   	<table width="100%">
 		<format:go-section title="Controlled Curation"
 				cvName="CC_genedb_controlledcuration" feature="${polypeptide}" />
 	</table>
@@ -123,7 +124,7 @@
   <format:roundStart/>
   <div class="inner">
   	<span><b>Gene Ontology</b></span>
-   	<table>
+   	<table width="100%">
    		<tr>
    			<th><b>Biological Process</b></th>
    			<td>
@@ -134,7 +135,7 @@
 			</td>
 		</tr>
 	</table>
-	<table>
+	<table width="100%">
 		<tr>
    			<th><b>Cellular Component</b></th>
    			<td>
@@ -145,7 +146,7 @@
 			</td>
 		</tr>
 	</table>
-	<table>
+	<table width="100%">
 		<tr>
    			<th><b>Molecular Function</b></th>
    			<td>

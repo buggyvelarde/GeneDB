@@ -9,7 +9,7 @@
 
 
 <db:filtered-loop items="${polypeptide.featureCvTerms}" cv="${cvName}" var="featCvTerm" varStatus="status" >
-  <tr>
+  <tr width="100%">
 <!--    <td>GO:${featCvTerm.cvTerm.dbXRef.accession}</td>-->
     <td width="40%" align="left">
     	${featCvTerm.cvTerm.name}
