@@ -29,7 +29,7 @@
 </select>
 <input type="hidden" name="outputFormat" value="EMBL_REMAPPING" />
 
-<input type="submit" value="Save Changes" />
+<input type="submit" value="Get output" />
 </form:form>
 
 </body>
