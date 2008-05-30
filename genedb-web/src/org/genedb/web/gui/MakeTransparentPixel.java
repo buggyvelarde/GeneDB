@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
  * Simple class that uses the Java2D API to create a 1x1
  * transparent GIF. Used to generate the file
  * 
- *     WebContent/includes/images/transparentPixel.gif
+ *     <code>WebContent/includes/images/transparentPixel.gif</code>
  * 
  * @author rh11
  */
