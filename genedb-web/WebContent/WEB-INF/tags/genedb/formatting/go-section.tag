@@ -1,14 +1,11 @@
 <%@ tag display-name="go-section"
-        body-content="empty" %>
-<%@ attribute name="cvName" required="true" %>
-<%@ attribute name="feature" required="true" %>
-<%@ attribute name="title" required="true" %>
+        body-content="empty" dynamic-attributes="fMap"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="db" uri="db" %>
-
-
-<db:filtered-loop items="${polypeptide.featureCvTerms}" cv="${cvName}" var="featCvTerm" varStatus="status" >
+<c:forEach var="f" begin="0" items="${fMap}">
+	<c:set var="featCvTerm" value="${f.value}" />	
+</c:forEach>
   <tr width="100%">
 <!--    <td>GO:${featCvTerm.cvTerm.dbXRef.accession}</td>-->
     <td width="40%" align="left">
@@ -42,8 +39,17 @@
 			0 Others
 		</c:if>
 		<c:if test="${fn:length(featCvTerm.cvTerm.featureCvTerms) > 1}" >
-			<a href="<c:url value="/"/>GenesByCvTermAndCv?cvTermName=${featCvTerm.cvTerm.name}&cvName=${cvName}"> ${fn:length(featCvTerm.cvTerm.featureCvTerms)} Others </a>
+			<c:set var="cnt" value="0"/>
+			<c:forEach items="${featCvTerm.cvTerm.featureCvTerms}" var="fct">
+				<db:propByName collection="${fct.featureCvTermProps}" name="qualifier" var="qualifiers">
+					<c:forEach items="${qualifiers}" var="qualifier" varStatus="st">
+    					<c:if test="${qualifier.value == 'NOT'}"> 
+    						${cnt++}
+    					</c:if>
+    				</c:forEach>
+				</db:propByName>
+			</c:forEach>
+			<a href="<c:url value="/"/>GenesByCvTermAndCv?cvTermName=${featCvTerm.cvTerm.name}&cvName=${cvName}"> ${fn:length(featCvTerm.cvTerm.featureCvTerms)-cnt} Others </a>
 		</c:if>
   	</td>
   </tr>
-</db:filtered-loop>
