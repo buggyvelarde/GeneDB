@@ -10,8 +10,8 @@
 <body>
 <p>Form Input</p>
 
-<form:form commandName="seq">
-<form:select path="topLevelFeature">
+<form:form>
+<select name="topLevelFeature">
 <option value="Pf3D7_01">Pf3D7_01</option>
 <option value="Pf3D7_02">Pf3D7_02</option>
 <option value="Pf3D7_03">Pf3D7_03</option>
@@ -26,7 +26,7 @@
 <option value="Pf3D7_12">Pf3D7_12</option>
 <option value="Pf3D7_13">Pf3D7_13</option>
 <option value="Pf3D7_14">Pf3D7_14</option>
-</form:select>
+</select>
 <input type="hidden" name="outputFormat" value="EMBL_REMAPPING" />
 
 <input type="submit" value="Save Changes" />
