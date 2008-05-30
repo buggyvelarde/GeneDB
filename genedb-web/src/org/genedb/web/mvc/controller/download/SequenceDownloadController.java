@@ -11,12 +11,17 @@ import org.springframework.web.bind.support.SessionStatus;
 @RequestMapping("/SequenceDownload")
 public class SequenceDownloadController {
 	    
+	@RequestMapping(method=RequestMethod.GET)
+	public String setUpForm() {
+		return "err/forminput";
+	}
+	
 	@RequestMapping(method=RequestMethod.POST)
-		public String processSubmit(
-				@ModelAttribute("seqDownloadBean") SequenceDownloadBean bean, 
-				BindingResult result, 
-				SessionStatus status 
-				) {
+	public String processSubmit(
+		@ModelAttribute("seqDownloadBean") SequenceDownloadBean bean, 
+		BindingResult result, 
+		SessionStatus status 
+	) {
 		
 		if (result.hasErrors()) {
 			return "err/formtest";
