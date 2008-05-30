@@ -29,15 +29,15 @@ public class SequenceDownloadController {
 	@RequestMapping(method=RequestMethod.POST)
 	public String processSubmit(
 		@RequestParam("topLevelFeature") String tlf, 
-		BindingResult result, 
-		SessionStatus status,
+		//BindingResult result, 
+		//SessionStatus status,
 		NativeWebRequest nwr,
 		Writer writer
 	) {
 		
-		if (result.hasErrors()) {
-			return "err/formtest";
-		}
+//		if (result.hasErrors()) {
+//			return "err/formtest";
+//		}
 		
 		PrintWriter out;
 		if (writer instanceof PrintWriter) {
