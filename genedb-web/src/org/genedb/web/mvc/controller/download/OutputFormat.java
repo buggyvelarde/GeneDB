@@ -20,5 +20,15 @@
 package org.genedb.web.mvc.controller.download;
 
 public enum OutputFormat {
-    CSV, EXCEL, ODF, HTML, GO_ASSOC, FASTA;
+    CSV,
+    EXCEL,
+    ODF,
+    HTML,
+    GO_ASSOC,
+    FASTA, 
+    EMBL_REMAPPING,
+    EMBL_SUBMISSION,
+    EMBL_PATHOGEN_FLATTENED,
+    EMBL_PATHOGEN_UNFLATTENED
+    ;
 }
