@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:url value="/" var="base"/>
 
@@ -103,64 +104,114 @@
 </div>
 </div>
 
-<!-- Controlled Curation Section -->
-<div id="controlCur" style="clear: both;">
-  <div class="outer">
-  <format:roundStart/>
-  <div class="inner">
-  	<span><b>Controlled Curation</b></span>
-   	<table width="100%">
-		<format:go-section title="Controlled Curation"
-				cvName="CC_genedb_controlledcuration" feature="${polypeptide}" />
-	</table>
-  </div>
-  <format:roundEnd/>
- </div>
-</div>
+<!-- Controlled Curation Section displays only if data is present in DB-->
+<!-- This probably isn't the right approach and maybe needs changing but works for now  -->
+<c:set var="cnt" value="0"/>
+<db:filtered-loop items="${polypeptide.featureCvTerms}" cv="CC_genedb_controlledcuration" var="featCvTerm" varStatus="status">
+<c:if test="${status.count == 1}">
+	<c:set var="cnt" value="${cnt+1}"/>
+	<div id="controlCur" style="clear: both;">
+	  <div class="outer">
+	  <format:roundStart/>
+	  <div class="inner">
+	  	<span><b>Controlled Curation</b></span>
+	   	<table width="100%">
+</c:if>
+	<format:go-section f1="${featCvTerm}" />
+</db:filtered-loop>
+<c:if test="${cnt == 1}">
+		</table>
+	  </div>
+	  <format:roundEnd/>
+	 </div>
+	</div>
+</c:if>
 
-<!-- Gene Ontology Section -->
-<div id="go" style="clear: both;">
-  <div class="outer">
-  <format:roundStart/>
-  <div class="inner">
+<!-- Gene Ontology Section displays only if data is present in DB-->
+<!-- This probably isn't the right approach and maybe needs changing but works for now  -->
+<c:set var="cnt" value="0"/>
+<c:set var="open" value="false"/> <!--  turned to true when rounded DIVs generated -->
+<db:filtered-loop items="${polypeptide.featureCvTerms}" cv="biological_process" var="featCvTerm" varStatus="status">
+<c:if test="${status.count == 1}">
+	<c:set var="cnt" value="${cnt+1}"/>
+	<c:set var="open" value="true"/>
+	<div id="go" style="clear: both;">
+  	<div class="outer">
+  	<format:roundStart/>
+  	<div class="inner">
   	<span><b>Gene Ontology</b></span>
    	<table width="100%">
    		<tr>
    			<th><b>Biological Process</b></th>
    			<td>
    				<table>
-				<format:go-section title="Biological Process"
-					cvName="biological_process" feature="${polypeptide}" />
+</c:if>
+				<format:go-section f1="${featCvTerm}" />
+<c:if test="${cnt == 1}">
 				</table>
 			</td>
 		</tr>
 	</table>
-	<table width="100%">
-		<tr>
-   			<th><b>Cellular Component</b></th>
-   			<td>
-   				<table>
-				<format:go-section title="Cellular Component"
-					cvName="cellular_component" feature="${polypeptide}" />
-				</table>
-			</td>
-		</tr>
-	</table>
-	<table width="100%">
-		<tr>
+</c:if>
+</db:filtered-loop>
+<c:set var="cnt" value="0"/>
+<db:filtered-loop items="${polypeptide.featureCvTerms}" cv="molecular_function" var="featCvTerm" varStatus="status">
+<c:if test="${status.count == 1}">
+	<c:set var="cnt" value="${cnt+1}"/>
+	<c:if test="${!open}"> <!-- if open still false generate the rounded DIV-->
+		<c:set var="open" value="true"/>
+		<div id="go" style="clear: both;">
+	  	<div class="outer">
+	  	<format:roundStart/>
+	  	<div class="inner">
+	  	<span><b>Gene Ontology</b></span>
+	</c:if>
+   	<table width="100%">
+   		<tr>
    			<th><b>Molecular Function</b></th>
    			<td>
    				<table>
-				<format:go-section title="Molecular Function"
-					cvName="molecular_function" feature="${polypeptide}" />
+</c:if>
+				<format:go-section f1="${featCvTerm}" />
+<c:if test="${cnt == 1}">
 				</table>
 			</td>
 		</tr>
 	</table>
+</c:if>
+</db:filtered-loop>
+<c:set var="cnt" value="0"/>
+<db:filtered-loop items="${polypeptide.featureCvTerms}" cv="cellular_component" var="featCvTerm" varStatus="status">
+<c:if test="${status.count == 1}">
+	<c:set var="cnt" value="${cnt+1}"/>
+	<c:if test="${!open}"> <!-- if open still false generate the rounded DIV-->
+		<c:set var="open" value="true"/>
+		<div id="go" style="clear: both;">
+	  	<div class="outer">
+	  	<format:roundStart/>
+	  	<div class="inner">
+	  	<span><b>Gene Ontology</b></span>
+	</c:if>
+   	<table width="100%">
+   		<tr>
+   			<th><b>Cellular Component</b></th>
+   			<td>
+   				<table>
+</c:if>
+				<format:go-section f1="${featCvTerm}" />
+<c:if test="${cnt == 1}">
+				</table>
+			</td>
+		</tr>
+	</table>
+</c:if>
+</db:filtered-loop>
+<c:if test="${open}">	
   </div>
   <format:roundEnd/>
   </div>
 </div>
+</c:if>
 
 <!-- Predicted Peptide Section -->
 <div id="predictedpep" style="clear: both;">
