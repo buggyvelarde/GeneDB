@@ -20,7 +20,14 @@ public class ContextMapWindowServlet extends HttpServlet {
     
     private static final Color FRAME_COLOR = new Color(0, 0, 200, 255);
     
-    private IndexColorModel colorModelFor(Color... colors) {
+    /*
+     * IE6 doesn't deal well with PNG alpha, so we generate a GIF89a
+     * image. In order for ImageIO to produce the correct result (with
+     * transparent pixels) we need to use an explicit indexed colour
+     * model.
+     */
+    
+    private static IndexColorModel colorModelFor(Color... colors) {
         int len = 1 + colors.length;
         int bits = 1, twoToBits = 2;
         while (twoToBits < len) {
@@ -44,6 +51,8 @@ public class ContextMapWindowServlet extends HttpServlet {
         return new IndexColorModel(bits, 1 + colors.length, reds, greens, blues, alphas);
     }
     
+    private static final IndexColorModel colorModel = colorModelFor(Color.WHITE, FRAME_COLOR);
+    
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType(MIME_TYPE);
@@ -51,15 +60,8 @@ public class ContextMapWindowServlet extends HttpServlet {
         
         OutputStream out = resp.getOutputStream();
         
-        /*
-         * IE6 doesn't deal well with PNG alpha, so we generate a GIF89a
-         * image. In order for ImageIO to produce the correct result (with
-         * transparent pixels) we need to use an explicit indexed colour
-         * model. For PNG we could just use BufferedImage.TYPE_INT_ARGB
-         * and avoid this messiness.
-         */
         BufferedImage image = new BufferedImage(width + 4, HEIGHT + 4,
-            BufferedImage.TYPE_BYTE_INDEXED, colorModelFor(Color.WHITE, FRAME_COLOR));
+            BufferedImage.TYPE_BYTE_INDEXED, colorModel);
         Graphics2D graf = (Graphics2D) image.getGraphics();
 
         graf.setColor(FRAME_COLOR);
