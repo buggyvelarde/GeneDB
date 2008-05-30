@@ -28,7 +28,7 @@ div#contextMapContent {
 	left: 0px;
 }
 
-img#contextMapImage {
+img.contextMapImage {
     position:absolute;
 }
 
@@ -55,12 +55,18 @@ img#contextMapImage {
 }
 
 img#chromosomeThumbnailImage {
-    margin-top: 3px;
+	position: absolute;
+    top: 5px;
 }
 
 img#chromosomeThumbnailWindow {
     position: absolute;
-    top: -2px;
+    top: 0px;
     margin-left: -2px;
     cursor: move;
+}
+
+img.transcriptBlock {
+	position: absolute;
+    cursor: pointer;
 }

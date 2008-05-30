@@ -6,12 +6,12 @@
 <c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
 
 <format:headerRound name="Gene: ${feature.displayName}" title="Gene Page ${feature.displayName}"
-		onLoad="initContextMap('${base}', '${feature.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax})">
-	<base href="<c:url value="/"/>">
+		onLoad="initContextMap('${base}', '${feature.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax});">
+
 	<st:init />
 	<%-- The next two are used by the scrollable context map --%>
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/contextMap.css"/>" />
-	<script type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
 </format:headerRound>
 <!-- Context Map -->
 <div id="contextMapOuterDiv">

@@ -1,13 +1,15 @@
 var loaded = false;
 var response;
 var contextMapDiv, contextMapThumbnailDiv, contextMapGeneInfo;
+var base;
 
-function initContextMap(base, organism, chromosome, chrlen, fmin, fmax) {
+function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax) {
+    base = baseArg;
     contextMapDiv = document.getElementById("contextMapDiv");
     contextMapThumbnailDiv = document.getElementById("contextMapThumbnailDiv");
     contextMapGeneInfo = document.getElementById("contextMapGeneInfo");
 
-    var contextMapInfo = getContextMapInfo(base, organism, chromosome, chrlen, fmin, fmax);
+    var contextMapInfo = getContextMapInfo(organism, chromosome, chrlen, fmin, fmax);
     
     contextMapDiv.onmousedown = startMove;
     document.onmousemove = doMove;
@@ -18,18 +20,21 @@ function initContextMap(base, organism, chromosome, chrlen, fmin, fmax) {
     contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
 }
 
-
-function getContextMapInfo(base, organism, chromosome, chrlen, fmin, fmax) {
+function getContextMapInfo(organism, chromosome, chrlen, fmin, fmax) {
 	var url = base + "ContextMap?organism="+organism+"&chromosome="+chromosome+"&chromosomeLength="+chrlen+
 	                   "&thumbnailDisplayWidth="+contextMapThumbnailDiv.clientWidth;
-	var req = new XMLHttpRequest();
+	var req;
+	if (window.XMLHttpRequest)
+	   req = new XMLHttpRequest();
+	else
+	   req = new ActiveXObject('Microsoft.XMLHTTP');
 	req.open( "GET", url, true );
 
 	req.onreadystatechange = function () {
 	    if ( req.readyState == 4 ) {
 	        if ( req.status == 200 ) {
 	            response = eval( "(" + req.responseText + ")" );
-	            loadTile(base, chrlen, (fmin+fmax)/2, response);
+	            loadTile(chrlen, (fmin+fmax)/2, response);
 	        } else {
 	            alert( "Request failed." );
 	        }
@@ -45,7 +50,7 @@ var chromosome;
 var contextMapContent, chromosomeThumbnailWindow;
 var basesPerPixel, thumbnailBasesPerPixel;
 
-function loadTile(base, chrlen, locus, tileData) {
+function loadTile(chrlen, locus, tileData) {
     organism = tileData.organism;
     chromosome = tileData.chromosome;
     basesPerPixel = tileData.basesPerPixel;
@@ -56,7 +61,6 @@ function loadTile(base, chrlen, locus, tileData) {
     contextMapContent = document.createElement("div");
     contextMapContent.id = "contextMapContent";
     contextMapContent.style.width = Math.floor(chrlen / basesPerPixel)+"px";
-    contextMapContent.style.left = (contextMapDiv.getWidth() / 2 - locus / basesPerPixel)+"px";
 
     var geneTrackHeight = tileData.geneTrackHeight;
     var scaleTrackHeight = tileData.scaleTrackHeight;
@@ -66,7 +70,7 @@ function loadTile(base, chrlen, locus, tileData) {
         var tile = tileData.tiles[tileIndex];
         
 	    var contextMapImage = document.createElement("img");
-	    contextMapImage.id     = "contextMapImage";
+	    contextMapImage.className  = "contextMapImage";
 	    contextMapImage.src    = tile.src;
 	    contextMapImage.width  = tile.width;
 	    contextMapImage.style.left = (tile.start / basesPerPixel) + "px";
@@ -76,7 +80,7 @@ function loadTile(base, chrlen, locus, tileData) {
 	contextMapDiv.style.height = tileData.tileHeight + "px";
     
     var chromosomeThumbnailImage = document.createElement("img");
-    chromosomeThumbnailImage.id = "chromosomeThumbnailImage";
+    chromosomeThumbnailImage.id  = "chromosomeThumbnailImage";
     chromosomeThumbnailImage.src = tileData.chromosomeThumbnail.src;
     contextMapThumbnailDiv.appendChild(chromosomeThumbnailImage);
     
@@ -89,10 +93,9 @@ function loadTile(base, chrlen, locus, tileData) {
     contextMapThumbnailDiv.appendChild(chromosomeThumbnailWindow);
     
     chromosomeThumbnailWindow.onmousedown = startDragWindow;
+    chromosomeThumbnailWindow.ondragstart = function() {return false;};
     
-    chromosomeThumbnailWindow.style.left = Math.round(-parseFloat(contextMapContent.style.left) * basesPerPixel / thumbnailBasesPerPixel)+"px";
-
-    contextMapDiv.style.height = tileData.imageHeight + "px";
+    moveTo(locus/basesPerPixel - Element.getWidth(contextMapDiv) / 2);
     
     var numPositiveTracks = tileData.positiveTracks.length;
     for (var trackIndex = 0; trackIndex < tileData.positiveTracks.length; trackIndex++) {
@@ -101,7 +104,7 @@ function loadTile(base, chrlen, locus, tileData) {
            var transcript = track[transcriptIndex];
            var topPx = (numPositiveTracks - trackIndex - 1) * geneTrackHeight
                         + (geneTrackHeight - exonRectHeight) / 2;
-           createArea(transcript, topPx, geneTrackHeight);
+           createArea(transcript, topPx, exonRectHeight);
         }
     }
 
@@ -111,25 +114,29 @@ function loadTile(base, chrlen, locus, tileData) {
        for (var transcriptIndex = 0; transcriptIndex < track.length; transcriptIndex++) {
            var transcript = track[transcriptIndex];
            var topPx = topHalf + trackIndex * geneTrackHeight + (geneTrackHeight - exonRectHeight) / 2;
-           createArea(transcript, topPx, geneTrackHeight);
+           createArea(transcript, topPx, exonRectHeight);
         }
     }
 }
 
 function createArea(transcript, topPx, heightPx) {
-    var area = document.createElement("div");
-    area.style.position = "absolute";
+    // The only way I could get this to work in IE6 was to
+    // use a transparent GIF here. (In proper browsers, you
+    // can just use a div with no background colour.)
+    var area = document.createElement("img");
+    area.src = base + "includes/images/transparentPixel.gif";
+    area.className = "transcriptBlock";
     var leftPx = transcript.fmin / basesPerPixel;
     area.style.left = leftPx + "px";
     area.style.width = (transcript.fmax / basesPerPixel - leftPx) + "px";
     area.style.top = topPx + "px";
     area.style.height = heightPx + "px";
-    area.style.cursor = "pointer";
     area.onmouseover = function() {
-        contextMapGeneInfo.textContent = transcript.name
+        contextMapGeneInfo.innerText = contextMapGeneInfo.textContent = transcript.name
             + " (" + transcript.products + ")";
+        return true;
     };
-    
+
     contextMapContent.appendChild(area);
 }
 
@@ -146,6 +153,9 @@ var draggingWindow = false; // Are we dragging the window?
 var velocity = 0;
 
 function startDragWindow(event) {
+    if (event == null)
+        event = window.event;
+
     dragging = false;
     draggingWindow = true;
     velocity = 0;
@@ -172,7 +182,10 @@ function startMove(event) {
     else
    	    beforeDragPos = parseFloat(contextMapContent.style.left);
    	prevX = dragStartX;
-   	prevTimeStamp = event.timeStamp;
+   	if (event.timeStamp != null)
+       	prevTimeStamp = event.timeStamp;
+    else
+        prevTimeStamp = new Date(); // IE, *sigh*
    	velocity = 0;
 
 	return false;
@@ -189,9 +202,15 @@ function doMove(event) {
 	    newPos = Math.round(newWindowPos * thumbnailBasesPerPixel / basesPerPixel);
     }
     else {
+        var timeStamp;
+        if (event.timeStamp != null)
+            timeStamp = event.timeStamp;
+        else
+            timeStamp = new Date();
+        
         newPos = Math.round(dragStartX - beforeDragPos - event.clientX);
-        velocity = (event.clientX - prevX) / (event.timeStamp - prevTimeStamp);
-        prevTimeStamp = event.timeStamp;
+        velocity = (event.clientX - prevX) / (timeStamp - prevTimeStamp);
+        prevTimeStamp = timeStamp;
     }
     
     moveTo(newPos);
@@ -210,8 +229,18 @@ function moveTo(newPos) {
 
 var animationInterval = 40; // milliseconds
 function endMove(event) {
-    if (dragging && event.timeStamp - prevTimeStamp < 180)
+    if (event == null)
+        event = window.event;
+    if (event.timeStamp != null)
+        timeStamp = event.timeStamp;
+    else
+        timeStamp = new Date();
+
+    if (dragging && timeStamp - prevTimeStamp < 180) {
+        if (animationTimer != null)
+            clearInterval(animationTimer);
     	animationTimer = setInterval('animateDeceleration()', animationInterval);
+    }
     dragging = false;
     draggingWindow = false;
 }

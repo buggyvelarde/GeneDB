@@ -5,10 +5,11 @@
 <%@ attribute name="onLoad" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 <head>
-	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
-	<link rel="stylesheet" href="<c:url value="/"/>includes/style/jimmac.css" type="text/css"/>
+	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css" />
+	<link rel="stylesheet" href="<c:url value="/"/>includes/style/jimmac.css" type="text/css" />
 	<c:set var="pageTitle" value="${title} - GeneDB"/>
 	<c:if test="!empty title">
 		<c:set var="pageTitle" value="${title}" />

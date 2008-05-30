@@ -1,11 +1,13 @@
 package org.genedb.web.gui;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,7 +45,42 @@ public class RenderedContextMap {
     private String filenamePrefix = "";
 
     private static final String FILE_FORMAT = "png";
-    static final String FILE_EXT = "png";
+    private static final String FILE_EXT = "png";
+    
+    /*
+     * A note on the color model choice: the choice of color model will
+     * control which type of PNG file is generated. Typically the indexed
+     * color model results in smaller files for full context map images,
+     * though the reverse is true for small chromosome thumbnails.
+     * 
+     * Unfortunately an apparent bug in the AWT rendering engine means
+     * that anti-aliased text cannot be drawn directly on a transparent
+     * background to an image with an indexed color model. Therefore
+     * in that case we draw the text to an image with direct color model
+     * and copy the result to the indexed image. In fact we can get
+     * away with simply blitting it over a rectangle of the indexed image,
+     * since the containing rectangle should not overlap anything else.
+     * 
+     * Thus we need a direct-color image on which to write the labels. Rather
+     * than create a new one each time, we use the same one for all the
+     * labels. It needs to be large enough to contain the label text,
+     * as specified by the constants MAX_LABEL_WIDTH and MAX_LABEL_HEIGHT.
+     * Should the need arise for labels of wildly varying sizes this
+     * can be reconsidered, but it will suffice for now.
+     */
+    
+    private enum ColorModel { DIRECT, INDEXED };
+    
+    /*
+     * These are used for the label buffer, when the INDEXED color model is in use.
+     */
+    private static final int MAX_LABEL_WIDTH  = 100;
+    private static final int MAX_LABEL_HEIGHT = 50;
+    
+    /**
+     * What color model should be used?
+     */
+    private ColorModel colorModel = ColorModel.DIRECT;
 
     /**
      * The scale at which this diagram is drawn, in bases per pixel.
@@ -80,19 +117,19 @@ public class RenderedContextMap {
         
     /**
      * The colour of the label background. If <code>null</code>, no label background is printed.
-     * (LCD text antialiasing doesn't work on a transparent background.)
+     * (Note that LCD text antialiasing doesn't work on a transparent background.)
      */
-    private Color labelBackgroundColor = new Color(0xF0, 0xF0, 0xE4);
+    private Color labelBackgroundColor = null; //new Color(0xF0, 0xF0, 0xE4);
     
     /**
      * The anti-aliasing mode used to draw label text.
      */
-    private Object labelAntialiasingMode = RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB;
+    private Object labelAntialiasingMode = RenderingHints.VALUE_TEXT_ANTIALIAS_ON; //LCD_HRGB;
 
     /**
      * Font used for printing figures on the scale track
      */
-    private Font labelFont = new Font("Dialog", Font.PLAIN, 10);
+    private Font labelFont = new Font("FuturaTMed", Font.PLAIN, 12);
 
     /**
      * Distance between minor scale ticks, in bases
@@ -131,11 +168,10 @@ public class RenderedContextMap {
     private int start, end;
     private int width;
 
-    private BufferedImage image;
-    private Graphics2D graf;
+    private BufferedImage image, labelBuffer;
+    private Graphics2D graf, labelGraf;
 
     public RenderedContextMap(ContextMapDiagram diagram) {
-        logger.info(labelFont.getFontName());
         this.diagram = diagram;
         this.width = diagram.getSize() / basesPerPixel;
         this.start = diagram.getStart();
@@ -214,6 +250,10 @@ public class RenderedContextMap {
         setTickDistances(0, 0);
         setScaleColor(Color.GRAY);
         filenamePrefix = "thumb-";
+        
+         /* For thumbnails, the resulting file is usually smaller with a direct color model */
+        this.colorModel = ColorModel.DIRECT;
+        
         return this;
     }
     
@@ -387,10 +427,27 @@ public class RenderedContextMap {
 
         logger.debug(String.format("Drawing RenderedContextMap with dimensions %dx%d", width, getHeight()));
         
-        image = new BufferedImage(width, getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+        switch (colorModel) {
+        case DIRECT:
+            image = new BufferedImage(width, getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+            labelBuffer = null;
+            break;
+        case INDEXED:
+            image = new BufferedImage(width, getHeight(),
+                BufferedImage.TYPE_BYTE_INDEXED, ArtemisColours.colorModel());
+            labelBuffer = new BufferedImage(MAX_LABEL_WIDTH, MAX_LABEL_HEIGHT, BufferedImage.TYPE_INT_ARGB_PRE);
+            break;
+        }
         graf = (Graphics2D) image.getGraphics();
+        if (labelBuffer != null) {
+            labelGraf = (Graphics2D) labelBuffer.getGraphics();
+            labelGraf.setComposite(AlphaComposite.Src);
+        }
 
         drawScaleTrack();
+        
+        if (labelGraf != null)
+            labelGraf.dispose();
 
         for (int i = 1; i <= diagram.numberOfPositiveTracks(); i++)
             drawGeneTrack(i, diagram.getTrack(i));
@@ -448,7 +505,7 @@ public class RenderedContextMap {
         int majorTicksEvery = (majorTickDistance / minorTickDistance);
         int tickNumber = 0;
         int pos = majorTickDistance * (getStart() / majorTickDistance);
-        while (pos < diagram.getEnd()) {
+        while (pos <= getEnd()) {
             if (tickNumber++ % majorTicksEvery == 0)
                 drawMajorScaleTick(pos);
             else
@@ -463,30 +520,90 @@ public class RenderedContextMap {
 
     private void drawMajorScaleTick(int pos) {
         drawScaleTick(pos, MAJOR_TICK_HEIGHT);
-        
+        drawLabel(pos);
+    }
+    
+    private void drawLabel(int pos) {
+        switch (colorModel) {
+        case DIRECT:
+            drawLabelDirectly(pos);
+            break;
+        case INDEXED:
+            drawLabelIndirectly(pos);
+        }
+    }
+    
+    private void drawLabelDirectly(int pos) {
         graf.setFont(labelFont);
-        
         Color previousColor = graf.getColor();
-        
         graf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, labelAntialiasingMode);
+
         FontRenderContext fontRenderContext = graf.getFontRenderContext();
-        
         Font font = graf.getFont();
-        String posString = String.valueOf(pos);
-        int posHalfWidth = (int) font.getStringBounds(posString, fontRenderContext).getCenterX();
-        LineMetrics posMetrics = font.getLineMetrics(posString, fontRenderContext);
+        String labelString = String.valueOf(pos);
+        int labelHalfWidth = (int) font.getStringBounds(labelString, fontRenderContext).getCenterX();
+        LineMetrics labelMetrics = font.getLineMetrics(labelString, fontRenderContext);
         
-        int x = xCoordinate(pos) - posHalfWidth;
-        int y = yCoordinateOfAxis() + (MAJOR_TICK_HEIGHT / 2) + LABEL_SEP + (int) posMetrics.getAscent();
+        int x = xCoordinate(pos) - labelHalfWidth;
+        int y = yCoordinateOfAxis() + (MAJOR_TICK_HEIGHT / 2) + LABEL_SEP + (int) labelMetrics.getAscent();
         if (labelBackgroundColor != null) {
             graf.setColor(labelBackgroundColor);
-            graf.fillRect(x, yCoordinateOfAxis() + (MAJOR_TICK_HEIGHT / 2) + LABEL_SEP, posHalfWidth * 2, (int) posMetrics.getHeight());
+            graf.fillRect(x, yCoordinateOfAxis() + (MAJOR_TICK_HEIGHT / 2) + LABEL_SEP, labelHalfWidth * 2, (int) labelMetrics.getHeight());
         }
         
         graf.setColor(labelColor);
-        graf.drawString(posString, x, y);
-        
+        graf.drawString(labelString, x, y);
+
         graf.setColor(previousColor);
+    }
+    
+    private static final Color transparentColor = new Color(0,0,0,0);
+    private void drawLabelIndirectly(int pos) {
+        labelGraf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, labelAntialiasingMode);
+
+        FontRenderContext fontRenderContext = labelGraf.getFontRenderContext();
+        Font font = labelGraf.getFont();
+        String labelString = String.valueOf(pos);
+        
+        /*
+         * Note: getStringBounds() is not generally guaranteed to give a rectangle
+         * that visually encloses all the rendered text, but in this case (printing
+         * numerals) it is reasonable to suppose that it will.
+         */
+        Rectangle2D labelBounds = font.getStringBounds(labelString, fontRenderContext);
+        LineMetrics labelMetrics = font.getLineMetrics(labelString, fontRenderContext);
+        
+        int w = (int) labelBounds.getWidth();
+        int h = (int) labelBounds.getHeight();
+        if (labelBackgroundColor == null)
+            labelGraf.setColor(transparentColor);
+        else
+            labelGraf.setColor(labelBackgroundColor);
+        labelGraf.fillRect(0, 0, w, h);
+        
+        labelGraf.setColor(labelColor);
+        labelGraf.drawString(labelString, 0, labelMetrics.getAscent());
+        
+        int[] labelData = labelBuffer.getRGB(0, 0, w, h, null, 0, w);
+        int x = xCoordinate(pos) - (int) labelBounds.getCenterX();
+        int y = yCoordinateOfAxis() + (MAJOR_TICK_HEIGHT / 2) + LABEL_SEP;
+        
+        /*
+         * Deal with the case where the label only partially
+         * intersects with the image, at the left or right edge
+         * of a tile.
+         */
+        int offset = 0, destWidth = w;
+        if (x < 0) {
+            offset = -x;
+            destWidth += x;
+            x = 0;
+        }
+        else if (x+w > this.width) {
+            destWidth = this.width - x;
+            x = this.width - destWidth;
+        }
+        image.setRGB(x, y, destWidth, h, labelData, offset, w);
     }
     
     private void drawScaleTick(int pos, int tickHeight) {

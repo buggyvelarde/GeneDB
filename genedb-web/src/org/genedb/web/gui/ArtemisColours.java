@@ -1,6 +1,7 @@
 package org.genedb.web.gui;
 
 import java.awt.Color;
+import java.awt.image.IndexColorModel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -167,6 +168,47 @@ public class ArtemisColours {
         return color;
     }
 
+    /**
+     * Generate a 256-entry (i.e. 8-bit) colour model including
+     * all the Artemis colours, with the remaining slots populated
+     * with a range of shades of transparent black.
+     * 
+     * This can be used to generate transparent PNGs using the
+     * indexed color model.
+     * 
+     * @return
+     */
+    public static IndexColorModel colorModel() {
+        byte[] reds = new byte[256];
+        byte[] greens = new byte[256];
+        byte[] blues = new byte[256];
+        byte[] alphas = new byte[256];
+        
+        int numColors = 0;
+        for (Color col: cols)
+            if (col != null)
+                numColors++;
+        
+        int i;
+        for(i=0; i < 256 - numColors; i++) {
+            reds[i] = greens[i] = blues[i] = 0;
+            alphas[i] = (byte) ((i * 0xff) / (256 - numColors));
+        }
+
+        for (Color col: cols) {
+            if (col == null)
+                continue;
+            
+            reds[i]   = (byte) col.getRed();
+            greens[i] = (byte) col.getGreen();
+            blues[i]  = (byte) col.getBlue();
+            alphas[i] = (byte) col.getAlpha();
+            i++;
+        }
+
+        return new IndexColorModel(8, 256,
+            reds, greens, blues, alphas);
+    }
 
 
 // colour_of_CDS = 5
