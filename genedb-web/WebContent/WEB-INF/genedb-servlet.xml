@@ -15,7 +15,11 @@
     http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd"
 	default-init-method="postConstruction">
 
-	<context:component-scan base-package="org.genedb.web.mvc.controller.download" />
+	<!-- <context:component-scan base-package="org.genedb.web.mvc.controller.download" /> -->
+
+	<bean id="sequenceDownload" class="org.genedb.web.mvc.controller.download.SequenceDownloadController" />
+		
+	</bean>
 
 	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
