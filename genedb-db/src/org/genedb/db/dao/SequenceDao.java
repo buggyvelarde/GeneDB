@@ -3,6 +3,7 @@ package org.genedb.db.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.SequenceDaoI;
 import org.gmod.schema.general.DbXRef;
@@ -19,6 +20,8 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class SequenceDao extends BaseDao implements SequenceDaoI {
     
+	private static Logger logger = Logger.getLogger(org.genedb.db.dao.SequenceDao.class);
+	
     public Feature getFeatureById(int id) {
         return (Feature) getHibernateTemplate().load(Feature.class, id);
     }
