@@ -1,5 +1,6 @@
 package org.genedb.db.dao;
 
+import org.apache.log4j.Logger;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.CvDaoI;
@@ -16,7 +17,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class CvDao extends BaseDao implements CvDaoI {
-
+	
+	private static Logger logger = Logger.getLogger(org.genedb.db.dao.CvDao.class);
+	
     protected GeneralDao generalDao;
 
     public Cv getCvById(int id) {

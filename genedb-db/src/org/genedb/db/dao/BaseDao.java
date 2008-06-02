@@ -1,12 +1,15 @@
 package org.genedb.db.dao;
 
+import org.apache.log4j.Logger;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.List;
 
 public class BaseDao extends HibernateDaoSupport {
-
+	
+	private static Logger logger = Logger.getLogger(org.genedb.db.dao.BaseDao.class);
+	
     private PlatformTransactionManager platformTransactionManager;
 
     /**
