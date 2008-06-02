@@ -20,27 +20,28 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class SequenceDao extends BaseDao implements SequenceDaoI {
     
-	private static Logger logger = Logger.getLogger(org.genedb.db.dao.SequenceDao.class);
-	
+    private static Logger logger = Logger.getLogger(org.genedb.db.dao.SequenceDao.class);
+
     public Feature getFeatureById(int id) {
         return (Feature) getHibernateTemplate().load(Feature.class, id);
     }
 
     public Feature getFeatureByUniqueName(String name, String featureType) {
-    	if(featureType.equals("gene")) {
-    		@SuppressWarnings("unchecked")
-        	List<Gene> features = getHibernateTemplate().findByNamedParam(
-                    "from Gene f where f.uniqueName=:name and f.cvTerm.name=:featureType",
-                    new String[]{"name","featureType"},new Object[]{name,featureType});
-            System.err.println("features size is " + features.size());
-    		if (features.size() > 0) {
+        if(featureType.equals("gene")) {
+            @SuppressWarnings("unchecked")
+            List<Gene> features = getHibernateTemplate().findByNamedParam(
+                "from Gene f where f.uniqueName=:name and f.cvTerm.name=:featureType",
+                new String[]{"name","featureType"},new Object[]{name,featureType});
+
+            if (features.size() > 0) {
                 return features.get(0);
             }
     	}
     	@SuppressWarnings("unchecked")
-    	List<Feature> features = getHibernateTemplate().findByNamedParam(
-                "from Feature f where f.uniqueName=:name and f.cvTerm.name=:featureType",
-                new String[] { "name", "featureType" }, new Object[] { name, featureType });
+        List<Feature> features = getHibernateTemplate().findByNamedParam(
+            "from Feature f where f.uniqueName=:name and f.cvTerm.name=:featureType",
+            new String[] { "name", "featureType" }, new Object[] { name, featureType });
+    	
         if (features.size() > 0) {
             return features.get(0);
         }
@@ -232,7 +233,6 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                                 + orgNames + " )", new String[] { "lookup", "featureType" },
                         new Object[] { lookup, featureType, });
 
-        System.out.println("Size in DAO " + features.size());
         return features;
     }
 
