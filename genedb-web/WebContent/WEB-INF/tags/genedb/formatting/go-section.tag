@@ -6,6 +6,7 @@
 <c:forEach var="f" begin="0" items="${fMap}">
 	<c:set var="featCvTerm" value="${f.value}" />	
 </c:forEach>
+<c:set var="cvName" value="${featCvTerm.cvTerm.cv.name}"/>
   <tr width="100%">
 <!--    <td>GO:${featCvTerm.cvTerm.dbXRef.accession}</td>-->
     <td width="40%" align="left">
