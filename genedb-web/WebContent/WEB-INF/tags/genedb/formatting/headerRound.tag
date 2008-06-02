@@ -1,6 +1,7 @@
 <%@ tag display-name="header1"
         body-content="scriptless" %>
 <%@ attribute name="name"%>
+<%@ attribute name="bodyClass" required="false" %>
 <%@ attribute name="title"  required="true" %>
 <%@ attribute name="onLoad" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -18,9 +19,9 @@
     <jsp:doBody />
 </head>
 <% if (onLoad == null) { %>
-<body>
+<body class="${bodyClass}">
 <% } else { %>
-<body onLoad="${onLoad}">
+<body class="${bodyClass}" onLoad="${onLoad}">
 <% } %>
 <!--  <div class="rounded" style="width: 100%; background-color: rgb(55, 124, 177); text-align: center; font-size: 2em; line-height: 3em; font-size-adjust: none; font-stretch: normal; color: rgb(0, 0, 0); font-family: Georgia; font-variant: small-caps; font-weight: bold;"> -->
 	<table width="100%" style="background-color: rgb(55, 124, 177); height: 30px;" class="main">
