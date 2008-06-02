@@ -23,9 +23,9 @@
 			 <p><a href="<misc:history />">Store these results in my history</a></p> 
 			<img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
 			<display:table name="results" uid="tmp" pagesize="30" requestURI="/NamedFeature" class="simple" cellspacing="0" cellpadding="4">
-   				<display:column property="organism" title="Organism"/>
-   				<display:column property="type" title="Type"/> 
-				<display:column property="name" href="./Search/FeatureByName" paramId="name"/>
+   				<display:column property="organism.abbreviation" title="Organism"/>
+   				<display:column property="cvTerm.name" title="Type"/> 
+				<display:column property="uniqueName" href="./NamedFeature" paramId="name"/>
 			</display:table>
 	</td>
 </tr>
