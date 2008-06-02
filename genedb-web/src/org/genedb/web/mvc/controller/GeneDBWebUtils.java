@@ -109,7 +109,7 @@ public class GeneDBWebUtils {
             proteinToke = protein.getTokenization("token");
             seq = new SimpleSymbolList(proteinToke, seqString);
         } catch (BioException e) {
-            logger.error("Can't translate into a protein sequence");
+            logger.error("Can't translate into a protein sequence", e);
             // pp.setWarning("Unable to translate protein"); // FIXME
             return pp;
         }
