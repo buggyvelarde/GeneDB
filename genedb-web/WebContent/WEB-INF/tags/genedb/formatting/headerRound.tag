@@ -44,6 +44,7 @@
 								<option value="product">Product</option>
 							</select>
 				--><input type="submit" value="Search" title="Search" align="middle" style="vertical-align: middle; margin:0 0 0 7px;background:transparent url(<c:url value="/"/>includes/images/bgsprite.gif) no-repeat -47px top;border:0;width:66px;height:24px;font-weight:normal;vertical-align:bottom;cursor:pointer;font-size:1em;font-weight:bold;"/>
+				</form>
 			</td>
 		</tr>
 	</table>
