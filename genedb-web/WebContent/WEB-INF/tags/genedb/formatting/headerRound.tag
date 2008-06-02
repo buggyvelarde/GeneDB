@@ -23,7 +23,7 @@
 <body onLoad="${onLoad}">
 <% } %>
 <!--  <div class="rounded" style="width: 100%; background-color: rgb(55, 124, 177); text-align: center; font-size: 2em; line-height: 3em; font-size-adjust: none; font-stretch: normal; color: rgb(0, 0, 0); font-family: Georgia; font-variant: small-caps; font-weight: bold;"> -->
-	<table width="100%" style="background-color: rgb(55, 124, 177); height: 30px;">
+	<table width="100%" style="background-color: rgb(55, 124, 177); height: 30px;" class="main">
 		<tr>
 			<td width="30%" align="left" style="background-color: rgb(55, 124, 177); text-align: left; font-size: 2em; line-height: 1em; font-size-adjust: none; font-stretch: normal; color: #e0e0d5; font-family: Georgia; font-variant: small-caps; font-weight: bold;vertical-align: middle">
 				GeneDB
@@ -46,7 +46,7 @@
 			</td>
 		</tr>
 	</table>
-		<div id="demo-container">
+		<div id="demo-container" class="main">
 			<ul id="simple-menu">
 				<li><a href="http://www.13styles.com/css-menus/simple-menu/" title="Home">About Us</a></li>
 				<li>

@@ -26,7 +26,7 @@
 </div>
 
 <!-- General Information -->
-<div id="genInfo">
+<div id="genInfo" class="main">
     <div id="one">
 	<format:roundStart/>
   <div class="inner" style="height:160px;">
@@ -110,7 +110,7 @@
 <db:filtered-loop items="${polypeptide.featureCvTerms}" cv="CC_genedb_controlledcuration" var="featCvTerm" varStatus="status">
 <c:if test="${status.count == 1}">
 	<c:set var="cnt" value="${cnt+1}"/>
-	<div id="controlCur" style="clear: both;">
+	<div id="controlCur" style="clear: both;" class="main">
 	  <div class="outer">
 	  <format:roundStart/>
 	  <div class="inner">
@@ -135,7 +135,7 @@
 <c:if test="${status.count == 1}">
 	<c:set var="cnt" value="${cnt+1}"/>
 	<c:set var="open" value="true"/>
-	<div id="go" style="clear: both;">
+	<div id="go" style="clear: both;" class="main">
   	<div class="outer">
   	<format:roundStart/>
   	<div class="inner">
@@ -160,7 +160,7 @@
 	<c:set var="cnt" value="${cnt+1}"/>
 	<c:if test="${!open}"> <!-- if open still false generate the rounded DIV-->
 		<c:set var="open" value="true"/>
-		<div id="go" style="clear: both;">
+		<div id="go" style="clear: both;" class="main">
 	  	<div class="outer">
 	  	<format:roundStart/>
 	  	<div class="inner">
@@ -186,7 +186,7 @@
 	<c:set var="cnt" value="${cnt+1}"/>
 	<c:if test="${!open}"> <!-- if open still false generate the rounded DIV-->
 		<c:set var="open" value="true"/>
-		<div id="go" style="clear: both;">
+		<div id="go" style="clear: both;" class="main">
 	  	<div class="outer">
 	  	<format:roundStart/>
 	  	<div class="inner">
@@ -214,7 +214,7 @@
 </c:if>
 
 <!-- Predicted Peptide Section -->
-<div id="predictedpep" style="clear: both;">
+<div id="predictedpep" style="clear: both;" class="main">
     <div id="two">
 	<format:roundStart/>
   <div class="inner" style="height:160px">
@@ -257,7 +257,7 @@
 </div>
 
 <!-- Ortholog / Paralog Section -->
-<div id="orthologs" style="clear: both;">
+<div id="orthologs" style="clear: both;" class="main">
     <div class="outer">
 	<format:roundStart/>
   <div class="inner">
