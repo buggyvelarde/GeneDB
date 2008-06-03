@@ -8,10 +8,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.TermQuery;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -37,6 +40,7 @@ private String listResultsView;
 		this.listResultsView = listResultsView;
 	}
 	
+	@Override
 	protected ModelAndView onSubmit(HttpServletRequest request, 
     		HttpServletResponse response, Object command, 
     		BindException be) throws Exception {
@@ -51,15 +55,14 @@ private String listResultsView;
 		String viewName = listResultsView;
 		
 		IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.FeatureProp");
-		String query = "";
+		BooleanQuery query = new BooleanQuery();
+		query.add(new TermQuery(new Term("value", input)), BooleanClause.Occur.MUST);
+                query.add(new TermQuery(new Term("feature.organism.commonName", orgs)), BooleanClause.Occur.MUST);
+                
+                if (!field.equals("ALL"))
+                    query.add(new TermQuery(new Term("cvTerm.name", field)), BooleanClause.Occur.MUST);
 		
-		if(field.equals("ALL")) {
-			query = "value:" + input + " AND feature.organism.commonName:" + orgs;
-		} else {
-			query = "value:" + input + " AND cvTerm.name:" + field + " AND feature.organism.commonName:" + orgs;
-		}
-		
-		Hits hits = luceneDao.search(ir, new StandardAnalyzer(), "cvTerm.name", query);
+		Hits hits = luceneDao.search(ir, query);
 		if (hits.length() == 0) {
 			be.reject("No Result");
 			return showForm(request, response, be);

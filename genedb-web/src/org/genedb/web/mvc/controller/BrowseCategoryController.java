@@ -19,7 +19,6 @@
 
 package org.genedb.web.mvc.controller;
 
-
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.loading.TaxonNode;
@@ -36,9 +35,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-
-
 /**
  * Returns cvterms based on a particular cv
  * 
@@ -47,36 +43,33 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BrowseCategoryController extends TaxonNodeBindingFormController {
     
-	private static final Logger logger = Logger.getLogger(BrowseCategoryController.class);
+    private static final Logger logger = Logger.getLogger(BrowseCategoryController.class);
 	
     private CvDao cvDao;
-    private String cvName;
 
-    
+    @Override
+    protected Map<String,BrowseCategory[]> referenceData(@SuppressWarnings("unused") HttpServletRequest request) throws Exception {
+        Map<String,BrowseCategory[]> reference = new HashMap<String,BrowseCategory[]>();
+        reference.put("categories", BrowseCategory.values());
+        return reference;
+    }
 
-    @SuppressWarnings("unchecked")
-	@Override
-	protected Map referenceData(HttpServletRequest request) throws Exception {
-    	Map reference = new HashMap();
-    	reference.put("categories", BrowseCategory.values());
-    	return reference;
-	}
-
-	@Override
+    @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
         BrowseCategoryBean bcb = (BrowseCategoryBean) command;
         String category = bcb.getCategory().toString();
         logger.info("category is " + category);
         TaxonNode[] taxonNodes = bcb.getOrganism();
         List<String> orgNames = taxonNodes[0].getAllChildrenNames(); // FIXME 
-        List<List> results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
+        List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null"); // TODO Improve text
             be.reject("no.results");
             return showForm(request, response, be);
         }
-        logger.info(results.get(0).get(0));
+        logger.debug(results.get(0));
+        
         // Go to list results page
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject("results", results);
@@ -84,13 +77,13 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (String org : orgNames) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(",");
-			}
-			sb.append(org);
-		}
+            if (first) {
+                first = false;
+            } else {
+                sb.append(",");
+            }
+            sb.append(org);
+        }
         mav.addObject("organism",sb.toString());
         return mav;
     }

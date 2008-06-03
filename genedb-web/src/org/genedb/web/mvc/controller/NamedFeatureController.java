@@ -27,10 +27,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.sequence.Feature;
 import org.springframework.validation.BindException;
@@ -63,28 +65,40 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         List<ResultHit> results = new ArrayList<ResultHit>();
 
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
-        String query = null;
         if (orgs == null) {
-            query = "uniqueName:" + name + " AND cvTerm.name:gene";
-            Hits hits = luceneDao.search(ir, new StandardAnalyzer(), "uniqueName", query);
+            Query query = new TermQuery(new Term("uniqueName", name));
+            Hits hits = luceneDao.search(ir, query);
             switch (hits.length()) {
-            case 0:
-                // Temporary check as the Lucene db isn't automatically
+            case 0: {
+                // Temporary check as the Lucene index isn't automatically
                 // up-to-date
-                if (directDbCheck(name)) {
-                    model = GeneDBWebUtils.prepareGene(name, model);
+                Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
+                if (feature != null) {
+                    logger.info(String.format("Lucene did not find feature '%s'; we found it in the database", name));
+                    model = GeneDBWebUtils.prepareFeature(feature, model);
                     viewName = geneView;
                     break;
                 }
+                logger.warn(String.format("Failed to find feature '%s'", name));
                 be.reject("No Result");
                 return showForm(request, response, be);
-            case 1:
-                model = GeneDBWebUtils.prepareGene(hits.doc(0).get("uniqueName"), model);
+            }
+            case 1: {
+                Document doc = hits.doc(0);
+                logger.info(String.format("Lucene found feature '%s'", doc.get("uniqueName")));
+                if ("gene".equals(doc.get("cvTerm.name")))
+                    GeneDBWebUtils.prepareGene(doc.get("uniqueName"), model);
+                else
+                    GeneDBWebUtils.prepareTranscript(doc.get("uniqueName"), model);
                 viewName = geneView;
                 break;
+            }
             default:
                 for (int i = 0; i < hits.length(); i++) {
                     Document doc = hits.doc(i);
+                    if (!"gene".equals(doc.get("cvTerm.name")))
+                        continue;
+                    
                     ResultHit rh = new ResultHit();
                     rh.setName(doc.get("uniqueName"));
                     rh.setType("gene");
@@ -106,21 +120,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             }
         }
         return new ModelAndView(viewName, model);
-    }
-
-    /**
-     * Look up a featurename directly in the database, as the Lucene indices
-     * aren't automatically up-to-date
-     * 
-     * @param name the uniquename of the gene
-     * @return whether it exists in the db
-     */
-    private boolean directDbCheck(String name) {
-        Feature f = sequenceDao.getFeatureByUniqueName(name, "gene");
-        if (f != null) {
-            return true;
-        }
-        return false;
     }
 
     public void setLuceneDao(LuceneDao luceneDao) {

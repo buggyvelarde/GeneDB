@@ -34,6 +34,10 @@ import org.genedb.web.utils.Grep;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.sequence.feature.Gene;
+import org.gmod.schema.sequence.feature.MRNA;
+import org.gmod.schema.sequence.feature.Polypeptide;
+import org.gmod.schema.sequence.feature.Transcript;
 import org.gmod.schema.utils.PeptideProperties;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -57,38 +61,74 @@ public class GeneDBWebUtils {
     public void setSequenceDao(SequenceDao sequenceDao) {
         GeneDBWebUtils.sequenceDao = sequenceDao;
     }
-
-    public static Map<String, Object> prepareGene(String systematicId, Map<String, Object> model)
-            throws IOException {
-        String type = "gene";
-        Feature gene = sequenceDao.getFeatureByUniqueName(systematicId, type);
-        model = prepareArtemisHistory(systematicId, model);
-        model.put("feature", gene);
-        // model.put("luceneDao", luceneDao); // FIXME Really part of model?
-        // -rh11
-
-        Feature mRNA = null;
-        Collection<FeatureRelationship> frs = gene.getFeatureRelationshipsForObjectId();
-        if (frs != null) {
-            for (FeatureRelationship fr : frs) {
-                mRNA = fr.getFeatureBySubjectId();
-                break;
-            }
-            if (mRNA != null) {
-                Feature polypeptide = null;
-                Collection<FeatureRelationship> frs2 = mRNA.getFeatureRelationshipsForObjectId();
-                for (FeatureRelationship fr : frs2) {
-                    Feature f = fr.getFeatureBySubjectId();
-                    if ("polypeptide".equals(f.getCvTerm().getName())) {
-                        polypeptide = f;
-                    }
-                }
-                model.put("transcript", mRNA);
-                model.put("polypeptide", polypeptide);
-                PeptideProperties pp = calculatePepstats(polypeptide);
-                model.put("polyprop", pp);
-            }
+    
+    public static Map<String, Object> prepareFeature(Feature feature, Map<String, Object> model) {
+        if (feature instanceof Gene)
+            return prepareGene((Gene) feature, model);
+        else if (feature instanceof Transcript)
+            return prepareTranscript((Transcript) feature, model);
+        else if (feature instanceof Polypeptide)
+            return prepareTranscript(((Polypeptide) feature).getTranscript(), model);
+        else {
+            logger.error(String.format("Cannot build model for feature '%s' of type '%s'", feature.getUniqueName(), feature.getClass()));
+            return model;
         }
+    }
+
+    /**
+     * Populate a model object with the details of the specified gene.
+     * 
+     * @param uniqueName the uniqueName of the gene
+     * @param model the Map object to populate
+     * @return a reference to <code>model</code>
+     * @throws IOException
+     */
+    public static Map<String, Object> prepareGene(String uniqueName, Map<String, Object> model)
+            throws IOException {
+        model = prepareArtemisHistory(uniqueName, model);
+        Gene gene = (Gene) sequenceDao.getFeatureByUniqueName(uniqueName, "gene");
+        return prepareGene(gene, model);
+    }
+    
+    public static Map<String, Object> prepareGene(Gene gene, Map<String, Object> model) {
+        model.put("gene", gene);
+
+        Collection<Transcript> transcripts = gene.getTranscripts();
+        if (transcripts.isEmpty()) {
+            logger.error(String.format("Gene '%s' has no transcripts", gene.getUniqueName()));
+            return model;
+        }
+        
+        Transcript firstTranscript = null;
+        for (Transcript transcript : transcripts)
+            if (firstTranscript == null || transcript.getFeatureId() < firstTranscript.getFeatureId())
+                firstTranscript = transcript;
+        
+        return prepareTranscript(firstTranscript, model);
+    }
+    
+    public static Map<String, Object> prepareTranscript(String uniqueName, Map<String, Object> model)
+            throws IOException {
+        model = prepareArtemisHistory(uniqueName, model);
+        Transcript transcript = (Transcript) sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
+        return prepareTranscript(transcript, model);
+    }
+
+    public static Map<String,Object> prepareTranscript(Transcript transcript, Map<String,Object> model) {
+        
+        if (!model.containsKey("gene"))
+            model.put("gene", transcript.getGene());
+        
+        model.put("transcript", transcript);
+        
+        if (transcript instanceof MRNA) {
+            MRNA codingTranscript = (MRNA) transcript;
+            Feature polypeptide = codingTranscript.getProtein();
+            
+            model.put("polypeptide", polypeptide);
+            model.put("polyprop", calculatePepstats(polypeptide));
+        }
+
         return model;
     }
 
@@ -100,7 +140,6 @@ public class GeneDBWebUtils {
             return null;
         }
         String seqString = new String(polypeptide.getResidues());
-        // System.err.println(seqString);
         Alphabet protein = ProteinTools.getAlphabet();
         SymbolTokenization proteinToke = null;
         SymbolList seq = null;
@@ -118,24 +157,21 @@ public class GeneDBWebUtils {
         try {
             cal = ipc.getPI(seq, false, false);
         } catch (IllegalAlphabetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error(String.format("Error computing protein isoelectric point for '%s'", seq), e);
         } catch (BioException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error(String.format("Error computing protein isoelectric point for '%s'", seq), e);
         }
         DecimalFormat df = new DecimalFormat("#.##");
         pp.setIsoelectricPoint(df.format(cal));
         pp.setAminoAcids(Integer.toString(seqString.length()));
         MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS, false);
         try {
-            cal = mc.getMass(seq) / 1000;
+            cal = mc.getMass(seq);
         } catch (IllegalSymbolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Error computing protein mass", e);
         }
-        pp.setMass(df.format(cal));
-        // cal = WebUtils.getCharge(seq);
+        pp.setMass(df.format(cal / 1000));
+        cal = getCharge(seq);
         pp.setCharge(df.format(cal));
         return pp;
     }
@@ -349,10 +385,10 @@ public class GeneDBWebUtils {
             chargeFor.put(aaToken.parseToken("R"), 1.0);
             chargeFor.put(aaToken.parseToken("Z"), -0.5);
         } catch (IllegalSymbolException e) {
-            e.printStackTrace();
+            logger.error(e);
             throw new RuntimeException("Unexpected biojava error - illegal symbol");
         } catch (BioException e) {
-            e.printStackTrace();
+            logger.error(e);
             throw new RuntimeException("Unexpected biojava error - general");
         }
 
