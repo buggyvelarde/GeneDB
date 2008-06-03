@@ -220,7 +220,14 @@ div.section-body {
  padding-right: 3px;
 }
 
-#demo-container{padding:0px 5px 0 5px;margin:0 0 5px 0;background-color:rgb(55, 124, 177);}
+#navigation {
+	padding: 0px 5px 0 5px;
+	margin: 0 0 5px 0;
+	position: absolute;
+	top: 30px;
+	right: 0px;
+}
+
 ul#simple-menu{list-style-type:none;width:100%;position:relative;height:27px;font-family:"Trebuchet MS",Arial,sans-serif;font-size:13px;font-weight:bold;margin:0;padding:11px 0 0 0;}
 ul#simple-menu li{float:right;margin:0 0 0 4px;height:27px;position:relative;z-index:1000;}
 ul#simple-menu li.left{margin:0;}
@@ -264,6 +271,49 @@ ul#simple-menu li:hover ul li {
 
 body.genePage {
 	font-size: 0.8em;
+}
+
+div#header {
+	position: relative;
+	display: block;
+	width: 100%;
+	min-width: 600px;	
+	background-color: #377CB1;
+	height:68px;
+}
+div#header table {
+	height:30px;
+}
+
+div#header table td {
+	font-size: 2em; 
+	line-height: 1em; 
+	color: #e0e0d5; 
+	font-family: Georgia; 
+	font-variant: small-caps; 
+	font-weight: bold;
+	vertical-align: middle
+}
+
+div#header table td input#query {
+	width: 150px; 
+	padding: 4px; 
+	vertical-align: middle;
+	border: 0;
+}
+
+div#header table td input#submit {
+	vertical-align: middle; 
+	margin: 0 0 0 7px;
+	background: transparent url(../images/bgsprite.gif) no-repeat -47px top;
+	border: 0;
+	width: 66px;
+	height: 24px;
+	vertical-align: bottom;
+	cursor: pointer;
+	font-size: 0.5em;
+	font-weight: bold;
+	border: 0;
 }
 
 div#geneDetails {
@@ -333,7 +383,7 @@ div#proteinMap {
 }
 
 .inner {
-	padding-left: 5px;
+	padding: 5px;
     background-color: #C2D2E1;
     font-family: sans-serif;
 }
