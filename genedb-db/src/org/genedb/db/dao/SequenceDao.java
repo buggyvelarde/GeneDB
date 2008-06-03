@@ -18,6 +18,10 @@ import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.utils.CountedName;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
+/**
+ * @author rh11
+ *
+ */
 public class SequenceDao extends BaseDao implements SequenceDaoI {
     
     private static Logger logger = Logger.getLogger(org.genedb.db.dao.SequenceDao.class);
@@ -26,32 +30,40 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return (Feature) getHibernateTemplate().load(Feature.class, id);
     }
 
-    public Feature getFeatureByUniqueName(String name, String featureType) {
-        if(featureType.equals("gene")) {
-            @SuppressWarnings("unchecked")
-            List<Gene> features = getHibernateTemplate().findByNamedParam(
-                "from Gene f where f.uniqueName=:name and f.cvTerm.name=:featureType",
-                new String[]{"name","featureType"},new Object[]{name,featureType});
+    public Feature getFeatureByUniqueName(String uniqueName, String featureType) {
+        if(featureType.equals("gene"))
+            return getFeatureByUniqueName(uniqueName, Gene.class);
 
-            if (features.size() > 0) {
-                return features.get(0);
-            }
-    	}
     	@SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
-            "from Feature f where f.uniqueName=:name and f.cvTerm.name=:featureType",
-            new String[] { "name", "featureType" }, new Object[] { name, featureType });
+            "from Feature where uniqueName=:name and cvTerm.name=:featureType",
+            new String[] { "name", "featureType" }, new Object[] { uniqueName, featureType });
     	
         if (features.size() > 0) {
             return features.get(0);
         }
         return null;
     }
+    
+    public Feature getFeatureByUniqueName(String uniqueName, Class<? extends Feature> featureClass) {
+        @SuppressWarnings("unchecked")
+        List<Gene> features = getHibernateTemplate().findByNamedParam(
+            "from "+featureClass.getSimpleName()+" where uniqueName=:name",
+            "name", uniqueName);
+
+        if (features.size() == 0) {
+            logger.warn(String.format("Hibernate found no feature of type '%s' with uniqueName '%s'",
+                featureClass.getSimpleName(), uniqueName));
+            return null;
+        }
+
+        return features.get(0);
+    }
 
     @SuppressWarnings("unchecked")
     public List<Feature> getFeaturesByUniqueName(String name) {
         List features = getHibernateTemplate().findByNamedParam(
-                "from Feature f where f.uniqueName like :name", "name", name);
+                "from Feature where uniqueName like :name", "name", name);
         return features;
     }
 

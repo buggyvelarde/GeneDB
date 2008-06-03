@@ -18,7 +18,7 @@ import org.hibernate.search.annotations.Store;
 
 public abstract class Transcript extends Feature {
 
-    private static Logger logger = Logger.getLogger(MRNA.class);
+    private static Logger logger = Logger.getLogger(Transcript.class);
     @Transient
     private AbstractGene gene;
 
@@ -45,7 +45,7 @@ public abstract class Transcript extends Feature {
             }
         }
         if (gene == null) {
-            logger.error(String.format("The mRNA transcript '%s' has no associated gene", getUniqueName()));
+            logger.error(String.format("The transcript '%s' has no associated gene", getUniqueName()));
             return null;
         }
         return gene;

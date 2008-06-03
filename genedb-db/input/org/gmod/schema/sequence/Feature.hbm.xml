@@ -172,5 +172,6 @@
         <subclass name="org.gmod.schema.sequence.feature.Pseudogene"      extends="org.gmod.schema.sequence.Feature" discriminator-value="423" />
         <subclass name="org.gmod.schema.sequence.feature.Exon"            extends="org.gmod.schema.sequence.Feature" discriminator-value="234" />
         <subclass name="org.gmod.schema.sequence.feature.PseudogenicExon" extends="org.gmod.schema.sequence.Feature" discriminator-value="595" />
+        <subclass name="org.gmod.schema.sequence.feature.Polypeptide"     extends="org.gmod.schema.sequence.Feature" discriminator-value="191" />
     </class>
 </hibernate-mapping>

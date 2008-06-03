@@ -70,11 +70,11 @@ public class Feature implements java.io.Serializable {
     private CvTerm cvTerm;
 
     @Column(name = "name", unique = false, nullable = true, insertable = true, updatable = true)
-    @Field(index = Index.TOKENIZED, store = Store.YES)
+    @Field(index = Index.UN_TOKENIZED, store = Store.YES)
     private String name;
 
     @Column(name = "uniquename", unique = false, nullable = false, insertable = true, updatable = true)
-    @Field(index = Index.TOKENIZED, store = Store.YES)
+    @Field(index = Index.UN_TOKENIZED, store = Store.YES)
     private String uniqueName;
 
     @Column(name = "seqlen", unique = false, nullable = true, insertable = true, updatable = true)
