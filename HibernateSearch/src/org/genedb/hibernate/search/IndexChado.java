@@ -17,6 +17,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.event.FullTextIndexEventListener;
@@ -138,26 +139,8 @@ public class IndexChado {
         transaction.commit();
         session.close();
 
-        if (failed.size() > 0) {
-            logger.info("Attempting to reindex failed features");
-            session = newSession(1);
-            transaction = session.beginTransaction();
-            for (int featureId : failed) {
-                logger.debug(String.format("Attempting to index feature %d", featureId));
-                Feature feature = (Feature) session.load(Feature.class, featureId);
-                logger.debug(String.format("Loaded feature '%s'", feature.getUniqueName()));
-                try {
-                    session.index(feature);
-                    logger.debug("Feature successfully indexed");
-                } catch (Exception e) {
-                    logger.info(String.format("Failed to index feature '%s' on the second attempt",
-                        feature.getUniqueName()), e);
-                }
-                session.clear();
-            }
-            transaction.commit();
-            session.close();
-        }
+        if (failed.size() > 0)
+            reindexFailedFeatures(failed);
     }
 
     /**
@@ -176,11 +159,12 @@ public class IndexChado {
             int numBatches, FullTextSession session) {
 
         Set<Integer> failedToLoad = new HashSet<Integer>();
-        Criteria criterion = session.createCriteria(featureClass);
+        Criteria criteria = session.createCriteria(featureClass);
+        criteria.add(Restrictions.eq("obsolete", false)); // Do not index obsolete features
         if (numBatches > 0)
-            criterion.setMaxResults(numBatches * BATCH_SIZE);
+            criteria.setMaxResults(numBatches * BATCH_SIZE);
 
-        ScrollableResults results = criterion.scroll(ScrollMode.FORWARD_ONLY);
+        ScrollableResults results = criteria.scroll(ScrollMode.FORWARD_ONLY);
 
         logger.info(String.format("Indexing %s", featureClass));
         int thisBatchCount = 0;
@@ -212,6 +196,35 @@ public class IndexChado {
         results.close();
         return failedToLoad;
     }
+    
+    /**
+     * Attempt to index the provided features individually
+     * (i.e. in batches of one). Used to reindex failures
+     * from a batch indexing run.
+     * 
+     * @param failed a set of features to reindex
+     */
+    private static void reindexFailedFeatures(Set<Integer> failed) {
+        logger.info("Attempting to reindex failed features");
+        FullTextSession session = newSession(1);
+        Transaction transaction = session.beginTransaction();
+        for (int featureId : failed) {
+            logger.debug(String.format("Attempting to index feature %d", featureId));
+            Feature feature = (Feature) session.load(Feature.class, featureId);
+            logger.debug(String.format("Loaded feature '%s'", feature.getUniqueName()));
+            try {
+                session.index(feature);
+                logger.debug("Feature successfully indexed");
+            } catch (Exception e) {
+                logger.info(String.format("Failed to index feature '%s' on the second attempt",
+                    feature.getUniqueName()), e);
+            }
+            session.clear();
+        }
+        transaction.commit();
+        session.close();
+    }
+
 
     public static void main(String[] args) {
         // The numBatches argument is only useful for quick-and-dirty testing
