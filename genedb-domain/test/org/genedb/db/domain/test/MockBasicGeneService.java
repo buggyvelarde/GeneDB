@@ -66,7 +66,7 @@ class BasicGeneFactory {
         gene.setChromosome(chromosome);
         gene.setStrand(strand);
         
-        gene.setSystematicId(uniqueName);
+        gene.setUniqueName(uniqueName);
         gene.setFmin(fmin);
         gene.setFmax(fmax);
 
@@ -287,7 +287,7 @@ public class MockBasicGeneService implements BasicGeneService {
 
     public BasicGene findGeneByUniqueName(String name) {
         for (BasicGene gene: genes) {
-            if (gene.getSystematicId().equals(name))
+            if (gene.getUniqueName().equals(name))
                 return gene;
         }
         return null;
