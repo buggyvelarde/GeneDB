@@ -97,9 +97,6 @@
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/poi/poi-3.0.1.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/biojava-1.4.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/bytecode-0.91.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
@@ -134,6 +131,9 @@
 <dependency-type>uses</dependency-type>
 </dependent-module>
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/ezmorph-1.0.4.jar">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/biojava-1.6.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
         <property name="java-output-path" value="/build/classes/"/>
