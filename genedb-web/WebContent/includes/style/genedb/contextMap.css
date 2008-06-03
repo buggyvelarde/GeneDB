@@ -10,7 +10,7 @@
 	overflow: hidden;
 	position: relative;
 	width: 100%;
-	height: 60px;
+	height: 62px;
 	cursor: move;
 	background-color: #F0F0E4;
 }
@@ -56,7 +56,8 @@ img.contextMapImage {
 
 img#chromosomeThumbnailImage {
 	position: absolute;
-    top: 5px;
+    top: 3px;
+    height: 9px;
 }
 
 img#chromosomeThumbnailWindow {

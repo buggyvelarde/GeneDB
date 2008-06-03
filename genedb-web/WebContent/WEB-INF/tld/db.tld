@@ -9,22 +9,61 @@
    <name>propByName</name>
    <tag-class>org.genedb.web.tags.db.PropertyFilterTag</tag-class>
    <body-content>scriptless</body-content>
+    <attribute>
+       <name>items</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute> 
    <attribute>
        <name>var</name>
        <rtexprvalue>true</rtexprvalue>
        <required>true</required>
     </attribute>
+
     <attribute>
-       <name>name</name>
+       <name>cv</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+    <attribute>
+       <name>cvTerm</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+ </tag>
+
+
+<tag>
+   <name>filtered-loop</name>
+   <tag-class>org.genedb.web.tags.db.FilteredPropertyLoopTag</tag-class>
+   <body-content>scriptless</body-content>
+   <attribute>
+       <name>items</name>
        <rtexprvalue>true</rtexprvalue>
        <required>true</required>
     </attribute>
     <attribute>
-       <name>collection</name>
+       <name>cv</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+    <attribute>
+       <name>cvTerm</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+    <attribute>
+       <name>var</name>
        <rtexprvalue>true</rtexprvalue>
        <required>true</required>
     </attribute> 
+    <attribute>
+       <name>varStatus</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute> 
  </tag>
+ 
 
  <tag>
    <name>synonym</name>
@@ -49,37 +88,6 @@
        <name>collection</name>
        <rtexprvalue>true</rtexprvalue>
        <required>true</required>
-    </attribute> 
- </tag>
- 
-  <tag>
-   <name>filtered-loop</name>
-   <tag-class>org.genedb.web.tags.db.FilteredPropertyLoopTag</tag-class>
-   <body-content>scriptless</body-content>
-   <attribute>
-       <name>items</name>
-       <rtexprvalue>true</rtexprvalue>
-       <required>true</required>
-    </attribute>
-    <attribute>
-       <name>cv</name>
-       <rtexprvalue>true</rtexprvalue>
-       <required>true</required>
-    </attribute>
-    <attribute>
-       <name>cvTerm</name>
-       <rtexprvalue>true</rtexprvalue>
-       <required>false</required>
-    </attribute>
-    <attribute>
-       <name>var</name>
-       <rtexprvalue>true</rtexprvalue>
-       <required>true</required>
-    </attribute> 
-    <attribute>
-       <name>varStatus</name>
-       <rtexprvalue>true</rtexprvalue>
-       <required>false</required>
     </attribute> 
  </tag>
  

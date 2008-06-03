@@ -167,7 +167,7 @@ function startDragWindow(event) {
 
 function startMove(event) {
 	// If the mouse button was released outside the document window,
-	// we are unable to detect that it's been released (in Firefox).
+	// we are unable to detect that it's been released (except in Safari).
     // Therefore dragging behaviour continues when the mouse pointer
     // is moved back into the document. If the user then clicks again
     // on the context map, we don't want to start a new drag.

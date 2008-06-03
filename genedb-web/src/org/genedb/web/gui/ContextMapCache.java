@@ -65,9 +65,17 @@ public class ContextMapCache {
 
         // File does not exist, so create it.
         FileOutputStream cacheOutputStream = new FileOutputStream(cacheFile);
-        renderedContextMap.writeTo(cacheOutputStream);
+        try {
+            renderedContextMap.writeTo(cacheOutputStream);
+        }
+        catch (Exception e) {
+            cacheOutputStream.close();
+            cacheFile.delete();
+            throw new RuntimeException(
+                String.format("Failed to create context map image '%s'", cacheFile), e);
+        }
         cacheOutputStream.close();
-
+        
         assert cacheFile.exists();
         return cacheFileRelativePath;
     }

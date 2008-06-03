@@ -11,8 +11,6 @@ import java.util.Map;
  * @author kmr
  */
 public class ArtemisColours {
-
-
     /**
      * The number of elements in the mapping
      */
@@ -171,14 +169,20 @@ public class ArtemisColours {
     /**
      * Generate a 256-entry (i.e. 8-bit) colour model including
      * all the Artemis colours, with the remaining slots populated
-     * with a range of shades of transparent black.
+     * with a range of shades of black mixed into the background
+     * colour, to represent anti-aliased black text on the given
+     * background.
      * 
-     * This can be used to generate transparent PNGs using the
-     * indexed color model.
+     * This can be used to generate transparent PNGs that use an
+     * indexed colour model.
      * 
-     * @return
+     * @param backgroundColor the background colour onto which
+     *  text will be drawn. If null, assume a transparent background.
+     *  If a <code>backgroundColor</code> is supplied it is assumed to
+     *  be opaque and its alpha value is ignored.
+     * @return the colour model
      */
-    public static IndexColorModel colorModel() {
+    public static IndexColorModel colorModel(Color backgroundColor) {
         byte[] reds = new byte[256];
         byte[] greens = new byte[256];
         byte[] blues = new byte[256];
@@ -190,9 +194,29 @@ public class ArtemisColours {
                 numColors++;
         
         int i;
-        for(i=0; i < 256 - numColors; i++) {
-            reds[i] = greens[i] = blues[i] = 0;
-            alphas[i] = (byte) ((i * 0xff) / (256 - numColors));
+        /*
+         * Note: we're assuming in both cases that an opaque black
+         * is already available from the cols array.
+         */
+        if (backgroundColor == null) {
+            for(i=0; i < 256 - numColors; i++) {
+                reds[i] = greens[i] = blues[i] = 0;
+                alphas[i] = (byte) ((i * 0xff) / (256 - numColors));
+            }
+        }
+        else {
+            reds[0] = greens[0] = blues[0] = alphas[0] = 0;
+            
+            int red = backgroundColor.getRed();
+            int green = backgroundColor.getGreen();
+            int blue = backgroundColor.getBlue();
+            for(i=1; i < 256 - numColors; i++) {
+                float ratio = (float) i / (255 - numColors);
+                reds[i]   = (byte) (red * ratio);
+                greens[i] = (byte) (green * ratio);
+                blues[i]  = (byte) (blue * ratio);
+                alphas[i] = (byte) 0xff;
+            }
         }
 
         for (Color col: cols) {

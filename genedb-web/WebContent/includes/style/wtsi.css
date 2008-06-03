@@ -30,7 +30,6 @@ body {
   padding:          0;
   text-decoration:  none;
   background-color: #ffffff;
-  overflow: auto;
 }
 /*
 div.main {
@@ -50,7 +49,7 @@ div.main {
 }
 
 tr {
-  vertical-align: top;
+    vertical-align: top;
   	margin: 0pt;
 	padding: 0pt;
 }
@@ -59,23 +58,13 @@ tr {
 	font-weight: bold;
 }
 
-th {
-	 /*background-color:#9bd1fa;*/ 
-	 text-align: right; 
-	 width:150px;
-	 padding: 6px 5px;
-	 border-color: gray;
-	 font-size:   15px;
-  	 font-weight: normal;
-}
-
 td {
-	padding: 6px 10px;
+    padding-bottom: 1ex;
+    padding-right: 4px;
 }
 
-p, td {
-  font-size:   15px;
-  font-weight: normal;
+td.others {
+	width: 6em;
 }
 
 /* IMAGES START */
@@ -158,8 +147,6 @@ div.fieldset div.content  {
   background-color: white;
   border:           #83a4c3 dotted 0px;
 }
-
-/*div.content { width: 100%; position: relative;}*/
 
 div.fieldset div.legend {
   position:         absolute;
@@ -275,109 +262,151 @@ ul#simple-menu li:hover ul li {
 	width: 165px;
 }
 
-/*
-.round{display:block}
-.round *{
-  display:block;
-  height:1px;
-  overflow:hidden;
-  font-size:.01em;
-  background:#9BD1FA;
+body.genePage {
+	font-size: 0.8em;
 }
-.round1{
-  margin-left:3px;
-  margin-right:3px;
-  padding-left:1px;
-  padding-right:1px;
-  border-left:1px solid #cae1f3;
-  border-right:1px solid #cae1f3;
-  background:#afd8f7}
-.round2{
-  margin-left:1px;
-  margin-right:1px;
-  padding-right:1px;
-  padding-left:1px;
-  border-left:1px solid #e5ebef;
-  border-right:1px solid #e5ebef;
-  background:#aad6f7}
-.round3{
-  margin-left:1px;
-  margin-right:1px;
-  border-left:1px solid #aad6f7;
-  border-right:1px solid #aad6f7;}
-.round4{
-  border-left:1px solid #cae1f3;
-  border-right:1px solid #cae1f3}
-.round5{
-  border-left:1px solid #afd8f7;
-  border-right:1px solid #afd8f7}
-.roundg{
-  background:#9BD1FA
-} */
 
-div#one { 
-         width:78%;
-         padding:2px 2px 5px 2px;
-         float:left;
-         height:170px;
- }
-div#two { 
-         width:21%;
-         padding:2px 2px 5px 2px;
-         float:left;
-         height:170px;
- }
- 
- .outer {
- 	padding:2px 2px 5px 2px;
-    float:left;
-    width: 99%;
- }
- 
- .inner {
- 	/*background:#9BD1FA; */
- 	background:#C2D2E1;
- }
- 
- .white{display:block}
-.white *{
+div#geneDetails {
+	position: relative;
+	display: block;
+	padding-top: 8px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 95%;
+    min-width: 37em;
+}
+
+div.row {
+	clear: both;
+	position: relative;
+	display: block;
+	width: 100%;
+}
+
+div#geneDetails div#firstRow div#generalInformation .middle {
+	min-width: 14em;
+	margin-right: 10em;
+}
+div#geneDetails div#firstRow div#generalInformation .inner {
+    min-height: 11em; /* height of analysis tools box */
+}
+* html div#geneDetails div#firstRow div#generalInformation .inner {
+    height: 11em;
+}
+
+div#geneDetails div#firstRow div#analysisTools {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 10em;
+}
+
+div#geneDetails div#firstRow div#analysisTools .inner {
+    height: 11em;
+}
+
+div#analysisTools #sendTo {
+	margin-bottom: 1ex;
+}
+
+div#peptideProperties .middle {
+	margin-right: 300px;
+}
+div#proteinMap {
+	position: absolute;
+	width: 300px;
+	right: 0px;
+	top: 0px;
+}
+
+.outer {
+   clear:left;
+   float: left;
+   width: 100%;
+   margin-bottom: 5px;
+}
+.left  {width: 80%;}
+.right {width: 20%; clear: none;}
+
+.middle {
+   padding-right: 5px;
+}
+
+.inner {
+	padding-left: 5px;
+    background-color: #C2D2E1;
+    font-family: sans-serif;
+}
+
+.whiteBox .inner {
+    background-color: white;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+}
+
+.inner * {
+	margin-bottom: 0pt;
+	margin-top: 0pt;
+}
+
+.label {
+	text-align: left;
+	font-weight: bold;
+    width: 9.3em;
+}
+
+.whiteBox .round *{
   display:block;
   height:1px;
   overflow:hidden;
   font-size:.01em;
-  background:#000000}
-.white1{
-  margin-left:3px;
-  margin-right:3px;
+  background:white}
+.whiteBox .round1{
+  margin-left:2px;
+  margin-right:2px;
   padding-left:1px;
   padding-right:1px;
-  border-left:1px solid #919191;
-  border-right:1px solid #919191;
-  background:#3f3f3f}
-.white2{
+  border-left:1px solid #777;
+  border-right:1px solid #777;
+  background-color:#444;}
+.whiteBox .round2{
   margin-left:1px;
   margin-right:1px;
   padding-right:1px;
   padding-left:1px;
-  border-left:1px solid #e5e5e5;
-  border-right:1px solid #e5e5e5;
-  background:#303030}
-.white3{
-  margin-left:1px;
-  margin-right:1px;
-  border-left:1px solid #303030;
-  border-right:1px solid #303030;}
-.white4{
-  border-left:1px solid #919191;
-  border-right:1px solid #919191}
-.white5{
-  border-left:1px solid #3f3f3f;
-  border-right:1px solid #3f3f3f}
-.whitefg{
-  background:#FFFFFF}
-  
-   other colours for the rounded divs 
-  .round{display:block}
+  border-left:1px solid #444;
+  border-right:1px solid #444;
+  background:black;}
+.whiteBox .round3{
+  margin-left:0px;
+  margin-right:0px;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-left:1px solid #777;
+  border-right:1px solid #777;
+  background: black;}
+.whiteBox .round4{
+  margin-left:0px;
+  margin-right:0px;
+  padding-left: 1px;
+  padding-right: 1px;
+  border-left:1px solid #444;
+  border-right:1px solid #444;
+  background: black;}
+.whiteBox .round5{
+  margin-left:0px;
+  margin-right:0px;
+  padding-left: 1px;
+  padding-right: 1px;
+  border-left:1px solid black;
+  border-right:1px solid black;
+  background: black;}
+.whiteBox .roundborder{
+  background:black}
+.whiteBox .roundbg{
+  background:white}
+
+.round{display:block}
 .round *{
   display:block;
   height:1px;
@@ -414,10 +443,8 @@ div#two {
 .roundfg{
   background:#C2D2E1}
   
-/* making the divs of specific width and adding scroll bars if the page 
-size is reduced or increased*/
-
-.main {
-min-width: 800px;
-overflow:auto;
-}
+ .heading {
+    font-family: sans-serif;
+    color: blue;
+    padding-bottom: 1ex;
+ }

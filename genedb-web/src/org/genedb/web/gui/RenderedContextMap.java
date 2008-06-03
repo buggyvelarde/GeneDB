@@ -80,7 +80,7 @@ public class RenderedContextMap {
     /**
      * What color model should be used?
      */
-    private ColorModel colorModel = ColorModel.DIRECT;
+    private ColorModel colorModel = ColorModel.INDEXED;
 
     /**
      * The scale at which this diagram is drawn, in bases per pixel.
@@ -103,7 +103,7 @@ public class RenderedContextMap {
     /**
      * The height of the scale track.
      */
-    private int scaleTrackHeight = 20;
+    private int scaleTrackHeight = 22;
     
     /**
      * The colour of the scale.
@@ -117,9 +117,11 @@ public class RenderedContextMap {
         
     /**
      * The colour of the label background. If <code>null</code>, no label background is printed.
-     * (Note that LCD text antialiasing doesn't work on a transparent background.)
+     * (Note that LCD text antialiasing doesn't work on a transparent background. Also note
+     * that IE6 does not ordinarily render partial transparency, though there is a workaround
+     * using AlphaImageLoader.)
      */
-    private Color labelBackgroundColor = null; //new Color(0xF0, 0xF0, 0xE4);
+    private Color labelBackgroundColor = new Color(0xF0, 0xF0, 0xE4);
     
     /**
      * The anti-aliasing mode used to draw label text.
@@ -167,6 +169,8 @@ public class RenderedContextMap {
     private ContextMapDiagram diagram;
     private int start, end;
     private int width;
+    
+    private int numberOfPositiveTracks, numberOfNegativeTracks;
 
     private BufferedImage image, labelBuffer;
     private Graphics2D graf, labelGraf;
@@ -176,6 +180,8 @@ public class RenderedContextMap {
         this.width = diagram.getSize() / basesPerPixel;
         this.start = diagram.getStart();
         this.end = diagram.getEnd();
+        this.numberOfPositiveTracks = diagram.numberOfPositiveTracks();
+        this.numberOfNegativeTracks = diagram.numberOfNegativeTracks();
     }
     
     public RenderedContextMap restrict(int start, int end) {
@@ -250,6 +256,7 @@ public class RenderedContextMap {
         setTickDistances(0, 0);
         setScaleColor(Color.GRAY);
         filenamePrefix = "thumb-";
+        forceTracks(2, 2);
         
          /* For thumbnails, the resulting file is usually smaller with a direct color model */
         this.colorModel = ColorModel.DIRECT;
@@ -288,9 +295,33 @@ public class RenderedContextMap {
      * @return the height in pixels of this rendered diagram
      */
     public int getHeight() {
-        return scaleTrackHeight + diagram.numberOfTracks() * geneTrackHeight;
+        return scaleTrackHeight + numberOfTracks() * geneTrackHeight;
     }
-        
+    
+    /**
+     * How many tracks will this diagram have, when rendered?
+     * May be different from getDiagram().numberOfTracks(),
+     * if {@link #forceTracks(int,int)} has been used.
+     * 
+     * @return
+     */
+    private int numberOfTracks() {
+        return numberOfPositiveTracks + numberOfNegativeTracks;
+    }
+    
+    /**
+     * Force the rendered diagram to have the specified number of tracks.
+     * Thus there may be empty tracks in the rendered diagram,
+     * and higher-numbered tracks will not be shown.
+     * 
+     * @param positiveTracks
+     * @param negativeTracks
+     */
+    private void forceTracks(int positiveTracks, int negativeTracks) {
+        this.numberOfPositiveTracks = positiveTracks;
+        this.numberOfNegativeTracks = negativeTracks;
+    }
+    
     /**
      * Get the height of the gene tracks of this diagram.
      * @return the height in pixels
@@ -434,7 +465,7 @@ public class RenderedContextMap {
             break;
         case INDEXED:
             image = new BufferedImage(width, getHeight(),
-                BufferedImage.TYPE_BYTE_INDEXED, ArtemisColours.colorModel());
+                BufferedImage.TYPE_BYTE_INDEXED, ArtemisColours.colorModel(labelBackgroundColor));
             labelBuffer = new BufferedImage(MAX_LABEL_WIDTH, MAX_LABEL_HEIGHT, BufferedImage.TYPE_INT_ARGB_PRE);
             break;
         }
@@ -442,6 +473,8 @@ public class RenderedContextMap {
         if (labelBuffer != null) {
             labelGraf = (Graphics2D) labelBuffer.getGraphics();
             labelGraf.setComposite(AlphaComposite.Src);
+            labelGraf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, labelAntialiasingMode);
+            labelGraf.setFont(labelFont);
         }
 
         drawScaleTrack();
@@ -449,10 +482,10 @@ public class RenderedContextMap {
         if (labelGraf != null)
             labelGraf.dispose();
 
-        for (int i = 1; i <= diagram.numberOfPositiveTracks(); i++)
+        for (int i = 1; i <= Math.min(numberOfPositiveTracks, diagram.numberOfPositiveTracks()); i++)
             drawGeneTrack(i, diagram.getTrack(i));
 
-        for (int i = 1; i <= diagram.numberOfNegativeTracks(); i++)
+        for (int i = 1; i <= Math.min(numberOfNegativeTracks, diagram.numberOfNegativeTracks()); i++)
             drawGeneTrack(-i, diagram.getTrack(-i));
 
         ImageIO.write(image, FILE_FORMAT, out);
@@ -559,8 +592,6 @@ public class RenderedContextMap {
     
     private static final Color transparentColor = new Color(0,0,0,0);
     private void drawLabelIndirectly(int pos) {
-        labelGraf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, labelAntialiasingMode);
-
         FontRenderContext fontRenderContext = labelGraf.getFontRenderContext();
         Font font = labelGraf.getFont();
         String labelString = String.valueOf(pos);
@@ -590,7 +621,7 @@ public class RenderedContextMap {
         
         /*
          * Deal with the case where the label only partially
-         * intersects with the image, at the left or right edge
+         * intersects the image, at the left or right edge
          * of a tile.
          */
         int offset = 0, destWidth = w;
@@ -685,7 +716,7 @@ public class RenderedContextMap {
      * @return
      */
     private int topOfTrack(int trackNumber) {
-        int firstGuess = (diagram.numberOfPositiveTracks() - trackNumber) * geneTrackHeight;
+        int firstGuess = (numberOfPositiveTracks - trackNumber) * geneTrackHeight;
 
         // The first guess is right for non-negative tracks.
         // Also, it's always right as long as the scale track is the same height
