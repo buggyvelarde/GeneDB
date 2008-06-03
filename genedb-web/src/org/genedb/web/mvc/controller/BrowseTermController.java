@@ -96,7 +96,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
 				newResults.add(feature);
 				//logger.info("Immediately adding '"+feature.getUniqueName()+"' as not part of gene");
 			} else {
-				//logger.info("Transforming '"+feature.getUniqueName()+"' as not part of gene");
+				logger.info("Transforming '"+feature.getUniqueName()+"' as not part of gene");
 				newResults.add(GeneUtils.getGeneFromPart(feature));
 			}
 		}
