@@ -2,6 +2,7 @@ package org.genedb.web.mvc.controller;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.sequence.feature.MRNA;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,12 +36,18 @@ public class GeneUtils {
 			Collection<FeatureRelationship> frs = feature.getFeatureRelationshipsForSubjectId();
 			for (FeatureRelationship relationship : frs) {
 				//System.err.println("FeatureRealtionship for mRNA is "+relationship.getFeatureByObjectId().getUniqueName());
-				mRNA = relationship.getFeatureByObjectId();
+				if(relationship.getCvTerm().getName().equals("derives_from")){
+				    mRNA = relationship.getFeatureByObjectId();
+				}
 			}
 			if (mRNA != null) {
 				frs = mRNA.getFeatureRelationshipsForSubjectId();
 				for (FeatureRelationship relationship : frs) {
-					gene = relationship.getFeatureByObjectId();
+					if(relationship.getCvTerm().getName().equals("part_of")) {
+					    gene = relationship.getFeatureByObjectId();
+					}
+				    //Feature feat = relationship.getFeatureByObjectId();
+					
 				}
 			}
 			return gene;
