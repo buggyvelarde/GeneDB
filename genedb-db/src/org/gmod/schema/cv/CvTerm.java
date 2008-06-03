@@ -105,7 +105,7 @@ public class CvTerm implements Serializable {
      private Cv cv;
      
     @Column(name="name", unique=false, nullable=false, insertable=true, updatable=true, length=1024)
-    @Field(index = Index.TOKENIZED,store=Store.YES)
+    @Field(index = Index.UN_TOKENIZED,store=Store.YES)
      private String name;
      
     @Column(name="definition", unique=false, nullable=true, insertable=true, updatable=true)
