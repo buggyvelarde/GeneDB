@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * Looks up a feature by uniquename, and possibly synonyms
+ * Returns cvterms based on a particular cv
  * 
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
@@ -66,16 +66,17 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
         BrowseCategoryBean bcb = (BrowseCategoryBean) command;
         String category = bcb.getCategory().toString();
+        logger.info("category is " + category);
         TaxonNode[] taxonNodes = bcb.getOrganism();
         List<String> orgNames = taxonNodes[0].getAllChildrenNames(); // FIXME 
-        List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
+        List<List> results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
         
         if (results == null || results.size() == 0) {
             logger.info("result is null"); // TODO Improve text
             be.reject("no.results");
             return showForm(request, response, be);
         }
-        
+        logger.info(results.get(0).get(0));
         // Go to list results page
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject("results", results);
