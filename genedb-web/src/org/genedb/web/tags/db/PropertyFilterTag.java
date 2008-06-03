@@ -1,57 +1,64 @@
 package org.genedb.web.tags.db;
 
-import org.gmod.schema.utils.propinterface.PropertyI;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.apache.log4j.Logger;
+import org.gmod.schema.utils.propinterface.PropertyI;
+
 public class PropertyFilterTag extends SimpleTagSupport {
-	
-	private Collection<PropertyI> collection;
-	private String name;
+    
+    private static final Logger logger = Logger.getLogger(PropertyFilterTag.class);
+
+    private Collection<PropertyI> items;
+    private String cvName;
+    private String cvTermName;
     private String var;
 
-
-	public void setVar(String var) {
+    public void setVar(String var) {
         this.var = var;
     }
 
-    public void setCollection(Collection<PropertyI> collection) {
-        this.collection = collection;
+    public void setItems(Collection<PropertyI> items) {
+        this.items = items;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCv(String name) {
+        this.cvName = name;
+    }
+    
+    public void setCvTerm(String name) {
+        this.cvTermName = name;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-	public void doTag() throws JspException, IOException {
-    	List filtered = new ArrayList();
-        if (collection != null) {
-        	//String type = collection.getClass().getName();
-            for (PropertyI prop : collection) {
-            	if (name.equals(prop.getCvTerm().getName())) {
-            		filtered.add(prop);
-            	}
-            }
-        } else {
-            System.err.println("Collection is null");
+    public void doTag() throws JspException, IOException {
+        if (items == null) {
+            logger.error("Items is null");
+            getJspContext().setAttribute(var, null);
+            return;
         }
-		JspWriter out = getJspContext().getOut();
-        getJspContext().setAttribute(var, filtered);
-        getJspBody().invoke(out);
-        getJspContext().removeAttribute(var);
-	}
-	
-//		PageContext pc = (PageContext) getJspContext();
-//		HttpServletRequest req = (HttpServletRequest) pc.getRequest();
-//		String contextPath = req.getContextPath();
 
+        List<PropertyI> filteredItems = new ArrayList<PropertyI>();
+        for (PropertyI propertyI : items)
+            if ((cvName == null || propertyI.getCvTerm().getCv().getName().equals(cvName))
+            && (cvTermName == null || propertyI.getCvTerm().getName().equals(cvTermName)))
+                    filteredItems.add(propertyI);
+
+        getJspContext().setAttribute(var, filteredItems);
+        
+        JspFragment body = getJspBody();
+        if (body != null) {
+            JspContext context = getJspContext();
+            body.invoke(context.getOut());
+            context.removeAttribute(var);
+        }
+    }
 }
