@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -58,14 +61,18 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         T convert(Document doc);
     }
     
+    private static final SortedSet<Exon> NO_EXONS = Collections.unmodifiableSortedSet(new TreeSet<Exon>());
+    
     /**
      * Convert the document to a Transcript object. If the <code>_hibernate_class</code>
-     * of the document is not <code>org.gmod.schema.sequence.Mrna</code>, returns null.
+     * of the document is not <code>org.gmod.schema.sequence.feature.MRNA</code>, returns null.
      */
     private final DocumentConverter<Transcript> convertToTranscript = new DocumentConverter<Transcript>() {
         public Transcript convert(Document doc) {
-            if (!doc.get("_hibernate_class").equals("org.gmod.schema.sequence.Mrna"))
+            if (!doc.get("_hibernate_class").equals("org.gmod.schema.sequence.feature.MRNA")) {
+                logger.debug(String.format("It's not a mRNA transcript, it's a '%s'", doc.get("_hibernate_class")));
                 return null;
+            }
             
             Transcript transcript = new Transcript();
             String colourString = doc.get("colour");
@@ -82,8 +89,14 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
             transcript.setFmin(Integer.parseInt(doc.get("start")));
             transcript.setFmax(Integer.parseInt(doc.get("stop")));
-            transcript.setExons(parseExonLocs(doc.get("exonlocs")));
-            
+            try {
+                transcript.setExons(parseExonLocs(doc.get("exonlocs")));
+            }
+            catch (Exception e) {
+                logger.error(String.format("Failed to parse exonlocs for transcript '%s'",
+                    doc.get("uniqueName")));
+                transcript.setExons(NO_EXONS);
+            }
             String productsTabSeparated = doc.get("product");
             if (productsTabSeparated != null)
                 transcript.setProducts(Arrays.asList(productsTabSeparated.split("\t")));
@@ -98,13 +111,15 @@ public class BasicGeneServiceImpl implements BasicGeneService {
      * back the associated transcripts. Should this prove unacceptable, the
      * associated transcripts could instead all be loaded at once.
      * 
-     * If the <code>_hibernate_class</code> is not equal to <code>org.gmod.schema.sequence.Gene</code>,
+     * If the <code>_hibernate_class</code> is not equal to <code>org.gmod.schema.sequence.feature.Gene</code>,
      * returns null.
      */
     private final DocumentConverter<BasicGene> convertToGene = new DocumentConverter<BasicGene>() {
         public BasicGene convert(Document doc) {
-            if (!doc.get("_hibernate_class").equals("org.gmod.schema.sequence.Gene"))
+            if (!doc.get("_hibernate_class").equals("org.gmod.schema.sequence.feature.Gene")) {
+                logger.debug(String.format("It's not a Gene, it's a '%s'", doc.get("_hibernate_class")));
                 return null;
+            }
 
             BasicGene ret = new BasicGene();
 
@@ -123,7 +138,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
                 ret.setSynonyms(Arrays.asList(synonyms.split("\t")));
 
             BooleanQuery transcriptQuery = new BooleanQuery();
-            transcriptQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.Mrna")),
+            transcriptQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.MRNA")),
                 BooleanClause.Occur.MUST);
             transcriptQuery.add(new TermQuery(new Term("gene", geneUniqueName)),
                 BooleanClause.Occur.MUST);            
@@ -180,6 +195,8 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         } catch (IOException e) {
             throw new RuntimeException("IOException while running Lucene query", e);
         }
+        
+        logger.debug(String.format("Query returned %d results", hits.length()));
 
         @SuppressWarnings("unchecked")
         Iterator<Hit> it = hits.iterator();
@@ -212,8 +229,8 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         return results.get(0);
     }
 
-    public BasicGene findGeneByUniqueName(String name) {
-        return findUniqueWithQuery(new TermQuery(new Term("uniqueName", name.toLowerCase())), convertToGene);
+    public BasicGene findGeneByUniqueName(String uniqueName) {
+        return findUniqueWithQuery(new TermQuery(new Term("uniqueName", uniqueName)), convertToGene);
     }
 
     /**
@@ -221,7 +238,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
      * in a Lucene query of the form *foo*: the problem is the initial wildcard.
      */
     public List<String> findGeneNamesByPartialName(String search) {
-        return findWithQuery(new WildcardQuery(new Term("uniqueName", String.format("*%s*", search.toLowerCase()))),
+        return findWithQuery(new WildcardQuery(new Term("uniqueName", String.format("*%s*", search))),
             new DocumentConverter<String>() {
                 public String convert(Document doc) {
                     return doc.get("uniqueName");
@@ -232,7 +249,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     public Collection<BasicGene> findGenesOverlappingRange(String organismCommonName,
             String chromosomeUniqueName, int strand, long locMin, long locMax) {
         BooleanQuery query = new BooleanQuery();
-        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.Gene")),
+        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gene")),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
             BooleanClause.Occur.MUST);
@@ -251,7 +268,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     public Collection<BasicGene> findGenesExtendingIntoRange(String organismCommonName,
             String chromosomeUniqueName, int strand, long locMin, long locMax) {
         BooleanQuery query = new BooleanQuery();
-        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.Gene")),
+        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gene")),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
             BooleanClause.Occur.MUST);
