@@ -634,6 +634,8 @@ public class RenderedContextMap {
             destWidth = this.width - x;
             x = this.width - destWidth;
         }
+        if (y + h > image.getHeight())
+            h = image.getHeight() - y;
         image.setRGB(x, y, destWidth, h, labelData, offset, w);
     }
     
