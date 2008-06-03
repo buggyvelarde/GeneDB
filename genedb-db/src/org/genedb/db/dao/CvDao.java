@@ -7,7 +7,7 @@ import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.utils.CountedName;
-import org.gmod.schema.sequence.FeatureCvTerm;
+
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -155,7 +155,7 @@ public class CvDao extends BaseDao implements CvDaoI {
             return countedNames;
         }
         
-        public List<List> getCountedNamesByCvNameAndOrganism(String cvName, List<String> orgList) {
+        public List<CountedName> getCountedNamesByCvNameAndOrganism(String cvName, List<String> orgList) {
             StringBuilder orgNames = new StringBuilder();
             boolean first = true;
             for (String orgName : orgList) {
@@ -164,21 +164,17 @@ public class CvDao extends BaseDao implements CvDaoI {
             	first = false;
             	orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
             }
-            
-            /* This is giving 
-             * unable to locate appropriate constructor
-             * for class org.gmod.schema.utils.CountedName
-             * error - therefore commented*/ 
+
             @SuppressWarnings("unchecked")
-            List<List> countedNames = getHibernateTemplate().findByNamedParam(
-                "select new List(cvt.name, count(fct))"+
+            List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(
+                "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct.feature.uniqueName))"+
                 " from FeatureCvTerm fct" +
                 " join fct.cvTerm cvt" +
                 " where fct.feature.organism.commonName in ("+orgNames+")" +
                 " and cvt.cv.name=:cvName" +
                 " group by cvt.name" +
                 " order by cvt.name",
-            "cvName", cvName); 
+            "cvName", cvName);
             
             return countedNames;
         }
