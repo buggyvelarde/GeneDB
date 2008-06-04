@@ -65,7 +65,7 @@ public class Feature implements java.io.Serializable {
     private Organism organism;
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "type_id", unique = false, nullable = false, insertable = true, updatable = true)
+    @JoinColumn(name = "type_id", unique = false, nullable = false, insertable = false, updatable = false)
     @IndexedEmbedded(depth = 2)
     private CvTerm cvTerm;
 
@@ -337,6 +337,7 @@ public class Feature implements java.io.Serializable {
      * 
      * @return the unique rank=0 FeatureLoc associated with this feature
      */   
+    @Transient
     public FeatureLoc getRankZeroFeatureLoc() {
         List<FeatureLoc> featureLocs = getFeatureLocsForFeatureId();
         if (featureLocs.size() == 0) {
@@ -505,6 +506,7 @@ public class Feature implements java.io.Serializable {
      * FeatureLoc of interest, but is neither automatically populated nor
      * persisted. It is (at the time of writing) used only by Artemis.
      */
+    @Transient
     public FeatureLoc getFeatureLoc() {
         return featureLoc;
     }
