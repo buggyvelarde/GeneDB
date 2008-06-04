@@ -42,7 +42,7 @@ public class Five_Prime_UTR_Processor extends BaseUtrProcessor {
 
     @Override
     public void processStrandedFeature(Feature parent, StrandedFeature feat, int offset) {
-        processUTR("five_prime_UTR", parent, feat, offset);
+//        processUTR("five_prime_UTR", parent, feat, offset);
     }
 
 }
