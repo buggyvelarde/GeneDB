@@ -90,7 +90,7 @@
   		<prop key="hibernate.hbm2dll.auto">validate</prop>
  	    <!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
 <!--	  	<prop key="hibernate.query.substitutions">true 'T', false 'F'</prop>-->
-			<prop key="hibernate.show_sql">false</prop>
+			<prop key="hibernate.show_sql">true</prop>
 <!--  		<prop key="hibernate.c3p0.minPoolSize">5</prop>-->
 <!--  		<prop key="hibernate.c3p0.maxPoolSize">20</prop>-->
 <!--  		<prop key="hibernate.c3p0.timeout">600</prop>-->
@@ -99,24 +99,24 @@
         <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
 <!--	  	<prop key="hibernate.c3p0.testConnectionOnCheckout">false</prop> -->
 		<prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
-		<prop key="hibernate.search.default.indexBase">/Users/cp2/hibernate/search/indexes</prop>
+		<prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop>
  	 </props>
 	 </property>
 	</bean>
     
-    <!-- Hibernate SessionFactory -->
-	<bean id="sessionFactory" 
+    	<!-- Hibernate SessionFactory -->
+	<!--<bean id="sessionFactory" 
   	 class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
 	 <property name="dataSource" ref="dataSource" />
-	 <!--  <property name="hibernateProperties" ref="hibernateProperties" /> -->
-	 <!--  OR mapping files. -->
+	   <property name="hibernateProperties" ref="hibernateProperties" /> 
+	   OR mapping files. 
  	<property name="mappingResources">
   	  <list>
-  	  	<!-- Analysis module -->
+  	  	 Analysis module 
   	    <value>org/gmod/schema/analysis/AnalysisFeature.hbm.xml</value>
         <value>org/gmod/schema/analysis/Analysis.hbm.xml</value>
         <value>org/gmod/schema/analysis/AnalysisProp.hbm.xml</value>
-        <!-- CV module -->
+         CV module 
     	<value>org/gmod/schema/cv/CvTermPath.hbm.xml</value>
         <value>org/gmod/schema/cv/CvTermRelationship.hbm.xml</value>
         <value>org/gmod/schema/cv/CvTermProp.hbm.xml</value>
@@ -125,16 +125,16 @@
         <value>org/gmod/schema/cv/CvTermDbXRef.hbm.xml</value>
         <value>org/gmod/schema/cv/CvTerm.hbm.xml</value>
         <value>org/gmod/schema/cv/DbXRefProp.hbm.xml</value>
-        <!-- General module -->
+         General module 
         <value>org/gmod/schema/general/Project.hbm.xml</value>
         <value>org/gmod/schema/general/Db.hbm.xml</value>
         <value>org/gmod/schema/general/Tableinfo.hbm.xml</value>
         <value>org/gmod/schema/general/DbXRef.hbm.xml</value>
-        <!-- Organism module -->
+         Organism module 
         <value>org/gmod/schema/organism/Organism.hbm.xml</value>
         <value>org/gmod/schema/organism/OrganismProp.hbm.xml</value>   
         <value>org/gmod/schema/organism/OrganismDbXRef.hbm.xml</value>
-        <!-- Phylogeny module -->
+         Phylogeny module 
         <value>org/gmod/schema/phylogeny/PhylotreePub.hbm.xml</value>
 		<value>org/gmod/schema/phylogeny/Phylotree.hbm.xml</value>
 		<value>org/gmod/schema/phylogeny/PhylonodeRelationship.hbm.xml</value>
@@ -143,13 +143,13 @@
 		<value>org/gmod/schema/phylogeny/PhylonodeOrganism.hbm.xml</value>
 		<value>org/gmod/schema/phylogeny/PhylonodeDbXRef.hbm.xml</value>
 		<value>org/gmod/schema/phylogeny/Phylonode.hbm.xml</value>
-		<!-- Pub module -->
+		 Pub module 
         <value>org/gmod/schema/pub/PubProp.hbm.xml</value>
         <value>org/gmod/schema/pub/Pub.hbm.xml</value>
         <value>org/gmod/schema/pub/PubAuthor.hbm.xml</value>
         <value>org/gmod/schema/pub/PubDbXRef.hbm.xml</value>
         <value>org/gmod/schema/pub/PubRelationship.hbm.xml</value>
-        <!-- Sequence module -->
+         Sequence module 
         <value>org/gmod/schema/sequence/Feature.hbm.xml</value>
         <value>org/gmod/schema/sequence/FeaturePub.hbm.xml</value>
         <value>org/gmod/schema/sequence/FeaturePropPub.hbm.xml</value>
@@ -170,4 +170,83 @@
  	</property>
 	</bean>
 	
+-->
+	
+	<bean id="sessionFactory"
+        class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+ 		<property name="hibernateProperties" ref="hibernateProperties" />
+        <!--  OR mapping files. -->
+       <property name="annotatedClasses">
+         <list>
+         <!-- Analysis module -->
+           <value>org.gmod.schema.analysis.AnalysisFeature</value>
+       <value>org.gmod.schema.analysis.Analysis</value>
+       <value>org.gmod.schema.analysis.AnalysisProp</value>
+       <!-- CV module -->
+       <value>org.gmod.schema.cv.CvTermPath</value>
+       <value>org.gmod.schema.cv.CvTermRelationship</value>
+       <value>org.gmod.schema.cv.CvTermProp</value>
+       <value>org.gmod.schema.cv.Cv</value>
+       <value>org.gmod.schema.cv.CvTermSynonym</value>
+       <value>org.gmod.schema.cv.CvTermDbXRef</value>
+       <value>org.gmod.schema.cv.CvTerm</value>
+       <value>org.gmod.schema.cv.DbXRefProp</value>
+       <!-- General module -->
+       <value>org.gmod.schema.general.Project</value>
+       <value>org.gmod.schema.general.Db</value>
+       <value>org.gmod.schema.general.Tableinfo</value>
+       <value>org.gmod.schema.general.DbXRef</value>
+       <!-- Organism module -->
+       <value>org.gmod.schema.organism.Organism</value>
+       <value>org.gmod.schema.organism.OrganismProp</value>
+       <value>org.gmod.schema.organism.OrganismDbXRef</value>
+       <!-- Phylogeny module -->
+       <value>org.gmod.schema.phylogeny.PhylotreePub</value>
+       <value>org.gmod.schema.phylogeny.Phylotree</value>
+       <value>org.gmod.schema.phylogeny.PhylonodeRelationship</value>
+       <value>org.gmod.schema.phylogeny.PhylonodePub</value>
+       <value>org.gmod.schema.phylogeny.PhylonodeProp</value>
+       <value>org.gmod.schema.phylogeny.PhylonodeOrganism</value>
+       <value>org.gmod.schema.phylogeny.PhylonodeDbXRef</value>
+       <value>org.gmod.schema.phylogeny.Phylonode</value>
+               <!-- Pub module -->
+       <value>org.gmod.schema.pub.PubProp</value>
+       <value>org.gmod.schema.pub.Pub</value>
+       <value>org.gmod.schema.pub.PubAuthor</value>
+       <value>org.gmod.schema.pub.PubDbXRef</value>
+       <value>org.gmod.schema.pub.PubRelationship</value>
+       <!-- Sequence module -->
+       <value>org.gmod.schema.sequence.Feature</value>
+       <value>org.gmod.schema.sequence.FeaturePub</value>
+       <value>org.gmod.schema.sequence.FeaturePropPub</value>
+       <value>org.gmod.schema.sequence.FeatureDbXRef</value>
+       <value>org.gmod.schema.sequence.FeatureSynonym</value>
+       <value>org.gmod.schema.sequence.FeatureRelationshipPub</value>
+       <value>org.gmod.schema.sequence.FeatureCvTermDbXRef</value>
+       <value>org.gmod.schema.sequence.FeatureLoc</value>
+       <value>org.gmod.schema.sequence.FeatureLocPub</value>
+       <value>org.gmod.schema.sequence.FeatureCvTermPub</value>
+       <value>org.gmod.schema.sequence.FeatureRelationshipProp</value>
+       <value>org.gmod.schema.sequence.FeatureCvTerm</value>
+       <value>org.gmod.schema.sequence.FeatureCvTermProp</value>
+       <value>org.gmod.schema.sequence.FeatureProp</value>
+       <value>org.gmod.schema.sequence.Synonym</value>
+       <value>org.gmod.schema.sequence.FeatureRelationshipPropPub</value>
+       <value>org.gmod.schema.sequence.FeatureRelationship</value>
+       <value>org.gmod.schema.sequence.feature.AbstractExon</value>
+       <value>org.gmod.schema.sequence.feature.AbstractGene</value>
+       <value>org.gmod.schema.sequence.feature.Exon</value>
+       <value>org.gmod.schema.sequence.feature.Gene</value>
+       <value>org.gmod.schema.sequence.feature.MRNA</value>
+       <value>org.gmod.schema.sequence.feature.Polypeptide</value>
+       <value>org.gmod.schema.sequence.feature.Pseudogene</value>
+       <value>org.gmod.schema.sequence.feature.PseudogenicExon</value>
+       <value>org.gmod.schema.sequence.feature.RRNA</value>
+       <value>org.gmod.schema.sequence.feature.SnRNA</value>
+       <value>org.gmod.schema.sequence.feature.Transcript</value>
+       <value>org.gmod.schema.sequence.feature.TRNA</value>
+        </list>
+       </property>
+       </bean>
 </beans>
