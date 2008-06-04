@@ -63,9 +63,9 @@ public class LoadInterPro {
 		return sequenceDao;
 	}
 
-//	public void setSequenceDao(SequenceDao sequenceDao) {
-//		this.sequenceDao = sequenceDao;
-//	}
+	public void setSequenceDao(SequenceDao sequenceDao) {
+		this.sequenceDao = sequenceDao;
+	}
 
 
 	public HibernateTransactionManager getHibernateTransactionManager() {
@@ -73,8 +73,8 @@ public class LoadInterPro {
 	}
 
 
-//	public void setHibernateTransactionManager(
-//			HibernateTransactionManager hibernateTransactionManager) {
-//		this.hibernateTransactionManager = hibernateTransactionManager;
-//	}
+	public void setHibernateTransactionManager(
+			HibernateTransactionManager hibernateTransactionManager) {
+		this.hibernateTransactionManager = hibernateTransactionManager;
+	}
 }
