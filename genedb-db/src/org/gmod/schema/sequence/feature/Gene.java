@@ -12,7 +12,6 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
-@SuppressWarnings("serial")
 @Entity
 @DiscriminatorValue("792")
 @Indexed
