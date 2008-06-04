@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.Feature" table="feature" lazy="false" discriminator-value="not null">
+    <class name="org.gmod.schema.sequence.Feature" table="feature">
         <comment>A feature is a biological sequence or a section of a biological sequence, or a collection of such sections. Examples include genes, exons, transcripts, regulatory
         regions, polypeptides, protein domains, chromosome sequences, sequence variations, cross-genome match regions such as hits and HSPs and so on; see the Sequence Ontology
         for more</comment>
@@ -14,7 +14,7 @@
             	<!-- Only used for seqhilo - not currently using <param name="max_lo">100</param>-->
             </generator>
         </id>
-        <discriminator column="type_id" type="integer" insert="false"/>
+<!--        <discriminator column="type_id" type="integer" insert="false"/>-->
         <many-to-one name="organism" class="org.gmod.schema.organism.Organism" fetch="select">
             <column name="organism_id" not-null="true">
                 <comment>The organism to which this feature belongs. This column is mandatory</comment>
@@ -164,7 +164,7 @@
             </key>
             <one-to-many class="org.gmod.schema.phylogeny.Phylonode" />
         </set>
-        <subclass name="org.gmod.schema.sequence.feature.MRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="321" />
+        <!--<subclass name="org.gmod.schema.sequence.feature.MRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="321" />
         <subclass name="org.gmod.schema.sequence.feature.SnRNA"           extends="org.gmod.schema.sequence.Feature" discriminator-value="361" />
         <subclass name="org.gmod.schema.sequence.feature.TRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="340" />
         <subclass name="org.gmod.schema.sequence.feature.RRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="339" />
@@ -173,5 +173,5 @@
         <subclass name="org.gmod.schema.sequence.feature.Exon"            extends="org.gmod.schema.sequence.Feature" discriminator-value="234" />
         <subclass name="org.gmod.schema.sequence.feature.PseudogenicExon" extends="org.gmod.schema.sequence.Feature" discriminator-value="595" />
         <subclass name="org.gmod.schema.sequence.feature.Polypeptide"     extends="org.gmod.schema.sequence.Feature" discriminator-value="191" />
-    </class>
+    --></class>
 </hibernate-mapping>
