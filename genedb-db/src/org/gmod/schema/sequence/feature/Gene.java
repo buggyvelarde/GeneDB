@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.hibernate.search.annotations.Field;
@@ -12,6 +13,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
 @SuppressWarnings("serial")
+@Entity
 @DiscriminatorValue("792")
 @Indexed
 public class Gene extends AbstractGene {

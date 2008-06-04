@@ -1,12 +1,14 @@
 package org.gmod.schema.sequence.feature;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 
+@Entity
 @DiscriminatorValue("191")
 public class Polypeptide extends Feature {
     private static Logger logger = Logger.getLogger(Polypeptide.class);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.gmod.schema.sequence.Feature;
@@ -15,6 +16,7 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
+@Entity
 @DiscriminatorValue("321")
 @Indexed
 public class MRNA extends Transcript {
