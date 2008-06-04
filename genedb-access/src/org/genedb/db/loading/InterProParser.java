@@ -325,6 +325,7 @@ public class InterProParser {
                         
                         ipDomain.setDbXRef(dbXRef);
                         sequenceDao.persist(ipDomain);
+                        System.err.println("looking at -> " + uniqueName + " " +  secDB + ":" + progAcc.get(count));
                         dbXRef = featureUtils.findOrCreateDbXRefFromString(secDB + ":" + progAcc.get(count));
                         FeatureDbXRef fdbXRef = new FeatureDbXRef();
                         fdbXRef.setFeature(ipDomain);

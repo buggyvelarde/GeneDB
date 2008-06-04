@@ -389,12 +389,13 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                 // Hopefully the systematic name of a gene
                 String sysId = MiningUtils.getProperty(qualifier, an, null);
                 // TODO Tidy
-                List<Feature> features = sequenceDao.getFeaturesByUniqueName(sysId);
-                if (features == null || features.size()!=1) {
-                	logger.error("Can't tie feature by name");
-                	return null;
-                }
-                ret = features.get(0);
+   //             System.err.println("Systematic id is " + sysId);
+   //             List<Feature> features = sequenceDao.getFeaturesByUniqueName(sysId);
+   //             if (features == null || features.size()!=1) {
+   //             	logger.error("Can't tie feature by name");
+   //             	return null;
+   //            }
+    //            ret = features.get(0);
     //                String utrName = this.gns.get5pUtr(gene.getUniquename(), 0);
     //                if ("three_prime_UTR".equals(type)) {
     //                    utrName = this.gns.get3pUtr(gene.getUniquename(), 0);
@@ -411,7 +412,10 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     //                handled = true;
     
                     // TODO Complain bitterly
+                Feature gene = sequenceDao.getFeatureByUniqueName(sysId, "gene");
+                return gene;
             }
+            
             return ret;
         }
 

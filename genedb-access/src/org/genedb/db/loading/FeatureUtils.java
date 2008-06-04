@@ -72,7 +72,8 @@ public class FeatureUtils implements InitializingBean {
             //System.err.println("Got cvterm type:"+type);
             Date now = new Date();
             Timestamp ts = new Timestamp(now.getTime());
-            Feature feature = new Feature(organism, type, uniqueName, false, false, ts, ts);
+            Feature feature = null;
+            feature = new Feature(organism, type, uniqueName, false, false, ts, ts);
             return feature;
 	}
 
