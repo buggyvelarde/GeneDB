@@ -19,15 +19,19 @@ import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
 import org.biojava.bio.proteomics.IsoelectricPointCalc;
 import org.biojava.bio.proteomics.MassCalc;
+import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.ProteinTools;
+import org.biojava.bio.seq.RNATools;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojava.bio.symbol.Alphabet;
+import org.biojava.bio.symbol.Edit;
 import org.biojava.bio.symbol.IllegalAlphabetException;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.SimpleSymbolList;
 import org.biojava.bio.symbol.Symbol;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
+import org.biojava.utils.ChangeVetoException;
 import org.biojava.utils.SmallMap;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
@@ -133,47 +137,80 @@ public class GeneDBWebUtils {
     }
 
     private static PeptideProperties calculatePepstats(Feature polypeptide) {
-
-        // String seqString = FeatureUtils.getResidues(polypeptide);
         if (polypeptide.getResidues() == null) {
             logger.warn("No residues for '" + polypeptide.getUniqueName() + "'");
             return null;
         }
         String seqString = new String(polypeptide.getResidues());
-        Alphabet protein = ProteinTools.getAlphabet();
-        SymbolTokenization proteinToke = null;
+        Alphabet dna = DNATools.getDNA();
+        SymbolTokenization dnaToken = null;
         SymbolList seq = null;
+        SymbolList pro = null;
         PeptideProperties pp = new PeptideProperties();
         try {
-            proteinToke = protein.getTokenization("token");
-            seq = new SimpleSymbolList(proteinToke, seqString);
+            dnaToken = dna.getTokenization("token");
+            seq = new SimpleSymbolList(dnaToken, seqString);
+            seq = DNATools.toRNA(seq);
+            //if not divisible by three truncate
+            if(seq.length() % 3 != 0){
+              seq = seq.subList(1, seq.length() - (seq.length() %3));
+            }
+   
+            seq = RNATools.translate(seq);
+
+            /*
+             * Translation of GTG or TTG actually results in a Methionine if
+             * it is the start codon (all proteins start with f-Met). Therefore
+             * we need to edit the sequence.
+             */      
+             if(seq.symbolAt(1) != ProteinTools.met()){
+                 seq = new SimpleSymbolList(seq);
+                 Edit e = new Edit(1, seq.getAlphabet(), ProteinTools.met());
+                 try {
+                     seq.edit(e);
+                 } catch (IndexOutOfBoundsException e1) {
+                     e1.printStackTrace();
+                 } catch (ChangeVetoException e1) {
+                     e1.printStackTrace();
+                 }
+             }
+             
+             /* This is to remove the '*' from protein sequence
+              * as BioJava complains and fails while calculating mass 
+              * if '*' is present. There should be a simpler solution
+              * to this
+              */
+             String sym = seq.seqString();
+             sym = sym.replaceAll("\\*", "");
+             Alphabet protein = ProteinTools.getAlphabet();
+             SymbolTokenization proteinToken = protein.getTokenization("token");
+             pro = new SimpleSymbolList(proteinToken,sym);
         } catch (BioException e) {
             logger.error("Can't translate into a protein sequence", e);
-            // pp.setWarning("Unable to translate protein"); // FIXME
             return pp;
         }
         IsoelectricPointCalc ipc = new IsoelectricPointCalc();
         Double cal = 0.0;
         try {
-            cal = ipc.getPI(seq, false, false);
+            cal = ipc.getPI(pro, false, false);
         } catch (IllegalAlphabetException e) {
-            logger.error(String.format("Error computing protein isoelectric point for '%s'", seq), e);
+            logger.error(String.format("Error computing protein isoelectric point for '%s'", pro), e);
         } catch (BioException e) {
-            logger.error(String.format("Error computing protein isoelectric point for '%s'", seq), e);
+            logger.error(String.format("Error computing protein isoelectric point for '%s'", pro), e);
         }
         DecimalFormat df = new DecimalFormat("#.##");
         pp.setIsoelectricPoint(df.format(cal));
-        pp.setAminoAcids(Integer.toString(seqString.length()));
-        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS, false);
+        pp.setAminoAcids(Integer.toString(seq.length()));
         try {
-            cal = mc.getMass(seq);
+            cal = 0.0;
+            cal = MassCalc.getMass(pro,SymbolPropertyTable.AVG_MASS,true) / 1000;
         } catch (IllegalSymbolException e) {
             logger.error("Error computing protein mass", e);
         }
         pp.setMass(df.format(cal / 1000));
-        cal = getCharge(seq);
+        cal = getCharge(pro);
         pp.setCharge(df.format(cal));
-        return pp;
+        return pp;        
     }
 
     /**
