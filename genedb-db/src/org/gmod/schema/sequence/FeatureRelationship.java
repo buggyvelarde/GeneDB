@@ -30,11 +30,11 @@ public class FeatureRelationship implements Serializable {
     @SequenceGenerator(name="generator", sequenceName="feature_relationship_feature_relationship_id_seq")
     private int featureRelationshipId;
      
-    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.EAGER)
     @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)     
     private Feature featureBySubjectId;
      
-    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
+    @ManyToOne(cascade={}, fetch=FetchType.EAGER)
     @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true) 
     private Feature featureByObjectId;
      

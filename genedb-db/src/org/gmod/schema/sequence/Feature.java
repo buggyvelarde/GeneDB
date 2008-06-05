@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,6 +34,7 @@ import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.utils.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -45,7 +45,7 @@ import org.hibernate.search.annotations.Store;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type_id", discriminatorType = DiscriminatorType.INTEGER)
+@DiscriminatorColumn(name = "type_id")
 @Table(name = "feature")
 @Indexed
 public class Feature implements java.io.Serializable {
@@ -106,6 +106,7 @@ public class Feature implements java.io.Serializable {
     private DbXRef dbXRef;
 
     @Column(name = "residues", unique = false, nullable = true, insertable = true, updatable = true)
+    @Type(type = "org.genedb.db.helpers.TextByteType")
     private byte[] residues;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureBySrcFeatureId")
@@ -506,7 +507,6 @@ public class Feature implements java.io.Serializable {
      * FeatureLoc of interest, but is neither automatically populated nor
      * persisted. It is (at the time of writing) used only by Artemis.
      */
-    @Transient
     public FeatureLoc getFeatureLoc() {
         return featureLoc;
     }
