@@ -15,7 +15,6 @@ import org.gmod.schema.sequence.FeatureRelationship;
  *
  */
 public abstract class AbstractGene extends Feature {
-
     @Transient
     public Collection<Transcript> getTranscripts() {
         Collection<Transcript> ret = new ArrayList<Transcript>();

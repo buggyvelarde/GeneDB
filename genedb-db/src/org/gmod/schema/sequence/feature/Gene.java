@@ -16,7 +16,7 @@ import org.hibernate.search.annotations.Store;
 @DiscriminatorValue("792")
 @Indexed
 public class Gene extends AbstractGene {
-    
+    @Transient
     public Collection<MRNA> getCodingTranscripts() {
         Collection<MRNA> ret = new ArrayList<MRNA>();
         
