@@ -15,6 +15,7 @@ public class TranscriptBeanInfo extends SimpleBeanInfo {
                 new PropertyDescriptor("name", Transcript.class),
                 new PropertyDescriptor("fmin", Transcript.class),
                 new PropertyDescriptor("fmax", Transcript.class),
+                new PropertyDescriptor("gene", Transcript.class),
                 // new PropertyDescriptor("exons", Transcript.class),
                 // new PropertyDescriptor("colourId", Transcript.class),
                 //new PropertyDescriptor("protein", Transcript.class),

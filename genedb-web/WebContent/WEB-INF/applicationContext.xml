@@ -90,7 +90,6 @@
   		<prop key="hibernate.hbm2dll.auto">validate</prop>
  	    <!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
 <!--	  	<prop key="hibernate.query.substitutions">true 'T', false 'F'</prop>-->
-			<prop key="hibernate.show_sql">true</prop>
 <!--  		<prop key="hibernate.c3p0.minPoolSize">5</prop>-->
 <!--  		<prop key="hibernate.c3p0.maxPoolSize">20</prop>-->
 <!--  		<prop key="hibernate.c3p0.timeout">600</prop>-->
@@ -103,74 +102,6 @@
  	 </props>
 	 </property>
 	</bean>
-    
-    	<!-- Hibernate SessionFactory -->
-	<!--<bean id="sessionFactory" 
-  	 class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-	 <property name="dataSource" ref="dataSource" />
-	   <property name="hibernateProperties" ref="hibernateProperties" /> 
-	   OR mapping files. 
- 	<property name="mappingResources">
-  	  <list>
-  	  	 Analysis module 
-  	    <value>org/gmod/schema/analysis/AnalysisFeature.hbm.xml</value>
-        <value>org/gmod/schema/analysis/Analysis.hbm.xml</value>
-        <value>org/gmod/schema/analysis/AnalysisProp.hbm.xml</value>
-         CV module 
-    	<value>org/gmod/schema/cv/CvTermPath.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTermRelationship.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTermProp.hbm.xml</value>
-        <value>org/gmod/schema/cv/Cv.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTermSynonym.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTermDbXRef.hbm.xml</value>
-        <value>org/gmod/schema/cv/CvTerm.hbm.xml</value>
-        <value>org/gmod/schema/cv/DbXRefProp.hbm.xml</value>
-         General module 
-        <value>org/gmod/schema/general/Project.hbm.xml</value>
-        <value>org/gmod/schema/general/Db.hbm.xml</value>
-        <value>org/gmod/schema/general/Tableinfo.hbm.xml</value>
-        <value>org/gmod/schema/general/DbXRef.hbm.xml</value>
-         Organism module 
-        <value>org/gmod/schema/organism/Organism.hbm.xml</value>
-        <value>org/gmod/schema/organism/OrganismProp.hbm.xml</value>   
-        <value>org/gmod/schema/organism/OrganismDbXRef.hbm.xml</value>
-         Phylogeny module 
-        <value>org/gmod/schema/phylogeny/PhylotreePub.hbm.xml</value>
-		<value>org/gmod/schema/phylogeny/Phylotree.hbm.xml</value>
-		<value>org/gmod/schema/phylogeny/PhylonodeRelationship.hbm.xml</value>
-		<value>org/gmod/schema/phylogeny/PhylonodePub.hbm.xml</value>
-		<value>org/gmod/schema/phylogeny/PhylonodeProp.hbm.xml</value>
-		<value>org/gmod/schema/phylogeny/PhylonodeOrganism.hbm.xml</value>
-		<value>org/gmod/schema/phylogeny/PhylonodeDbXRef.hbm.xml</value>
-		<value>org/gmod/schema/phylogeny/Phylonode.hbm.xml</value>
-		 Pub module 
-        <value>org/gmod/schema/pub/PubProp.hbm.xml</value>
-        <value>org/gmod/schema/pub/Pub.hbm.xml</value>
-        <value>org/gmod/schema/pub/PubAuthor.hbm.xml</value>
-        <value>org/gmod/schema/pub/PubDbXRef.hbm.xml</value>
-        <value>org/gmod/schema/pub/PubRelationship.hbm.xml</value>
-         Sequence module 
-        <value>org/gmod/schema/sequence/Feature.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeaturePub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeaturePropPub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureDbXRef.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureSynonym.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureRelationshipPub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureCvTermDbXRef.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureLoc.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureCvTermPub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureRelationshipProp.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureCvTerm.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureCvTermProp.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureProp.hbm.xml</value>
-        <value>org/gmod/schema/sequence/Synonym.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureRelationshipPropPub.hbm.xml</value>
-        <value>org/gmod/schema/sequence/FeatureRelationship.hbm.xml</value>
-   	 </list>
- 	</property>
-	</bean>
-	
--->
 	
 	<bean id="sessionFactory"
         class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -210,7 +141,7 @@
        <value>org.gmod.schema.phylogeny.PhylonodeOrganism</value>
        <value>org.gmod.schema.phylogeny.PhylonodeDbXRef</value>
        <value>org.gmod.schema.phylogeny.Phylonode</value>
-               <!-- Pub module -->
+       <!-- Pub module -->
        <value>org.gmod.schema.pub.PubProp</value>
        <value>org.gmod.schema.pub.Pub</value>
        <value>org.gmod.schema.pub.PubAuthor</value>
@@ -234,6 +165,7 @@
        <value>org.gmod.schema.sequence.Synonym</value>
        <value>org.gmod.schema.sequence.FeatureRelationshipPropPub</value>
        <value>org.gmod.schema.sequence.FeatureRelationship</value>
+       <!-- Sequence features -->
        <value>org.gmod.schema.sequence.feature.AbstractExon</value>
        <value>org.gmod.schema.sequence.feature.AbstractGene</value>
        <value>org.gmod.schema.sequence.feature.Exon</value>
@@ -246,6 +178,7 @@
        <value>org.gmod.schema.sequence.feature.SnRNA</value>
        <value>org.gmod.schema.sequence.feature.Transcript</value>
        <value>org.gmod.schema.sequence.feature.TRNA</value>
+       <value>org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome</value>
         </list>
        </property>
        </bean>

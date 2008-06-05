@@ -3,15 +3,16 @@
 
 <c:url value="/" var="base"/>
 
-<c:set var="primaryLoc" value="${feature.rankZeroFeatureLoc}" />
+<c:set var="primaryLoc" value="${gene.rankZeroFeatureLoc}" />
 <c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
 
-<format:headerRound name="Gene: ${feature.displayName}" title="Gene Page ${feature.displayName}" bodyClass="genePage"
-onLoad="initContextMap('${base}', '${feature.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax});">
+<format:headerRound name="Gene: ${gene.displayName}" title="Gene Page ${gene.displayName}" bodyClass="genePage"
+onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax});">
 
 <st:init />
-<%-- The next two are used by the scrollable context map --%>
+<%-- The next three are used by the scrollable context map --%>
 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/contextMap.css"/>" />
+<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery-1.2.6.min.js"/>"></script>
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
 </format:headerRound>
 <!-- Context Map -->
@@ -21,7 +22,16 @@ onLoad="initContextMap('${base}', '${feature.organism.commonName}', '${chromosom
         <div id="contextMapGeneInfo"></div>
     </div>
     <div id="contextMapDiv">
-        <img src="<c:url value="/includes/images/default/grid/loading.gif"/>" id="contextMapLoadingImage">
+        <div id="contextMapLoading">
+            <img src="<c:url value="/includes/images/default/grid/loading.gif"/>" id="contextMapLoadingImage">
+            Loading...
+        </div>
+    </div>
+    <div id="contextMapInfoPanel">
+        <div class="label">Gene name</div><div class="value" id="selectedGeneName"></div>
+        <div class="label">Systematic ID</div><div class="value" id="selectedGeneUniqueName"></div>
+        <div class="label">Transcript ID</div><div class="value" id="selectedGeneTranscript"></div>
+        <div class="label">Products</div><div class="value" id="selectedGeneProducts"></div>
     </div>
 </div>
 
@@ -32,23 +42,23 @@ onLoad="initContextMap('${base}', '${feature.organism.commonName}', '${chromosom
             <div class="heading">General Information</div>
             <table>
             <col style="width: 9em;">
-            <c:if test="${feature.name != null}">
+            <c:if test="${gene.name != null}">
                 <tr>
                     <td class="label">Gene Name</td>
-                    <td class="value">${feature.name}</td>
+                    <td class="value">${gene.name}</td>
                 </tr>
              </c:if>
              <tr>
                 <td class="label">Systematic Name</td>
-                <td class="value">${feature.uniqueName}</td>
+                <td class="value">${gene.uniqueName}</td>
             </tr>
-            <db:synonym name="obsolete_name" var="name" collection="${feature.featureSynonyms}">
+            <db:synonym name="obsolete_name" var="name" collection="${gene.featureSynonyms}">
                 <tr>
                     <th>Previous IDs</th>
                     <td><db:list-string collection="${name}" /></td>
                 </tr>
             </db:synonym>
-            <db:synonym name="synonym" var="name" collection="${feature.featureSynonyms}">
+            <db:synonym name="synonym" var="name" collection="${gene.featureSynonyms}">
                  <tr>
                     <td class="label">Synonyms</td>
                     <td class="value"><db:list-string collection="${name}" /></td>
@@ -67,7 +77,7 @@ onLoad="initContextMap('${base}', '${feature.organism.commonName}', '${chromosom
             <tr>
                 <td class="label">Location</td>
                 <td class="value">
-                    <c:forEach items="${feature.featureLocsForFeatureId}" var="featLoc">
+                    <c:forEach items="${gene.featureLocsForFeatureId}" var="featLoc">
                         <c:set var="start" value="${featLoc.fmin}" />
                         <c:set var="end" value="${featLoc.fmax}" />
                         ${start}..${end},

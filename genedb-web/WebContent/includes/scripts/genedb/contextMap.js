@@ -9,15 +9,7 @@ function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax) {
     contextMapThumbnailDiv = document.getElementById("contextMapThumbnailDiv");
     contextMapGeneInfo = document.getElementById("contextMapGeneInfo");
 
-    var contextMapInfo = getContextMapInfo(organism, chromosome, chrlen, fmin, fmax);
-    
-    contextMapDiv.onmousedown = startMove;
-    document.onmousemove = doMove;
-    document.onmouseup   = endMove; // Even if the mouse is released outside the image,
-                                    // we still want to know about it! (Though if the mouse
-                                    // is released outside the window, we're still screwed.)
-    
-    contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
+    getContextMapInfo(organism, chromosome, chrlen, fmin, fmax);
 }
 
 function getContextMapInfo(organism, chromosome, chrlen, fmin, fmax) {
@@ -35,8 +27,22 @@ function getContextMapInfo(organism, chromosome, chrlen, fmin, fmax) {
 	        if ( req.status == 200 ) {
 	            response = eval( "(" + req.responseText + ")" );
 	            loadTile(chrlen, (fmin+fmax)/2, response);
+                contextMapDiv.onmousedown = startMove;
+			    document.onmousemove = doMove;
+			    document.onmouseup   = endMove; // Even if the mouse is released outside the image,
+			                                    // we still want to know about it! (Though if the mouse
+			                                    // is released outside the window, we're still screwed.)
+			    
+			    contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
+                contextMapDiv.style.cursor = "move";
 	        } else {
-	            alert( "Request failed." );
+	            var loadingElement = document.getElementById("contextMapLoading");
+                contextMapDiv.removeChild(loadingElement);
+                var errorMessage = document.createElement("div");
+                errorMessage.id = "errorMessage";
+                errorMessage.innerText = errorMessage.textContent
+                    = "Error: failed to load context map";
+                contextMapDiv.appendChild(errorMessage);
 	        }
 	        req = null;
 	        loaded = true;
@@ -56,8 +62,8 @@ function loadTile(chrlen, locus, tileData) {
     basesPerPixel = tileData.basesPerPixel;
     thumbnailBasesPerPixel = tileData.chromosomeThumbnail.basesPerPixel;
 
-    var loadingImage = document.getElementById("contextMapLoadingImage");
-    contextMapDiv.removeChild(loadingImage);
+    var loadingElement = document.getElementById("contextMapLoading");
+    contextMapDiv.removeChild(loadingElement);
     contextMapContent = document.createElement("div");
     contextMapContent.id = "contextMapContent";
     contextMapContent.style.width = Math.floor(chrlen / basesPerPixel)+"px";
@@ -95,7 +101,7 @@ function loadTile(chrlen, locus, tileData) {
     chromosomeThumbnailWindow.onmousedown = startDragWindow;
     chromosomeThumbnailWindow.ondragstart = function() {return false;};
     
-    moveTo(locus/basesPerPixel - Element.getWidth(contextMapDiv) / 2);
+    moveTo(locus/basesPerPixel - contextMapDiv.offsetWidth / 2);
     
     var numPositiveTracks = tileData.positiveTracks.length;
     for (var trackIndex = 0; trackIndex < tileData.positiveTracks.length; trackIndex++) {
@@ -122,7 +128,7 @@ function loadTile(chrlen, locus, tileData) {
 function createArea(transcript, topPx, heightPx) {
     // The only way I could get this to work in IE6 was to
     // use a transparent GIF here. (In proper browsers, you
-    // can just use a div with no background colour.)
+    // can just use a div with no background colour.) -rh11
     var area = document.createElement("img");
     area.src = base + "includes/images/transparentPixel.gif";
     area.className = "transcriptBlock";
@@ -131,10 +137,15 @@ function createArea(transcript, topPx, heightPx) {
     area.style.width = (transcript.fmax / basesPerPixel - leftPx) + "px";
     area.style.top = topPx + "px";
     area.style.height = heightPx + "px";
-    area.onmouseover = function() {
-        contextMapGeneInfo.innerText = contextMapGeneInfo.textContent = transcript.name
-            + " (" + transcript.products + ")";
-        return true;
+    area.onmousedown = function(event) {
+        var gene = transcript.gene;
+        $("#contextMapInfoPanel").show('slow');
+        $("#selectedGeneName").text(gene.name);
+        $("#selectedGeneUniqueName").text(gene.uniqueName);
+        $("#selectedGeneTranscript").text(transcript.name);
+        $("#selectedGeneProducts").text(gene.uniqueName);
+        event.stopPropagation();
+        return false;
     };
 
     contextMapContent.appendChild(area);

@@ -93,13 +93,6 @@ public class BasicGene {
         this.organism = organism;
     }
 
-    public List<String> getProducts() {
-        return products;
-    }
-    public void setProducts(List<String> products) {
-        this.products = products;
-    }
-
     public List<Transcript> getTranscripts() {
         return transcripts;
     }

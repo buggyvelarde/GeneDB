@@ -82,19 +82,6 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             }
         }
 
-        // Collect all the products of all the proteins of all the transcripts
-        Set<String> products = new HashSet<String>();
-        for (Transcript transcript: ret.getTranscripts()) {
-            Feature protein = transcript.getProtein();
-    
-            for (FeatureCvTerm fcvt : protein.getFeatureCvTerms()) {
-                CvTerm featCvTerm = fcvt.getCvTerm();
-                if (featCvTerm.getCv().getName().equals("genedb_products")) {
-                    products.add(featCvTerm.getName());
-                }
-            }
-        }
-        ret.setProducts(new ArrayList<String> (products));
         ret.setOrganism(feat.getOrganism().getCommonName());
         
         FeatureLoc loc = feat.getRankZeroFeatureLoc();
@@ -117,27 +104,36 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     }
     
     private static Transcript makeTranscript(Feature feature) {
-        Transcript ret = new Transcript();
-        ret.setFmin(feature.getRankZeroFeatureLoc().getFmin());
-        ret.setFmax(feature.getRankZeroFeatureLoc().getFmax());
-        ret.setName(feature.getDisplayName());
+        Transcript transcript = new Transcript();
+        transcript.setFmin(feature.getRankZeroFeatureLoc().getFmin());
+        transcript.setFmax(feature.getRankZeroFeatureLoc().getFmax());
+        transcript.setName(feature.getDisplayName());
         
         Set<Exon> exons = new HashSet<Exon> ();
         for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
             Feature relatedFeature = fr.getFeatureBySubjectId();
             String relatedFeatureName = relatedFeature.getCvTerm().getName();
             if (relatedFeatureName.equals("polypeptide")) {
-                ret.setProtein(relatedFeature);
+                transcript.setProtein(relatedFeature);
             }
             else if (relatedFeatureName.equals("exon")) {
                 FeatureLoc otherFeatLoc = relatedFeature.getRankZeroFeatureLoc();
                 exons.add(new Exon(otherFeatLoc.getFmin(), otherFeatLoc.getFmax()));
             }
         }
-        ret.setExons(exons);
-        // TODO ret.setProducts
+        transcript.setExons(exons);
+
+        Feature protein = transcript.getProtein();
+        List<String> products = new ArrayList<String>();
+        for (FeatureCvTerm fcvt : protein.getFeatureCvTerms()) {
+            CvTerm featCvTerm = fcvt.getCvTerm();
+            if (featCvTerm.getCv().getName().equals("genedb_products")) {
+                products.add(featCvTerm.getName());
+            }
+        }
+        transcript.setProducts(products);
         
-        return ret;
+        return transcript;
     }
 
     public List<String> findGeneNamesByPartialName(String partialName) {
