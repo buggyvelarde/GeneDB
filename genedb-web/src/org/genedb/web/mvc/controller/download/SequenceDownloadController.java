@@ -61,23 +61,26 @@ public class SequenceDownloadController {
 		}
  		for (FeatureLoc fl : chromosome.getFeatureLocsForSrcFeatureId()) {
  			Object ob = fl.getFeatureByFeatureId();
-			out.print(ob.getClass());
+			//out.print(ob.getClass());
 			if (ob instanceof Feature) {
-				out.print(((Feature)ob).getUniqueName());
+				Feature f = (Feature) ob;
+				Map<String, String> attributes = new HashMap<String, String>();
+				attributes.put("systematic_id", f.getUniqueName());
+				writeEmblEntry(out, f.getCvTerm().getName(), true, fl.getFmin(), fl.getFmax(), attributes);
 			}
 			out.println();
 		}
 		
 		
-		Map<String, String> attributes = new HashMap<String, String>();
-		attributes.put("systematic_id", "fred");
-		out.println("topLevelFeature="+tlf);
-		writeEmblEntry(out, tlf, true, 1, 10000, attributes);
-		writeEmblEntry(out, "CDS", true, 1, 100, attributes);
-		writeEmblEntry(out, "misc_feature", true, 100, 200, attributes);
-		writeEmblEntry(out, "wibble", false, 1, 10, attributes);
-		writeEmblEntry(out, "fred", false, 1045, 1096, attributes);
-		writeEmblEntry(out, "foo", true, 1, 100, attributes);
+		//Map<String, String> attributes = new HashMap<String, String>();
+		//attributes.put("systematic_id", "fred");
+		//out.println("topLevelFeature="+tlf);
+		//writeEmblEntry(out, tlf, true, 1, 10000, attributes);
+		//writeEmblEntry(out, "CDS", true, 1, 100, attributes);
+		//writeEmblEntry(out, "misc_feature", true, 100, 200, attributes);
+		//writeEmblEntry(out, "wibble", false, 1, 10, attributes);
+		//writeEmblEntry(out, "fred", false, 1045, 1096, attributes);
+		//writeEmblEntry(out, "foo", true, 1, 100, attributes);
 		
 		
 		return null;
