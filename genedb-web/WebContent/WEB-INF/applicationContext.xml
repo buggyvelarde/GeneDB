@@ -178,6 +178,7 @@
        <value>org.gmod.schema.sequence.feature.Pseudogene</value>
        <value>org.gmod.schema.sequence.feature.PseudogenicExon</value>
        <value>org.gmod.schema.sequence.feature.PseudogenicTranscript</value>
+       <value>org.gmod.schema.sequence.feature.RepeatRegion</value>
        <value>org.gmod.schema.sequence.feature.RRNA</value>
        <value>org.gmod.schema.sequence.feature.SnRNA</value>
        <value>org.gmod.schema.sequence.feature.Transcript</value>
