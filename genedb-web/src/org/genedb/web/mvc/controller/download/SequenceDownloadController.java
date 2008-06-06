@@ -54,7 +54,7 @@ public class SequenceDownloadController {
 		HttpServletResponse hsr = (HttpServletResponse) nwr.getNativeResponse();
 		hsr.setContentType("text/plain");
 		
-		Feature chromosome = sequenceDao.getFeatureByUniqueName(tlf, "linear_double_stranded_DNA_chromosome");
+		Feature chromosome = sequenceDao.getFeatureByUniqueName(tlf, "linear_double_stranded_DNA_chromosome"); // FIXME - Shouldn't be hard-coded
 		if (chromosome == null) {
 			out.println("Unable to retrieve feature for '"+tlf+"'");
 			return null;
