@@ -66,7 +66,11 @@ public class SequenceDownloadController {
 				Feature f = (Feature) ob;
 				Map<String, String> attributes = new HashMap<String, String>();
 				attributes.put("systematic_id", f.getUniqueName());
-				writeEmblEntry(out, f.getCvTerm().getName(), true, fl.getFmin(), fl.getFmax(), attributes);
+				boolean strand = true;
+				if (fl.getStrand() < 0) {
+					strand = false;
+				}
+				writeEmblEntry(out, f.getCvTerm().getName(), strand, fl.getFmin(), fl.getFmax(), attributes);
 			}
 			out.println();
 		}
@@ -87,25 +91,31 @@ public class SequenceDownloadController {
 	}
 
 	private static String FEATURE_PREFIX_WIDTH = "22";
+	private static int MAX_FEATURE_WIDTH = 20;
 	private static final String FEATURE_TABLE_PREFIX = String.format("%-"+FEATURE_PREFIX_WIDTH+"s", "FT");
 	
 	private void writeEmblEntry(PrintWriter out, String featureType, 
 			boolean forwardStrand, int min, int max,
 			Map<String, String> qualifiers) {
 
+		if (featureType.length() > MAX_FEATURE_WIDTH) {
+			featureType = featureType.substring(0, MAX_FEATURE_WIDTH);
+		}
+		
 		out.format("FT %-"+FEATURE_PREFIX_WIDTH+"s", featureType);
 		if (!forwardStrand) {
 			out.print("complement(");
 		}
 		
-		out.println(min+".."+max);
+		out.print(min+".."+max);
 		
 		if (!forwardStrand) {
 			out.print(")");
 		}
+		out.println();
 		
 		for (Map.Entry<String, String> qualifier: qualifiers.entrySet()) {
-			out.println(FEATURE_TABLE_PREFIX+qualifier.getKey()+"=\""+qualifier.getValue()+"\"");
+			out.println(FEATURE_TABLE_PREFIX+"/"+qualifier.getKey()+"=\""+qualifier.getValue()+"\"");
 		}
 		
 	}
