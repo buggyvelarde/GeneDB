@@ -2,6 +2,7 @@ package org.gmod.schema.sequence.feature;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import org.hibernate.search.annotations.Indexed;
 
@@ -10,7 +11,7 @@ import org.hibernate.search.annotations.Indexed;
 @Indexed
 public class TRNA extends Transcript {
 
-    @Override
+    @Override @Transient
     public Integer getColourId() {
         return null;
     }

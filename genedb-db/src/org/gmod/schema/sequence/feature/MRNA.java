@@ -48,11 +48,11 @@ public class MRNA extends Transcript {
      * @return
      */
     @Transient
-    public Feature getProtein() {
+    public Polypeptide getProtein() {
         for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
             Feature feature = relation.getFeatureBySubjectId();
-            if (feature.getCvTerm().getName().equals("polypeptide"))
-                return feature;
+            if (feature instanceof Polypeptide)
+                return (Polypeptide) feature;
         }
         return null;
     }

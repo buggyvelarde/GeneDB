@@ -4,5 +4,5 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("1045")
-public class LinearDoubleStrandedDNAChromosome extends Chromosome { }
+@DiscriminatorValue("907")
+public class MitochondrialChromosome extends Chromosome {}

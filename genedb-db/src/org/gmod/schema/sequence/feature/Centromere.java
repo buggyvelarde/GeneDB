@@ -3,6 +3,8 @@ package org.gmod.schema.sequence.feature;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.gmod.schema.sequence.Feature;
+
 @Entity
-@DiscriminatorValue("1045")
-public class LinearDoubleStrandedDNAChromosome extends Chromosome { }
+@DiscriminatorValue("665")
+public class Centromere extends Feature {}

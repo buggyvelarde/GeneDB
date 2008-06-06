@@ -7,9 +7,9 @@ import javax.persistence.Transient;
 import org.hibernate.search.annotations.Indexed;
 
 @Entity
-@DiscriminatorValue("361")
+@DiscriminatorValue("604")
 @Indexed
-public class SnRNA extends Transcript {
+public class PseudogenicTranscript extends Transcript {
 
     @Override @Transient
     public Integer getColourId() {
