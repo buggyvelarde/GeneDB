@@ -7,6 +7,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.genedb.db.dao.SequenceDao;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureLoc;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +24,8 @@ import org.springframework.web.context.request.WebRequest;
 @RequestMapping("/SequenceDownload")
 public class SequenceDownloadController {
 	    
+	private SequenceDao sequenceDao;
+	
 	@RequestMapping(method=RequestMethod.GET)
 	public String setUpForm() {
 		return "err/forminput";
@@ -49,6 +54,12 @@ public class SequenceDownloadController {
 		HttpServletResponse hsr = (HttpServletResponse) nwr.getNativeResponse();
 		hsr.setContentType("text/plain");
 		
+		Feature chromsome = sequenceDao.getFeatureByUniqueName(tlf, "chromosome");
+		for (FeatureLoc fl : chromsome.getFeatureLocsForSrcFeatureId()) {
+			out.print(fl.getFeatureByFeatureId().getUniqueName());
+		}
+		
+		
 		Map<String, String> attributes = new HashMap<String, String>();
 		attributes.put("systematic_id", "fred");
 		out.println("topLevelFeature="+tlf);
@@ -64,13 +75,13 @@ public class SequenceDownloadController {
 	}
 
 	private static String FEATURE_PREFIX_WIDTH = "22";
-	private static final String FEATURE_TABLE_PREFIX = String.format("%1$"+FEATURE_PREFIX_WIDTH, "FT");
+	private static final String FEATURE_TABLE_PREFIX = String.format("%"+FEATURE_PREFIX_WIDTH, "FT");
 	
 	private void writeEmblEntry(PrintWriter out, String featureType, 
 			boolean forwardStrand, int min, int max,
 			Map<String, String> qualifiers) {
 
-		out.format("FT %1$-"+FEATURE_PREFIX_WIDTH, featureType);
+		out.format("FT %-"+FEATURE_PREFIX_WIDTH, featureType);
 		if (!forwardStrand) {
 			out.print("complement(");
 		}
