@@ -51,6 +51,7 @@ public class SequenceDownloadController {
 		
 		Map<String, String> attributes = new HashMap<String, String>();
 		attributes.put("systematic_id", "fred");
+		out.println("topLevelFeature="+tlf);
 		writeEmblEntry(out, tlf, true, 1, 10000, attributes);
 		writeEmblEntry(out, "CDS", true, 1, 100, attributes);
 		writeEmblEntry(out, "misc_feature", true, 100, 200, attributes);
