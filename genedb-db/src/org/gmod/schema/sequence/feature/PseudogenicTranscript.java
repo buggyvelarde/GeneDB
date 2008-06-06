@@ -13,7 +13,7 @@ public class PseudogenicTranscript extends Transcript {
 
     @Override @Transient
     public Integer getColourId() {
-        return null;
+        return null; // TODO
     }
 
 }
