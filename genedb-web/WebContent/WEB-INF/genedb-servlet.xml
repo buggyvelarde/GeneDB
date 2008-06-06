@@ -17,7 +17,9 @@
 
 	<!-- <context:component-scan base-package="org.genedb.web.mvc.controller.download" /> -->
 
-	<bean id="sequenceDownload" class="org.genedb.web.mvc.controller.download.SequenceDownloadController" />
+	<bean id="sequenceDownload" class="org.genedb.web.mvc.controller.download.SequenceDownloadController">
+		<property name="sequenceDao" ref="sequenceDao" />
+	</bean>
 
 	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
