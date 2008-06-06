@@ -62,9 +62,9 @@ public class SequenceDownloadController {
  		for (FeatureLoc fl : chromosome.getFeatureLocsForSrcFeatureId()) {
  			Object ob = fl.getFeatureByFeatureId();
 			out.print(ob.getClass());
-			//if (ob instanceof Feature) {
-			//	out.print(((Feature)ob).getUniqueName());
-			//}
+			if (ob instanceof Feature) {
+				out.print(((Feature)ob).getUniqueName());
+			}
 			out.println();
 		}
 		
@@ -84,7 +84,7 @@ public class SequenceDownloadController {
 	}
 
 	private static String FEATURE_PREFIX_WIDTH = "22";
-	private static final String FEATURE_TABLE_PREFIX = String.format("%"+FEATURE_PREFIX_WIDTH+"s", "FT");
+	private static final String FEATURE_TABLE_PREFIX = String.format("%-"+FEATURE_PREFIX_WIDTH+"s", "FT");
 	
 	private void writeEmblEntry(PrintWriter out, String featureType, 
 			boolean forwardStrand, int min, int max,
