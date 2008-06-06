@@ -75,13 +75,13 @@ public class SequenceDownloadController {
 	}
 
 	private static String FEATURE_PREFIX_WIDTH = "22";
-	private static final String FEATURE_TABLE_PREFIX = String.format("%"+FEATURE_PREFIX_WIDTH, "FT");
+	private static final String FEATURE_TABLE_PREFIX = String.format("%"+FEATURE_PREFIX_WIDTH+"s", "FT");
 	
 	private void writeEmblEntry(PrintWriter out, String featureType, 
 			boolean forwardStrand, int min, int max,
 			Map<String, String> qualifiers) {
 
-		out.format("FT %-"+FEATURE_PREFIX_WIDTH, featureType);
+		out.format("FT %-"+FEATURE_PREFIX_WIDTH+"s", featureType);
 		if (!forwardStrand) {
 			out.print("complement(");
 		}
