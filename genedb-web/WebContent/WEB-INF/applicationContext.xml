@@ -170,10 +170,14 @@
        <value>org.gmod.schema.sequence.feature.AbstractGene</value>
        <value>org.gmod.schema.sequence.feature.Exon</value>
        <value>org.gmod.schema.sequence.feature.Gene</value>
+       <value>org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome.java</value>
+       <value>org.gmod.schema.sequence.feature.Match.java</value>
        <value>org.gmod.schema.sequence.feature.MRNA</value>
        <value>org.gmod.schema.sequence.feature.Polypeptide</value>
+       <value>org.gmod.schema.sequence.feature.ProteinMatch.java</value>
        <value>org.gmod.schema.sequence.feature.Pseudogene</value>
        <value>org.gmod.schema.sequence.feature.PseudogenicExon</value>
+       <value>org.gmod.schema.sequence.feature.PseudogenicTranscript</value>
        <value>org.gmod.schema.sequence.feature.RRNA</value>
        <value>org.gmod.schema.sequence.feature.SnRNA</value>
        <value>org.gmod.schema.sequence.feature.Transcript</value>
