@@ -90,7 +90,7 @@ public class SequenceDownloadController {
 		return null;
 	}
 
-	private static String FEATURE_PREFIX_WIDTH = "22";
+	private static int FEATURE_PREFIX_WIDTH = 22;
 	private static int MAX_FEATURE_WIDTH = 20;
 	private static final String FEATURE_TABLE_PREFIX = String.format("%-"+FEATURE_PREFIX_WIDTH+"s", "FT");
 	
@@ -102,7 +102,7 @@ public class SequenceDownloadController {
 			featureType = featureType.substring(0, MAX_FEATURE_WIDTH);
 		}
 		
-		out.format("FT %-"+FEATURE_PREFIX_WIDTH+"s", featureType);
+		out.format("FT %-"+(FEATURE_PREFIX_WIDTH-3)+"s", featureType);
 		if (!forwardStrand) {
 			out.print("complement(");
 		}
