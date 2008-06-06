@@ -60,7 +60,12 @@ public class SequenceDownloadController {
 			return null;
 		}
  		for (FeatureLoc fl : chromosome.getFeatureLocsForSrcFeatureId()) {
-			out.print(fl.getFeatureByFeatureId().getUniqueName());
+ 			Object ob = fl.getFeatureByFeatureId();
+			out.print(ob.getClass());
+			if (ob instanceof Feature) {
+				out.print(((Feature)ob).getUniqueName());
+			}
+			out.println();
 		}
 		
 		
