@@ -97,6 +97,10 @@ public class SequenceDownloadController {
 		}
 		
 	}
+
+	public void setSequenceDao(SequenceDao sequenceDao) {
+		this.sequenceDao = sequenceDao;
+	}
 	
 	
 	
