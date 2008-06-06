@@ -54,8 +54,12 @@ public class SequenceDownloadController {
 		HttpServletResponse hsr = (HttpServletResponse) nwr.getNativeResponse();
 		hsr.setContentType("text/plain");
 		
-		Feature chromsome = sequenceDao.getFeatureByUniqueName(tlf, "chromosome");
-		for (FeatureLoc fl : chromsome.getFeatureLocsForSrcFeatureId()) {
+		Feature chromosome = sequenceDao.getFeatureByUniqueName(tlf, "linear_double_stranded_DNA_chromosome");
+		if (chromosome == null) {
+			out.println("Unable to retrieve feature for '"+tlf+"'");
+			return null;
+		}
+ 		for (FeatureLoc fl : chromosome.getFeatureLocsForSrcFeatureId()) {
 			out.print(fl.getFeatureByFeatureId().getUniqueName());
 		}
 		
