@@ -62,9 +62,9 @@ public class SequenceDownloadController {
  		for (FeatureLoc fl : chromosome.getFeatureLocsForSrcFeatureId()) {
  			Object ob = fl.getFeatureByFeatureId();
 			out.print(ob.getClass());
-			if (ob instanceof Feature) {
-				out.print(((Feature)ob).getUniqueName());
-			}
+			//if (ob instanceof Feature) {
+			//	out.print(((Feature)ob).getUniqueName());
+			//}
 			out.println();
 		}
 		
