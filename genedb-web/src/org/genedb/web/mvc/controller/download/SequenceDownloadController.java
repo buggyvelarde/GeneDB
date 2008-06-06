@@ -72,7 +72,7 @@ public class SequenceDownloadController {
 				}
 				writeEmblEntry(out, f.getCvTerm().getName(), strand, fl.getFmin(), fl.getFmax(), attributes);
 			}
-			out.println();
+			//out.println();
 		}
 		
 		
@@ -91,7 +91,7 @@ public class SequenceDownloadController {
 	}
 
 	private static int FEATURE_PREFIX_WIDTH = 22;
-	private static int MAX_FEATURE_WIDTH = 20;
+	private static int MAX_FEATURE_WIDTH = 18;
 	private static final String FEATURE_TABLE_PREFIX = String.format("%-"+FEATURE_PREFIX_WIDTH+"s", "FT");
 	
 	private void writeEmblEntry(PrintWriter out, String featureType, 
