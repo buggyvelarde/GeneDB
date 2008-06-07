@@ -120,14 +120,15 @@ public class GeneDBWebUtils {
 
     public static Map<String,Object> prepareTranscript(Transcript transcript, Map<String,Object> model) {
         
-        if (!model.containsKey("gene"))
+        if (!model.containsKey("gene")) {
             model.put("gene", transcript.getGene());
+        }
         
         model.put("transcript", transcript);
         
         if (transcript instanceof MRNA) {
             MRNA codingTranscript = (MRNA) transcript;
-            Feature polypeptide = codingTranscript.getProtein();
+            Polypeptide polypeptide = codingTranscript.getProtein();
             
             model.put("polypeptide", polypeptide);
             model.put("polyprop", calculatePepstats(polypeptide));
