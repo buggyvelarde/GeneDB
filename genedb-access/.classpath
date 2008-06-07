@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="src" path="conf"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
@@ -31,11 +32,11 @@
 			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.5.x/api"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.4.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/bytecode-0.91.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/saxon8.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/saxon8-xom.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/xom-1.0.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar"/>
 	<classpathentry kind="output" path="ant-build/classes"/>
 </classpath>

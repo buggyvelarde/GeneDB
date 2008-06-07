@@ -23,12 +23,12 @@
         <path location="${lib-dir}/spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
-	<path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
+        <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jta.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar"/>
         <path location="${lib-dir}/postgresql-8.2dev-501.jdbc3.jar"/>
         <path location="${lib-dir}/spring-2.5.4.jar"/>
-        <path location="${lib-dir}/biojava-1.4.jar"/>
+        <path location="${lib-dir}/biojava-1.6.jar"/>
         <path location="${lib-dir}/bytecode-0.91.jar"/>
         <path location="${lib-dir}/dom4j-1.6.1.jar"/>
         <path location="${lib-dir}/saxon8.jar"/>
@@ -76,7 +76,7 @@
 		<fileset file="${imported.basedir.access}/../genedb-domain/genedb-domain.jar"  />
 		<fileset file="${imported.basedir.access}/../genedb-query/ant-build/jars/genedb-query.jar"  />
 		<fileset file="${lib-dir}/spring-2.5.4.jar"  />
-		<fileset file="${lib-dir}/biojava-1.4.jar"/>
+		<fileset file="${lib-dir}/biojava-1.6.jar"/>
 		<fileset file="${lib-dir}/bytecode-0.91.jar"/>
 		<fileset file="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
 		<fileset file="${lib-dir}/spring-bundle-2.5.4/j2ee/jta.jar"/>
@@ -255,7 +255,7 @@
 	
 	<target name="load-smansoni" depends="replace,genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-			<arg line="Smansoni /nfs/pathdb/prod/data/input/smansoni/smansoni.config.xml"/>
+			<arg line="Smansoni /Users/rh11/GeneDB/input/smansoni/smansoni.config.xml"/>
 			<jvmarg line="-server"/>
 		</java>
 	</target>
@@ -489,4 +489,7 @@
 		</java>
 	</target>
 	
+    <target name="fix-residues" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues"/>
+    </target>
 </project>
