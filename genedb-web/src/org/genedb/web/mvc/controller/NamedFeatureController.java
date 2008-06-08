@@ -33,6 +33,8 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.WildcardQuery;
+
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.sequence.Feature;
 import org.springframework.validation.BindException;
@@ -66,7 +68,12 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
         if (orgs == null) {
-            Query query = new TermQuery(new Term("uniqueName", name));
+            Query query;
+            if (name.indexOf("*") == -1) {
+                query = new TermQuery(new Term("uniqueName", name));
+            } else {
+                query = new WildcardQuery(new Term("uniqueName", name));
+            }
             Hits hits = luceneDao.search(ir, query);
             switch (hits.length()) {
             case 0: {
@@ -97,9 +104,9 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             default:
                 for (int i = 0; i < hits.length(); i++) {
                     Document doc = hits.doc(i);
-                    if (!"gene".equals(doc.get("cvTerm.name")))
+                    if (!"gene".equals(doc.get("cvTerm.name"))) {
                         continue;
-                    
+                    }
                     ResultHit rh = new ResultHit();
                     rh.setName(doc.get("uniqueName"));
                     rh.setType("gene");
