@@ -33,7 +33,9 @@ public class SequenceDownloadController {
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public String processSubmit(
-		@RequestParam("topLevelFeature") String tlf, 
+		@RequestParam("topLevelFeature") String tlf,
+		@RequestParam("downloadType") String downloadType,
+		@RequestParam("featureType") String featureType,
 		//BindingResult result, 
 		//SessionStatus status,
 		NativeWebRequest nwr,
@@ -51,10 +53,11 @@ public class SequenceDownloadController {
 			out = new PrintWriter(writer);
 		}
 		
+		
 		HttpServletResponse hsr = (HttpServletResponse) nwr.getNativeResponse();
 		hsr.setContentType("text/plain");
 		
-		Feature chromosome = sequenceDao.getFeatureByUniqueName(tlf, "linear_double_stranded_DNA_chromosome"); // FIXME - Shouldn't be hard-coded
+		Feature chromosome = sequenceDao.getFeatureByUniqueName(tlf, featureType);
 		if (chromosome == null) {
 			out.println("Unable to retrieve feature for '"+tlf+"'");
 			return null;
