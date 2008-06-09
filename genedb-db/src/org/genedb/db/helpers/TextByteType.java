@@ -17,8 +17,8 @@ import org.hibernate.usertype.UserType;
  * or amino acids) to reduce the space requirements.
  */
 public class TextByteType implements UserType {
-    @SuppressWarnings("unused")
-    public byte[] assemble(Serializable cached, Object owner) throws HibernateException {
+    
+    public byte[] assemble(Serializable cached, @SuppressWarnings("unused") Object owner) throws HibernateException {
         return deepCopy(cached);
     }
 
@@ -29,7 +29,6 @@ public class TextByteType implements UserType {
         return Arrays.copyOf(original, original.length);
     }
 
-    @SuppressWarnings("unused")
     public byte[] disassemble(Object value) throws HibernateException {
         return deepCopy(value);
     }
@@ -38,17 +37,15 @@ public class TextByteType implements UserType {
         return (x == y) || (x != null && y != null && (x.equals(y)));
     }
 
-    @SuppressWarnings("unused")
-    public int hashCode(Object arg0) throws HibernateException {
+    public int hashCode(@SuppressWarnings("unused") Object arg0) throws HibernateException {
         return 0;
     }
 
     public boolean isMutable() {
-        return false;
+        return true;
     }
 
-    @SuppressWarnings("unused")
-    public byte[] nullSafeGet(ResultSet rs, String[] names, Object owner)
+    public byte[] nullSafeGet(ResultSet rs, String[] names, @SuppressWarnings("unused") Object owner)
             throws HibernateException, SQLException {
         String string = rs.getString(names[0]);
         if (string == null) {
@@ -68,8 +65,7 @@ public class TextByteType implements UserType {
         }
     }
 
-    @SuppressWarnings("unused")
-    public byte[] replace(Object original, Object target, Object owner) throws HibernateException {
+    public byte[] replace(Object original, @SuppressWarnings("unused") Object target, @SuppressWarnings("unused") Object owner) throws HibernateException {
         return deepCopy(original);
     }
 
