@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.utils.GeneNameOrganism;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -36,7 +37,7 @@ public class GenesByCvTermAndCvController extends AbstractController {
 		String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName",
 		    NO_VALUE_SUPPLIED);
 		String viewName = listResultsView;
-		List<Feature> features = sequenceDao.getFeaturesByCvTermNameAndCvName(cvTermName, cvName);
+		List<GeneNameOrganism> features = sequenceDao.getFeaturesByCvTermNameAndCvName(cvTermName, cvName);
 		
 		if (features == null || features.size() == 0) {
 		    try {
@@ -49,14 +50,14 @@ public class GenesByCvTermAndCvController extends AbstractController {
 		    }
 		}
 		Map<String,Object> model = new HashMap<String,Object>();
-		List<Feature> results = new ArrayList<Feature>();
-		for (Feature feature : features) {
+		//List<String> results = new ArrayList<String>();
+		/*for (Feature feature : features) {
 		    if ("gene".equals(feature.getCvTerm().getName())) {
 		    results.add(feature);
 		} else {
-			/*The below code gets Gene names from the corresponding polypeptides
+			The below code gets Gene names from the corresponding polypeptides
 			- this isn't the right approach and needs to be changed so that
-			something like polypeptide.getGene() can be used either*/
+			something like polypeptide.getGene() can be used either
 			Feature mRNA = null;
 		    Collection<FeatureRelationship> frs = feature.getFeatureRelationshipsForSubjectId();
 		    if (frs != null) {
@@ -80,13 +81,13 @@ public class GenesByCvTermAndCvController extends AbstractController {
 		            }
 		        }
 		    }
-		}
+		}*/
 		
-		if (results.size() == 1) {
-			model = GeneDBWebUtils.prepareGene(results.get(0).getUniqueName(), model);
+		if (features.size() == 1) {
+			model = GeneDBWebUtils.prepareGene(features.get(0).getGeneName(), model);
 			viewName = genePage;
 		} else {
-			model.put("results", results);
+			model.put("features", features);
 		}
 		return new ModelAndView(viewName, model);
 	}
