@@ -42,6 +42,7 @@ import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.sequence.feature.MRNA;
 import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.sequence.feature.Transcript;
+import org.gmod.schema.utils.GeneNameOrganism;
 import org.gmod.schema.utils.PeptideProperties;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -146,7 +147,6 @@ public class GeneDBWebUtils {
         Alphabet dna = DNATools.getDNA();
         SymbolTokenization dnaToken = null;
         SymbolList seq = null;
-        SymbolList pro = null;
         PeptideProperties pp = new PeptideProperties();
         try {
             dnaToken = dna.getTokenization("token");
@@ -175,17 +175,6 @@ public class GeneDBWebUtils {
                      e1.printStackTrace();
                  }
              }
-             
-             /* This is to remove the '*' from protein sequence
-              * as BioJava complains and fails while calculating mass 
-              * if '*' is present. There should be a simpler solution
-              * to this
-              */
-             String sym = seq.seqString();
-             sym = sym.replaceAll("\\*", "");
-             Alphabet protein = ProteinTools.getAlphabet();
-             SymbolTokenization proteinToken = protein.getTokenization("token");
-             pro = new SimpleSymbolList(proteinToken,sym);
         } catch (BioException e) {
             logger.error("Can't translate into a protein sequence", e);
             return pp;
@@ -193,23 +182,23 @@ public class GeneDBWebUtils {
         IsoelectricPointCalc ipc = new IsoelectricPointCalc();
         Double cal = 0.0;
         try {
-            cal = ipc.getPI(pro, false, false);
+            cal = ipc.getPI(seq, false, false);
         } catch (IllegalAlphabetException e) {
-            logger.error(String.format("Error computing protein isoelectric point for '%s'", pro), e);
+            logger.error(String.format("Error computing protein isoelectric point for '%s'", seq), e);
         } catch (BioException e) {
-            logger.error(String.format("Error computing protein isoelectric point for '%s'", pro), e);
+            logger.error(String.format("Error computing protein isoelectric point for '%s'", seq), e);
         }
         DecimalFormat df = new DecimalFormat("#.##");
         pp.setIsoelectricPoint(df.format(cal));
         pp.setAminoAcids(Integer.toString(seq.length()));
         try {
             cal = 0.0;
-            cal = MassCalc.getMass(pro,SymbolPropertyTable.AVG_MASS,true) / 1000;
+            cal = MassCalc.getMass(seq,SymbolPropertyTable.AVG_MASS,true) / 1000;
         } catch (IllegalSymbolException e) {
             logger.error("Error computing protein mass", e);
         }
         pp.setMass(df.format(cal / 1000));
-        cal = getCharge(pro);
+        cal = getCharge(seq);
         pp.setCharge(df.format(cal));
         return pp;        
     }
@@ -397,7 +386,7 @@ public class GeneDBWebUtils {
 
     public static int featureListSize(String cvTermName, String cvName) {
         int size = 0;
-        List<Feature> temp = sequenceDao.getFeaturesByCvTermNameAndCvName(cvTermName, cvName);
+        List<GeneNameOrganism> temp = sequenceDao.getFeaturesByCvTermNameAndCvName(cvTermName, cvName);
         if (temp != null) {
             return temp.size();
         }
