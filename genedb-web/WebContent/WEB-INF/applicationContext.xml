@@ -90,6 +90,8 @@
   		<prop key="hibernate.hbm2dll.auto">validate</prop>
  	    <!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
 <!--	  	<prop key="hibernate.query.substitutions">true 'T', false 'F'</prop>-->
+			<prop key="hibernate.show_sql">false</prop>
+			<prop key="hibernate.format_sql">false</prop>
 <!--  		<prop key="hibernate.c3p0.minPoolSize">5</prop>-->
 <!--  		<prop key="hibernate.c3p0.maxPoolSize">20</prop>-->
 <!--  		<prop key="hibernate.c3p0.timeout">600</prop>-->
@@ -168,7 +170,8 @@
        <!-- Sequence features -->
        <value>org.gmod.schema.sequence.feature.AbstractExon</value>
        <value>org.gmod.schema.sequence.feature.AbstractGene</value>
-       <value>org.gmod.schema.sequence.feature.Centromere</value>
+       <value>org.gmod.schema.sequence.feature.Chromosome</value>
+       <value>org.gmod.schema.sequence.feature.Contig</value>
        <value>org.gmod.schema.sequence.feature.Exon</value>
        <value>org.gmod.schema.sequence.feature.FivePrimeUTR</value>
        <value>org.gmod.schema.sequence.feature.Gap</value>
