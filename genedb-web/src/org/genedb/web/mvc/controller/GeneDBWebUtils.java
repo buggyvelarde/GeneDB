@@ -19,25 +19,20 @@ import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
 import org.biojava.bio.proteomics.IsoelectricPointCalc;
 import org.biojava.bio.proteomics.MassCalc;
-import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.ProteinTools;
-import org.biojava.bio.seq.RNATools;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojava.bio.symbol.Alphabet;
-import org.biojava.bio.symbol.Edit;
 import org.biojava.bio.symbol.IllegalAlphabetException;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.SimpleSymbolList;
 import org.biojava.bio.symbol.Symbol;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
-import org.biojava.utils.ChangeVetoException;
 import org.biojava.utils.SmallMap;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.sequence.feature.MRNA;
 import org.gmod.schema.sequence.feature.Polypeptide;
@@ -367,12 +362,10 @@ public class GeneDBWebUtils {
     }
 
     public static int featureListSize(String cvTermName, String cvName) {
-        int size = 0;
         List<GeneNameOrganism> temp = sequenceDao.getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, cvName);
-        if (temp != null) {
-            return temp.size();
-        }
-        return size;
+        if (temp == null)
+            return 0;
+        return temp.size();
     }
 
     // TODO Remove me once charge is stored by mining code
