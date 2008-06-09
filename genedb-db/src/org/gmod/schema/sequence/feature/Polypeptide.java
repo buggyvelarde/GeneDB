@@ -32,4 +32,17 @@ public class Polypeptide extends Feature {
         }
         return transcript;
     }
+    
+    public Gene getGene() {
+        Transcript transcript = getTranscript();
+        
+        for (FeatureRelationship relation : transcript.getFeatureRelationshipsForSubjectId()) {
+            Feature geneFeature = relation.getFeatureByObjectId();
+            if(geneFeature instanceof Gene) {
+                return (Gene)geneFeature;
+            }
+        }
+        
+        return null;
+    }
 }
