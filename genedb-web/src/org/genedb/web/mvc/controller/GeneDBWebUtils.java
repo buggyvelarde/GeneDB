@@ -51,7 +51,7 @@ import org.jdom.output.XMLOutputter;
 
 /**
  * @author art
- * 
+ *
  */
 public class GeneDBWebUtils {
 
@@ -66,7 +66,7 @@ public class GeneDBWebUtils {
     public void setSequenceDao(SequenceDao sequenceDao) {
         GeneDBWebUtils.sequenceDao = sequenceDao;
     }
-    
+
     public static Map<String, Object> prepareFeature(Feature feature, Map<String, Object> model) {
         if (feature instanceof Gene)
             return prepareGene((Gene) feature, model);
@@ -82,7 +82,7 @@ public class GeneDBWebUtils {
 
     /**
      * Populate a model object with the details of the specified gene.
-     * 
+     *
      * @param uniqueName the uniqueName of the gene
      * @param model the Map object to populate
      * @return a reference to <code>model</code>
@@ -94,7 +94,7 @@ public class GeneDBWebUtils {
         Gene gene = (Gene) sequenceDao.getFeatureByUniqueName(uniqueName, "gene");
         return prepareGene(gene, model);
     }
-    
+
     public static Map<String, Object> prepareGene(Gene gene, Map<String, Object> model) {
         model.put("gene", gene);
 
@@ -103,15 +103,15 @@ public class GeneDBWebUtils {
             logger.error(String.format("Gene '%s' has no transcripts", gene.getUniqueName()));
             return model;
         }
-        
+
         Transcript firstTranscript = null;
         for (Transcript transcript : transcripts)
             if (firstTranscript == null || transcript.getFeatureId() < firstTranscript.getFeatureId())
                 firstTranscript = transcript;
-        
+
         return prepareTranscript(firstTranscript, model);
     }
-    
+
     public static Map<String, Object> prepareTranscript(String uniqueName, Map<String, Object> model)
             throws IOException {
         model = prepareArtemisHistory(uniqueName, model);
@@ -120,17 +120,16 @@ public class GeneDBWebUtils {
     }
 
     public static Map<String,Object> prepareTranscript(Transcript transcript, Map<String,Object> model) {
-        
-        if (!model.containsKey("gene")) {
+
+        if (!model.containsKey("gene"))
             model.put("gene", transcript.getGene());
-        }
-        
+
         model.put("transcript", transcript);
-        
+
         if (transcript instanceof MRNA) {
             MRNA codingTranscript = (MRNA) transcript;
             Polypeptide polypeptide = codingTranscript.getProtein();
-            
+
             model.put("polypeptide", polypeptide);
             model.put("polyprop", calculatePepstats(polypeptide));
         }
@@ -143,37 +142,20 @@ public class GeneDBWebUtils {
             logger.warn("No residues for '" + polypeptide.getUniqueName() + "'");
             return null;
         }
-        String seqString = new String(polypeptide.getResidues());
-        Alphabet dna = DNATools.getDNA();
-        SymbolTokenization dnaToken = null;
-        SymbolList seq = null;
+        SymbolList protein = null;
         PeptideProperties pp = new PeptideProperties();
         try {
-            dnaToken = dna.getTokenization("token");
-            seq = new SimpleSymbolList(dnaToken, seqString);
-            seq = DNATools.toRNA(seq);
-            //if not divisible by three truncate
-            if(seq.length() % 3 != 0){
-              seq = seq.subList(1, seq.length() - (seq.length() %3));
-            }
-   
-            seq = RNATools.translate(seq);
+            SymbolTokenization proteinTokenization = ProteinTools.getTAlphabet().getTokenization("token");
+            protein = new SimpleSymbolList(proteinTokenization, new String(polypeptide.getResidues()));
 
-            /*
-             * Translation of GTG or TTG actually results in a Methionine if
-             * it is the start codon (all proteins start with f-Met). Therefore
-             * we need to edit the sequence.
-             */      
-             if(seq.symbolAt(1) != ProteinTools.met()){
-                 seq = new SimpleSymbolList(seq);
-                 Edit e = new Edit(1, seq.getAlphabet(), ProteinTools.met());
-                 try {
-                     seq.edit(e);
-                 } catch (IndexOutOfBoundsException e1) {
-                     e1.printStackTrace();
-                 } catch (ChangeVetoException e1) {
-                     e1.printStackTrace();
-                 }
+             try {
+                // if the seq ends with a * (termination) we need to
+                // remove the *
+                if (protein.symbolAt(protein.length()) == ProteinTools.ter())
+                    protein = protein.subList(1, protein.length() - 1);
+
+             } catch (IndexOutOfBoundsException exception) {
+                 throw new RuntimeException(exception);
              }
         } catch (BioException e) {
             logger.error("Can't translate into a protein sequence", e);
@@ -182,31 +164,31 @@ public class GeneDBWebUtils {
         IsoelectricPointCalc ipc = new IsoelectricPointCalc();
         Double cal = 0.0;
         try {
-            cal = ipc.getPI(seq, false, false);
+            cal = ipc.getPI(protein, false, false);
         } catch (IllegalAlphabetException e) {
-            logger.error(String.format("Error computing protein isoelectric point for '%s'", seq), e);
+            logger.error(String.format("Error computing protein isoelectric point for '%s'", protein), e);
         } catch (BioException e) {
-            logger.error(String.format("Error computing protein isoelectric point for '%s'", seq), e);
+            logger.error(String.format("Error computing protein isoelectric point for '%s'", protein), e);
         }
         DecimalFormat df = new DecimalFormat("#.##");
         pp.setIsoelectricPoint(df.format(cal));
-        pp.setAminoAcids(Integer.toString(seq.length()));
+        pp.setAminoAcids(Integer.toString(protein.length()));
         try {
             cal = 0.0;
-            cal = MassCalc.getMass(seq,SymbolPropertyTable.AVG_MASS,true) / 1000;
+            cal = MassCalc.getMass(protein, SymbolPropertyTable.AVG_MASS, true) / 1000;
         } catch (IllegalSymbolException e) {
             logger.error("Error computing protein mass", e);
         }
         pp.setMass(df.format(cal / 1000));
-        cal = getCharge(seq);
+        cal = getCharge(protein);
         pp.setCharge(df.format(cal));
-        return pp;        
+        return pp;
     }
 
     /**
      * Grep all references to the given id from a logfile, and remove usernames
      * etc and verbose info
-     * 
+     *
      * @param systematicId the genename
      * @param model the model returned to the view
      * @throws IOException if the log file can't be read
@@ -386,7 +368,7 @@ public class GeneDBWebUtils {
 
     public static int featureListSize(String cvTermName, String cvName) {
         int size = 0;
-        List<GeneNameOrganism> temp = sequenceDao.getFeaturesByCvTermNameAndCvName(cvTermName, cvName);
+        List<GeneNameOrganism> temp = sequenceDao.getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, cvName);
         if (temp != null) {
             return temp.size();
         }

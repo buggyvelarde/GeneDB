@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 public class GenesByCvTermAndCvController extends AbstractController {
-	
+
 	private static final String NO_VALUE_SUPPLIED = "_NO_VALUE_SUPPLIED";
-	
+
 	private SequenceDao sequenceDao;
 	private String listResultsView;
 	private String genePage;
@@ -30,15 +30,15 @@ public class GenesByCvTermAndCvController extends AbstractController {
 	@Override
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		
+
 		String cvName = ServletRequestUtils
         .getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
-		
+
 		String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName",
 		    NO_VALUE_SUPPLIED);
 		String viewName = listResultsView;
-		List<GeneNameOrganism> features = sequenceDao.getFeaturesByCvTermNameAndCvName(cvTermName, cvName);
-		
+		List<GeneNameOrganism> features = sequenceDao.getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, cvName);
+
 		if (features == null || features.size() == 0) {
 		    try {
 		    	ServletOutputStream out = response.getOutputStream();
@@ -82,7 +82,7 @@ public class GenesByCvTermAndCvController extends AbstractController {
 		        }
 		    }
 		}*/
-		
+
 		if (features.size() == 1) {
 			model = GeneDBWebUtils.prepareGene(features.get(0).getGeneName(), model);
 			viewName = genePage;
@@ -95,11 +95,11 @@ public class GenesByCvTermAndCvController extends AbstractController {
 	public void setSequenceDao(SequenceDao sequenceDao) {
 		this.sequenceDao = sequenceDao;
 	}
-	
+
 	public void setListResultsView(String listResultsView) {
 		this.listResultsView = listResultsView;
 	}
-	
+
 	public void setGenePage(String genePage) {
 		this.genePage = genePage;
 	}

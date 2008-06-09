@@ -24,7 +24,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
  *
  */
 public class SequenceDao extends BaseDao implements SequenceDaoI {
-    
+
     private static Logger logger = Logger.getLogger(org.genedb.db.dao.SequenceDao.class);
 
     public Feature getFeatureById(int id) {
@@ -39,13 +39,13 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         List<Feature> features = getHibernateTemplate().findByNamedParam(
             "from Feature where uniqueName=:name and cvTerm.name=:featureType",
             new String[] { "name", "featureType" }, new Object[] { uniqueName, featureType });
-    	
+
         if (features.size() > 0) {
             return features.get(0);
         }
         return null;
     }
-    
+
     public Feature getFeatureByUniqueName(String uniqueName, Class<? extends Feature> featureClass) {
         @SuppressWarnings("unchecked")
         List<Gene> features = getHibernateTemplate().findByNamedParam(
@@ -300,12 +300,22 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return topLevels;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<GeneNameOrganism> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName) {
+    public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName) {
+        @SuppressWarnings("unchecked")
+        List<Feature> features = getHibernateTemplate()
+                .findByNamedParam(
+                        "select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName and f.cvTerm.cv.name like :cvName",
+                        new String[] { "cvTermName", "cvName" },
+                        new Object[] { cvTermName, cvName });
+        return features;
+    }
+
+    public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvName(String cvTermName, String cvName) {
+        @SuppressWarnings("unchecked")
         List<GeneNameOrganism> features = getHibernateTemplate()
                 .findByNamedParam(
                         "select new org.gmod.schema.utils.GeneNameOrganism( " +
-                        "f1.featureByObjectId.uniqueName,f1.featureByObjectId.organism.abbreviation) " +
+                        "f1.featureByObjectId.uniqueName, f1.featureByObjectId.organism.abbreviation) " +
                         "from " +
                         "FeatureRelationship f1,FeatureRelationship f2 " +
                         "where f1.featureBySubjectId=f2.featureByObjectId and " +
@@ -316,7 +326,6 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                         new String[] { "cvTermName", "cvName" },
                         new Object[] { cvTermName, cvName });
         return features;
-
     }
 
     @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
