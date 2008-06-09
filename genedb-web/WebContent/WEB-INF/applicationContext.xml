@@ -18,19 +18,19 @@
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="messages"/>
 	</bean>
-	
+
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:project.properties" />
 	</bean>
-	
+
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
 
 
     <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.loading.TaxonNodeArrayPropertyEditor">
         <property name="taxonNodeManager" ref="taxonNodeManager" />
     </bean>
-    
-    
+
+
     <bean id="taxonNodeManager" class="org.genedb.db.loading.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
@@ -39,38 +39,38 @@
     <bean id="taxonUtils" class="org.genedb.web.mvc.controller.TaxonUtils">
     	<property name="tnm" ref="taxonNodeManager" />
     </bean>
-    
+
     <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="platformTransactionManager" ref="transactionManager" />
     </bean>
-    
+
     <bean id="cvDao" class="org.genedb.db.dao.CvDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="generalDao" ref="generalDao" />
-    </bean>    
-    
+    </bean>
+
     <bean id="luceneDao" class="org.genedb.web.mvc.controller.LuceneDao">
     </bean>
-    
+
     <bean id="generalDao" class="org.genedb.db.dao.GeneralDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="platformTransactionManager" ref="transactionManager" />
     </bean>
-        
+
     <bean id="organismDao" class="org.genedb.db.dao.OrganismDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>
-           
+
     <bean id="phylogenyDao" class="org.genedb.db.dao.PhylogenyDao" init-method="afterPropertiesSet">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
-                       
+
     <bean id="pubDao" class="org.genedb.db.dao.PubDao" init-method="afterPropertiesSet">
 		<property name="sessionFactory" ref="sessionFactory" />
     </bean>
-    
-    
+
+
     <!-- DataSource Property -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
@@ -78,7 +78,7 @@
         <property name="username"><value>${dbuser}</value></property>
         <property name="password"><value>${dbpassword}</value></property>
     </bean>
-	    
+
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
     	<property name="sessionFactory" ref="sessionFactory" />
     </bean>
@@ -104,7 +104,7 @@
  	 </props>
 	 </property>
 	</bean>
-	
+
 	<bean id="sessionFactory"
         class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
@@ -170,14 +170,14 @@
        <!-- Sequence features -->
        <value>org.gmod.schema.sequence.feature.AbstractExon</value>
        <value>org.gmod.schema.sequence.feature.AbstractGene</value>
-       <value>org.gmod.schema.sequence.feature.Chromosome</value>
+       <value>org.gmod.schema.sequence.feature.ApicoplastChromosome</value>
+       <value>org.gmod.schema.sequence.feature.Centromere</value>
        <value>org.gmod.schema.sequence.feature.Contig</value>
        <value>org.gmod.schema.sequence.feature.Exon</value>
        <value>org.gmod.schema.sequence.feature.FivePrimeUTR</value>
        <value>org.gmod.schema.sequence.feature.Gap</value>
        <value>org.gmod.schema.sequence.feature.Gene</value>
        <value>org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome</value>
-       <value>org.gmod.schema.sequence.feature.Match</value>
        <value>org.gmod.schema.sequence.feature.MRNA</value>
        <value>org.gmod.schema.sequence.feature.Polypeptide</value>
        <value>org.gmod.schema.sequence.feature.PolypeptideMotif</value>
@@ -191,6 +191,7 @@
        <value>org.gmod.schema.sequence.feature.ThreePrimeUTR</value>
        <value>org.gmod.schema.sequence.feature.Transcript</value>
        <value>org.gmod.schema.sequence.feature.TRNA</value>
+       <value>org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome</value>
        <value>org.gmod.schema.sequence.feature.ProteinMatch</value>
         </list>
        </property>
