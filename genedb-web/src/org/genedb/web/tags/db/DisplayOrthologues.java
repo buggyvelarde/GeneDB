@@ -10,6 +10,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.directwebremoting.util.Logger;
+import org.genedb.web.mvc.controller.GeneUtils;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -52,36 +53,14 @@ public class DisplayOrthologues extends SimpleTagSupport {
                         continue;
                     String product = cvTerm.getName();
                     /*
-                     * The below code gets Gene names from the
-                     * corresponding polypeptides - this isn't the right
-                     * approach and needs to be changed so that
+                     * The below line gets Gene name from the
+                     * corresponding polypeptide - this can
+                     * be changed so that
                      * something like polypeptide.getGene() can be used
                      * either
                      */
-                    Feature mRNA = null;
-                    Collection<FeatureRelationship> frs = feat
-                            .getFeatureRelationshipsForSubjectId();
-                    if (frs == null)
-                        continue;
-                    for (FeatureRelationship fr : frs) {
-                        if (fr.getCvTerm().getName().equals("derives_from")) {
-                            mRNA = fr.getFeatureByObjectId();
-                            break;
-                        }
-                    }
-                    if (mRNA == null)
-                        continue;
-                    Feature gene = null;
-                    Collection<FeatureRelationship> frs2 = mRNA
-                            .getFeatureRelationshipsForSubjectId();
-                    for (FeatureRelationship fr : frs2) {
-                        if (fr.getCvTerm().getName().equals("part_of")) {
-                            gene = fr.getFeatureByObjectId();
-                            break;
-                        }
-                    }
-                    if (gene != null)
-                        orthologs.put(feat.getUniqueName(), product);
+                    Feature gene = GeneUtils.getGeneFromPart(feat);
+                    orthologs.put(gene.getUniqueName(), product);
                 }
         }
         
