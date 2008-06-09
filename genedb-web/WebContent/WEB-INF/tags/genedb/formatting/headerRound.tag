@@ -42,7 +42,6 @@
 	</form>
 	<div id="navigation">
 		<ul id="simple-menu">
-			<li><a href="" title="Home">About Us</a></li>
 			<li>
 				<a href="" title="Home">Browse</a>
 				<ul class="w">
@@ -57,7 +56,6 @@
  					</li>
 				</ul>
 			</li>
-			<li><a href="" title="Home">Downloads</a></li>
 			<li>
 				<a href="http://pathdbsrv1a.sanger.ac.uk:8180/genedb-web/" title="Searches">Searches</a>
 				<ul>
@@ -65,19 +63,10 @@
 						<a class="w" href="http://pathdbsrv1a.sanger.ac.uk:8180/genedb-web/" title="Keyword Search">Keyword</a>
 					</li>
 					<li class="w">
-						<a class="w" href="http://pathdbsrv1a.sanger.ac.uk:8180/genedb-web/" title="Blast Search">Blast</a>
-					</li>
-					<li class="w">
-						<a class="w" href="http://pathdbsrv1a.sanger.ac.uk:8180/genedb-web/" title="Emowse Search">Emowse</a>
-					</li>
-					<li class="w">
 						<a class="w" href="http://pathdbsrv1a.sanger.ac.uk:8180/genedb-web/" title="Motif Search">Motif Search</a>
 					</li>
 				</ul>
 			</li>
-				<li>
-					<a href="http://pathdbsrv1a.sanger.ac.uk:8180/genedb-web/" title="Home" class="current">Home</a>
-				</li>
 		</ul>
 	</div>
 </div>
