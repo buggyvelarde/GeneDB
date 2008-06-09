@@ -64,9 +64,8 @@ function loadTile(chrlen, locus, tileData) {
 
     var loadingElement = document.getElementById("contextMapLoading");
     contextMapDiv.removeChild(loadingElement);
-    contextMapContent = document.createElement("div");
-    contextMapContent.id = "contextMapContent";
-    contextMapContent.style.width = Math.floor(chrlen / basesPerPixel)+"px";
+    contextMapContent = document.getElementById("contextMapContent");
+    contextMapContent.style.width = Math.round(chrlen / basesPerPixel)+"px";
 
     var geneTrackHeight = tileData.geneTrackHeight;
     var scaleTrackHeight = tileData.scaleTrackHeight;
@@ -123,6 +122,12 @@ function loadTile(chrlen, locus, tileData) {
            createArea(transcript, topPx, exonRectHeight);
         }
     }
+    
+    $("#contextMapInfoPanel img.upButton").click(
+        function() {
+            $("#contextMapInfoPanel").slideUp(200);
+        }
+    );
 }
 
 function createArea(transcript, topPx, heightPx) {
@@ -132,23 +137,50 @@ function createArea(transcript, topPx, heightPx) {
     var area = document.createElement("img");
     area.src = base + "includes/images/transparentPixel.gif";
     area.className = "transcriptBlock";
-    var leftPx = transcript.fmin / basesPerPixel;
+    var leftPx = Math.round(transcript.fmin / basesPerPixel);
+    var widthPx = Math.round((transcript.fmax - transcript.fmin) / basesPerPixel);
+    
     area.style.left = leftPx + "px";
-    area.style.width = (transcript.fmax / basesPerPixel - leftPx) + "px";
+    area.style.width = widthPx + "px";
     area.style.top = topPx + "px";
     area.style.height = heightPx + "px";
     area.onmousedown = function(event) {
+        highlightTranscript(leftPx, topPx, widthPx, heightPx);
         var gene = transcript.gene;
-        $("#contextMapInfoPanel").show('slow');
-        $("#selectedGeneName").text(gene.name);
-        $("#selectedGeneUniqueName").text(gene.uniqueName);
-        $("#selectedGeneTranscript").text(transcript.name);
-        $("#selectedGeneProducts").text(gene.uniqueName);
-        event.stopPropagation();
+        var name = gene.name;
+        if (name == null || name == "")
+            name = gene.uniqueName;
+        else
+            name += " (" + gene.uniqueName + ")";
+
+        var productArray = transcript.products;
+        var products = "";
+        if (productArray.length == 1)
+            products = productArray[0];
+        else {
+            products = "";
+            for (var i = 0; i < productArray.length; i++)
+                products += "<div class='product'>"+productArray[i]+"</div>";
+        }
+
+        $("#contextMapInfoPanel").slideDown(200);
+        $("#selectedGeneName").text(name);
+        $("#selectedGeneProducts").html(products);
+        $("#selectedGeneLocation").text(transcript.fmin + " to " +transcript.fmax);
         return false;
     };
 
     contextMapContent.appendChild(area);
+}
+
+function highlightTranscript(left, top, width, height) {
+    var highlighter = $("#highlighter");
+    highlighter.hide();
+    highlighter.css('left', (left-2) + "px")
+               .css('top', (top-2) + "px")
+               .width((width+4) + "px")
+               .height((height+4) + "px");
+    highlighter.show();
 }
 
 var beforeDragPos;

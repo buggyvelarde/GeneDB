@@ -405,6 +405,17 @@ div#proteinMap {
     width: 9.3em;
 }
 
+div.label {
+    float: left;
+    clear: left;
+    margin-bottom: 10px;
+}
+
+div.value {
+	float: left;
+	margin-left: 1em;
+}
+
 .whiteBox .round *{
   display:block;
   height:1px;

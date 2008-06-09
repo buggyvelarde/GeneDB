@@ -19,19 +19,21 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
 <div id="contextMapOuterDiv">
     <div id="contextMapTopPanel">
         <div id="contextMapThumbnailDiv"></div>
-        <div id="contextMapGeneInfo"></div>
     </div>
     <div id="contextMapDiv">
         <div id="contextMapLoading">
             <img src="<c:url value="/includes/images/default/grid/loading.gif"/>" id="contextMapLoadingImage">
             Loading...
         </div>
+        <div id="contextMapContent">
+            <div id="highlighter"></div>
+        </div>
     </div>
     <div id="contextMapInfoPanel">
-        <div class="label">Gene name</div><div class="value" id="selectedGeneName"></div>
-        <div class="label">Systematic ID</div><div class="value" id="selectedGeneUniqueName"></div>
-        <div class="label">Transcript ID</div><div class="value" id="selectedGeneTranscript"></div>
-        <div class="label">Products</div><div class="value" id="selectedGeneProducts"></div>
+        <img class="upButton" src="<c:url value="/includes/images/close-button.png"/>">
+        <div class="label">Gene:</div><div class="value" id="selectedGeneName"></div>
+        <div class="label">Products:</div><div class="value" id="selectedGeneProducts"></div>
+        <div class="label">Location:</div><div class="value" id="selectedGeneLocation"></div>
     </div>
 </div>
 
