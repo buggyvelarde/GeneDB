@@ -16,6 +16,7 @@ import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.utils.CountedName;
+import org.gmod.schema.utils.GeneNameOrganism;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 /**
@@ -300,10 +301,18 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName) {
-        List<Feature> features = getHibernateTemplate()
+    public List<GeneNameOrganism> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName) {
+        List<GeneNameOrganism> features = getHibernateTemplate()
                 .findByNamedParam(
-                        "select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName and f.cvTerm.cv.name like :cvName",
+                        "select new org.gmod.schema.utils.GeneNameOrganism( " +
+                        "f1.featureByObjectId.uniqueName,f1.featureByObjectId.organism.abbreviation) " +
+                        "from " +
+                        "FeatureRelationship f1,FeatureRelationship f2 " +
+                        "where f1.featureBySubjectId=f2.featureByObjectId and " +
+                        "f2.cvTerm.name='derives_from' and " +
+                        "f2.featureBySubjectId in ( " +
+                        "select fct.feature from FeatureCvTerm fct where " +
+                        "fct.cvTerm.name like :cvTermName and fct.cvTerm.cv.name like :cvName)",
                         new String[] { "cvTermName", "cvName" },
                         new Object[] { cvTermName, cvName });
         return features;

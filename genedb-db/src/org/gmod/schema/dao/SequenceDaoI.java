@@ -32,6 +32,7 @@ import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.utils.CountedName;
+import org.gmod.schema.utils.GeneNameOrganism;
 
 public interface SequenceDaoI extends BaseDaoI {
 
@@ -181,13 +182,13 @@ public interface SequenceDaoI extends BaseDaoI {
     public List<Feature> getFeaturesByCvTermName(String cvTermName);
     
     /**
-     * Return a list of features that have this particular cvterm 
+     * Return a list of feature(gene) uniquenames that have this particular cvterm 
      * 
      *  
      * @param cvTermName the CvTerm name
-     * @return a (possibly empty) List<Feature> of children
+     * @return a (possibly empty) List<String> of children
      */
-    public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName);
+    public List<GeneNameOrganism> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName);
     
     /**
      * Return a list of top-level features 
