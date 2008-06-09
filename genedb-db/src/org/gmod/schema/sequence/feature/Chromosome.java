@@ -5,4 +5,4 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("427")
-public abstract class Chromosome extends TopLevelFeature {}
+public class Chromosome extends TopLevelFeature {}
