@@ -90,31 +90,37 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
         
         <format:genePageSection id="analysisTools" className="whiteBox">
             <div class="heading">Analysis tools</div>
-        
-            <div id="sendTo"><form name="" action="">
-                Send
-                <select name="type">
-                    <option value="dna">Nucleotide</option>
-                    <option value="protein">Protein</option>
-                </select>
-                to
-                <select name="analysis">
-                    <option value="blast">Blast</option>
-                    <option value="omni">omniBlast</option>
-                </select>
-            </form></div>
-        
-            <form name="" action="">
+            <form name="downloadRegion" action="SequenceDownload">
                 <div>Download Region</div>
                 as
-                <select name="type">
+                <select name="downloadType">
                     <option value="fasta">FASTA</option>
                     <option value="embl">EMBL</option>
                 </select>
+                <input type="hidden" name="featureType" value="<c:out value="${chromosome.cvTerm.name}" />">
+                <input type="hidden" name="topLevelFeature" value="<c:out value="${chromosome.uniqueName}" />">
+                <input type="submit" name="Submit">
             </form>
-            <div style="margin-top: 1ex;"><a href="">GBrowse</a>&nbsp;&nbsp;&nbsp;<a href="">Synview</a></div>
+            <div style="margin-top: 1ex;">
+            	<a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Show region in Artemis</a>
+            </div>
         </format:genePageSection>
     </div>
+    
+    <!-- Comments Section -->
+    <c:if test="${fn:length(polypeptide.featureProps) > 0}">
+    	<format:genePageSection id="comments">
+        	<div class="heading">Comments</div>
+        	<table width="100%">
+    			<db:filtered-loop items="${polypeptide.featureProps}" cvTerm="comment" var="comment">
+    				<tr>
+    					<td>${comment.value}</td>
+    				</tr>
+    			</db:filtered-loop>
+	    	</table>
+	    </format:genePageSection>
+	</c:if>
+    
     
     <!-- Controlled Curation Section -->
     <db:propByName items="${polypeptide.featureCvTerms}" cv="CC_genedb_controlledcuration" var="controlledCurationTerms"/>
