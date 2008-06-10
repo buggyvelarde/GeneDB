@@ -91,7 +91,7 @@
             <propertyref name="password" />
             <propertyref name="index.base" />
         </propertyset>
-        <java fork="true" maxmemory="128m" failonerror="true" classpathref="exec-classpath" classname="org.genedb.hibernate.search.IndexChado">
+        <java fork="true" maxmemory="256m" failonerror="true" classpathref="exec-classpath" classname="org.genedb.hibernate.search.IndexChado">
             <syspropertyset refid="indexProperties" />
             <jvmarg line="-server" />
         </java>

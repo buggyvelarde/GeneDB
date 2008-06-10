@@ -4,64 +4,88 @@
 		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory name="pathdbsrv1a">
-        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.url">jdbc:postgresql://localhost:2225/malaria_workshop</property>
-        <property name="hibernate.connection.username">pathdb</property>
-        <property name="hibernate.connection.password">Pyrate_1</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-  	  	<!-- Analysis module -->
-  	    <mapping resource="org/gmod/schema/analysis/AnalysisFeature.hbm.xml"/>
-        <mapping resource="org/gmod/schema/analysis/Analysis.hbm.xml"/>
-        <mapping resource="org/gmod/schema/analysis/AnalysisProp.hbm.xml"/>
+        <mapping class="org.gmod.schema.analysis.AnalysisFeature" />
+        <mapping class="org.gmod.schema.analysis.Analysis" />
+        <mapping class="org.gmod.schema.analysis.AnalysisProp" />
         <!-- CV module -->
-    	<mapping resource="org/gmod/schema/cv/CvTermPath.hbm.xml"/>
-        <mapping resource="org/gmod/schema/cv/CvTermRelationship.hbm.xml"/>
-        <mapping resource="org/gmod/schema/cv/CvTermProp.hbm.xml"/>
-        <mapping resource="org/gmod/schema/cv/Cv.hbm.xml"/>
-        <mapping resource="org/gmod/schema/cv/CvTermSynonym.hbm.xml"/>
-        <mapping resource="org/gmod/schema/cv/CvTermDbXRef.hbm.xml"/>
-        <mapping resource="org/gmod/schema/cv/CvTerm.hbm.xml"/>
-        <mapping resource="org/gmod/schema/cv/DbXRefProp.hbm.xml"/>
+        <mapping class="org.gmod.schema.cv.CvTermPath" />
+        <mapping class="org.gmod.schema.cv.CvTermRelationship" />
+        <mapping class="org.gmod.schema.cv.CvTermProp" />
+        <mapping class="org.gmod.schema.cv.Cv" />
+        <mapping class="org.gmod.schema.cv.CvTermSynonym" />
+        <mapping class="org.gmod.schema.cv.CvTermDbXRef" />
+        <mapping class="org.gmod.schema.cv.CvTerm" />
+        <mapping class="org.gmod.schema.cv.DbXRefProp" />
         <!-- General module -->
-        <mapping resource="org/gmod/schema/general/Project.hbm.xml"/>
-        <mapping resource="org/gmod/schema/general/Db.hbm.xml"/>
-        <mapping resource="org/gmod/schema/general/Tableinfo.hbm.xml"/>
-        <mapping resource="org/gmod/schema/general/DbXRef.hbm.xml"/>
+        <mapping class="org.gmod.schema.general.Project" />
+        <mapping class="org.gmod.schema.general.Db" />
+        <mapping class="org.gmod.schema.general.Tableinfo" />
+        <mapping class="org.gmod.schema.general.DbXRef" />
         <!-- Organism module -->
-        <mapping resource="org/gmod/schema/organism/Organism.hbm.xml"/>
-        <mapping resource="org/gmod/schema/organism/OrganismProp.hbm.xml"/>   
-        <mapping resource="org/gmod/schema/organism/OrganismDbXRef.hbm.xml"/>
+        <mapping class="org.gmod.schema.organism.Organism" />
+        <mapping class="org.gmod.schema.organism.OrganismProp" />
+        <mapping class="org.gmod.schema.organism.OrganismDbXRef" />
         <!-- Phylogeny module -->
-        <mapping resource="org/gmod/schema/phylogeny/PhylotreePub.hbm.xml"/>
-		<mapping resource="org/gmod/schema/phylogeny/Phylotree.hbm.xml"/>
-		<mapping resource="org/gmod/schema/phylogeny/PhylonodeRelationship.hbm.xml"/>
-		<mapping resource="org/gmod/schema/phylogeny/PhylonodePub.hbm.xml"/>
-		<mapping resource="org/gmod/schema/phylogeny/PhylonodeProp.hbm.xml"/>
-		<mapping resource="org/gmod/schema/phylogeny/PhylonodeOrganism.hbm.xml"/>
-		<mapping resource="org/gmod/schema/phylogeny/PhylonodeDbXRef.hbm.xml"/>
-		<mapping resource="org/gmod/schema/phylogeny/Phylonode.hbm.xml"/>
-		<!-- Pub module -->
-        <mapping resource="org/gmod/schema/pub/PubProp.hbm.xml"/>
-        <mapping resource="org/gmod/schema/pub/Pub.hbm.xml"/>
-        <mapping resource="org/gmod/schema/pub/PubAuthor.hbm.xml"/>
-        <mapping resource="org/gmod/schema/pub/PubDbXRef.hbm.xml"/>
-        <mapping resource="org/gmod/schema/pub/PubRelationship.hbm.xml"/>
+        <mapping class="org.gmod.schema.phylogeny.PhylotreePub" />
+        <mapping class="org.gmod.schema.phylogeny.Phylotree" />
+        <mapping class="org.gmod.schema.phylogeny.PhylonodeRelationship" />
+        <mapping class="org.gmod.schema.phylogeny.PhylonodePub" />
+        <mapping class="org.gmod.schema.phylogeny.PhylonodeProp" />
+        <mapping class="org.gmod.schema.phylogeny.PhylonodeOrganism" />
+        <mapping class="org.gmod.schema.phylogeny.PhylonodeDbXRef" />
+        <mapping class="org.gmod.schema.phylogeny.Phylonode" />
+        <!-- Pub module -->
+        <mapping class="org.gmod.schema.pub.PubProp" />
+        <mapping class="org.gmod.schema.pub.Pub" />
+        <mapping class="org.gmod.schema.pub.PubAuthor" />
+        <mapping class="org.gmod.schema.pub.PubDbXRef" />
+        <mapping class="org.gmod.schema.pub.PubRelationship" />
         <!-- Sequence module -->
-        <mapping resource="org/gmod/schema/sequence/Feature.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeaturePub.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeaturePropPub.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureDbXRef.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureSynonym.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureRelationshipPub.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureCvTermDbXRef.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureLoc.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureCvTermPub.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureRelationshipProp.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureCvTerm.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureCvTermProp.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureProp.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/Synonym.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureRelationshipPropPub.hbm.xml"/>
-        <mapping resource="org/gmod/schema/sequence/FeatureRelationship.hbm.xml"/>
+        <mapping class="org.gmod.schema.sequence.Feature" />
+        <mapping class="org.gmod.schema.sequence.FeaturePub" />
+        <mapping class="org.gmod.schema.sequence.FeaturePropPub" />
+        <mapping class="org.gmod.schema.sequence.FeatureDbXRef" />
+        <mapping class="org.gmod.schema.sequence.FeatureSynonym" />
+        <mapping class="org.gmod.schema.sequence.FeatureRelationshipPub" />
+        <mapping class="org.gmod.schema.sequence.FeatureCvTermDbXRef" />
+        <mapping class="org.gmod.schema.sequence.FeatureLoc" />
+        <mapping class="org.gmod.schema.sequence.FeatureLocPub" />
+        <mapping class="org.gmod.schema.sequence.FeatureCvTermPub" />
+        <mapping class="org.gmod.schema.sequence.FeatureRelationshipProp" />
+        <mapping class="org.gmod.schema.sequence.FeatureCvTerm" />
+        <mapping class="org.gmod.schema.sequence.FeatureCvTermProp" />
+        <mapping class="org.gmod.schema.sequence.FeatureProp" />
+        <mapping class="org.gmod.schema.sequence.Synonym" />
+        <mapping class="org.gmod.schema.sequence.FeatureRelationshipPropPub" />
+        <mapping class="org.gmod.schema.sequence.FeatureRelationship" />
+        <!-- Sequence features -->
+        <mapping class="org.gmod.schema.sequence.feature.AbstractExon" />
+        <mapping class="org.gmod.schema.sequence.feature.AbstractGene" />
+        <mapping class="org.gmod.schema.sequence.feature.ApicoplastChromosome" />
+        <mapping class="org.gmod.schema.sequence.feature.Centromere" />
+        <mapping class="org.gmod.schema.sequence.feature.Contig" />
+        <mapping class="org.gmod.schema.sequence.feature.Exon" />
+        <mapping class="org.gmod.schema.sequence.feature.FivePrimeUTR" />
+        <mapping class="org.gmod.schema.sequence.feature.Gap" />
+        <mapping class="org.gmod.schema.sequence.feature.Gene" />
+        <mapping class="org.gmod.schema.sequence.feature.Intron" />
+        <mapping class="org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome" />
+        <mapping class="org.gmod.schema.sequence.feature.MitochondrialChromosome" />
+        <mapping class="org.gmod.schema.sequence.feature.MRNA" />
+        <mapping class="org.gmod.schema.sequence.feature.Polypeptide" />
+        <mapping class="org.gmod.schema.sequence.feature.PolypeptideMotif" />
+        <mapping class="org.gmod.schema.sequence.feature.ProductiveTranscript" />
+        <mapping class="org.gmod.schema.sequence.feature.ProteinMatch" />
+        <mapping class="org.gmod.schema.sequence.feature.Pseudogene" />
+        <mapping class="org.gmod.schema.sequence.feature.PseudogenicExon" />
+        <mapping class="org.gmod.schema.sequence.feature.PseudogenicTranscript" />
+        <mapping class="org.gmod.schema.sequence.feature.RepeatRegion" />
+        <mapping class="org.gmod.schema.sequence.feature.RRNA" />
+        <mapping class="org.gmod.schema.sequence.feature.SnRNA" />
+        <mapping class="org.gmod.schema.sequence.feature.ThreePrimeUTR" />
+        <mapping class="org.gmod.schema.sequence.feature.Transcript" />
+        <mapping class="org.gmod.schema.sequence.feature.TRNA" />
+        <mapping class="org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome" />
+        <mapping class="org.gmod.schema.sequence.feature.ProteinMatch" />
     </session-factory>
 </hibernate-configuration>

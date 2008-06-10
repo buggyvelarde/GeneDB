@@ -1,14 +1,13 @@
 package org.genedb.hibernate.search;
 
 import java.io.Console;
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.feature.Gene;
-import org.gmod.schema.sequence.feature.MRNA;
+import org.gmod.schema.sequence.feature.AbstractGene;
+import org.gmod.schema.sequence.feature.Transcript;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
@@ -16,6 +15,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
@@ -35,14 +35,14 @@ public class IndexChado {
      * The number of features to be processed in a single batch. If it's set too
      * high, we run out of heap space.
      */
-    private static final int BATCH_SIZE = 20;
+    private static final int BATCH_SIZE = 10;
 
     /**
      * Build a session factory configured with the supplied batch size, and
      * using database connection information taken from system properties. If no
      * database password is supplied, the user is prompted for one on the
      * console.
-     * 
+     *
      * @param batchSize
      * @return
      */
@@ -81,7 +81,7 @@ public class IndexChado {
 
     /**
      * Build a session factory configured with the supplied parameters.
-     * 
+     *
      * @param batchSize
      * @param databaseUrl
      * @param databaseUsername
@@ -91,8 +91,8 @@ public class IndexChado {
      */
     private static SessionFactory getSessionFactory(int batchSize, String databaseUrl,
             String databaseUsername, String databasePassword, String indexBaseDirectory) {
-        Configuration cfg = new Configuration();
-        cfg.addDirectory(new File("../genedb-db/input"));
+        Configuration cfg = new AnnotationConfiguration();
+        cfg.configure();
         cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
         cfg.setProperty("hibernate.connection.username", databaseUsername);
@@ -113,7 +113,7 @@ public class IndexChado {
 
     /**
      * Create a new session, configured with the supplied batch size.
-     * 
+     *
      * @param batchSize
      * @return
      */
@@ -128,7 +128,7 @@ public class IndexChado {
     /**
      * Index features of the specified class. First of all indexes the features
      * in batches, and then retries the failures one-by-one.
-     * 
+     *
      * @param featureClass
      * @param numBatches
      */
@@ -148,7 +148,7 @@ public class IndexChado {
      * that failed to be indexed. (An exception processing a feature will cause
      * the whole batch to fail, so it's worth trying to reindex failed features
      * one-by-one.)
-     * 
+     *
      * @param featureClass the class of features to index
      * @param numBatches the number of batches to process. If zero or negative,
      *                process all
@@ -196,12 +196,12 @@ public class IndexChado {
         results.close();
         return failedToLoad;
     }
-    
+
     /**
      * Attempt to index the provided features individually
      * (i.e. in batches of one). Used to reindex failures
      * from a batch indexing run.
-     * 
+     *
      * @param failed a set of features to reindex
      */
     private static void reindexFailedFeatures(Set<Integer> failed) {
@@ -234,7 +234,7 @@ public class IndexChado {
         else if (args.length != 0)
             throw new IllegalArgumentException("Unexpected command-line arguments");
 
-        indexFeatures(Gene.class, numBatches);
-        indexFeatures(MRNA.class, numBatches);
+        indexFeatures(AbstractGene.class, numBatches);
+        indexFeatures(Transcript.class, numBatches);
     }
 }
