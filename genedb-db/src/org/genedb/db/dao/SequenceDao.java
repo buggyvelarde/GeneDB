@@ -46,10 +46,10 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return null;
     }
 
-    public Feature getFeatureByUniqueName(String uniqueName, Class<? extends Feature> featureClass) {
+    public <T extends Feature> T getFeatureByUniqueName(String uniqueName, Class<T> featureClass) {
         @SuppressWarnings("unchecked")
-        List<Gene> features = getHibernateTemplate().findByNamedParam(
-            "from "+featureClass.getSimpleName()+" where uniqueName=:name",
+        List<T> features = getHibernateTemplate().findByNamedParam(
+            "from "+featureClass.getName()+" where uniqueName=:name",
             "name", uniqueName);
 
         if (features.size() == 0) {

@@ -113,7 +113,7 @@ public class GeneDBWebUtils {
     public static Map<String, Object> prepareTranscript(String uniqueName, Map<String, Object> model)
             throws IOException {
         model = prepareArtemisHistory(uniqueName, model);
-        Transcript transcript = (Transcript) sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
+        Transcript transcript = sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
         return prepareTranscript(transcript, model);
     }
 
