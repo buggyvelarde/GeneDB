@@ -6,6 +6,7 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.utils.CountedName;
 
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -190,5 +191,24 @@ public class CvDao extends BaseDao implements CvDaoI {
             
             return result;
         }
-
+        
+        @SuppressWarnings("unchecked")
+        public List<CountedName> getCountedNamesByCvNameAndFeature(String cvName,Polypeptide polypeptide) { 
+            
+            String query = "select new org.gmod.schema.utils.CountedName( fct.cvTerm.name, count" +
+            		" (fct)) from FeatureCvTerm fct where" +
+            		" fct.cvTerm.id in " +
+            		" (select fct.cvTerm.id from FeatureCvTerm fct, Feature f" +
+            		" where f=:polypeptide and fct.cvTerm.cv.name=:cvName" +
+            		" and fct.feature=f)" +
+            		" group by fct.cvTerm.name" +
+            		" order by fct.cvTerm.name";
+            
+            List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(query,
+                new String[]{"polypeptide","cvName"},
+                new Object[]{polypeptide,cvName});
+            
+            return countedNames;
+            
+        }
 }
