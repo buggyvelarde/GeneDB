@@ -1,5 +1,6 @@
 <%@ tag display-name="go-section" body-content="empty"%>
 <%@ attribute name="featureCvTerms" type="java.util.Collection" required="true" %>
+<%@ attribute name="featureCounts" type="java.util.Collection" required="false" %>
 <%@ attribute name="title" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -30,20 +31,16 @@
         	</c:forEach>
         </td>
         <td class="value others">
-        	<c:if test="${fn:length(featureCvTerm.cvTerm.featureCvTerms) == 1}" >
-        		0 Others
-        	</c:if>
-        	<c:if test="${fn:length(featureCvTerm.cvTerm.featureCvTerms) > 1}" >
-        		<c:set var="cnt" value="0"/>
-        		<c:forEach items="${featureCvTerm.cvTerm.featureCvTerms}" var="fct">
-        			<db:filtered-loop items="${fct.featureCvTermProps}" cvTerm="qualifier" var="qualifier" varStatus="st">
-        				<c:if test="${qualifier.value == 'NOT'}"> 
-        					${cnt++}
-        				</c:if>
-        			</db:filtered-loop>
-        		</c:forEach>
-        		<a href="<c:url value="/"/>GenesByCvTermAndCv?cvTermName=${featureCvTerm.cvTerm.name}&cvName=${featureCvTerm.cvTerm.cv.name}"> ${fn:length(featureCvTerm.cvTerm.featureCvTerms)-cnt} Others </a>
-        	</c:if>
+        	<c:forEach items="${featureCounts}" var="nc">
+        		<c:if test="${nc.name == featureCvTerm.cvTerm.name}">
+        			<c:if test="${nc.count == 1}" >
+        				0 Others
+        			</c:if>
+        			<c:if test="${nc.count > 1}" >
+        				<a href="<c:url value="/"/>GenesByCvTermAndCv?cvTermName=${featureCvTerm.cvTerm.name}&cvName=${featureCvTerm.cvTerm.cv.name}"> ${nc.count - 1} Others </a>
+        			</c:if>
+        		</c:if>
+        	</c:forEach>
         </td>
         </tr>
       </c:forEach>
