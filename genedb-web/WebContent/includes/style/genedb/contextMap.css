@@ -115,12 +115,36 @@ div#errorMessage {
 	width: 6em;
 }
 #contextMapInfoPanel .value {
-	padding-bottom: 0.2em;
+   	padding-bottom: 0.2em;
 }
 
-#contextMapInfoPanel img.upButton {
+#contextMapInfoPanel .flasher {
 	position: absolute;
-	top: 3px;
-	right: 3px;
-	cursor: pointer; 
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	display: none;
+	background-color: yellow;
+}
+
+.closeButton {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+}
+.closeButton a {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	background: transparent url(/genedb-web/includes/images/close-button.png) 0px 0px no-repeat;
+}
+.closeButton a:hover {
+    background: transparent url(/genedb-web/includes/images/close-button.png) 0px -16px no-repeat;
 }

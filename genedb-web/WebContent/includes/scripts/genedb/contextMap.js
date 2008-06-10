@@ -26,13 +26,13 @@ function getContextMapInfo(organism, chromosome, chrlen, fmin, fmax) {
 	    if ( req.readyState == 4 ) {
 	        if ( req.status == 200 ) {
 	            response = eval( "(" + req.responseText + ")" );
-	            loadTile(chrlen, (fmin+fmax)/2, response);
+	            loadTiles(chrlen, (fmin+fmax)/2, response);
                 contextMapDiv.onmousedown = startMove;
 			    document.onmousemove = doMove;
 			    document.onmouseup   = endMove; // Even if the mouse is released outside the image,
 			                                    // we still want to know about it! (Though if the mouse
 			                                    // is released outside the window, we're still screwed.)
-			    
+
 			    contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
                 contextMapDiv.style.cursor = "move";
 	        } else {
@@ -56,7 +56,7 @@ var chromosome;
 var contextMapContent, chromosomeThumbnailWindow;
 var basesPerPixel, thumbnailBasesPerPixel;
 
-function loadTile(chrlen, locus, tileData) {
+function loadTiles(chrlen, locus, tileData) {
     organism = tileData.organism;
     chromosome = tileData.chromosome;
     basesPerPixel = tileData.basesPerPixel;
@@ -70,10 +70,10 @@ function loadTile(chrlen, locus, tileData) {
     var geneTrackHeight = tileData.geneTrackHeight;
     var scaleTrackHeight = tileData.scaleTrackHeight;
     var exonRectHeight = tileData.exonRectHeight;
-    
+
     for (var tileIndex = 0; tileIndex < tileData.tiles.length; tileIndex++) {
         var tile = tileData.tiles[tileIndex];
-        
+
 	    var contextMapImage = document.createElement("img");
 	    contextMapImage.className  = "contextMapImage";
 	    contextMapImage.src    = tile.src;
@@ -83,25 +83,27 @@ function loadTile(chrlen, locus, tileData) {
 	    contextMapDiv.appendChild(contextMapContent);
 	}
 	contextMapDiv.style.height = tileData.tileHeight + "px";
-    
+
     var chromosomeThumbnailImage = document.createElement("img");
     chromosomeThumbnailImage.id  = "chromosomeThumbnailImage";
     chromosomeThumbnailImage.src = tileData.chromosomeThumbnail.src;
     contextMapThumbnailDiv.appendChild(chromosomeThumbnailImage);
-    
+
     var visibleBases = contextMapDiv.clientWidth * basesPerPixel;
-    var windowPixelWidth = visibleBases / tileData.chromosomeThumbnail.basesPerPixel;
-    
+    if (visibleBases > chrlen)
+        visibleBases = chrlen;
+    var windowPixelWidth = Math.floor(visibleBases / thumbnailBasesPerPixel);
+
     chromosomeThumbnailWindow = document.createElement("img");
     chromosomeThumbnailWindow.id = "chromosomeThumbnailWindow";
-    chromosomeThumbnailWindow.src=base + "ContextMapWindow?width=" + Math.round(windowPixelWidth);
+    chromosomeThumbnailWindow.src=base + "ContextMapWindow?width=" + windowPixelWidth;
     contextMapThumbnailDiv.appendChild(chromosomeThumbnailWindow);
-    
+
     chromosomeThumbnailWindow.onmousedown = startDragWindow;
     chromosomeThumbnailWindow.ondragstart = function() {return false;};
-    
+
     moveTo(locus/basesPerPixel - contextMapDiv.offsetWidth / 2);
-    
+
     var numPositiveTracks = tileData.positiveTracks.length;
     for (var trackIndex = 0; trackIndex < tileData.positiveTracks.length; trackIndex++) {
        var track = tileData.positiveTracks[trackIndex];
@@ -122,10 +124,11 @@ function loadTile(chrlen, locus, tileData) {
            createArea(transcript, topPx, exonRectHeight);
         }
     }
-    
-    $("#contextMapInfoPanel img.upButton").click(
+
+    $("#contextMapInfoPanel .closeButton").click(
         function() {
             $("#contextMapInfoPanel").slideUp(200);
+            $("#highlighter").hide();
         }
     );
 }
@@ -139,7 +142,7 @@ function createArea(transcript, topPx, heightPx) {
     area.className = "transcriptBlock";
     var leftPx = Math.round(transcript.fmin / basesPerPixel);
     var widthPx = Math.round((transcript.fmax - transcript.fmin) / basesPerPixel);
-    
+
     area.style.left = leftPx + "px";
     area.style.width = widthPx + "px";
     area.style.top = topPx + "px";
@@ -163,7 +166,8 @@ function createArea(transcript, topPx, heightPx) {
                 products += "<div class='product'>"+productArray[i]+"</div>";
         }
 
-        $("#contextMapInfoPanel").slideDown(200);
+        $("#contextMapInfoPanel:visible .flasher").fadeIn(20).fadeOut(200);
+        $("#contextMapInfoPanel:hidden").slideDown(200);
         $("#selectedGeneName").text(name);
         $("#selectedGeneProducts").html(products);
         $("#selectedGeneLocation").text(transcript.fmin + " to " +transcript.fmax);
@@ -204,7 +208,7 @@ function startDragWindow(event) {
     velocity = 0;
     dragStartX = event.clientX;
     beforeDragPos = parseFloat(chromosomeThumbnailWindow.style.left);
-    
+
     return false;
 }
 
@@ -215,7 +219,7 @@ function startMove(event) {
     // is moved back into the document. If the user then clicks again
     // on the context map, we don't want to start a new drag.
 	if (dragging) return false;
-	
+
 	if (!event) event = window.event; // IE is so broken
 	dragStartX = event.clientX;
     dragging = true;
@@ -238,7 +242,7 @@ function doMove(event) {
 	if (!dragging && !draggingWindow) return;
 
 	if (!event) event = window.event; // IE is so broken
-	
+
 	var newPos;
 	if (draggingWindow) {
 	    var newWindowPos = Math.round(beforeDragPos + event.clientX - dragStartX);
@@ -250,21 +254,22 @@ function doMove(event) {
             timeStamp = event.timeStamp;
         else
             timeStamp = new Date();
-        
+
         newPos = Math.round(dragStartX - beforeDragPos - event.clientX);
         velocity = (event.clientX - prevX) / (timeStamp - prevTimeStamp);
         prevTimeStamp = timeStamp;
     }
-    
+
     moveTo(newPos);
 	prevX = event.clientX;
 }
 
 function moveTo(newPos) {
-    if (newPos < 0)
+    var contextMapContentWidth = parseInt(contextMapContent.style.width);
+    if (newPos < 0 || contextMapContentWidth <= contextMapDiv.clientWidth)
         newPos = 0;
-    else if (newPos + contextMapDiv.clientWidth > parseInt(contextMapContent.style.width))
-        newPos = parseInt(contextMapContent.style.width) - contextMapDiv.clientWidth;
+    else if (newPos + contextMapDiv.clientWidth > contextMapContentWidth)
+        newPos = contextMapContentWidth - contextMapDiv.clientWidth;
 
     contextMapContent.style.left = -newPos + "px";
     chromosomeThumbnailWindow.style.left = Math.round(newPos * basesPerPixel / thumbnailBasesPerPixel) + "px";
