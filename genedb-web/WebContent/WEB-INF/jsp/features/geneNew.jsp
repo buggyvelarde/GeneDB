@@ -87,6 +87,12 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
                     chromosome ${chromosome.displayName}
                 </td>
             </tr>
+            <tr>
+            	<td class="label">See Also</td>
+            	<td class="value">
+            		PlasmoDB , TDRtargets
+            	</td>
+            </tr>
             </table>
         </format:genePageSection>
         
@@ -110,19 +116,19 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
     </div>
     
     <!-- Comments Section -->
-    <c:if test="${fn:length(polypeptide.featureProps) > 0}">
-    	<format:genePageSection id="comments">
-        	<div class="heading">Comments</div>
-        	<table width="100%">
-    			<db:filtered-loop items="${polypeptide.featureProps}" cvTerm="comment" var="comment">
-    				<tr>
-    					<td>${comment.value}</td>
-    				</tr>
-    			</db:filtered-loop>
+    <db:propByName items="${polypeptide.featureProps}" cvTerm="comment" var="comment"/>
+    <c:if test="${fn:length(comment) > 0}">
+		<format:genePageSection id="comment">
+			<div class="heading">Comments</div>
+			<table width="100%">
+	   		<db:filtered-loop items="${polypeptide.featureProps}" cvTerm="comment" var="comment" varStatus="status">
+		   		<tr>
+		   			<td>${comment.value}</td>
+		   		</tr>
+	    	</db:filtered-loop>
 	    	</table>
-	    </format:genePageSection>
+		</format:genePageSection>
 	</c:if>
-    
     
     <!-- Controlled Curation Section -->
     <db:propByName items="${polypeptide.featureCvTerms}" cv="CC_genedb_controlledcuration" var="controlledCurationTerms"/>
