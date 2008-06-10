@@ -76,7 +76,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         
         //String orgNames = TaxonUtils.getOrgNamesInHqlFormat(taxonNodes);
         String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrg());
-
+        
         List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), orgNames);
         
         if (results == null || results.size() == 0) {
