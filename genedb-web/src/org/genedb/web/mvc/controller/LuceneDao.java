@@ -16,7 +16,7 @@ public class LuceneDao {
 
     private static final Logger logger = Logger.getLogger(LuceneDao.class);
 
-    private String luceneIndexDirectory;
+    private String luceneIndexDirectoryName;
     
     // Effectively disable the clause limit.
     // (Wildcard and range queries are expanded into many clauses.)
@@ -32,7 +32,7 @@ public class LuceneDao {
      * @throws IOException
      */
     public IndexReader openIndex(String indexName) throws IOException {
-        String indexDir = String.format("%s/%s", luceneIndexDirectory, indexName);
+        String indexDir = String.format("%s/%s", luceneIndexDirectoryName, indexName);
         logger.info(String.format("Opening Lucene index at '%s'", indexDir));
         return IndexReader.open(indexDir);
     }
@@ -80,7 +80,7 @@ public class LuceneDao {
         }
     }
 
-	public void setLuceneIndexDirectory(String luceneIndexDirectory) {
-		this.luceneIndexDirectory = luceneIndexDirectory;
+	public void setLuceneIndexDirectoryName(String luceneIndexDirectoryName) {
+		this.luceneIndexDirectoryName = luceneIndexDirectoryName;
 	}
 }
