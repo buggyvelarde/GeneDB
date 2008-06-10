@@ -331,7 +331,7 @@
     </bean>
 
     <bean id="BrowseCategoryController" class="org.genedb.web.mvc.controller.BrowseCategoryController">
-        <!-- <property name="sessionForm" value="true"/> -->
+        <property name="sessionForm" value="true"/>
         <property name="commandName" value="browseCategory"/>
 		<property name="commandClass" value="org.genedb.web.mvc.controller.BrowseCategoryBean" />
 		<property name="cvDao" ref="cvDao"/>
@@ -342,7 +342,7 @@
     </bean>
 
     <bean id="BrowseTermController" class="org.genedb.web.mvc.controller.BrowseTermController">
-        <!-- <property name="sessionForm" value="true"/> -->
+        <property name="sessionForm" value="true"/>
         <property name="commandName" value="browseTerm"/>
 		<property name="commandClass" value="org.genedb.web.mvc.controller.BrowseTermBean" />
 		<property name="sequenceDao" ref="sequenceDao"/>
@@ -354,6 +354,7 @@
 
 	<bean id="GeneDBWebUtils" class="org.genedb.web.mvc.controller.GeneDBWebUtils">
 		<property name="sequenceDao" ref="sequenceDao"/>
+		<property name="cvDao" ref="cvDao"/>
 		<property name="grep" ref="grep"/>
 	</bean>
 
