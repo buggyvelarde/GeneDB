@@ -117,45 +117,45 @@
     li.selected { background-color: #ffb; }
     
 </style>
-<body onload="doSomething(); DWRUtil.useLoadingMessage(); createAutoCompleter()">
-<format:header name="Browse By Term"/>
-
-
-<p>This is a page for a browse by term search
-
-<form:form action="BrowseTerm" commandName="browseTerm" method="get" onsubmit="return check()">
-<table>
-<tr><td><form:errors path="*" /></td></tr>
-    <tr>
-      <td>Organisms:</td>
-      <td><div id="container"><db:phylogeny/></div></td>
-      <td>You can choose either an individual organism or a group of them. (Note this is a temporary select box)</td>
-    </tr>
-    <tr>
-      <td></td>
-      <td><form:input id="selected" readonly="readonly" path="org"/></td>
-    </tr>
-    <tr>
-	  <td>Browse category:</td>
-	  <td><form:select id="category" path="category" items="${categories}" /></td>
-	  <td></td>
-    </tr>
-        <tr>
-	  <td>Term:</td>
-	  <td><form:input id="textInput" path="term" size="50"/><div style="background-color: #2C5F93;" id="suggestions"></div></td>
-	  <td>This should be an auto-complete or subquery</td>
-    </tr>
-    <!-- <tr>
-	  <td>Feature Type:</td>
-	  <td>Gene</td>
-	  <td>Restrict the type of features searched for</td>
-    </tr> -->
-    <tr>
-      <td>&nbsp;</td>
-	  <td colspan="2"><input type="submit" value="Submit" /> <input type="reset" value="reset" onclick="resetall()"/></td>
-    </tr>
-
-</table>
-</form:form>
-
+<format:headerRound title="Browse By Term" onLoad="doSomething(); DWRUtil.useLoadingMessage(); createAutoCompleter()" bodyClass="genePage">
+<st:init/>
+</format:headerRound>
+<div id="geneDetails">
+	<format:genePageSection id="browseTerm" className="whiteBox">
+		<form:form action="BrowseTerm" commandName="browseTerm" method="get" onsubmit="">
+			<table>
+				<tr>
+					<td><form:errors path="*" /></td>
+				</tr>
+		    	<tr>
+		      		<td>Organisms:</td>
+		      		<td>
+			      		<select name="org">
+			      			<option value="Plasmodium">Plasmodium</option>
+			      			<option value="Pfalciparum">Pfalciparum</option>
+			      			<option value="Pberghei">Pberghei</option>
+			      			<option value="Pchabaudi">Pchabaudi</option>
+			      			<option value="Pknowlesi">Pknowlesi</option>
+			      			<option value="Pvivax">Pvivax</option>
+			      			<option value="Pyoelii">Pyoelii</option>
+			      		</select>
+			      	</td>
+		    	</tr>
+		    	<tr>
+			  		<td>Browse category:</td>
+			  		<td><form:select id="category" path="category" items="${categories}" /></td>
+			  		<td></td>
+		    	</tr>
+		        <tr>
+			  		<td>Term:</td>
+			  		<td><form:input id="textInput" path="term" size="50"/><div style="background-color: #2C5F93;" id="suggestions"></div></td>
+		    	</tr>
+		    	<tr>
+		      		<td>&nbsp;</td>
+			  		<td colspan="2"><input type="submit" value="Submit" /> <input type="reset" value="reset" onclick="resetall()"/></td>
+		    	</tr>
+			</table>
+		</form:form>
+	</format:genePageSection>
+</div>
 <format:footer />
