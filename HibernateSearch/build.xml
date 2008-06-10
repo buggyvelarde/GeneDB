@@ -33,7 +33,7 @@
             <file name="spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" />
         </filelist>
     </path>
-    
+
     <target name="destdir">
         <mkdir dir="ant-build"/>
         <mkdir dir="ant-build/jar"/>
@@ -80,7 +80,7 @@
     <target name="IndexChado" depends="anttasks,index.jar">
         <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="ant-build/tasks" />
 
-        <property name="database.url" value="jdbc:postgresql://localhost:11111/malaria_workshop" />
+        <property name="database.url" value="jdbc:postgresql://localhost:18000/malaria_workshop" />
         <property name="database.user" value="pathdb" />
         <password name="database.password" prompt="Password for ${database.user}@${database.url}" />
         <property name="index.base" value="/tmp" />
