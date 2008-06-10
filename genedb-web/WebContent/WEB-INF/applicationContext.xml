@@ -51,6 +51,7 @@
     </bean>
 
     <bean id="luceneDao" class="org.genedb.web.mvc.controller.LuceneDao">
+    	<property name="luceneIndexDirectoryName" value="${lucene.indexDirectory}" />
     </bean>
 
     <bean id="generalDao" class="org.genedb.db.dao.GeneralDao" init-method="afterPropertiesSet">

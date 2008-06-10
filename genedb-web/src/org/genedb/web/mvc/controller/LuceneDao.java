@@ -1,7 +1,6 @@
 package org.genedb.web.mvc.controller;
 
 import java.io.IOException;
-import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -17,21 +16,16 @@ public class LuceneDao {
 
     private static final Logger logger = Logger.getLogger(LuceneDao.class);
 
-    private static final String PROP_LUCENE_INDEX_DIRECTORY = "lucene.indexDirectory";
-
-    private static final ResourceBundle projectProperties = ResourceBundle.getBundle("project");
-    private static final String luceneIndexDirectory = projectProperties
-            .getString(PROP_LUCENE_INDEX_DIRECTORY);
+    private String luceneIndexDirectory;
     
-    static {
-        // Effectively disable the clause limit.
-        // (Wildcard and range queries are expanded into many clauses.)
-        BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
+    // Effectively disable the clause limit.
+    // (Wildcard and range queries are expanded into many clauses.)
+    public LuceneDao() {
+    	BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
     }
 
     /**
-     * Open the named Lucene index from the default location. (The default
-     * location is specifed by lucene.indexDirectory in project.properties.)
+     * Open the named Lucene index from the default location.
      * 
      * @param indexName The name of the index
      * @return
@@ -85,4 +79,8 @@ public class LuceneDao {
                 query), e);
         }
     }
+
+	public void setLuceneIndexDirectory(String luceneIndexDirectory) {
+		this.luceneIndexDirectory = luceneIndexDirectory;
+	}
 }
