@@ -47,6 +47,43 @@ insert into db (name, description) values (
 		'Local values for where we need a dbxref eg for new cvterms'
 );
 
+--
+-- Add url prefix to existing dbs
+--
+update db set urlprefix='http://www.ebi.ac.uk/interpro/IEntry?ac=' 
+	where name='InterPro';
+
+update db set urlprefix='http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=' 
+	where name='SGD';
+
+update db set urlprefix='http://smart.embl-heidelberg.de/smart/do_annotation.pl?&BLAST=DUMMY&DOMAIN=' 
+	where name='SMART';
+
+update db set urlprefix='http://tdrtargets.org/targets/view?gene_name='
+	where name='TDRtargets';
+
+update db set urlprefix='http://www.ebi.uniprot.org/entry/'
+	where name='UniProt';
+
+update db set urlprefix='http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id='
+	where name='PlasmoDB';
+
+update db set urlprefix='http://www.brenda.uni-koeln.de/php/result_flat.php3?ecno='
+	where name='BRENDA';
+
+update db set urlprefix='http://www.ebi.ac.uk/cgi-bin/expasyfetch?'
+	where name='EMBL';
+
+update db set urlprefix='http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId='
+	where name='PDB';
+
+update db set urlprefix='http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId='
+	where name='Pfam';
+
+update db set urlprefix='http://ca.expasy.org/cgi-bin/prosite-search-ac?'
+	where name='Prosite';
+
+
 
 --
 -- ----------------------
