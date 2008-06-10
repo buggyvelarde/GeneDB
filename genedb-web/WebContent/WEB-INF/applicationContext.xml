@@ -178,6 +178,7 @@
        <value>org.gmod.schema.sequence.feature.FivePrimeUTR</value>
        <value>org.gmod.schema.sequence.feature.Gap</value>
        <value>org.gmod.schema.sequence.feature.Gene</value>
+       <value>org.gmod.schema.sequence.feature.Intron</value>
        <value>org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome</value>
        <value>org.gmod.schema.sequence.feature.MRNA</value>
        <value>org.gmod.schema.sequence.feature.Polypeptide</value>
