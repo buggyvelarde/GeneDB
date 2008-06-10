@@ -130,7 +130,6 @@
         <copy todir="${finaldest.webapps}.tmp/WEB-INF/classes">
             <fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
         </copy>
-        <copy file="property-file.${deploy}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
     </target>
     
 	<target name="application-deploy" /> <!-- depends="deploy-Jogra" -->
