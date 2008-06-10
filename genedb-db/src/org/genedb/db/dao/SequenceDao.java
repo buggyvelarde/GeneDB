@@ -310,17 +310,23 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features;
     }
 
+    /**
+     * Given the specification of a CvTerm, find all the genes that
+     * have transcripts that have polypeptides that have this CvTerm
+     * associated to them. In practice, this is used to get a list of
+     * genes that have a particular Gene Ontology annotation, for example.
+     */
     public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvName(String cvTermName, String cvName) {
         @SuppressWarnings("unchecked")
         List<GeneNameOrganism> features = getHibernateTemplate()
                 .findByNamedParam(
                         "select new org.gmod.schema.utils.GeneNameOrganism( " +
-                        "f1.featureByObjectId.uniqueName, f1.featureByObjectId.organism.abbreviation) " +
+                        "transcript_gene.featureByObjectId.uniqueName, transcript_gene.featureByObjectId.organism.abbreviation) " +
                         "from " +
-                        "FeatureRelationship f1,FeatureRelationship f2 " +
-                        "where f1.featureBySubjectId=f2.featureByObjectId and " +
-                        "f2.cvTerm.name='derives_from' and " +
-                        "f2.featureBySubjectId in ( " +
+                        "FeatureRelationship transcript_gene, FeatureRelationship polypeptide_transcript " +
+                        "where transcript_gene.featureBySubjectId=polypeptide_transcript.featureByObjectId and " +
+                        "polypeptide_transcript.cvTerm.name='derives_from' and " +
+                        "polypeptide_transcript.featureBySubjectId in ( " +
                         "select fct.feature from FeatureCvTerm fct where " +
                         "fct.cvTerm.name like :cvTermName and fct.cvTerm.cv.name like :cvName)",
                         new String[] { "cvTermName", "cvName" },
