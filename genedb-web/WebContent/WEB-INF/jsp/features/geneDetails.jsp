@@ -76,7 +76,7 @@
             <input type="submit" name="Submit">
         </form>
         <div style="margin-top: 1ex;">
-            <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Show region in Artemis</a>
+            <br><a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Show region in Artemis</a>
         </div>
     </format:genePageSection>
 </div>
