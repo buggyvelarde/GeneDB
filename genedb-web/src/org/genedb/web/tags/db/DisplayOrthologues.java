@@ -10,18 +10,15 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.directwebremoting.util.Logger;
-import org.genedb.web.mvc.controller.GeneUtils;
-import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.sequence.feature.Gene;
+import org.gmod.schema.sequence.feature.AbstractGene;
 import org.gmod.schema.sequence.feature.Polypeptide;
 
 /**
  * Displays orthologous (cluster and individual) for a particular gene on gene
  * page
- * 
+ *
  * @author Chinmay Patel (cp2)
  */
 public class DisplayOrthologues extends SimpleTagSupport {
@@ -41,23 +38,26 @@ public class DisplayOrthologues extends SimpleTagSupport {
         for (FeatureRelationship featRel : featureRels) {
             if (!"orthologous_to".equals(featRel.getCvTerm().getName()))
                 continue;
-            
+
             Feature feat =  featRel.getFeatureByObjectId();
             if (feat instanceof Polypeptide) {
-                Gene gene = ((Polypeptide)feat).getGene();
-                orthologs.put(gene.getUniqueName(), gene.getProductsAsTabSeparatedString());
+                AbstractGene gene = ((Polypeptide)feat).getGene();
+                if (gene == null)
+                    logger.error(String.format("Polypeptide '%s' (ID=%d) has no associated gene!", feat.getUniqueName(), feat.getFeatureId()));
+                else
+                    orthologs.put(gene.getUniqueName(), gene.getProductsAsTabSeparatedString());
             }
             if ("protein_match".equals(feat.getCvTerm().getName())) {
                 int clusterSize = feat.getFeatureRelationshipsForObjectId().size();
                 clusterSizes.put(feat.getUniqueName(), clusterSize);
                 logger.info(String.format("cluster name - %s  %d others", feat.getUniqueName(),
                     clusterSize));
-            } 
+            }
         }
-        
+
         if (clusterSizes.isEmpty() && orthologs.isEmpty())
             return;
-        
+
         PrintWriter out = new PrintWriter(getJspContext().getOut(), true);
 
         for (Map.Entry<String, Integer> entry : clusterSizes.entrySet()) {
@@ -73,11 +73,11 @@ public class DisplayOrthologues extends SimpleTagSupport {
                 first = false;
                 out.println("<table>");
                 out.println("<tr>");
-                
+
             }
             String name = entry.getKey();
             String product = entry.getValue();
-            
+
             out.printf("<td> <a href=\"NamedFeature?name=%s\"> %1$s </a></td><td>%s</td>", name, product);
             out.println("</tr>");
         }
