@@ -27,7 +27,7 @@
         </td>
         <td class="value accession">
         	<c:forEach items="${featureCvTerm.featureCvTermDbXRefs}" var="fctdbx">
-        		${fctdbx.dbXRef.db.name}${fctdbx.dbXRef.accession}
+        		<a href="${fctdbx.dbXRef.db.urlPrefix}${fctdbx.dbXRef.accession}">${fctdbx.dbXRef.db.name}:${fctdbx.dbXRef.accession}</a>
         	</c:forEach>
         </td>
         <td class="value others">
