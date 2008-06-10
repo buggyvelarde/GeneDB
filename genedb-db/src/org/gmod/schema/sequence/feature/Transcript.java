@@ -36,7 +36,7 @@ public abstract class Transcript extends Feature {
     public AbstractGene getGene() {
         if (gene != null)
             return gene;
-        
+
         for (FeatureRelationship relation : getFeatureRelationshipsForSubjectId()) {
             Feature geneFeature = relation.getFeatureByObjectId();
             if (geneFeature instanceof Gene) {
@@ -54,9 +54,9 @@ public abstract class Transcript extends Feature {
     /**
      * Get the uniqueName of the gene associated to this transcript.
      * Equivalent to <code>getGene().getUniqueName()</code>.
-     * 
+     *
      * Indexed as <code>gene</code> in the Lucene index.
-     * 
+     *
      * @return
      */
     @Transient
@@ -68,7 +68,7 @@ public abstract class Transcript extends Feature {
     /**
      * Change the gene associated with this transcript.
      * Assumes that there already is an associated gene.
-     * 
+     *
      * @param gene
      */
     public void setGene(AbstractGene gene) {
@@ -87,15 +87,15 @@ public abstract class Transcript extends Feature {
     }
 
     @Transient
-    Collection<Exon> getExons() {
+    public Collection<Exon> getExons() {
         List<Exon> exons = new ArrayList<Exon>();
-        
+
         for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
             Feature feature = relation.getFeatureBySubjectId();
             if (feature instanceof Exon)
                 exons.add((Exon) feature);
         }
-        
+
         return exons;
     }
 
@@ -103,7 +103,7 @@ public abstract class Transcript extends Feature {
     @Field(name = "exonlocs", store = Store.YES)
     public String getExonLocs() {
         StringBuilder locs = new StringBuilder();
-    
+
         boolean first = true;
         for (AbstractExon exon : getExons()) {
             if (first)
@@ -112,7 +112,7 @@ public abstract class Transcript extends Feature {
                 locs.append(',');
             locs.append(exon.getLocAsString());
         }
-        
+
         return locs.toString();
     }
 
