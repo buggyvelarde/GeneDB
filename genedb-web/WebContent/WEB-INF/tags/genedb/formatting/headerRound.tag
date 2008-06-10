@@ -43,6 +43,17 @@
 	<div id="navigation">
 		<ul id="simple-menu">
 			<li>
+				<a href="http://pathdbsrv1a.sanger.ac.uk:8180/genedb-web/" title="Searches">Searches</a>
+				<ul>
+					<li class="w">
+						<a class="w" href="<c:url value="/NamedFeature"/>" title="Name Search">By Name/Product</a>
+					</li>
+					<li class="w">
+						<a class="w" href="<c:url value="/"/>" title="Motif Search">Motif Search</a>
+					</li>
+				</ul>
+			</li>
+			<li>
 				<a href="" title="Home">Browse</a>
 				<ul class="w">
 					<li class="w">
@@ -54,17 +65,6 @@
  					<li class="w">
  						<a class="w" href="<c:url value="/"/>" title="Browse GO Terms">GO Terms</a>
  					</li>
-				</ul>
-			</li>
-			<li>
-				<a href="http://pathdbsrv1a.sanger.ac.uk:8180/genedb-web/" title="Searches">Searches</a>
-				<ul>
-					<li class="w">
-						<a class="w" href="<c:url value="/"/>" title="Keyword Search">Keyword</a>
-					</li>
-					<li class="w">
-						<a class="w" href="<c:url value="/"/>" title="Motif Search">Motif Search</a>
-					</li>
 				</ul>
 			</li>
 		</ul>
