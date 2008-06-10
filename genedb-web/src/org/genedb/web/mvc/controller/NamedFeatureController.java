@@ -42,7 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Looks up a feature by uniquename, and possibly synonyms
- * 
+ *
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
@@ -53,7 +53,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private String listResultsView;
     private SequenceDao sequenceDao;
     private LuceneDao luceneDao;
-    private String geneView;
+    private String geneView, geneDetailsView;
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
@@ -127,6 +127,8 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
                 historyManager.addHistoryItems("name lookup '" + nlb + "'", ids);
             }
         }
+        if (geneView.equals(viewName) && nlb.isDetailsOnly())
+            viewName = geneDetailsView;
         return new ModelAndView(viewName, model);
     }
 
@@ -145,6 +147,10 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     public void setGeneView(String geneView) {
         this.geneView = geneView;
     }
+
+    public void setGeneDetailsView(String geneDetailsView) {
+        this.geneDetailsView = geneDetailsView;
+    }
 }
 
 class NameLookupBean {
@@ -154,6 +160,7 @@ class NameLookupBean {
     private String featureType = "gene";
     private boolean useProduct = false;
     private boolean history = false;
+    private boolean detailsOnly = false;
     private String orgs;
 
     public String getOrgs() {
@@ -208,6 +215,14 @@ class NameLookupBean {
 
     public void setHistory(boolean history) {
         this.history = history;
+    }
+
+    public boolean isDetailsOnly() {
+        return detailsOnly;
+    }
+
+    public void setDetailsOnly(boolean detailsOnly) {
+        this.detailsOnly = detailsOnly;
     }
 
     @Override

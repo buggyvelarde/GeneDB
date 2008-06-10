@@ -10,43 +10,45 @@ function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax) {
     contextMapGeneInfo = document.getElementById("contextMapGeneInfo");
 
     getContextMapInfo(organism, chromosome, chrlen, fmin, fmax);
+
+    $.historyInit(reloadDetails);
 }
 
 function getContextMapInfo(organism, chromosome, chrlen, fmin, fmax) {
-	var url = base + "ContextMap?organism="+organism+"&chromosome="+chromosome+"&chromosomeLength="+chrlen+
-	                   "&thumbnailDisplayWidth="+contextMapThumbnailDiv.clientWidth;
-	var req;
-	if (window.XMLHttpRequest)
-	   req = new XMLHttpRequest();
-	else
-	   req = new ActiveXObject('Microsoft.XMLHTTP');
-	req.open( "GET", url, true );
+  var url = base + "ContextMap?organism="+organism+"&chromosome="+chromosome+"&chromosomeLength="+chrlen+
+                     "&thumbnailDisplayWidth="+contextMapThumbnailDiv.clientWidth;
+  var req;
+  if (window.XMLHttpRequest)
+     req = new XMLHttpRequest();
+  else
+     req = new ActiveXObject('Microsoft.XMLHTTP');
+  req.open( "GET", url, true );
 
-	req.onreadystatechange = function () {
-	    if ( req.readyState == 4 ) {
-	        if ( req.status == 200 ) {
-	            response = eval( "(" + req.responseText + ")" );
-	            loadTiles(chrlen, (fmin+fmax)/2, response);
+  req.onreadystatechange = function () {
+      if ( req.readyState == 4 ) {
+          if ( req.status == 200 ) {
+              response = eval( "(" + req.responseText + ")" );
+              loadTiles(chrlen, (fmin+fmax)/2, response);
                 contextMapDiv.onmousedown = startMove;
-			    document.onmousemove = doMove;
-			    document.onmouseup   = endMove; // Even if the mouse is released outside the image,
-			                                    // we still want to know about it! (Though if the mouse
-			                                    // is released outside the window, we're still screwed.)
+          document.onmousemove = doMove;
+          document.onmouseup   = endMove; // Even if the mouse is released outside the image,
+                                          // we still want to know about it! (Though if the mouse
+                                          // is released outside the window, we're still screwed.)
 
-			    contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
+          contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
                 contextMapDiv.style.cursor = "move";
-	        } else {
-	            var loadingElement = document.getElementById("contextMapLoading");
+          } else {
+              var loadingElement = document.getElementById("contextMapLoading");
                 contextMapDiv.removeChild(loadingElement);
                 var errorMessage = document.createElement("div");
                 errorMessage.id = "errorMessage";
                 errorMessage.innerText = errorMessage.textContent
                     = "Error: failed to load context map";
                 contextMapDiv.appendChild(errorMessage);
-	        }
-	        req = null;
-	        loaded = true;
-	    }
+          }
+          req = null;
+          loaded = true;
+      }
     };
     req.send(null);
 }
@@ -55,6 +57,7 @@ var organism;
 var chromosome;
 var contextMapContent, chromosomeThumbnailWindow;
 var basesPerPixel, thumbnailBasesPerPixel;
+var selectedTranscript = null;
 
 function loadTiles(chrlen, locus, tileData) {
     organism = tileData.organism;
@@ -72,17 +75,17 @@ function loadTiles(chrlen, locus, tileData) {
     var exonRectHeight = tileData.exonRectHeight;
 
     for (var tileIndex = 0; tileIndex < tileData.tiles.length; tileIndex++) {
-        var tile = tileData.tiles[tileIndex];
+      var tile = tileData.tiles[tileIndex];
 
-	    var contextMapImage = document.createElement("img");
-	    contextMapImage.className  = "contextMapImage";
-	    contextMapImage.src    = tile.src;
-	    contextMapImage.width  = tile.width;
-	    contextMapImage.style.left = (tile.start / basesPerPixel) + "px";
-	    contextMapContent.appendChild(contextMapImage);
-	    contextMapDiv.appendChild(contextMapContent);
-	}
-	contextMapDiv.style.height = tileData.tileHeight + "px";
+      var contextMapImage = document.createElement("img");
+      contextMapImage.className  = "contextMapImage";
+      contextMapImage.src    = tile.src;
+      contextMapImage.width  = tile.width;
+      contextMapImage.style.left = (tile.start / basesPerPixel) + "px";
+      contextMapContent.appendChild(contextMapImage);
+      contextMapDiv.appendChild(contextMapContent);
+  }
+  contextMapDiv.style.height = tileData.tileHeight + "px";
 
     var chromosomeThumbnailImage = document.createElement("img");
     chromosomeThumbnailImage.id  = "chromosomeThumbnailImage";
@@ -125,12 +128,32 @@ function loadTiles(chrlen, locus, tileData) {
         }
     }
 
-    $("#contextMapInfoPanel .closeButton").click(
-        function() {
-            $("#contextMapInfoPanel").slideUp(200);
-            $("#highlighter").hide();
-        }
-    );
+    $("#contextMapInfoPanel .closeButton").click(deselectTranscript);
+    $("#contextMapInfoPanel").click(function(event) { event.stopPropagation(); });
+    $("#geneDetails").click(deselectTranscript);
+    $("#contextMapInfoPanel #loadDetails a").click(function() {
+        var hash = this.href;
+        hash = hash.replace(/^.*#/, '');
+        // moves to a new page.
+        // pageload is called at once.
+        $.historyLoad(hash);
+        return false;
+    });
+}
+
+function reloadDetails(name) {
+    if (name == null || name == "")
+        return;
+    deselectTranscript();
+    $("#geneDetails").fadeTo("slow", 0.1).load("/genedb-web/NamedFeature?name="+name+"&detailsOnly=true", null, function () {
+        $("#geneDetails").stop().fadeTo("fast", 1);
+    });
+}
+
+function deselectTranscript() {
+    $("#contextMapInfoPanel:visible").slideUp(200);
+    $("#highlighter").hide();
+    selectedTranscript = null;
 }
 
 function createArea(transcript, topPx, heightPx) {
@@ -148,29 +171,8 @@ function createArea(transcript, topPx, heightPx) {
     area.style.top = topPx + "px";
     area.style.height = heightPx + "px";
     area.onmousedown = function(event) {
+        selectedTranscript = transcript;
         highlightTranscript(leftPx, topPx, widthPx, heightPx);
-        var gene = transcript.gene;
-        var name = gene.name;
-        if (name == null || name == "")
-            name = gene.uniqueName;
-        else
-            name += " (" + gene.uniqueName + ")";
-
-        var productArray = transcript.products;
-        var products = "";
-        if (productArray.length == 1)
-            products = productArray[0];
-        else {
-            products = "";
-            for (var i = 0; i < productArray.length; i++)
-                products += "<div class='product'>"+productArray[i]+"</div>";
-        }
-
-        $("#contextMapInfoPanel:visible .flasher").fadeIn(20).fadeOut(200);
-        $("#contextMapInfoPanel:hidden").slideDown(200);
-        $("#selectedGeneName").text(name);
-        $("#selectedGeneProducts").html(products);
-        $("#selectedGeneLocation").text(transcript.fmin + " to " +transcript.fmax);
         return false;
     };
 
@@ -184,6 +186,31 @@ function highlightTranscript(left, top, width, height) {
                .css('top', (top-2) + "px")
                .width((width+4) + "px")
                .height((height+4) + "px");
+
+    var gene = selectedTranscript.gene;
+    var name = gene.name;
+    if (name == null || name == "")
+        name = gene.uniqueName;
+    else
+        name += " (" + gene.uniqueName + ")";
+
+    var productArray = selectedTranscript.products;
+    var products = "";
+    if (productArray.length == 1)
+        products = productArray[0];
+    else {
+        products = "";
+        for (var i = 0; i < productArray.length; i++)
+            products += "<div class='product'>"+productArray[i]+"</div>";
+    }
+
+    $("#contextMapInfoPanel:visible").Highlight("fast", "yellow");
+    $("#contextMapInfoPanel:hidden").slideDown(200);
+    $("#selectedGeneName").text(name);
+    $("#selectedGeneProducts").html(products);
+    $("#selectedGeneLocation").text(selectedTranscript.fmin + " to " +selectedTranscript.fmax);
+    $("#contextMapInfoPanel #loadDetails a").attr("href", "#"+selectedTranscript.name);
+
     highlighter.show();
 }
 
@@ -213,40 +240,40 @@ function startDragWindow(event) {
 }
 
 function startMove(event) {
-	// If the mouse button was released outside the document window,
-	// we are unable to detect that it's been released (except in Safari).
+  // If the mouse button was released outside the document window,
+  // we are unable to detect that it's been released (except in Safari).
     // Therefore dragging behaviour continues when the mouse pointer
     // is moved back into the document. If the user then clicks again
     // on the context map, we don't want to start a new drag.
-	if (dragging) return false;
+  if (dragging) return false;
 
-	if (!event) event = window.event; // IE is so broken
-	dragStartX = event.clientX;
+  if (!event) event = window.event; // IE is so broken
+  dragStartX = event.clientX;
     dragging = true;
     draggingWindow = false;
     if (contextMapContent.style.left == "")
        beforeDragPos = 0;
     else
-   	    beforeDragPos = parseFloat(contextMapContent.style.left);
-   	prevX = dragStartX;
-   	if (event.timeStamp != null)
-       	prevTimeStamp = event.timeStamp;
+         beforeDragPos = parseFloat(contextMapContent.style.left);
+     prevX = dragStartX;
+     if (event.timeStamp != null)
+         prevTimeStamp = event.timeStamp;
     else
         prevTimeStamp = new Date(); // IE, *sigh*
-   	velocity = 0;
+     velocity = 0;
 
-	return false;
+  return false;
 }
 
 function doMove(event) {
-	if (!dragging && !draggingWindow) return;
+  if (!dragging && !draggingWindow) return;
 
-	if (!event) event = window.event; // IE is so broken
+  if (!event) event = window.event; // IE is so broken
 
-	var newPos;
-	if (draggingWindow) {
-	    var newWindowPos = Math.round(beforeDragPos + event.clientX - dragStartX);
-	    newPos = Math.round(newWindowPos * thumbnailBasesPerPixel / basesPerPixel);
+  var newPos;
+  if (draggingWindow) {
+      var newWindowPos = Math.round(beforeDragPos + event.clientX - dragStartX);
+      newPos = Math.round(newWindowPos * thumbnailBasesPerPixel / basesPerPixel);
     }
     else {
         var timeStamp;
@@ -261,7 +288,7 @@ function doMove(event) {
     }
 
     moveTo(newPos);
-	prevX = event.clientX;
+  prevX = event.clientX;
 }
 
 function moveTo(newPos) {
@@ -287,7 +314,7 @@ function endMove(event) {
     if (dragging && timeStamp - prevTimeStamp < 180) {
         if (animationTimer != null)
             clearInterval(animationTimer);
-    	animationTimer = setInterval('animateDeceleration()', animationInterval);
+      animationTimer = setInterval('animateDeceleration()', animationInterval);
     }
     dragging = false;
     draggingWindow = false;
