@@ -19,12 +19,12 @@ public class Gene extends AbstractGene {
     @Transient
     public Collection<MRNA> getCodingTranscripts() {
         Collection<MRNA> ret = new ArrayList<MRNA>();
-        
+
         for (Transcript transcript : getTranscripts()) {
             if (transcript instanceof MRNA)
                 ret.add((MRNA) transcript);
         }
-        
+
         return ret;
     }
 
@@ -32,7 +32,7 @@ public class Gene extends AbstractGene {
     public String getProteinUniqueNamesTabSeparated() {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
-        for (MRNA transcript: getCodingTranscripts()) {
+        for (ProductiveTranscript transcript: getCodingTranscripts()) {
             if (first)
                 first = false;
             else
@@ -42,12 +42,13 @@ public class Gene extends AbstractGene {
         return ret.toString();
     }
 
+    @Override
     @Transient @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
     public String getProductsAsTabSeparatedString() {
         StringBuilder products = new StringBuilder();
 
         boolean first = true;
-        for (MRNA transcript : getCodingTranscripts()) {
+        for (ProductiveTranscript transcript : getCodingTranscripts()) {
             if (first)
                 first = false;
             else

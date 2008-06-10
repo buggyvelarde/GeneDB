@@ -182,6 +182,7 @@
        <value>org.gmod.schema.sequence.feature.MRNA</value>
        <value>org.gmod.schema.sequence.feature.Polypeptide</value>
        <value>org.gmod.schema.sequence.feature.PolypeptideMotif</value>
+       <value>org.gmod.schema.sequence.feature.ProductiveTranscript</value>
        <value>org.gmod.schema.sequence.feature.ProteinMatch</value>
        <value>org.gmod.schema.sequence.feature.Pseudogene</value>
        <value>org.gmod.schema.sequence.feature.PseudogenicExon</value>
