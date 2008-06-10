@@ -29,6 +29,7 @@ import org.biojava.bio.symbol.Symbol;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.biojava.utils.SmallMap;
+import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
 import org.gmod.schema.sequence.Feature;
@@ -37,6 +38,7 @@ import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.sequence.feature.MRNA;
 import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.sequence.feature.Transcript;
+import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
 import org.gmod.schema.utils.PeptideProperties;
 import org.jdom.Document;
@@ -52,6 +54,7 @@ public class GeneDBWebUtils {
 
     private static final Logger logger = Logger.getLogger(GeneDBWebUtils.class);
     private static SequenceDao sequenceDao;
+    private static CvDao cvDao;
     private static Grep grep;
 
     public void setGrep(Grep grep) {
@@ -127,8 +130,16 @@ public class GeneDBWebUtils {
 
             model.put("polypeptide", polypeptide);
             model.put("polyprop", calculatePepstats(polypeptide));
+            
+            List<CountedName> controlledCuration = cvDao.getCountedNamesByCvNameAndFeature("CC_genedb_controlledcuration", polypeptide);
+            List<CountedName> biologicalProcess = cvDao.getCountedNamesByCvNameAndFeature("biological_process", polypeptide);
+            List<CountedName> cellularComponent = cvDao.getCountedNamesByCvNameAndFeature("cellular_component", polypeptide);
+            List<CountedName> molecularFunction = cvDao.getCountedNamesByCvNameAndFeature("molecular_function", polypeptide);
+            model.put("CC", controlledCuration);
+            model.put("BP", biologicalProcess);
+            model.put("CellularC", cellularComponent);
+            model.put("MF", molecularFunction);
         }
-
         return model;
     }
 
@@ -429,5 +440,9 @@ public class GeneDBWebUtils {
             }
         }
         return symbolCounts;
+    }
+
+    public void setCvDao(CvDao cvDao) {
+        GeneDBWebUtils.cvDao = cvDao;
     }
 }
