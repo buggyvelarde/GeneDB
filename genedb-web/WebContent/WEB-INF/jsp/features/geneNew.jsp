@@ -136,7 +136,7 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
         <format:genePageSection id="controlCur">
             <div class="heading">Controlled Curation</div>
             <table width="100%" class="go-section">
-                <format:go-section featureCvTerms="${controlledCurationTerms}"/>
+                <format:go-section featureCvTerms="${controlledCurationTerms}" featureCounts="${CC}"/>
             </table>
         </format:genePageSection>
     </c:if>
@@ -149,9 +149,9 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
         <format:genePageSection id="geneOntology">
             <div class="heading">Gene Ontology</div>
             <table width="100%" class="go-section">
-                <format:go-section title="Biological Process" featureCvTerms="${biologicalProcessTerms}"/>
-                <format:go-section title="Cellular Component" featureCvTerms="${cellularComponentTerms}" />
-                <format:go-section title="Molecular Function" featureCvTerms="${molecularFunctionTerms}" />
+                <format:go-section title="Biological Process" featureCvTerms="${biologicalProcessTerms}" featureCounts="${BP}"/>
+                <format:go-section title="Cellular Component" featureCvTerms="${cellularComponentTerms}" featureCounts="${CellularC}"/>
+                <format:go-section title="Molecular Function" featureCvTerms="${molecularFunctionTerms}" featureCounts="${MF}"/>
             </table>
         </format:genePageSection>
     </c:if>
