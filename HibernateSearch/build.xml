@@ -3,6 +3,7 @@
 <project name="hibernate-index" default="index.jar" basedir=".">
 
     <import file="../genedb-db/build.xml" />
+    <property file="hibernate-properties.${config}"/>
 
     <path id="jars">
         <filelist dir="../genedb-db/ant-build/jars/">
@@ -64,6 +65,8 @@
             <classpath refid="jars" />
         </javac>
         <copy todir="ant-build/classes" file="log4j.properties" />
+        <copy todir="ant-build/classes" file="hibernate.cfg.xml" />
+        <copy file="hibernate-properties.${config}" tofile="ant-build/classes/hibernate.properties"/>
     </target>
 
     <target name="anttasks" depends="destdir">
@@ -79,20 +82,16 @@
 
     <target name="IndexChado" depends="anttasks,index.jar">
         <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="ant-build/tasks" />
-
-        <property name="database.url" value="jdbc:postgresql://localhost:18000/malaria_workshop" />
-        <property name="database.user" value="pathdb" />
         <password name="database.password" prompt="Password for ${database.user}@${database.url}" />
-        <property name="index.base" value="/tmp" />
         <propertyset id="indexProperties">
             <propertyref name="database.url" />
             <propertyref name="database.user" />
             <propertyref name="database.password" />
             <propertyref name="password" />
-            <propertyref name="index.base" />
         </propertyset>
         <java fork="true" maxmemory="256m" failonerror="true" classpathref="exec-classpath" classname="org.genedb.hibernate.search.IndexChado">
             <syspropertyset refid="indexProperties" />
+            <sysproperty key="index.base" value="${hibernate.search.default.indexBase}" />
             <jvmarg line="-server" />
         </java>
     </target>

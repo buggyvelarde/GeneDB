@@ -79,6 +79,7 @@ public class IndexChado {
         return new String(password);
     }
 
+    private static SessionFactory sessionFactory = null;
     /**
      * Build a session factory configured with the supplied parameters.
      *
@@ -91,6 +92,9 @@ public class IndexChado {
      */
     private static SessionFactory getSessionFactory(int batchSize, String databaseUrl,
             String databaseUsername, String databasePassword, String indexBaseDirectory) {
+        if (sessionFactory != null)
+            return sessionFactory;
+
         Configuration cfg = new AnnotationConfiguration();
         cfg.configure();
         cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
@@ -108,7 +112,7 @@ public class IndexChado {
         cfg.setListener("post-update", ft);
         cfg.setListener("post-delete", ft);
 
-        return cfg.buildSessionFactory();
+        return sessionFactory = cfg.buildSessionFactory();
     }
 
     /**
@@ -177,7 +181,7 @@ public class IndexChado {
             boolean failed = false;
             try {
                 logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
-                    featureClass));
+                    feature.getClass()));
                 session.index(feature);
             } catch (Exception e) {
                 logger.error("Batch failed", e);
@@ -234,7 +238,7 @@ public class IndexChado {
         else if (args.length != 0)
             throw new IllegalArgumentException("Unexpected command-line arguments");
 
-        indexFeatures(AbstractGene.class, numBatches);
+        //indexFeatures(AbstractGene.class, numBatches);
         indexFeatures(Transcript.class, numBatches);
     }
 }

@@ -63,6 +63,7 @@
         <mapping class="org.gmod.schema.sequence.feature.AbstractGene" />
         <mapping class="org.gmod.schema.sequence.feature.ApicoplastChromosome" />
         <mapping class="org.gmod.schema.sequence.feature.Centromere" />
+        <mapping class="org.gmod.schema.sequence.feature.Chromosome" />
         <mapping class="org.gmod.schema.sequence.feature.Contig" />
         <mapping class="org.gmod.schema.sequence.feature.Exon" />
         <mapping class="org.gmod.schema.sequence.feature.FivePrimeUTR" />
@@ -70,6 +71,7 @@
         <mapping class="org.gmod.schema.sequence.feature.Gene" />
         <mapping class="org.gmod.schema.sequence.feature.Intron" />
         <mapping class="org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome" />
+        <mapping class="org.gmod.schema.sequence.feature.Match" />
         <mapping class="org.gmod.schema.sequence.feature.MitochondrialChromosome" />
         <mapping class="org.gmod.schema.sequence.feature.MRNA" />
         <mapping class="org.gmod.schema.sequence.feature.Polypeptide" />
@@ -83,9 +85,10 @@
         <mapping class="org.gmod.schema.sequence.feature.RRNA" />
         <mapping class="org.gmod.schema.sequence.feature.SnRNA" />
         <mapping class="org.gmod.schema.sequence.feature.ThreePrimeUTR" />
+        <mapping class="org.gmod.schema.sequence.feature.TopLevelFeature" />
         <mapping class="org.gmod.schema.sequence.feature.Transcript" />
+        <mapping class="org.gmod.schema.sequence.feature.TranscriptComponent" />
         <mapping class="org.gmod.schema.sequence.feature.TRNA" />
-        <mapping class="org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome" />
-        <mapping class="org.gmod.schema.sequence.feature.ProteinMatch" />
+        <mapping class="org.gmod.schema.sequence.feature.UTR" />
     </session-factory>
 </hibernate-configuration>
