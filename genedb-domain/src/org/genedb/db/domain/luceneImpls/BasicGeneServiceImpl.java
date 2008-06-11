@@ -46,41 +46,38 @@ public class BasicGeneServiceImpl implements BasicGeneService {
      * class of object. A DocumentConverter can also function as a filter if
      * desired, by returning <code>null</code> from the convert method to
      * indicate that a particular document should be ignored.
-     * 
+     *
      * @author rh11
-     * 
+     *
      * @param <T> The return type of the conversion
      */
     private interface DocumentConverter<T> {
         /**
          * Convert the document to the desired form.
-         * 
+         *
          * @param doc  the document to convert
          * @return     the result of the conversion, or null if this document should be ignored
          */
         T convert(Document doc);
     }
-    
+
     private static final SortedSet<Exon> NO_EXONS = Collections.unmodifiableSortedSet(new TreeSet<Exon>());
-    
+
     /**
      * Convert the document to a Transcript object. If the <code>_hibernate_class</code>
      * of the document is not <code>org.gmod.schema.sequence.feature.MRNA</code>, returns null.
      */
     private final DocumentConverter<Transcript> convertToTranscript = new DocumentConverter<Transcript>() {
         public Transcript convert(Document doc) {
-            if (!doc.get("_hibernate_class").equals("org.gmod.schema.sequence.feature.MRNA")) {
-                logger.debug(String.format("It's not a mRNA transcript, it's a '%s'", doc.get("_hibernate_class")));
-                return null;
-            }
-            
+            logger.debug(String.format("Transcript has class '%s'", doc.get("_hibernate_class")));
+
             Transcript transcript = new Transcript();
             String colourString = doc.get("colour");
             if (colourString == null || colourString.equals("null"))
                 transcript.setColourId(null);
             else
                 transcript.setColourId(Integer.parseInt(colourString));
-            
+
             String transcriptName = doc.get("name");
             if (transcriptName != null)
                 transcript.setName(transcriptName);
@@ -94,29 +91,30 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             }
             catch (Exception e) {
                 logger.error(String.format("Failed to parse exonlocs for transcript '%s'",
-                    doc.get("uniqueName")));
-                transcript.setExons(NO_EXONS);
+                    doc.get("uniqueName")), e);
+                 transcript.setExons(NO_EXONS);
             }
             String productsTabSeparated = doc.get("product");
             if (productsTabSeparated != null)
                 transcript.setProducts(Arrays.asList(productsTabSeparated.split("\t")));
-            
+
             return transcript;
         }
     };
-    
+
     /**
      * This DocumentConverter populates a BasicGene object using the Lucene
      * Document. Currently it makes a new Lucene query for every gene to pull
      * back the associated transcripts. Should this prove unacceptable, the
      * associated transcripts could instead all be loaded at once.
-     * 
-     * If the <code>_hibernate_class</code> is not equal to <code>org.gmod.schema.sequence.feature.Gene</code>,
-     * returns null.
+     *
+     * If the <code>_hibernate_class</code> is neither equal to <code>org.gmod.schema.sequence.feature.Gene</code>
+     * nor to <code>org.gmod.schema.sequence.feature.Pseudogene</code>, returns null.
      */
     private final DocumentConverter<BasicGene> convertToGene = new DocumentConverter<BasicGene>() {
         public BasicGene convert(Document doc) {
-            if (!doc.get("_hibernate_class").equals("org.gmod.schema.sequence.feature.Gene")) {
+            if (!doc.get("_hibernate_class").equals("org.gmod.schema.sequence.feature.Gene")
+             && !doc.get("_hibernate_class").equals("org.gmod.schema.sequence.feature.Pseudogene")) {
                 logger.debug(String.format("It's not a Gene, it's a '%s'", doc.get("_hibernate_class")));
                 return null;
             }
@@ -132,16 +130,16 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             ret.setOrganism(doc.get("organism.commonName"));
             ret.setFmin(Integer.parseInt(doc.get("start")));
             ret.setFmax(Integer.parseInt(doc.get("stop")));
-            
+
             String synonyms = doc.get("synonym");
             if (synonyms != null)
                 ret.setSynonyms(Arrays.asList(synonyms.split("\t")));
 
             BooleanQuery transcriptQuery = new BooleanQuery();
-            transcriptQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.MRNA")),
-                BooleanClause.Occur.MUST);
+//            transcriptQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.MRNA")),
+//                BooleanClause.Occur.MUST);
             transcriptQuery.add(new TermQuery(new Term("gene", geneUniqueName)),
-                BooleanClause.Occur.MUST);            
+                BooleanClause.Occur.MUST);
 
             List<Transcript> transcripts = findWithQuery(transcriptQuery, convertToTranscript);
             if (transcripts.size() == 0)
@@ -151,7 +149,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             return ret;
         }
     };
-    
+
     private static Set<Exon> parseExonLocs(String exonLocs) {
         Set<Exon> exons = new HashSet<Exon>();
         for (String exonSpec: exonLocs.split(",")) {
@@ -177,7 +175,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     /**
      * Finds all documents matching the query, and makes a list of matches. Each
      * document is converted to an object of type T using the converter.
-     * 
+     *
      * @param <T> The return type
      * @param query The query object
      * @param converter Result converter
@@ -195,7 +193,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         } catch (IOException e) {
             throw new RuntimeException("IOException while running Lucene query", e);
         }
-        
+
         logger.debug(String.format("Query returned %d results", hits.length()));
 
         @SuppressWarnings("unchecked")
@@ -246,11 +244,18 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             });
     }
 
+    private static BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
+    static {
+        geneOrPseudogeneQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gene")),
+            BooleanClause.Occur.SHOULD);
+        geneOrPseudogeneQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Pseudogene")),
+            BooleanClause.Occur.SHOULD);
+    }
+
     public Collection<BasicGene> findGenesOverlappingRange(String organismCommonName,
             String chromosomeUniqueName, int strand, long locMin, long locMax) {
         BooleanQuery query = new BooleanQuery();
-        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gene")),
-            BooleanClause.Occur.MUST);
+        query.add(geneOrPseudogeneQuery, BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("chr", chromosomeUniqueName)),
@@ -268,8 +273,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     public Collection<BasicGene> findGenesExtendingIntoRange(String organismCommonName,
             String chromosomeUniqueName, int strand, long locMin, long locMax) {
         BooleanQuery query = new BooleanQuery();
-        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gene")),
-            BooleanClause.Occur.MUST);
+        query.add(geneOrPseudogeneQuery, BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("chr", chromosomeUniqueName)),
