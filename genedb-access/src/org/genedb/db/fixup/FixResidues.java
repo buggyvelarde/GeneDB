@@ -13,20 +13,11 @@ import java.util.ResourceBundle;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.biojava.bio.BioException;
-import org.biojava.bio.seq.DNATools;
-import org.biojava.bio.seq.RNATools;
-import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.SimpleSymbolList;
-import org.biojava.bio.symbol.SymbolList;
-import org.biojava.bio.symbol.SymbolListViews;
-import org.biojava.bio.symbol.TranslationTable;
-
 /**
  * Populate the 'residues' column of transcript features with the CDS,
  * and polypeptide features with the protein sequence, using the feature
  * location information and the top-level sequence.
- * 
+ *
  * @author rh11
  *
  */
@@ -35,17 +26,20 @@ public class FixResidues {
      * This is what we're currently using for apicoplast chromosomes, but it ain't right.
      */
     private static final String APICOPLAST_CHROMOSOME = "apicoplast_sequence";
-    
+
     private static final String MITOCHONDRIAL_CHROMOSOME = "mitochondrial_chromosome";
-    
+
     private static final int APICOPLAST_TRANSLATION_TABLE = 11;
-    
-    private boolean verbose = false;
+
+    private boolean verbose = (System.getProperty("verbose") != null);
     private void printf(String format, Object... args) {
         if (verbose)
             System.out.printf(format, args);
     }
-    
+
+    private static void error(Exception exception) {
+        error(exception.getMessage(), exception);
+    }
     private static void error(String message, Exception exception) {
         error(message);
         exception.printStackTrace(System.err);
@@ -54,9 +48,9 @@ public class FixResidues {
     private static void error(String format, Object... args) {
         System.err.printf("Error: "+format+"\n", args);
     }
-    
+
     public static void main(String[] args) throws Exception {
-        
+
         boolean verbose = false;
         int i;
         for (i=0; i < args.length; i++) {
@@ -73,7 +67,7 @@ public class FixResidues {
             else
                 break;
         }
-        
+
         FixResidues fr = new FixResidues(verbose);
         if (i == args.length)
             fr.fixAll();
@@ -81,48 +75,44 @@ public class FixResidues {
             for (; i < args.length; i++)
                 fr.fixOrganismByName(args[i]);
     }
-    
+
 
     private Connection conn;
     private static ResourceBundle config = ResourceBundle.getBundle("project");
     private TypeCodes typeCodes;
-    
+
     private FixResidues (boolean verbose)
         throws SQLException, ClassNotFoundException {
 
         this.verbose = verbose;
-        
+
         String url = String.format("jdbc:postgresql://%s:%s/%s",
             config.getString("dbhost"),
             config.getString("dbport"),
             config.getString("dbname"));
         String username = config.getString("dbuser");
         String password = config.getString("dbpassword");
-        
+
         Class.forName("org.postgresql.Driver");
         this.conn = DriverManager.getConnection(url, username, password);
         this.typeCodes = new TypeCodes(conn);
     }
-    
+
     private void fixAll() throws SQLException {
         for (Organism organism: getOrganisms(conn)) {
-            printf("Processing organism: %s\n", organism.commonName);
-            printf("\t(translation table = %d, mitochondrial = %d)\n\n", organism.translationTable, organism.mitochondrialTranslationTable);
             fixOrganism(organism);
         }
     }
-    
+
     private void fixOrganismByName(String organismName) throws SQLException {
         for (Organism organism: getOrganisms(conn)) {
             if (!organism.commonName.equals(organismName))
                 continue;
 
-            printf("Processing organism: %s\n", organism.commonName);
-            printf("\t(translation table = %d, mitochondrial = %d)\n\n", organism.translationTable, organism.mitochondrialTranslationTable);
             fixOrganism(organism);
         }
     }
-    
+
     private List<Organism> getOrganisms(Connection conn) throws SQLException {
         PreparedStatement st = conn.prepareStatement(
              "select organism_id"
@@ -140,13 +130,13 @@ public class FixResidues {
             st.setInt(1, typeCodes.typeId("genedb_misc", "translationTable"));
             st.setInt(2, typeCodes.typeId("genedb_misc", "mitochondrialTranslationTable"));
             ResultSet rs = st.executeQuery();
-            
+
             while (rs.next()) {
                 int organismId = rs.getInt("organism_id");
                 String organismName = rs.getString("common_name");
                 String translationTableString = rs.getString("translation_table");
                 String mitochondrialTranslationTableString = rs.getString("mitochondrial_translation_table");
-                
+
                 int translationTable;
                 if (translationTableString == null || translationTableString.length() == 0) {
                     translationTable = 1;
@@ -154,7 +144,7 @@ public class FixResidues {
                 }
                 else
                     translationTable = Integer.parseInt(translationTableString);
-                
+
                 int mitochondrialTranslationTable;
                 if (mitochondrialTranslationTableString == null || mitochondrialTranslationTableString.length() == 0) {
                     mitochondrialTranslationTable = 4;
@@ -163,7 +153,7 @@ public class FixResidues {
                 }
                 else
                     mitochondrialTranslationTable = Integer.parseInt(mitochondrialTranslationTableString);
-                
+
                 organisms.add(new Organism(organismId, organismName, translationTable, mitochondrialTranslationTable));
             }
             return organisms;
@@ -176,8 +166,11 @@ public class FixResidues {
             }
         }
     }
-    
+
     private void fixOrganism(Organism organism) throws SQLException {
+        printf("Processing organism: %s\n", organism.commonName);
+        printf("\t(translation table = %d, mitochondrial = %d)\n\n", organism.translationTable, organism.mitochondrialTranslationTable);
+
         PreparedStatement st = conn.prepareStatement(
             "select organism.common_name"
             +"      , toplevel.feature_id"
@@ -201,13 +194,13 @@ public class FixResidues {
                 int topLevelFeatureId = rs.getInt("feature_id");
                 String topLevelFeatureUniqueName = rs.getString("uniquename");
                 int topLevelFeatureTypeId = rs.getInt("type_id");
-                
+
                 String topLevelFeatureCv = typeCodes.cvName(topLevelFeatureTypeId);
                 String topLevelFeatureTerm = typeCodes.termName(topLevelFeatureTypeId);
                 if (!topLevelFeatureCv.equals("sequence"))
                     throw new IllegalStateException(String.format("Top-level feature '%s' has type '%s'/'%s', which does not belong to the sequence ontology",
                         topLevelFeatureUniqueName, topLevelFeatureCv, topLevelFeatureTerm));
-                
+
                 int translationTableId;
                 if (topLevelFeatureTerm.equals(MITOCHONDRIAL_CHROMOSOME))
                     translationTableId = organism.mitochondrialTranslationTable;
@@ -215,7 +208,7 @@ public class FixResidues {
                     translationTableId = APICOPLAST_TRANSLATION_TABLE;
                 else
                     translationTableId = organism.translationTable;
-                
+
                 printf("Processing top-level feature %s '%s'\n\n", topLevelFeatureTerm, topLevelFeatureUniqueName);
                 fixTopLevelFeature(translationTableId, topLevelFeatureId);
             }
@@ -228,7 +221,7 @@ public class FixResidues {
             }
         }
     }
-    
+
     private void fixTopLevelFeature(int translationTableId, int topLevelFeatureId) throws SQLException {
         String topLevelSequence = loadResidues(topLevelFeatureId);
         PreparedStatement st = conn.prepareStatement(
@@ -249,8 +242,7 @@ public class FixResidues {
                 int geneFeatureId = rs.getInt("feature_id");
                 int strand = rs.getInt("strand");
                 String geneUniqueName = rs.getString("uniquename");
-                
-                printf("Processing gene '%s' (ID=%d) on strand %d\n", geneUniqueName, geneFeatureId, strand);
+
                 fixGene(translationTableId, topLevelSequence, strand, geneFeatureId, geneUniqueName);
             }
         }
@@ -262,7 +254,7 @@ public class FixResidues {
             }
         }
     }
-    
+
     private String loadResidues(int topLevelFeatureId) throws SQLException {
         PreparedStatement st = conn.prepareStatement(
             "select residues from feature where feature_id = ?"
@@ -283,8 +275,10 @@ public class FixResidues {
             }
         }
     }
-    
+
     private void fixGene(int translationTableId, String topLevelSequence, int strand, int geneFeatureId, String geneUniqueName) throws SQLException {
+        printf("\nProcessing gene '%s' (ID=%d) on strand %d\n", geneUniqueName, geneFeatureId, strand);
+
         PreparedStatement st = conn.prepareStatement(
             "select transcript.feature_id as transcript_id"
             +"    , transcript.uniquename as transcript_uniquename"
@@ -316,18 +310,18 @@ public class FixResidues {
             st.setInt(5, typeCodes.typeId("sequence", "tRNA"));
             st.setInt(6, typeCodes.typeId("sequence", "snRNA"));
             ResultSet rs = st.executeQuery();
-            
+
             while (rs.next()) {
                 int transcriptId = rs.getInt("transcript_id");
                 String transcriptName = rs.getString("transcript_uniquename");
                 int transcriptType = rs.getInt("transcript_type");
-                
+
                 int exonId = rs.getInt("exon_id");
                 String exonName = rs.getString("exon_uniquename");
                 int phase = rs.getInt("phase");
                 int fmin = rs.getInt("fmin");
                 int fmax = rs.getInt("fmax");
-                
+
                 if (!transcriptsById.containsKey(transcriptId)) {
                     Transcript transcript = new Transcript(
                         transcriptId, transcriptName,
@@ -347,7 +341,7 @@ public class FixResidues {
                 error("Exception closing statement", e);
             }
         }
-                
+
         if (transcriptsById.isEmpty())
             error("Gene '%s' (ID=%d) has no transcripts, or at any rate no exons",
                 geneUniqueName, geneFeatureId);
@@ -356,16 +350,16 @@ public class FixResidues {
             fixTranscript(topLevelSequence, strand, transcript);
         }
     }
-    
-    private static final char[] COMPLEMENT_FROM = "acgtmrwsykvhdbn".toCharArray();
-    private static final char[] COMPLEMENT_TO   = "tgcakywsrmbdhvx".toCharArray();
-    
+
+    private static final char[] COMPLEMENT_FROM = "acgtmrwsykvhdbnx".toCharArray();
+    private static final char[] COMPLEMENT_TO   = "tgcakywsrmbdhvnx".toCharArray();
+
     private static String reverseComplement(String sequence) {
         StringBuilder sb = transliterate(sequence, COMPLEMENT_FROM, COMPLEMENT_TO);
         sb.reverse();
         return sb.toString();
     }
-    
+
     private static StringBuilder transliterate(String string, char[] from, char[] to) {
         if (from.length != to.length)
             throw new IllegalArgumentException("Source and destination alphabets have different lengths");
@@ -384,7 +378,7 @@ public class FixResidues {
         }
         return result;
     }
-    
+
     private void fixTranscript(String topLevelSequence, int strand, Transcript transcript) throws SQLException {
         StringBuilder cdsBuilder = new StringBuilder();
         for (Exon exon: transcript.exons) {
@@ -398,11 +392,11 @@ public class FixResidues {
             cds = reverseComplement(cdsBuilder.toString());
         else
             throw new IllegalStateException(String.format("Strand is neither +1 nor -1 (%d)", strand));
-        
-        printf("CDS: %s\n\n", cds);
+
+        printf("CDS: %s\n", cds);
         transcript.cds = cds;
         setResidues(transcript.featureId, cds);
-        
+
         if (!transcript.isCoding) {
             printf("\t...non-coding transcript; nothing more to do\n");
             return;
@@ -421,7 +415,7 @@ public class FixResidues {
         try {
             st.setInt(1, transcript.featureId);
             st.setInt(2, typeCodes.typeId("sequence", "polypeptide"));
-            
+
             ResultSet rs = st.executeQuery();
             if (!rs.next()) {
                 error("No polypeptide found for mRNA transcript '%s'", transcript.uniqueName);
@@ -429,7 +423,7 @@ public class FixResidues {
             }
             if (!rs.isLast())
                 error("More than one polypeptide found for mRNA transcript '%s'", transcript.uniqueName);
-            
+
             int polypeptideId = rs.getInt("feature_id");
             String polypeptideName = rs.getString("uniquename");
             printf("Polypeptide '%s'\n", polypeptideName);
@@ -445,39 +439,33 @@ public class FixResidues {
         }
     }
 
-    private static final SymbolTokenization dnaTokenization;
-    private static final TranslationTable transcriptionTable = RNATools.transcriptionTable();
-    static {
-        try {
-            dnaTokenization = DNATools.getDNA().getTokenization("token");
-        } catch (BioException e) {
-            throw new IllegalStateException("BioJava appears to be broken", e);
-        }
-    }
     private void fixPolypeptide(Transcript transcript, int polypeptideId) throws SQLException {
-        TranslationTable translationTable = RNATools.getGeneticCode(transcript.translationTableId);
-        
-        if (transcript.cds.length() < 3 + transcript.phase) {
-            error("Transcript '%s' is too short to translate (length=%d, phase=%d)\n",
-                transcript.uniqueName, transcript.cds.length(), transcript.phase);
-            return;
-        }
         try {
-            SymbolList dna = new SimpleSymbolList(dnaTokenization, transcript.cds);
-            SymbolList rna = SymbolListViews.translate(dna, transcriptionTable);
-            rna = rna.subList(transcript.phase + 1, transcript.phase + 3 * ((rna.length() - transcript.phase) / 3));
-            
-            SymbolList rnaWindowed = SymbolListViews.windowedSymbolList(rna, 3);
-            SymbolList protein = SymbolListViews.translate(rnaWindowed, translationTable);
-            
-            printf("Translated sequence: %s\n", protein.seqString());
-            setResidues(polypeptideId, protein.seqString());
+            printf("Translating to protein sequence with phase %d\n", transcript.phase);
+            String protein = transcript.translateToProteinSequence();
+            printf("Translated sequence: %s\n", protein);
+
+            if (verbose) {
+                if (protein.isEmpty())
+                    printf("WARNING: Translated protein sequence is empty\n");
+                else {
+                    if (!protein.startsWith("M"))
+                        printf("WARNING: Translated protein sequence does not start with Methionine\n");
+                    if (!protein.endsWith("*"))
+                        printf("WARNING: Translated protein sequence does not end with a stop codon\n");
+                    int firstStar = protein.indexOf('*');
+                    if (firstStar >= 0 && firstStar != protein.length()-1)
+                        printf("WARNING: Translated protein sequence contains an internal stop codon\n");
+                }
+            }
+
+            setResidues(polypeptideId, protein);
         }
-        catch (BioException e) {
-            error("Failed to translate cds", e);
+        catch (TranslationException e) {
+            error(e);
         }
     }
-    
+
     PreparedStatement updateResiduesSt = null;
     private void setResidues(int featureId, String residues) throws SQLException {
         if (updateResiduesSt == null) {
@@ -494,17 +482,6 @@ public class FixResidues {
     }
 }
 
-class Organism {
-    public int organismId;
-    public String commonName;
-    public int translationTable, mitochondrialTranslationTable;
-    public Organism(int organismId, String commonName, int translationTable, int mitochondrialTranslationTable) {
-        this.organismId = organismId;
-        this.commonName = commonName;
-        this.translationTable = translationTable;
-        this.mitochondrialTranslationTable = mitochondrialTranslationTable;
-    }
-}
 
 class Transcript {
     public int featureId;
@@ -523,6 +500,26 @@ class Transcript {
     public SortedSet<Exon> exons = new TreeSet<Exon>();
     public void addExon(Exon exon) {
         this.exons.add(exon);
+    }
+
+    public String translateToProteinSequence() throws TranslationException {
+        if (this.cds.length() < 3 + this.phase) {
+            throw new TranslationException(String.format("this '%s' is too short to translate (length=%d, phase=%d)\n",
+                this.uniqueName, this.cds.length(), this.phase));
+        }
+        return Translator.getTranslator(this.translationTableId).translate(this.cds, this.phase);
+    }
+}
+
+class Organism {
+    public int organismId;
+    public String commonName;
+    public int translationTable, mitochondrialTranslationTable;
+    public Organism(int organismId, String commonName, int translationTable, int mitochondrialTranslationTable) {
+        this.organismId = organismId;
+        this.commonName = commonName;
+        this.translationTable = translationTable;
+        this.mitochondrialTranslationTable = mitochondrialTranslationTable;
     }
 }
 
