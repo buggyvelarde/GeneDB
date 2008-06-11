@@ -37,6 +37,6 @@
 	<classpathentry kind="lib" path="/genedb-libs/lib/saxon8.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/saxon8-xom.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/xom-1.0.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar" sourcepath="/genedb-libs/lib-src/biojava-1.6-src.jar"/>
 	<classpathentry kind="output" path="ant-build/classes"/>
 </classpath>
