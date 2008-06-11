@@ -182,13 +182,14 @@ public class FixResidues {
             +"     select distinct geneloc.srcfeature_id as feature_id"
             +"     from feature gene"
             +"     join featureloc geneloc using (feature_id)"
-            +"     where gene.type_id = ?"
+            +"     where gene.type_id in (?, ?)"
             +" ) gene_srcfeature using (feature_id)"
             +" where toplevel.organism_id = ?",
             ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         try {
             st.setInt(1, typeCodes.typeId("sequence", "gene"));
-            st.setInt(2, organism.organismId);
+            st.setInt(2, typeCodes.typeId("sequence", "pseudogene"));
+            st.setInt(3, organism.organismId);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 int topLevelFeatureId = rs.getInt("feature_id");
@@ -230,13 +231,14 @@ public class FixResidues {
             +"    , geneloc.strand"
             +" from feature gene"
             +" join featureloc geneloc using (feature_id)"
-            +" where gene.type_id = ?"
+            +" where gene.type_id in (?, ?)"
             +" and geneloc.rank = 0"
             +" and geneloc.srcfeature_id = ?"
         );
         try {
             st.setInt(1, typeCodes.typeId("sequence", "gene"));
-            st.setInt(2, topLevelFeatureId);
+            st.setInt(2, typeCodes.typeId("sequence", "pseudogene"));
+            st.setInt(3, topLevelFeatureId);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 int geneFeatureId = rs.getInt("feature_id");
@@ -299,7 +301,7 @@ public class FixResidues {
             +"      on transcript_gene.subject_id = transcript.feature_id"
             +" where transcript_gene.object_id = ?"
             +" and exon.type_id = ?"
-            +" and transcript.type_id in (?, ?, ?, ?)"
+            +" and transcript.type_id in (?, ?, ?, ?, ?)"
         );
         Map<Integer,Transcript> transcriptsById = new HashMap<Integer,Transcript>();
         try {
@@ -309,6 +311,7 @@ public class FixResidues {
             st.setInt(4, typeCodes.typeId("sequence", "rRNA"));
             st.setInt(5, typeCodes.typeId("sequence", "tRNA"));
             st.setInt(6, typeCodes.typeId("sequence", "snRNA"));
+            st.setInt(7, typeCodes.typeId("sequence", "pseudogenic_transcript"));
             ResultSet rs = st.executeQuery();
 
             while (rs.next()) {
