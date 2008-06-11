@@ -63,7 +63,7 @@ public class InterProParser {
         dbs.put("BlastProDom", "ProDom");
         dbs.put("Superfamily", "Superfamily");
         dbs.put("superfamily", "Superfamily");
-        
+
         months.put("Jan", "01");
         months.put("Feb", "02");
         months.put("Mar", "03");
@@ -76,7 +76,7 @@ public class InterProParser {
         months.put("Oct", "10");
         months.put("Nov", "11");
         months.put("Dec", "12");
-        
+
     }
 
 
@@ -140,14 +140,14 @@ public class InterProParser {
 
             Set<String> strangeProgram = new HashSet<String>();
             SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
-        	Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
-        	TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-        	Transaction transaction = session.beginTransaction();
+            Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+            TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
+            Transaction transaction = session.beginTransaction();
             parse2(genes, col, strangeProgram,session);
             transaction.rollback();
             TransactionSynchronizationManager.unbindResource(sessionFactory);
-    		SessionFactoryUtils.closeSession(session);
-    		
+            SessionFactoryUtils.closeSession(session);
+
             Iterator<String> it = strangeProgram.iterator();
             if ( it.hasNext()) {
                 //System.err.println("WARN: Strange program name found in Interpro file: ");
@@ -163,14 +163,14 @@ public class InterProParser {
 
     }
 
-	public void afterPropertiesSet() {
-		// Deliberately empty
-	}
-    
+    public void afterPropertiesSet() {
+        // Deliberately empty
+    }
+
     private void parse2(Map<String, List<InterproRow>> genes, List<InterproRow> col, Set<String> strangeProgram, Session session) {
         // Go through each key and sort the ArrayLists
-    	
-    	Iterator<String> geneIterator = genes.keySet().iterator();
+
+        Iterator<String> geneIterator = genes.keySet().iterator();
         Feature polypeptide = null;
 
         while ( geneIterator.hasNext() ) {
@@ -224,14 +224,14 @@ public class InterProParser {
                 List<String[]> coordIP = new ArrayList<String[]>();
                 List<String> scores = new ArrayList<String>();
                 for ( int i = min; i <= max ; i++) {
-                	String[] thisRow = col.get(i).row;
-                	String prog = thisRow[COL_NATIVE_PROG];
+                    String[] thisRow = col.get(i).row;
+                    String prog = thisRow[COL_NATIVE_PROG];
                     String db = (String) dbs.get(prog);
                     if ( db == null) {
                         strangeProgram.add(prog);
                     } else {
                         //System.err.println("program is -> " + prog);
-                    	progs.add(prog);
+                        progs.add(prog);
                         String pAcc = thisRow[COL_NATIVE_ACC];
                         progAcc.add(pAcc);
                         String score = thisRow[8];
@@ -239,246 +239,246 @@ public class InterProParser {
                         scores.add(score + "=" + description);
                         coordIP.add(new String[] {thisRow[6], thisRow[7]});
                     }
-                    
+
                     if (thisRow.length >= COL_GO+1) {
                         //System.err.println("Adding GO terms for "+gene.getId());
                         addGoTerms(polypeptide, thisRow, goIdsLinked,session);
                     }
                 }
-                
+
                 processInterProHit(session, polypeptide, ipNum, progs, progAcc,
-						coordIP, scores);
-                
+                        coordIP, scores);
+
                 // Now go thru' individual hits even if InterPro is null
                 processIndividualHit(col, strangeProgram, session, polypeptide,
-						max, min, ipNum, progs);
+                        max, min, ipNum, progs);
             }
 
         } // Got all the interpro numbers
-        
+
     }
 
-	private void processIndividualHit(List<InterproRow> col, Set<String> strangeProgram,
-			Session session, Feature polypeptide, int max, int min,
-			String ipNum, List<String> progs) {
-		Iterator<String> it2 = progs.iterator();
+    private void processIndividualHit(List<InterproRow> col, Set<String> strangeProgram,
+            Session session, Feature polypeptide, int max, int min,
+            String ipNum, List<String> progs) {
+        Iterator<String> it2 = progs.iterator();
 //		int rank2 = 0;
-		while ( it2.hasNext() ) {
-		    int rank = 0;
-			String prog = (String) it2.next();
-		    List<String> coords = new ArrayList<String>();
-		    List<String[]> coordinates = new ArrayList<String[]>();
-		    String dbacc = null;
-		    String nativeProg = null;
-		    String score = null;
-		    String desc = null;
-		    int count = 0;
-		    for ( int i = min; i <= max ; i++) {
-		        StringBuffer tmp = new StringBuffer();
-		        String[] a = col.get(i).row;
-		        if ( a[3].equals(prog)) {
-		            tmp.append( a[6] + "-" + a[7] );
-		            if ( count == 0) {
-		                tmp.append( " (Score: ");
-		            } else {
-		                tmp.append(" (");
-		            }
-		            tmp.append(a[8] + ")");
-		            coords.add(tmp.toString());
-		            coordinates.add(new String[] {a[6], a[7]});
-		            dbacc = a[COL_NATIVE_ACC];
-		            nativeProg = a[COL_NATIVE_PROG];
-		            score = a[8];
-		            desc = a[12];
-		            count++;
-		        }
-		    }
-		    StringBuffer note = new StringBuffer("Residue");
-		    if ( coords.size() > 1 ) {
-		        note.append("s");
-		    }
-		    note.append(": ");
-		    for ( int i = 0; i < coords.size(); i++) {
-		        if ( i > 0 && (i != coords.size() - 1)) {
-		            note.append(", ");
-		        }
-		        if ( (i == coords.size() - 1) && coords.size() != 1) {
-		            note.append(" and ");
-		        }
-		        note.append( (String) coords.get(i) );
-		    }
-		    String db = (String) dbs.get(prog);
-		    if ( db == null ) {
-		        strangeProgram.add(prog);
-		    } else {
-		        if(ipNum.equals("NULL")) {
-		        	// Hack for superfamily as InterPro reports acc as SF12345 rather than 12345
-		        	Feature domain = null;
-		        	String uniqueName = polypeptide.getUniqueName() + ":" + dbacc;
-		        	//System.err.println("creating feature with uniquename -> " + uniqueName);
-		        	List<Feature> features = sequenceDao.getFeaturesByUniqueName(uniqueName + "%");
-		        	
-		        	if (features.size() == 0) {
-		        		//---domain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
-		        	} else {
-		        		//System.err.println("feature size is in else " + features.size());
-		        		
-		        		uniqueName = uniqueName + ":" + (features.size() - 1);
-		        		/*int num = 0;
-		        		String name = null;
-		        		for (Feature feature : features) {
-							name = feature.getUniqueName();
-							if(name.split(":").length > 4) {
-								
-							} else {
-								
-							}
-							int c = (int)name.charAt(name.length()-1);
-							if(c > num) {
-								num = c;
-							}
-						}
-		        		name = name + ":" + num++;*/
-		        		//---domain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
-		        	}
-		        	//Feature domain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
-		        	//---DbXRef dbxref = featureUtils.findOrCreateDbXRefFromString(db + ":" + dbacc);
-		        	session.flush();
-		        	//---domain.setDbXRef(dbxref);
-		    	
-		        	//---sequenceDao.persist(domain);
-		    	
-		        	//---CvTerm scoreTerm = featureUtils.findOrCreateCvTermFromString("null", "score");
-		        	//---FeatureProp scoreProp = new FeatureProp(domain,scoreTerm,score,0);
-		        	//---sequenceDao.persist(scoreProp);
-		    	
-		        	//---CvTerm description = featureUtils.findOrCreateCvTermFromString("null", "description");
-		        	//---FeatureProp descProp = new FeatureProp(domain,description,desc,0);
-		        	//---sequenceDao.persist(descProp);
-		    	
-		        	short strand = 0;
-		        	int start = 0;
-		        	int end = 0;
-		        	if ( coordinates.size() > 0) {
-		        		String[] coord = (String[])coordinates.get(0);
-		        		start = Integer.parseInt(coord[0]);
-		        		end = Integer.parseInt(coord[1]);
-		        	}	
-		        	//System.err.println("creating featureloc with " + polypeptide.getUniqueName() + " " + domain.getUniqueName() + " rank " + rank);
-		        	//---FeatureLoc floc = featureUtils.createLocation(polypeptide, domain, start, end, strand);
-		        	//---floc.setRank(rank);
-		        	//---sequenceDao.persist(floc);
-		        	rank++;
-		        	//---Iterator<FeatureLoc> iter = polypeptide.getFeatureLocsForFeatureId().iterator();
-		        	//---FeatureLoc featureLoc = (FeatureLoc)iter.next();
-		        	//---Feature parent = featureLoc.getFeatureBySrcFeatureId();
-		        	//---int start2 = ( start * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
-		        	//---int end2 = ( end * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
-		        	//System.err.println("creating featureloc with " + parent.getUniqueName() + " " + domain.getUniqueName() + " rank " + rank);
-		        	//---FeatureLoc floc2 = featureUtils.createLocation(parent,domain, start2, end2, strand);
-		        	//---floc2.setRank(rank);
-		        	rank++;
-		        	//---sequenceDao.persist(floc2);
-            
-		        	//---session.flush();
-		        }
-		    }
-		}
-	}
+        while ( it2.hasNext() ) {
+            int rank = 0;
+            String prog = (String) it2.next();
+            List<String> coords = new ArrayList<String>();
+            List<String[]> coordinates = new ArrayList<String[]>();
+            String dbacc = null;
+            String nativeProg = null;
+            String score = null;
+            String desc = null;
+            int count = 0;
+            for ( int i = min; i <= max ; i++) {
+                StringBuffer tmp = new StringBuffer();
+                String[] a = col.get(i).row;
+                if ( a[3].equals(prog)) {
+                    tmp.append( a[6] + "-" + a[7] );
+                    if ( count == 0) {
+                        tmp.append( " (Score: ");
+                    } else {
+                        tmp.append(" (");
+                    }
+                    tmp.append(a[8] + ")");
+                    coords.add(tmp.toString());
+                    coordinates.add(new String[] {a[6], a[7]});
+                    dbacc = a[COL_NATIVE_ACC];
+                    nativeProg = a[COL_NATIVE_PROG];
+                    score = a[8];
+                    desc = a[12];
+                    count++;
+                }
+            }
+            StringBuffer note = new StringBuffer("Residue");
+            if ( coords.size() > 1 ) {
+                note.append("s");
+            }
+            note.append(": ");
+            for ( int i = 0; i < coords.size(); i++) {
+                if ( i > 0 && (i != coords.size() - 1)) {
+                    note.append(", ");
+                }
+                if ( (i == coords.size() - 1) && coords.size() != 1) {
+                    note.append(" and ");
+                }
+                note.append( (String) coords.get(i) );
+            }
+            String db = (String) dbs.get(prog);
+            if ( db == null ) {
+                strangeProgram.add(prog);
+            } else {
+                if(ipNum.equals("NULL")) {
+                    // Hack for superfamily as InterPro reports acc as SF12345 rather than 12345
+                    Feature domain = null;
+                    String uniqueName = polypeptide.getUniqueName() + ":" + dbacc;
+                    //System.err.println("creating feature with uniquename -> " + uniqueName);
+                    List<Feature> features = sequenceDao.getFeaturesByUniqueName(uniqueName + "%");
 
-	private void processInterProHit(Session session, Feature polypeptide,
-			String ipNum, List<String> progs, List<String> progAcc,
-			List<String[]> coordIP, List<String> scores) {
-		Feature ipDomain = null;
-		String secDB = "";
-		if ( ipNum.equals("NULL")) {
-			return;
-		}
+                    if (features.size() == 0) {
+                        //---domain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
+                    } else {
+                        //System.err.println("feature size is in else " + features.size());
+
+                        uniqueName = uniqueName + ":" + (features.size() - 1);
+                        /*int num = 0;
+                        String name = null;
+                        for (Feature feature : features) {
+                            name = feature.getUniqueName();
+                            if(name.split(":").length > 4) {
+
+                            } else {
+
+                            }
+                            int c = (int)name.charAt(name.length()-1);
+                            if(c > num) {
+                                num = c;
+                            }
+                        }
+                        name = name + ":" + num++;*/
+                        //---domain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
+                    }
+                    //Feature domain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
+                    //---DbXRef dbxref = featureUtils.findOrCreateDbXRefFromString(db + ":" + dbacc);
+                    session.flush();
+                    //---domain.setDbXRef(dbxref);
+
+                    //---sequenceDao.persist(domain);
+
+                    //---CvTerm scoreTerm = featureUtils.findOrCreateCvTermFromString("null", "score");
+                    //---FeatureProp scoreProp = new FeatureProp(domain,scoreTerm,score,0);
+                    //---sequenceDao.persist(scoreProp);
+
+                    //---CvTerm description = featureUtils.findOrCreateCvTermFromString("null", "description");
+                    //---FeatureProp descProp = new FeatureProp(domain,description,desc,0);
+                    //---sequenceDao.persist(descProp);
+
+                    short strand = 0;
+                    int start = 0;
+                    int end = 0;
+                    if ( coordinates.size() > 0) {
+                        String[] coord = (String[])coordinates.get(0);
+                        start = Integer.parseInt(coord[0]);
+                        end = Integer.parseInt(coord[1]);
+                    }
+                    //System.err.println("creating featureloc with " + polypeptide.getUniqueName() + " " + domain.getUniqueName() + " rank " + rank);
+                    //---FeatureLoc floc = featureUtils.createLocation(polypeptide, domain, start, end, strand);
+                    //---floc.setRank(rank);
+                    //---sequenceDao.persist(floc);
+                    rank++;
+                    //---Iterator<FeatureLoc> iter = polypeptide.getFeatureLocsForFeatureId().iterator();
+                    //---FeatureLoc featureLoc = (FeatureLoc)iter.next();
+                    //---Feature parent = featureLoc.getFeatureBySrcFeatureId();
+                    //---int start2 = ( start * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
+                    //---int end2 = ( end * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
+                    //System.err.println("creating featureloc with " + parent.getUniqueName() + " " + domain.getUniqueName() + " rank " + rank);
+                    //---FeatureLoc floc2 = featureUtils.createLocation(parent,domain, start2, end2, strand);
+                    //---floc2.setRank(rank);
+                    rank++;
+                    //---sequenceDao.persist(floc2);
+
+                    //---session.flush();
+                }
+            }
+        }
+    }
+
+    private void processInterProHit(Session session, Feature polypeptide,
+            String ipNum, List<String> progs, List<String> progAcc,
+            List<String[]> coordIP, List<String> scores) {
+        Feature ipDomain = null;
+        String secDB = "";
+        if ( ipNum.equals("NULL")) {
+            return;
+        }
 
 
-		Iterator<String> it2 = progs.iterator();
-		int count = 0;
-		int rank = 0;
-		int rank2 = 0;
-		while ( it2.hasNext() ) {
-			//StringBuffer note = new StringBuffer();
-			//note.append("Derived from hit: ");
-			secDB = (String) dbs.get(it2.next());
-			//note.append(secDB);
-			String uniqueName = polypeptide.getUniqueName() + ":" + ipNum + ":" + progAcc.get(count);
-			//sequenceDao.getFeatureByUniqueName(uniqueName, "polypeptide_domain");
-			List<Feature> features = sequenceDao.getFeaturesByUniqueName(uniqueName + "%");
-			//System.err.println("feature size is " + features.size());
-			if (features.size() == 0) {
-				//---ipDomain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
-			} else {
-				//System.err.println("feature size is in else " + features.size());
-		    		
-				uniqueName = uniqueName + ":" + (features.size() - 1);
-				//---ipDomain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
-			}
-			//---DbXRef dbXRef = featureUtils.findOrCreateDbXRefFromString("InterPro:" + ipNum);
-		        
-			//---ipDomain.setDbXRef(dbXRef);
-			//---sequenceDao.persist(ipDomain);
-			System.err.println("looking at -> '" + uniqueName + "' '" +  secDB + "'':''" + progAcc.get(count));
-			//---dbXRef = featureUtils.findOrCreateDbXRefFromString(secDB + ":" + progAcc.get(count));
-			//---FeatureDbXRef fdbXRef = new FeatureDbXRef();
-			//---fdbXRef.setFeature(ipDomain);
-			//---fdbXRef.setDbXRef(dbXRef);
-			//---sequenceDao.persist(fdbXRef);
-			//---CvTerm description = featureUtils.findOrCreateCvTermFromString("feature_property", "description");
-			//---FeatureProp fp = new FeatureProp(ipDomain,description,note.toString(),rank2);
-			//---sequenceDao.persist(fp);
-			rank2++;
-			String score = scores.get(count).split("=")[0];
-			String desc = scores.get(count).split("=")[1];
-		        
-			//---CvTerm scoreTerm = featureUtils.findOrCreateCvTermFromString("null", "score");
-			//---FeatureProp scoreProp = new FeatureProp(ipDomain,scoreTerm,score,0);
-			//---sequenceDao.persist(scoreProp);
-			
-			//---FeatureProp descProp = new FeatureProp(ipDomain,description,desc,rank2);
-			//---sequenceDao.persist(descProp);
-		        
-			int start = 0;
-			int end = 0;
-			short strand = 0;
-			if ( coordIP.size() > 0) {
-				String[] coord = (String[])coordIP.get(count);
-				start = Integer.parseInt(coord[0]);
-				end = Integer.parseInt(coord[1]);
-			}	
-		    	
-			//---FeatureLoc floc = featureUtils.createLocation(polypeptide, ipDomain, start, end, strand);
-			//---floc.setRank(rank);
-			//---sequenceDao.persist(floc);
-			rank++;
-			//---Iterator<FeatureLoc> iter = polypeptide.getFeatureLocsForFeatureId().iterator();
-			//---FeatureLoc featureLoc = (FeatureLoc)iter.next();
-			//---Feature parent = featureLoc.getFeatureBySrcFeatureId();
-			//---int start2 = ( start * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
-			//---int end2 = ( end * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
-		    	
-			//---FeatureLoc floc2 = featureUtils.createLocation(parent,ipDomain, start2, end2, strand);
-			//---floc2.setRank(rank);
-			rank++;
-			//---sequenceDao.persist(floc2);
-			count++;
-			//---session.flush();
-		}
-		//System.err.println("Adding Interpro hit for "+gene.getId());
+        Iterator<String> it2 = progs.iterator();
+        int count = 0;
+        int rank = 0;
+        int rank2 = 0;
+        while ( it2.hasNext() ) {
+            //StringBuffer note = new StringBuffer();
+            //note.append("Derived from hit: ");
+            secDB = (String) dbs.get(it2.next());
+            //note.append(secDB);
+            String uniqueName = polypeptide.getUniqueName() + ":" + ipNum + ":" + progAcc.get(count);
+            //sequenceDao.getFeatureByUniqueName(uniqueName, "polypeptide_domain");
+            List<Feature> features = sequenceDao.getFeaturesByUniqueName(uniqueName + "%");
+            //System.err.println("feature size is " + features.size());
+            if (features.size() == 0) {
+                //---ipDomain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
+            } else {
+                //System.err.println("feature size is in else " + features.size());
 
-		    
-		//GeneUtils.addLink(brna, "InterPro", ipNum, note.toString());
-	}
+                uniqueName = uniqueName + ":" + (features.size() - 1);
+                //---ipDomain = featureUtils.createFeature("polypeptide_domain", uniqueName, polypeptide.getOrganism());
+            }
+            //---DbXRef dbXRef = featureUtils.findOrCreateDbXRefFromString("InterPro:" + ipNum);
+
+            //---ipDomain.setDbXRef(dbXRef);
+            //---sequenceDao.persist(ipDomain);
+            System.err.println("looking at -> '" + uniqueName + "' '" +  secDB + "'':''" + progAcc.get(count));
+            //---dbXRef = featureUtils.findOrCreateDbXRefFromString(secDB + ":" + progAcc.get(count));
+            //---FeatureDbXRef fdbXRef = new FeatureDbXRef();
+            //---fdbXRef.setFeature(ipDomain);
+            //---fdbXRef.setDbXRef(dbXRef);
+            //---sequenceDao.persist(fdbXRef);
+            //---CvTerm description = featureUtils.findOrCreateCvTermFromString("feature_property", "description");
+            //---FeatureProp fp = new FeatureProp(ipDomain,description,note.toString(),rank2);
+            //---sequenceDao.persist(fp);
+            rank2++;
+            String score = scores.get(count).split("=")[0];
+            String desc = scores.get(count).split("=")[1];
+
+            //---CvTerm scoreTerm = featureUtils.findOrCreateCvTermFromString("null", "score");
+            //---FeatureProp scoreProp = new FeatureProp(ipDomain,scoreTerm,score,0);
+            //---sequenceDao.persist(scoreProp);
+
+            //---FeatureProp descProp = new FeatureProp(ipDomain,description,desc,rank2);
+            //---sequenceDao.persist(descProp);
+
+            int start = 0;
+            int end = 0;
+            short strand = 0;
+            if ( coordIP.size() > 0) {
+                String[] coord = (String[])coordIP.get(count);
+                start = Integer.parseInt(coord[0]);
+                end = Integer.parseInt(coord[1]);
+            }
+
+            //---FeatureLoc floc = featureUtils.createLocation(polypeptide, ipDomain, start, end, strand);
+            //---floc.setRank(rank);
+            //---sequenceDao.persist(floc);
+            rank++;
+            //---Iterator<FeatureLoc> iter = polypeptide.getFeatureLocsForFeatureId().iterator();
+            //---FeatureLoc featureLoc = (FeatureLoc)iter.next();
+            //---Feature parent = featureLoc.getFeatureBySrcFeatureId();
+            //---int start2 = ( start * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
+            //---int end2 = ( end * 3 ) + polypeptide.getFeatureLocsForFeatureId().iterator().next().getFmin();
+
+            //---FeatureLoc floc2 = featureUtils.createLocation(parent,ipDomain, start2, end2, strand);
+            //---floc2.setRank(rank);
+            rank++;
+            //---sequenceDao.persist(floc2);
+            count++;
+            //---session.flush();
+        }
+        //System.err.println("Adding Interpro hit for "+gene.getId());
+
+
+        //GeneUtils.addLink(brna, "InterPro", ipNum, note.toString());
+    }
 
 
     //Molecular Function: protein kinase (GO:0004672),
     //Molecular Function: ATP binding (GO:0005524),
     //Biological Process: protein amino acid phosphorylation (GO:0006468)
     private void addGoTerms(Feature polypeptide, String[] row, Set<String> goIdsLinked, Session session) {
-    	String goTerms = row[COL_GO];
+        String goTerms = row[COL_GO];
         if ( goTerms == null || "".equals(goTerms)) {
             return;
         }
@@ -540,7 +540,7 @@ public class InterProParser {
                 //String name = GoQualifierDictionary.getName( acc );
                 c.setName( acc );
                 c.setGeneName(polypeptide.getUniqueName().split(":")[0]);
-               
+
                 //---featureUtils.createGoEntries(polypeptide,c);
                 session.flush();
             }
@@ -548,28 +548,27 @@ public class InterProParser {
     }
 
 
-	public void setFeatureUtils(FeatureUtils utils) {
-		featureUtils = utils;
-	}
+    public void setFeatureUtils(FeatureUtils utils) {
+        featureUtils = utils;
+    }
 
-	public void setHibernateTransactionManager(
-			HibernateTransactionManager hibernateTransactionManager) {
-		this.hibernateTransactionManager = hibernateTransactionManager;
-	}
+    public void setHibernateTransactionManager(
+            HibernateTransactionManager hibernateTransactionManager) {
+        this.hibernateTransactionManager = hibernateTransactionManager;
+    }
 
-	public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
-	}
-	
-	class InterproRow implements Comparable<InterproRow> {
-		String[] row;
-		
-		InterproRow(String[] row) {
-			this.row = row;
-		}
-		
-		@Override
-		public int compareTo(InterproRow o) {
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
+
+    class InterproRow implements Comparable<InterproRow> {
+        String[] row;
+
+        InterproRow(String[] row) {
+            this.row = row;
+        }
+
+        public int compareTo(InterproRow o) {
             String aAccNum = "NULL";
             String bAccNum = "NULL";
             if ( row.length > COL_ACC) {
@@ -580,18 +579,18 @@ public class InterProParser {
             }
             int cmp = aAccNum.compareTo(bAccNum);
             if ( cmp != 0 ) {
-            	return cmp; 
+                return cmp;
             }
-            
+
             return (row[COL_NATIVE_PROG].compareTo(o.row[COL_NATIVE_PROG]));
-		}
-		
-	}
-	
-	public static void main(String[] args) {
-		InterProParser ipp = new InterProParser();
-		ipp.parse("/nfs/team81/art/chr1merged.raw");
-		
-	}
-	
+        }
+
+    }
+
+    public static void main(String[] args) {
+        InterProParser ipp = new InterProParser();
+        ipp.parse("/nfs/team81/art/chr1merged.raw");
+
+    }
+
 }
