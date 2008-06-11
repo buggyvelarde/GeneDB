@@ -149,7 +149,7 @@ public class Feature implements java.io.Serializable {
      */
     @Transient
     private FeatureLoc featureLoc;
-    
+
     @Transient
     private Logger logger = Logger.getLogger(Feature.class);
 
@@ -207,7 +207,7 @@ public class Feature implements java.io.Serializable {
 
     /**
      * Get the human-readable form of the feature eg the gene name
-     * 
+     *
      * @return the name, may be null
      */
     public String getName() {
@@ -216,7 +216,7 @@ public class Feature implements java.io.Serializable {
 
     /**
      * Set the human-readable form of the feature eg the gene name
-     * 
+     *
      * @param name the human-readable name
      */
     public void setName(String name) {
@@ -225,7 +225,7 @@ public class Feature implements java.io.Serializable {
 
     /**
      * Fetch the unique name (systematic id) for the feature
-     * 
+     *
      * @return the unique name, not null
      */
     public String getUniqueName() {
@@ -234,7 +234,7 @@ public class Feature implements java.io.Serializable {
 
     /**
      * Set the unique name (systematic id) for the feature
-     * 
+     *
      * @param uniqueName the unique name, not null
      */
     public void setUniqueName(String uniqueName) {
@@ -249,7 +249,7 @@ public class Feature implements java.io.Serializable {
 
     /**
      * Fetch a subset of the sequence (may be lazy)
-     * 
+     *
      * @param min the lower bound, in interbase coordinates
      * @param max the upper bound, in interbase coordinates
      * @return
@@ -273,7 +273,7 @@ public class Feature implements java.io.Serializable {
 
     /**
      * Fetch the length of the sequence. Find it from the parent if necessary
-     * 
+     *
      * @return the length
      */
     public int getSeqLen() {
@@ -335,9 +335,9 @@ public class Feature implements java.io.Serializable {
      * Returns the unique rank=0 FeatureLoc associated with this feature. Every
      * feature should have one, so this method will not return null unless
      * something is wrong in the database.
-     * 
+     *
      * @return the unique rank=0 FeatureLoc associated with this feature
-     */   
+     */
     @Transient
     public FeatureLoc getRankZeroFeatureLoc() {
         List<FeatureLoc> featureLocs = getFeatureLocsForFeatureId();
@@ -454,7 +454,7 @@ public class Feature implements java.io.Serializable {
     /**
      * Get the display name for the gene, preferrably the name, otherwise the
      * display name
-     * 
+     *
      * @return the preferred display name, never null
      */
     public String getDisplayName() {
@@ -498,10 +498,10 @@ public class Feature implements java.io.Serializable {
 
     /**
      * Returns the value of the featureLoc field.
-     * 
+     *
      * This is probably not what you want: unless you are doing something
      * special, use the {@link #getRankZeroFeatureLoc()} method.
-     * 
+     *
      * This featureLoc field does not participate in the Hibernate mapping. It's
      * provided as a convenience for the client, and can be used to cache a
      * FeatureLoc of interest, but is neither automatically populated nor
@@ -513,10 +513,10 @@ public class Feature implements java.io.Serializable {
 
     /**
      * Sets the value of the featureLoc field.
-     * 
+     *
      * This is probably not what you were looking for: see
      * {@link #setFeatureLocsForFeatureId()}.
-     * 
+     *
      * This featureLoc field does not participate in the Hibernate mapping. It's
      * provided as a convenience for the client, and can be used to cache a
      * FeatureLoc of interest, but is neither automatically populated nor
@@ -536,10 +536,30 @@ public class Feature implements java.io.Serializable {
                 first = false;
             else
                 ret.append('\t');
-                    
+
            ret.append(featureSynonym.getSynonym().getName());
         }
         return ret.toString();
+    }
+
+    /**
+     * A string containing all the names by which this feature is known;
+     * indexed by Lucene and used for searches.
+     *
+     * @return
+     */
+    @Transient
+    @Field(name = "allNames", index = Index.TOKENIZED, store = Store.NO)
+    public String getAllNames() {
+        StringBuilder allNames = new StringBuilder();
+        if (getName() != null) {
+            allNames.append(getName());
+            allNames.append(' ');
+        }
+        allNames.append(getDisplayName());
+        allNames.append(' ');
+        allNames.append(getSynonymsAsTabSeparatedString());
+        return allNames.toString();
     }
 
     @Transient
