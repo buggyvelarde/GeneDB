@@ -253,8 +253,9 @@ ul#simple-menu li:hover ul {
 	list-style-type:none;
 	position:absolute;
 	top:27px;
-	left:-42px;
-	width: 150px;
+	left:-40px;
+	width: 70px;
+	padding-top: 2px;
 }
 
 .w {
