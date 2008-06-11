@@ -32,4 +32,9 @@ public abstract class AbstractGene extends Feature {
 
     @Transient
     abstract public String getProductsAsTabSeparatedString();
+
+    @Transient
+    public boolean isPseudo() {
+        return (this instanceof Pseudogene);
+    }
 }

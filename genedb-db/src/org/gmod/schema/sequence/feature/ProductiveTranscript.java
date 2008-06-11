@@ -1,13 +1,11 @@
 package org.gmod.schema.sequence.feature;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -19,6 +17,7 @@ import org.hibernate.search.annotations.Store;
  *
  * @author rh11
  */
+@Entity
 public abstract class ProductiveTranscript extends Transcript {
     /**
      * Return the uniqueName of the associated polypeptide.
@@ -58,6 +57,14 @@ public abstract class ProductiveTranscript extends Transcript {
     }
 
     @Transient
+    public List<String> getProducts() {
+        Polypeptide protein = getProtein();
+        if (protein == null)
+            return null;
+        return protein.getProducts();
+    }
+
+    @Transient
     @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
     public String getProductsAsTabSeparatedString() {
         StringBuilder ret = new StringBuilder();
@@ -75,47 +82,15 @@ public abstract class ProductiveTranscript extends Transcript {
         return ret.toString();
     }
 
-    @Transient
-    public List<String> getProducts() {
-        List<String> products = new ArrayList<String>();
-        Feature protein = getProtein();
-        if (protein == null)
-            return null;
-
-        for (FeatureCvTerm featureCvTerm : protein.getFeatureCvTerms()) {
-            if (featureCvTerm.getCvTerm().getCv().getName().equals("genedb_products")) {
-                products.add(featureCvTerm.getCvTerm().getName());
-            }
-        }
-        return products;
-    }
-
-    /**
-     * Get the ID number of the colour associated with this transcript's polypeptide.
-     * It is often unassigned, in which case <code>null</code> is returned.
-     *
-     * @return
-     */
     @Override
     @Transient
     @Field(name = "colour", index = Index.UN_TOKENIZED, store = Store.YES)
     public Integer getColourId() {
-        /* Sometimes there is no colour property at all,
-           and sometimes there is a colour property with a null value.
-
-           I don't know why this inconsistency exists. —rh11 */
-
-        for (FeatureProp featureProp : getProtein().getFeatureProps()) {
-            if (featureProp.getCvTerm().getName().equals("colour")) {
-                String colourString = featureProp.getValue();
-                if (colourString == null)
-                    return null;
-
-                return Integer.parseInt(colourString);
-            }
+        Polypeptide protein = getProtein();
+        if (protein == null) {
+            return null;
         }
-
-        return null;
+        return protein.getColourId();
     }
 
 }

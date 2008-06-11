@@ -1,16 +1,13 @@
 package org.gmod.schema.sequence.feature;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.hibernate.search.annotations.Field;
@@ -26,22 +23,13 @@ public abstract class Transcript extends Feature {
 
     public abstract Integer getColourId();
 
-    public Transcript() {
-        super();
-    }
-
-    public Transcript(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis,
-            boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {
-        super(organism, cvTerm, uniqueName, analysis, obsolete, timeAccessioned, timeLastModified);
-    }
-
     public AbstractGene getGene() {
         if (gene != null)
             return gene;
 
         for (FeatureRelationship relation : getFeatureRelationshipsForSubjectId()) {
             Feature geneFeature = relation.getFeatureByObjectId();
-            if (geneFeature instanceof Gene) {
+            if (geneFeature instanceof AbstractGene) {
                 gene = (AbstractGene) geneFeature;
                 break;
             }
@@ -89,18 +77,33 @@ public abstract class Transcript extends Feature {
     }
 
     @Transient
-    public Collection<Exon> getExons() {
-        List<Exon> exons = new ArrayList<Exon>();
+    public Collection<TranscriptComponent> getComponents() {
+        return getComponents(TranscriptComponent.class);
+    }
+
+    @Transient
+    public <T extends TranscriptComponent> SortedSet<T> getComponents(Class<T> clazz) {
+        SortedSet<T> components = new TreeSet<T>();
 
         for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
             Feature feature = relation.getFeatureBySubjectId();
-            if (feature instanceof Exon)
-                exons.add((Exon) feature);
+            if (clazz.isInstance(feature))
+                components.add(clazz.cast(feature));
         }
 
-        return exons;
+        return components;
     }
 
+    @Transient
+    public SortedSet<AbstractExon> getExons() {
+        return getComponents(AbstractExon.class);
+    }
+
+    /**
+     * Get the exon locations, as a comma-separated string.
+     *
+     * @return
+     */
     @Transient
     @Field(name = "exonlocs", store = Store.YES)
     public String getExonLocs() {
@@ -113,6 +116,29 @@ public abstract class Transcript extends Feature {
             else
                 locs.append(',');
             locs.append(exon.getLocAsString());
+        }
+
+        return locs.toString();
+    }
+
+    /**
+     * Get the exon locations in a form suitable for displaying
+     * to the end-user, in traditional coordinates and separated
+     * by a comma and a space.
+     *
+     * @return
+     */
+    @Transient
+    public String getExonLocsTraditional() {
+        StringBuilder locs = new StringBuilder();
+
+        boolean first = true;
+        for (AbstractExon exon : getExons()) {
+            if (first)
+                first = false;
+            else
+                locs.append(", ");
+            locs.append(exon.getTraditionalLocAsString());
         }
 
         return locs.toString();
