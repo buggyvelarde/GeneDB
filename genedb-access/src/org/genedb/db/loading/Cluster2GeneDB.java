@@ -85,8 +85,7 @@ public class Cluster2GeneDB {
                 map = parseFile(r);
 
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                System.exit(-1);
+                throw new RuntimeException(e);
             }
             writeToDb(map);
             transaction.commit();
@@ -95,8 +94,8 @@ public class Cluster2GeneDB {
 
     private void writeToDb(Map<String, String> map) {
 
-        for (Map.Entry<String,String> entry: map.entrySet()) {
-            String key   = entry.getKey();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String key = entry.getKey();
             String value = entry.getValue();
 
             if (value != null && value.length() > 0) {
@@ -104,7 +103,7 @@ public class Cluster2GeneDB {
                 if (polypeptide == null) {
                     logger.warn("Can't find gene for '" + key + "'");
                 } else {
-                    
+
                     DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(ORTHOMCLDB, value);
                     if (dbXRef == null) {
                         dbXRef = new DbXRef(ORTHOMCLDB, key);
@@ -116,7 +115,7 @@ public class Cluster2GeneDB {
                 }
             }
         }
-        
+
     }
 
     private Feature getPolypeptide(String geneName) {
@@ -142,7 +141,7 @@ public class Cluster2GeneDB {
                 map.put(terms[0], terms[1]);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return map;
     }
