@@ -1,13 +1,16 @@
 package org.genedb.hibernate.search;
 
 import java.io.Console;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.feature.AbstractGene;
 import org.gmod.schema.sequence.feature.Transcript;
+import org.gmod.schema.sequence.feature.UTR;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
@@ -37,16 +40,19 @@ public class IndexChado {
      */
     private static final int BATCH_SIZE = 10;
 
+    private String databaseUrl;
+    private String databaseUsername;
+    private String databasePassword;
+    private String indexBaseDirectory;
+
     /**
-     * Build a session factory configured with the supplied batch size, and
-     * using database connection information taken from system properties. If no
-     * database password is supplied, the user is prompted for one on the
-     * console.
+     * Create a new instance configured with database connection information taken from
+     * system properties. If no database password is supplied, the user is prompted for
+     * one on the console.
      *
      * @param batchSize
-     * @return
      */
-    private static SessionFactory getSessionFactory(int batchSize) {
+    public static IndexChado configuredWithSystemProperties() {
         String databaseUrl = System.getProperty("database.url");
         if (databaseUrl == null)
             die("The property database.url must be supplied, "
@@ -64,8 +70,7 @@ public class IndexChado {
             die("The property index.base must be supplied, "
                     + "e.g. -Dindex.base=/software/pathogen/genedb/indexes");
 
-        return getSessionFactory(batchSize, databaseUrl, databaseUsername, databasePassword,
-            indexBaseDirectory);
+        return new IndexChado(databaseUrl, databaseUsername, databasePassword, indexBaseDirectory);
     }
 
     private static String promptForPassword(String databaseUrl, String databaseUsername) {
@@ -79,21 +84,34 @@ public class IndexChado {
         return new String(password);
     }
 
-    private static SessionFactory sessionFactory = null;
     /**
-     * Build a session factory configured with the supplied parameters.
+     * Create a new instance configured with the specified database connection details.
      *
-     * @param batchSize
      * @param databaseUrl
      * @param databaseUsername
      * @param databasePassword
      * @param indexBaseDirectory
+     */
+    private IndexChado(String databaseUrl, String databaseUsername, String databasePassword,
+            String indexBaseDirectory) {
+        this.databaseUrl = databaseUrl;
+        this.databaseUsername = databaseUsername;
+        this.databasePassword = databasePassword;
+        this.indexBaseDirectory = indexBaseDirectory;
+    }
+
+    private Map<Integer,SessionFactory> sessionFactoryByBatchSize = new HashMap<Integer,SessionFactory>();
+
+    /**
+     * Get a session factory configured with the database connection information
+     * for this instance, and the supplied batch size.
+     *
+     * @param batchSize
      * @return
      */
-    private static SessionFactory getSessionFactory(int batchSize, String databaseUrl,
-            String databaseUsername, String databasePassword, String indexBaseDirectory) {
-        if (sessionFactory != null)
-            return sessionFactory;
+    private SessionFactory getSessionFactory(int batchSize) {
+        if (sessionFactoryByBatchSize.containsKey(batchSize))
+            return sessionFactoryByBatchSize.get(batchSize);
 
         Configuration cfg = new AnnotationConfiguration();
         cfg.configure();
@@ -112,7 +130,9 @@ public class IndexChado {
         cfg.setListener("post-update", ft);
         cfg.setListener("post-delete", ft);
 
-        return sessionFactory = cfg.buildSessionFactory();
+        SessionFactory sessionFactory = cfg.buildSessionFactory();
+        sessionFactoryByBatchSize.put(batchSize, sessionFactory);
+        return sessionFactory;
     }
 
     /**
@@ -121,7 +141,7 @@ public class IndexChado {
      * @param batchSize
      * @return
      */
-    private static FullTextSession newSession(int batchSize) {
+    private FullTextSession newSession(int batchSize) {
         SessionFactory sessionFactory = getSessionFactory(batchSize);
         FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
         session.setFlushMode(FlushMode.MANUAL);
@@ -136,7 +156,7 @@ public class IndexChado {
      * @param featureClass
      * @param numBatches
      */
-    public static void indexFeatures(Class<? extends Feature> featureClass, int numBatches) {
+    public void indexFeatures(Class<? extends Feature> featureClass, int numBatches) {
         FullTextSession session = newSession(BATCH_SIZE);
         Transaction transaction = session.beginTransaction();
         Set<Integer> failed = batchIndexFeatures(featureClass, numBatches, session);
@@ -159,7 +179,7 @@ public class IndexChado {
      * @param session
      * @return a set of featureIds of the features that failed to be indexed
      */
-    private static Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
+    private Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
             int numBatches, FullTextSession session) {
 
         Set<Integer> failedToLoad = new HashSet<Integer>();
@@ -208,7 +228,7 @@ public class IndexChado {
      *
      * @param failed a set of features to reindex
      */
-    private static void reindexFailedFeatures(Set<Integer> failed) {
+    private void reindexFailedFeatures(Set<Integer> failed) {
         logger.info("Attempting to reindex failed features");
         FullTextSession session = newSession(1);
         Transaction transaction = session.beginTransaction();
@@ -238,7 +258,9 @@ public class IndexChado {
         else if (args.length != 0)
             throw new IllegalArgumentException("Unexpected command-line arguments");
 
-        //indexFeatures(AbstractGene.class, numBatches);
-        indexFeatures(Transcript.class, numBatches);
+        IndexChado indexer = IndexChado.configuredWithSystemProperties();
+        indexer.indexFeatures(AbstractGene.class, numBatches);
+        indexer.indexFeatures(Transcript.class, numBatches);
+        indexer.indexFeatures(UTR.class, numBatches);
     }
 }
