@@ -3,6 +3,7 @@ package org.gmod.schema.sequence.feature;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.gmod.schema.sequence.Feature;
@@ -14,6 +15,7 @@ import org.gmod.schema.sequence.FeatureRelationship;
  * @author rh11
  *
  */
+@Entity
 public abstract class AbstractGene extends Feature {
     @Transient
     public Collection<Transcript> getTranscripts() {
@@ -28,5 +30,6 @@ public abstract class AbstractGene extends Feature {
         return ret;
     }
 
+    @Transient
     abstract public String getProductsAsTabSeparatedString();
 }

@@ -62,6 +62,9 @@ public abstract class ProductiveTranscript extends Transcript {
     public String getProductsAsTabSeparatedString() {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
+        List<String> products = getProducts();
+        if (products == null)
+            return null;
         for (String product: getProducts()) {
             if (first)
                 first = false;

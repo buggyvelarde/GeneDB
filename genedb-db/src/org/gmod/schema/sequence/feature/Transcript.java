@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
@@ -16,6 +17,7 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
 
+@Entity
 public abstract class Transcript extends Feature {
 
     private static Logger logger = Logger.getLogger(Transcript.class);
