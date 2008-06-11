@@ -300,18 +300,20 @@ public class FixResidues {
             +" join feature_relationship transcript_gene"
             +"      on transcript_gene.subject_id = transcript.feature_id"
             +" where transcript_gene.object_id = ?"
-            +" and exon.type_id = ?"
+            +" and exon.type_id in (?, ?)"
             +" and transcript.type_id in (?, ?, ?, ?, ?)"
         );
         Map<Integer,Transcript> transcriptsById = new HashMap<Integer,Transcript>();
         try {
             st.setInt(1, geneFeatureId);
             st.setInt(2, typeCodes.typeId("sequence", "exon"));
-            st.setInt(3, typeCodes.typeId("sequence", "mRNA"));
-            st.setInt(4, typeCodes.typeId("sequence", "rRNA"));
-            st.setInt(5, typeCodes.typeId("sequence", "tRNA"));
-            st.setInt(6, typeCodes.typeId("sequence", "snRNA"));
-            st.setInt(7, typeCodes.typeId("sequence", "pseudogenic_transcript"));
+            st.setInt(3, typeCodes.typeId("sequence", "pseudogenic_exon"));
+
+            st.setInt(4, typeCodes.typeId("sequence", "mRNA"));
+            st.setInt(5, typeCodes.typeId("sequence", "rRNA"));
+            st.setInt(6, typeCodes.typeId("sequence", "tRNA"));
+            st.setInt(7, typeCodes.typeId("sequence", "snRNA"));
+            st.setInt(8, typeCodes.typeId("sequence", "pseudogenic_transcript"));
             ResultSet rs = st.executeQuery();
 
             while (rs.next()) {
@@ -326,9 +328,11 @@ public class FixResidues {
                 int fmax = rs.getInt("fmax");
 
                 if (!transcriptsById.containsKey(transcriptId)) {
+                    boolean isCoding = transcriptType == typeCodes.typeId("sequence", "mRNA")
+                                    || transcriptType == typeCodes.typeId("sequence", "pseudogenic_transcript");
                     Transcript transcript = new Transcript(
                         transcriptId, transcriptName,
-                        (transcriptType == typeCodes.typeId("sequence", "mRNA")),
+                        isCoding,
                         translationTableId, phase);
                     transcriptsById.put(transcriptId, transcript);
                 }
