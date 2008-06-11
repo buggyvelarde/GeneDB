@@ -34,9 +34,11 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.feature.AbstractGene;
 import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.sequence.feature.MRNA;
 import org.gmod.schema.sequence.feature.Polypeptide;
+import org.gmod.schema.sequence.feature.ProductiveTranscript;
 import org.gmod.schema.sequence.feature.Transcript;
 import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
@@ -89,11 +91,11 @@ public class GeneDBWebUtils {
     public static Map<String, Object> prepareGene(String uniqueName, Map<String, Object> model)
             throws IOException {
         model = prepareArtemisHistory(uniqueName, model);
-        Gene gene = (Gene) sequenceDao.getFeatureByUniqueName(uniqueName, "gene");
+        AbstractGene gene = sequenceDao.getFeatureByUniqueName(uniqueName, AbstractGene.class);
         return prepareGene(gene, model);
     }
 
-    public static Map<String, Object> prepareGene(Gene gene, Map<String, Object> model) {
+    public static Map<String, Object> prepareGene(AbstractGene gene, Map<String, Object> model) {
         model.put("gene", gene);
 
         Collection<Transcript> transcripts = gene.getTranscripts();
@@ -124,13 +126,13 @@ public class GeneDBWebUtils {
 
         model.put("transcript", transcript);
 
-        if (transcript instanceof MRNA) {
-            MRNA codingTranscript = (MRNA) transcript;
+        if (transcript instanceof ProductiveTranscript) {
+            ProductiveTranscript codingTranscript = (ProductiveTranscript) transcript;
             Polypeptide polypeptide = codingTranscript.getProtein();
 
             model.put("polypeptide", polypeptide);
             model.put("polyprop", calculatePepstats(polypeptide));
-            
+
             List<CountedName> controlledCuration = cvDao.getCountedNamesByCvNameAndFeature("CC_genedb_controlledcuration", polypeptide);
             List<CountedName> biologicalProcess = cvDao.getCountedNamesByCvNameAndFeature("biological_process", polypeptide);
             List<CountedName> cellularComponent = cvDao.getCountedNamesByCvNameAndFeature("cellular_component", polypeptide);
@@ -154,6 +156,11 @@ public class GeneDBWebUtils {
             SymbolTokenization proteinTokenization = ProteinTools.getTAlphabet().getTokenization("token");
             protein = new SimpleSymbolList(proteinTokenization, new String(polypeptide.getResidues()));
 
+            if (protein.length() == 0) {
+                logger.error(String.format("Polypeptide feature '%s' has zero-length residues", polypeptide.getUniqueName()));
+                return pp;
+            }
+
              try {
                 // if the seq ends with a * (termination) we need to
                 // remove the *
@@ -167,27 +174,29 @@ public class GeneDBWebUtils {
             logger.error("Can't translate into a protein sequence", e);
             return pp;
         }
-        IsoelectricPointCalc ipc = new IsoelectricPointCalc();
-        Double cal = 0.0;
+
+        pp.setAminoAcids(Integer.toString(protein.length()));
+
+        DecimalFormat twoDecimalPlaces = new DecimalFormat("#.##");
+
         try {
-            cal = ipc.getPI(protein, false, false);
+            double isoElectricPoint = new IsoelectricPointCalc().getPI(protein, false, false);
+            pp.setIsoelectricPoint(twoDecimalPlaces.format(isoElectricPoint));
         } catch (IllegalAlphabetException e) {
             logger.error(String.format("Error computing protein isoelectric point for '%s'", protein), e);
         } catch (BioException e) {
             logger.error(String.format("Error computing protein isoelectric point for '%s'", protein), e);
         }
-        DecimalFormat df = new DecimalFormat("#.##");
-        pp.setIsoelectricPoint(df.format(cal));
-        pp.setAminoAcids(Integer.toString(protein.length()));
+
         try {
-            cal = 0.0;
-            cal = MassCalc.getMass(protein, SymbolPropertyTable.AVG_MASS, true) / 1000;
+            double massInDaltons = MassCalc.getMass(protein, SymbolPropertyTable.AVG_MASS, true);
+            pp.setMass(twoDecimalPlaces.format(massInDaltons / 1000));
         } catch (IllegalSymbolException e) {
             logger.error("Error computing protein mass", e);
         }
-        pp.setMass(df.format(cal / 1000));
-        cal = getCharge(protein);
-        pp.setCharge(df.format(cal));
+
+        double charge = getCharge(protein);
+        pp.setCharge(twoDecimalPlaces.format(charge));
         return pp;
     }
 

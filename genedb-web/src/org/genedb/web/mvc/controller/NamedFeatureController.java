@@ -93,7 +93,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             case 1: {
                 Document doc = hits.doc(0);
                 logger.info(String.format("Lucene found feature '%s'", doc.get("uniqueName")));
-                if ("gene".equals(doc.get("cvTerm.name"))) {
+                if ("gene".equals(doc.get("cvTerm.name")) || "pseudogene".equals(doc.get("cvTerm.name"))) {
                     GeneDBWebUtils.prepareGene(doc.get("uniqueName"), model);
                 } else {
                     GeneDBWebUtils.prepareTranscript(doc.get("uniqueName"), model);
