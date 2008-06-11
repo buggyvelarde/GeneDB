@@ -99,6 +99,21 @@
             </table>
         </format:genePageSection>
     </c:if>
+    
+    <!-- Curation Section -->
+    <db:propByName items="${polypeptide.featureProps}" cvTerm="curation" var="curation"/>
+    <c:if test="${fn:length(curation) > 0}">
+        <format:genePageSection id="curation">
+            <div class="heading">Curation</div>
+            <table width="100%">
+            <db:filtered-loop items="${polypeptide.featureProps}" cvTerm="curation" var="curation" varStatus="status">
+                <tr>
+                    <td>${curation.value}</td>
+                </tr>
+            </db:filtered-loop>
+            </table>
+        </format:genePageSection>
+    </c:if>
 
     <!-- Controlled Curation Section -->
     <db:propByName items="${polypeptide.featureCvTerms}" cv="CC_genedb_controlledcuration" var="controlledCurationTerms"/>
