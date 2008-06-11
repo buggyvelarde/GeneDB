@@ -88,13 +88,9 @@
     <c:if test="${fn:length(comment) > 0}">
         <format:genePageSection id="comment">
             <div class="heading">Comments</div>
-            <table width="100%">
             <db:filtered-loop items="${polypeptide.featureProps}" cvTerm="comment" var="comment" varStatus="status">
-                <tr>
-                    <td>${comment.value}</td>
-                </tr>
+                <div class="comment">${comment.value}</div>
             </db:filtered-loop>
-            </table>
         </format:genePageSection>
     </c:if>
 
@@ -103,13 +99,9 @@
     <c:if test="${fn:length(curation) > 0}">
         <format:genePageSection id="curation">
             <div class="heading">Curation</div>
-            <table width="100%">
             <db:filtered-loop items="${polypeptide.featureProps}" cvTerm="curation" var="curation" varStatus="status">
-                <tr>
-                    <td>${curation.value}</td>
-                </tr>
+                <div class="comment">${curation.value}</div>
             </db:filtered-loop>
-            </table>
         </format:genePageSection>
     </c:if>
 

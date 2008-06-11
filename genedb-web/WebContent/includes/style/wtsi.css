@@ -341,9 +341,16 @@ div.row {
 	width: 100%;
 }
 
+div.comment {
+	display: block;
+	clear: both;
+	margin-left: 1em;
+	margin-bottom: 1ex;
+}
+
 div#geneDetails div#firstRow div#generalInformation .middle {
 	min-width: 14em;
-	margin-right: 10em;
+	margin-right: 11.5em; /* width of analysis tools box */
 }
 div#geneDetails div#firstRow div#generalInformation .inner {
     min-height: 11em; /* height of analysis tools box */
@@ -356,7 +363,7 @@ div#geneDetails div#firstRow div#analysisTools {
     position: absolute;
     right: 0px;
     top: 0px;
-    width: 10em;
+    width: 11.5em;
 }
 
 div#geneDetails div#firstRow div#analysisTools .inner {
@@ -529,6 +536,7 @@ div.value {
 
  .heading {
     font-family: sans-serif;
+    font-weight: bold;
     color: blue;
     padding-bottom: 1ex;
  }
