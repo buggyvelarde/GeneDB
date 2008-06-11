@@ -203,10 +203,19 @@ function createArea(transcript, topPx, heightPx) {
         return false;
     };
     area.ondblclick = function() {
-        $.historyLoad(selectedTranscript.name);
+        if (selectedTranscript.name != loadedTranscriptName)
+            $.historyLoad(selectedTranscript.name);
     };
 
     contextMapContent.appendChild(area);
+
+    // On initial chromosome load, highlight the transcript we're here for.
+    if (transcript.name == originalTranscriptName)
+         $("#highlighter").css('left', (leftPx-2) + "px")
+			.css('top', (topPx-2) + "px")
+			.width((widthPx+4) + "px")
+			.height((heightPx+4) + "px")
+			.show();
 }
 
 function highlightTranscript(left, top, width, height) {
