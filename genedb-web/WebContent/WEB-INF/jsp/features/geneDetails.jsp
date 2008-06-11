@@ -18,7 +18,11 @@
          </c:if>
          <tr>
             <td class="label">Systematic Name</td>
-            <td class="value">${gene.uniqueName}</td>
+            <td class="value">
+                ${gene.uniqueName}<c:if test="${fn:length(gene.transcripts) > 1}">
+                    (Transcript ${transcript.uniqueName})
+                </c:if>
+            </td>
         </tr>
         <db:synonym name="obsolete_name" var="name" collection="${gene.featureSynonyms}">
             <tr>
@@ -32,14 +36,12 @@
                 <td class="value"><db:list-string collection="${name}" /></td>
              </tr>
         </db:synonym>
-        <c:if test="${polypeptide != null}">
+        <c:if test="${!empty(polypeptide.products)}">
             <tr>
                 <td class="label">Protein names</td>
                 <td class="value">
-                    <c:forEach items="${polypeptide.featureCvTerms}" var="featCvTerm">
-                        <c:if test="${featCvTerm.cvTerm.cv.name == 'genedb_products'}">
-                            <span>${featCvTerm.cvTerm.name}</span><br>
-                        </c:if>
+                    <c:forEach items="${polypeptide.products}" var="product">
+                        <span>${product}</span><br>
                     </c:forEach>
                 </td>
             </tr>
@@ -47,18 +49,14 @@
         <tr>
             <td class="label">Location</td>
             <td class="value">
-                <c:forEach items="${gene.featureLocsForFeatureId}" var="featLoc">
-                    <c:set var="start" value="${featLoc.fmin}" />
-                    <c:set var="end" value="${featLoc.fmax}" />
-                    ${start}..${end},
-                </c:forEach>
+                ${transcript.exonLocsTraditional},
                 chromosome ${chromosome.displayName}
             </td>
         </tr>
         <tr>
             <td class="label">See Also</td>
             <td class="value">
-                PlasmoDB , TDRtargets
+                PlasmoDB, TDRtargets
             </td>
         </tr>
         </table>
@@ -99,7 +97,7 @@
             </table>
         </format:genePageSection>
     </c:if>
-    
+
     <!-- Curation Section -->
     <db:propByName items="${polypeptide.featureProps}" cvTerm="curation" var="curation"/>
     <c:if test="${fn:length(curation) > 0}">
@@ -141,39 +139,41 @@
         </format:genePageSection>
     </c:if>
 
-    <!-- Predicted Peptide Section -->
-    <div id="peptideRow" class="row">
-        <format:genePageSection id="peptideProperties">
-            <div class="heading">Predicted Peptide Properties</div>
-            <table>
-            <tr>
-                <td class="label">Isoelectric Point</td>
-                <td class="value">pH ${polyprop.isoelectricPoint}</td>
-            </tr>
-            <c:if test="${polyprop.mass != null}">
+    <c:if test="${!gene.pseudo}">
+        <!-- Predicted Peptide Section -->
+        <div id="peptideRow" class="row">
+            <format:genePageSection id="peptideProperties">
+                <div class="heading">Predicted Peptide Properties</div>
+                <table>
                 <tr>
-                    <td class="label">Mass</td>
-                    <td class="value">${polyprop.mass} kDa</td>
+                    <td class="label">Isoelectric Point</td>
+                    <td class="value">pH ${polyprop.isoelectricPoint}</td>
                 </tr>
-            </c:if>
-            <tr>
-                <td class="label">Charge</td>
-                <td class="value">${polyprop.charge}</td>
-            </tr>
-            <tr>
-                <td class="label">Amino Acids</td>
-                <td class="value">${polyprop.aminoAcids}</td>
-            </tr>
-            </table>
-        </format:genePageSection>
+                <c:if test="${polyprop.mass != null}">
+                    <tr>
+                        <td class="label">Mass</td>
+                        <td class="value">${polyprop.mass} kDa</td>
+                    </tr>
+                </c:if>
+                <tr>
+                    <td class="label">Charge</td>
+                    <td class="value">${polyprop.charge}</td>
+                </tr>
+                <tr>
+                    <td class="label">Amino Acids</td>
+                    <td class="value">${polyprop.aminoAcids}</td>
+                </tr>
+                </table>
+            </format:genePageSection>
 
-        <format:genePageSection id="proteinMap" className="whiteBox">
-            <div class="heading">Protein Map</div>
-            <div align="center">
-                <img src="<c:url value="/includes/images/protein.gif"/>" id="ProteinMap">
-            </div>
-        </format:genePageSection>
-    </div>
+            <format:genePageSection id="proteinMap" className="whiteBox">
+                <div class="heading">Protein Map</div>
+                <div align="center">
+                    <img src="<c:url value="/includes/images/protein.gif"/>" id="ProteinMap">
+                </div>
+            </format:genePageSection>
+        </div>
+    </c:if>
 
     <!-- Domain Information -->
     <div id="domainInfo" style="clear: both;">
