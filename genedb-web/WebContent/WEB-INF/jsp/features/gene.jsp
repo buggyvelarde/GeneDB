@@ -6,7 +6,7 @@
 <c:url value="/" var="base"/>
 
 <format:headerRound name="Gene: ${gene.displayName}" title="Gene Page ${gene.displayName}" bodyClass="genePage"
-onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax});">
+onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax}, '${transcript.uniqueName}');">
 
 <st:init />
 <%-- The next three are used by the scrollable context map --%>
@@ -34,12 +34,15 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
     <div id="contextMapInfoPanel">
         <div class="closeButton"><a href="#"></a></div>
         <div id="loadDetails"><a href="#">Load details »</a></div>
-        <div class="label">Gene:</div><div class="value" id="selectedGeneName"></div>
-        <div class="label">Products:</div><div class="value" id="selectedGeneProducts"></div>
-        <div class="label">Location:</div><div class="value" id="selectedGeneLocation"></div>
+        <div class="value" id="selectedGeneName"></div>
+        <div class="value" id="selectedGeneProducts"></div>
     </div>
 </div>
 
+<format:genePageSection id="geneDetailsLoading" className="greyBox">
+    <img src="<c:url value="/includes/images/default/grid/loading.gif"/>">
+    Loading Gene Details...
+</format:genePageSection>
 <div id="geneDetails">
     <jsp:include page="geneDetails.jsp"/>
 </div>

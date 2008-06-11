@@ -1,9 +1,12 @@
 var loaded = false;
 var response;
 var contextMapDiv, contextMapThumbnailDiv, contextMapGeneInfo;
+var originalTranscriptName = null;
+var loadedTranscriptName = null;
 var base;
 
-function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax) {
+function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax, transcript) {
+    originalTranscriptName = loadedTranscriptName = transcript;
     base = baseArg;
     contextMapDiv = document.getElementById("contextMapDiv");
     contextMapThumbnailDiv = document.getElementById("contextMapThumbnailDiv");
@@ -142,12 +145,22 @@ function loadTiles(chrlen, locus, tileData) {
 }
 
 function reloadDetails(name) {
-    if (name == null || name == "")
-        return;
-    deselectTranscript();
-    $("#geneDetails").fadeTo("slow", 0.1).load("/genedb-web/NamedFeature?name="+name+"&detailsOnly=true", null, function () {
+    if (name == null || name == "") {
+        if (loadedTranscriptName == originalTranscriptName)
+            return;
+        else
+            name = originalTranscriptName; // Going back to initial view
+    }
+
+    $("#contextMapInfoPanel:visible").slideUp(200);
+    loadedTranscriptName = null;
+    $("#geneDetails").fadeTo("slow", 0.4).load("/genedb-web/NamedFeature?name="+name+"&detailsOnly=true", null, function () {
+        loadedTranscriptName = name;
+        window.title = "Gene "+name+" - GeneDB";
         $("#geneDetails").stop().fadeTo("fast", 1);
+        $("#geneDetailsLoading").hide();
     });
+    $("#geneDetailsLoading").show();
 }
 
 function deselectTranscript() {
@@ -171,9 +184,26 @@ function createArea(transcript, topPx, heightPx) {
     area.style.top = topPx + "px";
     area.style.height = heightPx + "px";
     area.onmousedown = function(event) {
-        selectedTranscript = transcript;
-        highlightTranscript(leftPx, topPx, widthPx, heightPx);
+        if (loadedTranscriptName == transcript.name)
+            $("#contextMapInfoPanel #loadDetails:visible").hide();
+        else
+            $("#contextMapInfoPanel #loadDetails:hidden").show();
+
+        if (selectedTranscript != transcript) {
+	        selectedTranscript = transcript;
+	        highlightTranscript(leftPx, topPx, widthPx, heightPx);
+	    }
+	    else {
+	       // If the details have just been loaded, the transcript
+	       // will be selected but the details pane hidden. Although
+	       // it provides no new information to reopen it, it feels
+	       // more intuitive to allow this.
+           $("#contextMapInfoPanel:hidden").slideDown(200);
+	    }
         return false;
+    };
+    area.ondblclick = function() {
+        $.historyLoad(selectedTranscript.name);
     };
 
     contextMapContent.appendChild(area);

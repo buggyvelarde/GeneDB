@@ -25,7 +25,7 @@ vibrants
 #8d0017 vibrant3	pantone 194
 #7c004f vibrant4	pantone 2612
 */
-body { 
+body {
   margin:           0;
   padding:          0;
   text-decoration:  none;
@@ -94,7 +94,7 @@ div.figleft, div.figright {
 
 div.left, div.figleft {
   float: left;
-} 
+}
 
 div.right, div.figright {
   float: right;
@@ -107,8 +107,8 @@ div.figleft p, div.figright p {
   font-size:  0.75em;
   border:     1px dotted #aaaaaa;
   padding:    0;
-} 
-        
+}
+
 div.figleft img, div.figright img {
   margin: 0;
   border: 1px solid #aaaaaa;
@@ -125,14 +125,14 @@ div.figleft a, div.figright a {
   text-align: justify;
   padding:    5px;
 }
-		      
+
 /* IMAGES FINISH  */
 
 /* begin cross-browser coloured fake-fieldsets */
 div.fieldset {
   border:           #83a4c3 dotted 1px;
   background-color: white;
-  padding:          0em 0.5em 0.5em 0.5em; 
+  padding:          0em 0.5em 0.5em 0.5em;
   width:            90%;
   text-align:       center;
   /*align:            center;*/
@@ -190,18 +190,18 @@ ul.vert-one li{
 
 ul.vert-one li a {
 	text-align:left;
-	padding: 0 0 0 20px; 
+	padding: 0 0 0 20px;
 	display:block;
 	text-decoration:none;
 	color:#fff;
 	background:#377cb1;
 	width:92%;
 }
-		
+
 ul.vert-one li a:hover {
 	background:#9bd1fa url("../images/vert-one_arrow.gif") no-repeat 0 9px;
 }
-		
+
 ul.vert-one li a.current,ul.vert-one li a.current:hover {
 	background:#9bd1fa url("../images/vert-one_arrow.gif") no-repeat 0 9px;
 }
@@ -278,8 +278,7 @@ div#header {
 	position: relative;
 	display: block;
 	width: 100%;
-	min-width: 600px;	
-	background-color: #377CB1;
+	min-width: 600px;
 	height:68px;
 }
 div#header table {
@@ -287,24 +286,23 @@ div#header table {
 }
 
 div#header table td {
-	font-size: 2em; 
-	line-height: 1em; 
-	color: #e0e0d5; 
-	font-family: Georgia; 
-	font-variant: small-caps; 
+	font-size: 2em;
+	line-height: 1em;
+	font-family: Georgia;
+	font-variant: small-caps;
 	font-weight: bold;
 	vertical-align: middle
 }
 
 div#header table td input#query {
-	width: 150px; 
-	padding: 4px; 
+	width: 150px;
+	padding: 4px;
 	vertical-align: middle;
 	border: 0;
 }
 
 div#header table td input#submit {
-	vertical-align: middle; 
+	vertical-align: middle;
 	margin: 0 0 0 7px;
 	background: transparent url(../images/bgsprite.gif) no-repeat -47px top;
 	border: 0;
@@ -315,6 +313,15 @@ div#header table td input#submit {
 	font-size: 0.5em;
 	font-weight: bold;
 	border: 0;
+}
+
+#header, .footer {
+    clear: both;
+    background-color: rgb(7,73,135);
+    color: #e0e0d5;
+}
+.footer :link, .footer :visited {
+	color: #e0e0d5;
 }
 
 div#geneDetails {
@@ -395,6 +402,12 @@ div#proteinMap {
     border-right: 2px solid black;
 }
 
+.greyBox .inner {
+    background-color: lightGray;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+}
+
 .inner * {
 	margin-bottom: 0pt;
 	margin-top: 0pt;
@@ -423,7 +436,13 @@ div.value {
   overflow:hidden;
   font-size:.01em;
   background:white}
-.whiteBox .round1{
+.greyBox .round *{
+  display:block;
+  height:1px;
+  overflow:hidden;
+  font-size:.01em;
+  background:lightGray}
+.whiteBox .round1, .greyBox .round1{
   margin-left:2px;
   margin-right:2px;
   padding-left:1px;
@@ -431,7 +450,7 @@ div.value {
   border-left:1px solid #777;
   border-right:1px solid #777;
   background-color:#444;}
-.whiteBox .round2{
+.whiteBox .round2, .greyBox .round2{
   margin-left:1px;
   margin-right:1px;
   padding-right:1px;
@@ -439,7 +458,7 @@ div.value {
   border-left:1px solid #444;
   border-right:1px solid #444;
   background:black;}
-.whiteBox .round3{
+.whiteBox .round3, .greyBox .round3{
   margin-left:0px;
   margin-right:0px;
   padding-left: 2px;
@@ -447,7 +466,7 @@ div.value {
   border-left:1px solid #777;
   border-right:1px solid #777;
   background: black;}
-.whiteBox .round4{
+.whiteBox .round4, .greyBox .round4{
   margin-left:0px;
   margin-right:0px;
   padding-left: 1px;
@@ -455,7 +474,7 @@ div.value {
   border-left:1px solid #444;
   border-right:1px solid #444;
   background: black;}
-.whiteBox .round5{
+.whiteBox .round5, .greyBox .round5{
   margin-left:0px;
   margin-right:0px;
   padding-left: 1px;
@@ -463,10 +482,13 @@ div.value {
   border-left:1px solid black;
   border-right:1px solid black;
   background: black;}
-.whiteBox .roundborder{
+.whiteBox .roundborder, .greyBox .roundborder{
   background:black}
 .whiteBox .roundbg{
   background:white}
+.greyBox .roundbg{
+  background:lightGray}
+
 
 .round{display:block}
 .round *{
@@ -504,7 +526,7 @@ div.value {
   border-right:1px solid #d1dde8}
 .roundfg{
   background:#C2D2E1}
-  
+
  .heading {
     font-family: sans-serif;
     color: blue;

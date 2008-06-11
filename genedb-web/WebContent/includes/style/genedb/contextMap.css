@@ -102,7 +102,7 @@ div#errorMessage {
 	border-right: 1px solid black;
     border-bottom: 1px solid black;
 	width: 38em;
-	height: 8em;
+	height: 6em;
 	margin-left: 30px;
 	padding-left: 1em;
 	padding-top: 1em;
@@ -110,6 +110,16 @@ div#errorMessage {
 	font-family: sans-serif;
 	z-index: 100;
 }
+
+#contextMapInfoPanel #selectedGeneName {
+	font-weight: bold;
+	margin-bottom: 1em;
+}
+
+#contextMapInfoPanel #selectedGeneProducts {
+    clear: left;
+}
+
 
 #contextMapInfoPanel .label {
 	width: 6em;
@@ -144,4 +154,24 @@ div#errorMessage {
 }
 .closeButton a:hover {
     background: transparent url(/genedb-web/includes/images/close-button.png) 0px -16px no-repeat;
+}
+
+#geneDetailsLoading {
+	position: absolute;
+	width: 15em;
+	top: 200px;
+	left: 200px;
+	font-size: 2em;
+	display: none;
+	z-index: 200;
+}
+
+#geneDetailsLoading .inner {
+	padding-top: 1em;
+	padding-bottom: 1em;
+	padding-left: 10px;
+}
+#geneDetailsLoading .inner img {
+	padding-left: 0.5em;
+    padding-right: 1em;
 }
