@@ -29,6 +29,7 @@ delete from db where name = 'UNIPROT';
 --
 -- Add local dbs and update existing dbs
 --
+
 insert into db (name, description) values (
 		'PRODUCT',
 		'Db where we store db entries corresponding to products');
@@ -82,6 +83,9 @@ update db set urlprefix='http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId='
 
 update db set urlprefix='http://ca.expasy.org/cgi-bin/prosite-search-ac?'
 	where name='Prosite';
+
+update db set urlprefix='http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids='
+	where name='PMID';
 
 
 
