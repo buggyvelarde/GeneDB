@@ -5,6 +5,7 @@ public class ResultHit {
 	private String name;
 	private String type;
 	private String organism;
+	private String product;
 	
 	public String getName() {
 		return name;
@@ -29,4 +30,12 @@ public class ResultHit {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
+    }
 }

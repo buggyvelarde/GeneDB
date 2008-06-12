@@ -18,6 +18,13 @@
 			<display:column property="geneName" href="./NamedFeature" paramId="name"/>
 		</display:table>
 	</c:if>
+	<c:if test="${luceneResults != null}">
+		<display:table name="luceneResults" uid="tmp" pagesize="30" requestURI="/NamedFeature" class="simple" cellspacing="0" cellpadding="4">
+			<display:column property="organism" title="Organism"/>
+			<display:column property="name" href="./NamedFeature" paramId="name"/>
+			<display:column property="product" title="Product"/>
+		</display:table>
+	</c:if>
 	</format:genePageSection>
 </div>
 <format:footer />

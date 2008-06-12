@@ -19,6 +19,8 @@
 
 package org.genedb.web.mvc.controller;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +29,23 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.analysis.Token;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.MultiFieldQueryParser;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
+import org.apache.lucene.search.BooleanClause.Occur;
 
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.sequence.Feature;
@@ -61,20 +73,36 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
         NameLookupBean nlb = (NameLookupBean) command;
         String orgs = nlb.getOrgs();
-        String name = nlb.getName();
+        String name = nlb.getName().toLowerCase();
         Map<String, Object> model = new HashMap<String, Object>(2);
         String viewName = listResultsView;
         List<ResultHit> results = new ArrayList<ResultHit>();
 
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
         if (orgs == null) {
-            Query query;
-            if (name.indexOf("*") == -1) {
-                query = new TermQuery(new Term("uniqueName", name));
+            BooleanQuery booleanQuery = new BooleanQuery();
+            
+            BooleanQuery booleanQueryFirst = new BooleanQuery();
+            booleanQueryFirst.add(new TermQuery(new Term("cvTerm.name","gene")),Occur.SHOULD);
+            booleanQueryFirst.add(new TermQuery(new Term("cvTerm.name","pseudogene")),Occur.SHOULD);
+            BooleanClause booleanClauseFirst = new BooleanClause(booleanQueryFirst,Occur.MUST);
+            booleanQuery.add(booleanClauseFirst);
+            
+            BooleanQuery booleanQuerySecond = new BooleanQuery();
+            Hits hits;
+            
+            if (name.indexOf('*') == -1) {
+                booleanQuerySecond.add(new TermQuery(new Term("allNames",name)),Occur.SHOULD);
+                booleanQuerySecond.add(new TermQuery(new Term("product",name)),Occur.SHOULD);
             } else {
-                query = new WildcardQuery(new Term("uniqueName", name));
+                booleanQuerySecond.add(new WildcardQuery(new Term("allNames", name)),Occur.SHOULD);
+                booleanQuerySecond.add(new WildcardQuery(new Term("product", name)),Occur.SHOULD);
             }
-            Hits hits = luceneDao.search(ir, query);
+            BooleanClause booleanClauseSecond = new BooleanClause(booleanQuerySecond,Occur.MUST);
+            booleanQuery.add(booleanClauseSecond);
+            
+            logger.info(String.format("Lucene query is %s", booleanQuery.toString()));
+            hits = luceneDao.search(ir, booleanQuery);
             switch (hits.length()) {
             case 0: {
                 // Temporary check as the Lucene index isn't automatically
@@ -104,17 +132,18 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             default:
                 for (int i = 0; i < hits.length(); i++) {
                     Document doc = hits.doc(i);
-                    if (!"gene".equals(doc.get("cvTerm.name"))) {
-                        continue;
+                    String type = doc.get("cvTerm.name");
+                    if (type.equalsIgnoreCase("gene")) {
+                        ResultHit rh = new ResultHit();
+                        rh.setName(doc.get("uniqueName"));
+                        rh.setType("gene");
+                        rh.setProduct(doc.get("product"));
+                        rh.setOrganism(doc.get("organism.commonName"));
+                        results.add(rh);
                     }
-                    ResultHit rh = new ResultHit();
-                    rh.setName(doc.get("uniqueName"));
-                    rh.setType("gene");
-                    rh.setOrganism(doc.get("organism.commonName"));
-                    results.add(rh);
                 }
                 viewName = listResultsView;
-                model.put("results", results);
+                model.put("luceneResults", results);
             }
 
             if (nlb.isHistory()) {
