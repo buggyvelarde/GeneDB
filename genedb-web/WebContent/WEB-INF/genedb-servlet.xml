@@ -354,6 +354,7 @@
 
 	<bean id="GeneDBWebUtils" class="org.genedb.web.mvc.controller.GeneDBWebUtils">
 		<property name="sequenceDao" ref="sequenceDao"/>
+		<property name="generalDao" ref="generalDao"/>
 		<property name="cvDao" ref="cvDao"/>
 		<property name="grep" ref="grep"/>
 	</bean>

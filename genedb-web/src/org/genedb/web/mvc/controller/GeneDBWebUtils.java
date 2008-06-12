@@ -30,8 +30,10 @@ import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.biojava.utils.SmallMap;
 import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
+import org.gmod.schema.general.Db;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.feature.AbstractGene;
@@ -56,6 +58,7 @@ public class GeneDBWebUtils {
 
     private static final Logger logger = Logger.getLogger(GeneDBWebUtils.class);
     private static SequenceDao sequenceDao;
+    private static GeneralDao generalDao;
     private static CvDao cvDao;
     private static Grep grep;
 
@@ -141,6 +144,9 @@ public class GeneDBWebUtils {
             model.put("BP", biologicalProcess);
             model.put("CellularC", cellularComponent);
             model.put("MF", molecularFunction);
+            
+            Db db = generalDao.getDbByName("PMID");
+            model.put("PMID",db.getUrlPrefix());
         }
         return model;
     }
@@ -453,5 +459,9 @@ public class GeneDBWebUtils {
 
     public void setCvDao(CvDao cvDao) {
         GeneDBWebUtils.cvDao = cvDao;
+    }
+
+    public void setGeneralDao(GeneralDao generalDao) {
+        GeneDBWebUtils.generalDao = generalDao;
     }
 }

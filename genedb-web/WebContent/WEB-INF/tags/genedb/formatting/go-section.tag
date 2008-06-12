@@ -29,6 +29,9 @@
         	<c:forEach items="${featureCvTerm.featureCvTermDbXRefs}" var="fctdbx">
         		<a href="${fctdbx.dbXRef.db.urlPrefix}${fctdbx.dbXRef.accession}">${fctdbx.dbXRef.db.name}:${fctdbx.dbXRef.accession}</a>
         	</c:forEach>
+        	<c:if test="${featureCvTerm.pub.uniqueName != 'null'}">
+        		<a href="${PMID}${featureCvTerm.pub.uniqueName}">${featureCvTerm.pub.uniqueName}</a>
+        	</c:if>
         </td>
         <td class="value others">
         	<c:forEach items="${featureCounts}" var="nc">
