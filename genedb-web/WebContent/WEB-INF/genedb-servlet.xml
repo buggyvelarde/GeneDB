@@ -346,7 +346,7 @@
         <property name="commandName" value="browseTerm"/>
 		<property name="commandClass" value="org.genedb.web.mvc.controller.BrowseTermBean" />
 		<property name="sequenceDao" ref="sequenceDao"/>
-        <property name="successView" value="list/features3" />
+        <property name="successView" value="list/terms" />
         <property name="formView" value="search/browseTerm" />
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
