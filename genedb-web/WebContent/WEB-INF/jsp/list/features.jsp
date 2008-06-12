@@ -2,6 +2,7 @@
 
 <format:headerRound title="Gene Results List" bodyClass="genePage">
 	<st:init />
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 <div id="geneDetails">
 	<format:genePageSection id="listResults" className="whiteBox">

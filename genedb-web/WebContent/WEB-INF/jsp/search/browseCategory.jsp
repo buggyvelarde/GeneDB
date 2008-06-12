@@ -1,10 +1,10 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="db" uri="db" %>
 
 <format:headerRound title="Browse By Category" bodyClass="genePage">
 	<st:init />
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 <div id="geneDetails">
 	<format:genePageSection id="browseCategory" className="whiteBox">
