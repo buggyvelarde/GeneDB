@@ -33,35 +33,40 @@ delete from db where name = 'UNIPROT';
 insert into db (name, description) values (
 		'PRODUCT',
 		'Db where we store db entries corresponding to products');
-		
+
 insert into db (name, description) values (
 		'RILEY',
 		'Db where we store db entries corresponding to RILEY terms');
-		
+
 insert into db (name, description) values (
 		'CCGEN',
-		'Db where we store db entries corresponding to controlled curation CV terms'
-);
+		'Db where we store db entries corresponding to controlled curation CV terms');
 
 insert into db (name, description) values (
 		'genedb_misc',
-		'Local values for where we need a dbxref eg for new cvterms'
-);
+		'Local values for where we need a dbxref eg for new cvterms');
+
+insert into db (name, description, urlprefix) values (
+        'SMART',
+        'Db where we store db entries corresponding to SMART terms',
+        'http://smart.embl-heidelberg.de/smart/do_annotation.pl?&BLAST=DUMMY&DOMAIN=');
+
+insert into db (name, description, urlprefix) values (
+        'TDRtargets',
+        'Db where we store db entries corresponding to TDRtargets terms',
+        'http://tdrtargets.org/targets/view?gene_name=');
 
 --
 -- Add url prefix to existing dbs
 --
-update db set urlprefix='http://www.ebi.ac.uk/interpro/IEntry?ac=' 
+update db set urlprefix='http://www.ebi.ac.uk/interpro/IEntry?ac='
 	where name='InterPro';
 
-update db set urlprefix='http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=' 
+update db set urlprefix='http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus='
 	where name='SGD';
 
-update db set urlprefix='http://smart.embl-heidelberg.de/smart/do_annotation.pl?&BLAST=DUMMY&DOMAIN=' 
+update db set urlprefix='http://smart.embl-heidelberg.de/smart/do_annotation.pl?&BLAST=DUMMY&DOMAIN='
 	where name='SMART';
-
-update db set urlprefix='http://tdrtargets.org/targets/view?gene_name='
-	where name='TDRtargets';
 
 update db set urlprefix='http://www.ebi.uniprot.org/entry/'
 	where name='UniProt';
@@ -160,12 +165,12 @@ insert into cv (name, definition) values (
 -- ----------------------
 
 --insert into dbxref(db_id, accession, description) values (
---		(select db_id from db where name='null'), 
+--		(select db_id from db where name='null'),
 --		'genedb_synonym_type:DisplayPage',
 --		'dbxref for cvterm DisplayPage'
 --);
 --insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
---		(select cv_id from cv where name='genedb_misc_...'), 
+--		(select cv_id from cv where name='genedb_misc_...'),
 --		'DisplayPage',
 --		'cvterm for attribute value page in taxonomy xml, which decides whether ot not a group should have individual page',
 --		(select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
@@ -180,7 +185,7 @@ insert into dbxref(db_id, accession) values (
 );
 insert into phylotree (dbxref_id, name, type_id, comment) values (
 		(select dbxref_id from dbxref where accession='genedb_misc:organism_heirachy'),
-		'org_heirachy', 
+		'org_heirachy',
 		(select cvterm_id from cvterm where name='taxonomy'),
 		'GeneDB organism heirachy'
 );
