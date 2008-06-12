@@ -1,0 +1,398 @@
+* html img,
+* html .png{
+    position:relative;
+    behavior: expression((this.runtimeStyle.behavior="none")&&(this.pngSet?this.pngSet=true:(this.nodeName == "IMG" && this.src.toLowerCase().indexOf('.png')>-1?(this.runtimeStyle.backgroundImage = "none",
+        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.src + "', sizingMethod='image')",
+        this.src = "transparent.gif"):(this.origBg = this.origBg? this.origBg :this.currentStyle.backgroundImage.toString().replace('url("','').replace('")',''),
+        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.origBg + "', sizingMethod='crop')",
+        this.runtimeStyle.backgroundImage = "none")),this.pngSet=true)
+    );
+}
+
+
+#contextMapOuterDiv {
+	position: relative;
+	width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#contextMapDiv {
+	border: 1px solid lightGray;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+	height: 62px;
+	cursor: default; /* changed to "move" on loading */
+	background-color: #F0F0E4;
+	z-index: 1;
+}
+
+div#highlighter {
+	position: absolute;
+	display: none;
+	background: black;
+	z-index: 2;
+}
+
+img#contextMapLoadingImage {
+	position:absolute;
+	top:50%;
+	left: 50%;
+	margin-top: -8px;
+    margin-left: -8px;
+}
+
+div#contextMapContent {
+	position: absolute;
+	left: 0px;
+}
+
+img.contextMapImage {
+    position:absolute;
+    z-index: 3;
+}
+
+#contextMapTopPanel {
+	position: relative;
+	width: 100%;
+}
+
+#contextMapThumbnailDiv {
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+    width: 700px;
+    height: 17px;
+}
+
+img#chromosomeThumbnailImage {
+	position: absolute;
+    top: 3px;
+    height: 9px;
+}
+
+img#chromosomeThumbnailWindow {
+    position: absolute;
+    top: 0px;
+    margin-left: -2px;
+    cursor: move;
+}
+
+img.transcriptBlock {
+	position: absolute;
+    cursor: pointer;
+    z-index: 4;
+}
+
+div#errorMessage {
+	font-family: sans-serif;
+	font-size: 25px;
+	text-align: center;
+	padding-top: 20px;
+	color: gray;
+}
+
+#contextMapInfoPanel {
+	position: absolute;
+	display: none;
+	background: white;
+	color: #228;
+    border-left: 1px solid black;
+	border-right: 1px solid black;
+    border-bottom: 1px solid black;
+	width: 38em;
+	height: 6em;
+	margin-left: 30px;
+	padding-left: 1em;
+	padding-top: 1em;
+	font-size: 14px;
+	font-family: sans-serif;
+	z-index: 100;
+}
+
+#contextMapInfoPanel #selectedGeneName {
+	font-weight: bold;
+	margin-bottom: 1em;
+}
+
+#contextMapInfoPanel #selectedGeneProducts {
+    clear: left;
+}
+
+
+#contextMapInfoPanel .label {
+	width: 6em;
+}
+#contextMapInfoPanel .value {
+   	padding-bottom: 0.2em;
+}
+
+#contextMapInfoPanel #loadDetails {
+    position: absolute;
+    right: 6px;
+    bottom: 3px;
+    font-size: 80%;
+}
+
+.closeButton {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+}
+.closeButton a {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	background: transparent url(/genedb-web/includes/images/close-button.png) 0px 0px no-repeat;
+}
+.closeButton a:hover {
+    background: transparent url(/genedb-web/includes/images/close-button.png) 0px -16px no-repeat;
+}
+
+#geneDetailsLoading {
+	position: absolute;
+	width: 15em;
+	top: 200px;
+	left: 200px;
+	font-size: 2em;
+	display: none;
+	z-index: 200;
+}
+
+#geneDetailsLoading .inner {
+	padding-top: 1em;
+	padding-bottom: 1em;
+	padding-left: 10px;
+}
+#geneDetailsLoading .inner img {
+	padding-left: 0.5em;
+    padding-right: 1em;
+}
+
+body.genePage {
+    font-size: 0.8em;
+}
+
+div#geneDetails {
+    position: relative;
+    display: block;
+    padding-top: 8px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    min-width: 37em;
+}
+
+div.row {
+    clear: both;
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+div.comment {
+    display: block;
+    clear: both;
+    margin-left: 1em;
+    margin-bottom: 1ex;
+}
+
+div#geneDetails div#firstRow div#generalInformation .middle {
+    min-width: 14em;
+    margin-right: 11.5em; /* width of analysis tools box */
+}
+div#geneDetails div#firstRow div#generalInformation .inner {
+    min-height: 11em; /* height of analysis tools box */
+}
+* html div#geneDetails div#firstRow div#generalInformation .inner {
+    height: 11em;
+}
+
+div#geneDetails div#firstRow div#analysisTools {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 11.5em;
+}
+
+div#geneDetails div#firstRow div#analysisTools .inner {
+    height: 11em;
+}
+
+div#analysisTools #sendTo {
+    margin-bottom: 1ex;
+}
+
+div#peptideProperties .middle {
+    margin-right: 300px;
+}
+div#proteinMap {
+    position: absolute;
+    width: 300px;
+    right: 0px;
+    top: 0px;
+}
+
+.outer {
+   clear:left;
+   float: left;
+   width: 100%;
+   margin-bottom: 5px;
+}
+.left  {width: 80%;}
+.right {width: 20%; clear: none;}
+
+.middle {
+   padding-right: 5px;
+}
+
+.inner {
+    padding: 5px;
+    background-color: #E0E2F3;
+    font-family: sans-serif;
+}
+
+.whiteBox .inner {
+    background-color: white;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+}
+
+.greyBox .inner {
+    background-color: lightGray;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+}
+
+.inner * {
+    margin-bottom: 0pt;
+    margin-top: 0pt;
+}
+
+.label {
+    text-align: left;
+    font-weight: bold;
+    width: 9.3em;
+}
+
+div.label {
+    float: left;
+    clear: left;
+    margin-bottom: 10px;
+}
+
+div.value {
+    float: left;
+    margin-left: 1em;
+}
+
+.whiteBox .round *{
+  display:block;
+  height:1px;
+  overflow:hidden;
+  font-size:.01em;
+  background:white}
+.greyBox .round *{
+  display:block;
+  height:1px;
+  overflow:hidden;
+  font-size:.01em;
+  background:lightGray}
+.whiteBox .round1, .greyBox .round1{
+  margin-left:2px;
+  margin-right:2px;
+  padding-left:1px;
+  padding-right:1px;
+  border-left:1px solid #777;
+  border-right:1px solid #777;
+  background-color:#444;}
+.whiteBox .round2, .greyBox .round2{
+  margin-left:1px;
+  margin-right:1px;
+  padding-right:1px;
+  padding-left:1px;
+  border-left:1px solid #444;
+  border-right:1px solid #444;
+  background:black;}
+.whiteBox .round3, .greyBox .round3{
+  margin-left:0px;
+  margin-right:0px;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-left:1px solid #777;
+  border-right:1px solid #777;
+  background: black;}
+.whiteBox .round4, .greyBox .round4{
+  margin-left:0px;
+  margin-right:0px;
+  padding-left: 1px;
+  padding-right: 1px;
+  border-left:1px solid #444;
+  border-right:1px solid #444;
+  background: black;}
+.whiteBox .round5, .greyBox .round5{
+  margin-left:0px;
+  margin-right:0px;
+  padding-left: 1px;
+  padding-right: 1px;
+  border-left:1px solid black;
+  border-right:1px solid black;
+  background: black;}
+.whiteBox .roundborder, .greyBox .roundborder{
+  background:black}
+.whiteBox .roundbg{
+  background:white}
+.greyBox .roundbg{
+  background:lightGray}
+
+
+.round{display:block}
+.round *{
+  display:block;
+  height:1px;
+  overflow:hidden;
+  font-size:.01em;
+  background:#E0E2F3}
+.round1{
+  margin-left:3px;
+  margin-right:3px;
+  padding-left:1px;
+  padding-right:1px;
+  border-left:1px solid #E4E6F7;
+  border-right:1px solid #E4E6F7;
+  background:#E2E4F5}
+.round2{
+  margin-left:1px;
+  margin-right:1px;
+  padding-right:1px;
+  padding-left:1px;
+  border-left:1px solid #E8EAFB;
+  border-right:1px solid #E8EAFB;
+  background:#E2E4F5}
+.round3{
+  margin-left:1px;
+  margin-right:1px;
+  border-left:1px solid #E2E4F5;
+  border-right:1px solid #E2E4F5;}
+.round4{
+  border-left:1px solid #E4E6F7;
+  border-right:1px solid #E4E6F7}
+.round5{
+  border-left:1px solid #E2E4F5;
+  border-right:1px solid #E2E4F5}
+.roundfg{
+  background:#E0E2F3}
+
+ .heading {
+    font-family: sans-serif;
+    font-weight: bold;
+    color: blue;
+    padding-bottom: 1ex;
+ }
