@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>genedb-db</project>
+		<project>genedb-domain</project>
 		<project>genedb-libs</project>
 		<project>genedb-query</project>
 	</projects>
