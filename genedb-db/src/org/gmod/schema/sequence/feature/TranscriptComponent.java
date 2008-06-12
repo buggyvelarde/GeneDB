@@ -9,10 +9,14 @@ import org.gmod.schema.sequence.FeatureLoc;
 @Entity
 public abstract class TranscriptComponent extends Feature  implements Comparable<TranscriptComponent> {
 
-    @Transient private boolean locLoaded = false;
-    @Transient private int fmin;
-    @Transient private int fmax;
-    @Transient private short strand;
+    @Transient
+    private boolean locLoaded = false;
+    @Transient
+    private int fmin;
+    @Transient
+    private int fmax;
+    @Transient
+    private short strand;
 
     private void loadLoc() {
         if (locLoaded)
