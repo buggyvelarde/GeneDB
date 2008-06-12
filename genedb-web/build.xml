@@ -6,7 +6,6 @@
     
     <property file="property-file.${deploy}" />
     <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
-    <import file="${imported.basedir.web}/../genedb-access/build.xml"/>
     <import file="${imported.basedir.web}/../genedb-query/build.xml"/>
     <import file="${imported.basedir.web}/../genedb-domain/build.xml"/>
     <import file="${imported.basedir.web}/../Jogra/build.xml"/>
@@ -18,7 +17,6 @@
     <!-- Classpaths -->
     
     <path id="libs">
-        <path location="${imported.basedir.web}/../genedb-access/genedb-access.jar" />
         <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/chado-interface.jar" />
         <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
         <path location="${imported.basedir.web}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
@@ -97,7 +95,7 @@
 		<copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/WEB-INF/lib" />
     </target>
     
-    <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-access.genedb-access.jar,genedb-db.alljars" />
+    <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.alljars" />
     
     <target name="make-all-and-deploy" depends="make-other-projects, compile, final-deploy, get-latest-jars"/>
     
