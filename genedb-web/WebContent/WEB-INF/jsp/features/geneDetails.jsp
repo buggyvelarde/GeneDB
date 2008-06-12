@@ -59,7 +59,7 @@
 	            <td class="value">
 	                <c:forEach items="${polypeptide.featureDbXRefs}" var="fdbxref">
 	                	<c:if test="${fn:length(fdbxref.dbXRef.db.urlPrefix) > 0}">
-	                		<span><a href="${fdbxref.dbXRef.db.urlPrefix}${fdbxref.dbXRef.accession}">${fdbxref.dbXRef.db.name}</a></span>
+	                		<span><a href="${fdbxref.dbXRef.db.urlPrefix}${fdbxref.dbXRef.accession}">${fdbxref.dbXRef.db.name}:${fdbxref.dbXRef.accession}</a></span>
 	                	</c:if>
 	                </c:forEach>
 	            </td>
