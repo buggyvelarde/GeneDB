@@ -56,6 +56,12 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private LuceneDao luceneDao;
     private String geneView, geneDetailsView;
 
+    private static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
+    static {
+        geneOrPseudogeneQuery.add(new TermQuery(new Term("cvTerm.name","gene")), Occur.SHOULD);
+        geneOrPseudogeneQuery.add(new TermQuery(new Term("cvTerm.name","pseudogene")), Occur.SHOULD);
+    }
+
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
             Object command, BindException be) throws Exception {
@@ -69,29 +75,22 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
         if (orgs == null) {
-            BooleanQuery booleanQuery = new BooleanQuery();
-
-            BooleanQuery booleanQueryFirst = new BooleanQuery();
-            booleanQueryFirst.add(new TermQuery(new Term("cvTerm.name","gene")), Occur.SHOULD);
-            booleanQueryFirst.add(new TermQuery(new Term("cvTerm.name","pseudogene")), Occur.SHOULD);
-            BooleanClause booleanClauseFirst = new BooleanClause(booleanQueryFirst, Occur.MUST);
-            booleanQuery.add(booleanClauseFirst);
-
-            BooleanQuery booleanQuerySecond = new BooleanQuery();
-            Hits hits;
+            BooleanQuery geneNameQuery = new BooleanQuery();
 
             if (name.indexOf('*') == -1) {
-                booleanQuerySecond.add(new TermQuery(new Term("allNames",name.toLowerCase())), Occur.SHOULD);
-                booleanQuerySecond.add(new TermQuery(new Term("product",name.toLowerCase())), Occur.SHOULD);
+                geneNameQuery.add(new TermQuery(new Term("allNames",name.toLowerCase())), Occur.SHOULD);
+                geneNameQuery.add(new TermQuery(new Term("product",name.toLowerCase())), Occur.SHOULD);
             } else {
-                booleanQuerySecond.add(new WildcardQuery(new Term("allNames", name.toLowerCase())), Occur.SHOULD);
-                booleanQuerySecond.add(new WildcardQuery(new Term("product", name.toLowerCase())), Occur.SHOULD);
+                geneNameQuery.add(new WildcardQuery(new Term("allNames", name.toLowerCase())), Occur.SHOULD);
+                geneNameQuery.add(new WildcardQuery(new Term("product", name.toLowerCase())), Occur.SHOULD);
             }
-            BooleanClause booleanClauseSecond = new BooleanClause(booleanQuerySecond, Occur.MUST);
-            booleanQuery.add(booleanClauseSecond);
 
-            logger.info(String.format("Lucene query is %s", booleanQuery.toString()));
-            hits = luceneDao.search(ir, booleanQuery);
+            BooleanQuery booleanQuery = new BooleanQuery();
+            booleanQuery.add(new BooleanClause(geneOrPseudogeneQuery, Occur.MUST));
+            booleanQuery.add(new BooleanClause(geneNameQuery, Occur.MUST));
+            logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
+            Hits hits = luceneDao.search(ir, booleanQuery);
+
             switch (hits.length()) {
             case 0: {
                 // Temporary check as the Lucene index isn't automatically
