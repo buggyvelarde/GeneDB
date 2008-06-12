@@ -57,13 +57,13 @@
 				<a href="" title="Home">Browse</a>
 				<ul class="w">
 					<li class="w">
-						<a class="w" href="<c:url value="/"/>" title="Browse Products">Products</a>
+						<a class="w" href="<c:url value="/"/>BrowseCategory" title="Browse Products">Products</a>
 					</li>
  					<li class="w">
  						<a class="w" href="<c:url value="/"/>BrowseCategory" title="Browse Curation">Curation</a>
  					</li>
  					<li class="w">
- 						<a class="w" href="<c:url value="/"/>" title="Browse GO Terms">GO Terms</a>
+ 						<a class="w" href="<c:url value="/"/>BrowseCategory" title="Browse GO Terms">GO Terms</a>
  					</li>
 				</ul>
 			</li>
