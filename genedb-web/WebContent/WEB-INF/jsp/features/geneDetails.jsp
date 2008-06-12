@@ -53,12 +53,18 @@
                 chromosome ${chromosome.displayName}
             </td>
         </tr>
-        <tr>
-            <td class="label">See Also</td>
-            <td class="value">
-                PlasmoDB, TDRtargets
-            </td>
-        </tr>
+        <c:if test="${!empty(polypeptide.featureDbXRefs)}">
+	        <tr>
+	            <td class="label">See Also</td>
+	            <td class="value">
+	                <c:forEach items="${polypeptide.featureDbXRefs}" var="fdbxref">
+	                	<c:if test="${fn:length(fdbxref.dbXRef.db.urlPrefix) > 0}">
+	                		<span><a href="${fdbxref.dbXRef.db.urlPrefix}${fdbxref.dbXRef.accession}">${fdbxref.dbXRef.db.name}</a></span>
+	                	</c:if>
+	                </c:forEach>
+	            </td>
+	        </tr>
+	    </c:if>
         </table>
     </format:genePageSection>
 
