@@ -59,6 +59,12 @@ insert into db (name, description, urlprefix) values (
 --
 -- Add url prefix to existing dbs
 --
+update db set urlprefix='http://merops.sanger.ac.uk/cgi-bin/merops.cgi?id='
+	where name='MEROPS';
+
+update db set urlprefix='http://www.ebi.ac.uk/interpro/IEntry?ac='
+	where name='InterPro';
+
 update db set urlprefix='http://www.ebi.ac.uk/interpro/IEntry?ac='
 	where name='InterPro';
 
