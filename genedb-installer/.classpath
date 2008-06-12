@@ -2,13 +2,21 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="/Users/art/Software/MyApps/eclipse-3.2/plugins/org.codehaus.groovy.eclipse_1.0.0.20061211/lib/commons-io-1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/art/Software/MyApps/eclipse-3.2/plugins/org.codehaus.groovy.eclipse_1.0.0.20061211/lib/commons-lang-2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/art/Software/MyApps/eclipse-3.2/plugins/org.codehaus.groovy.eclipse_1.0.0.20061211/lib/groovy-all-1.0-RC-01.jar"/>
 	<classpathentry exported="true" kind="lib" path="bin"/>
-	<classpathentry kind="lib" path="lib/ant.jar"/>
-	<classpathentry kind="lib" path="lib/ant-launcher.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hibernate-3.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.2.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/ant/ant.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/ant/ant-launcher.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/groovy/groovy-1.5.5.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-io.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-lang.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.4.jar" sourcepath="/genedb-libs/lib-src/spring-sources-2.5.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.5.x/api"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/v3/api/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
