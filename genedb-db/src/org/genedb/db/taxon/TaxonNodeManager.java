@@ -17,12 +17,18 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.db.loading;
+package org.genedb.db.taxon;
 
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.gmod.schema.dao.PhylogenyDaoI;
 import org.gmod.schema.phylogeny.Phylonode;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,20 +38,12 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 public class TaxonNodeManager implements InitializingBean{
-    
+
     private PhylogenyDaoI phylogenyDao;
-    
+
     private HibernateTransactionManager hibernateTransactionManager;
-    
+
     private Map<String, TaxonNode> labelTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> taxonTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> fullNameTaxonNodeMap = new HashMap<String, TaxonNode>();
@@ -55,7 +53,7 @@ public class TaxonNodeManager implements InitializingBean{
     	SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
     	Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
     	TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-    	try { 
+    	try {
     	//System.err.println("Session is '"+session+"'");
         Set<TaxonNode> nodes = new HashSet<TaxonNode>();
         List<Phylonode> phylonodes = phylogenyDao.getAllPhylonodes();
@@ -73,12 +71,11 @@ public class TaxonNodeManager implements InitializingBean{
                 nickNameTaxonNodeMap.put(tn.getName(TaxonNameType.NICKNAME), tn);
             }
         }
-        
+
         // Set up all child/parent relationships
         while (nodes.size() > 0) {
             Set<TaxonNode> tempNodes = new HashSet<TaxonNode>();
-            for (Iterator it = nodes.iterator(); it.hasNext();) {
-                TaxonNode tn = (TaxonNode) it.next();
+            for (TaxonNode tn: nodes) {
                 Phylonode phylonode = tn.getPhylonode();
                 Phylonode parent = phylonode.getParent();
                 if (parent != null) {
@@ -91,7 +88,7 @@ public class TaxonNodeManager implements InitializingBean{
                     }
                 } else {
                     System.err.println("Skipping one - maybe Root?");
-                    
+
                 }
             }
             nodes = tempNodes;
@@ -102,10 +99,9 @@ public class TaxonNodeManager implements InitializingBean{
     		  TransactionSynchronizationManager.unbindResource(sessionFactory);
     		  SessionFactoryUtils.closeSession(session);
     		}
-        
+
     }
-    
-    
+
     boolean validateTaxons(List<String> taxons, List<String> problems) {
         boolean problem = false;
         Set<String> uniqs = new HashSet<String>(taxons.size());
@@ -124,9 +120,9 @@ public class TaxonNodeManager implements InitializingBean{
         }
         return problem;
     }
-    
-    
-    public List<TaxonNode> getHeirachy(TaxonNode start) {
+
+
+    public List<TaxonNode> getHierachy(TaxonNode start) {
         TaxonNode node = start;
         List<TaxonNode> ret = new LinkedList<TaxonNode>();
         ret.add(node);
@@ -136,29 +132,20 @@ public class TaxonNodeManager implements InitializingBean{
         }
         return ret;
     }
-    
-//    private Phylonode getPhlyonodeForOrganism(Organism org) {
-//        Set<PhylonodeOrganism> pos = org.getPhylonodeOrganisms();
-//        if (pos.size() != 1) {
-//            throw new RuntimeException("Found more than one phylonodeOrganism for '"+org.getCommonName()+"'");
-//        }
-//        PhylonodeOrganism po = pos.iterator().next();
-//        return po.getPhylonode(); 
-//    }
-    
+
     boolean validateTaxon(String taxon) {
         return false; // FIXME
     }
-    
-    
+
+
     String getNameForTaxonId(String taxonId) {
         return null; // FIXME
     }
-    
+
     public TaxonNode getTaxonNodeForLabel(String label) {
         return labelTaxonNodeMap.get(label);
     }
-    
+
     public TaxonNode getTaxonNodeByString(String name, boolean includeNickName) {
         TaxonNode ret = getTaxonNodeForLabel(name);
         if (ret != null) {
@@ -182,7 +169,7 @@ public class TaxonNodeManager implements InitializingBean{
     public void setPhylogenyDao(PhylogenyDaoI phylogenyDao) {
         this.phylogenyDao = phylogenyDao;
     }
-    
+
     @Required
     public void setHibernateTransactionManager(
 			HibernateTransactionManager hibernateTransactionManager) {

@@ -81,6 +81,7 @@ public class StandardNomenclatureHandler implements NomenclatureHandler {
      * NOP as StandardNomenclatureHandler doesn't accept options
      * @see org.genedb.db.loading.NomenclatureHandler#setOptions(java.util.Map)
      */
+    @SuppressWarnings("unused")
     public void setOptions(Map<String, String> nomenclatureOptions) {
         // Deliberately empty
     }

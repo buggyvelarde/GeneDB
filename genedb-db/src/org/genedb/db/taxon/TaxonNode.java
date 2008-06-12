@@ -4,7 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.genedb.db.loading;
+package org.genedb.db.taxon;
 
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.organism.OrganismProp;

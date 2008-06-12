@@ -1,5 +1,6 @@
 package org.genedb.db.loading;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 
@@ -10,16 +11,13 @@ import org.springframework.orm.hibernate3.HibernateTransactionManager;
 
 public class LoadInterPro {
 
-
     private static SequenceDao sequenceDao;
-
     private static HibernateTransactionManager hibernateTransactionManager;
 
     /**
      * @param args
      */
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
 
         if (args.length == 0) {
             System.err.println("No input files specified");
@@ -41,23 +39,17 @@ public class LoadInterPro {
         long start = new Date().getTime();
 
         for (int i = 0; i < filePaths.length; i++) {
-
             runner.parse(filePaths[i]);
-
         }
 
         long stop = new Date().getTime();
 
         System.err.println("Total time taken - " + (stop - start)/60000 + " min" );
-
     }
-
 
     public void afterPropertiesSet() {
 
-
     }
-
 
     public SequenceDao getSequenceDao() {
         return sequenceDao;
@@ -67,11 +59,9 @@ public class LoadInterPro {
         this.sequenceDao = sequenceDao;
     }
 
-
     public HibernateTransactionManager getHibernateTransactionManager() {
         return hibernateTransactionManager;
     }
-
 
     public void setHibernateTransactionManager(
             HibernateTransactionManager hibernateTransactionManager) {

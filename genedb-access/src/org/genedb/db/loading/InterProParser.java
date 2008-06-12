@@ -1,27 +1,14 @@
 package org.genedb.db.loading;
 
-import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureDbXRef;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import org.springframework.orm.hibernate3.SessionHolder;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +17,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
+
+import org.genedb.db.dao.SequenceDao;
+import org.gmod.schema.sequence.Feature;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.orm.hibernate3.SessionHolder;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 
 public class InterProParser {
@@ -76,22 +75,19 @@ public class InterProParser {
         months.put("Oct", "10");
         months.put("Nov", "11");
         months.put("Dec", "12");
-
     }
 
 
 
-    public void parse(String filename) {
-
-        //System.err.println("Filename is  "+filename);
-        File fl = new File(filename);
-        if (!fl.exists()) {
+    public void parse(String filename) throws IOException {
+        File file = new File(filename);
+        if (!file.exists()) {
             System.err.println("WARN: INTERPRO file/directory doesn't exist: "+filename);
             return;
         }
 
-        if ( fl.isDirectory() ) {
-            String[] fls = fl.list(new FilenameFilter() {
+        if ( file.isDirectory() ) {
+            String[] fls = file.list(new FilenameFilter() {
                     public boolean accept(File dir, String name) {
                         if ( name.endsWith("~")) {
                             return false;
@@ -105,62 +101,49 @@ public class InterProParser {
             return;
         }
 
-
         System.err.println("Reading interpro from "+filename);
 
         String[][] ret = null;
-        try {
-            BufferedReader br = new BufferedReader(new FileReader( fl ) );
-            CharSVParser parser = new CharSVParser(br, "\t", true, 0, "#" );
-            ret = parser.getValues();
-        } catch (FileNotFoundException exp) {
-            exp.printStackTrace();
-        } catch (IOException exp) {
-            exp.printStackTrace();
+        InputStream inputStream = new FileInputStream(file);
+        if (filename.endsWith(".gz")) {
+            System.err.println("Treating as a GZIP file");
+            inputStream = new GZIPInputStream(inputStream);
         }
 
+        BufferedReader br = new BufferedReader(new InputStreamReader( inputStream ) );
+        CharSVParser parser = new CharSVParser(br, "\t", true, 0, "#" );
+        ret = parser.getValues();
 
-        if ( ret != null ) {
-            // Go through the results and pull the rows into the
-            // hashmap genes, keyed on gene names, where the values
-            // are ArrayLists of String[]
-            Map<String, List<InterproRow>> genes = new HashMap<String, List<InterproRow>>();
-            List<InterproRow> col = new ArrayList<InterproRow>();
-            for ( int i = 0; i < ret.length; i++ ) {
-                String geneId = ret[i][COL_ID];
-                if ( genes.containsKey(geneId) ) {
-                    col = genes.get(geneId);
-                } else {
-                    col = new ArrayList<InterproRow>();
-                    genes.put(geneId, col);
-                }
-                col.add(new InterproRow(ret[i]));
+        // Go through the results and pull the rows into the
+        // hashmap genes, keyed on gene names, where the values
+        // are ArrayLists of String[]
+        Map<String, List<InterproRow>> genes = new HashMap<String, List<InterproRow>>();
+        List<InterproRow> col = new ArrayList<InterproRow>();
+        for ( int i = 0; i < ret.length; i++ ) {
+            String geneId = ret[i][COL_ID];
+            if ( genes.containsKey(geneId) ) {
+                col = genes.get(geneId);
+            } else {
+                col = new ArrayList<InterproRow>();
+                genes.put(geneId, col);
             }
-            ret = null;
+            col.add(new InterproRow(ret[i]));
+        }
 
-            Set<String> strangeProgram = new HashSet<String>();
-            SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
-            Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
-            TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-            Transaction transaction = session.beginTransaction();
-            parse2(genes, col, strangeProgram,session);
-            transaction.rollback();
-            TransactionSynchronizationManager.unbindResource(sessionFactory);
-            SessionFactoryUtils.closeSession(session);
+        Set<String> strangePrograms = new HashSet<String>();
+        SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
+        Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
+        Transaction transaction = session.beginTransaction();
+        parse2(genes, col, strangePrograms,session);
+        transaction.rollback();
+        TransactionSynchronizationManager.unbindResource(sessionFactory);
+        SessionFactoryUtils.closeSession(session);
 
-            Iterator<String> it = strangeProgram.iterator();
-            if ( it.hasNext()) {
-                //System.err.println("WARN: Strange program name found in Interpro file: ");
-                while (it.hasNext()) {
-                    System.err.print(it.next());
-                    System.err.print(' ');
-                }
-                //System.err.print('\n');
-            }
-
-
-        } // if ( ret != null )
-
+        for (String strangeProgram: strangePrograms) {
+            System.err.print(strangeProgram);
+            System.err.print(' ');
+        }
     }
 
     public void afterPropertiesSet() {
@@ -170,26 +153,24 @@ public class InterProParser {
     private void parse2(Map<String, List<InterproRow>> genes, List<InterproRow> col, Set<String> strangeProgram, Session session) {
         // Go through each key and sort the ArrayLists
 
-        Iterator<String> geneIterator = genes.keySet().iterator();
         Feature polypeptide = null;
 
-        while ( geneIterator.hasNext() ) {
-            String id = (String) geneIterator.next();
+        for ( String id: genes.keySet() ) {
             polypeptide = sequenceDao.getFeatureByUniqueName(id+":pep", "polypeptide");
             if ( polypeptide == null ) {
                 System.err.println("WARN: Database doesn't contain id of :" + id);
                 continue;
             }
             Hibernate.initialize(polypeptide);
-            Set goIdsLinked = new HashSet();
+            Set<String> goIdsLinked = new HashSet<String>();
             col = genes.get(id);
             Collections.sort(col);
-            boolean swap = true;
+//            boolean swap = true;
 
             // col is now sorted by interpro, then program
             HashSet<String> ip = new HashSet<String>();
-            for ( int i = 0; i < col.size(); i++) {
-                String[] a = col.get(i).row;
+            for (InterproRow interproRow: col) {
+                String[] a = interproRow.row;
                 String aAccNum = "NULL";
                 if ( a.length > COL_ACC) {
                     aAccNum = a[COL_ACC];
@@ -198,11 +179,9 @@ public class InterProParser {
             }
             int max;
             int min;
-            Iterator<String> it = ip.iterator();
-            while ( it.hasNext()) {
+            for (String ipNum: ip) {
                 max = -1;
                 min = col.size();
-                String ipNum = (String) it.next();
                 for ( int i = 0; i < col.size(); i++ ) {
                     String[] a = col.get(i).row;
                     String aAccNum = "NULL";
@@ -226,7 +205,7 @@ public class InterProParser {
                 for ( int i = min; i <= max ; i++) {
                     String[] thisRow = col.get(i).row;
                     String prog = thisRow[COL_NATIVE_PROG];
-                    String db = (String) dbs.get(prog);
+                    String db = dbs.get(prog);
                     if ( db == null) {
                         strangeProgram.add(prog);
                     } else {
@@ -242,7 +221,7 @@ public class InterProParser {
 
                     if (thisRow.length >= COL_GO+1) {
                         //System.err.println("Adding GO terms for "+gene.getId());
-                        addGoTerms(polypeptide, thisRow, goIdsLinked,session);
+                        addGoTerms(polypeptide, thisRow, goIdsLinked, session);
                     }
                 }
 
@@ -265,13 +244,13 @@ public class InterProParser {
 //		int rank2 = 0;
         while ( it2.hasNext() ) {
             int rank = 0;
-            String prog = (String) it2.next();
+            String prog = it2.next();
             List<String> coords = new ArrayList<String>();
             List<String[]> coordinates = new ArrayList<String[]>();
             String dbacc = null;
-            String nativeProg = null;
-            String score = null;
-            String desc = null;
+//            String nativeProg = null;
+//            String score = null;
+//            String desc = null;
             int count = 0;
             for ( int i = min; i <= max ; i++) {
                 StringBuffer tmp = new StringBuffer();
@@ -287,9 +266,9 @@ public class InterProParser {
                     coords.add(tmp.toString());
                     coordinates.add(new String[] {a[6], a[7]});
                     dbacc = a[COL_NATIVE_ACC];
-                    nativeProg = a[COL_NATIVE_PROG];
-                    score = a[8];
-                    desc = a[12];
+//                    nativeProg = a[COL_NATIVE_PROG];
+//                    score = a[8];
+//                    desc = a[12];
                     count++;
                 }
             }
@@ -305,15 +284,15 @@ public class InterProParser {
                 if ( (i == coords.size() - 1) && coords.size() != 1) {
                     note.append(" and ");
                 }
-                note.append( (String) coords.get(i) );
+                note.append( coords.get(i) );
             }
-            String db = (String) dbs.get(prog);
+            String db = dbs.get(prog);
             if ( db == null ) {
                 strangeProgram.add(prog);
             } else {
                 if(ipNum.equals("NULL")) {
                     // Hack for superfamily as InterPro reports acc as SF12345 rather than 12345
-                    Feature domain = null;
+//                    Feature domain = null;
                     String uniqueName = polypeptide.getUniqueName() + ":" + dbacc;
                     //System.err.println("creating feature with uniquename -> " + uniqueName);
                     List<Feature> features = sequenceDao.getFeaturesByUniqueName(uniqueName + "%");
@@ -356,14 +335,14 @@ public class InterProParser {
                     //---FeatureProp descProp = new FeatureProp(domain,description,desc,0);
                     //---sequenceDao.persist(descProp);
 
-                    short strand = 0;
-                    int start = 0;
-                    int end = 0;
-                    if ( coordinates.size() > 0) {
-                        String[] coord = (String[])coordinates.get(0);
-                        start = Integer.parseInt(coord[0]);
-                        end = Integer.parseInt(coord[1]);
-                    }
+//                    short strand = 0;
+//                    int start = 0;
+//                    int end = 0;
+//                    if ( coordinates.size() > 0) {
+//                        String[] coord = coordinates.get(0);
+//                        start = Integer.parseInt(coord[0]);
+//                        end = Integer.parseInt(coord[1]);
+//                    }
                     //System.err.println("creating featureloc with " + polypeptide.getUniqueName() + " " + domain.getUniqueName() + " rank " + rank);
                     //---FeatureLoc floc = featureUtils.createLocation(polypeptide, domain, start, end, strand);
                     //---floc.setRank(rank);
@@ -389,7 +368,7 @@ public class InterProParser {
     private void processInterProHit(Session session, Feature polypeptide,
             String ipNum, List<String> progs, List<String> progAcc,
             List<String[]> coordIP, List<String> scores) {
-        Feature ipDomain = null;
+//        Feature ipDomain = null;
         String secDB = "";
         if ( ipNum.equals("NULL")) {
             return;
@@ -403,7 +382,7 @@ public class InterProParser {
         while ( it2.hasNext() ) {
             //StringBuffer note = new StringBuffer();
             //note.append("Derived from hit: ");
-            secDB = (String) dbs.get(it2.next());
+            secDB = dbs.get(it2.next());
             //note.append(secDB);
             String uniqueName = polypeptide.getUniqueName() + ":" + ipNum + ":" + progAcc.get(count);
             //sequenceDao.getFeatureByUniqueName(uniqueName, "polypeptide_domain");
@@ -431,8 +410,8 @@ public class InterProParser {
             //---FeatureProp fp = new FeatureProp(ipDomain,description,note.toString(),rank2);
             //---sequenceDao.persist(fp);
             rank2++;
-            String score = scores.get(count).split("=")[0];
-            String desc = scores.get(count).split("=")[1];
+//            String score = scores.get(count).split("=")[0];
+//            String desc = scores.get(count).split("=")[1];
 
             //---CvTerm scoreTerm = featureUtils.findOrCreateCvTermFromString("null", "score");
             //---FeatureProp scoreProp = new FeatureProp(ipDomain,scoreTerm,score,0);
@@ -441,14 +420,14 @@ public class InterProParser {
             //---FeatureProp descProp = new FeatureProp(ipDomain,description,desc,rank2);
             //---sequenceDao.persist(descProp);
 
-            int start = 0;
-            int end = 0;
-            short strand = 0;
-            if ( coordIP.size() > 0) {
-                String[] coord = (String[])coordIP.get(count);
-                start = Integer.parseInt(coord[0]);
-                end = Integer.parseInt(coord[1]);
-            }
+//            int start = 0;
+//            int end = 0;
+//            short strand = 0;
+//            if ( coordIP.size() > 0) {
+//                String[] coord = coordIP.get(count);
+//                start = Integer.parseInt(coord[0]);
+//                end = Integer.parseInt(coord[1]);
+//            }
 
             //---FeatureLoc floc = featureUtils.createLocation(polypeptide, ipDomain, start, end, strand);
             //---floc.setRank(rank);
@@ -497,13 +476,11 @@ public class InterProParser {
                 start = end+1;
             }
         }
-        for (int i=0; i < terms.size(); i++) {
-            String term = (String) terms.get(i);
+        for (String term: terms) {
             if ( term.startsWith(",")) {
                 term = term.substring(1);
             }
             term = term.trim();
-            //System.err.println(term);
             int lb = term.indexOf("(GO:");
             int rb = term.indexOf(")", lb);
             String acc = term.substring(lb+4, rb);
@@ -516,7 +493,7 @@ public class InterProParser {
                 c.setWithFrom( "Interpro:" + row[COL_ACC] );
                 c.setRef( "GOC:interpro2go" );
                 String[] rawDate = row[10].split("-");
-                String month = (String) months.get(rawDate[1]);
+                String month = months.get(rawDate[1]);
                 String date = rawDate[2]+month+rawDate[0];
                 c.setDate(date);
 
@@ -587,7 +564,7 @@ public class InterProParser {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         InterProParser ipp = new InterProParser();
         ipp.parse("/nfs/team81/art/chr1merged.raw");
 

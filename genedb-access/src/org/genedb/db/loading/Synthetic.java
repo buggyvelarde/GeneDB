@@ -5,23 +5,23 @@ import java.util.List;
 import java.util.Map;
 
 public class Synthetic {
-    
+
     private int offSet = 0;
     private String name;
     private String soType;
-    private Map properties;
+    private Map<String,String> properties;
     private List<Part> parts = new ArrayList<Part>();
-    
+
     public String getName() {
         return this.name;
     }
     public void setName(String name) {
         this.name = name;
     }
-    public Map getProperties() {
+    public Map<String,String> getProperties() {
         return this.properties;
     }
-    public void setProperties(Map properties) {
+    public void setProperties(Map<String,String> properties) {
         this.properties = properties;
     }
     public String getSoType() {

@@ -26,12 +26,10 @@ package org.genedb.db.loading;
 
 /**
  * Constants file representing qualifiers found in EMBL file
- * 
+ *
  * @author Adrian Tivey (art)
  */
 public class EmblQualifiers {
-
-
     public static final String QUAL_CHROMOSOME    = "chromosome";
     public static final String QUAL_SUPERCONTIG   = "supercontig";
     public static final String QUAL_CONTIG        = "contig";
@@ -47,7 +45,7 @@ public class EmblQualifiers {
     public static final String QUAL_EVIDENCE      = "evidence";
     public static final String QUAL_EC_NUMBER     = "EC_number";
     public static final String QUAL_D_COLOUR      = "colour";
-    
+
     // Naming
     public static final String QUAL_SYS_ID        = "systematic_id";
     public static final String QUAL_TEMP_SYS_ID   = "temporary_systematic_id";
@@ -57,16 +55,15 @@ public class EmblQualifiers {
     public static final String QUAL_RESERVED      = "reserved_name";
     public static final String QUAL_PREV_SYS_ID   = "prev_systematic_id";
     public static final String QUAL_PROTEIN_NAME  = "protein_name";
-    
+
     // Deprecated ie not output but will be read
     public static final String QUAL_D_GENE        = "gene";
     public static final String QUAL_D_FASTA_FILE  = "fasta_file";
     public static final String QUAL_D_LITERATURE  = "literature";
     public static final String QUAL_D_PSU_DB_XREF = "psu_db_xref";
     public static final String QUAL_D_EC_NUMBER   = "ec_number";
-    
+
     // Local ie GeneDB internal qualifiers
     public static final String QUAL_TOP_LEVEL = "top_level_seq";
-    
 }
 

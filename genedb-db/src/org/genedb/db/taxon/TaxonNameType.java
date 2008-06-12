@@ -17,7 +17,7 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.db.loading;
+package org.genedb.db.taxon;
 
 public enum TaxonNameType {
     HTML_FULL, HTML_SHORT, FULL, SHORT, LABEL, NICKNAME
