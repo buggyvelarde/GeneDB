@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2006 Genome Research Limited.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by the Free
  * Software Foundation; either version 2 of the License or (at your option) any
  * later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this program; see the file COPYING.LIB. If not, write to the Free
  * Software Foundation Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307
@@ -18,8 +18,8 @@
  */
 
 /**
- * 
- * 
+ *
+ *
  * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
  */
 package org.genedb.db.loading.featureProcessors;
@@ -79,20 +79,20 @@ import java.util.Set;
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
  * be called from the command-line, or a Makefile.
- * 
+ *
  * Usage: GenericRunner organism [-show_ids] [-show_contigs]
- * 
- * 
+ *
+ *
  * @author Adrian Tivey (art)
  */
 public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     protected SequenceDao sequenceDao;
-    
+
     protected CvDao cvDao;
-    
+
     protected FeatureUtils featureUtils;
-    
+
     protected DbUtilsBean dbUtilsBean;
 
     protected Organism organism;
@@ -102,7 +102,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected GeneNamingStrategy gns = new GeneDbGeneNamingStrategy();
 
     protected Cv CV_RELATION;
-    
+
     protected CvTerm REL_PART_OF;
 
 //    protected Cv CV_MISC;
@@ -115,9 +115,9 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected CvTerm MISC_CURATION;
     protected CvTerm MISC_PRIVATE;
     protected CvTerm MISC_EC_NUMBER;
-    
+
     private String[] discard = {};
-    
+
     private String[] requiredMultiple = {};
 
     private String[] requiredSingle = {};
@@ -129,11 +129,11 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     protected Pub DUMMY_PUB;
 
     protected Cv CV_SO;
-    
+
     protected Db DB_GO;
 
     protected CvTerm REL_DERIVES_FROM;
-    
+
     protected CvTerm GO_KEY_EVIDENCE;
     protected CvTerm GO_KEY_DATE;
     protected CvTerm GO_KEY_QUALIFIER;
@@ -141,20 +141,20 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     public Set<Db> warnedDbs = new HashSet<Db>();
 
     protected GeneralDao generalDao;
-    
-    protected PubDao pubDao;
-    
-	protected Set<String> seenQualifiers = new HashSet<String>();
-	String[] handledQualifiers = {};
-	List<String> unknownRileyClass;
 
-	protected ControlledCurationParser ccParser;
-	
+    protected PubDao pubDao;
+
+    protected Set<String> seenQualifiers = new HashSet<String>();
+    String[] handledQualifiers = {};
+    List<String> unknownRileyClass;
+
+    protected ControlledCurationParser ccParser;
+
     public BaseFeatureProcessor() {
         // Deliberately empty
     }
-    
-    public BaseFeatureProcessor(String[] requiredSingle, String[] requiredMultiple, 
+
+    public BaseFeatureProcessor(String[] requiredSingle, String[] requiredMultiple,
             String[] optionalSingle, String[] optionalMultiple, String[] discard) {
         super();
         this.requiredSingle = requiredSingle;
@@ -166,7 +166,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     public void afterPropertiesSet() {
         CV_RELATION = cvDao.getCvByName("relationship").get(0);
-       
+
         REL_PART_OF = cvDao.getCvTermByNameInCv("proper_part_of", CV_RELATION).get(0); // FIXME Is this right
         CV_SO = cvDao.getCvByName("sequence").get(0);
         //CV_MISC = cvDao.getCvByName("autocreated").get(0);
@@ -182,15 +182,15 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         MISC_PRIVATE = cvDao.getCvTermByNameInCv(QUAL_PRIVATE, CV_GENEDB).get(0);
         MISC_EC_NUMBER = cvDao.getCvTermByNameInCv(QUAL_EC_NUMBER, CV_GENEDB).get(0);
         DB_GO = generalDao.getDbByName("GO");
-     
+
         DUMMY_PUB = pubDao.getPubByUniqueName("null");
         //logger.warn("Just looked up DUMMY_PUB and it is '"+DUMMY_PUB+"'");
-        
+
         //Cv goKeys = cvDao.getCvByName("genedb_fcvt_prop_keys").get(0);
         GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
         GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
         GO_KEY_DATE = cvDao.getCvTermByNameInCv("date", CV_FEATURE_PROPERTY).get(0);
-        
+
     }
 
     public void setOrganism(Organism organism) {
@@ -204,41 +204,41 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
 
     public void process(final Feature parent, final org.biojava.bio.seq.Feature feat, final int offset) {
-        MiningUtils.sanityCheckAnnotation(feat, requiredSingle, requiredMultiple, 
+        MiningUtils.sanityCheckAnnotation(feat, requiredSingle, requiredMultiple,
                 optionalSingle , optionalMultiple, discard, false, true);
-        
+
       TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
       tt.execute(
               new TransactionCallbackWithoutResult() {
-				@Override
+                @Override
                   public void doInTransactionWithoutResult(TransactionStatus status) {
-	                  @SuppressWarnings("unchecked") Set<String> keySet = feat.getAnnotation().asMap().keySet();
-	                  for (String key : keySet) {
-	                	  if ("internal_data".equals(key)) {
-	                		  continue; // Don't store internal data - a biojava artifact
-	                	  }
-	                	  seenQualifiers.add(feat.getType()+":"+key);
-	                  }
+                      @SuppressWarnings("unchecked") Set<String> keySet = feat.getAnnotation().asMap().keySet();
+                      for (String key : keySet) {
+                          if ("internal_data".equals(key)) {
+                              continue; // Don't store internal data - a biojava artifact
+                          }
+                          seenQualifiers.add(feat.getType()+":"+key);
+                      }
                       processStrandedFeature(parent, (StrandedFeature) feat, offset);
                   }
               });
-        
+
         //processStrandedFeature(parent, (StrandedFeature) feat);
     }
-    
+
     public abstract void processStrandedFeature(Feature parent, StrandedFeature f, int offset);
-    
+
 
     protected FeatureProp createFeatureProp(Feature f, Annotation an, String annotationKey, String dbKey, Cv cv) {
         List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(annotationKey,cv);
-        
+
         if (cvTerms == null || cvTerms.size() == 0) {
-        	throw new RuntimeException("No cvterm of name '"+annotationKey+"' in cv '"+cv.getName()+"'");
+            throw new RuntimeException("No cvterm of name '"+annotationKey+"' in cv '"+cv.getName()+"'");
         }
         CvTerm cvTerm = cvTerms.get(0);
         String value = MiningUtils.getProperty(annotationKey, an, null);
         FeatureProp fp = new FeatureProp(f, cvTerm, value, 0);
-    
+
         f.getFeatureProps().add(fp);
         return fp;
     }
@@ -248,7 +248,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                 + "'");
         // Cvterm cvTerm = daoFactory.getCvTermDao().findByNameInCv(key,
         // cv).get(0);
-    
+
         List<String> values = MiningUtils.getProperties(key, an);
         if (values == null || values.size() == 0) {
             return 0;
@@ -257,10 +257,10 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         for (String note : values) {
             String[] notesArray = note.split(";");
             for (int i = 0; i < notesArray.length; i++) {
-                notes.add(notesArray[i]);   
+                notes.add(notesArray[i]);
             }
         }
-    
+
         int rank = startRank;
         for (String note : notes) {
             FeatureProp fp = new FeatureProp(f, cvTerm, note, rank);
@@ -284,22 +284,22 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         }
         return rank - startRank;
     }
-    
+
     protected void createDbXRefs(org.gmod.schema.sequence.Feature polypeptide, Annotation an) {
         List<String> xrefs = MiningUtils.getProperties(QUAL_DB_XREF, an);
         if (xrefs.size() == 0) {
             xrefs = new ArrayList<String>();
         }
-            
+
         List <String> tmp = MiningUtils.getProperties(QUAL_D_PSU_DB_XREF, an);
         if (tmp != null) {
             xrefs.addAll(tmp);
         }
-            
+
             // TODO EC numbers and literature aren't simple dbxrefs
     //        tmp = MiningUtils.getProperties(QUAL_D_LITERATURE, an);
     //        xrefs.addAll(tmp);
-    
+
     //        tmp = MiningUtils.getProperties(QUAL_D_EC_NUMBER, an);
     //        for (String ecNum : tmp) {
     //            if (ecNum.startsWith("EC:")) {
@@ -308,7 +308,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     //                xrefs.add("EC:" + ecNum);
     //            }
     //        }
-            
+
         if (xrefs.size() == 0) {
             return;
         }
@@ -334,7 +334,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                     //description = parts[1];
                 }
             }
-            
+
             Db db = dbUtilsBean.getDbByName(dbName);
             if (db == null) {
                 if (!warnedDbs.contains(db)) {
@@ -362,7 +362,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
                     logger.info("Persisting new FeatureDbXRef, dbXRef='"+dbXRef.getAccession()+"', feature='"+polypeptide.getDisplayName()+"'");
                     sequenceDao.persist(fdr);
                 }
-                
+
             }
             // TODO Store any user supplied notes
         }
@@ -404,18 +404,18 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     //                .createFeature(type, utrName, this.organism);
     //                FeatureRelationship utrFr = featureUtils.createRelationship(
     //                        utr, gene, REL_PART_OF);
-    //                FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
+    //                FeatureLoc utrFl = featureUtils.createLocation(parent, utr,
     //                        loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());
     //                daoFactory.persist(utr);
     //                daoFactory.persist(utrFr);
     //                daoFactory.persist(utrFl);
     //                handled = true;
-    
+
                     // TODO Complain bitterly
                 Feature gene = sequenceDao.getFeatureByUniqueName(sysId, "gene");
                 return gene;
             }
-            
+
             return ret;
         }
 
@@ -423,194 +423,194 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         this.pubDao = pubDao;
     }
 
-	public void setDbUtilsBean(DbUtilsBean dbUtilsBean) {
-		this.dbUtilsBean = dbUtilsBean;
-	}
-	
-	public List<String> getUnknownRileyClass() {
-		return unknownRileyClass;
-	}
-	
-	public Map<String, Boolean> getQualifierHandlingStatus() {
-		Map<String, Boolean> ret = new HashMap<String, Boolean>();
-		for (String seenQualifier : seenQualifiers) {
-			ret.put(seenQualifier, false);
-		}
-		for (String handledQualifier : handledQualifiers) {
-			if (ret.containsKey(handledQualifier)) {
-				ret.put(handledQualifier, true);
-			} else {
-				logger.warn("'"+this.getClass().getSimpleName()+"' can handle '"+handledQualifier+"' but has never seen one");
-			}
-		}
-		return ret;
-	}
+    public void setDbUtilsBean(DbUtilsBean dbUtilsBean) {
+        this.dbUtilsBean = dbUtilsBean;
+    }
 
-	public ProcessingPhase getProcessingPhase() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public List<String> getUnknownRileyClass() {
+        return unknownRileyClass;
+    }
 
-	public void createControlledCuration(Feature polypeptide, Annotation an, Cv controlledCuration) {
-	
-	    List<ControlledCurationInstance> ccs = ccParser.getAllControlledCurationFromAnnotation(an);
-	    if (ccs == null) {
-	        return;
-	    }
-	    
-	    Set<ControlledCurationInstance> lhs = new LinkedHashSet<ControlledCurationInstance>();
-	    lhs.addAll(ccs);
-	    if (lhs.size() != ccs.size()) {
-	    	logger.warn("Removed '"+(ccs.size()-lhs.size())+"' controlled_curations as apparently duplicates");
-	    	ccs.clear();
-	    	ccs.addAll(lhs);
-	    }
-	
-	    int rank = 0;
-	
-	    for (ControlledCurationInstance cc : ccs) {
-	        boolean other = false;
-	        DbXRef dbXRef = null;
-	        CvTerm cvt = this.cvDao.getCvTermByNameAndCvName(cc.getTerm(), "quality");
-	        if (cvt == null) {
-	            cvt = this.cvDao.getCvTermByNameAndCvName(cc.getTerm(), "CC_%");
-	
-	            if (cvt == null ) {
-	                // Got an unrecognized term
-	                if (cc.getCv() != null) {
-	                    logger.error("Got an unrecognized term '"+cc.getTerm()+"' in controlled_curation but it should already exist in '"+cc.getCv()+"'");
-	                    continue;
-	                }
-	
-	                Db db = generalDao.getDbByName("CCGEN");
-	                dbXRef = new DbXRef(db, "CCGEN_" + cc.getTerm());
-	                generalDao.persist(dbXRef);
-	
-	                cvt = new CvTerm(controlledCuration, dbXRef, cc.getTerm(), cc.getTerm());
-	                generalDao.persist(cvt);
-	            }
-	        }
-	
-	
-	        Pub pub = null;
-	        String[] list = null;
-	        // Handle dbxrefs
-	        if (cc.getDbXRef() != null) {
-	            list = cc.getDbXRef().split("\\|");
-	            for (String dbXRef2 : list) {
-	                String sections[] = dbXRef2.split(":");
-	                if (featureUtils.looksLikePub(dbXRef2)) {
-	                    //findOrCreatePubFromPMID(sections[0]); // FIXME - could this be a shortcut for below
-	                    DbXRef dbxref = null;
-	                    Db db = this.generalDao.getDbByName("MEDLINE");
-	                    dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
-	                    if (dbxref == null) {
-	                        dbxref = new DbXRef(db, sections[1]);
-	                        generalDao.persist(dbxref);
-	                    }
-	                    pub = this.pubDao.getPubByUniqueName(dbXRef2);
-	                    if (pub == null) {
-	                        CvTerm cvterm = this.cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
-	                        //logger.warn("cvterm='"+cvterm+"'");
-	                        pub = new Pub(dbXRef2, cvterm);
-	                        this.pubDao.persist(pub);
-	                        //pubProp = new PubProp(cvt,pub,DbXRef,0);
-	                        //this.pubDao.persist(pubProp);
-	                        PubDbXRef pubDb = new PubDbXRef(pub, dbxref, true);
-	                        this.pubDao.persist(pubDb);
-	                    }
-	                } else {
-	                    pub = DUMMY_PUB;
-	                    other = true;
-	                }
-	            }
-	        } else {
-	            pub = DUMMY_PUB; // FIXME - probably not right!!
-	        }
-	
-	
-	        boolean not = false; // TODO - Should get from GO object
-	        List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvt, not);
-	        FeatureCvTerm fct;// = new FeatureCvTerm(cvt, polypeptide, pub, not);
-	        //sequenceDao.persist(fct);
-	
-	        if (fcts == null || fcts.size()==0) {
-	            fct = new FeatureCvTerm(cvt, polypeptide, pub, not,rank);
-	            sequenceDao.persist(fct);
-	            logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
-	        } else {
-	            if(fcts.size() > 1){
-	                fct = fcts.get(fcts.size() - 1);
-	            } else {
-	                fct = fcts.get(0);
-	            }
-	            int r = fct.getRank();
-	            r++;
-	            fct = new FeatureCvTerm(cvt,polypeptide, pub, not, r);
-	            sequenceDao.persist(fct);
-	            logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
-	        }
-	
-	        //  FIXME Pass in unix date
-	        thingy("date", cc.getDate(), CV_FEATURE_PROPERTY, fct, null);
-	        thingy("attribution", cc.getAttribution(), CV_GENEDB, fct, null);
-	        thingy("evidence", cc.getEvidence(), CV_GENEDB, fct, null);
-	        thingy("residue", cc.getResidue(), CV_GENEDB, fct, null);
-	        thingy("qualifier", cc.getQualifier(), CV_GENEDB, fct, "\\|");
-	
-	
-	        if (other) {
-	            other = false;
-	            for (String dbXRef2 : list) {
-	                String sections[] = dbXRef2.split(":");
-	                if (sections.length != 2) {
-	                    logger.error("Unable to parse a dbxref from '"+dbXRef2+"'");
-	                } else {
-	                    if(!featureUtils.looksLikePub(sections[0])) {
-	                        DbXRef dbxref = null;
-	                        Db db = this.generalDao.getDbByName(sections[0].toUpperCase());
-	                        if (db == null) {
-	                        	logger.error("Can't find db by name of '"+db+"' when persisting controlled curation so skipping");
-	                        } else {
-	                        	dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
-	                        	if (dbxref == null) {
-	                        		dbxref = new DbXRef(db, sections[1]);
-	                        		this.generalDao.persist(dbxref);
-	                        	} else {
-	                        		FeatureCvTermDbXRef fcvDb = new FeatureCvTermDbXRef(dbxref,fct);
-	                        		this.sequenceDao.persist(fcvDb);
-	                        	}
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	        rank++;
-	    }
-	}
+    public Map<String, Boolean> getQualifierHandlingStatus() {
+        Map<String, Boolean> ret = new HashMap<String, Boolean>();
+        for (String seenQualifier : seenQualifiers) {
+            ret.put(seenQualifier, false);
+        }
+        for (String handledQualifier : handledQualifiers) {
+            if (ret.containsKey(handledQualifier)) {
+                ret.put(handledQualifier, true);
+            } else {
+                logger.warn("'"+this.getClass().getSimpleName()+"' can handle '"+handledQualifier+"' but has never seen one");
+            }
+        }
+        return ret;
+    }
 
-	private void thingy(String key, String value, Cv controlledCuration, FeatureCvTerm fct, String split) {
-	    if (value != null) {
-	        List<CvTerm> cvtL = this.cvDao.getCvTermByNameInCv(key, controlledCuration);
-	        if (cvtL == null || cvtL.size() == 0) {
-	            throw new RuntimeException("Expected cvterm '"+key+"' not found");
-	        }
-	        CvTerm cvTerm = cvtL.get(0);
-	
-	        String[] qualifiers = {value};
-	        if (split != null) {
-	            qualifiers = value.split(split);
-	        }
-	        for (int i = 0; i < qualifiers.length; i++) {
-	            FeatureCvTermProp fcvp = new FeatureCvTermProp(cvTerm, fct, qualifiers[i], i);
-	            sequenceDao.persist(fcvp);
-	        }
-	    }
-	}
+    public ProcessingPhase getProcessingPhase() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public void setCcParser(ControlledCurationParser ccParser) {
-	    this.ccParser = ccParser;
-	}
+    public void createControlledCuration(Feature polypeptide, Annotation an, Cv controlledCuration) {
+
+        List<ControlledCurationInstance> ccs = ccParser.getAllControlledCurationFromAnnotation(an);
+        if (ccs == null) {
+            return;
+        }
+
+        Set<ControlledCurationInstance> lhs = new LinkedHashSet<ControlledCurationInstance>();
+        lhs.addAll(ccs);
+        if (lhs.size() != ccs.size()) {
+            logger.warn("Removed '"+(ccs.size()-lhs.size())+"' controlled_curations as apparently duplicates");
+            ccs.clear();
+            ccs.addAll(lhs);
+        }
+
+        int rank = 0;
+
+        for (ControlledCurationInstance cc : ccs) {
+            boolean other = false;
+            DbXRef dbXRef = null;
+            CvTerm cvt = this.cvDao.getCvTermByNameAndCvName(cc.getTerm(), "quality");
+            if (cvt == null) {
+                cvt = this.cvDao.getCvTermByNameAndCvName(cc.getTerm(), "CC_%");
+
+                if (cvt == null ) {
+                    // Got an unrecognized term
+                    if (cc.getCv() != null) {
+                        logger.error("Got an unrecognized term '"+cc.getTerm()+"' in controlled_curation but it should already exist in '"+cc.getCv()+"'");
+                        continue;
+                    }
+
+                    Db db = generalDao.getDbByName("CCGEN");
+                    dbXRef = new DbXRef(db, "CCGEN_" + cc.getTerm());
+                    generalDao.persist(dbXRef);
+
+                    cvt = new CvTerm(controlledCuration, dbXRef, cc.getTerm(), cc.getTerm());
+                    generalDao.persist(cvt);
+                }
+            }
+
+
+            Pub pub = null;
+            String[] list = null;
+            // Handle dbxrefs
+            if (cc.getDbXRef() != null) {
+                list = cc.getDbXRef().split("\\|");
+                for (String dbXRef2 : list) {
+                    String sections[] = dbXRef2.split(":");
+                    if (featureUtils.looksLikePub(dbXRef2)) {
+                        //findOrCreatePubFromPMID(sections[0]); // FIXME - could this be a shortcut for below
+                        DbXRef dbxref = null;
+                        Db db = this.generalDao.getDbByName("MEDLINE");
+                        dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
+                        if (dbxref == null) {
+                            dbxref = new DbXRef(db, sections[1]);
+                            generalDao.persist(dbxref);
+                        }
+                        pub = this.pubDao.getPubByUniqueName(dbXRef2);
+                        if (pub == null) {
+                            CvTerm cvterm = this.cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
+                            //logger.warn("cvterm='"+cvterm+"'");
+                            pub = new Pub(dbXRef2, cvterm);
+                            this.pubDao.persist(pub);
+                            //pubProp = new PubProp(cvt,pub,DbXRef,0);
+                            //this.pubDao.persist(pubProp);
+                            PubDbXRef pubDb = new PubDbXRef(pub, dbxref, true);
+                            this.pubDao.persist(pubDb);
+                        }
+                    } else {
+                        pub = DUMMY_PUB;
+                        other = true;
+                    }
+                }
+            } else {
+                pub = DUMMY_PUB; // FIXME - probably not right!!
+            }
+
+
+            boolean not = false; // TODO - Should get from GO object
+            List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(polypeptide, cvt, not);
+            FeatureCvTerm fct;// = new FeatureCvTerm(cvt, polypeptide, pub, not);
+            //sequenceDao.persist(fct);
+
+            if (fcts == null || fcts.size()==0) {
+                fct = new FeatureCvTerm(cvt, polypeptide, pub, not,rank);
+                sequenceDao.persist(fct);
+                logger.info("Persisting new FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
+            } else {
+                if(fcts.size() > 1){
+                    fct = fcts.get(fcts.size() - 1);
+                } else {
+                    fct = fcts.get(0);
+                }
+                int r = fct.getRank();
+                r++;
+                fct = new FeatureCvTerm(cvt,polypeptide, pub, not, r);
+                sequenceDao.persist(fct);
+                logger.info("Already got FeatureCvTerm for '"+polypeptide.getUniqueName()+"' with a cvterm of '"+cvt.getName()+"'");
+            }
+
+            //  FIXME Pass in unix date
+            thingy("date", cc.getDate(), CV_FEATURE_PROPERTY, fct, null);
+            thingy("attribution", cc.getAttribution(), CV_GENEDB, fct, null);
+            thingy("evidence", cc.getEvidence(), CV_GENEDB, fct, null);
+            thingy("residue", cc.getResidue(), CV_GENEDB, fct, null);
+            thingy("qualifier", cc.getQualifier(), CV_GENEDB, fct, "\\|");
+
+
+            if (other) {
+                other = false;
+                for (String dbXRef2 : list) {
+                    String sections[] = dbXRef2.split(":");
+                    if (sections.length != 2) {
+                        logger.error("Unable to parse a dbxref from '"+dbXRef2+"'");
+                    } else {
+                        if(!featureUtils.looksLikePub(sections[0])) {
+                            DbXRef dbxref = null;
+                            Db db = this.generalDao.getDbByName(sections[0].toUpperCase());
+                            if (db == null) {
+                                logger.error("Can't find db by name of '"+db+"' when persisting controlled curation so skipping");
+                            } else {
+                                dbxref = this.generalDao.getDbXRefByDbAndAcc(db, sections[1]);
+                                if (dbxref == null) {
+                                    dbxref = new DbXRef(db, sections[1]);
+                                    this.generalDao.persist(dbxref);
+                                } else {
+                                    FeatureCvTermDbXRef fcvDb = new FeatureCvTermDbXRef(dbxref,fct);
+                                    this.sequenceDao.persist(fcvDb);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            rank++;
+        }
+    }
+
+    private void thingy(String key, String value, Cv controlledCuration, FeatureCvTerm fct, String split) {
+        if (value != null) {
+            List<CvTerm> cvtL = this.cvDao.getCvTermByNameInCv(key, controlledCuration);
+            if (cvtL == null || cvtL.size() == 0) {
+                throw new RuntimeException("Expected cvterm '"+key+"' not found");
+            }
+            CvTerm cvTerm = cvtL.get(0);
+
+            String[] qualifiers = {value};
+            if (split != null) {
+                qualifiers = value.split(split);
+            }
+            for (int i = 0; i < qualifiers.length; i++) {
+                FeatureCvTermProp fcvp = new FeatureCvTermProp(cvTerm, fct, qualifiers[i], i);
+                sequenceDao.persist(fcvp);
+            }
+        }
+    }
+
+    public void setCcParser(ControlledCurationParser ccParser) {
+        this.ccParser = ccParser;
+    }
 
 //    private ParsedString parseDbXref(String in, String prefix) {
 //            ParsedString ret;
@@ -633,8 +633,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 //			return;
 //		}
 //		//tn.
-//		
-//		
+//
+//
 //		Map translationDetails = tn.getAppDetails("translation");
 //		String table = (String) translationDetails.get("table");
 //		if ( table != null) {
@@ -673,7 +673,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     //
     //    /*
     //     * (non-Javadoc)
-    //     * 
+    //     *
     //     * @see org.genedb.db.loading.FeatureHandler#processSources(org.biojava.bio.seq.Sequence)
     //     */
     //    @SuppressWarnings("unchecked")
@@ -789,7 +789,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     //            // TODO
     //        }
     //    }
-	
-	
+
+
 
 }
