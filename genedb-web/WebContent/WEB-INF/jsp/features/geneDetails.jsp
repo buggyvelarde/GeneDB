@@ -178,9 +178,20 @@
     </div>
 
     <!-- Ortholog / Paralog Section -->
-    <format:genePageSection id="orthologs">
-        <div class="heading">Orthologs / Paralogs</div>
-        <db:ortholog polypeptide="${polypeptide}"/>
-    </format:genePageSection>
+    <db:propByName items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>
+    <c:if test="${fn:length(orthologs) > 0}">
+	    <format:genePageSection id="orthologs">
+	        <div class="heading">Orthologs / Paralogs</div>
+	        <db:filtered-loop items="${orthologs}" var="ortholog" varStatus="status">
+	        	<c:set var="feat" value="${ortholog.featureByObjectId}"/>
+	        	<c:if test="${feat.cvTerm.name eq 'protein_match'}">
+	        		<span>${feat.uniqueName} <a href="<c:url value="/"/>Orthologs?cluster=${feat.uniqueName}">${fn:length(feat.featureRelationshipsForObjectId)} Others</a></span><br>
+	        	</c:if>
+	        	<c:if test="${feat.cvTerm.name eq 'polypeptide'}">
+	        		<span><a href="<c:url value="/"/>NamedFeature?name=${feat.gene.uniqueName}">${feat.gene.uniqueName}</a></span><br>
+	        	</c:if>
+	        </db:filtered-loop>
+	    </format:genePageSection>
+	</c:if>
 
 </c:if>
