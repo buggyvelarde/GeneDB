@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.genedb.db.loading.TaxonNode;
+import org.genedb.db.taxon.TaxonNode;
 import org.genedb.web.menu.CompositeMenu;
 import org.genedb.web.menu.Menu;
 import org.genedb.web.menu.SimpleMenu;

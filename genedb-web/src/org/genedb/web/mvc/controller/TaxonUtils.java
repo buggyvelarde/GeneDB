@@ -1,7 +1,7 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.loading.TaxonNode;
-import org.genedb.db.loading.TaxonNodeManager;
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeManager;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;

@@ -19,8 +19,8 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.loading.TaxonNode;
-import org.genedb.db.loading.TaxonNodeArrayPropertyEditor;
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.bind.ServletRequestDataBinder;

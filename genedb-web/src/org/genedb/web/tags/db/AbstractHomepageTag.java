@@ -3,8 +3,8 @@ package org.genedb.web.tags.db;
 import static javax.servlet.jsp.PageContext.APPLICATION_SCOPE;
 import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANAGER;
 
-import org.genedb.db.loading.TaxonNode;
-import org.genedb.db.loading.TaxonNodeManager;
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeManager;
 
 import java.io.IOException;
 

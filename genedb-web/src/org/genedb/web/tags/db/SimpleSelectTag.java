@@ -1,6 +1,6 @@
 package org.genedb.web.tags.db;
 
-import org.genedb.db.loading.TaxonNode;
+import org.genedb.db.taxon.TaxonNode;
 
 import java.io.IOException;
 import java.util.ArrayList;

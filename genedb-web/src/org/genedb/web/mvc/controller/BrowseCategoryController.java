@@ -21,7 +21,7 @@ package org.genedb.web.mvc.controller;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.CvDao;
-import org.genedb.db.loading.TaxonNode;
+import org.genedb.db.taxon.TaxonNode;
 
 import org.gmod.schema.utils.CountedName;
 

@@ -3,11 +3,9 @@
 	<name>genedb-web</name>
 	<comment></comment>
 	<projects>
-		<project>genedb-access</project>
 		<project>genedb-db</project>
 		<project>genedb-libs</project>
 		<project>genedb-query</project>
-		<project>genedb-domain</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

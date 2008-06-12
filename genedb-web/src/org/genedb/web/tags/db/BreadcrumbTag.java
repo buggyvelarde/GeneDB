@@ -6,8 +6,8 @@ import static org.genedb.web.mvc.controller.TaxonManagerListener.TAXON_NODE_MANA
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 
 import org.apache.log4j.Logger;
-import org.genedb.db.loading.TaxonNode;
-import org.genedb.db.loading.TaxonNodeManager;
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.web.mvc.controller.WebConstants;
 
 import org.springframework.web.util.WebUtils;
@@ -44,7 +44,7 @@ public class BreadcrumbTag extends SimpleTagSupport {
         String trail = checkCache(taxonNode);
         if (trail == null) {
             StringBuilder buf = new StringBuilder();
-            List<TaxonNode> nodes = tnm.getHeirachy(taxonNode);
+            List<TaxonNode> nodes = tnm.getHierachy(taxonNode);
             boolean first = true;
             for (TaxonNode node : nodes) {
                 if (!first) {

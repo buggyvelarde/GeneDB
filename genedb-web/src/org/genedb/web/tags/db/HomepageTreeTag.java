@@ -1,7 +1,7 @@
 package org.genedb.web.tags.db;
 
-import org.genedb.db.loading.TaxonNameType;
-import org.genedb.db.loading.TaxonNode;
+import org.genedb.db.taxon.TaxonNameType;
+import org.genedb.db.taxon.TaxonNode;
 
 import java.io.IOException;
 

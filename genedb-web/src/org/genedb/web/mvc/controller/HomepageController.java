@@ -4,8 +4,8 @@ import static org.genedb.web.mvc.controller.WebConstants.CRUMB;
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 
 import org.apache.log4j.Logger;
-import org.genedb.db.loading.TaxonNode;
-import org.genedb.db.loading.TaxonNodeArrayPropertyEditor;
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.validation.BindingResult;

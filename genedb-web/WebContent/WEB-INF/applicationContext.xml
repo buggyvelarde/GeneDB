@@ -27,11 +27,11 @@
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
 
-    <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.loading.TaxonNodeArrayPropertyEditor">
+    <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
         <property name="taxonNodeManager" ref="taxonNodeManager" />
     </bean>
 
-    <bean id="taxonNodeManager" class="org.genedb.db.loading.TaxonNodeManager">
+    <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
