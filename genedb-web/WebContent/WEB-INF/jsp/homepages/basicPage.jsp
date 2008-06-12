@@ -1,8 +1,6 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="primaryLoc" value="${gene.rankZeroFeatureLoc}" />
-<c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
 <c:url value="/" var="base"/>
 
 <format:headerRound name="Organism: GeneDB" title="Organism: GeneDB" bodyClass="genePage">
@@ -12,7 +10,11 @@
 </format:headerRound>
 
 
-<format:genePageSection id="geneDetailsLoading" className="greyBox">
+
+<p></p>
+<format:genePageSection className="greyBox">
     Some blurb here
 </format:genePageSection>
+<p></p>
+
 <format:footer />
