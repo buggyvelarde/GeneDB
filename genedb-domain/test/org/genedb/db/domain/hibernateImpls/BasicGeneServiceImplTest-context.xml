@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
+    default-init-method="postConstruction">
+
+    <tx:annotation-driven />
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url"><value>jdbc:postgresql://localhost:11111/malaria_workshop</value></property>
+        <property name="username"><value>pathdb</value></property>
+        <property name="password"><value></value></property>
+    </bean>
+        
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!-- Database Property -->
+    <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="properties">
+    <props>
+        <prop key="hibernate.hbm2dll.auto">validate</prop>
+<!--        <prop key="hibernate.show_sql">true</prop>-->
+        <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+     </props>
+     </property>
+    </bean>
+    
+    <!-- Hibernate SessionFactory -->
+    <bean id="sessionFactory" 
+     class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration"/>
+        <property name="dataSource" ref="dataSource" />
+        <property name="hibernateProperties" ref="hibernateProperties" />
+        <property name="annotatedClasses">
+            <list>
+               <value>org.gmod.schema.analysis.Analysis</value>
+               <value>org.gmod.schema.analysis.AnalysisFeature</value>
+               <value>org.gmod.schema.analysis.AnalysisProp</value>
+
+               <value>org.gmod.schema.cv.Cv</value>
+               <value>org.gmod.schema.cv.CvTerm</value>
+               <value>org.gmod.schema.cv.CvTermDbXRef</value>
+               <value>org.gmod.schema.cv.CvTermPath</value>
+               <value>org.gmod.schema.cv.CvTermProp</value>
+               <value>org.gmod.schema.cv.CvTermRelationship</value>
+               <value>org.gmod.schema.cv.CvTermSynonym</value>
+               <value>org.gmod.schema.cv.DbXRefProp</value>
+ 
+               <value>org.gmod.schema.general.Db</value>
+               <value>org.gmod.schema.general.DbXRef</value>
+               <value>org.gmod.schema.general.Project</value>
+               <value>org.gmod.schema.general.Tableinfo</value>
+
+               <value>org.gmod.schema.organism.Organism</value>
+               <value>org.gmod.schema.organism.OrganismDbXRef</value>
+               <value>org.gmod.schema.organism.OrganismProp</value>
+
+               <value>org.gmod.schema.phylogeny.Phylonode</value>
+               <value>org.gmod.schema.phylogeny.PhylonodeDbXRef</value>
+               <value>org.gmod.schema.phylogeny.PhylonodeOrganism</value>
+               <value>org.gmod.schema.phylogeny.PhylonodeProp</value>
+               <value>org.gmod.schema.phylogeny.PhylonodePub</value>
+               <value>org.gmod.schema.phylogeny.PhylonodeRelationship</value>
+               <value>org.gmod.schema.phylogeny.Phylotree</value>
+               <value>org.gmod.schema.phylogeny.PhylotreePub</value>
+
+               <value>org.gmod.schema.pub.Pub</value>
+               <value>org.gmod.schema.pub.PubAuthor</value>
+               <value>org.gmod.schema.pub.PubDbXRef</value>
+               <value>org.gmod.schema.pub.PubProp</value>
+               <value>org.gmod.schema.pub.PubRelationship</value>
+
+               <value>org.gmod.schema.sequence.Feature</value>
+               <value>org.gmod.schema.sequence.FeatureCvTerm</value>
+               <value>org.gmod.schema.sequence.FeatureCvTermDbXRef</value>
+               <value>org.gmod.schema.sequence.FeatureCvTermProp</value>
+               <value>org.gmod.schema.sequence.FeatureCvTermPub</value>
+               <value>org.gmod.schema.sequence.FeatureDbXRef</value>
+               <value>org.gmod.schema.sequence.FeatureLoc</value>
+               <value>org.gmod.schema.sequence.FeatureLocPub</value>
+               <value>org.gmod.schema.sequence.FeatureProp</value>
+               <value>org.gmod.schema.sequence.FeaturePropPub</value>
+               <value>org.gmod.schema.sequence.FeaturePub</value>
+               <value>org.gmod.schema.sequence.FeatureRelationship</value>
+               <value>org.gmod.schema.sequence.FeatureRelationshipProp</value>
+               <value>org.gmod.schema.sequence.FeatureRelationshipPropPub</value>
+               <value>org.gmod.schema.sequence.FeatureRelationshipPub</value>
+               <value>org.gmod.schema.sequence.FeatureSynonym</value>
+               <value>org.gmod.schema.sequence.Gene</value>
+               <value>org.gmod.schema.sequence.Synonym</value>
+            </list>
+        </property>
+        <property name="annotatedPackages">
+	        <list>
+               <value>org.gmod.schema.analyss</value>
+               <value>org.gmod.schema.cv</value>
+               <value>org.gmod.schema.general</value>
+               <value>org.gmod.schema.organism</value>
+               <value>org.gmod.schema.phylogeny</value>
+               <value>org.gmod.schema.pub</value>
+	           <value>org.gmod.schema.sequence</value>
+	        </list>
+        </property>
+    </bean>
+    
+    <bean name="basicGeneService" class="org.genedb.db.domain.hibernateImpls.BasicGeneServiceImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+</beans>
