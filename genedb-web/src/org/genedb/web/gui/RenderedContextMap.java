@@ -53,13 +53,14 @@ public class RenderedContextMap {
      * color model results in smaller files for full context map images,
      * and the reverse is true for small chromosome thumbnails.
      *
-     * Unfortunately an apparent bug in the AWT rendering engine means
+     * Unfortunately a bug in the AWT rendering engine (#6712736) means
      * that anti-aliased text cannot be drawn directly on a transparent
      * background to an image with an indexed color model. Therefore
      * in that case we draw the text to an image with direct color model
      * and copy the result to the indexed image. In fact we can get
      * away with simply blitting it over a rectangle of the indexed image,
      * since the containing rectangle should not overlap anything else.
+     * See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6712736
      *
      * Thus we need a direct-color image on which to write the labels. Rather
      * than create a new one each time, we use the same one for all the
@@ -258,7 +259,9 @@ public class RenderedContextMap {
         filenamePrefix = "thumb-";
         forceTracks(2, 2);
 
-         /* For thumbnails, the resulting file is usually smaller with a direct color model */
+         /* For thumbnails, the resulting file is usually smaller with a direct color model.
+          * This means we have to apply the AlphaImageLoader hack to the chromosome thumbnail
+          * for IE6. */
         this.colorModel = ColorModel.DIRECT;
 
         return this;
@@ -689,7 +692,7 @@ public class RenderedContextMap {
     }
 
     /**
-     * Calculate the x-position (i.e. in pixels relative to this diagram)
+     * Calculate the x-position (in pixels relative to this diagram)
      * corresponding to a particular chromosome location.
      *
      * @param loc the chromosome location
