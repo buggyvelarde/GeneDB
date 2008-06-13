@@ -190,78 +190,80 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     public void setGeneDetailsView(String geneDetailsView) {
         this.geneDetailsView = geneDetailsView;
     }
-}
+    
+    public static class NameLookupBean {
 
-class NameLookupBean {
+        private String name; // The name to lookup, using * for wildcards
+        private boolean addWildcard = false;
+        private String featureType = "gene";
+        private boolean useProduct = false;
+        private boolean history = false;
+        private boolean detailsOnly = false;
+        private TaxonNode[] organism;
 
-    private String name; // The name to lookup, using * for wildcards
-    private boolean addWildcard = false;
-    private String featureType = "gene";
-    private boolean useProduct = false;
-    private boolean history = false;
-    private boolean detailsOnly = false;
-    private TaxonNode[] organism;
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        if (addWildcard) {
-            StringBuilder ret = new StringBuilder(this.name);
-            if (!(ret.charAt(0) == '*')) {
-                ret.insert(0, '*');
-            }
-            if (!(ret.charAt(ret.length() - 1) == '*')) {
-                ret.append('*');
-            }
-            return ret.toString();
+        public void setName(String name) {
+            this.name = name;
         }
-        return this.name;
-    }
 
-    public String getFeatureType() {
-        return featureType;
-    }
+        public String getName() {
+            if (addWildcard) {
+                StringBuilder ret = new StringBuilder(this.name);
+                if (!(ret.charAt(0) == '*')) {
+                    ret.insert(0, '*');
+                }
+                if (!(ret.charAt(ret.length() - 1) == '*')) {
+                    ret.append('*');
+                }
+                return ret.toString();
+            }
+            return this.name;
+        }
 
-    public void setFeatureType(String featureType) {
-        this.featureType = featureType;
-    }
+        public String getFeatureType() {
+            return featureType;
+        }
 
-    public void setAddWildcard(boolean addWildcard) {
-        this.addWildcard = addWildcard;
-    }
+        public void setFeatureType(String featureType) {
+            this.featureType = featureType;
+        }
 
-    public boolean isUseProduct() {
-        return useProduct;
-    }
+        public void setAddWildcard(boolean addWildcard) {
+            this.addWildcard = addWildcard;
+        }
 
-    public void setUseProduct(boolean useProduct) {
-        this.useProduct = useProduct;
-    }
+        public boolean isUseProduct() {
+            return useProduct;
+        }
 
-    public boolean isHistory() {
-        return history;
-    }
+        public void setUseProduct(boolean useProduct) {
+            this.useProduct = useProduct;
+        }
 
-    public void setHistory(boolean history) {
-        this.history = history;
-    }
+        public boolean isHistory() {
+            return history;
+        }
 
-    public boolean isDetailsOnly() {
-        return detailsOnly;
-    }
+        public void setHistory(boolean history) {
+            this.history = history;
+        }
 
-    public void setDetailsOnly(boolean detailsOnly) {
-        this.detailsOnly = detailsOnly;
-    }
+        public boolean isDetailsOnly() {
+            return detailsOnly;
+        }
 
-    public TaxonNode[] getOrganism() {
-        return organism;
-    }
+        public void setDetailsOnly(boolean detailsOnly) {
+            this.detailsOnly = detailsOnly;
+        }
 
-    public void setOrganism(TaxonNode[] organism) {
-        this.organism = organism;
-    }
+        public TaxonNode[] getOrganism() {
+            return organism;
+        }
 
+        public void setOrganism(TaxonNode[] organism) {
+            this.organism = organism;
+        }
+
+    }
 }
+
+
