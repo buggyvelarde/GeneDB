@@ -12,6 +12,7 @@
 */
 
 #contextMapOuterDiv {
+	clear: both;
 	position: relative;
 	width: 95%;
     margin-left: auto;
@@ -186,9 +187,8 @@ div#errorMessage {
     padding-right: 1em;
 }
 
-body.genePage {
-    font-size: 0.8em;
-}
+body.genePage {font-size: 0.8em;}
+* html body.genePage {font-size: 1em;}
 
 div#geneDetails {
     position: relative;
@@ -240,6 +240,7 @@ div#analysisTools #sendTo {
     margin-bottom: 1ex;
 }
 
+/* when protein map is restored:
 div#peptideProperties .middle {
     margin-right: 300px;
 }
@@ -249,6 +250,7 @@ div#proteinMap {
     right: 0px;
     top: 0px;
 }
+*/
 
 .outer {
    clear:left;

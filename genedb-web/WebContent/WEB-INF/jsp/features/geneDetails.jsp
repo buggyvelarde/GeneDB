@@ -164,12 +164,12 @@
                 </table>
             </format:genePageSection>
 
-            <format:genePageSection id="proteinMap" className="whiteBox">
+            <%-- <format:genePageSection id="proteinMap" className="whiteBox">
                 <div class="heading">Protein Map</div>
                 <div align="center">
                     <img src="<c:url value="/includes/images/protein.gif"/>" id="ProteinMap">
                 </div>
-            </format:genePageSection>
+            </format:genePageSection> --%>
         </div>
     </c:if>
 

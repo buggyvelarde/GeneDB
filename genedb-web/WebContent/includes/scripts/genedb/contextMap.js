@@ -142,6 +142,8 @@ function loadTiles(chrlen, locus, tileData) {
         $.historyLoad(hash);
         return false;
     });
+
+    //navigationMenuBar.render();
 }
 
 function reloadDetails(name) {
@@ -154,7 +156,7 @@ function reloadDetails(name) {
 
     $("#contextMapInfoPanel:visible").slideUp(200);
     loadedTranscriptName = null;
-    $("#geneDetails").fadeTo("slow", 0.4).load("/genedb-web/NamedFeature?name="+name+"&detailsOnly=true", null, function () {
+    $("#geneDetails").fadeTo("slow", 0.4).load(base + "NamedFeature?name="+name+"&detailsOnly=true", null, function () {
         loadedTranscriptName = name;
         document.title = "Transcript "+name+" - GeneDB";
         $("#geneDetails").stop().fadeTo("fast", 1);

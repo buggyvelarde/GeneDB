@@ -220,93 +220,44 @@ div.section-body {
  padding-right: 3px;
 }
 
+#navigation-row {
+	height: 1em;
+}
+
 #navigation {
-	padding: 0px 5px 0 5px;
-	margin: 0 0 5px 0;
-	position: absolute;
-	top: 30px;
-	right: 0px;
+    width: 14em;
+    float: right;
+   	font-size: 10pt;
+	padding: 0px 5px 0px 5px;
+	margin: 0 0 0 0;
+	bottom: 0px;
 }
+* html #navigation {margin-bottom: -6px;}
 
-ul#simple-menu{list-style-type:none;width:100%;position:relative;height:27px;font-family:"Trebuchet MS",Arial,sans-serif;font-size:13px;font-weight:bold;margin:0;padding:11px 0 0 0;}
-ul#simple-menu li{float:right;margin:0 0 0 4px;height:27px;position:relative;z-index:1000;}
-ul#simple-menu li.left{margin:0;}
-ul#simple-menu li a{float:left;color:#fff;background:#9bd1fa;line-height:27px;text-decoration:none;padding:0 17px 0 18px;height:27px;}
-ul#simple-menu li a.right{padding-right:19px;}
-ul#simple-menu li a:hover{background:#2E4560;}
-ul#simple-menu li a.current{color:#2E4560;background:#fff;}
-ul#simple-menu li a.current:hover{color:#2E4560;background:#fff;}
+#navigation .yuimenu {z-index: 23;}
 
-ul#simple-menu li ul {
-	display: none;
-	list-style-image:none;
-	list-style-position:outside;
-	list-style-type:none;
-	position:absolute;
-	top:60px;
-}
-
-ul#simple-menu li:hover ul {
-	display: block;
-	list-style-image:none;
-	list-style-position:outside;
-	list-style-type:none;
-	position:absolute;
-	top:27px;
-	left:-40px;
-	width: 70px;
-	padding-top: 2px;
-}
-
-.w {
-	width: 150px;
-}
-
-.c {
-	text-align: center;
-}
-
-ul#simple-menu li:hover ul li {
-	width: 165px;
-}
-
-div#header {
+#header {
 	position: relative;
-	display: block;
+	z-index: 29;
 	width: 100%;
 	min-width: 600px;
-	height:68px;
-}
-div#header table {
-	height:30px;
-}
-
-div#header table td {
+    height: 74px;
 	font-size: 2em;
-	line-height: 1em;
-	font-family: Georgia;
-	font-variant: small-caps;
-	font-weight: bold;
-	vertical-align: middle
+	font-family: sans-serif;
 }
-
-div#header table td input#query {
-	width: 150px;
-	padding: 4px;
-	vertical-align: middle;
-	border: 0;
-}
-
-div#header table td input#submit {
-	vertical-align: middle;
+#header td {padding: 0}
+#header #logo {width: 24%;margin-top:1ex;margin-left:10px;margin-right:-10px;font-weight:bold;}
+#header #name {width: 34%;margin-top:1ex; text-align:center; font-style:italic;}
+#header form {margin: 6px 3px 0 -3px;}
+#header #search {vertical-align: middle; font-size: 12pt; width: 40%; text-align:right;}
+#header input#submit {
 	margin: 0 0 0 7px;
 	background: transparent url(../images/bgsprite.gif) no-repeat -47px top;
 	border: 0;
 	width: 66px;
 	height: 24px;
-	vertical-align: bottom;
 	cursor: pointer;
-	font-size: 0.5em;
+	font-size: 0.8em;
 	font-weight: bold;
 	border: 0;
 }
