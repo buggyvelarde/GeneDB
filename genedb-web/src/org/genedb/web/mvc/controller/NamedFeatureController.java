@@ -37,7 +37,9 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.taxon.TaxonNode;
 import org.gmod.schema.sequence.Feature;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -67,16 +69,22 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             Object command, BindException be) throws Exception {
 
         NameLookupBean nlb = (NameLookupBean) command;
-        String orgs = nlb.getOrgs();
         String name = nlb.getName();
+        TaxonNode[] taxonNodes = nlb.getOrganism();
         Map<String, Object> model = new HashMap<String, Object>(2);
         String viewName = listResultsView;
         List<ResultHit> results = new ArrayList<ResultHit>();
 
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
-        if (orgs == null) {
-            BooleanQuery geneNameQuery = new BooleanQuery();
 
+        BooleanQuery geneNameQuery = new BooleanQuery();
+        
+        if(StringUtils.containsWhitespace(name)) {
+            for(String term : name.split(" ")) {
+                geneNameQuery.add(new TermQuery(new Term("product",term.toLowerCase()
+                    )), Occur.SHOULD);
+            }
+        } else {
             if (name.indexOf('*') == -1) {
                 geneNameQuery.add(new TermQuery(new Term("allNames",name.toLowerCase())), Occur.SHOULD);
                 geneNameQuery.add(new TermQuery(new Term("product",name.toLowerCase())), Occur.SHOULD);
@@ -84,66 +92,80 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
                 geneNameQuery.add(new WildcardQuery(new Term("allNames", name.toLowerCase())), Occur.SHOULD);
                 geneNameQuery.add(new WildcardQuery(new Term("product", name.toLowerCase())), Occur.SHOULD);
             }
-
-            BooleanQuery booleanQuery = new BooleanQuery();
-            booleanQuery.add(new BooleanClause(geneOrPseudogeneQuery, Occur.MUST));
-            booleanQuery.add(new BooleanClause(geneNameQuery, Occur.MUST));
-            logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
-            Hits hits = luceneDao.search(ir, booleanQuery);
-
-            switch (hits.length()) {
-            case 0: {
-                // Temporary check as the Lucene index isn't automatically
-                // up-to-date
-                Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
-                if (feature != null) {
-                    logger.info(String.format("Lucene did not find feature '%s'; we found it in the database", name));
-                    model = GeneDBWebUtils.prepareFeature(feature, model);
-                    viewName = geneView;
-                    break;
-                }
-                logger.warn(String.format("Failed to find feature '%s'", name));
-                be.reject("No Result");
-                return showForm(request, response, be);
+        }
+        
+        
+        
+        BooleanQuery booleanQuery = new BooleanQuery();
+        booleanQuery.add(new BooleanClause(geneOrPseudogeneQuery, Occur.MUST));
+        booleanQuery.add(new BooleanClause(geneNameQuery, Occur.MUST));
+        
+        
+        if(taxonNodes != null) {
+            List<String> orgNames = new ArrayList<String>();
+            for (TaxonNode node : taxonNodes) {
+                orgNames.addAll(node.getAllChildrenNames());
             }
-            case 1: {
-                Document doc = hits.doc(0);
-                logger.info(String.format("Lucene found feature '%s'", doc.get("uniqueName")));
-                if ("gene".equals(doc.get("cvTerm.name")) || "pseudogene".equals(doc.get("cvTerm.name"))) {
-                    GeneDBWebUtils.prepareGene(doc.get("uniqueName"), model);
-                } else {
-                    GeneDBWebUtils.prepareTranscript(doc.get("uniqueName"), model);
-                }
+            BooleanQuery organismQuery = new BooleanQuery();
+            for (String organism : orgNames) {
+                organismQuery.add(new TermQuery(new Term("organism.commonName",organism)), Occur.SHOULD);
+            }
+            booleanQuery.add(new BooleanClause(organismQuery,Occur.MUST));
+        }
+        
+        logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
+        Hits hits = luceneDao.search(ir, booleanQuery);
+        
+        switch (hits.length()) {
+        case 0: {
+            // Temporary check as the Lucene index isn't automatically
+            // up-to-date
+            Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
+            if (feature != null) {
+                logger.info(String.format("Lucene did not find feature '%s'; we found it in the database", name));
+                model = GeneDBWebUtils.prepareFeature(feature, model);
                 viewName = geneView;
                 break;
             }
-            default:
-                for (int i = 0; i < hits.length(); i++) {
-                    Document doc = hits.doc(i);
-                    String type = doc.get("cvTerm.name");
-                    if (type.equalsIgnoreCase("gene")) {
-                        ResultHit rh = new ResultHit();
-                        rh.setName(doc.get("uniqueName"));
-                        rh.setType("gene");
-                        rh.setProduct(doc.get("product"));
-                        rh.setOrganism(doc.get("organism.commonName"));
-                        results.add(rh);
-                    }
-                }
-                viewName = listResultsView;
-                model.put("luceneResults", results);
-            }
-
-            if (nlb.isHistory()) {
-                List<String> ids = new ArrayList<String>(results.size());
-                for (ResultHit feature : results) {
-                    ids.add(feature.getName());
-                }
-                HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(
-                    request.getSession());
-                historyManager.addHistoryItems("name lookup '" + nlb + "'", ids);
-            }
+            logger.warn(String.format("Failed to find feature '%s'", name));
+            be.reject("no.results");
+            return showForm(request, response, be);
         }
+        case 1: {
+            Document doc = hits.doc(0);
+            logger.debug(String.format("Lucene found feature '%s'", doc.get("uniqueName")));
+            if ("gene".equals(doc.get("cvTerm.name")) || "pseudogene".equals(doc.get("cvTerm.name"))) {
+                GeneDBWebUtils.prepareGene(doc.get("uniqueName"), model);
+            } else {
+                GeneDBWebUtils.prepareTranscript(doc.get("uniqueName"), model);
+            }
+            viewName = geneView;
+            break;
+        }
+        default:
+            for (int i = 0; i < hits.length(); i++) {
+                Document doc = hits.doc(i);
+                ResultHit rh = new ResultHit();
+                rh.setName(doc.get("uniqueName"));
+                rh.setType("gene");
+                rh.setProduct(doc.get("product"));
+                rh.setOrganism(doc.get("organism.commonName"));
+                results.add(rh);
+            }
+            viewName = listResultsView;
+            model.put("luceneResults", results);
+        }
+
+        if (nlb.isHistory()) {
+            List<String> ids = new ArrayList<String>(results.size());
+            for (ResultHit feature : results) {
+                ids.add(feature.getName());
+            }
+            HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(
+                request.getSession());
+            historyManager.addHistoryItems("name lookup '" + nlb + "'", ids);
+        }
+
         if (geneView.equals(viewName) && nlb.isDetailsOnly())
             viewName = geneDetailsView;
         return new ModelAndView(viewName, model);
@@ -178,15 +200,7 @@ class NameLookupBean {
     private boolean useProduct = false;
     private boolean history = false;
     private boolean detailsOnly = false;
-    private String orgs;
-
-    public String getOrgs() {
-        return orgs;
-    }
-
-    public void setOrgs(String orgs) {
-        this.orgs = orgs;
-    }
+    private TaxonNode[] organism;
 
     public void setName(String name) {
         this.name = name;
@@ -242,9 +256,12 @@ class NameLookupBean {
         this.detailsOnly = detailsOnly;
     }
 
-    @Override
-    public String toString() {
-        return getName() + "," + getOrgs();
+    public TaxonNode[] getOrganism() {
+        return organism;
+    }
+
+    public void setOrganism(TaxonNode[] organism) {
+        this.organism = organism;
     }
 
 }
