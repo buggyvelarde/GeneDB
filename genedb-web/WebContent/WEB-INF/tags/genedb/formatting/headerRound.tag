@@ -58,10 +58,10 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem">
-            						<c:if test="${organism != null}">
+            						<c:if test="${!empty organism}">
                                         <a class="yuimenuitemlabel" href="<c:url value="/NamedFeature?organism=${organism}"/>" title="Name Search">By Name/Product</a>
             						</c:if>
-            						<c:if test="${organism == null}">
+            						<c:if test="${empty organism}">
                                         <a class="yuimenuitemlabel" href="<c:url value="/NamedFeature"/>" title="Name Search">By Name/Product</a>
             						</c:if>
                                     </li>
@@ -79,26 +79,26 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem">
-            						<c:if test="${organism != null}">
+            						<c:if test="${!empty organism}">
                                         <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=genedb_products&organism=${organism}"/>" title="Browse Products">Products</a>
             						</c:if>
-            						<c:if test="${organism == null}">
+            						<c:if test="${empty organism}">
                                         <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=genedb_products"/>" title="Browse Products">Products</a>
             						</c:if>
                                     </li>
                                     <li class="yuimenuitem">
-                 						<c:if test="${organism != null}">
+                 						<c:if test="${!empty organism}">
                                             <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=CC_genedb_controlledcuration&organism=${organism}"/>" title="Browse Curation">Curation</a>
                  						</c:if>
-                 						<c:if test="${organism == null}">
+                 						<c:if test="${empty organism}">
                                             <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=CC_genedb_controlledcuration"/>" title="Browse Curation">Curation</a>
                  						</c:if>
                                     </li>
                                     <li class="yuimenuitem">
-                 						<c:if test="${organism != null}">
+                 						<c:if test="${!empty organism}">
                                             <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process&organism=${organism}"/>" title="Browse GO Terms">GO Terms</a>
                  						</c:if>
-                 						<c:if test="${organism == null}">
+                 						<c:if test="${empty organism}">
                                             <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process"/>" title="Browse GO Terms">GO Terms</a>
                  						</c:if>
                                     </li>
