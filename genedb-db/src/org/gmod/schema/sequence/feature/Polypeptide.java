@@ -19,7 +19,10 @@ public class Polypeptide extends Feature {
     private static Logger logger = Logger.getLogger(Polypeptide.class);
     @Transient
     private Transcript transcript = null;
-
+    
+    @Transient
+    private AbstractGene gene = null;
+    
     public Transcript getTranscript() {
         if (transcript != null)
             return transcript;
@@ -38,7 +41,6 @@ public class Polypeptide extends Feature {
         return transcript;
     }
 
-    @Transient
     public AbstractGene getGene() {
         Transcript transcript = getTranscript();
 

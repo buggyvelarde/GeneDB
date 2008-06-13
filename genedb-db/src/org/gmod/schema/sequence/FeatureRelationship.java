@@ -18,10 +18,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.utils.propinterface.PropertyI;
 
 @Entity
 @Table(name="feature_relationship")
-public class FeatureRelationship implements Serializable {
+public class FeatureRelationship implements Serializable,PropertyI {
 
     // Fields    
 
