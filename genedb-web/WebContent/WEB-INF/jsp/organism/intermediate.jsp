@@ -17,7 +17,6 @@
 <format:header1 name="Welcome to the GeneDB website Next Generation">
 <st:init />
 <link rel="stylesheet" href="<c:url value="/"/>includes/style/wtsi.css" type="text/css"/>
-<link rel="stylesheet" href="<c:url value="/"/>includes/style/jimmac.css" type="text/css"/>
 <link rel="stylesheet" href="<c:url value="/"/>includes/style/frontpage1.css" type="text/css"/>
 <script src='<c:url value="/dwr/interface/nameBrowse.js"/>' type="text/javascript"></script>
 <script src='<c:url value="/dwr/engine.js"/>' type="text/javascript"></script>

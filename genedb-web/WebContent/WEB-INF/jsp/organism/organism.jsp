@@ -3,7 +3,6 @@
 	<st:init />
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/wtsi.css" type="text/css"/>
-	<link rel="stylesheet" href="<c:url value="/"/>includes/style/jimmac.css" type="text/css"/>
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/frontpage1.css" type="text/css"/>
 	<script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-base.js"/>"></script>
     <script type="text/javascript" src="<c:url value="/includes/scripts/extjs/ext-all.js"/>"></script>

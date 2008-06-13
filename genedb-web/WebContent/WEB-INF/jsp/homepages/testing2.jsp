@@ -3,7 +3,6 @@
 <html>
 <head>
 <link rel="stylesheet" href="<c:url value="/"/>includes/style/wtsi.css" type="text/css"/>
-<link rel="stylesheet" href="<c:url value="/"/>includes/style/jimmac.css" type="text/css"/>
 <link rel="stylesheet" href="<c:url value="/"/>includes/style/test2.css" type="text/css"/>
 <title>
 	Welcome to GeneDB
