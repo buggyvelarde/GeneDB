@@ -333,14 +333,17 @@
     <bean id="BrowseCategoryController" class="org.genedb.web.mvc.controller.BrowseCategoryController">
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="browseCategory"/>
-		<property name="commandClass" value="org.genedb.web.mvc.controller.BrowseCategoryBean" />
+		<property name="commandClass" value="org.genedb.web.mvc.controller.BrowseCategoryController$BrowseCategoryBean" />
 		<property name="cvDao" ref="cvDao"/>
         <property name="successView" value="list/categories" />
         <property name="formView" value="search/browseCategory" />
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+        <property name="validator" ref="browseCategoryValidator" />
     </bean>
-
+	
+	<bean id="browseCategoryValidator" class="org.genedb.web.mvc.validators.BrowseCategoryFormValidator" />
+	
     <bean id="BrowseTermController" class="org.genedb.web.mvc.controller.BrowseTermController">
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="browseTerm"/>
