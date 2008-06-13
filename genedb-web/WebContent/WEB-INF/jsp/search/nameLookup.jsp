@@ -17,15 +17,15 @@
 			    <tr>
 			    	<td>Organisms:</td>
 			      	<td>
-			      		<select name="organism">
-			      			<option value="Plasmodium">Plasmodium</option>
-			      			<option value="Pfalciparum">Pfalciparum</option>
-			      			<option value="Pberghei">Pberghei</option>
-			      			<option value="Pchabaudi">Pchabaudi</option>
-			      			<option value="Pknowlesi">Pknowlesi</option>
-			      			<option value="Pvivax">Pvivax</option>
-			      			<option value="Pyoelii">Pyoelii</option>
-			      		</select>
+			      		<form:select path="organism" multiple="false">
+			      			<form:option value="Plasmodium"/>
+			      			<form:option value="Pfalciparum"/>
+			      			<form:option value="Pberghei"/>
+			      			<form:option value="Pchabaudi"/>
+			      			<form:option value="Pknowlesi"/>
+			      			<form:option value="Pvivax"/>
+			      			<form:option value="Pyoelii"/>
+			      		</form:select>
 			      	</td>
 			    </tr>
 			    <tr>
