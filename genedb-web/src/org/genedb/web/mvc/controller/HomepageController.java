@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 public class HomepageController extends AbstractController {
 	
     private static String HOMEPAGE = "homepages/";
-    private static String DEFAULT_HOMEPAGE = HOMEPAGE + "frontPage1";
+    private static String DEFAULT_HOMEPAGE = HOMEPAGE + "basicPage";
     private static String DEFAULT_STYLE = "childListing"; // FIXME
    
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
@@ -50,18 +50,19 @@ public class HomepageController extends AbstractController {
         BindingResult bindResult = binder.getBindingResult();
         
         if (bindResult.hasGlobalErrors()) {
-            System.err.println("Binding errors - go home");
+        	// TODO Add error message
+            logger.debug("Binding errors - go home");
             return new ModelAndView(DEFAULT_HOMEPAGE);
         }
         
         TaxonNode[] nodes = tnah.org;
         if (nodes == null || nodes.length == 0) {
-            System.err.println("No taxon nodes - go home");
+            logger.debug("No taxon nodes - go home");
             return new ModelAndView(DEFAULT_HOMEPAGE);
         }
         if (nodes.length > 1) {
             // TODO Add error message
-            System.err.println("Got too many taxon nodes");
+            logger.debug("Got too many taxon nodes");
             return new ModelAndView(DEFAULT_HOMEPAGE);
         }
         
