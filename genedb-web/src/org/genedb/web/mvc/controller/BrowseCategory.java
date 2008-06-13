@@ -24,7 +24,5 @@ public enum BrowseCategory {
     cellular_component,
     molecular_function,
     genedb_products,
-    CC_genedb_controlledcuration,
-    UNIPROT_KEYWORDS,
-    RILEY;
+    CC_genedb_controlledcuration;
 }
