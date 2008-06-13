@@ -37,13 +37,14 @@
     
     <h3>Organism List</h3>
     <ul>
-    <li><a href="${base}/Homepage?organism=pfalciparum"><i>Plasmodium falciparum</i></a></li>
-    <li><a href="${base}/Homepage?organism=pfalciparum"><i>Plasmodium falciparum</i></a></li>
-    <li><a href="${base}/Homepage?organism=pfalciparum"><i>Plasmodium falciparum</i></a></li>
-    <li><a href="${base}/Homepage?organism=pfalciparum"><i>Plasmodium falciparum</i></a></li>
-    <li><a href="${base}/Homepage?organism=pfalciparum"><i>Plasmodium falciparum</i></a></li>
-                    
-    
+		<li><a href="${base}/Homepage?organism=Pfalciparum"><i>Plasmodium falciparum</i></a></li>
+    	<li><a href="${base}/Homepage?organism=Pberghei"><i>Plasmodium berghei</i></a></li>
+    	<li><a href="${base}/Homepage?organism=Pchabaudi"><i>Plasmodium chabaudi</i></a></li>
+    	<li><a href="${base}/Homepage?organism=Pknowlesi"><i>Plasmodium knowlesi</i></a></li>
+    	<li><a href="${base}/Homepage?organism=Pvivax"><i>Plasmodium vivax</i></a></li>
+    	<li><a href="${base}/Homepage?organism=Pyoelli"><i>Plasmodium yoelii</i></a></li>
+	</ul>
+                        
     <p>
 </format:genePageSection>
 <p></p>
