@@ -32,8 +32,6 @@ public class LoadInterPro {
 
         InterProParser runner = (InterProParser) ctx.getBean("ipparser", InterProParser.class);
 
-        runner.afterPropertiesSet();
-
         String[] filePaths = args;
 
         long start = new Date().getTime();

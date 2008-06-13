@@ -47,12 +47,10 @@ public class InterProParser {
 
     private SequenceDao sequenceDao;
     private FeatureUtils featureUtils;
-    private static Map<String, String> months = new HashMap<String, String>(12);
     private HibernateTransactionManager hibernateTransactionManager;
-    private static HashMap<String, String> dbs;
 
+    private static HashMap<String, String> dbs = new HashMap<String, String>();
     static {
-        dbs = new HashMap<String, String>();
         dbs.put("HMMPfam", "Pfam");
         dbs.put("ScanProsite", "PROSITE");
         dbs.put("FPrintScan", "PRINTS");
@@ -62,7 +60,10 @@ public class InterProParser {
         dbs.put("BlastProDom", "ProDom");
         dbs.put("Superfamily", "Superfamily");
         dbs.put("superfamily", "Superfamily");
+    }
 
+    private static Map<String, String> months = new HashMap<String, String>(12);
+    static {
         months.put("Jan", "01");
         months.put("Feb", "02");
         months.put("Mar", "03");
@@ -88,11 +89,8 @@ public class InterProParser {
 
         if ( file.isDirectory() ) {
             String[] fls = file.list(new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        if ( name.endsWith("~")) {
-                            return false;
-                        }
-                        return true;
+                    public boolean accept(@SuppressWarnings("unused") File dir, String name) {
+                        return !name.endsWith("~");
                     }
                 });
             for (int i=0; i < fls.length; i++) {
@@ -135,7 +133,7 @@ public class InterProParser {
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
         TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
         Transaction transaction = session.beginTransaction();
-        parse2(genes, col, strangePrograms,session);
+        parse2(genes, col, strangePrograms, session);
         transaction.rollback();
         TransactionSynchronizationManager.unbindResource(sessionFactory);
         SessionFactoryUtils.closeSession(session);
@@ -146,16 +144,12 @@ public class InterProParser {
         }
     }
 
-    public void afterPropertiesSet() {
-        // Deliberately empty
-    }
-
-    private void parse2(Map<String, List<InterproRow>> genes, List<InterproRow> col, Set<String> strangeProgram, Session session) {
+    private void parse2(Map<String, List<InterproRow>> rowsByGeneId, List<InterproRow> col, Set<String> strangeProgram, Session session) {
         // Go through each key and sort the ArrayLists
 
         Feature polypeptide = null;
 
-        for ( String id: genes.keySet() ) {
+        for ( String id: rowsByGeneId.keySet() ) {
             polypeptide = sequenceDao.getFeatureByUniqueName(id+":pep", "polypeptide");
             if ( polypeptide == null ) {
                 System.err.println("WARN: Database doesn't contain id of :" + id);
@@ -163,7 +157,7 @@ public class InterProParser {
             }
             Hibernate.initialize(polypeptide);
             Set<String> goIdsLinked = new HashSet<String>();
-            col = genes.get(id);
+            col = rowsByGeneId.get(id);
             Collections.sort(col);
 //            boolean swap = true;
 
@@ -366,11 +360,11 @@ public class InterProParser {
     }
 
     private void processInterProHit(Session session, Feature polypeptide,
-            String ipNum, List<String> progs, List<String> progAcc,
+            String interproAccessionNumber, List<String> progs, List<String> progAcc,
             List<String[]> coordIP, List<String> scores) {
 //        Feature ipDomain = null;
         String secDB = "";
-        if ( ipNum.equals("NULL")) {
+        if ( interproAccessionNumber.equals("NULL")) {
             return;
         }
 
@@ -384,7 +378,7 @@ public class InterProParser {
             //note.append("Derived from hit: ");
             secDB = dbs.get(it2.next());
             //note.append(secDB);
-            String uniqueName = polypeptide.getUniqueName() + ":" + ipNum + ":" + progAcc.get(count);
+            String uniqueName = polypeptide.getUniqueName() + ":" + interproAccessionNumber + ":" + progAcc.get(count);
             //sequenceDao.getFeatureByUniqueName(uniqueName, "polypeptide_domain");
             List<Feature> features = sequenceDao.getFeaturesByUniqueName(uniqueName + "%");
             //System.err.println("feature size is " + features.size());
@@ -524,9 +518,29 @@ public class InterProParser {
         }
     }
 
+    private static class InterproRow implements Comparable<InterproRow> {
+        private String[] row;
 
-    public void setFeatureUtils(FeatureUtils utils) {
-        featureUtils = utils;
+        InterproRow(String[] row) {
+            this.row = row;
+        }
+
+        public int compareTo(InterproRow other) {
+            String aAccNum = "NULL";
+            String bAccNum = "NULL";
+            if ( this.row.length > COL_ACC) {
+                aAccNum = row[COL_ACC];
+            }
+            if ( other.row.length > COL_ACC) {
+                bAccNum = other.row[COL_ACC];
+            }
+            int cmp = aAccNum.compareTo(bAccNum);
+            if ( cmp != 0 ) {
+                return cmp;
+            }
+
+            return (this.row[COL_NATIVE_PROG].compareTo(other.row[COL_NATIVE_PROG]));
+        }
     }
 
     public void setHibernateTransactionManager(
@@ -538,36 +552,14 @@ public class InterProParser {
         this.sequenceDao = sequenceDao;
     }
 
-    class InterproRow implements Comparable<InterproRow> {
-        String[] row;
+    public static void main(String[] filenames) throws IOException {
+        if (filenames.length == 0)
+            throw new IllegalArgumentException("No filenames supplied");
 
-        InterproRow(String[] row) {
-            this.row = row;
-        }
-
-        public int compareTo(InterproRow o) {
-            String aAccNum = "NULL";
-            String bAccNum = "NULL";
-            if ( row.length > COL_ACC) {
-                aAccNum = row[COL_ACC];
-            }
-            if ( o.row.length > COL_ACC) {
-                bAccNum = o.row[COL_ACC];
-            }
-            int cmp = aAccNum.compareTo(bAccNum);
-            if ( cmp != 0 ) {
-                return cmp;
-            }
-
-            return (row[COL_NATIVE_PROG].compareTo(o.row[COL_NATIVE_PROG]));
-        }
-
-    }
-
-    public static void main(String[] args) throws IOException {
         InterProParser ipp = new InterProParser();
-        ipp.parse("/nfs/team81/art/chr1merged.raw");
-
+        for (String filename: filenames)
+            ipp.parse(filename);
     }
 
 }
+
