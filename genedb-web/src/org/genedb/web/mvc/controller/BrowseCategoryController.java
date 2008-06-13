@@ -48,7 +48,7 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
     private CvDao cvDao;
 
     @Override
-    protected Map<String,BrowseCategory[]> referenceData(@SuppressWarnings("unused") HttpServletRequest request) throws Exception {
+    protected Map<String,BrowseCategory[]> referenceData(HttpServletRequest request) throws Exception {
         Map<String,BrowseCategory[]> reference = new HashMap<String,BrowseCategory[]>();
         reference.put("categories", BrowseCategory.values());
         return reference;
@@ -60,11 +60,11 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
         String category = bcb.getCategory().toString();
         logger.info("category is " + category);
         TaxonNode[] taxonNodes = bcb.getOrganism();
-        List<String> orgNames = taxonNodes[0].getAllChildrenNames(); // FIXME 
+        List<String> orgNames = taxonNodes[0].getAllChildrenNames();
         List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
         
-        if (results == null || results.size() == 0) {
-            logger.info("result is null"); // TODO Improve text
+        if (results .isEmpty()) {
+            logger.info("result is null");
             be.reject("no.results");
             return showForm(request, response, be);
         }
@@ -91,25 +91,24 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
     }
-
-}
-
-class BrowseCategoryBean {
     
-    private TaxonNode[] organism;
-    private BrowseCategory category;
-    
-    public BrowseCategory getCategory() {
-        return this.category;
+    public static class BrowseCategoryBean {
+        
+        private TaxonNode[] organism;
+        private BrowseCategory category;
+        
+        public BrowseCategory getCategory() {
+            return this.category;
+        }
+        public void setCategory(BrowseCategory category) {
+            this.category = category;
+        }
+        public TaxonNode[] getOrganism() {
+            return this.organism;
+        }
+        public void setOrganism(TaxonNode[] organism) {
+            this.organism = organism;
+        }
+        
     }
-    public void setCategory(BrowseCategory category) {
-        this.category = category;
-    }
-    public TaxonNode[] getOrganism() {
-        return this.organism;
-    }
-    public void setOrganism(TaxonNode[] organism) {
-        this.organism = organism;
-    }
-    
 }
