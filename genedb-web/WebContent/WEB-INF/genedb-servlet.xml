@@ -271,7 +271,7 @@
 <!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="nameLookup"/>
-        <property name="commandClass" value="org.genedb.web.mvc.controller.NameLookupBean" />
+        <property name="commandClass" value="org.genedb.web.mvc.controller.NamedFeatureController$NameLookupBean" />
 		<property name="luceneDao" ref="luceneDao"/>
 		<property name="sequenceDao" ref="sequenceDao" />
         <property name="listResultsView" value="list/features" />
@@ -281,8 +281,11 @@
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
+        <property name="validator" ref="namedFeatureValidator"/>
     </bean>
-
+	
+	<bean id="namedFeatureValidator" class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
+	
     <bean id="OrthologsController" class="org.genedb.web.mvc.controller.OrthologsController">
 		<property name="sequenceDao" ref="sequenceDao" />
         <property name="listResultsView" value="list/features" />
