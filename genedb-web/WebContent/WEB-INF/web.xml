@@ -64,20 +64,27 @@
     </listener>
 
 	<servlet>
+		<servlet-name>headless-test</servlet-name>
+		<servlet-class>org.genedb.web.gui.InitHeadlessToolkitServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
 		<servlet-name>genedb</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<load-on-startup>2</load-on-startup>
+		<load-on-startup>3</load-on-startup>
 	</servlet>
 
 	<servlet>
 		<servlet-name>remoting</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 
     <servlet>
         <servlet-name>contextMapWindow</servlet-name>
         <servlet-class>org.genedb.web.gui.ContextMapWindowServlet</servlet-class>
+        <load-on-startup>4</load-on-startup>
     </servlet>
 
 	<servlet-mapping>
