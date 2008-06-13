@@ -3,8 +3,6 @@ package org.genedb.db.loading;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.sequence.Feature;
 import org.hibernate.Hibernate;
@@ -32,6 +31,32 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 
 public class InterProParser {
+    private static final Logger logger = Logger.getLogger(InterProParser.class);
+
+    private static class InterproRow implements Comparable<InterproRow> {
+        private String[] rows;
+
+        InterproRow(String[] rows) {
+            this.rows = rows;
+        }
+
+        public int compareTo(InterproRow other) {
+            String aAccNum = "NULL";
+            String bAccNum = "NULL";
+            if ( this.rows.length > COL_ACC) {
+                aAccNum = rows[COL_ACC];
+            }
+            if ( other.rows.length > COL_ACC) {
+                bAccNum = other.rows[COL_ACC];
+            }
+            int cmp = aAccNum.compareTo(bAccNum);
+            if ( cmp != 0 ) {
+                return cmp;
+            }
+
+            return (this.rows[COL_NATIVE_PROG].compareTo(other.rows[COL_NATIVE_PROG]));
+        }
+    }
 
     //    0     1 2       3          4          5      6
     // GeneACC  ? ? NATIVE_PROG NATIVE_ACC NATIVE_DESC ?
@@ -79,7 +104,6 @@ public class InterProParser {
     }
 
 
-
     public void parse(String filename) throws IOException {
         File file = new File(filename);
         if (!file.exists()) {
@@ -114,7 +138,7 @@ public class InterProParser {
 
         // Go through the results and pull the rows into the
         // hashmap genes, keyed on gene names, where the values
-        // are ArrayLists of String[]
+        // are Lists of InterproRow
         Map<String, List<InterproRow>> genes = new HashMap<String, List<InterproRow>>();
         List<InterproRow> col = new ArrayList<InterproRow>();
         for ( int i = 0; i < ret.length; i++ ) {
@@ -128,23 +152,22 @@ public class InterProParser {
             col.add(new InterproRow(ret[i]));
         }
 
-        Set<String> strangePrograms = new HashSet<String>();
+        Set<String> unrecognisedPrograms = new HashSet<String>();
         SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
         TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
         Transaction transaction = session.beginTransaction();
-        parse2(genes, col, strangePrograms, session);
+        parse2(genes, col, unrecognisedPrograms, session);
         transaction.rollback();
         TransactionSynchronizationManager.unbindResource(sessionFactory);
         SessionFactoryUtils.closeSession(session);
 
-        for (String strangeProgram: strangePrograms) {
-            System.err.print(strangeProgram);
-            System.err.print(' ');
+        for (String unrecognisedProgram: unrecognisedPrograms) {
+            logger.warn("Unrecognised program: " + unrecognisedProgram);
         }
     }
 
-    private void parse2(Map<String, List<InterproRow>> rowsByGeneId, List<InterproRow> col, Set<String> strangeProgram, Session session) {
+    private void parse2(Map<String, List<InterproRow>> rowsByGeneId, List<InterproRow> col, Set<String> unrecognisedPrograms, Session session) {
         // Go through each key and sort the ArrayLists
 
         Feature polypeptide = null;
@@ -164,7 +187,7 @@ public class InterProParser {
             // col is now sorted by interpro, then program
             HashSet<String> ip = new HashSet<String>();
             for (InterproRow interproRow: col) {
-                String[] a = interproRow.row;
+                String[] a = interproRow.rows;
                 String aAccNum = "NULL";
                 if ( a.length > COL_ACC) {
                     aAccNum = a[COL_ACC];
@@ -177,7 +200,7 @@ public class InterProParser {
                 max = -1;
                 min = col.size();
                 for ( int i = 0; i < col.size(); i++ ) {
-                    String[] a = col.get(i).row;
+                    String[] a = col.get(i).rows;
                     String aAccNum = "NULL";
                     if ( a.length > COL_ACC) {
                         aAccNum = a[COL_ACC];
@@ -197,11 +220,11 @@ public class InterProParser {
                 List<String[]> coordIP = new ArrayList<String[]>();
                 List<String> scores = new ArrayList<String>();
                 for ( int i = min; i <= max ; i++) {
-                    String[] thisRow = col.get(i).row;
+                    String[] thisRow = col.get(i).rows;
                     String prog = thisRow[COL_NATIVE_PROG];
                     String db = dbs.get(prog);
                     if ( db == null) {
-                        strangeProgram.add(prog);
+                        unrecognisedPrograms.add(prog);
                     } else {
                         //System.err.println("program is -> " + prog);
                         progs.add(prog);
@@ -223,7 +246,7 @@ public class InterProParser {
                         coordIP, scores);
 
                 // Now go thru' individual hits even if InterPro is null
-                processIndividualHit(col, strangeProgram, session, polypeptide,
+                processIndividualHit(col, unrecognisedPrograms, session, polypeptide,
                         max, min, ipNum, progs);
             }
 
@@ -248,7 +271,7 @@ public class InterProParser {
             int count = 0;
             for ( int i = min; i <= max ; i++) {
                 StringBuffer tmp = new StringBuffer();
-                String[] a = col.get(i).row;
+                String[] a = col.get(i).rows;
                 if ( a[3].equals(prog)) {
                     tmp.append( a[6] + "-" + a[7] );
                     if ( count == 0) {
@@ -515,31 +538,6 @@ public class InterProParser {
                 //---featureUtils.createGoEntries(polypeptide,c);
                 session.flush();
             }
-        }
-    }
-
-    private static class InterproRow implements Comparable<InterproRow> {
-        private String[] row;
-
-        InterproRow(String[] row) {
-            this.row = row;
-        }
-
-        public int compareTo(InterproRow other) {
-            String aAccNum = "NULL";
-            String bAccNum = "NULL";
-            if ( this.row.length > COL_ACC) {
-                aAccNum = row[COL_ACC];
-            }
-            if ( other.row.length > COL_ACC) {
-                bAccNum = other.row[COL_ACC];
-            }
-            int cmp = aAccNum.compareTo(bAccNum);
-            if ( cmp != 0 ) {
-                return cmp;
-            }
-
-            return (this.row[COL_NATIVE_PROG].compareTo(other.row[COL_NATIVE_PROG]));
         }
     }
 
