@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 public class HomepageController extends AbstractController {
 	
     private static String HOMEPAGE = "homepages/";
-    private static String DEFAULT_HOMEPAGE = HOMEPAGE + "basicPage";
+    private static String DEFAULT_HOMEPAGE = HOMEPAGE + "malariaReleasePage";
     private static String DEFAULT_STYLE = "childListing"; // FIXME
    
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
