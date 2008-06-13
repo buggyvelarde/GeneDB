@@ -15,7 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.log4j.Logger;
+import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.phylogeny.PhylonodeOrganism;
 import org.gmod.schema.sequence.Feature;
 import org.hibernate.search.annotations.DocumentId;
@@ -28,6 +31,7 @@ import org.hibernate.search.annotations.Store;
 @Table(name = "organism")
 @Indexed
 public class Organism implements Serializable {
+    private static final Logger logger = Logger.getLogger(Organism.class);
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "organism")
     private Collection<PhylonodeOrganism> phylonodeOrganisms;
@@ -157,5 +161,23 @@ public class Organism implements Serializable {
     @SuppressWarnings("unused")
     private void setOrganismDbXRefs(Collection<OrganismDbXRef> organismDbXRefs) {
         this.organismDbXRefs = organismDbXRefs;
+    }
+
+    @Transient
+    public String getPropertyValue(String cvName, String cvTermName) {
+        for (OrganismProp organismProp: getOrganismProps()) {
+            CvTerm propType = organismProp.getCvTerm();
+            if (propType.getName().equals(cvTermName) && propType.getCv().getName().equals(cvName)) {
+                logger.debug(String.format("Organism property '%s/%s' is '%s'", cvName, cvTermName, organismProp.getValue()));
+                return organismProp.getValue();
+            }
+        }
+        logger.error(String.format("Organism property '%s/%s' not found for organism ID=%d", cvName, cvTermName, getOrganismId()));
+        return null;
+    }
+
+    @Transient
+    public String getHtmlShortName() {
+        return getPropertyValue("genedb_misc", "htmlShortName");
     }
 }
