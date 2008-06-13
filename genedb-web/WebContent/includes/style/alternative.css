@@ -1,14 +1,19 @@
 /* alternative styles */
 
+table.simple {
+	
+}
 
 table.simple thead tr th {
 	/*background-color: #eee;*/
-	font-style: italic;
+	font-style: bold;
 	text-transform: uppercase;
+	background-color: #9BD1FA;
+	color: black;
 }
 
 table.simple tr.even {
-	background-color: rgb(155, 209, 250);
+	background-color: #E0E2F3;
 }
 
 table.simple {
