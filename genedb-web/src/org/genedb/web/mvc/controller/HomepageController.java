@@ -49,6 +49,8 @@ public class HomepageController extends AbstractController {
         binder.bind(request);
         BindingResult bindResult = binder.getBindingResult();
         
+        String organism = null;
+        
         if (bindResult.hasGlobalErrors()) {
         	// TODO Add error message
             logger.debug("Binding errors - go home");
@@ -72,6 +74,7 @@ public class HomepageController extends AbstractController {
         Map props = node.getAppDetails("WEB");
         if (props.containsKey("HOMEPAGE_STYLE")) {
             viewName = HOMEPAGE + props.get("HOMEPAGE_STYLE");
+            organism = node.getLabel();
         }
         
 //      List<NewsItem> news = checkNews();
@@ -81,7 +84,11 @@ public class HomepageController extends AbstractController {
         
         ModelAndView mav = new ModelAndView(viewName);
         mav.addObject(TAXON_NODE, node);
-        mav.addObject(CRUMB, "Homepage");  
+        mav.addObject(CRUMB, "Homepage");
+        if (organism != null) {
+        	mav.addObject("organism", organism);
+        	
+        }
         
         return mav;
     }
