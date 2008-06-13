@@ -23,6 +23,9 @@
     is currently under development, and not running on fault resistant 
     hardware, so may not be constantly available.
     
+    <p>To locate a gene, enter its ID or product, using wildcards, in 
+    the text box in the top right, or use the browsable categories in 
+    the menu just below it.</p>
     
     <h3>Example Genes</h3>
     <ul>
