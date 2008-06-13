@@ -1,3 +1,4 @@
+/*
 * html img,
 * html .png{
     position:relative;
@@ -8,7 +9,7 @@
         this.runtimeStyle.backgroundImage = "none")),this.pngSet=true)
     );
 }
-
+*/
 
 #contextMapOuterDiv {
 	position: relative;
@@ -18,7 +19,7 @@
 }
 
 #contextMapDiv {
-	border: 1px solid lightGray;
+	border: 1px solid #D3D3D3;
 	overflow: hidden;
 	position: relative;
 	width: 100%;
@@ -70,6 +71,15 @@ img#chromosomeThumbnailImage {
 	position: absolute;
     top: 3px;
     height: 9px;
+}
+* html img#chromosomeThumbnailImage {
+    position:relative;
+    behavior: expression((this.runtimeStyle.behavior="none")&&(this.pngSet?this.pngSet=true:(this.nodeName == "IMG" && this.src.toLowerCase().indexOf('.png')>-1?(this.runtimeStyle.backgroundImage = "none",
+        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.src + "', sizingMethod='image')",
+        this.src = "/genedb-web/includes/images/transparentPixel.gif"):(this.origBg = this.origBg? this.origBg :this.currentStyle.backgroundImage.toString().replace('url("','').replace('")',''),
+        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.origBg + "', sizingMethod='crop')",
+        this.runtimeStyle.backgroundImage = "none")),this.pngSet=true)
+    );
 }
 
 img#chromosomeThumbnailWindow {
@@ -266,7 +276,7 @@ div#proteinMap {
 }
 
 .greyBox .inner {
-    background-color: lightGray;
+    background-color: #D3D3D3;
     border-left: 2px solid black;
     border-right: 2px solid black;
 }
@@ -304,7 +314,7 @@ div.value {
   height:1px;
   overflow:hidden;
   font-size:.01em;
-  background:lightGray}
+  background:#D3D3D3}
 .whiteBox .round1, .greyBox .round1{
   margin-left:2px;
   margin-right:2px;
@@ -350,7 +360,7 @@ div.value {
 .whiteBox .roundbg{
   background:white}
 .greyBox .roundbg{
-  background:lightGray}
+  background:#D3D3D3}
 
 
 .round{display:block}

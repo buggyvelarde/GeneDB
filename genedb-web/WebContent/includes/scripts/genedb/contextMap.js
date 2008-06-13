@@ -156,7 +156,7 @@ function reloadDetails(name) {
     loadedTranscriptName = null;
     $("#geneDetails").fadeTo("slow", 0.4).load("/genedb-web/NamedFeature?name="+name+"&detailsOnly=true", null, function () {
         loadedTranscriptName = name;
-        window.title = "Gene "+name+" - GeneDB";
+        document.title = "Transcript "+name+" - GeneDB";
         $("#geneDetails").stop().fadeTo("fast", 1);
         $("#geneDetailsLoading").hide();
     });
@@ -366,6 +366,12 @@ function animateDeceleration() {
         animationTimer = null;
     }
     else {
+        // Sometimes with IE6 we get ridiculous velocities
+        if (velocity > 20)
+            velocity = 20;
+        else if (velocity < -20)
+            velocity = -20;
+
         moveTo(-parseFloat(contextMapContent.style.left) - velocity * animationInterval);
         velocity *= 0.9;
     }

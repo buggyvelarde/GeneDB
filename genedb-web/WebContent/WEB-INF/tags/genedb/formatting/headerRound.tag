@@ -24,48 +24,42 @@
 <body class="${bodyClass}" onLoad="${onLoad}">
 <% } %>
 <div id="header">
-	<form name="query" action="<c:url value="/"/>NamedFeature" method="get" style="vertical-align: middle;">
-		<table width="100%">
-			<tr>
-				<td align="left">GeneDB</td>
-				<td align="center">
-					<c:if test="${!empty name}">
-						<font style="font-size:1em;"> ${name}</font>
-					</c:if>
-				</td>
-				<td align="right">
-					<input id="query" name="name" type="text" align="middle"/>
-					<input id="submit" type="submit" value="Search" title="Search" align="middle" />
-				</td>
-			</tr>
-		</table>
-	</form>
+    <div id="logo">GeneDB</div>
+    <div id="name">${name}</div>
+    <div id="search">
+    	<form name="query" action="<c:url value="/"/>NamedFeature" method="get" style="vertical-align: middle;">
+        	<input id="query" name="name" type="text" align="middle"/>
+        	<input id="submit" type="submit" value="Search" title="Search" align="middle" />
+    	</form>
+    </div>
 	<div id="navigation">
 		<ul id="simple-menu">
 			<li>
-				<a href="http://pathdbsrv1a.sanger.ac.uk:8180/genedb-web/" title="Searches">Searches</a>
-				<ul>
-					<li class="w">
-						<a class="w" href="<c:url value="/NamedFeature"/>" title="Name Search">By Name/Product</a>
-					</li>
-					<li class="w">
-						<a class="w" href="<c:url value="/"/>" title="Motif Search">Motif Search</a>
-					</li>
-				</ul>
+				<a href="#">Searches<![if !(lte IE 6)]></a><![endif]>
+    				<ul>
+    					<li class="w">
+    						<a class="w" href="<c:url value="/NamedFeature"/>" title="Name Search">By Name/Product</a>
+    					</li>
+    					<li class="w">
+    						<a class="w" href="<c:url value="/"/>" title="Motif Search">Motif Search</a>
+    					</li>
+    				</ul>
+                <!--[if lte IE 6]></a><![endif]-->
 			</li>
 			<li>
-				<a href="" title="Home">Browse</a>
-				<ul class="w">
-					<li class="w">
-						<a class="w" href="<c:url value="/"/>BrowseCategory" title="Browse Products">Products</a>
-					</li>
- 					<li class="w">
- 						<a class="w" href="<c:url value="/"/>BrowseCategory" title="Browse Curation">Curation</a>
- 					</li>
- 					<li class="w">
- 						<a class="w" href="<c:url value="/"/>BrowseCategory" title="Browse GO Terms">GO Terms</a>
- 					</li>
-				</ul>
+				<a href="#">Browse<![if !(lte IE 6)]></a><![endif]>
+    				<ul class="w">
+    					<li class="w">
+    						<a class="w" href="<c:url value="/"/>BrowseCategory" title="Browse Products">Products</a>
+    					</li>
+     					<li class="w">
+     						<a class="w" href="<c:url value="/"/>BrowseCategory" title="Browse Curation">Curation</a>
+     					</li>
+     					<li class="w">
+     						<a class="w" href="<c:url value="/"/>BrowseCategory" title="Browse GO Terms">GO Terms</a>
+     					</li>
+    				</ul>
+                <!--[if lte IE 6]></a><![endif]-->
 			</li>
 		</ul>
 	</div>

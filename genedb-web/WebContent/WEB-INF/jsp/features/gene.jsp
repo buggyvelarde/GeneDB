@@ -5,7 +5,7 @@
 <c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
 <c:url value="/" var="base"/>
 
-<format:headerRound name="Gene: ${gene.displayName}" title="Gene Page ${gene.displayName}" bodyClass="genePage"
+<format:headerRound name="${gene.organism.commonName}" title="Gene Page ${gene.displayName}" bodyClass="genePage"
 onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax}, '${transcript.uniqueName}');">
 
 <st:init />
@@ -31,12 +31,13 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
             <div id="highlighter"></div>
         </div>
     </div>
-    <div id="contextMapInfoPanel">
-        <div class="closeButton"><a href="#"></a></div>
-        <div id="loadDetails"><a href="#">Load details »</a></div>
-        <div class="value" id="selectedGeneName"></div>
-        <div class="value" id="selectedGeneProducts"></div>
-    </div>
+</div>
+<%-- IE6 fails if this is nested within the contextMapOuterDiv. --%>
+<div id="contextMapInfoPanel">
+    <div class="closeButton"><a href="#"></a></div>
+    <div id="loadDetails"><a href="#">Load details »</a></div>
+    <div class="value" id="selectedGeneName"></div>
+    <div class="value" id="selectedGeneProducts"></div>
 </div>
 
 <format:genePageSection id="geneDetailsLoading" className="greyBox">
