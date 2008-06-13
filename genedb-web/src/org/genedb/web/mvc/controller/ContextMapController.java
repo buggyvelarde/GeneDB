@@ -16,7 +16,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
 public class ContextMapController extends PostOrGetFormController {
-    private static final int DIAGRAM_WIDTH = 300000; // in bases
+    /*
+     * More than 300,000 bases per tile, and almost all browsers
+     * fail. More than 50,000 or so, and Linux Firefox crashes.
+     * (This assumes ten bases per pixel: it's the size of the
+     * generated image that causes problems.)
+     */
+    private static final int TILE_WIDTH = 50000; // in bases
 
     private LuceneDao luceneDao; // Injected by Spring
     private View view; // Defined in genedb-servlet.xml
@@ -71,9 +77,9 @@ public class ContextMapController extends PostOrGetFormController {
         String chromosomeThumbnailURI = ContextMapCache.fileForDiagram(chromosomeThumbnail, getServletContext());
 
         ContextMapDiagram diagram = tiles.get(0).getDiagram();
-        
+
         Map<String,Object> model = new HashMap<String,Object>();
-        
+
         model.put("organism", diagram.getOrganism());
         model.put("chromosome", diagram.getChromosome());
         model.put("basesPerPixel", tiles.get(0).getBasesPerPixel());
@@ -89,41 +95,41 @@ public class ContextMapController extends PostOrGetFormController {
         for (RenderedContextMap tile: tiles) {
             String contextMapURI = ContextMapCache.fileForDiagram(tile, getServletContext());
             Map<String,Object> tileModel = new HashMap<String,Object>();
-            
+
             tileModel.put("src", contextMapURI);
             tileModel.put("width", tile.getWidth());
             tileModel.put("start", tile.getStart());
             tileModel.put("end", tile.getEnd());
-         
+
             tileModels.add(tileModel);
         }
         model.put("tiles", tileModels);
-        
+
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
         chromosomeThumbnailModel.put("src", chromosomeThumbnailURI);
         chromosomeThumbnailModel.put("basesPerPixel", chromosomeThumbnail.getBasesPerPixel());
         model.put("chromosomeThumbnail", chromosomeThumbnailModel);
-                
+
         return model;
     }
 
     @Override
     protected ModelAndView onSubmit(Object rawCommand) throws Exception {
         Command command = (Command) rawCommand;
-        
+
         IndexReader indexReader = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
         BasicGeneService basicGeneService = new BasicGeneServiceImpl(indexReader);
-        
+
         ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forRegion(basicGeneService, command.getOrganism(), command.getChromosome(), 0, command.getChromosomeLength());
-        
+
         List<RenderedContextMap> tiles = new ArrayList<RenderedContextMap>();
-        for (int i = 0; i < command.getChromosomeLength(); i += DIAGRAM_WIDTH) {
-            tiles.add(new RenderedContextMap(chromosomeDiagram).restrict(i, i+DIAGRAM_WIDTH));
+        for (int i = 0; i < command.getChromosomeLength(); i += TILE_WIDTH) {
+            tiles.add(new RenderedContextMap(chromosomeDiagram).restrict(i, i+TILE_WIDTH));
         }
 
         RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeDiagram).asThumbnail(command.getThumbnailDisplayWidth());
         Map<String,Object> model = populateModel(tiles, renderedChromosomeThumbnail);
-        
+
         model.put("positiveTracks", chromosomeDiagram.getPositiveTracks());
         model.put("negativeTracks", chromosomeDiagram.getNegativeTracks());
         return new ModelAndView(view, model);
