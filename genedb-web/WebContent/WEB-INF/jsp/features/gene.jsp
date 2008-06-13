@@ -5,7 +5,7 @@
 <c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
 <c:url value="/" var="base"/>
 
-<format:headerRound name="${gene.organism.commonName}" title="Gene Page ${gene.displayName}" bodyClass="genePage"
+<format:headerRound name="${gene.organism.commonName}" organism="${gene.organism.commonName}" title="Gene Page ${gene.displayName}" bodyClass="genePage"
 onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax}, '${transcript.uniqueName}');">
 
 <st:init />
