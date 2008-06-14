@@ -78,7 +78,7 @@ class DateFormatConverter {
 class InterProRow {
     private static final Logger logger = Logger.getLogger(InterProFile.class);
 
-    String gene, nativeProg, nativeAcc, nativeDesc, acc = "NULL", desc;
+    String gene, nativeProg, nativeAcc, nativeDesc, score, acc = "NULL", desc;
     int fmin, fmax;
     private DateFormatConverter date;
     Set<GoInstance> goTerms = new HashSet<GoInstance>();
@@ -90,6 +90,7 @@ class InterProRow {
     private static final int COL_NATIVE_DESC = 5;
     private static final int COL_FMIN        = 6;
     private static final int COL_FMAX        = 7;
+    private static final int COL_SCORE       = 8;
     private static final int COL_DATE        = 10;
     private static final int COL_ACC         = 11;
     private static final int COL_DESC        = 12;
@@ -117,6 +118,7 @@ class InterProRow {
         this.nativeDesc = rowFields[COL_NATIVE_DESC];
         this.fmin       = Integer.parseInt(rowFields[COL_FMIN]);
         this.fmax       = Integer.parseInt(rowFields[COL_FMAX]);
+        this.score      = rowFields[COL_SCORE];
         this.date       = new DateFormatConverter(rowFields[COL_DATE]);
 
         if (rowFields.length > COL_ACC)
@@ -170,6 +172,12 @@ class InterProRow {
     }
 }
 
+/**
+ * Represents an InterPro output file as a collection of {@link InterProRow}s
+ * keyed by gene name and InterPro accession number.
+ *
+ * @author rh11
+ */
 public class InterProFile {
     private Map<String, Map<String, Set<InterProRow>>> rowsByAccByGene
         = new HashMap<String, Map<String, Set<InterProRow>>>();

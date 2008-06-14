@@ -91,13 +91,18 @@ public class InterProLoader {
     private void loadGene(InterProFile interProFile, String gene) {
         for (String acc: interProFile.accsForGene(gene)) {
             logger.debug(String.format("Processing '%s'", acc));
-            loadIndividualHits(interProFile, gene, acc);
+            loadGroup(interProFile, gene, acc);
         }
     }
 
-    private void loadIndividualHits(InterProFile interProFile, String gene, String acc) {
+    private void loadGroup(InterProFile interProFile, String gene, String acc) {
+        if (!"NULL".equals(acc))
+            // TODO create dbxref if necessary
+            ;
         for (InterProRow row: interProFile.rows(gene, acc)) {
             logger.debug(row);
+            // TODO insert polypeptide_domain, link to Interpro dbxref if applicable
+            // TODO insert GO terms, if there are any
         }
     }
 
