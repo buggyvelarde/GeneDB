@@ -99,6 +99,9 @@ class InterProRow {
     /**
      * Convert a row of an Interpro output file to an InterproRow object.
      *
+     * @param lineNumber the line number of this line in the input file.
+     *          Used to produce more helpful diagnostics if there's a
+     *          problem decoding the line.
      * @param rowFields a line of the input file
      */
     InterProRow(int lineNumber, String row) {
@@ -108,6 +111,9 @@ class InterProRow {
     /**
      * Convert a row of an Interpro output file to an InterproRow object.
      *
+     * @param lineNumber the line number of this line in the input file.
+     *          Used to produce more helpful diagnostics if there's a
+     *          problem decoding the line.
      * @param rowFields an array containing the fields in the file.
      *  In the actual file, fields are separated by tab characters.
      */
