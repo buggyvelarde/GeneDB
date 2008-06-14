@@ -57,6 +57,8 @@
 		<delete file="${imported.basedir.access}/genedb-access.jar"/>
 		<mkdir dir="${imported.basedir.access}/ant-build/jar"/>
 
+		<delete dir="${imported.basedir.access}/ant-build/jar"/>
+		<mkdir dir="${imported.basedir.access}/ant-build/jar"/>
 		<copy todir="${imported.basedir.access}/ant-build/jar">
 			<fileset dir="${imported.basedir.access}/ant-build/classes" />
 			<fileset dir="${imported.basedir.access}/resources" />
@@ -107,17 +109,17 @@
 	</path>
 
 	<target name="load-goAssociation" depends="genedb-access.jar">
-			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.Goa2GeneDB">
-				<arg line="path-to-GOAssociationFile"/>
-				<jvmarg line="-server"/>
-			</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.Goa2GeneDB">
+			<arg line="path-to-GOAssociationFile"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="load-UPenn-data" depends="genedb-access.jar">
-				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.Cluster2GeneDB">
-					<arg line="path-to-UPenn-file"/>
-					<jvmarg line="-server"/>
-				</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.Cluster2GeneDB">
+			<arg line="path-to-UPenn-file"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="load-spombe" depends="genedb-access.jar">
@@ -142,59 +144,59 @@
 	</target>
 
 	<target name="load-senteritidisPT4" depends="genedb-access.jar">
-			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-				<arg line="Senteritidis_PT4 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SEN.config.xml"/>
-				<jvmarg line="-server"/>
-			</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Senteritidis_PT4 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SEN.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="ortho-senteritidisPT4" depends="genedb-access.jar">
-			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
-				<arg line="Senteritidis_PT4 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SEN.config.xml"/>
-				<jvmarg line="-server"/>
-			</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
+			<arg line="Senteritidis_PT4 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SEN.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="ortho-load-sept4" depends="genedb-access.jar">
-			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.OrthoStoreRunner">
-				<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/Senteritidis_PT4.orthologue.xml"/>
-				<jvmarg line="-server"/>
-			</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.OrthoStoreRunner">
+			<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/Senteritidis_PT4.orthologue.xml"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="interpro-sept4" depends="genedb-access.jar">
-			<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadInterPro">
-				<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/merged_SEN.raw"/>
-				<jvmarg line="-server"/>
-			</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadInterPro">
+			<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/merged_SEN.raw"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="load-sgallinarum287" depends="genedb-access.jar">
-				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
-					<arg line="Sgallinarum287 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SGAL.config.xml"/>
-					<jvmarg line="-server"/>
-				</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
+			<arg line="Sgallinarum287 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SGAL.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="ortho-sgallinarum287" depends="genedb-access.jar">
-				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
-					<arg line="Sgallinarum287 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SGAL.config.xml"/>
-					<jvmarg line="-server"/>
-				</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.ExtractOrthologueData">
+			<arg line="Sgallinarum287 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SGAL.config.xml"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="ortho-load-sgallinarum287" depends="genedb-access.jar">
-				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.OrthoStoreRunner">
-					<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/Sgallinarum287.orthologue.xml"/>
-					<jvmarg line="-server"/>
-				</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.OrthoStoreRunner">
+			<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/Sgallinarum287.orthologue.xml"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="interpro-sgal287" depends="genedb-access.jar">
-				<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadInterPro">
-					<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/merged_SGAL.raw"/>
-					<jvmarg line="-server"/>
-				</java>
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadInterPro">
+			<arg line="/software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/merged_SGAL.raw"/>
+			<jvmarg line="-server"/>
+		</java>
 	</target>
 
 	<target name="ortho-tbrucei" depends="genedb-access.jar">
@@ -309,7 +311,6 @@
 			<jvmarg line="-server"/>
 		</java>
 	</target>
-
 
 	<target name="load-bronchi" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
@@ -488,6 +489,14 @@
 			<jvmarg line="-server"/>
 		</java>
 	</target>
+
+	<target name="load-interpro" depends="genedb-access.jar">
+		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.interpro.LoadInterPro">
+			<arg line="${file}"/>
+			<jvmarg line="-server"/>
+		</java>
+	</target>
+
 
     <target name="fix-residues-verbose" depends="genedb-access.jar" if="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">

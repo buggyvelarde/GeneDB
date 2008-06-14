@@ -29,7 +29,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -97,12 +96,10 @@ public class CharSVParser {
 
 
     private void fireEvent(String[] val) {
-        if ( listeners != null ) {
-                event.setTerms(val);
-                Iterator it = listeners.iterator();
-                while ( it.hasNext() ) {
-                    ((CharSVParsingListener) it.next()).rowParsed(event);
-                }
+        if (listeners != null) {
+            event.setTerms(val);
+            for (CharSVParsingListener listener : listeners)
+                listener.rowParsed(event);
         }
     }
 
@@ -124,10 +121,7 @@ public class CharSVParser {
     }
 
     private boolean isComment(String line) {
-        if ( comment != null  && line.startsWith( comment )) {
-            return true;
-        }
-        return false;
+        return ( comment != null  && line.startsWith( comment ));
     }
 
     public String[][] getValues() throws IOException {
@@ -136,5 +130,4 @@ public class CharSVParser {
         }
         return ret;
     }
-
 }
