@@ -127,12 +127,10 @@ class InterProRow {
         this.score      = rowFields[COL_SCORE];
         this.date       = new DateFormatConverter(rowFields[COL_DATE]);
 
-        if (rowFields.length > COL_ACC)
+        if (rowFields.length > COL_ACC) {
             this.acc = rowFields[COL_ACC];
-
-        if (rowFields.length > COL_DESC)
             this.desc = rowFields[COL_DESC];
-
+        }
         if (rowFields.length > COL_GO)
             parseGoString(lineNumber, rowFields[COL_GO]);
     }
