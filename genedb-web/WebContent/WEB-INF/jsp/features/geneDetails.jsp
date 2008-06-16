@@ -31,11 +31,11 @@
         </tr>
         <tr>
             <td class="label">Feature Type</td>
-            <td class="value">${transcript.cvterm.name}
+            <td class="value">${transcript.cvTerm.name}
 				<c:choose>
-					<c:when test="${transcript.cvterm.name == 'MRNA'}">Protein coding gene</c:when>
-					<c:when test="${transcript.cvterm.name == 'pseudogenic_transcript'}">Pseudogene</c:when>
-					<c:otherwise>${transcript.cvterm.name}</c:otherwise>
+					<c:when test="${transcript.cvTerm.name == 'MRNA'}">Protein coding gene</c:when>
+					<c:when test="${transcript.cvTerm.name == 'pseudogenic_transcript'}">Pseudogene</c:when>
+					<c:otherwise>${transcript.cvTerm.name}</c:otherwise>
 				</c:choose>
             </td>
         </tr>
