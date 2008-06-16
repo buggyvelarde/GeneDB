@@ -19,10 +19,24 @@
          <tr>
             <td class="label">Systematic Name</td>
             <td class="value">
-                ${gene.uniqueName} (Gene) <br>
-                <c:if test="${fn:length(gene.transcripts) > 1}">
-                    ${transcript.uniqueName} (Transcript, one splice form of ${gene.uniqueName})
-                </c:if>
+				<c:choose>
+                <c:when test="${fn:length(gene.transcripts) > 1}">
+                    ${transcript.uniqueName} (one splice form of ${gene.uniqueName})
+				</c:when>
+				<c:otherwise>
+					${gene.uniqueName}
+				</c:otherwise>
+                </c:choose>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Feature Type</td>
+            <td class="value">${transcript.type.name}
+				<c:choose>
+					<c:when test="${transcript.type.name == 'MRNA'}">Protein coding gene</c:when>
+					<c:when test="${transcript.type.name == 'pseudogenic_transcript'}">Pseudogene</c:when>
+					<c:otherwise>${transcript.type.name}</c:otherwise>
+				</c:choose>
             </td>
         </tr>
         <db:synonym name="obsolete_name" var="name" collection="${gene.featureSynonyms}">
@@ -37,9 +51,10 @@
                 <td class="value"><db:list-string collection="${name}" /></td>
              </tr>
         </db:synonym>
+
         <c:if test="${!empty(polypeptide.products)}">
             <tr>
-                <td class="label">Protein names</td>
+                <td class="label">Product</td>
                 <td class="value">
                     <c:forEach items="${polypeptide.products}" var="product">
                         <span>${product}</span><br>
