@@ -244,8 +244,8 @@ public class CvDao extends BaseDao implements CvDaoI {
                 Polypeptide polypeptide) {
 
             String query = "select new org.gmod.schema.utils.CountedName( fct.cvTerm.name, count" +
-                    " (fct)) from FeatureCvTerm fct, Feature f where" +
-                    " fct.feature.organism.commonName=:organism " +
+                    " (fct)) from FeatureCvTerm fct where" +
+                    " fct.feature.organism.commonName=:organism and " +
                     " fct.cvTerm.id in " +
                     " (select fct.cvTerm.id from FeatureCvTerm fct, Feature f" +
                     " where f=:polypeptide and fct.cvTerm.cv.name=:cvName" +
