@@ -190,16 +190,8 @@ public class CvDao extends BaseDao implements CvDaoI {
             return countedNames;
         }
 
-        public List<CountedName> getCountedNamesByCvNameAndOrganism(String cvName, List<String> orgList) {
-            StringBuilder orgNames = new StringBuilder();
-            boolean first = true;
-            for (String orgName : orgList) {
-                if (!first)
-                    orgNames.append(", ");
-                first = false;
-                orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
-            }
-
+        public List<CountedName> getCountedNamesByCvNameAndOrganism(String cvName, String orgNames) {
+            
             @SuppressWarnings("unchecked")
             List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(
                 "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct.feature.uniqueName))"+
