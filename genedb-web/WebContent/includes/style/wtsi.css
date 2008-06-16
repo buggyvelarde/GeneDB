@@ -166,6 +166,9 @@ div.fieldset div.content img  {
   padding-bottom: 0.5em;
 }
 
+pre {
+	font-size: 1.5em;
+}
 /** html div.fieldset div.legend { width: 100px; }*/
 
 /* end cross-browser coloured fake-fieldsets */
