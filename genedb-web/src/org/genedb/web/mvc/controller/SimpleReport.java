@@ -151,15 +151,11 @@ public class SimpleReport extends MultiActionController implements InitializingB
 
 	public ModelAndView FindCvByName(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
 	    String name = ServletRequestUtils.getStringParameter(request, "name", "%");
-	    List<Cv> cvs = cvDao.getCvsByNamePattern(name);
-	    Map<String,Object> model = new HashMap<String,Object>();
+	    Cv cv = cvDao.getCvByName(name);
+	    Map model = new HashMap();
 	    String viewName = "db/listCv";
-	    if (cvs.size()==1) {
 		viewName = "db/cv";
-		model.put("cv", cvs.get(0));
-	    } else {
-		model.put("cvs", cvs);
-	    }
+		model.put("cv", cv);
 	    return new ModelAndView(viewName, model);
 	}
 
@@ -169,8 +165,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", "*");
 	    System.err.println("cvName="+cvName+"   :   cvTermName="+cvTermName);
 	    cvTermName = cvTermName.replace('*', '%');
-	    List<Cv> cvs = cvDao.getCvsByNamePattern(cvName);
-	    Cv cv = cvs.get(0);
+	    Cv cv = cvDao.getCvByName(cvName);
 	    System.err.println("cv="+cv);
 	    List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(cvTermName, cv);
 	    String viewName = "db/listCvTerms";

@@ -254,15 +254,13 @@ public class SearchController extends MultiActionController implements Initializ
     @SuppressWarnings("unused")
     public ModelAndView FindCvByName(HttpServletRequest request, HttpServletResponse response) {
         String name = ServletRequestUtils.getStringParameter(request, "name", "%");
-        List<Cv> cvs = this.cvDao.getCvsByNamePattern(name);
+        Cv cv = this.cvDao.getCvByName(name);
         Map<String,Object> model = new HashMap<String,Object>();
         String viewName = "db/listCv";
-        if (cvs.size() == 1) {
-            viewName = "db/cv";
-            model.put("cv", cvs.get(0));
-        } else {
-            model.put("cvs", cvs);
-        }
+        
+        viewName = "db/cv";
+        model.put("cv", cv);
+       
         return new ModelAndView(viewName, model);
     }
 
