@@ -7,7 +7,7 @@
 <div id="geneDetails">
 	<format:genePageSection id="listResults" className="whiteBox">
 	<c:if test="${results != null}">
-		<display:table name="results" uid="tmp" pagesize="30" requestURI="/NamedFeature" class="simple" cellspacing="0" cellpadding="4">
+		<display:table name="results" uid="tmp" pagesize="30" requestURI="/Orthologs" class="simple" cellspacing="0" cellpadding="4">
 			<display:column property="organism.abbreviation" title="Organism"/>
 			<display:column property="cvTerm.name" title="Type"/> 
 			<display:column property="uniqueName" href="./NamedFeature" paramId="name"/>

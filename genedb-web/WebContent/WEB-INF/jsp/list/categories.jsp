@@ -9,7 +9,7 @@
 <div id="geneDetails">
 	<format:genePageSection className="whiteBox">
 		<display:table name="results"  uid="row" pagesize="30" requestURI="/BrowseCategory" class="simple" cellspacing="0" cellpadding="4">
-		   	<display:column property="name" title="Category - ${category}" href="BrowseTerm?org=${organism}&category=${category}" paramId="term"/>
+		   	<display:column property="name" title="Category - ${category}" href="BrowseTerm?organism=${organism}&category=${category}" paramId="term"/>
 		   	<display:column property="count" title="Count"/>
 		</display:table>
 	</format:genePageSection>
