@@ -35,9 +35,10 @@ public class InterProLoader {
         SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
         TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-        Transaction transaction = session.beginTransaction();
+        Transaction transaction = session.getTransaction();
 
         for (String gene: interProFile.genes()) {
+            transaction.begin();
             logger.debug(String.format("Processing gene '%s'", gene));
             loadGene(interProFile, gene);
             transaction.commit();
@@ -100,9 +101,11 @@ public class InterProLoader {
     }
 
     private void loadGroup(InterProFile interProFile, String gene, InterProAcc acc, Polypeptide polypeptide) {
+        logger.debug("In loadGroup()");
         DbXRef interproDbxref = null;
-        if (!"NULL".equals(acc)) {
-            interproDbxref = featureUtils.findOrCreateDbXRefFromString("InterPro:" + acc.getId());
+        if (acc != InterProAcc.NULL) {
+            logger.debug(String.format("Creating InterPro dbxref for '%s'", acc.getId()));
+            interproDbxref = featureUtils.findOrCreateDbXRefFromDbAndAccession("InterPro", acc.getId());
             interproDbxref.setDescription(acc.getDescription());
         }
 
