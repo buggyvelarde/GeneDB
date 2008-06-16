@@ -78,11 +78,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             else
                 transcript.setColourId(Integer.parseInt(colourString));
 
-            String transcriptName = doc.get("name");
-            if (transcriptName != null)
-                transcript.setName(transcriptName);
-            else
-                transcript.setName(doc.get("uniqueName"));
+            transcript.setName(doc.get("uniqueName"));
 
             transcript.setFmin(Integer.parseInt(doc.get("start")));
             transcript.setFmax(Integer.parseInt(doc.get("stop")));
