@@ -67,7 +67,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), orgNames);
         
         if (results == null || results.size() == 0) {
-            logger.info("result is null"); // TODO Improve text
+            logger.info("result is null");
             be.reject("no.results");
             return showForm(request, response, be);
         }
