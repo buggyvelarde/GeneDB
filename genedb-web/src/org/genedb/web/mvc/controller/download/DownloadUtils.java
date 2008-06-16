@@ -9,6 +9,7 @@ public class DownloadUtils {
 	private static int MAX_FEATURE_WIDTH = 18;
 	private static final String FEATURE_TABLE_PREFIX = String.format("%-"+FEATURE_PREFIX_WIDTH+"s", "FT");
 	private static final int FASTA_WIDTH = 60;
+	private static final int BASES_WIDTH = 10;
 
 	public static void writeFasta(PrintWriter out, String header, String sequence) {
 		out.print("> ");
@@ -27,6 +28,30 @@ public class DownloadUtils {
 		
 	}
 	
+   public static String writeFasta(String header, String sequence) {
+       StringBuilder fasta = new StringBuilder(); 
+       fasta.append("> ");
+       fasta.append(header);
+       fasta.append("\n");
+        
+        int startPos = 0;
+        int sequenceLen = sequence.length();
+        while (startPos < sequenceLen) {
+            int endPos = startPos + BASES_WIDTH;
+            if (endPos > sequenceLen) {
+                endPos = sequenceLen;
+            }
+            
+            fasta.append(sequence.substring(startPos, endPos));
+            fasta.append(" ");
+            startPos += BASES_WIDTH;
+            if(startPos % 60 == 0) {
+                fasta.append("\n");
+            }
+        }
+        
+        return fasta.toString();
+    }
 	
 	public static void writeEmblEntry(PrintWriter out, String featureType, 
 			boolean forwardStrand, int min, int max,
@@ -54,4 +79,33 @@ public class DownloadUtils {
 		
 	}
 	
+	public static String writeEmblEntry(String featureType, 
+            boolean forwardStrand, int min, int max,
+            Map<String, String> qualifiers) {
+
+        StringBuilder embl = new StringBuilder();
+	    
+	    if (featureType.length() > MAX_FEATURE_WIDTH) {
+            featureType = featureType.substring(0, MAX_FEATURE_WIDTH);
+        }
+        
+        embl.append(String.format("FT %-"+(FEATURE_PREFIX_WIDTH-3)+"s", featureType));
+        if (!forwardStrand) {
+            embl.append("complement(");
+        }
+        
+        embl.append(min - 1 +".."+max); // Interbase conversion
+        
+        if (!forwardStrand) {
+            embl.append(")");
+        }
+        embl.append("\n");
+        
+        for (Map.Entry<String, String> qualifier: qualifiers.entrySet()) {
+            embl.append(FEATURE_TABLE_PREFIX+"/"+qualifier.getKey()+"=\""+qualifier.getValue()+"\"");
+            embl.append("\n");
+        }
+     
+        return embl.toString();
+    }
 }
