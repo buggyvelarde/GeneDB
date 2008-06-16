@@ -31,9 +31,9 @@
         </tr>
         <tr>
             <td class="label">Feature Type</td>
-            <td class="value">${transcript.cvTerm.name}
+            <td class="value">
 				<c:choose>
-					<c:when test="${transcript.cvTerm.name == 'MRNA'}">Protein coding gene</c:when>
+					<c:when test="${transcript.cvTerm.name == 'mRNA'}">Protein coding gene</c:when>
 					<c:when test="${transcript.cvTerm.name == 'pseudogenic_transcript'}">Pseudogene</c:when>
 					<c:otherwise>${transcript.cvTerm.name}</c:otherwise>
 				</c:choose>
