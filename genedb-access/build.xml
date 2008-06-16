@@ -26,6 +26,7 @@
         <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jta.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" />
         <path location="${lib-dir}/postgresql-8.2dev-501.jdbc3.jar"/>
         <path location="${lib-dir}/spring-2.5.4.jar"/>
         <path location="${lib-dir}/biojava-1.6.jar"/>
@@ -491,7 +492,7 @@
 	</target>
 
 	<target name="load-interpro" depends="genedb-access.jar">
-		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.interpro.LoadInterPro">
+		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.interpro.LoadInterPro">
 			<arg line="${file}"/>
 			<jvmarg line="-server"/>
 		</java>
