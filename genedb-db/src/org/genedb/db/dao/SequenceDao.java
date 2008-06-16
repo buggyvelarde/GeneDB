@@ -335,7 +335,8 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                         "polypeptide_transcript.cvTerm.name='derives_from' and " +
                         "polypeptide_transcript.featureBySubjectId in ( " +
                         "select fct.feature from FeatureCvTerm fct where " +
-                        "fct.cvTerm.name like :cvTermName and fct.cvTerm.cv.name like :cvName)",
+                        "fct.cvTerm.name like :cvTermName and fct.cvTerm.cv.name like :cvName) " +
+                        "order by transcript_gene.featureByObjectId.organism.abbreviation",
                         new String[] { "cvTermName", "cvName" },
                         new Object[] { cvTermName, cvName });
         return features;
