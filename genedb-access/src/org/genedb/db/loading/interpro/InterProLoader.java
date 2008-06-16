@@ -40,9 +40,9 @@ public class InterProLoader {
         for (String gene: interProFile.genes()) {
             logger.debug(String.format("Processing gene '%s'", gene));
             loadGene(interProFile, gene);
+            transaction.commit();
         }
 
-        transaction.rollback();
         TransactionSynchronizationManager.unbindResource(sessionFactory);
         SessionFactoryUtils.closeSession(session);
     }

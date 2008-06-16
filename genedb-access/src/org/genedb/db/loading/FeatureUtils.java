@@ -59,7 +59,7 @@ public class FeatureUtils implements InitializingBean {
     protected CvTerm GENEDB_TOP_LEVEL;
     private Pub DUMMY_PUB;
 
-    protected Pattern PUBMED_PATTERN;
+    protected static final Pattern PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
 
     public Feature createFeature(String typeName, String uniqueName, Organism organism) {
         List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(typeName, so);
@@ -171,7 +171,6 @@ public class FeatureUtils implements InitializingBean {
         Cv CV_GENEDB = cvDao.getCvByName("genedb_misc");
         GENEDB_TOP_LEVEL = cvDao.getCvTermByNameInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
         DUMMY_PUB = pubDao.getPubByUniqueName("null");
-        PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
     }
 
     public void markTopLevelFeature(org.gmod.schema.sequence.Feature topLevel) {
