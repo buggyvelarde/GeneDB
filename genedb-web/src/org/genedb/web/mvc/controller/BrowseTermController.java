@@ -25,13 +25,11 @@ import org.genedb.db.taxon.TaxonNode;
 
 import org.gmod.schema.sequence.Feature;
 
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -64,17 +62,6 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
 
         BrowseTermBean btb = (BrowseTermBean) command;
-        
-        //TODO - convert this into HqlFormat somehow...
-        //StringBuffer tmp = new StringBuffer();
-        //tmp.append('\'');
-        //tmp.append(btb.getOrg());
-        //tmp.append('\'');
-        //String orgNames = tmp.toString();
-        
-        //TaxonNode[] taxonNodes = btb.getOrganism();
-        
-        //String orgNames = TaxonUtils.getOrgNamesInHqlFormat(taxonNodes);
         String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrg());
         
         List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), orgNames);
@@ -87,20 +74,16 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         
         ModelAndView mav = new ModelAndView(getSuccessView());
         
-        //logger.info("The number of results before transformation is '"+results.size()+"'");
-        
-        // TODO The results are probably protein objects - change to genes
         List<Feature> newResults = new ArrayList<Feature>(results.size());
         for (Feature feature : results) {
 			if (!GeneUtils.isPartOfGene(feature)) {
 				newResults.add(feature);
-				//logger.info("Immediately adding '"+feature.getUniqueName()+"' as not part of gene");
 			} else {
 				logger.info("Transforming '"+feature.getUniqueName()+"' as not part of gene");
 				newResults.add(GeneUtils.getGeneFromPart(feature));
 			}
 		}
-        //logger.info("The number of results after transformation is '"+newResults.size()+"'");
+
         mav.addObject("results", newResults);
         mav.addObject("controllerPath", "/BrowseTerm");
 
