@@ -1,9 +1,9 @@
 finaldest.webapps=/nfs/pathdata/jira/apache-tomcat/webapps/ci-web
 webAppRootKey=genedb.ci-web.root
-dbhost=pathdbsrv1a
-dbport=10101
+dbhost=localhost
+dbport=18000
 dbname=malaria_workshop
-dbuser=pathdb
-dbpassword=Pyrate_1
+dbuser=genedb
+dbpassword=genedb
 lucene.indexDirectory=/software/pathogen/projects/genedb/indexes/malaria/
 contextMap.render.directory=/includes/images/cmap
