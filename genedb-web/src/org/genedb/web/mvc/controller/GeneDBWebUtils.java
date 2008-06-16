@@ -136,10 +136,10 @@ public class GeneDBWebUtils {
             model.put("polypeptide", polypeptide);
             model.put("polyprop", calculatePepstats(polypeptide));
 
-            List<CountedName> controlledCuration = cvDao.getCountedNamesByCvNameAndFeature("CC_genedb_controlledcuration", polypeptide);
-            List<CountedName> biologicalProcess = cvDao.getCountedNamesByCvNameAndFeature("biological_process", polypeptide);
-            List<CountedName> cellularComponent = cvDao.getCountedNamesByCvNameAndFeature("cellular_component", polypeptide);
-            List<CountedName> molecularFunction = cvDao.getCountedNamesByCvNameAndFeature("molecular_function", polypeptide);
+            List<CountedName> controlledCuration = cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("CC_genedb_controlledcuration", polypeptide);
+            List<CountedName> biologicalProcess = cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("biological_process", polypeptide);
+            List<CountedName> cellularComponent = cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("cellular_component", polypeptide);
+            List<CountedName> molecularFunction = cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("molecular_function", polypeptide);
             model.put("CC", controlledCuration);
             model.put("BP", biologicalProcess);
             model.put("CellularC", cellularComponent);

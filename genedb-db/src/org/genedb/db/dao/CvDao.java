@@ -237,4 +237,28 @@ public class CvDao extends BaseDao implements CvDaoI {
             return countedNames;
 
         }
+        
+
+        @SuppressWarnings("unchecked")
+        public List<CountedName> getCountedNamesByCvNameAndFeatureAndOrganism(String cvName, 
+                Polypeptide polypeptide) {
+
+            String query = "select new org.gmod.schema.utils.CountedName( fct.cvTerm.name, count" +
+                    " (fct)) from FeatureCvTerm fct, Feature f where" +
+                    " fct.feature.organism.commonName=:organism " +
+                    " fct.cvTerm.id in " +
+                    " (select fct.cvTerm.id from FeatureCvTerm fct, Feature f" +
+                    " where f=:polypeptide and fct.cvTerm.cv.name=:cvName" +
+                    " and fct.feature=f)" +
+                    " group by fct.cvTerm.name" +
+                    " order by fct.cvTerm.name";
+
+            List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(query,
+                new String[]{"polypeptide", "cvName", "organism"},
+                new Object[]{polypeptide, cvName, polypeptide.getOrganism().getCommonName()});
+
+            return countedNames;
+
+        }
+        
 }
