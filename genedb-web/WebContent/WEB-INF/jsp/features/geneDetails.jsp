@@ -10,7 +10,7 @@
         <div class="heading">General Information</div>
         <table>
         <col style="width: 9em;">
-        <c:if test="${gene.name != null}">
+        <c:if test="${!empty gene.name}">
             <tr>
                 <td class="label">Gene Name</td>
                 <td class="value">${gene.name}</td>
@@ -19,8 +19,9 @@
          <tr>
             <td class="label">Systematic Name</td>
             <td class="value">
-                ${gene.uniqueName}<c:if test="${fn:length(gene.transcripts) > 1}">
-                    (Transcript ${transcript.uniqueName})
+                ${gene.uniqueName} (Gene) <br>
+                <c:if test="${fn:length(gene.transcripts) > 1}">
+                    ${transcript.uniqueName} (Transcript, one splice form of ${gene.uniqueName})
                 </c:if>
             </td>
         </tr>
@@ -58,7 +59,7 @@
 	            <td class="label">See Also</td>
 	            <td class="value">
 	                <c:forEach items="${polypeptide.featureDbXRefs}" var="fdbxref">
-	                	<c:if test="${fn:length(fdbxref.dbXRef.db.urlPrefix) > 0}">
+	                	<c:if test="${!empty fdbxref.dbXRef.db.urlPrefix}">
 	                		<span><a href="${fdbxref.dbXRef.db.urlPrefix}${fdbxref.dbXRef.accession}">${fdbxref.dbXRef.db.name}:${fdbxref.dbXRef.accession}</a></span>
 	                	</c:if>
 	                </c:forEach>
@@ -70,16 +71,15 @@
 
     <format:genePageSection id="analysisTools" className="whiteBox">
         <div class="heading">Analysis tools</div>
-        <form name="downloadRegion" action="SequenceDownload">
-            <div>Download Region</div>
-            as
+        <form name="downloadRegion" action="FeatureDownload" method="get">
+            <div>Download Region as</div><br>
             <select name="downloadType">
-                <option value="fasta">FASTA</option>
-                <option value="embl">EMBL</option>
+                <option value="SPLICED_DNA">Spliced DNA</option>
+                <option value="PROTEIN">Protein</option>
             </select>
-            <input type="hidden" name="featureType" value="<c:out value="${chromosome.cvTerm.name}" />">
-            <input type="hidden" name="topLevelFeature" value="<c:out value="${chromosome.uniqueName}" />">
-            <input type="submit" name="Submit">
+            <input type="hidden" name="featureType" value="mRNA" />
+            <input type="hidden" name="featureName" value="<c:out value="${transcript.uniqueName}" />">
+            <input type="submit" value="Submit">
         </form>
         <div style="clear: both; margin-top: 1ex;">
             <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Show region in Artemis</a>
