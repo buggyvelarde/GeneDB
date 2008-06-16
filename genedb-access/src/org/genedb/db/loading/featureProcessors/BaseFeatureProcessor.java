@@ -165,16 +165,16 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     }
 
     public void afterPropertiesSet() {
-        CV_RELATION = cvDao.getCvByName("relationship").get(0);
+        CV_RELATION = cvDao.getCvByName("relationship");
 
         REL_PART_OF = cvDao.getCvTermByNameInCv("proper_part_of", CV_RELATION).get(0); // FIXME Is this right
-        CV_SO = cvDao.getCvByName("sequence").get(0);
+        CV_SO = cvDao.getCvByName("sequence");
         //CV_MISC = cvDao.getCvByName("autocreated").get(0);
-        CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property").get(0);
-        CV_RELATION = cvDao.getCvByName("relationship").get(0);
-        CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
-        CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration").get(0);
-        CV_PRODUCT = cvDao.getCvByName("genedb_products").get(0);
+        CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property");
+        CV_RELATION = cvDao.getCvByName("relationship");
+        CV_GENEDB = cvDao.getCvByName("genedb_misc");
+        CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration");
+        CV_PRODUCT = cvDao.getCvByName("genedb_products");
         //REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
         REL_DERIVES_FROM = cvDao.getCvTermByNameInCv("derives_from", CV_SO).get(0);
         MISC_NOTE = cvDao.getCvTermByNameInCv("comment", CV_FEATURE_PROPERTY).get(0);

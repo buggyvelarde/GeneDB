@@ -90,23 +90,23 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     private SimilarityParser siParser;
 
     //private int count;
-    
+
 	public CDS_Processor() {
-		handledQualifiers = new String[]{"CDS:EC_number", "CDS:primary_name", 
-				"CDS:systematic_id", "CDS:previous_systematic_id", "CDS:product", 
-				"CDS:db_xref", //"CDS:similarity", 
+		handledQualifiers = new String[]{"CDS:EC_number", "CDS:primary_name",
+				"CDS:systematic_id", "CDS:previous_systematic_id", "CDS:product",
+				"CDS:db_xref", //"CDS:similarity",
 				"CDS:temporary_systematic_id",
-				"CDS:fasta_file", "CDS:blast_file", "CDS:blastn_file", "CDS:colour", 
-				"CDS:blastpgo_file", "CDS:blastp_file", "CDS:blastx_file", 
-				"CDS:obsolete_name", "CDS:synonym", "CDS:reserved_name", 
-				"CDS:fastax_file", "CDS:tblastn_file", "CDS:tblastx_file", 
+				"CDS:fasta_file", "CDS:blast_file", "CDS:blastn_file", "CDS:colour",
+				"CDS:blastpgo_file", "CDS:blastp_file", "CDS:blastx_file",
+				"CDS:obsolete_name", "CDS:synonym", "CDS:reserved_name",
+				"CDS:fastax_file", "CDS:tblastn_file", "CDS:tblastx_file",
 				"CDS:literature", "CDS:curation", "CDS:private", "CDS:clustalx_file",
-				"CDS:pseudo", "CDS:psu_db_xref", "CDS:note", "CDS:GO", 
+				"CDS:pseudo", "CDS:psu_db_xref", "CDS:note", "CDS:GO",
 				"CDS:controlled_curation", "CDS:sigcleave_file"};
 		unknownRileyClass = new ArrayList<String>();
 	}
-    
-    
+
+
     @Override
     public void processStrandedFeature(final Feature parent, final StrandedFeature cds, final int offset) {
         final Annotation an = cds.getAnnotation();
@@ -116,9 +116,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     @SuppressWarnings( { "unchecked" })
     private void processCodingGene(StrandedFeature cds, Annotation an,
             Feature parent, int offset) {
-    	
+
     	String sysId = null;
-    	
+
     	String soTypeGene = "gene";
     	String soTypeTranscript = "mRNA";
     	String soTypeExon = "exon";
@@ -128,9 +128,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         	soTypeTranscript = "pseudogenic_transcript";
         	soTypeExon = "pseudogenic_exon";
     	}
-    	
+
         try {
-        	
+
             Location loc = cds.getLocation().translate(offset);
             Names names = this.nomenclatureHandler.findNames(an);
             sysId = names.getSystematicId();
@@ -143,7 +143,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 //            List<FeatureLoc> featureLocs = new ArrayList<FeatureLoc>();
 //            List<FeatureRelationship> featureRelationships = new ArrayList<FeatureRelationship>();
 
-            Cv CV_NAMING = cvDao.getCvByName("genedb_synonym_type").get(0);
+            Cv CV_NAMING = cvDao.getCvByName("genedb_synonym_type");
             CvTerm SYNONYM_RESERVED = cvDao.getCvTermByNameInCv(QUAL_RESERVED, CV_NAMING).get(0);
             CvTerm SYNONYM_SYNONYM = cvDao.getCvTermByNameInCv(QUAL_SYNONYM, CV_NAMING).get(0);
             CvTerm SYNONYM_PRIMARY = cvDao.getCvTermByNameInCv(QUAL_PRIMARY, CV_NAMING).get(0);
@@ -153,7 +153,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             this.DUMMY_PUB = pubDao.getPubByUniqueName("null");
             this.featureUtils.setDummyPub(this.DUMMY_PUB);
 
-            Cv CV_PRODUCTS = cvDao.getCvByName("genedb_products").get(0);
+            Cv CV_PRODUCTS = cvDao.getCvByName("genedb_products");
             //Db DB_PRODUCTS = this.daoFactory.getDbDao().findByName("genedb_products_db");
 
             // Is this a multiply spliced gene?
@@ -253,7 +253,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                         exon, mRNA, REL_PART_OF, exonCount -1);
                 FeatureLoc exonFl = this.featureUtils.createLocation(parent, exon, l
                         .getMin()-1, l.getMax(), strand);
-                
+
                 sequenceDao.persist(exon);
                 sequenceDao.persist(exonFl);
                 sequenceDao.persist(exonFr);
@@ -294,7 +294,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             // MISC).get(0);
 
             processQualifiers(polypeptide, an);
-            
+
             createTranslation(parent, polypeptide, an, loc);
             //System.err.print(".");
         } catch (RuntimeException exp) {
@@ -305,9 +305,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
     protected void processQualifiers(Feature polypeptide, Annotation an) {
         createFeaturePropsFromNotes(polypeptide, an, QUAL_NOTE, MISC_NOTE, 0);
-        
+
         processArtemisFiles(polypeptide, an);
-        
+
         createDbXRefs(polypeptide, an);
 
         createGoEntries(polypeptide, an);
@@ -326,19 +326,19 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         //createSimilarity(polypeptide,mRNA,an);
 
         processClass(polypeptide,an);
-        
+
         createEC_number(polypeptide,an);
-        
+
         createLiterature(polypeptide,an);
-        
+
         createOtherNotes(polypeptide, an, "private", MISC_PRIVATE);
         createOtherNotes(polypeptide, an, "curation", MISC_CURATION);
-        
 
-    	
-    	
+
+
+
     }
-    
+
     private void createGoEntries(Feature polypeptide,Annotation an) {
     	List<GoInstance> gos = goParser.getNewStyleGoTerm(an);
         if (gos.size() == 0) {
@@ -348,7 +348,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         for (GoInstance go : gos) {
         	featureUtils.createGoEntries(polypeptide, go);
         }
-		
+
 	}
 
 
@@ -415,7 +415,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 	private void processIndividualArtemisFile(Feature polypeptide, Annotation an, String propertyName) {
 		processIndividualArtemisFile(polypeptide, an, propertyName, propertyName);
 	}
-	
+
 	private void processIndividualArtemisFile(Feature polypeptide, Annotation an, String propertyName, String cvTermName) {
 		List<String> bFile = MiningUtils.getProperties(propertyName, an);
 		int rank = 0;
@@ -427,7 +427,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 			rank++;
 		}
 	}
-	
+
 	private void processArtemisFiles(Feature polypeptide, Annotation an) {
     	processIndividualArtemisFile(polypeptide, an, "blast_file");
     	processIndividualArtemisFile(polypeptide, an, "blastn_file");
@@ -482,9 +482,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     this.generalDao.persist(analysis);
                 }
 
-                /* create match feature 
-                 * create new dbxref for match feature if one does not already exsists 
-                 */ 
+                /* create match feature
+                 * create new dbxref for match feature if one does not already exsists
+                 */
 
                 Feature matchFeature = null;
                 String uniqueName = null;
@@ -502,36 +502,36 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 FeatureProp overlap = new FeatureProp(matchFeature,olap,si.getOverlap(),0);
                 this.sequenceDao.persist(overlap);
 
-                /* create analysisfeature 
-                 * 
+                /* create analysisfeature
+                 *
                  */
                 Double score = null;
                 if (si.getScore() != null) {
                     score = Double.parseDouble(si.getScore());
-                } 
+                }
 
                 Double evalue = null;
                 if (si.getEvalue() != null) {
                     evalue = Double.parseDouble(si.getEvalue());
-                } 
+                }
 
                 Double id = null;
                 if (si.getId() != null) {
                     id = Double.parseDouble(si.getId());
-                } 
+                }
 
                 AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
                 this.generalDao.persist(analysisFeature);
 
-                /* create subject feature if one does not already exists. If two database are 
-                 * referenced; seperate the primary and the secondary. Create feature.dbxref 
-                 * for primary and featuredbxref for secondary. Also add organism, product, gene, 
-                 * overlap and ungappedid as featureprop to this feature. Create featureloc from 
-                 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id 
-                 * of featureloc to 0. 
+                /* create subject feature if one does not already exists. If two database are
+                 * referenced; seperate the primary and the secondary. Create feature.dbxref
+                 * for primary and featuredbxref for secondary. Also add organism, product, gene,
+                 * overlap and ungappedid as featureprop to this feature. Create featureloc from
+                 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id
+                 * of featureloc to 0.
                  */
                 Feature subjectFeature = null;
-                
+
                 String sections[] = parseDbString(si.getPriDatabase());
                 String values[] = parseDbString(si.getSecDatabase());
                 if (sections[0].equals("SWALL") && sections[1].contains("_")) {
@@ -617,7 +617,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                     }
 
                     /* once the dbxrefs are set create featureprop for gene, organism and product
-                     * 
+                     *
                      */
                     CvTerm org = this.cvDao.getCvTermByNameAndCvName("organism", cv);
                     FeatureProp propOrganism = new FeatureProp(subjectFeature,org,si.getOrganism(),0);
@@ -634,7 +634,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 }
 
                 /* create featureloc and attach 'em to matchFeature
-                 * 
+                 *
                  */
                 short strand = 1;
                 String sCoords[] = si.getSubject().split("-");
@@ -660,7 +660,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     	}
     	return ret;
     }
-    
+
     private void processClass(Feature polypeptide, Annotation an) {
         List<String> classes = MiningUtils.getProperties("class", an);
         for (String rileyClass : classes) {
@@ -780,13 +780,13 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 	  }
 	  return ret;
   }
-	
+
 //  private String translate(String nucleic) {
 //		  if (translation != null && translation.length() > 0 ) {
 //		  this.setSequence(SequenceType.SEQ_PROTEIN, translation);
 //		  return;
 //		  }
-//		
+//
 //		  if ( table != null) {
 //		  try {
 //		  int num = Integer.parseInt(table);
@@ -800,7 +800,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 //		  System.err.println("WARN: Attempted to set unrecognized translation table ("+table+") in "+getId());
 //		  }
 //		  }
-//		
+//
 //		  int cdStartNum = 1;
 //		  if (cdStart != null && cdStart.length() != 0) {
 //		  cdStartNum = Integer.parseInt(cdStart);
@@ -815,11 +815,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 //		  + cdStart + ") but no /partial in " + getId());
 //		  setPartial(true);
 //		  }
-//		
+//
 //		  if (cdStartNum != 1) {
 //		  setCodonStart(cdStartNum);
 //		  }
-//		
+//
 //		  SeqTrans.SeqTransResult result =
 //		  SeqTrans.getInstance().translate(this, getTranslationTableNumber(),
 //		  getCodonStart().intValue(), codon, except);

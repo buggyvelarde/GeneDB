@@ -101,7 +101,7 @@ public class Feature implements java.io.Serializable {
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<Phylonode> phylonodes;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbxref_id", unique = false, nullable = true, insertable = true, updatable = true)
     private DbXRef dbXRef;
 
@@ -121,14 +121,14 @@ public class Feature implements java.io.Serializable {
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<FeatureDbXRef> featureDbXRefs;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureByFeatureId")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureByFeatureId")
     @OrderBy("rank ASC")
     private List<FeatureLoc> featureLocsForFeatureId;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<FeatureCvTerm> featureCvTerms;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     // @Cascade( {CascadeType.ALL, CascadeType.DELETE_ORPHAN} )
     private Collection<FeatureProp> featureProps;
 
@@ -392,6 +392,13 @@ public class Feature implements java.io.Serializable {
 
     public void setFeatureDbXRefs(Collection<FeatureDbXRef> featureDbXRefs) {
         this.featureDbXRefs = featureDbXRefs;
+    }
+
+    public void addFeatureDbXRef(FeatureDbXRef featureDbXRef) {
+        if (this.featureDbXRefs == null)
+            this.featureDbXRefs = new HashSet<FeatureDbXRef>();
+        this.featureDbXRefs.add(featureDbXRef);
+        featureDbXRef.setFeature(this);
     }
 
     public List<FeatureLoc> getFeatureLocsForFeatureId() {

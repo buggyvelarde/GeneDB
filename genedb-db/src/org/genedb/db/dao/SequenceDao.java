@@ -5,16 +5,21 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.dao.SequenceDaoI;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.sequence.feature.Gene;
+import org.gmod.schema.sequence.feature.Polypeptide;
+import org.gmod.schema.sequence.feature.PolypeptideDomain;
 import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -25,7 +30,9 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
  */
 public class SequenceDao extends BaseDao implements SequenceDaoI {
 
-    private static Logger logger = Logger.getLogger(org.genedb.db.dao.SequenceDao.class);
+    private static final Logger logger = Logger.getLogger(SequenceDao.class);
+
+    private CvDaoI cvDao;
 
     public Feature getFeatureById(int id) {
         return (Feature) getHibernateTemplate().load(Feature.class, id);
@@ -402,5 +409,120 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
             return frs.get(0);
         }
         return null;
+    }
+
+    private static final String QUERY_UNIQUENAME
+        = "select uniqueName from Feature where uniqueName = :uniqueName";
+
+    private boolean featureExists(String uniqueName) {
+        List<?> names = getHibernateTemplate().findByNamedParam(
+            QUERY_UNIQUENAME, "uniqueName", uniqueName);
+        return !names.isEmpty();
+    }
+
+    /**
+     * Given a candidate uniqueName for a feature, return a derived
+     * name that does not exist in the database. If the given name
+     * does not exist, it is guaranteed to be returned unchanged;
+     * otherwise it will have the string <code>:n</code> appended,
+     * where <code>n</code> is the least positive integer such that
+     * the name does not exist.
+     *
+     * @param uniqueName the proposed uniqueName
+     * @return a derived uniqueName that does not exist in the database
+     */
+    private String makeNameUnique(String uniqueName) {
+        /*
+         * Any features which have been persisted but not flushed
+         * will fail to be found here, unless we flush them first.
+         */
+        flush();
+
+        if (!featureExists(uniqueName)) {
+            logger.debug(String.format("Feature named '%s' does not already exist", uniqueName));
+            return uniqueName;
+        }
+
+        String nameToUse;
+        for (int n=1; featureExists(nameToUse = String.format("%s:%d", uniqueName, n)); n++);
+        logger.debug(String.format("Feature '%s' will be named '%s'", uniqueName, nameToUse));
+        return nameToUse;
+    }
+
+    /*
+     * The object-creation methods below are experimental. The thought is that
+     * it's redundant to have to specify the CvTerm when creating a feature,
+     * because the feature class determines it. I'm not sure whether it's
+     * possible to have the constructors do this: certainly they can't get
+     * access to the Hibernate session in any straightforward fashion. One
+     * possibility is to get the session factory from JNDI, where Hibernate
+     * should bind it. (In fact I don't think that is currently working: we get
+     * an error saying it can't be bound. This is presumably easy to fix.)
+     *
+     * If we can write constructors that get the CvTerm themselves, that would
+     * perhaps be a better solution to the basic problem. It's obviously
+     * inconvenient to have a lot of class-specific methods here that should
+     * really be associated with the classes themselves. On the other hand,
+     * methods here can do more sophisticated construction involving several
+     * objects, factory-style, as {@link #createPolypeptideDomain} shows.
+     *
+     * The message (to my future self and to anyone else who works on this) is
+     * to keep an open mind about whether this is a good idea or not. Perhaps we
+     * should ALSO have constructors that work out the CvTerm for themselves,
+     * and just have non-trivial factory methods defined here.
+     *
+     * There is also some overlap of intent with
+     * org.genedb.db.loading.FeatureUtils, which should be resolved, perhaps by
+     * migrating the factory methods of FeatureUtils into here..
+     *
+     * -rh11
+     */
+
+    private CvTerm polypeptideDomainType, scoreType, descriptionType;
+    /**
+     * Create a new polypeptide domain feature
+     *
+     * @param polypeptide the polypeptide to which this domain feature should be attached
+     * @param id a string identifying the domain
+     * @param score an indication, from the algorithm that predicted this domain,
+     *          of the confidence of the prediction. Usually a number.
+     * @param description description of the doman
+     * @param start the start of the domain, relative to the polypeptide, in interbase coordinates
+     * @param end the end of the domain, relative to the polypeptide, in interbase coordinates
+     * @param dbxref a database reference for this domain, if applicable. Can be null.
+     * @return the newly-created polypeptide domain
+     */
+    public PolypeptideDomain createPolypeptideDomain(Polypeptide polypeptide,
+            String id, String score, String description, int start, int end, DbXRef dbxref) {
+        if (polypeptideDomainType == null)
+            polypeptideDomainType = cvDao.getCvTermByNameAndCvName("polypeptide_domain", "sequence");
+        if (scoreType == null)
+            scoreType = cvDao.getCvTermByNameAndCvName("score", "null");
+        if (descriptionType == null)
+            descriptionType = cvDao.getCvTermByNameAndCvName("description", "feature_property");
+
+        String domainUniqueName = makeNameUnique(String.format("%s:%s",polypeptide.getUniqueName(), id));
+        PolypeptideDomain domain = new PolypeptideDomain(
+            polypeptide.getOrganism(), polypeptideDomainType, domainUniqueName);
+        FeatureLoc domainLoc = new FeatureLoc(polypeptide, domain, start, false, end, false, (short)0/*strand*/, null, 0, 0);
+        domain.addFeatureLocsForFeatureId(domainLoc);
+
+        FeatureProp scoreProp = new FeatureProp(domain, scoreType, score, 0);
+        domain.addFeatureProp(scoreProp);
+
+        FeatureProp descriptionProp = new FeatureProp(domain, descriptionType, description, 0);
+        domain.addFeatureProp(descriptionProp);
+
+        domain.setDbXRef(dbxref);
+
+        persist(domain);
+
+        return domain;
+        // TODO Add interproDbxref as additional parameter?
+    }
+
+    /* Invoked by Spring */
+    public void setCvDao(CvDaoI cvDao) {
+        this.cvDao = cvDao;
     }
 }

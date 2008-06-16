@@ -7,9 +7,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.util.List;
 
 public class BaseDao extends HibernateDaoSupport {
-	
-	private static Logger logger = Logger.getLogger(org.genedb.db.dao.BaseDao.class);
-	
+
+    private static Logger logger = Logger.getLogger(org.genedb.db.dao.BaseDao.class);
+
     private PlatformTransactionManager platformTransactionManager;
 
     /**
@@ -17,7 +17,7 @@ public class BaseDao extends HibernateDaoSupport {
      * or depending upon flush mode). This method is defined in all the DAOs.
      * It's recommended to call it through an appropriate one eg SequenceDaoI
      * for FeatureI
-     * 
+     *
      * @param o The object to store
      */
     public void persist(Object o) {
@@ -29,7 +29,7 @@ public class BaseDao extends HibernateDaoSupport {
      * end of the current transaction, or depending upon flush mode). This
      * method is defined in all the DAOs. It's recommended to call it through an
      * appropriate one eg SequenceDaoI for FeatureI
-     * 
+     *
      * @param o The object to merge
      */
     public void merge(Object o) {
@@ -41,11 +41,18 @@ public class BaseDao extends HibernateDaoSupport {
      * transaction, or depending upon flush mode). This method is defined in all
      * the DAOs. It's recommended to call it through an appropriate one eg
      * SequenceDaoI for FeatureI
-     * 
+     *
      * @param o The object to delete
      */
     public void delete(Object o) {
         getHibernateTemplate().delete(o);
+    }
+
+    /**
+     * Flush the session.
+     */
+    public void flush() {
+        getHibernateTemplate().flush();
     }
 
     public PlatformTransactionManager getPlatformTransactionManager() {
@@ -60,11 +67,11 @@ public class BaseDao extends HibernateDaoSupport {
      * Returns the first element of the given list, or null if the list is
      * empty. If the list has more than one element, logs a warning before
      * returning.
-     * 
+     *
      * The intention is that this should be called by data access methods that
      * expect a single result. The args parameters should consist alternately of
      * names and values, indicating the query parameters used.
-     * 
+     *
      * @param <T>
      * @param list The result list
      * @param args The query parameters (included in the log message if list

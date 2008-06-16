@@ -47,7 +47,7 @@ public class ExtendedOrganismManager {
     }
 
     public void afterPropertiesSet() {
-        Cv cv = cvDao.getCvByName("wibble").get(0); // FIXME
+        Cv cv = cvDao.getCvByName("wibble"); // FIXME
         rootType = cvDao.getCvTermByNameInCv("root", cv).get(0);
         interiorType = cvDao.getCvTermByNameInCv("interior", cv).get(0);
         leafType = cvDao.getCvTermByNameInCv("leaf", cv).get(0);
@@ -64,7 +64,7 @@ public class ExtendedOrganismManager {
     /**
      * Iterate over the children of node, creating a new ExtendedOrganism for
      * each one. This method calls itself recursively to process all children.
-     * 
+     *
      * @param node
      *                the parent node to process the children of
      * @param parent

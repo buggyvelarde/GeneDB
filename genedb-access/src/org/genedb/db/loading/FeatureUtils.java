@@ -167,8 +167,8 @@ public class FeatureUtils implements InitializingBean {
     }
 
     public void afterPropertiesSet() {
-        so = cvDao.getCvByName("sequence").get(0);
-        Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
+        so = cvDao.getCvByName("sequence");
+        Cv CV_GENEDB = cvDao.getCvByName("genedb_misc");
         GENEDB_TOP_LEVEL = cvDao.getCvTermByNameInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
         DUMMY_PUB = pubDao.getPubByUniqueName("null");
         PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
@@ -289,11 +289,11 @@ public class FeatureUtils implements InitializingBean {
     }
 
     /**
-     * Take a pipe-seperated string and split them up, then lookup or create
-     * them
+     * Take a pipe-separated list of dbxref identifers, and find (or
+     * create if necessary) the corresponding {@link org.gmod.schema.general.DbXRef}s.
      *
-     * @param xref A list of pipe seperated dbxrefs strings
-     * @return A list of DbXrefs
+     * @param xref A pipe-separated list of dbxref identifiers
+     * @return A list of the corresponding DbXref objects
      */
     public List<DbXRef> findOrCreateDbXRefsFromString(String xref) {
         List<DbXRef> ret = new ArrayList<DbXRef>();
@@ -317,12 +317,17 @@ public class FeatureUtils implements InitializingBean {
         }
         String dbName = xref.substring(0, index);
         String accession = xref.substring(index + 1);
+        return findOrCreateDbXRefFromDbAndAccession(dbName, accession);
+    }
+
+    public DbXRef findOrCreateDbXRefFromDbAndAccession(String dbName, String accession) {
         Db db = generalDao.getDbByName(dbName);
         if (db == null) {
             return null;
         }
         DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, accession);
         if (dbXRef == null) {
+            logger.debug(String.format("Creating new dbxref '%s:%s'", dbName, accession));
             dbXRef = new DbXRef(db, accession);
             sequenceDao.persist(dbXRef);
         }
@@ -344,31 +349,6 @@ public class FeatureUtils implements InitializingBean {
             }
         }
         return feature.getFeatureLocsForFeatureId().iterator().next().getFeatureBySrcFeatureId();
-    }
-
-    /**
-     * Take a cv and cvterm and look it up, or create it if it doesn't exist
-     *
-     * @param cv the cv
-     * @param cvTerm the cvTerm to find/create
-     * @return the created or looked-up CvTerm
-     */
-    public CvTerm findOrCreateCvTermFromString(String cv, String cvTerm) {
-        List<Cv> cvList = cvDao.getCvByName(cv);
-        if (cvList == null || cvList.size() == 0) {
-            return null;
-        }
-
-        List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(cvTerm, cvList.get(0));
-        if (cvTerms == null || cvTerms.size() == 0) {
-            Db db = generalDao.getDbByName("null");
-            DbXRef dbXRef = new DbXRef(db, cvTerm);
-            generalDao.persist(dbXRef);
-            CvTerm cvterm = new CvTerm(cvList.get(0), dbXRef, cvTerm, cvTerm);
-            cvDao.persist(cvterm);
-            return cvterm;
-        }
-        return cvTerms.get(0);
     }
 
     public void findPubOrDbXRefFromString(String xrefString, List<Pub> pubs, List<DbXRef> dbXRefs) {
@@ -508,7 +488,7 @@ public class FeatureUtils implements InitializingBean {
         // FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
         // sequenceDao.persist(fctp);
         // }
-        Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
+        Cv CV_GENEDB = cvDao.getCvByName("genedb_misc");
         CvTerm GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
         CvTerm GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
         // GO_KEY_DATE = cvDao.getCvTermByNameInCv("unixdate",
@@ -531,10 +511,9 @@ public class FeatureUtils implements InitializingBean {
         // With/From
         String xref = go.getWithFrom();
         if (xref != null) {
-            int index = xref.indexOf(':');
-            if (index == -1) {
+            if (!xref.contains(":"))
                 logger.error(String.format("Can't parse dbxref '%s'", xref));
-            } else {
+            else {
                 List<DbXRef> dbXRefs = findOrCreateDbXRefsFromString(xref);
                 for (DbXRef dbXRef : dbXRefs) {
                     if (dbXRef != null) {

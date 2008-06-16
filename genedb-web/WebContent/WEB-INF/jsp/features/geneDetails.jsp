@@ -174,8 +174,9 @@
     </c:if>
 
     <!-- Domain Information -->
-    <div id="domainInfo" style="clear: both;">
-    </div>
+    <format:genePageSection id="controlCur">
+        <div class="heading">Domain Information</div>
+    </format:genePageSection>
 
     <!-- Ortholog / Paralog Section -->
     <db:propByName items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>

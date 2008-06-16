@@ -1,19 +1,23 @@
 package org.genedb.db.loading.interpro;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.zip.GZIPInputStream;
+import java.sql.SQLException;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.FeatureUtils;
+import org.genedb.db.loading.GoInstance;
+import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.feature.AbstractGene;
+import org.gmod.schema.sequence.feature.Polypeptide;
+import org.gmod.schema.sequence.feature.PolypeptideDomain;
+import org.gmod.schema.sequence.feature.ProductiveTranscript;
+import org.gmod.schema.sequence.feature.Transcript;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
@@ -27,82 +31,112 @@ public class InterProLoader {
     private FeatureUtils featureUtils;
     private HibernateTransactionManager hibernateTransactionManager;
 
-    private static HashMap<String, String> dbs = new HashMap<String, String>();
-    static {
-        dbs.put("HMMPfam", "Pfam");
-        dbs.put("ScanProsite", "PROSITE");
-        dbs.put("FPrintScan", "PRINTS");
-        dbs.put("ProfileScan", "PROSITE");
-        dbs.put("ScanRegExp", "PROSITE");
-        dbs.put("HMMSmart", "SMART");
-        dbs.put("BlastProDom", "ProDom");
-        dbs.put("Superfamily", "Superfamily");
-        dbs.put("superfamily", "Superfamily");
-    }
-
-    private static FilenameFilter doesNotEndWithTilde = new FilenameFilter() {
-        public boolean accept(@SuppressWarnings("unused") File dir, String name) {
-            return !name.endsWith("~");
-        }
-    };
-
-    public void load(String filename) throws IOException {
-        File file = new File(filename);
-        if (!file.exists()) {
-            logger.error("No such file/directory: "+filename);
-            return;
-        }
-
-        if ( file.isDirectory() ) {
-            for (String filteredFilename: file.list(doesNotEndWithTilde))
-                load(filename+"/"+filteredFilename);
-            return;
-        }
-
-        logger.info(String.format("Reading interpro from '%s'", filename));
-
-        InputStream inputStream = new FileInputStream(file);
-        if (filename.endsWith(".gz")) {
-            logger.info("Treating as a GZIP file");
-            inputStream = new GZIPInputStream(inputStream);
-        }
-
-        InterProFile interProFile = new InterProFile(inputStream);
-
+    public void load(InterProFile interProFile) {
         SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
         TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
         Transaction transaction = session.beginTransaction();
 
-        load(interProFile);
+        for (String gene: interProFile.genes()) {
+            logger.debug(String.format("Processing gene '%s'", gene));
+            loadGene(interProFile, gene);
+        }
 
         transaction.rollback();
         TransactionSynchronizationManager.unbindResource(sessionFactory);
         SessionFactoryUtils.closeSession(session);
     }
 
-    public void load(InterProFile interProFile) {
-        for (String gene: interProFile.genes()) {
-            logger.debug(String.format("Processing gene '%s'", gene));
-            loadGene(interProFile, gene);
-        }
-    }
-
     private void loadGene(InterProFile interProFile, String gene) {
-        for (String acc: interProFile.accsForGene(gene)) {
-            logger.debug(String.format("Processing '%s'", acc));
-            loadGroup(interProFile, gene, acc);
+        Polypeptide polypeptide = getPolypeptideForGene(gene);
+        if (polypeptide == null)
+            return;
+        for (InterProAcc acc: interProFile.accsForGene(gene)) {
+            logger.debug(String.format("Processing '%s'", acc.getId()));
+            loadGroup(interProFile, gene, acc, polypeptide);
         }
     }
 
-    private void loadGroup(InterProFile interProFile, String gene, String acc) {
-        if (!"NULL".equals(acc))
-            // TODO create dbxref if necessary
-            ;
+    private Polypeptide getPolypeptideForGene(String geneUniqueName) {
+        AbstractGene gene = sequenceDao.getFeatureByUniqueName(geneUniqueName,
+            AbstractGene.class);
+        if (gene == null) {
+            logger.error(String.format("Gene '%s' not found in database", geneUniqueName));
+            return null;
+        }
+
+        Collection<Transcript> transcripts = gene.getTranscripts();
+        if (transcripts.isEmpty()) {
+            logger.error(String.format("Gene '%s' has no transcripts", geneUniqueName));
+            return null;
+        }
+
+        // Select the coding transcript with the least feature_id,
+        // logging an error if there's more than one.
+        ProductiveTranscript selectedTranscript = null;
+        int numberOfProductiveTranscripts = 0;
+        for (Transcript transcript : transcripts)
+            if (transcript instanceof ProductiveTranscript) {
+                ++ numberOfProductiveTranscripts;
+                if (selectedTranscript == null
+                    || transcript.getFeatureId() < selectedTranscript.getFeatureId())
+                {
+                    selectedTranscript = (ProductiveTranscript) transcript;
+                }
+            }
+
+        if (selectedTranscript == null) {
+            logger.error("Gene '%s' has no coding transcripts.");
+            return null;
+        }
+        if (numberOfProductiveTranscripts > 1)
+            logger.error(String.format("The gene '%s' is alternatively spliced: " +
+        		"we don't know to which transcript the domain hits apply.\n" +
+        		"We've selected '%s', the first coding transcript by loading" +
+        		"order: there's no reason to believe that is right!",
+        		geneUniqueName, selectedTranscript.getUniqueName()));
+
+        return selectedTranscript.getProtein();
+    }
+
+    private void loadGroup(InterProFile interProFile, String gene, InterProAcc acc, Polypeptide polypeptide) {
+        DbXRef interproDbxref = null;
+        if (!"NULL".equals(acc)) {
+            interproDbxref = featureUtils.findOrCreateDbXRefFromString("InterPro:" + acc.getId());
+            interproDbxref.setDescription(acc.getDescription());
+        }
+
         for (InterProRow row: interProFile.rows(gene, acc)) {
             logger.debug(row);
-            // TODO insert polypeptide_domain, link to Interpro dbxref if applicable
-            // TODO insert GO terms, if there are any
+
+            // Insert polypeptide_domain, link to Interpro dbxref if applicable
+            DbXRef dbxref = featureUtils.findOrCreateDbXRefFromDbAndAccession(row.db, row.nativeAcc);
+            PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(polypeptide, row.nativeAcc, row.score, row.desc, row.fmin, row.fmax, dbxref);
+
+            if (interproDbxref != null) {
+                FeatureDbXRef featureDbXRef = new FeatureDbXRef(interproDbxref, polypeptide, true);
+                polypeptideDomain.addFeatureDbXRef(featureDbXRef);
+            }
+
+            // Insert GO terms, if there are any
+            for (GoInstance goTerm: row.goTerms) {
+                try {
+                    featureUtils.createGoEntries(polypeptide, goTerm);
+                }
+                catch (DataIntegrityViolationException exception) {
+                    logger.error(String.format("Failed to create GO term '%s' for domain '%s'", goTerm.getId(), polypeptideDomain.getUniqueName()));
+                    Throwable cause = exception.getMostSpecificCause();
+                    logger.error(cause.getMessage());
+                    if (cause instanceof SQLException) {
+                        Throwable ultimateCause = null;
+                        for (Throwable chainedException: (SQLException) cause)
+                            ultimateCause = chainedException;
+
+                        logger.error(ultimateCause);
+                        System.exit(1); // TODO remove this line
+                    }
+                }
+            }
         }
     }
 

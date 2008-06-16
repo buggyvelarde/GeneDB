@@ -31,6 +31,8 @@ import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
+import org.gmod.schema.sequence.feature.Polypeptide;
+import org.gmod.schema.sequence.feature.PolypeptideDomain;
 import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
 
@@ -257,4 +259,25 @@ public interface SequenceDaoI extends BaseDaoI {
     public FeatureRelationship getFeatureRelationshipBySubjectObjectAndRelation(Feature subject,
     		Feature object, CvTerm relation);
 
+
+    /* Re the below, see the long comment in SequenceDao.java
+     *
+     *  -rh11
+     */
+
+    /**
+     * Create a new polypeptide domain feature
+     *
+     * @param polypeptide the polypeptide to which this domain feature should be attached
+     * @param id a string identifying the domain
+     * @param score an indication, from the algorithm that predicted this domain,
+     *          of the confidence of the prediction. Usually a number.
+     * @param description description of the doman
+     * @param start the start of the domain, relative to the polypeptide, in interbase coordinates
+     * @param end the end of the domain, relative to the polypeptide, in interbase coordinates
+     * @param dbxref a database reference for this domain, if applicable. Can be null.
+     * @return the newly-created polypeptide domain
+     */
+    public PolypeptideDomain createPolypeptideDomain(Polypeptide polypeptide,
+            String id, String score, String description, int start, int end, DbXRef dbxref);
 }

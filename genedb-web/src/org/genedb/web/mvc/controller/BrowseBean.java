@@ -1,6 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +11,6 @@ import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.utils.CountedName;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.ApplicationContextException;
-
 
 public class BrowseBean implements InitializingBean {
 
@@ -29,32 +26,21 @@ public class BrowseBean implements InitializingBean {
 
     private int limit = DEFAULT_LIMIT;
 
-	private Map<String,Cv> cvs = new HashMap<String, Cv>();
+    private Map<String, Cv> cvs = new HashMap<String, Cv>();
 
-	public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() throws Exception {
+        for (String cvName : cvNames)
+            cvs.put(cvName, cvDao.getCvByName(cvName));
+    }
 
-		for (String cvName : cvNames) {
-        	List<Cv> temp = cvDao.getCvByName(cvName);
-
-        	if (temp.size() == 0) {
-        		throw new ApplicationContextException("No cv of name '"+cvName+"' found when configuring " + getClass());
-        	}
-        	if (temp.size() > 1) {
-        		throw new ApplicationContextException("Too many ('"+cvs.size()+"') cv of name '"+cvName+"' found when configuring " + getClass());
-        	}
-
-        	cvs.put(cvName,temp.get(0));
-        }
-	}
-
-	public List<String> getPossibleMatches(String search,String cvName) {
-		return cvDao.getPossibleMatches(search, cvs.get(cvName), limit);
-//        List<String> results = new ArrayList<String>();
-//        results.add("a");
-//        results.add("b");
-//        results.add("c");
-//        return results;
-	}
+    public List<String> getPossibleMatches(String search, String cvName) {
+        return cvDao.getPossibleMatches(search, cvs.get(cvName), limit);
+        // List<String> results = new ArrayList<String>();
+        // results.add("a");
+        // results.add("b");
+        // results.add("c");
+        // return results;
+    }
 
     public List<CountedName> getAllTerms() {
         return cvDao.getAllTermsInCvWithCount(cv);
@@ -62,10 +48,6 @@ public class BrowseBean implements InitializingBean {
 
     public List<Feature> getFeaturesForCvTerm(String cvTermName, String cvName) {
         List<Feature> features = sequenceDao.getFeaturesByCvTermNameAndCvName(cvTermName, cvName);
-        for (Feature feature : features) {
-            // TODO Replace protein etc with genes
-
-        }
         return features;
     }
 
@@ -73,8 +55,6 @@ public class BrowseBean implements InitializingBean {
     public void setCvDaoI(CvDaoI cvDao) {
         this.cvDao = cvDao;
     }
-
-
 
     public void setLimit(int limit) {
         this.limit = limit;
@@ -85,8 +65,8 @@ public class BrowseBean implements InitializingBean {
         this.sequenceDao = sequenceDao;
     }
 
-	public void setCvNames(List<String> cvName) {
-		this.cvNames = cvName;
-	}
+    public void setCvNames(List<String> cvName) {
+        this.cvNames = cvName;
+    }
 
 }

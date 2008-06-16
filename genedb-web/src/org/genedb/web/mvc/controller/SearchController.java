@@ -44,7 +44,7 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
- * 
+ *
  * @author Adrian Tivey
  */
 public class SearchController extends MultiActionController implements InitializingBean {
@@ -77,7 +77,7 @@ public class SearchController extends MultiActionController implements Initializ
 
     /**
      * Custom handler for gene test
-     * 
+     *
      * @param request current HTTP request
      * @param response current HTTP response
      * @return a ModelAndView to render the response
@@ -89,7 +89,7 @@ public class SearchController extends MultiActionController implements Initializ
 
     /**
      * Custom handler for MOD common URL
-     * 
+     *
      * @param request current HTTP request
      * @param response current HTTP response
      * @return a ModelAndView to render the response
@@ -101,7 +101,7 @@ public class SearchController extends MultiActionController implements Initializ
 
     /**
      * Custom handler for examples
-     * 
+     *
      * @param request current HTTP request
      * @param response current HTTP response
      * @return a ModelAndView to render the response
@@ -153,7 +153,7 @@ public class SearchController extends MultiActionController implements Initializ
             throw new RuntimeException(String.format("Could not find feature with unique name '%s'", name));
         else if (features.size() > 1)
             logger.error(String.format("Found more than one feature with uniqueName LIKE '%s'", name));
-            
+
         Feature feat = features.get(0);
         Map<String,Object> model = new HashMap<String,Object>(4);
         model.put("feature", feat);
@@ -254,7 +254,7 @@ public class SearchController extends MultiActionController implements Initializ
     @SuppressWarnings("unused")
     public ModelAndView FindCvByName(HttpServletRequest request, HttpServletResponse response) {
         String name = ServletRequestUtils.getStringParameter(request, "name", "%");
-        List<Cv> cvs = this.cvDao.getCvByName(name);
+        List<Cv> cvs = this.cvDao.getCvsByNamePattern(name);
         Map<String,Object> model = new HashMap<String,Object>();
         String viewName = "db/listCv";
         if (cvs.size() == 1) {
@@ -271,10 +271,10 @@ public class SearchController extends MultiActionController implements Initializ
         String viewName = listProductsView;
         /*
          * HashMap hm = sequenceDao.getProducts();
-         * 
+         *
          * List<String> products = new ArrayList<String>(); List<String>
          * numbers = new ArrayList<String>();
-         * 
+         *
          * int count = 0; Set mappings = hm.entrySet(); for (Iterator i =
          * mappings.iterator(); i.hasNext();) { Map.Entry me =
          * (Map.Entry)i.next(); Object product = me.getKey(); Object number =
@@ -293,8 +293,7 @@ public class SearchController extends MultiActionController implements Initializ
         String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", "*");
         System.err.println("cvName=" + cvName + "   :   cvTermName=" + cvTermName);
         cvTermName = cvTermName.replace('*', '%');
-        List<Cv> cvs = cvDao.getCvByName(cvName);
-        Cv cv = cvs.get(0);
+        Cv cv = cvDao.getCvByName(cvName);
         System.err.println("cv=" + cv);
         List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(cvTermName, cv);
         String viewName = "db/listCvTerms";
@@ -371,7 +370,7 @@ public class SearchController extends MultiActionController implements Initializ
     // HttpServletResponse response) {
     // int id = ServletRequestUtils.getIntParameter(request, "id", -1);
     // if (id == -1) {
-    //		    
+    //
     // }
     // Pub pub = pubHome.findById(id);
     // Map model = new HashMap(3);

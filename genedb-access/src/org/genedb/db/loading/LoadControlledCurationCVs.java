@@ -58,15 +58,15 @@ import java.util.Properties;
 public class LoadControlledCurationCVs implements ApplicationContextAware {
 
     private static String usage="LoadControlledCuration";
-    
+
     protected final Log logger = LogFactory.getLog(this.getClass());
-    
+
     private ApplicationContext applicationContext;
 
     private CvDao cvDao;
 
     private GeneralDao generalDao;
-    
+
     private HibernateTransactionManager hibernateTransactionManager;
 
     @Required
@@ -98,7 +98,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
      * the command-line.
      *
      * @param args organism_common_name, [conf file path]
-     * @throws IOException 
+     * @throws IOException
      */
     public static void main (String[] args) throws IOException {
 
@@ -135,8 +135,8 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
 
 
     private void loadCvTerms() throws IOException {
-        /* Load the cvterms from the file. 
-         * 
+        /* Load the cvterms from the file.
+         *
          */
 
         // FIXME Put input file into CVS
@@ -153,18 +153,15 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
                     Db db = generalDao.getDbByName("CCGEN");
                     String accession = "CCGEN_" + sections[1];
                     DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db,accession);
-                    if (dbXRef == null) { 
+                    if (dbXRef == null) {
                         dbXRef = new DbXRef(db, accession);
                         generalDao.persist(dbXRef);
                     }
                     String name = "CC_" + rawCvName;
-                    List<Cv> cvs = this.cvDao.getCvByName(name);
-                    Cv cv = null;
-                    if (cvs.size() == 1) {
-                    	cv = cvs.get(0);
-                    } else {
+                    Cv cv = this.cvDao.getCvByName(name);
+                    if (cv == null)
                         throw new RuntimeException("Can't find required cv of name '"+name+"'");
-                    }
+
                     cvTerm = new CvTerm(cv, dbXRef, sections[1], sections[1]);
                     this.cvDao.persist(cvTerm);
                 }
@@ -173,7 +170,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
         in.close();
     }
 
-    
+
     private void loadRileyDb() throws IOException {
 
     	hibernateTransactionManager.getSessionFactory().openSession();
@@ -182,7 +179,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
         CvTerm parentId = null;
         String child = null;
         CvTerm childId = null;
-        Cv CV_RELATION = cvDao.getCvByName("relationship").get(0);
+        Cv CV_RELATION = cvDao.getCvByName("relationship");
         CvTerm REL_IS_A = cvDao.getCvTermByNameInCv("is_a", CV_RELATION).get(0);
         String str;
         while ((str = in.readLine()) != null) {
@@ -196,7 +193,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
                 }
                 DbXRef dbXRef = new DbXRef(db, sections[1]);
                 generalDao.persist(dbXRef);
-                Cv cv = this.cvDao.getCvByName("RILEY").get(0);
+                Cv cv = this.cvDao.getCvByName("RILEY");
                 cvTerm = new CvTerm(cv, dbXRef, sections[2], sections[2]);
                 this.cvDao.persist(cvTerm);
 

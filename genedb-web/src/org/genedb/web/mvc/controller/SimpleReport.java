@@ -34,11 +34,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author Adrian Tivey
  */
 public class SimpleReport extends MultiActionController implements InitializingBean {
-    
+
     	private SequenceDao sequenceDao;
     	//private PubHome pubHome;
     	private FileCheckingInternalResourceViewResolver viewChecker;
-	
+
 	public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
 	    this.viewChecker = viewChecker;
 	}
@@ -60,7 +60,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	public ModelAndView simpleQueryHandler(HttpServletRequest request, HttpServletResponse response) {
 		return new ModelAndView("featureView");
 	}
-	
+
 	/**
 	 * Custom handler for MOD common URL
 	 * @param request current HTTP request
@@ -70,8 +70,8 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	public ModelAndView booleanQueryHandler(HttpServletRequest request, HttpServletResponse response) {
 		return new ModelAndView("commonURLView");
 	}
-	
-	
+
+
 	/**
 	 * Custom handler for examples
 	 * @param request current HTTP request
@@ -82,15 +82,15 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    return new ModelAndView("examplesView");
 	}
 
-	
+
 	public ModelAndView FeatureById(HttpServletRequest request, HttpServletResponse response) {
 	    int id = ServletRequestUtils.getIntParameter(request, "id", -1);
 	    if (id == -1) {
-		    
+
 	    }
 	    Feature feat = sequenceDao.getFeatureById(id);
 	    Map model = new HashMap(3);
-	    model.put("feature", feat);		
+	    model.put("feature", feat);
 	    String viewName = "features/gene";
 	    String type = feat.getCvTerm().getName();
 	    // TODO
@@ -99,9 +99,9 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    viewName = "features/generic";
 	    return new ModelAndView(viewName, model);
 	}
-	
+
 	private static final String NO_VALUE_SUPPLIED = "_NO_VALUE_SUPPLIED";
-	
+
 	public ModelAndView DummyGeneFeature(HttpServletRequest request, HttpServletResponse response) {
 	    Feature feat = new Feature();
 	    feat.setName("dummy_name");
@@ -110,15 +110,15 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    cvTerm.setName("gene");
 	    feat.setCvTerm(cvTerm);
 	    Map model = new HashMap(3);
-	    model.put("feature", feat);		
+	    model.put("feature", feat);
 	    String viewName = "features/gene";
 	    return new ModelAndView(viewName, model);
 	}
-	
+
 	public ModelAndView ByRegion(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	    String name = ServletRequestUtils.getStringParameter(request, "name", NO_VALUE_SUPPLIED);
 	    if (name.equals(NO_VALUE_SUPPLIED)) {
-		    
+
 	    }
         RegionCommand bean = new RegionCommand();
         try {
@@ -130,10 +130,10 @@ public class SimpleReport extends MultiActionController implements InitializingB
         // Check sequence is valid in org
 	    Feature feat = sequenceDao.getFeaturesByUniqueName(bean.getName()).get(0);
 	    Map model = new HashMap(3);
-	    model.put("feature", feat);		
+	    model.put("feature", feat);
 	    String viewName = "features/gene";
 	    String type = feat.getCvTerm().getName();
-        
+
         Writer w = null; // TODO
         EmblUtils.exportEmbl(w, feat, bean.getMin(), bean.getMax(), false, true, bean.isTruncateEndFeatures());
 	    // TODO
@@ -142,17 +142,17 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    viewName = "features/generic";
 	    return new ModelAndView(viewName, model);
 	}
-	
+
 	CvDao cvDao;
 
 	public void setCvDao(CvDao cvDao) {
 	    this.cvDao = cvDao;
 	}
 
-	public ModelAndView FindCvByName(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView FindCvByName(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
 	    String name = ServletRequestUtils.getStringParameter(request, "name", "%");
-	    List cvs = cvDao.getCvByName(name);
-	    Map model = new HashMap();
+	    List<Cv> cvs = cvDao.getCvsByNamePattern(name);
+	    Map<String,Object> model = new HashMap<String,Object>();
 	    String viewName = "db/listCv";
 	    if (cvs.size()==1) {
 		viewName = "db/cv";
@@ -162,20 +162,20 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    }
 	    return new ModelAndView(viewName, model);
 	}
-	
 
-	public ModelAndView CvTermByCvName(HttpServletRequest request, HttpServletResponse response) {
+
+	public ModelAndView CvTermByCvName(HttpServletRequest request, @SuppressWarnings("unused")  HttpServletResponse response) {
 	    String cvName = ServletRequestUtils.getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
 	    String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", "*");
 	    System.err.println("cvName="+cvName+"   :   cvTermName="+cvTermName);
 	    cvTermName = cvTermName.replace('*', '%');
-	    List cvs = cvDao.getCvByName(cvName);
-	    Cv cv = (Cv) cvs.get(0);
+	    List<Cv> cvs = cvDao.getCvsByNamePattern(cvName);
+	    Cv cv = cvs.get(0);
 	    System.err.println("cv="+cv);
-	    List cvTerms = cvDao.getCvTermByNameInCv(cvTermName, cv);
+	    List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(cvTermName, cv);
 	    String viewName = "db/listCvTerms";
-	    Map model = new HashMap();
-	    
+	    Map<String,Object> model = new HashMap<String,Object>();
+
 	    if (cvTerms.size()==1) {
 		viewName = "db/cvTerm";
 		model.put("cvTerm", cvTerms.get(0));
@@ -185,19 +185,19 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    System.err.println("viewName is '"+viewName+"' and cvTerms length is "+cvTerms.size());
 	    return new ModelAndView(viewName, model);
 	}
-	
+
 //	public ModelAndView PublicationById(HttpServletRequest request, HttpServletResponse response) {
 //	    int id = ServletRequestUtils.getIntParameter(request, "id", -1);
 //	    if (id == -1) {
-//		    
+//
 //	    }
 //	    Pub pub = pubHome.findById(id);
 //	    Map model = new HashMap(3);
 //	    model.put("pub", pub);
 //	    return new ModelAndView("db/pub", model);
 //	}
-	
-	
+
+
 	/**
 	 * Custom handler for examples
 	 * @param request current HTTP request
@@ -210,7 +210,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 		if (!GeneDBWebUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
 			return new ModelAndView("chooseTaxonContextView");
 		}
-		
+
 		QueryForm qf = parseQueryForm(0, request);
 		NumberedQueryI q = qf.getNumberedQueryI();
 		if (q == null) {
@@ -225,7 +225,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 		    }
 		    // query not complete - fall back to query page
 		} else {
-		
+
 		    // Check for set expansion...
 		    for (Object o : request.getParameterMap().keySet()) {
 			String key = (String) o;
@@ -241,49 +241,49 @@ public class SimpleReport extends MultiActionController implements InitializingB
 		    }
 		    // Now let's see if an expansion was requested
 		}
-			
+
 		Map model = new HashMap();
 		model.put(WebConstants.QUERY_FORM, qf);
 		model.put(WebConstants.TAX_ID, answers.get(0));
 		return new ModelAndView("queryWorking", WebConstants.MODEL_MAP, model );
 	}
 
-	
-	private NumberedQueryI replaceNode(NumberedQueryI q, int q1, BooleanOp op) {	
+
+	private NumberedQueryI replaceNode(NumberedQueryI q, int q1, BooleanOp op) {
 		if (q1 == 0) {
 			return new BooleanQuery(op, q, new QueryPlaceHolder());
 		}
 		recurseTree(q, q1, op);
 		return q;
 	}
-		
-		
+
+
 	private boolean recurseTree(BasicQueryI q, int q1, BooleanOp op) {
 		// Looking for parent...
 		if (!(q instanceof BooleanQuery)) {
 			return false;
 		}
 		BooleanQuery bool = (BooleanQuery) q;
-		
+
 		if (bool.getFirstQuery().getIndex()==q1) {
 			BasicQueryI node = bool.getFirstQuery();
 			BooleanQuery newNode = new BooleanQuery(op, node, new QueryPlaceHolder());
 			bool.setFirstQuery(newNode);
 			return true;
 		}
-        
+
 		if (bool.getSecondQuery().getIndex()==q1) {
 		        BasicQueryI node = bool.getSecondQuery();
 		        BooleanQuery newNode = new BooleanQuery(op, node, new QueryPlaceHolder());
 		        bool.setSecondQuery(newNode);
 		        return true;
 		}
-		
+
 		if (recurseTree(bool.getFirstQuery(), q1, op)) {
 				return true;
 		}
 		return recurseTree(bool.getSecondQuery(), q1, op);
-		
+
 	}
 
 
@@ -296,9 +296,9 @@ public class SimpleReport extends MultiActionController implements InitializingB
 		QueryForm qf = new QueryForm();
 		qf.setNumberedQuery(parseQuery(index, request));
 		return qf;
-		
+
 	}
-	
+
 	/**
 	 * @param index
 	 * @param request
@@ -326,9 +326,9 @@ public class SimpleReport extends MultiActionController implements InitializingB
 			qph.setName(value);
 		}
 		qph.setIndex(index);
-		
+
 		return qph;
-		
+
 	}
 
 	public void setSequenceDao(SequenceDao sequenceDao) {

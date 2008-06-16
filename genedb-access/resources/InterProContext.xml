@@ -1,54 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
-         http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd"
-    default-init-method="postConstruction">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-    <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
-
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="messages"/>
-    </bean>
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages"/>
+	</bean>
 
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:project.properties" />
-    </bean>
-
-    <!-- ========================= MAPPING DEFINITIONS ========================= -->
-
-
-    <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
-        <property name="taxonNodeManager" ref="taxonNodeManager" />
-    </bean>
-
-    <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
-        <property name="phylogenyDao" ref="phylogenyDao" />
-        <property name="hibernateTransactionManager" ref="transactionManager" />
-    </bean>
-
-    <bean id="taxonUtils" class="org.genedb.web.mvc.controller.TaxonUtils">
-        <property name="tnm" ref="taxonNodeManager" />
-    </bean>
-
-    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
-        <property name="sessionFactory" ref="sessionFactory" />
-        <property name="platformTransactionManager" ref="transactionManager" />
-    </bean>
+		<property name="location" value="classpath:project.properties" />
+	</bean>
 
     <bean id="cvDao" class="org.genedb.db.dao.CvDao" init-method="afterPropertiesSet">
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="generalDao" ref="generalDao" />
-    </bean>
-
-    <bean id="luceneDao" class="org.genedb.web.mvc.controller.LuceneDao">
-        <property name="luceneIndexDirectoryName">
-        	<value>${lucene.indexDirectory}</value>
-        </property>
     </bean>
 
     <bean id="generalDao" class="org.genedb.db.dao.GeneralDao" init-method="afterPropertiesSet">
@@ -56,43 +25,60 @@
         <property name="platformTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="organismDao" class="org.genedb.db.dao.OrganismDao" init-method="afterPropertiesSet">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="phylogenyDao" class="org.genedb.db.dao.PhylogenyDao" init-method="afterPropertiesSet">
-        <property name="sessionFactory" ref="sessionFactory" />
+    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="platformTransactionManager" ref="transactionManager" />
+        <property name="cvDao" ref="cvDao"/>
     </bean>
 
     <bean id="pubDao" class="org.genedb.db.dao.PubDao" init-method="afterPropertiesSet">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    	<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+
+    <bean id="beanFactoryPostProcessor" class="org.genedb.db.loading.PropertyOverrideConfigurerByCoding">
+		<property name="key" value="dataSourceMunging"/>
+    </bean>
+
+    <bean id="iploader" class="org.genedb.db.loading.interpro.InterProLoader">
+    	<property name="featureUtils" ref="featureUtils" />
+    	<property name="sequenceDao" ref="sequenceDao" />
+    	<property name="hibernateTransactionManager" ref="transactionManager" />
+    </bean>
+
+    <bean id="featureUtils" class="org.genedb.db.loading.FeatureUtils">
+    	<property name="cvDao" ref="cvDao" />
+		<property name="sequenceDao" ref="sequenceDao" />
+		<property name="pubDao" ref="pubDao" />
+		<property name="generalDao" ref="generalDao" />
+    </bean>
 
     <!-- DataSource Property -->
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="org.postgresql.Driver" />
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		 <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url"><value>jdbc:postgresql://${dbhost}:${dbport}/${dbname}</value></property>
         <property name="username"><value>${dbuser}</value></property>
         <property name="password"><value>${dbpassword}</value></property>
-    </bean>
+	</bean>
 
-    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
+	<!-- Database Property -->
+	<bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+ 	<property name="properties">
+  	<props>
+  		<prop key="hibernate.hbm2dll.auto">validate</prop>
+        <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+        <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+        <prop key="hibernate.search.default.indexBase">${indexDir}</prop>
+      	<prop key="hibernate.search.autoregister_listeners">false</prop>
+	</props>
+	</property>
+	</bean>
 
-    <!-- Database Property -->
-    <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-    <property name="properties">
-        <props>
-            <prop key="hibernate.hbm2dll.auto">validate</prop>
-            <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop><!--
-            <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
-            <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop>
-         --></props>
-     </property>
-    </bean>
-
+    <!-- Hibernate SessionFactory -->
     <bean id="sessionFactory"
         class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />

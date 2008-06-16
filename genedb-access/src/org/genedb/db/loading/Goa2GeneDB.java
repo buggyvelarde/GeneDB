@@ -72,25 +72,25 @@ import java.util.regex.Pattern;
 public class Goa2GeneDB implements Goa2GeneDBI{
 
     protected static final Log logger = LogFactory.getLog(Goa2GeneDB.class);
-    
+
     private FeatureUtils featureUtils;
-	
+
     private SequenceDao sequenceDao;
 
     private CvDao cvDao;
-    
+
     private PubDao pubDao;
-    
+
     private HibernateTransactionManager hibernateTransactionManager;
 
 	private Pattern PUBMED_PATTERN;
-    
+
 	protected CvTerm GO_KEY_EVIDENCE;
     protected CvTerm GO_KEY_DATE;
     protected CvTerm GO_KEY_QUALIFIER;
-    
+
     private Session session;
-        
+
     public void setHibernateTransactionManager(
 			HibernateTransactionManager hibernateTransactionManager) {
 		this.hibernateTransactionManager = hibernateTransactionManager;
@@ -102,13 +102,13 @@ public class Goa2GeneDB implements Goa2GeneDBI{
          * the command-line.
          *
          * @param args organism_common_name, [conf file path]
-         * @throws XMLStreamException 
-         * @throws FileNotFoundException 
+         * @throws XMLStreamException
+         * @throws FileNotFoundException
          */
         public static void main (String[] args) throws FileNotFoundException {
-    
+
             String[] filePaths = args;
-    
+
             if (filePaths.length == 0) {
             	System.err.println("No input files specified");
             	System.exit(-1);
@@ -117,11 +117,11 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             Properties overrideProps = new Properties();
             overrideProps.setProperty("dataSource.username", "chado");
             PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
-    
-    
+
+
             ApplicationContext ctx = new ClassPathXmlApplicationContext(
                     new String[] {"NewRunner.xml"});
-    
+
             Goa2GeneDBI application = (Goa2GeneDBI) ctx.getBean("goa2genedb", Goa2GeneDBI.class);
             application.afterPropertiesSet();
             File[] inputs = new File[filePaths.length];
@@ -129,15 +129,15 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             for (int i = 0; i < filePaths.length; i++) {
             	inputs[i] = new File(filePaths[i]);
     		}
-            
+
 			application.process(inputs);
 			long duration = (new Date().getTime()-start)/1000;
 			logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
         }
-        
+
         /**
          * Does a string look likes it's a PubMed reference
-         * 
+         *
          * @param xref The string to examine
          * @return true if it looks like a PubMed reference
          */
@@ -149,11 +149,11 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 
         public void writeToDb(List<GoInstance> goInstances) {
         	for (GoInstance go : goInstances) {
-        		
+
         		Feature polypeptide = getPolypeptide(go.getGeneName());
-        		
+
         		if(polypeptide != null) {
-        		
+
         		String id = go.getId();
 
                 CvTerm cvTerm = cvDao.getGoCvTermByAccViaDb(id);
@@ -230,8 +230,8 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     		System.err.println("In aps cvDao='"+cvDao+"'");
     		session = hibernateTransactionManager.getSessionFactory().openSession();
     		PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
-    		Cv CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property").get(0);
-            Cv CV_GENEDB = cvDao.getCvByName("genedb_misc").get(0);
+    		Cv CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property");
+            Cv CV_GENEDB = cvDao.getCvByName("genedb_misc");
     		GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
             GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
             GO_KEY_DATE = cvDao.getCvTermByNameInCv("date", CV_FEATURE_PROPERTY).get(0);
@@ -247,7 +247,7 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     			try {
     				r = new FileReader(file);
     				goInstances = parseFile(r);
-    				
+
     			} catch (FileNotFoundException e) {
     				e.printStackTrace();
     				System.exit(-1);
@@ -256,7 +256,7 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     			transaction.commit();
     		}
     	}
-        
+
     	private List<GoInstance> parseFile(Reader r) {
     		BufferedReader input = new BufferedReader(r);
     		String line = null;
@@ -265,29 +265,29 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 				while((line = input.readLine()) != null) {
 
 		    		String terms[] = line.split("\t");
-		    		
+
 		    		GoInstance goi = new GoInstance();
-		    		
+
 					goi.setGeneName(terms[1].trim());
-					
+
 					String qualifier = terms[3];
 			        if ( qualifier != null && qualifier.length()>0) {
 			            goi.addQualifier(qualifier);
 			        }
-			        
+
 			        String id = terms[4];
 			        if (!id.startsWith("GO:")) {
 			            System.err.println("WARN: GO id doesn't start with GO: *"+id+"*");
 			            return null;
 			        }
 			        goi.setId( terms[4].substring(3) );
-			        
+
 			        goi.setRef(terms[5]);
 			        goi.setEvidence(GoEvidenceCode.valueOf(terms[6].trim()));
 			        goi.setWithFrom(terms[7]);
-			        
+
 			        String aspect = terms[8].substring(0,1).toUpperCase();
-		
+
 			        if( "P".equals(aspect) ){
 			            goi.setSubtype("process");
 			        } else {
@@ -302,19 +302,19 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 			                }
 			            }
 			        }
-			        
+
 			        goi.setDate(terms[13]);
-			        
+
 			        if (terms.length > 13) {
 			        		goi.setAttribution(terms[14]);
 			        }
-			        
+
 			        goInstances.add(goi);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			return goInstances;
     	}
 
@@ -330,5 +330,5 @@ public class Goa2GeneDB implements Goa2GeneDBI{
     	public void setPubDao(PubDao pubDao) {
     		this.pubDao = pubDao;
     	}
-        
+
     }

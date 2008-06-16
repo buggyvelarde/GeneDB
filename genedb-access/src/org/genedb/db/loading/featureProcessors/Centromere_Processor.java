@@ -30,8 +30,8 @@ public class Centromere_Processor extends BaseFeatureProcessor implements Featur
         Location loc = f.getLocation();
         Annotation an = f.getAnnotation();
         short strand = (short)f.getStrand().getValue();
-        String systematicId = (String) an.getProperty("systematic_id"); 
-        
+        String systematicId = (String) an.getProperty("systematic_id");
+
         Feature centromere = this.featureUtils.createFeature("centromere", systematicId,
                 this.organism);
         this.sequenceDao.persist(centromere);
@@ -42,7 +42,7 @@ public class Centromere_Processor extends BaseFeatureProcessor implements Featur
         createFeaturePropsFromNotes(centromere, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE, 0);
         createDbXRefs(centromere, an);
         // TODO Handle controlled curation
-        Cv CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration").get(0);
+        Cv CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration");
         createControlledCuration(centromere, an, CV_CONTROLLEDCURATION);
 	}
 

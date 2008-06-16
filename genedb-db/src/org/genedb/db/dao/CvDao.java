@@ -18,22 +18,33 @@ import java.util.Collection;
 import java.util.List;
 
 public class CvDao extends BaseDao implements CvDaoI {
-	
-	private static Logger logger = Logger.getLogger(org.genedb.db.dao.CvDao.class);
-	
+
+    private static Logger logger = Logger.getLogger(CvDao.class);
+
     protected GeneralDao generalDao;
 
     public Cv getCvById(int id) {
-    	return (Cv) getHibernateTemplate().load(Cv.class, id);
+        return (Cv) getHibernateTemplate().load(Cv.class, id);
     }
 
-    public List<Cv> getCvByName(String name) {
+    public List<Cv> getCvsByNamePattern(String namePattern) {
         @SuppressWarnings("unchecked")
-	List<Cv> cvs = getHibernateTemplate().findByNamedParam(
-		"from Cv cv where cv.name like :name", "name", name);
-	return cvs;
+        List<Cv> cvs = getHibernateTemplate().findByNamedParam(
+            "from Cv cv where cv.name like :name", "name", namePattern);
+        return cvs;
     }
-    
+
+    public Cv getCvByName(String name) {
+        @SuppressWarnings("unchecked")
+        List<Cv> cvs = getHibernateTemplate().findByNamedParam(
+            "from Cv cv where cv.name like :name", "name", name);
+        if (cvs.isEmpty()) {
+            logger.warn(String.format("Failed to find CV with name '%s'", name));
+            return null;
+        }
+        return cvs.get(0);
+    }
+
     public CvTerm getCvTermById(int id) {
         return (CvTerm) getHibernateTemplate().load(CvTerm.class, id);
     }
@@ -54,18 +65,17 @@ public class CvDao extends BaseDao implements CvDaoI {
     public CvTerm getGoCvTermByAcc(String value) {
         @SuppressWarnings("unchecked")
         List<CvTerm> terms = getHibernateTemplate().findByNamedParam(
-            "from CvTerm cvTerm where cvTerm.dbxref.db.name='GO' and cvTerm.dbxref.accession=:acc", 
+            "from CvTerm cvTerm where cvTerm.dbxref.db.name='GO' and cvTerm.dbxref.accession=:acc",
             "acc", value);
         return firstFromList(terms, "accession", value);
     }
 
     public CvTerm getGoCvTermByAccViaDb(final String id) {
-        @SuppressWarnings("unchecked")
         final Db DB_GO = generalDao.getDbByName("GO");
 
         // Find cvterm for db_xref
         TransactionTemplate tt = new TransactionTemplate(generalDao.getPlatformTransactionManager());
-        CvTerm cvTerm = (CvTerm) tt.execute(
+        return (CvTerm) tt.execute(
             new TransactionCallback() {
                 @SuppressWarnings("unused")
                 public Object doInTransaction(TransactionStatus status) {
@@ -86,7 +96,6 @@ public class CvDao extends BaseDao implements CvDaoI {
                     return cvTermDbXRefs.iterator().next();
                 }
             });
-            return cvTerm;
         }
 
         public void setGeneralDao(GeneralDao generalDao) {
@@ -107,19 +116,44 @@ public class CvDao extends BaseDao implements CvDaoI {
             return cvTerms;
         }
 
-        public CvTerm getCvTermByNameAndCvName(String cvTermName, String name) {
+        public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName) {
             @SuppressWarnings("unchecked")
             List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
-                "from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv.name like :name",
-                new String[]{"cvTermName", "name"}, new Object[]{cvTermName, name});
+                "from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv.name like :cvName",
+                new String[]{"cvTermName", "cvName"}, new Object[]{cvTermName, cvName});
             if (cvTermList == null || cvTermList.size() == 0) {
-                logger.warn("No cvterms found for '"+cvTermName+"' in '"+name+"'");
+                logger.warn("No cvterms found for '"+cvTermName+"' in '"+cvName+"'");
                 return null;
             } else {
                 return cvTermList.get(0);
             }
         }
-     
+
+        /**
+         * Take a cv and cvterm and look it up, or create it if it doesn't exist
+         *
+         * @param cv name of the cv, which must already exist
+         * @param cvTerm the cvTerm to find/create
+         * @return the created or looked-up CvTerm
+         */
+        public CvTerm findOrCreateCvTermByNameAndCvName(String cvTermName, String cvName) {
+            Cv cv = this.getCvByName(cvName);
+            if (cv == null) {
+                return null;
+            }
+
+            List<CvTerm> cvTerms = this.getCvTermByNameInCv(cvTermName, cv);
+            if (cvTerms == null || cvTerms.size() == 0) {
+                Db db = generalDao.getDbByName("null");
+                DbXRef dbXRef = new DbXRef(db, cvTermName);
+                generalDao.persist(dbXRef);
+                CvTerm cvterm = new CvTerm(cv, dbXRef, cvTermName, cvTermName);
+                this.persist(cvterm);
+                return cvterm;
+            }
+            return cvTerms.get(0);
+        }
+
         public CvTerm getCvTermByDbXRef(DbXRef dbXRef) {
             @SuppressWarnings("unchecked")
             List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
@@ -135,7 +169,7 @@ public class CvDao extends BaseDao implements CvDaoI {
             @SuppressWarnings("unchecked")
             List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
                 "cvt from CvTerm cvt, DbXRef dbx where cvt.dbXRef = dbx and dbx.db.name= :db and dbx.accession = :acc",
-                new String[]{db, acc}, 
+                new String[]{db, acc},
                 new Object[]{db, acc});
             if (cvTermList == null || cvTermList.size() == 0) {
                 return null;
@@ -155,15 +189,15 @@ public class CvDao extends BaseDao implements CvDaoI {
                 "cv", cv);
             return countedNames;
         }
-        
+
         public List<CountedName> getCountedNamesByCvNameAndOrganism(String cvName, List<String> orgList) {
             StringBuilder orgNames = new StringBuilder();
             boolean first = true;
             for (String orgName : orgList) {
-            	if (!first)
-            	    orgNames.append(", ");
-            	first = false;
-            	orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
+                if (!first)
+                    orgNames.append(", ");
+                first = false;
+                orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
             }
 
             @SuppressWarnings("unchecked")
@@ -176,39 +210,39 @@ public class CvDao extends BaseDao implements CvDaoI {
                 " group by cvt.name" +
                 " order by cvt.name",
             "cvName", cvName);
-            
+
             return countedNames;
         }
 
         public List<String> getPossibleMatches(String search, Cv cv, int limit) {
             HibernateTemplate ht = new HibernateTemplate(getSessionFactory());
             ht.setMaxResults(limit);
-            
+
             @SuppressWarnings("unchecked")
             List<String> result = ht.findByNamedParam(
             "select name from CvTerm where name like '%'||:search||'%' and cv = :cv",
             new String[]{"search", "cv"}, new Object[]{search, cv});
-            
+
             return result;
         }
-        
+
         @SuppressWarnings("unchecked")
-        public List<CountedName> getCountedNamesByCvNameAndFeature(String cvName,Polypeptide polypeptide) { 
-            
+        public List<CountedName> getCountedNamesByCvNameAndFeature(String cvName,Polypeptide polypeptide) {
+
             String query = "select new org.gmod.schema.utils.CountedName( fct.cvTerm.name, count" +
-            		" (fct)) from FeatureCvTerm fct where" +
-            		" fct.cvTerm.id in " +
-            		" (select fct.cvTerm.id from FeatureCvTerm fct, Feature f" +
-            		" where f=:polypeptide and fct.cvTerm.cv.name=:cvName" +
-            		" and fct.feature=f)" +
-            		" group by fct.cvTerm.name" +
-            		" order by fct.cvTerm.name";
-            
+                    " (fct)) from FeatureCvTerm fct where" +
+                    " fct.cvTerm.id in " +
+                    " (select fct.cvTerm.id from FeatureCvTerm fct, Feature f" +
+                    " where f=:polypeptide and fct.cvTerm.cv.name=:cvName" +
+                    " and fct.feature=f)" +
+                    " group by fct.cvTerm.name" +
+                    " order by fct.cvTerm.name";
+
             List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(query,
                 new String[]{"polypeptide","cvName"},
                 new Object[]{polypeptide,cvName});
-            
+
             return countedNames;
-            
+
         }
 }

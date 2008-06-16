@@ -19,10 +19,10 @@ public class Polypeptide extends Feature {
     private static Logger logger = Logger.getLogger(Polypeptide.class);
     @Transient
     private Transcript transcript = null;
-    
+
     @Transient
     private AbstractGene gene = null;
-    
+
     public Transcript getTranscript() {
         if (transcript != null)
             return transcript;
@@ -42,16 +42,14 @@ public class Polypeptide extends Feature {
     }
 
     public AbstractGene getGene() {
+        if (gene != null)
+            return gene;
+
         Transcript transcript = getTranscript();
+        if (transcript == null)
+            return null;
 
-        for (FeatureRelationship relation : transcript.getFeatureRelationshipsForSubjectId()) {
-            Feature geneFeature = relation.getFeatureByObjectId();
-            if(geneFeature instanceof AbstractGene) {
-                return (AbstractGene)geneFeature;
-            }
-        }
-
-        return null;
+        return gene = transcript.getGene();
     }
 
     @Transient

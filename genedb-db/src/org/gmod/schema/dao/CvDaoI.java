@@ -27,82 +27,97 @@ import org.gmod.schema.utils.CountedName;
 import java.util.List;
 
 public interface CvDaoI extends BaseDaoI {
-    
+
     /**
      * Get a CV by id
-     * 
+     *
      * @param id the cv id (primary key)
      * @return the corresponding Cv, or null
      */
-    public abstract Cv getCvById(int id);
+    public Cv getCvById(int id);
 
-    // TODO Should this return a list or just one?
+    /**
+     * Retrieve a list of Cvs whose names match the given pattern
+     * @param name
+     * @return
+     */
+    public List<Cv> getCvsByNamePattern(String namePattern);
+
     /**
      * Retrieve a controlled vocabulary by its name
-     * 
+     *
      * @param name the name to lookup
-     * @return the List<Cv> of matches, or null
+     * @return the named Cv, or null if there is no Cv of that name
      */
-    public abstract List<Cv> getCvByName(String name);
+    public Cv getCvByName(String name);
 
     /**
      * Retrieve a CvTerm by id
-     * 
+     *
      * @param id then cvterm id (primary key)
      * @return the corresponding CvTerm, or null
      */
-    public abstract CvTerm getCvTermById(int id);
+    public CvTerm getCvTermById(int id);
 
 
     // TODO Should this return a list or just one?
     /**
      * Retrieve a named CvTerm from a given Cv
-     * 
+     *
      * @param cvTermName the name of the cvterm
      * @param cv the controlled vocabulary this cvterm is part of
      * @return a (possibly empty) list of matching cvterms
      */
-    public abstract List<CvTerm> getCvTermByNameInCv(String cvTermName, Cv cv);
+    public List<CvTerm> getCvTermByNameInCv(String cvTermName, Cv cv);
 
 
     /**
      * Retrieve a CvTerm from the Gene Ontology
-     * 
-     * @param value the 
+     *
+     * @param value the
      * @return the corresponding CvTerm, or null
      */
-    public abstract CvTerm getGoCvTermByAcc(String value);
+    public CvTerm getGoCvTermByAcc(String value);
 
     /**
      * Retrieve a CvTerm from the Gene Ontology via it's database entry
-     * 
+     *
      * @param id the database name eg GO:123456
      * @return the corresponding CvTerm, or null
      */
-    public abstract CvTerm getGoCvTermByAccViaDb(final String id);
+    public CvTerm getGoCvTermByAccViaDb(final String id);
 
     /**
      * Retrieve all CvTerms
      * @return a list of all cvterms
      */
-    public abstract List<CvTerm> getCvTerms();
+    public List<CvTerm> getCvTerms();
 
     /**
      * Retrieve a named CvTerm from a given Cv
-     * 
+     *
      * @param cvTermName the name of the cvterm
-     * @param name the controlled vocabulary name this cvterm could be part of
+     * @param cvName the controlled vocabulary name this cvterm could be part of
      * @return a (possibly empty) cvterm
      */
-    public abstract CvTerm getCvTermByNameAndCvName(String cvTermName, String name);
-    
+    public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName);
+
+    /**
+     * Take a cv and cvterm and look it up, or create it if it doesn't exist
+     *
+     * @param cv name of the cv, which must already exist
+     * @param cvTerm the cvTerm to find/create
+     * @return the created or looked-up CvTerm
+     */
+    public CvTerm findOrCreateCvTermByNameAndCvName(String cvName, String cvTermName);
+
     /**
      * Get a CvTerm by DbXRef
-     * 
-     * @param dbXRef the DbXRef 
+     *
+     * @param dbXRef the DbXRef
      * @return the corresponding CvTerm, or null
      */
-    public abstract CvTerm getCvTermByDbXRef(DbXRef dbXRef);
+    public CvTerm getCvTermByDbXRef(DbXRef dbXRef);
 
     public boolean existsNameInOntology(String name, Cv ontology);
 
