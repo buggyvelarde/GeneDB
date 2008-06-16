@@ -62,7 +62,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
 
         BrowseTermBean btb = (BrowseTermBean) command;
-        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrg());
+        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrganism());
         
         List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), orgNames);
         
@@ -99,10 +99,9 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
 
 class BrowseTermBean {
     
-    private TaxonNode[] organism;
     private BrowseCategory category;
     private String term;
-    private String org;
+    private String organism;
     
     public BrowseCategory getCategory() {
         return this.category;
@@ -110,23 +109,17 @@ class BrowseTermBean {
     public void setCategory(BrowseCategory category) {
         this.category = category;
     }
-    public TaxonNode[] getOrganism() {
-        return this.organism;
-    }
-    public void setOrganism(TaxonNode[] organism) {
-        this.organism = organism;
-    }
     public String getTerm() {
         return this.term;
     }
     public void setTerm(String term) {
         this.term = term;
     }
-	public String getOrg() {
-		return org;
+	public String getOrganism() {
+		return organism;
 	}
-	public void setOrg(String org) {
-		this.org = org;
+	public void setOrganism(String organism) {
+		this.organism = organism;
 	}
 
 }
