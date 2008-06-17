@@ -186,8 +186,12 @@ public class InterProLoader {
             n++;
             logger.debug(row);
 
-            // Insert polypeptide_domain, link to Interpro dbxref if applicable
+            // Insert polypeptide_domain
             DbXRef dbxref = dbxrefManager.get(row.db, row.nativeAcc);
+            if (dbxref == null) {
+                logger.error(String.format("Could not find dbxref '%s'/'%s'", row.db, row.nativeAcc));
+                continue;
+            }
 
             String domainUniqueName;
             if (n == 0)
@@ -199,8 +203,10 @@ public class InterProLoader {
             PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(
                 domainUniqueName, polypeptide, row.score, row.desc, row.fmin, row.fmax, dbxref);
 
+            // link to Interpro dbxref if applicable
             if (interproDbxref != null) {
-                FeatureDbXRef featureDbXRef = new FeatureDbXRef(interproDbxref, polypeptide, true);
+                FeatureDbXRef featureDbXRef = new FeatureDbXRef(interproDbxref, polypeptideDomain, true);
+                sequenceDao.persist(featureDbXRef);
                 polypeptideDomain.addFeatureDbXRef(featureDbXRef);
             }
 
