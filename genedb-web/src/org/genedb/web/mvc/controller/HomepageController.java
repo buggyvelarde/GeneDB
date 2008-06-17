@@ -4,6 +4,7 @@ import static org.genedb.web.mvc.controller.WebConstants.CRUMB;
 import static org.genedb.web.mvc.controller.WebConstants.TAXON_NODE;
 
 import org.apache.log4j.Logger;
+import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 
@@ -74,7 +75,7 @@ public class HomepageController extends AbstractController {
         Map props = node.getAppDetails("WEB");
         if (props.containsKey("HOMEPAGE_STYLE")) {
             viewName = HOMEPAGE + props.get("HOMEPAGE_STYLE");
-            organism = node.getLabel();
+            organism = node.getName(TaxonNameType.HTML_SHORT); // TODO Pass in taxon node
         }
         
 //      List<NewsItem> news = checkNews();
