@@ -80,9 +80,6 @@ update db set urlprefix='http://merops.sanger.ac.uk/cgi-bin/merops.cgi?id='
 update db set urlprefix='http://www.ebi.ac.uk/interpro/IEntry?ac='
 	where name='InterPro';
 
-update db set urlprefix='http://www.ebi.ac.uk/interpro/IEntry?ac='
-	where name='InterPro';
-
 update db set urlprefix='http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus='
 	where name='SGD';
 
@@ -104,7 +101,7 @@ update db set urlprefix='http://www.ebi.ac.uk/cgi-bin/expasyfetch?'
 update db set urlprefix='http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId='
 	where name='PDB';
 
-update db set urlprefix='http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId='
+update db set urlprefix='http://pfam.janelia.org/family?type=Family&entry='
 	where name='Pfam';
 
 update db set urlprefix='http://ca.expasy.org/cgi-bin/prosite-search-ac?'
