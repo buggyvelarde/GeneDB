@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Properties;
 
-import javax.xml.stream.XMLStreamException;
+//import javax.xml.stream.XMLStreamException;
 
 
 
@@ -56,7 +56,7 @@ public class OrthoStoreRunner {
      * @throws XMLStreamException 
      * @throws FileNotFoundException 
      */
-    public static void main (String[] args) throws FileNotFoundException, XMLStreamException {
+    public static void main (String[] args) throws FileNotFoundException {
 
         String[] filePaths = args;
 
