@@ -35,6 +35,7 @@
         <path location="${lib-dir}/saxon8.jar"/>
         <path location="${lib-dir}/saxon8-xom.jar"/>
         <path location="${lib-dir}/xom-1.0.jar"/>
+		<path location="${lib-dir}/jsr173_api.jar"/>
 		<path location="${imported.basedir.access}/lib/genedb-hibernate.jar"/>
 		<path location="${imported.basedir.access}/lib/chado-interface.jar"/>
 	</path>
@@ -107,6 +108,7 @@
 		<fileset file="${lib-dir}/saxon8.jar"/>
 		<fileset file="${lib-dir}/saxon8-xom.jar"/>
 		<fileset file="${lib-dir}/xom-1.0.jar"/>
+		<fileset file="${lib-dir}/jsr173_api.jar"/>
 		<fileset file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
 		<fileset file="${imported.basedir.access}/../genedb-db/ant-build/jars/chado-interface.jar" />
 		<fileset file="genedb-access.jar" />
