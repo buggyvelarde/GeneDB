@@ -32,8 +32,13 @@ public class GenesByCvTermAndCvController extends AbstractController {
 
 		String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName",
 		    NO_VALUE_SUPPLIED);
+		
+		String organism = ServletRequestUtils.getStringParameter(request, "organism",
+	            null);
+		
 		String viewName = listResultsView;
-		List<GeneNameOrganism> features = sequenceDao.getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, cvName);
+		List<GeneNameOrganism> features = sequenceDao.getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, 
+		                                    cvName,organism);
 
 		if (features == null || features.size() == 0) {
 		    try {
