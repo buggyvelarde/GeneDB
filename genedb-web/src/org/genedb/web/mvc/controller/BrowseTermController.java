@@ -23,6 +23,8 @@ import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.feature.AbstractGene;
+import org.gmod.schema.sequence.feature.Polypeptide;
 
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,6 +50,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
 	
 	private static final Logger logger = Logger.getLogger(BrowseTermController.class);
 	private SequenceDao sequenceDao;
+	private String geneView;
 
     @SuppressWarnings("unchecked")
 	@Override
@@ -62,6 +65,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
 
         BrowseTermBean btb = (BrowseTermBean) command;
         String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrganism());
+        Map<String, Object> model = new HashMap<String, Object>();
         
         List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), orgNames);
         
@@ -71,27 +75,44 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
             return showForm(request, response, be);
         }
         
-        ModelAndView mav = new ModelAndView(getSuccessView());
+        if(results.size() == 1) {
+            AbstractGene gene;
+            if (results.get(0) instanceof Polypeptide) {
+                Polypeptide polypeptide = (Polypeptide) results.get(0);
+                gene = polypeptide.getGene();
+            } else {
+                gene = (AbstractGene) results.get(0);
+            }
+            GeneDBWebUtils.prepareGene(gene, model);
+            return new ModelAndView(geneView,model);
+        }
         
         List<Feature> newResults = new ArrayList<Feature>(results.size());
         for (Feature feature : results) {
 			if (!GeneUtils.isPartOfGene(feature)) {
 				newResults.add(feature);
 			} else {
-				logger.info("Transforming '"+feature.getUniqueName()+"' as not part of gene");
 				newResults.add(GeneUtils.getGeneFromPart(feature));
 			}
 		}
 
-        mav.addObject("results", newResults);
-        mav.addObject("controllerPath", "/BrowseTerm");
+        model.put("results", newResults);
+        model.put("controllerPath", "/BrowseTerm");
 
-        return mav;
+        return new ModelAndView(getSuccessView(),model);
     }
 
 	public void setSequenceDao(SequenceDao sequenceDao) {
 		this.sequenceDao = sequenceDao;
 	}
+
+    public String getGeneView() {
+        return geneView;
+    }
+
+    public void setGeneView(String geneView) {
+        this.geneView = geneView;
+    }
 
 }
 

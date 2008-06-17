@@ -365,6 +365,7 @@
 		<property name="sequenceDao" ref="sequenceDao"/>
         <property name="successView" value="list/terms" />
         <property name="formView" value="search/browseTerm" />
+        <property name="geneView" value="features/gene" />
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
