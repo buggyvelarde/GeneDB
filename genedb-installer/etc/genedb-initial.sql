@@ -71,6 +71,11 @@ insert into db (name, description, urlprefix) values (
         'Db where we store db entries corresponding to ProDom terms',
         'http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query=');
 
+insert into db (name, description, urlprefix) values (
+        'FlyBase',
+        'Db where we store db entries corresponding to FlyBase',
+        'http://flybase.bio.indiana.edu/.bin/fbidq.html?');
+
 --
 -- Add url prefix to existing dbs
 --
