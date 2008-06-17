@@ -460,7 +460,7 @@ public class GeneDBWebUtils {
     }
 
     public static int featureListSize(String cvTermName, String cvName) {
-        List<GeneNameOrganism> temp = sequenceDao.getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, cvName);
+        List<GeneNameOrganism> temp = sequenceDao.getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, cvName,null);
         if (temp == null)
             return 0;
         return temp.size();
