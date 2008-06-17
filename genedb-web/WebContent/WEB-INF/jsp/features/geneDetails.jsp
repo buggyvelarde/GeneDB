@@ -96,9 +96,6 @@
             <input type="hidden" name="featureName" value="<c:out value="${transcript.uniqueName}" />">
             <input type="submit" value="Submit">
         </form>
-        <div style="clear: both; margin-top: 1ex;">
-            <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Show region in Artemis</a>
-        </div>
     </format:genePageSection>
 </div>
 
