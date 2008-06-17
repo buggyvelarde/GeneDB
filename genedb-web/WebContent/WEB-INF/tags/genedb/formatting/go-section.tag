@@ -1,6 +1,7 @@
 <%@ tag display-name="go-section" body-content="empty"%>
 <%@ attribute name="featureCvTerms" type="java.util.Collection" required="true" %>
 <%@ attribute name="featureCounts" type="java.util.Collection" required="false" %>
+<%@ attribute name="organism" type="java.lang.String" required="true" %>
 <%@ attribute name="title" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -40,7 +41,7 @@
         				0 Others
         			</c:if>
         			<c:if test="${nc.count > 1}" >
-        				<a href="<c:url value="/"/>GenesByCvTermAndCv?cvTermName=${featureCvTerm.cvTerm.name}&cvName=${featureCvTerm.cvTerm.cv.name}"> ${nc.count - 1} Others </a>
+        				<a href="<c:url value="/"/>GenesByCvTermAndCv?organism=${organism}&cvTermName=${featureCvTerm.cvTerm.name}&cvName=${featureCvTerm.cvTerm.cv.name}"> ${nc.count - 1} Others </a>
         			</c:if>
         		</c:if>
         	</c:forEach>

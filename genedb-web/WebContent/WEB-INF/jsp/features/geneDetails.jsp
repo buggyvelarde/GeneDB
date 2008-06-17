@@ -3,6 +3,7 @@
 
 <c:set var="primaryLoc" value="${gene.rankZeroFeatureLoc}" />
 <c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
+<c:set var="organism" value="${gene.organism.commonName}" />
 
 <div id="firstRow" class="row">
     <!-- General Information -->
@@ -129,7 +130,7 @@
         <format:genePageSection id="controlCur">
             <div class="heading">Controlled Curation</div>
             <table width="100%" class="go-section">
-                <format:go-section featureCvTerms="${controlledCurationTerms}" featureCounts="${CC}"/>
+                <format:go-section featureCvTerms="${controlledCurationTerms}" featureCounts="${CC}" organism="${organism}"/>
             </table>
         </format:genePageSection>
     </c:if>
@@ -142,9 +143,9 @@
         <format:genePageSection id="geneOntology">
             <div class="heading">Gene Ontology</div>
             <table width="100%" class="go-section">
-                <format:go-section title="Biological Process" featureCvTerms="${biologicalProcessTerms}" featureCounts="${BP}"/>
-                <format:go-section title="Cellular Component" featureCvTerms="${cellularComponentTerms}" featureCounts="${CellularC}"/>
-                <format:go-section title="Molecular Function" featureCvTerms="${molecularFunctionTerms}" featureCounts="${MF}"/>
+                <format:go-section title="Biological Process" featureCvTerms="${biologicalProcessTerms}" featureCounts="${BP}" organism="${organism}"/>
+                <format:go-section title="Cellular Component" featureCvTerms="${cellularComponentTerms}" featureCounts="${CellularC}" organism="${organism}"/>
+                <format:go-section title="Molecular Function" featureCvTerms="${molecularFunctionTerms}" featureCounts="${MF}" organism="${organism}"/>
             </table>
         </format:genePageSection>
     </c:if>
