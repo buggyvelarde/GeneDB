@@ -45,35 +45,35 @@ public class HomepageController extends AbstractController {
         
     	String originalOrg = ServletRequestUtils.getStringParameter(request, "organism", "XXX");
     	
-        TaxonNodeArrayHolder tnah = new TaxonNodeArrayHolder();
-        
-        ServletRequestDataBinder binder = new ServletRequestDataBinder(tnah);
-        binder.initDirectFieldAccess();
-        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
-        binder.bind(request);
-        BindingResult bindResult = binder.getBindingResult();
+//        TaxonNodeArrayHolder tnah = new TaxonNodeArrayHolder();
+//        
+//        ServletRequestDataBinder binder = new ServletRequestDataBinder(tnah);
+//        binder.initDirectFieldAccess();
+//        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
+//        binder.bind(request);
+//        BindingResult bindResult = binder.getBindingResult();
         
         String organism = null;
         String pageName = null;
         
-        if (bindResult.hasGlobalErrors()) {
-        	// TODO Add error message
-            logger.debug("Binding errors - go home");
-            return new ModelAndView(DEFAULT_HOMEPAGE);
-        }
+//        if (bindResult.hasGlobalErrors()) {
+//        	// TODO Add error message
+//            logger.debug("Binding errors - go home");
+//            return new ModelAndView(DEFAULT_HOMEPAGE);
+//        }
         
-        TaxonNode[] nodes = tnah.org;
-        if (nodes == null || nodes.length == 0) {
-            logger.debug("No taxon nodes - go home");
-            return new ModelAndView(DEFAULT_HOMEPAGE);
-        }
-        if (nodes.length > 1) {
-            // TODO Add error message
-            logger.debug("Got too many taxon nodes");
-            return new ModelAndView(DEFAULT_HOMEPAGE);
-        }
+//        TaxonNode[] nodes = tnah.org;
+//        if (nodes == null || nodes.length == 0) {
+//            logger.debug("No taxon nodes - go home");
+//            return new ModelAndView(DEFAULT_HOMEPAGE);
+//        }
+//        if (nodes.length > 1) {
+//            // TODO Add error message
+//            logger.debug("Got too many taxon nodes");
+//            return new ModelAndView(DEFAULT_HOMEPAGE);
+//        }
         
-        TaxonNode node = nodes[0];
+//        TaxonNode node = nodes[0];
         String viewName = HOMEPAGE + DEFAULT_STYLE;
         if (!originalOrg.equals("XXX")) {
         	pageName = originalOrg;
@@ -84,10 +84,10 @@ public class HomepageController extends AbstractController {
         //logger.warn(String.format("Retrieved an organism name of '%s'", pageName));
         }
         	
-        Map props = node.getAppDetails("WEB");
-        if (props.containsKey("HOMEPAGE_STYLE")) {
-            viewName = HOMEPAGE + props.get("HOMEPAGE_STYLE");
-        }
+//        Map props = node.getAppDetails("WEB");
+//        if (props.containsKey("HOMEPAGE_STYLE")) {
+//            viewName = HOMEPAGE + props.get("HOMEPAGE_STYLE");
+//        }
         
 //      List<NewsItem> news = checkNews();
 //      if (news.size() > 0) {
@@ -95,7 +95,7 @@ public class HomepageController extends AbstractController {
 //      }
         
         ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject(TAXON_NODE, node);
+        //mav.addObject(TAXON_NODE, node);
         mav.addObject(CRUMB, "Homepage");
         if (organism != null) {
         	mav.addObject("organism", organism);
