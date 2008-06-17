@@ -65,8 +65,8 @@
         <tr>
             <td class="label">Location</td>
             <td class="value">
-                ${transcript.exonLocsTraditional},
-                chromosome ${chromosome.displayName}
+                Chromosome ${chromosome.displayName},
+                locations ${transcript.exonLocsTraditional}
             </td>
         </tr>
         <c:if test="${!empty(polypeptide.featureDbXRefs)}">
@@ -188,10 +188,15 @@
         </div>
     </c:if>
 
-    <!-- Domain Information -->
+    <!-- Domain Information --><%--
     <format:genePageSection id="controlCur">
         <div class="heading">Domain Information</div>
-    </format:genePageSection>
+        <table><tbody>
+
+            <tr>
+            </tr>
+        </tbody></table>
+    </format:genePageSection> --%>
 
     <!-- Ortholog / Paralog Section -->
     <db:propByName items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>

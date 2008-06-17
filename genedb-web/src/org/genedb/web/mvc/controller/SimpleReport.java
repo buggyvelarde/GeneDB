@@ -128,7 +128,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
             exp.printStackTrace();
         }
         // Check sequence is valid in org
-	    Feature feat = sequenceDao.getFeaturesByUniqueName(bean.getName()).get(0);
+	    Feature feat = sequenceDao.getFeaturesByUniqueNamePattern(bean.getName()).get(0);
 	    Map model = new HashMap(3);
 	    model.put("feature", feat);
 	    String viewName = "features/gene";
@@ -151,11 +151,15 @@ public class SimpleReport extends MultiActionController implements InitializingB
 
 	public ModelAndView FindCvByName(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
 	    String name = ServletRequestUtils.getStringParameter(request, "name", "%");
-	    Cv cv = cvDao.getCvByName(name);
-	    Map model = new HashMap();
+	    List<Cv> cvs = cvDao.getCvsByNamePattern(name);
+	    Map<String,Object> model = new HashMap<String,Object>();
 	    String viewName = "db/listCv";
+	    if (cvs.size()==1) {
 		viewName = "db/cv";
-		model.put("cv", cv);
+		model.put("cv", cvs.get(0));
+	    } else {
+		model.put("cvs", cvs);
+	    }
 	    return new ModelAndView(viewName, model);
 	}
 
@@ -165,7 +169,8 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", "*");
 	    System.err.println("cvName="+cvName+"   :   cvTermName="+cvTermName);
 	    cvTermName = cvTermName.replace('*', '%');
-	    Cv cv = cvDao.getCvByName(cvName);
+	    List<Cv> cvs = cvDao.getCvsByNamePattern(cvName);
+	    Cv cv = cvs.get(0);
 	    System.err.println("cv="+cv);
 	    List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(cvTermName, cv);
 	    String viewName = "db/listCvTerms";

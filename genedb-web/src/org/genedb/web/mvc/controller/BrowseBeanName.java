@@ -6,33 +6,32 @@ import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.CvDaoI;
-import org.gmod.schema.dao.SequenceDaoI;
 import org.springframework.beans.factory.InitializingBean;
 
 public class BrowseBeanName implements InitializingBean{
 
 	private static final int DEFAULT_LIMIT = 15;
-	
-	private SequenceDaoI sequenceDao;
-	
+
+	private SequenceDao sequenceDao;
+
 	private CvDaoI cvDao;
-	
+
 	private String term;
-	
+
 	private CvTerm cvTerm;
-	
+
 	private int limit = DEFAULT_LIMIT;
-	
+
 	public void afterPropertiesSet() throws Exception {
 		cvTerm = cvDao.getCvTermByNameAndCvName(term, "sequence");
-		
+
 	}
-	
+
 	public List<String> getPossibleMatches(String search) {
 		return sequenceDao.getPossibleMatches(search, cvTerm, limit);
 	}
 
-	public void setSequenceDaoI(SequenceDao sequenceDao) {
+	public void setSequenceDao(SequenceDao sequenceDao) {
 		this.sequenceDao = sequenceDao;
 	}
 

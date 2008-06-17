@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.CvDaoI;
-import org.gmod.schema.dao.SequenceDaoI;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
@@ -28,16 +27,28 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
  * @author rh11
  *
  */
-public class SequenceDao extends BaseDao implements SequenceDaoI {
+public class SequenceDao extends BaseDao {
 
     private static final Logger logger = Logger.getLogger(SequenceDao.class);
 
     private CvDaoI cvDao;
 
+    /**
+     * Return the feature corresponding to this feature_id
+     *
+     * @param id the systematic id
+     * @return the Feature, or null
+     */
     public Feature getFeatureById(int id) {
         return (Feature) getHibernateTemplate().load(Feature.class, id);
     }
 
+   /**
+    *
+    * @param name the uniquename
+    * @param featureType the type of feature to return eg "gene". <b>NB</> String, not a type argument
+    * @return
+    */
     public Feature getFeatureByUniqueName(String uniqueName, String featureType) {
         if(featureType.equals("gene"))
             return getFeatureByUniqueName(uniqueName, Gene.class);
@@ -68,13 +79,25 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features.get(0);
     }
 
+    /**
+     * Return a list of features whose uniqueName matches the given pattern.
+     *
+     * @param namePattern an SQL/HQL pattern
+     * @return the Feature, or null
+     */
     @SuppressWarnings("unchecked")
-    public List<Feature> getFeaturesByUniqueName(String name) {
+    public List<Feature> getFeaturesByUniqueNamePattern(String namePattern) {
         List features = getHibernateTemplate().findByNamedParam(
-                "from Feature where uniqueName like :name", "name", name);
+                "from Feature where uniqueName like :name", "name", namePattern);
         return features;
     }
 
+    /**
+     * Return a list of features with any current (ie non-obsolete) name or synonym
+     *
+     * @param name the lookup name
+     * @return a (possibly empty) List<Feature> of children with this current name
+     */
     public List<Feature> getFeaturesByAnyCurrentName(String name) {
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate()
@@ -84,6 +107,16 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features;
     }
 
+    /**
+     * Return a list of features located on a source Feature, within a given range
+     *
+     * @param min the minimum (interbase) coordinate
+     * @param max the maximum (interbase) coordinate
+     * @param strand
+     * @param parent the source feature
+     * @param type
+     * @return a List of the features completely contained within this range
+     */
     public List<Feature> getFeaturesByRange(int min, int max, int strand, Feature feat, String type) {
         int fid = feat.getFeatureId();
         @SuppressWarnings("unchecked")
@@ -98,6 +131,14 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features;
     }
 
+    /**
+     * Return a list of features with this name or synonym (including obsolete names). The
+     * name can contain an SQL wildcard (%)
+     *
+     * @param name the lookup name
+     * @param featureType the type of feature to return eg "gene"
+     * @return a (possibly empty) List<Feature> of children with this name
+     */
     public List<Feature> getFeaturesByAnyName(String name, String featureType) {
         // TODO Taxon and filter
         String lookup = name.replaceAll("\\*", "%");
@@ -112,6 +153,14 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features;
     }
 
+    /**
+     * Return the FeatureCvTerm that links a given Feature and CvTerm, with a given value of 'not'
+     *
+     * @param feature the Feature to test the link for
+     * @param cvTerm the CvTerm to test the link for
+     * @param not test for the not flag in the FeatureCvTerm
+     * @return the Feature, or null
+     */
     @SuppressWarnings("unchecked")
     public List<FeatureCvTerm> getFeatureCvTermsByFeatureAndCvTermAndNot(Feature feature,
             CvTerm cvTerm, boolean not) {
@@ -140,6 +189,13 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                         new Object[] { cvName, cvTermName });
     }
 
+    /**
+     * Return a synonym of the given name and type if it exists
+     *
+     * @param name the name to lookup
+     * @param type the type of the Synonym
+     * @return a Synonym, or null
+     */
     public Synonym getSynonymByNameAndCvTerm(String name, CvTerm type) {
         @SuppressWarnings("unchecked")
         List<Synonym> list = getHibernateTemplate().findByNamedParam(
@@ -149,6 +205,13 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return firstFromList(list, "name", name, "cvterm", type.getName());
     }
 
+    /**
+     * Return a list of FeatureSynonyms which link a given Feature and Synonym
+     *
+     * @param feature the test Feature
+     * @param synonym the test Synonym
+     * @return a (possibly empty) list of feature synonyms
+     */
     @SuppressWarnings("unchecked")
     public List<FeatureSynonym> getFeatureSynonymsByFeatureAndSynonym(Feature feature,
             Synonym synonym) {
@@ -157,6 +220,12 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                 new String[] { "feature", "synonym" }, new Object[] { feature, synonym });
     }
 
+    /**
+     * Return a list of features located on a source Feature
+     *
+     * @param parent the parent feature
+     * @return a (possibly empty) List<Feature> of children located on this parent
+     */
     public List<Feature> getFeaturesByLocatedOnFeature(Feature parent) {
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
@@ -167,6 +236,13 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features;
     }
 
+    /**
+     * Return all the FeatureDbXRefs for a given feature, <b>specified by name</b>, or all if
+     * <code>null</code> is passed
+     *
+     * @param uniqueName the uniquename of a Feature, or null for all FeatureDbXRefs
+     * @return a (possibly empty) List<FeatureDbXRefI>
+     */
     @SuppressWarnings("unchecked")
     public List<FeatureDbXRef> getFeatureDbXRefsByFeatureUniquename(String uniqueName) {
         if (uniqueName == null) {
@@ -177,6 +253,13 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                 new String[] { "uniqueName" }, new Object[] { uniqueName });
     }
 
+    /**
+     * Return the list of FeatureSynonyms for a given Feature, <b>specified by name</b>, or all if
+     * <code>null</code> is passed
+     *
+     * @param uniqueName the uniquename of a Feature, or null for all
+     * @return a (possibly empty) List<FeatureSynonymI> of matching synonyms
+     */
     @SuppressWarnings("unchecked")
     public List<FeatureSynonym> getFeatureSynonymsByFeatureUniquename(String uniqueName) {
         if (uniqueName == null) {
@@ -187,6 +270,10 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                 new String[] { "uniqueName" }, new Object[] { uniqueName });
     }
 
+    /*
+     * Deleted doc comment that was obviously wrong. - rh11
+     * TODO work out what this actually does, and document it.
+     */
     @SuppressWarnings("unchecked")
     public List<List<?>> getFeatureByGO(String go) {
         String temp[] = go.split(":");
@@ -236,6 +323,15 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return firstFromList(results, feature, dbXRef);
     }
 
+    /**
+     * Return a list of feature uniquename based on cvterm for auto-completion
+     *
+     * @param name the Feature uniquename
+     * @param orgNames the comma seperated organism common names
+     * @param featureType the type of Features to return e.g gene
+     * @param limit the number of maximum results to return
+     * @return a (possibly empty) List<Feature> of Feature
+     */
     @SuppressWarnings("unchecked")
     public List<Feature> getFeaturesByAnyNameAndOrganism(String nl, String orgNames,
             String featureType) {
@@ -290,6 +386,12 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
                         + "where f=fct.feature and cvt=fct.cvTerm and cvt.cv=15 group by cvt.name");
     }
 
+    /**
+     * Return a list of features that have this particular cvterm
+     *
+     * @param cvTermName the CvTerm name
+     * @return a (possibly empty) List<Feature> of children
+     */
     public List<Feature> getFeaturesByCvTermName(String cvTermName) {
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
@@ -299,6 +401,11 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
     }
 
     // FIXME - Use top level properties instead
+    /**
+     * Return a list of top-level features
+     *
+     * @return a (possibly empty) List<Feature> of children
+     */
     public List<Feature> getTopLevelFeatures() {
         String name = "chromosome%";
         @SuppressWarnings("unchecked")
@@ -307,6 +414,13 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return topLevels;
     }
 
+    /**
+     * Return a list of features that have this particular cvterm
+     *
+     * @param cvTermName the CvTerm name
+     * @param cvName the CV to which the term belongs
+     * @return a (possibly empty) List<Feature> of matching features
+     */
     public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName) {
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate()
@@ -322,6 +436,9 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
      * have transcripts that have polypeptides that have this CvTerm
      * associated to them. In practice, this is used to get a list of
      * genes that have a particular Gene Ontology annotation, for example.
+     *
+     * @param cvTermName the CvTerm name
+     * @return a (possibly empty) List<GeneNameOrganism> of matches
      */
     public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvName(String cvTermName, String cvName) {
         @SuppressWarnings("unchecked")
@@ -342,18 +459,32 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features;
     }
 
-    @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
+    /**
+     * Return a list of feature uniquename based on cvterm for auto-completion
+     *
+     * @param name the Feature uniquename
+     * @param cvTerm the CvTerm
+     * @param limit the number of maximum results to return
+     * @return a (possibly empty) List<String> of feature uniquename
+     */
     public List<String> getPossibleMatches(String name, CvTerm cvTerm, int limit) {
         HibernateTemplate ht = new HibernateTemplate(getSessionFactory());
         ht.setMaxResults(limit);
 
-        return ht
-                .findByNamedParam(
+        @SuppressWarnings("unchecked")
+        List<String> result = ht.findByNamedParam(
                         "select f.uniqueName from Feature f where lower(f.uniqueName) like lower(:name) and f.cvTerm = :cvTerm",
                         new String[] { "name", "cvTerm" },
                         new Object[] { "%" + name + "%", cvTerm });
+        return result;
     }
 
+    /**
+     * Return a list of feature based on organism
+     *
+     * @param organism the Organism
+     * @return a (possibly empty) List<String> of feature
+     */
     public List<Feature> getFeaturesByOrganism(Organism org) {
         @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
         List<Feature> features = getHibernateTemplate().findByNamedParam(
@@ -361,6 +492,12 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features;
     }
 
+    /**
+     * Return the features corresponding to uniquenames in the list
+     *
+     * @param names the list of uniquenames
+     * @return the list of Features, or null
+     */
     public List<Feature> getFeaturesByUniqueNames(List<String> names) {
         boolean notFirst = false;
         StringBuilder featureIds = new StringBuilder();
@@ -382,6 +519,16 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features;
     }
 
+    /**
+     * Return a list of features located within a given range
+     *
+     * @param min the minimum (interbase) coordinate
+     * @param max the maximum (interbase) coordinate
+     * @param type (gene, protein, mRNA etc)
+     * @param organism
+     * @param parent (chromosome or contig)
+     * @return a ;ist of features completely contained within this range
+     */
     public List<Feature> getFeaturesByLocation(int min, int max, String type, String organism,
             Feature parent) {
         @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
@@ -396,6 +543,14 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         return features;
     }
 
+    /**
+     * Return the FeatureRelationship containing a particular subject, object and the relation
+     *
+     * @param subject the subject Feature
+     * @param object the object Feature
+     * @param relation the cvterm corresponding to the relation
+     * @return the FeatureRelationship, or null
+     */
     public FeatureRelationship getFeatureRelationshipBySubjectObjectAndRelation(Feature subject,
             Feature object, CvTerm relation) {
         @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
@@ -432,7 +587,7 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
      * @param uniqueName the proposed uniqueName
      * @return a derived uniqueName that does not exist in the database
      */
-    private String makeNameUnique(String uniqueName) {
+    public String makeNameUnique(String uniqueName) {
         /*
          * Any features which have been persisted but not flushed
          * will fail to be found here, unless we flush them first.
@@ -483,18 +638,18 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
     /**
      * Create a new polypeptide domain feature
      *
+     * @param domainUniqueName
      * @param polypeptide the polypeptide to which this domain feature should be attached
-     * @param id a string identifying the domain
      * @param score an indication, from the algorithm that predicted this domain,
      *          of the confidence of the prediction. Usually a number.
-     * @param description description of the doman
+     * @param description description of the domain
      * @param start the start of the domain, relative to the polypeptide, in interbase coordinates
      * @param end the end of the domain, relative to the polypeptide, in interbase coordinates
      * @param dbxref a database reference for this domain, if applicable. Can be null.
      * @return the newly-created polypeptide domain
      */
-    public PolypeptideDomain createPolypeptideDomain(Polypeptide polypeptide,
-            String id, String score, String description, int start, int end, DbXRef dbxref) {
+    public PolypeptideDomain createPolypeptideDomain(String domainUniqueName, Polypeptide polypeptide,
+            String score, String description, int start, int end, DbXRef dbxref) {
         if (polypeptideDomainType == null)
             polypeptideDomainType = cvDao.getCvTermByNameAndCvName("polypeptide_domain", "sequence");
         if (scoreType == null)
@@ -502,7 +657,6 @@ public class SequenceDao extends BaseDao implements SequenceDaoI {
         if (descriptionType == null)
             descriptionType = cvDao.getCvTermByNameAndCvName("description", "feature_property");
 
-        String domainUniqueName = makeNameUnique(String.format("%s:%s",polypeptide.getUniqueName(), id));
         PolypeptideDomain domain = new PolypeptideDomain(
             polypeptide.getOrganism(), polypeptideDomainType, domainUniqueName);
         FeatureLoc domainLoc = new FeatureLoc(polypeptide, domain, start, false, end, false, (short)0/*strand*/, null, 0, 0);

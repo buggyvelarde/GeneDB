@@ -20,22 +20,23 @@
 package org.gmod.schema.dao;
 
 
-import java.util.List;
-
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermDbXRef;
+import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
-import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
-import org.gmod.schema.sequence.feature.Polypeptide;
-import org.gmod.schema.sequence.feature.PolypeptideDomain;
 import org.gmod.schema.utils.CountedName;
-import org.gmod.schema.utils.GeneNameOrganism;
 
+import java.util.List;
+
+/**
+ * This interface is no longer used, except by Artemis.
+ */
 public interface SequenceDaoI extends BaseDaoI {
 
     /**
@@ -96,18 +97,6 @@ public interface SequenceDaoI extends BaseDaoI {
             Feature parent, String type);
 
     /**
-     * Return a list of features located within a given range
-     *
-     * @param min the minimum (interbase) coordinate
-     * @param max the maximum (interbase) coordinate
-     * @param type (gene, protein, mRNA etc)
-     * @param organism
-     * @param parent (chromosome or contig)
-     * @return a List<Feature> which ??? this range
-     */
-    public List<Feature> getFeaturesByLocation(int min, int max, String type, String organism, Feature parent);
-
-    /**
      * Return a list of features located on a source Feature
      *
      * @param parent the parent feature
@@ -125,6 +114,30 @@ public interface SequenceDaoI extends BaseDaoI {
      */
     public List<FeatureCvTerm> getFeatureCvTermsByFeatureAndCvTermAndNot(Feature feature,
             CvTerm cvTerm, boolean not);
+
+    /**
+     * Return a list of FeatureCvterm's for a Feature, or a list
+     * of all FeatureCvTerm's if Feature is null.
+     * @param feature the Feature to retrieve associated FeatureCvTerm's
+     * @return the FeatureCvTerm's
+     */
+    public List<FeatureCvTerm> getFeatureCvTermsByFeature(Feature feature);
+
+    /**
+     * Get a list of all FeatureCvTermDbXRef's for a Feature, or a list
+     * of all FeatureCvTermDbXRef's if Feature is null.
+     * @param feature the Feature to retrieve associated FeatureCvTermDbXRef's
+     * @return the FeatureCvTermDbXRef's
+     */
+    public List<FeatureCvTermDbXRef> getFeatureCvTermDbXRefByFeature(Feature feature);
+
+    /**
+     * Get a list of all FeatureCvTermPub's for a Feature, or a list
+     * of all FeatureCvTermPub's if Feature is null.
+     * @param feature the Feature to retrieve associated FeatureCvTermPub's
+     * @return the FeatureCvTermPub's
+     */
+    public List<FeatureCvTermPub> getFeatureCvTermPubByFeature(Feature feature);
 
     /**
      * Return a synonym of the given name and type if it exists
@@ -166,11 +179,15 @@ public interface SequenceDaoI extends BaseDaoI {
     public List<FeatureSynonym> getFeatureSynonymsByFeatureUniquename(final String uniqueName);
 
     /**
-     * Return the list of Features for a given GO number
+     * Return the list of all feature_synonyms as Feature.featureSynonyms
      *
-     *
-     * @param go the GO number
-     * @return a (possibly empty) List<Feature> of matching genes
+     * @return a (possibly empty) List<Features> of matching synonyms
+     */
+    public List<Feature> getAllFeatureSynonymsAsFeature();
+
+    /*
+     * Deleted wrong documentation. -rh11
+     * TODO work out what this is supposed to do, and add correct documentation
      */
     public List<List<?>> getFeatureByGO(final String go);
 
@@ -186,20 +203,11 @@ public interface SequenceDaoI extends BaseDaoI {
     /**
      * Return a list of features that have this particular cvterm
      *
+     *
      * @param cvTermName the CvTerm name
-     * @param cvName the CV to which the term belongs
-     * @return a (possibly empty) List<Feature> of matching features
+     * @return a (possibly empty) List<Feature> of children
      */
     public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName);
-
-    /**
-     * Return a list of feature(gene) uniquenames that have this particular cvterm
-     *
-     *
-     * @param cvTermName the CvTerm name
-     * @return a (possibly empty) List<GeneNameOrganism> of matches
-     */
-    public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvName(String cvTermName, String cvName);
 
     /**
      * Return a list of top-level features
@@ -248,36 +256,4 @@ public interface SequenceDaoI extends BaseDaoI {
      */
     public List<Feature> getFeaturesByUniqueNames(List<String> names);
 
-    /**
-     * Return the FeatureRelationship containing a particular subject, object and the relation
-     *
-     * @param subject the subject Feature
-     * @param object the object Feature
-     * @param relation the cvterm corresponding to the relation
-     * @return the FeatureRelationship, or null
-     */
-    public FeatureRelationship getFeatureRelationshipBySubjectObjectAndRelation(Feature subject,
-    		Feature object, CvTerm relation);
-
-
-    /* Re the below, see the long comment in SequenceDao.java
-     *
-     *  -rh11
-     */
-
-    /**
-     * Create a new polypeptide domain feature
-     *
-     * @param polypeptide the polypeptide to which this domain feature should be attached
-     * @param id a string identifying the domain
-     * @param score an indication, from the algorithm that predicted this domain,
-     *          of the confidence of the prediction. Usually a number.
-     * @param description description of the doman
-     * @param start the start of the domain, relative to the polypeptide, in interbase coordinates
-     * @param end the end of the domain, relative to the polypeptide, in interbase coordinates
-     * @param dbxref a database reference for this domain, if applicable. Can be null.
-     * @return the newly-created polypeptide domain
-     */
-    public PolypeptideDomain createPolypeptideDomain(Polypeptide polypeptide,
-            String id, String score, String description, int start, int end, DbXRef dbxref);
 }

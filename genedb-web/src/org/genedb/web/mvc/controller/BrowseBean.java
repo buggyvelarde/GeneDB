@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.dao.CvDaoI;
-import org.gmod.schema.dao.SequenceDaoI;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.utils.CountedName;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,7 +20,7 @@ public class BrowseBean implements InitializingBean {
 
     private CvDaoI cvDao;
 
-    private SequenceDaoI sequenceDao;
+    private SequenceDao sequenceDao;
 
     private List<String> cvNames;
 
@@ -61,7 +61,7 @@ public class BrowseBean implements InitializingBean {
     }
 
     @Required
-    public void setSequenceDaoI(SequenceDaoI sequenceDao) {
+    public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
 

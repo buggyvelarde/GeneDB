@@ -148,7 +148,7 @@ public class SearchController extends MultiActionController implements Initializ
         if (name.equals(NO_VALUE_SUPPLIED)) {
 
         }
-        List<Feature> features = sequenceDao.getFeaturesByUniqueName(name);
+        List<Feature> features = sequenceDao.getFeaturesByUniqueNamePattern(name);
         if (features.size() == 0)
             throw new RuntimeException(String.format("Could not find feature with unique name '%s'", name));
         else if (features.size() > 1)
@@ -254,13 +254,15 @@ public class SearchController extends MultiActionController implements Initializ
     @SuppressWarnings("unused")
     public ModelAndView FindCvByName(HttpServletRequest request, HttpServletResponse response) {
         String name = ServletRequestUtils.getStringParameter(request, "name", "%");
-        Cv cv = this.cvDao.getCvByName(name);
+        List<Cv> cvs = this.cvDao.getCvsByNamePattern(name);
         Map<String,Object> model = new HashMap<String,Object>();
         String viewName = "db/listCv";
-        
-        viewName = "db/cv";
-        model.put("cv", cv);
-       
+        if (cvs.size() == 1) {
+            viewName = "db/cv";
+            model.put("cv", cvs.get(0));
+        } else {
+            model.put("cvs", cvs);
+        }
         return new ModelAndView(viewName, model);
     }
 

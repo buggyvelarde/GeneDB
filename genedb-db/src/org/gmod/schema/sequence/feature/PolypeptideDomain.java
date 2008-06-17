@@ -14,12 +14,14 @@ import org.gmod.schema.sequence.Feature;
 @DiscriminatorValue("504")
 public class PolypeptideDomain extends Feature {
 
+    public PolypeptideDomain() { }
     public PolypeptideDomain(Organism organism, CvTerm type, String uniqueName) {
         this(organism, type, uniqueName, false, false);
     }
     public PolypeptideDomain(Organism organism, CvTerm type, String uniqueName, boolean analysis,
             boolean obsolete) {
-        // Constructor call must be the first statement in a constructor
+        // Constructor call must be the first statement in a constructor,
+        // hence the duplicated Timestamp construction.
         super(organism, type, uniqueName, analysis, obsolete,
             new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
     }

@@ -15,8 +15,8 @@ public class BaseDao extends HibernateDaoSupport {
     /**
      * Save the object to the database (at the end of the current transaction,
      * or depending upon flush mode). This method is defined in all the DAOs.
-     * It's recommended to call it through an appropriate one eg SequenceDaoI
-     * for FeatureI
+     * It's recommended to call it through an appropriate one eg SequenceDao
+     * for Feature
      *
      * @param o The object to store
      */
@@ -28,7 +28,7 @@ public class BaseDao extends HibernateDaoSupport {
      * Merge (update) an already persistent object back to the database (at the
      * end of the current transaction, or depending upon flush mode). This
      * method is defined in all the DAOs. It's recommended to call it through an
-     * appropriate one eg SequenceDaoI for FeatureI
+     * appropriate one eg SequenceDao for Feature
      *
      * @param o The object to merge
      */
@@ -40,7 +40,7 @@ public class BaseDao extends HibernateDaoSupport {
      * Remove the object from the database (at the end of the current
      * transaction, or depending upon flush mode). This method is defined in all
      * the DAOs. It's recommended to call it through an appropriate one eg
-     * SequenceDaoI for FeatureI
+     * SequenceDao for Feature
      *
      * @param o The object to delete
      */

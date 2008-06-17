@@ -44,7 +44,7 @@
            <dwr:include method="getPossibleMatches" />
         </dwr:remote>
         <property name="cvDaoI"  ref="cvDao" />
-        <property name="sequenceDaoI"  ref="sequenceDao" />
+        <property name="sequenceDao"  ref="sequenceDao" />
         <property name="cvNames">
         	<list>
         		<value>biological_process</value>
@@ -67,7 +67,7 @@
            <dwr:include method="getPossibleMatches" />
         </dwr:remote>
         <property name="cvDaoI" ref="cvDao" />
-        <property name="sequenceDaoI" ref="sequenceDao"/>
+        <property name="sequenceDao" ref="sequenceDao"/>
         <property name="cvTerm" value="gene"/>
 	</bean>
     <dwr:controller id="dwrController" debug="true"/>
@@ -283,9 +283,9 @@
         <property name="historyManagerFactory" ref="historyManagerFactory" />
         <property name="validator" ref="namedFeatureValidator"/>
     </bean>
-	
+
 	<bean id="namedFeatureValidator" class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
-	
+
 	<bean id="FeatureDownloadController" class="org.genedb.web.mvc.controller.download.FeatureDownloadController">
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="featureDownload"/>
@@ -355,9 +355,9 @@
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
         <property name="validator" ref="browseCategoryValidator" />
     </bean>
-	
+
 	<bean id="browseCategoryValidator" class="org.genedb.web.mvc.validators.BrowseCategoryFormValidator" />
-	
+
     <bean id="BrowseTermController" class="org.genedb.web.mvc.controller.BrowseTermController">
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="browseTerm"/>

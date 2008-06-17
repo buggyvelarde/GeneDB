@@ -15,7 +15,9 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CvDao extends BaseDao implements CvDaoI {
 
@@ -62,7 +64,12 @@ public class CvDao extends BaseDao implements CvDaoI {
         return cvTermList;
     }
 
+    private Db DB_GO = null;
+
     public CvTerm getGoCvTermByAcc(String value) {
+        if (DB_GO == null)
+            DB_GO = generalDao.getDbByName("GO");
+
         @SuppressWarnings("unchecked")
         List<CvTerm> terms = getHibernateTemplate().findByNamedParam(
             "from CvTerm cvTerm where cvTerm.dbxref.db.name='GO' and cvTerm.dbxref.accession=:acc",
@@ -71,7 +78,8 @@ public class CvDao extends BaseDao implements CvDaoI {
     }
 
     public CvTerm getGoCvTermByAccViaDb(final String id) {
-        final Db DB_GO = generalDao.getDbByName("GO");
+        if (DB_GO == null)
+            DB_GO = generalDao.getDbByName("GO");
 
         // Find cvterm for db_xref
         TransactionTemplate tt = new TransactionTemplate(generalDao.getPlatformTransactionManager());
@@ -96,6 +104,22 @@ public class CvDao extends BaseDao implements CvDaoI {
                     return cvTermDbXRefs.iterator().next();
                 }
             });
+        }
+
+        public Map<String,Integer> getGoTermIdsByAcc() {
+            if (DB_GO == null)
+                DB_GO = generalDao.getDbByName("GO");
+
+            Map<String,Integer> goTerms = new HashMap<String,Integer>();
+            @SuppressWarnings("unchecked")
+            Collection<Object[]> results = getHibernateTemplate().findByNamedParam(
+                "select cvTerm.dbXRef.accession, cvTerm.id " +
+                "from CvTerm cvTerm " +
+                "where cvTerm.dbXRef.db = :goDb",
+                "goDb", DB_GO);
+            for (Object[] result: results)
+                goTerms.put((String) result[0], (Integer) result[1]);
+            return goTerms;
         }
 
         public void setGeneralDao(GeneralDao generalDao) {
@@ -190,8 +214,16 @@ public class CvDao extends BaseDao implements CvDaoI {
             return countedNames;
         }
 
-        public List<CountedName> getCountedNamesByCvNameAndOrganism(String cvName, String orgNames) {
-            
+        public List<CountedName> getCountedNamesByCvNameAndOrganism(String cvName, Collection<String> orgs) {
+            StringBuilder orgNames = new StringBuilder();
+            boolean first = true;
+            for (String orgName : orgs) {
+                if (!first)
+                    orgNames.append(", ");
+                first = false;
+                orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
+            }
+
             @SuppressWarnings("unchecked")
             List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(
                 "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct.feature.uniqueName))"+
@@ -237,10 +269,10 @@ public class CvDao extends BaseDao implements CvDaoI {
             return countedNames;
 
         }
-        
+
 
         @SuppressWarnings("unchecked")
-        public List<CountedName> getCountedNamesByCvNameAndFeatureAndOrganism(String cvName, 
+        public List<CountedName> getCountedNamesByCvNameAndFeatureAndOrganism(String cvName,
                 Polypeptide polypeptide) {
 
             String query = "select new org.gmod.schema.utils.CountedName( fct.cvTerm.name, count" +
@@ -260,5 +292,5 @@ public class CvDao extends BaseDao implements CvDaoI {
             return countedNames;
 
         }
-        
+
 }

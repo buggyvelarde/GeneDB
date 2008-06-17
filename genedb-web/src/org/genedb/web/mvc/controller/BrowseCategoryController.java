@@ -19,15 +19,7 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.apache.log4j.Logger;
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.taxon.TaxonNode;
-
-import org.gmod.schema.utils.CountedName;
-
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,16 +27,22 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+import org.genedb.db.dao.CvDao;
+import org.gmod.schema.utils.CountedName;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+
 /**
  * Returns cvterms based on a particular cv
- * 
+ *
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
 public class BrowseCategoryController extends TaxonNodeBindingFormController {
-    
+
     private static final Logger logger = Logger.getLogger(BrowseCategoryController.class);
-	
+
     private CvDao cvDao;
 
     @Override
@@ -58,17 +56,17 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
         BrowseCategoryBean bcb = (BrowseCategoryBean) command;
         String category = bcb.getCategory().toString();
-        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(bcb.getOrganism());
+        Collection<String> orgNames = TaxonUtils.getOrgNames(bcb.getOrganism());
 
         List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
-        
+
         if (results .isEmpty()) {
             logger.info("result is null");
             be.reject("no.results");
             return showForm(request, response, be);
         }
         logger.debug(results.get(0));
-        
+
         // Go to list results page
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject("results", results);
@@ -80,12 +78,12 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
     }
-    
+
     public static class BrowseCategoryBean {
-        
+
         private BrowseCategory category;
         private String organism;
-        
+
         public String getOrganism() {
             return organism;
         }
