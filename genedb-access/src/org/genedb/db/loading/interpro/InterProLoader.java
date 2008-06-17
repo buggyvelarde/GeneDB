@@ -116,6 +116,23 @@ public class InterProLoader {
             dbxrefsByAccByDb.get(dbName).put(accession, dbxref);
             return dbxref;
         }
+
+        /**
+         * Get or create a DbXRef, and set the description if it's not already set.
+         * Works even if the DbXRef has been created but not yet flushed, unlike
+         * {@link FeatureUtils#findOrCreateDbXRefFromDbAndAccession(String,String)}
+         *
+         * @param dbName The database name
+         * @param accession The database-specific identifier
+         * @param description The description to use
+         * @return the existing or newly-created DbXRef
+         */
+        public DbXRef get(String dbName, String accession, String description) {
+            DbXRef dbxref = get(dbName, accession);
+            if (dbxref.getDescription() == null)
+                dbxref.setDescription(description);
+            return dbxref;
+        }
     }
 
     private void loadGene(InterProFile interProFile, String gene) {
@@ -176,9 +193,9 @@ public class InterProLoader {
         logger.debug("In loadGroup()");
         DbXRef interproDbxref = null;
         if (acc != InterProAcc.NULL) {
-            logger.debug(String.format("Creating InterPro dbxref for '%s'", acc.getId()));
-            interproDbxref = dbxrefManager.get("InterPro", acc.getId());
-            interproDbxref.setDescription(acc.getDescription());
+            logger.debug(String.format("Creating InterPro dbxref for '%s' with description '%s'",
+                acc.getId(), acc.getDescription()));
+            interproDbxref = dbxrefManager.get("InterPro", acc.getId(), acc.getDescription());
         }
 
         int n = -1;
@@ -187,7 +204,7 @@ public class InterProLoader {
             logger.debug(row);
 
             // Insert polypeptide_domain
-            DbXRef dbxref = dbxrefManager.get(row.db, row.nativeAcc);
+            DbXRef dbxref = dbxrefManager.get(row.db, row.nativeAcc, row.nativeDesc);
             if (dbxref == null) {
                 logger.error(String.format("Could not find dbxref '%s'/'%s'", row.db, row.nativeAcc));
                 continue;
