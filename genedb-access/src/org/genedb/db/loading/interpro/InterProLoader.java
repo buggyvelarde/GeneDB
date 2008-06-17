@@ -113,6 +113,12 @@ public class InterProLoader {
                 return dbxrefsByAccByDb.get(dbName).get(accession);
 
             DbXRef dbxref = featureUtils.findOrCreateDbXRefFromDbAndAccession(dbName, accession);
+
+            /* The above statement can trigger a flush, hence the apparent
+             * repetition here. */
+            if (!dbxrefsByAccByDb.containsKey(dbName))
+                dbxrefsByAccByDb.put(dbName, new HashMap<String,DbXRef>());
+
             dbxrefsByAccByDb.get(dbName).put(accession, dbxref);
             return dbxref;
         }

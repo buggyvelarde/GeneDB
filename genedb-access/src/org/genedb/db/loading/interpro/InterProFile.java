@@ -100,10 +100,10 @@ class InterProRow {
     private static final HashMap<String, String> dbByProg = new HashMap<String, String>();
     static {
         dbByProg.put("HMMPfam", "Pfam");
-        dbByProg.put("ScanProsite", "PROSITE");
+        dbByProg.put("ScanProsite", "Prosite");
         dbByProg.put("FPrintScan", "PRINTS");
-        dbByProg.put("ProfileScan", "PROSITE");
-        dbByProg.put("ScanRegExp", "PROSITE");
+        dbByProg.put("ProfileScan", "Prosite");
+        dbByProg.put("ScanRegExp", "Prosite");
         dbByProg.put("HMMSmart", "SMART");
         dbByProg.put("BlastProDom", "ProDom");
         dbByProg.put("Superfamily", "Superfamily");
