@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HomepageController extends AbstractController {
 	
+	public static final String DUMMY_UNKNOWN = "XXX";
+	
     private static String HOMEPAGE = "homepages/";
     private static String DEFAULT_HOMEPAGE = HOMEPAGE + "malariaReleasePage";
     private static String DEFAULT_STYLE = "childListing"; // FIXME
@@ -43,7 +45,7 @@ public class HomepageController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         
-    	String originalOrg = ServletRequestUtils.getStringParameter(request, "organism", "XXX");
+    	String originalOrg = ServletRequestUtils.getStringParameter(request, "organism", DUMMY_UNKNOWN);
     	
 //        TaxonNodeArrayHolder tnah = new TaxonNodeArrayHolder();
 //        
@@ -74,8 +76,9 @@ public class HomepageController extends AbstractController {
 //        }
         
 //        TaxonNode node = nodes[0];
-        String viewName = HOMEPAGE + DEFAULT_STYLE;
-        if (!originalOrg.equals("XXX")) {
+        String viewName = DEFAULT_HOMEPAGE;
+        //String viewName = HOMEPAGE + DEFAULT_STYLE;
+        if (!originalOrg.equals(DUMMY_UNKNOWN)) {
         	pageName = originalOrg;
         	organism = originalOrg;
         //pageName = node.getName(TaxonNameType.HTML_SHORT); // TODO Pass in taxon node
