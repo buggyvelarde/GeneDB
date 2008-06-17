@@ -410,8 +410,9 @@ div.value {
  }
 
 .domainTable {width: 90%;}
-.domainTitleFirst {width: 70%; padding-top: 0px; padding-bottom: 1em;}
-.domainTitle {width: 70%; padding-top: 2em; padding-bottom: 1em;}
-.domainAccession {padding-left: 2em;}
+.domainTitleFirst {padding-top: 0px;}
+.domainTitle {padding-top: 1em;}
+.domainAccession {width: 9em; padding-left: 2em; text-align: right;}
+.domainDescription {padding-left: 2em;}
 .domainPosition {text-align: right; margin-right: 2em;}
 .domainScore {text-align: right;}
