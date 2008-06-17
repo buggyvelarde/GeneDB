@@ -66,6 +66,11 @@ insert into db (name, description, urlprefix) values (
         'Db where we store db entries corresponding to PRINTS terms',
         'http://www.bioinf.manchester.ac.uk/cgi-bin/dbbrowser/PRINTS/DoPRINTS.pl?cmd_a=Display&fun_a=text&qst_a=');
 
+insert into db (name, description, urlprefix) values (
+        'ProDom',
+        'Db where we store db entries corresponding to ProDom terms',
+        'http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query=');
+
 --
 -- Add url prefix to existing dbs
 --
