@@ -4,15 +4,13 @@ import org.genedb.web.mvc.controller.BrowseCategoryController.BrowseCategoryBean
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-public class BrowseCategoryFormValidator implements Validator{
+public class BrowseCategoryFormValidator implements Validator {
 
     @SuppressWarnings("unchecked")
-    @Override
     public boolean supports(Class clazz) {
         return true;
     }
 
-    @Override
     public void validate(Object object, Errors errors) {
         BrowseCategoryBean bean = (BrowseCategoryBean) object;
         

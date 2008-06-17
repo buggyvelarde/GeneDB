@@ -7,12 +7,10 @@ import org.springframework.validation.Validator;
 public class NamedFeatureFormValidator implements Validator{
 
     @SuppressWarnings("unchecked")
-    @Override
     public boolean supports(Class clazz) {
         return true;
     }
 
-    @Override
     public void validate(Object object, Errors errors) {
         NameLookupBean bean = (NameLookupBean) object;
         
