@@ -28,9 +28,14 @@ public class TextByteType implements UserType {
     public byte[] deepCopy(Object originalOb) throws HibernateException {
         logger.trace("deepCopy");
         byte[] original = (byte[]) originalOb;
+        
         if (original == null)
             return null;
-        return Arrays.copyOf(original, original.length);
+        
+        byte[] newCopy = new byte[original.length];
+        
+        System.arraycopy(original, 0, newCopy, 0, original.length);
+        return newCopy;
     }
 
     public byte[] disassemble(Object value) throws HibernateException {
