@@ -50,11 +50,12 @@
 		<javac srcdir="${imported.basedir.access}/src" destdir="${imported.basedir.access}/ant-build/classes" debug="true" classpathref="genedb-access.libs"/>
 	</target>
 
-	<target name="replace">
-		<copy file="property-file.${load}" tofile="${imported.basedir.access}/resources/project.properties" />
+	<target name="replace" if="load">
+		<copy file="property-file.${load}" tofile="${imported.basedir.access}/resources/project.properties"
+		    overwrite="true" />
 	</target>
 
-	<target name="genedb-access.jar" depends="compile-access" description="Create JAR file">
+	<target name="genedb-access.jar" depends="replace,compile-access" description="Create JAR file">
 		<delete file="${imported.basedir.access}/genedb-access.jar"/>
 		<mkdir dir="${imported.basedir.access}/ant-build/jar"/>
 
@@ -63,6 +64,7 @@
 		<copy todir="${imported.basedir.access}/ant-build/jar">
 			<fileset dir="${imported.basedir.access}/ant-build/classes" />
 			<fileset dir="${imported.basedir.access}/resources" />
+            <fileset dir="${imported.basedir.access}/conf" />
 		</copy>
 
 		<jar jarfile="${imported.basedir.access}/genedb-access.jar">
@@ -76,6 +78,8 @@
 	</target>
 
 	<path id="exec-classpath">
+        <fileset dir="resources/"/>
+        <fileset dir="conf/"/>
 		<fileset file="${imported.basedir.access}/../genedb-domain/genedb-domain.jar"  />
 		<fileset file="${imported.basedir.access}/../genedb-query/ant-build/jars/genedb-query.jar"  />
 		<fileset file="${lib-dir}/spring-2.5.4.jar"  />
@@ -106,7 +110,6 @@
 		<fileset file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
 		<fileset file="${imported.basedir.access}/../genedb-db/ant-build/jars/chado-interface.jar" />
 		<fileset file="genedb-access.jar" />
-		<fileset dir="resources/"/>
 	</path>
 
 	<target name="load-goAssociation" depends="genedb-access.jar">
@@ -256,7 +259,7 @@
 		</java>
 	</target>
 
-	<target name="load-smansoni" depends="replace,genedb-access.jar">
+	<target name="load-smansoni" depends="genedb-access.jar">
 		<java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
 			<arg line="Smansoni /Users/rh11/GeneDB/input/smansoni/smansoni.config.xml"/>
 			<jvmarg line="-server"/>
@@ -494,7 +497,7 @@
 	<target name="load-interpro" depends="genedb-access.jar">
 		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.interpro.LoadInterPro">
 			<arg line="${file}"/>
-			<jvmarg line="-server"/>
+			<jvmarg line="-server -Xmx256m"/>
 		</java>
 	</target>
 
