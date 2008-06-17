@@ -72,12 +72,12 @@ public class HomepageController extends AbstractController {
         
         TaxonNode node = nodes[0];
         String viewName = HOMEPAGE + DEFAULT_STYLE;
+        pageName = node.getName(TaxonNameType.HTML_SHORT); // TODO Pass in taxon node
+        organism = node.getName(TaxonNameType.LABEL);
         
         Map props = node.getAppDetails("WEB");
         if (props.containsKey("HOMEPAGE_STYLE")) {
             viewName = HOMEPAGE + props.get("HOMEPAGE_STYLE");
-            pageName = node.getName(TaxonNameType.HTML_SHORT); // TODO Pass in taxon node
-            organism = node.getName(TaxonNameType.LABEL);
         }
         
 //      List<NewsItem> news = checkNews();
