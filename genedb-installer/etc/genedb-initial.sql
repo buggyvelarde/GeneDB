@@ -56,6 +56,16 @@ insert into db (name, description, urlprefix) values (
         'Db where we store db entries corresponding to TDRtargets terms',
         'http://tdrtargets.org/targets/view?gene_name=');
 
+insert into db (name, description, urlprefix) values (
+        'Superfamily',
+        'Db where we store db entries corresponding to Superfamily terms',
+        'http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/model.cgi?model=');
+
+insert into db (name, description, urlprefix) values (
+        'PRINTS',
+        'Db where we store db entries corresponding to PRINTS terms',
+        'http://www.bioinf.manchester.ac.uk/cgi-bin/dbbrowser/PRINTS/DoPRINTS.pl?cmd_a=Display&fun_a=text&qst_a=');
+
 --
 -- Add url prefix to existing dbs
 --
