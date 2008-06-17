@@ -1,7 +1,11 @@
 package org.genedb.db.loading.interpro;
 
-import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
@@ -14,10 +18,10 @@ import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.sequence.feature.PolypeptideDomain;
 import org.gmod.schema.sequence.feature.ProductiveTranscript;
 import org.gmod.schema.sequence.feature.Transcript;
+import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
@@ -30,31 +34,94 @@ public class InterProLoader {
     private SequenceDao sequenceDao;
     private FeatureUtils featureUtils;
     private HibernateTransactionManager hibernateTransactionManager;
+    private DbXRefManager dbxrefManager;
 
     public void load(InterProFile interProFile) {
         SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
-        Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+        this.dbxrefManager = new DbXRefManager();
+        Session session = SessionFactoryUtils.getSession(sessionFactory, dbxrefManager, null);
         TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
         Transaction transaction = session.getTransaction();
 
-        for (String gene: interProFile.genes()) {
+        Collection<String> genes = interProFile.genes();
+        int n=1;
+        for (String gene: genes) {
             transaction.begin();
-            logger.debug(String.format("Processing gene '%s'", gene));
+            logger.info(String.format("Processing gene '%s' [%d/%d]", gene, n++, genes.size()));
             loadGene(interProFile, gene);
             transaction.commit();
         }
 
         TransactionSynchronizationManager.unbindResource(sessionFactory);
-        SessionFactoryUtils.closeSession(session);
+        SessionFactoryUtils.releaseSession(session, sessionFactory);
+    }
+
+    /**
+     * Maintains a cache of the DbXRefs that have been created but
+     * not yet flushed, so we can look them up even though they're
+     * not in the database yet. The cache is cleared whenever
+     * Hibernate flushes.
+     *
+     * @author rh11
+     */
+    private class DbXRefManager extends EmptyInterceptor {
+        private Map<String,Map<String,DbXRef>> dbxrefsByAccByDb
+            = new HashMap<String,Map<String,DbXRef>>();
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void postFlush(@SuppressWarnings("unused") Iterator entities) {
+            logger.debug("Flushing dbxrefs");
+            dbxrefsByAccByDb = new HashMap<String,Map<String,DbXRef>>();
+        }
+
+        /**
+         * Get or create a DbXRef. Works even if the DbXRef has been
+         * created but not yet flushed, unlike
+         * {@link FeatureUtils#findOrCreateDbXRefFromDbAndAccession(String,String)}
+         *
+         * @param identifier A string of the form <code>db:accession</code>
+         * @return the existing or newly-created DbXRef
+         */
+        public DbXRef get(String identifier) {
+            int colonIndex = identifier.indexOf(':');
+            if (colonIndex == -1)
+                throw new IllegalArgumentException(String.format(
+                    "Failed to parse dbxref identifier '%s'", identifier));
+            return get(identifier.substring(0, colonIndex), identifier.substring(colonIndex + 1));
+        }
+
+        /**
+         * Get or create a DbXRef. Works even if the DbXRef has been
+         * created but not yet flushed, unlike
+         * {@link FeatureUtils#findOrCreateDbXRefFromDbAndAccession(String,String)}
+         *
+         * @param dbName The database name
+         * @param accession The database-specific identifier
+         * @return the existing or newly-created DbXRef
+         */
+        public DbXRef get(String dbName, String accession) {
+            logger.debug(String.format("Getting DbXRef '%s'/'%s'", dbName, accession));
+            if (!dbxrefsByAccByDb.containsKey(dbName))
+                dbxrefsByAccByDb.put(dbName, new HashMap<String,DbXRef>());
+
+            if (dbxrefsByAccByDb.get(dbName).containsKey(accession))
+                return dbxrefsByAccByDb.get(dbName).get(accession);
+
+            DbXRef dbxref = featureUtils.findOrCreateDbXRefFromDbAndAccession(dbName, accession);
+            dbxrefsByAccByDb.get(dbName).put(accession, dbxref);
+            return dbxref;
+        }
     }
 
     private void loadGene(InterProFile interProFile, String gene) {
+        Set<String> goTermIds = new HashSet<String>();
         Polypeptide polypeptide = getPolypeptideForGene(gene);
         if (polypeptide == null)
             return;
         for (InterProAcc acc: interProFile.accsForGene(gene)) {
             logger.debug(String.format("Processing '%s'", acc.getId()));
-            loadGroup(interProFile, gene, acc, polypeptide);
+            loadGroup(interProFile, gene, acc, polypeptide, goTermIds);
         }
     }
 
@@ -100,21 +167,33 @@ public class InterProLoader {
         return selectedTranscript.getProtein();
     }
 
-    private void loadGroup(InterProFile interProFile, String gene, InterProAcc acc, Polypeptide polypeptide) {
+    private void loadGroup(InterProFile interProFile, String gene, InterProAcc acc,
+            Polypeptide polypeptide, Set<String> goTermIds) {
         logger.debug("In loadGroup()");
         DbXRef interproDbxref = null;
         if (acc != InterProAcc.NULL) {
             logger.debug(String.format("Creating InterPro dbxref for '%s'", acc.getId()));
-            interproDbxref = featureUtils.findOrCreateDbXRefFromDbAndAccession("InterPro", acc.getId());
+            interproDbxref = dbxrefManager.get("InterPro", acc.getId());
             interproDbxref.setDescription(acc.getDescription());
         }
 
+        int n = -1;
         for (InterProRow row: interProFile.rows(gene, acc)) {
+            n++;
             logger.debug(row);
 
             // Insert polypeptide_domain, link to Interpro dbxref if applicable
-            DbXRef dbxref = featureUtils.findOrCreateDbXRefFromDbAndAccession(row.db, row.nativeAcc);
-            PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(polypeptide, row.nativeAcc, row.score, row.desc, row.fmin, row.fmax, dbxref);
+            DbXRef dbxref = dbxrefManager.get(row.db, row.nativeAcc);
+
+            String domainUniqueName;
+            if (n == 0)
+                domainUniqueName = String.format("%s:%s", polypeptide.getUniqueName(), row.nativeAcc);
+            else
+                domainUniqueName = String.format("%s:%s:%d",
+                    polypeptide.getUniqueName(), row.nativeAcc, n);
+
+            PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(
+                domainUniqueName, polypeptide, row.score, row.desc, row.fmin, row.fmax, dbxref);
 
             if (interproDbxref != null) {
                 FeatureDbXRef featureDbXRef = new FeatureDbXRef(interproDbxref, polypeptide, true);
@@ -123,22 +202,18 @@ public class InterProLoader {
 
             // Insert GO terms, if there are any
             for (GoInstance goTerm: row.goTerms) {
-                try {
-                    featureUtils.createGoEntries(polypeptide, goTerm);
+                if (goTermIds.contains(goTerm.getId())) {
+                    logger.debug(String.format("The GO term '%s' has already been added to gene '%s'",
+                        goTerm.getId(), gene));
+                    continue;
                 }
-                catch (DataIntegrityViolationException exception) {
-                    logger.error(String.format("Failed to create GO term '%s' for domain '%s'", goTerm.getId(), polypeptideDomain.getUniqueName()));
-                    Throwable cause = exception.getMostSpecificCause();
-                    logger.error(cause.getMessage());
-                    if (cause instanceof SQLException) {
-                        Throwable ultimateCause = null;
-                        for (Throwable chainedException: (SQLException) cause)
-                            ultimateCause = chainedException;
+                goTermIds.add(goTerm.getId());
 
-                        logger.error(ultimateCause);
-                        System.exit(1); // TODO remove this line
-                    }
-                }
+                logger.debug(String.format("Creating GO term '%s' for domain '%s'",
+                    goTerm.getId(), polypeptideDomain.getUniqueName()));
+
+                featureUtils.createGoEntries(polypeptide, goTerm,
+                    "From Interpro file", dbxrefManager.get(goTerm.getWithFrom()));
             }
         }
     }

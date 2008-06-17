@@ -162,7 +162,7 @@ class InterProRow {
             GoInstance goTerm = new GoInstance();
             goTerm.setId(goId);
             goTerm.setEvidence(GoEvidenceCode.IEA);
-            goTerm.setWithFrom("Interpro:" + this.acc);
+            goTerm.setWithFrom("InterPro:" + this.acc.getId());
             goTerm.setRef("GOC:interpro2go");
             goTerm.setDate(this.date.withoutDashes());
             goTerm.setGeneName(this.gene);

@@ -40,11 +40,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
-
 import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.GoInstance;
 import org.genedb.db.loading.GoParser;
@@ -55,12 +53,10 @@ import org.genedb.db.loading.ParsedString;
 import org.genedb.db.loading.ProcessingPhase;
 import org.genedb.db.loading.SimilarityInstance;
 import org.genedb.db.loading.SimilarityParser;
-
 import org.gmod.schema.analysis.Analysis;
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.dao.SequenceDaoI;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.pub.Pub;
@@ -162,7 +158,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             String sharedId = MiningUtils.getProperty("shared_id", an, null);
             if (sharedId != null) {
                 // TODO Tidy
-                List<Feature> featureList = sequenceDao.getFeaturesByUniqueName(sharedId);
+                List<Feature> featureList = sequenceDao.getFeaturesByUniqueNamePattern(sharedId);
                 if (featureList != null && featureList.size()==1) {
                 	gene = featureList.get(0);
                 }
@@ -346,7 +342,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         }
 
         for (GoInstance go : gos) {
-        	featureUtils.createGoEntries(polypeptide, go);
+        	featureUtils.createGoEntries(polypeptide, go, null);
         }
 
 	}

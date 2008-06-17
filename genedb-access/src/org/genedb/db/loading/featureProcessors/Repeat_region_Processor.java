@@ -91,7 +91,7 @@ public class Repeat_region_Processor extends BaseFeatureProcessor {
         if (!cvDao.existsNameInOntology(soType, CV_SO)) {
         	logger.warn("Can't create repeat feature of type '"+soType+"' at location '"+loc+"'");
         } else {
-            if (sequenceDao.getFeaturesByUniqueName(systematicId).size() == 0) {
+            if (sequenceDao.getFeaturesByUniqueNamePattern(systematicId).size() == 0) {
             	Feature repeat = this.featureUtils.createFeature(soType, systematicId,
             			this.organism);
             	sequenceDao.persist(repeat);

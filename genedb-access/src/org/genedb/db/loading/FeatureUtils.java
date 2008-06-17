@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -166,11 +167,16 @@ public class FeatureUtils implements InitializingBean {
         this.sequenceDao = sequenceDao;
     }
 
+    private Cv CV_GENEDB;
+    private CvTerm GO_KEY_EVIDENCE, GO_KEY_QUALIFIER, GENEDB_AUTOCOMMENT;
     public void afterPropertiesSet() {
         so = cvDao.getCvByName("sequence");
-        Cv CV_GENEDB = cvDao.getCvByName("genedb_misc");
+        CV_GENEDB = cvDao.getCvByName("genedb_misc");
         GENEDB_TOP_LEVEL = cvDao.getCvTermByNameInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
         DUMMY_PUB = pubDao.getPubByUniqueName("null");
+        GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
+        GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
+        GENEDB_AUTOCOMMENT = cvDao.getCvTermByNameInCv("autocomment", CV_GENEDB).get(0);
     }
 
     public void markTopLevelFeature(org.gmod.schema.sequence.Feature topLevel) {
@@ -434,6 +440,22 @@ public class FeatureUtils implements InitializingBean {
         return pp;
     }
 
+    /*
+     * Pre-caching the name -> id mapping is a big win compared with
+     * doing a new query every time, when doing a data load. It uses a
+     * chunk of memory though, and perhaps a less aggressive strategy
+     * would give a better time/space tradeoff.
+     */
+
+    private Map<String, Integer> goTermIdsByAcc = null;
+    private CvTerm getGoTerm(String id) {
+        if (goTermIdsByAcc == null)
+            goTermIdsByAcc = cvDao.getGoTermIdsByAcc();
+        if (!goTermIdsByAcc.containsKey(id))
+            return null;
+        return cvDao.getCvTermById(goTermIdsByAcc.get(id));
+    }
+
     /**
      * Take a polypeptide feature and GoInstance object to create GO entries
      *
@@ -442,16 +464,38 @@ public class FeatureUtils implements InitializingBean {
      * @param go a GoInstance object
      *
      */
-    public void createGoEntries(Feature polypeptide, GoInstance go) {
+    public void createGoEntries(Feature polypeptide, GoInstance go, String comment) {
+        List<DbXRef> withFromDbXRefs = new ArrayList<DbXRef>();
 
-        // Find db_xref for go id
-        String id = go.getId();
-        // logger.debug("Investigating storing GO '"+id+"' on
-        // '"+polypeptide.getUniquename()+"'");
+        String xref = go.getWithFrom();
+        if (xref != null) {
+            if (!xref.contains(":"))
+                logger.error(String.format("Can't parse dbxref '%s'", xref));
+            else {
+                List<DbXRef> dbXRefs = findOrCreateDbXRefsFromString(xref);
+                for (DbXRef dbXRef : dbXRefs) {
+                    if (dbXRef != null) {
+                        withFromDbXRefs.add(dbXRef);
+                    }
+                }
+            }
+        }
+        createGoEntries(polypeptide, go, comment, withFromDbXRefs);
+    }
 
-        CvTerm cvTerm = cvDao.getGoCvTermByAccViaDb(id);
+    public void createGoEntries(Feature polypeptide, GoInstance go, String comment,
+            DbXRef withFromDbXRef) {
+        if (withFromDbXRef == null)
+            createGoEntries(polypeptide, go, comment, Collections.<DbXRef>emptyList());
+        else
+            createGoEntries(polypeptide, go, comment, Collections.singletonList(withFromDbXRef));
+    }
+
+    public void createGoEntries(Feature polypeptide, GoInstance go, String comment,
+            List<DbXRef> withFromDbXRefs) {
+        CvTerm cvTerm = getGoTerm(go.getId());
         if (cvTerm == null) {
-            logger.error("Unable to find a CvTerm for the GO id of '" + id + "'. Skipping");
+            logger.error("Unable to find a CvTerm for the GO id of '" + go.getId() + "'. Skipping");
             return;
         }
 
@@ -487,15 +531,14 @@ public class FeatureUtils implements InitializingBean {
         // FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
         // sequenceDao.persist(fctp);
         // }
-        Cv CV_GENEDB = cvDao.getCvByName("genedb_misc");
-        CvTerm GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
-        CvTerm GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
         // GO_KEY_DATE = cvDao.getCvTermByNameInCv("unixdate",
         // CV_FEATURE_PROPERTY).get(0);
 
+        sequenceDao.persist(new FeatureCvTermProp(GENEDB_AUTOCOMMENT, fct, comment, 0));
+
         // Evidence
-        FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE, fct, go.getEvidence()
-                .getDescription(), 0);
+        FeatureCvTermProp fctp = new FeatureCvTermProp(GO_KEY_EVIDENCE, fct,
+                go.getEvidence().getDescription(), 0);
         sequenceDao.persist(fctp);
 
         // Qualifiers
@@ -508,25 +551,13 @@ public class FeatureUtils implements InitializingBean {
         }
 
         // With/From
-        String xref = go.getWithFrom();
-        if (xref != null) {
-            if (!xref.contains(":"))
-                logger.error(String.format("Can't parse dbxref '%s'", xref));
-            else {
-                List<DbXRef> dbXRefs = findOrCreateDbXRefsFromString(xref);
-                for (DbXRef dbXRef : dbXRefs) {
-                    if (dbXRef != null) {
-                        FeatureCvTermDbXRef fcvtdbx = new FeatureCvTermDbXRef(dbXRef, fct);
-                        sequenceDao.persist(fcvtdbx);
-                    }
-                }
-            }
+        for (DbXRef withFromDbXRef: withFromDbXRefs) {
+            sequenceDao.persist(new FeatureCvTermDbXRef(withFromDbXRef, fct));
         }
 
         // logger.info("Persisting new FeatureCvTerm for
         // '"+polypeptide.getUniquename()+"' with a cvterm of
         // '"+cvTerm.getName()+"'");
-
     }
 
     public void setGeneralDao(GeneralDao generalDao) {
