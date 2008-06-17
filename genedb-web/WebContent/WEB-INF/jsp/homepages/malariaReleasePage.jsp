@@ -3,7 +3,7 @@
 
 <c:url value="/" var="base"/>
 
-<format:headerRound organism="${organism}" name="GeneDB" title="GeneDB" bodyClass="genePage">
+<format:headerRound organism="${organism}" name="${pageName}" title="GeneDB" bodyClass="genePage">
 
 <st:init />
 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
@@ -21,7 +21,7 @@
 
 	    <p>It also provides a preview of the new GeneDB website. This site
 	    is currently under development, and not running on fault resistant
-	    hardware, so may not be constantly available.<br>
+	    hardware, so may not be constantly available.</p><br>
 
 	    <p>To locate a gene, enter its ID or product, using wildcards, in
 	    the text box in the top right, or use the browsable categories in
@@ -29,8 +29,8 @@
 
 	    <h3>Example Genes</h3>
 	    <ul>
-	    <li><a href="<c:url value="NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
-	    <li><a href="<c:url value="NamedFeature?name=PF07_0048"/>">PF07_0048 (VAR)</a></li>
+	    <li><a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
+	    <li><a href="<c:url value="/NamedFeature?name=PF07_0048"/>">PF07_0048 (VAR)</a></li>
 	    </ul>
 
 
