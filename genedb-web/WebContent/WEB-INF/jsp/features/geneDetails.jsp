@@ -167,11 +167,11 @@
                         <td class="label">Mass</td>
                         <td class="value">${polyprop.mass} kDa</td>
                     </tr>
-                </c:if>
+                </c:if><!--
                 <tr>
                     <td class="label">Charge</td>
                     <td class="value">${polyprop.charge}</td>
-                </tr>
+                </tr> -->
                 <tr>
                     <td class="label">Amino Acids</td>
                     <td class="value">${polyprop.aminoAcids}</td>
