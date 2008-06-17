@@ -21,7 +21,6 @@ package org.genedb.web.mvc.controller;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.taxon.TaxonNode;
 
 import org.gmod.schema.sequence.Feature;
 
