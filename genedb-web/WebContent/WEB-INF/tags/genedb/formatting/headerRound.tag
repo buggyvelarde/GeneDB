@@ -25,7 +25,7 @@
     <script type="text/javascript">
         var navigationMenuBar;
         YAHOO.util.Event.onContentReady("navigation", function () {
-            navigationMenuBar = new YAHOO.widget.MenuBar("navigation", {autosubmenudisplay: true, hidedelay: 750, lazyload: true});
+            navigationMenuBar = new YAHOO.widget.MenuBar("navigation", {autosubmenudisplay: true, showdelay: 50, hidedelay: 1000, lazyload: false});
             navigationMenuBar.render();
         });
     </script>
