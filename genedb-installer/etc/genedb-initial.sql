@@ -59,7 +59,7 @@ insert into db (name, description, urlprefix) values (
 insert into db (name, description, urlprefix) values (
         'Superfamily',
         'Db where we store db entries corresponding to Superfamily terms',
-        'http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/model.cgi?model=');
+        'http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/search.cgi?search_field=');
 
 insert into db (name, description, urlprefix) values (
         'PRINTS',
@@ -110,6 +110,8 @@ update db set urlprefix='http://ca.expasy.org/cgi-bin/prosite-search-ac?'
 update db set urlprefix='http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids='
 	where name='PMID';
 
+update db set urlprefix='http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/search.cgi?search_field='
+    where name='Superfamily';
 
 
 --
