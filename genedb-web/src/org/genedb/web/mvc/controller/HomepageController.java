@@ -73,7 +73,9 @@ public class HomepageController extends AbstractController {
         TaxonNode node = nodes[0];
         String viewName = HOMEPAGE + DEFAULT_STYLE;
         pageName = node.getName(TaxonNameType.HTML_SHORT); // TODO Pass in taxon node
+        logger.warn(String.format("Retrieved a page name of '%s'", pageName));
         organism = node.getName(TaxonNameType.LABEL);
+        logger.warn(String.format("Retrieved an organism name of '%s'", pageName));
         
         Map props = node.getAppDetails("WEB");
         if (props.containsKey("HOMEPAGE_STYLE")) {
