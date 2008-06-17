@@ -453,7 +453,7 @@ public class FixResidues {
             printf("Translated sequence: %s\n", protein);
 
             if (verbose) {
-                if (protein.isEmpty())
+                if (protein.length()==0)
                     printf("WARNING: Translated protein sequence is empty\n");
                 else {
                     if (!protein.startsWith("M"))
