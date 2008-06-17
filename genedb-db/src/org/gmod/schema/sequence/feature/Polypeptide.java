@@ -1,7 +1,10 @@
 package org.gmod.schema.sequence.feature;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -10,6 +13,7 @@ import javax.persistence.Transient;
 import org.apache.log4j.Logger;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 
@@ -88,5 +92,18 @@ public class Polypeptide extends Feature {
         }
 
         return null;
+    }
+
+    @Transient
+    public Collection<PolypeptideDomain> getDomains() {
+        Set<PolypeptideDomain> domains = new HashSet<PolypeptideDomain>();
+
+        for (FeatureLoc domainLoc: this.getFeatureLocsForSrcFeatureId()) {
+            Feature domain = domainLoc.getFeatureByFeatureId();
+            if (domain instanceof PolypeptideDomain)
+                domains.add((PolypeptideDomain) domain);
+        }
+
+        return domains;
     }
 }

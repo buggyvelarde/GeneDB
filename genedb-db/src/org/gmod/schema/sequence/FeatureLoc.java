@@ -33,7 +33,7 @@ public class FeatureLoc implements Serializable {
     @JoinColumn(name = "srcfeature_id", unique = false, nullable = true, insertable = true, updatable = true)
     private Feature featureBySrcFeatureId;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {}, fetch = FetchType.EAGER)
     @JoinColumn(name = "feature_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature featureByFeatureId;
 
@@ -209,9 +209,9 @@ public class FeatureLoc implements Serializable {
      * Return the (unmapped) srcFeatureId property. This must be explicitly
      * populated beforehand using setSrcFeatureId(int); it is not automatically
      * populated by Hibernate.
-     * 
+     *
      * Perhaps you really wanted getFeatureBySrcFeatureId().getFeatureId()?
-     * 
+     *
      * @return The value of the srcFeatureId property
      */
     public int getSrcFeatureId() {
@@ -222,7 +222,7 @@ public class FeatureLoc implements Serializable {
      * Set the value of the (unmapped) srcFeatureId property. This is not
      * automatically populated by Hibernate, and must be set explicitly if it is
      * used. Currently used only by Artemis.
-     * 
+     *
      * @param srcFeatureId
      */
     public void setSrcFeatureId(int srcFeatureId) {

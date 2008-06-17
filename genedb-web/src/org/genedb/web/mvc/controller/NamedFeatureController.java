@@ -78,7 +78,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
 
         BooleanQuery geneNameQuery = new BooleanQuery();
-        
+
         if(StringUtils.containsWhitespace(name)) {
             for(String term : name.split(" ")) {
                 geneNameQuery.add(new TermQuery(new Term("product",term.toLowerCase()
@@ -93,14 +93,13 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
                 geneNameQuery.add(new WildcardQuery(new Term("product", name.toLowerCase())), Occur.SHOULD);
             }
         }
-        
-        
-        
+
+
         BooleanQuery booleanQuery = new BooleanQuery();
         booleanQuery.add(new BooleanClause(geneOrPseudogeneQuery, Occur.MUST));
         booleanQuery.add(new BooleanClause(geneNameQuery, Occur.MUST));
-        
-        
+
+
         if(taxonNodes != null) {
             List<String> orgNames = new ArrayList<String>();
             for (TaxonNode node : taxonNodes) {
@@ -112,10 +111,10 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             }
             booleanQuery.add(new BooleanClause(organismQuery,Occur.MUST));
         }
-        
+
         logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
         Hits hits = luceneDao.search(ir, booleanQuery);
-        
+
         switch (hits.length()) {
         case 0: {
             // Temporary check as the Lucene index isn't automatically
@@ -190,7 +189,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     public void setGeneDetailsView(String geneDetailsView) {
         this.geneDetailsView = geneDetailsView;
     }
-    
+
     public static class NameLookupBean {
 
         private String name; // The name to lookup, using * for wildcards

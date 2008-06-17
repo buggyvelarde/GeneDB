@@ -188,16 +188,45 @@
         </div>
     </c:if>
 
-    <!-- Domain Information --><%--
-    <format:genePageSection id="controlCur">
-        <div class="heading">Domain Information</div>
-        <table><tbody>
-
-            <tr>
-            </tr>
-        </tbody></table>
-    </format:genePageSection> --%>
-
+    <c:if test="${fn:length(domainInformation) > 0}">
+        <!-- Domain Information -->
+        <format:genePageSection id="domainInfo">
+            <div class="heading">Domain Information</div>
+            <table class="domainTable"><tbody>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="domainPosition">Position</td>
+                    <td class="domainScore">E-value</td>
+                </tr>
+                <c:forEach var="subsection" varStatus="status" items="${domainInformation}">
+                    <tr>
+                        <td colspan="2" class="domainTitle<c:if test="${status.first}">First</c:if>">
+                            <c:if test="${subsection.interproDbXRef != null}">
+                                <a href="${subsection.interproDbXRef.db.urlPrefix}${subsection.interproDbXRef.accession}"
+                                    >${subsection.interproDbXRef.db.name}:${subsection.interproDbXRef.accession}</a>
+                                    <i>${subsection.interproDbXRef.description}</i>
+                                    matches:
+                            </c:if>
+                            <c:if test="${subsection.interproDbXRef == null}">
+                                Other domain matches:
+                            </c:if>
+                        </td>
+                    </tr>
+                    <c:forEach var="hit" items="${subsection.hits}">
+                        <tr>
+                            <td class="domainAccession">
+                                <a href="${hit.dbxref.db.urlPrefix}${hit.dbxref.accession}"
+                                    >${hit.dbxref.db.name}:${hit.dbxref.accession}</a>
+                            </td>
+                            <td class="domainDescription">${hit.dbxref.description}</td>
+                            <td class="domainPosition">${1 + hit.fmin} - ${hit.fmax}</td>
+                            <td class="domainScore">${hit.score}</td>
+                        </tr>
+                    </c:forEach>
+                </c:forEach>
+            </tbody></table>
+        </format:genePageSection>
+    </c:if>
     <!-- Ortholog / Paralog Section -->
     <db:propByName items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>
     <c:if test="${fn:length(orthologs) > 0}">

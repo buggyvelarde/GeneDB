@@ -9,9 +9,14 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,17 +39,17 @@ import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
 import org.gmod.schema.general.Db;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.feature.AbstractGene;
-import org.gmod.schema.sequence.feature.Gene;
-import org.gmod.schema.sequence.feature.MRNA;
 import org.gmod.schema.sequence.feature.Polypeptide;
+import org.gmod.schema.sequence.feature.PolypeptideDomain;
 import org.gmod.schema.sequence.feature.ProductiveTranscript;
 import org.gmod.schema.sequence.feature.Transcript;
-import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
 import org.gmod.schema.utils.PeptideProperties;
+import org.hibernate.Hibernate;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -71,8 +76,8 @@ public class GeneDBWebUtils {
     }
 
     public static Map<String, Object> prepareFeature(Feature feature, Map<String, Object> model) {
-        if (feature instanceof Gene)
-            return prepareGene((Gene) feature, model);
+        if (feature instanceof AbstractGene)
+            return prepareGene((AbstractGene) feature, model);
         else if (feature instanceof Transcript)
             return prepareTranscript((Transcript) feature, model);
         else if (feature instanceof Polypeptide)
@@ -136,19 +141,86 @@ public class GeneDBWebUtils {
             model.put("polypeptide", polypeptide);
             model.put("polyprop", calculatePepstats(polypeptide));
 
-            List<CountedName> controlledCuration = cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("CC_genedb_controlledcuration", polypeptide);
-            List<CountedName> biologicalProcess = cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("biological_process", polypeptide);
-            List<CountedName> cellularComponent = cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("cellular_component", polypeptide);
-            List<CountedName> molecularFunction = cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("molecular_function", polypeptide);
-            model.put("CC", controlledCuration);
-            model.put("BP", biologicalProcess);
-            model.put("CellularC", cellularComponent);
-            model.put("MF", molecularFunction);
-            
+            model.put("CC",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("CC_genedb_controlledcuration", polypeptide));
+            model.put("BP",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("biological_process", polypeptide));
+            model.put("CellularC", cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("cellular_component", polypeptide));
+            model.put("MF",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("molecular_function", polypeptide));
+
             Db db = generalDao.getDbByName("PMID");
             model.put("PMID",db.getUrlPrefix());
+
+            model.put("domainInformation", prepareDomainInformation(polypeptide));
         }
         return model;
+    }
+
+    /**
+     * How to order the hits within each subsection.
+     * Here we order them by database and accession ID.
+     */
+    private static Comparator<Map<String, Object>> hitComparator
+        = new Comparator<Map<String, Object>> ()
+    {
+        public int compare(Map<String, Object> a, Map<String, Object> b) {
+            DbXRef aDbXRef = (DbXRef) a.get("dbxref");
+            DbXRef bDbXRef = (DbXRef) b.get("dbxref");
+            int dbNameComparison = aDbXRef.getDb().getName().compareTo(bDbXRef.getDb().getName());
+            if (dbNameComparison != 0)
+                return dbNameComparison;
+            return aDbXRef.getAccession().compareTo(bDbXRef.getAccession());
+        }
+    };
+    private static List<Map<String,Object>> prepareDomainInformation(Polypeptide polypeptide) {
+        Map<DbXRef, Set<Map<String, Object>>> detailsByInterProHit
+            = new HashMap<DbXRef, Set<Map<String, Object>>>();
+        Set<Map<String, Object>> otherMatches = new HashSet<Map<String, Object>> ();
+
+        for (PolypeptideDomain domain: polypeptide.getDomains()) {
+            FeatureLoc domainLoc = domain.getRankZeroFeatureLoc();
+            DbXRef dbxref = domain.getDbXRef();
+            if (dbxref == null) {
+                logger.error(String.format("The polypeptide domain '%s' has no DbXRef",
+                    domain.getUniqueName()));
+                continue;
+            }
+
+            Map<String, Object> thisHit = new HashMap<String, Object>();
+            thisHit.put("dbxref", dbxref);
+            thisHit.put("fmin", domainLoc.getFmin());
+            thisHit.put("fmax", domainLoc.getFmax());
+            thisHit.put("score", domain.getScore());
+
+            DbXRef interProDbXRef = domain.getInterProDbXRef();
+            Hibernate.initialize(interProDbXRef);
+            if (interProDbXRef == null)
+                otherMatches.add(thisHit);
+            else {
+                if (!detailsByInterProHit.containsKey(interProDbXRef))
+                    detailsByInterProHit.put(interProDbXRef,
+                        new TreeSet<Map<String, Object>>(hitComparator));
+                detailsByInterProHit.get(interProDbXRef).add(thisHit);
+            }
+        }
+
+        List<Map<String,Object>> domainInformation = new ArrayList<Map<String,Object>>();
+
+        for (Map.Entry<DbXRef,Set<Map<String,Object>>> entry: detailsByInterProHit.entrySet()) {
+            DbXRef interProDbXRef = entry.getKey();
+            Set<Map<String,Object>> hits = entry.getValue();
+
+            Map<String,Object> subsection = new HashMap<String,Object>();
+            subsection.put("interproDbXRef", interProDbXRef);
+            subsection.put("hits", hits);
+            domainInformation.add(subsection);
+        }
+
+        if (!otherMatches.isEmpty()) {
+            Map<String,Object> otherMatchesSubsection = new HashMap<String,Object>();
+            otherMatchesSubsection.put("hits", otherMatches);
+            domainInformation.add(otherMatchesSubsection);
+        }
+
+        return domainInformation;
     }
 
     private static PeptideProperties calculatePepstats(Feature polypeptide) {
