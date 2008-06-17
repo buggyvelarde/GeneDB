@@ -50,6 +50,10 @@ public class InterProLoader {
             logger.info(String.format("Processing gene '%s' [%d/%d]", gene, n++, genes.size()));
             loadGene(interProFile, gene);
             transaction.commit();
+            if (n % 50 == 1) {
+                logger.info("Clearing session");
+                session.clear();
+            }
         }
 
         TransactionSynchronizationManager.unbindResource(sessionFactory);
