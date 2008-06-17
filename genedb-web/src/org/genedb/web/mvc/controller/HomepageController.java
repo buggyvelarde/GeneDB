@@ -11,6 +11,7 @@ import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -42,6 +43,8 @@ public class HomepageController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         
+    	String originalOrg = ServletRequestUtils.getStringParameter(request, "organism", "XXX");
+    	
         TaxonNodeArrayHolder tnah = new TaxonNodeArrayHolder();
         
         ServletRequestDataBinder binder = new ServletRequestDataBinder(tnah);
@@ -72,11 +75,15 @@ public class HomepageController extends AbstractController {
         
         TaxonNode node = nodes[0];
         String viewName = HOMEPAGE + DEFAULT_STYLE;
-        pageName = node.getName(TaxonNameType.HTML_SHORT); // TODO Pass in taxon node
-        logger.warn(String.format("Retrieved a page name of '%s'", pageName));
-        organism = node.getName(TaxonNameType.LABEL);
-        logger.warn(String.format("Retrieved an organism name of '%s'", pageName));
-        
+        if (!originalOrg.equals("XXX")) {
+        	pageName = originalOrg;
+        	organism = originalOrg;
+        //pageName = node.getName(TaxonNameType.HTML_SHORT); // TODO Pass in taxon node
+        //logger.warn(String.format("Retrieved a page name of '%s'", pageName));
+        //organism = node.getName(TaxonNameType.LABEL);
+        //logger.warn(String.format("Retrieved an organism name of '%s'", pageName));
+        }
+        	
         Map props = node.getAppDetails("WEB");
         if (props.containsKey("HOMEPAGE_STYLE")) {
             viewName = HOMEPAGE + props.get("HOMEPAGE_STYLE");
