@@ -249,8 +249,8 @@ div.section-body {
 	font-family: sans-serif;
 }
 #header td {padding: 0}
-#header #logo {width: 24%;margin-top:1ex;margin-left:10px;margin-right:-10px;font-weight:bold;}
-#header #name {width: 34%;margin-top:1ex; text-align:center; font-style:italic;}
+#header #logo {width: 24%;padding-top:1ex;padding-left:10px;margin-right:-10px;font-weight:bold;}
+#header #name {width: 34%;padding-top:1ex; text-align:center; font-style:italic;}
 #header form {margin: 6px 3px 0 -3px;}
 #header #search {vertical-align: middle; font-size: 12pt; width: 40%; text-align:right;}
 #header input#submit {
