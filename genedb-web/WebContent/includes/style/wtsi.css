@@ -273,3 +273,12 @@ div.section-body {
 .footer :link, .footer :visited {
 	color: #e0e0d5;
 }
+
+div#frontPage h1 {
+	text-align: center;
+	font-size: 1.5em;
+}
+
+div#frontPage p {
+	text-align: justify;
+}
