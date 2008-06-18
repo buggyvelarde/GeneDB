@@ -230,7 +230,7 @@ function highlightTranscript(left, top, width, height) {
 
     var gene = selectedTranscript.gene;
     var name = gene.name;
-    if (name == null || name == "")
+    if (name == null || name == "" || name == gene.uniqueName)
         name = gene.uniqueName;
     else
         name += " (" + gene.uniqueName + ")";
