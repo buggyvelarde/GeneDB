@@ -61,7 +61,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
         ret.setUniqueName(feat.getUniqueName());
         ret.setFeatureId(feat.getFeatureId());
-        
+
         List<String> synonyms = new ArrayList<String>();
         for (FeatureSynonym fs : feat.getFeatureSynonyms()) {
             String type = fs.getSynonym().getCvTerm().getName();
@@ -77,13 +77,13 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
         for (FeatureRelationship fr : feat.getFeatureRelationshipsForObjectId()) {
             Feature otherFeat = fr.getFeatureBySubjectId();
-            if (otherFeat.getCvTerm().getName().equals("mRNA")) {
+            if (otherFeat instanceof org.gmod.schema.sequence.feature.Transcript) {
                 ret.addTranscript(makeTranscript(otherFeat));
             }
         }
 
         ret.setOrganism(feat.getOrganism().getCommonName());
-        
+
         FeatureLoc loc = feat.getRankZeroFeatureLoc();
         Feature chromosomeFeature = loc.getFeatureBySrcFeatureId();
         Chromosome chromosome = new Chromosome(chromosomeFeature.getDisplayName(), chromosomeFeature.getSeqLen());
@@ -94,7 +94,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
         return ret;
     }
-    
+
     protected List<BasicGene> genesFromFeatures(List<Feature> features) {
         List<BasicGene> ret = new ArrayList<BasicGene>();
         for(Feature feature: features) {
@@ -102,13 +102,13 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         }
         return ret;
     }
-    
+
     private static Transcript makeTranscript(Feature feature) {
         Transcript transcript = new Transcript();
         transcript.setFmin(feature.getRankZeroFeatureLoc().getFmin());
         transcript.setFmax(feature.getRankZeroFeatureLoc().getFmax());
         transcript.setName(feature.getDisplayName());
-        
+
         Set<Exon> exons = new HashSet<Exon> ();
         for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
             Feature relatedFeature = fr.getFeatureBySubjectId();
@@ -124,15 +124,17 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         transcript.setExons(exons);
 
         Feature protein = transcript.getProtein();
-        List<String> products = new ArrayList<String>();
-        for (FeatureCvTerm fcvt : protein.getFeatureCvTerms()) {
-            CvTerm featCvTerm = fcvt.getCvTerm();
-            if (featCvTerm.getCv().getName().equals("genedb_products")) {
-                products.add(featCvTerm.getName());
+        if (protein != null) {
+            List<String> products = new ArrayList<String>();
+            for (FeatureCvTerm fcvt : protein.getFeatureCvTerms()) {
+                CvTerm featCvTerm = fcvt.getCvTerm();
+                if (featCvTerm.getCv().getName().equals("genedb_products")) {
+                    products.add(featCvTerm.getName());
+                }
             }
+            transcript.setProducts(products);
         }
-        transcript.setProducts(products);
-        
+
         return transcript;
     }
 
@@ -151,7 +153,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         else
             return names;
     }
- 
+
     public Collection<BasicGene> findGenesOverlappingRange(String organismCommonName,
             String chromosomeUniqueName, int strand, long locMin, long locMax) {
 
@@ -159,13 +161,13 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         @SuppressWarnings("unchecked")
         List<Feature> geneFeatures = sessionFactory.getCurrentSession().createQuery(
                 "select f from Feature f"
-                +"inner join f.featureLocsForFeatureId fl"
+                +" inner join f.featureLocsForFeatureId fl"
                 +"    with fl.rank = 0"
-                +"where fl.fmax >= :locMin and fl.fmin < :locMax"
-                +"and fl.strand = :strand"
-                +"and fl.featureBySrcFeatureId.uniqueName = :chr"
-                +"and f.organism.commonName = :org"
-                +"and f.cvTerm.name='gene'")
+                +" where fl.fmax >= :locMin and fl.fmin < :locMax"
+                +" and fl.strand = :strand"
+                +" and fl.featureBySrcFeatureId.uniqueName = :chr"
+                +" and f.organism.commonName = :org"
+                +" and f.cvTerm.name='gene'")
                 .setLong   ("locMin", locMin)
                 .setLong   ("locMax", locMax)
                 .setInteger("strand", strand)
@@ -182,13 +184,13 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         @SuppressWarnings("unchecked")
         List<Feature> geneFeatures = sessionFactory.getCurrentSession().createQuery(
                 "select f from Feature f"
-                +"inner join f.featureLocsForFeatureId fl"
+                +" inner join f.featureLocsForFeatureId fl"
                 +"    with fl.rank = 0"
                 +" where fl.fmax >= :locMin and fl.fmax < :locMax" // <- this line differs from above!
-                +"and fl.strand = :strand"
-                +"and fl.featureBySrcFeatureId.uniqueName = :chr"
-                +"and f.organism.commonName = :org"
-                +"and f.cvTerm.name='gene'")
+                +" and fl.strand = :strand"
+                +" and fl.featureBySrcFeatureId.uniqueName = :chr"
+                +" and f.organism.commonName = :org"
+                +" and f.cvTerm.name='gene'")
                 .setLong   ("locMin", locMin)
                 .setLong   ("locMax", locMax)
                 .setInteger("strand", strand)
