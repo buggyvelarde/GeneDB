@@ -433,29 +433,56 @@ public class SequenceDao extends BaseDao {
 
     /**
      * Given the specification of a CvTerm, find all the genes that
-     * have transcripts that have polypeptides that have this CvTerm
-     * associated to them. In practice, this is used to get a list of
-     * genes that have a particular Gene Ontology annotation, for example.
+     * belong to an organism and have transcripts that have polypeptides 
+     * that have this CvTerm associated to them. In practice, this is used 
+     * to get a list of genes that have a particular Gene Ontology annotation, 
+     * for example.
      *
      * @param cvTermName the CvTerm name
+     * @param cvName the Cv name
+     * @param organism the Organism common name. can be null in which case search spans 
+     * across all organisms
      * @return a (possibly empty) List<GeneNameOrganism> of matches
      */
-    public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvName(String cvTermName, String cvName) {
-        @SuppressWarnings("unchecked")
-        List<GeneNameOrganism> features = getHibernateTemplate()
-                .findByNamedParam(
-                        "select new org.gmod.schema.utils.GeneNameOrganism( " +
-                        "transcript_gene.featureByObjectId.uniqueName, transcript_gene.featureByObjectId.organism.abbreviation) " +
-                        "from " +
-                        "FeatureRelationship transcript_gene, FeatureRelationship polypeptide_transcript " +
-                        "where transcript_gene.featureBySubjectId=polypeptide_transcript.featureByObjectId and " +
-                        "polypeptide_transcript.cvTerm.name='derives_from' and " +
-                        "polypeptide_transcript.featureBySubjectId in ( " +
-                        "select fct.feature from FeatureCvTerm fct where " +
-                        "fct.cvTerm.name like :cvTermName and fct.cvTerm.cv.name like :cvName) " +
-                        "order by transcript_gene.featureByObjectId.organism.abbreviation",
-                        new String[] { "cvTermName", "cvName" },
-                        new Object[] { cvTermName, cvName });
+    @SuppressWarnings("unchecked")
+    public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvName(String cvTermName, String cvName, 
+            String organism) {
+        
+        List<GeneNameOrganism> features;
+        if(organism != null) {
+        
+            features = getHibernateTemplate()
+                    .findByNamedParam(
+                            "select new org.gmod.schema.utils.GeneNameOrganism( " +
+                            "transcript_gene.featureByObjectId.uniqueName, transcript_gene.featureByObjectId.organism.abbreviation) " +
+                            "from " +
+                            "FeatureRelationship transcript_gene, FeatureRelationship polypeptide_transcript " +
+                            "where transcript_gene.featureBySubjectId=polypeptide_transcript.featureByObjectId and " +
+                            "polypeptide_transcript.cvTerm.name='derives_from' and " +
+                            " transcript_gene.featureByObjectId.organism.commonName=:organism and " +
+                            "polypeptide_transcript.featureBySubjectId in ( " +
+                            "select fct.feature from FeatureCvTerm fct where " +
+                            "fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name=:cvName) " +
+                            "order by transcript_gene.featureByObjectId.organism.abbreviation",
+                            new String[] { "organism","cvTermName", "cvName" },
+                            new Object[] { organism,cvTermName, cvName });
+        } else {
+            features = getHibernateTemplate()
+            .findByNamedParam(
+                    "select new org.gmod.schema.utils.GeneNameOrganism( " +
+                    "transcript_gene.featureByObjectId.uniqueName, transcript_gene.featureByObjectId.organism.abbreviation) " +
+                    "from " +
+                    "FeatureRelationship transcript_gene, FeatureRelationship polypeptide_transcript " +
+                    "where transcript_gene.featureBySubjectId=polypeptide_transcript.featureByObjectId and " +
+                    "polypeptide_transcript.cvTerm.name='derives_from' and " +
+                    "polypeptide_transcript.featureBySubjectId in ( " +
+                    "select fct.feature from FeatureCvTerm fct where " +
+                    "fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name=:cvName) " +
+                    "order by transcript_gene.featureByObjectId.organism.abbreviation",
+                    new String[] { "cvTermName", "cvName" },
+                    new Object[] { cvTermName, cvName });
+        }
+        
         return features;
     }
 
