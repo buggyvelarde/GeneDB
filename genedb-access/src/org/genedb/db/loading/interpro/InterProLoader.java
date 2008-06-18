@@ -50,6 +50,13 @@ public class InterProLoader {
             logger.info(String.format("Processing gene '%s' [%d/%d]", gene, n++, genes.size()));
             loadGene(interProFile, gene);
             transaction.commit();
+            /*
+             * If the session isn't cleared out every so often, it
+             * starts to get pretty slow after a while if we're loading
+             * a large file. It's important that this come immediately
+             * after a flush. (Commit will trigger a flush unless you've
+             * set FlushMode.MANUAL, which we assume you haven't.)
+             */
             if (n % 50 == 1) {
                 logger.info("Clearing session");
                 session.clear();
@@ -76,7 +83,7 @@ public class InterProLoader {
         @SuppressWarnings("unchecked")
         public void postFlush(@SuppressWarnings("unused") Iterator entities) {
             logger.debug("Flushing dbxrefs");
-            dbxrefsByAccByDb = new HashMap<String,Map<String,DbXRef>>();
+            dbxrefsByAccByDb.clear();
         }
 
         /**
@@ -106,16 +113,21 @@ public class InterProLoader {
          */
         public DbXRef get(String dbName, String accession) {
             logger.debug(String.format("Getting DbXRef '%s'/'%s'", dbName, accession));
-            if (!dbxrefsByAccByDb.containsKey(dbName))
-                dbxrefsByAccByDb.put(dbName, new HashMap<String,DbXRef>());
 
-            if (dbxrefsByAccByDb.get(dbName).containsKey(accession))
+            if (dbxrefsByAccByDb.containsKey(dbName)
+                    && dbxrefsByAccByDb.get(dbName).containsKey(accession))
                 return dbxrefsByAccByDb.get(dbName).get(accession);
 
             DbXRef dbxref = featureUtils.findOrCreateDbXRefFromDbAndAccession(dbName, accession);
 
-            /* The above statement can trigger a flush, hence the apparent
-             * repetition here. */
+            /* The above statement can trigger a flush, which is why we
+             * need this check afterwards rather than before. That was
+             * a hell of a bug to discover at 6am, I can tell you!
+             * Especially when it conspired with a classpath misconfguration
+             * that meant the logging didn't work. (If the logging had worked
+             * it would have been pretty easy to see what was happening, to
+             * tell you the truth.) -rh11
+             */
             if (!dbxrefsByAccByDb.containsKey(dbName))
                 dbxrefsByAccByDb.put(dbName, new HashMap<String,DbXRef>());
 
