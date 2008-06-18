@@ -270,13 +270,25 @@ public class CvDao extends BaseDao implements CvDaoI {
 
         }
 
-
+        /**
+         * Given a Cv name and Polypeptide feature, find all the cvterms in 
+         * this polypeptide for Cv along with their count for the organism 
+         * the polypeptide belongs 
+         * 
+         * @param cvName the Cv name
+         * @param polypeptide the Polypeptide feature
+         * @return a (possibly empty) List<CountedName> of matches
+         */
         @SuppressWarnings("unchecked")
         public List<CountedName> getCountedNamesByCvNameAndFeatureAndOrganism(String cvName,
                 Polypeptide polypeptide) {
-
+            
+            /**
+             * the distinct clause in the query counts only once if there is more than
+             * FeatureCvTerm for a Feature with a particular CvTerm
+             */
             String query = "select new org.gmod.schema.utils.CountedName( fct.cvTerm.name, count" +
-                    " (fct)) from FeatureCvTerm fct where" +
+                    " (distinct fct.feature)) from FeatureCvTerm fct where" +
                     " fct.feature.organism.commonName=:organism and " +
                     " fct.cvTerm.id in " +
                     " (select fct.cvTerm.id from FeatureCvTerm fct, Feature f" +
