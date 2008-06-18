@@ -14,45 +14,45 @@
 	<property name="version" value="0.2"/>
 	<property name="jar-build" value="ant-build/jar-build"/>
 
+    <property name="genedb-db.libdir" value="${imported.basedir.db}/../genedb-libs/lib"/>
 
 	<!-- Classpaths -->
 
 	<path id="tools-interface-compile-lib">
-		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-tools.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar"/>
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
+		<path location="${genedb-db.libdir}/hibernate-extras/hibernate-tools.jar" />
+		<path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+		<path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/j2ee/persistence.jar"/>
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
 	</path>
 
 	<path id="tools-hibernate-compile-lib">
 		<path refid="tools-interface-compile-lib" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-2.5.4.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/postgresql-8.2dev-501.jdbc3.jar"/>
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
+		<path location="${genedb-db.libdir}/spring-2.5.4.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+		<path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
+		<path location="${genedb-db.libdir}/postgresql-8.2dev-501.jdbc3.jar"/>
 	</path>
 
 
 	<path id="tools-hibernate-reveng-lib">
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-tools.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/freemarker/freemarker.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+		<path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/freemarker/freemarker.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" />
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
 		<path location="${imported.basedir.db}/lib/jtidy-r8-21122004.jar" />
 	</path>
 
@@ -60,8 +60,20 @@
 		<path location="${imported.basedir.db}/lib/retrotranslator-transformer-1.1.0.jar" />
 		<path location="${imported.basedir.db}/lib/retrotranslator-runtime-1.1.0.jar" />
 		<path location="${imported.basedir.db}/lib/backport-util-concurrent.jar" />
-		<path location="${imported.basedir.db}/../genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
+		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
 	</path>
+
+    <path id="tools-instrument-lib">
+        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
+        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
+
+        <!-- The Hibernate task does not work with the cglib-nodep jar that is in the Spring bundle,
+             because it also calls asm directly. It also does not work with newer version of cglib
+             due to API changes, so we need separate copies of cglib-2.1_3 and asm-1.5.3 -->
+        <path location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
+        <path location="${genedb-db.libdir}/asm-1.5.3.jar"/>
+        <path location="${genedb-db.libdir}/asm-attrs-1.5.3.jar"/>
+    </path>
 
     <!-- Define extra tasks
     <taskdef name="hibernatetool"
@@ -75,7 +87,7 @@
     <!-- This task is used to instrument the Feature class to enable lazy property fetching -->
     <taskdef name="instrument"
         classname="org.hibernate.tool.instrument.cglib.InstrumentTask"
-        classpathref="tools-hibernate-compile-lib"/>
+        classpathref="tools-instrument-lib"/>
 
 
 	<!-- Targets -->
@@ -146,7 +158,8 @@
     <target name="hibernate-instrumentation">
         <instrument verbose="true">
             <fileset dir="${directory}">
-                <include name="org/gmod/schema/sequence/feature/Feature.class"/>
+                <include name="org/gmod/schema/sequence/Feature.class"/>
+                <include name="org/gmod/schema/sequence/feature/*.class"/>
             </fileset>
         </instrument>
     </target>
