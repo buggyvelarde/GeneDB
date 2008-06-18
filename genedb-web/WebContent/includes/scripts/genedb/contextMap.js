@@ -4,6 +4,8 @@ var contextMapDiv, contextMapThumbnailDiv, contextMapGeneInfo;
 var originalTranscriptName = null;
 var loadedTranscriptName = null;
 var base;
+var animationTimer = null;
+var cruise = false;
 
 function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax, transcript) {
     originalTranscriptName = loadedTranscriptName = transcript;
@@ -18,40 +20,62 @@ function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax, trans
 }
 
 function getContextMapInfo(organism, chromosome, chrlen, fmin, fmax) {
-  var url = base + "ContextMap?organism="+organism+"&chromosome="+chromosome+"&chromosomeLength="+chrlen+
-                     "&thumbnailDisplayWidth="+contextMapThumbnailDiv.clientWidth;
-  var req;
-  if (window.XMLHttpRequest)
-     req = new XMLHttpRequest();
-  else
-     req = new ActiveXObject('Microsoft.XMLHTTP');
-  req.open( "GET", url, true );
+	var url = base + "ContextMap?organism="+organism+"&chromosome="+chromosome+"&chromosomeLength="+chrlen+
+	                   "&thumbnailDisplayWidth="+contextMapThumbnailDiv.clientWidth;
+	var req;
+	if (window.XMLHttpRequest)
+       req = new XMLHttpRequest();
+    else
+       req = new ActiveXObject('Microsoft.XMLHTTP');
+    req.open( "GET", url, true );
 
-  req.onreadystatechange = function () {
-      if ( req.readyState == 4 ) {
-          if ( req.status == 200 ) {
-              response = eval( "(" + req.responseText + ")" );
-              loadTiles(chrlen, (fmin+fmax)/2, response);
+    req.onreadystatechange = function () {
+        if ( req.readyState == 4 ) {
+            if ( req.status == 200 ) {
+                response = eval( "(" + req.responseText + ")" );
+                loadTiles(chrlen, (fmin+fmax)/2, response);
                 contextMapDiv.onmousedown = startMove;
-          document.onmousemove = doMove;
-          document.onmouseup   = endMove; // Even if the mouse is released outside the image,
-                                          // we still want to know about it! (Though if the mouse
-                                          // is released outside the window, we're still screwed.)
+                document.onmousemove = doMove;
+                document.onmouseup   = endMove; // Even if the mouse is released outside the image,
+                                                // we still want to know about it! (Though if the mouse
+                                                // is released outside the window, we're still screwed.)
+                document.onkeydown = function(event) {
+                    if (event == null)
+                        event = window.event;
+                    if (event.keyCode == 37 && velocity < 1 /* left arrow */)
+                        velocity = 1;
+                    else if (event.keyCode == 39 && velocity > -1 /* right arrow */)
+                        velocity = -1;
+                    else if (event.keyCode == 27 /* escape */)
+                        deselectTranscript();
 
-          contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
+                    if (velocity != 0) {
+                        cruise = true;
+                        if (animationTimer == null)
+                            animationTimer = setInterval('animateDeceleration()', animationInterval);
+                    }
+                    return true;
+                }
+                $().keyup(function(event) {
+                    if (event.keyCode == 37 || event.keyCode == 39)
+                        cruise=false;
+                });
+                $("form").keydown(function(event){event.stopPropagation()});
+
+                contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
                 contextMapDiv.style.cursor = "move";
-          } else {
-              var loadingElement = document.getElementById("contextMapLoading");
+            } else {
+                var loadingElement = document.getElementById("contextMapLoading");
                 contextMapDiv.removeChild(loadingElement);
                 var errorMessage = document.createElement("div");
                 errorMessage.id = "errorMessage";
                 errorMessage.innerText = errorMessage.textContent
                     = "Error: failed to load context map";
                 contextMapDiv.appendChild(errorMessage);
-          }
-          req = null;
-          loaded = true;
-      }
+            }
+            req = null;
+            loaded = true;
+        }
     };
     req.send(null);
 }
@@ -78,17 +102,17 @@ function loadTiles(chrlen, locus, tileData) {
     var exonRectHeight = tileData.exonRectHeight;
 
     for (var tileIndex = 0; tileIndex < tileData.tiles.length; tileIndex++) {
-      var tile = tileData.tiles[tileIndex];
+        var tile = tileData.tiles[tileIndex];
 
-      var contextMapImage = document.createElement("img");
-      contextMapImage.className  = "contextMapImage";
-      contextMapImage.src    = tile.src;
-      contextMapImage.width  = tile.width;
-      contextMapImage.style.left = (tile.start / basesPerPixel) + "px";
-      contextMapContent.appendChild(contextMapImage);
-      contextMapDiv.appendChild(contextMapContent);
-  }
-  contextMapDiv.style.height = tileData.tileHeight + "px";
+        var contextMapImage = document.createElement("img");
+        contextMapImage.className  = "contextMapImage";
+        contextMapImage.src    = tile.src;
+        contextMapImage.width  = tile.width;
+        contextMapImage.style.left = (tile.start / basesPerPixel) + "px";
+        contextMapContent.appendChild(contextMapImage);
+        contextMapDiv.appendChild(contextMapContent);
+    }
+    contextMapDiv.style.height = tileData.tileHeight + "px";
 
     var chromosomeThumbnailImage = document.createElement("img");
     chromosomeThumbnailImage.id  = "chromosomeThumbnailImage";
@@ -166,8 +190,7 @@ function reloadDetails(name) {
 }
 
 function deselectTranscript() {
-    $("#contextMapInfoPanel:visible").slideUp(200);
-    $("#highlighter").hide();
+    $("#contextMapInfoPanel:visible").slideUp(200, function() {$("#highlighter").hide();});
     selectedTranscript = null;
 }
 
@@ -192,16 +215,16 @@ function createArea(transcript, topPx, heightPx) {
             $("#contextMapInfoPanel #loadDetails:hidden").show();
 
         if (selectedTranscript != transcript) {
-	        selectedTranscript = transcript;
-	        highlightTranscript(leftPx, topPx, widthPx, heightPx);
-	    }
-	    else {
-	       // If the details have just been loaded, the transcript
-	       // will be selected but the details pane hidden. Although
-	       // it provides no new information to reopen it, it feels
-	       // more intuitive to allow this.
+          selectedTranscript = transcript;
+          highlightTranscript(leftPx, topPx, widthPx, heightPx);
+      }
+      else {
+         // If the details have just been loaded, the transcript
+         // will be selected but the details pane hidden. Although
+         // it provides no new information to reopen it, it feels
+         // more intuitive to allow this.
            $("#contextMapInfoPanel:hidden").slideDown(200);
-	    }
+      }
         return false;
     };
     area.ondblclick = function() {
@@ -214,10 +237,10 @@ function createArea(transcript, topPx, heightPx) {
     // On initial chromosome load, highlight the transcript we're here for.
     if (transcript.name == originalTranscriptName)
          $("#highlighter").css('left', (leftPx-2) + "px")
-			.css('top', (topPx-2) + "px")
-			.width((widthPx+4) + "px")
-			.height((heightPx+4) + "px")
-			.show();
+      .css('top', (topPx-2) + "px")
+      .width((widthPx+4) + "px")
+      .height((heightPx+4) + "px")
+      .show();
 }
 
 function highlightTranscript(left, top, width, height) {
@@ -261,8 +284,6 @@ var dragStartX;
 var prevX;
 var prevTimestamp;
 
-var animationTimer;
-
 var dragging = false;       // Are we currently dragging the image?
 var draggingWindow = false; // Are we dragging the window?
 var velocity = 0;
@@ -281,15 +302,15 @@ function startDragWindow(event) {
 }
 
 function startMove(event) {
-  // If the mouse button was released outside the document window,
-  // we are unable to detect that it's been released (except in Safari).
+    // If the mouse button was released outside the document window,
+    // we are unable to detect that it's been released (except in Safari).
     // Therefore dragging behaviour continues when the mouse pointer
     // is moved back into the document. If the user then clicks again
     // on the context map, we don't want to start a new drag.
-  if (dragging) return false;
+    if (dragging) return false;
 
-  if (!event) event = window.event; // IE is so broken
-  dragStartX = event.clientX;
+    if (!event) event = window.event; // IE is so broken
+    dragStartX = event.clientX;
     dragging = true;
     draggingWindow = false;
     if (contextMapContent.style.left == "")
@@ -303,18 +324,18 @@ function startMove(event) {
         prevTimeStamp = new Date(); // IE, *sigh*
      velocity = 0;
 
-  return false;
+    return false;
 }
 
 function doMove(event) {
-  if (!dragging && !draggingWindow) return;
+    if (!dragging && !draggingWindow) return;
 
-  if (!event) event = window.event; // IE is so broken
+    if (!event) event = window.event; // IE is so broken
 
-  var newPos;
-  if (draggingWindow) {
-      var newWindowPos = Math.round(beforeDragPos + event.clientX - dragStartX);
-      newPos = Math.round(newWindowPos * thumbnailBasesPerPixel / basesPerPixel);
+    var newPos;
+    if (draggingWindow) {
+        var newWindowPos = Math.round(beforeDragPos + event.clientX - dragStartX);
+        newPos = Math.round(newWindowPos * thumbnailBasesPerPixel / basesPerPixel);
     }
     else {
         var timeStamp;
@@ -329,7 +350,7 @@ function doMove(event) {
     }
 
     moveTo(newPos);
-  prevX = event.clientX;
+    prevX = event.clientX;
 }
 
 function moveTo(newPos) {
@@ -355,10 +376,11 @@ function endMove(event) {
     if (dragging && timeStamp - prevTimeStamp < 180) {
         if (animationTimer != null)
             clearInterval(animationTimer);
-      animationTimer = setInterval('animateDeceleration()', animationInterval);
+        animationTimer = setInterval('animateDeceleration()', animationInterval);
     }
     dragging = false;
     draggingWindow = false;
+    cruise = false;
 }
 
 function animateDeceleration() {
@@ -375,6 +397,12 @@ function animateDeceleration() {
             velocity = -20;
 
         moveTo(-parseFloat(contextMapContent.style.left) - velocity * animationInterval);
-        velocity *= 0.9;
+
+        if (cruise) {
+            if (Math.abs(velocity) < 20)
+                velocity *= 1.01;
+        }
+        else
+            velocity *= 0.9;
     }
 }

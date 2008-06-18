@@ -91,9 +91,11 @@
             <div>Download Region as</div><br>
             <select name="downloadType">
                 <option value="SPLICED_DNA">Spliced DNA</option>
-                <option value="PROTEIN">Protein</option>
+                <c:if test="${polypeptide != null}">
+                    <option value="PROTEIN">Protein</option>
+                </c:if>
             </select>
-            <input type="hidden" name="featureType" value="mRNA" />
+            <input type="hidden" name="featureType" value="${transcript.cvTerm.name}" />
             <input type="hidden" name="featureName" value="<c:out value="${transcript.uniqueName}" />">
             <input type="submit" value="Submit">
         </form>
