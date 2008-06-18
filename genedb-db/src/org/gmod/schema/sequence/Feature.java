@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -106,6 +107,7 @@ public class Feature implements java.io.Serializable {
     private DbXRef dbXRef;
 
     @Column(name = "residues", unique = false, nullable = true, insertable = true, updatable = true)
+    @Basic(fetch = FetchType.LAZY)
     @Type(type = "org.genedb.db.helpers.TextByteType")
     private byte[] residues;
 
