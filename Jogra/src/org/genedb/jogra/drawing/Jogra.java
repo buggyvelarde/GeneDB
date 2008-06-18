@@ -24,6 +24,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,15 +49,15 @@ import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
 public class Jogra implements SingleInstanceListener, PropertyChangeListener, EventSubscriber<GeneDBMessage> {
-	
+
 	private static int TIMER_DELAY = 10*1000;
 
 	private static final Logger logger = Logger.getLogger(Jogra.class);
-	
+
     private Map<String, JograPlugin> pluginMap;
 
     private SingleInstanceService sis;
-    
+
     // private List<JFrame> windowList = new ArrayList<JFrame>();
 
     private final JFrame mainFrame = new JFrame();
@@ -68,9 +69,9 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     private JograBusiness jograBusiness;
 
     private Timer timer = new Timer();
-    
+
     private MessageService messageService;
-    
+
     // private TestService testService;
 
     // public void setDirty(boolean dirty) {
@@ -104,13 +105,13 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         // VetoEventListener {});
 
         EventBus.subscribe(OpenWindowEvent.class, this);
-        
+
         TimerTask fetchMessage = new TimerTask() {
         	@Override
         	public void run() {
-        	
+
         		String clientName = "dummy"; // FIXME
-				Deque<Message> messages = messageService.checkMessages(clientName);
+				Collection<Message> messages = messageService.checkMessages(clientName);
 				if (messages != null) {
 					for (Message message : messages) {
 						EventBus.publish(message);
@@ -127,7 +128,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     }
 
     public void init() throws Exception {
-    	
+
         LoginService ls = new JograLoginService();
         JXLoginPane loginPane = new JXLoginPane(ls);
         loginPane.setBannerText("Jogra Login");
@@ -137,9 +138,9 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         if (status != Status.SUCCEEDED) {
         	finalShutdown();
         }
-        
-        try { 
-        	sis = 
+
+        try {
+        	sis =
         		(SingleInstanceService)ServiceManager.lookup("javax.jnlp.SingleInstanceService");
         	sis.addSingleInstanceListener(this);
         }
@@ -165,7 +166,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
             }
         });
         mainFrame.setTitle("Jogra");
-        
+
         mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         final JMenuBar menu = new JMenuBar();
@@ -267,7 +268,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.genedb.jogra.drawing.JograApplication#testTransactions()
      */
     public void testTransactions() {
@@ -303,7 +304,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
                 new String[] { "classpath:domain-client-applicationContext.xml", "classpath:/applicationContext.xml" });
         final Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
         ctx.registerShutdownHook();
-        
+
         return application;
     }
 
@@ -316,7 +317,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         final Jogra application = Jogra.instantiate();
 
         application.testTransactions();
-        
+
         application.init();
         // application.logon();
         application.makeMain();
@@ -368,7 +369,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 			newArgs.add(args[i]);
 		}
 		jp.process(newArgs);
-		
-		
+
+
 	}
 }
