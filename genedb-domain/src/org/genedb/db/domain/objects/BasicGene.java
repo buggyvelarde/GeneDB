@@ -1,13 +1,14 @@
 package org.genedb.db.domain.objects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * This class represents the basic features of a gene. In practice, this means
  * those features that we keep in the Lucene index as well as the database. It's
  * populated by an instance of a BasicGeneService class.
- * 
+ *
  * @author rh11
  *
  */
@@ -23,7 +24,7 @@ public class BasicGene {
     private int fmin, fmax;
     private int strand;
     private List<String> synonyms;
-    
+
     /**
      * Two BasicGenes are equal if they have the same systematicId.
      */
@@ -43,7 +44,7 @@ public class BasicGene {
     public BasicGene() { }
     /**
      * Copy an existing BasicGene.
-     * 
+     *
      * @param basis The object to copy
      */
     protected BasicGene (BasicGene basis) {
@@ -59,10 +60,10 @@ public class BasicGene {
         this.strand = basis.strand;
         this.synonyms = basis.synonyms;
     }
-    
+
     /**
      * The display name is the name if there is one, or the systematic ID if not.
-     * 
+     *
      * @return the display name
      */
     public String getDisplayName() {
@@ -94,6 +95,8 @@ public class BasicGene {
     }
 
     public List<Transcript> getTranscripts() {
+        if (transcripts == null)
+            return Collections.emptyList();
         return transcripts;
     }
     public void addTranscript(Transcript transcript) {
@@ -115,21 +118,21 @@ public class BasicGene {
     public void setFmin(int fmin) {
         this.fmin = fmin;
     }
-    
+
     public int getFmax() {
         return fmax;
     }
     public void setFmax(int fmax) {
         this.fmax = fmax;
     }
-    
+
     public int getFeatureId() {
         return featureId;
     }
     public void setFeatureId(int featureId) {
         this.featureId = featureId;
     }
-    
+
     public List<String> getSynonyms() {
         return synonyms;
     }
@@ -150,7 +153,7 @@ public class BasicGene {
     public void setChromosome(Chromosome chromosome) {
         this.chromosome = chromosome;
     }
-    
+
     public String getChromosomeName() {
         if (chromosome == null)
             return null;
