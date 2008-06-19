@@ -39,8 +39,8 @@
 <% } %>
 <table id="header"><tbody>
     <tr id="top-row">
-        <td id="logo">GeneDB</div>
-        <td id="name">${name}</div>
+        <td id="logo">GeneDB</td>
+        <td id="name">${name}</td>
         <td id="search">
         	<c:if test="${!empty organism}">
             	<form name="searchForm" action="<c:url value="/"/>NamedFeature?organism=${organism}" method="get">
