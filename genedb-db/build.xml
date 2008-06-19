@@ -62,6 +62,7 @@
 		<path location="${imported.basedir.db}/lib/retrotranslator-runtime-1.1.0.jar" />
 		<path location="${imported.basedir.db}/lib/backport-util-concurrent.jar" />
 		<path location="${genedb-db.libdir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
+        <path location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
 	</path>
 
     <path id="tools-instrument-lib">
@@ -226,12 +227,12 @@
 			<classpath refid="tools-interface-compile-lib"/>
 		</javac>
 
+        <antcall target="hibernate-instrumentation">
+            <param name="directory" value="${imported.basedir.db}/ant-build/classes-1.4-interface-pre"/>
+        </antcall>
         <antcall target="retrotranslator">
             <param name="retrotranslator.source" value="${imported.basedir.db}/ant-build/classes-1.4-interface-pre"/>
             <param name="retrotranslator.dest"   value="${imported.basedir.db}/ant-build/classes-1.4-interface-post"/>
-        </antcall>
-        <antcall target="hibernate-instrumentation">
-            <param name="directory" value="${imported.basedir.db}/ant-build/classes-1.4-interface-post"/>
         </antcall>
 
 		<jar jarfile="${imported.basedir.db}/ant-build/jars/chado-14-interface.jar">
