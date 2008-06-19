@@ -1,5 +1,4 @@
 var loaded = false;
-var response;
 var contextMapDiv, contextMapThumbnailDiv, contextMapGeneInfo;
 var originalTranscriptName = null;
 var loadedTranscriptName = null;
@@ -32,34 +31,14 @@ function getContextMapInfo(organism, chromosome, chrlen, fmin, fmax) {
     req.onreadystatechange = function () {
         if ( req.readyState == 4 ) {
             if ( req.status == 200 ) {
-                response = eval( "(" + req.responseText + ")" );
-                loadTiles(chrlen, (fmin+fmax)/2, response);
+                var tileData = eval( "(" + req.responseText + ")" );
+                loadTiles(chrlen, (fmin+fmax)/2, tileData);
                 contextMapDiv.onmousedown = startMove;
                 document.onmousemove = doMove;
                 document.onmouseup   = endMove; // Even if the mouse is released outside the image,
                                                 // we still want to know about it! (Though if the mouse
                                                 // is released outside the window, we're still screwed.)
-                document.onkeydown = function(event) {
-                    if (event == null)
-                        event = window.event;
-                    if (event.keyCode == 37 && velocity < 1 /* left arrow */)
-                        velocity = 1;
-                    else if (event.keyCode == 39 && velocity > -1 /* right arrow */)
-                        velocity = -1;
-                    else if (event.keyCode == 27 /* escape */)
-                        deselectTranscript();
-
-                    if (velocity != 0) {
-                        cruise = true;
-                        if (animationTimer == null)
-                            animationTimer = setInterval('animateDeceleration()', animationInterval);
-                    }
-                    return true;
-                }
-                $().keyup(function(event) {
-                    if (event.keyCode == 37 || event.keyCode == 39)
-                        cruise=false;
-                });
+                $().keydown(handleKeyDown).keyup(handleKeyUp);
                 $("form").keydown(function(event){event.stopPropagation()});
 
                 contextMapDiv.ondragstart = function() {return false;} // Apparently this is needed to work around IE's brokenness
@@ -80,11 +59,66 @@ function getContextMapInfo(organism, chromosome, chrlen, fmin, fmax) {
     req.send(null);
 }
 
+var selectedTranscript = null;
+var selectedArea = null;
+
+function handleKeyDown(event) {
+    console.log("key down: "+event.keyCode);
+    switch(event.keyCode) {
+    case 37: /* left arrow */
+        if (velocity < 1)
+            velocity = 1;
+        cruise = true;
+        break;
+    case 39: /* right arrow */
+        if (velocity > -1)
+            velocity = -1;
+        cruise = true;
+        break;
+    case 27: /* escape */
+        deselectTranscript();
+        break;
+    case 219: /* left square bracket */
+        var nextArea = selectedArea.previousSibling;
+        if (nextArea != null) {
+            selectTranscript(nextArea, nextArea.transcript);
+            showDetailsOfSelectedTranscript();
+        }
+        break;
+    case 221: /* right square bracket */
+        var nextArea = selectedArea.nextSibling;
+        if (nextArea != null) {
+            selectTranscript(nextArea, nextArea.transcript);
+            showDetailsOfSelectedTranscript();
+        }
+        break;
+    case 10: case 13:
+        if (selectedTranscript != null && $("#contextMapInfoPanel").is(":visible")
+        && selectedTranscript.name != loadedTranscriptName)
+            reloadDetails(selectedTranscript.name);
+        break;
+    }
+
+    if (velocity != 0) {
+        if (animationTimer == null)
+            animationTimer = setInterval('animateDeceleration()', animationInterval);
+    }
+    return true;
+}
+
+function handleKeyUp(event) {
+    console.log("key up: "+event.keyCode);
+
+    if ((event.keyCode == 37 && velocity > 0) || (event.keyCode == 39 && velocity < 0)) {
+        console.log("Cruise mode off");
+        cruise=false;
+    }
+}
+
 var organism;
 var chromosome;
 var contextMapContent, chromosomeThumbnailWindow;
 var basesPerPixel, thumbnailBasesPerPixel;
-var selectedTranscript = null;
 
 function loadTiles(chrlen, locus, tileData) {
     organism = tileData.organism;
@@ -166,8 +200,6 @@ function loadTiles(chrlen, locus, tileData) {
         $.historyLoad(hash);
         return false;
     });
-
-    //navigationMenuBar.render();
 }
 
 function reloadDetails(name) {
@@ -180,18 +212,15 @@ function reloadDetails(name) {
 
     $("#contextMapInfoPanel:visible").slideUp(200);
     loadedTranscriptName = null;
+
+    var loadingDetailsTimer = setTimeout('$("#geneDetailsLoading").show()', 2000);
     $("#geneDetails").fadeTo("slow", 0.4).load(base + "NamedFeature?name="+name+"&detailsOnly=true", null, function () {
+        clearTimeout(loadingDetailsTimer);
         loadedTranscriptName = name;
         document.title = "Transcript "+name+" - GeneDB";
         $("#geneDetails").stop().fadeTo("fast", 1);
         $("#geneDetailsLoading").hide();
     });
-    $("#geneDetailsLoading").show();
-}
-
-function deselectTranscript() {
-    $("#contextMapInfoPanel:visible").slideUp(200, function() {$("#highlighter").hide();});
-    selectedTranscript = null;
 }
 
 function createArea(transcript, topPx, heightPx) {
@@ -201,6 +230,7 @@ function createArea(transcript, topPx, heightPx) {
     var area = document.createElement("img");
     area.src = base + "includes/images/transparentPixel.gif";
     area.className = "transcriptBlock";
+    area.transcript = transcript;
     var leftPx = Math.round(transcript.fmin / basesPerPixel);
     var widthPx = Math.round((transcript.fmax - transcript.fmin) / basesPerPixel);
 
@@ -208,23 +238,14 @@ function createArea(transcript, topPx, heightPx) {
     area.style.width = widthPx + "px";
     area.style.top = topPx + "px";
     area.style.height = heightPx + "px";
-    area.onmousedown = function(event) {
-        if (loadedTranscriptName == transcript.name)
-            $("#contextMapInfoPanel #loadDetails:visible").hide();
-        else
-            $("#contextMapInfoPanel #loadDetails:hidden").show();
 
-        if (selectedTranscript != transcript) {
-          selectedTranscript = transcript;
-          highlightTranscript(leftPx, topPx, widthPx, heightPx);
-      }
-      else {
-         // If the details have just been loaded, the transcript
-         // will be selected but the details pane hidden. Although
-         // it provides no new information to reopen it, it feels
-         // more intuitive to allow this.
-           $("#contextMapInfoPanel:hidden").slideDown(200);
-      }
+    area.onmousedown = function(event) {
+        if (transcript == selectedTranscript)
+            $("#contextMapInfoPanel:hidden").slideDown(200);
+        else {
+            selectTranscript(area, transcript);
+            showDetailsOfSelectedTranscript();
+        }
         return false;
     };
     area.ondblclick = function() {
@@ -235,30 +256,46 @@ function createArea(transcript, topPx, heightPx) {
     contextMapContent.appendChild(area);
 
     // On initial chromosome load, highlight the transcript we're here for.
-    if (transcript.name == originalTranscriptName)
-         $("#highlighter").css('left', (leftPx-2) + "px")
-      .css('top', (topPx-2) + "px")
-      .width((widthPx+4) + "px")
-      .height((heightPx+4) + "px")
-      .show();
+
+    if (transcript.name == originalTranscriptName) {
+        selectTranscript(area, transcript);
+        populateInfoPanel(transcript);
+    }
 }
 
-function highlightTranscript(left, top, width, height) {
-    var highlighter = $("#highlighter");
-    highlighter.hide();
-    highlighter.css('left', (left-2) + "px")
-               .css('top', (top-2) + "px")
-               .width((width+4) + "px")
-               .height((height+4) + "px");
+function selectTranscript(area, transcript) {
+    selectedArea = area;
+    selectedTranscript = transcript;
 
-    var gene = selectedTranscript.gene;
+    var leftPx   = parseInt(area.style.left);
+    var topPx    = parseInt(area.style.top);
+    var widthPx  = parseInt(area.style.width);
+    var heightPx = parseInt(area.style.height);
+    highlightRectangle(leftPx, topPx, widthPx, heightPx);
+}
+
+function deselectTranscript() {
+    $("#contextMapInfoPanel:visible").slideUp(200, function() {$("#highlighter").hide();});
+    selectedTranscript = null;
+}
+
+function highlightRectangle(left, top, width, height) {
+    $("#highlighter")
+        .hide()
+        .css('left', (left-2) + "px").css('top', (top-2) + "px")
+        .width((width+4) + "px").height((height+4) + "px")
+        .show();
+}
+
+function populateInfoPanel(transcript) {
+    var gene = transcript.gene;
     var name = gene.name;
     if (name == null || name == "" || name == gene.uniqueName)
         name = gene.uniqueName;
     else
         name += " (" + gene.uniqueName + ")";
 
-    var productArray = selectedTranscript.products;
+    var productArray = transcript.products;
     var products = "";
     if (productArray.length == 1)
         products = productArray[0];
@@ -267,15 +304,16 @@ function highlightTranscript(left, top, width, height) {
         for (var i = 0; i < productArray.length; i++)
             products += "<div class='product'>"+productArray[i]+"</div>";
     }
-
-    $("#contextMapInfoPanel:visible").Highlight("fast", "yellow");
-    $("#contextMapInfoPanel:hidden").slideDown(200);
     $("#selectedGeneName").text(name);
     $("#selectedGeneProducts").html(products);
-    $("#selectedGeneLocation").text(selectedTranscript.fmin + " to " +selectedTranscript.fmax);
-    $("#contextMapInfoPanel #loadDetails a").attr("href", "#"+selectedTranscript.name);
+    $("#selectedGeneLocation").text(transcript.fmin + " to " +transcript.fmax);
+    $("#contextMapInfoPanel #loadDetails a").attr("href", "#"+transcript.name);
+}
 
-    highlighter.show();
+function showDetailsOfSelectedTranscript() {
+    populateInfoPanel(selectedTranscript);
+    $("#contextMapInfoPanel:visible").Highlight("fast", "yellow");
+    $("#contextMapInfoPanel:hidden").slideDown(200);
 }
 
 var beforeDragPos;
@@ -355,10 +393,19 @@ function doMove(event) {
 
 function moveTo(newPos) {
     var contextMapContentWidth = parseInt(contextMapContent.style.width);
-    if (newPos < 0 || contextMapContentWidth <= contextMapDiv.clientWidth)
+    var hitEnd = false;
+    if (newPos < 0 || contextMapContentWidth <= contextMapDiv.clientWidth) {
         newPos = 0;
-    else if (newPos + contextMapDiv.clientWidth > contextMapContentWidth)
+        hitEnd = true;
+    }
+    else if (newPos + contextMapDiv.clientWidth > contextMapContentWidth) {
         newPos = contextMapContentWidth - contextMapDiv.clientWidth;
+        hitEnd = true;
+    }
+    if (hitEnd && cruise) {
+        velocity *= -0.1;
+        cruise = false;
+    }
 
     contextMapContent.style.left = -newPos + "px";
     chromosomeThumbnailWindow.style.left = Math.round(newPos * basesPerPixel / thumbnailBasesPerPixel) + "px";
