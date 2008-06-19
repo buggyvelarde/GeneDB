@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp
         spec="1.0+"
-        codebase="http://www.sanger.ac.uk/Software/Artemis/v9/chado/new/">
+        codebase="http://www.sanger.ac.uk/Software/Artemis/v10/database">
          <information>
            <title>Artemis</title>
            <vendor>Sanger Institute</vendor> 
-           <homepage href="http://www.sanger.ac.uk/Software/Artemis/v9/chado/new/"/>
+           <homepage href="http://www.sanger.ac.uk/Software/Artemis/"/>
            <description>Artemis</description>
            <description kind="short">DNA sequence viewer and annotation tool.
            </description>
@@ -28,6 +28,6 @@
            <property name="offset" value="${offset}" />
          </resources>
          <application-desc main-class="uk.ac.sanger.artemis.components.ArtemisMain">
-          <argument>${argument}</argument>
+          <argument>-Dread_only ${argument}</argument>
          </application-desc>
 </jnlp>
