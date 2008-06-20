@@ -99,8 +99,8 @@
             <input type="hidden" name="featureName" value="<c:out value="${transcript.uniqueName}" />">
             <input type="submit" value="Submit">
         </form>
-        <div style="clear: both; margin-top: 1ex;">	 
-             <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Show region in Artemis</a>	 
+        <div style="clear: both; margin-top: 1ex;">
+             <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Show region in Artemis</a>
          </div>
     </format:genePageSection>
 </div>
@@ -161,10 +161,12 @@
             <format:genePageSection id="peptideProperties">
                 <div class="heading">Predicted Peptide Properties</div>
                 <table>
-                <tr>
-                    <td class="label">Isoelectric Point</td>
-                    <td class="value">pH ${polyprop.isoelectricPoint}</td>
-                </tr>
+                <c:if test="${polyprop.isoelectricPoint != null}">
+                    <tr>
+                        <td class="label">Isoelectric Point</td>
+                        <td class="value">pH ${polyprop.isoelectricPoint}</td>
+                    </tr>
+                </c:if>
                 <c:if test="${polyprop.mass != null}">
                     <tr>
                         <td class="label">Mass</td>
