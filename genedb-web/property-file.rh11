@@ -1,0 +1,10 @@
+finaldest.webapps=/software/pathogen/projects/genedb/rh11/tomcat/webapps/genedb-web
+webAppRootKey=genedb.new.root
+dbhost=localhost
+dbport=18000
+dbname=malaria_workshop
+dbuser=genedb
+dbpassword=genedb
+
+lucene.indexDirectory=/software/pathogen/projects/genedb/indexes/malaria
+contextMap.render.directory=/includes/images/cmap
