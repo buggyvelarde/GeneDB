@@ -61,10 +61,13 @@ function getContextMapInfo(organism, chromosome, chrlen, fmin, fmax) {
 
 var selectedTranscript = null;
 var selectedArea = null;
+var turbo = false;
 
 function handleKeyDown(event) {
-    console.log("key down: "+event.keyCode);
     switch(event.keyCode) {
+    case 16: /* shift */
+        turbo = true;
+        break;
     case 37: /* left arrow */
         if (velocity < 1)
             velocity = 1;
@@ -107,11 +110,18 @@ function handleKeyDown(event) {
 }
 
 function handleKeyUp(event) {
-    console.log("key up: "+event.keyCode);
-
-    if ((event.keyCode == 37 && velocity > 0) || (event.keyCode == 39 && velocity < 0)) {
-        console.log("Cruise mode off");
-        cruise=false;
+    switch (event.keyCode) {
+    case 16: /*shift*/
+        turbo = false;
+        break;
+    case 37:
+        if (velocity > 0)
+            cruise = false;
+        break;
+    case 39:
+        if (velocity < 0)
+            cruise = false;
+        break;
     }
 }
 
@@ -253,6 +263,13 @@ function createArea(transcript, topPx, heightPx) {
             $.historyLoad(selectedTranscript.name);
     };
 
+    var a = document.createElement("a");
+    a.href="Transcript:" + transcript.name;
+    if (transcript.gene.name != "" && transcript.gene.name != transcript.gene.uniqueName)
+        a.href += "#" + transcript.gene.name;
+    a.setAttribute("onclick", "return false;");
+    a.appendChild(area);
+
     contextMapContent.appendChild(area);
 
     // On initial chromosome load, highlight the transcript we're here for.
@@ -277,6 +294,7 @@ function selectTranscript(area, transcript) {
 function deselectTranscript() {
     $("#contextMapInfoPanel:visible").slideUp(200, function() {$("#highlighter").hide();});
     selectedTranscript = null;
+    return false;
 }
 
 function highlightRectangle(left, top, width, height) {
@@ -446,8 +464,9 @@ function animateDeceleration() {
         moveTo(-parseFloat(contextMapContent.style.left) - velocity * animationInterval);
 
         if (cruise) {
-            if (Math.abs(velocity) < 20)
-                velocity *= 1.01;
+            if (Math.abs(velocity) < 20) {
+                velocity *= (turbo ? 1.10 : 1.01);
+            }
         }
         else
             velocity *= 0.9;
