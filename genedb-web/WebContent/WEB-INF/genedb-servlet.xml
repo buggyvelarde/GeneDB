@@ -282,6 +282,7 @@
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
         <property name="validator" ref="namedFeatureValidator"/>
+        <property name="cacheSeconds" value="86400"/>
     </bean>
 
 	<bean id="namedFeatureValidator" class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
@@ -295,8 +296,9 @@
         <property name="formView" value="search/featureDownload" />
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+        <property name="cacheSeconds" value="86400"/>
     </bean>
-	
+
     <bean id="OrthologsController" class="org.genedb.web.mvc.controller.OrthologsController">
 		<property name="sequenceDao" ref="sequenceDao" />
         <property name="listResultsView" value="list/features" />
@@ -310,7 +312,6 @@
     </bean>
 
     <bean id="SearchAllController" class="org.genedb.web.mvc.controller.SearchAllController">
-<!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="searchAll"/>
         <property name="commandClass" value="org.genedb.web.mvc.controller.SearchAllBean" />
@@ -323,7 +324,6 @@
     </bean>
 
     <bean id="CurationController" class="org.genedb.web.mvc.controller.CurationController">
-<!--        <property name="viewChecker" ref="checkingViewResolver"/>-->
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="curation"/>
         <property name="commandClass" value="org.genedb.web.mvc.controller.CurationBean" />
@@ -388,6 +388,7 @@
 		<property name="luceneDao" ref="luceneDao"/>
 		<property name="view" ref="jsonView"/>
 		<property name="validator" ref="contextMapFormValidator"/>
+        <property name="cacheSeconds" value="86400"/>
     </bean>
 
     <bean id="contextMapFormValidator" class="org.genedb.web.mvc.validators.ContextMapFormValidator"/>
