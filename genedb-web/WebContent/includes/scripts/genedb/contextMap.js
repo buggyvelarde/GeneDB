@@ -263,13 +263,7 @@ function createArea(transcript, topPx, heightPx) {
             $.historyLoad(selectedTranscript.name);
     };
 
-    var a = document.createElement("a");
-    a.href="Transcript:" + transcript.name;
-    if (transcript.gene.name != "" && transcript.gene.name != transcript.gene.uniqueName)
-        a.href += "#" + transcript.gene.name;
-    a.setAttribute("onclick", "return false;");
-    a.appendChild(area);
-
+    area.setAttribute("title", geneName(transcript));
     contextMapContent.appendChild(area);
 
     // On initial chromosome load, highlight the transcript we're here for.
@@ -305,14 +299,17 @@ function highlightRectangle(left, top, width, height) {
         .show();
 }
 
-function populateInfoPanel(transcript) {
+function geneName(transcript) {
     var gene = transcript.gene;
     var name = gene.name;
     if (name == null || name == "" || name == gene.uniqueName)
         name = gene.uniqueName;
     else
         name += " (" + gene.uniqueName + ")";
+    return name;
+}
 
+function populateInfoPanel(transcript) {
     var productArray = transcript.products;
     var products = "";
     if (productArray.length == 1)
@@ -322,7 +319,7 @@ function populateInfoPanel(transcript) {
         for (var i = 0; i < productArray.length; i++)
             products += "<div class='product'>"+productArray[i]+"</div>";
     }
-    $("#selectedGeneName").text(name);
+    $("#selectedGeneName").text(geneName(transcript));
     $("#selectedGeneProducts").html(products);
     $("#selectedGeneLocation").text(transcript.fmin + " to " +transcript.fmax);
     $("#contextMapInfoPanel #loadDetails a").attr("href", "#"+transcript.name);
