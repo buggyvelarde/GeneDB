@@ -89,7 +89,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 
 	    }
 	    Feature feat = sequenceDao.getFeatureById(id);
-	    Map model = new HashMap(3);
+	    Map<String,Object> model = new HashMap<String,Object>(3);
 	    model.put("feature", feat);
 	    String viewName = "features/gene";
 	    String type = feat.getCvTerm().getName();
@@ -109,7 +109,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 	    CvTerm cvTerm = new CvTerm();
 	    cvTerm.setName("gene");
 	    feat.setCvTerm(cvTerm);
-	    Map model = new HashMap(3);
+	    Map<String,Object> model = new HashMap<String,Object>(3);
 	    model.put("feature", feat);
 	    String viewName = "features/gene";
 	    return new ModelAndView(viewName, model);
@@ -129,7 +129,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
         }
         // Check sequence is valid in org
 	    Feature feat = sequenceDao.getFeaturesByUniqueNamePattern(bean.getName()).get(0);
-	    Map model = new HashMap(3);
+	    Map<String,Object> model = new HashMap<String,Object>(3);
 	    model.put("feature", feat);
 	    String viewName = "features/gene";
 	    String type = feat.getCvTerm().getName();
@@ -234,7 +234,7 @@ public class SimpleReport extends MultiActionController implements InitializingB
 			    BooleanOp op = BooleanOp.valueOf(parts[1]);
 			    int q1 = Integer.parseInt(parts[2]);
 			    q = replaceNode(q, q1, op);
-			    QueryTreeWalker qtw = new QueryTreeWalker((NumberedQueryI)q, 0);
+			    QueryTreeWalker qtw = new QueryTreeWalker(q, 0);
 			    qtw.go();
 			    break;
 			}
