@@ -73,15 +73,7 @@ img#chromosomeThumbnailImage {
     top: 3px;
     height: 9px;
 }
-* html img#chromosomeThumbnailImage {
-    position:relative;
-    behavior: expression((this.runtimeStyle.behavior="none")&&(this.pngSet?this.pngSet=true:(this.nodeName == "IMG" && this.src.toLowerCase().indexOf('.png')>-1?(this.runtimeStyle.backgroundImage = "none",
-        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.src + "', sizingMethod='image')",
-        this.src = "/genedb-web/includes/images/transparentPixel.gif"):(this.origBg = this.origBg? this.origBg :this.currentStyle.backgroundImage.toString().replace('url("','').replace('")',''),
-        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.origBg + "', sizingMethod='crop')",
-        this.runtimeStyle.backgroundImage = "none")),this.pngSet=true)
-    );
-}
+/* An IE-specific hack for transparency is in the page itself */
 
 img#chromosomeThumbnailWindow {
     position: absolute;
@@ -154,18 +146,8 @@ div#errorMessage {
     height: 16px;
     overflow: hidden;
 }
-.closeButton a {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 16px;
-	height: 16px;
-	cursor: pointer;
-	background: transparent url(/genedb-web/includes/images/close-button.png) 0px 0px no-repeat;
-}
-.closeButton a:hover {
-    background: transparent url(/genedb-web/includes/images/close-button.png) 0px -16px no-repeat;
-}
+
+/* Other .closeButton entries are in the page itself */
 
 #geneDetailsLoading {
 	position: absolute;

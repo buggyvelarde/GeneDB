@@ -11,6 +11,32 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
 <st:init />
 <%-- The next three are used by the scrollable context map --%>
 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
+<%-- Here we put those styles that contain URLs --%>
+<style>
+* html img#chromosomeThumbnailImage {
+    position:relative;
+    behavior: expression((this.runtimeStyle.behavior="none")&&(this.pngSet?this.pngSet=true:(this.nodeName == "IMG" && this.src.toLowerCase().indexOf('.png')>-1?(this.runtimeStyle.backgroundImage = "none",
+        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.src + "', sizingMethod='image')",
+        this.src = "<c:url value="/includes/images/transparentPixel.gif"/>"):(this.origBg = this.origBg? this.origBg :this.currentStyle.backgroundImage.toString().replace('url("','').replace('")',''),
+        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.origBg + "', sizingMethod='crop')",
+        this.runtimeStyle.backgroundImage = "none")),this.pngSet=true)
+    );
+}
+
+.closeButton a {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    background: transparent url(<c:url value="/includes/images/close-button.png"/>) 0px 0px no-repeat;
+}
+.closeButton a:hover {
+    background: transparent url(<c:url value="/includes/images/close-button.png"/>) 0px -16px no-repeat;
+}
+</style>
+
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery-1.2.6.min.js"/>"></script>
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/interface-1.2/ifx.js"/>"></script>
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/interface-1.2/ifxhighlight.js"/>"></script>
