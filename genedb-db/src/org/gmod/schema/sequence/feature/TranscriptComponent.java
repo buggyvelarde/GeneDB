@@ -42,7 +42,7 @@ public abstract class TranscriptComponent extends Feature  implements Comparable
     }
 
     /**
-     * Get the exon location as a string, in traditional coordinates (i.e. inclusive base coordinates with the origin at 1).
+     * Get the component location as a string, in traditional coordinates (i.e. inclusive base coordinates with the origin at 1).
      *
      * @return
      */

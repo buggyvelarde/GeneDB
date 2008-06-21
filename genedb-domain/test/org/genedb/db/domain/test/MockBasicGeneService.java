@@ -10,50 +10,51 @@ import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Chromosome;
 import org.genedb.db.domain.objects.Exon;
 import org.genedb.db.domain.objects.Transcript;
+import org.genedb.db.domain.objects.TranscriptComponent;
 import org.genedb.db.domain.services.BasicGeneService;
 
 /**
  * Used to generate BasicGene objects for testing.
  * Ordinarily used via the proxy methods of {@link MockBasicGeneService}
  * rather than directly.
- * 
+ *
  * @author rh11
  *
  */
 class BasicGeneFactory {
     private int nextId;
-    
+
     private String organism;
     private Chromosome chromosome;
     private int strand;
-    
+
     /**
      * The default length of a test chromosome, if not explicitly specified.
      */
     private static int DEFAULT_CHR_LENGTH = 1000000;
-    
+
     /**
      * Sets the default organism, chromosome and strand for genes produced by this factory.
-     * 
+     *
      * @param organism
      * @param chromosome
      * @param strand
      */
     public BasicGeneFactory(String organism, String chromosome, int strand) {
         assert strand == 1 || strand == -1;
-        
+
         this.nextId = 1;
         this.organism = organism;
         this.chromosome = new Chromosome(chromosome, DEFAULT_CHR_LENGTH);
         this.strand = strand;
     }
-    
+
     /**
      * Create a BasicGene with the specified uniqueName and location,
      * on the strand and chromosome specified by this factory. A gene created
      * by this method will have no transcripts. Transcripts must be added
      * manually, perhaps using {@link BasicGeneHelper}.
-     * 
+     *
      * @param uniqueName
      * @param fmin
      * @param fmax
@@ -65,19 +66,19 @@ class BasicGeneFactory {
         gene.setOrganism(organism);
         gene.setChromosome(chromosome);
         gene.setStrand(strand);
-        
+
         gene.setUniqueName(uniqueName);
         gene.setFmin(fmin);
         gene.setFmax(fmax);
 
         return gene;
     }
-    
+
     /**
      * Create a new BasicGene with the specified uniqueName and location,
      * on the strand and chromosome specified by this factory. A gene created
      * by this method will have one transcript, consisting of one exon.
-     * 
+     *
      * @param uniqueName
      * @param fmin
      * @param fmax
@@ -90,21 +91,21 @@ class BasicGeneFactory {
         transcript.setFmin(fmin);
         transcript.setFmax(fmax);
         transcript.setColourId(colourId);
-        
+
         // with a single exon
-        Set<Exon> exons = new HashSet<Exon> ();
+        Set<TranscriptComponent> exons = new HashSet<TranscriptComponent> ();
         exons.add(new Exon(fmin, fmax));
-        transcript.setExons(exons);
-        
+        transcript.setComponents(exons);
+
         gene.addTranscript(transcript);
 
         return gene;
     }
-    
+
     /**
      * Create a new BasicGene with the specified uniqueName, name and location,
      * on the strand and chromosome specified by this factory.
-     * 
+     *
      * @param uniqueName
      * @param fmin
      * @param fmax
@@ -113,14 +114,14 @@ class BasicGeneFactory {
     public BasicGene simpleGene (String uniqueName, String name, int fmin, int fmax, Integer colourId) {
         BasicGene gene = simpleGene(uniqueName, fmin, fmax, colourId);
         gene.setName(name);
-        
+
         return gene;
     }
 
     /**
      * Change the default organism for genes produced by this factory.
-     * 
-     * 
+     *
+     *
      * @param organism The name of the new default organism
      */
     public void setOrganism(String organism) {
@@ -128,7 +129,7 @@ class BasicGeneFactory {
     }
     /**
      * Change the default chromosome for genes produced by this factory.
-     * 
+     *
      * @param chromosome The new default chromosome
      */
     public void setChromosome(Chromosome chromosome) {
@@ -138,7 +139,7 @@ class BasicGeneFactory {
      * Change the default chromosome for genes produced by this factory.
      * This convenience method creates a new {@link org.genedb.db.domain.objects.Chromosome}
      * object with a default length.
-     * 
+     *
      * @param chromosome The name of the new default chromosome
      */
     public void setChromosome(String chromosomeName) {
@@ -146,12 +147,12 @@ class BasicGeneFactory {
     }
     /**
      * Change the default strand for genes produced by this factory.
-     * 
+     *
      * @param strand The new default strand (<code>1</code> or <code>-1</code>)
      */
     public void setStrand(int strand) {
         assert strand == 1 || strand == -1;
-        
+
         this.strand = strand;
     }
 }
@@ -161,21 +162,21 @@ class BasicGeneFactory {
  * using sample data. A new instance initially contains no genes; genes can be added using the methods
  * {@link #addSimpleGene(String,int,int,Integer)}, {@link #addSimpleGene(String,String,int,int,Integer)}
  * etc.
- * 
+ *
  * @author rh11
  *
  */
 public class MockBasicGeneService implements BasicGeneService {
     private BasicGeneFactory factory;
     private Collection<BasicGene> genes;
-    
+
     /**
      * Creates a new instance that uses the supplied organism, chromosome and strand
      * as the default for genes that are added using the <code>add*Gene</code> methods.
-     * 
+     *
      * These defaults can be changed with the <code>set*</code> methods, which change
      * the values used for genes added subsequently.
-     * 
+     *
      * @param organism
      * @param chromosome
      * @param strand
@@ -184,10 +185,10 @@ public class MockBasicGeneService implements BasicGeneService {
         factory = new BasicGeneFactory(organism, chromosome, strand);
         genes = new ArrayList<BasicGene> ();
     }
-    
+
     /**
      * Add a simple, minimal gene.
-     * 
+     *
      * @param uniqueName
      * @param fmin
      * @param fmax
@@ -195,11 +196,11 @@ public class MockBasicGeneService implements BasicGeneService {
     public void addSimpleGene(String uniqueName, int fmin, int fmax) {
         genes.add(factory.simpleGene(uniqueName, fmin, fmax, null));
     }
-    
+
     /**
      * Add a simple Gene.
      * This method is a proxy for {@see BasicGeneFactory.addSimpleGene(String,int,int,Integer)}.
-     * 
+     *
      * @param uniqueName
      * @param fmin
      * @param fmax
@@ -208,11 +209,11 @@ public class MockBasicGeneService implements BasicGeneService {
     public void addSimpleGene(String uniqueName, int fmin, int fmax, Integer colourId) {
         genes.add(factory.simpleGene(uniqueName, fmin, fmax, colourId));
     }
-    
+
     /**
      * Add a simple Gene with a name and a colour.
      * This method is a proxy for {@see BasicGeneFactory.addSimpleGene(String,int,int,Integer)}.
-     * 
+     *
      * @param uniqueName
      * @param name
      * @param fmin
@@ -222,18 +223,18 @@ public class MockBasicGeneService implements BasicGeneService {
     public void addSimpleGene(String uniqueName, String name, int fmin, int fmax, Integer colourId) {
         genes.add(factory.simpleGene(uniqueName, name, fmin, fmax, colourId));
     }
-    
+
     /**
      * Add a gene with no transcripts. This is used to generate alternatively-spliced
      * test genes in conjunction with {@link BasicGeneHelper#transcript(String,int,int)}.
-     * 
+     *
      * For example,
      * <code>
      *     mockBasicGeneService.addAltGene("gene1", 100, 200)
      *          .transcript("rna1", 100, 150)
      *          .transcript("rna2", 120, 200);
      * </code>
-     * 
+     *
      * @param uniqueName
      * @param fmin
      * @param fmax
@@ -244,21 +245,21 @@ public class MockBasicGeneService implements BasicGeneService {
         genes.add(gene);
         return gene;
     }
-    
+
     /**
      * Change the default organism used for new genes.
      * This method is a proxy for {@see BasicGeneFactory.setOrganism(String)}.
-     * 
+     *
      * @param organism
      */
     public void setOrganism(String organism) {
         factory.setOrganism(organism);
     }
-    
+
     /**
      * Change the default chromosome used for new genes.
      * This method is a proxy for {@see BasicGeneFactory.setChromosome(String)}.
-     * 
+     *
      * @param chromosome
      */
     public void setChromosome(String chromosome) {
@@ -268,7 +269,7 @@ public class MockBasicGeneService implements BasicGeneService {
     /**
      * Change the default chromosome used for new genes.
      * This method is a proxy for {@see BasicGeneFactory.setChromosome(Chromosome)}.
-     * 
+     *
      * @param chromosome
      */
     public void setChromosome(Chromosome chromosome) {
@@ -278,7 +279,7 @@ public class MockBasicGeneService implements BasicGeneService {
     /**
      * Change the default strand used for new genes.
      * This method is a proxy for {@see BasicGeneFactory.setStrand(int)}.
-     * 
+     *
      * @param strand
      */
     public void setStrand(int strand) {

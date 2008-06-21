@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.genedb.db.domain.objects.Chromosome;
-import org.genedb.db.domain.objects.Exon;
+import org.genedb.db.domain.objects.TranscriptComponent;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.services.BasicGeneService;
 import org.genedb.db.domain.test.MockBasicGeneService;
@@ -161,11 +161,11 @@ public class ContextMapDiagramTest {
         assertNotNull(transcript.getColourId());
         assertEquals(2, transcript.getColourId().intValue());
         
-        Set<Exon> exons = transcript.getExons();
+        Set<TranscriptComponent> exons = transcript.getComponents();
         assertNotNull(exons);
         assertEquals(exons.size(), 1);
         
-        for (Exon exon: exons) {
+        for (TranscriptComponent exon: exons) {
             assertNotNull(exon);
             assertEquals(90,  exon.getStart());
             assertEquals(110, exon.getEnd());

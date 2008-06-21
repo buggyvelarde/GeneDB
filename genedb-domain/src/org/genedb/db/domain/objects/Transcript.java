@@ -33,7 +33,7 @@ public class Transcript implements Serializable {
     private String name;
     private Integer colourId; // May be null
     private BasicGene gene;
-    private SortedSet<Exon> exons;
+    private SortedSet<TranscriptComponent> components;
     private List<String> products;
     private int fmin, fmax;
 
@@ -58,14 +58,14 @@ public class Transcript implements Serializable {
         this.fmax = fmax;
     }
     
-    public SortedSet<Exon> getExons() {
-        return exons;
+    public SortedSet<TranscriptComponent> getComponents() {
+        return components;
     }
-    public void setExons(SortedSet<Exon> exons) {
-        this.exons = exons;
+    public void setComponents(SortedSet<TranscriptComponent> components) {
+        this.components = components;
     }
-    public void setExons(Set<Exon> exons) {
-        this.exons = new TreeSet<Exon> (exons);
+    public void setComponents(Set<TranscriptComponent> components) {
+        this.components = new TreeSet<TranscriptComponent> (components);
     }
 
     public Integer getColourId() {

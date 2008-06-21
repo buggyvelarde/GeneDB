@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.feature.AbstractGene;
+import org.gmod.schema.sequence.feature.Gap;
 import org.gmod.schema.sequence.feature.Transcript;
 import org.gmod.schema.sequence.feature.UTR;
 import org.hibernate.CacheMode;
@@ -262,5 +263,6 @@ public class IndexChado {
         indexer.indexFeatures(AbstractGene.class, numBatches);
         indexer.indexFeatures(Transcript.class, numBatches);
         indexer.indexFeatures(UTR.class, numBatches);
+        indexer.indexFeatures(Gap.class, numBatches);
     }
 }

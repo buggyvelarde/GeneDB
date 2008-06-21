@@ -13,6 +13,7 @@ import org.genedb.db.domain.objects.Chromosome;
 import org.genedb.db.domain.objects.Exon;
 import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.objects.Transcript;
+import org.genedb.db.domain.objects.TranscriptComponent;
 import org.genedb.db.domain.services.BasicGeneService;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
@@ -109,7 +110,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         transcript.setFmax(feature.getRankZeroFeatureLoc().getFmax());
         transcript.setName(feature.getDisplayName());
 
-        Set<Exon> exons = new HashSet<Exon> ();
+        Set<TranscriptComponent> exons = new HashSet<TranscriptComponent> ();
         for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
             Feature relatedFeature = fr.getFeatureBySubjectId();
             String relatedFeatureName = relatedFeature.getCvTerm().getName();
@@ -121,7 +122,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
                 exons.add(new Exon(otherFeatLoc.getFmin(), otherFeatLoc.getFmax()));
             }
         }
-        transcript.setExons(exons);
+        transcript.setComponents(exons);
 
         Feature protein = transcript.getProtein();
         if (protein != null) {

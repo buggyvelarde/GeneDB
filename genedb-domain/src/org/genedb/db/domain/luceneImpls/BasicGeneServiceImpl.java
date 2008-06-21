@@ -30,6 +30,8 @@ import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Chromosome;
 import org.genedb.db.domain.objects.Exon;
 import org.genedb.db.domain.objects.Transcript;
+import org.genedb.db.domain.objects.TranscriptComponent;
+import org.genedb.db.domain.objects.UTR;
 import org.genedb.db.domain.services.BasicGeneService;
 
 public class BasicGeneServiceImpl implements BasicGeneService {
@@ -61,7 +63,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         T convert(Document doc);
     }
 
-    private static final SortedSet<Exon> NO_EXONS = Collections.unmodifiableSortedSet(new TreeSet<Exon>());
+    private static final SortedSet<TranscriptComponent> NO_EXONS = Collections.unmodifiableSortedSet(new TreeSet<TranscriptComponent>());
 
     /**
      * Convert the document to a Transcript object. If the <code>_hibernate_class</code>
@@ -83,12 +85,12 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             transcript.setFmin(Integer.parseInt(doc.get("start")));
             transcript.setFmax(Integer.parseInt(doc.get("stop")));
             try {
-                transcript.setExons(parseExonLocs(doc.get("exonlocs")));
+                transcript.setComponents(parseLocs(doc.get("locs")));
             }
             catch (Exception e) {
-                logger.error(String.format("Failed to parse exonlocs for transcript '%s'",
+                logger.error(String.format("Failed to parse locs for transcript '%s'",
                     doc.get("uniqueName")), e);
-                 transcript.setExons(NO_EXONS);
+                 transcript.setComponents(NO_EXONS);
             }
             String productsTabSeparated = doc.get("product");
             if (productsTabSeparated != null)
@@ -146,26 +148,40 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         }
     };
 
-    private static Set<Exon> parseExonLocs(String exonLocs) {
-        Set<Exon> exons = new HashSet<Exon>();
-        for (String exonSpec: exonLocs.split(",")) {
-            int numberStart = 0;
-            int numberEnd = exonSpec.length();
-            if (exonSpec.startsWith("(")) {
-                if (!exonSpec.endsWith(")"))
+    private static Set<TranscriptComponent> parseLocs(String locs) {
+        Set<TranscriptComponent> components = new HashSet<TranscriptComponent>();
+        for (String loc: locs.split(",")) {
+            int colonIndex = loc.indexOf(':');
+            boolean isExon = (colonIndex == -1);
+            if (!isExon) {
+                String type = loc.substring(0, colonIndex);
+                if (!type.endsWith("UTR")) {
+                    logger.warn(String.format("Unknown transcript component type '%s'", type));
+                    continue;
+                }
+            }
+
+            int numberStart = colonIndex + 1;
+            int numberEnd = loc.length();
+            if (loc.charAt(numberStart) == '(') {
+                if (!loc.endsWith(")"))
                     throw new IllegalArgumentException(String.
-                        format("Exon location '%s' starts with '(' but does not end with ')'; from string '%s'", exonSpec, exonLocs));
+                        format("Exon location '%s' starts with '(' but does not end with ')'; from string '%s'", loc, locs));
                 numberStart++;
                 numberEnd--;
             }
-            int dots = exonSpec.indexOf("..");
+            int dots = loc.indexOf("..");
             if (dots < 1)
-                throw new IllegalArgumentException(String.format("Failed to parse exon location '%s' from string '%s'", exonSpec, exonLocs));
-            int exonStart = Integer.parseInt(exonSpec.substring(numberStart, dots));
-            int exonStop  = Integer.parseInt(exonSpec.substring(dots+2, numberEnd));
-            exons.add(new Exon(exonStart, exonStop));
+                throw new IllegalArgumentException(String.format("Failed to parse exon location '%s' from string '%s'", loc, locs));
+            int componentStart = Integer.parseInt(loc.substring(numberStart, dots));
+            int componentStop  = Integer.parseInt(loc.substring(dots+2, numberEnd));
+
+            if (isExon)
+                components.add(new Exon(componentStart, componentStop));
+            else
+                components.add(new UTR(componentStart, componentStop));
         }
-        return exons;
+        return components;
     }
 
     /**

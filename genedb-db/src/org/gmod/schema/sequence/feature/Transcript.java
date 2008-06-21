@@ -100,22 +100,28 @@ public abstract class Transcript extends Feature {
     }
 
     /**
-     * Get the exon locations, as a comma-separated string.
+     * Get the component locations, as a comma-separated string.
+     * Includes UTRs as well as exons. This is stored in the Lucene index,
+     * for use by the chromosome browser.
      *
      * @return
      */
     @Transient
-    @Field(name = "exonlocs", store = Store.YES)
+    @Field(name = "locs", store = Store.YES)
     public String getExonLocs() {
         StringBuilder locs = new StringBuilder();
 
         boolean first = true;
-        for (AbstractExon exon : getExons()) {
+        for (TranscriptComponent component : getComponents(TranscriptComponent.class)) {
             if (first)
                 first = false;
             else
                 locs.append(',');
-            locs.append(exon.getLocAsString());
+            if (!(component instanceof AbstractExon)) {
+                locs.append(component.getClass().getSimpleName());
+                locs.append(':');
+            }
+            locs.append(component.getLocAsString());
         }
 
         return locs.toString();

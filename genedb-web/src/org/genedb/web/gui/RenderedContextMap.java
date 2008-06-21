@@ -1,6 +1,7 @@
 package org.genedb.web.gui;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -18,6 +19,7 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import org.genedb.db.domain.objects.Exon;
 import org.genedb.db.domain.objects.Transcript;
+import org.genedb.db.domain.objects.TranscriptComponent;
 
 /**
  * Renders a {@link ContextMapDiagram} as an image.
@@ -35,7 +37,9 @@ import org.genedb.db.domain.objects.Transcript;
  * be correctly generated but most decoding software will fail in one of several
  * amusing ways. Therefore it is advisable to use a ContextMapDiagram
  * representing fewer than 327670 bases (assuming the current default scale of
- * 10 bases per pixel).
+ * 10 bases per pixel). Moreover, a rendered diagram even 10k pixels wide
+ * appears to crash at least some versions of Firefox on Linux, so we are
+ * currently limiting ourselves to tiles 5000 pixels wide.
  *
  * @author rh11
  */
@@ -95,11 +99,16 @@ public class RenderedContextMap {
     /**
      * The height of the rectangle representing an exon
      */
-    private int exonRectHeght = 12;
+    private int exonRectHeight = 12;
     /**
      * The height of the rectangle representing an intron
      */
     private int intronRectHeight = 2;
+
+    /**
+     * The width in pixels of the border drawn around a UTR
+     */
+    private float utrStrokeSize = 3.0f;
 
     /**
      * The height of the scale track.
@@ -195,6 +204,11 @@ public class RenderedContextMap {
             this.start = start;
 
         if (end > diagram.getEnd()) {
+            /*
+             * At present (2008-06-20) this warning is triggered in the normal
+             * course of events: when the chromosome is split into tiles, the
+             * final tile will be restricted past its end. This is not a problem.
+             */
             logger.warn(String.format("End of diagram is %d, end of restriction is %d",
                 diagram.getEnd(), end));
             this.end = diagram.getEnd();
@@ -252,7 +266,7 @@ public class RenderedContextMap {
         setMaxWidth(maxWidth);
         setScaleTrackHeight(1);
         setGeneTrackHeight(2);
-        setExonRectHeght(2);
+        setExonRectHeight(2);
         setIntronRectHeight(2);
         setTickDistances(0, 0);
         setScaleColor(Color.GRAY);
@@ -346,15 +360,15 @@ public class RenderedContextMap {
      * @return the height in pixels
      */
     public int getExonRectHeght() {
-        return exonRectHeght;
+        return exonRectHeight;
     }
 
     /**
      * Set the height of the rectangles used to represent exons in this diagram
-     * @param exonRectHeght the height in pixels
+     * @param exonRectHeight the height in pixels
      */
-    public void setExonRectHeght(int exonRectHeght) {
-        this.exonRectHeght = exonRectHeght;
+    public void setExonRectHeight(int exonRectHeight) {
+        this.exonRectHeight = exonRectHeight;
     }
 
     /**
@@ -367,7 +381,7 @@ public class RenderedContextMap {
 
    /**
     * Set the height of the rectangles used to represent introns in this diagram
-    * @param exonRectHeght the height in pixels
+    * @param exonRectHeight the height in pixels
     */
     public void setIntronRectHeight(int intronRectHeight) {
         this.intronRectHeight = intronRectHeight;
@@ -656,6 +670,7 @@ public class RenderedContextMap {
             Color color = ArtemisColours.getColour(transcript.getColourId());
             logger.debug("Setting colour: " + color);
             graf.setColor(color);
+            graf.setStroke(new BasicStroke(utrStrokeSize));
             drawTranscript(trackNumber, transcript);
         }
     }
@@ -664,10 +679,10 @@ public class RenderedContextMap {
         logger.debug(String.format("Drawing transcript %s (%d..%d) on track %d", transcript
                 .getName(), transcript.getFmin(), transcript.getFmax(), trackNumber));
         int currentPos = transcript.getFmin();
-        for (Exon exon : transcript.getExons()) {
-            drawIntron(trackNumber, currentPos, exon.getStart());
-            drawExon(trackNumber, exon.getStart(), exon.getEnd());
-            currentPos = exon.getEnd();
+        for (TranscriptComponent component : transcript.getComponents()) {
+            drawIntron(trackNumber, currentPos, component.getStart());
+            drawComponent(trackNumber, component);
+            currentPos = component.getEnd();
         }
         drawIntron(trackNumber, currentPos, transcript.getFmax());
     }
@@ -681,6 +696,13 @@ public class RenderedContextMap {
         graf.fillRect(x, y, width, intronRectHeight);
     }
 
+    private void drawComponent(int trackNumber, TranscriptComponent component) {
+        if (component instanceof Exon)
+            drawExon(trackNumber, component.getStart(), component.getEnd());
+        else
+            drawUTR(trackNumber, component.getStart(), component.getEnd());
+    }
+
     private void drawExon(int trackNumber, int start, int end) {
         if (end <= start) {
             logger.warn("Drawing nothing: empty or negative");
@@ -688,7 +710,19 @@ public class RenderedContextMap {
         }
         int x = xCoordinate(start), y = topOfExon(trackNumber);
         int width = pixelWidth(start, end);
-        graf.fillRect(x, y, width, exonRectHeght);
+        graf.fillRect(x, y, width, exonRectHeight);
+    }
+
+    private void drawUTR(int trackNumber, int start, int end) {
+        if (end <= start) {
+            logger.warn("Drawing nothing: empty or negative");
+            return;
+        }
+        int x = xCoordinate(start), y = topOfExon(trackNumber);
+        int width = pixelWidth(start, end);
+        graf.draw(new Rectangle2D.Float(
+            x + utrStrokeSize/2, y + utrStrokeSize/2,
+            width - utrStrokeSize, exonRectHeight - utrStrokeSize));
     }
 
     /**
@@ -738,6 +772,6 @@ public class RenderedContextMap {
     }
 
     private int topOfExon(int trackNumber) {
-        return topOfTrack(trackNumber) + (geneTrackHeight - exonRectHeght) / 2;
+        return topOfTrack(trackNumber) + (geneTrackHeight - exonRectHeight) / 2;
     }
 }
