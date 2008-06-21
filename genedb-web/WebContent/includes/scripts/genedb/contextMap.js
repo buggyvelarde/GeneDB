@@ -199,7 +199,10 @@ function loadTiles(chrlen, locus, tileData) {
         }
     }
 
-    $("#contextMapInfoPanel .closeButton").click(deselectTranscript);
+    $("#contextMapInfoPanel .closeButton").click(function(){
+        deselectTranscript();
+        return false;
+    });
     $("#contextMapInfoPanel").click(function(event) { event.stopPropagation(); });
     $("#geneDetails").click(deselectTranscript);
     $("#contextMapInfoPanel #loadDetails a").click(function() {
@@ -288,7 +291,6 @@ function selectTranscript(area, transcript) {
 function deselectTranscript() {
     $("#contextMapInfoPanel:visible").slideUp(200, function() {$("#highlighter").hide();});
     selectedTranscript = null;
-    return false;
 }
 
 function highlightRectangle(left, top, width, height) {
@@ -443,6 +445,8 @@ function endMove(event) {
     dragging = false;
     draggingWindow = false;
     cruise = false;
+
+    return true;
 }
 
 function animateDeceleration() {
