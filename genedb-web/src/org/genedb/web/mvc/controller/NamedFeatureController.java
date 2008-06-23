@@ -19,13 +19,8 @@
 
 package org.genedb.web.mvc.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.taxon.TaxonNode;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -36,12 +31,19 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.taxon.TaxonNode;
 import org.gmod.schema.sequence.Feature;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Looks up a feature by uniquename, and possibly synonyms
@@ -50,13 +52,18 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Adrian Tivey (art)
  */
 public class NamedFeatureController extends TaxonNodeBindingFormController {
+    
+    // TODO Far too gene-centric
+    // TODO Use TaxonNode properly
+    // TODO LuceneTemplate
 
     //private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
 
     private String listResultsView;
     private SequenceDao sequenceDao;
     private LuceneDao luceneDao;
-    private String geneView, geneDetailsView;
+    private String geneView; 
+    private String geneDetailsView;
 
     private static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
     static {
@@ -75,45 +82,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         String viewName = listResultsView;
         List<ResultHit> results = new ArrayList<ResultHit>();
 
-        IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
-
-        BooleanQuery geneNameQuery = new BooleanQuery();
-
-        if(StringUtils.containsWhitespace(name)) {
-            for(String term : name.split(" ")) {
-                geneNameQuery.add(new TermQuery(new Term("product",term.toLowerCase()
-                    )), Occur.SHOULD);
-            }
-        } else {
-            if (name.indexOf('*') == -1) {
-                geneNameQuery.add(new TermQuery(new Term("allNames",name.toLowerCase())), Occur.SHOULD);
-                geneNameQuery.add(new TermQuery(new Term("product",name.toLowerCase())), Occur.SHOULD);
-            } else {
-                geneNameQuery.add(new WildcardQuery(new Term("allNames", name.toLowerCase())), Occur.SHOULD);
-                geneNameQuery.add(new WildcardQuery(new Term("product", name.toLowerCase())), Occur.SHOULD);
-            }
-        }
-
-
-        BooleanQuery booleanQuery = new BooleanQuery();
-        booleanQuery.add(new BooleanClause(geneOrPseudogeneQuery, Occur.MUST));
-        booleanQuery.add(new BooleanClause(geneNameQuery, Occur.MUST));
-
-
-        if(taxonNodes != null) {
-            List<String> orgNames = new ArrayList<String>();
-            for (TaxonNode node : taxonNodes) {
-                orgNames.addAll(node.getAllChildrenNames());
-            }
-            BooleanQuery organismQuery = new BooleanQuery();
-            for (String organism : orgNames) {
-                organismQuery.add(new TermQuery(new Term("organism.commonName",organism)), Occur.SHOULD);
-            }
-            booleanQuery.add(new BooleanClause(organismQuery,Occur.MUST));
-        }
-
-        logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
-        Hits hits = luceneDao.search(ir, booleanQuery);
+        Hits hits = lookupInLucene(name, taxonNodes);
 
         switch (hits.length()) {
         case 0: {
@@ -165,9 +134,53 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             historyManager.addHistoryItems("name lookup '" + nlb + "'", ids);
         }
 
-        if (geneView.equals(viewName) && nlb.isDetailsOnly())
+        if (geneView.equals(viewName) && nlb.isDetailsOnly()) {
             viewName = geneDetailsView;
+        }
         return new ModelAndView(viewName, model);
+    }
+
+    private Hits lookupInLucene(String name, TaxonNode[] taxonNodes) throws IOException {
+        IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
+
+        BooleanQuery geneNameQuery = new BooleanQuery();
+
+        if(StringUtils.containsWhitespace(name)) {
+            for(String term : name.split(" ")) {
+                geneNameQuery.add(new TermQuery(new Term("product",term.toLowerCase()
+                    )), Occur.SHOULD);
+            }
+        } else {
+            if (name.indexOf('*') == -1) {
+                geneNameQuery.add(new TermQuery(new Term("allNames",name.toLowerCase())), Occur.SHOULD);
+                geneNameQuery.add(new TermQuery(new Term("product",name.toLowerCase())), Occur.SHOULD);
+            } else {
+                geneNameQuery.add(new WildcardQuery(new Term("allNames", name.toLowerCase())), Occur.SHOULD);
+                geneNameQuery.add(new WildcardQuery(new Term("product", name.toLowerCase())), Occur.SHOULD);
+            }
+        }
+
+
+        BooleanQuery booleanQuery = new BooleanQuery();
+        booleanQuery.add(new BooleanClause(geneOrPseudogeneQuery, Occur.MUST));
+        booleanQuery.add(new BooleanClause(geneNameQuery, Occur.MUST));
+
+
+        if(taxonNodes != null) {
+            List<String> orgNames = new ArrayList<String>();
+            for (TaxonNode node : taxonNodes) {
+                orgNames.addAll(node.getAllChildrenNames());
+            }
+            BooleanQuery organismQuery = new BooleanQuery();
+            for (String organism : orgNames) {
+                organismQuery.add(new TermQuery(new Term("organism.commonName",organism)), Occur.SHOULD);
+            }
+            booleanQuery.add(new BooleanClause(organismQuery,Occur.MUST));
+        }
+
+        logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
+        Hits hits = luceneDao.search(ir, booleanQuery);
+        return hits;
     }
 
     public void setLuceneDao(LuceneDao luceneDao) {
