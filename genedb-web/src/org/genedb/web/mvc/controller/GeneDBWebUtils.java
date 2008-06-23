@@ -38,11 +38,11 @@ import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.utils.Grep;
-import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.feature.AbstractGene;
+import org.gmod.schema.sequence.feature.MRNA;
 import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.sequence.feature.PolypeptideDomain;
 import org.gmod.schema.sequence.feature.ProductiveTranscript;
@@ -135,8 +135,22 @@ public class GeneDBWebUtils {
         model.put("transcript", transcript);
 
         if (transcript instanceof ProductiveTranscript) {
+            model.put("PMID", generalDao.getDbByName("PMID").getUrlPrefix());
+
             ProductiveTranscript codingTranscript = (ProductiveTranscript) transcript;
             Polypeptide polypeptide = codingTranscript.getProtein();
+            if (polypeptide == null) {
+                /*
+                 * A pseudogenic transcript need not have a polypeptide,
+                 * but an mRNA transcript must. If we find an mRNA transcript
+                 * that has no polypeptide, we log an error and continue
+                 * as best we can.
+                 */
+                if (transcript instanceof MRNA)
+                    logger.error(String.format("Transcript '%s' has no polypeptide!",
+                        codingTranscript.getUniqueName()));
+                return model;
+            }
 
             model.put("polypeptide", polypeptide);
             model.put("polyprop", calculatePepstats(polypeptide));
@@ -145,9 +159,6 @@ public class GeneDBWebUtils {
             model.put("BP",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("biological_process", polypeptide));
             model.put("CellularC", cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("cellular_component", polypeptide));
             model.put("MF",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("molecular_function", polypeptide));
-
-            Db db = generalDao.getDbByName("PMID");
-            model.put("PMID",db.getUrlPrefix());
 
             model.put("domainInformation", prepareDomainInformation(polypeptide));
         }
