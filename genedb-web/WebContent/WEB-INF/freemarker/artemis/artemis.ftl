@@ -21,11 +21,12 @@
            <property name="artemis.environment" value="UNIX" />
            <property name="j2ssh" value="" />
            <property name="ibatis" value="" />
-           <property name="chado" value="193.62.203.5:5432/malaria_workshop?" />
+           <property name="chado" value="193.62.203.5:5432/malaria_workshop?genedb_ro" />
            <property name="jdbc.drivers" value="org.postgresql.Driver" />
            <property name="apple.laf.useScreenMenuBar" value="true" />
            <property name="com.apple.mrj.application.apple.menu.about.name" value="Artemis" />
            <property name="offset" value="${offset}" />
+           <property name="read_only" value="" />
          </resources>
          <application-desc main-class="uk.ac.sanger.artemis.components.ArtemisMain">
           <argument>-Dread_only ${argument}</argument>
