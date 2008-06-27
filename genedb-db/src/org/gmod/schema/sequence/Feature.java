@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -466,8 +467,40 @@ public class Feature implements java.io.Serializable {
      *
      * @return the preferred display name, never null
      */
+    @Transient
     public String getDisplayName() {
         return (getName() != null) ? getName() : getUniqueName();
+    }
+
+    /**
+     * Get the current systematic ID or temporary systematic ID, if there is one.
+     * If not, returns the unique name.
+     *
+     * @return the systematic ID, temporary systematic ID, or unique name
+     */
+    @Transient
+    public String getSystematicId() {
+        for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
+            Synonym synonym = featureSynonym.getSynonym();
+            if (("systematic_id".equals(synonym.getCvTerm().getName())
+            || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
+            && featureSynonym.isCurrent())
+                return synonym.getSynonymSgml();
+        }
+        return getUniqueName();
+    }
+
+    @Transient
+    public Collection<String> getPreviousSystematicIds() {
+        Set<String> ret = new HashSet<String>();
+        for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
+            Synonym synonym = featureSynonym.getSynonym();
+            if (("systematic_id".equals(synonym.getCvTerm().getName())
+            || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
+            && !featureSynonym.isCurrent())
+                ret.add(synonym.getSynonymSgml());
+        }
+        return ret;
     }
 
     public void setFeatureLocsForFeatureId(List<FeatureLoc> featureLocsForFeatureId) {
