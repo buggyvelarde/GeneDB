@@ -2,6 +2,7 @@ package org.gmod.schema.sequence;
 
 
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.utils.Rankable;
 import org.gmod.schema.utils.propinterface.PropertyI;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -24,7 +25,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="featureprop")
-public class FeatureProp implements Serializable, PropertyI {
+public class FeatureProp implements Serializable, PropertyI, Rankable {
 
     // Fields    
     @SuppressWarnings("unused")
