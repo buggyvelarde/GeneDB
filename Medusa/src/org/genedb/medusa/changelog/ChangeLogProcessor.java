@@ -19,8 +19,8 @@ public class ChangeLogProcessor {
 	}
 
 	private void validateStoreAndProcess(ChangeLogMessage clm) {
-		Processor p = findProcessor(clm);
-		p.process(clm);
+//		Processor p = findProcessor(clm);
+//		p.process(clm);
 		store(clm);
 	}
 
