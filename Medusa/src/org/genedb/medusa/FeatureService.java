@@ -10,5 +10,7 @@ public interface FeatureService {
 	CvTerm findConventionalFeatureForProperty(CvTerm cvTerm);
 
 	Feature findGenePart(String systematicId, CvTerm featureType);
+	
+	String findTypeNameForSystematicId(String systematicId);
 
 }

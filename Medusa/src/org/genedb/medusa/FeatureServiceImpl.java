@@ -1,24 +1,14 @@
 package org.genedb.medusa;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.sequence.FeatureSynonym;
-import org.hibernate.Criteria;
+
+import org.apache.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.springframework.util.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FeatureServiceImpl implements FeatureService {
     protected SessionFactory sessionFactory;
@@ -197,10 +187,23 @@ public class FeatureServiceImpl implements FeatureService {
         this.sessionFactory = sessionFactory;
     }
 
+    Map<String, String> conventionalLocation = new HashMap<String, String>();
+	CvService cvService;
+    
 	@Override
 	public CvTerm findConventionalFeatureForProperty(CvTerm cvTerm) {
-		// TODO Auto-generated method stub
-		return null;
+		String key = cvTerm.getCv().getName()+"::"+cvTerm.getName();
+		String featureTypeName = conventionalLocation.get(key);
+		if (featureTypeName == null) {
+			log.error("Can't find where to store this");
+		}
+
+		CvTerm soType = cvService.findCvTermByCvAndName("sequence", featureTypeName);
+		if (soType == null) {
+			log.error("Can't find sequence type");
+			throw new RuntimeException();
+		}
+		return soType;
 	}
 
 	@Override
@@ -222,5 +225,20 @@ public class FeatureServiceImpl implements FeatureService {
 	public Feature findGenePart(String systematicId, CvTerm featureType) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String findTypeNameForSystematicId(String systematicId) {
+		try {
+			String soTypeName =  (String) sessionFactory.getCurrentSession().createQuery(
+			"select f.cvTerm.name from Feature f where f.uniqueName = :systematicId")
+			.setString("systematicId", systematicId)
+			.uniqueResult();
+			return soTypeName;
+		}
+		catch (NonUniqueResultException exp) {
+			log.error(String.format("Got more than 1 result when should have had one for an uniquename of '%s'", systematicId), exp);
+			return null;
+		}
 	}
 }
