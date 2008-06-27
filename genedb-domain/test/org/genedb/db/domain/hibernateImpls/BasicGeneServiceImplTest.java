@@ -4,7 +4,7 @@
 package org.genedb.db.domain.hibernateImpls;
 
 
-import org.genedb.db.domain.objects.BasicGene;
+import org.genedb.db.domain.objects.CompoundLocatedFeature;
 import org.genedb.db.domain.services.BasicGeneService;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class BasicGeneServiceImplTest {
     
     @Test
     public void findGeneByUniqueNameReturnsSomething () {
-        BasicGene gene = basicGeneService.findGeneByUniqueName("PFB0770c");
+        CompoundLocatedFeature gene = basicGeneService.findGeneByUniqueName("PFB0770c");
         assertNotNull(gene);
     }
 

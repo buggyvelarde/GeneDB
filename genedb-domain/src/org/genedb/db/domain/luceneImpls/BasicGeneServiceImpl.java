@@ -24,11 +24,14 @@ import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Chromosome;
 import org.genedb.db.domain.objects.Exon;
+import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
 import org.genedb.db.domain.objects.UTR;
@@ -80,7 +83,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             else
                 transcript.setColourId(Integer.parseInt(colourString));
 
-            transcript.setName(doc.get("uniqueName"));
+            transcript.setUniqueName(doc.get("uniqueName"));
 
             transcript.setFmin(Integer.parseInt(doc.get("start")));
             transcript.setFmax(Integer.parseInt(doc.get("stop")));
@@ -148,6 +151,16 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         }
     };
 
+    /**
+     * This DocumentConverter populates a Gap object using the Lucene Document.
+     */
+    private final DocumentConverter<Gap> convertToGap = new DocumentConverter<Gap>() {
+        public Gap convert(Document doc) {
+            return new Gap(doc.get("uniqueName"), Integer.parseInt(doc.get("start")), Integer.parseInt(doc.get("stop")));
+        }
+    };
+
+
     private static Set<TranscriptComponent> parseLocs(String locs) {
         Set<TranscriptComponent> components = new HashSet<TranscriptComponent>();
         for (String loc: locs.split(",")) {
@@ -194,6 +207,21 @@ public class BasicGeneServiceImpl implements BasicGeneService {
      * @return
      */
     private <T> List<T> findWithQuery(Query query, DocumentConverter<T> converter) {
+        return findWithQuery(query, null, converter);
+    }
+
+    /**
+     * Finds all documents matching the query, sorted using the specified sort order,
+     * and makes a list of matches. Each document is converted to an object of type T
+     * using the converter.
+     *
+     * @param <T> The return type
+     * @param query The query object
+     * @param sort How to order the results
+     * @param converter Result converter
+     * @return
+     */
+    private <T> List<T> findWithQuery(Query query, Sort sort, DocumentConverter<T> converter) {
         List<T> ret = new ArrayList<T>();
 
         IndexSearcher searcher = new IndexSearcher(luceneIndex);
@@ -201,7 +229,10 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
         Hits hits;
         try {
-            hits = searcher.search(query);
+            if (sort == null)
+                hits = searcher.search(query);
+            else
+                hits = searcher.search(query, sort);
         } catch (IOException e) {
             throw new RuntimeException("IOException while running Lucene query", e);
         }
@@ -282,6 +313,41 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         return findWithQuery(query, convertToGene);
     }
 
+    private static final SortField START_ASC = new SortField("start");
+    private static final SortField STOP_DESC = new SortField("stop", true);
+    private static final Sort SORT_BY_LOCATION = new Sort(new SortField[] {START_ASC, STOP_DESC});
+    public Collection<Gap> findGapsOverlappingRange(String organismCommonName,
+        String chromosomeUniqueName, long locMin, long locMax) {
+
+        BooleanQuery query = new BooleanQuery();
+        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gap")),
+            BooleanClause.Occur.MUST);
+        query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
+            BooleanClause.Occur.MUST);
+        query.add(new TermQuery(new Term("chr", chromosomeUniqueName)),
+            BooleanClause.Occur.MUST);
+        query.add(new ConstantScoreRangeQuery("start", null, String.format("%09d", locMax), false, false),
+            BooleanClause.Occur.MUST);
+        query.add(new ConstantScoreRangeQuery("stop", String.format("%09d", locMin), null, true, false),
+            BooleanClause.Occur.MUST);
+
+        return findWithQuery(query, SORT_BY_LOCATION, convertToGap);
+    }
+
+    public Collection<Gap> findGapsOnChromosome(String organismCommonName,
+            String chromosomeUniqueName) {
+
+        BooleanQuery query = new BooleanQuery();
+        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gap")),
+            BooleanClause.Occur.MUST);
+        query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
+            BooleanClause.Occur.MUST);
+        query.add(new TermQuery(new Term("chr", chromosomeUniqueName)),
+            BooleanClause.Occur.MUST);
+
+        return findWithQuery(query, SORT_BY_LOCATION, convertToGap);
+    }
+
     public Collection<BasicGene> findGenesExtendingIntoRange(String organismCommonName,
             String chromosomeUniqueName, int strand, long locMin, long locMax) {
         BooleanQuery query = new BooleanQuery();
@@ -291,6 +357,20 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         query.add(new TermQuery(new Term("chr", chromosomeUniqueName)),
             BooleanClause.Occur.MUST);
         query.add(new ConstantScoreRangeQuery("stop", String.format("%09d", locMin), String.format("%09d", locMax), true, false),
+            BooleanClause.Occur.MUST);
+        query.add(new TermQuery(new Term("strand", String.valueOf(strand))),
+            BooleanClause.Occur.MUST);
+
+        return findWithQuery(query, convertToGene);
+    }
+
+    public Collection<BasicGene> findGenesOnStrand(String organismCommonName,
+            String chromosomeUniqueName, int strand) {
+        BooleanQuery query = new BooleanQuery();
+        query.add(geneOrPseudogeneQuery, BooleanClause.Occur.MUST);
+        query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
+            BooleanClause.Occur.MUST);
+        query.add(new TermQuery(new Term("chr", chromosomeUniqueName)),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("strand", String.valueOf(strand))),
             BooleanClause.Occur.MUST);

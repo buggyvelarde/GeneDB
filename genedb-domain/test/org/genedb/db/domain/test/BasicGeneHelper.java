@@ -32,7 +32,7 @@ public class BasicGeneHelper extends BasicGene {
      */
     public BasicGeneHelper transcript (String name, int fmin, int fmax) {
         Transcript transcript = new Transcript();
-        transcript.setName(name);
+        transcript.setUniqueName(name);
         transcript.setFmin(fmin);
         transcript.setFmax(fmax);
 

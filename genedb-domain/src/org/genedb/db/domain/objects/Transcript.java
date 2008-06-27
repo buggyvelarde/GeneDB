@@ -28,7 +28,7 @@ import java.util.TreeSet;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureProp;
 
-public class Transcript implements Serializable {
+public class Transcript extends LocatedFeature implements Serializable {
     private transient Feature protein;
     private String name;
     private Integer colourId; // May be null
@@ -37,27 +37,30 @@ public class Transcript implements Serializable {
     private List<String> products;
     private int fmin, fmax;
 
-    public String getName() {
+    @Override
+    public String getUniqueName() {
         return name;
     }
-    public void setName(String name) {
+    public void setUniqueName(String name) {
         this.name = name;
     }
 
+    @Override
     public int getFmin() {
         return fmin;
     }
     public void setFmin(int fmin) {
         this.fmin = fmin;
     }
-    
+
+    @Override
     public int getFmax() {
         return fmax;
     }
     public void setFmax(int fmax) {
         this.fmax = fmax;
     }
-    
+
     public SortedSet<TranscriptComponent> getComponents() {
         return components;
     }
@@ -81,7 +84,7 @@ public class Transcript implements Serializable {
 
     /**
      * Sets the protein property, and also updates the colourId from the protein.
-     * 
+     *
      * @param protein
      */
     public void setProtein(Feature protein) {
@@ -91,7 +94,7 @@ public class Transcript implements Serializable {
                 setColourId(Integer.parseInt(proteinProp.getValue()));
         }
     }
-    
+
     public BasicGene getGene() {
         return gene;
     }

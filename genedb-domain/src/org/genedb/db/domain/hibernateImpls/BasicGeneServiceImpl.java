@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Chromosome;
 import org.genedb.db.domain.objects.Exon;
+import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
@@ -104,11 +105,25 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         return ret;
     }
 
+    protected Gap gapFromFeature(Feature feat) {
+        FeatureLoc loc = feat.getRankZeroFeatureLoc();
+        return new Gap(feat.getUniqueName(), loc.getFmin(), loc.getFmax());
+    }
+
+
+    protected List<Gap> gapsFromFeatures(List<Feature> features) {
+        List<Gap> ret = new ArrayList<Gap>();
+        for(Feature feature: features) {
+            ret.add(gapFromFeature(feature));
+        }
+        return ret;
+    }
+
     private static Transcript makeTranscript(Feature feature) {
         Transcript transcript = new Transcript();
         transcript.setFmin(feature.getRankZeroFeatureLoc().getFmin());
         transcript.setFmax(feature.getRankZeroFeatureLoc().getFmax());
-        transcript.setName(feature.getDisplayName());
+        transcript.setUniqueName(feature.getDisplayName());
 
         Set<TranscriptComponent> exons = new HashSet<TranscriptComponent> ();
         for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
@@ -178,6 +193,41 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         return genesFromFeatures(geneFeatures);
     }
 
+    public Collection<Gap> findGapsOverlappingRange(String organismCommonName,
+        String chromosomeUniqueName, long locMin, long locMax) {
+
+    @SuppressWarnings("unchecked")
+    List<Feature> gaps = sessionFactory.getCurrentSession().createQuery(
+            "select f from Gap f"
+            +" inner join f.featureLocsForFeatureId fl"
+            +"    with fl.rank = 0"
+            +" where fl.fmax >= :locMin and fl.fmin < :locMax"
+            +" and fl.featureBySrcFeatureId.uniqueName = :chr"
+            +" and f.organism.commonName = :org")
+            .setLong   ("locMin", locMin)
+            .setLong   ("locMax", locMax)
+            .setString ("chr", chromosomeUniqueName)
+            .setString ("org", organismCommonName)
+            .list();
+        return gapsFromFeatures(gaps);
+    }
+
+    public Collection<Gap> findGapsOnChromosome(String organismCommonName,
+            String chromosomeUniqueName) {
+
+        @SuppressWarnings("unchecked")
+        List<Feature> gaps = sessionFactory.getCurrentSession().createQuery(
+            "select f from Gap f"
+            +" inner join f.featureLocsForFeatureId fl"
+            +"    with fl.rank = 0"
+            +" and fl.featureBySrcFeatureId.uniqueName = :chr"
+            +" and f.organism.commonName = :org")
+            .setString ("chr", chromosomeUniqueName)
+            .setString ("org", organismCommonName)
+            .list();
+        return gapsFromFeatures(gaps);
+    }
+
     public Collection<BasicGene> findGenesExtendingIntoRange(String organismCommonName,
         String chromosomeUniqueName, int strand, long locMin, long locMax) {
 
@@ -201,7 +251,27 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         return genesFromFeatures(geneFeatures);
     }
 
+    public Collection<BasicGene> findGenesOnStrand(String organismCommonName,
+        String chromosomeUniqueName, int strand) {
+        assert strand == 1 || strand == -1;
+        @SuppressWarnings("unchecked")
+        List<Feature> geneFeatures = sessionFactory.getCurrentSession().createQuery(
+                "select f from Feature f"
+                +" inner join f.featureLocsForFeatureId fl"
+                +"    with fl.rank = 0"
+                +" where fl.strand = :strand"
+                +" and fl.featureBySrcFeatureId.uniqueName = :chr"
+                +" and f.organism.commonName = :org"
+                +" and f.cvTerm.name='gene'")
+                .setInteger("strand", strand)
+                .setString ("chr", chromosomeUniqueName)
+                .setString ("org", organismCommonName)
+                .list();
+        return genesFromFeatures(geneFeatures);
+    }
+
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+
 }

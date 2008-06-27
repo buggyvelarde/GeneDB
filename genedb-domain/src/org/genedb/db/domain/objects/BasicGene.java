@@ -12,7 +12,7 @@ import java.util.List;
  * @author rh11
  *
  */
-public class BasicGene {
+public class BasicGene extends CompoundLocatedFeature {
 
     private List<Transcript> transcripts;
     private int featureId;
@@ -26,7 +26,7 @@ public class BasicGene {
     private List<String> synonyms;
 
     /**
-     * Two BasicGenes are equal if they have the same systematicId.
+     * Two BasicGenes are equal if they have the same uniqueName.
      */
     @Override
     public boolean equals(Object obj) {
@@ -73,6 +73,7 @@ public class BasicGene {
             return uniqueName;
     }
 
+    @Override
     public String getUniqueName() {
         return uniqueName;
     }
@@ -80,6 +81,7 @@ public class BasicGene {
         this.uniqueName = systematicId;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -94,6 +96,10 @@ public class BasicGene {
         this.organism = organism;
     }
 
+    @Override
+    public List<? extends LocatedFeature> getSubfeatures() {
+        return getTranscripts();
+    }
     public List<Transcript> getTranscripts() {
         if (transcripts == null)
             return Collections.emptyList();
@@ -112,6 +118,7 @@ public class BasicGene {
         this.transcripts = transcripts;
     }
 
+    @Override
     public int getFmin() {
         return fmin;
     }
@@ -119,6 +126,7 @@ public class BasicGene {
         this.fmin = fmin;
     }
 
+    @Override
     public int getFmax() {
         return fmax;
     }
@@ -140,6 +148,7 @@ public class BasicGene {
         this.synonyms = synonyms;
     }
 
+    @Override
     public int getStrand() {
         return strand;
     }

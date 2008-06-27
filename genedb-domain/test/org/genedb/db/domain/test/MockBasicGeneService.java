@@ -2,13 +2,18 @@ package org.genedb.db.domain.test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Chromosome;
 import org.genedb.db.domain.objects.Exon;
+import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
 import org.genedb.db.domain.services.BasicGeneService;
@@ -155,6 +160,14 @@ class BasicGeneFactory {
 
         this.strand = strand;
     }
+
+    public String getOrganism() {
+        return organism;
+    }
+
+    public String getChromosomeName() {
+        return chromosome.getName();
+    }
 }
 
 /**
@@ -169,6 +182,7 @@ class BasicGeneFactory {
 public class MockBasicGeneService implements BasicGeneService {
     private BasicGeneFactory factory;
     private Collection<BasicGene> genes;
+    private Map<String,Map<String,Collection<Gap>>> gapsByChromosomeByOrganism;
 
     /**
      * Creates a new instance that uses the supplied organism, chromosome and strand
@@ -184,6 +198,7 @@ public class MockBasicGeneService implements BasicGeneService {
     public MockBasicGeneService (String organism, String chromosome, int strand) {
         factory = new BasicGeneFactory(organism, chromosome, strand);
         genes = new ArrayList<BasicGene> ();
+        gapsByChromosomeByOrganism = new HashMap<String,Map<String,Collection<Gap>>>();
     }
 
     /**
@@ -245,6 +260,43 @@ public class MockBasicGeneService implements BasicGeneService {
         genes.add(gene);
         return gene;
     }
+
+    /**
+     * Add a gap.
+     *
+     * @param uniqueName
+     * @param fmin
+     * @param fmax
+     */
+    public void addGap(String uniqueName, int fmin, int fmax) {
+        String organism   = factory.getOrganism();
+        String chromosome = factory.getChromosomeName();
+
+        if (!gapsByChromosomeByOrganism.containsKey(organism))
+            gapsByChromosomeByOrganism.put(organism, new HashMap<String,Collection<Gap>>());
+        Map<String,Collection<Gap>> gapsByChromosome = gapsByChromosomeByOrganism.get(organism);
+        if (!gapsByChromosome.containsKey(chromosome))
+            gapsByChromosome.put(chromosome, new TreeSet<Gap>());
+
+        gapsByChromosome.get(chromosome).add(new Gap(uniqueName, fmin, fmax));
+    }
+
+    /**
+     * Get all the gaps for the specified chromosome of the specified organism.
+     *
+     * @param organism the common name of the organism
+     * @param chromosome the unique name of the chromosome
+     * @return
+     */
+    public Collection<Gap> findGapsOnChromosome(String organism, String chromosome) {
+        if (!gapsByChromosomeByOrganism.containsKey(organism))
+            return Collections.emptySet();
+        if (!gapsByChromosomeByOrganism.get(organism).containsKey(chromosome))
+            return Collections.emptySet();
+
+        return gapsByChromosomeByOrganism.get(organism).get(chromosome);
+    }
+
 
     /**
      * Change the default organism used for new genes.
@@ -317,6 +369,19 @@ public class MockBasicGeneService implements BasicGeneService {
         return ret;
     }
 
+    public Collection<BasicGene> findGenesOnStrand(String organism,
+            String chromosome, int strand) {
+
+        List<BasicGene> ret = new ArrayList<BasicGene> ();
+        for (BasicGene gene: genes) {
+            if (gene.getOrganism().equals(organism)
+                    && gene.getChromosomeName().equals(chromosome)
+                    && gene.getStrand() == strand)
+                ret.add(gene);
+        }
+        return ret;
+    }
+
     public Collection<BasicGene> findGenesExtendingIntoRange(String organism,
             String chromosome, int strand, long locMin, long locMax) {
 
@@ -331,5 +396,18 @@ public class MockBasicGeneService implements BasicGeneService {
         }
         return ret;
     }
+
+    public Collection<Gap> findGapsOverlappingRange(String organismCommonName,
+            String chromosomeUniqueName, long locMin, long locMax) {
+
+        List<Gap> ret = new ArrayList<Gap> ();
+        for (Gap gap: findGapsOnChromosome(organismCommonName, chromosomeUniqueName)) {
+            if (gap.getFmin() < locMax
+             && gap.getFmax() >= locMin)
+                ret.add(gap);
+        }
+        return ret;
+    }
+
 }
 
