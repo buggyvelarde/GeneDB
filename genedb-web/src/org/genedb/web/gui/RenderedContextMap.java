@@ -1,7 +1,6 @@
 package org.genedb.web.gui;
 
 import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -10,16 +9,30 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
+import net.sf.json.JSONString;
+
 import org.apache.log4j.Logger;
+import org.genedb.db.domain.objects.CompoundLocatedFeature;
 import org.genedb.db.domain.objects.Exon;
+import org.genedb.db.domain.objects.Gap;
+import org.genedb.db.domain.objects.LocatedFeature;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
+import org.genedb.web.gui.TrackedDiagram.AllocatedCompoundFeature;
 
 /**
  * Renders a {@link ContextMapDiagram} as an image.
@@ -106,9 +119,21 @@ public class RenderedContextMap {
     private int intronRectHeight = 2;
 
     /**
-     * The width in pixels of the border drawn around a UTR
+     * The height of the rectangle representing an untranslated region
      */
-    private float utrStrokeSize = 3.0f;
+    private int utrRectHeight = 6;
+
+//    /**
+//     * The width in pixels of the border drawn around a UTR
+//     */
+//    private float utrStrokeSize = 3.0f;
+//    private Stroke utrStroke = new BasicStroke(utrStrokeSize);
+
+//    private int utrGapHeight = 4;
+
+    private int axisBreakX = 2;
+    private int axisBreakY = 4;
+    private int axisBreakGap = 6;
 
     /**
      * The height of the scale track.
@@ -168,7 +193,7 @@ public class RenderedContextMap {
      * Vertical position of scale axis within scale track,
      * measured in pixels downwards from the top of the scale track.
      */
-    private static final int SCALE_VERTICAL_POS = MAJOR_TICK_HEIGHT / 2;
+    private int scaleVerticalPos = MAJOR_TICK_HEIGHT / 2;
 
     /**
      * How much space to leave between a major scale tick and the label below, in pixels.
@@ -177,21 +202,48 @@ public class RenderedContextMap {
 
 
     private ContextMapDiagram diagram;
+    private NavigableMap<Integer,Gap> gapsByStart = new TreeMap<Integer,Gap>();
+
     private int start, end;
-    private int width;
+    private int sizeExcludingGaps;
 
     private int numberOfPositiveTracks, numberOfNegativeTracks;
 
-    private BufferedImage image, labelBuffer;
-    private Graphics2D graf, labelGraf;
-
     public RenderedContextMap(ContextMapDiagram diagram) {
+
         this.diagram = diagram;
-        this.width = diagram.getSize() / basesPerPixel;
         this.start = diagram.getStart();
         this.end = diagram.getEnd();
+
+        for (LocatedFeature globalFeature: diagram.getGlobalFeatures()) {
+            if (globalFeature instanceof Gap) {
+                Gap gap = (Gap) globalFeature;
+                gapsByStart.put(gap.getFmin(), gap);
+            }
+        }
+        calculateSizeExcludingGaps();
+
         this.numberOfPositiveTracks = diagram.numberOfPositiveTracks();
         this.numberOfNegativeTracks = diagram.numberOfNegativeTracks();
+    }
+
+    /**
+     * Compute the size, excluding gaps, between
+     * <code>start</code> and <code>end</code>,
+     * and store the result in <code>sizeExcludingGaps</code>.
+     */
+    private void calculateSizeExcludingGaps() {
+        sizeExcludingGaps = 0;
+        int loc = getStart();
+        for (Gap gap : gapsByStart.values()) {
+            if (loc < gap.getFmin()) {
+                sizeExcludingGaps += gap.getFmin() - loc;
+                loc = gap.getFmax();
+            }
+        }
+
+        if (loc < getEnd())
+            sizeExcludingGaps += getEnd() - loc;
     }
 
     public RenderedContextMap restrict(int start, int end) {
@@ -204,11 +256,6 @@ public class RenderedContextMap {
             this.start = start;
 
         if (end > diagram.getEnd()) {
-            /*
-             * At present (2008-06-20) this warning is triggered in the normal
-             * course of events: when the chromosome is split into tiles, the
-             * final tile will be restricted past its end. This is not a problem.
-             */
             logger.warn(String.format("End of diagram is %d, end of restriction is %d",
                 diagram.getEnd(), end));
             this.end = diagram.getEnd();
@@ -216,7 +263,6 @@ public class RenderedContextMap {
         else
             this.end = end;
 
-        this.width = getSize() / basesPerPixel;
         return this;
     }
 
@@ -238,18 +284,14 @@ public class RenderedContextMap {
         return end;
     }
 
-    /**
-     * Get the size of the diagram.
-     *
-     * @return the size of the diagram, in bases
-     */
-    private int getSize() {
-        return end - start;
-    }
-
     public String getPreferredFilename () {
         return String.format("%s%09d-%09ds%d.%s", filenamePrefix, getStart(), getEnd(),
             getBasesPerPixel(), FILE_EXT);
+    }
+
+    private String getPreferredFilenameForTile (int tileIndex, int tileWidth) {
+        return String.format("%s%09d-%09ds%dt%dw%d.%s", filenamePrefix, getStart(), getEnd(),
+            getBasesPerPixel(), tileIndex, tileWidth, FILE_EXT);
     }
 
     public ContextMapDiagram getDiagram() {
@@ -257,18 +299,20 @@ public class RenderedContextMap {
     }
 
     /**
-     * Configure this diagram to render as a thumbnail
+     * Configure this diagram to render as a thumbnail.
      *
      * @param maxWidth the maximum width, in pixels, of the rendered thumbnail
      * @return this object
      */
     public RenderedContextMap asThumbnail(int maxWidth) {
-        setMaxWidth(maxWidth);
+        setMaxWidth(maxWidth, 0);
         setScaleTrackHeight(1);
         setGeneTrackHeight(2);
         setExonRectHeight(2);
         setIntronRectHeight(2);
+        setUTRRectHeight(2);
         setTickDistances(0, 0);
+        setAxisBreakSlash(0, 0);
         setScaleColor(Color.GRAY);
         filenamePrefix = "thumb-";
         forceTracks(2, 2);
@@ -286,25 +330,33 @@ public class RenderedContextMap {
      * @return the width in pixels of this rendered diagram
      */
     public int getWidth() {
-        return width;
+        return pixelWidth(getStart(), getEnd());
     }
 
     /**
      * Constrain the diagram to fit within a fixed width,
-     * by adjusting the scale. The resulting width will
-     * be as close as possible to maxWidth, but no larger.
+     * for a given gap size, by adjusting the scale. The
+     * resulting width will be as close as possible to maxWidth,
+     * but no larger. The <code>axisBreakGap</code> is also
+     * set equal to the supplied value.
      *
      * @param maxWidth the maximum allowed width, in pixels
+     * @param axisBreakGap the size, in pixels, of a break in the axis
+     *          representing a gap.
      * @return the actual width of the diagram
      */
-    public int setMaxWidth(int maxWidth) {
-        if (getSize() % maxWidth == 0)
-            setBasesPerPixel(getSize() / maxWidth);
-        else
-            setBasesPerPixel((getSize() / maxWidth) + 1);
+    public int setMaxWidth(int maxWidth, int axisBreakGap) {
+        this.axisBreakGap = axisBreakGap;
 
-        assert this.width <= maxWidth;
-        return this.width;
+        int maxWidthExcludingGaps = maxWidth - axisBreakGap * this.gapsByStart.size();
+        if (sizeExcludingGaps % maxWidthExcludingGaps == 0)
+            setBasesPerPixel(sizeExcludingGaps / maxWidthExcludingGaps);
+        else
+            setBasesPerPixel((sizeExcludingGaps / maxWidthExcludingGaps) + 1);
+
+        calculateContigs();
+        assert getWidth() <= maxWidth;
+        return getWidth();
     }
 
     /**
@@ -359,7 +411,7 @@ public class RenderedContextMap {
      * Get the height of the rectangles used to represent exons in this diagram.
      * @return the height in pixels
      */
-    public int getExonRectHeght() {
+    public int getExonRectHeight() {
         return exonRectHeight;
     }
 
@@ -381,10 +433,26 @@ public class RenderedContextMap {
 
    /**
     * Set the height of the rectangles used to represent introns in this diagram
-    * @param exonRectHeight the height in pixels
+    * @param intronRectHeight the height in pixels
     */
     public void setIntronRectHeight(int intronRectHeight) {
         this.intronRectHeight = intronRectHeight;
+    }
+
+    /**
+     * Get the height of the rectangles used to represent untranslated regions in this diagram.
+     * @return the height in pixels
+     */
+    public int getUTRRectHeight() {
+        return utrRectHeight;
+    }
+
+    /**
+     * Set the height of the rectangles used to represent untranslated regions in this diagram
+     * @param utrRectHeight the height in pixels
+     */
+    public void setUTRRectHeight(int utrRectHeight) {
+        this.utrRectHeight = utrRectHeight;
     }
 
     /**
@@ -447,7 +515,9 @@ public class RenderedContextMap {
     /**
      * Set the distance between major (labelled) and minor (unlabelled) ticks on
      * the scale track of this diagram. The <code>majorTickDistance</code>
-     * must be a multiple of the <code>minorTickDistance</code>.
+     * must be a multiple of the <code>minorTickDistance</code>. If the major
+     * tick distance is zero, then only minor ticks will be drawn. If the tick
+     * distances are both zero, then no scale ticks will be drawn.
      *
      * @param majorTickDistance the distance in bases
      * @param minorTickDistance the distance in bases
@@ -460,6 +530,18 @@ public class RenderedContextMap {
 
         this.majorTickDistance = majorTickDistance;
         this.minorTickDistance = minorTickDistance;
+
+        if (majorTickDistance == 0)
+            scaleVerticalPos = 0;
+    }
+
+    protected void setAxisBreakSlash(int axisBreakX, int axisBreakY) {
+        this.axisBreakX = axisBreakX;
+        this.axisBreakY = axisBreakY;
+    }
+
+    protected void setAxisBreakGap(int axisBreakGap) {
+        this.axisBreakGap = axisBreakGap;
     }
 
     /**
@@ -471,17 +553,96 @@ public class RenderedContextMap {
         return majorTickDistance;
     }
 
-    public void writeTo(OutputStream out) throws IOException {
+    public String getRelativeRenderDirectory() {
+        return String.format("%s/%s", getDiagram().getOrganism(), getDiagram().getChromosome());
+    }
 
-        logger.debug(String.format("Drawing RenderedContextMap with dimensions %dx%d", width, getHeight()));
+    public List<RenderedContextMap.Tile> renderTilesTo(String directory, int tileWidth) {
+        String absoluteRenderDirectory = directory + "/" + getRelativeRenderDirectory();
+        logger.debug(String.format("Rendering tiles to '%s'", absoluteRenderDirectory));
 
+        File dir = new File(absoluteRenderDirectory);
+        dir.mkdirs();
+        if (!dir.isDirectory())
+            throw new RuntimeException(String.format("Failed to create directory '%s'", dir));
+
+        beforeRender();
+        drawScaleTrack();
+        renderFeatures();
+
+        List<RenderedContextMap.Tile> tiles = new ArrayList<RenderedContextMap.Tile>();
+
+        if (getWidth() != image.getWidth())
+            throw new IllegalStateException(String.format(
+                "Image width: expected=%d, actual=%d", getWidth(), image.getWidth()));
+
+        for (int startOfTile = 0, tileIndex = 1; startOfTile < getWidth(); startOfTile += tileWidth, tileIndex++) {
+            String preferredFilename = getPreferredFilenameForTile(tileIndex, tileWidth);
+            File tileFile = new File(dir, preferredFilename);
+
+            int widthOfThisTile = tileWidth;
+            if (startOfTile + widthOfThisTile > getWidth())
+                widthOfThisTile = getWidth() - startOfTile;
+
+            if (!tileFile.exists()) {
+                File tileTempFile;
+                try {
+                    tileTempFile = File.createTempFile(preferredFilename, null, dir);
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(String.format(
+                        "Failed to create temp file for tile %d in directory '%s'", tileIndex, dir), e);
+                }
+
+                logger.debug(String.format("Rendering tile %d (start=%d,width=%d) to '%s'", tileIndex, startOfTile, widthOfThisTile, tileTempFile));
+                BufferedImage tile = image.getSubimage(startOfTile, 0, widthOfThisTile, image.getHeight());
+                try {
+                    ImageIO.write(tile, FILE_FORMAT, new FileOutputStream(tileTempFile));
+                } catch (IOException e) {
+                    tileTempFile.delete();
+                    throw new RuntimeException(String.format("Failed to write image file '%s'", tileTempFile), e);
+                }
+
+                if (!tileTempFile.renameTo(tileFile))
+                    throw new RuntimeException(String.format("Failed to rename '%s' to '%s'", tileTempFile, tileFile));
+            }
+
+            tiles.add(new Tile(widthOfThisTile, preferredFilename));
+        }
+
+        return tiles;
+    }
+
+    private Graphics2D graf, labelGraf;
+    private BufferedImage image, labelBuffer;
+    private List<RenderedFeature> renderedFeatures;
+
+    /**
+     * A navigable map from base -> pixel, with an entry corresponding to
+     * the beginning of each contiguous region. It is populated at the start
+     * of rendering, by {@link #drawScaleLine()}, and used for the duration
+     * of the rendering process.
+     */
+    private NavigableMap<Integer,Integer> contigs;
+
+    private void calculateContigs() {
+        contigs = new TreeMap<Integer,Integer>();
+        int x = xCoordinate(getStart());
+        for (Gap gap: gapsByStart.values()) {
+            x = xCoordinate(gap.getFmin()) + axisBreakGap;
+            contigs.put(gap.getFmax(), x);
+        }
+    }
+
+    private void beforeRender() {
+        calculateContigs();
         switch (colorModel) {
         case DIRECT:
-            image = new BufferedImage(width, getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+            image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
             labelBuffer = null;
             break;
         case INDEXED:
-            image = new BufferedImage(width, getHeight(),
+            image = new BufferedImage(getWidth(), getHeight(),
                 BufferedImage.TYPE_BYTE_INDEXED, ArtemisColours.colorModel(labelBackgroundColor));
             labelBuffer = new BufferedImage(MAX_LABEL_WIDTH, MAX_LABEL_HEIGHT, BufferedImage.TYPE_INT_ARGB_PRE);
             break;
@@ -494,22 +655,67 @@ public class RenderedContextMap {
             labelGraf.setFont(labelFont);
         }
 
-        drawScaleTrack();
+        renderedFeatures = new ArrayList<RenderedFeature>();
+    }
 
+    private void afterRender() {
         if (labelGraf != null)
             labelGraf.dispose();
-
-        for (int i = 1; i <= Math.min(numberOfPositiveTracks, diagram.numberOfPositiveTracks()); i++)
-            drawGeneTrack(i, diagram.getTrack(i));
-
-        for (int i = 1; i <= Math.min(numberOfNegativeTracks, diagram.numberOfNegativeTracks()); i++)
-            drawGeneTrack(-i, diagram.getTrack(-i));
-
-        ImageIO.write(image, FILE_FORMAT, out);
 
         image = null;
         graf.dispose();
         graf = null;
+    }
+
+    public void writeTo(OutputStream out) throws IOException {
+
+        logger.debug(String.format("Drawing RenderedContextMap with dimensions %dx%d", getWidth(), getHeight()));
+
+        beforeRender();
+        drawScaleTrack();
+        renderFeatures();
+
+        ImageIO.write(image, FILE_FORMAT, out);
+
+        afterRender();
+    }
+
+    private void renderFeatures() {
+        SortedSet<AllocatedCompoundFeature> features = diagram.getAllocatedCompoundFeatures();
+        for (AllocatedCompoundFeature superfeature : features) {
+            int track = superfeature.getTrack();
+            CompoundLocatedFeature compoundFeature = superfeature.getFeature();
+            List<? extends LocatedFeature> subfeatures = compoundFeature.getSubfeatures();
+            if (subfeatures.size() == 0) {
+                logger.error(String.format("Gene '%s' has no transcripts!", compoundFeature.getUniqueName()));
+                continue;
+            }
+            if (compoundFeature.getFmax() < this.getStart() || compoundFeature.getFmin() > this.getEnd())
+                continue;
+
+            for (LocatedFeature subfeature: subfeatures) {
+                if (!(subfeature instanceof Transcript)) {
+                    logger.error(String.format("Located feature '%s' is a '%s' not a Transcript", superfeature, superfeature.getClass()));
+                    continue;
+                }
+
+                renderedFeatures.add(new RenderedFeature(compoundFeature, subfeature, track, ((Transcript) subfeature).getProducts()));
+
+                drawTranscript(track, (Transcript) subfeature);
+
+                track += Integer.signum(track);
+            }
+        }
+    }
+
+    /**
+     * Once the diagram has been rendered, this method will return a list of
+     * all the rendered features with their locations on the rendered image.
+     *
+     * @return
+     */
+    public List<RenderedFeature> getRenderedFeatures() {
+        return renderedFeatures;
     }
 
     /**
@@ -533,26 +739,55 @@ public class RenderedContextMap {
                 basesPerPixel));
 
         this.basesPerPixel = basesPerPixel;
-        this.width = getSize() / basesPerPixel;
     }
 
 
 
     private int yCoordinateOfAxis() {
-        if (majorTickDistance == 0)
-            return topOfTrack(0) + scaleTrackHeight / 2;
-        return topOfTrack(0) + SCALE_VERTICAL_POS;
+        return topOfTrack(0) + scaleVerticalPos;
+    }
+
+    /**
+     * Draw the scale line, marking any gaps. Does not draw ticks.
+     * Also adds the gaps to <code>renderedFeatures</code>.
+     */
+    private void drawScaleLine() {
+        graf.setColor(scaleColor);
+        int x = xCoordinate(getStart()), y = yCoordinateOfAxis();
+        for (Gap gap: gapsByStart.values()) {
+            renderedFeatures.add(new RenderedFeature(
+                String.format("gap: %d-%d", gap.getFmin()+1, gap.getFmax()),
+                /*track*/ 0, xCoordinate(gap.getFmin()), axisBreakGap));
+            int gapStartX = xCoordinate(gap.getFmin());
+
+            if (labelBackgroundColor != null && axisBreakGap > 0) {
+                graf.setColor(labelBackgroundColor);
+                graf.fillRect(gapStartX - axisBreakX - 1, y - axisBreakY - 1, 2 * axisBreakX + axisBreakGap + 3, 2 * axisBreakY + 3);
+                graf.setColor(scaleColor);
+            }
+
+            graf.drawLine(x, y, gapStartX, y);
+
+            if (axisBreakGap > 0) {
+                graf.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                graf.drawLine(gapStartX + axisBreakX, y - axisBreakY, gapStartX - axisBreakX, y + axisBreakY);
+                graf.drawLine(gapStartX + axisBreakX + axisBreakGap, y - axisBreakY, gapStartX - axisBreakX + axisBreakGap, y + axisBreakY);
+                graf.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            }
+
+            x = xCoordinate(gap.getFmin()) + axisBreakGap;
+        }
+        graf.drawLine(x, y, xCoordinate(getEnd()), y);
     }
 
     private void drawScaleTrack() {
-        graf.setColor(scaleColor);
-        graf.drawLine(xCoordinate(getStart()), yCoordinateOfAxis(),
-            xCoordinate(getEnd()), yCoordinateOfAxis());
 
-        if (minorTickDistance == 0 || majorTickDistance == 0)
+        drawScaleLine();
+
+        if (minorTickDistance == 0)
             return;
 
-        int majorTicksEvery = (majorTickDistance / minorTickDistance);
+        int majorTicksEvery = (majorTickDistance == 0 ? Integer.MAX_VALUE : (majorTickDistance / minorTickDistance));
         int tickNumber = 0;
         int pos = majorTickDistance * (getStart() / majorTickDistance);
         while (pos <= getEnd()) {
@@ -569,8 +804,8 @@ public class RenderedContextMap {
     }
 
     private void drawMajorScaleTick(int pos) {
-        drawScaleTick(pos, MAJOR_TICK_HEIGHT);
-        drawLabel(pos);
+        if (drawScaleTick(pos, MAJOR_TICK_HEIGHT))
+            drawLabel(pos);
     }
 
     private void drawLabel(int pos) {
@@ -607,7 +842,11 @@ public class RenderedContextMap {
         graf.setColor(previousColor);
     }
 
-    private static final Color transparentColor = new Color(0,0,0,0);
+    /*
+     * Thanks to Java bug #6712736: if we want antialiased text on an indexed
+     * image, we must draw it to a direct image first and copy the result.
+     */
+    private static final Color TRANSPARENT = new Color(0,0,0,0);
     private void drawLabelIndirectly(int pos) {
         FontRenderContext fontRenderContext = labelGraf.getFontRenderContext();
         Font font = labelGraf.getFont();
@@ -624,7 +863,7 @@ public class RenderedContextMap {
         int w = (int) labelBounds.getWidth();
         int h = (int) labelBounds.getHeight();
         if (labelBackgroundColor == null)
-            labelGraf.setColor(transparentColor);
+            labelGraf.setColor(TRANSPARENT);
         else
             labelGraf.setColor(labelBackgroundColor);
         labelGraf.fillRect(0, 0, w, h);
@@ -647,37 +886,44 @@ public class RenderedContextMap {
             destWidth += x;
             x = 0;
         }
-        else if (x+w > this.width) {
-            destWidth = this.width - x;
-            x = this.width - destWidth;
+        else if (x+w > getWidth()) {
+            destWidth = getWidth() - x;
+            x = getWidth() - destWidth;
         }
         if (y + h > image.getHeight())
             h = image.getHeight() - y;
         image.setRGB(x, y, destWidth, h, labelData, offset, w);
     }
 
-    private void drawScaleTick(int pos, int tickHeight) {
+    /**
+     * Draw a scale tick.
+     * @param pos the position of the tick, in interbase coordinates.
+     * @param tickHeight the height of the tick, in pixels
+     * @return a boolean value indicating whether the tick has been drawn.
+     *          If the position falls into a gap, the tick will not be drawn
+     *          and this method will return <code>false</code>.
+     */
+    private boolean drawScaleTick(int pos, int tickHeight) {
+
+        if (gapContainingLocation(pos) != null)
+            return false;
+
         int topOfTick    = yCoordinateOfAxis() - (tickHeight / 2);
         int bottomOfTick = yCoordinateOfAxis() + (tickHeight / 2);
 
         int x = xCoordinate(pos);
         graf.drawLine(x, topOfTick, x, bottomOfTick);
-    }
-
-    private void drawGeneTrack(int trackNumber, List<Transcript> transcripts) {
-        logger.debug(String.format("Drawing track %d", trackNumber));
-        for (Transcript transcript : transcripts) {
-            Color color = ArtemisColours.getColour(transcript.getColourId());
-            logger.debug("Setting colour: " + color);
-            graf.setColor(color);
-            graf.setStroke(new BasicStroke(utrStrokeSize));
-            drawTranscript(trackNumber, transcript);
-        }
+        return true;
     }
 
     private void drawTranscript(int trackNumber, Transcript transcript) {
         logger.debug(String.format("Drawing transcript %s (%d..%d) on track %d", transcript
-                .getName(), transcript.getFmin(), transcript.getFmax(), trackNumber));
+                .getUniqueName(), transcript.getFmin(), transcript.getFmax(), trackNumber));
+
+        Color color = ArtemisColours.getColour(transcript.getColourId());
+        graf.setColor(color);
+        //graf.setStroke(utrStroke);
+
         int currentPos = transcript.getFmin();
         for (TranscriptComponent component : transcript.getComponents()) {
             drawIntron(trackNumber, currentPos, component.getStart());
@@ -697,33 +943,47 @@ public class RenderedContextMap {
     }
 
     private void drawComponent(int trackNumber, TranscriptComponent component) {
-        if (component instanceof Exon)
-            drawExon(trackNumber, component.getStart(), component.getEnd());
-        else
-            drawUTR(trackNumber, component.getStart(), component.getEnd());
-    }
-
-    private void drawExon(int trackNumber, int start, int end) {
+        int start = component.getStart(), end = component.getEnd();
         if (end <= start) {
             logger.warn("Drawing nothing: empty or negative");
             return;
         }
-        int x = xCoordinate(start), y = topOfExon(trackNumber);
-        int width = pixelWidth(start, end);
+
+        int x = xCoordinate(component.getStart());
+        int width = pixelWidth(component);
+
+        if (component instanceof Exon)
+            drawExon(trackNumber, x, width);
+        else
+            drawUTR(trackNumber, x, width);
+    }
+
+    private void drawExon(int trackNumber, int x, int width) {
+        /*
+         * Always draw exons at least 1 pixel wide, otherwise it
+         * looks confusing. See the P. falciparum gene PF14_0177
+         * for example.
+         */
+        if (width < 1)
+            width = 1;
+
+        int y = topOfExon(trackNumber);
         graf.fillRect(x, y, width, exonRectHeight);
     }
 
-    private void drawUTR(int trackNumber, int start, int end) {
-        if (end <= start) {
-            logger.warn("Drawing nothing: empty or negative");
-            return;
-        }
-        int x = xCoordinate(start), y = topOfExon(trackNumber);
-        int width = pixelWidth(start, end);
-        graf.draw(new Rectangle2D.Float(
-            x + utrStrokeSize/2, y + utrStrokeSize/2,
-            width - utrStrokeSize, exonRectHeight - utrStrokeSize));
-    }
+    private void drawUTR(int trackNumber, int x, int width) {
+//        graf.draw(new Rectangle2D.Float(
+//            x + utrStrokeSize/2, y + utrStrokeSize/2,
+//            width - utrStrokeSize, exonRectHeight - utrStrokeSize));
+
+//        int y = topOfExon(trackNumber);
+//        int height = (exonRectHeight - utrGapHeight) / 2;
+//        graf.fillRect(x, y, width, height);
+//        graf.fillRect(x, y + height + utrGapHeight, width, height);
+
+        int y = topOfUTR(trackNumber);
+        graf.fillRect(x, y, width, utrRectHeight);
+   }
 
     /**
      * Calculate the x-position (in pixels relative to this diagram)
@@ -733,7 +993,39 @@ public class RenderedContextMap {
      * @return the corresponding x position
      */
     private int xCoordinate(int loc) {
-        return pixelWidth(getStart(), loc);
+        Gap gapContainingLocation = gapContainingLocation(loc);
+        if (gapContainingLocation != null) {
+            logger.warn(String.format("Diagram location %d lies in the gap '%s'", loc, gapContainingLocation.getUniqueName()));
+            Integer gapEndPx = contigs.get(gapContainingLocation.getFmax());
+            if (gapEndPx == null)
+                throw new IllegalStateException("Failed to locate gap. This should never happen!");
+            return gapEndPx - axisBreakGap / 2;
+        }
+        Map.Entry<Integer, Integer> e = contigs.floorEntry(loc);
+        if (e == null)
+            return naivePixelWidth(getStart(), loc);
+
+        return e.getValue() + naivePixelWidth(e.getKey(), loc);
+    }
+
+    /**
+     * Calculate the width in pixels of a transcript component.
+     *
+     * @param transcriptComponent the transcript component
+     * @return the width in pixels
+     */
+    private int pixelWidth(TranscriptComponent transcriptComponent) {
+        return pixelWidth(transcriptComponent.getStart(), transcriptComponent.getEnd());
+    }
+
+    /**
+     * Calculate the width in pixels of a feature of the diagram.
+     *
+     * @param locatedFeature the feature in question
+     * @return the width in pixels
+     */
+    private int pixelWidth(LocatedFeature locatedFeature) {
+        return pixelWidth(locatedFeature.getFmin(), locatedFeature.getFmax());
     }
 
     /**
@@ -744,8 +1036,21 @@ public class RenderedContextMap {
      * @return the width in pixels
      */
     private int pixelWidth(int start, int end) {
-        return (int) (Math.round((double) end / basesPerPixel) - Math.round((double) start
-                / basesPerPixel));
+        return xCoordinate(end) - xCoordinate(start);
+    }
+
+    private int naivePixelWidth(int start, int end) {
+        long startPx = Math.round((double) start / basesPerPixel);
+        long endPx   = Math.round((double) end / basesPerPixel);
+
+        return (int) (endPx - startPx);
+    }
+
+    private Gap gapContainingLocation(int loc) {
+        Map.Entry<Integer, Gap> e = gapsByStart.lowerEntry(loc);
+        if (e == null || loc >= e.getValue().getFmax())
+            return null;
+        return e.getValue();
     }
 
     /**
@@ -773,5 +1078,93 @@ public class RenderedContextMap {
 
     private int topOfExon(int trackNumber) {
         return topOfTrack(trackNumber) + (geneTrackHeight - exonRectHeight) / 2;
+    }
+
+    private int topOfUTR(int trackNumber) {
+        return topOfTrack(trackNumber) + (geneTrackHeight - utrRectHeight) / 2;
+    }
+
+    public class Tile implements JSONString {
+        private int width;
+        private String filename;
+
+        public Tile(int width, String filename) {
+            this.width = width;
+            this.filename = filename;
+        }
+
+        public String toJSONString() {
+            return String.format("[%d,\"%s\"]", width, filename);
+        }
+    }
+
+    private List<String> products = new ArrayList<String>();
+    private Map<String,Integer> productIndexByName = new HashMap<String,Integer>();
+    private int productIndex(String productName) {
+        if (productIndexByName.containsKey(productName))
+            return productIndexByName.get(productName);
+        else {
+            products.add(productName);
+            int indexOfProduct = products.size() - 1;
+            productIndexByName.put(productName, indexOfProduct);
+            return indexOfProduct;
+        }
+    }
+
+    public List<String> getProducts() {
+        return products;
+    }
+
+    /**
+     * Represents a located feature that has been rendered,
+     * and stores its position on the rendered diagram.
+     *
+     * @author rh11
+     */
+    public class RenderedFeature implements JSONString {
+        private String uniqueName, compoundUniqueName = "", compoundName = "";
+        private int track, pixelX, pixelWidth;
+        private List<Integer> productIndices = new ArrayList<Integer>();
+        public RenderedFeature (CompoundLocatedFeature compoundFeature, LocatedFeature subfeature, int track, List<String> productNames) {
+            this(subfeature.getUniqueName(), compoundFeature.getUniqueName(),
+            compoundFeature.getName(), track,
+            xCoordinate(subfeature.getFmin()), pixelWidth(subfeature));
+
+            if (productNames != null) {
+                for (String productName: productNames)
+                    productIndices.add(productIndex(productName));
+            }
+        }
+        public RenderedFeature(String uniqueName, int track, int pixelX, int pixelWidth) {
+            this.uniqueName = uniqueName;
+            this.track = track;
+            this.pixelX = pixelX;
+            this.pixelWidth = pixelWidth;
+        }
+        private RenderedFeature(String uniqueName, String compoundUniqueName, String compoundName, int track, int pixelX, int pixelWidth) {
+            this(uniqueName, track, pixelX, pixelWidth);
+
+            if (compoundUniqueName != null)
+                this.compoundUniqueName = compoundUniqueName;
+
+            if (compoundName != null)
+                this.compoundName = compoundName;
+        }
+        private String getProductIndicesAsJSONString() {
+            StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            for (int productIndex: productIndices) {
+                if (first)
+                    first = false;
+                else
+                    sb.append(',');
+                sb.append(productIndex);
+            }
+            return "[" + sb.toString() + "]";
+        }
+        public String toJSONString() {
+            return String.format("[\"%s\",\"%s\",\"%s\",%d,%d,%d,%s]",
+                uniqueName, compoundUniqueName, compoundName, track, pixelX, pixelWidth, getProductIndicesAsJSONString());
+        }
     }
 }

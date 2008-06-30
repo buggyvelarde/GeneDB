@@ -53,9 +53,7 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
             <img src="<c:url value="/includes/images/default/grid/loading.gif"/>" id="contextMapLoadingImage">
             Loading...
         </div>
-        <div id="contextMapContent">
-            <div id="highlighter"></div>
-        </div>
+        <div id="contextMapContent" class="contextMapContent"><div class="highlighter"></div></div>
     </div>
 </div>
 <%-- IE6 fails if this is nested within the contextMapOuterDiv. --%>

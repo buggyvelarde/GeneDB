@@ -1,10 +1,10 @@
 package org.genedb.web.mvc.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.lucene.index.IndexReader;
 import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
@@ -17,12 +17,10 @@ import org.springframework.web.servlet.View;
 
 public class ContextMapController extends PostOrGetFormController {
     /*
-     * More than 300,000 bases per tile, and almost all browsers
-     * fail. More than 50,000 or so, and Linux Firefox crashes.
-     * (This assumes ten bases per pixel: it's the size of the
-     * generated image that causes problems.)
+     * More than 30,000 pixels per tile, and almost all browsers
+     * fail. More than 5,000 or so, and Linux Firefox crashes.
      */
-    private static final int TILE_WIDTH = 50000; // in bases
+    private static final int TILE_WIDTH = 5000; // in pixels
 
     private LuceneDao luceneDao; // Injected by Spring
     private View view; // Defined in genedb-servlet.xml
@@ -73,37 +71,31 @@ public class ContextMapController extends PostOrGetFormController {
         }
     }
 
-    private Map<String,Object> populateModel(List<RenderedContextMap> tiles, RenderedContextMap chromosomeThumbnail) throws IOException {
+    private Map<String,Object> populateModel(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap,
+            List<RenderedContextMap.Tile> tiles) throws IOException {
         String chromosomeThumbnailURI = ContextMapCache.fileForDiagram(chromosomeThumbnail, getServletContext());
 
-        ContextMapDiagram diagram = tiles.get(0).getDiagram();
+        ContextMapDiagram diagram = contextMap.getDiagram();
 
         Map<String,Object> model = new HashMap<String,Object>();
 
         model.put("organism", diagram.getOrganism());
         model.put("chromosome", diagram.getChromosome());
-        model.put("basesPerPixel", tiles.get(0).getBasesPerPixel());
-        model.put("geneTrackHeight", tiles.get(0).getGeneTrackHeight());
-        model.put("scaleTrackHeight", tiles.get(0).getScaleTrackHeight());
-        model.put("exonRectHeight", tiles.get(0).getExonRectHeght());
-        model.put("tileHeight", tiles.get(0).getHeight());
+        model.put("numberOfPositiveTracks", diagram.numberOfPositiveTracks());
+        model.put("geneTrackHeight", contextMap.getGeneTrackHeight());
+        model.put("scaleTrackHeight", contextMap.getScaleTrackHeight());
+        model.put("exonRectHeight", contextMap.getExonRectHeight());
+        model.put("tileHeight", contextMap.getHeight());
+        model.put("basesPerPixel", contextMap.getBasesPerPixel());
+
+        model.put("products", contextMap.getProducts());
+        model.put("features", contextMap.getRenderedFeatures());
 
         model.put("start", diagram.getStart());
         model.put("end", diagram.getEnd());
 
-        List<Map<String,Object>> tileModels = new ArrayList<Map<String,Object>>();
-        for (RenderedContextMap tile: tiles) {
-            String contextMapURI = ContextMapCache.fileForDiagram(tile, getServletContext());
-            Map<String,Object> tileModel = new HashMap<String,Object>();
-
-            tileModel.put("src", contextMapURI);
-            tileModel.put("width", tile.getWidth());
-            tileModel.put("start", tile.getStart());
-            tileModel.put("end", tile.getEnd());
-
-            tileModels.add(tileModel);
-        }
-        model.put("tiles", tileModels);
+        model.put("tilePrefix", getServletContext().getContextPath() + renderDirectory + "/" + contextMap.getRelativeRenderDirectory());
+        model.put("tiles", tiles);
 
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
         chromosomeThumbnailModel.put("src", chromosomeThumbnailURI);
@@ -113,6 +105,11 @@ public class ContextMapController extends PostOrGetFormController {
         return model;
     }
 
+    private static final String PROP_CONTEXT_RENDER_DIRECTORY = "contextMap.render.directory";
+    private static final ResourceBundle projectProperties = ResourceBundle.getBundle("project");
+    private static final String renderDirectory = projectProperties
+            .getString(PROP_CONTEXT_RENDER_DIRECTORY);
+
     @Override
     protected ModelAndView onSubmit(Object rawCommand) throws Exception {
         Command command = (Command) rawCommand;
@@ -120,18 +117,17 @@ public class ContextMapController extends PostOrGetFormController {
         IndexReader indexReader = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
         BasicGeneService basicGeneService = new BasicGeneServiceImpl(indexReader);
 
-        ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forRegion(basicGeneService, command.getOrganism(), command.getChromosome(), 0, command.getChromosomeLength());
+        ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forChromosome(basicGeneService,
+            command.getOrganism(), command.getChromosome(), command.getChromosomeLength());
 
-        List<RenderedContextMap> tiles = new ArrayList<RenderedContextMap>();
-        for (int i = 0; i < command.getChromosomeLength(); i += TILE_WIDTH) {
-            tiles.add(new RenderedContextMap(chromosomeDiagram).restrict(i, i+TILE_WIDTH));
-        }
-
+        RenderedContextMap renderedContextMap = new RenderedContextMap(chromosomeDiagram);
         RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeDiagram).asThumbnail(command.getThumbnailDisplayWidth());
-        Map<String,Object> model = populateModel(tiles, renderedChromosomeThumbnail);
 
-        model.put("positiveTracks", chromosomeDiagram.getPositiveTracks());
-        model.put("negativeTracks", chromosomeDiagram.getNegativeTracks());
+        String renderDirectoryPath = getServletContext().getRealPath(renderDirectory);
+        List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTilesTo(renderDirectoryPath, TILE_WIDTH);
+
+        Map<String,Object> model = populateModel(renderedChromosomeThumbnail, renderedContextMap, tiles);
+
         return new ModelAndView(view, model);
     }
 

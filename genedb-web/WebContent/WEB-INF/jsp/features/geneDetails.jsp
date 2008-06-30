@@ -11,7 +11,7 @@
         <div class="heading">General Information</div>
         <table>
         <col style="width: 9em;">
-        <c:if test="${!empty gene.name}">
+        <c:if test="${!empty gene.name && gene.name != gene.systematicId}">
             <tr>
                 <td class="label">Gene Name</td>
                 <td class="value">${gene.name}</td>
@@ -22,10 +22,10 @@
             <td class="value">
 				<c:choose>
                 <c:when test="${fn:length(gene.transcripts) > 1}">
-                    ${transcript.uniqueName} (one splice form of ${gene.uniqueName})
+                    ${transcript.uniqueName} (one splice form of ${gene.systematicId})
 				</c:when>
 				<c:otherwise>
-					${gene.uniqueName}
+					${gene.systematicId}
 				</c:otherwise>
                 </c:choose>
             </td>

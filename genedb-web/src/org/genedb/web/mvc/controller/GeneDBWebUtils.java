@@ -271,16 +271,14 @@ public class GeneDBWebUtils {
         try {
             double isoElectricPoint = new IsoelectricPointCalc().getPI(protein, false, false);
             pp.setIsoelectricPoint(twoDecimalPlaces.format(isoElectricPoint));
-        } catch (IllegalAlphabetException e) {
-            logger.error(String.format("Error computing protein isoelectric point for '%s'", protein), e);
-        } catch (BioException e) {
+        } catch (Exception e) {
             logger.error(String.format("Error computing protein isoelectric point for '%s'", protein), e);
         }
 
         try {
             double massInDaltons = MassCalc.getMass(protein, SymbolPropertyTable.AVG_MASS, true);
             pp.setMass(twoDecimalPlaces.format(massInDaltons / 1000));
-        } catch (IllegalSymbolException e) {
+        } catch (Exception e) {
             logger.error("Error computing protein mass", e);
         }
 

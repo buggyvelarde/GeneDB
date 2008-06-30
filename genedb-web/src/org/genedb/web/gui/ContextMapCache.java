@@ -22,7 +22,7 @@ public class ContextMapCache {
      * Get the path of a file containing an image representing this diagram,
      * relative to the document root. If the relevant file does not already
      * exist, it is created before returning.
-     *  
+     *
      * @param renderedContextMap
      * @param servletContext
      * @return
@@ -60,8 +60,8 @@ public class ContextMapCache {
         File cacheFile = new File(chromosomeDir, cacheFileName);
         String cacheFileRelativePath = servletContext.getContextPath() + renderDirectory + '/'
                 + diagram.getOrganism() + '/' + diagram.getChromosome() + '/' + cacheFileName;
-        if (cacheFile.exists())
-            return cacheFileRelativePath;
+        //if (cacheFile.exists())
+        //    return cacheFileRelativePath;
 
         // File does not exist, so create it.
         FileOutputStream cacheOutputStream = new FileOutputStream(cacheFile);
@@ -75,7 +75,7 @@ public class ContextMapCache {
                 String.format("Failed to create context map image '%s'", cacheFile), e);
         }
         cacheOutputStream.close();
-        
+
         assert cacheFile.exists();
         return cacheFileRelativePath;
     }

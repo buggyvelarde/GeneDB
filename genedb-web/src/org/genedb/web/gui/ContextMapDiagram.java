@@ -1,18 +1,9 @@
 package org.genedb.web.gui;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
 import org.genedb.db.domain.objects.BasicGene;
-import org.genedb.db.domain.objects.Transcript;
+import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.services.BasicGeneService;
 
 /**
@@ -30,17 +21,17 @@ import org.genedb.db.domain.services.BasicGeneService;
  * <ul>
  * <li> If a gene is alternatively spliced, we represent each splicing on a
  * separate track.
- * 
+ *
  * <li> Sometimes the database contains unconfirmed gene predictions made
  * automatically by software. In this case, it is possible to have inconsistent
  * overlapping predictions, at most one of which will be correct.
- * 
+ *
  * <li> Some organisms have nested genes, where a gene is contained wholly
  * within an exon belonging to another gene. (The reading frame of the "inner"
  * gene is often different.) At the time of writing (2008-04-28) the pathogen
  * database does not contain any nested genes, but this may change in future.
  * </ul>
- * 
+ *
  * A particular gene should always appear on the same track, no matter how far
  * the actual map region extends. It is therefore possible for a particular gene
  * to be pushed to a higher track by an overlapping gene that is not visible on
@@ -48,117 +39,52 @@ import org.genedb.db.domain.services.BasicGeneService;
  * stitch together adjacent maps seamlessly. Of course it <i>may</i> happen
  * that some views have more tracks than others; a context map display tool will
  * need to allow for this.
- * 
+ *
  * @author rh11
- * 
+ *
  */
-public class ContextMapDiagram {
+public class ContextMapDiagram extends TrackedDiagram {
     /*
      * Implementation note: The following is not part of the specification of
      * the class, and should be regarded as an implementation detail.
      *
      * All the transcripts of a particular gene are placed together, on
      * adjacent tracks.
-     * 
-     * Where two genes overlap, the one with the 5'-most start will always be on
+     *
+     * Where two genes overlap, the one with the leftmost start will always be on
      * a lower track. If the overlapping genes have the same start position, the
      * longer of the two will be placed below it (so that the configuration
      * looks stable; it's subconsciously disturbing to look at a diagram that
      * appears liable to overbalance).
-     * 
+     *
      * If two genes abut precisely (is that even biologically possible?), they
      * are treated as overlapping and placed on different tracks.
-     * 
+     *
      * We might need to inspect genes outside the bounds of the map to achieve
-     * consistency: because of the 5'most-below rule, we only need to look in
-     * the 5' direction. If there is a gene that extends off the 5' end of the
+     * consistency: because of the leftmost-below rule, we only need to look to
+     * the left. If there is a gene that extends off the left-hand end of the
      * map, we need to find all the genes that overlap with it to establish
      * which track it should be in. This procedure may need to be iterated -- in
-     * the theoretical worst-case, all the way to the 5' end of the chromosome
+     * the theoretical worst-case, all the way to the leftmost end of the chromosome
      * or contig. (In practice it is unusual for the procedure to be
      * iterated at all, because overlaps are relatively rare.)
      */
-    
-    private static final Logger logger = Logger.getLogger(ContextMapDiagram.class);
 
-    /**
-     * Represents half a diagram: either the positive or the negative half.
-     */
-    private class Half {
-        public int numTracks = 0;
-        private List<List<Transcript>> tracks = new ArrayList<List<Transcript>>();
-        public void addGene(BasicGene gene, int track) {
-            for (Transcript transcript: gene.getTranscripts()) {
-                while (track >= tracks.size())
-                    tracks.add(new ArrayList<Transcript>());
-                tracks.get(track).add(transcript);
-                track++;
-            }
-        }
-        public List<Transcript> getTrack(int track) {
-            try {
-                return tracks.get(track);
-            }
-            catch (IndexOutOfBoundsException e) {
-                return null;
-            }
-        }
-    }
-
-    private int start, end, locus;
     private String organism, chromosome;
-    private Half positiveHalf, negativeHalf;
-    
-    public int numberOfPositiveTracks() {
-        return positiveHalf.numTracks;
-    }
-    public int numberOfNegativeTracks() {
-        return negativeHalf.numTracks;
-    }
-    public int numberOfTracks() {
-        return numberOfPositiveTracks() + numberOfNegativeTracks();
-    }
-    /**
-     * The track number should be between -1 and <code>-numberOfNegativeTracks()</code>
-     * inclusive, to retrieve a negative track; or between 1 and <code>numberOfPositiveTracks()</code>
-     * inclusive, to retrieve a negative track.
-     * 
-     * @param track
-     * @return a list of Transcripts, or null if there are none
-     */
-    public List<Transcript> getTrack(int track) {
-        if (track == 0)
-            throw new IllegalArgumentException("The track specifier must be positive or negative, not zero");
-        else if (track < 0)
-            return negativeHalf.getTrack(-track-1);
-        else
-            return positiveHalf.getTrack(track-1);
-    }
-    
-    public List<List<Transcript>> getPositiveTracks() {
-        return positiveHalf.tracks;
-    }
-
-    public List<List<Transcript>> getNegativeTracks() {
-        return negativeHalf.tracks;
-    }
-
     /**
      * Users should not call this constructor directly, but use one of the
      * static methods defined below.
      */
-    private ContextMapDiagram(String organism, String chromosome, int start, int end, int locus) {
+    private ContextMapDiagram(String organism, String chromosome, int start, int end) {
+        super(start, end);
         this.organism = organism;
         this.chromosome = chromosome;
-        this.start = start;
-        this.end = end;
-        this.locus = locus;
     }
 
     /**
-     * Create a context map diagram of length size, centred about the specified
+     * Create a context map diagram of length <code>size</code>, centred about the specified
      * gene.
-     * 
+     *
      * @param basicGeneService A BasicGeneService, used to fetch the genes from
      *                a data store
      * @param geneName The unique name of the gene
@@ -169,7 +95,7 @@ public class ContextMapDiagram {
             int size) {
         BasicGene gene = basicGeneService.findGeneByUniqueName(geneName);
         int chromosomeLength = gene.getChromosome().getLength();
-        
+
         int start, end;
         int geneCentre = (gene.getFmin() + gene.getFmax()) / 2;
         if (size > chromosomeLength) {
@@ -180,7 +106,7 @@ public class ContextMapDiagram {
         else {
             start = geneCentre - (size / 2);
             end = start + size;
-            
+
             if (start < 0) {
                 start = 0;
                 end = size;
@@ -190,33 +116,17 @@ public class ContextMapDiagram {
                 start = end - size;
             }
         }
-                
+
         String organismName = gene.getOrganism();
         String chromosomeName = gene.getChromosomeName();
 
-        return forRegion(basicGeneService, organismName, chromosomeName, start, end, geneCentre);
+        return forRegion(basicGeneService, organismName, chromosomeName, start, end);
     }
-    
-    /**
-     * Create a context map diagram for the whole of the specified chromosome.
-     * 
-     * @param basicGeneService A BasicGeneService, used to fetch the genes from
-     *                a data store
-     * @param organismName The common name of the organism
-     * @param chromosomeName The name of the chromosome
-     * @return
-     */
-/*
- * FIXME
- * Does not work! See comment below.
-       public static ContextMapDiagram forChromosome(BasicGeneService basicGeneService, String organismName, String chromosomeName) {
-        return forRegion(basicGeneService, organismName, chromosomeName, 0, Integer.MAX_VALUE, 0);
-    }
-*/
+
     /**
      * Create a context map diagram for the specified region of the specified
      * chromosome.
-     * 
+     *
      * @param basicGeneService A BasicGeneService, used to fetch the genes from
      *                a data store
      * @param organismName The common name of the organism
@@ -227,281 +137,31 @@ public class ContextMapDiagram {
      */
     public static ContextMapDiagram forRegion(BasicGeneService basicGeneService,
             String organismName, String chromosomeName, int start, int end) {
-        /*
-         * FIXME
-         * We have a bit of a problem here! There's currently no way to
-         * retrieve the details of a chromosome using the genedb-domain
-         * machinery, so we can't constrain the specified region to the
-         * actual bounds of the chromosome. This is a particular problem
-         * when called via forChromosome, obviously.
-         */
-        return forRegion(basicGeneService, organismName, chromosomeName, start, end, (end - start)/2);
-    }
-    
-    /**
-     * Create a context map diagram for the specified region of the specified
-     * chromosome, with the specified locus.
-     * 
-     * @param basicGeneService A BasicGeneService, used to fetch the genes from
-     *                a data store
-     * @param organismName The common name of the organism
-     * @param chromosomeName The name of the chromosome
-     * @param start The start position (measured in bases from the 5' end)
-     * @param end The end position
-     * @return
-     */
-    public static ContextMapDiagram forRegion(BasicGeneService basicGeneService,
-            String organismName, String chromosomeName, int start, int end, int locus) {
-        
-        assert start <= locus && locus <= end;
-        
-        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, start, end, locus);
-                
-        diagram.positiveHalf = diagram.createHalf(basicGeneService, organismName, chromosomeName, +1, start, end);
-        diagram.negativeHalf = diagram.createHalf(basicGeneService, organismName, chromosomeName, -1, start, end);
+        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, start, end);
+
+        diagram.allocateTracks(diagram.boundaries(basicGeneService, organismName, chromosomeName, +1, start, end), false);
+        diagram.allocateTracks(diagram.boundaries(basicGeneService, organismName, chromosomeName, -1, start, end), true);
+
+        for (Gap gap: basicGeneService.findGapsOverlappingRange(organismName, chromosomeName, start, end))
+            diagram.addGlobalFeature(gap);
 
         return diagram;
     }
-    
-    // The next segment of code implements track allocation
-    
-    /**
-     * Represents the boundary (either the START of the END) of a gene.
-     */
-    private static class GeneBoundary implements Comparable<GeneBoundary> {
-        /**
-         * Compares GeneBoundaries, ordering them in the appropriate way for
-         * track-allocation. If two boundaries have different locations, the
-         * leftmost one goes first; if their locations coincide then we put
-         * START boundaries before ENDs, and we put the START of a longer gene
-         * before the START of a shorter. 
-         */
-        public int compareTo(GeneBoundary other) {
-            int thisLoc  = this.getLocation();
-            int otherLoc = other.getLocation();
-            
-            if (thisLoc != otherLoc)
-                return (thisLoc - otherLoc);
-            else if (this.type == GeneBoundary.Type.START && other.type == GeneBoundary.Type.END)
-                return -1;
-            else if (this.type == GeneBoundary.Type.END && other.type == GeneBoundary.Type.START)
-                return +1;
-            else if (this.type == GeneBoundary.Type.START && other.type == GeneBoundary.Type.START) {
-                int ret = other.gene.getFmax() - this.gene.getFmax();
-                if (ret != 0)
-                    return ret;
-            }
-            return this.gene.getUniqueName().compareTo(other.gene.getUniqueName());
-        }
-        
-        /**
-         * Two GeneBoundary objects are equal if they have the same type
-         * and they refer to the same gene.
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof GeneBoundary) {
-                GeneBoundary other = (GeneBoundary) obj;
-                return (this.type == other.type && this.gene.equals(other.gene));
-            }
-            return false;
-        }
 
-        public enum Type {START, END}
-        public Type type;
-        public BasicGene gene;
-        
-        GeneBoundary(Type type, BasicGene gene) {
-            this.type = type;
-            this.gene = gene;
-        }
-        /**
-         * Returns the location of the boundary, which is to say the
-         * <code>fmin</code> of the gene for a START boundary, or the <code>fmax</code> for an END.
-         * 
-         * @return the location
-         */
-        public int getLocation () {
-            switch (type) {
-            case START: return gene.getFmin();
-            case END:   return gene.getFmax();
-            default:    throw new IllegalStateException("GeneBoundary type is invalid. This should never happen!");
-            }
-        }
+    public static ContextMapDiagram forChromosome(BasicGeneService basicGeneService,
+            String organismName, String chromosomeName, int chromosomeLength) {
+        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, 0, chromosomeLength);
 
-        @Override
-        public String toString() {
-            return String.format("%s of %s (%d..%d)", type, gene.getDisplayName(), gene.getFmin(), gene.getFmax());
-        }
-    }
-    
-    private class GeneBoundarySet extends TreeSet<GeneBoundary> {
-        public GeneBoundarySet (Collection<BasicGene> genes) {
-            super();
-            addGenes(genes);
-        }
-        public void addGenes(Collection<BasicGene> genes) {
-            for (BasicGene gene: genes) {
-                this.add(new GeneBoundary(GeneBoundary.Type.START, gene));
-                this.add(new GeneBoundary(GeneBoundary.Type.END,   gene));
-            }
-        }
-        @Override
-        public String toString() {
-            StringBuilder s = new StringBuilder();
-            boolean first = true;
-            for (GeneBoundary boundary: this) {
-                if (first)
-                    first = false;
-                else
-                    s.append(", ");
-                s.append(boundary.toString());
-            }
-            return s.toString();
-        }
-    }
-    
-    /**
-     * Return a <code>GeneBoundarySet</code> of matched boundaries, such that the 5'-most gene
-     * overlaps only with genes included in the set. We may need to include genes beyond
-     * the 5' end of the stated range in order to achieve this; we include only as many
-     * as necessary.
-     * 
-     * @param genes
-     * @return
-     */
-    private GeneBoundarySet boundaries(BasicGeneService basicGeneService, String organismName, String chromosomeName, int strand, int start, int end) {
-        Collection<BasicGene> genes = basicGeneService.findGenesOverlappingRange(organismName, chromosomeName, strand, start, end);
+        diagram.allocateTracks(diagram.boundaries(basicGeneService, organismName, chromosomeName, +1), false);
+        diagram.allocateTracks(diagram.boundaries(basicGeneService, organismName, chromosomeName, -1), true);
 
-        GeneBoundarySet boundaries = new GeneBoundarySet(genes);
-        if (boundaries.isEmpty())
-            return boundaries;
-        
-        int newStart;
-        while ((newStart = boundaries.first().getLocation()) < start) {
-            Collection<BasicGene> moreGenes = basicGeneService.findGenesOverlappingRange(organismName, chromosomeName, strand, newStart, start);
-            boundaries.addGenes(moreGenes);
-            start = newStart;
-        }
-        
-        return boundaries;
-    }
-    
-    /**
-     * Allocates each transcript to a track in the appropriate way,
-     * grouping together the different transcripts of each gene.
-     * 
-     * @param  genes
-     * @return the diagram Half
-     */
-    private Half createHalf(BasicGeneService basicGeneService, String organismName, String chromosomeName, int strand, int start, int end) {
-        Half half = new Half();
-        SortedSet<GeneBoundary> boundaries = boundaries(basicGeneService, organismName, chromosomeName, strand, start, end);
-        
-        int numTracks = 0;
-        Set<Integer>           activeTracks = new HashSet<Integer> ();
-        Map<BasicGene,Integer> activeGenes  = new HashMap<BasicGene,Integer> ();
-        for(GeneBoundary boundary: boundaries) {
-            BasicGene gene = boundary.gene;
-            int numTranscripts = gene.getTranscripts().size();
-            if (numTranscripts == 0) {
-                logger.error(String.format("The gene '%s' has no transcripts!", gene.getUniqueName()));
-                continue;
-            }
-            
-            int track, lastUsedTrack;
-            switch (boundary.type) {
-            case START:
-                track = findGap(activeTracks, numTranscripts);
-                lastUsedTrack = track + numTranscripts - 1;
-                if (lastUsedTrack >= numTracks)
-                    numTracks = lastUsedTrack + 1;
-                for(int i = track; i <= lastUsedTrack; i++)
-                    activeTracks.add(i);
-                activeGenes.put(gene, track);
-                break;
-            case END:
-                track = activeGenes.get(gene);
-                lastUsedTrack = track + numTranscripts - 1;
-                half.addGene(gene, track);
-                activeGenes.remove(gene);
+        for (Gap gap: basicGeneService.findGapsOnChromosome(organismName, chromosomeName))
+            diagram.addGlobalFeature(gap);
 
-                for(int i = track; i <= lastUsedTrack; i++)
-                    activeTracks.remove(i);
-                break;
-            default: throw new IllegalStateException("GeneBoundary type is invalid. This should never happen!");
-            }
-        }
-        half.numTracks = numTracks;
-        return half;
-    }
-    
-    /**
-     * Find the first gap large enough to contain <code>gapSize</code> entries.
-     * 
-     * @param filled    the set of unavailable indices
-     * @param gapSize   the size of the required gap, >= 1
-     * @return          the index of the start of the first sufficiently-large gap
-     */
-    private static int findGap(Set<Integer> filled, int gapSize) {
-        /* Irrelevant note:
-         *
-         * This algorithm is linear-time and constant-space.
-         * I reckon it should be possible to do better with a
-         * special-purpose data structure; presumably there's
-         * a huge literature on this in the context of memory
-         * management / allocation.
-         */
-        if (gapSize < 1)
-            throw new IllegalArgumentException(String
-                .format("gapSize is %d, must be >=1", gapSize));
-
-        int currentGapSize = 0;
-        for (int i=0; ; i++) {
-            if (filled.contains(i))
-                currentGapSize = 0;
-            else {
-                if (++currentGapSize == gapSize)
-                    return i - gapSize + 1;
-            }
-        }
+        return diagram;
     }
 
-    /**
-     * Get the location (interbase coordinates) of the start of the diagram.
-     * @return the start location
-     */
-    public int getStart() {
-        return start;
-    }
 
-    /**
-     * Get the location (interbase coordinates) of the end of the diagram.
-     * @return the end location
-     */
-    public int getEnd() {
-        return end;
-    }
-    
-    /**
-     * Get the locus of this diagram, i.e. the point of primary interest.
-     * Usually this is the centre of the gene about which the diagram was
-     * created using {@link #forGene}, or the centre of the region created
-     * using {@link #forRegion}
-     * @return the locus location
-     */
-    public int getLocus() {
-        return locus;
-    }
-    
-    /**
-     * Get the size of the diagram in bases, equivalent to <code>(getEnd() - getStart())</code>.
-     * @return the size of the diagram
-     */
-    public int getSize() {
-        return end - start;
-    }
-    
     /**
      * Get the common name of the organism of whose genome this map represents part.
      * @return the common name of the organism
@@ -517,4 +177,38 @@ public class ContextMapDiagram {
     public String getChromosome() {
         return chromosome;
     }
+
+    private BoundarySet<BasicGene> boundaries(BasicGeneService basicGeneService, String organismName,
+        String chromosomeName, int strand) {
+
+        return boundaries(basicGeneService, organismName, chromosomeName, strand, getStart(), getEnd());
+    }
+
+    /**
+     * Return a <code>FeatureBoundarySet</code> of matched boundaries, such that
+     * the leftmost feature overlaps only with features included in the set. We may
+     * need to include features beyond the left-hand end of the stated range in order to
+     * achieve this; we include only as many as necessary.
+     */
+    private BoundarySet<BasicGene> boundaries(BasicGeneService basicGeneService, String organismName,
+            String chromosomeName, int strand, int start, int end) {
+
+        Collection<BasicGene> genes = basicGeneService.findGenesOverlappingRange(organismName,
+            chromosomeName, strand, start, end);
+
+        BoundarySet<BasicGene> boundaries = new BoundarySet<BasicGene>(genes);
+        if (boundaries.isEmpty())
+            return boundaries;
+
+        int newStart;
+        while ((newStart = boundaries.first().getLocation()) < start) {
+            Collection<BasicGene> moreGenes = basicGeneService.findGenesOverlappingRange(
+                organismName, chromosomeName, strand, newStart, start);
+            boundaries.addGenes(moreGenes);
+            start = newStart;
+        }
+
+        return boundaries;
+    }
+
 }
