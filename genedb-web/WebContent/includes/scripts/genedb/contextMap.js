@@ -154,7 +154,7 @@ function loadTiles(chrlen, tileData) {
     chromosome = tileData.chromosome;
     products = tileData.products;
     basesPerPixel = tileData.basesPerPixel;
-    thumbnailBasesPerPixel = tileData.chromosomeThumbnail.basesPerPixel;
+    thumbnailBasesPerPixel = (tileData.end - tileData.start) / tileData.chromosomeThumbnail.width;
 
     var loadingElement = document.getElementById("contextMapLoading");
     contextMapDiv.removeChild(loadingElement);

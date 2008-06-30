@@ -99,7 +99,7 @@ public class ContextMapController extends PostOrGetFormController {
 
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
         chromosomeThumbnailModel.put("src", chromosomeThumbnailURI);
-        chromosomeThumbnailModel.put("basesPerPixel", chromosomeThumbnail.getBasesPerPixel());
+        chromosomeThumbnailModel.put("width", chromosomeThumbnail.getWidth());
         model.put("chromosomeThumbnail", chromosomeThumbnailModel);
 
         return model;

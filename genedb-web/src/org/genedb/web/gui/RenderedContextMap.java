@@ -623,13 +623,13 @@ public class RenderedContextMap {
      * of rendering, by {@link #drawScaleLine()}, and used for the duration
      * of the rendering process.
      */
-    private NavigableMap<Integer,Integer> contigs;
+    private NavigableMap<Integer,Double> contigs;
 
     private void calculateContigs() {
-        contigs = new TreeMap<Integer,Integer>();
-        int x = xCoordinate(getStart());
+        contigs = new TreeMap<Integer,Double>();
+        double x = xCoordinate(getStart());
         for (Gap gap: gapsByStart.values()) {
-            x = xCoordinate(gap.getFmin()) + axisBreakGap;
+            x = xCoordinateAsDouble(gap.getFmin()) + axisBreakGap;
             contigs.put(gap.getFmax(), x);
         }
     }
@@ -993,15 +993,18 @@ public class RenderedContextMap {
      * @return the corresponding x position
      */
     private int xCoordinate(int loc) {
+        return (int) Math.round(xCoordinateAsDouble(loc));
+    }
+    private double xCoordinateAsDouble(int loc) {
         Gap gapContainingLocation = gapContainingLocation(loc);
         if (gapContainingLocation != null) {
             logger.warn(String.format("Diagram location %d lies in the gap '%s'", loc, gapContainingLocation.getUniqueName()));
-            Integer gapEndPx = contigs.get(gapContainingLocation.getFmax());
+            Double gapEndPx = contigs.get(gapContainingLocation.getFmax());
             if (gapEndPx == null)
                 throw new IllegalStateException("Failed to locate gap. This should never happen!");
             return gapEndPx - axisBreakGap / 2;
         }
-        Map.Entry<Integer, Integer> e = contigs.floorEntry(loc);
+        Map.Entry<Integer, Double> e = contigs.floorEntry(loc);
         if (e == null)
             return naivePixelWidth(getStart(), loc);
 
@@ -1039,11 +1042,11 @@ public class RenderedContextMap {
         return xCoordinate(end) - xCoordinate(start);
     }
 
-    private int naivePixelWidth(int start, int end) {
-        long startPx = Math.round((double) start / basesPerPixel);
-        long endPx   = Math.round((double) end / basesPerPixel);
+    private double naivePixelWidth(int start, int end) {
+        double startPx = (double) start / basesPerPixel;
+        double endPx   = (double) end / basesPerPixel;
 
-        return (int) (endPx - startPx);
+        return (endPx - startPx);
     }
 
     private Gap gapContainingLocation(int loc) {
