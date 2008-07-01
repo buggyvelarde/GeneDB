@@ -9,7 +9,6 @@
 onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax}, '${transcript.uniqueName}');">
 
 <st:init />
-<%-- The next three are used by the scrollable context map --%>
 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 <%-- Here we put those styles that contain URLs --%>
 <style>
@@ -37,10 +36,7 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
 }
 </style>
 
-<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery-1.2.6.min.js"/>"></script>
-<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/interface-1.2/ifx.js"/>"></script>
-<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/interface-1.2/ifxhighlight.js"/>"></script>
-<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery.history.js"/>"></script>
+<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
 </format:headerRound>
 <!-- Context Map -->

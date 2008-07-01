@@ -417,7 +417,7 @@ function populateInfoPanel(transcript) {
 
 function showDetailsOfSelectedTranscript() {
     populateInfoPanel(selectedTranscript);
-    $("#contextMapInfoPanel:visible").Highlight("fast", "yellow");
+    $("#contextMapInfoPanel:visible").effect("highlight", {color: "yellow"}, "fast");
     $("#contextMapInfoPanel:hidden").slideDown(200);
 }
 
