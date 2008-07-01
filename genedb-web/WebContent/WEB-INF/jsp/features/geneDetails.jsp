@@ -130,7 +130,7 @@
     </c:if>
 
     <!-- Controlled Curation Section -->
-    <db:propByName items="${polypeptide.featureCvTerms}" cv="CC_genedb_controlledcuration" var="controlledCurationTerms"/>
+    <db:propByName items="${polypeptide.featureCvTerms}" cvPattern="CC_.*" var="controlledCurationTerms"/>
     <c:if test="${fn:length(controlledCurationTerms) > 0}">
         <format:genePageSection id="controlCur">
             <div class="heading">Controlled Curation</div>
