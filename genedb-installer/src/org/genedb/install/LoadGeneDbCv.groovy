@@ -261,7 +261,7 @@ class LoadGeneDbCv {
         </term>
 
         <term name="protein_property" description="A property of a polypeptide feature">
-            <term name="GPI_anchored" description="A flag to indicate that the protein is predicted to be GPI-anchored"/>
+            <term name="GPI_anchored" description="A flag to indicate that the protein is GPI-anchored, as predicted by dgpi"/>
             <term name="SignalP_prediction" description="The SignalP prediction for this protein. Possible values are 'Signal peptide' and 'Signal anchor'."/>
             <term name="signal_peptide_probability" description="The probability that this protein is a signal peptide, as predicted by SignalP."/>
             <term name="signal_anchor_probability" description="The probability that this protein is a signal anchor, as predicted by SignalP."/>
