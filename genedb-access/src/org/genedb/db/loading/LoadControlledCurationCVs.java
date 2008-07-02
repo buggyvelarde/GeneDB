@@ -19,29 +19,26 @@
 
 package org.genedb.db.loading;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
-
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.cv.CvTermRelationship;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
 
 
 
@@ -147,7 +144,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
             String sections[] = str.split("\t");
             String rawCvName = sections[0];
             if (!rawCvName.equalsIgnoreCase("PATO")) {
-                CvTerm cvTerm = this.cvDao.getCvTermByNameAndCvName(sections[1], "CC_%");
+                CvTerm cvTerm = this.cvDao.getCvTermByNameAndCvNamePattern(sections[1], "CC_%");
                 if (cvTerm == null) {
                     // Need to create a new CvTerm
                     Db db = generalDao.getDbByName("CCGEN");

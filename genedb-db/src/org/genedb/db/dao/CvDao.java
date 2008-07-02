@@ -143,14 +143,35 @@ public class CvDao extends BaseDao implements CvDaoI {
         public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName) {
             @SuppressWarnings("unchecked")
             List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
-                "from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv.name like :cvName",
+                "from CvTerm cvTerm where cvTerm.name = :cvTermName and cvTerm.cv.name = :cvName",
                 new String[]{"cvTermName", "cvName"}, new Object[]{cvTermName, cvName});
             if (cvTermList == null || cvTermList.size() == 0) {
                 logger.warn("No cvterms found for '"+cvTermName+"' in '"+cvName+"'");
                 return null;
-            } else {
-                return cvTermList.get(0);
             }
+
+            if (cvTermList.size() > 1)
+                logger.error(String.format("Found %d CvTerms with cv '%s' and term name '%s'",
+                    cvTermList.size(), cvName, cvTermName));
+
+            return cvTermList.get(0);
+        }
+
+        public CvTerm getCvTermByNameAndCvNamePattern(String cvTermName, String cvNamePattern) {
+            @SuppressWarnings("unchecked")
+            List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
+                "from CvTerm cvTerm where cvTerm.name = :cvTermName and cvTerm.cv.name like :cvNamePattern",
+                new String[]{"cvTermName", "cvNamePattern"}, new Object[]{cvTermName, cvNamePattern});
+            if (cvTermList == null || cvTermList.size() == 0) {
+                logger.warn("No cvterms found for '"+cvTermName+"' in CV matching '"+cvNamePattern+"'");
+                return null;
+            }
+
+            if (cvTermList.size() > 1)
+                logger.error(String.format("Found %d CvTerms with cv matching '%s' and term name '%s'",
+                    cvTermList.size(), cvNamePattern, cvTermName));
+
+            return cvTermList.get(0);
         }
 
         /**
@@ -192,14 +213,18 @@ public class CvDao extends BaseDao implements CvDaoI {
         public CvTerm getCvTermByDbAcc(String db, String acc) {
             @SuppressWarnings("unchecked")
             List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
-                "cvt from CvTerm cvt, DbXRef dbx where cvt.dbXRef = dbx and dbx.db.name= :db and dbx.accession = :acc",
-                new String[]{db, acc},
-                new Object[]{db, acc});
-            if (cvTermList == null || cvTermList.size() == 0) {
+                "from CvTerm where dbXRef.db.name= :db and dbXRef.accession = :acc",
+                new String[]{"db", "acc"},
+                new Object[]{ db,   acc });
+
+            if (cvTermList == null || cvTermList.size() == 0)
                 return null;
-            } else {
-                return cvTermList.get(0);
-            }
+
+            if (cvTermList.size() > 1)
+                logger.error(String.format("Found %d CvTerms with db '%s' and accession '%s'",
+                    cvTermList.size(), db, acc));
+
+            return cvTermList.get(0);
         }
 
         public List<CountedName> getAllTermsInCvWithCount(Cv cv) {
@@ -271,10 +296,10 @@ public class CvDao extends BaseDao implements CvDaoI {
         }
 
         /**
-         * Given a Cv name and Polypeptide feature, find all the cvterms in 
-         * this polypeptide for Cv along with their count for the organism 
-         * the polypeptide belongs 
-         * 
+         * Given a Cv name and Polypeptide feature, find all the cvterms in
+         * this polypeptide for Cv along with their count for the organism
+         * the polypeptide belongs
+         *
          * @param cvName the Cv name
          * @param polypeptide the Polypeptide feature
          * @return a (possibly empty) List<CountedName> of matches
@@ -282,7 +307,7 @@ public class CvDao extends BaseDao implements CvDaoI {
         @SuppressWarnings("unchecked")
         public List<CountedName> getCountedNamesByCvNameAndFeatureAndOrganism(String cvName,
                 Polypeptide polypeptide) {
-            
+
             /**
              * the distinct clause in the query counts only once if there is more than
              * FeatureCvTerm for a Feature with a particular CvTerm

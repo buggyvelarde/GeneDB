@@ -473,7 +473,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
             DbXRef dbXRef = null;
             CvTerm cvt = this.cvDao.getCvTermByNameAndCvName(cc.getTerm(), "quality");
             if (cvt == null) {
-                cvt = this.cvDao.getCvTermByNameAndCvName(cc.getTerm(), "CC_%");
+                cvt = this.cvDao.getCvTermByNameAndCvNamePattern(cc.getTerm(), "CC_%");
 
                 if (cvt == null ) {
                     // Got an unrecognized term
