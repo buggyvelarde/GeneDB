@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.dao.CvDaoI;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
@@ -19,6 +18,8 @@ import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.sequence.feature.PolypeptideDomain;
+import org.gmod.schema.sequence.feature.SignalPeptide;
+import org.gmod.schema.sequence.feature.TransmembraneRegion;
 import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -31,7 +32,7 @@ public class SequenceDao extends BaseDao {
 
     private static final Logger logger = Logger.getLogger(SequenceDao.class);
 
-    private CvDaoI cvDao;
+    private CvDao cvDao;
 
     /**
      * Return the feature corresponding to this feature_id
@@ -433,24 +434,24 @@ public class SequenceDao extends BaseDao {
 
     /**
      * Given the specification of a CvTerm, find all the genes that
-     * belong to an organism and have transcripts that have polypeptides 
-     * that have this CvTerm associated to them. In practice, this is used 
-     * to get a list of genes that have a particular Gene Ontology annotation, 
+     * belong to an organism and have transcripts that have polypeptides
+     * that have this CvTerm associated to them. In practice, this is used
+     * to get a list of genes that have a particular Gene Ontology annotation,
      * for example.
      *
      * @param cvTermName the CvTerm name
      * @param cvName the Cv name
-     * @param organism the Organism common name. can be null in which case search spans 
+     * @param organism the Organism common name. can be null in which case search spans
      * across all organisms
      * @return a (possibly empty) List<GeneNameOrganism> of matches
      */
     @SuppressWarnings("unchecked")
-    public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvName(String cvTermName, String cvName, 
+    public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvName(String cvTermName, String cvName,
             String organism) {
-        
+
         List<GeneNameOrganism> features;
         if(organism != null) {
-        
+
             features = getHibernateTemplate()
                     .findByNamedParam(
                             "select new org.gmod.schema.utils.GeneNameOrganism( " +
@@ -482,7 +483,7 @@ public class SequenceDao extends BaseDao {
                     new String[] { "cvTermName", "cvName" },
                     new Object[] { cvTermName, cvName });
         }
-        
+
         return features;
     }
 
@@ -703,8 +704,39 @@ public class SequenceDao extends BaseDao {
         // TODO Add interproDbxref as additional parameter?
     }
 
+    private CvTerm transmembraneRegionType;
+    public TransmembraneRegion createTransmembraneRegion(Polypeptide polypeptide, int start, int end) {
+        if (transmembraneRegionType == null)
+            transmembraneRegionType = cvDao.getCvTermByDbAcc("sequence", "0001077");
+
+        String regionUniqueName = String.format("%s:tmhelix%d-%d", polypeptide.getUniqueName(), start, end);
+        TransmembraneRegion transmembraneRegion = new TransmembraneRegion(polypeptide.getOrganism(), transmembraneRegionType, regionUniqueName);
+        FeatureLoc regionLoc = new FeatureLoc(polypeptide, transmembraneRegion, start, false, end, false, (short)0/*strand*/, null, 0, 0);
+        transmembraneRegion.addFeatureLocsForFeatureId(regionLoc);
+
+        return transmembraneRegion;
+    }
+
+    private CvTerm signalPeptideType, cleavageSiteProbabilityType;
+    public SignalPeptide createSignalPeptide(Polypeptide polypeptide, int loc, String probability) {
+        if (signalPeptideType == null)
+            signalPeptideType = cvDao.getCvTermByDbAcc("sequence", "0000418");
+        if (cleavageSiteProbabilityType == null)
+            cleavageSiteProbabilityType = cvDao.getCvTermByNameAndCvName("cleavage_site_probability", "genedb_misc");
+
+        String regionUniqueName = String.format("%s:sigp%d", polypeptide.getUniqueName(), loc);
+        SignalPeptide signalPeptide = new SignalPeptide(polypeptide.getOrganism(), signalPeptideType, regionUniqueName);
+        FeatureLoc signalPeptideLoc = new FeatureLoc(polypeptide, signalPeptide, 0, false, loc, false, (short)0/*strand*/, null, 0, 0);
+        signalPeptide.addFeatureLocsForFeatureId(signalPeptideLoc);
+
+        FeatureProp probabilityProp = new FeatureProp(signalPeptide, cleavageSiteProbabilityType, probability, 0);
+        signalPeptide.addFeatureProp(probabilityProp);
+
+        return signalPeptide;
+    }
+
     /* Invoked by Spring */
-    public void setCvDao(CvDaoI cvDao) {
+    public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
     }
 }
