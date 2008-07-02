@@ -159,7 +159,7 @@ public abstract class Loader {
             if (polypeptide != null)
                 return polypeptide;
         }
-        return null;
+        return sequenceDao.getFeatureByUniqueName(mangledName, Polypeptide.class);
     }
 
 }

@@ -119,7 +119,7 @@ public class Load {
             return;
         }
 
-        logger.info(String.format("Loading InterPro file '%s'", filename));
+        logger.info(String.format("Loading file '%s'", filename));
 
         InputStream inputStream = new FileInputStream(file);
         if (filename.endsWith(".gz")) {
