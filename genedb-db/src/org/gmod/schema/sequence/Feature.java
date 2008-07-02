@@ -462,7 +462,7 @@ public class Feature implements java.io.Serializable {
     }
 
     /**
-     * Get the display name for the gene, preferrably the name, otherwise the
+     * Get the display name for the gene: preferably the name, otherwise the
      * display name
      *
      * @return the preferred display name, never null
