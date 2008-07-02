@@ -291,11 +291,11 @@
     	<property name="xmlParser" ref="xmlOrthologueRelationshipParser" />
     </bean>
 
-    <bean id="iploader" class="org.genedb.db.loading.interpro.InterProLoader">
+    <!-- <bean id="iploader" class="org.genedb.db.loading.interpro.InterProLoader">
     	<property name="featureUtils" ref="featureUtils" />
     	<property name="sequenceDao" ref="sequenceDao" />
     	<property name="hibernateTransactionManager" ref="transactionManager" />
-    </bean>
+    </bean> -->
 
     <bean id="featureUtils" class="org.genedb.db.loading.FeatureUtils">
     	<property name="cvDao" ref="cvDao" />
