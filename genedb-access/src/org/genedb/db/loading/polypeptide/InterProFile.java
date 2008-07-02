@@ -1,4 +1,4 @@
-package org.genedb.db.loading.interpro;
+package org.genedb.db.loading.polypeptide;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -78,14 +78,14 @@ class DateFormatConverter {
 class InterProRow {
     private static final Logger logger = Logger.getLogger(InterProFile.class);
 
-    String gene, nativeProg, db, nativeAcc, nativeDesc, score, desc;
+    String key, nativeProg, db, nativeAcc, nativeDesc, score, desc;
     InterProAcc acc = InterProAcc.NULL;
     int fmin, fmax;
     private DateFormatConverter date;
     Set<GoInstance> goTerms = new HashSet<GoInstance>();
 
     // The columns we're interested in:
-    private static final int COL_GENE_ID     = 0;
+    private static final int COL_KEY         = 0;
     private static final int COL_NATIVE_PROG = 3;
     private static final int COL_NATIVE_ACC  = 4;
     private static final int COL_NATIVE_DESC = 5;
@@ -132,7 +132,7 @@ class InterProRow {
      *  In the actual file, fields are separated by tab characters.
      */
     InterProRow(int lineNumber, String[] rowFields) {
-        this.gene       = rowFields[COL_GENE_ID];
+        this.key       = rowFields[COL_KEY];
         this.nativeProg = rowFields[COL_NATIVE_PROG];
         this.db         = dbByProg.get(nativeProg);
         this.nativeAcc  = rowFields[COL_NATIVE_ACC];
@@ -165,8 +165,14 @@ class InterProRow {
             goTerm.setWithFrom("InterPro:" + this.acc.getId());
             goTerm.setRef("GOC:interpro2go");
             goTerm.setDate(this.date.withoutDashes());
-            goTerm.setGeneName(this.gene);
             goTerm.setSubtype(type);
+
+            /*
+             * We do not set the <code>geneName</code> field of the GoInstance,
+             * because a) the key is not necessarily a gene name, and b) the
+             * method FeatureUtils#createGoEntries does not use the geneName
+             * field.
+             */
 
             this.goTerms.add(goTerm);
         }
@@ -182,7 +188,7 @@ class InterProRow {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%s/%s: %s (%s), location %d-%d",
-            gene, acc.getId(), nativeDesc, nativeProg, fmin, fmax));
+            key, acc.getId(), nativeDesc, nativeProg, fmin, fmax));
         for (GoInstance goTerm: goTerms) {
             sb.append(String.format("\n\t%s (GO:%s)", goTerm.getSubtype(), goTerm.getId()));
         }
@@ -253,7 +259,7 @@ class InterProAcc {
 public class InterProFile {
     private static final Logger logger = Logger.getLogger(InterProFile.class);
 
-    private Map<String, Map<InterProAcc, Set<InterProRow>>> rowsByAccByGene
+    private Map<String, Map<InterProAcc, Set<InterProRow>>> rowsByAccByKey
         = new HashMap<String, Map<InterProAcc, Set<InterProRow>>>();
 
     public InterProFile(InputStream inputStream) throws IOException {
@@ -274,30 +280,30 @@ public class InterProFile {
                 continue;
             }
 
-            if (!rowsByAccByGene.containsKey(row.gene))
-                rowsByAccByGene.put(row.gene, new HashMap<InterProAcc, Set<InterProRow>>());
-            if (!rowsByAccByGene.get(row.gene).containsKey(row.acc))
-                rowsByAccByGene.get(row.gene).put(row.acc, new HashSet<InterProRow>());
-            rowsByAccByGene.get(row.gene).get(row.acc).add(row);
+            if (!rowsByAccByKey.containsKey(row.key))
+                rowsByAccByKey.put(row.key, new HashMap<InterProAcc, Set<InterProRow>>());
+            if (!rowsByAccByKey.get(row.key).containsKey(row.acc))
+                rowsByAccByKey.get(row.key).put(row.acc, new HashSet<InterProRow>());
+            rowsByAccByKey.get(row.key).get(row.acc).add(row);
         }
     }
-    public Set<String> genes() {
-        return rowsByAccByGene.keySet();
+    public Set<String> keys() {
+        return rowsByAccByKey.keySet();
     }
-    public Set<InterProAcc> accsForGene(String gene) {
-        if (!rowsByAccByGene.containsKey(gene))
+    public Set<InterProAcc> accsForKey(String key) {
+        if (!rowsByAccByKey.containsKey(key))
             throw new IllegalArgumentException(
-                String.format("Gene '%s' not found", gene));
-        return rowsByAccByGene.get(gene).keySet();
+                String.format("Key '%s' not found", key));
+        return rowsByAccByKey.get(key).keySet();
     }
-    public Set<InterProRow> rows(String gene, InterProAcc acc) {
-        if (!rowsByAccByGene.containsKey(gene))
+    public Set<InterProRow> rows(String key, InterProAcc acc) {
+        if (!rowsByAccByKey.containsKey(key))
             throw new IllegalArgumentException(
-                String.format("Gene '%s' not found", gene));
-        if (!rowsByAccByGene.get(gene).containsKey(acc))
+                String.format("Key '%s' not found", key));
+        if (!rowsByAccByKey.get(key).containsKey(acc))
             throw new IllegalArgumentException(
-                String.format("Accession number '%s' not found for gene '%s'", acc, gene));
+                String.format("Accession number '%s' not found for key '%s'", acc, key));
 
-        return rowsByAccByGene.get(gene).get(acc);
+        return rowsByAccByKey.get(key).get(acc);
     }
 }

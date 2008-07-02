@@ -496,12 +496,22 @@
 		</java>
 	</target>
 
+
 	<target name="load-interpro" depends="genedb-access.jar">
-		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.interpro.LoadInterPro">
-			<arg line="${file}"/>
+		<java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.Load">
+			<arg line="iploader --key-type=polypeptide ${file}"/>
 			<jvmarg line="-server -Xmx256m"/>
 		</java>
 	</target>
+
+    <target name="clear-interpro" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.ClearInterPro">
+            <arg line="${organism}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="reload-interpro" depends="clear-interpro,load-interpro"/>
 
 
     <target name="fix-residues-verbose" depends="genedb-access.jar" if="verbose">

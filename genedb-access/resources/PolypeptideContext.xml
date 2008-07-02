@@ -44,7 +44,8 @@
 		<property name="key" value="dataSourceMunging"/>
     </bean>
 
-    <bean id="iploader" class="org.genedb.db.loading.interpro.InterProLoader">
+    <bean id="iploader" class="org.genedb.db.loading.polypeptide.InterProLoader">
+        <property name="dbxrefManager" ref="dbxrefManager" />
     	<property name="featureUtils" ref="featureUtils" />
     	<property name="sequenceDao" ref="sequenceDao" />
     	<property name="hibernateTransactionManager" ref="transactionManager" />
@@ -55,6 +56,10 @@
 		<property name="sequenceDao" ref="sequenceDao" />
 		<property name="pubDao" ref="pubDao" />
 		<property name="generalDao" ref="generalDao" />
+    </bean>
+
+    <bean id="dbxrefManager" class="org.genedb.db.loading.polypeptide.DbXRefManager">
+        <property name="featureUtils" ref="featureUtils" />
     </bean>
 
     <!-- DataSource Property -->
