@@ -181,10 +181,12 @@
                 <value>org.gmod.schema.sequence.feature.PseudogenicTranscript</value>
                 <value>org.gmod.schema.sequence.feature.RRNA</value>
                 <value>org.gmod.schema.sequence.feature.RepeatRegion</value>
+                <value>org.gmod.schema.sequence.feature.SignalPeptide</value>
                 <value>org.gmod.schema.sequence.feature.SnRNA</value>
                 <value>org.gmod.schema.sequence.feature.TRNA</value>
                 <value>org.gmod.schema.sequence.feature.ThreePrimeUTR</value>
                 <value>org.gmod.schema.sequence.feature.Transcript</value>
+                <value>org.gmod.schema.sequence.feature.TransmembraneRegion</value>
                 <value>org.gmod.schema.sequence.feature.UTR</value>
             </list>
         </property>
