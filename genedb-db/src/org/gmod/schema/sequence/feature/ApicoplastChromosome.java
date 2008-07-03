@@ -1,10 +1,11 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.gmod.schema.cfg.FeatureType;
+
 /*
- * Note: this value 831 refers to the 'apicoplast_sequence' SO term, which
+ * Note: we are using the 'apicoplast_sequence' SO term, which
  * is NOT correct for this purpose. It's not even the correct type. This
  * needs to be changed in the database, the loader and here. The problem
  * is that there is no obviously-suitable term, though we could simply use
@@ -12,5 +13,5 @@ import javax.persistence.Entity;
  * the origin.
  */
 @Entity
-@DiscriminatorValue("831")
+@FeatureType(cv="sequence", term="apicoplast_sequence")
 public class ApicoplastChromosome extends Chromosome {}

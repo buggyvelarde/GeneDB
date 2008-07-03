@@ -1,8 +1,9 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.gmod.schema.cfg.FeatureType;
+
 @Entity
-@DiscriminatorValue("595")
+@FeatureType(cv="sequence", term="pseudogenic_exon")
 public class PseudogenicExon extends AbstractExon {}

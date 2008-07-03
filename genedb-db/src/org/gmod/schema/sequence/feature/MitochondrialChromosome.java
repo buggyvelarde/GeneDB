@@ -1,8 +1,9 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.gmod.schema.cfg.FeatureType;
+
 @Entity
-@DiscriminatorValue("907")
+@FeatureType(cv="sequence", term="mitochondrial_chromosome")
 public class MitochondrialChromosome extends Chromosome {}

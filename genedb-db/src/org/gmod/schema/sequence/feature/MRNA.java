@@ -1,15 +1,15 @@
 package org.gmod.schema.sequence.feature;
 
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.gmod.schema.cfg.FeatureType;
 import org.hibernate.search.annotations.Indexed;
 
 @Entity
-@DiscriminatorValue("321")
+@FeatureType(cv="sequence", term="mRNA")
 @Indexed
 public class MRNA extends ProductiveTranscript {
     private static final Logger logger = Logger.getLogger(MRNA.class);

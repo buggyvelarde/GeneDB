@@ -1,12 +1,12 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.sequence.Feature;
 import org.hibernate.search.annotations.Indexed;
 
 @Entity
-@DiscriminatorValue("818")
+@FeatureType(cv="sequence", term="gap")
 @Indexed
 public class Gap extends Feature {}

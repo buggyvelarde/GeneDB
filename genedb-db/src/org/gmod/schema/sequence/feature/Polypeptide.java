@@ -6,11 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureLoc;
@@ -18,7 +18,7 @@ import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 
 @Entity
-@DiscriminatorValue("191")
+@FeatureType(cv="sequence", term="polypeptide")
 public class Polypeptide extends Feature {
     private static Logger logger = Logger.getLogger(Polypeptide.class);
     @Transient

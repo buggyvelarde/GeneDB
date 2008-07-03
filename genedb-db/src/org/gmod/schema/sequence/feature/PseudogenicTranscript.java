@@ -1,11 +1,11 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.gmod.schema.cfg.FeatureType;
 import org.hibernate.search.annotations.Indexed;
 
 @Entity
-@DiscriminatorValue("604")
+@FeatureType(cv="sequence", term="pseudogenic_transcript")
 @Indexed
 public class PseudogenicTranscript extends ProductiveTranscript {}

@@ -3,10 +3,10 @@ package org.gmod.schema.sequence.feature;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.hibernate.search.annotations.Field;
@@ -15,7 +15,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
 @Entity
-@DiscriminatorValue("423")
+@FeatureType(cv="sequence", term="pseudogene")
 @Indexed
 public class Pseudogene extends AbstractGene {
     @Transient

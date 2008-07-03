@@ -1,12 +1,13 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.organism.Organism;
 
-@Entity @DiscriminatorValue("506")
+@Entity
+@FeatureType(cv="sequence", term="signal_peptide")
 public class SignalPeptide extends PolypeptideRegion {
 
     public SignalPeptide(Organism organism, CvTerm cvTerm, String uniqueName) {

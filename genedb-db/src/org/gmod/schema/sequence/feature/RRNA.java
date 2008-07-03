@@ -1,13 +1,13 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import org.gmod.schema.cfg.FeatureType;
 import org.hibernate.search.annotations.Indexed;
 
 @Entity
-@DiscriminatorValue("339")
+@FeatureType(cv="sequence", term="rRNA")
 @Indexed
 public class RRNA extends Transcript {
 
