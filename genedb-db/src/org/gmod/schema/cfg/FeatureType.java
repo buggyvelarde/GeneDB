@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * There are two modes. Either specify a CV and a term name:
  * <code>@FeatureType(cv="sequence", term="gene")<code>
  * or specify a CV and an accession number:
- * <code>@FeatureType(cv="sequence", term="0001077")<code>
+ * <code>@FeatureType(cv="sequence", accession="0001077")<code>
  *
  * The former is more readable, but the latter is more robust
  * in the face of changes to the Sequence Ontology. For example,
