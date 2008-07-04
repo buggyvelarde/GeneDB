@@ -15,6 +15,7 @@ import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
+import org.gmod.schema.sequence.feature.GPIAnchorCleavageSite;
 import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.sequence.feature.PolypeptideDomain;
@@ -734,6 +735,43 @@ public class SequenceDao extends BaseDao {
 
         return signalPeptide;
     }
+
+    private CvTerm gpiAnchoredType, gpiAnchorCleavageSiteType, gpiCleavageSiteScoreType;
+    public FeatureProp createGPIAnchoredProperty(Polypeptide polypeptide) {
+        if (gpiAnchoredType == null)
+            gpiAnchoredType = cvDao.getCvTermByNameAndCvName("GPI_anchored", "genedb_misc");
+
+        FeatureProp featureProp = new FeatureProp(polypeptide, gpiAnchoredType, "true", 0);
+        polypeptide.addFeatureProp(featureProp);
+        return featureProp;
+    }
+    public GPIAnchorCleavageSite createGPIAnchorCleavageSite(Polypeptide polypeptide, int anchorLocation, String score) {
+        if (gpiAnchorCleavageSiteType == null)
+            gpiAnchorCleavageSiteType = cvDao.getCvTermByNameAndCvName("GPI_anchor_cleavage_site", "genedb_feature_type");
+        if (gpiCleavageSiteScoreType == null)
+            gpiCleavageSiteScoreType = cvDao.getCvTermByNameAndCvName("GPI_cleavage_site_score", "genedb_misc");
+
+        String cleavageSiteUniqueName = String.format("%s:gpi", polypeptide.getUniqueName());
+        GPIAnchorCleavageSite cleavageSite = new GPIAnchorCleavageSite(polypeptide.getOrganism(), gpiAnchorCleavageSiteType, cleavageSiteUniqueName);
+        FeatureLoc cleavageSiteLoc = new FeatureLoc(polypeptide, cleavageSite, anchorLocation, false, anchorLocation, false, (short)0/*strand*/, null, 0, 0);
+        cleavageSite.addFeatureLocsForFeatureId(cleavageSiteLoc);
+
+        FeatureProp scoreProp = new FeatureProp(cleavageSite, gpiCleavageSiteScoreType, score, 0);
+        cleavageSite.addFeatureProp(scoreProp);
+
+        return cleavageSite;
+    }
+
+    private CvTerm plasmoAPScoreType;
+    public FeatureProp createPlasmoAPScore(Polypeptide polypeptide, String score) {
+        if (plasmoAPScoreType == null)
+            plasmoAPScoreType = cvDao.getCvTermByNameAndCvName("PlasmoAP_score", "genedb_misc");
+
+        FeatureProp featureProp = new FeatureProp(polypeptide, plasmoAPScoreType, score, 0);
+        polypeptide.addFeatureProp(featureProp);
+        return featureProp;
+    }
+
 
     /* Invoked by Spring */
     public void setCvDao(CvDao cvDao) {

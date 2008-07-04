@@ -565,6 +565,23 @@
     <target name="reload-signalp" depends="clear-signalp,load-signalp"/>
 
 
+    <target name="load-plasmoap" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.Load">
+            <arg line="plasmoaploader ${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="clear-plasmoap" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.ClearPlasmoAP">
+            <arg line="${organism}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="reload-plasmoap" depends="clear-plasmoap,load-plasmoap"/>
+
+
     <target name="fix-residues-verbose" depends="genedb-access.jar" if="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="-v" />
