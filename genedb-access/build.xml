@@ -528,7 +528,7 @@
         </java>
     </target>
 
-    <target name="reload-tmhmm" depends="clear-tmhmm,load-tmhmm"/>
+    <target name="reload-tmhmm" depends="clear-tmhmm,load-tmhmm" />
 
 
     <target name="load-signalp" depends="genedb-access.jar">
