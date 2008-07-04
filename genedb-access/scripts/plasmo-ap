@@ -1,0 +1,27 @@
+#! /usr/local/bin/perl
+
+# Simple wrapper script to run PlasmoAP on a FASTA file containing
+# multiple sequences, and print the results to standard output.
+
+use warnings; use strict;
+use lib "/software/pathogen/psu_cvs/genlib/perl/src";
+
+use Bio::PSU::SeqFactory;
+use Bio::PSU::Utils::PlasmoAP11;
+
+for my $input_file (@ARGV) {
+    my $seqi = Bio::PSU::SeqFactory->make(
+	-file => $input_file,
+	-format => 'fasta'
+    );
+
+    while (my $seq = $seqi->next_seq) {
+	my $plasmo_ap = Bio::PSU::Utils::PlasmoAP11->new(
+	    seqId => $seq->id,
+	    sequence => $seq->str,
+	);
+
+	print $plasmo_ap->analysis, "\n";
+    }
+}
+

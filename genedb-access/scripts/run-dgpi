@@ -1,0 +1,62 @@
+#! /usr/local/bin/perl
+
+# Simple wrapper script to run DGPI on a FASTA file containing multiple sequences,
+# and collect the results into a single file. This output format is what's expected
+# by the genedb-access DGPI loader.
+
+use warnings; use strict;
+use File::Temp 'tempfile';
+
+use constant DGPI => '/software/pathogen/external/applications/dgpi/dgpi';
+
+main();
+exit;
+
+
+sub main {
+	my $header;
+	my $sequence = "";
+	while (<>) {
+		if (/^>(.*)/) {
+			process($header, $sequence) if defined $header;
+			$header = $1;
+			$sequence = "";
+		}
+		else {
+			$sequence .= $_;
+		}
+	}
+	process ($header, $sequence);
+}
+
+
+sub process {
+	my ($header, $sequence) = @_;
+	my $result = run_dgpi($sequence);
+	print ">$header\n$result" if defined $result;
+}
+
+sub run_dgpi {
+	my ($sequence) = @_;
+	my ($fh, $filename) = tempfile();
+	print $fh ">XXXX\n";
+	print $fh $sequence;
+
+	system(DGPI." -file=$filename -output=text >/dev/null");
+	if ($?) {
+		warn "Failed to execute DGPI: $sequence\n";
+		return;
+	}
+
+	open my $result, "<", "$filename.txt"
+		or die "Failed to open '$filename.txt': $!\n";
+
+	local $/;
+	my $output = <$result>;
+
+	close($fh); close($output);
+	unlink($filename, "$filename.txt");
+
+	return $output;
+}
+
