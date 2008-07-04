@@ -8,6 +8,9 @@ import org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBea
  * Extends {@link org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean} with
  * support for the <code>@FeatureType</code> annotation. See {@link FeatureType}.
  *
+ * All it does is to change the default Configuration class to {@link ChadoAnnotationConfiguration}
+ * and set the data source appropriately.
+ *
  * @author rh11
  */
 public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
@@ -16,16 +19,11 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
         setConfigurationClass(ChadoAnnotationConfiguration.class);
     }
 
-    @Override @SuppressWarnings("unchecked")
-    public void setConfigurationClass(Class configurationClass) {
-        if (configurationClass != null && ChadoAnnotationConfiguration.class.isAssignableFrom(configurationClass))
-            super.setConfigurationClass(configurationClass);
-    }
-
     @Override
     protected Configuration newConfiguration() throws HibernateException {
         Configuration cfg = super.newConfiguration();
-        ((ChadoAnnotationConfiguration) cfg).setDataSource(getDataSource());
+        if (cfg instanceof ChadoAnnotationConfiguration)
+            ((ChadoAnnotationConfiguration) cfg).setDataSource(getDataSource());
         return cfg;
     }
 }
