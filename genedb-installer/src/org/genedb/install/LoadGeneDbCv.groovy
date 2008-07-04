@@ -268,6 +268,10 @@ class LoadGeneDbCv {
             <term name="PlasmoAP_score" description="A score denoting how likely this protein is to target the apicoplast, as predicted by PlasmoAP."/>
         </term>
 
+        <term name="GPI_anchor_cleavage_site_property" description="A property of a GPI_anchor_cleavage_site feature">
+            <term name="GPI_cleavage_site_score" description="The score assigned to this GPI cleavage site by dgpi"/>
+        </term>
+
         <term name="feature_cvterm_props" description="Keys for storing information specifically for FeatureCvTermProps">
             <term name="qualifier" description="eg NOT, colocalizes_with" />
             <term name="evidence" description="Typically an evidence code" />
@@ -309,11 +313,11 @@ class LoadGeneDbCv {
 			<term name="pepstats_file"   description="Peptide statistics file location" />
 		</term>
     </cv>
-    
+
     <!-- Feature types used by GeneDB that are not SO terms.
          These are slated for addition to SO; when they're added,
          we should switch to using the SO term instead. -->
-    <cv name="genedb_feature_type">
+    <cv name="genedb_feature_type" db="genedb_misc">
         <term name="GPI_anchor_cleavage_site" description="the site on the C-terminus of the protein which is cleaved off prior to addition of the glycolipid"/>
     </cv>
 
