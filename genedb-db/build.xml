@@ -215,11 +215,12 @@
         <copy todir="${imported.basedir.db}/ant-build/src-1.4-interface">
             <fileset dir="${imported.basedir.db}/src">
                 <include name="org/gmod/schema/**/*.java"/>
+                <exclude name="org/gmod/schema/cfg/*.java"/>
             </fileset>
         </copy>
 
         <replaceregexp byline="true">
-            <regexp pattern="^(\s*@[A-Z].*|import( static)? (javax\.persistence|org\.hibernate|org\.genedb\.db\.helpers\..*Bridge).*)$" />
+            <regexp pattern="^(\s*@[A-Z].*|import( static)? (javax\.persistence|org\.hibernate|org\.genedb\.db\.helpers\..*Bridge|org\.gmod\.schema\.cfg).*)$" />
             <substitution expression="" />
             <fileset dir="${imported.basedir.db}/ant-build/src-1.4-interface" />
         </replaceregexp>
