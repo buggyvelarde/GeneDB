@@ -18,6 +18,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Run the specified loader on the specified files or directories.
+ * Valid loaders are Spring beans, defined in <code>PolyPeptideContext.xml</code>.
+ * If the name of a specified file ends with <code>.gz</code>, it is assumed
+ * to be GZip-compressed, and is decompressed before loading. If a directory
+ * is specified, the contents of the directory are processed recursively,
+ * ignoring files or subdirectories whose name ends with a tilde (<code>~</code>).
+ * <p>
+ * This class is ordinarily invoked from ant via a loader-specific target, for example:
+ * <p>
+ * <code>ant -Dload=test -Dorganism=Pfalciparum -Dfile=PlasmoAP.txt reload-plasmoap</code>
  *
  * @author art
  * @author rh11
