@@ -531,6 +531,23 @@
     <target name="reload-tmhmm" depends="clear-tmhmm,load-tmhmm" />
 
 
+    <target name="load-dgpi" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.Load">
+            <arg line="dgpiloader ${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="clear-dgpi" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.ClearDGPI">
+            <arg line="${organism}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="reload-dgpi" depends="clear-dgpi,load-dgpi" />
+
+
     <target name="load-signalp" depends="genedb-access.jar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.Load">
             <arg line="signalploader ${file}"/>

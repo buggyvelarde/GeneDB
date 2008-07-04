@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 
 public abstract class Clear {
-    private static final Logger logger = Logger.getLogger(ClearInterPro.class);
+    private static final Logger logger = Logger.getLogger(Clear.class);
     private static final ResourceBundle config = ResourceBundle.getBundle("project");
 
     private Connection conn;
