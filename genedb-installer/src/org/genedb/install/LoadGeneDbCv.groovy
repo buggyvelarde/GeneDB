@@ -309,15 +309,19 @@ class LoadGeneDbCv {
 			<term name="pepstats_file"   description="Peptide statistics file location" />
 		</term>
     </cv>
-
-
+    
+    <!-- Feature types used by GeneDB that are not SO terms.
+         These are slated for addition to SO; when they're added,
+         we should switch to using the SO term instead. -->
+    <cv name="genedb_feature_type">
+        <term name="GPI_anchor_cleavage_site" description="the site on the C-terminus of the protein which is cleaved off prior to addition of the glycolipid"/>
+    </cv>
 
     <cv name="genedb_literature" db="genedb_misc">
         <term name="unknown"   description="unknown literature type" />
         <term name="unfetched" description="unfetched literature type" />
         <term name="journal"   description="journal literature type" />
     </cv>
-
 
     <cv name="genedb_synonym_type" db="genedb_misc">
         <term name="reserved_name"   description="A name reserved for future use eg a paper pending" />
