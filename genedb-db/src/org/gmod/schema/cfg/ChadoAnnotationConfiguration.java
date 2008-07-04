@@ -18,8 +18,9 @@ import org.hibernate.mapping.SingleTableSubclass;
 
 /**
  * Extends org.hibernate.cfg.AnnotationConfiguration with support for the <code>@FeatureType</code> annotation.
- * If you use this directly, you must set the data source. With Spring, if you use {@link ChadoSessionFactoryBean}
- * then this configuration will be used automatically.
+ *
+ * If you use this directly, you must set the data source. With Spring, use {@link ChadoSessionFactoryBean},
+ * which defaults to this configuration and automatically sets the data source.
  *
  * @author rh11
  */
@@ -72,7 +73,7 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
             throw new ChadoAnnotationException(String.format("@FeatureType annotation for class '%s' has neither 'term' nor 'accession'", className));
 
         if (!"".equals(term) && !"".equals(accession))
-            throw new ChadoAnnotationException(String.format("@FeatureType annotation for class '%s' has both 'term' nor 'accession'", className));
+            throw new ChadoAnnotationException(String.format("@FeatureType annotation for class '%s' has both 'term' and 'accession'", className));
     }
 
     private String description(FeatureType featureType) {
