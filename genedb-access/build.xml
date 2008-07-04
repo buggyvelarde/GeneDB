@@ -514,6 +514,40 @@
     <target name="reload-interpro" depends="clear-interpro,load-interpro"/>
 
 
+    <target name="load-tmhmm" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.Load">
+            <arg line="tmhmmloader ${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="clear-tmhmm" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.ClearTMHMM">
+            <arg line="${organism}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="reload-tmhmm" depends="clear-tmhmm,load-tmhmm"/>
+
+
+    <target name="load-signalp" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.Load">
+            <arg line="signalploader ${file}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="clear-signalp" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.polypeptide.ClearSignalP">
+            <arg line="${organism}"/>
+            <jvmarg line="-server -Xmx256m"/>
+        </java>
+    </target>
+
+    <target name="reload-signalp" depends="clear-signalp,load-signalp"/>
+
+
     <target name="fix-residues-verbose" depends="genedb-access.jar" if="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="-v" />
