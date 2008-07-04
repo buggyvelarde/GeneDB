@@ -29,6 +29,10 @@ public class DGPILoader extends Loader {
         for (String key: file.keys()) {
             logger.info(String.format("[%d/%d] Loading DGPI results for key '%s'", n++, file.keys().size(), key));
             Polypeptide polypeptide = getPolypeptideByMangledName(key);
+            if (polypeptide == null) {
+                logger.error(String.format("Could not find polypeptide '%s'", key));
+                continue;
+            }
 
             transaction.begin();
             loadResult(polypeptide, file.resultForKey(key));
