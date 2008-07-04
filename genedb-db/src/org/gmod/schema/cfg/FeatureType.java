@@ -11,12 +11,15 @@ import java.lang.annotation.Target;
  *
  * It's similar to setting the <code>@DiscriminatorColumn</code>,
  * but does not require the cvterm_id to be hard-coded.
- *
+ *<p>
  * There are two modes. Either specify a CV and a term name:
- * <code>@FeatureType(cv="sequence", term="gene")<code>
+ *<p>
+ * <code>@FeatureType(cv="sequence", term="gene")</code>
+ *<p>
  * or specify a CV and an accession number:
- * <code>@FeatureType(cv="sequence", accession="0001077")<code>
- *
+ *<p>
+ * <code>@FeatureType(cv="sequence", accession="0001077")</code>
+ * <p>
  * The former is more readable, but the latter is more robust
  * in the face of changes to the Sequence Ontology. For example,
  * the term with accession number 0001077 has recently been
