@@ -49,17 +49,20 @@ public class DeleteRedundantGOTerms {
     }
 
     public static void deleteRedundantGOTerms(DataSource dataSource) throws SQLException, IOException {
-        Connection conn = dataSource.getConnection();
-        new DeleteRedundantGOTerms(conn).deleteRedundantGOTerms().closeConnection();
+        deleteRedundantGOTerms(dataSource.getConnection());
     }
 
     public static void deleteRedundantGOTerms(Session session) throws SQLException, IOException {
         SessionFactoryImplementor sessionFactoryImplementer = (SessionFactoryImplementor) session.getSessionFactory();
         ConnectionProvider connectionProvider = sessionFactoryImplementer.getConnectionProvider();
-        Connection conn = connectionProvider.getConnection();
-        new DeleteRedundantGOTerms(conn).deleteRedundantGOTerms().closeConnection();
+        deleteRedundantGOTerms(connectionProvider.getConnection());
     }
 
+    public static void deleteRedundantGOTerms(Connection conn) throws SQLException, IOException {
+        new DeleteRedundantGOTerms(conn)
+            .deleteRedundantGOTerms()
+            .closeConnection();
+    }
 
     private Connection conn;
     public DeleteRedundantGOTerms (Connection conn) throws SQLException {
@@ -161,6 +164,7 @@ public class DeleteRedundantGOTerms {
     }
 
     private void closeConnection() throws SQLException {
+        conn.commit();
         conn.close();
     }
 }
