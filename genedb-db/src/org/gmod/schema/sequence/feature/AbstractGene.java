@@ -37,4 +37,12 @@ public abstract class AbstractGene extends Feature {
     public boolean isPseudo() {
         return (this instanceof Pseudogene);
     }
+    
+    @Transient
+    public byte[] getResidues() {
+        byte[] sequence = null;
+        Feature parent = this.getRankZeroFeatureLoc().getFeatureBySrcFeatureId();
+        sequence = parent.getResidues(this.getStart(), this.getStop());
+        return sequence;
+    }
 }
