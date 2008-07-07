@@ -258,8 +258,9 @@ public class Feature implements java.io.Serializable {
      * @return
      */
     public byte[] getResidues(int min, int max) {
-        byte[] results = new byte[max - min];
-        System.arraycopy(getResidues(), 0, results, 0, max);
+        int length = max - min;
+        byte[] results = new byte[length+1];
+        System.arraycopy(getResidues(), min,results,0,length);
         return results;
     }
 
