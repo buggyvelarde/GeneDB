@@ -45,6 +45,7 @@ public class Load {
             for (String validOption: validOptions)
                 System.err.printf("\t--%s\n", validOption);
         }
+        System.exit(1);
     }
 
     public static void main(String[] args) throws IOException {
@@ -71,15 +72,13 @@ public class Load {
                 break;
             }
             option = option.substring(2);
-            if (!validOptions.contains(option))
-                invalidOption(option, validOptions);
 
             int equalsIndex = option.indexOf('=');
             boolean optionAccepted;
             if (equalsIndex < 0)
-                optionAccepted = loader.processOption(option, null);
+                optionAccepted = loader.processOptionIfValid(option, null);
             else
-                optionAccepted = loader.processOption(option.substring(0, equalsIndex), option.substring(equalsIndex + 1));
+                optionAccepted = loader.processOptionIfValid(option.substring(0, equalsIndex), option.substring(equalsIndex + 1));
 
             if (!optionAccepted)
                 invalidOption(option, validOptions);

@@ -37,9 +37,15 @@ public abstract class Loader {
         return Collections.emptySet();
     }
 
-    @SuppressWarnings("unused")
-    protected boolean processOption(String optionName, String optionValue) {
-        return false;
+    protected boolean processOptionIfValid(String optionName, String optionValue) {
+        if (getOptionNames().contains(optionName))
+            return processOption(optionName, optionValue);
+        else
+            return false;
+    }
+
+    protected boolean processOption(@SuppressWarnings("unused") String optionName, @SuppressWarnings("unused") String optionValue) {
+        throw new IllegalStateException("processOption() must be overridden if options are specified");
     }
 
     public void load(InputStream inputStream) throws IOException {
