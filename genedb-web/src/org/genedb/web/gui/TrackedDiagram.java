@@ -26,7 +26,7 @@ public class TrackedDiagram {
         implements Comparable<Boundary<? extends LocatedFeature>>
     {
         /**
-         * Compares FeatureBoundaries, ordering them in the appropriate way for
+         * Compares Boundaries, ordering them in the appropriate way for
          * track-allocation. If two boundaries have different locations, the
          * leftmost one goes first; if their locations coincide then we put
          * START boundaries before ENDs, and we put the START of a longer feature
@@ -51,8 +51,8 @@ public class TrackedDiagram {
         }
 
         /**
-         * Two GeneBoundary objects are equal if they have the same type and
-         * they refer to the same gene.
+         * Two Boundary objects are equal if they have the same type and
+         * they refer to the same feature.
          */
         @Override
         public boolean equals(Object obj) {
@@ -78,7 +78,7 @@ public class TrackedDiagram {
 
         /**
          * Returns the location of the boundary, which is to say the
-         * <code>fmin</code> of the gene for a START boundary, or the
+         * <code>fmin</code> of the feature for a START boundary, or the
          * <code>fmax</code> for an END.
          *
          * @return the location
@@ -103,9 +103,9 @@ public class TrackedDiagram {
     }
 
     class BoundarySet<T extends CompoundLocatedFeature> extends TreeSet<Boundary<T>> {
-        public BoundarySet (Collection<T> genes) {
+        public BoundarySet (Collection<T> features) {
             super();
-            addFeatures(genes);
+            addFeatures(features);
         }
         public void addFeatures(Collection<T> genes) {
             for (T gene: genes) {
