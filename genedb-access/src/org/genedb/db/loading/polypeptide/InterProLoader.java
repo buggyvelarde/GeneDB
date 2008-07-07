@@ -2,6 +2,7 @@ package org.genedb.db.loading.polypeptide;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,6 +47,12 @@ public class InterProLoader extends Loader {
     @Override
     public void doLoad(InputStream inputStream, Session session) throws IOException {
         loadInterProFile(new InterProFile(inputStream), session);
+        try {
+            DeleteRedundantGOTerms.deleteRedundantGOTerms(session);
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void loadInterProFile(InterProFile interProFile, Session session) {
