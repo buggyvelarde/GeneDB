@@ -204,7 +204,7 @@ public class ContextMapDiagram extends TrackedDiagram {
         while ((newStart = boundaries.first().getLocation()) < start) {
             Collection<BasicGene> moreGenes = basicGeneService.findGenesOverlappingRange(
                 organismName, chromosomeName, strand, newStart, start);
-            boundaries.addGenes(moreGenes);
+            boundaries.addFeatures(moreGenes);
             start = newStart;
         }
 

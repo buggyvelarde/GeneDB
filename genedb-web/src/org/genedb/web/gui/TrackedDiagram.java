@@ -105,9 +105,9 @@ public class TrackedDiagram {
     class BoundarySet<T extends CompoundLocatedFeature> extends TreeSet<Boundary<T>> {
         public BoundarySet (Collection<T> genes) {
             super();
-            addGenes(genes);
+            addFeatures(genes);
         }
-        public void addGenes(Collection<T> genes) {
+        public void addFeatures(Collection<T> genes) {
             for (T gene: genes) {
                 this.add(new Boundary<T>(Boundary.Type.START, gene));
                 this.add(new Boundary<T>(Boundary.Type.END,   gene));
