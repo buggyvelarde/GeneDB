@@ -252,7 +252,7 @@ class InterProAcc {
 
 /**
  * Represents an InterPro output file as a collection of {@link InterProRow}s
- * keyed by gene name and InterPro accession number.
+ * keyed by gene name (or mangled polypeptide name) and InterPro accession number.
  *
  * @author rh11
  */
