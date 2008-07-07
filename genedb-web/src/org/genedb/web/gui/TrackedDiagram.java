@@ -1,6 +1,7 @@
 package org.genedb.web.gui;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -292,7 +293,7 @@ public class TrackedDiagram {
      * @param gapSize the size of the required gap, >= 1
      * @return the index of the start of the first sufficiently-large gap
      */
-    protected static int findGap(Set<Integer> filled, int gapSize) {
+    protected static int findGap(BitSet filled, int gapSize) {
         /*
          * Irrelevant note:
          *
@@ -306,7 +307,7 @@ public class TrackedDiagram {
 
         int currentGapSize = 0;
         for (int i = 0;; i++) {
-            if (filled.contains(i))
+            if (filled.get(i))
                 currentGapSize = 0;
             else {
                 if (++currentGapSize == gapSize)
@@ -357,7 +358,7 @@ public class TrackedDiagram {
      */
     protected void allocateTracks(BoundarySet<? extends CompoundLocatedFeature> boundaries, boolean negativeHalf) {
         int numTracks = 0;
-        Set<Integer> activeTracks = new HashSet<Integer>();
+        BitSet activeTracks = new BitSet();
         Map<CompoundLocatedFeature, Integer> activeFeatures = new HashMap<CompoundLocatedFeature, Integer>();
         for (Boundary<? extends CompoundLocatedFeature> boundary : boundaries) {
             CompoundLocatedFeature feature = boundary.feature;
@@ -383,7 +384,7 @@ public class TrackedDiagram {
                 if (lastUsedTrack >= numTracks)
                     numTracks = lastUsedTrack + 1;
                 for (int i = track; i <= lastUsedTrack; i++)
-                    activeTracks.add(i);
+                    activeTracks.set(i);
                 activeFeatures.put(feature, track);
                 break;
             case END:
@@ -393,7 +394,7 @@ public class TrackedDiagram {
                 activeFeatures.remove(feature);
 
                 for (int i = track; i <= lastUsedTrack; i++)
-                    activeTracks.remove(i);
+                    activeTracks.clear(i);
                 break;
             default:
                 throw new IllegalStateException(
