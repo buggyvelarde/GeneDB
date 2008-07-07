@@ -128,7 +128,7 @@ public class InterProLoader extends Loader {
                     polypeptide.getUniqueName(), row.nativeAcc, n);
 
             PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(
-                domainUniqueName, polypeptide, row.score, row.desc, row.fmin, row.fmax, dbxref);
+                domainUniqueName, polypeptide, row.score, row.acc.getDescription(), row.fmin, row.fmax, dbxref);
 
             // link to Interpro dbxref if applicable
             if (interproDbxref != null) {

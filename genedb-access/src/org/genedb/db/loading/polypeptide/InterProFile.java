@@ -78,7 +78,7 @@ class DateFormatConverter {
 class InterProRow {
     private static final Logger logger = Logger.getLogger(InterProFile.class);
 
-    String key, nativeProg, db, nativeAcc, nativeDesc, score, desc;
+    String key, nativeProg, db, nativeAcc, nativeDesc, score;
     InterProAcc acc = InterProAcc.NULL;
     int fmin, fmax;
     private DateFormatConverter date;
