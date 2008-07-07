@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -300,7 +298,9 @@ public class TrackedDiagram {
          * This algorithm is linear-time and constant-space. I reckon it should
          * be possible to do better with a special-purpose data structure;
          * presumably there's a huge literature on this in the context of memory
-         * management / allocation.
+         * management / allocation. We could probably improve performance simply by
+         * using BitSet#nextClearBit(int). But we don't have a performance problem
+         * here, as far as I know.
          */
         if (gapSize < 1)
             throw new IllegalArgumentException(String.format("gapSize is %d, must be >=1", gapSize));
