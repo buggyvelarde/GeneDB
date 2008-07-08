@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,18 +25,12 @@ import org.biojava.bio.proteomics.IsoelectricPointCalc;
 import org.biojava.bio.proteomics.MassCalc;
 import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.Alphabet;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.SimpleSymbolList;
-import org.biojava.bio.symbol.Symbol;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
-import org.biojava.utils.SmallMap;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.web.utils.Grep;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
@@ -65,11 +58,6 @@ public class GeneDBWebUtils {
     private static SequenceDao sequenceDao;
     private static GeneralDao generalDao;
     private static CvDao cvDao;
-    private static Grep grep;
-
-    public void setGrep(Grep grep) {
-        this.grep = grep;
-    }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         GeneDBWebUtils.sequenceDao = sequenceDao;
@@ -96,9 +84,7 @@ public class GeneDBWebUtils {
      * @return a reference to <code>model</code>
      * @throws IOException
      */
-    public static Map<String, Object> prepareGene(String uniqueName, Map<String, Object> model)
-            throws IOException {
-        model = prepareArtemisHistory(uniqueName, model);
+    public static Map<String, Object> prepareGene(String uniqueName, Map<String, Object> model) {
         AbstractGene gene = sequenceDao.getFeatureByUniqueName(uniqueName, AbstractGene.class);
         return prepareGene(gene, model);
     }
@@ -120,9 +106,7 @@ public class GeneDBWebUtils {
         return prepareTranscript(firstTranscript, model);
     }
 
-    public static Map<String, Object> prepareTranscript(String uniqueName, Map<String, Object> model)
-            throws IOException {
-        model = prepareArtemisHistory(uniqueName, model);
+    public static Map<String, Object> prepareTranscript(String uniqueName, Map<String, Object> model) {
         Transcript transcript = sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
         return prepareTranscript(transcript, model);
     }
@@ -239,13 +223,15 @@ public class GeneDBWebUtils {
             logger.warn("No residues for '" + polypeptide.getUniqueName() + "'");
             return null;
         }
-        SymbolList protein = null;
+        String residuesString = new String(polypeptide.getResidues());
+
+        SymbolList residuesSymbolList = null;
         PeptideProperties pp = new PeptideProperties();
         try {
             SymbolTokenization proteinTokenization = ProteinTools.getTAlphabet().getTokenization("token");
-            protein = new SimpleSymbolList(proteinTokenization, new String(polypeptide.getResidues()));
+            residuesSymbolList = new SimpleSymbolList(proteinTokenization, residuesString);
 
-            if (protein.length() == 0) {
+            if (residuesSymbolList.length() == 0) {
                 logger.error(String.format("Polypeptide feature '%s' has zero-length residues", polypeptide.getUniqueName()));
                 return pp;
             }
@@ -253,8 +239,8 @@ public class GeneDBWebUtils {
              try {
                 // if the seq ends with a * (termination) we need to
                 // remove the *
-                if (protein.symbolAt(protein.length()) == ProteinTools.ter())
-                    protein = protein.subList(1, protein.length() - 1);
+                if (residuesSymbolList.symbolAt(residuesSymbolList.length()) == ProteinTools.ter())
+                    residuesSymbolList = residuesSymbolList.subList(1, residuesSymbolList.length() - 1);
 
              } catch (IndexOutOfBoundsException exception) {
                  throw new RuntimeException(exception);
@@ -264,53 +250,28 @@ public class GeneDBWebUtils {
             return pp;
         }
 
-        pp.setAminoAcids(Integer.toString(protein.length()));
+        pp.setAminoAcids(Integer.toString(residuesSymbolList.length()));
 
         DecimalFormat twoDecimalPlaces = new DecimalFormat("#.##");
 
         try {
-            double isoElectricPoint = new IsoelectricPointCalc().getPI(protein, false, false);
+            double isoElectricPoint = new IsoelectricPointCalc().getPI(residuesSymbolList, false, false);
             pp.setIsoelectricPoint(twoDecimalPlaces.format(isoElectricPoint));
         } catch (Exception e) {
-            logger.error(String.format("Error computing protein isoelectric point for '%s'", protein), e);
+            logger.error(String.format("Error computing protein isoelectric point for '%s'", residuesSymbolList), e);
         }
 
         try {
-            double massInDaltons = MassCalc.getMass(protein, SymbolPropertyTable.AVG_MASS, true);
+            double massInDaltons = MassCalc.getMass(residuesSymbolList, SymbolPropertyTable.AVG_MASS, true);
             pp.setMass(twoDecimalPlaces.format(massInDaltons / 1000));
         } catch (Exception e) {
             logger.error("Error computing protein mass", e);
         }
 
-        double charge = getCharge(protein);
+        double charge = getCharge(residuesString);
         pp.setCharge(twoDecimalPlaces.format(charge));
-        return pp;
-    }
 
-    /**
-     * Grep all references to the given id from a logfile, and remove usernames
-     * etc and verbose info
-     *
-     * @param systematicId the genename
-     * @param model the model returned to the view
-     * @throws IOException if the log file can't be read
-     */
-    private static Map<String, Object> prepareArtemisHistory(String systematicId,
-            Map<String, Object> model) throws IOException {
-        grep.compile("ID=" + systematicId);
-        List<String> out = grep.grep();
-        List<String> filtered = new ArrayList<String>(out.size());
-        for (String s : out) {
-            s = s.trim();
-            s = s.replace("uk.ac.sanger.artemis.chado.ChadoTransactionManager", "");
-            s = s.replace("[AWT-EventQueue-0]", "");
-            s = s.replaceAll("\\d+\\.\\d+\\.\\d+\\.\\d+\\s+\\d+", "");
-            s = s.replaceAll("\\S+@\\S+", "uname");
-            s = "&nbsp;&nbsp;&nbsp;" + s;
-            filtered.add(s);
-        }
-        model.put("modified", filtered);
-        return model;
+        return pp;
     }
 
     public static boolean extractTaxonNodesFromRequest(HttpServletRequest request,
@@ -475,67 +436,23 @@ public class GeneDBWebUtils {
         return temp.size();
     }
 
-    // TODO Remove me once charge is stored by mining code
-    public static double getCharge(SymbolList aaSymList) {
-        @SuppressWarnings("unchecked")
-        Map<Symbol, Double> chargeFor = new SmallMap();
+    /**
+     * Calculate the charge of a polypeptide.
+     *
+     * @param residues a string representing the polypeptide residues, using the single-character code
+     * @return the charge of this polypeptide
+     */
+    public static double getCharge(String residues) {
         double charge = 0.0;
-
-        try {
-            Alphabet aa = ProteinTools.getAlphabet();
-            SymbolTokenization aaToken = aa.getTokenization("token");
-
-            // A,C,F,G,I,L,M,N,P,Q,S,T,U,V,W,X,Y are all zero
-            chargeFor.put(aaToken.parseToken("B"), -0.5);
-            chargeFor.put(aaToken.parseToken("D"), -1.0);
-            chargeFor.put(aaToken.parseToken("E"), -1.0);
-            chargeFor.put(aaToken.parseToken("H"), 0.5);
-            chargeFor.put(aaToken.parseToken("K"), 1.0);
-            chargeFor.put(aaToken.parseToken("R"), 1.0);
-            chargeFor.put(aaToken.parseToken("Z"), -0.5);
-        } catch (IllegalSymbolException e) {
-            logger.error(e);
-            throw new RuntimeException("Unexpected biojava error - illegal symbol");
-        } catch (BioException e) {
-            logger.error(e);
-            throw new RuntimeException("Unexpected biojava error - general");
-        }
-
-        @SuppressWarnings("unchecked")
-        Map<Symbol, Integer> counts = residueCount(aaSymList, chargeFor);
-
-        // iterate thru' all counts computing the partial contribution to charge
-        for (Map.Entry<Symbol, Integer> e : counts.entrySet()) {
-            Symbol sym = e.getKey();
-            int count = e.getValue();
-            double symbolsCharge = chargeFor.get(sym);
-
-            charge += (symbolsCharge * count);
-        }
-        return charge;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Map residueCount(SymbolList aaSymList, Map chargeFor) {
-        // iterate thru' aaSymList collating number of relevant residues
-        Iterator residues = aaSymList.iterator();
-
-        Map symbolCounts = new SmallMap();
-
-        while (residues.hasNext()) {
-            Symbol sym = (Symbol) residues.next();
-
-            if (chargeFor.containsKey(sym)) {
-                Integer currCount = (Integer) symbolCounts.get(sym);
-
-                if (currCount != null) {
-                    currCount = currCount + 1;
-                } else {
-                    symbolCounts.put(sym, new Integer(1));
-                }
+        for (char aminoAcid: residues.toCharArray()) {
+            switch (aminoAcid) {
+            case 'B': case 'Z': charge += -0.5; break;
+            case 'D': case 'E': charge += -1.0; break;
+            case 'H':           charge +=  0.5; break;
+            case 'K': case 'R': charge +=  1.0; break;
             }
         }
-        return symbolCounts;
+        return charge;
     }
 
     public void setCvDao(CvDao cvDao) {
