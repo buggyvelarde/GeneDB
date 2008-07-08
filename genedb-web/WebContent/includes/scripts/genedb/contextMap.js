@@ -120,7 +120,7 @@ function handleKeyDown(event) {
     case 10: case 13:
         if (selectedTranscript != null && $("#contextMapInfoPanel").is(":visible")
         && selectedTranscript[0] != loadedTranscriptName)
-            reloadDetails(selectedTranscript[0]);
+            $.historyLoad(selectedTranscript[0]);
         return false;
     }
 
