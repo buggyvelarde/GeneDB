@@ -218,7 +218,7 @@ public class TrackedDiagram {
      * @param feature the feature to add
      * @param track the track number
      */
-    protected void addFeature(CompoundLocatedFeature feature, int track) {
+    private void addFeature(CompoundLocatedFeature feature, int track) {
         allocatedCompoundFeatures.add(new AllocatedCompoundFeature(feature, track));
 
         int numberOfSubfeatures = feature.getSubfeatures().size();
@@ -291,7 +291,7 @@ public class TrackedDiagram {
      * @param gapSize the size of the required gap, >= 1
      * @return the index of the start of the first sufficiently-large gap
      */
-    protected static int findGap(BitSet filled, int gapSize) {
+    private static int findGap(BitSet filled, int gapSize) {
         /*
          * Irrelevant note:
          *
