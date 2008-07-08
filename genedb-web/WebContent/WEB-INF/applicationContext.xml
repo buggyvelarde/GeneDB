@@ -86,10 +86,8 @@
     <property name="properties">
         <props>
             <prop key="hibernate.hbm2dll.auto">validate</prop>
-            <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop><!--
-            <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
-            <prop key="hibernate.search.default.indexBase">${lucene.indexDirectory}</prop>
-         --></props>
+            <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+        </props>
      </property>
     </bean>
 
@@ -97,98 +95,9 @@
         class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="hibernateProperties" ref="hibernateProperties" />
-        <!--  OR mapping files. -->
-        <property name="annotatedClasses">
+        <property name="annotatedPackages">
             <list>
-                 <!-- Analysis module -->
-                <value>org.gmod.schema.analysis.Analysis</value>
-                <value>org.gmod.schema.analysis.AnalysisFeature</value>
-                <value>org.gmod.schema.analysis.AnalysisProp</value>
-                <!-- CV module -->
-                <value>org.gmod.schema.cv.Cv</value>
-                <value>org.gmod.schema.cv.CvTerm</value>
-                <value>org.gmod.schema.cv.CvTermDbXRef</value>
-                <value>org.gmod.schema.cv.CvTermPath</value>
-                <value>org.gmod.schema.cv.CvTermProp</value>
-                <value>org.gmod.schema.cv.CvTermRelationship</value>
-                <value>org.gmod.schema.cv.CvTermSynonym</value>
-                <value>org.gmod.schema.cv.DbXRefProp</value>
-                <!-- General module -->
-                <value>org.gmod.schema.general.Db</value>
-                <value>org.gmod.schema.general.DbXRef</value>
-                <value>org.gmod.schema.general.Project</value>
-                <value>org.gmod.schema.general.Tableinfo</value>
-                <!-- Organism module -->
-                <value>org.gmod.schema.organism.Organism</value>
-                <value>org.gmod.schema.organism.OrganismDbXRef</value>
-                <value>org.gmod.schema.organism.OrganismProp</value>
-                <!-- Phylogeny module -->
-                <value>org.gmod.schema.phylogeny.Phylonode</value>
-                <value>org.gmod.schema.phylogeny.PhylonodeDbXRef</value>
-                <value>org.gmod.schema.phylogeny.PhylonodeOrganism</value>
-                <value>org.gmod.schema.phylogeny.PhylonodeProp</value>
-                <value>org.gmod.schema.phylogeny.PhylonodePub</value>
-                <value>org.gmod.schema.phylogeny.PhylonodeRelationship</value>
-                <value>org.gmod.schema.phylogeny.Phylotree</value>
-                <value>org.gmod.schema.phylogeny.PhylotreePub</value>
-                <!-- Pub module -->
-                <value>org.gmod.schema.pub.Pub</value>
-                <value>org.gmod.schema.pub.PubAuthor</value>
-                <value>org.gmod.schema.pub.PubDbXRef</value>
-                <value>org.gmod.schema.pub.PubProp</value>
-                <value>org.gmod.schema.pub.PubRelationship</value>
-                <!-- Sequence module -->
-                <value>org.gmod.schema.sequence.Feature</value>
-                <value>org.gmod.schema.sequence.FeatureCvTerm</value>
-                <value>org.gmod.schema.sequence.FeatureCvTermDbXRef</value>
-                <value>org.gmod.schema.sequence.FeatureCvTermProp</value>
-                <value>org.gmod.schema.sequence.FeatureCvTermPub</value>
-                <value>org.gmod.schema.sequence.FeatureDbXRef</value>
-                <value>org.gmod.schema.sequence.FeatureLoc</value>
-                <value>org.gmod.schema.sequence.FeatureLocPub</value>
-                <value>org.gmod.schema.sequence.FeatureProp</value>
-                <value>org.gmod.schema.sequence.FeaturePropPub</value>
-                <value>org.gmod.schema.sequence.FeaturePub</value>
-                <value>org.gmod.schema.sequence.FeatureRelationship</value>
-                <value>org.gmod.schema.sequence.FeatureRelationshipProp</value>
-                <value>org.gmod.schema.sequence.FeatureRelationshipPropPub</value>
-                <value>org.gmod.schema.sequence.FeatureRelationshipPub</value>
-                <value>org.gmod.schema.sequence.FeatureSynonym</value>
-                <value>org.gmod.schema.sequence.Synonym</value>
-                <!-- Sequence features -->
-                <value>org.gmod.schema.sequence.feature.AbstractExon</value>
-                <value>org.gmod.schema.sequence.feature.AbstractGene</value>
-                <value>org.gmod.schema.sequence.feature.ApicoplastChromosome</value>
-                <value>org.gmod.schema.sequence.feature.Centromere</value>
-                <value>org.gmod.schema.sequence.feature.Chromosome</value>
-                <value>org.gmod.schema.sequence.feature.Contig</value>
-                <value>org.gmod.schema.sequence.feature.Exon</value>
-                <value>org.gmod.schema.sequence.feature.FivePrimeUTR</value>
-                <value>org.gmod.schema.sequence.feature.Gap</value>
-                <value>org.gmod.schema.sequence.feature.Gene</value>
-                <value>org.gmod.schema.sequence.feature.Intron</value>
-                <value>org.gmod.schema.sequence.feature.LinearDoubleStrandedDNAChromosome</value>
-                <value>org.gmod.schema.sequence.feature.MRNA</value>
-                <value>org.gmod.schema.sequence.feature.Match</value>
-                <value>org.gmod.schema.sequence.feature.MitochondrialChromosome</value>
-                <value>org.gmod.schema.sequence.feature.Polypeptide</value>
-                <value>org.gmod.schema.sequence.feature.PolypeptideDomain</value>
-                <value>org.gmod.schema.sequence.feature.PolypeptideMotif</value>
-                <value>org.gmod.schema.sequence.feature.ProductiveTranscript</value>
-                <value>org.gmod.schema.sequence.feature.ProteinMatch</value>
-                <value>org.gmod.schema.sequence.feature.Pseudogene</value>
-                <value>org.gmod.schema.sequence.feature.PseudogenicExon</value>
-                <value>org.gmod.schema.sequence.feature.PseudogenicTranscript</value>
-                <value>org.gmod.schema.sequence.feature.RRNA</value>
-                <value>org.gmod.schema.sequence.feature.RepeatRegion</value>
-                <value>org.gmod.schema.sequence.feature.Region</value>
-                <value>org.gmod.schema.sequence.feature.SignalPeptide</value>
-                <value>org.gmod.schema.sequence.feature.SnRNA</value>
-                <value>org.gmod.schema.sequence.feature.TRNA</value>
-                <value>org.gmod.schema.sequence.feature.ThreePrimeUTR</value>
-                <value>org.gmod.schema.sequence.feature.Transcript</value>
-                <value>org.gmod.schema.sequence.feature.TransmembraneRegion</value>
-                <value>org.gmod.schema.sequence.feature.UTR</value>
+                <value>org.gmod.schema</value>
             </list>
         </property>
     </bean>
