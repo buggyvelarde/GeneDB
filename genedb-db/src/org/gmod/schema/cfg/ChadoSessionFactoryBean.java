@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -81,6 +82,7 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
         ClassPathScanningCandidateComponentProvider scanner =
             new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter( new AnnotationTypeFilter(Entity.class) );
+        scanner.addIncludeFilter( new AnnotationTypeFilter(MappedSuperclass.class) );
 
         List<Class<?>> foundClasses = new ArrayList<Class<?>>();
         for (BeanDefinition bd : scanner.findCandidateComponents(packageName)) {
