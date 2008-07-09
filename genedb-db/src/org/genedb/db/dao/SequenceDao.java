@@ -184,9 +184,9 @@ public class SequenceDao extends BaseDao {
         List<Feature> features = getHibernateTemplate()
                 .findByNamedParam(
                         "select feature"
-                        +" from FeatureCvTerm"
-                        +" where feature.organism.commonName in ("+orgs+")"
-                        +" and cvTerm.cv.name=:cvName and cvTerm.name=:cvTermName",
+                        +" from FeatureCvTerm fct"
+                        +" where fct.feature.organism.commonName in ("+orgs+")"
+                        +" and fct.cvTerm.cv.name=:cvName and fct.cvTerm.name=:cvTermName",
                         new String[] { "cvName", "cvTermName" },
                         new Object[] { cvName, cvTermName });
         return features;
@@ -200,9 +200,9 @@ public class SequenceDao extends BaseDao {
         List<Feature> features = getHibernateTemplate()
                 .findByNamedParam(
                     "select feature"
-                    +" from FeatureCvTerm"
-                    +" where feature.organism.commonName in ("+orgs+")"
-                    +" and cvTerm.cv.name like :cvNamePattern and cvTerm.name=:cvTermName",
+                    +" from FeatureCvTerm fct"
+                    +" where fct.feature.organism.commonName in ("+orgs+")"
+                    +" and fct.cvTerm.cv.name like :cvNamePattern and fct.cvTerm.name=:cvTermName",
                     new String[] { "cvNamePattern", "cvTermName" }, new Object[] { cvNamePattern, cvTermName });
         return features;
     }
