@@ -9,4 +9,4 @@ import javax.persistence.Entity;
  *
  */
 @Entity
-public abstract class AbstractExon extends TranscriptComponent { }
+public abstract class AbstractExon extends TranscriptRegion { }

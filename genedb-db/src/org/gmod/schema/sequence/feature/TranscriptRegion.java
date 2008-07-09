@@ -3,11 +3,17 @@ package org.gmod.schema.sequence.feature;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureLoc;
 
+/**
+ * SO:0000833, but we don't use it directly, which is why it's an
+ * abstract class.
+ *
+ * @author rh11
+ */
 @Entity
-public abstract class TranscriptComponent extends Feature  implements Comparable<TranscriptComponent> {
+public abstract class TranscriptRegion extends Region
+    implements Comparable<TranscriptRegion> {
 
     @Transient
     private boolean locLoaded = false;
@@ -55,7 +61,7 @@ public abstract class TranscriptComponent extends Feature  implements Comparable
             return (fmin+1) + "-" + fmax;
     }
 
-    public int compareTo(TranscriptComponent other) {
+    public int compareTo(TranscriptRegion other) {
         this.loadLoc();
         other.loadLoc();
 

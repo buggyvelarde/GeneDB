@@ -8,4 +8,4 @@ import org.gmod.schema.sequence.Feature;
 @SuppressWarnings("serial")
 @Entity
 @FeatureType(cv="sequence", term="polypeptide_motif")
-public class PolypeptideMotif extends Feature { }
+public class PolypeptideMotif extends PolypeptideDomain { }

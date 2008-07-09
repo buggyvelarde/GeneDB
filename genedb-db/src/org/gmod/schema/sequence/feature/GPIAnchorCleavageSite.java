@@ -14,6 +14,7 @@ import org.gmod.schema.organism.Organism;
 @Entity
 @FeatureType(cv="genedb_feature_type", term="GPI_anchor_cleavage_site")
 public class GPIAnchorCleavageSite extends PolypeptideRegion {
+    public GPIAnchorCleavageSite() {}
     public GPIAnchorCleavageSite(Organism organism, CvTerm cvTerm, String uniqueName) {
         super(organism, cvTerm, uniqueName, true /*analysis*/, false /*obsolete*/);
     }

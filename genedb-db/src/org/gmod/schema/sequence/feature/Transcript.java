@@ -15,7 +15,7 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
 
 @Entity
-public abstract class Transcript extends Feature {
+public abstract class Transcript extends Region {
 
     private static Logger logger = Logger.getLogger(Transcript.class);
     @Transient
@@ -77,12 +77,12 @@ public abstract class Transcript extends Feature {
     }
 
     @Transient
-    public Collection<TranscriptComponent> getComponents() {
-        return getComponents(TranscriptComponent.class);
+    public Collection<TranscriptRegion> getComponents() {
+        return getComponents(TranscriptRegion.class);
     }
 
     @Transient
-    public <T extends TranscriptComponent> SortedSet<T> getComponents(Class<T> clazz) {
+    public <T extends TranscriptRegion> SortedSet<T> getComponents(Class<T> clazz) {
         SortedSet<T> components = new TreeSet<T>();
 
         for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
@@ -112,7 +112,7 @@ public abstract class Transcript extends Feature {
         StringBuilder locs = new StringBuilder();
 
         boolean first = true;
-        for (TranscriptComponent component : getComponents(TranscriptComponent.class)) {
+        for (TranscriptRegion component : getComponents(TranscriptRegion.class)) {
             if (first)
                 first = false;
             else

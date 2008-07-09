@@ -7,4 +7,4 @@ import org.gmod.schema.sequence.Feature;
 
 @Entity
 @FeatureType(cv="sequence", term="intron")
-public class Intron extends Feature { }
+public class Intron extends TranscriptRegion { }

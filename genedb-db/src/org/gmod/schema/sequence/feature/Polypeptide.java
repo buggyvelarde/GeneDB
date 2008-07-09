@@ -19,7 +19,7 @@ import org.gmod.schema.sequence.FeatureRelationship;
 
 @Entity
 @FeatureType(cv="sequence", term="polypeptide")
-public class Polypeptide extends Feature {
+public class Polypeptide extends Region {
     private static Logger logger = Logger.getLogger(Polypeptide.class);
     @Transient
     private Transcript transcript = null;

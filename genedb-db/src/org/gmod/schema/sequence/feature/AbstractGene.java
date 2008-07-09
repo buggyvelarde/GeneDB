@@ -16,7 +16,7 @@ import org.gmod.schema.sequence.FeatureRelationship;
  *
  */
 @Entity
-public abstract class AbstractGene extends Feature {
+public abstract class AbstractGene extends Region {
     @Transient
     public Collection<Transcript> getTranscripts() {
         Collection<Transcript> ret = new ArrayList<Transcript>();
@@ -37,8 +37,13 @@ public abstract class AbstractGene extends Feature {
     public boolean isPseudo() {
         return (this instanceof Pseudogene);
     }
-    
-    @Transient
+
+    /**
+     * Rather than returning the residues stored in the database,
+     * this method extracts the appropriate subsequence of the
+     * residues of the source feature (chromosome or contig).
+     */
+    @Transient @Override
     public byte[] getResidues() {
         byte[] sequence = null;
         Feature parent = this.getRankZeroFeatureLoc().getFeatureBySrcFeatureId();

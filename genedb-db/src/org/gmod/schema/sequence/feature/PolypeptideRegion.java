@@ -5,9 +5,8 @@ import java.util.Date;
 
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.organism.Organism;
-import org.gmod.schema.sequence.Feature;
 
-public class PolypeptideRegion extends Feature {
+public class PolypeptideRegion extends Region {
 
     public PolypeptideRegion() {}
 

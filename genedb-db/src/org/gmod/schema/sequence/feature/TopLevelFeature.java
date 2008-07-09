@@ -2,7 +2,10 @@ package org.gmod.schema.sequence.feature;
 
 import javax.persistence.Entity;
 
-import org.gmod.schema.sequence.Feature;
-
+/**
+ * A chromosome or contig.
+ *
+ * @author rh11
+ */
 @Entity
-public abstract class TopLevelFeature extends Feature { }
+public abstract class TopLevelFeature extends Region { }
