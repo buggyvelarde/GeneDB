@@ -254,39 +254,6 @@ public class SequenceDao extends BaseDao {
         return features;
     }
 
-    /**
-     * Return all the FeatureDbXRefs for a given feature, <b>specified by name</b>, or all if
-     * <code>null</code> is passed
-     *
-     * @param uniqueName the uniquename of a Feature, or null for all FeatureDbXRefs
-     * @return a (possibly empty) List<FeatureDbXRefI>
-     */
-    @SuppressWarnings("unchecked")
-    public List<FeatureDbXRef> getFeatureDbXRefsByFeatureUniquename(String uniqueName) {
-        if (uniqueName == null) {
-            return getHibernateTemplate().find("select from FeatureDbXRef");
-        }
-        return getHibernateTemplate().findByNamedParam(
-                "from FeatureDbXRef fdxr where fdxr.feature.uniqueName=:uniqueName",
-                new String[] { "uniqueName" }, new Object[] { uniqueName });
-    }
-
-    /**
-     * Return the list of FeatureSynonyms for a given Feature, <b>specified by name</b>, or all if
-     * <code>null</code> is passed
-     *
-     * @param uniqueName the uniquename of a Feature, or null for all
-     * @return a (possibly empty) List<FeatureSynonymI> of matching synonyms
-     */
-    @SuppressWarnings("unchecked")
-    public List<FeatureSynonym> getFeatureSynonymsByFeatureUniquename(String uniqueName) {
-        if (uniqueName == null) {
-            return getHibernateTemplate().find("select from FeatureSynonym");
-        }
-        return getHibernateTemplate().findByNamedParam(
-                "from FeatureSynonym fs where fs.feature.uniqueName=:uniqueName",
-                new String[] { "uniqueName" }, new Object[] { uniqueName });
-    }
 
     /*
      * Deleted doc comment that was obviously wrong. - rh11
