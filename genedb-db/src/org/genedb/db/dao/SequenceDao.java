@@ -186,7 +186,7 @@ public class SequenceDao extends BaseDao {
                                 + " from CvTerm cvt,FeatureCvTerm fct,Feature f "
                                 + "where f.organism.commonName in ("
                                 + orgs
-                                + ") and f=fct.feature and cvt=fct.cvTerm and cvt.cv.name=:cvName and cvt.name=:cvTermName",
+                                + ") and f=fct.feature and cvt=fct.cvTerm and cvt.cv.name like :cvName and cvt.name=:cvTermName",
                         new String[] { "cvName", "cvTermName" },
                         new Object[] { cvName, cvTermName });
     }

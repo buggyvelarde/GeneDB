@@ -16,7 +16,7 @@
 		    	<tr>
 		      		<td>Organisms:</td>
 		      		<td>
-			      		<select name="org">
+			      		<select name="organism">
 			      			<option value="Plasmodium">Plasmodium</option>
 			      			<option value="Pfalciparum">Pfalciparum</option>
 			      			<option value="Pberghei">Pberghei</option>
