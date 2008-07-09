@@ -26,6 +26,11 @@ import org.hibernate.stat.Statistics;
  * that session. This makes it possible to have filters that are enabled by
  * default. Currently only unparameterised filters are supported: there is no
  * way to set filter parameters.
+ * <p>
+ * Although this class could be used on its own, it's currently used only
+ * by the Spring class {@link ChadoSessionFactoryBean}, which wraps the
+ * session factory it returns in a <code>FilteringSessionFactory</code>,
+ * configured with whatever default filters were defined in the configuration.
  *
  * @author rh11
  *
@@ -36,12 +41,17 @@ public class FilteringSessionFactory implements SessionFactory {
     private SessionFactory underlyingSessionFactory;
     private Set<String> filters = new HashSet<String>();
 
+    /**
+     * Create a new <code>FilteringSessionFactory</code> that wraps
+     * the supplied underlying session factory.
+     * @param underlyingSessionFactory the session factory to wrap
+     */
     public FilteringSessionFactory(SessionFactory underlyingSessionFactory) {
         this.underlyingSessionFactory = underlyingSessionFactory;
     }
     /**
      * Add a filter to the list of filters that are enabled by default.
-     * @param filterName the name of the filter
+     * @param filterName the name of the filter to add
      */
     public void addFilter(String filterName) {
         filters.add(filterName);
