@@ -255,7 +255,7 @@ public class SearchController extends MultiActionController implements Initializ
     public ModelAndView Products(@SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         Map<String, Object> model = new HashMap<String, Object>(1);
         String viewName = listProductsView;
-        List<CountedName> products = sequenceDao.getAllProductsWithCount();
+        List<CountedName> products = sequenceDao.getProducts();
         model.put("products", products);
         return new ModelAndView(viewName, model);
     }
