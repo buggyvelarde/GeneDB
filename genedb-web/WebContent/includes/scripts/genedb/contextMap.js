@@ -87,14 +87,14 @@ function handleKeyDown(event) {
         if (!selectedArea) return true;
         var nextArea = selectedArea.previousSibling;
         if (nextArea != null && nextArea.transcript) {
-            selectTranscript(nextArea, nextArea.transcript);
+            selectTranscript(nextArea);
             showDetailsOfSelectedTranscript();
             break;
         }
         for (var i=0; i < selectedArea.copies.length; i++) {
             nextArea = selectedArea.copies[i].previousSibling;
             if (nextArea != null && nextArea.transcript) {
-                selectTranscript(nextArea, nextArea.transcript);
+                selectTranscript(nextArea);
                 showDetailsOfSelectedTranscript();
                 break;
             }
@@ -104,14 +104,14 @@ function handleKeyDown(event) {
         if (!selectedArea) return true;
         var nextArea = selectedArea.nextSibling;
         if (nextArea != null) {
-            selectTranscript(nextArea, nextArea.transcript);
+            selectTranscript(nextArea);
             showDetailsOfSelectedTranscript();
             break;
         }
         for (var i=0; i < selectedArea.copies.length; i++) {
             nextArea = selectedArea.copies[i].nextSibling;
             if (nextArea != null) {
-                selectTranscript(nextArea, nextArea.transcript);
+                selectTranscript(nextArea);
                 showDetailsOfSelectedTranscript();
                 break;
             }
@@ -263,6 +263,7 @@ function loadFeatures (tileData, features) {
 
 }
 
+var areasByTranscriptName = new Array();
 function reloadDetails(name) {
     if (loading) return;
     if (name == null || name == "") {
@@ -284,6 +285,7 @@ function reloadDetails(name) {
         $("#geneDetails").stop().fadeTo("fast", 1);
         $("#geneDetailsLoading").hide();
         loading = false;
+        selectTranscript(areasByTranscriptName[name]);
     });
 }
 
@@ -298,6 +300,8 @@ function createArea(transcript, topPx, heightPx) {
     area.style.width = transcript[5] + "px";
     area.style.top = topPx + "px";
     area.style.height = heightPx + "px";
+
+    areasByTranscriptName[transcript[0]] = area;
 
     if (transcript[3] != 0) {
         // Really a transcript
@@ -352,6 +356,9 @@ function computedStyle(element, style)
 }
 
 function selectTranscript(area, transcript) {
+    if (transcript == null)
+        transcript = area.transcript;
+
     selectedTranscript = transcript;
 
     selectedArea = null;
