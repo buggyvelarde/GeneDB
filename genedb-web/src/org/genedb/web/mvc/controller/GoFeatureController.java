@@ -1,15 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.OrganismDao;
-import org.genedb.db.dao.SequenceDao;
-
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
-
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.apache.log4j.Logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,14 +8,20 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+import org.genedb.db.dao.SequenceDao;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.sequence.Feature;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.SimpleFormController;
+
 public class GoFeatureController extends SimpleFormController{
-	
-	private static final Logger logger = Logger.getLogger(GoFeatureController.class);
+
+    private static final Logger logger = Logger.getLogger(GoFeatureController.class);
     private String listResultsView;
     private String formInputView;
     private SequenceDao sequenceDao;
-    private OrganismDao organismDao;
-  	
+
     @Override
     @SuppressWarnings("unused")
     protected boolean isFormSubmission(HttpServletRequest request) {
@@ -50,16 +46,13 @@ public class GoFeatureController extends SimpleFormController{
         }
         List<List<?>> data;
         List<Feature> results;
-        List<Feature> features;
         String goName = new String();
-        List<FeatureLoc> featlocs = new ArrayList<FeatureLoc>();
         data = sequenceDao.getFeatureByGO(gl.getLookup());
         results = (List<Feature>) data.get(0);
-        features = (List<Feature>) data.get(1);
         if(data.get(2).size() != 0) {
             goName = ((CvTerm)data.get(2).get(0)).getName();
         }
-        
+
         if (results.size()== 0 ) {
             logger.info("result is null");
             List <String> err = new ArrayList <String> ();
@@ -77,16 +70,11 @@ public class GoFeatureController extends SimpleFormController{
         model.put("termName", goName);
         model.put("goNumber", gl.getLookup());
         File tmpDir = new File(getServletContext().getRealPath("/GViewer/data"));
-        String length = GeneDBWebUtils.buildGViewerXMLFiles(results, tmpDir);
+        String length = webUtils.buildGViewerXMLFiles(results, tmpDir);
         model.put("length", length);
-        
-        
+
+
         return new ModelAndView(viewName,model);
-    }
-
-
-    public void setOrganismDao(OrganismDao organismDao) {
-        this.organismDao = organismDao;
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
@@ -108,4 +96,10 @@ public class GoFeatureController extends SimpleFormController{
     public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;
     }
+
+    private GeneDBWebUtils webUtils;
+    public void setWebUtils(GeneDBWebUtils webUtils) {
+        this.webUtils = webUtils;
+    }
+
 }

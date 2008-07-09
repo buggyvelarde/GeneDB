@@ -19,35 +19,30 @@
 
 package org.genedb.web.mvc.controller;
 
-
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import javax.servlet.http.HttpServletRequest;
 
-
-
 /**
- * This is a very simple extension to the Spring SimpleFormController 
- * which considers a form submission to have happened if the request is a 
- * POST, or if there are any parameters supplied
- * 
+ * This is a very simple extension to the Spring SimpleFormController which
+ * considers a form submission to have happened if the request is a POST, or if
+ * there are any parameters supplied
+ *
  * @author Adrian Tivey (art)
  */
-public class PostOrGetFormController extends SimpleFormController {
+public abstract class PostOrGetFormController extends SimpleFormController {
 
-  	
-	/**
+    /**
      * Behaves as superclass except a GET request with parameters is also
-     * considered a form submission. This makes hyperlinking to the controller easier
-     * 
-	 * @see org.springframework.web.servlet.mvc.AbstractFormController#isFormSubmission(javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
+     * considered a form submission. This makes hyperlinking to the controller
+     * easier
+     *
+     * @see org.springframework.web.servlet.mvc.AbstractFormController#isFormSubmission(javax.servlet.http.HttpServletRequest)
+     */
+    @Override
     protected boolean isFormSubmission(HttpServletRequest request) {
         boolean sup = super.isFormSubmission(request);
         return sup ? true : (request.getParameterMap().size() > 0);
     }
- 
+
 }
-    
- 

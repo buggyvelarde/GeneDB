@@ -40,7 +40,6 @@ import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.sequence.feature.PolypeptideDomain;
 import org.gmod.schema.sequence.feature.ProductiveTranscript;
 import org.gmod.schema.sequence.feature.Transcript;
-import org.gmod.schema.utils.GeneNameOrganism;
 import org.gmod.schema.utils.PeptideProperties;
 import org.hibernate.Hibernate;
 import org.jdom.Document;
@@ -55,15 +54,8 @@ import org.jdom.output.XMLOutputter;
 public class GeneDBWebUtils {
 
     private static final Logger logger = Logger.getLogger(GeneDBWebUtils.class);
-    private static SequenceDao sequenceDao;
-    private static GeneralDao generalDao;
-    private static CvDao cvDao;
 
-    public void setSequenceDao(SequenceDao sequenceDao) {
-        GeneDBWebUtils.sequenceDao = sequenceDao;
-    }
-
-    public static Map<String, Object> prepareFeature(Feature feature, Map<String, Object> model) {
+    public Map<String, Object> prepareFeature(Feature feature, Map<String, Object> model) {
         if (feature instanceof AbstractGene)
             return prepareGene((AbstractGene) feature, model);
         else if (feature instanceof Transcript)
@@ -84,12 +76,12 @@ public class GeneDBWebUtils {
      * @return a reference to <code>model</code>
      * @throws IOException
      */
-    public static Map<String, Object> prepareGene(String uniqueName, Map<String, Object> model) {
+    public Map<String, Object> prepareGene(String uniqueName, Map<String, Object> model) {
         AbstractGene gene = sequenceDao.getFeatureByUniqueName(uniqueName, AbstractGene.class);
         return prepareGene(gene, model);
     }
 
-    public static Map<String, Object> prepareGene(AbstractGene gene, Map<String, Object> model) {
+    public Map<String, Object> prepareGene(AbstractGene gene, Map<String, Object> model) {
         model.put("gene", gene);
 
         Collection<Transcript> transcripts = gene.getTranscripts();
@@ -106,12 +98,12 @@ public class GeneDBWebUtils {
         return prepareTranscript(firstTranscript, model);
     }
 
-    public static Map<String, Object> prepareTranscript(String uniqueName, Map<String, Object> model) {
+    public Map<String, Object> prepareTranscript(String uniqueName, Map<String, Object> model) {
         Transcript transcript = sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
         return prepareTranscript(transcript, model);
     }
 
-    public static Map<String,Object> prepareTranscript(Transcript transcript, Map<String,Object> model) {
+    public Map<String,Object> prepareTranscript(Transcript transcript, Map<String,Object> model) {
 
         if (!model.containsKey("gene"))
             model.put("gene", transcript.getGene());
@@ -153,7 +145,7 @@ public class GeneDBWebUtils {
      * How to order the hits within each subsection.
      * Here we order them by database and accession ID.
      */
-    private static Comparator<Map<String, Object>> hitComparator
+    private static final Comparator<Map<String, Object>> hitComparator
         = new Comparator<Map<String, Object>> ()
     {
         public int compare(Map<String, Object> a, Map<String, Object> b) {
@@ -165,7 +157,7 @@ public class GeneDBWebUtils {
             return aDbXRef.getAccession().compareTo(bDbXRef.getAccession());
         }
     };
-    private static List<Map<String,Object>> prepareDomainInformation(Polypeptide polypeptide) {
+    private List<Map<String,Object>> prepareDomainInformation(Polypeptide polypeptide) {
         Map<DbXRef, Set<Map<String, Object>>> detailsByInterProHit
             = new HashMap<DbXRef, Set<Map<String, Object>>>();
         Set<Map<String, Object>> otherMatches = new HashSet<Map<String, Object>> ();
@@ -218,7 +210,7 @@ public class GeneDBWebUtils {
         return domainInformation;
     }
 
-    private static PeptideProperties calculatePepstats(Feature polypeptide) {
+    private PeptideProperties calculatePepstats(Feature polypeptide) {
         if (polypeptide.getResidues() == null) {
             logger.warn("No residues for '" + polypeptide.getUniqueName() + "'");
             return null;
@@ -268,7 +260,7 @@ public class GeneDBWebUtils {
             logger.error("Error computing protein mass", e);
         }
 
-        double charge = getCharge(residuesString);
+        double charge = calculateCharge(residuesString);
         pp.setCharge(twoDecimalPlaces.format(charge));
 
         return pp;
@@ -313,7 +305,7 @@ public class GeneDBWebUtils {
         return true;
     }
 
-    public static void buildErrorMsg(HttpServletRequest request, String msg) {
+    private static void buildErrorMsg(HttpServletRequest request, String msg) {
         @SuppressWarnings("unchecked")
         List<String> stored = (List<String>) request.getAttribute(WebConstants.ERROR_MSG);
         if (stored == null) {
@@ -323,7 +315,7 @@ public class GeneDBWebUtils {
         request.setAttribute(WebConstants.ERROR_MSG, stored);
     }
 
-    public static String buildGViewerXMLFiles(List<Feature> displayFeatures, File tmpDir) {
+    public String buildGViewerXMLFiles(List<Feature> displayFeatures, File tmpDir) {
         List<Feature> topLevels = sequenceDao.getTopLevelFeatures();
         OutputStream out = null;
         try {
@@ -429,20 +421,13 @@ public class GeneDBWebUtils {
         return Integer.toString(length);
     }
 
-    public static int featureListSize(String cvTermName, String cvName) {
-        List<GeneNameOrganism> temp = sequenceDao.getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, cvName,null);
-        if (temp == null)
-            return 0;
-        return temp.size();
-    }
-
     /**
      * Calculate the charge of a polypeptide.
      *
      * @param residues a string representing the polypeptide residues, using the single-character code
-     * @return the charge of this polypeptide
+     * @return the charge of this polypeptide (in what units?)
      */
-    public static double getCharge(String residues) {
+    private double calculateCharge(String residues) {
         double charge = 0.0;
         for (char aminoAcid: residues.toCharArray()) {
             switch (aminoAcid) {
@@ -450,16 +435,31 @@ public class GeneDBWebUtils {
             case 'D': case 'E': charge += -1.0; break;
             case 'H':           charge +=  0.5; break;
             case 'K': case 'R': charge +=  1.0; break;
+            /*
+             * EMBOSS seems to think that 'O' (presumably Pyrrolysine)
+             * also contributes +1 to the charge. According to Wikipedia,
+             * this obscure amino acid is found only in methanogenic archaea,
+             * so it's unlikely to trouble us soon. Still, it can't hurt:
+             */
+            case 'O':           charge +=  1.0; break;
             }
         }
         return charge;
     }
 
+    private SequenceDao sequenceDao;
+    private GeneralDao generalDao;
+    private CvDao cvDao;
+
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
+
     public void setCvDao(CvDao cvDao) {
-        GeneDBWebUtils.cvDao = cvDao;
+        this.cvDao = cvDao;
     }
 
     public void setGeneralDao(GeneralDao generalDao) {
-        GeneDBWebUtils.generalDao = generalDao;
+        this.generalDao = generalDao;
     }
 }

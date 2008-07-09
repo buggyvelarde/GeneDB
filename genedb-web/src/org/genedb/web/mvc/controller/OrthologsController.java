@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  * Returns all features (orthologs) that belong to a particular cluster
- * 
+ *
  * @author Chinmay Patel (cp2)
  */
 
@@ -97,12 +97,17 @@ public class OrthologsController extends AbstractController {
             // TODO return to an error page displaying proper message
         case 1:
             String gene = orthologs.get(0).getUniqueName();
-            model = GeneDBWebUtils.prepareGene(gene, model);
+            model = webUtils.prepareGene(gene, model);
             viewName = genePage;
             break;
         default:
             model.put("results", orthologs);
         }
         return new ModelAndView(viewName, model);
+    }
+
+    private GeneDBWebUtils webUtils;
+    public void setWebUtils(GeneDBWebUtils webUtils) {
+        this.webUtils = webUtils;
     }
 }

@@ -167,6 +167,7 @@
             ref="searchControllerResolver" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="cvDao" ref="cvDao" />
+        <property name="webUtils" ref="GeneDBWebUtils"/>
     </bean>
 
     <bean id="HistoryController"
@@ -204,7 +205,7 @@
             value="org.genedb.web.mvc.controller.GoLookup" />
         <property name="commandName" value="goLookup" />
         <property name="sequenceDao" ref="sequenceDao" />
-        <property name="organismDao" ref="organismDao" />
+        <property name="webUtils" ref="GeneDBWebUtils"/>
         <property name="listResultsView" value="features/GO" />
         <property name="formInputView" value="err/goerr" />
         <property name="bindOnNewForm" value="true" />
@@ -266,6 +267,7 @@
             value="org.genedb.web.mvc.controller.NamedFeatureController$NameLookupBean" />
         <property name="luceneDao" ref="luceneDao" />
         <property name="sequenceDao" ref="sequenceDao" />
+        <property name="webUtils" ref="GeneDBWebUtils"/>
         <property name="listResultsView" value="list/features" />
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="features/gene" />
@@ -302,11 +304,13 @@
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="listResultsView" value="list/features" />
         <property name="genePage" value="features/gene" />
+        <property name="webUtils" ref="GeneDBWebUtils"/>
     </bean>
 
     <bean id="GenesByCvTermAndCvController"
         class="org.genedb.web.mvc.controller.GenesByCvTermAndCvController">
         <property name="sequenceDao" ref="sequenceDao" />
+        <property name="webUtils" ref="GeneDBWebUtils"/>
         <property name="listResultsView" value="list/features" />
         <property name="genePage" value="features/gene" />
     </bean>
@@ -386,6 +390,7 @@
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor"
             ref="taxonNodeArrayPropertyEditor" />
+        <property name="webUtils" ref="GeneDBWebUtils"/>
     </bean>
 
     <bean id="GeneDBWebUtils"

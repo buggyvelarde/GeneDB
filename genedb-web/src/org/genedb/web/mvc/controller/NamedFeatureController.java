@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Adrian Tivey (art)
  */
 public class NamedFeatureController extends TaxonNodeBindingFormController {
-    
+
     // TODO Far too gene-centric
     // TODO Use TaxonNode properly
     // TODO LuceneTemplate
@@ -62,7 +62,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private String listResultsView;
     private SequenceDao sequenceDao;
     private LuceneDao luceneDao;
-    private String geneView; 
+    private String geneView;
     private String geneDetailsView;
 
     private static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
@@ -91,7 +91,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
             if (feature != null) {
                 logger.info(String.format("Lucene did not find feature '%s'; we found it in the database", name));
-                model = GeneDBWebUtils.prepareFeature(feature, model);
+                model = webUtils.prepareFeature(feature, model);
                 viewName = geneView;
                 break;
             }
@@ -103,9 +103,9 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             Document doc = hits.doc(0);
             logger.debug(String.format("Lucene found feature '%s'", doc.get("uniqueName")));
             if ("gene".equals(doc.get("cvTerm.name")) || "pseudogene".equals(doc.get("cvTerm.name"))) {
-                GeneDBWebUtils.prepareGene(doc.get("uniqueName"), model);
+                webUtils.prepareGene(doc.get("uniqueName"), model);
             } else {
-                GeneDBWebUtils.prepareTranscript(doc.get("uniqueName"), model);
+                webUtils.prepareTranscript(doc.get("uniqueName"), model);
             }
             viewName = geneView;
             break;
@@ -203,6 +203,11 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         this.geneDetailsView = geneDetailsView;
     }
 
+    private GeneDBWebUtils webUtils;
+    public void setWebUtils(GeneDBWebUtils webUtils) {
+        this.webUtils = webUtils;
+    }
+
     public static class NameLookupBean {
 
         private String name; // The name to lookup, using * for wildcards
@@ -274,8 +279,5 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         public void setOrganism(TaxonNode[] organism) {
             this.organism = organism;
         }
-
     }
 }
-
-

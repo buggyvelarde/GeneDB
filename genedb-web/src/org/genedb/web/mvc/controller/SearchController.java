@@ -62,16 +62,7 @@ public class SearchController extends MultiActionController implements Initializ
         this.phylogenyDao = phylogenyDao;
     }
 
-/*    public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
-        this.viewChecker = viewChecker;
-    }
-*/
-    public void afterPropertiesSet() throws Exception {
-        // if (clinic == null) {
-        // throw new ApplicationContextException("Must set clinic bean property
-        // on " + getClass());
-        // }
-    }
+    public void afterPropertiesSet() {}
 
     // handlers
 
@@ -184,11 +175,6 @@ public class SearchController extends MultiActionController implements Initializ
             model.put("polyprop", pp);
         }
         return new ModelAndView(viewName, model);
-        /*
-         * try { PrintWriter out = response.getWriter(); out.write("feature name
-         * is " + feat.getUniqueName()); } catch (IOException e) { // TODO
-         * Auto-generated catch block e.printStackTrace(); } return null;
-         */
     }
 
     private PeptideProperties calculatePepstats(Feature polypeptide) {
@@ -269,20 +255,7 @@ public class SearchController extends MultiActionController implements Initializ
     public ModelAndView Products(@SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         Map<String, Object> model = new HashMap<String, Object>(1);
         String viewName = listProductsView;
-        /*
-         * HashMap hm = sequenceDao.getProducts();
-         *
-         * List<String> products = new ArrayList<String>(); List<String>
-         * numbers = new ArrayList<String>();
-         *
-         * int count = 0; Set mappings = hm.entrySet(); for (Iterator i =
-         * mappings.iterator(); i.hasNext();) { Map.Entry me =
-         * (Map.Entry)i.next(); Object product = me.getKey(); Object number =
-         * me.getValue(); products.add(count, product.toString());
-         * numbers.add(count,number.toString()); count++; }
-         * model.put("products", products); model.put("numbers", numbers);
-         */
-        List<CountedName> products = sequenceDao.getProducts();
+        List<CountedName> products = sequenceDao.getAllProductsWithCount();
         model.put("products", products);
         return new ModelAndView(viewName, model);
     }
@@ -291,10 +264,10 @@ public class SearchController extends MultiActionController implements Initializ
         String cvName = ServletRequestUtils
                 .getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
         String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", "*");
-        System.err.println("cvName=" + cvName + "   :   cvTermName=" + cvTermName);
+        System.err.printf("cvName=%s   :   cvTermName=%s\n", cvName, cvTermName);
         cvTermName = cvTermName.replace('*', '%');
         Cv cv = cvDao.getCvByName(cvName);
-        System.err.println("cv=" + cv);
+        System.err.printf("cv=%s\n", cv);
         List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(cvTermName, cv);
         String viewName = "db/listCvTerms";
         Map<String,Object> model = new HashMap<String,Object>();
@@ -305,8 +278,7 @@ public class SearchController extends MultiActionController implements Initializ
         } else {
             model.put("cvTerms", cvTerms);
         }
-        System.err
-                .println("viewName is '" + viewName + "' and cvTerms length is " + cvTerms.size());
+        System.err.printf("viewName is '%s' and cvTerms length is %d\n", viewName, cvTerms.size());
         return new ModelAndView(viewName, model);
     }
 
@@ -366,19 +338,6 @@ public class SearchController extends MultiActionController implements Initializ
         return new ModelAndView(viewName, model);
     }
 
-    // public ModelAndView PublicationById(HttpServletRequest request,
-    // HttpServletResponse response) {
-    // int id = ServletRequestUtils.getIntParameter(request, "id", -1);
-    // if (id == -1) {
-    //
-    // }
-    // Pub pub = pubHome.findById(id);
-    // Map model = new HashMap(3);
-    // model.put("pub", pub);
-    // return new ModelAndView("db/pub", model);
-    // }
-
-   // @SuppressWarnings("unchecked")
     public ModelAndView FeatureByCvTermNameAndCvName(HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) {
         String viewName = null;
@@ -460,12 +419,12 @@ public class SearchController extends MultiActionController implements Initializ
                 }
                 model.put("features", feats);
                 File tmpDir = new File(getServletContext().getRealPath("/GViewer/data"));
-                length = GeneDBWebUtils.buildGViewerXMLFiles(feats, tmpDir);
+                length = webUtils.buildGViewerXMLFiles(feats, tmpDir);
                 model.put("length", length);
             } else {
                 model.put("features", features);
                 File tmpDir = new File(getServletContext().getRealPath("/GViewer/data"));
-                length = GeneDBWebUtils.buildGViewerXMLFiles(features, tmpDir);
+                length = webUtils.buildGViewerXMLFiles(features, tmpDir);
                 model.put("length", length);
             }
             viewName = "list/features1";
@@ -514,7 +473,6 @@ public class SearchController extends MultiActionController implements Initializ
                 buildMenu(child, parentMenu);
             }
         }
-
     }
 
     private boolean isLeaf(Phylonode child) {
@@ -533,8 +491,8 @@ public class SearchController extends MultiActionController implements Initializ
         this.sequenceDao = sequenceDao;
     }
 
-    // public void setPubHome(PubHome pubHome) {
-    // this.pubHome = pubHome;
-    // }
-
+    private GeneDBWebUtils webUtils;
+    public void setWebUtils(GeneDBWebUtils webUtils) {
+        this.webUtils = webUtils;
+    }
 }

@@ -37,45 +37,44 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-
-
 /**
  * Looks up a feature by uniquename, and possibly synonyms
- * 
+ *
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
 public class BrowseTermController extends TaxonNodeBindingFormController {
-	
-	private static final Logger logger = Logger.getLogger(BrowseTermController.class);
-	private SequenceDao sequenceDao;
-	private String geneView;
 
-    @SuppressWarnings("unchecked")
-	@Override
-	protected Map referenceData(HttpServletRequest request) throws Exception {
-    	Map reference = new HashMap();
-    	reference.put("categories", BrowseCategory.values());
-    	return reference;
-	}
-	
+    private static final Logger logger = Logger.getLogger(BrowseTermController.class);
+    private SequenceDao sequenceDao;
+    private GeneDBWebUtils webUtils;
+    private String geneView;
+
     @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException be) throws Exception {
+    protected Map<?,?> referenceData(@SuppressWarnings("unused") HttpServletRequest request) throws Exception {
+        Map<String,Object> reference = new HashMap<String,Object>();
+        reference.put("categories", BrowseCategory.values());
+        return reference;
+    }
+
+    @Override
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
+            Object command, BindException be) throws Exception {
 
         BrowseTermBean btb = (BrowseTermBean) command;
         String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrganism());
         Map<String, Object> model = new HashMap<String, Object>();
-        
-        List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb.getCategory().toString(), btb.getTerm(), orgNames);
-        
+
+        List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(btb
+                .getCategory().toString(), btb.getTerm(), orgNames);
+
         if (results == null || results.size() == 0) {
             logger.info("result is null");
             be.reject("no.results");
             return showForm(request, response, be);
         }
-        
-        if(results.size() == 1) {
+
+        if (results.size() == 1) {
             AbstractGene gene;
             if (results.get(0) instanceof Polypeptide) {
                 Polypeptide polypeptide = (Polypeptide) results.get(0);
@@ -83,28 +82,28 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
             } else {
                 gene = (AbstractGene) results.get(0);
             }
-            GeneDBWebUtils.prepareGene(gene, model);
-            return new ModelAndView(geneView,model);
+            webUtils.prepareGene(gene, model);
+            return new ModelAndView(geneView, model);
         }
-        
+
         List<Feature> newResults = new ArrayList<Feature>(results.size());
         for (Feature feature : results) {
-			if (!GeneUtils.isPartOfGene(feature)) {
-				newResults.add(feature);
-			} else {
-				newResults.add(GeneUtils.getGeneFromPart(feature));
-			}
-		}
+            if (!GeneUtils.isPartOfGene(feature)) {
+                newResults.add(feature);
+            } else {
+                newResults.add(GeneUtils.getGeneFromPart(feature));
+            }
+        }
 
         model.put("results", newResults);
         model.put("controllerPath", "/BrowseTerm");
 
-        return new ModelAndView(getSuccessView(),model);
+        return new ModelAndView(getSuccessView(), model);
     }
 
-	public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
-	}
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
 
     public String getGeneView() {
         return geneView;
@@ -114,33 +113,40 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         this.geneView = geneView;
     }
 
+    public void setWebUtils(GeneDBWebUtils webUtils) {
+        this.webUtils = webUtils;
+    }
+
 }
 
-
 class BrowseTermBean {
-    
+
     private BrowseCategory category;
     private String term;
     private String organism;
-    
+
     public BrowseCategory getCategory() {
         return this.category;
     }
+
     public void setCategory(BrowseCategory category) {
         this.category = category;
     }
+
     public String getTerm() {
         return this.term;
     }
+
     public void setTerm(String term) {
         this.term = term;
     }
-	public String getOrganism() {
-		return organism;
-	}
-	public void setOrganism(String organism) {
-		this.organism = organism;
-	}
+
+    public String getOrganism() {
+        return organism;
+    }
+
+    public void setOrganism(String organism) {
+        this.organism = organism;
+    }
 
 }
-
