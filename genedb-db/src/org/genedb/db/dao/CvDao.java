@@ -251,11 +251,11 @@ public class CvDao extends BaseDao implements CvDaoI {
 
             @SuppressWarnings("unchecked")
             List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(
-                "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct.feature.uniqueName))"+
+                "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct))"+
                 " from FeatureCvTerm fct" +
                 " join fct.cvTerm cvt" +
                 " where fct.feature.organism.commonName in ("+orgNames+")" +
-                " and cvt.cv.name=:cvName" +
+                " and cvt.cv.name like :cvName" +
                 " group by cvt.name" +
                 " order by cvt.name",
             "cvName", cvName);

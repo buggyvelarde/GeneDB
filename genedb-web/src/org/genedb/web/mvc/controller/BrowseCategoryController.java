@@ -57,7 +57,16 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
         BrowseCategoryBean bcb = (BrowseCategoryBean) command;
         String category = bcb.getCategory().toString();
         Collection<String> orgNames = TaxonUtils.getOrgNames(bcb.getOrganism());
-
+        
+        /* This is to include all the cvs starting with CC.
+         * In future when the other cvs have more terms in,
+         * this can be removed and the other cvs starting 
+         * with CC can be added to BrowseCategory
+         */
+        if(category.equals("ControlledCuration")) {
+            category = "CC_%";
+        }
+        
         List<CountedName> results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
 
         if (results .isEmpty()) {
@@ -70,6 +79,9 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
         // Go to list results page
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject("results", results);
+        if(category.equals("CC_%")) {
+            category = "ControlledCuration";
+        }
         mav.addObject("category", category);
         mav.addObject("organism",bcb.getOrganism());
         return mav;
