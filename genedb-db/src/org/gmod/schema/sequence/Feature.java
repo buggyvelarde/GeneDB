@@ -34,6 +34,8 @@ import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.utils.CollectionUtils;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -49,6 +51,8 @@ import org.hibernate.search.annotations.Store;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type_id")
 @Table(name = "feature")
+@FilterDef(name="excludeObsoleteFeatures")
+@Filter(name="excludeObsoleteFeatures", condition="not is_obsolete")
 @Indexed
 public class Feature implements java.io.Serializable {
 

@@ -9,6 +9,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -18,9 +19,14 @@ import org.springframework.util.ClassUtils;
 
 /**
  * Extends {@link org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean} with
- * support for the <code>@FeatureType</code> annotation. See {@link FeatureType}. Also changes the
- * behaviour of the annotatedPackages attribute, so that all annotated classes in such a package
- * are automatically included.
+ * some useful extra features:
+ * <ul>
+ * <li> Includes support for the {@link FeatureType} annotation.
+ * <li> Changes the behaviour of the annotatedPackages attribute, so that all annotated
+ * classes in such a package are automatically included.
+ * <li> Default filters can be specified, which will be applied to all Hibernate sessions
+ * when they're created. This uses {@link FilteringSessionFactory}.
+ * </ul>
  * <p>
  * The default Configuration class is {@link ChadoAnnotationConfiguration}, and the data source
  * is set appropriately.
@@ -38,6 +44,8 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
     private Class<?>[] annotatedClasses;
     private ClassLoader beanClassLoader;
 
+    private String[] defaultFilters = new String[0];
+
     @Override
     public void setAnnotatedPackages(String[] annotatedPackages) {
         this.annotatedPackages = annotatedPackages;
@@ -54,6 +62,10 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
     public void setBeanClassLoader( ClassLoader beanClassLoader ) {
       this.beanClassLoader = beanClassLoader;
       super.setBeanClassLoader(beanClassLoader);
+    }
+
+    public void setDefaultFilters(String[] defaultFilters) {
+        this.defaultFilters = defaultFilters;
     }
 
 
@@ -97,4 +109,13 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
 
         super.setAnnotatedClasses(foundClasses.toArray(new Class<?>[0]));
     }
+
+    @Override
+    protected SessionFactory newSessionFactory(Configuration config) throws HibernateException {
+        FilteringSessionFactory filteringSessionFactory = new FilteringSessionFactory(super.newSessionFactory(config));
+        for (String filterName: defaultFilters)
+            filteringSessionFactory.addFilter(filterName);
+        return filteringSessionFactory;
+    }
+
 }
