@@ -1,15 +1,14 @@
 package org.genedb.db.dao;
 
-import org.gmod.schema.pub.PubDbXRef;
-import org.gmod.schema.pub.PubProp;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.dao.PubDaoI;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.pub.Pub;
-
 import java.util.List;
 
-public class PubDao extends BaseDao implements PubDaoI {
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.pub.Pub;
+import org.gmod.schema.pub.PubDbXRef;
+import org.gmod.schema.pub.PubProp;
+
+public class PubDao extends BaseDao {
 
     public Pub getPubById(int id) {
         return (Pub) getHibernateTemplate().load(Pub.class, id);
@@ -40,7 +39,7 @@ public class PubDao extends BaseDao implements PubDaoI {
     	return list;
     }
 
-    
+
     public List<PubDbXRef> getPubDbXRef() {
         @SuppressWarnings("unchecked")
         List<PubDbXRef> list = getHibernateTemplate().loadAll(PubDbXRef.class);

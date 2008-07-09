@@ -46,11 +46,13 @@ public class SequenceDao extends BaseDao {
     }
 
    /**
-    *
+    * This method is deprecated. Use {@link #getFeatureByUniqueName(String,Class&lt;T&gt;)} instead.
+    * @deprecated
     * @param name the uniquename
     * @param featureType the type of feature to return eg "gene". <b>NB</> String, not a type argument
     * @return
     */
+    @Deprecated
     public Feature getFeatureByUniqueName(String uniqueName, String featureType) {
         if(featureType.equals("gene"))
             return getFeatureByUniqueName(uniqueName, Gene.class);

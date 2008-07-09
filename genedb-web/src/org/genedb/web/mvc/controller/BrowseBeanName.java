@@ -5,7 +5,6 @@ import java.util.List;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.dao.CvDaoI;
 import org.springframework.beans.factory.InitializingBean;
 
 public class BrowseBeanName implements InitializingBean{
@@ -14,7 +13,7 @@ public class BrowseBeanName implements InitializingBean{
 
 	private SequenceDao sequenceDao;
 
-	private CvDaoI cvDao;
+	private CvDao cvDao;
 
 	private String term;
 
@@ -39,7 +38,7 @@ public class BrowseBeanName implements InitializingBean{
 		this.term = cvTerm;
 	}
 
-	public void setCvDaoI(CvDao cvDao) {
+	public void setCvDao(CvDao cvDao) {
 		this.cvDao = cvDao;
 	}
 

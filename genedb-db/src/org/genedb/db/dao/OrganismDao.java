@@ -2,10 +2,9 @@ package org.genedb.db.dao;
 
 import java.util.List;
 
-import org.gmod.schema.dao.OrganismDaoI;
 import org.gmod.schema.organism.Organism;
 
-public class OrganismDao extends BaseDao implements OrganismDaoI {
+public class OrganismDao extends BaseDao {
 
     public Organism getOrganismById(int id) {
         return (Organism) getHibernateTemplate().load(Organism.class, id);

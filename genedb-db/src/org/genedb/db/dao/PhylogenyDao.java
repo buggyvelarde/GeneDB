@@ -1,18 +1,17 @@
 package org.genedb.db.dao;
 
+import java.util.List;
+
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.dao.PhylogenyDaoI;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.phylogeny.Phylotree;
 
-import java.util.List;
-
-public class PhylogenyDao extends BaseDao implements PhylogenyDaoI {
+public class PhylogenyDao extends BaseDao {
 
     public List<Phylonode> getPhyloNodesByCvTermInTree(CvTerm type, Phylotree tree) {
         @SuppressWarnings("unchecked")
         List<Phylonode> nodes = getHibernateTemplate().findByNamedParam(
-                "from Phylonode pn where pn.type=:type and pn.tree=:tree", 
+                "from Phylonode pn where pn.type=:type and pn.tree=:tree",
                 new String[]{"type", "tree"},
                 new Object[]{type, tree});
         return nodes;
@@ -21,7 +20,7 @@ public class PhylogenyDao extends BaseDao implements PhylogenyDaoI {
     @SuppressWarnings("unchecked")
     public Phylotree getPhyloTreeByName(String name) {
         List<Phylotree> trees = getHibernateTemplate().findByNamedParam(
-                "from Phylotree where name=:name", 
+                "from Phylotree where name=:name",
                 new String[]{"name"},
                 new Object[]{name});
         return firstFromList(trees, "name", name);
@@ -53,7 +52,7 @@ public class PhylogenyDao extends BaseDao implements PhylogenyDaoI {
     @SuppressWarnings("unchecked")
     public List<Phylonode> getPhylonodeByName(String name) {
         List<Phylonode> nodes = getHibernateTemplate().findByNamedParam(
-            "from Phylonode p where p.label=:name", new String("name"), 
+            "from Phylonode p where p.label=:name", new String("name"),
             name);
         return nodes;
     }
@@ -61,7 +60,7 @@ public class PhylogenyDao extends BaseDao implements PhylogenyDaoI {
     @SuppressWarnings("unchecked")
     public List<Phylonode> getPhylonodesByParent(Phylonode parent) {
         List<Phylonode> nodes = getHibernateTemplate().findByNamedParam(
-            "from Phylonode p where p.parent=:parent", new String("parent"), 
+            "from Phylonode p where p.parent=:parent", new String("parent"),
             parent);
         return nodes;
     }

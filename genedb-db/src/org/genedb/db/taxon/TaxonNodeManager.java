@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.gmod.schema.dao.PhylogenyDaoI;
+import org.genedb.db.dao.PhylogenyDao;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -40,7 +40,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 public class TaxonNodeManager implements InitializingBean{
 
-    private PhylogenyDaoI phylogenyDao;
+    private PhylogenyDao phylogenyDao;
 
     private HibernateTransactionManager hibernateTransactionManager;
 
@@ -166,7 +166,7 @@ public class TaxonNodeManager implements InitializingBean{
     }
 
     @Required
-    public void setPhylogenyDao(PhylogenyDaoI phylogenyDao) {
+    public void setPhylogenyDao(PhylogenyDao phylogenyDao) {
         this.phylogenyDao = phylogenyDao;
     }
 

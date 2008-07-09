@@ -22,10 +22,10 @@ package org.genedb.db.domain.objects;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.PhylogenyDao;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.dao.CvDaoI;
-import org.gmod.schema.dao.PhylogenyDaoI;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.phylogeny.PhylonodeOrganism;
@@ -33,8 +33,8 @@ import org.gmod.schema.phylogeny.Phylotree;
 
 public class ExtendedOrganismManager {
 
-    private PhylogenyDaoI phylogenyDao;
-    private CvDaoI cvDao;
+    private PhylogenyDao phylogenyDao;
+    private CvDao cvDao;
 
     private Map<String, ExtendedOrganism> nameMap = new HashMap<String, ExtendedOrganism>();
 

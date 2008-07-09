@@ -162,7 +162,7 @@ public class GeneDBWebUtils {
             = new HashMap<DbXRef, Set<Map<String, Object>>>();
         Set<Map<String, Object>> otherMatches = new HashSet<Map<String, Object>> ();
 
-        for (PolypeptideDomain domain: polypeptide.getDomains()) {
+        for (PolypeptideDomain domain: polypeptide.getRegions(PolypeptideDomain.class)) {
             FeatureLoc domainLoc = domain.getRankZeroFeatureLoc();
             DbXRef dbxref = domain.getDbXRef();
             if (dbxref == null) {
@@ -229,8 +229,7 @@ public class GeneDBWebUtils {
             }
 
              try {
-                // if the seq ends with a * (termination) we need to
-                // remove the *
+                // if the sequence ends with a termination symbol (*), we need to remove it
                 if (residuesSymbolList.symbolAt(residuesSymbolList.length()) == ProteinTools.ter())
                     residuesSymbolList = residuesSymbolList.subList(1, residuesSymbolList.length() - 1);
 

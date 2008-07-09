@@ -450,7 +450,6 @@ public class SearchController extends MultiActionController implements Initializ
             sb.append(menu.render(j - 1));
         }
         top.deleteCharAt(top.length() - 1);
-        // System.out.println(sb.toString());
         sb.append("<input type=\"hidden\" id=\"itemsLength\" value=\"" + Menu.counter + "\"/>");
         sb.append("<input type=\"hidden\" id=\"topItems\" value=\"" + top.toString() + "\"/>");
         Map<String,String> model = new HashMap<String,String>(1);

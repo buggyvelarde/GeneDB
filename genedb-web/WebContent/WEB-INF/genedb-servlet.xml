@@ -37,7 +37,7 @@
 
     <bean id="goProcessBrowse"
         class="org.genedb.web.mvc.controller.BrowseBean">
-        <property name="cvDaoI" ref="cvDao" />
+        <property name="cvDao" ref="cvDao" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="cvNames">
             <list>
@@ -54,7 +54,7 @@
 
     <bean id="nameBrowse"
         class="org.genedb.web.mvc.controller.BrowseBeanName">
-        <property name="cvDaoI" ref="cvDao" />
+        <property name="cvDao" ref="cvDao" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="cvTerm" value="gene" />
     </bean>

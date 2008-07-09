@@ -94,14 +94,20 @@ public class Polypeptide extends Region {
         return null;
     }
 
+    /**
+     * Get all the polypeptide regions of the specified type.
+     * @param <T> the type of region. Must be a subclass of <code>PolypeptideRegion</code>
+     * @param type a class object representing the region type. For example, <code>PolypeptideDomain.class</code>
+     * @return a collection of those regions of the requested type
+     */
     @Transient
-    public Collection<PolypeptideDomain> getDomains() {
-        Set<PolypeptideDomain> domains = new HashSet<PolypeptideDomain>();
+    public <T extends PolypeptideRegion> Collection<T> getRegions(Class<T> type) {
+        Set<T> domains = new HashSet<T>();
 
         for (FeatureLoc domainLoc: this.getFeatureLocsForSrcFeatureId()) {
             Feature domain = domainLoc.getFeatureByFeatureId();
-            if (domain instanceof PolypeptideDomain)
-                domains.add((PolypeptideDomain) domain);
+            if (type.isAssignableFrom(domain.getClass()))
+                domains.add(type.cast(domain));
         }
 
         return domains;
