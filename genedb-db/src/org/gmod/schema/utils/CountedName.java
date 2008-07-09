@@ -16,8 +16,9 @@ public class CountedName {
     }
 
     public CountedName(String name, long count) {
-        if (count > Integer.MAX_VALUE)
+        if (count > Integer.MAX_VALUE) {
             throw new IllegalArgumentException(String.format("Count %ld is too large!", count));
+        }
         
         this.name = name;
         this.count = (int) count;

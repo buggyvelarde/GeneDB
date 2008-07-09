@@ -29,8 +29,9 @@ public class TextByteType implements UserType {
         logger.trace("deepCopy");
         byte[] original = (byte[]) originalOb;
         
-        if (original == null)
+        if (original == null) {
             return null;
+        }
         
         byte[] newCopy = new byte[original.length];
         

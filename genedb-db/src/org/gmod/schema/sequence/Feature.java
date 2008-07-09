@@ -245,8 +245,9 @@ public class Feature implements java.io.Serializable {
      * @param uniqueName the unique name, not null
      */
     private void setUniqueName(String uniqueName) {
-        if (uniqueName == null)
-            throw new IllegalArgumentException("setUniqueName: the unique name cannot be null");
+        if (uniqueName == null) {
+            throw new NullPointerException("setUniqueName: the unique name cannot be null");
+        }
         this.uniqueName = uniqueName;
     }
 
@@ -355,10 +356,11 @@ public class Feature implements java.io.Serializable {
             return null;
         }
         for (FeatureLoc featureLoc : featureLocs) {
-            if (featureLoc == null)
+            if (featureLoc == null) {
                 logger.warn(String.format("Feature '%s' has a null featureLoc", uniqueName));
-            else
+            } else {
                 return featureLoc;
+            }
         }
         logger.error(String.format("Feature '%s' has no non-null featureLocs", uniqueName));
         return null;
@@ -403,8 +405,9 @@ public class Feature implements java.io.Serializable {
     }
 
     public void addFeatureDbXRef(FeatureDbXRef featureDbXRef) {
-        if (this.featureDbXRefs == null)
+        if (this.featureDbXRefs == null) {
             this.featureDbXRefs = new HashSet<FeatureDbXRef>();
+        }
         this.featureDbXRefs.add(featureDbXRef);
         featureDbXRef.setFeature(this);
     }
@@ -489,8 +492,9 @@ public class Feature implements java.io.Serializable {
             Synonym synonym = featureSynonym.getSynonym();
             if (("systematic_id".equals(synonym.getCvTerm().getName())
             || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
-            && featureSynonym.isCurrent())
+            && featureSynonym.isCurrent()) {
                 return synonym.getSynonymSgml();
+            }
         }
         return getUniqueName();
     }
@@ -502,8 +506,9 @@ public class Feature implements java.io.Serializable {
             Synonym synonym = featureSynonym.getSynonym();
             if (("systematic_id".equals(synonym.getCvTerm().getName())
             || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
-            && !featureSynonym.isCurrent())
+            && !featureSynonym.isCurrent()) {
                 ret.add(synonym.getSynonymSgml());
+            }
         }
         return ret;
     }
@@ -532,8 +537,9 @@ public class Feature implements java.io.Serializable {
             StringBuilder hexValue = new StringBuilder();
             for (int i = 0; i < md5Bytes.length; i++) {
                 int val = md5Bytes[i] & 0xff;
-                if (val < 16)
+                if (val < 16) {
                     hexValue.append("0");
+                }
                 hexValue.append(Integer.toHexString(val));
             }
             return hexValue.toString();
@@ -578,11 +584,13 @@ public class Feature implements java.io.Serializable {
     private String getSynonymsAsTabSeparatedString() {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
+        // TODO we have libraries
         for (FeatureSynonym featureSynonym : getFeatureSynonyms()) {
-            if (first)
+            if (first) {
                 first = false;
-            else
+            } else {
                 ret.append('\t');
+            }
 
            ret.append(featureSynonym.getSynonym().getName());
         }
@@ -627,8 +635,9 @@ public class Feature implements java.io.Serializable {
     @Field(name = "strand", index=Index.UN_TOKENIZED, store = Store.YES)
 	public int getStrand() {
         FeatureLoc loc = getRankZeroFeatureLoc();
-        if (loc == null)
+        if (loc == null) {
             return 0;
+        }
         return loc.getStrand();
     }
 
@@ -636,8 +645,9 @@ public class Feature implements java.io.Serializable {
     @Field(name = "chr", index=Index.UN_TOKENIZED, store = Store.YES)
     private String getChr() {
         FeatureLoc loc = getRankZeroFeatureLoc();
-        if (loc == null)
+        if (loc == null) {
             return null;
+        }
         return loc.getFeatureBySrcFeatureId().getUniqueName();
     }
 
@@ -645,8 +655,9 @@ public class Feature implements java.io.Serializable {
     @Field(name = "chrlen", store = Store.YES)
     private int getChrLen() {
         FeatureLoc loc = getRankZeroFeatureLoc();
-        if (loc == null)
+        if (loc == null) {
             return 0;
+        }
         return loc.getFeatureBySrcFeatureId().getSeqLen();
     }
 }

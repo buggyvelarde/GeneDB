@@ -30,8 +30,9 @@ public abstract class ProductiveTranscript extends Transcript {
     @Field(name = "protein", store = Store.YES)
     public String getProteinUniqueName() {
         Feature protein = getProtein();
-        if (protein == null)
+        if (protein == null) {
             return null;
+        }
         return protein.getUniqueName();
     }
 
@@ -50,8 +51,9 @@ public abstract class ProductiveTranscript extends Transcript {
     public Polypeptide getProtein() {
         for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
             Feature feature = relation.getFeatureBySubjectId();
-            if (feature instanceof Polypeptide)
+            if (feature instanceof Polypeptide) {
                 return (Polypeptide) feature;
+            }
         }
         return null;
     }
@@ -59,8 +61,9 @@ public abstract class ProductiveTranscript extends Transcript {
     @Transient
     public List<String> getProducts() {
         Polypeptide protein = getProtein();
-        if (protein == null)
+        if (protein == null) {
             return null;
+        }
         return protein.getProducts();
     }
 
@@ -70,13 +73,15 @@ public abstract class ProductiveTranscript extends Transcript {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
         List<String> products = getProducts();
-        if (products == null)
+        if (products == null) {
             return null;
+        }
         for (String product: getProducts()) {
-            if (first)
+            if (first) {
                 first = false;
-            else
+            } else {
                 ret.append('\t');
+            }
             ret.append(product);
         }
         return ret.toString();

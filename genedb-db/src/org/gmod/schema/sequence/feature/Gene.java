@@ -21,8 +21,9 @@ public class Gene extends AbstractGene {
         Collection<MRNA> ret = new ArrayList<MRNA>();
 
         for (Transcript transcript : getTranscripts()) {
-            if (transcript instanceof MRNA)
+            if (transcript instanceof MRNA) {
                 ret.add((MRNA) transcript);
+            }
         }
 
         return ret;
@@ -33,10 +34,11 @@ public class Gene extends AbstractGene {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
         for (ProductiveTranscript transcript: getCodingTranscripts()) {
-            if (first)
+            if (first) {
                 first = false;
-            else
+            } else {
                 ret.append('\t');
+            }
             ret.append(transcript.getProteinUniqueName());
         }
         return ret.toString();
@@ -49,10 +51,11 @@ public class Gene extends AbstractGene {
 
         boolean first = true;
         for (ProductiveTranscript transcript : getCodingTranscripts()) {
-            if (first)
+            if (first) {
                 first = false;
-            else
+            } else {
                 products.append('\t');
+            }
             products.append(transcript.getProductsAsTabSeparatedString());
         }
         return products.toString();

@@ -28,8 +28,9 @@ public class Polypeptide extends Region {
     private AbstractGene gene = null;
 
     public Transcript getTranscript() {
-        if (transcript != null)
+        if (transcript != null) {
             return transcript;
+        }
 
         for (FeatureRelationship relation : getFeatureRelationshipsForSubjectId()) {
             Feature transcriptFeature = relation.getFeatureByObjectId();
@@ -46,12 +47,14 @@ public class Polypeptide extends Region {
     }
 
     public AbstractGene getGene() {
-        if (gene != null)
+        if (gene != null) {
             return gene;
+        }
 
         Transcript transcript = getTranscript();
-        if (transcript == null)
+        if (transcript == null) {
             return null;
+        }
 
         return gene = transcript.getGene();
     }
@@ -84,8 +87,9 @@ public class Polypeptide extends Region {
         for (FeatureProp featureProp : this.getFeatureProps()) {
             if (featureProp.getCvTerm().getName().equals("colour")) {
                 String colourString = featureProp.getValue();
-                if (colourString == null)
+                if (colourString == null) {
                     return null;
+                }
 
                 return new Integer(colourString);
             }
@@ -106,8 +110,9 @@ public class Polypeptide extends Region {
 
         for (FeatureLoc domainLoc: this.getFeatureLocsForSrcFeatureId()) {
             Feature domain = domainLoc.getFeatureByFeatureId();
-            if (type.isAssignableFrom(domain.getClass()))
+            if (type.isAssignableFrom(domain.getClass())) {
                 domains.add(type.cast(domain));
+            }
         }
 
         return domains;

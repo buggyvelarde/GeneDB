@@ -65,8 +65,9 @@ public class CvDao extends BaseDao {
     private Db DB_GO = null;
 
     public CvTerm getGoCvTermByAcc(String value) {
-        if (DB_GO == null)
+        if (DB_GO == null) {
             DB_GO = generalDao.getDbByName("GO");
+        }
 
         @SuppressWarnings("unchecked")
         List<CvTerm> terms = getHibernateTemplate().findByNamedParam(
@@ -76,8 +77,9 @@ public class CvDao extends BaseDao {
     }
 
     public CvTerm getGoCvTermByAccViaDb(final String id) {
-        if (DB_GO == null)
+        if (DB_GO == null) {
             DB_GO = generalDao.getDbByName("GO");
+        }
 
         // Find cvterm for db_xref
         TransactionTemplate tt = new TransactionTemplate(generalDao.getPlatformTransactionManager());
@@ -105,8 +107,9 @@ public class CvDao extends BaseDao {
         }
 
         public Map<String,Integer> getGoTermIdsByAcc() {
-            if (DB_GO == null)
+            if (DB_GO == null) {
                 DB_GO = generalDao.getDbByName("GO");
+            }
 
             Map<String,Integer> goTerms = new HashMap<String,Integer>();
             @SuppressWarnings("unchecked")
@@ -115,8 +118,9 @@ public class CvDao extends BaseDao {
                 "from CvTerm cvTerm " +
                 "where cvTerm.dbXRef.db = :goDb",
                 "goDb", DB_GO);
-            for (Object[] result: results)
+            for (Object[] result: results) {
                 goTerms.put((String) result[0], (Integer) result[1]);
+            }
             return goTerms;
         }
 
@@ -148,9 +152,10 @@ public class CvDao extends BaseDao {
                 return null;
             }
 
-            if (cvTermList.size() > 1)
+            if (cvTermList.size() > 1) {
                 logger.error(String.format("Found %d CvTerms with cv '%s' and term name '%s'",
                     cvTermList.size(), cvName, cvTermName));
+            }
 
             return cvTermList.get(0);
         }
@@ -165,9 +170,10 @@ public class CvDao extends BaseDao {
                 return null;
             }
 
-            if (cvTermList.size() > 1)
+            if (cvTermList.size() > 1) {
                 logger.error(String.format("Found %d CvTerms with cv matching '%s' and term name '%s'",
                     cvTermList.size(), cvNamePattern, cvTermName));
+            }
 
             return cvTermList.get(0);
         }
@@ -215,12 +221,14 @@ public class CvDao extends BaseDao {
                 new String[]{"db", "acc"},
                 new Object[]{ db,   acc });
 
-            if (cvTermList == null || cvTermList.size() == 0)
+            if (cvTermList == null || cvTermList.size() == 0) {
                 return null;
+            }
 
-            if (cvTermList.size() > 1)
+            if (cvTermList.size() > 1) {
                 logger.error(String.format("Found %d CvTerms with db '%s' and accession '%s'",
                     cvTermList.size(), db, acc));
+            }
 
             return cvTermList.get(0);
         }
@@ -241,8 +249,9 @@ public class CvDao extends BaseDao {
             StringBuilder orgNames = new StringBuilder();
             boolean first = true;
             for (String orgName : orgs) {
-                if (!first)
+                if (!first) {
                     orgNames.append(", ");
+                }
                 first = false;
                 orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
             }
@@ -265,8 +274,9 @@ public class CvDao extends BaseDao {
             StringBuilder orgNames = new StringBuilder();
             boolean first = true;
             for (String orgName : orgs) {
-                if (!first)
+                if (!first) {
                     orgNames.append(", ");
+                }
                 first = false;
                 orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
             }

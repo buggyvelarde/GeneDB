@@ -23,8 +23,9 @@ public abstract class AbstractGene extends Region {
 
         for (FeatureRelationship relationship : this.getFeatureRelationshipsForObjectId()) {
             Feature transcript = relationship.getFeatureBySubjectId();
-            if (transcript instanceof Transcript)
+            if (transcript instanceof Transcript) {
                 ret.add((Transcript) transcript);
+            }
         }
 
         return ret;

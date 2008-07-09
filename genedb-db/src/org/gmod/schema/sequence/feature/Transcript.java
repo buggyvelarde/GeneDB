@@ -24,8 +24,9 @@ public abstract class Transcript extends Region {
     public abstract Integer getColourId();
 
     public AbstractGene getGene() {
-        if (gene != null)
+        if (gene != null) {
             return gene;
+        }
 
         for (FeatureRelationship relation : getFeatureRelationshipsForSubjectId()) {
             Feature geneFeature = relation.getFeatureByObjectId();
@@ -72,8 +73,9 @@ public abstract class Transcript extends Region {
                 break;
             }
         }
-        if (!foundGene)
+        if (!foundGene) {
             logger.error(String.format("The mRNA transcript '%s' has no associated gene", getUniqueName()));
+        }
     }
 
     @Transient
@@ -87,8 +89,9 @@ public abstract class Transcript extends Region {
 
         for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
             Feature feature = relation.getFeatureBySubjectId();
-            if (clazz.isInstance(feature))
+            if (clazz.isInstance(feature)) {
                 components.add(clazz.cast(feature));
+            }
         }
 
         return components;
@@ -113,10 +116,11 @@ public abstract class Transcript extends Region {
 
         boolean first = true;
         for (TranscriptRegion component : getComponents(TranscriptRegion.class)) {
-            if (first)
+            if (first) {
                 first = false;
-            else
+            } else {
                 locs.append(',');
+            }
             if (!(component instanceof AbstractExon)) {
                 locs.append(component.getClass().getSimpleName());
                 locs.append(':');
@@ -140,10 +144,11 @@ public abstract class Transcript extends Region {
 
         boolean first = true;
         for (AbstractExon exon : getExons()) {
-            if (first)
+            if (first) {
                 first = false;
-            else
+            } else {
                 locs.append(", ");
+            }
             locs.append(exon.getTraditionalLocAsString());
         }
 

@@ -27,9 +27,11 @@ public class PolypeptideDomain extends PolypeptideRegion {
 
     @Transient
     public String getScore() {
-        for (FeatureProp featureProp : this.getFeatureProps())
-            if (featureProp.getCvTerm().getName().equals("score"))
+        for (FeatureProp featureProp : this.getFeatureProps()) {
+            if (featureProp.getCvTerm().getName().equals("score")) {
                 return featureProp.getValue();
+            }
+        }
 
         logger.error(String.format("Polypeptide domain '%s' has no score", getUniqueName()));
         return null;
@@ -39,8 +41,9 @@ public class PolypeptideDomain extends PolypeptideRegion {
     public DbXRef getInterProDbXRef() {
         for (FeatureDbXRef featureDbXRef: this.getFeatureDbXRefs()) {
             DbXRef dbXRef = featureDbXRef.getDbXRef();
-            if ("InterPro".equals(dbXRef.getDb().getName()))
+            if ("InterPro".equals(dbXRef.getDb().getName())) {
                 return dbXRef;
+            }
         }
         return null;
     }

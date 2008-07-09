@@ -25,8 +25,9 @@ public abstract class TranscriptRegion extends Region
     private short strand;
 
     private void loadLoc() {
-        if (locLoaded)
+        if (locLoaded) {
             return;
+        }
         FeatureLoc featureLoc = getRankZeroFeatureLoc();
         fmin = featureLoc.getFmin();
         fmax = featureLoc.getFmax();
@@ -41,10 +42,11 @@ public abstract class TranscriptRegion extends Region
     @Transient
     protected String getLocAsString() {
         loadLoc();
-        if (strand == -1)
+        if (strand == -1) {
             return "(" + fmin + ".." + fmax + ")";
-        else
+        } else {
             return fmin + ".." + fmax;
+        }
     }
 
     /**
@@ -55,22 +57,26 @@ public abstract class TranscriptRegion extends Region
     @Transient
     protected String getTraditionalLocAsString() {
         loadLoc();
-        if (strand == -1)
+        if (strand == -1) {
             return "(" + (fmin+1) + "-" + fmax + ")";
-        else
+        } else {
             return (fmin+1) + "-" + fmax;
+        }
     }
 
     public int compareTo(TranscriptRegion other) {
         this.loadLoc();
         other.loadLoc();
 
-        if (this.strand != other.strand)
+        if (this.strand != other.strand) {
             return this.strand - other.strand;
-        if (this.fmin != other.fmin)
+        }
+        if (this.fmin != other.fmin) {
             return this.fmin - other.fmin;
-        if (this.fmax != other.fmax)
+        }
+        if (this.fmax != other.fmax) {
             return this.fmax - other.fmax;
+        }
 
         return 0;
     }

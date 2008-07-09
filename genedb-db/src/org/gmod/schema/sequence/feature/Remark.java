@@ -25,8 +25,9 @@ public class Remark extends Region {
     @Transient
     public String getComment() {
         for(FeatureProp featureProp: this.getFeatureProps()) {
-            if (featureProp.getCvTerm().getName().equals("comment"))
+            if (featureProp.getCvTerm().getName().equals("comment")) {
                 return featureProp.getValue();
+            }
         }
 
         logger.error(String.format("Remark feature '%s' (ID=%d) has no comment",

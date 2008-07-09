@@ -24,8 +24,9 @@ public class Pseudogene extends AbstractGene {
 
         for (FeatureRelationship relationship : this.getFeatureRelationshipsForObjectId()) {
             Feature transcript = relationship.getFeatureBySubjectId();
-            if (transcript instanceof PseudogenicTranscript)
+            if (transcript instanceof PseudogenicTranscript) {
                 ret.add((PseudogenicTranscript) transcript);
+            }
         }
 
         return ret;
@@ -38,10 +39,11 @@ public class Pseudogene extends AbstractGene {
 
         boolean first = true;
         for (PseudogenicTranscript transcript : getPseudogenicTranscripts()) {
-            if (first)
+            if (first) {
                 first = false;
-            else
+            } else {
                 products.append('\t');
+            }
             products.append(transcript.getProductsAsTabSeparatedString());
         }
         return products.toString();

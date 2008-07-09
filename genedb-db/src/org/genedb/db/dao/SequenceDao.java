@@ -47,15 +47,15 @@ public class SequenceDao extends BaseDao {
 
    /**
     * This method is deprecated. Use {@link #getFeatureByUniqueName(String,Class&lt;T&gt;)} instead.
-    * @deprecated
     * @param name the uniquename
     * @param featureType the type of feature to return eg "gene". <b>NB</> String, not a type argument
     * @return
     */
     @Deprecated
     public Feature getFeatureByUniqueName(String uniqueName, String featureType) {
-        if(featureType.equals("gene"))
+        if(featureType.equals("gene")) {
             return getFeatureByUniqueName(uniqueName, Gene.class);
+        }
 
     	@SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
@@ -670,12 +670,15 @@ public class SequenceDao extends BaseDao {
      */
     public PolypeptideDomain createPolypeptideDomain(String domainUniqueName, Polypeptide polypeptide,
             String score, String description, int start, int end, DbXRef dbxref) {
-        if (polypeptideDomainType == null)
+        if (polypeptideDomainType == null) {
             polypeptideDomainType = cvDao.getCvTermByNameAndCvName("polypeptide_domain", "sequence");
-        if (scoreType == null)
+        }
+        if (scoreType == null) {
             scoreType = cvDao.getCvTermByNameAndCvName("score", "null");
-        if (descriptionType == null)
+        }
+        if (descriptionType == null) {
             descriptionType = cvDao.getCvTermByNameAndCvName("description", "feature_property");
+        }
 
         PolypeptideDomain domain = new PolypeptideDomain(
             polypeptide.getOrganism(), polypeptideDomainType, domainUniqueName);
@@ -698,8 +701,9 @@ public class SequenceDao extends BaseDao {
 
     private CvTerm transmembraneRegionType;
     public TransmembraneRegion createTransmembraneRegion(Polypeptide polypeptide, int start, int end) {
-        if (transmembraneRegionType == null)
+        if (transmembraneRegionType == null) {
             transmembraneRegionType = cvDao.getCvTermByDbAcc("sequence", "0001077");
+        }
 
         String regionUniqueName = String.format("%s:tmhelix%d-%d", polypeptide.getUniqueName(), start, end);
         TransmembraneRegion transmembraneRegion = new TransmembraneRegion(polypeptide.getOrganism(), transmembraneRegionType, regionUniqueName);
@@ -711,10 +715,12 @@ public class SequenceDao extends BaseDao {
 
     private CvTerm signalPeptideType, cleavageSiteProbabilityType;
     public SignalPeptide createSignalPeptide(Polypeptide polypeptide, int loc, String probability) {
-        if (signalPeptideType == null)
+        if (signalPeptideType == null) {
             signalPeptideType = cvDao.getCvTermByDbAcc("sequence", "0000418");
-        if (cleavageSiteProbabilityType == null)
+        }
+        if (cleavageSiteProbabilityType == null) {
             cleavageSiteProbabilityType = cvDao.getCvTermByNameAndCvName("cleavage_site_probability", "genedb_misc");
+        }
 
         String regionUniqueName = String.format("%s:sigp%d", polypeptide.getUniqueName(), loc);
         SignalPeptide signalPeptide = new SignalPeptide(polypeptide.getOrganism(), signalPeptideType, regionUniqueName);
@@ -729,18 +735,21 @@ public class SequenceDao extends BaseDao {
 
     private CvTerm gpiAnchoredType, gpiAnchorCleavageSiteType, gpiCleavageSiteScoreType;
     public FeatureProp createGPIAnchoredProperty(Polypeptide polypeptide) {
-        if (gpiAnchoredType == null)
+        if (gpiAnchoredType == null) {
             gpiAnchoredType = cvDao.getCvTermByNameAndCvName("GPI_anchored", "genedb_misc");
+        }
 
         FeatureProp featureProp = new FeatureProp(polypeptide, gpiAnchoredType, "true", 0);
         polypeptide.addFeatureProp(featureProp);
         return featureProp;
     }
     public GPIAnchorCleavageSite createGPIAnchorCleavageSite(Polypeptide polypeptide, int anchorLocation, String score) {
-        if (gpiAnchorCleavageSiteType == null)
+        if (gpiAnchorCleavageSiteType == null) {
             gpiAnchorCleavageSiteType = cvDao.getCvTermByNameAndCvName("GPI_anchor_cleavage_site", "genedb_feature_type");
-        if (gpiCleavageSiteScoreType == null)
+        }
+        if (gpiCleavageSiteScoreType == null) {
             gpiCleavageSiteScoreType = cvDao.getCvTermByNameAndCvName("GPI_cleavage_site_score", "genedb_misc");
+        }
 
         String cleavageSiteUniqueName = String.format("%s:gpi", polypeptide.getUniqueName());
         GPIAnchorCleavageSite cleavageSite = new GPIAnchorCleavageSite(polypeptide.getOrganism(), gpiAnchorCleavageSiteType, cleavageSiteUniqueName);
@@ -755,8 +764,9 @@ public class SequenceDao extends BaseDao {
 
     private CvTerm plasmoAPScoreType;
     public FeatureProp createPlasmoAPScore(Polypeptide polypeptide, String score) {
-        if (plasmoAPScoreType == null)
+        if (plasmoAPScoreType == null) {
             plasmoAPScoreType = cvDao.getCvTermByNameAndCvName("PlasmoAP_score", "genedb_misc");
+        }
 
         FeatureProp featureProp = new FeatureProp(polypeptide, plasmoAPScoreType, score, 0);
         polypeptide.addFeatureProp(featureProp);

@@ -100,8 +100,9 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
             String className = e.getKey();
             PersistentClass persistentClass = e.getValue();
             logger.trace(String.format("Inspecting class '%s'", className));
-            if (!(persistentClass instanceof SingleTableSubclass))
+            if (!(persistentClass instanceof SingleTableSubclass)) {
                 continue;
+            }
 
             logger.trace(String.format("Processing class '%s'", className));
             Class<?> mappedClass = persistentClass.getMappedClass();
@@ -111,9 +112,10 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
 
                     validate(className, featureType);
                     Integer cvTermId = getCvTermIdForFeatureType(featureType);
-                    if (cvTermId == null)
+                    if (cvTermId == null) {
                         throw new HibernateException(String.format("Failed to initialise class '%s': could not find %s",
                             className, description(featureType)));
+                    }
 
                     logger.debug(String.format("Setting discriminator column of '%s' to %d (for %s)",
                         className, cvTermId, description(featureType)));
@@ -129,25 +131,29 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
         String term = featureType.term();
         String accession = featureType.accession();
 
-        if ("".equals(term) && "".equals(accession))
+        if ("".equals(term) && "".equals(accession)) {
             throw new ChadoAnnotationException(String.format("@FeatureType annotation for class '%s' has neither 'term' nor 'accession'", className));
-
-        if (!"".equals(term) && !"".equals(accession))
+        }
+            
+        if (!"".equals(term) && !"".equals(accession)) {
             throw new ChadoAnnotationException(String.format("@FeatureType annotation for class '%s' has both 'term' and 'accession'", className));
+        }
     }
 
     private String description(FeatureType featureType) {
-        if ("".equals(featureType.accession()))
+        if ("".equals(featureType.accession())) {
             return String.format("term '%s' in CV '%s'", featureType.term(), featureType.cv());
-        else
+        } else {
             return String.format("accession number '%s' in CV '%s'", featureType.accession(), featureType.cv());
+        }
     }
 
     private Integer getCvTermIdForFeatureType(FeatureType featureType) throws ChadoAnnotationException {
-        if ("".equals(featureType.accession()))
+        if ("".equals(featureType.accession())) {
             return getCvTermIdForTermFeatureType(featureType);
-        else
+        } else {
             return getCvTermIdForAccessionFeatureType(featureType);
+        }
     }
 
     private Integer getCvTermIdForTermFeatureType(FeatureType featureType) throws ChadoAnnotationException {
@@ -158,8 +164,9 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
                 st.setString(1, featureType.cv());
                 st.setString(2, featureType.term());
                 ResultSet rs = st.executeQuery();
-                if (!rs.next())
+                if (!rs.next()) {
                     return null;
+                }
                 return rs.getInt(1);
             }
             finally {
@@ -180,8 +187,9 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
                 st.setString(1, featureType.cv());
                 st.setString(2, featureType.accession());
                 ResultSet rs = st.executeQuery();
-                if (!rs.next())
+                if (!rs.next()) {
                     return null;
+                }
                 return rs.getInt(1);
             }
             finally {
