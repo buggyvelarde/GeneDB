@@ -24,6 +24,10 @@ import java.lang.annotation.Target;
  * in the face of changes to the Sequence Ontology. For example,
  * the term with accession number 0001077 has recently been
  * renamed from 'transmembrane' to 'transmembrane_region'.
+ * <p>
+ * These annotations are processed by {@link ChadoAnnotationConfiguration},
+ * so to use the feature classes with Hibernate you need to use that,
+ * either directly or via the {@link ChadoSessionFactoryBean}.
  *
  * @author rh11
  */
