@@ -20,6 +20,7 @@
 package org.genedb.db.helpers;
 
 import org.genedb.db.dao.OrganismDao;
+
 import org.gmod.schema.organism.Organism;
 
 // import java.util.List;

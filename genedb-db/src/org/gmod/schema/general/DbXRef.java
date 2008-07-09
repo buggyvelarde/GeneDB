@@ -3,6 +3,17 @@ package org.gmod.schema.general;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.cv.CvTermDbXRef;
+import org.gmod.schema.cv.DbXRefProp;
+import org.gmod.schema.organism.OrganismDbXRef;
+import org.gmod.schema.phylogeny.PhylonodeDbXRef;
+import org.gmod.schema.phylogeny.Phylotree;
+import org.gmod.schema.pub.PubDbXRef;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTermDbXRef;
+import org.gmod.schema.sequence.FeatureDbXRef;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,18 +29,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.phylogeny.PhylonodeDbXRef;
-import org.gmod.schema.phylogeny.Phylotree;
-import org.gmod.schema.cv.DbXRefProp;
-import org.gmod.schema.sequence.FeatureCvTermDbXRef;
-import org.gmod.schema.cv.CvTermDbXRef;
-import org.gmod.schema.organism.OrganismDbXRef;
-import org.gmod.schema.pub.PubDbXRef;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTermDbXRef;
-import org.gmod.schema.sequence.FeatureDbXRef;
 
 @Entity
 @Table(name="dbxref")

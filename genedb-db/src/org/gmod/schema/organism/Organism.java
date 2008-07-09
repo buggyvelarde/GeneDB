@@ -2,6 +2,17 @@ package org.gmod.schema.organism;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.phylogeny.PhylonodeOrganism;
+import org.gmod.schema.sequence.Feature;
+
+import org.apache.log4j.Logger;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,16 +27,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.apache.log4j.Logger;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.phylogeny.PhylonodeOrganism;
-import org.gmod.schema.sequence.Feature;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
 
 @Entity
 @Table(name = "organism")

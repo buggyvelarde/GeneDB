@@ -1,15 +1,15 @@
 package org.genedb.db.helpers;
 
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.usertype.UserType;
+
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Arrays;
-
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.usertype.UserType;
 
 
 /**

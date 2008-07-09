@@ -1,16 +1,5 @@
 package org.gmod.schema.cfg;
 
-import java.lang.annotation.Annotation;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
-
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -22,6 +11,17 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
+
+import java.lang.annotation.Annotation;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
+
+import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import javax.sql.DataSource;
 
 /**
  * Extends org.hibernate.cfg.AnnotationConfiguration in two ways:

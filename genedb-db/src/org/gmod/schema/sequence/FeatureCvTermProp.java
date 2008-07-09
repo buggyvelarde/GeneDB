@@ -4,8 +4,8 @@ package org.gmod.schema.sequence;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.utils.propinterface.PropertyI;
 import org.gmod.schema.utils.Rankable;
+import org.gmod.schema.utils.propinterface.PropertyI;
 
 import java.io.Serializable;
 

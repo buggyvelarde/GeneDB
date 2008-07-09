@@ -1,14 +1,5 @@
 package org.gmod.schema.cfg;
 
-import java.io.Serializable;
-import java.sql.Connection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-import javax.naming.Reference;
-
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
@@ -19,6 +10,15 @@ import org.hibernate.engine.FilterDefinition;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
+
+import java.io.Serializable;
+import java.sql.Connection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.NamingException;
+import javax.naming.Reference;
 
 /**
  * This class wraps a Hibernate SessionFactory object, and delegates to it.

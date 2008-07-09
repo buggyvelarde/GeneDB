@@ -3,6 +3,9 @@ package org.gmod.schema.sequence;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.utils.propinterface.PropertyI;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -16,9 +19,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.utils.propinterface.PropertyI;
 
 @Entity
 @Table(name="feature_relationship")

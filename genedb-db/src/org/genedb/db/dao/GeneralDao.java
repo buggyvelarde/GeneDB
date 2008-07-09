@@ -1,12 +1,12 @@
 package org.genedb.db.dao;
 
-import java.util.List;
-
 import org.gmod.schema.analysis.Analysis;
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.Feature;
+
+import java.util.List;
 
 public class GeneralDao extends BaseDao {
 

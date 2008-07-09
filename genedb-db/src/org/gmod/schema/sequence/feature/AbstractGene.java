@@ -1,13 +1,13 @@
 package org.gmod.schema.sequence.feature;
 
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureRelationship;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
 
 /**
  * A {@link Gene} or a {@link Pseudogene}.

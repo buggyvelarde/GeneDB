@@ -5,8 +5,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import org.gmod.schema.pub.Pub;
 
-
-
 import java.io.Serializable;
 
 import javax.persistence.Column;

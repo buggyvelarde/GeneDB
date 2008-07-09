@@ -1,10 +1,10 @@
 package org.genedb.db.dao;
 
-import java.util.List;
-
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.phylogeny.Phylotree;
+
+import java.util.List;
 
 public class PhylogenyDao extends BaseDao {
 

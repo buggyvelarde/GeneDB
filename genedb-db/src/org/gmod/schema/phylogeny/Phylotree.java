@@ -6,8 +6,6 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

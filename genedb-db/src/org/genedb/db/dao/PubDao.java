@@ -1,12 +1,12 @@
 package org.genedb.db.dao;
 
-import java.util.List;
-
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.pub.PubProp;
+
+import java.util.List;
 
 public class PubDao extends BaseDao {
 

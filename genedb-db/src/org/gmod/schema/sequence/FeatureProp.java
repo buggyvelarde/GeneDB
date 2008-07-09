@@ -1,6 +1,13 @@
 package org.gmod.schema.sequence;
 
 
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.utils.Rankable;
+import org.gmod.schema.utils.propinterface.PropertyI;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -13,12 +20,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.utils.Rankable;
-import org.gmod.schema.utils.propinterface.PropertyI;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name="featureprop")

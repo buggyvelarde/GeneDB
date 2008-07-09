@@ -1,5 +1,14 @@
 package org.gmod.schema.sequence.feature;
 
+import org.gmod.schema.cfg.FeatureType;
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeatureRelationship;
+
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -8,14 +17,6 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-
-import org.apache.log4j.Logger;
-import org.gmod.schema.cfg.FeatureType;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
-import org.gmod.schema.sequence.FeatureRelationship;
 
 @Entity
 @FeatureType(cv="sequence", term="polypeptide")

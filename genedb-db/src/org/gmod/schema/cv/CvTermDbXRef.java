@@ -2,6 +2,8 @@ package org.gmod.schema.cv;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import org.gmod.schema.general.DbXRef;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -13,8 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.gmod.schema.general.DbXRef;
 
 
 @Entity

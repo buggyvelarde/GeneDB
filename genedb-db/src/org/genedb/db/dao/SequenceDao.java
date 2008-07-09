@@ -1,9 +1,5 @@
 package org.genedb.db.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
@@ -23,7 +19,12 @@ import org.gmod.schema.sequence.feature.SignalPeptide;
 import org.gmod.schema.sequence.feature.TransmembraneRegion;
 import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
+
+import org.apache.log4j.Logger;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author rh11

@@ -1,12 +1,13 @@
 package org.gmod.schema.sequence.feature;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import org.gmod.schema.cfg.FeatureType;
 
 import org.apache.log4j.Logger;
-import org.gmod.schema.cfg.FeatureType;
 import org.hibernate.search.annotations.Indexed;
+
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 @Entity
 @FeatureType(cv="sequence", term="mRNA")

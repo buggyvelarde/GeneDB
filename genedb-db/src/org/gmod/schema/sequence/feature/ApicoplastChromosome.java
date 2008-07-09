@@ -1,8 +1,8 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.Entity;
-
 import org.gmod.schema.cfg.FeatureType;
+
+import javax.persistence.Entity;
 
 /*
  * Note: we are using the 'apicoplast_sequence' SO term, which

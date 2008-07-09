@@ -1,10 +1,10 @@
 package org.gmod.schema.sequence.feature;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.organism.Organism;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 public class PolypeptideRegion extends Region {
 

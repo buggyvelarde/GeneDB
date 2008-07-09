@@ -1,11 +1,12 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.Entity;
-import javax.persistence.Transient;
-
-import org.apache.log4j.Logger;
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.sequence.FeatureProp;
+
+import org.apache.log4j.Logger;
+
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * A remark about a portion of the sequence.

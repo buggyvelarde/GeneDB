@@ -1,16 +1,17 @@
 package org.gmod.schema.sequence.feature;
 
+import org.gmod.schema.cfg.FeatureType;
+
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-
-import org.gmod.schema.cfg.FeatureType;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
 
 @Entity
 @FeatureType(cv="sequence", term="gene")

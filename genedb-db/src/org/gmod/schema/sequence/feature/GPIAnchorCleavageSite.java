@@ -1,10 +1,10 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.Entity;
-
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.organism.Organism;
+
+import javax.persistence.Entity;
 
 /*
  * There isn't yet a suitable SO term for this, so we're temporarily

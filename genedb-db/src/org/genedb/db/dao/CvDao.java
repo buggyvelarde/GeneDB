@@ -1,21 +1,22 @@
 package org.genedb.db.dao;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.utils.CountedName;
+
+import org.apache.log4j.Logger;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CvDao extends BaseDao {
 

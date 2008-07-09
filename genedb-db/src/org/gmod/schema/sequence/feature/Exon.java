@@ -1,8 +1,8 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.Entity;
-
 import org.gmod.schema.cfg.FeatureType;
+
+import javax.persistence.Entity;
 
 @Entity
 @FeatureType(cv="sequence", term="exon")

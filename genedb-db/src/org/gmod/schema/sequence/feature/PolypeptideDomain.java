@@ -1,15 +1,16 @@
 package org.gmod.schema.sequence.feature;
 
-import javax.persistence.Entity;
-import javax.persistence.Transient;
-
-import org.apache.log4j.Logger;
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureProp;
+
+import org.apache.log4j.Logger;
+
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 @Entity
 @FeatureType(cv="sequence", term="polypeptide_domain")

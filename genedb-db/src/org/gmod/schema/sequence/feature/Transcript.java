@@ -1,18 +1,19 @@
 package org.gmod.schema.sequence.feature;
 
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureRelationship;
+
+import org.apache.log4j.Logger;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Store;
+
 import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-
-import org.apache.log4j.Logger;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Store;
 
 @Entity
 public abstract class Transcript extends Region {

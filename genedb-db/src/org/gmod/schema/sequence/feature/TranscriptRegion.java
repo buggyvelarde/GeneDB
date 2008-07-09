@@ -1,9 +1,9 @@
 package org.gmod.schema.sequence.feature;
 
+import org.gmod.schema.sequence.FeatureLoc;
+
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-
-import org.gmod.schema.sequence.FeatureLoc;
 
 /**
  * SO:0000833, but we don't use it directly, which is why it's an

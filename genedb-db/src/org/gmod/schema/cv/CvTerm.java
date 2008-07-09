@@ -2,21 +2,6 @@ package org.gmod.schema.cv;
 
 
 
-import java.io.Serializable;
-import java.util.Collection;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import org.gmod.schema.analysis.AnalysisProp;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.OrganismProp;
@@ -34,10 +19,26 @@ import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureRelationshipProp;
 import org.gmod.schema.sequence.Synonym;
+
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
+
+import java.io.Serializable;
+import java.util.Collection;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 @Entity
 @Table(name="cvterm")

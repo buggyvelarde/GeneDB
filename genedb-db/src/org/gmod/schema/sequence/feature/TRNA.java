@@ -1,10 +1,11 @@
 package org.gmod.schema.sequence.feature;
 
+import org.gmod.schema.cfg.FeatureType;
+
+import org.hibernate.search.annotations.Indexed;
+
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-
-import org.gmod.schema.cfg.FeatureType;
-import org.hibernate.search.annotations.Indexed;
 
 @Entity
 @FeatureType(cv="sequence", term="tRNA")

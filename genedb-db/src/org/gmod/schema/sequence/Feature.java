@@ -1,5 +1,28 @@
 package org.gmod.schema.sequence;
 
+import org.genedb.db.helpers.LocationBridge;
+
+import org.gmod.schema.analysis.AnalysisFeature;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
+import org.gmod.schema.phylogeny.Phylonode;
+import org.gmod.schema.utils.CollectionUtils;
+
+import org.apache.log4j.Logger;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
@@ -25,27 +48,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.apache.log4j.Logger;
-import org.genedb.db.helpers.LocationBridge;
-import org.gmod.schema.analysis.AnalysisFeature;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.phylogeny.Phylonode;
-import org.gmod.schema.utils.CollectionUtils;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

@@ -2,6 +2,10 @@ package org.gmod.schema.cv;
 
 
 
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -11,10 +15,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
 
 @Entity
 @Table(name="cv")

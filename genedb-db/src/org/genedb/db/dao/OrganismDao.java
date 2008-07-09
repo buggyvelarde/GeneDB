@@ -1,8 +1,8 @@
 package org.genedb.db.dao;
 
-import java.util.List;
-
 import org.gmod.schema.organism.Organism;
+
+import java.util.List;
 
 public class OrganismDao extends BaseDao {
 
