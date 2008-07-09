@@ -184,7 +184,7 @@ public class Feature implements java.io.Serializable {
         return this.featureId;
     }
 
-    public void setFeatureId(int featureId) {
+    private void setFeatureId(int featureId) {
         this.featureId = featureId;
     }
 
@@ -192,7 +192,7 @@ public class Feature implements java.io.Serializable {
         return this.organism;
     }
 
-    public void setOrganism(Organism organism) {
+    private void setOrganism(Organism organism) {
         this.organism = organism;
     }
 
@@ -244,7 +244,7 @@ public class Feature implements java.io.Serializable {
      *
      * @param uniqueName the unique name, not null
      */
-    public void setUniqueName(String uniqueName) {
+    private void setUniqueName(String uniqueName) {
         if (uniqueName == null)
             throw new IllegalArgumentException("setUniqueName: the unique name cannot be null");
         this.uniqueName = uniqueName;
@@ -295,11 +295,11 @@ public class Feature implements java.io.Serializable {
         this.seqLen = seqLen;
     }
 
-    public String getMd5Checksum() {
+    private String getMd5Checksum() {
         return this.md5Checksum;
     }
 
-    public void setMd5Checksum(String md5Checksum) {
+    private void setMd5Checksum(String md5Checksum) {
         this.md5Checksum = md5Checksum;
     }
 
@@ -307,7 +307,7 @@ public class Feature implements java.io.Serializable {
         return this.analysis;
     }
 
-    public void setAnalysis(boolean analysis) {
+    private void setAnalysis(boolean analysis) {
         this.analysis = analysis;
     }
 
@@ -315,7 +315,7 @@ public class Feature implements java.io.Serializable {
         return this.obsolete;
     }
 
-    public void setObsolete(boolean obsolete) {
+    private void setObsolete(boolean obsolete) {
         this.obsolete = obsolete;
     }
 
@@ -323,7 +323,7 @@ public class Feature implements java.io.Serializable {
         return this.timeAccessioned;
     }
 
-    public void setTimeAccessioned(Timestamp timeAccessioned) {
+    private void setTimeAccessioned(Timestamp timeAccessioned) {
         this.timeAccessioned = timeAccessioned;
     }
 
@@ -331,7 +331,7 @@ public class Feature implements java.io.Serializable {
         return this.timeLastModified;
     }
 
-    public void setTimeLastModified(Timestamp timeLastModified) {
+    private void setTimeLastModified(Timestamp timeLastModified) {
         this.timeLastModified = timeLastModified;
     }
 
@@ -347,7 +347,7 @@ public class Feature implements java.io.Serializable {
      * @return the unique rank=0 FeatureLoc associated with this feature
      */
     @Transient
-    public FeatureLoc getRankZeroFeatureLoc() {
+	public FeatureLoc getRankZeroFeatureLoc() {
         List<FeatureLoc> featureLocs = getFeatureLocsForFeatureId();
         if (featureLocs.size() == 0) {
             logger.error(String.format("getRankZeroFeatureLoc: Feature '%s' has no FeatureLocs",
@@ -364,7 +364,7 @@ public class Feature implements java.io.Serializable {
         return null;
     }
 
-    public void setFeatureLocsForSrcFeatureId(Collection<FeatureLoc> featureLocsForSrcFeatureId) {
+    private void setFeatureLocsForSrcFeatureId(Collection<FeatureLoc> featureLocsForSrcFeatureId) {
         this.featureLocsForSrcFeatureId = featureLocsForSrcFeatureId;
     }
 
@@ -373,7 +373,7 @@ public class Feature implements java.io.Serializable {
                 .safeGetter(featureRelationshipsForObjectId));
     }
 
-    public void setFeatureRelationshipsForObjectId(
+    private void setFeatureRelationshipsForObjectId(
             Collection<FeatureRelationship> featureRelationshipsForObjectId) {
         this.featureRelationshipsForObjectId = featureRelationshipsForObjectId;
     }
@@ -383,7 +383,7 @@ public class Feature implements java.io.Serializable {
                 .safeGetter(featureRelationshipsForSubjectId));
     }
 
-    public void setFeatureRelationshipsForSubjectId(
+    private void setFeatureRelationshipsForSubjectId(
             Collection<FeatureRelationship> featureRelationshipsForSubjectId) {
         this.featureRelationshipsForSubjectId = featureRelationshipsForSubjectId;
     }
@@ -398,7 +398,7 @@ public class Feature implements java.io.Serializable {
         return this.featureDbXRefs;
     }
 
-    public void setFeatureDbXRefs(Collection<FeatureDbXRef> featureDbXRefs) {
+    private void setFeatureDbXRefs(Collection<FeatureDbXRef> featureDbXRefs) {
         this.featureDbXRefs = featureDbXRefs;
     }
 
@@ -429,7 +429,7 @@ public class Feature implements java.io.Serializable {
         featureCvTerms.add(featureCvTerm);
     }
 
-    public void setFeatureCvTerms(Collection<FeatureCvTerm> featureCvTerms) {
+    private void setFeatureCvTerms(Collection<FeatureCvTerm> featureCvTerms) {
         this.featureCvTerms = featureCvTerms;
     }
 
@@ -442,11 +442,11 @@ public class Feature implements java.io.Serializable {
         getFeatureProps().add(featureProp);
     }
 
-    public Collection<FeaturePub> getFeaturePubs() {
+    private Collection<FeaturePub> getFeaturePubs() {
         return this.featurePubs;
     }
 
-    public void setFeaturePubs(Collection<FeaturePub> featurePubs) {
+    private void setFeaturePubs(Collection<FeaturePub> featurePubs) {
         this.featurePubs = featurePubs;
     }
 
@@ -454,7 +454,7 @@ public class Feature implements java.io.Serializable {
         return this.analysisFeatures;
     }
 
-    public void setAnalysisFeatures(Collection<AnalysisFeature> analysisFeatures) {
+    private void setAnalysisFeatures(Collection<AnalysisFeature> analysisFeatures) {
         this.analysisFeatures = analysisFeatures;
     }
 
@@ -462,7 +462,7 @@ public class Feature implements java.io.Serializable {
         return (featureSynonyms = CollectionUtils.safeGetter(featureSynonyms));
     }
 
-    public void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
+    private void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
         this.featureSynonyms = featureSynonyms;
     }
 
@@ -473,7 +473,7 @@ public class Feature implements java.io.Serializable {
      * @return the preferred display name, never null
      */
     @Transient
-    public String getDisplayName() {
+	public String getDisplayName() {
         return (getName() != null) ? getName() : getUniqueName();
     }
 
@@ -484,7 +484,7 @@ public class Feature implements java.io.Serializable {
      * @return the systematic ID, temporary systematic ID, or unique name
      */
     @Transient
-    public String getSystematicId() {
+    private String getSystematicId() {
         for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
             Synonym synonym = featureSynonym.getSynonym();
             if (("systematic_id".equals(synonym.getCvTerm().getName())
@@ -496,7 +496,7 @@ public class Feature implements java.io.Serializable {
     }
 
     @Transient
-    public Collection<String> getPreviousSystematicIds() {
+    private Collection<String> getPreviousSystematicIds() {
         Set<String> ret = new HashSet<String>();
         for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
             Synonym synonym = featureSynonym.getSynonym();
@@ -508,19 +508,19 @@ public class Feature implements java.io.Serializable {
         return ret;
     }
 
-    public void setFeatureLocsForFeatureId(List<FeatureLoc> featureLocsForFeatureId) {
+    private void setFeatureLocsForFeatureId(List<FeatureLoc> featureLocsForFeatureId) {
         this.featureLocsForFeatureId = featureLocsForFeatureId;
     }
 
-    public void setFeatureProps(Collection<FeatureProp> featureProps) {
+    private void setFeatureProps(Collection<FeatureProp> featureProps) {
         this.featureProps = featureProps;
     }
 
-    public Collection<Phylonode> getPhylonodes() {
+    private Collection<Phylonode> getPhylonodes() {
         return this.phylonodes;
     }
 
-    public void setPhylonodes(Collection<Phylonode> phylonodes) {
+    private void setPhylonodes(Collection<Phylonode> phylonodes) {
         this.phylonodes = phylonodes;
     }
 
@@ -554,7 +554,7 @@ public class Feature implements java.io.Serializable {
      * FeatureLoc of interest, but is neither automatically populated nor
      * persisted. It is (at the time of writing) used only by Artemis.
      */
-    public FeatureLoc getFeatureLoc() {
+    private FeatureLoc getFeatureLoc() {
         return featureLoc;
     }
 
@@ -569,13 +569,13 @@ public class Feature implements java.io.Serializable {
      * FeatureLoc of interest, but is neither automatically populated nor
      * persisted. It is (at the time of writing) used only by Artemis.
      */
-    public void setFeatureLoc(FeatureLoc featureLoc) {
+    private void setFeatureLoc(FeatureLoc featureLoc) {
         this.featureLoc = featureLoc;
     }
 
     @Transient
     @Field(name = "synonym", index = Index.TOKENIZED, store = Store.YES)
-    public String getSynonymsAsTabSeparatedString() {
+    private String getSynonymsAsTabSeparatedString() {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
         for (FeatureSynonym featureSynonym : getFeatureSynonyms()) {
@@ -597,7 +597,7 @@ public class Feature implements java.io.Serializable {
      */
     @Transient
     @Field(name = "allNames", index = Index.TOKENIZED, store = Store.NO)
-    public String getAllNames() {
+    private String getAllNames() {
         StringBuilder allNames = new StringBuilder();
         if (getName() != null) {
             allNames.append(getName());
@@ -612,20 +612,20 @@ public class Feature implements java.io.Serializable {
     @Transient
     @Field(name = "start", store = Store.YES)
     @FieldBridge(impl = LocationBridge.class)
-    public int getStart() {
+	public int getStart() {
         return getRankZeroFeatureLoc().getFmin();
     }
 
     @Transient
     @Field(name = "stop", store = Store.YES)
     @FieldBridge(impl = LocationBridge.class)
-    public int getStop() {
+	public int getStop() {
         return getRankZeroFeatureLoc().getFmax();
     }
 
     @Transient
     @Field(name = "strand", index=Index.UN_TOKENIZED, store = Store.YES)
-    public int getStrand() {
+	public int getStrand() {
         FeatureLoc loc = getRankZeroFeatureLoc();
         if (loc == null)
             return 0;
@@ -634,7 +634,7 @@ public class Feature implements java.io.Serializable {
 
     @Transient
     @Field(name = "chr", index=Index.UN_TOKENIZED, store = Store.YES)
-    public String getChr() {
+    private String getChr() {
         FeatureLoc loc = getRankZeroFeatureLoc();
         if (loc == null)
             return null;
@@ -643,7 +643,7 @@ public class Feature implements java.io.Serializable {
 
     @Transient
     @Field(name = "chrlen", store = Store.YES)
-    public int getChrLen() {
+    private int getChrLen() {
         FeatureLoc loc = getRankZeroFeatureLoc();
         if (loc == null)
             return 0;
