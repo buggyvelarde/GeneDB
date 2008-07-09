@@ -251,14 +251,38 @@ public class CvDao extends BaseDao implements CvDaoI {
 
             @SuppressWarnings("unchecked")
             List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(
-                "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct))"+
+                "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct.feature.uniqueName))"+
                 " from FeatureCvTerm fct" +
                 " join fct.cvTerm cvt" +
                 " where fct.feature.organism.commonName in ("+orgNames+")" +
-                " and cvt.cv.name like :cvName" +
+                " and cvt.cv.name=:cvName" +
                 " group by cvt.name" +
                 " order by cvt.name",
             "cvName", cvName);
+
+            return countedNames;
+        }
+
+        public List<CountedName> getCountedNamesByCvNamePatternAndOrganism(String cvNamePattern, Collection<String> orgs) {
+            StringBuilder orgNames = new StringBuilder();
+            boolean first = true;
+            for (String orgName : orgs) {
+                if (!first)
+                    orgNames.append(", ");
+                first = false;
+                orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
+            }
+
+            @SuppressWarnings("unchecked")
+            List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(
+                "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct.feature.uniqueName))"+
+                " from FeatureCvTerm fct" +
+                " join fct.cvTerm cvt" +
+                " where fct.feature.organism.commonName in ("+orgNames+")" +
+                " and cvt.cv.name like :cvNamePattern" +
+                " group by cvt.name" +
+                " order by cvt.name",
+            "cvNamePattern", cvNamePattern);
 
             return countedNames;
         }
@@ -325,6 +349,41 @@ public class CvDao extends BaseDao implements CvDaoI {
             List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(query,
                 new String[]{"polypeptide", "cvName", "organism"},
                 new Object[]{polypeptide, cvName, polypeptide.getOrganism().getCommonName()});
+
+            return countedNames;
+
+        }
+
+        /**
+         * Given a Cv name and Polypeptide feature, find all the cvterms in
+         * this polypeptide for Cv along with their count for the organism
+         * the polypeptide belongs
+         *
+         * @param cvNamePattern a pattern (HQL/SQL syntax) to match against the CV name
+         * @param polypeptide the Polypeptide feature
+         * @return a (possibly empty) List<CountedName> of matches
+         */
+        @SuppressWarnings("unchecked")
+        public List<CountedName> getCountedNamesByCvNamePatternAndFeatureAndOrganism(String cvNamePattern,
+                Polypeptide polypeptide) {
+
+            /**
+             * the distinct clause in the query counts only once if there is more than
+             * FeatureCvTerm for a Feature with a particular CvTerm
+             */
+            String query = "select new org.gmod.schema.utils.CountedName( fct.cvTerm.name, count" +
+                    " (distinct fct.feature)) from FeatureCvTerm fct where" +
+                    " fct.feature.organism.commonName=:organism and " +
+                    " fct.cvTerm.id in " +
+                    " (select fct.cvTerm.id from FeatureCvTerm fct, Feature f" +
+                    " where f=:polypeptide and fct.cvTerm.cv.name LIKE :cvNamePattern" +
+                    " and fct.feature=f)" +
+                    " group by fct.cvTerm.name" +
+                    " order by fct.cvTerm.name";
+
+            List<CountedName> countedNames = getHibernateTemplate().findByNamedParam(query,
+                new String[]{"polypeptide", "cvNamePattern", "organism"},
+                new Object[]{polypeptide, cvNamePattern, polypeptide.getOrganism().getCommonName()});
 
             return countedNames;
 

@@ -65,19 +65,20 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrganism());
         Map<String, Object> model = new HashMap<String, Object>();
         String category = btb.getCategory().toString();
-        
+
         /* This is to include all the cvs starting with CC.
          * In future when the other cvs have more terms in,
-         * this can be removed and the other cvs starting 
+         * this can be removed and the other cvs starting
          * with CC can be added to BrowseCategory
          */
-        if(category.equals("ControlledCuration")) {
-            category = "CC_%";
-        }
-        
-        List<Feature> results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(
+        List<Feature> results;
+        if(category.equals("ControlledCuration"))
+            results = sequenceDao.getFeaturesByCvNamePatternAndCvTermNameAndOrganisms(
+                "CC\\_%", btb.getTerm(), orgNames);
+        else
+            results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(
         		category, btb.getTerm(), orgNames);
-        
+
         if (results == null || results.size() == 0) {
             logger.info("result is null");
             be.reject("no.results");

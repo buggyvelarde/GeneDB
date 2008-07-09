@@ -131,7 +131,7 @@ public class GeneDBWebUtils {
             model.put("polypeptide", polypeptide);
             model.put("polyprop", calculatePepstats(polypeptide));
 
-            model.put("CC",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("CC_genedb_controlledcuration", polypeptide));
+            model.put("CC",        cvDao.getCountedNamesByCvNamePatternAndFeatureAndOrganism("CC\\_*", polypeptide));
             model.put("BP",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("biological_process", polypeptide));
             model.put("CellularC", cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("cellular_component", polypeptide));
             model.put("MF",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("molecular_function", polypeptide));

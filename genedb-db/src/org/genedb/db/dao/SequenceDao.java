@@ -175,20 +175,36 @@ public class SequenceDao extends BaseDao {
         return list;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Feature> getFeaturesByCvNameAndCvTermNameAndOrganisms(String cvName,
             String cvTermName, String orgs) {
-        logger.info("Querying with cvName='" + cvName + "' cvTermName='" + cvTermName + "' orgs='"
-                + orgs + "'");
-        return getHibernateTemplate()
+        logger.info(String.format("Querying with cvName='%s', cvTermName='%s', orgs in (%s)",
+            cvName, cvTermName, orgs));
+
+        @SuppressWarnings("unchecked")
+        List<Feature> features = getHibernateTemplate()
                 .findByNamedParam(
-                        "select f"
-                                + " from CvTerm cvt,FeatureCvTerm fct,Feature f "
-                                + "where f.organism.commonName in ("
-                                + orgs
-                                + ") and f=fct.feature and cvt=fct.cvTerm and cvt.cv.name like :cvName and cvt.name=:cvTermName",
+                        "select feature"
+                        +" from FeatureCvTerm"
+                        +" where feature.organism.commonName in ("+orgs+")"
+                        +" and cvTerm.cv.name=:cvName and cvTerm.name=:cvTermName",
                         new String[] { "cvName", "cvTermName" },
                         new Object[] { cvName, cvTermName });
+        return features;
+    }
+
+    public List<Feature> getFeaturesByCvNamePatternAndCvTermNameAndOrganisms(String cvNamePattern,
+            String cvTermName, String orgs) {
+        logger.info(String.format("Querying with cvName like '%s', cvTermName='%s', orgs in (%s)",
+            cvNamePattern, cvTermName, orgs));
+        @SuppressWarnings("unchecked")
+        List<Feature> features = getHibernateTemplate()
+                .findByNamedParam(
+                    "select feature"
+                    +" from FeatureCvTerm"
+                    +" where feature.organism.commonName in ("+orgs+")"
+                    +" and cvTerm.cv.name like :cvNamePattern and cvTerm.name=:cvTermName",
+                    new String[] { "cvNamePattern", "cvTermName" }, new Object[] { cvNamePattern, cvTermName });
+        return features;
     }
 
     /**
@@ -379,13 +395,19 @@ public class SequenceDao extends BaseDao {
                         new Object[] { lookup, featureType, });
     }
 
+    /**
+     * Get a list of all products, together with the number of
+     * times each is used.
+     *
+     * @return a list of <code>CountedName</code> objects
+     */
     @SuppressWarnings("unchecked")
     // FIXME - Remove hard coded value - make more general?
-    public List<CountedName> getProducts() {
+    public List<CountedName> getAllProductsWithCount() {
         return getHibernateTemplate().find(
-                "select new CountedName(cvt.name,count(f.uniqueName))"
-                        + " from CvTerm cvt,FeatureCvTerm fct,Feature f "
-                        + "where f=fct.feature and cvt=fct.cvTerm and cvt.cv=15 group by cvt.name");
+                "select new CountedName(cvt.name, count(fct.feature.uniqueName))"
+                        + " from CvTerm cvt, FeatureCvTerm fct"
+                        + " where cvt=fct.cvTerm and cvt.cv=15 group by cvt.name");
     }
 
     /**
