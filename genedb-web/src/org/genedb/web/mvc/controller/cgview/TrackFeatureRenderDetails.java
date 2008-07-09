@@ -3,51 +3,51 @@ package org.genedb.web.mvc.controller.cgview;
 import java.awt.Paint;
 
 public class TrackFeatureRenderDetails {
-	
-	private Paint foreground;
-	
-	private double startAngle;
-	
-	private double extentAngle;
-	
-	private TrackFeature trackFeature;
 
-	public TrackFeatureRenderDetails(TrackFeature trackFeature) {
-		this.trackFeature = trackFeature;
-	}
+    private Paint foreground;
 
-	public Paint getForeground() {
-		return foreground;
-	}
+    private double startAngle;
 
-	public void setForeground(Paint foreground) {
-		this.foreground = foreground;
-	}
+    private double extentAngle;
 
-	public double getStartAngle() {
-		return startAngle;
-	}
+    private TrackFeature trackFeature;
 
-	public void setStartAngle(double startAngle) {
-		this.startAngle = startAngle;
-	}
+    public TrackFeatureRenderDetails(TrackFeature trackFeature) {
+        this.trackFeature = trackFeature;
+    }
 
-	public double getExtentAngle() {
-		return extentAngle;
-	}
+    public Paint getForeground() {
+        return foreground;
+    }
 
-	public void setExtentAngle(double extentAngle) {
-		this.extentAngle = extentAngle;
-	}
-	
-	@Override
+    public void setForeground(Paint foreground) {
+        this.foreground = foreground;
+    }
+
+    public double getStartAngle() {
+        return startAngle;
+    }
+
+    public void setStartAngle(double startAngle) {
+        this.startAngle = startAngle;
+    }
+
+    public double getExtentAngle() {
+        return extentAngle;
+    }
+
+    public void setExtentAngle(double extentAngle) {
+        this.extentAngle = extentAngle;
+    }
+
+    @Override
     public String toString() {
-		return "startAngle='"+startAngle+"' extentAngle='"+extentAngle+"'";
-		
-	}
+        return "startAngle='" + startAngle + "' extentAngle='" + extentAngle + "'";
 
-	public TrackFeature getTrackFeature() {
-		return trackFeature;
-	}
+    }
+
+    public TrackFeature getTrackFeature() {
+        return trackFeature;
+    }
 
 }

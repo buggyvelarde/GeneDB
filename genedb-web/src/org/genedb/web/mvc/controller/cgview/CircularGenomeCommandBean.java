@@ -1,14 +1,13 @@
-package org.genedb.web.mvc.controller.cgview;  
-
+package org.genedb.web.mvc.controller.cgview;
 
 public class CircularGenomeCommandBean {
-    
+
     private String enzymeName;
-    
+
     private String taxon;
-    
+
     private String uniqueName;
-    
+
     private String file;
 
     public String getEnzymeName() {
@@ -35,13 +34,12 @@ public class CircularGenomeCommandBean {
         this.uniqueName = uniqueName;
     }
 
-	public String getFile() {
-		return file;
-	}
+    public String getFile() {
+        return file;
+    }
 
-	public void setFile(String file) {
-		this.file = file;
-	}
-    
-    
+    public void setFile(String file) {
+        this.file = file;
+    }
+
 }
