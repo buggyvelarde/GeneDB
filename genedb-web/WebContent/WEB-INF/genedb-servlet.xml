@@ -3,16 +3,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:util="http://www.springframework.org/schema/util"
     xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
     xsi:schemaLocation="
 	http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 	http://www.springframework.org/schema/util
 	http://www.springframework.org/schema/util/spring-util-2.5.xsd
 	http://www.springframework.org/schema/context
-	http://www.springframework.org/schema/util/spring-context-2.5.xsd
-    http://www.directwebremoting.org/schema/spring-dwr
-    http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd"
+	http://www.springframework.org/schema/util/spring-context-2.5.xsd"
     default-init-method="postConstruction">
 
     <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
@@ -40,9 +37,6 @@
 
     <bean id="goProcessBrowse"
         class="org.genedb.web.mvc.controller.BrowseBean">
-        <dwr:remote javascript="goPBrowse">
-            <dwr:include method="getPossibleMatches" />
-        </dwr:remote>
         <property name="cvDaoI" ref="cvDao" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="cvNames">
@@ -60,14 +54,10 @@
 
     <bean id="nameBrowse"
         class="org.genedb.web.mvc.controller.BrowseBeanName">
-        <dwr:remote javascript="nameBrowse">
-            <dwr:include method="getPossibleMatches" />
-        </dwr:remote>
         <property name="cvDaoI" ref="cvDao" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="cvTerm" value="gene" />
     </bean>
-    <dwr:controller id="dwrController" debug="true" />
 
     <!--
       - This bean provides explicit View mappings in a resource bundle instead of the
@@ -143,17 +133,6 @@
         </property>
     </bean>
 
-
-    <bean id="dwrHandlerMappings"
-        class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="order" value="1" />
-        <property name="alwaysUseFullPath" value="true" />
-        <property name="mappings">
-            <props>
-                <prop key="/dwr/**/*">dwrController</prop>
-            </props>
-        </property>
-    </bean>
 
 
     <!-- ========================= CONTROLLER DEFINITIONS ========================= -->
@@ -343,18 +322,6 @@
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor"
             ref="taxonNodeArrayPropertyEditor" />
-        <property name="historyManagerFactory"
-            ref="historyManagerFactory" />
-    </bean>
-
-    <bean id="ExtController"
-        class="org.genedb.web.mvc.controller.ExtController">
-        <property name="sessionForm" value="true" />
-        <property name="commandName" value="ext" />
-        <property name="commandClass"
-            value="org.genedb.web.mvc.controller.ExtBean" />
-        <property name="sequenceDao" ref="sequenceDao" />
-        <property name="bindOnNewForm" value="true" />
         <property name="historyManagerFactory"
             ref="historyManagerFactory" />
     </bean>
