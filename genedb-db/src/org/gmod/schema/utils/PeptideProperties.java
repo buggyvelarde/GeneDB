@@ -1,76 +1,76 @@
 package org.gmod.schema.utils;
 
 public class PeptideProperties {
-	
-	private String mass;
-	
-	private String aminoAcids;
-	
-	private String isoelectricPoint;
-	
-	private String charge;
-	
-	private String signalPeptide;
-	
-	private String transmembraneDomain;
-	
-	private String gpiAnchor;
 
-	public String getAminoAcids() {
-		return aminoAcids;
-	}
+    private String mass;
 
-	public void setAminoAcids(String aminoAcids) {
-		this.aminoAcids = aminoAcids;
-	}
+    private String aminoAcids;
 
-	public String getCharge() {
-		return charge;
-	}
+    private String isoelectricPoint;
 
-	public void setCharge(String charge) {
-		this.charge = charge;
-	}
+    private String charge;
 
-	public String getGpiAnchor() {
-		return gpiAnchor;
-	}
+    private String signalPeptide;
 
-	public void setGpiAnchor(String gpiAnchor) {
-		this.gpiAnchor = gpiAnchor;
-	}
+    private String transmembraneDomain;
 
-	public String getIsoelectricPoint() {
-		return isoelectricPoint;
-	}
+    private String gpiAnchor;
 
-	public void setIsoelectricPoint(String isoelectricPoint) {
-		this.isoelectricPoint = isoelectricPoint;
-	}
+    public String getAminoAcids() {
+        return aminoAcids;
+    }
 
-	public String getMass() {
-		return mass;
-	}
+    public void setAminoAcids(String aminoAcids) {
+        this.aminoAcids = aminoAcids;
+    }
 
-	public void setMass(String mass) {
-		this.mass = mass;
-	}
+    public String getCharge() {
+        return charge;
+    }
 
-	public String getSignalPeptide() {
-		return signalPeptide;
-	}
+    public void setCharge(String charge) {
+        this.charge = charge;
+    }
 
-	public void setSignalPeptide(String signalPeptide) {
-		this.signalPeptide = signalPeptide;
-	}
+    public String getGpiAnchor() {
+        return gpiAnchor;
+    }
 
-	public String getTransmembraneDomain() {
-		return transmembraneDomain;
-	}
+    public void setGpiAnchor(String gpiAnchor) {
+        this.gpiAnchor = gpiAnchor;
+    }
 
-	public void setTransmembraneDomain(String transmembraneDomain) {
-		this.transmembraneDomain = transmembraneDomain;
-	}
-	
-	
+    public String getIsoelectricPoint() {
+        return isoelectricPoint;
+    }
+
+    public void setIsoelectricPoint(String isoelectricPoint) {
+        this.isoelectricPoint = isoelectricPoint;
+    }
+
+    public String getMass() {
+        return mass;
+    }
+
+    public void setMass(String mass) {
+        this.mass = mass;
+    }
+
+    public String getSignalPeptide() {
+        return signalPeptide;
+    }
+
+    public void setSignalPeptide(String signalPeptide) {
+        this.signalPeptide = signalPeptide;
+    }
+
+    public String getTransmembraneDomain() {
+        return transmembraneDomain;
+    }
+
+    public void setTransmembraneDomain(String transmembraneDomain) {
+        this.transmembraneDomain = transmembraneDomain;
+    }
+
+
 }

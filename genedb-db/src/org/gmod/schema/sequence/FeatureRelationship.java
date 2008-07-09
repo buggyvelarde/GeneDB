@@ -24,34 +24,34 @@ import org.gmod.schema.utils.propinterface.PropertyI;
 @Table(name="feature_relationship")
 public class FeatureRelationship implements Serializable,PropertyI {
 
-    // Fields    
+    // Fields
 
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="feature_relationship_id", unique=false, nullable=false, insertable=true, updatable=true)
     @SequenceGenerator(name="generator", sequenceName="feature_relationship_feature_relationship_id_seq")
     private int featureRelationshipId;
-     
+
     @ManyToOne(cascade={}, fetch=FetchType.EAGER)
-    @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)     
+    @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)
     private Feature featureBySubjectId;
-     
+
     @ManyToOne(cascade={}, fetch=FetchType.EAGER)
-    @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true) 
+    @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true)
     private Feature featureByObjectId;
-     
-     @ManyToOne(cascade={}, fetch=FetchType.LAZY)   
+
+     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
      @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
-     
-     @Column(name="value", unique=false, nullable=true, insertable=true, updatable=true)    
+
+     @Column(name="value", unique=false, nullable=true, insertable=true, updatable=true)
      private String value;
-     
-     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)     
+
+     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
      private int rank;
-     
+
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureRelationship")
      private Collection<FeatureRelationshipProp> featureRelationshipProps;
-     
+
      @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureRelationship")
      private Collection<FeatureRelationshipPub> featureRelationshipPubs;
 
@@ -59,7 +59,7 @@ public class FeatureRelationship implements Serializable,PropertyI {
 
     /** default constructor */
     public FeatureRelationship() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** minimal constructor */
@@ -69,14 +69,14 @@ public class FeatureRelationship implements Serializable,PropertyI {
         this.cvTerm = cvTerm;
         this.rank = rank;
     }
-    
-   
+
+
     // Property accessors
 
     public int getFeatureRelationshipId() {
         return this.featureRelationshipId;
     }
-    
+
     public void setFeatureRelationshipId(int featureRelationshipId) {
         this.featureRelationshipId = featureRelationshipId;
     }
@@ -84,7 +84,7 @@ public class FeatureRelationship implements Serializable,PropertyI {
     public Feature getFeatureBySubjectId() {
         return this.featureBySubjectId;
     }
-    
+
     public void setFeatureBySubjectId(Feature featureBySubjectId) {
         this.featureBySubjectId = featureBySubjectId;
     }
@@ -92,7 +92,7 @@ public class FeatureRelationship implements Serializable,PropertyI {
     public Feature getFeatureByObjectId() {
         return this.featureByObjectId;
     }
-    
+
     public void setFeatureByObjectId(Feature featureByObjectId) {
         this.featureByObjectId = featureByObjectId;
     }
@@ -100,23 +100,23 @@ public class FeatureRelationship implements Serializable,PropertyI {
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
+
     public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
-    
+
     public String getValue() {
         return this.value;
     }
-    
+
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     public int getRank() {
         return this.rank;
     }
-    
+
     public void setRank(int rank) {
         this.rank = rank;
     }

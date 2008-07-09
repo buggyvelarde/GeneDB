@@ -20,7 +20,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name="phylonode_dbxref", uniqueConstraints = { @UniqueConstraint( columnNames = { "phylonode_id", "dbxref_id" } ) })
 public class PhylonodeDbXRef  implements java.io.Serializable {
 
-    // Fields    
+    // Fields
 
      private int phylonodeDbXRefId;
      private DbXRef dbXRef;
@@ -30,7 +30,7 @@ public class PhylonodeDbXRef  implements java.io.Serializable {
 
     /** default constructor */
     public PhylonodeDbXRef() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */
@@ -39,26 +39,26 @@ public class PhylonodeDbXRef  implements java.io.Serializable {
        this.dbXRef = dbXRef;
        this.phylonode = phylonode;
     }
-   
+
     // Property accessors
      @Id
-    
+
     @Column(name="phylonode_dbxref_id", unique=true, nullable=false, insertable=true, updatable=true)
     public int getPhylonodeDbXRefId() {
         return this.phylonodeDbXRefId;
     }
-    
+
     public void setPhylonodeDbXRefId(int phylonodeDbXRefId) {
         this.phylonodeDbXRefId = phylonodeDbXRefId;
     }
-    
+
 @ManyToOne(cascade={},fetch=FetchType.LAZY)
-    
+
     @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
     public DbXRef getDbXRef() {
         return this.dbXRef;
     }
-    
+
     public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
@@ -67,7 +67,7 @@ public class PhylonodeDbXRef  implements java.io.Serializable {
     public Phylonode getPhylonode() {
         return this.phylonode;
     }
-    
+
     public void setPhylonode(Phylonode phylonode) {
         this.phylonode = phylonode;
     }

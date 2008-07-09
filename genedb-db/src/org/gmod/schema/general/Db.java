@@ -21,28 +21,28 @@ import javax.persistence.Table;
 @Table(name="db")
 public class Db implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="db_db_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="db_db_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="db_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int dbId;
-     
+
     @Column(name="name", unique=true, nullable=false, insertable=true, updatable=true)
      private String name;
-     
+
     @Column(name="description", unique=false, nullable=true, insertable=true, updatable=true)
      private String description;
-     
+
     @Column(name="urlprefix", unique=false, nullable=true, insertable=true, updatable=true)
      private String urlPrefix;
 
     @Column(name="url", unique=false, nullable=true, insertable=true, updatable=true)
      private String url;
-     
+
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="db")
      private Collection<DbXRef> dbXRefs;
-    
-   
+
+
     // Property accessors
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getDbId()
@@ -50,14 +50,14 @@ public class Db implements Serializable {
     public int getDbId() {
         return this.dbId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDbId(int)
      */
     public void setDbId(int dbId) {
         this.dbId = dbId;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getName()
@@ -65,14 +65,14 @@ public class Db implements Serializable {
     public String getName() {
         return this.name;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setName(java.lang.String)
      */
     public void setName(String name) {
         this.name = name;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getDescription()
@@ -80,14 +80,14 @@ public class Db implements Serializable {
     public String getDescription() {
         return this.description;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDescription(java.lang.String)
      */
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getUrlPrefix()
@@ -95,14 +95,14 @@ public class Db implements Serializable {
     public String getUrlPrefix() {
         return this.urlPrefix;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setUrlPrefix(java.lang.String)
      */
     public void setUrlPrefix(String urlPrefix) {
         this.urlPrefix = urlPrefix;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getUrl()
@@ -110,7 +110,7 @@ public class Db implements Serializable {
     public String getUrl() {
         return this.url;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setUrl(java.lang.String)
      */
@@ -124,7 +124,7 @@ public class Db implements Serializable {
     public Collection<DbXRef> getDbXRefs() {
         return this.dbXRefs;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDbXRefs(java.util.Set)
      */

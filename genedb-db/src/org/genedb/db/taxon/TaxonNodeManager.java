@@ -50,11 +50,11 @@ public class TaxonNodeManager implements InitializingBean{
     private Map<String, TaxonNode> nickNameTaxonNodeMap = new HashMap<String, TaxonNode>();
 
     public void afterPropertiesSet() throws Exception {
-    	SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
-    	Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
-    	TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-    	try {
-    	//System.err.println("Session is '"+session+"'");
+        SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
+        Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
+        try {
+        //System.err.println("Session is '"+session+"'");
         Set<TaxonNode> nodes = new HashSet<TaxonNode>();
         List<Phylonode> phylonodes = phylogenyDao.getAllPhylonodes();
         if (phylonodes == null || phylonodes.size() == 0) {
@@ -93,12 +93,12 @@ public class TaxonNodeManager implements InitializingBean{
             }
             nodes = tempNodes;
         }
-    	//System.err.println("Session is '"+session+"'");
-    	}
-    	finally {
-    		  TransactionSynchronizationManager.unbindResource(sessionFactory);
-    		  SessionFactoryUtils.closeSession(session);
-    		}
+        //System.err.println("Session is '"+session+"'");
+        }
+        finally {
+              TransactionSynchronizationManager.unbindResource(sessionFactory);
+              SessionFactoryUtils.closeSession(session);
+            }
 
     }
 
@@ -172,8 +172,8 @@ public class TaxonNodeManager implements InitializingBean{
 
     @Required
     public void setHibernateTransactionManager(
-			HibernateTransactionManager hibernateTransactionManager) {
-		this.hibernateTransactionManager = hibernateTransactionManager;
-	}
+            HibernateTransactionManager hibernateTransactionManager) {
+        this.hibernateTransactionManager = hibernateTransactionManager;
+    }
 
 }

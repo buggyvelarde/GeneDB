@@ -20,35 +20,35 @@ import javax.persistence.Table;
 @Table(name="cvtermpath")
 public class CvTermPath implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="cvtermpath_cvtermpath_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="cvtermpath_cvtermpath_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="cvtermpath_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int cvTermPathId;
-    
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermBySubjectId;
-     
+
     @ManyToOne(cascade={},fetch=FetchType.LAZY)
-        
+
         @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByObjectId;
-     
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-        
+
         @JoinColumn(name="type_id", unique=false, nullable=true, insertable=true, updatable=true)
      private CvTerm cvTermByTypeId;
-     
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-        
+
         @JoinColumn(name="cv_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Cv cv;
-     
+
     @Column(name="pathdistance", unique=false, nullable=true, insertable=true, updatable=true)
      private Integer pathDistance;
-    
-   
+
+
     // Property accessors
 
     /* (non-Javadoc)
@@ -57,7 +57,7 @@ public class CvTermPath implements Serializable {
     private int getCvTermPathId() {
         return this.cvTermPathId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCvTermPathId(int)
      */
@@ -71,7 +71,7 @@ public class CvTermPath implements Serializable {
     private CvTerm getCvTermBySubjectId() {
         return this.cvTermBySubjectId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCvTermBySubjectId(org.gmod.schema.cv.CvTermI)
      */
@@ -85,7 +85,7 @@ public class CvTermPath implements Serializable {
     private CvTerm getCvTermByObjectId() {
         return this.cvTermByObjectId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCvTermByObjectId(org.gmod.schema.cv.CvTermI)
      */
@@ -99,7 +99,7 @@ public class CvTermPath implements Serializable {
     private CvTerm getCvTermByTypeId() {
         return this.cvTermByTypeId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCvTermByTypeId(org.gmod.schema.cv.CvTermI)
      */
@@ -113,14 +113,14 @@ public class CvTermPath implements Serializable {
     private Cv getCv() {
         return this.cv;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setCv(org.gmod.schema.cv.CvI)
      */
     private void setCv(Cv cv) {
         this.cv = cv;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#getPathDistance()
@@ -128,7 +128,7 @@ public class CvTermPath implements Serializable {
     private Integer getPathDistance() {
         return this.pathDistance;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPathI#setPathDistance(java.lang.Integer)
      */

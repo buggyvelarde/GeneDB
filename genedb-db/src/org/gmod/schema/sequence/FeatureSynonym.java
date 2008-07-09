@@ -23,31 +23,31 @@ import javax.persistence.Table;
 @Table(name="feature_synonym")
 public class FeatureSynonym implements Serializable {
 
-    // Fields    
+    // Fields
     @SequenceGenerator(name="generator", sequenceName="feature_synonym_feature_synonym_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
-    
+
     @Column(name="feature_synonym_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureSynonymId;
-     
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-        
+
         @JoinColumn(name="synonym_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Synonym synonym;
-     
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-        
+
         @JoinColumn(name="feature_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Feature feature;
-     
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-        
+
         @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
-     
+
     @Column(name="is_current", unique=false, nullable=false, insertable=true, updatable=true)
      private boolean current;
-     
+
     @Column(name="is_internal", unique=false, nullable=false, insertable=true, updatable=true)
      private boolean internal;
 
@@ -55,7 +55,7 @@ public class FeatureSynonym implements Serializable {
 
     /** default constructor */
     public FeatureSynonym() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */
@@ -66,8 +66,8 @@ public class FeatureSynonym implements Serializable {
        this.current = current;
        this.internal = internal;
     }
-    
-   
+
+
     // Property accessors
 
     /* (non-Javadoc)
@@ -76,7 +76,7 @@ public class FeatureSynonym implements Serializable {
     public int getFeatureSynonymId() {
         return this.featureSynonymId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setFeatureSynonymId(int)
      */
@@ -90,7 +90,7 @@ public class FeatureSynonym implements Serializable {
     public Synonym getSynonym() {
         return this.synonym;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setSynonym(org.gmod.schema.sequence.SynonymI)
      */
@@ -104,7 +104,7 @@ public class FeatureSynonym implements Serializable {
     public Feature getFeature() {
         return this.feature;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setFeature(org.genedb.db.jpa.Feature)
      */
@@ -118,14 +118,14 @@ public class FeatureSynonym implements Serializable {
     public Pub getPub() {
         return this.pub;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setPub(org.gmod.schema.pub.PubI)
      */
     public void setPub(Pub pub) {
         this.pub = pub;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#isCurrent()
@@ -133,14 +133,14 @@ public class FeatureSynonym implements Serializable {
     public boolean isCurrent() {
         return this.current;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setCurrent(boolean)
      */
     public void setCurrent(boolean current) {
         this.current = current;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#isInternal()
@@ -148,7 +148,7 @@ public class FeatureSynonym implements Serializable {
     public boolean isInternal() {
         return this.internal;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setInternal(boolean)
      */

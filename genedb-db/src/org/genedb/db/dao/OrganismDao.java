@@ -13,7 +13,7 @@ public class OrganismDao extends BaseDao {
     public Organism getOrganismByCommonName(String commonName) {
         @SuppressWarnings("unchecked")
         List<Organism> list = getHibernateTemplate().findByNamedParam(
-		"from Organism org where org.commonName like :commonname", "commonname", commonName);
+        "from Organism org where org.commonName like :commonname", "commonname", commonName);
         return firstFromList(list, "commonname", commonName);
     }
 

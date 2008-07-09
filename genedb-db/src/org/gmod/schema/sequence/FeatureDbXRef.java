@@ -43,7 +43,7 @@ public class FeatureDbXRef implements Serializable {
 
     /** default constructor */
     public FeatureDbXRef() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */

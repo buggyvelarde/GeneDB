@@ -22,27 +22,27 @@ import javax.persistence.Table;
 @Table(name="featureloc_pub")
 public class FeatureLocPub implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="featureloc_pub_featureloc_pub_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="featureloc_pub_featureloc_pub_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="featureloc_pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureLocPubId;
-     
+
     @ManyToOne(cascade={},fetch=FetchType.LAZY)
     @JoinColumn(name="featureloc_id", unique=false, nullable=false, insertable=true, updatable=true)
      private FeatureLoc featureLoc;
-     
+
     @ManyToOne(cascade={},fetch=FetchType.LAZY)
     @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
 
-    
-   
+
+
     // Property accessors
     private int getFeatureLocPubId() {
         return this.featureLocPubId;
     }
-    
+
     private void setFeatureLocPubId(int featureLocPubId) {
         this.featureLocPubId = featureLocPubId;
     }
@@ -50,7 +50,7 @@ public class FeatureLocPub implements Serializable {
     private FeatureLoc getFeatureloc() {
         return this.featureLoc;
     }
-    
+
     private void setFeatureloc(FeatureLoc featureloc) {
         this.featureLoc = featureloc;
     }
@@ -58,7 +58,7 @@ public class FeatureLocPub implements Serializable {
     private Pub getPub() {
         return this.pub;
     }
-    
+
     private void setPub(Pub pub) {
         this.pub = pub;
     }

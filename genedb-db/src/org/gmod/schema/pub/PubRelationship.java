@@ -20,28 +20,28 @@ import javax.persistence.Table;
 @Table(name="pub_relationship")
 public class PubRelationship implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="pub_relationship_pub_relationship_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="pub_relationship_pub_relationship_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="pub_relationship_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int pubRelationshipId;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pubBySubjectId;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pubByObjectId;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
-    
-   
+
+
     // Property accessors
 
     /* (non-Javadoc)
@@ -50,7 +50,7 @@ public class PubRelationship implements Serializable {
     private int getPubRelationshipId() {
         return this.pubRelationshipId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubRelationshipI#setPubRelationshipId(int)
      */
@@ -64,7 +64,7 @@ public class PubRelationship implements Serializable {
     private Pub getPubBySubjectId() {
         return this.pubBySubjectId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubRelationshipI#setPubBySubjectId(org.gmod.schema.pub.PubI)
      */
@@ -78,7 +78,7 @@ public class PubRelationship implements Serializable {
     private Pub getPubByObjectId() {
         return this.pubByObjectId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubRelationshipI#setPubByObjectId(org.gmod.schema.pub.PubI)
      */
@@ -92,7 +92,7 @@ public class PubRelationship implements Serializable {
     private CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubRelationshipI#setCvTerm(org.gmod.schema.cv.CvTermI)
      */

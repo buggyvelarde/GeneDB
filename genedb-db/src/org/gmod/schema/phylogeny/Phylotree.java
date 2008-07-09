@@ -26,7 +26,7 @@ import javax.persistence.Table;
 @Table(name="phylotree", uniqueConstraints = {  })
 public class Phylotree  implements java.io.Serializable {
 
-    // Fields    
+    // Fields
 
      private int phylotreeId;
      private CvTerm cvTerm;
@@ -40,10 +40,10 @@ public class Phylotree  implements java.io.Serializable {
 
     /** default constructor */
     public Phylotree() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
-	/** minimal constructor */
+    /** minimal constructor */
     public Phylotree(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
@@ -56,61 +56,61 @@ public class Phylotree  implements java.io.Serializable {
        this.phylonodes = phylonodes;
        this.phylotreePubs = phylotreePubs;
     }
-   
+
     // Property accessors
      @Id
     @Column(name="phylotree_id", unique=true, nullable=false, insertable=true, updatable=true)
     public int getPhylotreeId() {
         return this.phylotreeId;
     }
-    
+
     private void setPhylotreeId(int phylotreeId) {
         this.phylotreeId = phylotreeId;
     }
-    
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="type_id", unique=false, nullable=true, insertable=true, updatable=true)
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
+
     public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
-    
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
     public DbXRef getDbXRef() {
         return this.dbXRef;
     }
-    
+
     public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
-    
+
     @Column(name="name", unique=false, nullable=true, insertable=true, updatable=true)
     public String getName() {
         return this.name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Column(name="comment", unique=false, nullable=true, insertable=true, updatable=true)
     public String getComment() {
         return this.comment;
     }
-    
+
     public void setComment(String comment) {
         this.comment = comment;
     }
-    
+
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="phylotree")
     public Collection<Phylonode> getPhylonodes() {
         return this.phylonodes;
     }
-    
+
     public void setPhylonodes(Collection<Phylonode> phylonodes) {
         this.phylonodes = phylonodes;
     }
@@ -118,7 +118,7 @@ public class Phylotree  implements java.io.Serializable {
     public Collection<PhylotreePub> getPhylotreePubs() {
         return this.phylotreePubs;
     }
-    
+
     public void setPhylotreePubs(Collection<PhylotreePub> phylotreePubs) {
         this.phylotreePubs = phylotreePubs;
     }

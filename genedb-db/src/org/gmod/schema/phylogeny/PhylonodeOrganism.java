@@ -20,7 +20,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name="phylonode_organism", uniqueConstraints = { @UniqueConstraint( columnNames = { "phylonode_id" } ) })
 public class PhylonodeOrganism  implements java.io.Serializable {
 
-    // Fields    
+    // Fields
 
      private int phylonodeOrganismId;
      private Organism organism;
@@ -30,7 +30,7 @@ public class PhylonodeOrganism  implements java.io.Serializable {
 
     /** default constructor */
     public PhylonodeOrganism() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */
@@ -39,35 +39,35 @@ public class PhylonodeOrganism  implements java.io.Serializable {
        this.organism = organism;
        this.phylonode = phylonode;
     }
-   
+
     // Property accessors
      @Id
-    
+
     @Column(name="phylonode_organism_id", unique=true, nullable=false, insertable=true, updatable=true)
     public int getPhylonodeOrganismId() {
         return this.phylonodeOrganismId;
     }
-    
+
     public void setPhylonodeOrganismId(int phylonodeOrganismId) {
         this.phylonodeOrganismId = phylonodeOrganismId;
     }
-    
+
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="organism_id", unique=false, nullable=false, insertable=true, updatable=true)
     public Organism getOrganism() {
         return this.organism;
     }
-    
+
     public void setOrganism(Organism organism) {
         this.organism = organism;
     }
-    
+
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="phylonode_id", unique=true, nullable=false, insertable=true, updatable=true)
     public Phylonode getPhylonode() {
         return this.phylonode;
     }
-    
+
     public void setPhylonode(Phylonode phylonode) {
         this.phylonode = phylonode;
     }

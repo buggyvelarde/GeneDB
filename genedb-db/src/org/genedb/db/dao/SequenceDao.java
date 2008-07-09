@@ -57,7 +57,7 @@ public class SequenceDao extends BaseDao {
             return getFeatureByUniqueName(uniqueName, Gene.class);
         }
 
-    	@SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
             "from Feature where uniqueName=:name and cvTerm.name=:featureType",
             new String[] { "name", "featureType" }, new Object[] { uniqueName, featureType });

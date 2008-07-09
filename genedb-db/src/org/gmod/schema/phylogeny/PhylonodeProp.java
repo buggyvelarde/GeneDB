@@ -22,7 +22,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name="phylonodeprop", uniqueConstraints = { @UniqueConstraint( columnNames = { "phylonode_id", "type_id", "value", "rank" } ) })
 public class PhylonodeProp  implements java.io.Serializable, PropertyI {
 
-    // Fields    
+    // Fields
 
      private int phylonodePropId;
      private CvTerm cvTerm;
@@ -34,7 +34,7 @@ public class PhylonodeProp  implements java.io.Serializable, PropertyI {
 
     /** default constructor */
     public PhylonodeProp() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */
@@ -45,53 +45,53 @@ public class PhylonodeProp  implements java.io.Serializable, PropertyI {
        this.value = value;
        this.rank = rank;
     }
-   
+
     // Property accessors
      @Id
-    
+
     @Column(name="phylonodeprop_id", unique=true, nullable=false, insertable=true, updatable=true)
     public int getPhylonodePropId() {
         return this.phylonodePropId;
     }
-    
+
     public void setPhylonodePropId(int phylonodePropId) {
         this.phylonodePropId = phylonodePropId;
     }
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-    
+
     @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
+
     public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 @ManyToOne(cascade={},fetch=FetchType.LAZY)
-    
+
     @JoinColumn(name="phylonode_id", unique=false, nullable=false, insertable=true, updatable=true)
     public Phylonode getPhylonode() {
         return this.phylonode;
     }
-    
+
     public void setPhylonode(Phylonode phylonode) {
         this.phylonode = phylonode;
     }
-    
+
     @Column(name="value", unique=false, nullable=false, insertable=true, updatable=true)
     public String getValue() {
         return this.value;
     }
-    
+
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
     public int getRank() {
         return this.rank;
     }
-    
+
     public void setRank(int rank) {
         this.rank = rank;
     }

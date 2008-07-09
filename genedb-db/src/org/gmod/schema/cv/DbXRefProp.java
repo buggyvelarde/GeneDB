@@ -24,26 +24,26 @@ import javax.persistence.Table;
 @Table(name="dbxrefprop")
 public class DbXRefProp implements Serializable, PropertyI {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="dbxrefprop_dbxrefprop_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="dbxrefprop_dbxrefprop_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(unique=false, nullable=false, insertable=true, updatable=true)
      private int dbXRefPropId;
-     
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
-     
+
     @ManyToOne(cascade={},fetch=FetchType.LAZY)
         @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
-     
+
     @Column(name="value", unique=false, nullable=false, insertable=true, updatable=true)
      private String value;
-     
+
     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
      private int rank;
-   
+
     // Property accessors
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#getDbXRefpropId()
@@ -51,7 +51,7 @@ public class DbXRefProp implements Serializable, PropertyI {
     private int getDbXRefPropId() {
         return this.dbXRefPropId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#setDbXRefpropId(int)
      */
@@ -65,7 +65,7 @@ public class DbXRefProp implements Serializable, PropertyI {
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#setCvTerm(org.gmod.schema.cv.CvTermI)
      */
@@ -79,14 +79,14 @@ public class DbXRefProp implements Serializable, PropertyI {
     private DbXRef getDbXRef() {
         return this.dbXRef;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#setDbXRef(org.gmod.schema.general.DbXRefI)
      */
     private void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#getValue()
@@ -94,14 +94,14 @@ public class DbXRefProp implements Serializable, PropertyI {
     private String getValue() {
         return this.value;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#setValue(java.lang.String)
      */
     private void setValue(String value) {
         this.value = value;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#getRank()
@@ -109,7 +109,7 @@ public class DbXRefProp implements Serializable, PropertyI {
     private int getRank() {
         return this.rank;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbXRefPropI#setRank(int)
      */

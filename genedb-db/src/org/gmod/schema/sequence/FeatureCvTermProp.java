@@ -21,11 +21,11 @@ import javax.persistence.Table;
 
 
 /**
- * This represents a key/value pair attached to a FeatureCvTerm. The key is itself a CvTerm, with 
+ * This represents a key/value pair attached to a FeatureCvTerm. The key is itself a CvTerm, with
  * a free-text value
- * 
+ *
  * Database constraints: feature_cvtermprop_c1 unique (feature_cvterm_id, type_id, rank)
- * 
+ *
  * @author art
  */
 /**
@@ -54,21 +54,21 @@ COMMENT ON TABLE feature_cvtermprop IS 'Extensible properties for feature to cvt
 create index feature_cvtermprop_idx1 on feature_cvtermprop (feature_cvterm_id);
 create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
 */
-    
-    
-    
-    
-    // Fields    
 
-    
+
+
+
+    // Fields
+
+
      /**
-     * Database unique primary key 
+     * Database unique primary key
      */
-	@SequenceGenerator(name="generator", sequenceName="feature_cvtermprop_feature_cvtermprop_id_seq")
+    @SequenceGenerator(name="generator", sequenceName="feature_cvtermprop_feature_cvtermprop_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="feature_cvtermprop_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureCvTermPropId;
-     
+
 
     /**
      * The CvTerm that acts as the key in this map of properties
@@ -76,23 +76,23 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
-     
+
      /**
      * The FeatureCvTerm to which this property is attached
      */
     @ManyToOne(cascade={},fetch=FetchType.LAZY)
          @JoinColumn(name="feature_cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private FeatureCvTerm featureCvTerm;
-     
+
      /**
      * The value of this property
      */
     @Column(name="value", unique=false, nullable=true, insertable=true, updatable=true)
      private String value;
-     
+
      /**
-     * The rank is used to distinguish multiple 
-     * values for the same key eg /foo="value1", /foo="value2" in an EMBL file could be stored as two FeatureCvTerm with 
+     * The rank is used to distinguish multiple
+     * values for the same key eg /foo="value1", /foo="value2" in an EMBL file could be stored as two FeatureCvTerm with
      * different ranks. The default is 0;
      */
     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
@@ -102,10 +102,10 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
 
     /** default constructor */
     public FeatureCvTermProp() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
-	/** minimal constructor */
+    /** minimal constructor */
     public FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, int rank) {
         this.cvTerm = cvTerm;
         this.featureCvTerm = featureCvTerm;
@@ -118,30 +118,30 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
        this.value = value;
        this.rank = rank;
     }
-    
-   
+
+
     // Property accessors
 
     private int getFeatureCvTermPropId() {
         return this.featureCvTermPropId;
     }
-    
+
     private void setFeatureCvTermPropId(int featureCvTermPropId) {
         this.featureCvTermPropId = featureCvTermPropId;
     }
 
     /**
      * Accessor for featureCvTerm
-     * 
+     *
      * @see featureCvTerm
      */
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
+
     /**
      * Accessor for cvTerm
-     * 
+     *
      * @see cvTerm
      */
     public void setCvTerm(CvTerm cvTerm) {
@@ -150,53 +150,53 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
 
     /**
      * Accessor for featureCvTerm
-     * 
+     *
      * @see featureCvTerm
      */
     public FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
-    
+
     /**
      * Accessor for featureCvTerm
-     * 
+     *
      * @see featureCvTerm
      */
     public void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }
-    
+
 
     /**
      * Accessor for value
-     * 
+     *
      * @see value
      */
     public String getValue() {
         return this.value;
     }
-    
+
     /**
      * Accessor for value
-     * 
+     *
      * @see value
      */
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     /**
      * Accessor for rank
-     * 
+     *
      * @see rank
      */
     public int getRank() {
         return this.rank;
     }
-    
+
     /**
      * Accessor for rank
-     * 
+     *
      * @see rank
      */
     public void setRank(int rank) {

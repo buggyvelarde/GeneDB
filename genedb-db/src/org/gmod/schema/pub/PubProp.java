@@ -23,25 +23,25 @@ import javax.persistence.Table;
 @Table(name="pubprop")
 public class PubProp implements Serializable, PropertyI {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="pubprop_pubprop_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="pubprop_pubprop_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="pubprop_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int pubPropId;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
-     
+
      @Column(name="value", unique=false, nullable=false, insertable=true, updatable=true)
      private String value;
-     
+
      @Column(name="rank", unique=false, nullable=true, insertable=true, updatable=true)
      private Integer rank;
 
@@ -49,10 +49,10 @@ public class PubProp implements Serializable, PropertyI {
 
     /** default constructor */
     public PubProp() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
-	/** minimal constructor */
+    /** minimal constructor */
     public PubProp(CvTerm cvTerm, Pub pub, String value) {
         this.cvTerm = cvTerm;
         this.pub = pub;
@@ -65,8 +65,8 @@ public class PubProp implements Serializable, PropertyI {
        this.value = value;
        this.rank = rank;
     }
-    
-   
+
+
     // Property accessors
 
     /* (non-Javadoc)
@@ -75,7 +75,7 @@ public class PubProp implements Serializable, PropertyI {
     private int getPubPropId() {
         return this.pubPropId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubPropI#setPubPropId(int)
      */
@@ -89,7 +89,7 @@ public class PubProp implements Serializable, PropertyI {
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubPropI#setCvTerm(org.gmod.schema.cv.CvTermI)
      */
@@ -103,14 +103,14 @@ public class PubProp implements Serializable, PropertyI {
     private Pub getPub() {
         return this.pub;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubPropI#setPub(org.gmod.schema.pub.PubI)
      */
     private void setPub(Pub pub) {
         this.pub = pub;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubPropI#getValue()
@@ -118,14 +118,14 @@ public class PubProp implements Serializable, PropertyI {
     private String getValue() {
         return this.value;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubPropI#setValue(java.lang.String)
      */
     private void setValue(String value) {
         this.value = value;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubPropI#getRank()
@@ -133,7 +133,7 @@ public class PubProp implements Serializable, PropertyI {
     public Integer getRank() {
         return this.rank;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubPropI#setRank(java.lang.Integer)
      */

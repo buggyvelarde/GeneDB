@@ -20,23 +20,23 @@ import javax.persistence.Table;
 @Table(name="organism_dbxref")
 public class OrganismDbXRef implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="organism_dbxref_organism_dbxref_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="organism_dbxref_organism_dbxref_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="organism_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int organismDbXRefId;
-     
+
      @ManyToOne(cascade={},fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="organism_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Organism organism;
-     
+
      @ManyToOne(cascade={},fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
-    
-   
+
+
     // Property accessors
 
     /* (non-Javadoc)
@@ -45,7 +45,7 @@ public class OrganismDbXRef implements Serializable {
     private int getOrganismDbXRefId() {
         return this.organismDbXRefId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismDbXRefI#setOrganismDbXRefId(int)
      */
@@ -59,7 +59,7 @@ public class OrganismDbXRef implements Serializable {
     private Organism getOrganism() {
         return this.organism;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismDbXRefI#setOrganism(org.gmod.schema.organism.OrganismI)
      */
@@ -73,7 +73,7 @@ public class OrganismDbXRef implements Serializable {
     private DbXRef getDbXRef() {
         return this.dbXRef;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.OrganismDbXRefI#setDbXRef(org.gmod.schema.general.DbXRefI)
      */

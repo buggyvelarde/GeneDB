@@ -20,7 +20,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name="phylonode_relationship", uniqueConstraints = { @UniqueConstraint( columnNames = { "subject_id", "object_id", "type_id" } ) })
 public class PhylonodeRelationship  implements java.io.Serializable {
 
-    // Fields    
+    // Fields
 
      private int phylonodeRelationshipId;
      private Phylonode phylonodeBySubjectId;
@@ -32,10 +32,10 @@ public class PhylonodeRelationship  implements java.io.Serializable {
 
     /** default constructor */
     public PhylonodeRelationship() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
-	/** minimal constructor */
+    /** minimal constructor */
     public PhylonodeRelationship(int phylonodeRelationshipId, Phylonode phylonodeBySubjectId, Phylonode phylonodeByObjectId, CvTerm cvTerm) {
         this.phylonodeRelationshipId = phylonodeRelationshipId;
         this.phylonodeBySubjectId = phylonodeBySubjectId;
@@ -50,54 +50,54 @@ public class PhylonodeRelationship  implements java.io.Serializable {
        this.cvTerm = cvTerm;
        this.rank = rank;
     }
-   
+
     // Property accessors
      @Id
-    
+
     @Column(name="phylonode_relationship_id", unique=true, nullable=false, insertable=true, updatable=true)
     public int getPhylonodeRelationshipId() {
         return this.phylonodeRelationshipId;
     }
-    
+
     public void setPhylonodeRelationshipId(int phylonodeRelationshipId) {
         this.phylonodeRelationshipId = phylonodeRelationshipId;
     }
 @ManyToOne(cascade={},fetch=FetchType.LAZY)
-    
+
     @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)
     public Phylonode getPhylonodeBySubjectId() {
         return this.phylonodeBySubjectId;
     }
-    
+
     public void setPhylonodeBySubjectId(Phylonode phylonodeBySubjectId) {
         this.phylonodeBySubjectId = phylonodeBySubjectId;
     }
 @ManyToOne(cascade={},fetch=FetchType.LAZY)
-    
+
     @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true)
     public Phylonode getPhylonodeByObjectId() {
         return this.phylonodeByObjectId;
     }
-    
+
     public void setPhylonodeByObjectId(Phylonode phylonodeByObjectId) {
         this.phylonodeByObjectId = phylonodeByObjectId;
     }
 @ManyToOne(cascade={},fetch=FetchType.LAZY)
-    
+
     @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
+
     public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
-    
+
     @Column(name="rank", unique=false, nullable=true, insertable=true, updatable=true)
     public Integer getRank() {
         return this.rank;
     }
-    
+
     public void setRank(Integer rank) {
         this.rank = rank;
     }

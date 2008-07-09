@@ -20,22 +20,22 @@ import javax.persistence.Table;
 @Table(name="pub_dbxref")
 public class PubDbXRef implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="pub_dbxref_pub_dbxref_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="pub_dbxref_pub_dbxref_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="pub_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int pubDbXRefId;
-     
+
      @ManyToOne(cascade={},fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
-     
+
      @ManyToOne(cascade={},fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
-     
+
      @Column(name="is_current", unique=false, nullable=false, insertable=true, updatable=true)
      private boolean current;
 
@@ -43,7 +43,7 @@ public class PubDbXRef implements Serializable {
 
     /** default constructor */
     public PubDbXRef() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */
@@ -52,8 +52,8 @@ public class PubDbXRef implements Serializable {
        this.pub = pub;
        this.current = current;
     }
-    
-   
+
+
     // Property accessors
 
     /* (non-Javadoc)
@@ -62,7 +62,7 @@ public class PubDbXRef implements Serializable {
     private int getPubDbXRefId() {
         return this.pubDbXRefId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setPubDbXRefId(int)
      */
@@ -76,7 +76,7 @@ public class PubDbXRef implements Serializable {
     public DbXRef getDbXRef() {
         return this.dbXRef;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setDbXRef(org.gmod.schema.general.DbXRefI)
      */
@@ -90,14 +90,14 @@ public class PubDbXRef implements Serializable {
     public Pub getPub() {
         return this.pub;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setPub(org.gmod.schema.pub.PubI)
      */
     public void setPub(Pub pub) {
         this.pub = pub;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#isCurrent()
@@ -105,7 +105,7 @@ public class PubDbXRef implements Serializable {
     public boolean isCurrent() {
         return this.current;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setCurrent(boolean)
      */

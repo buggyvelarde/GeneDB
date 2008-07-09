@@ -20,32 +20,32 @@ import javax.persistence.Table;
 @Table(name="pubauthor")
 public class PubAuthor implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="pubauthor_pubauthor_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="pubauthor_pubauthor_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="pubauthor_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int pubAuthorId;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
-     
-     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)     
+
+     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
      private int rank;
-     
-     @Column(name="editor", unique=false, nullable=true, insertable=true, updatable=true)    
+
+     @Column(name="editor", unique=false, nullable=true, insertable=true, updatable=true)
      private Boolean editor;
-     
-     @Column(name="surname", unique=false, nullable=false, insertable=true, updatable=true, length=100)    
+
+     @Column(name="surname", unique=false, nullable=false, insertable=true, updatable=true, length=100)
      private String surname;
-     
-     @Column(name="givennames", unique=false, nullable=true, insertable=true, updatable=true, length=100)     
+
+     @Column(name="givennames", unique=false, nullable=true, insertable=true, updatable=true, length=100)
      private String givenNames;
-     
-     @Column(name="suffix", unique=false, nullable=true, insertable=true, updatable=true, length=100)     
+
+     @Column(name="suffix", unique=false, nullable=true, insertable=true, updatable=true, length=100)
      private String suffix;
 
-   
+
     // Property accessors
 
     /* (non-Javadoc)
@@ -54,7 +54,7 @@ public class PubAuthor implements Serializable {
     private int getPubAuthorId() {
         return this.pubAuthorId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#setPubAuthorId(int)
      */
@@ -68,14 +68,14 @@ public class PubAuthor implements Serializable {
     private Pub getPub() {
         return this.pub;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#setPub(org.gmod.schema.pub.PubI)
      */
     private void setPub(Pub pub) {
         this.pub = pub;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#getRank()
@@ -83,14 +83,14 @@ public class PubAuthor implements Serializable {
     private int getRank() {
         return this.rank;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#setRank(int)
      */
     private void setRank(int rank) {
         this.rank = rank;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#getEditor()
@@ -98,14 +98,14 @@ public class PubAuthor implements Serializable {
     private Boolean getEditor() {
         return this.editor;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#setEditor(java.lang.Boolean)
      */
     private void setEditor(Boolean editor) {
         this.editor = editor;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#getSurname()
@@ -113,14 +113,14 @@ public class PubAuthor implements Serializable {
     private String getSurname() {
         return this.surname;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#setSurname(java.lang.String)
      */
     private void setSurname(String surname) {
         this.surname = surname;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#getGivenNames()
@@ -128,14 +128,14 @@ public class PubAuthor implements Serializable {
     private String getGivenNames() {
         return this.givenNames;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#setGivenNames(java.lang.String)
      */
     private void setGivenNames(String givenNames) {
         this.givenNames = givenNames;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#getSuffix()
@@ -143,7 +143,7 @@ public class PubAuthor implements Serializable {
     private String getSuffix() {
         return this.suffix;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubAuthorI#setSuffix(java.lang.String)
      */

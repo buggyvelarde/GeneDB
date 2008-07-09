@@ -22,19 +22,19 @@ import javax.persistence.Table;
 @Table(name="feature_cvterm_pub")
 public class FeatureCvTermPub implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="feature_cvterm_pub_feature_cvterm_pub_id_seq")
-    @Id @GeneratedValue(strategy=SEQUENCE, generator="generator") 
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="feature_cvterm_pub_feature_cvterm_pub_id_seq")
+    @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="feature_cvterm_pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureCvTermPubId;
-     
+
      @ManyToOne(cascade={},fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Pub pub;
-     
+
      @ManyToOne(cascade={},fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="feature_cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private FeatureCvTerm featureCvTerm;
 
@@ -42,7 +42,7 @@ public class FeatureCvTermPub implements Serializable {
 
     /** default constructor */
     public FeatureCvTermPub() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */
@@ -50,8 +50,8 @@ public class FeatureCvTermPub implements Serializable {
        this.pub = pub;
        this.featureCvTerm = featureCvTerm;
     }
-    
-   
+
+
     // Property accessors
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#getFeatureCvTermPubId()
@@ -59,7 +59,7 @@ public class FeatureCvTermPub implements Serializable {
     public int getFeatureCvTermPubId() {
         return this.featureCvTermPubId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#setFeatureCvTermPubId(int)
      */
@@ -73,7 +73,7 @@ public class FeatureCvTermPub implements Serializable {
     public Pub getPub() {
         return this.pub;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#setPub(org.gmod.schema.pub.PubI)
      */
@@ -87,7 +87,7 @@ public class FeatureCvTermPub implements Serializable {
     public FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#setFeatureCvterm(org.gmod.schema.sequence.FeatureCvTermI)
      */

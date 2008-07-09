@@ -21,24 +21,24 @@ import javax.persistence.Table;
 @Table(name="cvtermsynonym")
 public class CvTermSynonym implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="cvtermsynonym_cvtermsynonym_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="cvtermsynonym_cvtermsynonym_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="cvtermsynonym_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int cvTermSynonymId;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          @JoinColumn(name="cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByCvTermId;
-     
+
      @ManyToOne(cascade={},fetch=FetchType.LAZY)
          @JoinColumn(name="type_id", unique=false, nullable=true, insertable=true, updatable=true)
      private CvTerm cvTermByTypeId;
-     
+
      @Column(name="synonym", unique=false, nullable=false, insertable=true, updatable=true, length=1024)
      private String synonym;
-    
-   
+
+
     // Property accessors
 
     /* (non-Javadoc)
@@ -47,7 +47,7 @@ public class CvTermSynonym implements Serializable {
     private int getCvTermSynonymId() {
         return this.cvTermSynonymId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#setCvTermSynonymId(int)
      */
@@ -61,7 +61,7 @@ public class CvTermSynonym implements Serializable {
     private CvTerm getCvTermByCvTermId() {
         return this.cvTermByCvTermId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#setCvTermByCvTermId(org.gmod.schema.cv.CvTermI)
      */
@@ -75,14 +75,14 @@ public class CvTermSynonym implements Serializable {
     private CvTerm getCvTermByTypeId() {
         return this.cvTermByTypeId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#setCvTermByTypeId(org.gmod.schema.cv.CvTermI)
      */
     private void setCvTermByTypeId(CvTerm cvTermByTypeId) {
         this.cvTermByTypeId = cvTermByTypeId;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#getSynonym()
@@ -90,7 +90,7 @@ public class CvTermSynonym implements Serializable {
     private String getSynonym() {
         return this.synonym;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermSynonymI#setSynonym(java.lang.String)
      */

@@ -20,19 +20,19 @@ import javax.persistence.Table;
 @Table(name="feature_cvterm_dbxref")
 public class FeatureCvTermDbXRef implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="feature_cvterm_dbxref_feature_cvterm_dbxref_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="feature_cvterm_dbxref_feature_cvterm_dbxref_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="feature_cvterm_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureCvTermDbXRefId;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-         
+
          @JoinColumn(name="feature_cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private FeatureCvTerm featureCvTerm;
 
@@ -40,7 +40,7 @@ public class FeatureCvTermDbXRef implements Serializable {
 
     /** default constructor */
     public FeatureCvTermDbXRef() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */
@@ -48,13 +48,13 @@ public class FeatureCvTermDbXRef implements Serializable {
        this.dbXRef = dbXRef;
        this.featureCvTerm = featureCvTerm;
     }
-    
-   
+
+
     // Property accessors
     private int getFeatureCvTermDbXRefId() {
         return this.featureCvTermDbXRefId;
     }
-    
+
     private void setFeatureCvTermDbXRefId(int featureCvTermDbXRefId) {
         this.featureCvTermDbXRefId = featureCvTermDbXRefId;
     }
@@ -62,7 +62,7 @@ public class FeatureCvTermDbXRef implements Serializable {
     public DbXRef getDbXRef() {
         return this.dbXRef;
     }
-    
+
     public void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
@@ -70,7 +70,7 @@ public class FeatureCvTermDbXRef implements Serializable {
     public FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
-    
+
     public void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }

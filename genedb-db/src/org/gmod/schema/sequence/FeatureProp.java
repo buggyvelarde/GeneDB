@@ -52,7 +52,7 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
      // Constructors
     /** default constructor */
     public FeatureProp() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** useful constructor ! */

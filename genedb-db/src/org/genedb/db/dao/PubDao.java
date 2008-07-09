@@ -32,11 +32,11 @@ public class PubDao extends BaseDao {
 
     public List<PubProp> getPubPropByPubAndCvTerm(Pub pub,CvTerm cvTerm){
         @SuppressWarnings("unchecked")
-    	List<PubProp> list = getHibernateTemplate().findByNamedParam(
-    	    "from PubProp pp where pp.pub=:pub and pp.cvTerm=:cvTerm",
-    	    new String[]{"pub","cvTerm"},
-    	    new Object[]{pub,cvTerm});
-    	return list;
+        List<PubProp> list = getHibernateTemplate().findByNamedParam(
+            "from PubProp pp where pp.pub=:pub and pp.cvTerm=:cvTerm",
+            new String[]{"pub","cvTerm"},
+            new Object[]{pub,cvTerm});
+        return list;
     }
 
 

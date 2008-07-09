@@ -348,7 +348,7 @@ public class Feature implements java.io.Serializable {
      * @return the unique rank=0 FeatureLoc associated with this feature
      */
     @Transient
-	public FeatureLoc getRankZeroFeatureLoc() {
+    public FeatureLoc getRankZeroFeatureLoc() {
         List<FeatureLoc> featureLocs = getFeatureLocsForFeatureId();
         if (featureLocs.size() == 0) {
             logger.error(String.format("getRankZeroFeatureLoc: Feature '%s' has no FeatureLocs",
@@ -476,7 +476,7 @@ public class Feature implements java.io.Serializable {
      * @return the preferred display name, never null
      */
     @Transient
-	public String getDisplayName() {
+    public String getDisplayName() {
         return (getName() != null) ? getName() : getUniqueName();
     }
 
@@ -620,20 +620,20 @@ public class Feature implements java.io.Serializable {
     @Transient
     @Field(name = "start", store = Store.YES)
     @FieldBridge(impl = LocationBridge.class)
-	public int getStart() {
+    public int getStart() {
         return getRankZeroFeatureLoc().getFmin();
     }
 
     @Transient
     @Field(name = "stop", store = Store.YES)
     @FieldBridge(impl = LocationBridge.class)
-	public int getStop() {
+    public int getStop() {
         return getRankZeroFeatureLoc().getFmax();
     }
 
     @Transient
     @Field(name = "strand", index=Index.UN_TOKENIZED, store = Store.YES)
-	public int getStrand() {
+    public int getStrand() {
         FeatureLoc loc = getRankZeroFeatureLoc();
         if (loc == null) {
             return 0;

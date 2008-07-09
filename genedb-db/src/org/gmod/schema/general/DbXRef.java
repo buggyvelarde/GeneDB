@@ -34,46 +34,46 @@ import org.gmod.schema.sequence.FeatureDbXRef;
 @Entity
 @Table(name="dbxref")
 public class DbXRef implements Serializable {
-	
+
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbXRef")
     private Collection<PhylonodeDbXRef> phylonodeDbXRefs;
-	
+
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="dbXRef")
     private Collection<Phylotree> phylotrees;
-    
+
     public Collection<PhylonodeDbXRef> getPhylonodeDbXRefs() {
         return this.phylonodeDbXRefs;
     }
-    
+
     public void setPhylonodeDbXRefs(Collection<PhylonodeDbXRef> phylonodeDbXRefs) {
         this.phylonodeDbXRefs = phylonodeDbXRefs;
     }
 
-    
+
     public Collection<Phylotree> getPhylotrees() {
         return this.phylotrees;
     }
-    
+
     public void setPhylotrees(Collection<Phylotree> phylotrees) {
         this.phylotrees = phylotrees;
     }
 
-    // Fields    
+    // Fields
     @SequenceGenerator(name="generator", sequenceName="dbxref_dbxref_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int dbXRefId;
-     
+
     @Column(name="version", unique=false, nullable=false, insertable=true, updatable=true)
      private String version;
-     
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="db_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Db db;
-     
+
     @Column(name="accession", unique=false, nullable=false, insertable=true, updatable=true)
      private String accession;
-     
+
     @Column(name="description", unique=false, nullable=true, insertable=true, updatable=true)
      private String description;
 
@@ -82,22 +82,22 @@ public class DbXRef implements Serializable {
 
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
      private Collection<DbXRefProp> dbXRefProps = new HashSet<DbXRefProp>(0);
-    
+
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
      private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
-    
+
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
      private Collection<Feature> features = new HashSet<Feature>(0);
-    
+
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
      private Collection<FeatureDbXRef> featureDbXRefs = new HashSet<FeatureDbXRef>(0);
-    
+
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
      private Collection<PubDbXRef> pubDbXRefs = new HashSet<PubDbXRef>(0);
-    
+
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
      private Collection<OrganismDbXRef> organismDbXRefs = new HashSet<OrganismDbXRef>(0);
-    
+
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="dbXRef")
      private Collection<CvTermDbXRef> cvTermDbXRefs = new HashSet<CvTermDbXRef>(0);
 
@@ -105,31 +105,31 @@ public class DbXRef implements Serializable {
 
     /** default constructor */
     public DbXRef() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
-	/** minimal constructor */
+    /** minimal constructor */
     public DbXRef(Db db, String accession) {
         this.version = "1";
         this.db = db;
         this.accession = accession;
     }
-    
-   
+
+
     // Property accessors
     public int getDbXRefId() {
         return this.dbXRefId;
     }
-    
+
     public void setDbXRefId(int dbXRefId) {
         this.dbXRefId = dbXRefId;
     }
-    
+
 
     public String getVersion() {
         return this.version;
     }
-    
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -137,23 +137,23 @@ public class DbXRef implements Serializable {
     public Db getDb() {
         return this.db;
     }
-    
+
     public void setDb(Db db) {
         this.db = db;
     }
-    
+
     public String getAccession() {
         return this.accession;
     }
-    
+
     public void setAccession(String accession) {
         this.accession = accession;
     }
-    
+
     public String getDescription() {
         return this.description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -165,7 +165,7 @@ public class DbXRef implements Serializable {
     public Collection<DbXRefProp> getDbXRefProps() {
         return this.dbXRefProps;
     }
-    
+
     public void setDbXRefProps(Collection<DbXRefProp> dbXRefProps) {
         this.dbXRefProps = dbXRefProps;
     }
@@ -173,7 +173,7 @@ public class DbXRef implements Serializable {
     private Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
         return this.featureCvTermDbXRefs;
     }
-    
+
     private void setFeatureCvTermDbXRefs(Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
         this.featureCvTermDbXRefs = featureCvTermDbXRefs;
     }
@@ -181,7 +181,7 @@ public class DbXRef implements Serializable {
     private Collection<Feature> getFeatures() {
         return this.features;
     }
-    
+
     private void setFeatures(Collection<Feature> features) {
         this.features = features;
     }
@@ -189,11 +189,11 @@ public class DbXRef implements Serializable {
     private Collection<FeatureDbXRef> getFeatureDbXRefs() {
         return this.featureDbXRefs;
     }
-    
+
     private void setFeatureDbXRefs(Collection<FeatureDbXRef> featureDbXRefs) {
         this.featureDbXRefs = featureDbXRefs;
     }
-    
+
     private void setCvTerms(Collection<CvTerm> cvTerms) {
         this.cvTerms = cvTerms;
     }
@@ -201,7 +201,7 @@ public class DbXRef implements Serializable {
     private Collection<PubDbXRef> getPubDbXRefs() {
         return this.pubDbXRefs;
     }
-    
+
     private void setPubDbXRefs(Collection<PubDbXRef> pubDbXRefs) {
         this.pubDbXRefs = pubDbXRefs;
     }
@@ -209,7 +209,7 @@ public class DbXRef implements Serializable {
     private Collection<OrganismDbXRef> getOrganismDbXRefs() {
         return this.organismDbXRefs;
     }
-    
+
     private void setOrganismDbXRefs(Collection<OrganismDbXRef> organismDbXRefs) {
         this.organismDbXRefs = organismDbXRefs;
     }
@@ -217,7 +217,7 @@ public class DbXRef implements Serializable {
     private Collection<CvTermDbXRef> getCvTermDbXRefs() {
         return this.cvTermDbXRefs;
     }
-    
+
     private void setCvTermDbXRefs(Collection<CvTermDbXRef> cvTermDbXRefs) {
         this.cvTermDbXRefs = cvTermDbXRefs;
     }

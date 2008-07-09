@@ -20,20 +20,20 @@ import javax.persistence.Table;
 @Table(name="cvterm_relationship")
 public class CvTermRelationship implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="cvterm_relationship_cvterm_relationship_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="cvterm_relationship_cvterm_relationship_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="cvterm_relationship_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int cvTermRelationshipId;
-     
+
     @ManyToOne(cascade={},fetch=FetchType.LAZY)
         @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermBySubjectId;
-     
+
     @ManyToOne(cascade={},fetch=FetchType.LAZY)
         @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByObjectId;
-     
+
     @ManyToOne(cascade={},fetch=FetchType.LAZY)
         @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByTypeId;
@@ -42,7 +42,7 @@ public class CvTermRelationship implements Serializable {
 
     /** default constructor */
     public CvTermRelationship() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */
@@ -51,8 +51,8 @@ public class CvTermRelationship implements Serializable {
        this.cvTermByObjectId = cvTermByObjectId;
        this.cvTermByTypeId = cvTermByTypeId;
     }
-    
-   
+
+
     // Property accessors
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#getCvTermRelationshipId()
@@ -60,7 +60,7 @@ public class CvTermRelationship implements Serializable {
     private int getCvTermRelationshipId() {
         return this.cvTermRelationshipId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#setCvTermRelationshipId(int)
      */
@@ -74,7 +74,7 @@ public class CvTermRelationship implements Serializable {
     private CvTerm getCvTermBySubjectId() {
         return this.cvTermBySubjectId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#setCvTermBySubjectId(org.gmod.schema.cv.CvTermI)
      */
@@ -88,7 +88,7 @@ public class CvTermRelationship implements Serializable {
     private CvTerm getCvTermByObjectId() {
         return this.cvTermByObjectId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#setCvTermByObjectId(org.gmod.schema.cv.CvTermI)
      */
@@ -102,7 +102,7 @@ public class CvTermRelationship implements Serializable {
     private CvTerm getCvTermByTypeId() {
         return this.cvTermByTypeId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermRelationshipI#setCvTermByTypeId(org.gmod.schema.cv.CvTermI)
      */

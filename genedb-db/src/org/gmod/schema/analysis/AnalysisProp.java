@@ -22,25 +22,25 @@ import javax.persistence.Table;
 @Table(name="analysisprop")
 public class AnalysisProp implements Serializable, PropertyI {
 
-    // Fields    
+    // Fields
 
-	@SequenceGenerator(name="generator",sequenceName="analysisprop_analysisprop_id_seq" )
+    @SequenceGenerator(name="generator",sequenceName="analysisprop_analysisprop_id_seq" )
     @Id @GeneratedValue(generator="generator")
     @Column(name="analysisprop_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int analysisPropId;
-    
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="analysis_id", unique=false, nullable=false, insertable=true, updatable=true)
      private Analysis analysis;
-    
+
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTerm;
-    
+
     @Column(name="value", unique=false, nullable=true, insertable=true, updatable=true)
      private String value;
-    
-   
+
+
     // Property accessors
 
     /* (non-Javadoc)
@@ -49,7 +49,7 @@ public class AnalysisProp implements Serializable, PropertyI {
     private int getAnalysisPropId() {
         return this.analysisPropId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#setAnalysispropId(int)
      */
@@ -63,7 +63,7 @@ public class AnalysisProp implements Serializable, PropertyI {
     private Analysis getAnalysis() {
         return this.analysis;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#setAnalysis(org.genedb.db.jpa.Analysis)
      */
@@ -77,21 +77,21 @@ public class AnalysisProp implements Serializable, PropertyI {
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#setCvterm(org.gmod.schema.cv.CvTermI)
      */
     private void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#getValue()
      */
     private String getValue() {
         return this.value;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.AnalysisPropI#setValue(java.lang.String)
      */

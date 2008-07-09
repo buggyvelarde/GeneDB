@@ -21,27 +21,27 @@ import javax.persistence.Table;
 @Table(name="cvtermprop")
 public class CvTermProp implements Serializable {
 
-    // Fields    
-	@SequenceGenerator(name="generator", sequenceName="cvtermprop_cvtermprop_id_seq")
+    // Fields
+    @SequenceGenerator(name="generator", sequenceName="cvtermprop_cvtermprop_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
     @Column(name="cvtermprop_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int cvTermPropId;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          @JoinColumn(name="cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByCvTermId;
-     
+
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
          @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
      private CvTerm cvTermByTypeId;
-     
+
      @Column(name="value", unique=false, nullable=false, insertable=true, updatable=true)
      private String value;
-     
+
      @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
      private int rank;
-    
-   
+
+
     // Property accessors
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#getCvTermpropId()
@@ -49,7 +49,7 @@ public class CvTermProp implements Serializable {
     private int getCvTermPropId() {
         return this.cvTermPropId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#setCvTermpropId(int)
      */
@@ -63,7 +63,7 @@ public class CvTermProp implements Serializable {
     private CvTerm getCvTermByCvTermId() {
        return this.cvTermByCvTermId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#setCvTermByCvTermId(org.gmod.schema.cv.CvTermI)
      */
@@ -77,14 +77,14 @@ public class CvTermProp implements Serializable {
     private CvTerm getCvTermByTypeId() {
         return this.cvTermByTypeId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#setCvTermByTypeId(org.gmod.schema.cv.CvTermI)
      */
     private void setCvTermByTypeId(CvTerm cvTermByTypeId) {
         this.cvTermByTypeId = cvTermByTypeId;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#getValue()
@@ -92,14 +92,14 @@ public class CvTermProp implements Serializable {
     private String getValue() {
         return this.value;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#setValue(java.lang.String)
      */
     private void setValue(String value) {
         this.value = value;
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#getRank()
@@ -107,7 +107,7 @@ public class CvTermProp implements Serializable {
     private int getRank() {
         return this.rank;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.CvTermPropI#setRank(int)
      */

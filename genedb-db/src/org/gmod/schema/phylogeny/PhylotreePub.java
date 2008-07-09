@@ -20,7 +20,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name="phylotree_pub", uniqueConstraints = { @UniqueConstraint( columnNames = { "phylotree_id", "pub_id" } ) })
 public class PhylotreePub  implements java.io.Serializable {
 
-    // Fields    
+    // Fields
 
      private int phylotreePubId;
      private Phylotree phylotree;
@@ -30,7 +30,7 @@ public class PhylotreePub  implements java.io.Serializable {
 
     /** default constructor */
     public PhylotreePub() {
-    	// Deliberately empty default constructor
+        // Deliberately empty default constructor
     }
 
     /** full constructor */
@@ -39,35 +39,35 @@ public class PhylotreePub  implements java.io.Serializable {
        this.phylotree = phylotree;
        this.pub = pub;
     }
-   
+
     // Property accessors
      @Id
-    
+
     @Column(name="phylotree_pub_id", unique=true, nullable=false, insertable=true, updatable=true)
     public int getPhylotreePubId() {
         return this.phylotreePubId;
     }
-    
+
     public void setPhylotreePubId(int phylotreePubId) {
         this.phylotreePubId = phylotreePubId;
     }
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-    
+
     @JoinColumn(name="phylotree_id", unique=false, nullable=false, insertable=true, updatable=true)
     public Phylotree getPhylotree() {
         return this.phylotree;
     }
-    
+
     public void setPhylotree(Phylotree phylotree) {
         this.phylotree = phylotree;
     }
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-    
+
     @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
     public Pub getPub() {
         return this.pub;
     }
-    
+
     public void setPub(Pub pub) {
         this.pub = pub;
     }

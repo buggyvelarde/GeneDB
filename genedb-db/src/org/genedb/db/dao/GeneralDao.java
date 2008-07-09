@@ -13,7 +13,7 @@ public class GeneralDao extends BaseDao {
     public Db getDbByName(String name) {
         @SuppressWarnings("unchecked")
         List<Db> results = getHibernateTemplate().findByNamedParam(
-		"from Db db where upper(db.name)=:name",
+        "from Db db where upper(db.name)=:name",
         "name", name.toUpperCase());
         return firstFromList(results, "name", name);
     }
@@ -29,11 +29,11 @@ public class GeneralDao extends BaseDao {
 
     public Analysis getAnalysisByProgram(String program) {
         @SuppressWarnings("unchecked")
-    	List<Analysis> temp = getHibernateTemplate().findByNamedParam("from Analysis where program=:program","program",program);
-    	if (temp.size() > 0) {
-    	    return temp.get(0);
-    	}
-    	return null;
+        List<Analysis> temp = getHibernateTemplate().findByNamedParam("from Analysis where program=:program","program",program);
+        if (temp.size() > 0) {
+            return temp.get(0);
+        }
+        return null;
     }
 
     public AnalysisFeature getAnalysisFeatureFromFeature(Feature feature) {
