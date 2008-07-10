@@ -45,7 +45,7 @@ public class Synonym implements Serializable {
     // Constructors
 
     /** default constructor */
-    private Synonym() {
+    public Synonym() {
         // Deliberately empty default constructor
     }
 
@@ -58,19 +58,15 @@ public class Synonym implements Serializable {
 
     // Property accessors
 
-    private int getSynonymId() {
+    public int getSynonymId() {
         return this.synonymId;
-    }
-
-    private void setSynonymId(int synonymId) {
-        this.synonymId = synonymId;
     }
 
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
 
-    private void setCvTerm(CvTerm cvterm) {
+    public void setCvTerm(CvTerm cvterm) {
         this.cvTerm = cvterm;
     }
 
@@ -78,22 +74,25 @@ public class Synonym implements Serializable {
         return this.name;
     }
 
+    @SuppressWarnings("unused") // Called by Hibernate only
     private void setName(String name) {
         this.name = name;
     }
 
-    String getSynonymSgml() {
+    public String getSynonymSgml() {
         return this.synonymSgml;
     }
 
+    @SuppressWarnings("unused") // Called by Hibernate only
     private void setSynonymSgml(String synonymSgml) {
         this.synonymSgml = synonymSgml;
     }
 
-    private Collection<FeatureSynonym> getFeatureSynonyms() {
+    public Collection<FeatureSynonym> getFeatureSynonyms() {
         return this.featureSynonyms;
     }
 
+    @SuppressWarnings("unused") // Called by Hibernate only
     private void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
         this.featureSynonyms = featureSynonyms;
     }

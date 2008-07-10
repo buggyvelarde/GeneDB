@@ -22,41 +22,21 @@ import javax.persistence.Table;
 
 /**
  * This represents a key/value pair attached to a FeatureCvTerm. The key is itself a CvTerm, with
- * a free-text value
- *
- * Database constraints: feature_cvtermprop_c1 unique (feature_cvterm_id, type_id, rank)
+ * a free-text value. The value may be null, for properties that are merely flags. The collection
+ * of properties (of a particular FeatureCvTerm) is ordered, with the <code>rank</code> serving to
+ * define the ordering.
+ * <p>
+ * GMOD description: Extensible properties for feature to cvterm associations. Examples: GO evidence
+ * codes; qualifiers; metadata such as the date on which the entry was curated and the source of the
+ * association.
+ *<p>
+ * Database constraints: <code>feature_cvtermprop_c1 unique (feature_cvterm_id, type_id, rank)</code>
  *
  * @author art
- */
-/**
- * @author art
- *
  */
 @Entity
 @Table(name="feature_cvtermprop")
 public class FeatureCvTermProp implements Serializable, PropertyI, Rankable {
-
-/*
-create table feature_cvtermprop (
-    feature_cvtermprop_id serial not null,
-    primary key (feature_cvtermprop_id),
-    feature_cvterm_id int not null,
-    foreign key (feature_cvterm_id) references feature_cvterm (feature_cvterm_id) on delete cascade,
-    type_id int not null,
-    foreign key (type_id) references cvterm (cvterm_id) on delete cascade INITIALLY DEFERRED,
-    value text null,
-    rank int not null default 0,
-    constraint feature_cvtermprop_c1 unique (feature_cvterm_id,type_id,rank)
-);
-
-COMMENT ON TABLE feature_cvtermprop IS 'Extensible properties for feature to cvterm associations. Examples: GO evidence codes; qualifiers; metadata such as the date on which the entry was curated and the source of the association';
-
-create index feature_cvtermprop_idx1 on feature_cvtermprop (feature_cvterm_id);
-create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
-*/
-
-
-
 
     // Fields
 
@@ -130,75 +110,39 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
         this.featureCvTermPropId = featureCvTermPropId;
     }
 
-    /**
-     * Accessor for featureCvTerm
-     *
-     * @see featureCvTerm
-     */
     public CvTerm getCvTerm() {
         return this.cvTerm;
     }
 
-    /**
-     * Accessor for cvTerm
-     *
-     * @see cvTerm
-     */
-    private void setCvTerm(CvTerm cvTerm) {
-        this.cvTerm = cvTerm;
-    }
-
-    /**
-     * Accessor for featureCvTerm
-     *
-     * @see featureCvTerm
-     */
     private FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
 
-    /**
-     * Accessor for featureCvTerm
-     *
-     * @see featureCvTerm
-     */
     private void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }
 
 
     /**
-     * Accessor for value
-     *
-     * @see value
+     * Get the value of this property
+     * @return the property value, a string. May be null.
      */
-    private String getValue() {
+    public String getValue() {
         return this.value;
     }
 
-    /**
-     * Accessor for value
-     *
-     * @see value
-     */
     private void setValue(String value) {
         this.value = value;
     }
 
     /**
-     * Accessor for rank
-     *
-     * @see rank
+     * Get the rank of this property.
+     * @return the rank, a non-negative integer
      */
     public int getRank() {
         return this.rank;
     }
 
-    /**
-     * Accessor for rank
-     *
-     * @see rank
-     */
     private void setRank(int rank) {
         this.rank = rank;
     }

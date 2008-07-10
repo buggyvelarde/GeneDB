@@ -6,11 +6,15 @@ import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.utils.Rankable;
 import org.gmod.schema.utils.propinterface.PropertyI;
+
 import org.hibernate.annotations.Filter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +24,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -54,7 +59,8 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     private int rank;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
-    private Collection<FeatureCvTermProp> featureCvTermProps = new HashSet<FeatureCvTermProp>(0);
+    @OrderBy("rank")
+    private List<FeatureCvTermProp> featureCvTermProps = new ArrayList<FeatureCvTermProp>(0);
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
     private Collection<FeatureCvTermPub> featureCvTermPubs = new HashSet<FeatureCvTermPub>(0);
@@ -103,7 +109,12 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
         this.feature = feature;
     }
 
-    private Pub getPub() {
+    /**
+     * Get the details of the principal publication associated with this FeatureCvTerm, if any.
+     * @return a Pub object containing the details of the principal publication associated with
+     *  this FeatureCvTerm, or <code>null</code> if there isn't one.
+     */
+    public Pub getPub() {
         return this.pub;
     }
 
@@ -119,24 +130,34 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
         this.not = not;
     }
 
-    private Collection<FeatureCvTermProp> getFeatureCvTermProps() {
-        return this.featureCvTermProps;
+    /**
+     * Get the <code>FeatureCvTermProp</code> objects that describe properties of this FeatureCvTerm.
+     * @return an unmodifiable collection of <code>FeatureCvTermProp</code> objects
+     */
+    public Collection<FeatureCvTermProp> getFeatureCvTermProps() {
+        return Collections.unmodifiableCollection(this.featureCvTermProps);
     }
 
-    private void setFeatureCvTermProps(Collection<FeatureCvTermProp> featureCvTermProps) {
-        this.featureCvTermProps = featureCvTermProps;
-    }
-
-    private Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
-        return this.featureCvTermPubs;
+    /**
+     * Get the <code>FeatureCvTermPub</code> objects that describe publications related to this FeatureCvTerm.
+     * @return an unmodifiable collection of <code>FeatureCvTermPub</code> objects
+     */
+    public Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
+        return Collections.unmodifiableCollection(this.featureCvTermPubs);
     }
 
     private void setFeatureCvTermPubs(Collection<FeatureCvTermPub> featureCvTermPubs) {
         this.featureCvTermPubs = featureCvTermPubs;
     }
 
-    private Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
-        return this.featureCvTermDbXRefs;
+    /**
+     * Get the <code>FeatureCvTermDbXRef</code> objects that describe the database cross-references
+     * for this FeatureCvTerm.
+     *
+     * @return an unmodifiable collection of <code>FeatureCvTermDbXRef</code> objects
+     */
+    public Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
+        return Collections.unmodifiableCollection(this.featureCvTermDbXRefs);
     }
 
     private void setFeatureCvTermDbXRefs(Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
