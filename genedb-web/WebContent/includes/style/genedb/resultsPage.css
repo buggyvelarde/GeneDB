@@ -1,0 +1,15 @@
+#list {
+    text-align: center;
+}
+#list table {
+    margin-left:auto; margin-right:auto;
+}
+#list .yui-pg-container a {
+    color: #00d;
+}
+#list .yui-pg-pages a {
+    text-decoration: underline;
+}
+#list, #list .yui-dt-loading {
+    text-align: center; background-color: transparent;
+}

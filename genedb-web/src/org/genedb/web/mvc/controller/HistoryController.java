@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.spring.web.servlet.view.JsonView;
+
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.query.Result;
 import org.genedb.query.SimpleListResult;
@@ -20,9 +24,9 @@ import org.genedb.query.history.SimpleHistory;
 import org.genedb.web.mvc.history.commandline.HistoryParser;
 import org.genedb.web.mvc.history.commandline.ParseException;
 import org.gmod.schema.sequence.Feature;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
@@ -37,19 +41,17 @@ public class HistoryController extends MultiActionController implements Initiali
     private SequenceDao sequenceDao;
     private FileCheckingInternalResourceViewResolver viewChecker;
     private HistoryManagerFactory historyManagerFactory;
-
+    private String historyView;
+    private JsonView jsonView;
+    private String downloadView;
+    private String editView;
+    
     public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
         this.viewChecker = viewChecker;
     }
 
     public void afterPropertiesSet() throws Exception {
-        // if (clinic == null) {
-        // throw new ApplicationContextException("Must set clinic bean property
-        // on " + getClass());
-        // }
     }
-
-    // handlers
 
     /**
      * Custom handler for examples
@@ -72,16 +74,10 @@ public class HistoryController extends MultiActionController implements Initiali
             session = request.getSession(true);
             return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
         }
-        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-
-        Map<String,Object> model = new HashMap<String,Object>();
-        model.put("items", historyManager.getHistoryItems());
-
-        return new ModelAndView("history/historyIndex", model);
+        return new ModelAndView(historyView);
     }
-
-    @SuppressWarnings("unchecked")
-    public ModelAndView Data(HttpServletRequest request, HttpServletResponse response) {
+    
+    public ModelAndView viewData(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             // No session
@@ -96,45 +92,43 @@ public class HistoryController extends MultiActionController implements Initiali
             return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
         }
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-        List<HistoryItem> items = historyManager.getHistoryItems();
-        String change = request.getParameter("change");
-        if (change.equals("true")) {
-            int row = Integer.parseInt((request.getParameter("row")));
-            String value = request.getParameter("value");
 
-            items.get(row).setName(value);
-        }
+        Map<String,Object> model = new HashMap<String,Object>();
+        JSONArray items = JSONArray.fromObject(historyManager.getHistoryItems());
+        model.put("items",items);
 
-        int count = 1;
-        JSONArray array = new JSONArray();
-        for (HistoryItem item : items) {
-            JSONObject obj = new JSONObject();
-            obj.put("index", count);
-            obj.put("name", item.getName());
-            obj.put("download", "http://developer.genedb.org/old/DownloadFeatures?historyItem="
-                    + count);
-            array.add(obj);
-            count++;
-        }
-        JSONObject obj = new JSONObject();
-        obj.put("total", items.size());
-        obj.put("queries", array);
-        PrintWriter out = null;
-        try {
-            out = response.getWriter();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        out.print(obj);
-        out.close();
-
-        return new ModelAndView("history/historyIndex");
+        return new ModelAndView(jsonView, model);
     }
+    
+    public ModelAndView Download(HttpServletRequest request,HttpServletResponse response, BindException be) {
+        String history = ServletRequestUtils.getStringParameter(request, "history","0");
+        
+        if(history == "0") {
+            be.reject("no.download.history");
+            return new ModelAndView(downloadView);
+        }
 
+        Map<String,Object> model = new HashMap<String,Object>();
+        model.put("history", history);
+        return new ModelAndView(downloadView,model);
+    }
+    
+    public ModelAndView EditHistory(HttpServletRequest request,HttpServletResponse response) {
+        String history = ServletRequestUtils.getStringParameter(request, "history","0");
+        
+        if(history == "0") {
+            //be.reject("no.download.history");
+            return new ModelAndView(editView);
+        }
+
+        Map<String,Object> model = new HashMap<String,Object>();
+        model.put("history", history);
+        return new ModelAndView(editView,model);
+    }
+    
     private static final String GENEDB_HISTORY = "_GeneDB_History_List";
 
-    public ModelAndView AddItem(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
+    public ModelAndView AddItem(HttpServletRequest request,HttpServletResponse response) {
         Result result = new SimpleListResult();
         result.setName("testing");
 
@@ -443,6 +437,34 @@ public class HistoryController extends MultiActionController implements Initiali
             ids.add(feature.getUniqueName());
         }
         historyManager.addHistoryItems("name lookup '" + name + "'", ids);
+    }
+
+    public String getHistoryView() {
+        return historyView;
+    }
+
+    public void setHistoryView(String historyView) {
+        this.historyView = historyView;
+    }
+
+    public JsonView getJsonView() {
+        return jsonView;
+    }
+
+    public void setJsonView(JsonView jsonView) {
+        this.jsonView = jsonView;
+    }
+
+    public String getDownloadView() {
+        return downloadView;
+    }
+
+    public void setDownloadView(String downloadView) {
+        this.downloadView = downloadView;
+    }
+
+    public void setEditView(String editView) {
+        this.editView = editView;
     }
 
 }

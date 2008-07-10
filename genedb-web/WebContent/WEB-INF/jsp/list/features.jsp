@@ -1,8 +1,19 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
-
-<format:headerRound title="Gene Results List" bodyClass="genePage">
-	<st:init />
+<c:url value="/" var="base"/>
+<format:headerRound title="Gene Results List" bodyClass="genePage" onLoad="initList('${base}','${args}');">
+		<st:init />
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/YUI-2.5.2/fonts/fonts-min.css"/>" />
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/YUI-2.5.2/datatable/assets/skins/sam/datatable.css"/>" />
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/connection/connection-min.js"/>"></script>
+	
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/json/json-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/element/element-beta-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/datasource/datasource-beta-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/datatable/datatable-beta-min.js"/>"></script>
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
+	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/resultsPage.css"/>" />
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/list.js"/>"></script>
 </format:headerRound>
 <div id="geneDetails">
 	<format:genePageSection id="listResults" className="whiteBox">
@@ -26,6 +37,8 @@
 			<display:column property="product" title="Product"/>
 		</display:table>
 	</c:if>
+	<div id="list" style="clear: both;"></div>
 	</format:genePageSection>
 </div>
+
 <format:footer />

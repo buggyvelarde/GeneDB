@@ -1,7 +1,21 @@
 package org.genedb.web.mvc.controller.download;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+
+import org.genedb.db.dao.SequenceDao;
+import org.gmod.schema.sequence.feature.AbstractExon;
+import org.gmod.schema.sequence.feature.AbstractGene;
+import org.gmod.schema.sequence.feature.Exon;
+import org.gmod.schema.sequence.feature.Gene;
+import org.gmod.schema.sequence.feature.MRNA;
+import org.gmod.schema.sequence.feature.ProductiveTranscript;
+import org.gmod.schema.sequence.feature.Transcript;
 
 public class DownloadUtils {
 
@@ -108,4 +122,56 @@ public class DownloadUtils {
      
         return embl.toString();
     }
+	
+	public static String getSequence(AbstractGene gene,SequenceType sequenceType) {
+	    String sequence = null;
+	    boolean alternateSpliced = false;
+	    Collection<Transcript> transcripts = gene.getTranscripts();
+	    ProductiveTranscript transcript = null;
+	    
+	    if(transcripts.size() > 1 ) {
+	        alternateSpliced = true;
+	    } else {
+	       Transcript t = transcripts.iterator().next();
+	       if(t instanceof ProductiveTranscript) {
+	           transcript = (ProductiveTranscript) t;
+	       }
+	    }
+        
+	    if(!alternateSpliced && transcript!=null) {
+    	    switch (sequenceType) {
+    	        case SPLICED_DNA:
+    	            if(transcript.getResidues() != null) {
+    	                sequence = new String(transcript.getResidues());
+    	            }
+    	            break;
+    	        case UNSPLICED_DNA:
+    	            if(transcript.getResidues() != null) {
+    	                sequence = new String(gene.getResidues());
+    	            }
+    	            break;
+    	        case PROTEIN:
+    	            if(transcript.getProtein().getResidues() != null) {
+    	                sequence = new String(transcript.getProtein().getResidues());
+    	            }
+    	            break;
+    	        case INTRON:
+    	            Object[] exons = transcript.getExons().toArray();
+    	            if(exons.length > 1) {
+        	            sequence = new String();
+    	                for(int i=0;i<exons.length - 1;i++) {
+        	                AbstractExon exon = (AbstractExon) exons[i];
+        	                int start = exon.getStart();
+        	                int stop = exon.getStop();
+        	                String str = new String(gene.getRankZeroFeatureLoc().getFeatureBySrcFeatureId()
+        	                        .getResidues(start, stop));
+        	                sequence = sequence.concat(str);   
+        	            }
+    	            }
+    	            break;
+    	    }
+	    }
+	    
+	    return sequence;
+	}
 }

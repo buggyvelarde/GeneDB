@@ -67,9 +67,20 @@ public class HttpSessionHistoryManager implements HistoryManager {
 	 * @see org.genedb.web.mvc.controller.HistoryManager#addHistoryItem(java.lang.String, java.util.List)
 	 */
 	public void addHistoryItems(String name, List<String> ids) {
-		HistoryItem item = new HistoryItem(name, ids);
+		
 		List<HistoryItem> history = getHistoryItems();
-		history.add(item);
+		boolean found = false;
+		for (HistoryItem hi : history) {
+            if (hi.getName().equals(name)) {
+                found = true;
+                break;
+            }
+        }
+		if(!found) {
+		  HistoryItem item = new HistoryItem(name, ids);
+		  history.add(item);
+		}
+		
 	}
 	
 	public void addHistoryItem(String name, String id) {

@@ -41,7 +41,7 @@
         				0 Others
         			</c:if>
         			<c:if test="${nc.count > 1}" >
-        				<a href="<c:url value="/"/>GenesByCvTermAndCv?organism=${organism}&cvTermName=${featureCvTerm.cvTerm.name}&cvName=${featureCvTerm.cvTerm.cv.name}"> ${nc.count - 1} Others </a>
+        				<a href="<c:url value="/"/>GenesByCvTermAndCv?organism=${organism}&cvTermName=${featureCvTerm.cvTerm.name}&cvName=${featureCvTerm.cvTerm.cv.name}&json=false"> ${nc.count - 1} Others </a>
         			</c:if>
         		</c:if>
         	</c:forEach>

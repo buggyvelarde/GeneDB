@@ -399,3 +399,13 @@ div.value {
 .domainDescription {padding-left: 2em;}
 .domainPosition {text-align: right; margin-right: 2em;}
 .domainScore {text-align: right;}
+
+fieldset {
+	border: 1px solid gray;
+	padding: 20px;
+	width: 600px;
+}
+
+.sequenceButton {
+	padding: 5px;
+}

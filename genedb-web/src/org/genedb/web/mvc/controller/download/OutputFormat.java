@@ -21,6 +21,7 @@ package org.genedb.web.mvc.controller.download;
 
 public enum OutputFormat {
     CSV,
+    TAB,
     EXCEL,
     ODF,
     HTML,

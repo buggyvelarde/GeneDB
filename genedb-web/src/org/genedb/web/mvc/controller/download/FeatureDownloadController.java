@@ -22,7 +22,7 @@ public class FeatureDownloadController extends TaxonNodeBindingFormController{
     public static class FeatureDownloadBean {
         private String featureName;
         private String featureType;
-        private DownloadType downloadType;
+        private SequenceType downloadType;
         public String getFeatureName() {
             return featureName;
         }
@@ -35,19 +35,19 @@ public class FeatureDownloadController extends TaxonNodeBindingFormController{
         public void setFeatureType(String featureType) {
             this.featureType = featureType;
         }
-        public DownloadType getDownloadType() {
+        public SequenceType getDownloadType() {
             return downloadType;
         }
-        public void setDownloadType(DownloadType downloadType) {
+        public void setDownloadType(SequenceType downloadType) {
             this.downloadType = downloadType;
         }
     }
 
     @Override
-    protected Map<String,DownloadType[]> referenceData(@SuppressWarnings("unused") HttpServletRequest request)
+    protected Map<String,SequenceType[]> referenceData(@SuppressWarnings("unused") HttpServletRequest request)
     {
-        Map<String,DownloadType[]> reference = new HashMap<String,DownloadType[]>();
-        reference.put("downloadTypes", DownloadType.values());
+        Map<String,SequenceType[]> reference = new HashMap<String,SequenceType[]>();
+        reference.put("downloadTypes", SequenceType.values());
         return reference;
     }
 

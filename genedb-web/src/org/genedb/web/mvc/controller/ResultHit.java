@@ -6,6 +6,9 @@ public class ResultHit {
 	private String type;
 	private String organism;
 	private String product;
+	private String chromosome;
+	private String location;
+	private String synonym;
 	
 	public String getName() {
 		return name;
@@ -37,5 +40,29 @@ public class ResultHit {
 
     public void setProduct(String product) {
         this.product = product;
+    }
+
+    public String getChromosome() {
+        return chromosome;
+    }
+
+    public void setChromosome(String chromosome) {
+        this.chromosome = chromosome;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getSynonym() {
+        return synonym;
+    }
+
+    public void setSynonym(String synonym) {
+        this.synonym = synonym;
     }
 }

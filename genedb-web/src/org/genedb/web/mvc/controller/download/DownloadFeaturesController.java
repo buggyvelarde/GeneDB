@@ -26,15 +26,25 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.spring.web.servlet.view.JsonView;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -42,18 +52,18 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.mvc.controller.HistoryItem;
 import org.genedb.web.mvc.controller.HistoryManager;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
+import org.genedb.web.mvc.controller.LuceneDao;
+import org.genedb.web.mvc.controller.ResultHit;
 import org.genedb.web.mvc.controller.TaxonNodeBindingFormController;
 import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.sequence.feature.AbstractGene;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 
 
 /**
- * Looks up a feature by uniquename, and possibly synonyms
+ * List Download
  * 
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
@@ -61,463 +71,322 @@ import org.springframework.web.servlet.ModelAndView;
 public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 
     private SequenceDao sequenceDao;
+    private LuceneDao luceneDao;
     private HistoryManagerFactory historyManagerFactory;
-    
-//	@Override
-//	protected Map referenceData(HttpServletRequest request) throws Exception {
-//		Map map = super.referenceData(request);
-//		return getDownloadMethods(map);
-//	}
+    private String downloadView;
+    private JsonView jsonView;
 
-//	protected Map getDownloadMethods(Map in) {
-//		Map map = in;
-//		if (map == null) {
-//			map = new HashMap();
-//		}
-//		List downloadMethods = new ArrayList();
-//		downloadMethods.add("Choose...");
-//		downloadMethods.add("Sequence");
-//		downloadMethods.add("Annotation");
-//		map.put("downloadMethods", downloadMethods);
-//		return map;
-//	}
-
-    private String createExcel(List<String> ids,String file,String[] columns) {
-    	int rcount = 2;
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet();
-		List<Feature> features = sequenceDao.getFeaturesByUniqueNames(ids);
-		for(Feature feature : features) {
-			HSSFRow row = sheet.createRow(rcount++);
-			HSSFCell cell1 = row.createCell((short) 1);
-			HSSFCell cell2 = row.createCell((short) 2);
-			HSSFCell cell3 = row.createCell((short) 3);
-			HSSFCell cell4 = row.createCell((short) 4);
-			HSSFCell cell5 = row.createCell((short) 5);
-			HSSFCell cell6 = row.createCell((short) 6);
-			HSSFCell cell7 = row.createCell((short) 7);
-			HSSFCell cell8 = row.createCell((short) 8);
-			HSSFCell cell9 = row.createCell((short) 9);
-			HSSFCell cell10 = row.createCell((short) 10);
-			
-			int count = 1;
-			for (String column: columns) {
-				switch (count) {
-					case 1:
-							cell1.setCellValue(getValue(column,feature));
-							break;
-					case 2:
-							cell2.setCellValue(getValue(column,feature));
-							break;
-					case 3:
-							cell3.setCellValue(getValue(column,feature));
-							break;
-					case 4:
-							cell4.setCellValue(getValue(column,feature));
-							break;
-					case 5:
-							cell5.setCellValue(getValue(column,feature));
-							break;
-					case 6:
-							cell6.setCellValue(getValue(column,feature));
-							break;
-					case 7:
-							cell7.setCellValue(getValue(column,feature));
-							break;
-					case 8:
-							cell8.setCellValue(getValue(column,feature));
-							break;
-					case 9:
-							cell9.setCellValue(getValue(column,feature));
-							break;
-					case 10:
-							cell10.setCellValue(getValue(column,feature));
-							break;
-				}
-				count++;
-			}
-		}
-		
-		String f = getServletContext().getRealPath("/includes/excel/" + file);
-		FileOutputStream stream=null;
-		try {
-			stream = new FileOutputStream(f);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		try {
-			workbook.write(stream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-    }
-    
-    private String createCsv(List<String> ids,String file,String[] columns) {
-    	List<Feature> features = sequenceDao.getFeaturesByUniqueNames(ids);
-    	BufferedWriter out = null;
-    	try {
-    		out = new BufferedWriter(new FileWriter(getServletContext().getRealPath("/includes/excel/" + file)));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		}
-		
-		StringBuffer whole = new StringBuffer();
-		
-		for (Feature feature : features) {
-			StringBuffer row = new StringBuffer();
-			for (String column : columns) {
-				if (column.equals("organism")) {
-					row.append(feature.getOrganism().getCommonName()+",");
-				} else if (column.equals("type")) {
-					row.append(feature.getCvTerm().getName()+",");
-				} else if (column.equals("name")) {
-					row.append(feature.getUniqueName()+",");
-				} else if (column.equals("pname")) {
-					row.append(feature.getName()+",");
-				} else if (column.equals("product")) {
-					String product = "";
-		    		Iterator<FeatureRelationship> iter = feature.getFeatureRelationshipsForObjectId().iterator();
-		    		while(iter.hasNext()) {
-		    			FeatureRelationship fr = iter.next();
-		    			Iterator<FeatureRelationship> frs = fr.getFeatureBySubjectId().getFeatureRelationshipsForObjectId().iterator();
-		    			while(frs.hasNext()) {
-		    				FeatureRelationship frel = frs.next();
-		    				//logger.info("Type = " + frel.getFeatureBySubjectId().getCvTerm().getName());
-		    				if(frel.getFeatureBySubjectId().getCvTerm().getName().equals("polypeptide")) {
-		    					Feature f = frel.getFeatureBySubjectId();
-		    					//logger.info("Polypeptide is " + f.getUniqueName());
-		    					Iterator<FeatureCvTerm> fcts = f.getFeatureCvTerms().iterator();
-		    					while(fcts.hasNext()) {
-		    						FeatureCvTerm fct = fcts.next();
-		    						if(fct.getCvTerm().getCv().getName().equals("genedb_products")) {
-		    							product = fct.getCvTerm().getName();
-		    						}
-		    					}
-		    				}
-		    			}
-		    		}
-		    		row.append(product+",");
-				} else if (column.equals("location")) {
-					Iterator<FeatureLoc> flocs = feature.getFeatureLocsForFeatureId().iterator();
-		    		while(flocs.hasNext()) {
-		    			FeatureLoc floc = flocs.next();
-		    			int min = floc.getFmin();
-		        		int max = floc.getFmax();
-		        		if(floc.getStrand() == 1) {
-		        			row.append((min + "-" + max)+",");
-		        		} else {
-		        			row.append("complement( " + min + "-" + max + " ),");
-		        		}
-		    		}
-				} else if (column.equals("chromosome")) {
-					Iterator<FeatureLoc> flocs = feature.getFeatureLocsForFeatureId().iterator();
-		    		while(flocs.hasNext()) {
-		    			FeatureLoc floc = flocs.next();
-		    			int min = floc.getFmin();
-		        		int max = floc.getFmax();
-		        		row.append(floc.getFeatureBySrcFeatureId().getUniqueName() + ",");
-		    		}
-				}
-			}
-			row.deleteCharAt(row.length()-1);
-			whole = whole.append(row.toString() + "\n");
-		}
-		try {
-			out.write(whole.toString());
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-    	return null;
-    }
-    
-    private String getValue(String column, Feature feature) {
-		if(column.equals("organism")) {
-			return feature.getOrganism().getCommonName();
-		} else if (column.equals("type")) {
-			return feature.getCvTerm().getName();
-		} else if (column.equals("name")) {
-			return feature.getUniqueName();	
-		} else if (column.equals("pname")) {
-			return feature.getName();
-		} else if (column.equals("product")) {
-			String product = "";
-    		Iterator<FeatureRelationship> iter = feature.getFeatureRelationshipsForObjectId().iterator();
-    		while(iter.hasNext()) {
-    			FeatureRelationship fr = iter.next();
-    			Iterator<FeatureRelationship> frs = fr.getFeatureBySubjectId().getFeatureRelationshipsForObjectId().iterator();
-    			while(frs.hasNext()) {
-    				FeatureRelationship frel = frs.next();
-    				//logger.info("Type = " + frel.getFeatureBySubjectId().getCvTerm().getName());
-    				if(frel.getFeatureBySubjectId().getCvTerm().getName().equals("polypeptide")) {
-    					Feature f = frel.getFeatureBySubjectId();
-    					//logger.info("Polypeptide is " + f.getUniqueName());
-    					Iterator<FeatureCvTerm> fcts = f.getFeatureCvTerms().iterator();
-    					while(fcts.hasNext()) {
-    						FeatureCvTerm fct = fcts.next();
-    						if(fct.getCvTerm().getCv().getName().equals("genedb_products")) {
-    							product = fct.getCvTerm().getName();
-    						}
-    					}
-    				}
-    			}
-    		}
-    		return product;
-		} else if (column.equals("location")) {
-			Iterator<FeatureLoc> flocs = feature.getFeatureLocsForFeatureId().iterator();
-    		while(flocs.hasNext()) {
-    			FeatureLoc floc = flocs.next();
-    			int min = floc.getFmin();
-        		int max = floc.getFmax();
-        		if(floc.getStrand() == 1) {
-        			return(min + "-" + max);
-        		} else {
-        			return("complement( " + min + "-" + max + " )");
-        		}
-
-    		}
-		} else if (column.equals("chromosome")) {
-			Iterator<FeatureLoc> flocs = feature.getFeatureLocsForFeatureId().iterator();
-    		while(flocs.hasNext()) {
-    			FeatureLoc floc = flocs.next();
-    			int min = floc.getFmin();
-        		int max = floc.getFmax();
-        		return floc.getFeatureBySrcFeatureId().getUniqueName();
-    		}
-    		
-		}
-		return null;
-	}
-    
 	@Override
     protected ModelAndView onSubmit(HttpServletRequest request, 
     		HttpServletResponse response, Object command, 
     		BindException be) throws Exception {
     	
         DownloadBean db = (DownloadBean) command;
-       
+        if(!db.isJson()) {
+            return new ModelAndView(downloadView);
+        }
+        
         int historyItem = db.getHistoryItem()-1;
         
+    	HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
+		List<HistoryItem> historyItems = historyManager.getHistoryItems();
+		if(historyItem >= historyItems.size()) {
+		    response.sendError(511);
+		    return null;
+		}
+		
+		HistoryItem hItem = historyItems.get(historyItem);
+		List<String> ids = hItem.getIds();
+		Hits hits = lookupInLucene(ids);
+		
         OutputFormat format = db.getOutputFormat();
-        
-        if(!(format==null)) {
-        	String file = "";
-        	String columns[];
-        	HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
-    		List<HistoryItem> historyItems = historyManager.getHistoryItems();
-    		HistoryItem hItem = historyItems.get(historyItem);
-    		List<String> ids = hItem.getIds();
-    		
-        	switch (format) {
-        		case EXCEL:
-        				file = request.getSession().getId() + ".xls";
-        				columns = request.getParameter("columns").split(",");
-        				createExcel(ids,file,columns);
-        				break;
-        		case CSV:
-        				file = request.getSession().getId() + ".txt"; 
-        				columns = request.getParameter("columns").split(",");
-        				createCsv(ids,file,columns);
-        				break;
+        SequenceType sequenceType = db.getSequenceType();
+
+        String file = request.getSession().getId();
+        String columns[] = request.getParameter("columns").split(",");
+		
+		File output = null;
+    	
+		switch (format) {
+    		case EXCEL:
+    				output = createExcel(hits,file,columns);
+    				response.setContentType("application/vnd.ms-excel");
+    				response.setHeader("Content-Disposition", "attachment");
+    	            response.setHeader("filename", output.getName());
+    				break;
+    		case CSV:
+    				output = createCsv(hits,file,columns,format);
+    				response.setContentType("application/x-download");
+    				response.setHeader("Content-Disposition", "attachment");
+    	            response.setHeader("filename", output.getName());
+    				break;
+    		case TAB:
+                    output = createCsv(hits,file,columns,format);
+                    response.setContentType("application/x-download");
+                    response.setHeader("Content-Disposition", "attachment");
+                    response.setHeader("filename", output.getName());
+                    break;
+    		case HTML:
+    		        Map<String,Object> model = new HashMap<String,Object>();
+    		        List<ResultHit> jHits = new ArrayList<ResultHit>();
+    		        for(int i=0;i<hits.length();i++) {
+    		            Document doc = hits.doc(i);
+    		            ResultHit rh = new ResultHit();
+    		            for (String column : columns) {
+                            if(column.equals("chr")) {
+                                rh.setChromosome(getValue(column, doc));
+                            } else if(column.equals("locs")) {
+                                rh.setLocation(getValue(column, doc));
+                            } else if(column.equals("uniqueName")) {
+                                rh.setName(getValue(column, doc));
+                            } else if(column.equals("product")) {
+                                rh.setProduct(getValue(column, doc));
+                            } else if(column.equals("synonym")) {
+                                rh.setSynonym(getValue(column, doc));
+                            } else if(column.equals("organism.commonName")) {
+                                rh.setOrganism(getValue(column, doc));
+                            }
+                        }
+    		            jHits.add(rh);
+    		        }
+    		        
+    		        model.put("hits",jHits );
+    		        model.put("hitsLength", hits.length());
+    		        return new ModelAndView(jsonView,model);
+    		case FASTA:
+    		        output = createFasta(hits,file,columns,sequenceType);
+    		        response.setContentType("application/x-download");
+                    response.setHeader("Content-Disposition", "attachment");
+                    response.setHeader("filename", output.getName());
         	}
-        	
-        	Map model = new HashMap(2);
-        	model.put("file", file);
-        	model.put("format", format);
-        	return new ModelAndView("download/download",model);
-        	
-        } else {
-        
-	        File tmpDir = new File(getServletContext().getRealPath("/includes/scripts/extjs"));
-	        BufferedWriter out = null;
-			try {
-				out = new BufferedWriter(new FileWriter(tmpDir + "/download.js"));
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			}
-			
-			/*out.write(" Ext.onReady(function(){ \n" +
-						" var ds = new Ext.data.Store({ \n" +
-				        " proxy: new Ext.data.HttpProxy({ \n" +
-				        " url: 'http://localhost:8080/genedb-web/Ext?history=" + historyItem + "'\n" +
-				        " }), \n" +
-				        " reader: new Ext.data.JsonReader({ \n" +
-				        " root: 'features', \n" +
-				        " totalProperty: 'total', \n" +
-				        " id: 'id' \n" +
-				        " }, [ \n" +
-				        " {name: 'organism', mapping: 'organism'}, \n" +
-				        " {name: 'type', mapping: 'type'}, \n" +
-				        " {name: 'name', mapping: 'name'}, \n" +
-				        " {name: 'chromosome', mapping: 'chromosome'}, \n" +
-				        " {name: 'location', mapping: 'location'}, \n" +
-				        " {name: 'product', mapping: 'product'}, \n" +
-				        " {name: 'pname', mapping: 'pname'} \n" +
-				        " ]), \n" +
-				        " remoteSort: true \n" +
-	    				" });\n\n"); -- working */ 
-			//new ext2.0
-			out.write(" Ext.onReady(function(){ \n" +
-					" var ds = new Ext.data.Store({ \n" +
-			        " proxy: new Ext.data.HttpProxy({ \n" +
-			        " url: 'http://developer.genedb.org/old/Ext?history=" + historyItem + "'\n" +
-			        " }), \n" +
-			        " reader: new Ext.data.JsonReader({ \n" +
-			        " root: 'features', \n" +
-			        " totalProperty: 'total', \n" +
-			        " id: 'id', \n" +
-			        " fields: [ \n" +
-			        " {name: 'organism', mapping: 'organism'}, \n" +
-			        " {name: 'type', mapping: 'type'}, \n" +
-			        " {name: 'name', mapping: 'name'}, \n" +
-			        " {name: 'chromosome', mapping: 'chromosome'}, \n" +
-			        " {name: 'location', mapping: 'location'}, \n" +
-			        " {name: 'product', mapping: 'product'}, \n" +
-			        " {name: 'pname', mapping: 'pname'} \n" +
-			        " ]}), \n" +
-			        " remoteSort: true \n" +
-    				" });\n\n");
-			
-			out.write("var cm = new Ext.grid.ColumnModel([{ \n" +
-	                  " id: 'organism', \n" + 
-	                  " header: \"Organism\", \n" +
-	                  " dataIndex: 'organism', \n" +
-	                  " width: 150, \n" +
-	                  " css: 'white-space:normal;' \n" +
-	        		  " },{ \n" +
-	        		  " id: 'type', \n" +
-	                  " header: \"Type\", \n" +
-	                  " dataIndex: 'type', \n" +
-	                  " hidden: true, \n" +
-	                  " width: 150, \n" +
-	                  " },{ \n" +
-	                  " id: 'chromosome', \n" +
-	                  " header: \"Chromosome\", \n" +
-	                  " dataIndex: 'chromosome', \n" +
-	                  " hidden: true, \n" +
-	                  " width: 150, \n" +
-	                  " },{ \n" +
-	                  " id: 'location', \n" +
-	                  " header: \"Location\", \n" +
-	                  " dataIndex: 'location', \n" +
-	                  " hidden: true, \n" +
-	                  " width: 150, \n" +
-	                  " },{ \n" +
-	                  " id: 'product', \n" +
-	                  " header: \"Product\", \n" +
-	                  " dataIndex: 'product', \n" +
-	                  " width: 150 \n" +
-	                  " },{ \n" +
-	                  " id: 'pname', \n" +
-	                  " header: \"PrimaryName\", \n" +
-	                  " dataIndex: 'pname', \n" +
-	                  " width: 150 \n" +
-	        		  " },{ \n" +
-	        		  " id: 'name', \n" +
-	                  " header: \"name\", \n" +
-	                  " dataIndex: 'name', \n" +
-	                  " width: 150 " + "}]);\n\ncm.defaultSortable = true;\n\n");
-			
-			out.write("var grid = new Ext.grid.EditorGridPanel({ \n" +
-	                  " store: ds, \n" +
-	                  " cm: cm, \n" +
-	                  " title: 'Download', \n" +
-	                  " selModel: new Ext.grid.RowSelectionModel({singleSelect:true}), \n" +
-	                  " renderTo:'download-grid', \n" +
-	                  " autoHeight : true, \n" +
-	                  " height: 'auto', \n" +
-	                  " enableColumnHide : true, \n" +
-	                  " enableColumnMove : true, \n" +
-	                  " enableHdMenu : true, \n" +
-	                  " stripeRows: true, \n" +
-	                  " loadMask: true, \n" +
-	                  " bbar: new Ext.PagingToolbar({ \n" +
-	                  "   pageSize: 25, \n" +
-	                  "    store: ds, \n" +
-	                  "    displayInfo: true, \n" +
-	                  "    displayMsg: 'Displaying history items {0} - {1} of {2}', \n" +
-	                  "    emptyMsg: \"No history items to display\" ,\n" +
-	                  "   items:[  \n" +
-	                  "       '-', { \n" +
-	                  "      pressed: false, \n" +
-	                  "      enableToggle:true, \n" +
-	                  "      text: 'Excel', \n" +
-	                  "       cls: 'x-btn-text-icon details', \n" +
-	                  "       toggleHandler: toggleExcel \n" +
-	                  "   },'-',{ \n" +
-	                  "      pressed: true, \n" +
-	                  "      enableToggle:false, \n" +
-	                  "      text: 'CSV', \n" +
-	                  "       cls: 'x-btn-text-icon details', \n" +
-	                  "       toggleHandler: toggleTab \n" +
-	                  "   }] \n" +
-	                  " }) \n" +
-	    			  " });\n\n");
-			
-			int h = historyItem + 1;
-			out.write("function toggleExcel(btn, pressed){ \n" +
-					  "if (pressed) { \n" +
-					  "  var count = cm.getColumnCount();\n" +
-					  "  var hidden = new Array();\n" +
-					  "  var i=0;\n" +
-					  "  for(var index=0; index<count; index++) {\n" +
-					  "  	var id = cm.getColumnId(index);\n" +
-					  "		if(!(cm.isHidden(index))) {\n" +
-					  "			hidden[i] = id;\n" +
-					  "			i++;\n" +
-					  "		}\n" +
-					  "	 }\n"+
-					  " var cols = hidden.join(',')\n"+
-					  " window.location=\"http://developer.genedb.org/old/DownloadFeatures?historyItem=" + h + "&outputFormat=EXCEL&columns=\" + cols + \"\";\n" +
-					  //"	 ds.load({params:{start:0, limit:25,excel:true,columns:hidden.join(',')}}); \n" +
-					  "} \n" +
-					  "}\n\n");
-			
-			out.write("function toggleTab(btn, pressed){ \n" +
-					  "if (pressed) { \n" +
-					  "  var count = cm.getColumnCount();\n" +
-					  "  var hidden = new Array();\n" +
-					  "  var i=0;\n" +
-					  "  for(var index=0; index<count; index++) {\n" +
-					  "  	var id = cm.getColumnId(index);\n" +
-					  "		if(!(cm.isHidden(index))) {\n" +
-					  "			hidden[i] = id;\n" +
-					  "			i++;\n" +
-					  "		}\n" +
-					  "	 }\n"+
-					  " var cols = hidden.join(',')\n"+
-					  " window.location=\"http://developer.genedb.org/old/DownloadFeatures?historyItem=" + h + "&outputFormat=CSV&columns=\" + cols + \"\";\n" +
-					  //"	 ds.load({params:{start:0, limit:25,excel:true,columns:hidden.join(',')}}); \n" +
-					  "} \n" +
-					  "}\n\n");
-			
-			out.write("ds.load({params:{start:0, limit:25}});\n");
-			out.write("});\n");
-			
-			out.close();
-			
-	        /*Writer w = response.getWriter();
-	        w.write("destination="+db.getOutputDestination().name()+"\n");
-	        w.write("format="+db.getOutputDestination().name()+"\n");
-	        w.write("history="+db.getHistoryItem()+"\n");
-	        w.write("version="+db.getVersion()+"\n");
-	        w.write("options="+db.getOutputOption()+"\n");
-	        w.close();
-	        return null;*/
-	//       
-	//        // Problem - report FIXME
-	//      
-			Map<String, Object> model = new HashMap<String, Object>(2);
-			model.put("historyItem", historyItem);
-			model.put("version", db.getVersion());
-			return new ModelAndView("search/download2",model);
-        }
+        return null;
     }
 
+	private Hits lookupInLucene(List<String> ids) throws IOException {
+        IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
+        BooleanQuery bQuery = new BooleanQuery();
+        for (String id : ids) {
+            bQuery.add(new TermQuery(new Term("uniqueName",id)), Occur.SHOULD);
+        }
+        Hits hits = luceneDao.search(ir, bQuery);
+        return hits;
+    }
+    
+    
+	private File createFasta(Hits hits,String file,String[] columns, SequenceType sequenceType) {
+
+        StringBuffer whole = new StringBuffer();
+        StringBuffer row = new StringBuffer();
+        
+        //add data
+        for(int i=0;i<hits.length();i++) {
+            row = new StringBuffer();
+            Document doc = null;
+            try {
+                doc = hits.doc(i);
+            } catch (CorruptIndexException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            for (String column: columns) {
+                if(!column.equals("sequence")) {
+                    row.append(getValue(column,doc) + ";");
+                }
+            }
+            row.deleteCharAt(row.length()-1);
+            
+            AbstractGene gene =  (AbstractGene)sequenceDao.getFeatureByUniqueName(doc.get("uniqueName"), Feature.class);
+            logger.info(String.format(" %d Gene %s Type %s",i,doc.get("uniqueName"),gene.getCvTerm().getName() ));
+            String sequence = DownloadUtils.getSequence(gene, sequenceType);
+            String entry;
+            if(sequence != null) {
+                entry = DownloadUtils.writeFasta(row.toString(), sequence);
+            } else {
+                entry = String.format("%s \n Alternatey Spliced or sequence not attached ", row.toString());
+            }
+            
+            whole.append(entry);
+            whole.append("\n\n");
+        }
+        
+        
+        
+        BufferedWriter out = null;
+        File outFile = new File(getServletContext().getRealPath("/" + file));
+        try {
+            out = new BufferedWriter(new FileWriter(outFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            out.write(whole.toString());
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return outFile;
+	}
+	
+    private File createExcel(Hits hits,String file,String[] columns) throws IOException {
+        int rcount = 2;
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        HSSFRow heading = sheet.createRow(rcount++);
+        short count = 1;
+        
+        //add headers
+        for (String column: columns) {
+            HSSFCell cell = heading.createCell(count);
+            HSSFRichTextString value = null;
+            if(column.equals("organism.commonName")) {
+                value = new HSSFRichTextString("Organism");
+            } else if (column.equals("uniqueName")) {
+                value = new HSSFRichTextString("Systematic Id");
+            } else if (column.equals("synonym")) {
+                value = new HSSFRichTextString("Synonyms");
+            } else if (column.equals("locs")) {
+                value = new HSSFRichTextString("Location");
+            } else if (column.equals("chr")) {
+                value = new HSSFRichTextString("Chromosome");
+            } else if (column.equals("product")) {
+                value = new HSSFRichTextString("Product");
+            } 
+            
+            cell.setCellValue(value);
+            count++;
+        }
+        rcount++;
+        
+        //add data
+        for(int i=0;i<hits.length();i++) {
+            Document doc = null;
+            try {
+                doc = hits.doc(i);
+            } catch (CorruptIndexException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
+            HSSFRow row = sheet.createRow(rcount++);
+            count = 1;
+            for (String column: columns) {
+                HSSFCell cell = row.createCell(count);
+                HSSFRichTextString value = new HSSFRichTextString(getValue(column,doc));
+                cell.setCellValue(value);
+                count++;
+            }
+        }
+        
+        File dir = new File(getServletContext().getRealPath("/"));
+        File f = File.createTempFile(file, ".xls",dir);
+        
+        FileOutputStream stream=null;
+        try {
+            stream = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            workbook.write(stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return f;
+    }
+    
+    private String getValue(String column, Document doc) {
+        if(column.equals("locs")) {
+            int start = Integer.parseInt(doc.get("start"));
+            int stop = Integer.parseInt(doc.get("stop"));
+            String strand = doc.get("strand");
+            
+            String locs = String.format("%d-%d", start,stop);
+            if(strand.equals("-1")) {
+                locs = String.format("(%d-%d)", start,stop);
+            }
+            return locs;
+        }
+        return doc.get(column);
+    }
+
+
+    private File createCsv(Hits hits,String file,String[] columns,OutputFormat format) {
+        String separator = ",";
+        StringBuffer whole = new StringBuffer();
+        StringBuffer row = new StringBuffer();
+        
+        if(format == OutputFormat.TAB) {
+            separator = "\t";
+        } 
+        
+        //add headers
+        for (String column: columns) {
+            
+            if(column.equals("organism.commonName")) {
+                row.append("Organism");
+            } else if (column.equals("uniqueName")) {
+                row.append("Systematic Id");
+            } else if (column.equals("synonym")) {
+                row.append("Synonyms");
+            } else if (column.equals("locs")) {
+                row.append("Location");
+            } else if (column.equals("chr")) {
+                row.append("Chromosome");
+            } else if (column.equals("product")) {
+                row.append("Product");
+            } 
+            row.append(separator);
+        }
+        row.deleteCharAt(row.length()-1);
+        whole.append(row);
+        whole.append("\n");
+        //add data
+        for(int i=0;i<hits.length();i++) {
+            row = new StringBuffer();
+            Document doc = null;
+            try {
+                doc = hits.doc(i);
+            } catch (CorruptIndexException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
+            for (String column: columns) {
+                row.append(getValue(column,doc));
+                row.append(separator);
+            }
+            row.deleteCharAt(row.length()-1);
+            whole.append(row);
+            whole.append("\n");
+        }
+        
+        BufferedWriter out = null;
+        File outFile = new File(getServletContext().getRealPath("/" + file));
+        try {
+            out = new BufferedWriter(new FileWriter(outFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            out.write(whole.toString());
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return outFile;
+    }
+    
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
@@ -525,6 +394,32 @@ public class DownloadFeaturesController extends TaxonNodeBindingFormController {
 	public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
 		this.historyManagerFactory = historyManagerFactory;
 	}
+
+    public String getDownloadView() {
+        return downloadView;
+    }
+
+    public void setDownloadView(String downloadView) {
+        this.downloadView = downloadView;
+    }
+
+    public LuceneDao getLuceneDao() {
+        return luceneDao;
+    }
+
+    public void setLuceneDao(LuceneDao luceneDao) {
+        this.luceneDao = luceneDao;
+    }
+
+
+    public JsonView getJsonView() {
+        return jsonView;
+    }
+
+
+    public void setJsonView(JsonView jsonView) {
+        this.jsonView = jsonView;
+    }
 
 	
 }
