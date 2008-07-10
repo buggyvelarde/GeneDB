@@ -9,6 +9,7 @@ public class GeneNameOrganism {
     
     private String geneName;
     private String organismName;
+    private String product;
     
     
     public GeneNameOrganism(String geneName, String organism) {
@@ -27,6 +28,14 @@ public class GeneNameOrganism {
     }
     public void setOrganismName(String organismName) {
         this.organismName = organismName;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
     }
     
     
