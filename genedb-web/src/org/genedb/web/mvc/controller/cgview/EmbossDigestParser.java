@@ -19,6 +19,7 @@
 
 package org.genedb.web.mvc.controller.cgview;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.io.BufferedReader;
@@ -30,7 +31,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class EmbossDigestParser implements InitializingBean {
-
+    
+    private static final Logger logger = Logger.getLogger(EmbossDigestParser.class);
+    
     String embossDir; 
     
     private List<String> digests = Collections.emptyList();
@@ -39,8 +42,12 @@ public class EmbossDigestParser implements InitializingBean {
         return digests;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        parseDigests();
+    public void afterPropertiesSet() {
+        try {
+            parseDigests();
+        } catch (IOException e) {
+            logger.warn(String.format("Emboss directory %s does't exist",embossDir));
+        }
     }
     
     private void parseDigests() throws IOException {
