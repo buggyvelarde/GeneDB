@@ -59,7 +59,7 @@ public class FeatureCvTermDbXRef implements Serializable {
         this.featureCvTermDbXRefId = featureCvTermDbXRefId;
     }
 
-    private DbXRef getDbXRef() {
+    public DbXRef getDbXRef() {
         return this.dbXRef;
     }
 
