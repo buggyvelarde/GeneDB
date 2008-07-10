@@ -10,6 +10,7 @@ import org.gmod.schema.phylogeny.Phylonode;
 import org.gmod.schema.utils.CollectionUtils;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
@@ -169,7 +170,7 @@ public class Feature implements java.io.Serializable {
     private Collection<FeatureCvTerm> featureCvTerms;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
-    // @Cascade( {CascadeType.ALL, CascadeType.DELETE_ORPHAN} )
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Collection<FeatureProp> featureProps;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
@@ -180,15 +181,6 @@ public class Feature implements java.io.Serializable {
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<FeatureSynonym> featureSynonyms;
-
-    /**
-     * This featureLoc field does not participate in the Hibernate mapping. It's
-     * provided as a convenience for the client, and can be used to cache a
-     * FeatureLoc of interest, but is neither automatically populated nor
-     * persisted. It is (at the time of writing) used only by Artemis.
-     */
-    @Transient
-    private FeatureLoc featureLoc;
 
     @Transient
     private Logger logger = Logger.getLogger(Feature.class);
@@ -520,7 +512,7 @@ public class Feature implements java.io.Serializable {
      * @return the systematic ID, temporary systematic ID, or unique name
      */
     @Transient
-    private String getSystematicId() {
+    public String getSystematicId() {
         for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
             Synonym synonym = featureSynonym.getSynonym();
             if (("systematic_id".equals(synonym.getCvTerm().getName())
@@ -533,7 +525,7 @@ public class Feature implements java.io.Serializable {
     }
 
     @Transient
-    private Collection<String> getPreviousSystematicIds() {
+    public Collection<String> getPreviousSystematicIds() {
         Set<String> ret = new HashSet<String>();
         for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
             Synonym synonym = featureSynonym.getSynonym();
@@ -580,36 +572,6 @@ public class Feature implements java.io.Serializable {
             // Shouldn't happen - MD5 is a supported algorithm
             throw new RuntimeException("Could not find MD5 algorithm", exp);
         }
-    }
-
-    /**
-     * Returns the value of the featureLoc field.
-     *
-     * This is probably not what you want: unless you are doing something
-     * special, use the {@link #getRankZeroFeatureLoc()} method.
-     *
-     * This featureLoc field does not participate in the Hibernate mapping. It's
-     * provided as a convenience for the client, and can be used to cache a
-     * FeatureLoc of interest, but is neither automatically populated nor
-     * persisted. It is (at the time of writing) used only by Artemis.
-     */
-    private FeatureLoc getFeatureLoc() {
-        return featureLoc;
-    }
-
-    /**
-     * Sets the value of the featureLoc field.
-     *
-     * This is probably not what you were looking for: see
-     * {@link #setFeatureLocsForFeatureId()}.
-     *
-     * This featureLoc field does not participate in the Hibernate mapping. It's
-     * provided as a convenience for the client, and can be used to cache a
-     * FeatureLoc of interest, but is neither automatically populated nor
-     * persisted. It is (at the time of writing) used only by Artemis.
-     */
-    private void setFeatureLoc(FeatureLoc featureLoc) {
-        this.featureLoc = featureLoc;
     }
 
     @Transient
