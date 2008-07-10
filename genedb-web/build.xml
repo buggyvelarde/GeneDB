@@ -12,17 +12,18 @@
     <property name="version" value="0.2"/>
     <property name="jar-build" value="ant-build/jar-build"/>
     <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
-    <property name="in-lib-dir" value="WebContent/WEB-INF/lib"/>
+    <property name="in-lib-dir" value="${imported.basedir.web}/WebContent/WEB-INF/lib"/>
     
     <!-- Classpaths -->
     
     <path id="libs">
-        <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/chado-interface.jar" />
+    	<path location="${in-lib-dir}/artemis.jar" />
+    	
+    	<path location="${imported.basedir.web}/../genedb-db/ant-build/jars/chado-interface.jar" />
         <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
         <path location="${imported.basedir.web}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
         <path location="${imported.basedir.web}/../genedb-query/ant-build/jars/genedb-query.jar" />
         
-        <path location="${lib-dir}/cgview.jar"/>
         <path location="${lib-dir}/antlr-runtime-3.0.jar"/>
         <path location="${lib-dir}/biojava-1.4.jar"/>
         <path location="${lib-dir}/displaytag-1.1.jar"/>
