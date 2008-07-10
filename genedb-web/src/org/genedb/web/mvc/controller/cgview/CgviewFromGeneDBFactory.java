@@ -1,110 +1,37 @@
 package org.genedb.web.mvc.controller.cgview;
 
-import static ca.ualberta.stothard.cgview.CgviewConstants.DIRECT_STRAND;
-
+import org.apache.log4j.Logger;
+import org.biojava.bio.Annotation;
+import org.biojava.bio.BioException;
+import org.biojava.bio.seq.Sequence;
+import org.biojava.bio.seq.SequenceIterator;
+import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.symbol.Location;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.web.gui.ArtemisColours;
 
+
+import uk.ac.sanger.artemis.circular.DNADraw;
+import uk.ac.sanger.artemis.circular.Track;
+import uk.ac.sanger.artemis.circular.Feature;
+
+import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
-import ca.ualberta.stothard.cgview.Cgview;
-import ca.ualberta.stothard.cgview.Feature;
-import ca.ualberta.stothard.cgview.FeatureRange;
-import ca.ualberta.stothard.cgview.FeatureSlot;
-import ca.ualberta.stothard.cgview.Legend;
-
-/**
- * This class reads an XML document and creates a Cgview object. The various elements and attributes in the file are
- * used to describe sequence features (position, type, name, color, label font, and opacity). Optional XML attributes
- * can be included, to control global map characteristics, and to add legends, a title, and footnotes.
- *
- * @author Paul Stothard
- */
 
 public class CgviewFromGeneDBFactory {
 
-    private static final String contextPath = "/";
-
-    private final static int MAX_BASES = 10000000;
-    private final static int MIN_BASES = 10;
-    private final static double MIN_BACKBONE_RADIUS = 10.0d;
-    private final static double MAX_BACKBONE_RADIUS = 12000.0d;  //default is 190.0d
-    private final static int MAX_IMAGE_WIDTH = 30000; //default is 700.0d
-    private final static int MIN_IMAGE_WIDTH = 100;
-
-    private final static int MAX_IMAGE_HEIGHT = 30000; //default is 700.0d
-    private final static int MIN_IMAGE_HEIGHT = 100;
-
-    private Pattern fontDescriptionPattern = Pattern.compile("\\s*(\\S+)\\s*,\\s*(\\S+)\\s*,\\s*(\\d+)\\s*,*\\s*");
-    private Pattern colorDescriptionPattern = Pattern.compile("\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,*\\s*");
-    private Matcher m;
-
-    private int cgviewLength;
-//    private int imageWidth;
-//    private int imageHeight;
-
-    //set to true if combining data
-//    private boolean ignoreCgviewTag = false;
-//    private boolean ignoreLegendTag = false;
-//    private boolean ignoreLegendItemTag = false;
-
-    private Cgview currentCgview;
-    private FeatureSlot currentFeatureSlot;
-    private Feature currentFeature;
-    private FeatureRange currentFeatureRange;
-    private Legend currentLegend;
-//    private LegendItem currentLegendItem;
-
-    private int labelFontSize = -1;
-//    private int rulerFontSize = -1;
-    private int legendFontSize = -1;
-
-//    private StringBuffer content = new StringBuffer();
-    
+    private static final Logger logger = Logger.getLogger(CgviewFromGeneDBFactory.class);
     SequenceDao sequenceDAO;
-    
-    /**
-     * Generates a Cgview object from a String of XML content.
-     *
-     * @param xml the XML content to read.
-     * @return the newly created Cgview object.
-     */
-    public Cgview createCgviewFromString(String id) {
-        //org.genedb.db.hibernate.Feature chromosome = featureDAO.findByUniqueName(id);
-        //Cgview ret = new Cgview(chromosome.getSeqlen());
 
-        Cgview ret = new Cgview(20000);
-        ret.setHeight(600);
-        //FeatureSlot forward = new FeatureSlot(ret, DIRECT_STRAND);
-        //FeatureSlot reverse = new FeatureSlot(ret, REVERSE_STRAND);
-        
-        FeatureSlot cutSlot = new FeatureSlot(ret, DIRECT_STRAND);
-
-        EmbossTableParser etp = new EmbossTableParser();
-        List<CutSite> sites = null;
-        try {
-            BufferedReader br = new BufferedReader(new FileReader("/nfs/team81/art/circular-restrict.txt"));
-            sites = etp.parse(br);
-        }
-        catch (IOException exp) {
-            throw new RuntimeException("Couldn't read, or parse results");
-        }
-        
-        int i = 0;
-        for (CutSite cutSite : sites) {
-            createFeature(cutSlot, cutSite.getStart(), cutSite.getEnd(), i);
-            i++;
-        }
-        return ret;
-    }
-    
-    
     public ReportDetails findCutSitesFromEmbossReport(String fileName) {
         EmbossTableParser etp = new EmbossTableParser();
         ReportDetails ret = new ReportDetails();
@@ -116,54 +43,129 @@ public class CgviewFromGeneDBFactory {
         catch (IOException exp) {
             throw new RuntimeException("Couldn't read, or parse results");
         }
-        
-        System.err.println("Found '"+ret.cutSites.size()+"' cutsites in a length of '"+etp.getLength()+"'");
-    	return ret;
+        return ret;
     }
     
-    public Cgview createCgviewFromReportDetails(ReportDetails rd) {
+    public DNADraw createDnaFromReportDetails(ReportDetails rd) {
 
-        Cgview ret = new Cgview(rd.length);
-        ret.setHeight(600);
-        FeatureSlot cutSlot = new FeatureSlot(ret, DIRECT_STRAND);
+        DNADraw dna = new DNADraw();
+        dna.setSize(600, 600);
+        dna.setName("Circular Diagram");
+        int sequenceLength = rd.length;
+        Hashtable<String,Object> lineAttr = new Hashtable<String,Object>();
+        lineAttr.put("lsize",new Integer(1) );
+        lineAttr.put("circular",new Boolean(true) );
+        lineAttr.put("start",new Integer(0) );
+        lineAttr.put("end",new Integer(sequenceLength) );
+        dna.setLineAttributes(lineAttr);
         
+        //set ticks
+        int div;
+        if(sequenceLength < 1000)
+          div = 100;
+        else if(sequenceLength < 10000)
+          div = 1000;
+        else if(sequenceLength < 100000)
+          div = 10000;
+        else
+          div = 100000;
+        int tickNum = sequenceLength/div;
+        int tick = tickNum*(div/10);
+        while((sequenceLength % tick) < (div/10)) {
+            tickNum++;
+            tick = tickNum*(div/10);
+        }
+        dna.setMinorTickInterval(tick);
+        dna.setTickInterval(tick);
+        dna.setBackground(Color.WHITE);
+        dna.setGeneticMarker(null);
+        Track forward = new Track(0.9,"",true,false,null);
+        Track reverse = new Track(0.85,"",false,true,null);
         int counter = 1;
+        if(rd.cutSites.size() == 1) {
+          CutSite cutSite = rd.cutSites.get(0);
+          dna.addFeatureToTrack(createFeature(cutSite.getEnd(), rd.length + cutSite.getStart(), 1),forward,false);
+          return dna;
+        } 
         Iterator<CutSite> it = rd.cutSites.iterator();
         CutSite cutSite = it.next();
         int firstCutPos = cutSite.getStart();
         int lastCutPos = cutSite.getEnd();
         while (it.hasNext()) {
             cutSite = it.next();
-            createFeature(cutSlot, lastCutPos, cutSite.getStart(), counter);
+            if(counter % 2 == 0) {
+                dna.addFeatureToTrack(createFeature(lastCutPos, cutSite.getStart(), counter),reverse,false);
+            } else {
+                dna.addFeatureToTrack(createFeature(lastCutPos, cutSite.getStart(), counter),forward,false);
+            }
             lastCutPos = cutSite.getEnd();
             counter++;
         }
-        createFeature(cutSlot, lastCutPos, firstCutPos, counter);
-        return ret;
+        if(counter % 2 == 0) {
+            dna.addFeatureToTrack(createFeature(lastCutPos, rd.length + firstCutPos, counter),reverse,false);
+        } else {
+            dna.addFeatureToTrack(createFeature(lastCutPos, rd.length + firstCutPos, counter),forward,false);
+        }
+        return dna;
     }
 
-    private Feature createFeature(FeatureSlot cutSlot, int coord1, int coord2, int counter) {
-        Feature f1 = new Feature(cutSlot);
-        //f1.setShowLabel(3);
-        f1.setLabel(counter + ":"+coord1+"->"+coord2+" ("+(coord2-coord1)+" bp)");
-        f1.setProportionOfThickness(0.5f);
+    private Feature createFeature(int coord1, int coord2, int counter) {
+        int colour;
         if (counter % 2 == 0) {
-            f1.setColor(ArtemisColours.getByName("red"));
+            colour = 2;
         } else {
-            f1.setColor(ArtemisColours.getByName("blue"));
-            f1.setRadiusAdjustment(0.5f);
+            colour = 5;
         }
-        f1.setMouseover("return showMenu("+coord1+","+coord2+")");
-        //f1.setMouseover("<a href=\\\"www.google.com\\\">Menu 1</a>&nbsp;&nbsp;<a href=\\\"www.sanger.ac.uk\\\">Menu 2</a>");
-        f1.setLabel(".....   "+counter);
-        f1.setHyperlink(""+coord1+":"+coord2);
-        new FeatureRange(f1, coord1, coord2); // Don't need to store reference
+        Feature f1 = new Feature(String.valueOf(counter),coord1,coord2,colour);
         return f1;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Map<String, Location> parseEmblForMiscFeatures(String addFileName) {
+        Map<String,Location> ret = new HashMap<String,Location>();
+        BufferedReader br = null;
+        try {
+              br = new BufferedReader(new FileReader(addFileName));
+            }
+            catch (FileNotFoundException ex) {
+              ex.printStackTrace();
+              System.exit(-1);
+            }
+            SequenceIterator sequences = SeqIOTools.readEmbl(br);
+
+            while(sequences.hasNext()){
+              try {
+                Sequence seq = sequences.nextSequence();
+                Iterator<org.biojava.bio.seq.Feature> features = seq.features();
+                int counter = 0;
+                while(features.hasNext()) {
+                    org.biojava.bio.seq.Feature feature = (org.biojava.bio.seq.Feature) features.next();
+                    if(feature.getType().equals("misc_feature")) {
+                        Annotation an = feature.getAnnotation();
+                        String label = (String)an.getProperty("systematic_id");
+                        if (label == "") {
+                            label = "misc-feature-" + counter;
+                        } else {
+                            label = "misc-feature-" + label;
+                        }
+                        counter++;
+                        Location loc = feature.getLocation();
+                        ret.put(label, loc);
+                    }
+                }
+              }
+              catch (BioException ex) {
+                ex.printStackTrace();
+              }catch (NoSuchElementException ex) {
+                ex.printStackTrace();
+              }
+            }
+        return ret;
     }
 }
 
     class ReportDetails {
-    	int length;
-    	List<CutSite> cutSites;
+        int length;
+        List<CutSite> cutSites;
     }
     

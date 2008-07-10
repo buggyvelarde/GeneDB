@@ -9,6 +9,16 @@ public class CircularGenomeCommandBean {
     private String uniqueName;
 
     private String file;
+    
+    private String additionalFile;
+
+    public String getAdditionalFile() {
+        return additionalFile;
+    }
+
+    public void setAdditionalFile(String additionalFile) {
+        this.additionalFile = additionalFile;
+    }
 
     public String getEnzymeName() {
         return this.enzymeName;
@@ -41,5 +51,6 @@ public class CircularGenomeCommandBean {
     public void setFile(String file) {
         this.file = file;
     }
-
+    
+    
 }

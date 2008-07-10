@@ -1,9 +1,21 @@
 package org.genedb.web.mvc.controller.cgview;
 
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.multipart.support.StringMultipartFileEditor;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.SimpleFormController;
+
+import uk.ac.sanger.artemis.circular.DNADraw;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -11,12 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,81 +35,76 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.multipart.support.StringMultipartFileEditor;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
-import ca.ualberta.stothard.cgview.Cgview;
-import ca.ualberta.stothard.cgview.LabelBounds;
 
 /**
- * 
- * 
- * @author Paul Stothard
  * @author Adrian Tivey
  */
-public class CircularGenomeFormController extends SimpleFormController implements InitializingBean {
-
+public class CircularGenomeFormController extends SimpleFormController implements InitializingBean{
+    
     private List<String> digestNames;
-    private ExecutionService restrictService;
-    private ExecutionService digestService;
-    private CachedFileFactory cachedFileFactory;
+    
     private EmbossDigestParser embossDigestParser;
+    
+    private CachedFileFactory cachedFileFactory;
+
     private Map<String, String> orgs = new HashMap<String, String>();
-    private BufferedImage overlay;
+    
+    private String embossDirectoryName;
+    
+    private String diagramView;
+    
+    private String fileName = null;
+    
+    private String organism = null;
+    
+    public String getDiagramView() {
+        return diagramView;
+    }
+
+
+    public void setDiagramView(String diagramView) {
+        this.diagramView = diagramView;
+    }
+
 
     public CircularGenomeFormController() {
         String ROOT = "/nfs/team81/art/circ_genome_data/";
-        orgs.put("S. typhi", ROOT + "styphi/chr1/St.art");
-        orgs.put("S. pyogenes", ROOT + "spyogenes/curated/SP.embl");
-        orgs.put("C. jejuni", ROOT + "cjejuni/curated/chr1/Cj.embl");
-
-        try {
-            overlay = ImageIO.read(new File("/nfs/team81/art/circ_icon.png"));
-        } catch (IOException e) {
-            System.err.println("Unable to load overlay file");
-        }
+        orgs.put("S. typhi", ROOT+"styphi/chr1/St.embl");
+        orgs.put("S. pyogenes", ROOT+"spyogenes/curated/SP.art");
+        orgs.put("C. jejuni", ROOT+"cjejuni/curated/chr1/Cj.embl");
     }
+
 
     /**
      * Custom handler for homepage
-     * 
      * @param request current HTTP request
      * @param response current HTTP response
      * @return a ModelAndView to render the response
      */
     @SuppressWarnings("unchecked")
     @Override
-    public ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-            Object command, BindException errors) {
-
+    public ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, 
+            Object command, BindException errors) throws Exception{
+        
         CircularGenomeCommandBean cgcb = (CircularGenomeCommandBean) command;
-        // List<String> answers = new ArrayList<String>();
-        // if (WebUtils.extractTaxonOrOrganism(request, false, true, answers)) {
-        // if (answers.size() > 0) {
-        // Taxon taxon = TaxonUtils.getTaxonFromList(answers, 0);
-
+        
         CgviewFromGeneDBFactory factory = new CgviewFromGeneDBFactory();
+        
+        Map<String,Object> model = new HashMap<String,Object>(4);
 
         try {
-            Map settings = new HashMap();
-
-            String fileName = null;
             if (!cgcb.getTaxon().equals("User uploaded file")) {
-                System.err.println("Processing a built-in data file");
-                fileName = orgs.get(cgcb.getTaxon());
+                organism = cgcb.getTaxon();
+                fileName = orgs.get(organism);
             } else {
                 String file = cgcb.getFile();
                 if (file == null) {
                     // hmm, that's strange, the user did not upload anything
                     // otherwise save to a temp file
-
-                    System.err.println("Tried to upload file but empty");
+                    errors.reject("no.file.upload");
+                    logger.error("No file was uploaded");
+                    return showForm(request,response,errors);
                 } else {
                     System.err.println("Received an upload file");
                     Writer fw = null;
@@ -116,7 +120,8 @@ public class CircularGenomeFormController extends SimpleFormController implement
                             fw.write('\n');
                         }
                         fileName = outFile.getCanonicalPath();
-                    } finally {
+                    }
+                    finally {
                         if (fw != null) {
                             fw.close();
                         }
@@ -126,13 +131,9 @@ public class CircularGenomeFormController extends SimpleFormController implement
                     }
                 }
             }
-
-            // Run restrict over organism
-            String embossDir = "/software/EMBOSS-4.0.0/";
+            
             File output = File.createTempFile("circular_genome", ".txt");
-            String[] args = { embossDir + "/bin/restrict", fileName, "-auto", "-limit", "y",
-                    "-enzymes", cgcb.getEnzymeName(), "-out", output.getCanonicalPath() };
-            System.err.println(Arrays.toString(args));
+            String[] args = {embossDirectoryName+"/bin/restrict", fileName, "-auto", "-limit", "y", "-enzymes", cgcb.getEnzymeName(), "-out", output.getCanonicalPath() };
             ProcessBuilder pb = new ProcessBuilder(args);
             pb.redirectErrorStream(true);
             Process p = pb.start();
@@ -140,352 +141,169 @@ public class CircularGenomeFormController extends SimpleFormController implement
             try {
                 InputStream is = p.getInputStream();
                 int inchar;
-                while ((inchar = is.read()) != -1) {
+                while ((inchar = is.read())!=-1) {
                     char c = (char) inchar;
                     System.err.print(c);
                 }
                 System.err.println("**");
                 p.waitFor();
-                System.err.println("Process exited with '" + p.exitValue() + "'");
+                System.err.println("Process exited with '"+p.exitValue()+"'");
             } catch (InterruptedException exp) {
-                // TODO Report error
-                exp.printStackTrace();
-                return null;
+                errors.reject("emboss.error");
+                logger.error(exp);
+                return showForm(request, response, errors);
             }
-            // System.err.println("Written output to
-            // '"+output.getCanonicalPath()+"' but not using it!");
-
-            // Cgview cgview =
-            // factory.createCgviewFromEmbossReport("/nfs/team81/art/circular-restrict.txt");
-            // Cgview cgview =
-            // factory.createCgviewFromEmbossReport(output.getCanonicalPath());
+            p.waitFor();
             ReportDetails rd = factory.findCutSitesFromEmbossReport(output.getCanonicalPath());
-            // ReportDetails rd =
-            // factory.findCutSitesFromEmbossReport("/nfs/team81/art/circ_genome_data/output1.txt");
-            Cgview cgview = factory.createCgviewFromReportDetails(rd);
-            // System.err.println("Got a cgview");
-            // cgview.setDesiredZoomCenter(centerBaseValue.intValue());
-            // cgview.setDesiredZoom(zoomValue.doubleValue());
-            CachedFile pngFile = cachedFileFactory.getCachedFile("organism-" + cgcb.getTaxon()
-                    + ":" + "enzyme-" + cgcb.getEnzymeName());
+            //ReportDetails rd = factory.findCutSitesFromEmbossReport("/nfs/team81/cp2/circular_genome6317.txt");
+            if (rd.cutSites.size() == 0) {
+                errors.reject("emboss.no.results");
+                return showForm(request, response, errors);
+            }
+            DNADraw dna = factory.createDnaFromReportDetails(rd);
+            
+            //Map<String,Location> miscFeatures = factory.parseEmblForMiscFeatures(addFileName);
+            CachedFile pngFile = cachedFileFactory.getCachedFile("organism-enzyme-"+cgcb.getEnzymeName()+".PNG");
 
-            BufferedImage bi = writeCgviewToImage(cgview, false);
-
-            String imageMap = modifyImage(bi, cgview.getLabelBounds());
-
-            System.err.println("Writing picture to " + pngFile.getFile().getAbsolutePath());
+            RenderedImage bi = writeCgviewToImage(dna, false);
+            String table = makeTable(dna.getFeaturePoints());
             ImageIO.write(bi, "PNG", pngFile.getFile());
-
+            
+            
             String browserPath = pngFile.getBrowserPath(request);
-
-            imageMap = addImageMap(browserPath, cgview.getWidth(), cgview.getHeight(), cgview
-                    .getLabelBounds(), true, fileName);
-
+            String circular = ("<img style=\"border:0\" src=\"" + StringEscapeUtils.escapeHtml(browserPath) + "\" width=\"" + Integer.toString(600) + "\" height=\"" + Integer.toString(600) + "\" />" + '\n');
+            
             VirtualDigest vDigest = new VirtualDigest();
+            vDigest.setLength(rd.length);
             vDigest.setCutSites(rd.cutSites);
             BufferedImage bi2 = vDigest.draw();
-            CachedFile pngFile2 = cachedFileFactory.getCachedFile("organism-" + cgcb.getTaxon()
-                    + ":" + "enzyme-" + cgcb.getEnzymeName() + "-gel-image");
-
-            System.err.println("Writing picture2 to " + pngFile.getFile().getAbsolutePath());
+            String array = makeArray(vDigest.getCoords());
+            CachedFile pngFile2 = cachedFileFactory.getCachedFile("organism-"+cgcb.getTaxon()+":"+"enzyme-"+cgcb.getEnzymeName()+"-gel-image");
             ImageIO.write(bi2, "PNG", pngFile2.getFile());
-
-            imageMap += ("<img style=\"border:0\" src=\""
-                    + StringEscapeUtils.escapeHtml(pngFile2.getBrowserPath(request))
-                    + "\" width=\"" + Integer.toString(100) + "\" height=\""
-                    + Integer.toString(600) + "\" />" + '\n');
-            // imageMap = addTempTable(imageMap, cgview.getLabelBounds());
-
-            settings.put("map", imageMap);
-
-            return new ModelAndView("graphics/circularGenome", "settings", settings);
+            
+            String gel = ("<img id=\"gel\" style=\"border:0\" src=\"" + StringEscapeUtils.escapeHtml(pngFile2.getBrowserPath(request)) + "\" width=\"" + Integer.toString(100) + "\" height=\"" + Integer.toString(600) + "\" />" + '\n');
+            
+            model.put("circular", circular);
+            model.put("gel", gel);
+            model.put("array", array);
+            model.put("table", table);
+            return new ModelAndView(diagramView, model);
         } catch (IOException exp) {
-            exp.printStackTrace();
-            // FIXME - Need msg before returning to form or homepage
+            errors.reject("emboss.error");
+            logger.error(exp);
+            return showForm(request, response, errors);
         }
-
-        // }
-        // }
-        return new ModelAndView("homepages/frontPage");
+        //return null;
     }
 
-    private String modifyImage(BufferedImage bi, ArrayList labelBounds) {
-        Graphics2D g2d = bi.createGraphics();
-        StringBuilder ret = new StringBuilder();
 
-        try {
-            // ret.append("<img style=\"border:0\" src=\"" +
-            // StringEscapeUtils.escapeHtml(imageFile) + "\" width=\"" +
-            // Integer.toString(width) + "\" height=\"" +
-            // Integer.toString(height) + "\" usemap=\"#cgviewmap\" />" + '\n');
-            ret.append("<map id=\"cgviewmap\" name=\"cgviewmap\">" + '\n');
+    private String makeTable(Hashtable<String,Point[]> points) {
+        StringBuilder table = new StringBuilder();
+        String[] keys = new String[points.size()];
+        int width = 600;
+        Iterator<String> iter = points.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            String[] values = key.split(";");
+            int count = Integer.parseInt(values[0]);
+            keys[count-1] = key;
+        }
+        table.append("<table clas=\"simple\">");
+        table.append("<tr>");
+        table.append("<th>Feature</th>");
+        table.append("<th>Links</th>");
+        table.append("</tr>");
+        for(int i=0;i<keys.length;i++) {
+            table.append("<tr>");
+            Point[] point = points.get(keys[i]);
+            Point start = point[0];
+            Point end = point[2];
+            
+            int x1 = (int) start.getX();
+            int y1 = (int) start.getY();
+            
+            int x3 = (int) end.getX();
+            int y3 = (int) end.getY();
 
-            // add areas
-            Iterator i = labelBounds.iterator();
-            while (i.hasNext()) {
-                LabelBounds currentLabelBounds = (LabelBounds) i.next();
-                Rectangle2D bounds = currentLabelBounds.getBounds();
-
-                if ((currentLabelBounds.getUse() == true)
-                        && ((currentLabelBounds.getMouseover() != null) || (currentLabelBounds
-                                .getHyperlink() != null))) {
-                    int x = (int) Math.floor(bounds.getX() + 0.5d);
-                    int y = (int) Math.floor(bounds.getY() + 0.5d);
-                    modifyImage(g2d, x, y);
-                    // ret.append("<area shape=\"rect\" coords=\"" +
-                    // Integer.toString(x) + "," + Integer.toString((int)
-                    // Math.floor(bounds.getY() + 0.5d)) + "," +
-                    // Integer.toString(x) + (int) Math.floor(bounds.getWidth()
-                    // + 0.5d)) + "," + Integer.toString(y) + (int)
-                    // Math.floor(bounds.getHeight() + 0.5d)) + "\" ");
-
-                    if (currentLabelBounds.getHyperlink() != null) {
-                        ret.append("href=\"" + currentLabelBounds.getHyperlink() + "\" ");
-                    }
-
-                    // if ((currentLabelBounds.getMouseover() != null) &&
-                    // (!(currentLabelBounds.getMouseover().matches("\\S*")))) {
-                    if (currentLabelBounds.getMouseover() != null) {
-
-                        // if (useOverlib) {
-                        // ret.append("onmouseover=\"return showMenu(3,5);\" ");
-                        // // ret.append("onmouseover=\"return overlib('" +
-                        // currentLabelBounds.getMouseover() + "');\" ");
-                        // //ret.append("onmouseover=\"return overlib('" +
-                        // StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover())
-                        // + "');\" ");
-                        // ret.append("onmouseout=\"return nd();\" ");
-                        // } else {
-                        // //ret.append("onmouseover=\"self.status='" +
-                        // StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover())
-                        // + "'; return true;\" ");
-                        // //ret.append("onmouseout=\"self.status=' '; return
-                        // true;\" ");
-                        // ret.append("onmouseover=\""+currentLabelBounds.getMouseover()
-                        // + "; return true;\" ");
-                        // }
-                    }
-                    ret.append("/>" + '\n');
-                }
-
+            if(x3 + 20 > width) {
+                x3 = width - 25;
+            } else if (x3 - 20 < 0) {
+                x3 = 25;
             }
-            ret.append("</map>" + '\n');
-            return ret.toString();
-        } finally {
-            g2d.dispose();
+            
+            if(y3 + 10 > width) {
+                y3 = width - 15;
+            } else if (y3 - 20 < 0) {
+                y3 = 15;
+            }
+            String feature = keys[i].split(";")[0];
+            String coord = keys[i].split(";")[1];
+            String[] values = coord.split("\\.\\.");
+            String orgOrFileLink = String.format("taxon=User uploaded file&file=%s", fileName);
+            if (fileName == null) {
+                orgOrFileLink = String.format("organism=%s",organism);
+            }
+            String hrefArtemis = String.format("href=\"FlatFileReport?outputFormat=Artemis&%s&min=%s&max=%s\"",orgOrFileLink,values[0],values[1]);
+            String hrefTable = String.format("href=\"FlatFileReport?outputFormat=Table&%s&min=%s&max=%s\"",orgOrFileLink,values[0],values[1]);
+           
+            String coords = String.format("%d,%d,%d,%d,%s", x1,x3,y1,y3,feature);
+            table.append("<td>");
+            table.append(String.format("<a href=\"#\" onmouseover= \"highlight(%s)\" onmouseout= \"highlightOff()\"> %s </a>",coords,feature));
+            table.append("</td>");
+            table.append("<td>");
+            table.append(String.format("<a %s> Annotation </a> | <a %s> Artemis </a>",hrefTable,hrefArtemis));
+            table.append("</td>");
+            table.append("</tr>");
         }
+        table.append("</table>");
+        return table.toString();
     }
 
-    private void modifyImage(Graphics2D g2d, int x, int y) {
-        System.err.println("Trying to draw overlay at x='" + x + "' y='" + y + "'");
-        System.err.println("Overlay is width='" + overlay.getWidth(null) + "' height='"
-                + overlay.getHeight(null) + "'");
-        g2d.setPaint(Color.GREEN);
-        g2d.drawRect(x, y, 20, 10);
-        g2d.drawImage(overlay, x, y, null);
+    private String makeArray(Map<String, List<String>> coords) {
+        Iterator<String> iterator = coords.keySet().iterator();
+        StringBuilder ret = new StringBuilder(); 
+        ret.append("<script type=\"text/javascript\">");
+        ret.append(String.format("var coords = new Array(%d);",coords.size()));
+        while (iterator.hasNext()) {
+           String id = iterator.next();
+           List<String> coord = coords.get(id);
+           String topY = coord.get(0);
+           String bottomX = coord.get(1);
+           String bottomY = coord.get(2);
+           int count = Integer.parseInt(id) - 1;
+           ret.append(String.format("coords[%d] = new Array(3);",count));
+           ret.append(String.format("coords[%d][0] = %s;",count,topY));
+           ret.append(String.format("coords[%d][1] = %s;",count,bottomX));
+           ret.append(String.format("coords[%d][2] = %s;",count,bottomY));
+        }  
+        ret.append("</script>");
+        
+        
+        return ret.toString();
     }
+    
+    public static BufferedImage writeCgviewToImage(DNADraw dna, boolean keepLastLabels) {
 
-    public static BufferedImage writeCgviewToImage(Cgview cgview, boolean keepLastLabels) {
-
-        // TODO This is wrong if image is scaled
-        BufferedImage buffImage = new BufferedImage(cgview.getWidth(), cgview.getHeight(),
-                BufferedImage.TYPE_INT_RGB);
+        int height = (int)dna.getHeight();
+        int width = (int)dna.getWidth();
+        dna.setOpaque(true);
+        BufferedImage buffImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D graphics2D = buffImage.createGraphics();
+        graphics2D.setColor(Color.white);
+        graphics2D.fillRect(0, 0, width,height);
         try {
-            if (cgview.getDesiredZoom() > 1.0d) {
-                cgview.drawZoomed(graphics2D, cgview.getDesiredZoom(), cgview
-                        .getDesiredZoomCenter(), keepLastLabels);
-            } else {
-                cgview.draw(graphics2D, keepLastLabels);
-            }
+                
+                dna.drawAll(graphics2D, true);
         } finally {
             graphics2D.dispose();
         }
         return buffImage;
     }
 
-    /**
-     * Adds an image with an image map to this CgviewHTMLDocument, to implement
-     * mouseovers and hyperlinks associated with Cgview Feature objects and
-     * FeatureRange objects. Image maps are used for PNG and JPG maps. SVG maps
-     * contain the mouseover and hyperlink information internally.
-     * 
-     * @param imageFile the image URL that the image map refers to.
-     * @param width the width of the image.
-     * @param height the height of the image.
-     * @param labelBounds an ArrayList of LabelBounds objects, obtained from a
-     *                previously drawn Cgview object using the
-     *                {@link Cgview#getLabelBounds()} method.
-     * @param useOverlib whether or not to use the overlib.js JavaScript library
-     *                for PNG and JPG image maps.
-     */
-    public String addImageMap(String imageFile, int width, int height, List labelBounds,
-            boolean useOverlib, String fileName) {
-        StringBuilder ret = new StringBuilder();
-
-        ret.append("<img style=\"border:0\" src=\"" + StringEscapeUtils.escapeHtml(imageFile)
-                + "\" width=\"" + Integer.toString(width) + "\" height=\""
-                + Integer.toString(height) + "\" usemap=\"#cgviewmap\" />" + '\n');
-        ret.append("<map id=\"cgviewmap\" name=\"cgviewmap\">" + '\n');
-
-        // add areas
-        Iterator i;
-        i = labelBounds.iterator();
-        while (i.hasNext()) {
-
-            LabelBounds currentLabelBounds = (LabelBounds) i.next();
-            Rectangle2D bounds = currentLabelBounds.getBounds();
-            if ((currentLabelBounds.getUse() == true)
-                    && ((currentLabelBounds.getMouseover() != null) || (currentLabelBounds
-                            .getHyperlink() != null))) {
-                int left = (int) Math.floor(bounds.getX() + 0.5d);
-                int bottom = (int) Math.floor(bounds.getY() + 0.5d);
-                MaxMinPair pair = extractMaxMinFromLink(currentLabelBounds);
-                String orgOrFileLink = "organism=S_typhi";
-                if (fileName != null) {
-                    orgOrFileLink = "taxon=User uploaded file&file=" + fileName;
-                }
-                String href;
-                href = "FlatFileReport?outputFormat=Artemis&" + orgOrFileLink + "&min=" + pair.min
-                        + "&max=" + pair.max;
-                makeImageMapArea(ret, currentLabelBounds, left, bottom, href);
-                href = "FlatFileReport?outputFormat=Table&" + orgOrFileLink + "&min=" + pair.min
-                        + "&max=" + pair.max;
-                makeImageMapArea(ret, currentLabelBounds, left + 13, bottom, href);
-            }
-
-        }
-        ret.append("</map>" + '\n');
-        return ret.toString();
-    }
-
-    private void makeImageMapArea(StringBuilder ret, LabelBounds currentLabelBounds, int left,
-            int bottom, String href) {
-        ret.append("<area shape=\"rect\" coords=\"" + left + "," + bottom + "," + (left + 12) + ","
-                + (bottom + 12) + "\" ");
-        ret.append("href=\"" + href + "\"");
-        if (currentLabelBounds.getHyperlink() != null) {
-            ret.append("href=\"" + currentLabelBounds.getHyperlink() + "\" ");
-        }
-
-        // if ((currentLabelBounds.getMouseover() != null) &&
-        // (!(currentLabelBounds.getMouseover().matches("\\S*")))) {
-        if (currentLabelBounds.getMouseover() != null) {
-
-            // if (useOverlib) {
-            // ret.append("onmouseover=\"return showMenu(3,5);\" ");
-            // // ret.append("onmouseover=\"return overlib('" +
-            // currentLabelBounds.getMouseover() + "');\" ");
-            // //ret.append("onmouseover=\"return overlib('" +
-            // StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover())
-            // + "');\" ");
-            // ret.append("onmouseout=\"return nd();\" ");
-            // } else {
-            // //ret.append("onmouseover=\"self.status='" +
-            // StringEscapeUtils.escapeJavaScript(currentLabelBounds.getMouseover())
-            // + "'; return true;\" ");
-            // //ret.append("onmouseout=\"self.status=' '; return true;\" ");
-            // ret.append("onmouseover=\""+currentLabelBounds.getMouseover() +
-            // "; return true;\" ");
-            // }
-        }
-        ret.append("/>" + '\n');
-    }
-
-    @SuppressWarnings("unchecked")
-    public String addTempTable(String in, List labelBounds) {
-
-        Collections.sort(labelBounds, new Comparator<LabelBounds>() {
-            public int compare(LabelBounds lb1, LabelBounds lb2) {
-                String label1 = lb1.getLabel();
-                int colon = label1.indexOf(":");
-                if (colon == -1) {
-                    return -1;
-                }
-                String count1 = label1.substring(0, colon);
-
-                String label2 = lb2.getLabel();
-                if (label2 == null) {
-                    return -1;
-                }
-                colon = label2.indexOf(":");
-                if (colon == -1) {
-                    return -1;
-                }
-                String count2 = label2.substring(0, colon);
-
-                return count1.compareTo(count2);
-            }
-        });
-
-        StringBuilder ret = new StringBuilder(in);
-        ret.append("<table border=\"1\">\n");
-        ret.append("<tr><th>Fragment</th><th>Start</th><th>End</th><th>Length</th><th>EMBL</th><th>Artemis</th><th>Table</th></tr>");
-
-        // add areas
-        Iterator i;
-        i = labelBounds.iterator();
-        while (i.hasNext()) {
-            LabelBounds clb = (LabelBounds) i.next();
-            String label = clb.getLabel();
-            String href = clb.getHyperlink();
-            if (href != null) {
-                System.err.println("label='" + label + "' href='" + href + "'");
-                int colon = href.indexOf(":");
-                if (colon != -1) {
-                    int start = Integer.parseInt(href.substring(0, colon));
-                    int end = Integer.parseInt(href.substring(colon + 1));
-
-                    // int lbr = label.indexOf("(");
-                    // String count = label.substring(0, lbr).trim();
-                    ret.append("<tr><td>-");
-                    // ret.append(count);
-                    ret.append("</td><td>");
-                    ret.append(start);
-                    ret.append("</td><td>");
-                    ret.append(end);
-                    ret.append("</td><td>");
-                    ret.append(end - start);
-                    ret.append("</td><td>");
-                    ret.append("<a href=\"FlatFileReport?outputFormat=EMBL&organism=wibble&min="
-                            + start + "&max=" + end + "\">Link</a></td><td>");
-                    ret.append("<a href=\"FlatFileReport?outputFormat=Artemis&organism=wibble&min="
-                            + start + "&max=" + end + "\">Link</a></td><td>");
-                    ret.append("<a href=\"FlatFileReport?outputFormat=Table&organism=wibble&min="
-                            + start + "&max=" + end + "\">Link</a></td>");
-                    ret.append("</tr>\n");
-                }
-            }
-        }
-        ret.append("</table>" + '\n');
-        return ret.toString();
-    }
-
-    class MaxMinPair {
-        int min;
-        int max;
-    }
-
-    private MaxMinPair extractMaxMinFromLink(LabelBounds clb) {
-        String label = clb.getLabel();
-        String href = clb.getHyperlink();
-        if (href != null) {
-            System.err.println("label='" + label + "' href='" + href + "'");
-            int colon = href.indexOf(":");
-            if (colon != -1) {
-                MaxMinPair pair = new MaxMinPair();
-                pair.min = Integer.parseInt(href.substring(0, colon));
-                pair.max = Integer.parseInt(href.substring(colon + 1));
-                return pair;
-            }
-        }
-        return null;
-    }
-
     @Override
-    protected Map referenceData(HttpServletRequest req) throws Exception {
-        Map<String, Collection> ret = new HashMap<String, Collection>();
+    protected Map<String,Collection<String>> referenceData(HttpServletRequest req) throws Exception {
+        Map<String, Collection<String>> ret = new HashMap<String, Collection<String>>();
         Map<String, String> orgMappings = new LinkedHashMap<String, String>(orgs.size());
         orgMappings.put("User uploaded file", "user-file");
         orgMappings.putAll(orgs);
@@ -494,33 +312,41 @@ public class CircularGenomeFormController extends SimpleFormController implement
         return ret;
     }
 
-    @Required
-    public void setDigestService(ExecutionService digestService) {
-        this.digestService = digestService;
+    public void setCachedFileFactory(CachedFileFactory cachedFileFactory) {
+        this.cachedFileFactory = cachedFileFactory;
     }
 
-    @Required
-    public void setRestrictService(ExecutionService restrictService) {
-        this.restrictService = restrictService;
+
+    @Override
+    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+        super.initBinder(request, binder);
+        binder.registerCustomEditor(String.class, new StringMultipartFileEditor());
     }
 
+
+    public String getEmbossDirectoryName() {
+        return embossDirectoryName;
+    }
+
+
+    public void setEmbossDirectoryName(String embossDirectoryName) {
+        this.embossDirectoryName = embossDirectoryName;
+    }
+
+
+    @Override
     public void afterPropertiesSet() throws Exception {
         digestNames = embossDigestParser.getDigests();
     }
+
+
+    public EmbossDigestParser getEmbossDigestParser() {
+        return embossDigestParser;
+    }
+
 
     public void setEmbossDigestParser(EmbossDigestParser embossDigestParser) {
         this.embossDigestParser = embossDigestParser;
     }
 
-    public void setCachedFileFactory(CachedFileFactory cachedFileFactory) {
-        this.cachedFileFactory = cachedFileFactory;
-    }
-
-    @Override
-    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder)
-            throws Exception {
-        super.initBinder(request, binder);
-        binder.registerCustomEditor(String.class, new StringMultipartFileEditor());
-    }
-
-}
+};

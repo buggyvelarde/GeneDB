@@ -44,7 +44,7 @@ public class EmbossDigestParser implements InitializingBean {
     }
     
     private void parseDigests() throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(new File(embossDir+"/data/REBASE/embossre.enz")));
+        BufferedReader br = new BufferedReader(new FileReader(new File(embossDir+"REBASE/embossre.enz")));
         String line;
         digests = new ArrayList<String>();
         while ((line = br.readLine()) != null) {

@@ -1,35 +1,36 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
-<%@ taglib prefix="sp" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<format:header name="Circular Genome ">
+<format:headerRound title="Circular Genome ">
 	<st:init />
-</format:header>
-
-<c:forEach items="${status}" var ="errorMessage"> 
-<font color="red">
-<c:out value ="${errorMessage}"/><br>
-</font>
-</c:forEach>
-
-<sp:form action="CircularGenomeForm" method="post" enctype="multipart/form-data">
+</format:headerRound>
+<br>
+<form:form action="CircularGenomeForm" method="post" enctype="multipart/form-data">
 	<table align="center" width="50%">
 		<tr>
+			<td><FONT color="red"><form:errors path="*"/></FONT></td>
+		</tr>
+		<tr>
 			<td>Organism :</td>
-			<td><sp:select items="${organisms}" path="taxon"/></td>
+			<td><form:select items="${organisms}" path="taxon"/></td>
 		</tr>
 		<tr>
 			<td>File upload :</td>
-			<td><input type="file" name="file"/></td>
+			<td><input id="file" name="file" type="file"/></td>
 		</tr>
+		<!--   <tr>
+			<td>Misc Feature File upload :</td>
+			<td><input id="additionalFile" type="file" name="additionalFile"/></td>
+		</tr>-->
 		<tr>
 			<td>Restriction Enzyme :</td>
-			<td><sp:select items="${digestNames}" path="enzymeName"/></td>
+			<td><form:select items="${digestNames}" path="enzymeName"/></td>
 		</tr>
 		<tr>
 			<td><input type="submit" value="Submit"/></td>
 		</tr>
 	</table>
-</sp:form>
+</form:form>
 <format:footer />
