@@ -34,6 +34,30 @@ public class FeatureRelationship implements Serializable,PropertyI {
     @SequenceGenerator(name = "generator", sequenceName = "feature_relationship_feature_relationship_id_seq")
     private int featureRelationshipId;
 
+    /*
+     * The references featureBySubjectId and featureByObjectId are fetched eagerly.
+     * The obvious reason is for performance: in almost every case when fetching a
+     * relationship, we're interested in the features it relates, so it makes sense
+     * to fetch them at the same time.
+     *
+     * However, there are also two more subtle reasons:<ol>
+     * <li> If they were lazily-fetched, the associated objects would
+     *      necessarily be objects of a Hibernate wrapper class, so it
+     *      would be impossible to do tests such as
+     *      <code>rel.getFeatureByObjectId() instanceof ProductiveTranscript</code>
+     *      and the like, because the wrapper objects can't respect the
+     *      hierarchy of feature classes.
+     * <li> The condition used, when the excludeObsoleteFeatures filter is
+     *      active, to restrict Feature.featureRelationshipsForSubjectId and
+     *      Feature.featureRelationshipsForObjectId, relies on the fact that
+     *      the corresponding query also retrieves the associated features.
+     *      It does so only because of the eager fetching here. If these
+     *      properties were to be lazily fetched, that condition would need
+     *      to be replaced by a less efficient nested subquery (which might
+     *      well cancel out any perceived advantages of lazy fetching here).
+     * </ol>
+     */
+
     @ManyToOne(cascade = {}, fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature featureBySubjectId;
@@ -41,6 +65,7 @@ public class FeatureRelationship implements Serializable,PropertyI {
     @ManyToOne(cascade = {}, fetch = FetchType.EAGER)
     @JoinColumn(name = "object_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature featureByObjectId;
+
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", unique = false, nullable = false, insertable = true, updatable = true)

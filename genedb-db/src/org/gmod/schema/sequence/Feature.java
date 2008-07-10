@@ -63,7 +63,10 @@ import javax.persistence.Transient;
  * the filter.
  *
  * At the time of writing, it applies to:<ul>
- * <li> Feature and FeatureCvTerm entities
+ * <li> The entity Feature
+ * <li> The entity FeatureCvTerm
+ * <li> The entity FeatureRelationship
+ * <li> The collections Feature.featureRelationshipsForSubjectId and Feature.featureRelationshipsForObjectId
  * </ul>
  * -rh11
  */
@@ -135,6 +138,17 @@ public class Feature implements java.io.Serializable {
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureBySrcFeatureId")
     private Collection<FeatureLoc> featureLocsForSrcFeatureId;
 
+    /*
+     * These collections respect the excludeObsoleteFeatures filter.
+     * Note that they rely on the specific name-mangling convention
+     * that Hibernate uses, so they might need to be changed when
+     * upgrading to a newer version of Hibernate, if this changes.
+     *
+     * Furthermore, they rely on the fact that the FeatureRelationship
+     * properties featureBySubjectId and featureByObjectId are
+     * fetched eagerly. If they were not, we'd need a nested query
+     * instead here.
+     */
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureByObjectId")
     @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
     private Collection<FeatureRelationship> featureRelationshipsForObjectId;
@@ -142,6 +156,7 @@ public class Feature implements java.io.Serializable {
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureBySubjectId")
     @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
     private Collection<FeatureRelationship> featureRelationshipsForSubjectId;
+
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<FeatureDbXRef> featureDbXRefs;
