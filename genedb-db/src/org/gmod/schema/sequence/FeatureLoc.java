@@ -112,7 +112,7 @@ public class FeatureLoc implements Serializable {
         return this.fmin;
     }
 
-    private void setFmin(Integer fmin) {
+    public void setFmin(Integer fmin) {
         this.fmin = fmin;
     }
 
@@ -128,7 +128,7 @@ public class FeatureLoc implements Serializable {
         return this.fmax;
     }
 
-    private void setFmax(Integer fmax) {
+    public void setFmax(Integer fmax) {
         this.fmax = fmax;
     }
 
@@ -172,11 +172,11 @@ public class FeatureLoc implements Serializable {
         this.locGroup = locGroup;
     }
 
-    private int getRank() {
+    public int getRank() {
         return this.rank;
     }
 
-    private void setRank(int rank) {
+    public void setRank(int rank) {
         this.rank = rank;
     }
 

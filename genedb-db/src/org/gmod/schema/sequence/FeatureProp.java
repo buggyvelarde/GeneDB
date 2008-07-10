@@ -52,7 +52,7 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
 
      // Constructors
     /** default constructor */
-    private FeatureProp() {
+    public FeatureProp() {
         // Deliberately empty default constructor
     }
 
@@ -71,7 +71,7 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
         return this.cvTerm;
     }
 
-    private void setCvTerm(CvTerm cvTerm) {
+    public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
@@ -79,7 +79,7 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
         return this.feature;
     }
 
-    void setFeature(Feature feature) {
+    public void setFeature(Feature feature) {
         this.feature = feature;
     }
 
@@ -87,7 +87,7 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
         return this.value;
     }
 
-    private void setValue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
@@ -104,7 +104,7 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
         return this.featurePropPubs;
     }
 
-    private void setFeaturePropPubs(Collection<FeaturePropPub> featurePropPubs) {
+    public void setFeaturePropPubs(Collection<FeaturePropPub> featurePropPubs) {
         this.featurePropPubs = featurePropPubs;
     }
 

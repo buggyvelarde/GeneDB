@@ -6,6 +6,8 @@ import static javax.persistence.GenerationType.SEQUENCE;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.utils.propinterface.PropertyI;
 
+import org.hibernate.annotations.Filter;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -22,48 +24,49 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="feature_relationship")
+@Filter(name="excludeObsoleteFeatures", condition="2 = (select count(*) from feature where feature.feature_id in (subject_id, object_id) and not feature.is_obsolete)")
 public class FeatureRelationship implements Serializable,PropertyI {
 
     // Fields
 
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
-    @Column(name="feature_relationship_id", unique=false, nullable=false, insertable=true, updatable=true)
-    @SequenceGenerator(name="generator", sequenceName="feature_relationship_feature_relationship_id_seq")
+    @Column(name = "feature_relationship_id", unique = false, nullable = false, insertable = true, updatable = true)
+    @SequenceGenerator(name = "generator", sequenceName = "feature_relationship_feature_relationship_id_seq")
     private int featureRelationshipId;
 
-    @ManyToOne(cascade={}, fetch=FetchType.EAGER)
-    @JoinColumn(name="subject_id", unique=false, nullable=false, insertable=true, updatable=true)
+    @ManyToOne(cascade = {}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "subject_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature featureBySubjectId;
 
-    @ManyToOne(cascade={}, fetch=FetchType.EAGER)
-    @JoinColumn(name="object_id", unique=false, nullable=false, insertable=true, updatable=true)
+    @ManyToOne(cascade = {}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "object_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature featureByObjectId;
 
-     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-     @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private CvTerm cvTerm;
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_id", unique = false, nullable = false, insertable = true, updatable = true)
+    private CvTerm cvTerm;
 
-     @Column(name="value", unique=false, nullable=true, insertable=true, updatable=true)
-     private String value;
+    @Column(name = "value", unique = false, nullable = true, insertable = true, updatable = true)
+    private String value;
 
-     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
-     private int rank;
+    @Column(name = "rank", unique = false, nullable = false, insertable = true, updatable = true)
+    private int rank;
 
-     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureRelationship")
-     private Collection<FeatureRelationshipProp> featureRelationshipProps;
+    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureRelationship")
+    private Collection<FeatureRelationshipProp> featureRelationshipProps;
 
-     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="featureRelationship")
-     private Collection<FeatureRelationshipPub> featureRelationshipPubs;
+    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureRelationship")
+    private Collection<FeatureRelationshipPub> featureRelationshipPubs;
 
-     // Constructors
+    // Constructors
 
     /** default constructor */
     private FeatureRelationship() {
-        // Deliberately empty default constructor
+    	// Deliberately empty default constructor
     }
 
     /** minimal constructor */
-    private FeatureRelationship(Feature featureBySubjectId, Feature featureByObjectId, CvTerm cvTerm, int rank) {
+    public FeatureRelationship(Feature featureBySubjectId, Feature featureByObjectId, CvTerm cvTerm, int rank) {
         this.featureBySubjectId = featureBySubjectId;
         this.featureByObjectId = featureByObjectId;
         this.cvTerm = cvTerm;

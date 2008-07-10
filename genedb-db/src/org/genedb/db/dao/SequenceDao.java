@@ -241,23 +241,6 @@ public class SequenceDao extends BaseDao {
                 new String[] { "feature", "synonym" }, new Object[] { feature, synonym });
     }
 
-    /**
-     * Return a list of features located on a source Feature
-     *
-     * @param parent the parent feature
-     * @return a (possibly empty) List<Feature> of children located on this parent
-     */
-    public List<Feature> getFeaturesByLocatedOnFeature(Feature parent) {
-        @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate().findByNamedParam(
-                "select f " + "from Feature f, FeatureLoc loc, CvTerm cvt where "
-                        + "f.featureId=loc.featureByFeatureId and"
-                        + " loc.featureBySrcFeatureId=:parent", new String[] { "parent" },
-                new Object[] { parent });
-        return features;
-    }
-
-
     /*
      * Deleted doc comment that was obviously wrong. - rh11
      * TODO work out what this actually does, and document it.
@@ -340,31 +323,6 @@ public class SequenceDao extends BaseDao {
         return features;
     }
 
-    // Maybe replace this with lucene query
-    @SuppressWarnings("unchecked")
-    public List<Feature> getFeaturesByAnyNameOrProductAndOrganism(String nl, String orgs,
-            String featureType) {
-
-        String lookup = nl.replaceAll("\\*", "%");
-
-        logger.info("Lookup='" + lookup + "' featureType='" + featureType + "' orgs='" + orgs
-                        + "'");
-        // The list of orgs is being included literally as it didn't seem to
-        // work as a parameter
-        return getHibernateTemplate()
-                .findByNamedParam(
-                        "select f from Feature f, FeatureProp fp where ("
-                        + " f.uniqueName like :lookup or ("
-                        + "   fp.cvTerm.cv.name = 'genedb_products'"
-                        + "   and fp.cvTerm.name like :lookup and fp.feature = f"
-                        + " )"
-                        + ")"
-                        + " and f.cvTerm.name = :featureType"
-                        + " and f.organism.commonName in ( " + orgs + " )",
-                        new String[] { "lookup", "featureType" },
-                        new Object[] { lookup, featureType, });
-    }
-
     /**
      * Get a list of all products, together with the number of
      * times each is used.
@@ -419,7 +377,8 @@ public class SequenceDao extends BaseDao {
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate()
                 .findByNamedParam(
-                        "select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName and f.cvTerm.cv.name like :cvName",
+                        "select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName"
+                        +" and f.cvTerm.cv.name like :cvName",
                         new String[] { "cvTermName", "cvName" },
                         new Object[] { cvTermName, cvName });
         return features;

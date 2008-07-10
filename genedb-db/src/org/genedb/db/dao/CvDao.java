@@ -265,7 +265,7 @@ public class CvDao extends BaseDao {
                 " where fct.feature.organism.commonName in ("+orgNames+")" +
                 " and cvt.cv.name=:cvName" +
                 " group by cvt.name" +
-                " order by cvt.name",
+                " order by lower(cvt.name), cvt.name",
             "cvName", cvName);
 
             return countedNames;

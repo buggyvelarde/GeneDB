@@ -53,6 +53,20 @@ import javax.persistence.Transient;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type_id")
 @Table(name = "feature")
+/*
+ * The filter 'excludeObsoleteFeatures' does what its name would suggest.
+ * (The genedb-web project enables this filter by default.)
+ *
+ * In fact, even with this filter enabled, it is possible to retrieve
+ * obsolete features in certain roundabout ways -- but don't rely on that,
+ * because it's subject to change. If you want obsolete features, disable
+ * the filter.
+ *
+ * At the time of writing, it applies to:<ul>
+ * <li> Feature and FeatureCvTerm entities
+ * </ul>
+ * -rh11
+ */
 @FilterDef(name="excludeObsoleteFeatures")
 @Filter(name="excludeObsoleteFeatures", condition="not is_obsolete")
 @Indexed
@@ -122,9 +136,11 @@ public class Feature implements java.io.Serializable {
     private Collection<FeatureLoc> featureLocsForSrcFeatureId;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureByObjectId")
+    @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
     private Collection<FeatureRelationship> featureRelationshipsForObjectId;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureBySubjectId")
+    @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
     private Collection<FeatureRelationship> featureRelationshipsForSubjectId;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
@@ -246,7 +262,7 @@ public class Feature implements java.io.Serializable {
      *
      * @param uniqueName the unique name, not null
      */
-    private void setUniqueName(String uniqueName) {
+    public void setUniqueName(String uniqueName) {
         if (uniqueName == null) {
             throw new NullPointerException("setUniqueName: the unique name cannot be null");
         }
@@ -362,7 +378,7 @@ public class Feature implements java.io.Serializable {
                 logger.warn(String.format("Feature '%s' has a null featureLoc", uniqueName));
             } else {
                 return featureLoc;
-            }
+        }
         }
         logger.error(String.format("Feature '%s' has no non-null featureLocs", uniqueName));
         return null;
@@ -496,7 +512,7 @@ public class Feature implements java.io.Serializable {
             || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
             && featureSynonym.isCurrent()) {
                 return synonym.getSynonymSgml();
-            }
+        }
         }
         return getUniqueName();
     }
@@ -510,7 +526,7 @@ public class Feature implements java.io.Serializable {
             || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
             && !featureSynonym.isCurrent()) {
                 ret.add(synonym.getSynonymSgml());
-            }
+        }
         }
         return ret;
     }

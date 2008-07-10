@@ -50,7 +50,7 @@ public class Synonym implements Serializable {
     }
 
     /** minimal constructor */
-    private Synonym(CvTerm cvTerm, String name, String synonymSgml) {
+    public Synonym(CvTerm cvTerm, String name, String synonymSgml) {
         this.cvTerm = cvTerm;
         this.name = name;
         this.synonymSgml = synonymSgml;
@@ -66,7 +66,7 @@ public class Synonym implements Serializable {
         this.synonymId = synonymId;
     }
 
-    CvTerm getCvTerm() {
+    public CvTerm getCvTerm() {
         return this.cvTerm;
     }
 
@@ -74,7 +74,7 @@ public class Synonym implements Serializable {
         this.cvTerm = cvterm;
     }
 
-    String getName() {
+    public String getName() {
         return this.name;
     }
 

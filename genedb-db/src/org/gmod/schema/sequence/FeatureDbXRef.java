@@ -47,7 +47,7 @@ public class FeatureDbXRef implements Serializable {
     }
 
     /** full constructor */
-    private FeatureDbXRef(DbXRef dbXRef, Feature feature, boolean current) {
+    public FeatureDbXRef(DbXRef dbXRef, Feature feature, boolean current) {
        this.dbXRef = dbXRef;
        this.feature = feature;
        this.current = current;
@@ -79,7 +79,7 @@ public class FeatureDbXRef implements Serializable {
         this.feature = feature;
     }
 
-    private boolean isCurrent() {
+    public boolean isCurrent() {
         return this.current;
     }
 

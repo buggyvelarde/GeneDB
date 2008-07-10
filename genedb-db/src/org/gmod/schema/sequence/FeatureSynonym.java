@@ -30,26 +30,26 @@ public class FeatureSynonym implements Serializable {
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
 
-        @JoinColumn(name="synonym_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private Synonym synonym;
+    @JoinColumn(name="synonym_id", unique=false, nullable=false, insertable=true, updatable=true)
+    private Synonym synonym;
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
 
-        @JoinColumn(name="feature_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private Feature feature;
+    @JoinColumn(name="feature_id", unique=false, nullable=false, insertable=true, updatable=true)
+    private Feature feature;
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
 
-        @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private Pub pub;
+    @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
+    private Pub pub;
 
     @Column(name="is_current", unique=false, nullable=false, insertable=true, updatable=true)
-     private boolean current;
+    private boolean current;
 
     @Column(name="is_internal", unique=false, nullable=false, insertable=true, updatable=true)
-     private boolean internal;
+    private boolean internal;
 
-     // Constructors
+    // Constructors
 
     /** default constructor */
     private FeatureSynonym() {
@@ -57,7 +57,7 @@ public class FeatureSynonym implements Serializable {
     }
 
     /** full constructor */
-    private FeatureSynonym(Synonym synonym, Feature feature, Pub pub, boolean current, boolean internal) {
+    public FeatureSynonym(Synonym synonym, Feature feature, Pub pub, boolean current, boolean internal) {
        this.synonym = synonym;
        this.feature = feature;
        this.pub = pub;
@@ -68,95 +68,53 @@ public class FeatureSynonym implements Serializable {
 
     // Property accessors
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#getFeatureSynonymId()
-     */
     private int getFeatureSynonymId() {
         return this.featureSynonymId;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#setFeatureSynonymId(int)
-     */
     private void setFeatureSynonymId(int featureSynonymId) {
         this.featureSynonymId = featureSynonymId;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#getSynonym()
-     */
-    Synonym getSynonym() {
+    public Synonym getSynonym() {
         return this.synonym;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#setSynonym(org.gmod.schema.sequence.SynonymI)
-     */
     private void setSynonym(Synonym synonym) {
         this.synonym = synonym;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#getFeature()
-     */
     private Feature getFeature() {
         return this.feature;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#setFeature(org.genedb.db.jpa.Feature)
-     */
     private void setFeature(Feature feature) {
         this.feature = feature;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#getPub()
-     */
-    private Pub getPub() {
+    public Pub getPub() {
         return this.pub;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#setPub(org.gmod.schema.pub.PubI)
-     */
     private void setPub(Pub pub) {
         this.pub = pub;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#isCurrent()
-     */
-    boolean isCurrent() {
+    public boolean isCurrent() {
         return this.current;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#setCurrent(boolean)
-     */
     private void setCurrent(boolean current) {
         this.current = current;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#isInternal()
-     */
-    private boolean isInternal() {
+    public boolean isInternal() {
         return this.internal;
     }
 
-    /* (non-Javadoc)
-     * @see org.genedb.db.jpa.FeatureSynonymI#setInternal(boolean)
-     */
     private void setInternal(boolean internal) {
         this.internal = internal;
     }
-
-
-
-
 }
 
 

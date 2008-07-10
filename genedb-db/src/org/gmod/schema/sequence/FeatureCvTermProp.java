@@ -112,7 +112,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
         this.rank = rank;
     }
     /** full constructor */
-    private FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, String value, int rank) {
+    public FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, String value, int rank) {
        this.cvTerm = cvTerm;
        this.featureCvTerm = featureCvTerm;
        this.value = value;
