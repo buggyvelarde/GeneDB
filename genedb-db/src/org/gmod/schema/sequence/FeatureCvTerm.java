@@ -91,11 +91,11 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
         return this.cvTerm;
     }
 
-    private void setCvTerm(CvTerm cvTerm) {
+    public void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
-    private Feature getFeature() {
+    public Feature getFeature() {
         return this.feature;
     }
 
