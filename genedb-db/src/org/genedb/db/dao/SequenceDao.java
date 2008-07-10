@@ -54,9 +54,6 @@ public class SequenceDao extends BaseDao {
     */
     @Deprecated
     public Feature getFeatureByUniqueName(String uniqueName, String featureType) {
-        if(featureType.equals("gene")) {
-            return getFeatureByUniqueName(uniqueName, Gene.class);
-        }
 
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
