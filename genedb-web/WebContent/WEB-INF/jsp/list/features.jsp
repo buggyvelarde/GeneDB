@@ -37,7 +37,9 @@
 			<display:column property="product" title="Product"/>
 		</display:table>
 	</c:if>
-	<div id="list" style="clear: both;"></div>
+	<c:if test="${luceneResults == null && features == null && results == null}">
+		<div id="list" style="clear: both;"></div>
+	</c:if>
 	</format:genePageSection>
 </div>
 
