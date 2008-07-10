@@ -32,7 +32,7 @@ public abstract class AbstractGene extends Region {
     }
 
     @Transient
-    abstract public String getProductsAsTabSeparatedString();
+    public abstract String getProductsAsTabSeparatedString();
 
     @Transient
     public boolean isPseudo() {

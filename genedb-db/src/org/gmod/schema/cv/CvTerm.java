@@ -198,7 +198,7 @@ public class CvTerm implements Serializable {
     }
 
     /** useful constructor! */
-    public CvTerm(Cv cv, DbXRef dbXRef, String name, String definition) {
+    public CvTerm(final Cv cv, final DbXRef dbXRef, final String name, final String definition) {
        this.dbXRef = dbXRef;
        this.cv = cv;
        this.name = name;

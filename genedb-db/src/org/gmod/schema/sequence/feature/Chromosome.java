@@ -11,4 +11,6 @@ import javax.persistence.Entity;
  */
 @Entity
 @FeatureType(cv="sequence", term="chromosome")
-public class Chromosome extends TopLevelFeature {}
+public class Chromosome extends TopLevelFeature {
+    // Deliberately empty
+}

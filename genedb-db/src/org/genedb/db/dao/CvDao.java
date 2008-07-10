@@ -22,7 +22,7 @@ public class CvDao extends BaseDao {
 
     private static Logger logger = Logger.getLogger(CvDao.class);
 
-    protected GeneralDao generalDao;
+    private GeneralDao generalDao;
 
     public Cv getCvById(int id) {
         return (Cv) getHibernateTemplate().load(Cv.class, id);
@@ -63,7 +63,7 @@ public class CvDao extends BaseDao {
         return cvTermList;
     }
 
-    private Db DB_GO = null;
+    private Db DB_GO;
 
     public CvTerm getGoCvTermByAcc(String value) {
         if (DB_GO == null) {

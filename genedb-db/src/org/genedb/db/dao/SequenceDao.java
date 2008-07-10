@@ -263,8 +263,8 @@ public class SequenceDao extends BaseDao {
      * TODO work out what this actually does, and document it.
      */
     @SuppressWarnings("unchecked")
-    public List<List<?>> getFeatureByGO(String go) {
-        String temp[] = go.split(":");
+    public List<List<?>> getFeatureByGO(final String go) {
+        String[] temp = go.split(":");
         String number = temp[1];
         List<Feature> polypeptides;
         List<CvTerm> goName;
@@ -655,7 +655,9 @@ public class SequenceDao extends BaseDao {
      * -rh11
      */
 
-    private CvTerm polypeptideDomainType, scoreType, descriptionType;
+    private CvTerm polypeptideDomainType;
+    private CvTerm scoreType;
+    private CvTerm descriptionType;
     /**
      * Create a new polypeptide domain feature
      *
@@ -714,7 +716,8 @@ public class SequenceDao extends BaseDao {
         return transmembraneRegion;
     }
 
-    private CvTerm signalPeptideType, cleavageSiteProbabilityType;
+    private CvTerm signalPeptideType;
+    private CvTerm cleavageSiteProbabilityType;
     public SignalPeptide createSignalPeptide(Polypeptide polypeptide, int loc, String probability) {
         if (signalPeptideType == null) {
             signalPeptideType = cvDao.getCvTermByDbAcc("sequence", "0000418");
@@ -734,7 +737,9 @@ public class SequenceDao extends BaseDao {
         return signalPeptide;
     }
 
-    private CvTerm gpiAnchoredType, gpiAnchorCleavageSiteType, gpiCleavageSiteScoreType;
+    private CvTerm gpiAnchoredType;
+    private CvTerm gpiAnchorCleavageSiteType;
+    private CvTerm gpiCleavageSiteScoreType;
     public FeatureProp createGPIAnchoredProperty(Polypeptide polypeptide) {
         if (gpiAnchoredType == null) {
             gpiAnchoredType = cvDao.getCvTermByNameAndCvName("GPI_anchored", "genedb_misc");

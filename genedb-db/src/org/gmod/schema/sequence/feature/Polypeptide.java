@@ -23,10 +23,10 @@ import javax.persistence.Transient;
 public class Polypeptide extends Region {
     private static Logger logger = Logger.getLogger(Polypeptide.class);
     @Transient
-    private Transcript transcript = null;
+    private Transcript transcript;
 
     @Transient
-    private AbstractGene gene = null;
+    private AbstractGene gene;
 
     public Transcript getTranscript() {
         if (transcript != null) {
@@ -57,7 +57,8 @@ public class Polypeptide extends Region {
             return null;
         }
 
-        return gene = transcript.getGene();
+        gene = transcript.getGene();
+        return gene;
     }
 
     @Transient
