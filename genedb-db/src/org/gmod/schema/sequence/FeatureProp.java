@@ -35,7 +35,7 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
-    public CvTerm cvTerm;
+    private CvTerm cvTerm;
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="feature_id", unique=false, nullable=false, insertable=true, updatable=true)
@@ -52,7 +52,7 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
 
      // Constructors
     /** default constructor */
-    public FeatureProp() {
+    private FeatureProp() {
         // Deliberately empty default constructor
     }
 
@@ -71,15 +71,15 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
         return this.cvTerm;
     }
 
-    public void setCvTerm(CvTerm cvTerm) {
+    private void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
-    public Feature getFeature() {
+    private Feature getFeature() {
         return this.feature;
     }
 
-    public void setFeature(Feature feature) {
+    void setFeature(Feature feature) {
         this.feature = feature;
     }
 
@@ -87,7 +87,7 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
         return this.value;
     }
 
-    public void setValue(String value) {
+    private void setValue(String value) {
         this.value = value;
     }
 
@@ -95,24 +95,24 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
         return this.rank;
     }
 
-    public void setRank(int rank) {
+    private void setRank(int rank) {
         this.rank = rank;
     }
 
 
-    public Collection<FeaturePropPub> getFeaturePropPubs() {
+    private Collection<FeaturePropPub> getFeaturePropPubs() {
         return this.featurePropPubs;
     }
 
-    public void setFeaturePropPubs(Collection<FeaturePropPub> featurePropPubs) {
+    private void setFeaturePropPubs(Collection<FeaturePropPub> featurePropPubs) {
         this.featurePropPubs = featurePropPubs;
     }
 
-    public int getFeaturePropId() {
+    private int getFeaturePropId() {
         return this.featurePropId;
     }
 
-    public void setFeaturePropId(final int featurePropId) {
+    private void setFeaturePropId(final int featurePropId) {
         this.featurePropId = featurePropId;
     }
 

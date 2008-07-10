@@ -37,27 +37,27 @@ public class FeaturePropPub implements Serializable {
 
     // Property accessors
 
-    public int getFeaturePropPubId() {
+    private int getFeaturePropPubId() {
         return this.featurePropPubId;
     }
 
-    public void setFeaturePropPubId(int featurePropPubId) {
+    private void setFeaturePropPubId(int featurePropPubId) {
         this.featurePropPubId = featurePropPubId;
     }
 
-    public FeatureProp getFeatureProp() {
+    private FeatureProp getFeatureProp() {
         return this.featureProp;
     }
 
-    public void setFeatureProp(FeatureProp featureProp) {
+    private void setFeatureProp(FeatureProp featureProp) {
         this.featureProp = featureProp;
     }
 
-    public Pub getPub() {
+    private Pub getPub() {
         return this.pub;
     }
 
-    public void setPub(Pub pub) {
+    private void setPub(Pub pub) {
         this.pub = pub;
     }
 }

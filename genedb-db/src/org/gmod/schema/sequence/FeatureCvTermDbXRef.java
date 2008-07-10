@@ -39,12 +39,12 @@ public class FeatureCvTermDbXRef implements Serializable {
      // Constructors
 
     /** default constructor */
-    public FeatureCvTermDbXRef() {
+    private FeatureCvTermDbXRef() {
         // Deliberately empty default constructor
     }
 
     /** full constructor */
-    public FeatureCvTermDbXRef(DbXRef dbXRef, FeatureCvTerm featureCvTerm) {
+    private FeatureCvTermDbXRef(DbXRef dbXRef, FeatureCvTerm featureCvTerm) {
        this.dbXRef = dbXRef;
        this.featureCvTerm = featureCvTerm;
     }
@@ -59,19 +59,19 @@ public class FeatureCvTermDbXRef implements Serializable {
         this.featureCvTermDbXRefId = featureCvTermDbXRefId;
     }
 
-    public DbXRef getDbXRef() {
+    private DbXRef getDbXRef() {
         return this.dbXRef;
     }
 
-    public void setDbXRef(DbXRef dbXRef) {
+    private void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 
-    public FeatureCvTerm getFeatureCvTerm() {
+    private FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
 
-    public void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
+    private void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }
 }

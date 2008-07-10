@@ -70,7 +70,7 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     }
 
     /** minimal constructor */
-    public FeatureCvTerm(CvTerm cvTerm, Feature feature, Pub pub, boolean not,int rank) {
+    private FeatureCvTerm(CvTerm cvTerm, Feature feature, Pub pub, boolean not,int rank) {
         this.cvTerm = cvTerm;
         this.feature = feature;
         this.pub = pub;
@@ -83,14 +83,14 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvTermId()
      */
-    public int getFeatureCvTermId() {
+    private int getFeatureCvTermId() {
         return this.featureCvTermId;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvTermId(int)
      */
-    public void setFeatureCvTermId(int featureCvTermId) {
+    private void setFeatureCvTermId(int featureCvTermId) {
         this.featureCvTermId = featureCvTermId;
     }
 
@@ -104,35 +104,35 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setCvterm(org.gmod.schema.cv.CvTermI)
      */
-    public void setCvTerm(CvTerm cvTerm) {
+    private void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeature()
      */
-    public Feature getFeature() {
+    private Feature getFeature() {
         return this.feature;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeature(org.genedb.db.jpa.Feature)
      */
-    public void setFeature(Feature feature) {
+    private void setFeature(Feature feature) {
         this.feature = feature;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getPub()
      */
-    public Pub getPub() {
+    private Pub getPub() {
         return this.pub;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setPub(org.gmod.schema.pub.PubI)
      */
-    public void setPub(Pub pub) {
+    private void setPub(Pub pub) {
         this.pub = pub;
     }
 
@@ -140,56 +140,56 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#isNot()
      */
-    public boolean isNot() {
+    private boolean isNot() {
         return this.not;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setNot(boolean)
      */
-    public void setNot(boolean not) {
+    private void setNot(boolean not) {
         this.not = not;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvtermprops()
      */
-    public Collection<FeatureCvTermProp> getFeatureCvTermProps() {
+    private Collection<FeatureCvTermProp> getFeatureCvTermProps() {
         return this.featureCvTermProps;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermprops(java.util.Set)
      */
-    public void setFeatureCvTermProps(Collection<FeatureCvTermProp> featureCvTermProps) {
+    private void setFeatureCvTermProps(Collection<FeatureCvTermProp> featureCvTermProps) {
         this.featureCvTermProps = featureCvTermProps;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvtermPubs()
      */
-    public Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
+    private Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
         return this.featureCvTermPubs;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermPubs(java.util.Set)
      */
-    public void setFeatureCvTermPubs(Collection<FeatureCvTermPub> featureCvTermPubs) {
+    private void setFeatureCvTermPubs(Collection<FeatureCvTermPub> featureCvTermPubs) {
         this.featureCvTermPubs = featureCvTermPubs;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#getFeatureCvtermDbxrefs()
      */
-    public Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
+    private Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
         return this.featureCvTermDbXRefs;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermI#setFeatureCvtermDbxrefs(java.util.Set)
      */
-    public void setFeatureCvTermDbXRefs(Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
+    private void setFeatureCvTermDbXRefs(Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs) {
         this.featureCvTermDbXRefs = featureCvTermDbXRefs;
     }
 
@@ -197,7 +197,7 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
         return rank;
     }
 
-    public void setRank(int rank) {
+    private void setRank(int rank) {
         this.rank = rank;
     }
 

@@ -42,12 +42,12 @@ public class FeatureDbXRef implements Serializable {
     // Constructors
 
     /** default constructor */
-    public FeatureDbXRef() {
+    private FeatureDbXRef() {
         // Deliberately empty default constructor
     }
 
     /** full constructor */
-    public FeatureDbXRef(DbXRef dbXRef, Feature feature, boolean current) {
+    private FeatureDbXRef(DbXRef dbXRef, Feature feature, boolean current) {
        this.dbXRef = dbXRef;
        this.feature = feature;
        this.current = current;
@@ -55,11 +55,11 @@ public class FeatureDbXRef implements Serializable {
 
 
     // Property accessors
-    public int getFeatureDbXRefId() {
+    private int getFeatureDbXRefId() {
         return this.featureDbXRefId;
     }
 
-    public void setFeatureDbXRefId(int featureDbXRefId) {
+    private void setFeatureDbXRefId(int featureDbXRefId) {
         this.featureDbXRefId = featureDbXRefId;
     }
 
@@ -67,23 +67,23 @@ public class FeatureDbXRef implements Serializable {
         return this.dbXRef;
     }
 
-    public void setDbXRef(DbXRef dbXRef) {
+    private void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 
-    public Feature getFeature() {
+    private Feature getFeature() {
         return this.feature;
     }
 
-    public void setFeature(Feature feature) {
+    void setFeature(Feature feature) {
         this.feature = feature;
     }
 
-    public boolean isCurrent() {
+    private boolean isCurrent() {
         return this.current;
     }
 
-    public void setCurrent(boolean current) {
+    private void setCurrent(boolean current) {
         this.current = current;
     }
 

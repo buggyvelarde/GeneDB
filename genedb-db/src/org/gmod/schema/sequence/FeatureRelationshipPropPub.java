@@ -37,27 +37,27 @@ public class FeatureRelationshipPropPub implements Serializable {
 
     // Property accessors
 
-    public int getFeatureRelationshipPropPubId() {
+    private int getFeatureRelationshipPropPubId() {
         return this.featureRelationshipPropPubId;
     }
 
-    public void setFeatureRelationshipPropPubId(int featureRelationshipPropPubId) {
+    private void setFeatureRelationshipPropPubId(int featureRelationshipPropPubId) {
         this.featureRelationshipPropPubId = featureRelationshipPropPubId;
     }
 
-    public FeatureRelationshipProp getFeatureRelationshipProp() {
+    private FeatureRelationshipProp getFeatureRelationshipProp() {
         return this.featureRelationshipProp;
     }
 
-    public void setFeatureRelationshipProp(FeatureRelationshipProp featureRelationshipProp) {
+    private void setFeatureRelationshipProp(FeatureRelationshipProp featureRelationshipProp) {
         this.featureRelationshipProp = featureRelationshipProp;
     }
 
-    public Pub getPub() {
+    private Pub getPub() {
         return this.pub;
     }
 
-    public void setPub(Pub pub) {
+    private void setPub(Pub pub) {
         this.pub = pub;
     }
 }

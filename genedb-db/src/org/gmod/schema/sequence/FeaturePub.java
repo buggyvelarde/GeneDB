@@ -38,39 +38,39 @@ public class FeaturePub implements Serializable {
     // Constructors
 
     /** default constructor */
-    public FeaturePub() {
+    private FeaturePub() {
         // Deliberately empty default constructor
     }
 
     /** full constructor */
-    public FeaturePub(Feature feature, Pub pub) {
+    private FeaturePub(Feature feature, Pub pub) {
         this.feature = feature;
         this.pub = pub;
     }
 
     // Property accessors
 
-    public int getFeaturePubId() {
+    private int getFeaturePubId() {
         return this.featurePubId;
     }
 
-    public void setFeaturePubId(int featurePubId) {
+    private void setFeaturePubId(int featurePubId) {
         this.featurePubId = featurePubId;
     }
 
-    public Feature getFeature() {
+    private Feature getFeature() {
         return this.feature;
     }
 
-    public void setFeature(Feature feature) {
+    private void setFeature(Feature feature) {
         this.feature = feature;
     }
 
-    public Pub getPub() {
+    private Pub getPub() {
         return this.pub;
     }
 
-    public void setPub(Pub pub) {
+    private void setPub(Pub pub) {
         this.pub = pub;
     }
 }

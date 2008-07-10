@@ -45,12 +45,12 @@ public class Synonym implements Serializable {
     // Constructors
 
     /** default constructor */
-    public Synonym() {
+    private Synonym() {
         // Deliberately empty default constructor
     }
 
     /** minimal constructor */
-    public Synonym(CvTerm cvTerm, String name, String synonymSgml) {
+    private Synonym(CvTerm cvTerm, String name, String synonymSgml) {
         this.cvTerm = cvTerm;
         this.name = name;
         this.synonymSgml = synonymSgml;
@@ -58,43 +58,43 @@ public class Synonym implements Serializable {
 
     // Property accessors
 
-    public int getSynonymId() {
+    private int getSynonymId() {
         return this.synonymId;
     }
 
-    public void setSynonymId(int synonymId) {
+    private void setSynonymId(int synonymId) {
         this.synonymId = synonymId;
     }
 
-    public CvTerm getCvTerm() {
+    CvTerm getCvTerm() {
         return this.cvTerm;
     }
 
-    public void setCvTerm(CvTerm cvterm) {
+    private void setCvTerm(CvTerm cvterm) {
         this.cvTerm = cvterm;
     }
 
-    public String getName() {
+    String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
-    public String getSynonymSgml() {
+    String getSynonymSgml() {
         return this.synonymSgml;
     }
 
-    public void setSynonymSgml(String synonymSgml) {
+    private void setSynonymSgml(String synonymSgml) {
         this.synonymSgml = synonymSgml;
     }
 
-    public Collection<FeatureSynonym> getFeatureSynonyms() {
+    private Collection<FeatureSynonym> getFeatureSynonyms() {
         return this.featureSynonyms;
     }
 
-    public void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
+    private void setFeatureSynonyms(Collection<FeatureSynonym> featureSynonyms) {
         this.featureSynonyms = featureSynonyms;
     }
 }

@@ -58,12 +58,12 @@ public class FeatureRelationship implements Serializable,PropertyI {
      // Constructors
 
     /** default constructor */
-    public FeatureRelationship() {
+    private FeatureRelationship() {
         // Deliberately empty default constructor
     }
 
     /** minimal constructor */
-    public FeatureRelationship(Feature featureBySubjectId, Feature featureByObjectId, CvTerm cvTerm, int rank) {
+    private FeatureRelationship(Feature featureBySubjectId, Feature featureByObjectId, CvTerm cvTerm, int rank) {
         this.featureBySubjectId = featureBySubjectId;
         this.featureByObjectId = featureByObjectId;
         this.cvTerm = cvTerm;
@@ -73,11 +73,11 @@ public class FeatureRelationship implements Serializable,PropertyI {
 
     // Property accessors
 
-    public int getFeatureRelationshipId() {
+    private int getFeatureRelationshipId() {
         return this.featureRelationshipId;
     }
 
-    public void setFeatureRelationshipId(int featureRelationshipId) {
+    private void setFeatureRelationshipId(int featureRelationshipId) {
         this.featureRelationshipId = featureRelationshipId;
     }
 
@@ -85,7 +85,7 @@ public class FeatureRelationship implements Serializable,PropertyI {
         return this.featureBySubjectId;
     }
 
-    public void setFeatureBySubjectId(Feature featureBySubjectId) {
+    void setFeatureBySubjectId(Feature featureBySubjectId) {
         this.featureBySubjectId = featureBySubjectId;
     }
 
@@ -93,7 +93,7 @@ public class FeatureRelationship implements Serializable,PropertyI {
         return this.featureByObjectId;
     }
 
-    public void setFeatureByObjectId(Feature featureByObjectId) {
+    public void setFeatureByObjectId(final Feature featureByObjectId) {
         this.featureByObjectId = featureByObjectId;
     }
 
@@ -101,39 +101,39 @@ public class FeatureRelationship implements Serializable,PropertyI {
         return this.cvTerm;
     }
 
-    public void setCvTerm(CvTerm cvTerm) {
+    private void setCvTerm(final CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
-    public String getValue() {
+    private String getValue() {
         return this.value;
     }
 
-    public void setValue(String value) {
+    private void setValue(final String value) {
         this.value = value;
     }
 
-    public int getRank() {
+    private int getRank() {
         return this.rank;
     }
 
-    public void setRank(int rank) {
+    private void setRank(final int rank) {
         this.rank = rank;
     }
 
-    public Collection<FeatureRelationshipProp> getFeatureRelationshipProps() {
+    private Collection<FeatureRelationshipProp> getFeatureRelationshipProps() {
         return featureRelationshipProps;
     }
 
-    public void setFeatureRelationshipProps(Collection<FeatureRelationshipProp> featureRelationshipProps) {
+    private void setFeatureRelationshipProps(Collection<FeatureRelationshipProp> featureRelationshipProps) {
         this.featureRelationshipProps = featureRelationshipProps;
     }
 
-    public Collection<FeatureRelationshipPub> getFeatureRelationshipPubs() {
+    private Collection<FeatureRelationshipPub> getFeatureRelationshipPubs() {
         return featureRelationshipPubs;
     }
 
-    public void setFeatureRelationshipPubs(Collection<FeatureRelationshipPub> featureRelationshipPubs) {
+    private void setFeatureRelationshipPubs(Collection<FeatureRelationshipPub> featureRelationshipPubs) {
         this.featureRelationshipPubs = featureRelationshipPubs;
     }
 }

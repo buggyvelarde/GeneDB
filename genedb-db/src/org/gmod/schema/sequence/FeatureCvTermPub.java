@@ -41,12 +41,12 @@ public class FeatureCvTermPub implements Serializable {
      // Constructors
 
     /** default constructor */
-    public FeatureCvTermPub() {
+    private FeatureCvTermPub() {
         // Deliberately empty default constructor
     }
 
     /** full constructor */
-    public FeatureCvTermPub(Pub pub, FeatureCvTerm featureCvTerm) {
+    private FeatureCvTermPub(Pub pub, FeatureCvTerm featureCvTerm) {
        this.pub = pub;
        this.featureCvTerm = featureCvTerm;
     }
@@ -56,42 +56,42 @@ public class FeatureCvTermPub implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#getFeatureCvTermPubId()
      */
-    public int getFeatureCvTermPubId() {
+    private int getFeatureCvTermPubId() {
         return this.featureCvTermPubId;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#setFeatureCvTermPubId(int)
      */
-    public void setFeatureCvTermPubId(int featureCvTermPubId) {
+    private void setFeatureCvTermPubId(int featureCvTermPubId) {
         this.featureCvTermPubId = featureCvTermPubId;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#getPub()
      */
-    public Pub getPub() {
+    private Pub getPub() {
         return this.pub;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#setPub(org.gmod.schema.pub.PubI)
      */
-    public void setPub(Pub pub) {
+    private void setPub(Pub pub) {
         this.pub = pub;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#getFeatureCvterm()
      */
-    public FeatureCvTerm getFeatureCvTerm() {
+    private FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureCvTermPubI#setFeatureCvterm(org.gmod.schema.sequence.FeatureCvTermI)
      */
-    public void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
+    private void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }
 

@@ -67,19 +67,10 @@ public class FeatureLoc implements Serializable {
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureLoc")
     private Collection<FeatureLocPub> featureLocPubs;
 
-    /**
-     * This field does not participate in the Hibernate mapping, and is neither
-     * automatically populated nor persisted. It may be explicitly assigned
-     * using setSrcFeatureId(int). It's currently used by Artemis to cache the
-     * equivalent of getFeatureBySrcFeatureId().getFeatureId().
-     */
-    @Transient
-    private int srcFeatureId;
-
     // Constructors
 
     /** default constructor */
-    public FeatureLoc() {
+    private FeatureLoc() {
         // Deliberately empty default constructor
     }
 
@@ -105,7 +96,7 @@ public class FeatureLoc implements Serializable {
         return this.featureBySrcFeatureId;
     }
 
-    public void setFeatureBySrcFeatureId(Feature featureBySrcFeatureId) {
+    private void setFeatureBySrcFeatureId(Feature featureBySrcFeatureId) {
         this.featureBySrcFeatureId = featureBySrcFeatureId;
     }
 
@@ -113,7 +104,7 @@ public class FeatureLoc implements Serializable {
         return this.featureByFeatureId;
     }
 
-    public void setFeatureByFeatureId(Feature featureByFeatureId) {
+    void setFeatureByFeatureId(Feature featureByFeatureId) {
         this.featureByFeatureId = featureByFeatureId;
     }
 
@@ -121,15 +112,15 @@ public class FeatureLoc implements Serializable {
         return this.fmin;
     }
 
-    public void setFmin(Integer fmin) {
+    private void setFmin(Integer fmin) {
         this.fmin = fmin;
     }
 
-    public boolean isFminPartial() {
+    private boolean isFminPartial() {
         return this.fminPartial;
     }
 
-    public void setFminPartial(boolean fminPartial) {
+    private void setFminPartial(boolean fminPartial) {
         this.fminPartial = fminPartial;
     }
 
@@ -137,15 +128,15 @@ public class FeatureLoc implements Serializable {
         return this.fmax;
     }
 
-    public void setFmax(Integer fmax) {
+    private void setFmax(Integer fmax) {
         this.fmax = fmax;
     }
 
-    public boolean isFmaxPartial() {
+    private boolean isFmaxPartial() {
         return this.fmaxPartial;
     }
 
-    public void setFmaxPartial(boolean fmaxPartial) {
+    private void setFmaxPartial(boolean fmaxPartial) {
         this.fmaxPartial = fmaxPartial;
     }
 
@@ -153,79 +144,56 @@ public class FeatureLoc implements Serializable {
         return this.strand;
     }
 
-    public void setStrand(Short strand) {
+    private void setStrand(Short strand) {
         this.strand = strand;
     }
 
-    public Integer getPhase() {
+    private Integer getPhase() {
         return this.phase;
     }
 
-    public void setPhase(Integer phase) {
+    private void setPhase(Integer phase) {
         this.phase = phase;
     }
 
-    public String getResidueInfo() {
+    private String getResidueInfo() {
         return this.residueInfo;
     }
 
-    public void setResidueInfo(String residueInfo) {
+    private void setResidueInfo(String residueInfo) {
         this.residueInfo = residueInfo;
     }
 
-    public int getLocGroup() {
+    private int getLocGroup() {
         return this.locGroup;
     }
 
-    public void setLocGroup(int locGroup) {
+    private void setLocGroup(int locGroup) {
         this.locGroup = locGroup;
     }
 
-    public int getRank() {
+    private int getRank() {
         return this.rank;
     }
 
-    public void setRank(int rank) {
+    private void setRank(int rank) {
         this.rank = rank;
     }
 
-    public Collection<FeatureLocPub> getFeatureLocPubs() {
+    private Collection<FeatureLocPub> getFeatureLocPubs() {
         return this.featureLocPubs;
     }
 
-    public void setFeaturelocPubs(Collection<FeatureLocPub> featureLocPubs) {
+    private void setFeaturelocPubs(Collection<FeatureLocPub> featureLocPubs) {
         this.featureLocPubs = featureLocPubs;
     }
 
-    public int getFeatureLocId() {
+    private int getFeatureLocId() {
         return this.featureLocId;
     }
 
-    public void setFeatureLocId(int featureLocId) {
+    private void setFeatureLocId(int featureLocId) {
         this.featureLocId = featureLocId;
     }
 
-    /**
-     * Return the (unmapped) srcFeatureId property. This must be explicitly
-     * populated beforehand using setSrcFeatureId(int); it is not automatically
-     * populated by Hibernate.
-     *
-     * Perhaps you really wanted getFeatureBySrcFeatureId().getFeatureId()?
-     *
-     * @return The value of the srcFeatureId property
-     */
-    public int getSrcFeatureId() {
-        return srcFeatureId;
-    }
-
-    /**
-     * Set the value of the (unmapped) srcFeatureId property. This is not
-     * automatically populated by Hibernate, and must be set explicitly if it is
-     * used. Currently used only by Artemis.
-     *
-     * @param srcFeatureId
-     */
-    public void setSrcFeatureId(int srcFeatureId) {
-        this.srcFeatureId = srcFeatureId;
-    }
 }

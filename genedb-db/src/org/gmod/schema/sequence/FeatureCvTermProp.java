@@ -101,18 +101,18 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
      // Constructors
 
     /** default constructor */
-    public FeatureCvTermProp() {
+    private FeatureCvTermProp() {
         // Deliberately empty default constructor
     }
 
     /** minimal constructor */
-    public FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, int rank) {
+    private FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, int rank) {
         this.cvTerm = cvTerm;
         this.featureCvTerm = featureCvTerm;
         this.rank = rank;
     }
     /** full constructor */
-    public FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, String value, int rank) {
+    private FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, String value, int rank) {
        this.cvTerm = cvTerm;
        this.featureCvTerm = featureCvTerm;
        this.value = value;
@@ -144,7 +144,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
      *
      * @see cvTerm
      */
-    public void setCvTerm(CvTerm cvTerm) {
+    private void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
@@ -153,7 +153,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
      *
      * @see featureCvTerm
      */
-    public FeatureCvTerm getFeatureCvTerm() {
+    private FeatureCvTerm getFeatureCvTerm() {
         return this.featureCvTerm;
     }
 
@@ -162,7 +162,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
      *
      * @see featureCvTerm
      */
-    public void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
+    private void setFeatureCvTerm(FeatureCvTerm featureCvTerm) {
         this.featureCvTerm = featureCvTerm;
     }
 
@@ -172,7 +172,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
      *
      * @see value
      */
-    public String getValue() {
+    private String getValue() {
         return this.value;
     }
 
@@ -181,7 +181,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
      *
      * @see value
      */
-    public void setValue(String value) {
+    private void setValue(String value) {
         this.value = value;
     }
 
@@ -199,7 +199,7 @@ create index feature_cvtermprop_idx2 on feature_cvtermprop (type_id);
      *
      * @see rank
      */
-    public void setRank(int rank) {
+    private void setRank(int rank) {
         this.rank = rank;
     }
 }

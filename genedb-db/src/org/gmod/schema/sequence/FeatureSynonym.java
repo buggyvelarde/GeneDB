@@ -52,12 +52,12 @@ public class FeatureSynonym implements Serializable {
      // Constructors
 
     /** default constructor */
-    public FeatureSynonym() {
+    private FeatureSynonym() {
         // Deliberately empty default constructor
     }
 
     /** full constructor */
-    public FeatureSynonym(Synonym synonym, Feature feature, Pub pub, boolean current, boolean internal) {
+    private FeatureSynonym(Synonym synonym, Feature feature, Pub pub, boolean current, boolean internal) {
        this.synonym = synonym;
        this.feature = feature;
        this.pub = pub;
@@ -71,56 +71,56 @@ public class FeatureSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#getFeatureSynonymId()
      */
-    public int getFeatureSynonymId() {
+    private int getFeatureSynonymId() {
         return this.featureSynonymId;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setFeatureSynonymId(int)
      */
-    public void setFeatureSynonymId(int featureSynonymId) {
+    private void setFeatureSynonymId(int featureSynonymId) {
         this.featureSynonymId = featureSynonymId;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#getSynonym()
      */
-    public Synonym getSynonym() {
+    Synonym getSynonym() {
         return this.synonym;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setSynonym(org.gmod.schema.sequence.SynonymI)
      */
-    public void setSynonym(Synonym synonym) {
+    private void setSynonym(Synonym synonym) {
         this.synonym = synonym;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#getFeature()
      */
-    public Feature getFeature() {
+    private Feature getFeature() {
         return this.feature;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setFeature(org.genedb.db.jpa.Feature)
      */
-    public void setFeature(Feature feature) {
+    private void setFeature(Feature feature) {
         this.feature = feature;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#getPub()
      */
-    public Pub getPub() {
+    private Pub getPub() {
         return this.pub;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setPub(org.gmod.schema.pub.PubI)
      */
-    public void setPub(Pub pub) {
+    private void setPub(Pub pub) {
         this.pub = pub;
     }
 
@@ -128,14 +128,14 @@ public class FeatureSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#isCurrent()
      */
-    public boolean isCurrent() {
+    boolean isCurrent() {
         return this.current;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setCurrent(boolean)
      */
-    public void setCurrent(boolean current) {
+    private void setCurrent(boolean current) {
         this.current = current;
     }
 
@@ -143,14 +143,14 @@ public class FeatureSynonym implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#isInternal()
      */
-    public boolean isInternal() {
+    private boolean isInternal() {
         return this.internal;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.FeatureSynonymI#setInternal(boolean)
      */
-    public void setInternal(boolean internal) {
+    private void setInternal(boolean internal) {
         this.internal = internal;
     }
 
