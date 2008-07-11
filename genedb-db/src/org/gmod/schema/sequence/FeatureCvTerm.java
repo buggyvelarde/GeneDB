@@ -7,6 +7,7 @@ import org.gmod.schema.pub.Pub;
 import org.gmod.schema.utils.Rankable;
 import org.gmod.schema.utils.propinterface.PropertyI;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
 
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +32,15 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "feature_cvterm")
-@Filter(name="excludeObsoleteFeatures", condition="exists (select 8 from feature where feature.feature_id = feature_id and not feature.is_obsolete)")
+/*
+ * This filter definition depends on the name-mangling algorithm used by
+ * Hbernate, but it is more than an order of magnitude faster than the
+ * corresponding nested subquery. It also assumes that the feature is
+ * being fetched in the same query, of course, which is usually the case
+ * anyway in our examples but is forced to be universally true by marking
+ * the feature with <code>FetchType.EAGER</code>
+ */
+@Filter(name="excludeObsoleteFeatures", condition="not feature2_.is_obsolete")
 public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
 
     // Fields
@@ -40,11 +50,17 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     @Column(name = "feature_cvterm_id", unique = false, nullable = false, insertable = true, updatable = true)
     private int featureCvTermId;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    /*
+     * We are rarely if ever interested in a FeatureCvTerm without also being
+     * interested in the corresponding Feature and CvTerm, so it makes sense
+     * to fetch these eagerly. Besides, the filter definition above relies on
+     * the feature being fetched eagerly.
+     */
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "cvterm_id", unique = false, nullable = false, insertable = true, updatable = true)
     private CvTerm cvTerm;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "feature_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature feature;
 
@@ -58,14 +74,17 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
     @Column(name = "rank", unique = false, nullable = false, insertable = true, updatable = true)
     private int rank;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @OrderBy("rank")
     private List<FeatureCvTermProp> featureCvTermProps = new ArrayList<FeatureCvTermProp>(0);
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Collection<FeatureCvTermPub> featureCvTermPubs = new HashSet<FeatureCvTermPub>(0);
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
      private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
 
     // Constructors
