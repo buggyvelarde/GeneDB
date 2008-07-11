@@ -27,12 +27,10 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 
 import javax.servlet.http.HttpServletRequest;
 
-
-
 /**
  * A SimpleFormController which already binds a TaxonNode[] property editor and
  * allows submission by GET as well as POST
- * 
+ *
  * @author Adrian Tivey (art)
  */
 public class TaxonNodeBindingFormController extends PostOrGetFormController {
@@ -41,23 +39,26 @@ public class TaxonNodeBindingFormController extends PostOrGetFormController {
     private HistoryManagerFactory historyManagerFactory;
 
     @Override
-    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder srdb) throws Exception {
+    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder srdb)
+            throws Exception {
         super.initBinder(request, srdb);
+        if (taxonNodeArrayPropertyEditor == null)
+            throw new RuntimeException("Required property 'taxonNodeArrayPropertyEditor' is missing for "+this.getClass());
         srdb.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
     }
-    
+
     @Required
     public void setTaxonNodeArrayPropertyEditor(
             TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
         this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
     }
 
-	public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
-		this.historyManagerFactory = historyManagerFactory;
-	}
+    public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
+        this.historyManagerFactory = historyManagerFactory;
+    }
 
-	protected HistoryManagerFactory getHistoryManagerFactory() {
-		return historyManagerFactory;
-	}
+    protected HistoryManagerFactory getHistoryManagerFactory() {
+        return historyManagerFactory;
+    }
 
 }

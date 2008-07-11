@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class NamedFeatureController extends TaxonNodeBindingFormController {
+public class NamedFeatureController extends PostOrGetFormController {
      private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
 
     private SequenceDao sequenceDao;
