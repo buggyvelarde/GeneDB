@@ -1,5 +1,8 @@
 package org.genedb.db.fixup;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -22,6 +25,8 @@ import java.util.TreeSet;
  *
  */
 public class FixResidues {
+    private final Logger logger = Logger.getLogger(FixResidues.class);
+
     /*
      * This is what we're currently using for apicoplast chromosomes, but it ain't right.
      */
@@ -31,22 +36,31 @@ public class FixResidues {
 
     private static final int APICOPLAST_TRANSLATION_TABLE = 11;
 
-    private boolean verbose = (System.getProperty("verbose") != null);
-    private void printf(String format, Object... args) {
-        if (verbose)
-            System.out.printf(format, args);
+    private void debug(String format, Object... args) {
+        logger.debug(String.format(format, args));
+    }
+    private void info(String format, Object... args) {
+        logger.info(String.format(format, args));
     }
 
-    private static void error(Exception exception) {
+    private void error(Exception exception) {
         error(exception.getMessage(), exception);
     }
-    private static void error(String message, Exception exception) {
-        error(message);
-        exception.printStackTrace(System.err);
-        System.err.println();
+    private void error(String message, Exception exception) {
+        logger.error(message, exception);
     }
-    private static void error(String format, Object... args) {
-        System.err.printf("Error: "+format+"\n", args);
+    private void error(String format, Object... args) {
+        logger.error(String.format("Error: "+format, args));
+    }
+
+    private void warn(List<String> warnings, String format, Object... args) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format(format, args));
+        for (String warning: warnings) {
+            sb.append("\n\t");
+            sb.append(warning);
+        }
+        logger.warn(sb.toString());
     }
 
     public static void main(String[] args) throws Exception {
@@ -84,7 +98,9 @@ public class FixResidues {
     private FixResidues (boolean verbose)
         throws SQLException, ClassNotFoundException {
 
-        this.verbose = verbose;
+        if (verbose) {
+            logger.setLevel(Level.DEBUG);
+        }
 
         String url = String.format("jdbc:postgresql://%s:%s/%s",
             config.getString("dbhost"),
@@ -94,7 +110,7 @@ public class FixResidues {
         String password = config.getString("dbpassword");
 
         Class.forName("org.postgresql.Driver");
-        printf("Connecting to database '%s' as user '%s'\n", url, username);
+        info("Connecting to database '%s' as user '%s'", url, username);
         this.conn = DriverManager.getConnection(url, username, password);
         this.typeCodes = new TypeCodes(conn);
     }
@@ -169,8 +185,8 @@ public class FixResidues {
     }
 
     private void fixOrganism(Organism organism) throws SQLException {
-        printf("Processing organism: %s\n", organism.commonName);
-        printf("\t(translation table = %d, mitochondrial = %d)\n\n", organism.translationTable, organism.mitochondrialTranslationTable);
+        info("Processing organism: %s", organism.commonName);
+        info("\t(translation table = %d, mitochondrial = %d)", organism.translationTable, organism.mitochondrialTranslationTable);
 
         PreparedStatement st = conn.prepareStatement(
             "select organism.common_name"
@@ -211,7 +227,7 @@ public class FixResidues {
                 else
                     translationTableId = organism.translationTable;
 
-                printf("Processing top-level feature %s '%s'\n\n", topLevelFeatureTerm, topLevelFeatureUniqueName);
+                debug("Processing top-level feature %s '%s'", topLevelFeatureTerm, topLevelFeatureUniqueName);
                 fixTopLevelFeature(translationTableId, topLevelFeatureId);
             }
         }
@@ -280,7 +296,7 @@ public class FixResidues {
     }
 
     private void fixGene(int translationTableId, String topLevelSequence, int strand, int geneFeatureId, String geneUniqueName) throws SQLException {
-        printf("\nProcessing gene '%s' (ID=%d) on strand %d\n", geneUniqueName, geneFeatureId, strand);
+        debug("Processing gene '%s' (ID=%d) on strand %d", geneUniqueName, geneFeatureId, strand);
 
         PreparedStatement st = conn.prepareStatement(
             "select transcript.feature_id as transcript_id"
@@ -356,7 +372,7 @@ public class FixResidues {
             error("Gene '%s' (ID=%d) has no transcripts, or at any rate no exons",
                 geneUniqueName, geneFeatureId);
         for (Transcript transcript: transcriptsById.values()) {
-            printf("Transcript: %s\n", transcript.uniqueName);
+            debug("Transcript: %s", transcript.uniqueName);
             fixTranscript(topLevelSequence, strand, transcript);
         }
     }
@@ -392,7 +408,7 @@ public class FixResidues {
     private void fixTranscript(String topLevelSequence, int strand, Transcript transcript) throws SQLException {
         StringBuilder cdsBuilder = new StringBuilder();
         for (Exon exon: transcript.exons) {
-            printf("\tExon %s (%d-%d)\n", exon.uniqueName, exon.fmin, exon.fmax);
+            debug("\tExon %s (%d-%d)", exon.uniqueName, exon.fmin, exon.fmax);
             cdsBuilder.append(topLevelSequence.substring(exon.fmin, exon.fmax));
         }
         String cds;
@@ -403,12 +419,12 @@ public class FixResidues {
         else
             throw new IllegalStateException(String.format("Strand is neither +1 nor -1 (%d)", strand));
 
-        printf("CDS: %s\n", cds);
+        debug("CDS: %s", cds);
         transcript.cds = cds;
         setResidues(transcript.featureId, cds);
 
         if (!transcript.isCoding) {
-            printf("\t...non-coding transcript; nothing more to do\n");
+            debug("\t...non-coding transcript; nothing more to do");
             return;
         }
 
@@ -436,7 +452,7 @@ public class FixResidues {
 
             int polypeptideId = rs.getInt("feature_id");
             String polypeptideName = rs.getString("uniquename");
-            printf("Polypeptide '%s'\n", polypeptideName);
+            debug("Polypeptide '%s'", polypeptideName);
             fixPolypeptide(transcript, polypeptideId);
         }
         finally {
@@ -451,21 +467,25 @@ public class FixResidues {
 
     private void fixPolypeptide(Transcript transcript, int polypeptideId) throws SQLException {
         try {
-            printf("Translating to protein sequence with phase %d\n", transcript.phase);
+            debug("Translating to protein sequence with phase %d", transcript.phase);
             String protein = transcript.translateToProteinSequence();
-            printf("Translated sequence: %s\n", protein);
+            debug("Translated sequence: %s", protein);
 
-            if (verbose && !transcript.isPseudo) {
+            if (logger.isEnabledFor(Level.WARN) && !transcript.isPseudo) {
+                List<String> warnings = new ArrayList<String>();
                 if (protein.length()==0)
-                    printf("WARNING: Translated protein sequence is empty\n");
+                    warnings.add("Translated protein sequence is empty");
                 else {
                     if (!protein.startsWith("M"))
-                        printf("WARNING: Translated protein sequence does not start with Methionine\n");
+                        warnings.add("Translated protein sequence does not start with Methionine");
                     if (!protein.endsWith("*"))
-                        printf("WARNING: Translated protein sequence does not end with a stop codon\n");
+                        warnings.add("Translated protein sequence does not end with a stop codon");
                     int firstStar = protein.indexOf('*');
                     if (firstStar >= 0 && firstStar != protein.length()-1)
-                        printf("WARNING: Translated protein sequence contains an internal stop codon\n");
+                        warnings.add("Translated protein sequence contains an internal stop codon");
+                }
+                if (!warnings.isEmpty()) {
+                    warn(warnings, "%s: problems with translated protein sequence:\n%s", transcript.uniqueName, protein);
                 }
             }
 
@@ -516,7 +536,7 @@ class Transcript {
 
     public String translateToProteinSequence() throws TranslationException {
         if (this.cds.length() < 3 + this.phase) {
-            throw new TranslationException(String.format("this '%s' is too short to translate (length=%d, phase=%d)\n",
+            throw new TranslationException(String.format("this '%s' is too short to translate (length=%d, phase=%d)",
                 this.uniqueName, this.cds.length(), this.phase));
         }
         return Translator.getTranslator(this.translationTableId).translate(this.cds, this.phase);
