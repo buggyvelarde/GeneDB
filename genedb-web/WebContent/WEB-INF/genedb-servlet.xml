@@ -27,11 +27,11 @@
             </list>
         </property>
     </bean>
-	
+
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:project.properties" />
     </bean>
-    
+
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
     <bean id="sequenceDownload"
@@ -153,11 +153,11 @@
         <property name="webUtils" ref="GeneDBWebUtils"/>
     </bean>
 
-    <bean id="HistoryController" 
+    <bean id="HistoryController"
     	class="org.genedb.web.mvc.controller.HistoryController">
-        <property name="methodNameResolver" 
+        <property name="methodNameResolver"
         	ref="historyControllerResolver"/>
-        <property name="historyManagerFactory" 
+        <property name="historyManagerFactory"
         	ref="historyManagerFactory" />
         <property name="sequenceDao" ref="sequenceDao"/>
         <property name="historyView" value="history/historyIndex"/>
@@ -166,13 +166,13 @@
         <property name="editView" value="history/editHistory"/>
     </bean>
 
-  	<bean id="DownloadFeaturesController" 
+  	<bean id="DownloadFeaturesController"
   		class="org.genedb.web.mvc.controller.download.DownloadFeaturesController">
-        <property name="historyManagerFactory" 
+        <property name="historyManagerFactory"
         	ref="historyManagerFactory" />
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="download"/>
-        <property name="commandClass" 
+        <property name="commandClass"
         	value="org.genedb.web.mvc.controller.download.DownloadBean" />
 		<property name="sequenceDao" ref="sequenceDao"/>
 		<property name="luceneDao" ref="luceneDao"/>
@@ -182,14 +182,11 @@
         <property name="bindOnNewForm" value="true" />
         <property name="validator" ref="downloadFeaturesValidator"/>
     </bean>
-	
-	<bean id="downloadFeaturesValidator" class="org.genedb.web.mvc.validators.DownloadFeaturesValidator" />
-	
-    <bean id="pfamLookup" 
-    	class="org.genedb.web.mvc.controller.PfamLookup" />
 
-    <bean id="StaticController"
-        class="org.genedb.web.mvc.controller.StaticController" />
+	<bean id="downloadFeaturesValidator" class="org.genedb.web.mvc.validators.DownloadFeaturesValidator" />
+
+    <bean id="pfamLookup"
+    	class="org.genedb.web.mvc.controller.PfamLookup" />
 
     <bean id="GoFeatureController"
         class="org.genedb.web.mvc.controller.GoFeatureController">
@@ -204,21 +201,6 @@
         <property name="bindOnNewForm" value="true" />
     </bean>
 
-    <bean id="LuceneSearchController"
-        class="org.genedb.web.mvc.controller.LuceneSearchController">
-        <property name="sessionForm" value="true" />
-        <property name="commandClass"
-            value="org.genedb.web.mvc.controller.LuceneSearch" />
-        <property name="commandName" value="luceneSearch" />
-        <property name="listResultsView" value="features/results" />
-        <property name="formView" value="search/lucene" />
-        <property name="bindOnNewForm" value="true" />
-        <property name="taxonNodeArrayPropertyEditor"
-            ref="taxonNodeArrayPropertyEditor" />
-        <property name="historyManagerFactory"
-            ref="historyManagerFactory" />
-    </bean>
-
     <bean id="OrganismChooserController"
         class="org.genedb.web.mvc.controller.OrganismChooserController">
         <property name="commandClass"
@@ -227,11 +209,6 @@
 
     <bean id="ArtemisLaunchController"
         class="org.genedb.web.mvc.controller.ArtemisLaunchController" />
-
-
-
-    <bean id="JograLaunchController"
-        class="org.genedb.web.mvc.controller.JograLaunchController" />
 
 
     <bean id="ProductSearchController"
@@ -300,7 +277,7 @@
         <property name="webUtils" ref="GeneDBWebUtils"/>
     </bean>
 
-    <bean id="GenesByCvTermAndCvController" 
+    <bean id="GenesByCvTermAndCvController"
     	class="org.genedb.web.mvc.controller.GenesByCvTermAndCvController">
 		<property name="sequenceDao" ref="sequenceDao" />
 		<property name="luceneDao" ref="luceneDao" />
@@ -410,14 +387,14 @@
             ref="searchControllerResolver" />
         <property name="dataSource" ref="dataSource" />
     </bean>
-    
+
     <bean id="openSessionInView"
         class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
         <property name="sessionFactory">
             <ref bean="sessionFactory" />
         </property>
     </bean>
-    
+
 	<bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
         <property name="embossDir">
         	<value>${psu.emboss.directory}</value>
@@ -426,7 +403,7 @@
 
 	<bean id="cachedFileFactory"
         class="org.genedb.web.mvc.controller.cgview.CachedFileFactory" />
-        
+
 	<bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
 			<property name="commandClass" value="org.genedb.web.mvc.controller.cgview.CircularGenomeCommandBean" />
 			<property name="formView" value="graphics/circularGenomeForm" />
