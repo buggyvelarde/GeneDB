@@ -29,6 +29,7 @@
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/j2ee/persistence.jar"/>
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
         <path location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
+        <path location="${genedb-db.libdir}/biojava-1.6.jar" />
     </path>
 
     <path id="tools-hibernate-compile-lib">
@@ -45,32 +46,11 @@
         <path location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
     </path>
 
-
-    <path id="tools-hibernate-reveng-lib">
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
-        <path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/freemarker/freemarker.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
-        <path location="${imported.basedir.db}/lib/jtidy-r8-21122004.jar" />
-    </path>
-
-    <path id="tools-translate-lib">
-        <path location="${imported.basedir.db}/lib/retrotranslator-transformer-1.1.0.jar" />
-        <path location="${imported.basedir.db}/lib/retrotranslator-runtime-1.1.0.jar" />
-        <path location="${imported.basedir.db}/lib/backport-util-concurrent.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
-    </path>
-
     <path id="tools-instrument-lib">
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
 
-        <!-- The Hibernate task does not work with the cglib-nodep jar that is in the Spring bundle,
+        <!-- The instrument task does not work with the cglib-nodep jar that is in the Spring bundle,
              because it also calls asm directly. It also does not work with newer version of cglib
              due to API changes, so we need separate copies of cglib-2.1_3 and asm-1.5.3 -->
         <path location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
@@ -78,14 +58,7 @@
         <path location="${genedb-db.libdir}/asm-attrs-1.5.3.jar"/>
     </path>
 
-    <!-- Define extra tasks
-    <taskdef name="hibernatetool"
-             classname="org.hibernate.tool.ant.HibernateToolTask"
-             classpathref="tools-hibernate-reveng-lib" /> -->
-
-    <taskdef name="retrotranslator"
-             classpathref="tools-translate-lib"
-         classname="net.sf.retrotranslator.transformer.RetrotranslatorTask" />
+    <!-- Define extra tasks -->
 
     <!-- This task is used to instrument the Feature class to enable lazy property fetching -->
     <taskdef name="instrument"
@@ -118,9 +91,6 @@
         <mkdir dir="${imported.basedir.db}/ant-build/classes-interface" />
         <mkdir dir="${imported.basedir.db}/ant-build/src-implementation" />
         <mkdir dir="${imported.basedir.db}/ant-build/classes-implementation" />
-        <mkdir dir="${imported.basedir.db}/ant-build/src-1.4-interface" />
-        <mkdir dir="${imported.basedir.db}/ant-build/classes-1.4-interface-pre" />
-        <mkdir dir="${imported.basedir.db}/ant-build/classes-1.4-interface-post" />
         <mkdir dir="${imported.basedir.db}/ant-build/jars" />
     </target>
 
@@ -204,28 +174,6 @@
         </jar>
 
     </target>
-    
-	
-    <target name="look-for-jre">
-        <available property="appleVM"
-            file="/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar"/>
-    </target>
-    <target name="retrotranslator" depends="look-for-jre, retrotranslator-apple, retrotranslator-linux" />
-    <target name="retrotranslator-apple" if="appleVM">
-        <retrotranslator destdir="${retrotranslator.dest}" verify="true">
-            <src path="${retrotranslator.source}"/>
-            <classpath location="/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar"/>
-            <classpath refid="tools-translate-lib"/>
-        </retrotranslator>
-    </target>
-    <target name="retrotranslator-linux" unless="appleVM">
-        <retrotranslator destdir="${retrotranslator.dest}" verify="true">
-            <src path="${retrotranslator.source}"/>
-            <classpath location="/software/pathogen/external/applications/java/jdk1.6.0/jre/lib/rt.jar"/>
-            <classpath refid="tools-translate-lib"/>
-        </retrotranslator>
-    </target>
-
 
     <!-- To Sort -->
 
