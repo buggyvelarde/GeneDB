@@ -27,12 +27,10 @@ public class FeatureCvTermDbXRef implements Serializable {
      private int featureCvTermDbXRefId;
 
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-
          @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
 
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-
          @JoinColumn(name="feature_cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private FeatureCvTerm featureCvTerm;
 
@@ -75,5 +73,4 @@ public class FeatureCvTermDbXRef implements Serializable {
         this.featureCvTerm = featureCvTerm;
     }
 }
-
 
