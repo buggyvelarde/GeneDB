@@ -56,5 +56,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.2.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/cglib-2.1_3.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar" sourcepath="/genedb-libs/lib-src/biojava-1.6-src.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
