@@ -94,6 +94,7 @@ public class FixResidues {
         String password = config.getString("dbpassword");
 
         Class.forName("org.postgresql.Driver");
+        printf("Connecting to database '%s' as user '%s'\n", url, username);
         this.conn = DriverManager.getConnection(url, username, password);
         this.typeCodes = new TypeCodes(conn);
     }
@@ -330,10 +331,12 @@ public class FixResidues {
                 if (!transcriptsById.containsKey(transcriptId)) {
                     boolean isCoding = transcriptType == typeCodes.typeId("sequence", "mRNA")
                                     || transcriptType == typeCodes.typeId("sequence", "pseudogenic_transcript");
+                    boolean isPseudo = transcriptType == typeCodes.typeId("sequence", "pseudogenic_transcript");
                     Transcript transcript = new Transcript(
                         transcriptId, transcriptName,
                         isCoding,
-                        translationTableId, phase);
+                        translationTableId, phase,
+                        isPseudo);
                     transcriptsById.put(transcriptId, transcript);
                 }
                 Transcript transcript = transcriptsById.get(transcriptId);
@@ -452,7 +455,7 @@ public class FixResidues {
             String protein = transcript.translateToProteinSequence();
             printf("Translated sequence: %s\n", protein);
 
-            if (verbose) {
+            if (verbose && !transcript.isPseudo) {
                 if (protein.length()==0)
                     printf("WARNING: Translated protein sequence is empty\n");
                 else {
@@ -494,15 +497,17 @@ class Transcript {
     public int featureId;
     public String uniqueName;
     public boolean isCoding;
+    public boolean isPseudo;
     public int translationTableId;
     public int phase = 0;
     public String cds;
-    public Transcript(int featureId, String uniqueName, boolean isCoding, int translationTableId, int phase) {
+    public Transcript(int featureId, String uniqueName, boolean isCoding, int translationTableId, int phase, boolean isPseudo) {
         this.featureId = featureId;
         this.uniqueName = uniqueName;
         this.isCoding = isCoding;
         this.translationTableId = translationTableId;
         this.phase = phase;
+        this.isPseudo = isPseudo;
     }
     public SortedSet<Exon> exons = new TreeSet<Exon>();
     public void addExon(Exon exon) {
