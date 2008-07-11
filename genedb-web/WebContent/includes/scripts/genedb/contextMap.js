@@ -263,7 +263,6 @@ function loadFeatures (tileData, features) {
 
 }
 
-var areasByTranscriptName = new Array();
 function reloadDetails(name) {
     if (loading) return;
     if (name == null || name == "") {
@@ -285,10 +284,11 @@ function reloadDetails(name) {
         $("#geneDetails").stop().fadeTo("fast", 1);
         $("#geneDetailsLoading").hide();
         loading = false;
-        selectTranscript(areasByTranscriptName[name]);
+        selectTranscriptByName(name);
     });
 }
 
+var areasByTranscriptName = new Array();
 function createArea(transcript, topPx, heightPx) {
     // The only way I could get this to work in IE6 was to
     // use a transparent GIF here. (In proper browsers, you
@@ -341,7 +341,7 @@ function createArea(transcript, topPx, heightPx) {
     } while (c = c.nextSibling);
 
     // On initial chromosome load, highlight the transcript we're here for.
-    if (transcript[0] == originalTranscriptName) {
+    if (transcript[0] == loadedTranscriptName) {
         selectTranscript(area, transcript);
         populateInfoPanel(transcript);
     }
@@ -353,6 +353,13 @@ function computedStyle(element, style)
     return element.currentStyle[style]; // IE
   else
     return document.defaultView.getComputedStyle(element, null)[style];
+}
+
+function selectTranscriptByName(name) {
+    if (areasByTranscriptName[name])
+        selectTranscript(areasByTranscriptName[name]);
+    else if (window.console)
+        window.console.log("Did not find transcript '%s'", name);
 }
 
 function selectTranscript(area, transcript) {
