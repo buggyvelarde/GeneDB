@@ -72,6 +72,9 @@ public class NameSearchController extends TaxonNodeBindingFormController {
 
         NameLookupBean nlb = (NameLookupBean) command;
         String name = nlb.getName();
+        if (name == null)
+            return showForm(request, response, be);
+
         TaxonNode[] taxonNodes = nlb.getOrganism();
         Map<String, Object> model = new HashMap<String, Object>();
         String viewName = listResultsView;

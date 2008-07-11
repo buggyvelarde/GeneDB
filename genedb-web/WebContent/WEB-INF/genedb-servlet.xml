@@ -249,8 +249,8 @@
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="redirect:NamedFeature" />
         <property name="bindOnNewForm" value="true" />
-        <property name="historyManagerFactory"
-            ref="historyManagerFactory" />
+        <property name="taxonNodeArrayPropertyEditor"
+            ref="taxonNodeArrayPropertyEditor" />
         <property name="validator" ref="nameSearchValidator" />
     </bean>
     <bean id="nameSearchValidator"
