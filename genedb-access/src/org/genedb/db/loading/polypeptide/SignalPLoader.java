@@ -69,7 +69,8 @@ public class SignalPLoader extends Loader {
         sequenceDao.persist(new FeatureProp(polypeptide, anchorProbabilityTerm, hit.getAnchorProbability(), 0));
 
         if (hit.getType().equals("Signal peptide")) {
-            SignalPeptide signalPeptide = sequenceDao.createSignalPeptide(polypeptide, hit.getCleavageSiteAfter(), hit.getCleavageSiteProbability());
+            SignalPeptide signalPeptide = sequenceDao.createSignalPeptide(polypeptide, hit.getCleavageSiteAfter(),
+                hit.getCleavageSiteProbability());
             sequenceDao.persist(signalPeptide);
         }
     }
@@ -85,9 +86,9 @@ class SignalPFile {
         String previousLine = null, line;
         while (null != (line = reader.readLine())) {
             if (line.startsWith("Prediction: ")) {
-                if (previousLine == null)
+                if (previousLine == null) {
                     throw new IllegalStateException();
-
+                }
                 StringBuilder sb = new StringBuilder(previousLine);
                 sb.append('\n');
                 sb.append(line);
@@ -122,15 +123,16 @@ class SignalPFile {
             String key  = matcher.group(1);
             String type = matcher.group(2);
 
-            if (type.equals("Non-secretory protein"))
+            if (type.equals("Non-secretory protein")) {
                 return;
-
+            }
             String peptideProbability = matcher.group(3);
             String anchorProbability  = matcher.group(4);
             String cleavageSiteProbability = matcher.group(5);
             int cleavageSiteAfter = Integer.parseInt(matcher.group(7));
 
-            hits.add(new SignalPHit(key, type, peptideProbability, anchorProbability, cleavageSiteProbability, cleavageSiteAfter));
+            hits.add(new SignalPHit(key, type, peptideProbability, anchorProbability, cleavageSiteProbability,
+                cleavageSiteAfter));
         }
         else {
             logger.error("Failed to parse summary:\n" + summary);
