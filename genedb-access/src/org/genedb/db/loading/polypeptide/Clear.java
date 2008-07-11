@@ -36,6 +36,7 @@ public abstract class Clear {
         String password = config.getString("dbpassword");
 
         Class.forName("org.postgresql.Driver");
+        logger.debug(String.format("Connecting to database '%s' as user '%s'", url, username));
         this.conn = DriverManager.getConnection(url, username, password);
         this.organismCommonName = organismCommonName;
     }
