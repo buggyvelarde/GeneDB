@@ -65,10 +65,10 @@
                                 <ul>
                                     <li class="yuimenuitem">
             						<c:if test="${!empty organism}">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/NamedFeature?organism=${organism}"/>" title="Name Search">By Name/Product</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/NameSearch?organism=${organism}"/>" title="Name Search">By Name/Product</a>
             						</c:if>
             						<c:if test="${empty organism}">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/NamedFeature"/>" title="Name Search">By Name/Product</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/NameSearch"/>" title="Name Search">By Name/Product</a>
             						</c:if>
                                     </li>
                                     <%-- Motif Search not yet implemented
