@@ -31,18 +31,26 @@ public class ModelBuilder {
     private static final Logger logger = Logger.getLogger(ModelBuilder.class);
 
     /**
+     * Generate a model object with the details of the specified feature.
+     * If the feature is a Polypeptide, then the corresponding transcript
+     * is used.
+     *
+     * @param feature the feature to use
+     * @return the populated model
+     */
+    public Map<String, Object> prepareFeature(Feature feature) {
+        return prepareFeature(feature, new HashMap<String,Object>());
+    }
+
+    /**
      * Populate a model object with the details of the specified feature.
      * If the feature is a Polypeptide, then the corresponding transcript
      * is used.
      *
      * @param feature the feature to use
-     * @param model the model object to populate. If null, a new empty model is created first.
-     * @return the populated model
+     * @param model the model object to populate
      */
     public Map<String, Object> prepareFeature(Feature feature, Map<String, Object> model) {
-        if (model == null) {
-            model = new HashMap<String,Object>();
-        }
         if (feature instanceof AbstractGene)
             return prepareGene((AbstractGene) feature, model);
         else if (feature instanceof Transcript)

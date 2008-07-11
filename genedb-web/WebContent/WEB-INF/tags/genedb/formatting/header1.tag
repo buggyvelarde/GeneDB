@@ -22,7 +22,7 @@
 	<script src="<c:url value="/includes/scripts/autocomplete.js"/>" type="text/javascript"></script>
 	<script type="text/javascript" language="javascript">
 	var ilength;
-			
+
 	function populateAutocomplete(autocompleter, token) {
       nameBrowse.getPossibleMatches(token, function(suggestions) {
           autocompleter.setChoices(suggestions);
@@ -34,7 +34,7 @@
       new Autocompleter.DWR("textInput", "suggestions", populateAutocomplete, {});
   }
 </script>
-</head>    
+</head>
 <body onload="DWRUtil.useLoadingMessage(); createAutoCompleter()">
 <div id="masthead">
 ~~ GeneDB ~~
@@ -42,10 +42,10 @@
 </div>
 <div id="nav">
 	<div id="goggles">
-		<form name="query" action="<c:url value="/"/>NamedFeature" method="get" style="vertical-align: middle;">
+		<form name="query" action="<c:url value="/"/>NameSearch" method="get" style="vertical-align: middle;">
 			<input id="textInput" name="name" type="text" style="width: 219px; border:0; padding: 4px; vertical-align: middle;" align="middle"/>
 			<div id="suggestions"></div>
-			<input type="submit" value="Search" title="Search" align="middle" style="vertical-align: middle; margin:0 0 0 7px;background:transparent url(<c:url value="/"/>includes/images/bgsprite.gif) no-repeat -47px top;border:0;width:66px;height:24px;font-weight:normal;vertical-align:bottom;cursor:pointer;font-size:1em;font-weight:bold;"/> 
+			<input type="submit" value="Search" title="Search" align="middle" style="vertical-align: middle; margin:0 0 0 7px;background:transparent url(<c:url value="/"/>includes/images/bgsprite.gif) no-repeat -47px top;border:0;width:66px;height:24px;font-weight:normal;vertical-align:bottom;cursor:pointer;font-size:1em;font-weight:bold;"/>
 		</form>
 	</div>
 	<div id="menu">

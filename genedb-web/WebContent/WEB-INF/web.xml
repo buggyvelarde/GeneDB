@@ -133,6 +133,10 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/NameSearch</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/FeatureDownload</url-pattern>
     </servlet-mapping>
     <servlet-mapping>

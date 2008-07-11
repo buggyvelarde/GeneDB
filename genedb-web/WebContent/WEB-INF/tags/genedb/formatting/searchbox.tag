@@ -1,11 +1,11 @@
 <%@ tag display-name="searchbox"
         body-content="scriptless" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-        
+
 <div class="fieldset">
 		<div class="legend">Quick Search</div>
 			<br>
-			<form name="query" action="<c:url value="/"/>NamedFeature" method="get">
+			<form name="query" action="<c:url value="/"/>NameSearch" method="get">
 			<table>
 				<tr>
 					<td>Gene Name: </td>

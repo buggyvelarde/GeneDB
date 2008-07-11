@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 <script type="text/javascript" language="javascript">
 	var ilength;
-			
+
 	function populateAutocomplete(autocompleter, token) {
       nameBrowse.getPossibleMatches(token, function(suggestions) {
           autocompleter.setChoices(suggestions);
@@ -29,7 +29,7 @@
 		<div class="fieldset">
 		<div class="legend">Quick Search</div>
 		<div class="content">
-			<form name="query" action="NamedFeature" method="get">
+			<form name="query" action="NameSearch" method="get">
 			<table>
 				<tr>
 					<td>Gene Name: </td>
@@ -73,7 +73,7 @@
 		<div class="content">
 		<table width="100%" align="center">
 		<tbody>
-		<c:forEach items="${nodes}" var="orgs">	
+		<c:forEach items="${nodes}" var="orgs">
 			<tr>
 				<td width="100%">
 				<a href="<c:url value="/"/>OrganismChooser?organism=${orgs}">${orgs}</a>
@@ -104,9 +104,9 @@
 		<table>
 			<tr>
 				<td>
-					<div align="center"> 
+					<div align="center">
 						<font color="#660000" size="+1"> <a href="www.google.com"> News<br> News News<br> News News<br> </a></font><br><br>
-						<font color="#660000" size="+1"> <a href="www.sanger.ac.uk"> News1<br> News1 News1<br> News1 News1<br> </a></font> 
+						<font color="#660000" size="+1"> <a href="www.sanger.ac.uk"> News1<br> News1 News1<br> News1 News1<br> </a></font>
 					</div>
 				</td>
 			</tr>

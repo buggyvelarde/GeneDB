@@ -5,13 +5,13 @@
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:header>
 
-<p>  
+<p>
 
     <!-- Main content part of page -->
-  
+
     <table align="center" border="0" cellspacing="0"
       cellpadding="2" width="90%">
-      
+
       <tr bgcolor="navy">
 	<td align="center" colspan="5">
 	  <font face="Arial,Helvetica,Geneva,sans-serif"><FONT color="white"><B>Database Entry Point</B></FONT></font>
@@ -20,7 +20,7 @@
       <tr>
 	<td align="center" colspan="5">&nbsp;</TD>
       </tr>
-      
+
       <tr>
 	<TD bgcolor="navy" align="center"><font face="Arial,Helvetica,Geneva,sans-serif"><FONT color="white"><B>Searches</B></FONT></font></TD>
         <td>&nbsp;</td>
@@ -28,7 +28,7 @@
         <td>&nbsp;</td>
 	<TD bgcolor="navy" align="center" width="33%"><font face="Arial,Helvetica,Geneva,sans-serif"><FONT color="white"><B>Datasets</B></FONT></font></TD>
       </tr>
-      
+
 
 
 
@@ -39,7 +39,7 @@
 
       <TR>
 	<TD bgcolor="#FAFAD2" align="center">
-    <form action="NamedFeature" method="GET" name="ohm1">
+    <form action="NameSearch" method="GET" name="ohm1">
 	<br>
 	  <b>Search for</b>
 	  <br><b>gene by</b>
@@ -93,7 +93,7 @@ href="/genedb/History">History/Custom Downloads</a></font></b>
       </TR>
 
     <tr><td colspan="5">&nbsp;</td></tr>
-    
+
 <!--      <tr bgcolor="#FAFAD2"">
 	<td align="center" colspan="5">
 	  <font face="Arial,Helvetica,Geneva,sans-serif"><B>Version 3</B></FONT></font>
@@ -108,10 +108,10 @@ href="/genedb/History">History/Custom Downloads</a></font></b>
     <tr><td colspan="5">&nbsp;</td></tr>
 -->
   </table>
-    
-    
+
+
     <table align="center" border="0" cellspacing="0" cellpadding="2" width="90%">
-      
+
       <tr>
 	<td align="center" bgcolor="navy">
 	  <font face="Arial,Helvetica,Geneva,sans-serif"><FONT color="white"><B>Information</B></FONT></font>
@@ -121,7 +121,7 @@ href="/genedb/History">History/Custom Downloads</a></font></b>
 	  <font face="Arial,Helvetica,Geneva,sans-serif"><FONT color="white"><B>Links</B></FONT></font>
 	</TD>
       </tr>
-      
+
       <TR>
 	<TD bgcolor="#FAFAD2">
 	  <a href="/genedb/navHelp.jsp">Guide to GeneDB</a>
@@ -132,7 +132,7 @@ href="/genedb/History">History/Custom Downloads</a></font></b>
 	  <A href="http://www.sanger.ac.uk/Projects/Microbes/">Prokaryotes</A>
 	</TD>
       </TR>
-      
+
       <TR>
 	<TD bgcolor="#FAFAD2">
 	  &nbsp;&nbsp;&nbsp;What is GeneDB, and what's in it?
@@ -143,7 +143,7 @@ href="/genedb/History">History/Custom Downloads</a></font></b>
 	  <A href="http://www.sanger.ac.uk/Projects/Protozoa/">Eukaryotes (Protozoa)</A>
 	</TD>
       </TR>
-      
+
       <TR>
 	<TD bgcolor="#FAFAD2">
 	&nbsp;&nbsp;&nbsp;Navigating/Searching GeneDB
@@ -154,7 +154,7 @@ href="/genedb/History">History/Custom Downloads</a></font></b>
 	  <A href="http://www.sanger.ac.uk/Projects/Fungi/">Eukaryotes (Fungi)</A>
 	</TD>
       </TR>
-      
+
       <TR>
 	<TD bgcolor="#FAFAD2">
 	  &nbsp;&nbsp;&nbsp;Contacting Us/Feedback
@@ -165,7 +165,7 @@ href="/genedb/History">History/Custom Downloads</a></font></b>
 	  <A href="http://www.sanger.ac.uk/Software/ACT">ACT</A>
 	</TD>
       </TR>
-      
+
       <TR>
 	<TD bgcolor="#FAFAD2">
 	  &nbsp;&nbsp;&nbsp;Privacy Policy
@@ -176,8 +176,8 @@ href="/genedb/History">History/Custom Downloads</a></font></b>
 	  <A href="http://www.sanger.ac.uk/Software/Artemis/">Artemis</A>
 	</TD>
       </TR>
-      
-      
+
+
       <TR>
 	<TD bgcolor="#FAFAD2">
 	  <a href="/genedb/generalPolicy.jsp">Data Release Policy</a>
@@ -186,9 +186,9 @@ href="/genedb/History">History/Custom Downloads</a></font></b>
 	<TD bgcolor="#FAFAD2">&nbsp;</TD>
 	<TD bgcolor="#FAFAD2">&nbsp;</TD>
       </TR>
-      
 
-    
+
+
       <tr>
 	<td colspan="4">
 
@@ -198,26 +198,25 @@ Sequencing Unit's (PSU) activities. Its primary goals are:
  <li>to provide reliable access to the latest sequence data and
 annotation/curation for the whole range of organisms sequenced by the PSU.
  <li>to develop the website and other tools to aid the community in accessing
-and obtaining the maximum value from this data.  
+and obtaining the maximum value from this data.
 </ul>
 
 <p>GeneDB currently provides <a
-href="/genedb/help/allOrgsList.jsp">access to 37 genomes</a>, 
+href="/genedb/help/allOrgsList.jsp">access to 37 genomes</a>,
 from various stages of the sequencing curation pipeline, from early access to partial genomes with
 automatic annotation through to complete genomes with extensive manual curation.
 <!--We plan to add another 15 organisms over the next 6 months.--> (Details correct as
 of May 2006)
-                
+
 <p><b>Note:</b>This site (data and/or code) is updated approximately
 weekly. If things do not appear to be working - let us know, and we will try
 and fix them. Please see our <a href="/genedb/help/linking.jsp">help page before
 creating links</a> to our site. If you have any suggestions or requests about
 the site please <a href="/genedb/feedback.jsp">contact the technical team</a>
 
-	  
+
 	</td></tr>
     </table>
     <p>
-      
+
     <format:footer />
-    

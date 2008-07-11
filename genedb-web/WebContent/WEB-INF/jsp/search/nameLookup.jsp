@@ -7,7 +7,7 @@
 </format:headerRound>
 <div id="geneDetails">
 	<format:genePageSection id="nameSearch" className="whiteBox">
-		<form:form commandName="nameLookup" action="NamedFeature" method="get">
+		<form:form commandName="nameLookup" action="NameSearch" method="get">
 			<table>
 				<tr>
 					<td colspan="3">

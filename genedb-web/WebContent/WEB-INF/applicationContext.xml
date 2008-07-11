@@ -96,14 +96,10 @@
         <property name="dataSource" ref="dataSource" />
         <property name="hibernateProperties" ref="hibernateProperties" />
         <property name="annotatedPackages">
-            <list>
-                <value>org.gmod.schema</value>
-            </list>
+            <list><value>org.gmod.schema</value></list>
         </property>
         <property name="defaultFilters">
-            <list>
-                <value>excludeObsoleteFeatures</value>
-            </list>
+            <list><value>excludeObsoleteFeatures</value></list>
         </property>
     </bean>
 </beans>

@@ -226,24 +226,37 @@
         <property name="commandName" value="nameLookup" />
         <property name="commandClass"
             value="org.genedb.web.mvc.controller.NamedFeatureController$NameLookupBean" />
-        <property name="luceneDao" ref="luceneDao" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="modelBuilder" ref="modelBuilder"/>
-        <property name="listResultsView" value="list/features" />
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="features/gene" />
         <property name="geneDetailsView" value="features/geneDetails" />
         <property name="bindOnNewForm" value="true" />
-        <property name="taxonNodeArrayPropertyEditor"
-            ref="taxonNodeArrayPropertyEditor" />
-        <property name="historyManagerFactory"
-            ref="historyManagerFactory" />
         <property name="validator" ref="namedFeatureValidator" />
         <property name="cacheSeconds" value="86400" />
     </bean>
-
     <bean id="namedFeatureValidator"
         class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
+
+    <bean id="NameSearchController"
+        class="org.genedb.web.mvc.controller.NameSearchController">
+        <property name="sessionForm" value="true" />
+        <property name="commandName" value="nameLookup" />
+        <property name="commandClass"
+            value="org.genedb.web.mvc.controller.NameSearchController$NameLookupBean" />
+        <property name="luceneDao" ref="luceneDao" />
+        <property name="listResultsView" value="list/features" />
+        <property name="formView" value="search/nameLookup" />
+        <property name="geneView" value="redirect:NamedFeature" />
+        <property name="bindOnNewForm" value="true" />
+        <property name="historyManagerFactory"
+            ref="historyManagerFactory" />
+        <property name="validator" ref="nameSearchValidator" />
+    </bean>
+    <bean id="nameSearchValidator"
+        class="org.genedb.web.mvc.validators.NameSearchFormValidator" />
+
+
 
     <bean id="FeatureDownloadController"
         class="org.genedb.web.mvc.controller.download.FeatureDownloadController">

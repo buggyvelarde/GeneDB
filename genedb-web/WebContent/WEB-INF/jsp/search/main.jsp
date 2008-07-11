@@ -12,7 +12,7 @@
 
 <script type="text/javascript" language="javascript">
 	var ilength;
-			
+
 	function populateAutocomplete(autocompleter, token) {
       nameBrowse.getPossibleMatches(token, function(suggestions) {
           autocompleter.setChoices(suggestions);
@@ -23,7 +23,7 @@
   function createAutoCompleter() {
       new Autocompleter.DWR("textInput", "suggestions", populateAutocomplete, {});
   }
-	
+
 	function doSomething() {
 		var obj = document.getElementById("start");
 		var curleft = curtop = 0;
@@ -61,13 +61,13 @@
 			if(element.checked) {
 				if (selected.value == '') {
 					selected.value = document.getElementById("menu_" + i).textContent;
-				} else {	
+				} else {
 					selected.value = selected.value + ',' + document.getElementById("menu_" + i).textContent;
 				}
-			}	
+			}
 		}
 	}
-	
+
 	function resetall() {
 		for (var i=0; i< ilength; i++) {
 			this.checked[i] = false;
@@ -79,24 +79,24 @@
 		var url = document.URL.split('?');
 		window.location = url[0];
 	}
-	
+
 	function check() {
 		var selected = document.getElementById("selected");
 		if (selected.value == '') {
 			selected.style.border = "solid 1px red";
 			alert ("Please select an organism from the tree");
 			return false;
-		} 
+		}
 		var org = document.getElementById("textInput");
 		if (org.value == '') {
 			org.style.border = "solid 1px red";
 			alert ("Please enter the search term in the input box");
 			return false;
-		} 
-		
-		
+		}
+
+
 	}
-	
+
 	function checkThis(form) {
 			if(form.query.value == ""){
 			//document.writeln("look up is ...");
@@ -117,9 +117,9 @@
       margin:0px;
       padding:0px;
     }
-    
+
     li.selected { background-color: #ffb; }
-    
+
 </style>
 <body onload="doSomething(); DWRUtil.useLoadingMessage(); createAutoCompleter()">
 <format:header name="Main Search Page">
@@ -129,7 +129,7 @@
 <sp:form name="lucene" commandName="luceneSearch" action="../LuceneSearch" method="post" onsubmit="checkThis(this)">
 	<table>
 		<tr>
-			<td>Fields: 
+			<td>Fields:
 				<sp:select path="field">
 					<sp:option value="ALL" label="ALL"/>
 					<sp:options items="${fields}"/>
@@ -143,7 +143,7 @@
 </div>
 <div style="border: 1px solid #cccccc; padding: 5px;margin-top: 5px;">
 <div align="center" style="background: url('/genedb-web/includes/images/subhead_bg.png') repeat;margin: 5px;">Gene Search</div>
-<sp:form commandName="nameLookup" action="../NamedFeature" method="get">
+<sp:form commandName="nameLookup" action="../NameSearch" method="get">
   <table>
     <tr><td colspan="3">
       <font color="red"><sp:errors path="*" /></font>

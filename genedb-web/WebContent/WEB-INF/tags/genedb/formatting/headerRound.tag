@@ -44,10 +44,10 @@
         <td id="name">${name}</td>
         <td id="search">
         	<c:if test="${!empty organism}">
-            	<form name="searchForm" action="<c:url value="/"/>NamedFeature?organism=${organism}" method="get">
+            	<form name="searchForm" action="<c:url value="/"/>NameSearch?organism=${organism}" method="get">
             </c:if>
             <c:if test="${empty organism}">
-            	<form name="searchForm" action="<c:url value="/"/>NamedFeature" method="get">
+            	<form name="searchForm" action="<c:url value="/NameSearch"/>" method="get">
             </c:if>
             	<input id="query" name="name" type="text" align="middle"/>
             	<input id="submit" type="submit" value="Search" title="Search" align="middle" />

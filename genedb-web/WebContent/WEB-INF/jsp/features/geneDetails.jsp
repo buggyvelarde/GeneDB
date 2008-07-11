@@ -213,7 +213,7 @@
                                     matches:
                             </c:if>
                             <c:if test="${subsection.interproDbXRef == null}">
-                                Other domain matches:
+                                ${subsection.title}:
                             </c:if>
                         </td>
                     </tr>
