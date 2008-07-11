@@ -14,4 +14,6 @@ import javax.persistence.Entity;
  */
 @Entity
 @FeatureType(cv="sequence", term="apicoplast_sequence")
-public class ApicoplastChromosome extends Chromosome {}
+public class ApicoplastChromosome extends Chromosome {
+    // Deliberately empty
+}
