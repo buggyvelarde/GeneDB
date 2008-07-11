@@ -93,6 +93,15 @@ public class NamedFeatureController extends PostOrGetFormController {
             return this.name;
         }
 
+        /*
+         * We need this because the form that is shown when the feature
+         * can't be found (search/nameLookup.jsp) expects an 'organism'
+         * property.
+         */
+        public String getOrganism() {
+            return null;
+        }
+
         public boolean isDetailsOnly() {
             return detailsOnly;
         }
