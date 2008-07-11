@@ -12,7 +12,6 @@ import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.sequence.feature.GPIAnchorCleavageSite;
-import org.gmod.schema.sequence.feature.Gene;
 import org.gmod.schema.sequence.feature.Polypeptide;
 import org.gmod.schema.sequence.feature.PolypeptideDomain;
 import org.gmod.schema.sequence.feature.SignalPeptide;
