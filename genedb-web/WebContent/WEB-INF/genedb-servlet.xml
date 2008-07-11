@@ -144,15 +144,6 @@
       - This bean is a MultiActionController that manages general View rendering.
       - It uses the "clinicControllerResolver" bean below for method name resolution.
       -->
-    <bean id="SearchController"
-        class="org.genedb.web.mvc.controller.SearchController">
-        <property name="methodNameResolver"
-            ref="searchControllerResolver" />
-        <property name="sequenceDao" ref="sequenceDao" />
-        <property name="cvDao" ref="cvDao" />
-        <property name="webUtils" ref="GeneDBWebUtils"/>
-    </bean>
-
     <bean id="HistoryController"
     	class="org.genedb.web.mvc.controller.HistoryController">
         <property name="methodNameResolver"
@@ -237,7 +228,7 @@
             value="org.genedb.web.mvc.controller.NamedFeatureController$NameLookupBean" />
         <property name="luceneDao" ref="luceneDao" />
         <property name="sequenceDao" ref="sequenceDao" />
-        <property name="webUtils" ref="GeneDBWebUtils"/>
+        <property name="modelBuilder" ref="modelBuilder"/>
         <property name="listResultsView" value="list/features" />
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="features/gene" />
@@ -274,14 +265,14 @@
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="listResultsView" value="list/features" />
         <property name="genePage" value="features/gene" />
-        <property name="webUtils" ref="GeneDBWebUtils"/>
+        <property name="modelBuilder" ref="modelBuilder"/>
     </bean>
 
     <bean id="GenesByCvTermAndCvController"
     	class="org.genedb.web.mvc.controller.GenesByCvTermAndCvController">
 		<property name="sequenceDao" ref="sequenceDao" />
 		<property name="luceneDao" ref="luceneDao" />
-		<property name="webUtils" ref="GeneDBWebUtils"/>
+        <property name="modelBuilder" ref="modelBuilder"/>
         <property name="listResultsView" value="list/features" />
         <property name="genePage" value="features/gene" />
         <property name="jsonView" ref="jsonView" />
@@ -351,11 +342,22 @@
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor"
             ref="taxonNodeArrayPropertyEditor" />
+        <property name="modelBuilder" ref="modelBuilder"/>
+    </bean>
+
+    <bean id="ComplexQueryController"
+        class="org.genedb.web.mvc.controller.ComplexQueryController">
         <property name="webUtils" ref="GeneDBWebUtils"/>
     </bean>
 
+
     <bean id="GeneDBWebUtils"
         class="org.genedb.web.mvc.controller.GeneDBWebUtils">
+        <property name="sequenceDao" ref="sequenceDao" />
+    </bean>
+
+    <bean id="modelBuilder"
+        class="org.genedb.web.mvc.controller.ModelBuilder">
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="generalDao" ref="generalDao" />
         <property name="cvDao" ref="cvDao" />

@@ -1,7 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.SequenceDao;
 import org.genedb.query.BasicQueryI;
 import org.genedb.query.NumberedQueryI;
 import org.genedb.query.QueryPlaceHolder;
@@ -23,43 +21,25 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
- * 
+ *
  * @author Adrian Tivey
  */
 public class ComplexQueryController extends MultiActionController implements InitializingBean {
 
-    private SequenceDao sequenceDao;
-    private CvDao cvDao;
-    private FileCheckingInternalResourceViewResolver viewChecker;
-    private String listProductsView;
-
-    public void setListProductsView(String listProductsView) {
-        this.listProductsView = listProductsView;
-    }
-
-    public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
-        this.viewChecker = viewChecker;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        // if (clinic == null) {
-        // throw new ApplicationContextException("Must set clinic bean property
-        // on " + getClass());
-        // }
-    }
+    public void afterPropertiesSet() throws Exception {}
 
     // handlers
 
     /**
      * Custom handler for examples
-     * 
+     *
      * @param request current HTTP request
      * @param response current HTTP response
      * @return a ModelAndView to render the response
      */
-    public ModelAndView BooleanQuery(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView BooleanQuery(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         List<String> answers = new ArrayList<String>();
-        if (!GeneDBWebUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
+        if (!webUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
             return new ModelAndView("chooseTaxon");
         }
 
@@ -179,8 +159,8 @@ public class ComplexQueryController extends MultiActionController implements Ini
         return qph;
     }
 
-    public void setSequenceDao(SequenceDao sequenceDao) {
-        this.sequenceDao = sequenceDao;
+    private GeneDBWebUtils webUtils;
+    public void setWebUtils(GeneDBWebUtils webutils) {
+        this.webUtils = webutils;
     }
-
 }

@@ -47,7 +47,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
 
     private static final Logger logger = Logger.getLogger(BrowseTermController.class);
     private SequenceDao sequenceDao;
-    private GeneDBWebUtils webUtils;
+    private ModelBuilder modelBuilder;
     private String geneView;
 
     @Override
@@ -93,7 +93,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
             } else {
                 gene = (AbstractGene) results.get(0);
             }
-            webUtils.prepareGene(gene, model);
+            modelBuilder.prepareGene(gene, model);
             return new ModelAndView(geneView, model);
         }
 
@@ -124,8 +124,8 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         this.geneView = geneView;
     }
 
-    public void setWebUtils(GeneDBWebUtils webUtils) {
-        this.webUtils = webUtils;
+    public void setModelBuilder(ModelBuilder modelBuilder) {
+        this.modelBuilder = modelBuilder;
     }
 
 }

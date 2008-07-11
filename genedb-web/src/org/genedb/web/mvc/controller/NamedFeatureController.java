@@ -91,7 +91,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
             if (feature != null) {
                 logger.info(String.format("Lucene did not find feature '%s'; we found it in the database", name));
-                model = webUtils.prepareFeature(feature, model);
+                model = modelBuilder.prepareFeature(feature, model);
                 viewName = geneView;
                 break;
             }
@@ -103,9 +103,9 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             Document doc = hits.doc(0);
             logger.debug(String.format("Lucene found feature '%s'", doc.get("uniqueName")));
             if ("gene".equals(doc.get("cvTerm.name")) || "pseudogene".equals(doc.get("cvTerm.name"))) {
-                webUtils.prepareGene(doc.get("uniqueName"), model);
+                modelBuilder.prepareGene(doc.get("uniqueName"), model);
             } else {
-                webUtils.prepareTranscript(doc.get("uniqueName"), model);
+                modelBuilder.prepareTranscript(doc.get("uniqueName"), model);
             }
             viewName = geneView;
             break;
@@ -203,9 +203,9 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         this.geneDetailsView = geneDetailsView;
     }
 
-    private GeneDBWebUtils webUtils;
-    public void setWebUtils(GeneDBWebUtils webUtils) {
-        this.webUtils = webUtils;
+    private ModelBuilder modelBuilder;
+    public void setModelBuilder(ModelBuilder modelBuilder) {
+        this.modelBuilder = modelBuilder;
     }
 
     public static class NameLookupBean {

@@ -1,5 +1,14 @@
 package org.genedb.web.mvc.controller;
 
+import org.genedb.db.dao.SequenceDao;
+
+import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureRelationship;
+
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,13 +17,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  * Returns all features (orthologs) that belong to a particular cluster
@@ -97,7 +99,7 @@ public class OrthologsController extends AbstractController {
             // TODO return to an error page displaying proper message
         case 1:
             String gene = orthologs.get(0).getUniqueName();
-            model = webUtils.prepareGene(gene, model);
+            model = modelBuilder.prepareGene(gene, model);
             viewName = genePage;
             break;
         default:
@@ -106,8 +108,8 @@ public class OrthologsController extends AbstractController {
         return new ModelAndView(viewName, model);
     }
 
-    private GeneDBWebUtils webUtils;
-    public void setWebUtils(GeneDBWebUtils webUtils) {
-        this.webUtils = webUtils;
+    private ModelBuilder modelBuilder;
+    public void setModelBuilder(ModelBuilder modelBuilder) {
+        this.modelBuilder = modelBuilder;
     }
 }

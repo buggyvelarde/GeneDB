@@ -27,82 +27,76 @@ public class GenesByCvTermAndCvController extends AbstractController {
     private static final String NO_VALUE_SUPPLIED = "_NO_VALUE_SUPPLIED";
 
     private SequenceDao sequenceDao;
-	private LuceneDao luceneDao;
-	private String listResultsView;
-	private String genePage;
-	private JsonView jsonView;
-	private HistoryManagerFactory historyManagerFactory;
-	
-	@Override
-	protected ModelAndView handleRequestInternal(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-	    
-	    String cvName = ServletRequestUtils
-            .getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
-	    
+    private LuceneDao luceneDao;
+    private String listResultsView;
+    private String genePage;
+    private JsonView jsonView;
+    private HistoryManagerFactory historyManagerFactory;
+
+    @Override
+    protected ModelAndView handleRequestInternal(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        String cvName = ServletRequestUtils.getStringParameter(request, "cvName", NO_VALUE_SUPPLIED);
         String viewName = listResultsView;
+        String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName", NO_VALUE_SUPPLIED);
+        String organism = ServletRequestUtils.getStringParameter(request, "organism", null);
+        String json = ServletRequestUtils.getStringParameter(request, "json", null);
+        boolean isJson = Boolean.parseBoolean(json);
 
-		String cvTermName = ServletRequestUtils.getStringParameter(request, "cvTermName",
-		    NO_VALUE_SUPPLIED);
-		
-		String organism = ServletRequestUtils.getStringParameter(request, "organism",
-	            null);
-		
-		String json = ServletRequestUtils.getStringParameter(request, "json",
-                null);
-		
-		boolean isJson = Boolean.parseBoolean(json);
+        Map<String, Object> model = new HashMap<String, Object>();
 
-		Map<String,Object> model = new HashMap<String,Object>();
-		
-		if(isJson) {
-		
-    		List<GeneNameOrganism> features = sequenceDao.getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, 
-    		                                    cvName,organism);
-    
-    		if (features == null || features.size() == 0) {
-    		    try {
-    		    	ServletOutputStream out = response.getOutputStream();
-    		    	out.print("There is no Gene in the database coresponding to CvTerm " + cvTermName);
-    		        out.close();
-    		        return null;
-    		    } catch (IOException e) {
-    		        e.printStackTrace();
-    		    }
-    		}
-    
-    		if (features.size() == 1) {
-    			model = webUtils.prepareGene(features.get(0).getGeneName(), model);
-    			viewName = genePage;
-    		} else {
-    		    HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(
-                        request.getSession());
-    		    
-    		    String args = String.format("organism:%s GO %s:%s ", organism,cvName,cvTermName);
-    		    
-    		    List<String> ids = new ArrayList<String>();
-    		    
-    		    IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
-    		    
-    		    for (GeneNameOrganism feature : features) {
+        if (isJson) {
+
+            List<GeneNameOrganism> features = sequenceDao
+                    .getGeneNameOrganismsByCvTermNameAndCvName(cvTermName, cvName, organism);
+
+            if (features == null || features.size() == 0) {
+                try {
+                    ServletOutputStream out = response.getOutputStream();
+                    out.print("There is no Gene in the database coresponding to CvTerm "
+                            + cvTermName);
+                    out.close();
+                    return null;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (features.size() == 1) {
+                model = modelBuilder.prepareGene(features.get(0).getGeneName(), model);
+                viewName = genePage;
+            } else {
+                HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(
+                    request.getSession());
+
+                String args = String.format("organism:%s GO %s:%s ", organism, cvName, cvTermName);
+
+                List<String> ids = new ArrayList<String>();
+
+                IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
+
+                for (GeneNameOrganism feature : features) {
                     ids.add(feature.getGeneName());
-                    
-                    TermQuery query = new TermQuery(new Term("uniqueName",feature.getGeneName()));
+
+                    TermQuery query = new TermQuery(new Term("uniqueName", feature.getGeneName()));
                     Hits hits = luceneDao.search(ir, query);
-                    
-                    if(hits.length() > 0) {
+
+                    if (hits.length() > 0) {
                         feature.setProduct(hits.doc(0).get("product"));
                     }
                 }
-                historyManager.addHistoryItems(String.format("GenesByCvTermNameAndCv-%s",args) , ids);
-    		    model.put("features", features);
-    			return new ModelAndView(jsonView,model);
-    		}
-		} else {
-		    model.put("args", String.format("?organism=%s&cvTermName=%s&cvName=%s&json=True", organism,cvTermName,cvName));
-		}
-		return new ModelAndView(viewName, model);
-	}
+                historyManager.addHistoryItems(String.format("GenesByCvTermNameAndCv-%s", args),
+                    ids);
+                model.put("features", features);
+                return new ModelAndView(jsonView, model);
+            }
+        } else {
+            model.put("args", String.format("?organism=%s&cvTermName=%s&cvName=%s&json=True",
+                organism, cvTermName, cvName));
+        }
+        return new ModelAndView(viewName, model);
+    }
 
     public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;
@@ -111,12 +105,13 @@ public class GenesByCvTermAndCvController extends AbstractController {
     public void setGenePage(String genePage) {
         this.genePage = genePage;
     }
-    
-    private GeneDBWebUtils webUtils;
-    public void setWebUtils(GeneDBWebUtils webUtils) {
-        this.webUtils = webUtils;
+
+    private ModelBuilder modelBuilder;
+
+    public void setModelBuilder(ModelBuilder modelBuilder) {
+        this.modelBuilder = modelBuilder;
     }
-    
+
     public JsonView getJsonView() {
         return jsonView;
     }
