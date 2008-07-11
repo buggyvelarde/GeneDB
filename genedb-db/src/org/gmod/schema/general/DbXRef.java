@@ -103,7 +103,7 @@ public class DbXRef implements Serializable {
      // Constructors
 
     /** default constructor */
-    public DbXRef() {
+    private DbXRef() {
         // Deliberately empty default constructor
     }
 
@@ -116,20 +116,20 @@ public class DbXRef implements Serializable {
 
 
     // Property accessors
-    public int getDbXRefId() {
+    private int getDbXRefId() {
         return this.dbXRefId;
     }
 
-    public void setDbXRefId(int dbXRefId) {
+    private void setDbXRefId(int dbXRefId) {
         this.dbXRefId = dbXRefId;
     }
 
 
-    public String getVersion() {
+    private String getVersion() {
         return this.version;
     }
 
-    public void setVersion(String version) {
+    private void setVersion(String version) {
         this.version = version;
     }
 
@@ -137,7 +137,7 @@ public class DbXRef implements Serializable {
         return this.db;
     }
 
-    public void setDb(Db db) {
+    private void setDb(Db db) {
         this.db = db;
     }
 
@@ -145,7 +145,7 @@ public class DbXRef implements Serializable {
         return this.accession;
     }
 
-    public void setAccession(String accession) {
+    private void setAccession(String accession) {
         this.accession = accession;
     }
 
@@ -161,11 +161,11 @@ public class DbXRef implements Serializable {
         return this.cvTerms;
     }
 
-    public Collection<DbXRefProp> getDbXRefProps() {
+    private Collection<DbXRefProp> getDbXRefProps() {
         return this.dbXRefProps;
     }
 
-    public void setDbXRefProps(Collection<DbXRefProp> dbXRefProps) {
+    private void setDbXRefProps(Collection<DbXRefProp> dbXRefProps) {
         this.dbXRefProps = dbXRefProps;
     }
 

@@ -41,12 +41,12 @@ public class CvTermDbXRef implements Serializable {
 
     // Property accessors
 
-    public int getCvTermDbXRefId() {
+    private int getCvTermDbXRefId() {
         return this.cvTermDbXRefId;
     }
 
 
-    public CvTerm getCvTerm() {
+    private CvTerm getCvTerm() {
         return this.cvTerm;
     }
 

@@ -45,14 +45,14 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getDbId()
      */
-    public int getDbId() {
+    private int getDbId() {
         return this.dbId;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDbId(int)
      */
-    public void setDbId(int dbId) {
+    private void setDbId(int dbId) {
         this.dbId = dbId;
     }
 
@@ -67,7 +67,7 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setName(java.lang.String)
      */
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
@@ -75,14 +75,14 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getDescription()
      */
-    public String getDescription() {
+    private String getDescription() {
         return this.description;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDescription(java.lang.String)
      */
-    public void setDescription(String description) {
+    private void setDescription(String description) {
         this.description = description;
     }
 
@@ -90,14 +90,14 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getUrlPrefix()
      */
-    public String getUrlPrefix() {
+    private String getUrlPrefix() {
         return this.urlPrefix;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setUrlPrefix(java.lang.String)
      */
-    public void setUrlPrefix(String urlPrefix) {
+    private void setUrlPrefix(String urlPrefix) {
         this.urlPrefix = urlPrefix;
     }
 
@@ -105,28 +105,28 @@ public class Db implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getUrl()
      */
-    public String getUrl() {
+    private String getUrl() {
         return this.url;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setUrl(java.lang.String)
      */
-    public void setUrl(String url) {
+    private void setUrl(String url) {
         this.url = url;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#getDbXRefs()
      */
-    public Collection<DbXRef> getDbXRefs() {
+    private Collection<DbXRef> getDbXRefs() {
         return this.dbXRefs;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.DbI#setDbXRefs(java.util.Set)
      */
-    public void setDbXRefs(Collection<DbXRef> dbXRefs) {
+    private void setDbXRefs(Collection<DbXRef> dbXRefs) {
         this.dbXRefs = dbXRefs;
     }
 

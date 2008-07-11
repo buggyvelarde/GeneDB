@@ -29,12 +29,12 @@ public class PhylonodeOrganism  implements java.io.Serializable {
      // Constructors
 
     /** default constructor */
-    public PhylonodeOrganism() {
+    private PhylonodeOrganism() {
         // Deliberately empty default constructor
     }
 
     /** full constructor */
-    public PhylonodeOrganism(int phylonodeOrganismId, Organism organism, Phylonode phylonode) {
+    private PhylonodeOrganism(int phylonodeOrganismId, Organism organism, Phylonode phylonode) {
        this.phylonodeOrganismId = phylonodeOrganismId;
        this.organism = organism;
        this.phylonode = phylonode;
@@ -44,11 +44,11 @@ public class PhylonodeOrganism  implements java.io.Serializable {
      @Id
 
     @Column(name="phylonode_organism_id", unique=true, nullable=false, insertable=true, updatable=true)
-    public int getPhylonodeOrganismId() {
+    private int getPhylonodeOrganismId() {
         return this.phylonodeOrganismId;
     }
 
-    public void setPhylonodeOrganismId(int phylonodeOrganismId) {
+    private void setPhylonodeOrganismId(int phylonodeOrganismId) {
         this.phylonodeOrganismId = phylonodeOrganismId;
     }
 
@@ -58,17 +58,17 @@ public class PhylonodeOrganism  implements java.io.Serializable {
         return this.organism;
     }
 
-    public void setOrganism(Organism organism) {
+    private void setOrganism(Organism organism) {
         this.organism = organism;
     }
 
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="phylonode_id", unique=true, nullable=false, insertable=true, updatable=true)
-    public Phylonode getPhylonode() {
+    private Phylonode getPhylonode() {
         return this.phylonode;
     }
 
-    public void setPhylonode(Phylonode phylonode) {
+    private void setPhylonode(Phylonode phylonode) {
         this.phylonode = phylonode;
     }
 

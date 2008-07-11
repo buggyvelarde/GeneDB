@@ -83,11 +83,11 @@ public class Organism implements Serializable {
 
     // Property accessors
 
-    public int getOrganismId() {
+    private int getOrganismId() {
         return this.organismId;
     }
 
-    public void setOrganismId(int organismId) {
+    private void setOrganismId(int organismId) {
         this.organismId = organismId;
     }
 
@@ -99,7 +99,7 @@ public class Organism implements Serializable {
         return this.abbreviation;
     }
 
-    public void setAbbreviation(final String abbreviation) {
+    private void setAbbreviation(final String abbreviation) {
         this.abbreviation = abbreviation;
     }
 
@@ -107,7 +107,7 @@ public class Organism implements Serializable {
         return this.genus;
     }
 
-    public void setGenus(final String genus) {
+    private void setGenus(final String genus) {
         this.genus = genus;
     }
 
@@ -115,7 +115,7 @@ public class Organism implements Serializable {
         return this.species;
     }
 
-    public void setSpecies(final String species) {
+    private void setSpecies(final String species) {
         this.species = species;
     }
 
@@ -123,15 +123,15 @@ public class Organism implements Serializable {
         return this.commonName;
     }
 
-    public void setCommonName(final String commonName) {
+    private void setCommonName(final String commonName) {
         this.commonName = commonName;
     }
 
-    public String getComment() {
+    private String getComment() {
         return this.comment;
     }
 
-    public void setComment(String comment) {
+    private void setComment(String comment) {
         this.comment = comment;
     }
 
@@ -165,7 +165,7 @@ public class Organism implements Serializable {
     }
 
     @Transient
-    public String getPropertyValue(String cvName, String cvTermName) {
+    private String getPropertyValue(String cvName, String cvTermName) {
         for (OrganismProp organismProp: getOrganismProps()) {
             CvTerm propType = organismProp.getCvTerm();
             if (propType.getName().equals(cvTermName) && propType.getCv().getName().equals(cvName)) {
@@ -178,7 +178,7 @@ public class Organism implements Serializable {
     }
 
     @Transient
-    public String getHtmlShortName() {
+    private String getHtmlShortName() {
         return getPropertyValue("genedb_misc", "htmlShortName");
     }
 }

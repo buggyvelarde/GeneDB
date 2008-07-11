@@ -505,25 +505,6 @@ public class Feature implements java.io.Serializable {
         return (getName() != null) ? getName() : getUniqueName();
     }
 
-    /**
-     * Get the current systematic ID or temporary systematic ID, if there is one.
-     * If not, returns the unique name.
-     *
-     * @return the systematic ID, temporary systematic ID, or unique name
-     */
-    @Transient
-    public String getSystematicId() {
-        for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
-            Synonym synonym = featureSynonym.getSynonym();
-            if (("systematic_id".equals(synonym.getCvTerm().getName())
-            || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
-            && featureSynonym.isCurrent()) {
-                return synonym.getSynonymSgml();
-        }
-        }
-        return getUniqueName();
-    }
-
     @Transient
     public Collection<String> getPreviousSystematicIds() {
         Set<String> ret = new HashSet<String>();

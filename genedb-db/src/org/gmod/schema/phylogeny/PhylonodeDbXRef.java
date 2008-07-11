@@ -29,12 +29,12 @@ public class PhylonodeDbXRef  implements java.io.Serializable {
      // Constructors
 
     /** default constructor */
-    public PhylonodeDbXRef() {
+    private PhylonodeDbXRef() {
         // Deliberately empty default constructor
     }
 
     /** full constructor */
-    public PhylonodeDbXRef(int phylonodeDbXRefId, DbXRef dbXRef, Phylonode phylonode) {
+    private PhylonodeDbXRef(int phylonodeDbXRefId, DbXRef dbXRef, Phylonode phylonode) {
        this.phylonodeDbXRefId = phylonodeDbXRefId;
        this.dbXRef = dbXRef;
        this.phylonode = phylonode;
@@ -44,31 +44,31 @@ public class PhylonodeDbXRef  implements java.io.Serializable {
      @Id
 
     @Column(name="phylonode_dbxref_id", unique=true, nullable=false, insertable=true, updatable=true)
-    public int getPhylonodeDbXRefId() {
+    private int getPhylonodeDbXRefId() {
         return this.phylonodeDbXRefId;
     }
 
-    public void setPhylonodeDbXRefId(int phylonodeDbXRefId) {
+    private void setPhylonodeDbXRefId(int phylonodeDbXRefId) {
         this.phylonodeDbXRefId = phylonodeDbXRefId;
     }
 
 @ManyToOne(cascade={},fetch=FetchType.LAZY)
 
     @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
-    public DbXRef getDbXRef() {
+    private DbXRef getDbXRef() {
         return this.dbXRef;
     }
 
-    public void setDbXRef(DbXRef dbXRef) {
+    private void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
     @JoinColumn(name="phylonode_id", unique=false, nullable=false, insertable=true, updatable=true)
-    public Phylonode getPhylonode() {
+    private Phylonode getPhylonode() {
         return this.phylonode;
     }
 
-    public void setPhylonode(Phylonode phylonode) {
+    private void setPhylonode(Phylonode phylonode) {
         this.phylonode = phylonode;
     }
 

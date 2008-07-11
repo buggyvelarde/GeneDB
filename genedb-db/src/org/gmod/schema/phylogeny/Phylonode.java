@@ -85,12 +85,12 @@ public class Phylonode implements java.io.Serializable {
     // Constructors
 
     /** default constructor */
-    public Phylonode() {
+    private Phylonode() {
         // Deliberately empty default constructor
     }
 
     /** minimal constructor */
-    public Phylonode(int phylonodeId, Phylotree phylotree, int leftIdx, int rightIdx) {
+    private Phylonode(int phylonodeId, Phylotree phylotree, int leftIdx, int rightIdx) {
         this.phylonodeId = phylonodeId;
         this.phylotree = phylotree;
         this.leftIdx = leftIdx;
@@ -98,7 +98,7 @@ public class Phylonode implements java.io.Serializable {
     }
 
     /** full constructor */
-    public Phylonode(int phylonodeId, Phylotree phylotree, Phylonode parent, CvTerm cvTerm,
+    private Phylonode(int phylonodeId, Phylotree phylotree, Phylonode parent, CvTerm cvTerm,
             Feature feature, int leftIdx, int rightIdx, String label, Double distance,
             Collection<PhylonodeRelationship> phylonodeRelationshipsForObjectId,
             Collection<PhylonodeOrganism> phylonodeOrganisms, Collection<PhylonodePub> phylonodePubs,
@@ -122,19 +122,19 @@ public class Phylonode implements java.io.Serializable {
     }
 
     // Property accessors
-    public int getPhylonodeId() {
+    private int getPhylonodeId() {
         return this.phylonodeId;
     }
 
-    public void setPhylonodeId(int phylonodeId) {
+    private void setPhylonodeId(int phylonodeId) {
         this.phylonodeId = phylonodeId;
     }
 
-    public Phylotree getPhylotree() {
+    private Phylotree getPhylotree() {
         return this.phylotree;
     }
 
-    public void setPhylotree(Phylotree phylotree) {
+    private void setPhylotree(Phylotree phylotree) {
         this.phylotree = phylotree;
     }
 
@@ -142,7 +142,7 @@ public class Phylonode implements java.io.Serializable {
         return this.parent;
     }
 
-    public void setParent(Phylonode parent) {
+    private void setParent(Phylonode parent) {
         this.parent = parent;
     }
 
@@ -150,31 +150,31 @@ public class Phylonode implements java.io.Serializable {
         return this.cvTerm;
     }
 
-    public void setCvTerm(CvTerm cvTerm) {
+    private void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
-    public Feature getFeature() {
+    private Feature getFeature() {
         return this.feature;
     }
 
-    public void setFeature(Feature feature) {
+    private void setFeature(Feature feature) {
         this.feature = feature;
     }
 
-    public int getLeftIdx() {
+    private int getLeftIdx() {
         return this.leftIdx;
     }
 
-    public void setLeftIdx(int leftIdx) {
+    private void setLeftIdx(int leftIdx) {
         this.leftIdx = leftIdx;
     }
 
-    public int getRightIdx() {
+    private int getRightIdx() {
         return this.rightIdx;
     }
 
-    public void setRightIdx(int rightIdx) {
+    private void setRightIdx(int rightIdx) {
         this.rightIdx = rightIdx;
     }
 
@@ -182,23 +182,23 @@ public class Phylonode implements java.io.Serializable {
         return this.label;
     }
 
-    public void setLabel(String label) {
+    private void setLabel(String label) {
         this.label = label;
     }
 
-    public Double getDistance() {
+    private Double getDistance() {
         return this.distance;
     }
 
-    public void setDistance(Double distance) {
+    private void setDistance(Double distance) {
         this.distance = distance;
     }
 
-    public Collection<PhylonodeRelationship> getPhylonodeRelationshipsForObjectId() {
+    private Collection<PhylonodeRelationship> getPhylonodeRelationshipsForObjectId() {
         return this.phylonodeRelationshipsForObjectId;
     }
 
-    public void setPhylonodeRelationshipsForObjectId(
+    private void setPhylonodeRelationshipsForObjectId(
             Collection<PhylonodeRelationship> phylonodeRelationshipsForObjectId) {
         this.phylonodeRelationshipsForObjectId = phylonodeRelationshipsForObjectId;
     }
@@ -207,40 +207,40 @@ public class Phylonode implements java.io.Serializable {
         return this.phylonodeOrganisms;
     }
 
-    public void setPhylonodeOrganisms(Collection<PhylonodeOrganism> phylonodeOrganisms) {
+    private void setPhylonodeOrganisms(Collection<PhylonodeOrganism> phylonodeOrganisms) {
         this.phylonodeOrganisms = phylonodeOrganisms;
     }
 
-    public Collection<PhylonodePub> getPhylonodePubs() {
+    private Collection<PhylonodePub> getPhylonodePubs() {
         return this.phylonodePubs;
     }
 
-    public void setPhylonodePubs(Collection<PhylonodePub> phylonodePubs) {
+    private void setPhylonodePubs(Collection<PhylonodePub> phylonodePubs) {
         this.phylonodePubs = phylonodePubs;
     }
 
-    public Collection<PhylonodeRelationship> getPhylonodeRelationshipsForSubjectId() {
+    private Collection<PhylonodeRelationship> getPhylonodeRelationshipsForSubjectId() {
         return this.phylonodeRelationshipsForSubjectId;
     }
 
-    public void setPhylonodeRelationshipsForSubjectId(
+    private void setPhylonodeRelationshipsForSubjectId(
             Set<PhylonodeRelationship> phylonodeRelationshipsForSubjectId) {
         this.phylonodeRelationshipsForSubjectId = phylonodeRelationshipsForSubjectId;
     }
 
-    public Collection<PhylonodeDbXRef> getPhylonodeDbXRefs() {
+    private Collection<PhylonodeDbXRef> getPhylonodeDbXRefs() {
         return this.phylonodeDbXRefs;
     }
 
-    public void setPhylonodeDbXRefs(Collection<PhylonodeDbXRef> phylonodeDbXRefs) {
+    private void setPhylonodeDbXRefs(Collection<PhylonodeDbXRef> phylonodeDbXRefs) {
         this.phylonodeDbXRefs = phylonodeDbXRefs;
     }
 
-    public Collection<PhylonodeProp> getPhylonodeProps() {
+    private Collection<PhylonodeProp> getPhylonodeProps() {
         return this.phylonodeProps;
     }
 
-    public void setPhylonodeProps(Collection<PhylonodeProp> phylonodeProps) {
+    private void setPhylonodeProps(Collection<PhylonodeProp> phylonodeProps) {
         this.phylonodeProps = phylonodeProps;
     }
 
@@ -248,7 +248,7 @@ public class Phylonode implements java.io.Serializable {
         return children;
     }
 
-    public void setPhylonodes(Collection<Phylonode> children) {
+    private void setPhylonodes(Collection<Phylonode> children) {
         this.children = children;
     }
 }

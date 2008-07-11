@@ -29,12 +29,12 @@ public class PhylonodePub  implements java.io.Serializable {
      // Constructors
 
     /** default constructor */
-    public PhylonodePub() {
+    private PhylonodePub() {
         // Deliberately empty default constructor
     }
 
     /** full constructor */
-    public PhylonodePub(int phylonodePubId, Pub pub, Phylonode phylonode) {
+    private PhylonodePub(int phylonodePubId, Pub pub, Phylonode phylonode) {
        this.phylonodePubId = phylonodePubId;
        this.pub = pub;
        this.phylonode = phylonode;
@@ -44,31 +44,31 @@ public class PhylonodePub  implements java.io.Serializable {
      @Id
 
     @Column(name="phylonode_pub_id", unique=true, nullable=false, insertable=true, updatable=true)
-    public int getPhylonodePubId() {
+    private int getPhylonodePubId() {
         return this.phylonodePubId;
     }
 
-    public void setPhylonodePubId(int phylonodePubId) {
+    private void setPhylonodePubId(int phylonodePubId) {
         this.phylonodePubId = phylonodePubId;
     }
 @ManyToOne(cascade={},fetch=FetchType.LAZY)
 
     @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
-    public Pub getPub() {
+    private Pub getPub() {
         return this.pub;
     }
 
-    public void setPub(Pub pub) {
+    private void setPub(Pub pub) {
         this.pub = pub;
     }
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
 
     @JoinColumn(name="phylonode_id", unique=false, nullable=false, insertable=true, updatable=true)
-    public Phylonode getPhylonode() {
+    private Phylonode getPhylonode() {
         return this.phylonode;
     }
 
-    public void setPhylonode(Phylonode phylonode) {
+    private void setPhylonode(Phylonode phylonode) {
         this.phylonode = phylonode;
     }
 

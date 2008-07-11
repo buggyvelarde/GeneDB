@@ -41,20 +41,20 @@ public class Pub implements Serializable {
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY, mappedBy="pub")
     private Collection<PhylonodePub> phylonodePubs;
 
-    public Collection<PhylotreePub> getPhylotreePubs() {
+    private Collection<PhylotreePub> getPhylotreePubs() {
         return this.phylotreePubs;
     }
 
-    public void setPhylotreePubs(Collection<PhylotreePub> phylotreePubs) {
+    private void setPhylotreePubs(Collection<PhylotreePub> phylotreePubs) {
         this.phylotreePubs = phylotreePubs;
     }
 
 
-    public Collection<PhylonodePub> getPhylonodePubs() {
+    private Collection<PhylonodePub> getPhylonodePubs() {
         return this.phylonodePubs;
     }
 
-    public void setPhylonodePubs(Collection<PhylonodePub> phylonodePubs) {
+    private void setPhylonodePubs(Collection<PhylonodePub> phylonodePubs) {
         this.phylonodePubs = phylonodePubs;
     }
 
@@ -147,7 +147,7 @@ public class Pub implements Serializable {
      // Constructors
 
     /** default constructor */
-    public Pub() {
+    private Pub() {
         // Deliberately empty default constructor
     }
 
@@ -157,26 +157,26 @@ public class Pub implements Serializable {
         this.cvTerm = cvTerm;
     }
 
-    public Pub(String uniqueName) {
+    private Pub(String uniqueName) {
         this.uniqueName = uniqueName;
     }
 
 
     // Property accessors
 
-    public int getPubId() {
+    private int getPubId() {
         return this.pubId;
     }
 
-    public void setPubId(int pubId) {
+    private void setPubId(int pubId) {
         this.pubId = pubId;
     }
 
-    public CvTerm getCvTerm() {
+    private CvTerm getCvTerm() {
         return this.cvTerm;
     }
 
-    public void setCvTerm(CvTerm cvTerm) {
+    private void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 
@@ -184,118 +184,118 @@ public class Pub implements Serializable {
         return this.title;
     }
 
-    public void setTitle(String title) {
+    private void setTitle(String title) {
         this.title = title;
     }
 
-    public String getVolumeTitle() {
+    private String getVolumeTitle() {
         return this.volumeTitle;
     }
 
-    public void setVolumeTitle(String volumeTitle) {
+    private void setVolumeTitle(String volumeTitle) {
         this.volumeTitle = volumeTitle;
     }
 
 
-    public String getVolume() {
+    private String getVolume() {
         return this.volume;
     }
 
-    public void setVolume(String volume) {
+    private void setVolume(String volume) {
         this.volume = volume;
     }
 
 
-    public String getSeriesName() {
+    private String getSeriesName() {
         return this.seriesName;
     }
 
-    public void setSeriesName(String seriesName) {
+    private void setSeriesName(String seriesName) {
         this.seriesName = seriesName;
     }
 
-    public String getIssue() {
+    private String getIssue() {
         return this.issue;
     }
 
-    public void setIssue(String issue) {
+    private void setIssue(String issue) {
         this.issue = issue;
     }
 
-    public String getPyear() {
+    private String getPyear() {
         return this.pyear;
     }
 
-    public void setPyear(String pyear) {
+    private void setPyear(String pyear) {
         this.pyear = pyear;
     }
 
 
-    public String getPages() {
+    private String getPages() {
         return this.pages;
     }
 
-    public void setPages(String pages) {
+    private void setPages(String pages) {
         this.pages = pages;
     }
 
 
-    public String getMiniRef() {
+    private String getMiniRef() {
         return this.miniRef;
     }
 
-    public void setMiniRef(String miniRef) {
+    private void setMiniRef(String miniRef) {
         this.miniRef = miniRef;
     }
 
 
-    public String getUniqueName() {
+    private String getUniqueName() {
         return this.uniqueName;
     }
 
-    public void setUniqueName(String uniqueName) {
+    private void setUniqueName(String uniqueName) {
         this.uniqueName = uniqueName;
     }
 
-    public Boolean getObsolete() {
+    private Boolean getObsolete() {
         return this.obsolete;
     }
 
-    public void setObsolete(Boolean obsolete) {
+    private void setObsolete(Boolean obsolete) {
         this.obsolete = obsolete;
     }
 
 
-    public String getPublisher() {
+    private String getPublisher() {
         return this.publisher;
     }
 
-    public void setPublisher(String publisher) {
+    private void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
 
-    public String getPubPlace() {
+    private String getPubPlace() {
         return this.pubPlace;
     }
 
-    public void setPubPlace(String pubPlace) {
+    private void setPubPlace(String pubPlace) {
         this.pubPlace = pubPlace;
     }
 
-    public Collection<PubAuthor> getPubAuthors() {
+    private Collection<PubAuthor> getPubAuthors() {
         return this.pubAuthors;
     }
 
-    public void setPubAuthors(Collection<PubAuthor> pubAuthors) {
+    private void setPubAuthors(Collection<PubAuthor> pubAuthors) {
         this.pubAuthors = pubAuthors;
     }
 
-    public Collection<PubRelationship> getPubRelationshipsForObjectId() {
+    private Collection<PubRelationship> getPubRelationshipsForObjectId() {
         return this.pubRelationshipsForObjectId;
     }
 
-    public void setPubRelationshipsForObjectId(Collection<PubRelationship> pubRelationshipsForObjectId) {
+    private void setPubRelationshipsForObjectId(Collection<PubRelationship> pubRelationshipsForObjectId) {
         this.pubRelationshipsForObjectId = pubRelationshipsForObjectId;
     }
 

@@ -33,12 +33,12 @@ public class PhylonodeProp  implements java.io.Serializable, PropertyI {
      // Constructors
 
     /** default constructor */
-    public PhylonodeProp() {
+    private PhylonodeProp() {
         // Deliberately empty default constructor
     }
 
     /** full constructor */
-    public PhylonodeProp(int phylonodePropId, CvTerm cvTerm, Phylonode phylonode, String value, int rank) {
+    private PhylonodeProp(int phylonodePropId, CvTerm cvTerm, Phylonode phylonode, String value, int rank) {
        this.phylonodePropId = phylonodePropId;
        this.cvTerm = cvTerm;
        this.phylonode = phylonode;
@@ -50,11 +50,11 @@ public class PhylonodeProp  implements java.io.Serializable, PropertyI {
      @Id
 
     @Column(name="phylonodeprop_id", unique=true, nullable=false, insertable=true, updatable=true)
-    public int getPhylonodePropId() {
+    private int getPhylonodePropId() {
         return this.phylonodePropId;
     }
 
-    public void setPhylonodePropId(int phylonodePropId) {
+    private void setPhylonodePropId(int phylonodePropId) {
         this.phylonodePropId = phylonodePropId;
     }
 @ManyToOne(cascade={}, fetch=FetchType.LAZY)
@@ -64,35 +64,35 @@ public class PhylonodeProp  implements java.io.Serializable, PropertyI {
         return this.cvTerm;
     }
 
-    public void setCvTerm(CvTerm cvTerm) {
+    private void setCvTerm(CvTerm cvTerm) {
         this.cvTerm = cvTerm;
     }
 @ManyToOne(cascade={},fetch=FetchType.LAZY)
 
     @JoinColumn(name="phylonode_id", unique=false, nullable=false, insertable=true, updatable=true)
-    public Phylonode getPhylonode() {
+    private Phylonode getPhylonode() {
         return this.phylonode;
     }
 
-    public void setPhylonode(Phylonode phylonode) {
+    private void setPhylonode(Phylonode phylonode) {
         this.phylonode = phylonode;
     }
 
     @Column(name="value", unique=false, nullable=false, insertable=true, updatable=true)
-    public String getValue() {
+    private String getValue() {
         return this.value;
     }
 
-    public void setValue(String value) {
+    private void setValue(String value) {
         this.value = value;
     }
 
     @Column(name="rank", unique=false, nullable=false, insertable=true, updatable=true)
-    public int getRank() {
+    private int getRank() {
         return this.rank;
     }
 
-    public void setRank(int rank) {
+    private void setRank(int rank) {
         this.rank = rank;
     }
 

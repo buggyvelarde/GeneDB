@@ -83,19 +83,19 @@ public class CvTerm implements Serializable {
     }
 
     // Property accessors
-    public int getCvTermId() {
+    private int getCvTermId() {
         return this.cvTermId;
     }
 
-    public void setCvTermId(int cvTermId) {
+    private void setCvTermId(int cvTermId) {
         this.cvTermId = cvTermId;
     }
 
-    public DbXRef getDbXRef() {
+    private DbXRef getDbXRef() {
         return this.dbXRef;
     }
 
-    public void setDbXRef(DbXRef dbXRef) {
+    private void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 
@@ -103,7 +103,7 @@ public class CvTerm implements Serializable {
         return this.cv;
     }
 
-    public void setCv(Cv cv) {
+    private void setCv(Cv cv) {
         this.cv = cv;
     }
 
@@ -111,59 +111,59 @@ public class CvTerm implements Serializable {
         return this.name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
-    public String getDefinition() {
+    private String getDefinition() {
         return this.definition;
     }
 
-    public void setDefinition(String definition) {
+    private void setDefinition(String definition) {
         this.definition = definition;
     }
 
-    public boolean isObsolete() {
+    private boolean isObsolete() {
         return this.obsolete;
     }
 
-    public void setObsolete(boolean isObsolete) {
+    private void setObsolete(boolean isObsolete) {
         this.obsolete = isObsolete;
     }
 
 
-    public boolean getIsRelationshipType() {
+    private boolean getIsRelationshipType() {
         return this.isRelationshipType;
     }
 
-    public void setIsRelationshipType(boolean isRelationshipType) {
+    private void setIsRelationshipType(boolean isRelationshipType) {
         this.isRelationshipType = isRelationshipType;
     }
 
-    public Collection<Synonym> getSynonyms() {
+    private Collection<Synonym> getSynonyms() {
         return Collections.unmodifiableCollection(this.synonyms);
     }
 
-    public void addSynonym(Synonym synonym) {
+    private void addSynonym(Synonym synonym) {
         this.synonyms.add(synonym);
         synonym.setCvTerm(this);
     }
 
-    public void removeSynonym(Synonym synonym) {
+    private void removeSynonym(Synonym synonym) {
         this.synonyms.remove(synonym);
         synonym.setCvTerm(null);
     }
 
-    public Collection<CvTermDbXRef> getCvTermDbXRefs() {
+    private Collection<CvTermDbXRef> getCvTermDbXRefs() {
         return Collections.unmodifiableCollection(this.cvTermDbXRefs);
     }
 
-    public void addCvTermDbXRef(CvTermDbXRef cvTermDbXRef) {
+    private void addCvTermDbXRef(CvTermDbXRef cvTermDbXRef) {
         this.cvTermDbXRefs.add(cvTermDbXRef);
         cvTermDbXRef.setCvTerm(this);
     }
 
-    public void removeCvTermDbXRef(CvTermDbXRef cvTermDbXRef) {
+    private void removeCvTermDbXRef(CvTermDbXRef cvTermDbXRef) {
         this.cvTermDbXRefs.remove(cvTermDbXRef);
         cvTermDbXRef.setCvTerm(null);
     }

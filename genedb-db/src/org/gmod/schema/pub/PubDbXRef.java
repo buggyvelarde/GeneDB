@@ -42,7 +42,7 @@ public class PubDbXRef implements Serializable {
      // Constructors
 
     /** default constructor */
-    public PubDbXRef() {
+    private PubDbXRef() {
         // Deliberately empty default constructor
     }
 
@@ -73,28 +73,28 @@ public class PubDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#getDbXRef()
      */
-    public DbXRef getDbXRef() {
+    private DbXRef getDbXRef() {
         return this.dbXRef;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setDbXRef(org.gmod.schema.general.DbXRefI)
      */
-    public void setDbXRef(DbXRef dbXRef) {
+    private void setDbXRef(DbXRef dbXRef) {
         this.dbXRef = dbXRef;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#getPub()
      */
-    public Pub getPub() {
+    private Pub getPub() {
         return this.pub;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setPub(org.gmod.schema.pub.PubI)
      */
-    public void setPub(Pub pub) {
+    private void setPub(Pub pub) {
         this.pub = pub;
     }
 
@@ -102,14 +102,14 @@ public class PubDbXRef implements Serializable {
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#isCurrent()
      */
-    public boolean isCurrent() {
+    private boolean isCurrent() {
         return this.current;
     }
 
     /* (non-Javadoc)
      * @see org.genedb.db.jpa.PubDbXRefI#setCurrent(boolean)
      */
-    public void setCurrent(boolean current) {
+    private void setCurrent(boolean current) {
         this.current = current;
     }
 
