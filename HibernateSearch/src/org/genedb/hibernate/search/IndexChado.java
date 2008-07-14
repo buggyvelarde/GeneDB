@@ -1,17 +1,13 @@
 package org.genedb.hibernate.search;
 
-import java.io.Console;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
+import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Gap;
+import org.gmod.schema.feature.Transcript;
+import org.gmod.schema.feature.UTR;
+import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.feature.AbstractGene;
-import org.gmod.schema.sequence.feature.Gap;
-import org.gmod.schema.sequence.feature.Transcript;
-import org.gmod.schema.sequence.feature.UTR;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
@@ -19,12 +15,21 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.event.FullTextIndexEventListener;
+import org.postgresql.jdbc3.Jdbc3SimpleDataSource;
+
+import java.io.Console;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.sql.DataSource;
 
 public class IndexChado {
     private static Logger logger = Logger.getLogger(IndexChado.class);
@@ -101,6 +106,24 @@ public class IndexChado {
         this.indexBaseDirectory = indexBaseDirectory;
     }
 
+    private static final Pattern POSTGRES_URL_PATTERN = Pattern.compile("jdbc:postgresql://([^:/]*)(?::(\\d+))?/([^/]+)");
+    private DataSource getDataSource() {
+        Jdbc3SimpleDataSource dataSource = new Jdbc3SimpleDataSource();
+        Matcher urlMatcher = POSTGRES_URL_PATTERN.matcher(databaseUrl);
+        if (!urlMatcher.matches())
+            throw new RuntimeException(String.format("Malformed PostgreSQL URL '%s'", databaseUrl));
+
+        dataSource.setServerName(urlMatcher.group(1));
+        if (urlMatcher.group(2) != null)
+            dataSource.setPortNumber(Integer.parseInt(urlMatcher.group(2)));
+        dataSource.setDatabaseName(urlMatcher.group(3));
+
+        dataSource.setUser(databaseUsername);
+        dataSource.setPassword(databasePassword);
+
+        return dataSource;
+    }
+
     private Map<Integer,SessionFactory> sessionFactoryByBatchSize = new HashMap<Integer,SessionFactory>();
 
     /**
@@ -114,13 +137,16 @@ public class IndexChado {
         if (sessionFactoryByBatchSize.containsKey(batchSize))
             return sessionFactoryByBatchSize.get(batchSize);
 
-        Configuration cfg = new AnnotationConfiguration();
+        ChadoAnnotationConfiguration cfg = new ChadoAnnotationConfiguration();
+        cfg.setDataSource(getDataSource());
         cfg.configure();
+
         cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
         cfg.setProperty("hibernate.connection.username", databaseUsername);
         cfg.setProperty("hibernate.connection.password", databasePassword);
         cfg.setProperty("hibernate.connection.url", databaseUrl);
+
         cfg.setProperty("hibernate.search.default.directory_provider",
             "org.hibernate.search.store.FSDirectoryProvider");
         cfg.setProperty("hibernate.search.worker.batch_size", String.valueOf(batchSize));

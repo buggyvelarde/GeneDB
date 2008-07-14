@@ -32,6 +32,7 @@
             <file name="postgresql-8.2dev-501.jdbc3.jar" />
             <file name="spring-bundle-2.5.4/hibernate/hibernate3.jar" />
             <file name="spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" />
+            <file name="biojava-1.6.jar"/>
         </filelist>
     </path>
 
