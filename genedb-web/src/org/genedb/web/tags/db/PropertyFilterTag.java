@@ -13,7 +13,8 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.apache.log4j.Logger;
-import org.gmod.schema.cv.CvTerm;
+
+import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.utils.propinterface.PropertyI;
 
 public class PropertyFilterTag extends SimpleTagSupport {
@@ -71,7 +72,7 @@ public class PropertyFilterTag extends SimpleTagSupport {
 
         List<PropertyI> filteredItems = new ArrayList<PropertyI>();
         for (PropertyI propertyI : items)
-            if (filterMatches(propertyI.getCvTerm()))
+            if (filterMatches(propertyI.getType()))
                     filteredItems.add(propertyI);
 
         getJspContext().setAttribute(var, filteredItems);

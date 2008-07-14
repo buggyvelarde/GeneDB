@@ -31,8 +31,8 @@
 		var="cvTermRel">
 		<tr>
 			<td>this</td>
-			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvTermByTypeId.name}&cvName=${cvTermRel.cvTermByTypeId.cv.name}">${cvTermRel.cvTermByTypeId.name}</a></td>
-			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvTermByObjectId.name}&cvName=${cvTermRel.cvTermByObjectId.cv.name}">${cvTermRel.cvTermByObjectId.name}</a></td>
+			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.type.name}&cvName=${cvTermRel.type.cv.name}">${cvTermRel.type.name}</a></td>
+			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.object.name}&cvName=${cvTermRel.object.cv.name}">${cvTermRel.object.name}</a></td>
 		</tr>
 
 	</c:forEach>
@@ -43,8 +43,8 @@
 	<c:forEach items="${cvTerm.cvTermRelationshipsForObjectId}"
 		var="cvTermRel">
 		<tr>
-			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvTermBySubjectId.name}&cvName=${cvTermRel.cvTermBySubjectId.cv.name}">${cvTermRel.cvTermBySubjectId.name}</a></td>
-			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.cvTermByTypeId.name}&cvName=${cvTermRel.cvTermByTypeId.cv.name}">${cvTermRel.cvTermByTypeId.name}</a></td>
+			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.subject.name}&cvName=${cvTermRel.subject.cv.name}">${cvTermRel.subject.name}</a></td>
+			<td><a href="./CvTermByCvName?cvTermName=${cvTermRel.type.name}&cvName=${cvTermRel.type.cv.name}">${cvTermRel.type.name}</a></td>
 			<td>this</td>
 		</tr>
 

@@ -292,38 +292,6 @@
         <property name="historyManagerFactory" ref="historyManagerFactory" />
     </bean>
 
-    <bean id="SearchAllController"
-        class="org.genedb.web.mvc.controller.SearchAllController">
-        <property name="sessionForm" value="true" />
-        <property name="commandName" value="searchAll" />
-        <property name="commandClass"
-            value="org.genedb.web.mvc.controller.SearchAllBean" />
-        <property name="luceneDao" ref="luceneDao" />
-        <property name="listResultsView" value="list/searchAll" />
-        <property name="formView" value="search/searchAll" />
-        <property name="bindOnNewForm" value="true" />
-        <property name="taxonNodeArrayPropertyEditor"
-            ref="taxonNodeArrayPropertyEditor" />
-        <property name="historyManagerFactory"
-            ref="historyManagerFactory" />
-    </bean>
-
-    <bean id="CurationController"
-        class="org.genedb.web.mvc.controller.CurationController">
-        <property name="sessionForm" value="true" />
-        <property name="commandName" value="curation" />
-        <property name="commandClass"
-            value="org.genedb.web.mvc.controller.CurationBean" />
-        <property name="luceneDao" ref="luceneDao" />
-        <property name="listResultsView" value="list/searchCuration" />
-        <property name="formView" value="search/searchCuration" />
-        <property name="bindOnNewForm" value="true" />
-        <property name="taxonNodeArrayPropertyEditor"
-            ref="taxonNodeArrayPropertyEditor" />
-        <property name="historyManagerFactory"
-            ref="historyManagerFactory" />
-    </bean>
-
     <bean id="BrowseCategoryController"
         class="org.genedb.web.mvc.controller.BrowseCategoryController">
         <property name="sessionForm" value="true" />

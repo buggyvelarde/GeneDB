@@ -23,7 +23,9 @@ import org.genedb.query.history.History;
 import org.genedb.query.history.SimpleHistory;
 import org.genedb.web.mvc.history.commandline.HistoryParser;
 import org.genedb.web.mvc.history.commandline.ParseException;
-import org.gmod.schema.sequence.Feature;
+
+import org.gmod.schema.mapped.Feature;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;

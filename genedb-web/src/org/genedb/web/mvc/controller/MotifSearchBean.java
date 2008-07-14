@@ -19,7 +19,7 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.gmod.schema.organism.Organism;
+import org.gmod.schema.mapped.Organism;
 
 public class MotifSearchBean {
     

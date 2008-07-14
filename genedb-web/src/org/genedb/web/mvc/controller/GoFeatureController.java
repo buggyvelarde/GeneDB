@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.Feature;
+
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Feature;
+
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 

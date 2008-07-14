@@ -9,13 +9,14 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.sequence.feature.AbstractExon;
-import org.gmod.schema.sequence.feature.AbstractGene;
-import org.gmod.schema.sequence.feature.Exon;
-import org.gmod.schema.sequence.feature.Gene;
-import org.gmod.schema.sequence.feature.MRNA;
-import org.gmod.schema.sequence.feature.ProductiveTranscript;
-import org.gmod.schema.sequence.feature.Transcript;
+
+import org.gmod.schema.feature.AbstractExon;
+import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Exon;
+import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.MRNA;
+import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.Transcript;
 
 public class DownloadUtils {
 
@@ -163,7 +164,7 @@ public class DownloadUtils {
         	                AbstractExon exon = (AbstractExon) exons[i];
         	                int start = exon.getStart();
         	                int stop = exon.getStop();
-        	                String str = new String(gene.getRankZeroFeatureLoc().getFeatureBySrcFeatureId()
+        	                String str = new String(gene.getRankZeroFeatureLoc().getSourceFeature()
         	                        .getResidues(start, stop));
         	                sequence = sequence.concat(str);   
         	            }

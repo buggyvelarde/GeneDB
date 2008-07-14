@@ -8,9 +8,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.mvc.controller.TaxonNodeBindingFormController;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.feature.ProductiveTranscript;
-import org.gmod.schema.sequence.feature.Transcript;
+
+import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.Transcript;
+import org.gmod.schema.mapped.Feature;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 

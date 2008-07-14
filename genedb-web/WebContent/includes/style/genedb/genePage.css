@@ -1,16 +1,3 @@
-/*
-* html img,
-* html .png{
-    position:relative;
-    behavior: expression((this.runtimeStyle.behavior="none")&&(this.pngSet?this.pngSet=true:(this.nodeName == "IMG" && this.src.toLowerCase().indexOf('.png')>-1?(this.runtimeStyle.backgroundImage = "none",
-        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.src + "', sizingMethod='image')",
-        this.src = "transparent.gif"):(this.origBg = this.origBg? this.origBg :this.currentStyle.backgroundImage.toString().replace('url("','').replace('")',''),
-        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + this.origBg + "', sizingMethod='crop')",
-        this.runtimeStyle.backgroundImage = "none")),this.pngSet=true)
-    );
-}
-*/
-
 #contextMapOuterDiv {
 	clear: both;
 	position: relative;
@@ -171,7 +158,6 @@ div#errorMessage {
 }
 
 body.genePage {font-size: 0.8em;}
-* html body.genePage {font-size: 1em;}
 
 div#geneDetails {
     position: relative;
@@ -188,6 +174,7 @@ div.row {
     position: relative;
     display: block;
     width: 100%;
+    overflow: visible;
 }
 
 div.comment {
@@ -223,17 +210,26 @@ div#analysisTools #sendTo {
     margin-bottom: 1ex;
 }
 
-/* when protein map is restored:
-div#peptideProperties .middle {
-    margin-right: 300px;
+div.leftBox {
+	position: absolute;
+	width: auto;
+	top: 0px; left: 0px;
 }
-div#proteinMap {
-    position: absolute;
-    width: 300px;
-    right: 0px;
-    top: 0px;
+div.leftBox .middle {
+    width: 16em;
 }
-*/
+div.leftBox .inner {
+	height: 9em;
+}
+div.rightBox {float: none;}
+div.rightBox .middle {
+	margin-left: 16em;
+	padding-left: 5px;
+}
+div.rightBox .inner {
+    height: 9em;
+}
+
 
 .outer {
    clear:left;
@@ -395,7 +391,7 @@ div.value {
 .domainTable {width: 90%;}
 .domainTitleFirst {padding-top: 0px;}
 .domainTitle {padding-top: 1em;}
-.domainAccession {width: 9em; padding-left: 2em; text-align: right;}
+.domainAccession, .domainName {width: 9em; padding-left: 2em; text-align: right;}
 .domainDescription {padding-left: 2em;}
 .domainPosition {text-align: right; margin-right: 2em;}
 .domainScore {text-align: right;}

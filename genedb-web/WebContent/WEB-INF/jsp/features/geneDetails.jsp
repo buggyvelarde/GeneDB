@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="primaryLoc" value="${gene.rankZeroFeatureLoc}" />
-<c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
+<c:set var="chromosome" value="${primaryLoc.sourceFeature}" />
 <c:set var="organism" value="${gene.organism.commonName}" />
 
 <div id="firstRow" class="row">
@@ -34,9 +34,9 @@
             <td class="label">Feature Type</td>
             <td class="value">
 				<c:choose>
-					<c:when test="${transcript.cvTerm.name == 'mRNA'}">Protein coding gene</c:when>
-					<c:when test="${transcript.cvTerm.name == 'pseudogenic_transcript'}">Pseudogene</c:when>
-					<c:otherwise>${transcript.cvTerm.name}</c:otherwise>
+					<c:when test="${transcript.type.name == 'mRNA'}">Protein coding gene</c:when>
+					<c:when test="${transcript.type.name == 'pseudogenic_transcript'}">Pseudogene</c:when>
+					<c:otherwise>${transcript.type.name}</c:otherwise>
 				</c:choose>
             </td>
         </tr>
@@ -95,7 +95,7 @@
                     <option value="PROTEIN">Protein</option>
                 </c:if>
             </select>
-            <input type="hidden" name="featureType" value="${transcript.cvTerm.name}" />
+            <input type="hidden" name="featureType" value="${transcript.type.name}" />
             <input type="hidden" name="featureName" value="<c:out value="${transcript.uniqueName}" />">
             <input type="submit" value="Submit">
         </form>
@@ -108,7 +108,7 @@
 <c:if test="${polypeptide != null}">
 
     <!-- Comments Section -->
-    <db:propByName items="${polypeptide.featureProps}" cvTerm="comment" var="comment"/>
+    <db:filterByType items="${polypeptide.featureProps}" cvTerm="comment" var="comment"/>
     <c:if test="${fn:length(comment) > 0}">
         <format:genePageSection id="comment">
             <div class="heading">Comments</div>
@@ -119,7 +119,7 @@
     </c:if>
 
     <!-- Curation Section -->
-    <db:propByName items="${polypeptide.featureProps}" cvTerm="curation" var="curation"/>
+    <db:filterByType items="${polypeptide.featureProps}" cvTerm="curation" var="curation"/>
     <c:if test="${fn:length(curation) > 0}">
         <format:genePageSection id="curation">
             <div class="heading">Curation</div>
@@ -130,7 +130,7 @@
     </c:if>
 
     <!-- Controlled Curation Section -->
-    <db:propByName items="${polypeptide.featureCvTerms}" cvPattern="CC_.*" var="controlledCurationTerms"/>
+    <db:filterByType items="${polypeptide.featureCvTerms}" cvPattern="CC_.*" var="controlledCurationTerms"/>
     <c:if test="${fn:length(controlledCurationTerms) > 0}">
         <format:genePageSection id="controlCur">
             <div class="heading">Controlled Curation</div>
@@ -141,9 +141,9 @@
     </c:if>
 
     <!-- Gene Ontology Section -->
-    <db:propByName items="${polypeptide.featureCvTerms}" cv="biological_process" var="biologicalProcessTerms"/>
-    <db:propByName items="${polypeptide.featureCvTerms}" cv="molecular_function" var="molecularFunctionTerms"/>
-    <db:propByName items="${polypeptide.featureCvTerms}" cv="cellular_component" var="cellularComponentTerms"/>
+    <db:filterByType items="${polypeptide.featureCvTerms}" cv="biological_process" var="biologicalProcessTerms"/>
+    <db:filterByType items="${polypeptide.featureCvTerms}" cv="molecular_function" var="molecularFunctionTerms"/>
+    <db:filterByType items="${polypeptide.featureCvTerms}" cv="cellular_component" var="cellularComponentTerms"/>
     <c:if test="${fn:length(biologicalProcessTerms) + fn:length(molecularFunctionTerms) + fn:length(cellularComponentTerms) > 0}">
         <format:genePageSection id="geneOntology">
             <div class="heading">Gene Ontology</div>
@@ -158,38 +158,66 @@
     <c:if test="${!gene.pseudo}">
         <!-- Predicted Peptide Section -->
         <div id="peptideRow" class="row">
-            <format:genePageSection id="peptideProperties">
-                <div class="heading">Predicted Peptide Properties</div>
+            <c:set var="hasAlgorithmData" value="${fn:length(algorithmData) > 0}"/>
+            <c:if test="${hasAlgorithmData}">
+                <c:set var="peptidePropertiesClass" value="leftBox"/>
+            </c:if>
+            <format:genePageSection id="peptideProperties" className="${peptidePropertiesClass}">
+                <div class="heading">Predicted Peptide Data</div>
                 <table>
-                <c:if test="${polyprop.isoelectricPoint != null}">
+                <c:if test="${pepstats.isoelectricPoint != null}">
                     <tr>
                         <td class="label">Isoelectric Point</td>
-                        <td class="value">pH ${polyprop.isoelectricPoint}</td>
+                        <td class="value">pH ${pepstats.isoelectricPoint}</td>
                     </tr>
                 </c:if>
-                <c:if test="${polyprop.mass != null}">
+                <c:if test="${pepstats.mass != null}">
                     <tr>
                         <td class="label">Mass</td>
-                        <td class="value">${polyprop.mass} kDa</td>
+                        <td class="value">${pepstats.mass} kDa</td>
                     </tr>
                 </c:if>
                 <tr>
                     <td class="label">Charge</td>
-                    <td class="value">${polyprop.charge}</td>
+                    <td class="value">${pepstats.charge}</td>
                 </tr>
                 <tr>
                     <td class="label">Amino Acids</td>
-                    <td class="value">${polyprop.aminoAcids}</td>
+                    <td class="value">${pepstats.aminoAcids}</td>
                 </tr>
                 </table>
             </format:genePageSection>
 
-            <%-- <format:genePageSection id="proteinMap" className="whiteBox">
-                <div class="heading">Protein Map</div>
-                <div align="center">
-                    <img src="<c:url value="/includes/images/protein.gif"/>" id="ProteinMap">
-                </div>
-            </format:genePageSection> --%>
+            <c:if test="${hasAlgorithmData}">
+                <format:genePageSection id="peptideAlgorithms" className="rightBox">
+                    <div class="heading">Algorithmic Predictions</div>
+                    <c:if test="${algorithmData.SignalP != null}">
+                        <div class="comment">
+                            <div class="label">SignalP</div>
+                            Predicted ${algorithmData.SignalP.prediction}
+                            (Signal peptide probability ${algorithmData.SignalP.peptideProb},
+                            signal anchor probability ${algorithmData.SignalP.anchorProb}).
+                            <c:if test="${algorithmData.SignalP.cleavageSite != null}">
+                                Predicted cleavage site at ${algorithmData.SignalP.cleavageSite}
+                                with probability ${algorithmData.SignalP.cleavageSiteProb}.
+                            </c:if>
+                        </div>
+                    </c:if>
+                    <c:if test="${algorithmData.DGPI != null}">
+                        <div class="comment">
+                            <div class="label">DGPI</div>
+                            <c:if test="${algorithmData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
+                            <c:if test="${algorithmData.DGPI.location != null}">Predicted cleavage site at ${algorithmData.DGPI.location} with score ${algorithmData.DGPI.score}.</c:if>
+                        </div>
+                    </c:if>
+                    <c:if test="${algorithmData.PlasmoAP != null}">
+                        <div class="comment">
+                            <div class="label">PlasmoAP</div>
+                            ${algorithmData.PlasmoAP.description} apicoplast-targeting protein (score ${algorithmData.PlasmoAP.score}).
+                        </div>
+                    </c:if>
+                </format:genePageSection>
+            </c:if>
         </div>
     </c:if>
 
@@ -219,11 +247,17 @@
                     </tr>
                     <c:forEach var="hit" items="${subsection.hits}">
                         <tr>
-                            <td class="domainAccession">
-                                <a href="${hit.dbxref.db.urlPrefix}${hit.dbxref.accession}"
-                                    >${hit.dbxref.db.name}:${hit.dbxref.accession}</a>
-                            </td>
-                            <td class="domainDescription">${hit.dbxref.description}</td>
+                            <c:if test="${hit.dbxref != null}">
+                                <td class="domainAccession">
+                                    <a href="${hit.dbxref.db.urlPrefix}${hit.dbxref.accession}"
+                                        >${hit.dbxref.db.name}:${hit.dbxref.accession}</a>
+                                </td>
+                                <td class="domainDescription">${hit.dbxref.description}</td>
+                            </c:if>
+                            <c:if test="${hit.dbxref == null}">
+                                <td class="domainName">${hit.name}</td>
+                                <td class="domainDescription">${hit.description}</td>
+                            </c:if>
                             <td class="domainPosition">${1 + hit.fmin} - ${hit.fmax}</td>
                             <td class="domainScore">${hit.score}</td>
                         </tr>
@@ -233,16 +267,16 @@
         </format:genePageSection>
     </c:if>
     <!-- Ortholog / Paralog Section -->
-    <db:propByName items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>
+    <db:filterByType items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>
     <c:if test="${fn:length(orthologs) > 0}">
 	    <format:genePageSection id="orthologs">
 	        <div class="heading">Orthologs / Paralogs</div>
 	        <db:filtered-loop items="${orthologs}" var="ortholog" varStatus="status">
-	        	<c:set var="feat" value="${ortholog.featureByObjectId}"/>
-	        	<c:if test="${feat.cvTerm.name eq 'protein_match'}">
+	        	<c:set var="feat" value="${ortholog.objectFeature}"/>
+	        	<c:if test="${feat.type.name eq 'protein_match'}">
 	        		<span>${feat.uniqueName} <a href="<c:url value="/"/>Orthologs?cluster=${feat.uniqueName}">${fn:length(feat.featureRelationshipsForObjectId)} Others</a></span><br>
 	        	</c:if>
-	        	<c:if test="${feat.cvTerm.name eq 'polypeptide'}">
+	        	<c:if test="${feat.type.name eq 'polypeptide'}">
 	        		<span><a href="<c:url value="/"/>NamedFeature?name=${feat.gene.uniqueName}">${feat.gene.uniqueName}</a></span><br>
 	        	</c:if>
 	        </db:filtered-loop>

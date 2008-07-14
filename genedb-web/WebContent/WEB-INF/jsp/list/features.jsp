@@ -6,7 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/YUI-2.5.2/datatable/assets/skins/sam/datatable.css"/>" />
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/connection/connection-min.js"/>"></script>
-	
+
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/json/json-min.js"/>"></script>
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/element/element-beta-min.js"/>"></script>
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/datasource/datasource-beta-min.js"/>"></script>
@@ -20,7 +20,7 @@
 	<c:if test="${results != null}">
 		<display:table name="results" uid="tmp" pagesize="30" requestURI="/Orthologs" class="simple" cellspacing="0" cellpadding="4">
 			<display:column property="organism.abbreviation" title="Organism"/>
-			<display:column property="cvTerm.name" title="Type"/> 
+			<display:column property="type.name" title="Type"/>
 			<display:column property="uniqueName" href="./NamedFeature" paramId="name"/>
 		</display:table>
 	</c:if>

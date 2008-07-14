@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="primaryLoc" value="${gene.rankZeroFeatureLoc}" />
-<c:set var="chromosome" value="${primaryLoc.featureBySrcFeatureId}" />
+<c:set var="chromosome" value="${primaryLoc.sourceFeature}" />
 <c:url value="/" var="base"/>
 
 <format:headerRound name="${gene.organism.htmlShortName}" organism="${gene.organism.commonName}" title="Gene Page ${gene.displayName}" bodyClass="genePage"

@@ -124,7 +124,7 @@ public class NameSearchController extends TaxonNodeBindingFormController {
     }
 
     private Hits lookupInLucene(String name, TaxonNode[] taxonNodes) throws IOException {
-        IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
+        IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
 
         BooleanQuery geneNameQuery = new BooleanQuery();
 

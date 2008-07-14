@@ -2,8 +2,8 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureRelationship;
 
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -67,13 +67,13 @@ public class OrthologsController extends AbstractController {
          * something like polypeptide.getGene() can be used either
          */
         for (FeatureRelationship featureRel : relations) {
-            Feature protein = featureRel.getFeatureBySubjectId();
+            Feature protein = featureRel.getSubjectFeature();
             Feature mRNA = null;
             Collection<FeatureRelationship> frs = protein.getFeatureRelationshipsForSubjectId();
             if (frs != null) {
                 for (FeatureRelationship fr : frs) {
-                    if (fr.getCvTerm().getName().equals("derives_from")) {
-                        mRNA = fr.getFeatureByObjectId();
+                    if (fr.getType().getName().equals("derives_from")) {
+                        mRNA = fr.getObjectFeature();
                         break;
                     }
                 }
@@ -82,8 +82,8 @@ public class OrthologsController extends AbstractController {
                     Collection<FeatureRelationship> frs2 = mRNA
                             .getFeatureRelationshipsForSubjectId();
                     for (FeatureRelationship fr : frs2) {
-                        if (fr.getCvTerm().getName().equals("part_of")) {
-                            gene = fr.getFeatureByObjectId();
+                        if (fr.getType().getName().equals("part_of")) {
+                            gene = fr.getObjectFeature();
                             break;
                         }
                     }

@@ -114,7 +114,7 @@ public class ContextMapController extends PostOrGetFormController {
     protected ModelAndView onSubmit(Object rawCommand) throws Exception {
         Command command = (Command) rawCommand;
 
-        IndexReader indexReader = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
+        IndexReader indexReader = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
         BasicGeneService basicGeneService = new BasicGeneServiceImpl(indexReader);
 
         ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forChromosome(basicGeneService,

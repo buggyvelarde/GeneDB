@@ -8,6 +8,7 @@
 
 <%
 Exception ex = (Exception) request.getAttribute("exception");
+org.apache.log4j.Logger.getLogger("org.genedb.web.DataAccessFailure").error(ex);
 %>
 
 <H2>Data access failure: <%= ex.getMessage() %></H2>

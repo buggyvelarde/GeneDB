@@ -19,7 +19,7 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.mapped.Feature;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -66,7 +66,7 @@ public class Gff3Utils {
         int phase = -4;
         String attributes = null;
         // TODO dummy values above 
-        writeGFFLine(w, seqId, source, feat.getCvTerm().getName(), start, end, score, strand, phase, attributes);
+        writeGFFLine(w, seqId, source, feat.getType().getName(), start, end, score, strand, phase, attributes);
         // Get immediate children of feature
         // Loop over children, call this but with top not true
         // If top, write FASTA sequence

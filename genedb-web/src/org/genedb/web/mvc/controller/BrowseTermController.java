@@ -22,9 +22,9 @@ package org.genedb.web.mvc.controller;
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.feature.AbstractGene;
-import org.gmod.schema.sequence.feature.Polypeptide;
+import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.mapped.Feature;
 
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;

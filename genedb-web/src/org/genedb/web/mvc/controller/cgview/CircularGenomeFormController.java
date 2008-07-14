@@ -41,23 +41,23 @@ import javax.servlet.http.HttpServletResponse;
  * @author Adrian Tivey
  */
 public class CircularGenomeFormController extends SimpleFormController implements InitializingBean{
-    
+
     private List<String> digestNames;
-    
+
     private EmbossDigestParser embossDigestParser;
-    
+
     private CachedFileFactory cachedFileFactory;
 
     private Map<String, String> orgs = new HashMap<String, String>();
-    
+
     private String embossDirectoryName;
-    
+
     private String diagramView;
-    
+
     private String fileName = null;
-    
+
     private String organism = null;
-    
+
     public String getDiagramView() {
         return diagramView;
     }
@@ -84,13 +84,13 @@ public class CircularGenomeFormController extends SimpleFormController implement
      */
     @SuppressWarnings("unchecked")
     @Override
-    public ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, 
+    public ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
             Object command, BindException errors) throws Exception{
-        
+
         CircularGenomeCommandBean cgcb = (CircularGenomeCommandBean) command;
-        
+
         CgviewFromGeneDBFactory factory = new CgviewFromGeneDBFactory();
-        
+
         Map<String,Object> model = new HashMap<String,Object>(4);
 
         try {
@@ -131,7 +131,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
                     }
                 }
             }
-            
+
             File output = File.createTempFile("circular_genome", ".txt");
             String[] args = {embossDirectoryName+"/bin/restrict", fileName, "-auto", "-limit", "y", "-enzymes", cgcb.getEnzymeName(), "-out", output.getCanonicalPath() };
             ProcessBuilder pb = new ProcessBuilder(args);
@@ -161,18 +161,18 @@ public class CircularGenomeFormController extends SimpleFormController implement
                 return showForm(request, response, errors);
             }
             DNADraw dna = factory.createDnaFromReportDetails(rd);
-            
+
             //Map<String,Location> miscFeatures = factory.parseEmblForMiscFeatures(addFileName);
             CachedFile pngFile = cachedFileFactory.getCachedFile("organism-enzyme-"+cgcb.getEnzymeName()+".PNG");
 
-            RenderedImage bi = writeCgviewToImage(dna, false);
+            RenderedImage bi = writeCgviewToImage(dna);
             String table = makeTable(dna.getFeaturePoints());
             ImageIO.write(bi, "PNG", pngFile.getFile());
-            
-            
+
+
             String browserPath = pngFile.getBrowserPath(request);
             String circular = ("<img style=\"border:0\" src=\"" + StringEscapeUtils.escapeHtml(browserPath) + "\" width=\"" + Integer.toString(600) + "\" height=\"" + Integer.toString(600) + "\" />" + '\n');
-            
+
             VirtualDigest vDigest = new VirtualDigest();
             vDigest.setLength(rd.length);
             vDigest.setCutSites(rd.cutSites);
@@ -180,9 +180,9 @@ public class CircularGenomeFormController extends SimpleFormController implement
             String array = makeArray(vDigest.getCoords());
             CachedFile pngFile2 = cachedFileFactory.getCachedFile("organism-"+cgcb.getTaxon()+":"+"enzyme-"+cgcb.getEnzymeName()+"-gel-image");
             ImageIO.write(bi2, "PNG", pngFile2.getFile());
-            
+
             String gel = ("<img id=\"gel\" style=\"border:0\" src=\"" + StringEscapeUtils.escapeHtml(pngFile2.getBrowserPath(request)) + "\" width=\"" + Integer.toString(100) + "\" height=\"" + Integer.toString(600) + "\" />" + '\n');
-            
+
             model.put("circular", circular);
             model.put("gel", gel);
             model.put("array", array);
@@ -218,10 +218,10 @@ public class CircularGenomeFormController extends SimpleFormController implement
             Point[] point = points.get(keys[i]);
             Point start = point[0];
             Point end = point[2];
-            
+
             int x1 = (int) start.getX();
             int y1 = (int) start.getY();
-            
+
             int x3 = (int) end.getX();
             int y3 = (int) end.getY();
 
@@ -230,7 +230,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
             } else if (x3 - 20 < 0) {
                 x3 = 25;
             }
-            
+
             if(y3 + 10 > width) {
                 y3 = width - 15;
             } else if (y3 - 20 < 0) {
@@ -245,7 +245,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
             }
             String hrefArtemis = String.format("href=\"FlatFileReport?outputFormat=Artemis&%s&min=%s&max=%s\"",orgOrFileLink,values[0],values[1]);
             String hrefTable = String.format("href=\"FlatFileReport?outputFormat=Table&%s&min=%s&max=%s\"",orgOrFileLink,values[0],values[1]);
-           
+
             String coords = String.format("%d,%d,%d,%d,%s", x1,x3,y1,y3,feature);
             table.append("<td>");
             table.append(String.format("<a href=\"#\" onmouseover= \"highlight(%s)\" onmouseout= \"highlightOff()\"> %s </a>",coords,feature));
@@ -261,7 +261,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
 
     private String makeArray(Map<String, List<String>> coords) {
         Iterator<String> iterator = coords.keySet().iterator();
-        StringBuilder ret = new StringBuilder(); 
+        StringBuilder ret = new StringBuilder();
         ret.append("<script type=\"text/javascript\">");
         ret.append(String.format("var coords = new Array(%d);",coords.size()));
         while (iterator.hasNext()) {
@@ -275,25 +275,23 @@ public class CircularGenomeFormController extends SimpleFormController implement
            ret.append(String.format("coords[%d][0] = %s;",count,topY));
            ret.append(String.format("coords[%d][1] = %s;",count,bottomX));
            ret.append(String.format("coords[%d][2] = %s;",count,bottomY));
-        }  
+        }
         ret.append("</script>");
-        
-        
+
+
         return ret.toString();
     }
-    
-    public static BufferedImage writeCgviewToImage(DNADraw dna, boolean keepLastLabels) {
 
-        int height = (int)dna.getHeight();
-        int width = (int)dna.getWidth();
+    public static BufferedImage writeCgviewToImage(DNADraw dna) {
+
         dna.setOpaque(true);
-        BufferedImage buffImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage buffImage = new BufferedImage(dna.getWidth() ,dna.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D graphics2D = buffImage.createGraphics();
         graphics2D.setColor(Color.white);
-        graphics2D.fillRect(0, 0, width,height);
+        graphics2D.fillRect(0, 0, dna.getWidth() ,dna.getHeight());
         try {
-                
+
                 dna.drawAll(graphics2D, true);
         } finally {
             graphics2D.dispose();
@@ -302,7 +300,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
     }
 
     @Override
-    protected Map<String,Collection<String>> referenceData(HttpServletRequest req) throws Exception {
+    protected Map<String,Collection<String>> referenceData(@SuppressWarnings("unused") HttpServletRequest req) throws Exception {
         Map<String, Collection<String>> ret = new HashMap<String, Collection<String>>();
         Map<String, String> orgMappings = new LinkedHashMap<String, String>(orgs.size());
         orgMappings.put("User uploaded file", "user-file");

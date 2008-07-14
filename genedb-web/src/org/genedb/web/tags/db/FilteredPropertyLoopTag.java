@@ -31,8 +31,8 @@ public class FilteredPropertyLoopTag extends LoopTagSupport {
         // Filter the values list based on the cv and possibly the cvterm
         List<PropertyI> filteredItems = new ArrayList<PropertyI>();
         for (PropertyI propertyI : items)
-            if ((cvName == null || propertyI.getCvTerm().getCv().getName().equals(cvName))
-            && (cvTermName == null || propertyI.getCvTerm().getName().equals(cvTermName)))
+            if ((cvName == null || propertyI.getType().getCv().getName().equals(cvName))
+            && (cvTermName == null || propertyI.getType().getName().equals(cvTermName)))
                     filteredItems.add(propertyI);
 
         filteredItemsIterator = filteredItems.iterator();

@@ -2,8 +2,8 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -147,7 +147,7 @@ public class GeneDBWebUtils {
 
             Collection<FeatureLoc> temp = feature.getFeatureLocsForFeatureId();
             for (FeatureLoc fl : temp) {
-                String name = fl.getFeatureBySrcFeatureId().getUniqueName();
+                String name = fl.getSourceFeature().getUniqueName();
                 String number = name.substring(name.length() - 1);
                 chromosome.setText(number);
                 chrstart.setText(fl.getFmin().toString());

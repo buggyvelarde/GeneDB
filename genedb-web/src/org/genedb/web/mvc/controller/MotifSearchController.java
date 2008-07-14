@@ -6,7 +6,7 @@
  */
 package org.genedb.web.mvc.controller;
 
-import org.gmod.schema.organism.Organism;
+import org.gmod.schema.mapped.Organism;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;

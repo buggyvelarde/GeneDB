@@ -6,7 +6,7 @@
  <uri>db</uri>
 
  <tag>
-   <name>propByName</name>
+   <name>filterByType</name>
    <tag-class>org.genedb.web.tags.db.PropertyFilterTag</tag-class>
    <body-content>scriptless</body-content>
     <attribute>

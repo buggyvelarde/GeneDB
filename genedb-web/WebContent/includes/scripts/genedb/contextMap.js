@@ -206,6 +206,7 @@ function loadTiles(chrlen, tileData) {
         contextMapImage.className  = "contextMapImage";
         contextMapImage.src    = tilePrefix + "/" + tile[1];
         contextMapImage.width  = tile[0];
+        contextMapImage.height = tileData.tileHeight; // IE6 needs this
         contextMapImage.style.left = (leftPx - contextMapContent.trueLeft) + "px";
         contextMapContent.appendChild(contextMapImage);
 

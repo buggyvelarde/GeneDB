@@ -1,8 +1,8 @@
 package org.genedb.web.mvc.controller;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.sequence.feature.MRNA;
+import org.gmod.schema.feature.MRNA;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureRelationship;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,7 +20,7 @@ public class GeneUtils {
 	
 	// FIXME - This is just it's possible, not certain
 	public static boolean isPartOfGene(Feature feature) {
-		if (geneParts.contains(feature.getCvTerm().getName())) {
+		if (geneParts.contains(feature.getType().getName())) {
 			//System.err.println("Returning true for "+feature.getUniqueName());
 			return true;
 		}
@@ -29,22 +29,22 @@ public class GeneUtils {
 	}
 
 	public static Feature getGeneFromPart(Feature feature) {
-		if ("polypeptide".equals(feature.getCvTerm().getName())) {
+		if ("polypeptide".equals(feature.getType().getName())) {
 			//System.err.println("Looking for gene for "+feature.getUniqueName());
 			Feature gene = null;
 			Feature mRNA = null;
 			Collection<FeatureRelationship> frs = feature.getFeatureRelationshipsForSubjectId();
 			for (FeatureRelationship relationship : frs) {
 				//System.err.println("FeatureRealtionship for mRNA is "+relationship.getFeatureByObjectId().getUniqueName());
-				if(relationship.getCvTerm().getName().equals("derives_from")){
-				    mRNA = relationship.getFeatureByObjectId();
+				if(relationship.getType().getName().equals("derives_from")){
+				    mRNA = relationship.getObjectFeature();
 				}
 			}
 			if (mRNA != null) {
 				frs = mRNA.getFeatureRelationshipsForSubjectId();
 				for (FeatureRelationship relationship : frs) {
-					if(relationship.getCvTerm().getName().equals("part_of")) {
-					    gene = relationship.getFeatureByObjectId();
+					if(relationship.getType().getName().equals("part_of")) {
+					    gene = relationship.getObjectFeature();
 					}
 				    //Feature feat = relationship.getFeatureByObjectId();
 					

@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.cv.CvTerm;
+
+import org.gmod.schema.mapped.CvTerm;
+
 import org.springframework.beans.factory.InitializingBean;
 
 public class BrowseBeanName implements InitializingBean {

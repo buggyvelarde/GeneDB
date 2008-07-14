@@ -74,7 +74,7 @@ public class GenesByCvTermAndCvController extends AbstractController {
 
                 List<String> ids = new ArrayList<String>();
 
-                IndexReader ir = luceneDao.openIndex("org.gmod.schema.sequence.Feature");
+                IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
 
                 for (GeneNameOrganism feature : features) {
                     ids.add(feature.getGeneName());

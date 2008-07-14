@@ -9,10 +9,10 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.gmod.schema.analysis.AnalysisFeature;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.mapped.AnalysisFeature;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
 
 public class DisplaySimilarity extends SimpleTagSupport {
 
@@ -44,8 +44,8 @@ public class DisplaySimilarity extends SimpleTagSupport {
         JspWriter out = getJspContext().getOut();
 
         for (FeatureLoc loc : flocs) {
-            if ("protein_match".equals(loc.getFeatureByFeatureId().getCvTerm().getName())) {
-                similarityFeatures.add(loc.getFeatureByFeatureId());
+            if ("protein_match".equals(loc.getFeature().getType().getName())) {
+                similarityFeatures.add(loc.getFeature());
             }
         }
 
@@ -55,8 +55,8 @@ public class DisplaySimilarity extends SimpleTagSupport {
          */
         flocs = transcript.getFeatureLocsForSrcFeatureId();
         for (FeatureLoc loc : flocs) {
-            if ("nucleotide_match".equals(loc.getFeatureByFeatureId().getCvTerm().getName())) {
-                similarityFeatures.add(loc.getFeatureByFeatureId());
+            if ("nucleotide_match".equals(loc.getFeature().getType().getName())) {
+                similarityFeatures.add(loc.getFeature());
             }
         }
 
@@ -80,7 +80,7 @@ public class DisplaySimilarity extends SimpleTagSupport {
             for (Feature matchFeature : similarityFeatures) {
 
                 for (FeatureProp prop : matchFeature.getFeatureProps()) {
-                    if (prop.getCvTerm().getName().equals("overlap")) {
+                    if (prop.getType().getName().equals("overlap")) {
                         overlap = prop.getValue();
                     }
                 }
@@ -97,19 +97,19 @@ public class DisplaySimilarity extends SimpleTagSupport {
                 Feature subjectFeature = null;
                 for (FeatureLoc floc : matchFeature.getFeatureLocsForFeatureId()) {
                     System.out.println("subjecFeature can be : "
-                            + floc.getFeatureBySrcFeatureId().getCvTerm().getName());
-                    if (floc.getFeatureBySrcFeatureId().getCvTerm().getName().equals(
+                            + floc.getSourceFeature().getType().getName());
+                    if (floc.getSourceFeature().getType().getName().equals(
                         "similarity_region")) {
-                        subjectFeature = floc.getFeatureBySrcFeatureId();
+                        subjectFeature = floc.getSourceFeature();
                     }
                 }
                 accession = subjectFeature.getDbXRef().getAccession();
                 database = subjectFeature.getDbXRef().getDb().getName();
 
                 for (FeatureProp prop : subjectFeature.getFeatureProps()) {
-                    if (prop.getCvTerm().getName().equals("product")) {
+                    if (prop.getType().getName().equals("product")) {
                         description = prop.getValue();
-                    } else if (prop.getCvTerm().getName().equals("organism")) {
+                    } else if (prop.getType().getName().equals("organism")) {
                         organism = prop.getValue();
                     }
                 }

@@ -11,7 +11,7 @@
       <c:forEach items="${featureCvTerms}" var="featureCvTerm" varStatus="status">
         <tr>
         <td class="label"><c:if test="${status.first}">${title}</c:if></th>
-        <td class="value name">${featureCvTerm.cvTerm.name}</td>
+        <td class="value name">${featureCvTerm.type.name}</td>
         <td class="value qualifiers">
         	<db:filtered-loop items="${featureCvTerm.featureCvTermProps}" cvTerm="qualifier" var="qualifier" varStatus="st">
         		<c:if test="${!st.first}"> | </c:if>
@@ -22,8 +22,8 @@
             <db:filtered-loop items="${featureCvTerm.featureCvTermProps}" cvTerm="evidence" var="evidence">
             		${evidence.value}
             </db:filtered-loop>&nbsp;
-            <c:forEach items="${featureCvTerm.featureCvTermPubs}" var="fctp">
-            	(${fctp.pub.uniqueName})
+            <c:forEach items="${featureCvTerm.pubs}" var="pub">
+            	(${pub.uniqueName})
             </c:forEach>
         </td>
         <td class="value accession">

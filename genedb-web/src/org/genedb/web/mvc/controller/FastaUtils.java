@@ -19,7 +19,7 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.mapped.Feature;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -27,7 +27,7 @@ import java.io.Writer;
 public class FastaUtils {
 
     public static void exportFeatureFasta(Writer w, boolean spaces, Feature feat) throws IOException {
-        exportFasta(w, feat.getCvTerm().getName()+":"+feat.getUniqueName(), feat.getResidues(), spaces);
+        exportFasta(w, feat.getType().getName()+":"+feat.getUniqueName(), feat.getResidues(), spaces);
     }
     
     public static void exportFastaRegion(Writer w, String header, boolean spaces, 

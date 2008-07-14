@@ -76,7 +76,7 @@
 					<dd>${feature.uniqueName}</dd>
 
 					<dt><b>Type:</b></dt>
-					<dd>${feature.cvTerm.name}</dd>
+					<dd>${feature.type.name}</dd>
 
 					<dt><b>Analysis Feature:</b></dt>
 					<dd>${feature.analysis}</dd>
@@ -100,7 +100,7 @@
 					<c:forEach items="${feature.featureProps}" var="featProp">
 						<tr>
 							<td>[${featProp.rank}]</td>
-							<td>&nbsp;&nbsp;&nbsp;&nbsp;${featProp.cvTerm.name}</td>
+							<td>&nbsp;&nbsp;&nbsp;&nbsp;${featProp.type.name}</td>
 							<td>&nbsp;&nbsp;&nbsp;&nbsp;${featProp.value}</td>
 						</tr>
 					</c:forEach>
@@ -116,10 +116,10 @@
 							<td>${featRel.rank}</td>
 							<td>${featRel.value}</td>
 							<td>this</td>
-							<td>is ${featRel.cvTerm.name}</td>
+							<td>is ${featRel.type.name}</td>
 							<td><a
-								href="./FeatureByName?name=${featRel.featureByObjectId.uniqueName}">${featRel.featureByObjectId.uniqueName}</a>
-							[${featRel.featureByObjectId.cvTerm.name}]</td>
+								href="./FeatureByName?name=${featRel.objectFeature.uniqueName}">${featRel.objectFeature.uniqueName}</a>
+							[${featRel.objectFeature.type.name}]</td>
 						</tr>
 
 					</c:forEach>
@@ -134,9 +134,9 @@
 							<td>${featRel.rank}</td>
 							<td>${featRel.value}</td>
 							<td><a
-								href="./FeatureByName?name=${featRel.featureBySubjectId.uniqueName}">${featRel.featureBySubjectId.uniqueName}</a>
-							[${featRel.featureBySubjectId.cvTerm.name}]</td>
-							<td>is ${featRel.cvTerm.name}</td>
+								href="./FeatureByName?name=${featRel.subjectFeature.uniqueName}">${featRel.subjectFeature.uniqueName}</a>
+							[${featRel.subjectFeature.type.name}]</td>
+							<td>is ${featRel.type.name}</td>
 							<td>this</td>
 						</tr>
 					</c:forEach>

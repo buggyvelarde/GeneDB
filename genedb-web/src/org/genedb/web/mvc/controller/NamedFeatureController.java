@@ -21,7 +21,7 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
 
-import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;

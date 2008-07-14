@@ -6,8 +6,9 @@ import java.util.Map;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.sequence.Feature;
+
+import org.gmod.schema.mapped.Cv;
+import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.utils.CountedName;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
