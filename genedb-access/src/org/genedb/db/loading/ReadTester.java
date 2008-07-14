@@ -1,13 +1,13 @@
 package org.genedb.db.loading;
 
 
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.pub.Pub;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureDbXRef;
-import org.gmod.schema.sequence.FeatureProp;
-import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureDbXRef;
+import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.FeatureSynonym;
+import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.mapped.Pub;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -52,7 +52,7 @@ public class ReadTester {
         	System.err.println("=== "+feature.getName()+" ===");
         	
         	// Type
-        	System.err.println("Type: "+feature.getCvTerm().getName());
+        	System.err.println("Type: "+feature.getType().getName());
         	
         	// Analysis
         	System.err.println("Analysis Feature: "+feature.isAnalysis());
@@ -79,7 +79,7 @@ public class ReadTester {
 			System.err.println("Feature properties:");
 			Collection<FeatureProp> props = feature.getFeatureProps();
 			for (FeatureProp prop : props) {
-				System.err.println("\t"+prop.getRank()+"   "+prop.getCvTerm().getName()+"="+prop.getValue());
+				System.err.println("\t"+prop.getRank()+"   "+prop.getType().getName()+"="+prop.getValue());
 			}
 			
 			DbXRef oneXref = feature.getDbXRef();

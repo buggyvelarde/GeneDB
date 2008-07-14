@@ -3,7 +3,7 @@ package org.genedb.db.loading;
 
 import org.genedb.db.dao.GeneralDao;
 
-import org.gmod.schema.general.Db;
+import org.gmod.schema.mapped.Db;
 
 import org.springframework.beans.factory.InitializingBean;
 

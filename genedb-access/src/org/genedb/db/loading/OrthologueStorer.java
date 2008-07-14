@@ -1,6 +1,6 @@
 package org.genedb.db.loading;
 
-import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.mapped.CvTerm;
 
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

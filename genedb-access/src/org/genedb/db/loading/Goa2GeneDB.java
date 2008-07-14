@@ -35,14 +35,15 @@ import java.util.Properties;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.pub.Pub;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureCvTermDbXRef;
-import org.gmod.schema.sequence.FeatureCvTermProp;
+
+import org.gmod.schema.mapped.Cv;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.FeatureCvTermDbXRef;
+import org.gmod.schema.mapped.FeatureCvTermProp;
+import org.gmod.schema.mapped.Pub;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
@@ -156,7 +157,7 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 
         		String id = go.getId();
 
-                CvTerm cvTerm = cvDao.getGoCvTermByAccViaDb(id);
+                CvTerm cvTerm = cvDao.getGoCvTermByAcc(id);
                 if (cvTerm == null) {
                     logger.warn("Unable to find a CvTerm for the GO id of '"+id+"'. Skipping");
                     continue;

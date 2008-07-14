@@ -3,7 +3,8 @@ package org.genedb.db.loading.featureProcessors;
 import org.biojava.bio.seq.StrandedFeature;
 import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.ProcessingPhase;
-import org.gmod.schema.sequence.Feature;
+
+import org.gmod.schema.mapped.Feature;
 
 public class Gap_Processor extends BaseFeatureProcessor implements FeatureProcessor {
 

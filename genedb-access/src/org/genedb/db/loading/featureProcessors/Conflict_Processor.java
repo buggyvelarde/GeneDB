@@ -29,7 +29,7 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.mapped.Feature;
 
 import org.biojava.bio.seq.StrandedFeature;
 

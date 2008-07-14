@@ -32,9 +32,9 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureRelationship;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
@@ -122,7 +122,7 @@ public class PolyA_site_Processor extends BaseFeatureProcessor {
     private void storeFeature(String type, Feature above, Feature parent, StrandedFeature feat, Location loc) {
         
        String utrName = this.gns.get5pUtr(above.getUniqueName(), 0);
-       org.gmod.schema.sequence.Feature utr = this.featureUtils.createFeature(type, utrName, this.organism);
+       org.gmod.schema.mapped.Feature utr = this.featureUtils.createFeature(type, utrName, this.organism);
        FeatureRelationship utrFr = featureUtils.createRelationship(utr, above, REL_PART_OF, 0);
        FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
                 loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());

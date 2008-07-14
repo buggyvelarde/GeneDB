@@ -32,9 +32,9 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureRelationship;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
@@ -123,13 +123,13 @@ public class PolyA_signal_Processor extends BaseFeatureProcessor {
        Feature gene = null;
        Feature transcript = null;
        
-       if (above.getCvTerm().getName().equals("gene")) {
+       if (above.getType().getName().equals("gene")) {
            logger.info("Trying to store '"+type+"' for gene '"+above.getUniqueName()+"'");
            gene = above;
            Collection<FeatureRelationship> frs = gene.getFeatureRelationshipsForObjectId(); 
            logger.info("The number of possible transcripts is '"+frs.size()+"'");
            for (FeatureRelationship fr : frs) {
-               transcript = fr.getFeatureBySubjectId();
+               transcript = fr.getSubjectFeature();
                break;
            }
        } else {
@@ -138,14 +138,14 @@ public class PolyA_signal_Processor extends BaseFeatureProcessor {
            Collection<FeatureRelationship> frs = transcript.getFeatureRelationshipsForSubjectId(); 
            logger.info("The number of possible genes is '"+frs.size()+"'");
            for (FeatureRelationship fr : frs) {
-               gene = fr.getFeatureByObjectId();
+               gene = fr.getObjectFeature();
                break;
            }
        }
 
         
        String utrName = this.gns.get5pUtr(transcript.getUniqueName(), 0);
-       org.gmod.schema.sequence.Feature utr = this.featureUtils.createFeature(type, utrName, this.organism);
+       org.gmod.schema.mapped.Feature utr = this.featureUtils.createFeature(type, utrName, this.organism);
        FeatureRelationship utrFr = featureUtils.createRelationship(utr, transcript, REL_PART_OF, 0);
        FeatureLoc utrFl = featureUtils.createLocation(parent, utr, 
                 loc.getMin()-1, loc.getMax(), (short)feat.getStrand().getValue());

@@ -27,8 +27,8 @@ package org.genedb.db.loading.featureProcessors;
 import org.genedb.db.loading.EmblQualifiers;
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;

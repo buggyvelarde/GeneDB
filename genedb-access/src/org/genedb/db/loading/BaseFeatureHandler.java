@@ -126,7 +126,7 @@ public abstract class BaseFeatureHandler extends BaseFeatureProcessor implements
 //    }
 
     @Override
-    public void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature feat, int offset) {
+    public void processStrandedFeature(org.gmod.schema.mapped.Feature parent, StrandedFeature feat, int offset) {
         // Dummy method
     }
 

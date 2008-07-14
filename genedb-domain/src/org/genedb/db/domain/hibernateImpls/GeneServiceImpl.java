@@ -6,10 +6,12 @@ import java.util.List;
 import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.services.GeneService;
-import org.gmod.schema.analysis.AnalysisFeature;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.sequence.FeatureSynonym;
+
+import org.gmod.schema.mapped.AnalysisFeature;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.mapped.FeatureSynonym;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,11 +41,11 @@ public class GeneServiceImpl extends BasicGeneServiceImpl implements GeneService
             paralogues.add(af.getAnalysis().getName());
         }
         for (FeatureRelationship fr : protein.getFeatureRelationshipsForObjectId()) {
-            Feature otherFeat = fr.getFeatureBySubjectId();
+            Feature otherFeat = fr.getSubjectFeature();
             processOrthoParaClusters(fr, otherFeat, clusters, orthologues, paralogues);
         }
         for (FeatureRelationship fr : protein.getFeatureRelationshipsForSubjectId()) {
-            Feature otherFeat = fr.getFeatureByObjectId();
+            Feature otherFeat = fr.getObjectFeature();
             processOrthoParaClusters(fr, otherFeat, clusters, orthologues, paralogues);
         }
         ret.setOrthologues(orthologues);
@@ -57,7 +59,7 @@ public class GeneServiceImpl extends BasicGeneServiceImpl implements GeneService
 
     private void processOrthoParaClusters(FeatureRelationship fr, Feature otherFeat,
             List<String> clusters, List<String> orthologues, List<String> paralogues) {
-        String type = fr.getCvTerm().getName();
+        String type = fr.getType().getName();
         if (type.equals("orthologous_to")) {
             if (otherFeat.getOrganism().getFullName().equals("dummy")) {
                 clusters.add(otherFeat.getUniqueName());

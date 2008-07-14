@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.gmod.schema.sequence.feature.Polypeptide;
+
+import org.gmod.schema.feature.Polypeptide;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

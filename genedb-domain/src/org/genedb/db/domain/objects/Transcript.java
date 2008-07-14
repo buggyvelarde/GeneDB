@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureProp;
 
 public class Transcript extends LocatedFeature implements Serializable {
     private transient Feature protein;
@@ -90,7 +90,7 @@ public class Transcript extends LocatedFeature implements Serializable {
     public void setProtein(Feature protein) {
         this.protein = protein;
         for (FeatureProp proteinProp: protein.getFeatureProps()) {
-            if (proteinProp.getCvTerm().getName().equals("colour"))
+            if (proteinProp.getType().getName().equals("colour"))
                 setColourId(Integer.parseInt(proteinProp.getValue()));
         }
     }

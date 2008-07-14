@@ -13,7 +13,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.gmod.schema.sequence.feature.Polypeptide;
+
+import org.gmod.schema.feature.Polypeptide;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

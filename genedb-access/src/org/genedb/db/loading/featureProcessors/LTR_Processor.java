@@ -30,9 +30,9 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 import org.genedb.db.loading.EmblQualifiers;
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
@@ -68,7 +68,7 @@ public class LTR_Processor extends BaseFeatureProcessor {
         short strand = (short)f.getStrand().getValue();
         String systematicId = "LTR"+loc.getMin()+"-"+loc.getMax(); 
         
-        org.gmod.schema.sequence.Feature ltr = this.featureUtils.createFeature("long_terminal_repeat", systematicId,
+        org.gmod.schema.mapped.Feature ltr = this.featureUtils.createFeature("long_terminal_repeat", systematicId,
                 this.organism);
         sequenceDao.persist(ltr);
 

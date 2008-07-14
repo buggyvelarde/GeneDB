@@ -28,11 +28,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.cv.CvTermRelationship;
-import org.gmod.schema.general.Db;
-import org.gmod.schema.general.DbXRef;
+
+import org.gmod.schema.mapped.Cv;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.CvTermRelationship;
+import org.gmod.schema.mapped.Db;
+import org.gmod.schema.mapped.DbXRef;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;

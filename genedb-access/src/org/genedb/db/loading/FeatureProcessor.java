@@ -23,14 +23,15 @@ import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.organism.Organism;
+
+import org.gmod.schema.mapped.Organism;
 
 import java.util.List;
 import java.util.Map;
 
 public interface FeatureProcessor {
 
-    public void process(org.gmod.schema.sequence.Feature parent, org.biojava.bio.seq.Feature feat, int offset);
+    public void process(org.gmod.schema.mapped.Feature parent, org.biojava.bio.seq.Feature feat, int offset);
     
     public void setFeatureUtils(FeatureUtils featureUtils);
     

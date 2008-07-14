@@ -51,8 +51,9 @@ import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.featureProcessors.CDS_Processor;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.sequence.FeatureLoc;
+
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.Organism;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.BeansException;
@@ -227,7 +228,7 @@ public class NewRunner implements ApplicationContextAware {
      *
      * @param f The feature to dispatch on
      */
-    private void despatchOnFeatureType(final FeatureProcessor fp, final Feature f, Session session, final org.gmod.schema.sequence.Feature parent, final int offset) {
+    private void despatchOnFeatureType(final FeatureProcessor fp, final Feature f, Session session, final org.gmod.schema.mapped.Feature parent, final int offset) {
     //	TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
      //   tt.execute(
               //  new TransactionCallbackWithoutResult() {
@@ -421,7 +422,7 @@ public class NewRunner implements ApplicationContextAware {
         	List <FeaturePart> featurePartList = new ArrayList<FeaturePart>();
         	List <FilePart> fpList = new ArrayList<FilePart>();
         	
-        	final org.gmod.schema.sequence.Feature top = featureUtils.createFeature(synthetic.getSoType(), synthetic.getName(), organism);
+        	final org.gmod.schema.mapped.Feature top = featureUtils.createFeature(synthetic.getSoType(), synthetic.getName(), organism);
             StringBuilder residues = new StringBuilder();
 
             for (Part part : synthetic.getParts()) {
@@ -454,7 +455,7 @@ public class NewRunner implements ApplicationContextAware {
             sequenceDao.persist(top);
             
             for (FeaturePart fp : featurePartList) {
-            	org.gmod.schema.sequence.Feature f = 
+            	org.gmod.schema.mapped.Feature f = 
                     featureUtils.createFeature(fp.getSoType(), fp.getName(), organism);
                 FeatureLoc fl = featureUtils.createLocation(top, f, fp.getOffSet(), fp.getOffSet()+fp.getSize(), fp.getStrand());
                 sequenceDao.persist(f);
@@ -543,11 +544,11 @@ public class NewRunner implements ApplicationContextAware {
      * @param offset The base offset, when reparenting is taking place
      */
     @SuppressWarnings("unchecked")
-    private void processSequence(File file, Sequence seq, org.gmod.schema.sequence.Feature parent, int offset) {
+    private void processSequence(File file, Sequence seq, org.gmod.schema.mapped.Feature parent, int offset) {
     	Session session = hibernateTransactionManager.getSessionFactory().openSession();
     	
     	try {
-            org.gmod.schema.sequence.Feature topLevel = this.featureHandler.process(file, seq);
+            org.gmod.schema.mapped.Feature topLevel = this.featureHandler.process(file, seq);
             logger.info("Processing '"+file.getAbsolutePath()+"'");
             if (parent == null) {
                 parent = topLevel;

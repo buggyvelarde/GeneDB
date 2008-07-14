@@ -25,12 +25,12 @@ import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
 
-import org.gmod.schema.analysis.Analysis;
-import org.gmod.schema.analysis.AnalysisFeature;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.mapped.Analysis;
+import org.gmod.schema.mapped.AnalysisFeature;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.mapped.Organism;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -281,7 +281,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 			List<Feature> features = new ArrayList<Feature>(frs.size());
 			for (FeatureRelationship relationship : frs) {
 				//System.err.println("  "+relationship.getFeatureBySubjectId().getUniqueName());
-				features.add(relationship.getFeatureBySubjectId());
+				features.add(relationship.getSubjectFeature());
 			}
 			for (int i = 0; i < features.size()-1; i++) {
 				Feature f1 = features.get(i);

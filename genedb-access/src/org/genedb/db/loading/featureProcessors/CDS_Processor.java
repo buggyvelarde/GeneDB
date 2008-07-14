@@ -53,20 +53,20 @@ import org.genedb.db.loading.ParsedString;
 import org.genedb.db.loading.ProcessingPhase;
 import org.genedb.db.loading.SimilarityInstance;
 import org.genedb.db.loading.SimilarityParser;
-import org.gmod.schema.analysis.Analysis;
-import org.gmod.schema.analysis.AnalysisFeature;
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.Db;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.pub.Pub;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureDbXRef;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
-import org.gmod.schema.sequence.FeaturePub;
-import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.mapped.Analysis;
+import org.gmod.schema.mapped.AnalysisFeature;
+import org.gmod.schema.mapped.Cv;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Db;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.FeatureDbXRef;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.FeaturePub;
+import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.mapped.Pub;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -314,8 +314,8 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         Collection<FeatureRelationship> featureRels = polypeptide.getFeatureRelationshipsForSubjectId();
         Feature mRNA = null;
         for (FeatureRelationship featureRelationship : featureRels) {
-			Feature feature = featureRelationship.getFeatureByObjectId();
-			if(feature.getCvTerm().getName().equals("mRNA")) {
+			Feature feature = featureRelationship.getObjectFeature();
+			if(feature.getType().getName().equals("mRNA")) {
 				mRNA = feature;
 			}
 		}

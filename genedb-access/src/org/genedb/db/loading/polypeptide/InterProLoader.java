@@ -10,10 +10,11 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.loading.GoInstance;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.sequence.FeatureDbXRef;
-import org.gmod.schema.sequence.feature.Polypeptide;
-import org.gmod.schema.sequence.feature.PolypeptideDomain;
+
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.PolypeptideDomain;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.FeatureDbXRef;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

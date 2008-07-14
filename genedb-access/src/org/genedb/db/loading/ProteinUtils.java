@@ -19,7 +19,7 @@
 
 package org.genedb.db.loading;
 
-import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.mapped.Feature;
 
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.ProteinTools;

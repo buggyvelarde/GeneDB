@@ -1,6 +1,5 @@
 package org.genedb.db.domain.hibernateImpls;
 
-import org.genedb.db.dao.CvDao;
 import org.genedb.db.domain.misc.MethodResult;
 import org.genedb.db.domain.misc.SemanticLog;
 import org.genedb.db.domain.objects.Product;
@@ -8,8 +7,9 @@ import org.genedb.db.domain.services.LockAndNotificationService;
 import org.genedb.db.domain.services.LockStatus;
 import org.genedb.db.domain.services.ProductService;
 
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.FeatureCvTerm;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;

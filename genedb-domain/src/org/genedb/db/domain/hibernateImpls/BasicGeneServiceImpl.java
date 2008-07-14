@@ -16,12 +16,14 @@ import org.genedb.db.domain.objects.Gene;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
 import org.genedb.db.domain.services.BasicGeneService;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.sequence.FeatureSynonym;
+
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.mapped.FeatureSynonym;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -78,8 +80,8 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         }
 
         for (FeatureRelationship fr : feat.getFeatureRelationshipsForObjectId()) {
-            Feature otherFeat = fr.getFeatureBySubjectId();
-            if (otherFeat instanceof org.gmod.schema.sequence.feature.Transcript) {
+            Feature otherFeat = fr.getSubjectFeature();
+            if (otherFeat instanceof org.gmod.schema.feature.Transcript) {
                 ret.addTranscript(makeTranscript(otherFeat));
             }
         }
@@ -87,7 +89,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         ret.setOrganism(feat.getOrganism().getCommonName());
 
         FeatureLoc loc = feat.getRankZeroFeatureLoc();
-        Feature chromosomeFeature = loc.getFeatureBySrcFeatureId();
+        Feature chromosomeFeature = loc.getSourceFeature();
         Chromosome chromosome = new Chromosome(chromosomeFeature.getDisplayName(), chromosomeFeature.getSeqLen());
         ret.setChromosome(chromosome);
         ret.setStrand(loc.getStrand());
@@ -127,8 +129,8 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
         Set<TranscriptComponent> exons = new HashSet<TranscriptComponent> ();
         for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
-            Feature relatedFeature = fr.getFeatureBySubjectId();
-            String relatedFeatureName = relatedFeature.getCvTerm().getName();
+            Feature relatedFeature = fr.getSubjectFeature();
+            String relatedFeatureName = relatedFeature.getType().getName();
             if (relatedFeatureName.equals("polypeptide")) {
                 transcript.setProtein(relatedFeature);
             }
@@ -143,7 +145,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         if (protein != null) {
             List<String> products = new ArrayList<String>();
             for (FeatureCvTerm fcvt : protein.getFeatureCvTerms()) {
-                CvTerm featCvTerm = fcvt.getCvTerm();
+                CvTerm featCvTerm = fcvt.getType();
                 if (featCvTerm.getCv().getName().equals("genedb_products")) {
                     products.add(featCvTerm.getName());
                 }

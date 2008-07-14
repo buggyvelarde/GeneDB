@@ -9,10 +9,12 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.FeatureUtils;
-import org.gmod.schema.sequence.feature.AbstractGene;
-import org.gmod.schema.sequence.feature.Polypeptide;
-import org.gmod.schema.sequence.feature.ProductiveTranscript;
-import org.gmod.schema.sequence.feature.Transcript;
+
+import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.Transcript;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;

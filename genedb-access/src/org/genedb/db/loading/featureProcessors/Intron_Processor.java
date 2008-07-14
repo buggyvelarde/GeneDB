@@ -4,9 +4,9 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureRelationship;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
@@ -47,7 +47,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
         	
         	featureRelations = mrna.getFeatureRelationshipsForObjectId();
             for (FeatureRelationship featureRelation : featureRelations) {
-            	Feature feature = featureRelation.getFeatureBySubjectId();   
+            	Feature feature = featureRelation.getSubjectFeature();   
             	logger.debug(feature.getUniqueName());
             	if(feature.getUniqueName().contains("exon")) {
             		ex.add(feature);
@@ -66,7 +66,7 @@ public class Intron_Processor extends BaseFeatureProcessor {
         	}
         	systematicId = systematicId + ":" + j;
         	
-	        org.gmod.schema.sequence.Feature intron = this.featureUtils.createFeature("intron", systematicId, this.organism);
+	        org.gmod.schema.mapped.Feature intron = this.featureUtils.createFeature("intron", systematicId, this.organism);
 	        sequenceDao.persist(intron);
 	        FeatureRelationship intronFr = featureUtils.createRelationship(intron,l.get(0), REL_PART_OF, 0); // FIXME Rank wrong
 	        sequenceDao.persist(intronFr);

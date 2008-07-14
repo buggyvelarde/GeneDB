@@ -12,10 +12,11 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.dao.CvDao;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.FeatureProp;
-import org.gmod.schema.sequence.feature.Polypeptide;
-import org.gmod.schema.sequence.feature.SignalPeptide;
+
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.SignalPeptide;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.FeatureProp;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -58,6 +59,7 @@ public class SignalPLoader extends Loader {
 
     private void loadHit(SignalPHit hit) {
         Polypeptide polypeptide = getPolypeptideByMangledName(hit.getKey());
+        logger.debug(String.format("Processing hit of type '%s'", hit.getType()));
 
         if (polypeptide == null) {
             logger.error(String.format("Could not find polypeptide for key '%s'", hit.getKey()));

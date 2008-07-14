@@ -11,8 +11,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.gmod.schema.sequence.feature.Polypeptide;
-import org.gmod.schema.sequence.feature.TransmembraneRegion;
+
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.TransmembraneRegion;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

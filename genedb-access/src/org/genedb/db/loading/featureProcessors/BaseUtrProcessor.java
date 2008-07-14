@@ -32,9 +32,9 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureRelationship;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
@@ -147,16 +147,16 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
        Feature gene = null;
        Feature transcript = null;
        
-       if (above.getCvTerm().getName().equals("gene")) {
+       if (above.getType().getName().equals("gene")) {
            //logger.info("Trying to store '"+type+"' for gene '"+above.getUniquename()+"'");
            gene = above;
            Collection<FeatureRelationship> frs = gene.getFeatureRelationshipsForObjectId(); 
            logger.info("The number of possible transcripts is '"+frs.size()+"'");
            for (FeatureRelationship fr : frs) {
-               System.out.println(fr.getFeatureBySubjectId().getUniqueName());
+               System.out.println(fr.getSubjectFeature().getUniqueName());
            }
            for (FeatureRelationship fr : frs) {
-               transcript = fr.getFeatureBySubjectId();
+               transcript = fr.getSubjectFeature();
                break;
            }
        } else {
@@ -165,7 +165,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
            Collection<FeatureRelationship> frs = transcript.getFeatureRelationshipsForSubjectId(); 
            //logger.info("The number of possible genes is '"+frs.size()+"'");
            for (FeatureRelationship fr : frs) {
-               gene = fr.getFeatureByObjectId();
+               gene = fr.getObjectFeature();
                break;
            }
        }

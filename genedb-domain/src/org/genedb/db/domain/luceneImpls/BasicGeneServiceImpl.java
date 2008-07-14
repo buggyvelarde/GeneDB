@@ -70,7 +70,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
     /**
      * Convert the document to a Transcript object. If the <code>_hibernate_class</code>
-     * of the document is not <code>org.gmod.schema.sequence.feature.MRNA</code>, returns null.
+     * of the document is not <code>org.gmod.schema.feature.MRNA</code>, returns null.
      */
     private final DocumentConverter<Transcript> convertToTranscript = new DocumentConverter<Transcript>() {
         public Transcript convert(Document doc) {
@@ -109,13 +109,13 @@ public class BasicGeneServiceImpl implements BasicGeneService {
      * back the associated transcripts. Should this prove unacceptable, the
      * associated transcripts could instead all be loaded at once.
      *
-     * If the <code>_hibernate_class</code> is neither equal to <code>org.gmod.schema.sequence.feature.Gene</code>
-     * nor to <code>org.gmod.schema.sequence.feature.Pseudogene</code>, returns null.
+     * If the <code>_hibernate_class</code> is neither equal to <code>org.gmod.schema.feature.Gene</code>
+     * nor to <code>org.gmod.schema.feature.Pseudogene</code>, returns null.
      */
     private final DocumentConverter<BasicGene> convertToGene = new DocumentConverter<BasicGene>() {
         public BasicGene convert(Document doc) {
-            if (!doc.get("_hibernate_class").equals("org.gmod.schema.sequence.feature.Gene")
-             && !doc.get("_hibernate_class").equals("org.gmod.schema.sequence.feature.Pseudogene")) {
+            if (!doc.get("_hibernate_class").equals("org.gmod.schema.feature.Gene")
+             && !doc.get("_hibernate_class").equals("org.gmod.schema.feature.Pseudogene")) {
                 logger.debug(String.format("It's not a Gene, it's a '%s'", doc.get("_hibernate_class")));
                 return null;
             }
@@ -137,8 +137,6 @@ public class BasicGeneServiceImpl implements BasicGeneService {
                 ret.setSynonyms(Arrays.asList(synonyms.split("\t")));
 
             BooleanQuery transcriptQuery = new BooleanQuery();
-//            transcriptQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.MRNA")),
-//                BooleanClause.Occur.MUST);
             transcriptQuery.add(new TermQuery(new Term("gene", geneUniqueName)),
                 BooleanClause.Occur.MUST);
 
@@ -289,9 +287,9 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
     private static BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
     static {
-        geneOrPseudogeneQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gene")),
+        geneOrPseudogeneQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.feature.Gene")),
             BooleanClause.Occur.SHOULD);
-        geneOrPseudogeneQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Pseudogene")),
+        geneOrPseudogeneQuery.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.feature.Pseudogene")),
             BooleanClause.Occur.SHOULD);
     }
 
@@ -320,7 +318,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         String chromosomeUniqueName, long locMin, long locMax) {
 
         BooleanQuery query = new BooleanQuery();
-        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gap")),
+        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.feature.Gap")),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
             BooleanClause.Occur.MUST);
@@ -338,7 +336,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             String chromosomeUniqueName) {
 
         BooleanQuery query = new BooleanQuery();
-        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.sequence.feature.Gap")),
+        query.add(new TermQuery(new Term("_hibernate_class", "org.gmod.schema.feature.Gap")),
             BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term("organism.commonName", organismCommonName)),
             BooleanClause.Occur.MUST);

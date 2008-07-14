@@ -6,7 +6,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.loading.FeatureUtils;
-import org.gmod.schema.general.DbXRef;
+
+import org.gmod.schema.mapped.DbXRef;
+
 import org.hibernate.EmptyInterceptor;
 
 /**

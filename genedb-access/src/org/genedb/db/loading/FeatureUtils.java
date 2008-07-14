@@ -2,52 +2,40 @@ package org.genedb.db.loading;
 
 import static org.genedb.db.loading.EmblQualifiers.QUAL_TOP_LEVEL;
 
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.GeneralDao;
+import org.genedb.db.dao.PubDao;
+import org.genedb.db.dao.SequenceDao;
+
+import org.gmod.schema.mapped.Cv;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Db;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.FeatureCvTermDbXRef;
+import org.gmod.schema.mapped.FeatureCvTermProp;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.mapped.FeatureSynonym;
+import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.mapped.Pub;
+import org.gmod.schema.mapped.PubDbXRef;
+import org.gmod.schema.mapped.Synonym;
+
+import org.apache.log4j.Logger;
+import org.biojava.bio.seq.StrandedFeature;
+import org.springframework.beans.factory.InitializingBean;
+
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
-import org.biojava.bio.BioException;
-import org.biojava.bio.proteomics.IsoelectricPointCalc;
-import org.biojava.bio.proteomics.MassCalc;
-import org.biojava.bio.seq.ProteinTools;
-import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.Alphabet;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.bio.symbol.SimpleSymbolList;
-import org.biojava.bio.symbol.SymbolList;
-import org.biojava.bio.symbol.SymbolPropertyTable;
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.GeneralDao;
-import org.genedb.db.dao.PubDao;
-import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.Db;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.pub.Pub;
-import org.gmod.schema.pub.PubDbXRef;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureCvTermDbXRef;
-import org.gmod.schema.sequence.FeatureCvTermProp;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.sequence.FeatureSynonym;
-import org.gmod.schema.sequence.Synonym;
-import org.gmod.schema.utils.PeptideProperties;
-import org.springframework.beans.factory.InitializingBean;
 
 public class FeatureUtils implements InitializingBean {
     private static final Logger logger = Logger.getLogger(FeatureUtils.class);
@@ -179,88 +167,12 @@ public class FeatureUtils implements InitializingBean {
         GENEDB_AUTOCOMMENT = cvDao.getCvTermByNameInCv("autocomment", CV_GENEDB).get(0);
     }
 
-    public void markTopLevelFeature(org.gmod.schema.sequence.Feature topLevel) {
-        FeatureProp fp = new FeatureProp();
-        fp.setFeature(topLevel);
-        fp.setCvTerm(GENEDB_TOP_LEVEL);
-        fp.setValue("true");
+    public void markTopLevelFeature(org.gmod.schema.mapped.Feature topLevel) {
+        sequenceDao.persist(new FeatureProp(topLevel, GENEDB_TOP_LEVEL, "true", 0));
     }
 
     public void setDummyPub(Pub dummyPub) {
         DUMMY_PUB = dummyPub;
-    }
-
-    private static FeatureLoc getZeroRankFeatureLoc(Feature f) {
-        Collection<FeatureLoc> collection = f.getFeatureLocsForSrcFeatureId();
-        for (FeatureLoc loc : collection) {
-            if (loc.getRank() == 0) {
-                return loc;
-            }
-        }
-        return null;
-    }
-
-    public static String getResidues(Feature feature) {
-        String residues = null;
-        residues = new String(feature.getResidues());
-
-        if (!residues.contains("A")) {
-            // TODO Check what this is intended to do
-            if ("gene".equals(feature.getCvTerm().getName())) {
-                Collection<FeatureLoc> fl = feature.getFeatureLocsForFeatureId();
-                for (FeatureLoc loc : fl) {
-                    Feature toplevel = loc.getFeatureBySrcFeatureId();
-                    String temp = new String(toplevel.getResidues());
-                    residues = temp.substring(loc.getFmin(), loc.getFmax());
-                    return residues;
-                }
-            } else if ("mRNA".equals(feature.getCvTerm().getName())) {
-                Collection<FeatureRelationship> fr = feature.getFeatureRelationshipsForSubjectId();
-                for (FeatureRelationship relationship : fr) {
-                    Feature gene = relationship.getFeatureByObjectId();
-                    FeatureLoc parentLoc = getZeroRankFeatureLoc(gene);
-                    Feature toplevel = parentLoc.getFeatureBySrcFeatureId();
-                    String temp = new String(toplevel.getResidues());
-                    residues = temp.substring(parentLoc.getFmin(), parentLoc.getFmax());
-                    return residues;
-                }
-            } else {
-                Collection<FeatureRelationship> fr = feature.getFeatureRelationshipsForSubjectId();
-                Feature mrna = null;
-                for (FeatureRelationship relationship : fr) {
-                    mrna = relationship.getFeatureByObjectId();
-                    System.out.println("mrna name is : " + mrna.getUniqueName());
-                    break;
-                }
-                // Feature gene = null;
-                Collection<FeatureRelationship> fr2 = mrna.getFeatureRelationshipsForSubjectId();
-                for (FeatureRelationship relationship : fr2) {
-                    Feature gene = relationship.getFeatureByObjectId();
-                    System.out.println("gene name is : " + gene.getUniqueName());
-                    Feature toplevel = gene.getFeatureLocsForFeatureId().iterator().next()
-                            .getFeatureBySrcFeatureId();
-                    String temp = new String(toplevel.getResidues());
-                    // System.out.println("Residues " + temp);
-                    FeatureLoc fl = mrna.getFeatureLocsForFeatureId().iterator().next();
-                    System.out.println(fl.getFmin() + " " + fl.getFmax());
-                    residues = temp.substring(fl.getFmin(), fl.getFmax());
-                    SeqTrans st = new SeqTrans();
-                    residues = st.translate(residues.getBytes(), 1, 1);
-                    if (residues.contains("*")) {
-                        String toSend = new String();
-                        toSend = residues;
-                        StringTokenizer token = new StringTokenizer(toSend, "*");
-                        residues = new String();
-                        while (token.hasMoreTokens()) {
-                            residues = residues + token.nextToken();
-                        }
-                        // System.out.println("residues are : " + residues);
-                    }
-                    return residues;
-                }
-            }
-        }
-        return residues;
     }
 
     /**
@@ -295,7 +207,7 @@ public class FeatureUtils implements InitializingBean {
 
     /**
      * Take a pipe-separated list of dbxref identifers, and find (or
-     * create if necessary) the corresponding {@link org.gmod.schema.general.DbXRef}s.
+     * create if necessary) the corresponding {@link org.gmod.schema.mapped.DbXRef}s.
      *
      * @param xref A pipe-separated list of dbxref identifiers
      * @return A list of the corresponding DbXref objects
@@ -340,38 +252,6 @@ public class FeatureUtils implements InitializingBean {
     }
 
     /**
-     * Take a feature and find its parent
-     *
-     * @param feature the feature whose parent is to be found
-     * @return the parent feature
-     */
-    public Feature getParentFeature(Feature feature) {
-        if (feature.getFeatureLocsForFeatureId() == null) {
-            if (feature.getFeatureLocsForSrcFeatureId().size() > 1) {
-                return feature; // itself is a parent
-            } else {
-                return null; // some error occured
-            }
-        }
-        return feature.getFeatureLocsForFeatureId().iterator().next().getFeatureBySrcFeatureId();
-    }
-
-    public void findPubOrDbXRefFromString(String xrefString, List<Pub> pubs, List<DbXRef> dbXRefs) {
-        boolean makePubs = (pubs != null) ? true : false;
-        String[] xrefs = xrefString.split("\\|");
-        for (String xref : xrefs) {
-            if (makePubs && looksLikePub(xref)) {
-                pubs.add(findOrCreatePubFromPMID(xref));
-            } else {
-                DbXRef dbXRef = findOrCreateDbXRefFromString(xref);
-                if (dbXRef != null) {
-                    dbXRefs.add(dbXRef);
-                }
-            }
-        }
-    }
-
-    /**
      * Does a string look likes it's a PubMed reference
      *
      * @param xref The string to examine
@@ -380,64 +260,6 @@ public class FeatureUtils implements InitializingBean {
     public boolean looksLikePub(String xref) {
         boolean ret = PUBMED_PATTERN.matcher(xref).lookingAt();
         return ret;
-    }
-
-    public PeptideProperties calculatePepstats(Feature polypeptide) {
-
-        String seqString = FeatureUtils.getResidues(polypeptide);
-        Alphabet protein = ProteinTools.getAlphabet();
-        SymbolTokenization proteinToke = null;
-        SymbolList seq = null;
-        PeptideProperties pp = new PeptideProperties();
-        try {
-            proteinToke = protein.getTokenization("token");
-            seq = new SimpleSymbolList(proteinToke, seqString);
-        } catch (BioException e) {
-
-        }
-        IsoelectricPointCalc ipc = new IsoelectricPointCalc();
-        Double cal = 0.0;
-        try {
-            cal = ipc.getPI(seq, false, false);
-        } catch (IllegalAlphabetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (BioException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        DecimalFormat df = new DecimalFormat("#.##");
-        pp.setIsoelectricPoint(df.format(cal));
-
-        // CvTerm MISC_ISOELECTRIC =
-        // cvDao.getCvTermByNameAndCvName("isoelectric_point", "genedb_misc");
-        // CvTerm MISC_MASS = cvDao.getCvTermByNameAndCvName("molecular mass",
-        // "genedb_misc");
-        // CvTerm MISC_CHARGE = cvDao.getCvTermByNameAndCvName("protein_charge",
-        // "genedb_misc");
-
-        // FeatureProp fp = new FeatureProp(polypeptide, MISC_ISOELECTRIC,
-        // df.format(cal), 0);
-
-        pp.setAminoAcids(Integer.toString(seqString.length()));
-        MassCalc mc = new MassCalc(SymbolPropertyTable.AVG_MASS, false);
-        try {
-            cal = mc.getMass(seq) / 1000;
-        } catch (IllegalSymbolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        pp.setMass(df.format(cal));
-
-        // fp = new FeatureProp(polypeptide, MISC_MASS, df.format(cal), 0);
-
-        cal = ProteinUtils.getCharge(seq);
-        pp.setCharge(df.format(cal));
-
-        // fp = new FeatureProp(polypeptide, MISC_CHARGE,
-        // df.format(ProteinUtils.getCharge(seq)), 0);
-
-        return pp;
     }
 
     /*

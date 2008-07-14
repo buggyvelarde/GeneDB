@@ -15,10 +15,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.SequenceDao;
-import org.gmod.schema.general.Db;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureDbXRef;
+
+import org.gmod.schema.mapped.Db;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureDbXRef;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.context.ApplicationContext;

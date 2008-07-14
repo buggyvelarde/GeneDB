@@ -2,7 +2,8 @@ package org.genedb.db.loading.featureProcessors;
 
 import org.biojava.bio.seq.StrandedFeature;
 import org.genedb.db.loading.ProcessingPhase;
-import org.gmod.schema.sequence.Feature;
+
+import org.gmod.schema.mapped.Feature;
 
 public class DummyFeatureProcessor extends BaseFeatureProcessor {
 

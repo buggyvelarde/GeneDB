@@ -128,7 +128,7 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
      * @see org.genedb.db.loading.FeatureHandler#processSources(org.biojava.bio.seq.Sequence)
      */
     @SuppressWarnings("unchecked")
-    public org.gmod.schema.sequence.Feature process(File file, Sequence seq)
+    public org.gmod.schema.mapped.Feature process(File file, Sequence seq)
             throws ChangeVetoException, BioException {
         FeatureHolder fh = seq.filter(new FeatureFilter.ByType(FT_SOURCE));
 
@@ -174,7 +174,7 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
         // System.err.println("Would like to create a '"+foundType+"' with name
         // '"+uniqueName+"'");
 
-        org.gmod.schema.sequence.Feature topLevel = this.featureUtils
+        org.gmod.schema.mapped.Feature topLevel = this.featureUtils
                 .createFeature(foundType, uniqueName, this.organism);
         // System.err.println("Got a feature to persist");
 
@@ -201,7 +201,7 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
 //    }
 
     @Override
-    public void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature feat, int offset) {
+    public void processStrandedFeature(org.gmod.schema.mapped.Feature parent, StrandedFeature feat, int offset) {
         // Dummy method
     }
 

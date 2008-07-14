@@ -49,7 +49,7 @@ public class OptionDrivenFeatureHandler extends BaseFeatureHandler implements Fe
      * @see org.genedb.db.loading.FeatureHandler#processSources(org.biojava.bio.seq.Sequence)
      */
     @SuppressWarnings("unchecked")
-    public org.gmod.schema.sequence.Feature process(File file, Sequence seq)
+    public org.gmod.schema.mapped.Feature process(File file, Sequence seq)
             throws ChangeVetoException, BioException {
         
         String type = getOptions().get("so-type");
@@ -60,7 +60,7 @@ public class OptionDrivenFeatureHandler extends BaseFeatureHandler implements Fe
         
         // TODO Get chromosome from path, maybe
 
-        org.gmod.schema.sequence.Feature topLevel = this.featureUtils
+        org.gmod.schema.mapped.Feature topLevel = this.featureUtils
                 .createFeature(type, uniqueName, this.organism);
         // System.err.println("Got a feature to persist");
 
@@ -80,7 +80,7 @@ public class OptionDrivenFeatureHandler extends BaseFeatureHandler implements Fe
 //    }
 
     @Override
-    public void processStrandedFeature(org.gmod.schema.sequence.Feature parent, StrandedFeature feat, int offset) {
+    public void processStrandedFeature(org.gmod.schema.mapped.Feature parent, StrandedFeature feat, int offset) {
         // Dummy method
     }
 

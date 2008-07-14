@@ -4,9 +4,10 @@ import java.util.List;
 
 import org.biojava.bio.Annotation;
 import org.genedb.db.loading.MiningUtils;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureProp;
+
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureProp;
 
 public class Cirad_CDS_Processor extends CDS_Processor {
 

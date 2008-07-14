@@ -28,8 +28,8 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;

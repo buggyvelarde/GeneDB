@@ -24,12 +24,13 @@ import java.util.Map;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.PhylogenyDao;
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.phylogeny.Phylonode;
-import org.gmod.schema.phylogeny.PhylonodeOrganism;
-import org.gmod.schema.phylogeny.Phylotree;
+
+import org.gmod.schema.mapped.Cv;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.mapped.Phylonode;
+import org.gmod.schema.mapped.PhylonodeOrganism;
+import org.gmod.schema.mapped.Phylotree;
 
 public class ExtendedOrganismManager {
 

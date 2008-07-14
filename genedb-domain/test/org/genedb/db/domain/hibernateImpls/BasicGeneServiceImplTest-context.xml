@@ -39,61 +39,61 @@
         <property name="hibernateProperties" ref="hibernateProperties" />
         <property name="annotatedClasses">
             <list>
-               <value>org.gmod.schema.analysis.Analysis</value>
-               <value>org.gmod.schema.analysis.AnalysisFeature</value>
-               <value>org.gmod.schema.analysis.AnalysisProp</value>
+               <value>org.gmod.schema.mapped.Analysis</value>
+               <value>org.gmod.schema.mapped.AnalysisFeature</value>
+               <value>org.gmod.schema.mapped.AnalysisProp</value>
 
-               <value>org.gmod.schema.cv.Cv</value>
-               <value>org.gmod.schema.cv.CvTerm</value>
-               <value>org.gmod.schema.cv.CvTermDbXRef</value>
-               <value>org.gmod.schema.cv.CvTermPath</value>
-               <value>org.gmod.schema.cv.CvTermProp</value>
-               <value>org.gmod.schema.cv.CvTermRelationship</value>
-               <value>org.gmod.schema.cv.CvTermSynonym</value>
-               <value>org.gmod.schema.cv.DbXRefProp</value>
+               <value>org.gmod.schema.mapped.Cv</value>
+               <value>org.gmod.schema.mapped.CvTerm</value>
+               <value>org.gmod.schema.mapped.CvTermDbXRef</value>
+               <value>org.gmod.schema.mapped.CvTermPath</value>
+               <value>org.gmod.schema.mapped.CvTermProp</value>
+               <value>org.gmod.schema.mapped.CvTermRelationship</value>
+               <value>org.gmod.schema.mapped.CvTermSynonym</value>
+               <value>org.gmod.schema.mapped.DbXRefProp</value>
  
-               <value>org.gmod.schema.general.Db</value>
-               <value>org.gmod.schema.general.DbXRef</value>
-               <value>org.gmod.schema.general.Project</value>
-               <value>org.gmod.schema.general.Tableinfo</value>
+               <value>org.gmod.schema.mapped.Db</value>
+               <value>org.gmod.schema.mapped.DbXRef</value>
+               <value>org.gmod.schema.mapped.Project</value>
+               <value>org.gmod.schema.mapped.Tableinfo</value>
 
-               <value>org.gmod.schema.organism.Organism</value>
-               <value>org.gmod.schema.organism.OrganismDbXRef</value>
-               <value>org.gmod.schema.organism.OrganismProp</value>
+               <value>org.gmod.schema.mapped.Organism</value>
+               <value>org.gmod.schema.mapped.OrganismDbXRef</value>
+               <value>org.gmod.schema.mapped.OrganismProp</value>
 
-               <value>org.gmod.schema.phylogeny.Phylonode</value>
-               <value>org.gmod.schema.phylogeny.PhylonodeDbXRef</value>
-               <value>org.gmod.schema.phylogeny.PhylonodeOrganism</value>
-               <value>org.gmod.schema.phylogeny.PhylonodeProp</value>
-               <value>org.gmod.schema.phylogeny.PhylonodePub</value>
-               <value>org.gmod.schema.phylogeny.PhylonodeRelationship</value>
-               <value>org.gmod.schema.phylogeny.Phylotree</value>
-               <value>org.gmod.schema.phylogeny.PhylotreePub</value>
+               <value>org.gmod.schema.mapped.Phylonode</value>
+               <value>org.gmod.schema.mapped.PhylonodeDbXRef</value>
+               <value>org.gmod.schema.mapped.PhylonodeOrganism</value>
+               <value>org.gmod.schema.mapped.PhylonodeProp</value>
+               <value>org.gmod.schema.mapped.PhylonodePub</value>
+               <value>org.gmod.schema.mapped.PhylonodeRelationship</value>
+               <value>org.gmod.schema.mapped.Phylotree</value>
+               <value>org.gmod.schema.mapped.PhylotreePub</value>
 
-               <value>org.gmod.schema.pub.Pub</value>
-               <value>org.gmod.schema.pub.PubAuthor</value>
-               <value>org.gmod.schema.pub.PubDbXRef</value>
-               <value>org.gmod.schema.pub.PubProp</value>
-               <value>org.gmod.schema.pub.PubRelationship</value>
+               <value>org.gmod.schema.mapped.Pub</value>
+               <value>org.gmod.schema.mapped.PubAuthor</value>
+               <value>org.gmod.schema.mapped.PubDbXRef</value>
+               <value>org.gmod.schema.mapped.PubProp</value>
+               <value>org.gmod.schema.mapped.PubRelationship</value>
 
-               <value>org.gmod.schema.sequence.Feature</value>
-               <value>org.gmod.schema.sequence.FeatureCvTerm</value>
-               <value>org.gmod.schema.sequence.FeatureCvTermDbXRef</value>
-               <value>org.gmod.schema.sequence.FeatureCvTermProp</value>
-               <value>org.gmod.schema.sequence.FeatureCvTermPub</value>
-               <value>org.gmod.schema.sequence.FeatureDbXRef</value>
-               <value>org.gmod.schema.sequence.FeatureLoc</value>
-               <value>org.gmod.schema.sequence.FeatureLocPub</value>
-               <value>org.gmod.schema.sequence.FeatureProp</value>
-               <value>org.gmod.schema.sequence.FeaturePropPub</value>
-               <value>org.gmod.schema.sequence.FeaturePub</value>
-               <value>org.gmod.schema.sequence.FeatureRelationship</value>
-               <value>org.gmod.schema.sequence.FeatureRelationshipProp</value>
-               <value>org.gmod.schema.sequence.FeatureRelationshipPropPub</value>
-               <value>org.gmod.schema.sequence.FeatureRelationshipPub</value>
-               <value>org.gmod.schema.sequence.FeatureSynonym</value>
+               <value>org.gmod.schema.mapped.Feature</value>
+               <value>org.gmod.schema.mapped.FeatureCvTerm</value>
+               <value>org.gmod.schema.mapped.FeatureCvTermDbXRef</value>
+               <value>org.gmod.schema.mapped.FeatureCvTermProp</value>
+               <value>org.gmod.schema.mapped.FeatureCvTermPub</value>
+               <value>org.gmod.schema.mapped.FeatureDbXRef</value>
+               <value>org.gmod.schema.mapped.FeatureLoc</value>
+               <value>org.gmod.schema.mapped.FeatureLocPub</value>
+               <value>org.gmod.schema.mapped.FeatureProp</value>
+               <value>org.gmod.schema.mapped.FeaturePropPub</value>
+               <value>org.gmod.schema.mapped.FeaturePub</value>
+               <value>org.gmod.schema.mapped.FeatureRelationship</value>
+               <value>org.gmod.schema.mapped.FeatureRelationshipProp</value>
+               <value>org.gmod.schema.mapped.FeatureRelationshipPropPub</value>
+               <value>org.gmod.schema.mapped.FeatureRelationshipPub</value>
+               <value>org.gmod.schema.mapped.FeatureSynonym</value>
                <value>org.gmod.schema.sequence.Gene</value>
-               <value>org.gmod.schema.sequence.Synonym</value>
+               <value>org.gmod.schema.mapped.Synonym</value>
             </list>
         </property>
         <property name="annotatedPackages">

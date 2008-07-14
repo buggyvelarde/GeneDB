@@ -44,20 +44,20 @@ import org.genedb.db.loading.GeneNamingStrategy;
 import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.Db;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.pub.Pub;
-import org.gmod.schema.pub.PubDbXRef;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureCvTermDbXRef;
-import org.gmod.schema.sequence.FeatureCvTermProp;
-import org.gmod.schema.sequence.FeatureDbXRef;
-import org.gmod.schema.sequence.FeatureProp;
-import org.gmod.schema.sequence.FeaturePropPub;
+import org.gmod.schema.mapped.Cv;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Db;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.FeatureCvTermDbXRef;
+import org.gmod.schema.mapped.FeatureCvTermProp;
+import org.gmod.schema.mapped.FeatureDbXRef;
+import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.FeaturePropPub;
+import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.mapped.Pub;
+import org.gmod.schema.mapped.PubDbXRef;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -243,7 +243,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         return fp;
     }
 
-    protected int createFeaturePropsFromNotes(org.gmod.schema.sequence.Feature f, Annotation an, String key, CvTerm cvTerm, int startRank) {
+    protected int createFeaturePropsFromNotes(org.gmod.schema.mapped.Feature f, Annotation an, String key, CvTerm cvTerm, int startRank) {
         logger.debug("About to set '"+key+"' for feature '" + f.getUniqueName()
                 + "'");
         // Cvterm cvTerm = daoFactory.getCvTermDao().findByNameInCv(key,
@@ -266,26 +266,22 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
             FeatureProp fp = new FeatureProp(f, cvTerm, note, rank);
             // TODO Parse info from (PMID:...) if present
             // TODO cope with more than one
-            Set<FeaturePropPub> fpubs = new HashSet<FeaturePropPub>();
             //ParsedString ps;
             // do {
             // ps = parseDbXref(note, "PMID:");
             // note = ps.getMain();
             // String pmid = ps.getExtract();
             // Pub pub = daoFactory.getPubDao().findOrCreateByPmid(pmid);
-            // FeaturePub fpub = new FeaturePub();
-            // fpub.setFeature(f);
-            // fpub.setPub(pub);
-            // // FIXME - should add fpubs.add(fpub);
+            // FeaturePub fpub = new FeaturePub(f, pub);
+            // fp.addFeaturePropPub(fpub);
             // } while (ps.isSplit());
-            fp.setFeaturePropPubs(fpubs);
             sequenceDao.persist(fp);
             rank++;
         }
         return rank - startRank;
     }
 
-    protected void createDbXRefs(org.gmod.schema.sequence.Feature polypeptide, Annotation an) {
+    protected void createDbXRefs(org.gmod.schema.mapped.Feature polypeptide, Annotation an) {
         List<String> xrefs = MiningUtils.getProperties(QUAL_DB_XREF, an);
         if (xrefs.size() == 0) {
             xrefs = new ArrayList<String>();
@@ -382,8 +378,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     }
 
 
-    protected org.gmod.schema.sequence.Feature tieFeatureByNameInQualifier(String qualifier, org.gmod.schema.sequence.Feature parent, StrandedFeature feat, Annotation an, Location loc) {
-            org.gmod.schema.sequence.Feature ret = null;
+    protected org.gmod.schema.mapped.Feature tieFeatureByNameInQualifier(String qualifier, org.gmod.schema.mapped.Feature parent, StrandedFeature feat, Annotation an, Location loc) {
+            org.gmod.schema.mapped.Feature ret = null;
             if (an.containsProperty(qualifier)) {
                 //logger.warn("Trying to tie UTR via '"+qualifier+"'");
                 // Hopefully the systematic name of a gene

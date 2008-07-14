@@ -265,7 +265,7 @@ public class ExtractOrthologueData implements ApplicationContextAware {
      * @param offset The base offset, when reparenting is taking place
      */
     @SuppressWarnings("unchecked")
-    private void processSequence(File file, Sequence seq, org.gmod.schema.sequence.Feature parent, int offset) {
+    private void processSequence(File file, Sequence seq, org.gmod.schema.mapped.Feature parent, int offset) {
     	
    // 	try {
             logger.info("Processing '"+file.getAbsolutePath()+"'");

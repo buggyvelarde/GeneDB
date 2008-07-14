@@ -26,7 +26,7 @@ package org.genedb.db.loading;
 
 import org.genedb.db.dao.CvDao;
 
-import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.mapped.CvTerm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,18 +41,18 @@ import java.util.Map;
 
 
 /**
- * This reads the GO data from annotation on a BaseRNA object. It copes with both new 
+ * This reads the GO data from annotation on a BaseRNA object. It copes with both new
  * and old-style qualifiers
- * 
+ *
  * @author art
  *
  */
 public class GoParser {
-    
+
     protected static final Log logger = LogFactory.getLog(GoParser.class);
     private CvDao cvDao;
-    
-    
+
+
     public List<GoInstance> getAllGoTermsFromAnnotation(Annotation an) {
 	List<GoInstance> ret = new ArrayList<GoInstance>();
 	ret.addAll(getNewStyleGoTerm(an));
@@ -211,7 +211,7 @@ public class GoParser {
 
 
     private String lookUpGoName(String id) {
-        CvTerm cvTerm = cvDao.getGoCvTermByAccViaDb(id);
+        CvTerm cvTerm = cvDao.getGoCvTermByAcc(id);
         if (cvTerm == null) {
             return null;
         }
@@ -290,7 +290,7 @@ public class GoParser {
     }
 
     // ------------------------------------------------------------------------
-    
+
     private int count;
 //    private boolean mungeCase;
 
@@ -299,7 +299,7 @@ public class GoParser {
         //this.mungeCase = mungeCase;
         final Map<String, List<GoInstance>> ret = new HashMap<String, List<GoInstance>>();
         CharSVParser parser = new CharSVParser(input, "\t", false, 0, "#" );
-        
+
         parser.addCharSVParsingListener (new CharSVParsingListener() {
             public void rowParsed(CharSVParsingEvent ev) {
                 count++;
@@ -312,7 +312,7 @@ public class GoParser {
         parser.go();
         return ret;
     }
-    
+
 
 
     public int getCount() {
@@ -374,9 +374,9 @@ public class GoParser {
                 }
             }
         }
-        
+
         go.setDate(terms[13]);
-        
+
         go.setAttribution(terms[14]);
 
         return systematicId;
@@ -385,7 +385,7 @@ public class GoParser {
 
 
     public void setCvDao(CvDao cvDao) {
-    
+
         this.cvDao = cvDao;
     }
 

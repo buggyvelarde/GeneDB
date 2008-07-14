@@ -8,9 +8,9 @@ import org.genedb.db.loading.EmblQualifiers;
 import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.ProcessingPhase;
 
-import org.gmod.schema.cv.Cv;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.mapped.Cv;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
 
 
 
