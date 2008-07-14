@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.Synonym" table="synonym">
+    <class name="org.gmod.schema.mapped.Synonym" table="synonym">
         <comment>A synonym for a feature. One feature can have multiple synonyms, and the same synonym can apply to multiple features</comment>
         <id name="synonymId" type="int">
             <column name="synonym_id" />
@@ -11,7 +11,7 @@
             	<param name="sequence">synonym_synonym_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" not-null="true">
                 <comment>types would be symbol and fullname for now</comment>
             </column>
@@ -30,7 +30,7 @@
             <key>
                 <column name="synonym_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureSynonym" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureSynonym" />
         </set>
     </class>
 </hibernate-mapping>

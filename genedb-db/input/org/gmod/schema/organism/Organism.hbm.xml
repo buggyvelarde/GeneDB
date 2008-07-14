@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.organism.Organism" table="organism">
+    <class name="org.gmod.schema.mapped.Organism" table="organism">
         <id name="organismId" type="int">
             <column name="organism_id" />
             <generator class="sequence">
@@ -32,13 +32,13 @@
             <key>
                 <column name="organism_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.organism.OrganismProp" />
+            <one-to-many class="org.gmod.schema.mapped.OrganismProp" />
         </set>
         <set name="phylonodeOrganisms" inverse="true">
             <key>
                 <column name="organism_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.PhylonodeOrganism" />
+            <one-to-many class="org.gmod.schema.mapped.PhylonodeOrganism" />
         </set>
         <set name="features" inverse="true" cascade="all,delete-orphan">
             <key>
@@ -46,13 +46,13 @@
                     <comment>The organism to which this feature belongs. This column is mandatory</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.sequence.Feature" />
+            <one-to-many class="org.gmod.schema.mapped.Feature" />
         </set>
         <set name="organismDbXRefs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="organism_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.organism.OrganismDbXRef" />
+            <one-to-many class="org.gmod.schema.mapped.OrganismDbXRef" />
         </set>
     </class>
 </hibernate-mapping>

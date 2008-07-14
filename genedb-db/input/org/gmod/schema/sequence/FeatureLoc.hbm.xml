@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.FeatureLoc" table="featureloc">
+    <class name="org.gmod.schema.mapped.FeatureLoc" table="featureloc">
         <comment>The location of a feature relative to another feature. IMPORTANT: INTERBASE COORDINATES ARE USED.(This is vital as it allows us to represent zero-length features
         eg splice sites, insertion points without an awkward fuzzy system). Features typically have exactly ONE location, but this need not be the case. Some features may not be
         localized (eg a gene that has been characterized genetically but no sequence/molecular info is available). NOTE ON MULTIPLE LOCATIONS: Each feature can have 0 or more
@@ -18,14 +18,14 @@
             	<param name="sequence">featureloc_featureloc_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="featureBySrcFeatureId" class="org.gmod.schema.sequence.Feature" fetch="select">
+        <many-to-one name="featureBySrcFeatureId" class="org.gmod.schema.mapped.Feature" fetch="select">
             <column name="srcfeature_id">
                 <comment>The source feature which this location is relative to. Every location is relative to another feature (however, this column is nullable, because the
                 srcfeature may not be known). All locations are -proper- that is, nothing should be located relative to itself. No cycles are allowed in the featureloc
                 graph</comment>
             </column>
         </many-to-one>
-        <many-to-one name="featureByFeatureId" class="org.gmod.schema.sequence.Feature" fetch="select">
+        <many-to-one name="featureByFeatureId" class="org.gmod.schema.mapped.Feature" fetch="select">
             <column name="feature_id" not-null="true" />
         </many-to-one>
         <property name="fmin" type="java.lang.Integer">

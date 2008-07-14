@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.FeatureRelationship" table="feature_relationship">
+    <class name="org.gmod.schema.mapped.FeatureRelationship" table="feature_relationship">
         <comment>features can be arranged in graphs, eg exon part_of transcript part_of gene; translation madeby transcript if type is thought of as a verb, each arc makes a
         statement [SUBJECT VERB OBJECT] object can also be thought of as parent (containing feature), and subject as child (contained feature or subfeature) -- we include the
         relationship rank/order, because even though most of the time we can order things implicitly by sequence coordinates, we cant always do this - eg transpliced genes. its
@@ -14,17 +14,17 @@
             	<param name="sequence">feature_relationship_feature_relationship_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="featureBySubjectId" class="org.gmod.schema.sequence.Feature" fetch="select">
+        <many-to-one name="featureBySubjectId" class="org.gmod.schema.mapped.Feature" fetch="select">
             <column name="subject_id" not-null="true">
                 <comment>the subject of the subj-predicate-obj sentence. This is typically the subfeature</comment>
             </column>
         </many-to-one>
-        <many-to-one name="featureByObjectId" class="org.gmod.schema.sequence.Feature" fetch="select">
+        <many-to-one name="featureByObjectId" class="org.gmod.schema.mapped.Feature" fetch="select">
             <column name="object_id" not-null="true">
                 <comment>the object of the subj-predicate-obj sentence. This is typically the container feature</comment>
             </column>
         </many-to-one>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" not-null="true">
                 <comment>relationship type between subject and object. This is a cvterm, typically from the OBO relationship ontology, although other relationship types are
                 allowed. The most common relationship type is OBO_REL:part_of. Valid relationship types are constrained by the Sequence Ontology</comment>
@@ -45,13 +45,13 @@
             <key>
                 <column name="feature_relationship_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureRelationshipProp" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureRelationshipProp" />
         </set>
         <set name="featureRelationshipPubs" inverse="true">
             <key>
                 <column name="feature_relationship_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureRelationshipPub" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureRelationshipPub" />
         </set>
     </class>
 </hibernate-mapping>

@@ -1,10 +1,10 @@
 package org.genedb.db.dao;
 
-import org.gmod.schema.analysis.Analysis;
-import org.gmod.schema.analysis.AnalysisFeature;
-import org.gmod.schema.general.Db;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.mapped.Analysis;
+import org.gmod.schema.mapped.AnalysisFeature;
+import org.gmod.schema.mapped.Db;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Feature;
 
 import java.util.List;
 

@@ -6,10 +6,10 @@
  */
 package org.genedb.db.taxon;
 
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.organism.OrganismProp;
-import org.gmod.schema.phylogeny.Phylonode;
-import org.gmod.schema.phylogeny.PhylonodeOrganism;
+import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.mapped.OrganismProp;
+import org.gmod.schema.mapped.Phylonode;
+import org.gmod.schema.mapped.PhylonodeOrganism;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,7 +76,7 @@ public class TaxonNode {
 
     private String getOrganismProperty(Organism org, String key) {
         for (OrganismProp prop : org.getOrganismProps()) {
-            if (prop.getCvTerm().getName().equals(key)) {
+            if (prop.getType().getName().equals(key)) {
                 return prop.getValue();
             }
         }

@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.analysis.Analysis" table="analysis">
+    <class name="org.gmod.schema.mapped.Analysis" table="analysis">
         <id name="analysisId" type="int">
             <column name="analysis_id" />
             <generator class="sequence">
@@ -41,13 +41,13 @@
             <key>
                 <column name="analysis_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.analysis.AnalysisFeature" />
+            <one-to-many class="org.gmod.schema.mapped.AnalysisFeature" />
         </set>
         <set name="analysisProps" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="analysis_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.analysis.AnalysisProp" />
+            <one-to-many class="org.gmod.schema.mapped.AnalysisProp" />
         </set>
     </class>
 </hibernate-mapping>

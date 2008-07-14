@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.Feature" table="feature">
+    <class name="org.gmod.schema.mapped.Feature" table="feature">
         <comment>A feature is a biological sequence or a section of a biological sequence, or a collection of such sections. Examples include genes, exons, transcripts, regulatory
         regions, polypeptides, protein domains, chromosome sequences, sequence variations, cross-genome match regions such as hits and HSPs and so on; see the Sequence Ontology
         for more</comment>
@@ -15,18 +15,18 @@
             </generator>
         </id>
 <!--        <discriminator column="type_id" type="integer" insert="false"/>-->
-        <many-to-one name="organism" class="org.gmod.schema.organism.Organism" fetch="select">
+        <many-to-one name="organism" class="org.gmod.schema.mapped.Organism" fetch="select">
             <column name="organism_id" not-null="true">
                 <comment>The organism to which this feature belongs. This column is mandatory</comment>
             </column>
         </many-to-one>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" not-null="true">
                 <comment>A required reference to a table:cvterm giving the feature type. This will typically be a Sequence Ontology identifier. This column is thus used to
                 subclass the feature table</comment>
             </column>
         </many-to-one>
-        <many-to-one name="dbXRef" class="org.gmod.schema.general.DbXRef" fetch="select">
+        <many-to-one name="dbXRef" class="org.gmod.schema.mapped.DbXRef" fetch="select">
             <column name="dbxref_id">
                 <comment>An optional primary public stable identifier for this feature. Secondary identifiers and external dbxrefs go in table:feature_dbxref</comment>
             </column>
@@ -97,7 +97,7 @@
                     graph</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureLoc" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureLoc" />
         </set>
         <set name="featureRelationshipsForObjectId" inverse="true">
             <key>
@@ -105,7 +105,7 @@
                     <comment>the object of the subj-predicate-obj sentence. This is typically the container feature</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureRelationship" />
         </set>
         <set name="featureRelationshipsForSubjectId" inverse="true">
             <key>
@@ -113,65 +113,65 @@
                     <comment>the subject of the subj-predicate-obj sentence. This is typically the subfeature</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureRelationship" />
         </set>
         <set name="featureDbXRefs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureDbXRef" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureDbXRef" />
         </set>
         <list name="featureLocsForFeatureId" inverse="true">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
             <list-index column="rank"/>
-            <one-to-many class="org.gmod.schema.sequence.FeatureLoc" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureLoc" />
         </list>
         <set name="featureCvTerms" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureCvTerm" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureCvTerm" />
         </set>
         <set name="featureProps" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureProp" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureProp" />
         </set>
         <set name="featurePubs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeaturePub" />
+            <one-to-many class="org.gmod.schema.mapped.FeaturePub" />
         </set>
         <set name="analysisFeatures" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.analysis.AnalysisFeature" />
+            <one-to-many class="org.gmod.schema.mapped.AnalysisFeature" />
         </set>
         <set name="featureSynonyms" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureSynonym" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureSynonym" />
         </set>
         <set name="phylonodes" inverse="true">
             <key>
                 <column name="feature_id" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.Phylonode" />
+            <one-to-many class="org.gmod.schema.mapped.Phylonode" />
         </set>
-        <!--<subclass name="org.gmod.schema.sequence.feature.MRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="321" />
-        <subclass name="org.gmod.schema.sequence.feature.SnRNA"           extends="org.gmod.schema.sequence.Feature" discriminator-value="361" />
-        <subclass name="org.gmod.schema.sequence.feature.TRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="340" />
-        <subclass name="org.gmod.schema.sequence.feature.RRNA"            extends="org.gmod.schema.sequence.Feature" discriminator-value="339" />
-        <subclass name="org.gmod.schema.sequence.feature.Gene"            extends="org.gmod.schema.sequence.Feature" discriminator-value="792" />
-        <subclass name="org.gmod.schema.sequence.feature.Pseudogene"      extends="org.gmod.schema.sequence.Feature" discriminator-value="423" />
-        <subclass name="org.gmod.schema.sequence.feature.Exon"            extends="org.gmod.schema.sequence.Feature" discriminator-value="234" />
-        <subclass name="org.gmod.schema.sequence.feature.PseudogenicExon" extends="org.gmod.schema.sequence.Feature" discriminator-value="595" />
-        <subclass name="org.gmod.schema.sequence.feature.Polypeptide"     extends="org.gmod.schema.sequence.Feature" discriminator-value="191" />
+        <!--<subclass name="org.gmod.schema.feature.MRNA"            extends="org.gmod.schema.mapped.Feature" discriminator-value="321" />
+        <subclass name="org.gmod.schema.feature.SnRNA"           extends="org.gmod.schema.mapped.Feature" discriminator-value="361" />
+        <subclass name="org.gmod.schema.feature.TRNA"            extends="org.gmod.schema.mapped.Feature" discriminator-value="340" />
+        <subclass name="org.gmod.schema.feature.RRNA"            extends="org.gmod.schema.mapped.Feature" discriminator-value="339" />
+        <subclass name="org.gmod.schema.feature.Gene"            extends="org.gmod.schema.mapped.Feature" discriminator-value="792" />
+        <subclass name="org.gmod.schema.feature.Pseudogene"      extends="org.gmod.schema.mapped.Feature" discriminator-value="423" />
+        <subclass name="org.gmod.schema.feature.Exon"            extends="org.gmod.schema.mapped.Feature" discriminator-value="234" />
+        <subclass name="org.gmod.schema.feature.PseudogenicExon" extends="org.gmod.schema.mapped.Feature" discriminator-value="595" />
+        <subclass name="org.gmod.schema.feature.Polypeptide"     extends="org.gmod.schema.mapped.Feature" discriminator-value="191" />
     --></class>
 </hibernate-mapping>

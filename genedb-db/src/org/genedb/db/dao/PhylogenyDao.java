@@ -1,8 +1,8 @@
 package org.genedb.db.dao;
 
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.phylogeny.Phylonode;
-import org.gmod.schema.phylogeny.Phylotree;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Phylonode;
+import org.gmod.schema.mapped.Phylotree;
 
 import java.util.List;
 

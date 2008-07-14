@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.FeatureRelationshipPub" table="feature_relationship_pub">
+    <class name="org.gmod.schema.mapped.FeatureRelationshipPub" table="feature_relationship_pub">
         <comment>Provenance. Attach optional evidence to a feature_relationship in the form of a publication</comment>
         <id name="featureRelationshipPubId" type="int">
             <column name="feature_relationship_pub_id" />
@@ -11,10 +11,10 @@
             	<param name="sequence">feature_relationship_pub_feature_relationship_pub_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="pub" class="org.gmod.schema.pub.Pub" fetch="select">
+        <many-to-one name="pub" class="org.gmod.schema.mapped.Pub" fetch="select">
             <column name="pub_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="featureRelationship" class="org.gmod.schema.sequence.FeatureRelationship" fetch="select">
+        <many-to-one name="featureRelationship" class="org.gmod.schema.mapped.FeatureRelationship" fetch="select">
             <column name="feature_relationship_id" not-null="true" />
         </many-to-one>
     </class>

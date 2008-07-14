@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.FeatureRelationshipProp" table="feature_relationshipprop">
+    <class name="org.gmod.schema.mapped.FeatureRelationshipProp" table="feature_relationshipprop">
         <comment>Extensible properties for feature_relationships. Analagous structure to featureprop</comment>
         <id name="featureRelationshipPropId" type="int">
             <column name="feature_relationshipprop_id" />
@@ -11,10 +11,10 @@
             	<param name="sequence">feature_relationshipprop_feature_relationshipprop_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="featureRelationship" class="org.gmod.schema.sequence.FeatureRelationship" fetch="select">
+        <many-to-one name="featureRelationship" class="org.gmod.schema.mapped.FeatureRelationship" fetch="select">
             <column name="feature_relationship_id" not-null="true" />
         </many-to-one>
         <property name="value" type="string">
@@ -27,7 +27,7 @@
             <key>
                 <column name="feature_relationshipprop_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureRelationshipPropPub" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureRelationshipPropPub" />
         </set>
     </class>
 </hibernate-mapping>

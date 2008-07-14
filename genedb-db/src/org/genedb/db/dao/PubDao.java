@@ -1,10 +1,10 @@
 package org.genedb.db.dao;
 
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.pub.Pub;
-import org.gmod.schema.pub.PubDbXRef;
-import org.gmod.schema.pub.PubProp;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Pub;
+import org.gmod.schema.mapped.PubDbXRef;
+import org.gmod.schema.mapped.PubProp;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class PubDao extends BaseDao {
     public List<PubProp> getPubPropByPubAndCvTerm(Pub pub,CvTerm cvTerm){
         @SuppressWarnings("unchecked")
         List<PubProp> list = getHibernateTemplate().findByNamedParam(
-            "from PubProp pp where pp.pub=:pub and pp.cvTerm=:cvTerm",
+            "from PubProp pp where pp.pub=:pub and pp.type=:cvTerm",
             new String[]{"pub","cvTerm"},
             new Object[]{pub,cvTerm});
         return list;

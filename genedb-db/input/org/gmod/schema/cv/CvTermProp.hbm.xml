@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.cv.CvTermProp" table="cvtermprop">
+    <class name="org.gmod.schema.mapped.CvTermProp" table="cvtermprop">
         <comment>Additional extensible properties can be attached to a cvterm using this table. Corresponds to -AnnotationProperty- in W3C OWL format</comment>
         <id name="cvTermPropId" type="int">
             <column name="cvtermprop_id" />
@@ -11,10 +11,10 @@
             	<param name="sequence">cvtermprop_cvtermprop_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="cvTermByCvTermId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTermByCvTermId" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="cvterm_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="cvTermByTypeId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTermByTypeId" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" not-null="true">
                 <comment>The name of the property/slot is a cvterm. The meaning of the property is defined in that cvterm</comment>
             </column>

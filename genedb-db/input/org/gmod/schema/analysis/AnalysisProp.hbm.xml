@@ -3,17 +3,17 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.analysis.AnalysisProp" table="analysisprop">
+    <class name="org.gmod.schema.mapped.AnalysisProp" table="analysisprop">
         <id name="analysisPropId" type="int">
             <column name="analysisprop_id" />
             <generator class="sequence">
             	<param name="sequence">analysisprop_analysisprop_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="analysis" class="org.gmod.schema.analysis.Analysis" fetch="select">
+        <many-to-one name="analysis" class="org.gmod.schema.mapped.Analysis" fetch="select">
             <column name="analysis_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" not-null="true" />
         </many-to-one>
         <property name="value" type="string">

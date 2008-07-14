@@ -3,17 +3,17 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.pub.PubDbXRef" table="pub_dbxref">
+    <class name="org.gmod.schema.mapped.PubDbXRef" table="pub_dbxref">
         <id name="pubDbXRefId" type="int">
             <column name="pub_dbxref_id" />
             <generator class="sequence">
             	<param name="sequence">pub_dbxref_pub_dbxref_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="dbXRef" class="org.gmod.schema.general.DbXRef" fetch="select">
+        <many-to-one name="dbXRef" class="org.gmod.schema.mapped.DbXRef" fetch="select">
             <column name="dbxref_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="pub" class="org.gmod.schema.pub.Pub" fetch="select">
+        <many-to-one name="pub" class="org.gmod.schema.mapped.Pub" fetch="select">
             <column name="pub_id" not-null="true" />
         </many-to-one>
     </class>

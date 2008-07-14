@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.cv.CvTermDbXRef" table="cvterm_dbxref">
+    <class name="org.gmod.schema.mapped.CvTermDbXRef" table="cvterm_dbxref">
         <comment>In addition to the primary identifier (cvterm.dbxref_id) a cvterm can have zero or more secondary identifiers, which may be in external databases</comment>
         <id name="cvTermDbXRefId" type="int">
             <column name="cvterm_dbxref_id" />
@@ -11,10 +11,10 @@
             	<param name="sequence">cvterm_dbxref_cvterm_dbxref_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="cvterm_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="dbXRef" class="org.gmod.schema.general.DbXRef" fetch="select">
+        <many-to-one name="dbXRef" class="org.gmod.schema.mapped.DbXRef" fetch="select">
             <column name="dbxref_id" not-null="true" />
         </many-to-one>
         <property name="isForDefinition" type="int">

@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.cv.CvTermPath" table="cvtermpath">
+    <class name="org.gmod.schema.mapped.CvTermPath" table="cvtermpath">
         <comment>The reflexive transitive closure of the cvterm_relationship relation. For a full discussion, see the file populating-cvtermpath.txt in this directory</comment>
         <id name="cvTermPathId" type="int">
             <column name="cvtermpath_id" />
@@ -11,19 +11,19 @@
             	<param name="sequence">cvtermpath_cvtermpath_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="cvTermBySubjectId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTermBySubjectId" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="subject_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="cvTermByObjectId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTermByObjectId" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="object_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="cvTermByTypeId" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTermByTypeId" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id">
                 <comment>The relationship type that this is a closure over. If null, then this is a closure over ALL relationship types. If non-null, then this references a
                 relationship cvterm - note that the closure will apply to both this relationship AND the OBO_REL:is_a (subclass) relationship</comment>
             </column>
         </many-to-one>
-        <many-to-one name="cv" class="org.gmod.schema.cv.Cv" fetch="select">
+        <many-to-one name="cv" class="org.gmod.schema.mapped.Cv" fetch="select">
             <column name="cv_id" not-null="true">
                 <comment>Closures will mostly be within one cv. If the closure of a relationship traverses a cv, then this refers to the cv of the object_id cvterm</comment>
             </column>

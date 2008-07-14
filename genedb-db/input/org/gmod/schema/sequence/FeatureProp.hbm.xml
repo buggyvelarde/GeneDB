@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.FeatureProp" table="featureprop">
+    <class name="org.gmod.schema.mapped.FeatureProp" table="featureprop">
         <comment>A feature can have any number of slot-value property tags attached to it. This is an alternative to hardcoding a list of columns in the relational schema, and is
         completely extensible</comment>
         <id name="featurePropId" type="int">
@@ -12,13 +12,13 @@
             	<param name="sequence">featureprop_featureprop_id_seq</param>
             </generator>
         </id>        
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" not-null="true">
                 <comment>The name of the property/slot is a cvterm. The meaning of the property is defined in that cvterm. Certain properties will only apply to certain feature
                 types; this will be handled by the Sequence Ontology</comment>
             </column>
         </many-to-one>
-        <many-to-one name="feature" class="org.gmod.schema.sequence.Feature" fetch="select">
+        <many-to-one name="feature" class="org.gmod.schema.mapped.Feature" fetch="select">
             <column name="feature_id" not-null="true" />
         </many-to-one>
         <property name="value" type="string">
@@ -37,7 +37,7 @@
             <key>
                 <column name="featureprop_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeaturePropPub" />
+            <one-to-many class="org.gmod.schema.mapped.FeaturePropPub" />
         </set>
     </class>
 </hibernate-mapping>

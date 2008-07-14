@@ -1,6 +1,6 @@
 package org.gmod.schema.utils.propinterface;
 
-import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.mapped.CvTerm;
 
 /**
  *
@@ -8,6 +8,6 @@ import org.gmod.schema.cv.CvTerm;
  */
 public interface PropertyI {
 
-    public abstract CvTerm getCvTerm();
+    public abstract CvTerm getType();
 
 }

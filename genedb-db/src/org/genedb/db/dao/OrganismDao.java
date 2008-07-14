@@ -1,6 +1,6 @@
 package org.genedb.db.dao;
 
-import org.gmod.schema.organism.Organism;
+import org.gmod.schema.mapped.Organism;
 
 import java.util.List;
 

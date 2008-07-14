@@ -3,17 +3,17 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.organism.OrganismProp" table="organismprop">
+    <class name="org.gmod.schema.mapped.OrganismProp" table="organismprop">
         <id name="organismPropId" type="int">
             <column name="organismprop_id" />
             <generator class="sequence">
             	<param name="sequence">organismprop_organismprop_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="organism" class="org.gmod.schema.organism.Organism" fetch="select">
+        <many-to-one name="organism" class="org.gmod.schema.mapped.Organism" fetch="select">
             <column name="organism_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" not-null="true" />
         </many-to-one>
         <property name="value" type="string">

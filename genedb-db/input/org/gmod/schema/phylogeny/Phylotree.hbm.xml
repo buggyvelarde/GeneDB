@@ -3,17 +3,17 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.phylogeny.Phylotree" table="phylotree">
+    <class name="org.gmod.schema.mapped.Phylotree" table="phylotree">
         <id name="phylotreeId" type="int">
             <column name="phylotree_id" />
             <generator class="sequence">
             	<param name="sequence">phylotree_phylotree_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" />
         </many-to-one>
-        <many-to-one name="dbXRef" class="org.gmod.schema.general.DbXRef" fetch="select">
+        <many-to-one name="dbXRef" class="org.gmod.schema.mapped.DbXRef" fetch="select">
             <column name="dbxref_id" not-null="true" />
         </many-to-one>
         <property name="name" type="string">
@@ -26,13 +26,13 @@
             <key>
                 <column name="phylotree_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.Phylonode" />
+            <one-to-many class="org.gmod.schema.mapped.Phylonode" />
         </set>
         <set name="phylotreePubs" inverse="true">
             <key>
                 <column name="phylotree_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.PhylotreePub" />
+            <one-to-many class="org.gmod.schema.mapped.PhylotreePub" />
         </set>
     </class>
 </hibernate-mapping>

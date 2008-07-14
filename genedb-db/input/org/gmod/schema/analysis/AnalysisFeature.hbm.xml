@@ -3,17 +3,17 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.analysis.AnalysisFeature" table="analysisfeature">
+    <class name="org.gmod.schema.mapped.AnalysisFeature" table="analysisfeature">
         <id name="analysisFeatureId" type="int">
             <column name="analysisfeature_id" />
             <generator class="sequence">
             	<param name="sequence">analysisfeature_analysisfeature_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="analysis" class="org.gmod.schema.analysis.Analysis" fetch="select">
+        <many-to-one name="analysis" class="org.gmod.schema.mapped.Analysis" fetch="select">
             <column name="analysis_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="feature" class="org.gmod.schema.sequence.Feature" fetch="select">
+        <many-to-one name="feature" class="org.gmod.schema.mapped.Feature" fetch="select">
             <column name="feature_id" not-null="true" />
         </many-to-one>
         <property name="rawScore" type="java.lang.Double">

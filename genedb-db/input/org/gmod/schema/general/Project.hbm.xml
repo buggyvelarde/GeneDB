@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.general.Project" table="project">
+    <class name="org.gmod.schema.mapped.Project" table="project">
         <id name="projectId" type="int">
             <column name="project_id" />
             <generator class="sequence">

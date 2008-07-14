@@ -22,7 +22,7 @@ package org.genedb.db.taxon;
 
 import org.genedb.db.dao.PhylogenyDao;
 
-import org.gmod.schema.phylogeny.Phylonode;
+import org.gmod.schema.mapped.Phylonode;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

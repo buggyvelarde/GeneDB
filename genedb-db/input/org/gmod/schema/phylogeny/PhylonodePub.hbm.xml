@@ -3,17 +3,17 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.phylogeny.PhylonodePub" table="phylonode_pub">
+    <class name="org.gmod.schema.mapped.PhylonodePub" table="phylonode_pub">
         <id name="phylonodePubId" type="int">
             <column name="phylonode_pub_id" />
             <generator class="sequence">
             	<param name="sequence">phylonode_pub_phylonode_pub_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="pub" class="org.gmod.schema.pub.Pub" fetch="select">
+        <many-to-one name="pub" class="org.gmod.schema.mapped.Pub" fetch="select">
             <column name="pub_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="phylonode" class="org.gmod.schema.phylogeny.Phylonode" fetch="select">
+        <many-to-one name="phylonode" class="org.gmod.schema.mapped.Phylonode" fetch="select">
             <column name="phylonode_id" not-null="true" />
         </many-to-one>
     </class>

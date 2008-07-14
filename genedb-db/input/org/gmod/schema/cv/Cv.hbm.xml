@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.cv.Cv" table="cv">
+    <class name="org.gmod.schema.mapped.Cv" table="cv">
         <comment>A controlled vocabulary or ontology. A cv is composed of cvterms (aka terms, classes, concepts, frames) and the relationships between them</comment>
         <id name="cvId" type="int">
             <column name="cv_id" />
@@ -27,7 +27,7 @@
                     <comment>Closures will mostly be within one cv. If the closure of a relationship traverses a cv, then this refers to the cv of the object_id cvterm</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermPath" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermPath" />
         </set>
         <set name="cvTerms" inverse="true">
             <key>
@@ -35,7 +35,7 @@
                     <comment>The cv/ontology/namespace to which this cvterm belongs</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTerm" />
+            <one-to-many class="org.gmod.schema.mapped.CvTerm" />
         </set>
     </class>
 </hibernate-mapping>

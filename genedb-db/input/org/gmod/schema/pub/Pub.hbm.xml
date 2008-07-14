@@ -3,14 +3,14 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.pub.Pub" table="pub">
+    <class name="org.gmod.schema.mapped.Pub" table="pub">
         <id name="pubId" type="int">
             <column name="pub_id" />
             <generator class="sequence">
             	<param name="sequence">pub_pub_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="type_id" not-null="true" />
         </many-to-one>
         <property name="title" type="string">
@@ -53,49 +53,49 @@
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.pub.PubAuthor" />
+            <one-to-many class="org.gmod.schema.mapped.PubAuthor" />
         </set>
         <set name="phylotreePubs" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.PhylotreePub" />
+            <one-to-many class="org.gmod.schema.mapped.PhylotreePub" />
         </set>
         <set name="pubRelationshipsForObjectId" inverse="true">
             <key>
                 <column name="object_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.pub.PubRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.PubRelationship" />
         </set>
         <set name="pubDbXRefs" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.pub.PubDbXRef" />
+            <one-to-many class="org.gmod.schema.mapped.PubDbXRef" />
         </set>
         <set name="featureCvTerms" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureCvTerm" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureCvTerm" />
         </set>
         <set name="featureRelationshipPubs" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureRelationshipPub" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureRelationshipPub" />
         </set>
         <set name="featurePubs" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeaturePub" />
+            <one-to-many class="org.gmod.schema.mapped.FeaturePub" />
         </set>
         <set name="featurePropPubs" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeaturePropPub" />
+            <one-to-many class="org.gmod.schema.mapped.FeaturePropPub" />
         </set>
         <set name="featureSynonyms" inverse="true">
             <key>
@@ -103,37 +103,37 @@
                     <comment>the pub_id link is for relating the usage of a given synonym to the publication in which it was used</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureSynonym" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureSynonym" />
         </set>
         <set name="featureCvTermPubs" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureCvTermPub" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureCvTermPub" />
         </set>
         <set name="featureRelationshipPropPubs" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureRelationshipPropPub" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureRelationshipPropPub" />
         </set>
         <set name="pubProps" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.pub.PubProp" />
+            <one-to-many class="org.gmod.schema.mapped.PubProp" />
         </set>
         <set name="phylonodePubs" inverse="true">
             <key>
                 <column name="pub_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.PhylonodePub" />
+            <one-to-many class="org.gmod.schema.mapped.PhylonodePub" />
         </set>
         <set name="pubRelationshipsForSubjectId" inverse="true">
             <key>
                 <column name="subject_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.pub.PubRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.PubRelationship" />
         </set>
     </class>
 </hibernate-mapping>

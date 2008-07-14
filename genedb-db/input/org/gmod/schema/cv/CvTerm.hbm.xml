@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.cv.CvTerm" table="cvterm">
+    <class name="org.gmod.schema.mapped.CvTerm" table="cvterm">
         <comment>A term, class or concept within an ontology or controlled vocabulary. Also used for relationship types. A cvterm can also be thought of as a node in a
         graph</comment>
         <id name="cvTermId" type="int">
@@ -12,13 +12,13 @@
             	<param name="sequence">cvterm_cvterm_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="dbXRef" class="org.gmod.schema.general.DbXRef" fetch="select">
+        <many-to-one name="dbXRef" class="org.gmod.schema.mapped.DbXRef" fetch="select">
             <column name="dbxref_id" not-null="true" unique="true">
                 <comment>Primary dbxref - The unique global OBO identifier for this cvterm. Note that a cvterm may have multiple secondary dbxrefs - see also table:
                 cvterm_dbxref</comment>
             </column>
         </many-to-one>
-        <many-to-one name="cv" class="org.gmod.schema.cv.Cv" fetch="select">
+        <many-to-one name="cv" class="org.gmod.schema.mapped.Cv" fetch="select">
             <column name="cv_id" not-null="true">
                 <comment>The cv/ontology/namespace to which this cvterm belongs</comment>
             </column>
@@ -49,19 +49,19 @@
             <key>
                 <column name="type_id" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.Phylotree" />
+            <one-to-many class="org.gmod.schema.mapped.Phylotree" />
         </set>
         <set name="dbXRefProps" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.cv.DbXRefProp" />
+            <one-to-many class="org.gmod.schema.mapped.DbXRefProp" />
         </set>
         <set name="cvTermPropsForCvTermId" inverse="true">
             <key>
                 <column name="cvterm_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermProp" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermProp" />
         </set>
         <set name="synonyms" inverse="true">
             <key>
@@ -69,7 +69,7 @@
                     <comment>types would be symbol and fullname for now</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.sequence.Synonym" />
+            <one-to-many class="org.gmod.schema.mapped.Synonym" />
         </set>
         <set name="cvTermPathsForTypeId" inverse="true">
             <key>
@@ -78,19 +78,19 @@
                     relationship cvterm - note that the closure will apply to both this relationship AND the OBO_REL:is_a (subclass) relationship</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermPath" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermPath" />
         </set>
         <set name="cvTermDbXRefs" inverse="true">
             <key>
                 <column name="cvterm_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermDbXRef" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermDbXRef" />
         </set>
         <set name="phylonodeProps" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.PhylonodeProp" />
+            <one-to-many class="org.gmod.schema.mapped.PhylonodeProp" />
         </set>
         <set name="cvTermRelationshipsForTypeId" inverse="true">
             <key>
@@ -99,7 +99,7 @@
                     allowed</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermRelationship" />
         </set>
         <set name="cvTermRelationshipsForObjectId" inverse="true">
             <key>
@@ -107,13 +107,13 @@
                     <comment>the object of the subj-predicate-obj sentence. In a DAG, this corresponds to the parent node</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermRelationship" />
         </set>
         <set name="pubProps" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.pub.PubProp" />
+            <one-to-many class="org.gmod.schema.mapped.PubProp" />
         </set>
         <set name="cvTermRelationshipsForSubjectId" inverse="true">
             <key>
@@ -121,19 +121,19 @@
                     <comment>the subject of the subj-predicate-obj sentence. In a DAG, this corresponds to the child node</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermRelationship" />
         </set>
         <set name="organismProps" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.organism.OrganismProp" />
+            <one-to-many class="org.gmod.schema.mapped.OrganismProp" />
         </set>
         <set name="cvTermPathsForSubjectId" inverse="true">
             <key>
                 <column name="subject_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermPath" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermPath" />
         </set>
         <set name="featureProps" inverse="true">
             <key>
@@ -142,13 +142,13 @@
                     feature types; this will be handled by the Sequence Ontology</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureProp" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureProp" />
         </set>
         <set name="cvTermPathsForObjectId" inverse="true">
             <key>
                 <column name="object_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermPath" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermPath" />
         </set>
         <set name="cvTermSynonymsForTypeId" inverse="true">
             <key>
@@ -156,13 +156,13 @@
                     <comment>A synonym can be exact, narrow or broader than</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermSynonym" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermSynonym" />
         </set>
         <set name="pubs" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.pub.Pub" />
+            <one-to-many class="org.gmod.schema.mapped.Pub" />
         </set>
         <set name="features" inverse="true">
             <key>
@@ -171,13 +171,13 @@
                     subclass the feature table</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.sequence.Feature" />
+            <one-to-many class="org.gmod.schema.mapped.Feature" />
         </set>
         <set name="pubRelationships" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.pub.PubRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.PubRelationship" />
         </set>
         <set name="cvTermPropsForTypeId" inverse="true">
             <key>
@@ -185,43 +185,43 @@
                     <comment>The name of the property/slot is a cvterm. The meaning of the property is defined in that cvterm</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermProp" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermProp" />
         </set>
         <set name="analysisProps" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.analysis.AnalysisProp" />
+            <one-to-many class="org.gmod.schema.mapped.AnalysisProp" />
         </set>
         <set name="phylonodeRelationships" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.PhylonodeRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.PhylonodeRelationship" />
         </set>
         <set name="featureCvTermProps" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureCvTermProp" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureCvTermProp" />
         </set>
         <set name="featureCvTerms" inverse="true">
             <key>
                 <column name="cvterm_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureCvTerm" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureCvTerm" />
         </set>
         <set name="cvTermSynonymsForCvTermId" inverse="true">
             <key>
                 <column name="cvterm_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.cv.CvTermSynonym" />
+            <one-to-many class="org.gmod.schema.mapped.CvTermSynonym" />
         </set>
         <set name="featureRelationshipProps" inverse="true">
             <key>
                 <column name="type_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureRelationshipProp" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureRelationshipProp" />
         </set>
         <set name="featureRelationships" inverse="true">
             <key>
@@ -230,13 +230,13 @@
                     allowed. The most common relationship type is OBO_REL:part_of. Valid relationship types are constrained by the Sequence Ontology</comment>
                 </column>
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureRelationship" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureRelationship" />
         </set>
         <set name="phylonodes" inverse="true">
             <key>
                 <column name="type_id" />
             </key>
-            <one-to-many class="org.gmod.schema.phylogeny.Phylonode" />
+            <one-to-many class="org.gmod.schema.mapped.Phylonode" />
         </set>
     </class>
 </hibernate-mapping>

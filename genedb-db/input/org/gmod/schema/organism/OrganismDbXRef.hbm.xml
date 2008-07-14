@@ -3,17 +3,17 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.organism.OrganismDbXRef" table="organism_dbxref">
+    <class name="org.gmod.schema.mapped.OrganismDbXRef" table="organism_dbxref">
         <id name="organismDbXRefId" type="int">
             <column name="organism_dbxref_id" />
             <generator class="sequence">
             	<param name="sequence">organism_dbxref_organism_dbxref_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="organism" class="org.gmod.schema.organism.Organism" fetch="select">
+        <many-to-one name="organism" class="org.gmod.schema.mapped.Organism" fetch="select">
             <column name="organism_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="dbXRef" class="org.gmod.schema.general.DbXRef" fetch="select">
+        <many-to-one name="dbXRef" class="org.gmod.schema.mapped.DbXRef" fetch="select">
             <column name="dbxref_id" not-null="true" />
         </many-to-one>
     </class>

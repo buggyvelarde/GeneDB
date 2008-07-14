@@ -131,8 +131,8 @@
     <target name="hibernate-instrumentation">
         <instrument verbose="true">
             <fileset dir="${directory}">
-                <include name="org/gmod/schema/sequence/Feature.class"/>
-                <include name="org/gmod/schema/sequence/feature/*.class"/>
+                <include name="org/gmod/schema/mapped/Feature.class"/>
+                <include name="org/gmod/schema/feature/*.class"/>
             </fileset>
         </instrument>
     </target>

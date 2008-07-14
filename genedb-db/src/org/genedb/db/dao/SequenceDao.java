@@ -1,21 +1,21 @@
 package org.genedb.db.dao;
 
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.organism.Organism;
-import org.gmod.schema.sequence.Feature;
-import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureDbXRef;
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
-import org.gmod.schema.sequence.FeatureRelationship;
-import org.gmod.schema.sequence.FeatureSynonym;
-import org.gmod.schema.sequence.Synonym;
-import org.gmod.schema.sequence.feature.GPIAnchorCleavageSite;
-import org.gmod.schema.sequence.feature.Polypeptide;
-import org.gmod.schema.sequence.feature.PolypeptideDomain;
-import org.gmod.schema.sequence.feature.SignalPeptide;
-import org.gmod.schema.sequence.feature.TransmembraneRegion;
+import org.gmod.schema.feature.GPIAnchorCleavageSite;
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.PolypeptideDomain;
+import org.gmod.schema.feature.SignalPeptide;
+import org.gmod.schema.feature.TransmembraneRegion;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.FeatureDbXRef;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.mapped.FeatureSynonym;
+import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.mapped.Synonym;
 import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
 
@@ -124,8 +124,8 @@ public class SequenceDao extends BaseDao {
         List<Feature> features = getHibernateTemplate()
                 .findByNamedParam(
                         "select f "
-                                + "from Feature f, FeatureLoc loc, CvTerm cvt where "
-                                + "f.featureId=loc.featureByFeatureId and f.cvTerm=cvt.cvTermId and cvt.name=:type and loc.strand="
+                                + "from Feature f, FeatureLoc loc where "
+                                + "f = loc.featureByFeatureId and f.type.name=:type and loc.strand="
                                 + strand + " and" + " loc.featureBySrcFeatureId=" + fid + " and ("
                                 + " loc.fmin<=:min and loc.fmax>=:max)",
                         new String[] { "type", "min", "max" }, new Object[] { type, min, max });
@@ -148,7 +148,7 @@ public class SequenceDao extends BaseDao {
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate()
                 .findByNamedParam(
-                        "select f from Feature f, FeatureSynonym fs, Synonym s, CvTerm cvt where f=fs.feature and fs.synonym=s and fs.current=true and f.cvTerm=cvt.cvTermId and cvt.name=:featureType and s.name like :lookup",
+                        "select f from Feature f, FeatureSynonym fs, Synonym s, CvTerm cvt where f=fs.feature and fs.synonym=s and fs.current=true and f.type=cvt.cvTermId and cvt.name=:featureType and s.name like :lookup",
                         new String[] { "lookup", "featureType" },
                         new Object[] { lookup, featureType });
         return features;
@@ -249,9 +249,9 @@ public class SequenceDao extends BaseDao {
         List<CvTerm> goName;
         List<Feature> features = new ArrayList<Feature>();
         polypeptides = getHibernateTemplate().findByNamedParam(
-                "select f " + "from Feature f, DbXRef d, CvTerm c, FeatureCvTerm fc where "
-                        + "d.accession=:number and d.dbXRefId=c.dbXRef and c.cvTermId=fc.cvTerm "
-                        + "and fc.feature=f.featureId", new String[] { "number" },
+                "select f " + "from Feature f, CvTerm c, FeatureCvTerm fc where "
+                        + "c.dbXRef.accession=:number and fc.cvTerm = c "
+                        + "and fc.feature=f", new String[] { "number" },
                 new Object[] { number });
         for (Feature polypep : polypeptides) {
             logger.info(polypep.getUniqueName());
@@ -259,8 +259,8 @@ public class SequenceDao extends BaseDao {
                     .findByNamedParam(
                             "select f "
                                     + "from Feature f,FeatureRelationship f1,FeatureRelationship f2 where "
-                                    + "f2.featureBySubjectId=:polypep and f2.featureByObjectId=f1.featureBySubjectId "
-                                    + "and f1.featureByObjectId=f", new String[] { "polypep" },
+                                    + "f2.subjectFeature=:polypep and f2.objectFeature=f1.subjectFeature "
+                                    + "and f1.objectFeature=f", new String[] { "polypep" },
                             new Object[] { polypep });
             if (genes.size() > 0) {
                 features.add(genes.get(0));
@@ -273,7 +273,7 @@ public class SequenceDao extends BaseDao {
         List<Feature> flocs = new ArrayList<Feature>();
         String name = "chromosome";
         flocs = getHibernateTemplate().findByNamedParam(
-                "select f from Feature f " + "where f.cvTerm.name=:name", new String[] { "name" },
+                "select f from Feature f " + "where f.type.name=:name", new String[] { "name" },
                 new Object[] { name });
         List<List<?>> data = new ArrayList<List<?>>();
         data.add(features);
@@ -312,7 +312,7 @@ public class SequenceDao extends BaseDao {
         List<Feature> features = getHibernateTemplate()
                 .findByNamedParam(
                         "select f from Feature f where"
-                                + " f.uniqueName like :lookup and f.cvTerm.name=:featureType and f.organism.commonName in ( "
+                                + " f.uniqueName like :lookup and f.type.name=:featureType and f.organism.commonName in ( "
                                 + orgNames + " )", new String[] { "lookup", "featureType" },
                         new Object[] { lookup, featureType, });
 
@@ -343,7 +343,7 @@ public class SequenceDao extends BaseDao {
     public List<Feature> getFeaturesByCvTermName(String cvTermName) {
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
-                "select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName",
+                "select f.feature from FeatureCvTerm f where f.type.name like :cvTermName",
                 "cvTermName", cvTermName);
         return features;
     }
@@ -373,8 +373,8 @@ public class SequenceDao extends BaseDao {
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate()
                 .findByNamedParam(
-                        "select f.feature from FeatureCvTerm f where f.cvTerm.name like :cvTermName"
-                        +" and f.cvTerm.cv.name like :cvName",
+                        "select f.feature from FeatureCvTerm f where f.type.name like :cvTermName"
+                        +" and f.type.cv.name like :cvName",
                         new String[] { "cvTermName", "cvName" },
                         new Object[] { cvTermName, cvName });
         return features;
@@ -403,31 +403,31 @@ public class SequenceDao extends BaseDao {
             features = getHibernateTemplate()
                     .findByNamedParam(
                             "select new org.gmod.schema.utils.GeneNameOrganism( " +
-                            "transcript_gene.featureByObjectId.uniqueName, transcript_gene.featureByObjectId.organism.abbreviation) " +
+                            "transcript_gene.objectFeature.uniqueName, transcript_gene.objectFeature.organism.abbreviation) " +
                             "from " +
                             "FeatureRelationship transcript_gene, FeatureRelationship polypeptide_transcript " +
-                            "where transcript_gene.featureBySubjectId=polypeptide_transcript.featureByObjectId and " +
-                            "polypeptide_transcript.cvTerm.name='derives_from' and " +
-                            " transcript_gene.featureByObjectId.organism.commonName=:organism and " +
-                            "polypeptide_transcript.featureBySubjectId in ( " +
+                            "where transcript_gene.subjectFeature=polypeptide_transcript.objectFeature and " +
+                            "polypeptide_transcript.type.name='derives_from' and " +
+                            " transcript_gene.objectFeature.organism.commonName=:organism and " +
+                            "polypeptide_transcript.subjectFeature in ( " +
                             "select fct.feature from FeatureCvTerm fct where " +
                             "fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name=:cvName) " +
-                            "order by transcript_gene.featureByObjectId.organism.abbreviation",
+                            "order by transcript_gene.objectFeature.organism.abbreviation",
                             new String[] { "organism","cvTermName", "cvName" },
                             new Object[] { organism,cvTermName, cvName });
         } else {
             features = getHibernateTemplate()
             .findByNamedParam(
                     "select new org.gmod.schema.utils.GeneNameOrganism( " +
-                    "transcript_gene.featureByObjectId.uniqueName, transcript_gene.featureByObjectId.organism.abbreviation) " +
+                    "transcript_gene.objectFeature.uniqueName, transcript_gene.objectFeature.organism.abbreviation) " +
                     "from " +
                     "FeatureRelationship transcript_gene, FeatureRelationship polypeptide_transcript " +
-                    "where transcript_gene.featureBySubjectId=polypeptide_transcript.featureByObjectId and " +
-                    "polypeptide_transcript.cvTerm.name='derives_from' and " +
-                    "polypeptide_transcript.featureBySubjectId in ( " +
+                    "where transcript_gene.subjectFeature=polypeptide_transcript.objectFeature and " +
+                    "polypeptide_transcript.type.name='derives_from' and " +
+                    "polypeptide_transcript.subjectFeature in ( " +
                     "select fct.feature from FeatureCvTerm fct where " +
                     "fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name=:cvName) " +
-                    "order by transcript_gene.featureByObjectId.organism.abbreviation",
+                    "order by transcript_gene.objectFeature.organism.abbreviation",
                     new String[] { "cvTermName", "cvName" },
                     new Object[] { cvTermName, cvName });
         }
@@ -449,7 +449,7 @@ public class SequenceDao extends BaseDao {
 
         @SuppressWarnings("unchecked")
         List<String> result = ht.findByNamedParam(
-                        "select f.uniqueName from Feature f where lower(f.uniqueName) like lower(:name) and f.cvTerm = :cvTerm",
+                        "select f.uniqueName from Feature f where lower(f.uniqueName) like lower(:name) and f.type = :cvTerm",
                         new String[] { "name", "cvTerm" },
                         new Object[] { "%" + name + "%", cvTerm });
         return result;
@@ -511,7 +511,7 @@ public class SequenceDao extends BaseDao {
         List<Feature> features = getHibernateTemplate().findByNamedParam(
                 "select f from Feature f , FeatureLoc fl " + "where fl.fmin>=:min "
                         + "and fl.fmax<=:max and fl.featureByFeatureId=f.featureId "
-                        + "and fl.featureBySrcFeatureId=:parent and f.cvTerm.name=:type "
+                        + "and fl.featureBySrcFeatureId=:parent and f.type.name=:type "
                         + "and f.organism.commonName=:organism",
                 new String[] { "min", "max", "type", "organism", "parent" },
                 new Object[] { min, max, type, organism, parent });
@@ -532,8 +532,8 @@ public class SequenceDao extends BaseDao {
         @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
         List<FeatureRelationship> frs = getHibernateTemplate().findByNamedParam(
                 "from FeatureRelationship fr "
-                        + "where fr.featureBySubjectId=:subject and fr.featureByObjectId=:object "
-                        + "and fr.cvTerm=:relation",
+                        + "where fr.subjectFeature=:subject and fr.objectFeature=:object "
+                        + "and fr.type=:relation",
                 new String[] { "subject", "object", "relation" },
                 new Object[] { subject, object, relation });
 

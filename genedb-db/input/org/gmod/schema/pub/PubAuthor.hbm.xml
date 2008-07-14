@@ -3,14 +3,14 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.pub.PubAuthor" table="pubauthor">
+    <class name="org.gmod.schema.mapped.PubAuthor" table="pubauthor">
         <id name="pubAuthorId" type="int">
             <column name="pubauthor_id" />
             <generator class="sequence">
             	<param name="sequence">pubauthor_pubauthor_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="pub" class="org.gmod.schema.pub.Pub" fetch="select">
+        <many-to-one name="pub" class="org.gmod.schema.mapped.Pub" fetch="select">
             <column name="pub_id" not-null="true" />
         </many-to-one>
         <property name="rank" type="int">

@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Sep 1, 2006 11:31:28 AM by Hibernate Tools 3.2.0.beta7 -->
 <hibernate-mapping>
-    <class name="org.gmod.schema.sequence.FeatureCvTerm" table="feature_cvterm">
+    <class name="org.gmod.schema.mapped.FeatureCvTerm" table="feature_cvterm">
         <comment>Associate a term from a cv with a feature, for example, GO annotation</comment>
         <id name="featureCvTermId" type="int">
             <column name="feature_cvterm_id" />
@@ -11,13 +11,13 @@
             	<param name="sequence">feature_cvterm_feature_cvterm_id_seq</param>
             </generator>
         </id>
-        <many-to-one name="cvTerm" class="org.gmod.schema.cv.CvTerm" fetch="select">
+        <many-to-one name="cvTerm" class="org.gmod.schema.mapped.CvTerm" fetch="select">
             <column name="cvterm_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="feature" class="org.gmod.schema.sequence.Feature" fetch="select">
+        <many-to-one name="feature" class="org.gmod.schema.mapped.Feature" fetch="select">
             <column name="feature_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="pub" class="org.gmod.schema.pub.Pub" fetch="select">
+        <many-to-one name="pub" class="org.gmod.schema.mapped.Pub" fetch="select">
             <column name="pub_id" not-null="true" />
         </many-to-one>
         <property name="not" type="boolean">
@@ -30,19 +30,19 @@
             <key>
                 <column name="feature_cvterm_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureCvTermProp" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureCvTermProp" />
         </set>
         <set name="featureCvTermPubs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_cvterm_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureCvTermPub" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureCvTermPub" />
         </set>
         <set name="featureCvTermDbXRefs" inverse="true" cascade="all,delete-orphan">
             <key>
                 <column name="feature_cvterm_id" not-null="true" />
             </key>
-            <one-to-many class="org.gmod.schema.sequence.FeatureCvTermDbXRef" />
+            <one-to-many class="org.gmod.schema.mapped.FeatureCvTermDbXRef" />
         </set>
     </class>
 </hibernate-mapping>
