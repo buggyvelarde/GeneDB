@@ -500,11 +500,12 @@ public class FixResidues {
     private void setResidues(int featureId, String residues) throws SQLException {
         if (updateResiduesSt == null) {
             updateResiduesSt = conn.prepareStatement(
-                "update feature set residues = ? where feature_id = ?"
+                "update feature set residues = ?, seqlen = ? where feature_id = ?"
             );
         }
         updateResiduesSt.setString(1, residues);
-        updateResiduesSt.setInt(2, featureId);
+        updateResiduesSt.setInt(2, residues.length());
+        updateResiduesSt.setInt(3, featureId);
         int updatedRows = updateResiduesSt.executeUpdate();
         if (updatedRows != 1)
             throw new IllegalArgumentException(String.format("Unexpected result (%d) updating residues for feature %d",
