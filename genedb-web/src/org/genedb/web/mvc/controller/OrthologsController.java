@@ -92,24 +92,19 @@ public class OrthologsController extends AbstractController {
                 }
             }
         }
-        model = new HashMap<String, Object>(1);
+        model = new HashMap<String, Object>();
 
         switch (orthologs.size()) {
         case 0:
             // TODO return to an error page displaying proper message
         case 1:
             String gene = orthologs.get(0).getUniqueName();
-            model = modelBuilder.prepareGene(gene, model);
+            model.put("name", gene);
             viewName = genePage;
             break;
         default:
             model.put("results", orthologs);
         }
         return new ModelAndView(viewName, model);
-    }
-
-    private ModelBuilder modelBuilder;
-    public void setModelBuilder(ModelBuilder modelBuilder) {
-        this.modelBuilder = modelBuilder;
     }
 }

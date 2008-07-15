@@ -277,8 +277,7 @@
         class="org.genedb.web.mvc.controller.OrthologsController">
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="listResultsView" value="list/features" />
-        <property name="genePage" value="features/gene" />
-        <property name="modelBuilder" ref="modelBuilder"/>
+        <property name="genePage" value="redirect:NamedFeature" />
     </bean>
 
     <bean id="GenesByCvTermAndCvController"
