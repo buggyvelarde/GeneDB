@@ -1,5 +1,4 @@
-function ArrayList()
-{
+function ArrayList() {
   this.array = new Array();
   
   this.add = function(obj){
@@ -15,7 +14,9 @@ function ArrayList()
   }
   
   this.get = function (index){
-    return this.array[index];
+	  if(index < this.array.length) {
+		  return this.array[index];
+	  }
   }
   
   this.addAll = function (obj) {
@@ -36,15 +37,29 @@ function ArrayList()
 			  return true;
 		  }
 	  }
+	  return false;
   }
   
   this.remove = function (obj) {
+	  var temp = new Array();
+	  var count = 0;
 	  for (var i=0;i<this.array.length;i++) {
-		  if(this.array[i] == obj) {
-			  for(var j=i; j<this.array.length)
+		  if(this.array[i] != obj) {
+			  temp[count] = this.array[i];
+			  count++;
 		  }
 	  }
+	  this.array = temp;
   }
+  
+  this.toString = function() {
+	  var str = "";
+	  for (var i=0;i<this.array.length;i++) {
+		  str += this.array[i] + ",";
+	  }
+	  return str.replace(/(.*),/,"$1");
+  }
+  
 }
 
 

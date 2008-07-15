@@ -117,12 +117,21 @@ public class HistoryController extends MultiActionController implements Initiali
     
     public ModelAndView EditHistory(HttpServletRequest request,HttpServletResponse response) {
         String history = ServletRequestUtils.getStringParameter(request, "history","0");
+        String remove = ServletRequestUtils.getStringParameter(request, "remove","false");
         
         if(history == "0") {
             //be.reject("no.download.history");
             return new ModelAndView(editView);
         }
-
+        
+        if(remove.equals("true")) {
+            logger.info("history is " + remove);
+            HttpSession session = request.getSession(false);
+            HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+            historyManager.removeItem(Integer.parseInt(history)-1, historyManager.getVersion());
+            return new ModelAndView("redirect:/History/View");
+        }
+        
         Map<String,Object> model = new HashMap<String,Object>();
         model.put("history", history);
         return new ModelAndView(editView,model);
@@ -131,27 +140,40 @@ public class HistoryController extends MultiActionController implements Initiali
     private static final String GENEDB_HISTORY = "_GeneDB_History_List";
 
     public ModelAndView AddItem(HttpServletRequest request,HttpServletResponse response) {
-        Result result = new SimpleListResult();
-        result.setName("testing");
-
         HttpSession session = request.getSession(false);
-        String sessionTest = "";
-        boolean madeSession = false;
         if (session == null) {
-            madeSession = true;
+            // No session
+            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest",
+                "false");
+            if ("true".equals(secondTry)) {
+                // TODO Maybe use built in error handling
+                return new ModelAndView("history/noSession");
+            }
+            // Try and create session and return here
             session = request.getSession(true);
+            return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
         }
-        History history = (History) session.getAttribute(GENEDB_HISTORY);
-        if (history == null) {
-            history = new SimpleHistory();
-            session.setAttribute(GENEDB_HISTORY, history);
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+        
+        String history = ServletRequestUtils.getStringParameter(request, "history","0");
+        String id = ServletRequestUtils.getStringParameter(request, "ids","");
+        String type = ServletRequestUtils.getStringParameter(request, "type","");
+        
+        ArrayList<String> ids = new ArrayList<String>();
+        String list[] = id.split(",");
+        for (String s : ids) {
+            ids.add(s);
         }
-        history.addResult(result);
-        if (madeSession) {
-            sessionTest = "?sessionTest=true";
+        HistoryItem item = historyManager.getHistoryItems().get(Integer.parseInt(history)-1);
+        
+        if(type.equals("MODIFY")) {
+            item.setIds(ids);
+            item.setHistoryType(HistoryType.MANUAL);
         }
-
-        return new ModelAndView("redirect:/History/View" + sessionTest);
+        
+        String name = String.format("%s - Modified", item.getName());
+        historyManager.addHistoryItems(name,HistoryType.MANUAL,ids);
+        return new ModelAndView("redirect:/History/View");
     }
 
     @SuppressWarnings("unchecked")
@@ -405,7 +427,7 @@ public class HistoryController extends MultiActionController implements Initiali
             exp.printStackTrace();
         }
 
-        historyManager.addHistoryItems("merged", historyItem.getIds());
+        //historyManager.addHistoryItems("merged", historyItem.getIds());
 
         return new ModelAndView("redirect:/History/View");
     }
@@ -438,7 +460,7 @@ public class HistoryController extends MultiActionController implements Initiali
         for (Feature feature : results) {
             ids.add(feature.getUniqueName());
         }
-        historyManager.addHistoryItems("name lookup '" + name + "'", ids);
+        //historyManager.addHistoryItems("name lookup '" + name + "'", ids);
     }
 
     public String getHistoryView() {

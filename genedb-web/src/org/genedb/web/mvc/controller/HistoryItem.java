@@ -57,7 +57,7 @@ public class HistoryItem {
 		return historyType;
 	}
 	
-  public void union(HistoryItem i) {
+	public void union(HistoryItem i) {
         this.ids.addAll(i.getIds());
     }
 
@@ -69,4 +69,8 @@ public class HistoryItem {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public void setHistoryType(HistoryType historyType) {
+        this.historyType = historyType;
+    }
 }

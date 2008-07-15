@@ -34,7 +34,8 @@ function initList(base,params) {
         }
         
         var paginator = new YAHOO.widget.Paginator({ 
-            rowsPerPage: 25,
+        	alwaysVisible: false,
+        	rowsPerPage: 25,
             template : "{FirstPageLink} <span>{CurrentPageReport}</span> {PageLinks} {LastPageLink}",
             previousPageLinkLabel : '&lt;',
             nextPageLinkLabel : '&gt;',

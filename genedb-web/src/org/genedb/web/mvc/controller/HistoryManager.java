@@ -6,7 +6,7 @@ public interface HistoryManager {
 
 	public abstract List<HistoryItem> getHistoryItems();
 
-	public abstract void addHistoryItems(String name, List<String> ids);
+	public abstract void addHistoryItems(String name, HistoryType type, List<String> ids);
 	
 	public abstract void addHistoryItem(String name, String id);
 	
