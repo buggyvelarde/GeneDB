@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="dbxref")
@@ -77,6 +78,19 @@ public class DbXRef implements Serializable {
     }
     void setDb(Db db) {
         this.db = db;
+    }
+
+    /**
+     * Get the URL of this reference.
+     * @return the URL, or null if the associated database is not accessible through the web
+     */
+    @Transient
+    public String getUrl() {
+        String urlPrefix = getDb().getUrlPrefix();
+        if (urlPrefix == null) {
+            return null;
+        }
+        return urlPrefix + getAccession();
     }
 
     public String getAccession() {
