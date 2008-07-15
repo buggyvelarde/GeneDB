@@ -86,14 +86,7 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
         }
 
         if (results.size() == 1) {
-            AbstractGene gene;
-            if (results.get(0) instanceof Polypeptide) {
-                Polypeptide polypeptide = (Polypeptide) results.get(0);
-                gene = polypeptide.getGene();
-            } else {
-                gene = (AbstractGene) results.get(0);
-            }
-            modelBuilder.prepareGene(gene, model);
+            model.put("name", results.get(0).getUniqueName());
             return new ModelAndView(geneView, model);
         }
 
