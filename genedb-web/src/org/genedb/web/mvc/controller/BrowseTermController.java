@@ -19,13 +19,11 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.apache.log4j.Logger;
 import org.genedb.db.dao.SequenceDao;
 
-import org.gmod.schema.feature.AbstractGene;
-import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.Feature;
 
+import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -47,7 +45,6 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
 
     private static final Logger logger = Logger.getLogger(BrowseTermController.class);
     private SequenceDao sequenceDao;
-    private ModelBuilder modelBuilder;
     private String geneView;
 
     @Override
@@ -116,11 +113,6 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
     public void setGeneView(String geneView) {
         this.geneView = geneView;
     }
-
-    public void setModelBuilder(ModelBuilder modelBuilder) {
-        this.modelBuilder = modelBuilder;
-    }
-
 }
 
 class BrowseTermBean {

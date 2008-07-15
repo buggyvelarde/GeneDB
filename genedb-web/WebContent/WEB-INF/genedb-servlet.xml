@@ -323,7 +323,6 @@
         <property name="bindOnNewForm" value="true" />
         <property name="taxonNodeArrayPropertyEditor"
             ref="taxonNodeArrayPropertyEditor" />
-        <property name="modelBuilder" ref="modelBuilder"/>
     </bean>
 
     <bean id="ComplexQueryController"
