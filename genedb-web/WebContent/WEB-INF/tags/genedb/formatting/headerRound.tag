@@ -105,7 +105,7 @@
                                             <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process&organism=${organism}"/>" title="Browse GO Terms">Biological Process</a>
                  						</c:if>
                  						<c:if test="${empty organism}">
-                                            <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process"/>" title="Browse GO Terms">Biologiccal Process</a>
+                                            <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process"/>" title="Browse GO Terms">Biological Process</a>
                  						</c:if>
                                     </li>
                                     <li class="yuimenuitem">
