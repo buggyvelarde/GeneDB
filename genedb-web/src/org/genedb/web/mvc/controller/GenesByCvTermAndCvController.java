@@ -82,7 +82,7 @@ public class GenesByCvTermAndCvController extends AbstractController {
                 }
             }
             historyManager.addHistoryItems(String.format("GenesByCvTermNameAndCv-%s", args),
-                ids);
+                HistoryType.QUERY, ids);
             model.put("features", features);
             return new ModelAndView(jsonView, model);
         } else {
