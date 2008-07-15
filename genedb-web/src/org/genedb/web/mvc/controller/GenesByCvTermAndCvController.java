@@ -29,7 +29,6 @@ public class GenesByCvTermAndCvController extends AbstractController {
     private SequenceDao sequenceDao;
     private LuceneDao luceneDao;
     private String listResultsView;
-    private String genePage;
     private JsonView jsonView;
     private HistoryManagerFactory historyManagerFactory;
 
@@ -63,34 +62,29 @@ public class GenesByCvTermAndCvController extends AbstractController {
                 }
             }
 
-            if (features.size() == 1) {
-                model = modelBuilder.prepareGene(features.get(0).getGeneName(), model);
-                viewName = genePage;
-            } else {
-                HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(
-                    request.getSession());
+            HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(
+                request.getSession());
 
-                String args = String.format("organism:%s GO %s:%s ", organism, cvName, cvTermName);
+            String args = String.format("organism:%s GO %s:%s ", organism, cvName, cvTermName);
 
-                List<String> ids = new ArrayList<String>();
+            List<String> ids = new ArrayList<String>();
 
-                IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
+            IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
 
-                for (GeneNameOrganism feature : features) {
-                    ids.add(feature.getGeneName());
+            for (GeneNameOrganism feature : features) {
+                ids.add(feature.getGeneName());
 
-                    TermQuery query = new TermQuery(new Term("uniqueName", feature.getGeneName()));
-                    Hits hits = luceneDao.search(ir, query);
+                TermQuery query = new TermQuery(new Term("uniqueName", feature.getGeneName()));
+                Hits hits = luceneDao.search(ir, query);
 
-                    if (hits.length() > 0) {
-                        feature.setProduct(hits.doc(0).get("product"));
-                    }
+                if (hits.length() > 0) {
+                    feature.setProduct(hits.doc(0).get("product"));
                 }
-                historyManager.addHistoryItems(String.format("GenesByCvTermNameAndCv-%s", args),
-                    ids);
-                model.put("features", features);
-                return new ModelAndView(jsonView, model);
             }
+            historyManager.addHistoryItems(String.format("GenesByCvTermNameAndCv-%s", args),
+                ids);
+            model.put("features", features);
+            return new ModelAndView(jsonView, model);
         } else {
             model.put("args", String.format("?organism=%s&cvTermName=%s&cvName=%s&json=True",
                 organism, cvTermName, cvName));
@@ -100,16 +94,6 @@ public class GenesByCvTermAndCvController extends AbstractController {
 
     public void setListResultsView(String listResultsView) {
         this.listResultsView = listResultsView;
-    }
-
-    public void setGenePage(String genePage) {
-        this.genePage = genePage;
-    }
-
-    private ModelBuilder modelBuilder;
-
-    public void setModelBuilder(ModelBuilder modelBuilder) {
-        this.modelBuilder = modelBuilder;
     }
 
     public JsonView getJsonView() {

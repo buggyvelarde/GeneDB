@@ -284,9 +284,7 @@
     	class="org.genedb.web.mvc.controller.GenesByCvTermAndCvController">
 		<property name="sequenceDao" ref="sequenceDao" />
 		<property name="luceneDao" ref="luceneDao" />
-        <property name="modelBuilder" ref="modelBuilder"/>
         <property name="listResultsView" value="list/features" />
-        <property name="genePage" value="features/gene" />
         <property name="jsonView" ref="jsonView" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
     </bean>
