@@ -17,7 +17,7 @@
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
 <display:table name="features" uid="tmp" pagesize="30" requestURI="/NameFeature" class="simple" cellspacing="0" cellpadding="4">
    	<display:column property="organism.abbreviation" title="Organism"/>
-   	<display:column property="cvTerm.name" title="Type"/>
+   	<display:column property="type.name" title="Type"/>
 	<display:column property="uniqueName" href="./FeatureByName" paramId="name"/>
 </display:table>
 <img src="<c:url value="/" />/includes/images/purpleDot.gif" width="100%" height="2" alt="----------------------">
