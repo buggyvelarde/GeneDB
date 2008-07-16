@@ -1,8 +1,11 @@
 package org.genedb.db.dao;
 
+import org.gmod.schema.feature.CytoplasmicRegion;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
+import org.gmod.schema.feature.NonCytoplasmicRegion;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.PolypeptideDomain;
+import org.gmod.schema.feature.PolypeptideRegion;
 import org.gmod.schema.feature.SignalPeptide;
 import org.gmod.schema.feature.TransmembraneRegion;
 import org.gmod.schema.mapped.CvTerm;
@@ -699,18 +702,34 @@ public class SequenceDao extends BaseDao {
         // TODO Add interproDbxref as additional parameter?
     }
 
-    private CvTerm transmembraneRegionType;
     public TransmembraneRegion createTransmembraneRegion(Polypeptide polypeptide, int start, int end) {
-        if (transmembraneRegionType == null) {
-            transmembraneRegionType = cvDao.getCvTermByDbAcc("sequence", "0001077");
+        return createPolypeptideRegion(TransmembraneRegion.class, polypeptide, start, end);
+    }
+    public CytoplasmicRegion createCytoplasmicRegion(Polypeptide polypeptide, int start, int end) {
+        return createPolypeptideRegion(CytoplasmicRegion.class, polypeptide, start, end);
+    }
+    public NonCytoplasmicRegion createNonCytoplasmicRegion(Polypeptide polypeptide, int start, int end) {
+        return createPolypeptideRegion(NonCytoplasmicRegion.class, polypeptide, start, end);
+    }
+    private <T extends PolypeptideRegion> T createPolypeptideRegion(Class<T> regionClass,
+            Polypeptide polypeptide, int start, int end) {
+
+        CvTerm regionTerm = cvDao.getCvTermForAnnotatedClass(regionClass);
+        String regionUniqueName = String.format("%s:%d-%d", polypeptide.getUniqueName(), start, end);
+
+        T region;
+        try {
+            region = regionClass.getConstructor(Organism.class, CvTerm.class, String.class)
+                .newInstance(polypeptide.getOrganism(), regionTerm, regionUniqueName);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(String.format("Failed to instantiate %s", regionClass), e);
         }
 
-        String regionUniqueName = String.format("%s:tmhelix%d-%d", polypeptide.getUniqueName(), start, end);
-        TransmembraneRegion transmembraneRegion = new TransmembraneRegion(polypeptide.getOrganism(), transmembraneRegionType, regionUniqueName);
-        FeatureLoc regionLoc = new FeatureLoc(polypeptide, transmembraneRegion, start, false, end, false, (short)0/*strand*/, null, 0, 0);
-        transmembraneRegion.addFeatureLocsForFeatureId(regionLoc);
+        FeatureLoc regionLoc = new FeatureLoc(polypeptide, region, start, false, end, false, (short)0/*strand*/, null, 0, 0);
+        region.addFeatureLocsForFeatureId(regionLoc);
 
-        return transmembraneRegion;
+        return region;
     }
 
     private CvTerm signalPeptideType;
