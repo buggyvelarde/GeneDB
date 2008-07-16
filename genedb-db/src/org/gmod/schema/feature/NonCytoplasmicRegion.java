@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import javax.persistence.Entity;
 
 @Entity
-@FeatureType(cv="sequence", term="non_cytoplasmic_region")
+@FeatureType(cv="sequence", accession="0001074")
 public class NonCytoplasmicRegion extends PolypeptideRegion {
 
     public NonCytoplasmicRegion(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis,
