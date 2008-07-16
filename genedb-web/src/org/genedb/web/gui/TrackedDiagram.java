@@ -14,7 +14,7 @@ import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.CompoundLocatedFeature;
 import org.genedb.db.domain.objects.LocatedFeature;
 
-public class TrackedDiagram {
+public abstract class TrackedDiagram {
 
     protected static final Logger logger = Logger.getLogger(TrackedDiagram.class);
 
@@ -101,7 +101,7 @@ public class TrackedDiagram {
         }
     }
 
-    class BoundarySet<T extends CompoundLocatedFeature> extends TreeSet<Boundary<T>> {
+    protected class BoundarySet<T extends CompoundLocatedFeature> extends TreeSet<Boundary<T>> {
         public BoundarySet (Collection<T> features) {
             super();
             addFeatures(features);
@@ -387,6 +387,7 @@ public class TrackedDiagram {
                     activeTracks.set(i);
                 activeFeatures.put(feature, track);
                 break;
+
             case END:
                 track = activeFeatures.get(feature);
                 lastUsedTrack = track + numSubfeatures - 1;
@@ -396,6 +397,7 @@ public class TrackedDiagram {
                 for (int i = track; i <= lastUsedTrack; i++)
                     activeTracks.clear(i);
                 break;
+
             default:
                 throw new IllegalStateException(
                         "Boundary type is invalid. This should never happen!");

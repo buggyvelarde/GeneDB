@@ -185,7 +185,7 @@ public class ContextMapDiagram extends TrackedDiagram {
     }
 
     /**
-     * Return a <code>FeatureBoundarySet</code> of matched boundaries, such that
+     * Return a <code>BoundarySet</code> of matched boundaries, such that
      * the leftmost feature overlaps only with features included in the set. We may
      * need to include features beyond the left-hand end of the stated range in order to
      * achieve this; we include only as many as necessary.

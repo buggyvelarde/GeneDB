@@ -20,13 +20,19 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.domain.objects.PolypeptideRegionGroup;
+import org.genedb.web.gui.DiagramCache;
+import org.genedb.web.gui.ProteinMapDiagram;
+import org.genedb.web.gui.RenderedProteinMap;
 
+import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +66,20 @@ public class NamedFeatureController extends PostOrGetFormController {
 
         String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
         Map<String, Object> model = modelBuilder.prepareFeature(feature);
+
+        if (model.containsKey("polypeptide")) {
+            Polypeptide polypeptide = (Polypeptide) model.get("polypeptide");
+            @SuppressWarnings("unchecked")
+            List<PolypeptideRegionGroup> domainInformation = (List<PolypeptideRegionGroup>) model.get("domainInformation");
+
+            if (!domainInformation.isEmpty()) {
+                ProteinMapDiagram diagram = new ProteinMapDiagram(polypeptide, domainInformation);
+                RenderedProteinMap renderedProteinMap = new RenderedProteinMap(diagram);
+
+                model.put("proteinMap", DiagramCache.fileForDiagram(renderedProteinMap, getServletContext()));
+            }
+        }
+
         return new ModelAndView(viewName, model);
     }
 

@@ -1,19 +1,20 @@
 package org.genedb.web.mvc.controller;
 
+import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
+import org.genedb.db.domain.services.BasicGeneService;
+import org.genedb.web.gui.DiagramCache;
+import org.genedb.web.gui.ContextMapDiagram;
+import org.genedb.web.gui.RenderedContextMap;
+
+import org.apache.lucene.index.IndexReader;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import org.apache.lucene.index.IndexReader;
-import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
-import org.genedb.db.domain.services.BasicGeneService;
-import org.genedb.web.gui.ContextMapCache;
-import org.genedb.web.gui.ContextMapDiagram;
-import org.genedb.web.gui.RenderedContextMap;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 public class ContextMapController extends PostOrGetFormController {
     /*
@@ -73,7 +74,7 @@ public class ContextMapController extends PostOrGetFormController {
 
     private Map<String,Object> populateModel(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap,
             List<RenderedContextMap.Tile> tiles) throws IOException {
-        String chromosomeThumbnailURI = ContextMapCache.fileForDiagram(chromosomeThumbnail, getServletContext());
+        String chromosomeThumbnailURI = DiagramCache.fileForDiagram(chromosomeThumbnail, getServletContext());
 
         ContextMapDiagram diagram = contextMap.getDiagram();
 
@@ -82,7 +83,7 @@ public class ContextMapController extends PostOrGetFormController {
         model.put("organism", diagram.getOrganism());
         model.put("chromosome", diagram.getChromosome());
         model.put("numberOfPositiveTracks", diagram.numberOfPositiveTracks());
-        model.put("geneTrackHeight", contextMap.getGeneTrackHeight());
+        model.put("geneTrackHeight", contextMap.getTrackHeight());
         model.put("scaleTrackHeight", contextMap.getScaleTrackHeight());
         model.put("exonRectHeight", contextMap.getExonRectHeight());
         model.put("tileHeight", contextMap.getHeight());

@@ -3,6 +3,9 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.domain.objects.InterProHit;
+import org.genedb.db.domain.objects.PolypeptideRegionGroup;
+import org.genedb.db.domain.objects.SimpleRegionGroup;
 
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
@@ -24,10 +27,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class ModelBuilder {
@@ -158,105 +160,54 @@ public class ModelBuilder {
             model.put("CellularC", cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("cellular_component", polypeptide));
             model.put("MF",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("molecular_function", polypeptide));
 
-            model.put("domainInformation", prepareDomainInformation(polypeptide));
+            List<PolypeptideRegionGroup> domainInformation = prepareDomainInformation(polypeptide);
+            model.put("domainInformation", domainInformation);
             model.put("algorithmData", prepareAlgorithmData(polypeptide));
         }
         return model;
     }
 
-    /**
-     * How to order the hits within each subsection.
-     * Here we order them by database, accession ID and fmin.
-     */
-    private static final Comparator<Map<String, Object>> hitComparator
-        = new Comparator<Map<String, Object>> ()
-    {
-        public int compare(Map<String, Object> a, Map<String, Object> b) {
-            if (a.containsKey("dbxref") && b.containsKey("dbxref")) {
-                DbXRef aDbXRef = (DbXRef) a.get("dbxref");
-                DbXRef bDbXRef = (DbXRef) b.get("dbxref");
-                int dbNameComparison = aDbXRef.getDb().getName().compareTo(bDbXRef.getDb().getName());
-                if (dbNameComparison != 0)
-                    return dbNameComparison;
-                int accessionComparison = aDbXRef.getAccession().compareToIgnoreCase(bDbXRef.getAccession());
-                if (accessionComparison != 0)
-                    return accessionComparison;
-            }
-            return ((Integer) a.get("fmin")) - ((Integer) b.get("fmin"));
-        }
-    };
-    private List<Map<String,Object>> prepareDomainInformation(Polypeptide polypeptide) {
-        Map<DbXRef, Set<Map<String, Object>>> detailsByInterProHit
-            = new HashMap<DbXRef, Set<Map<String, Object>>>();
-        Set<Map<String, Object>> otherMatches = new HashSet<Map<String, Object>> ();
+    private List<PolypeptideRegionGroup> prepareDomainInformation(Polypeptide polypeptide) {
+        Map<DbXRef, org.genedb.db.domain.objects.InterProHit> interProHitsByDbXRef
+            = new HashMap<DbXRef, org.genedb.db.domain.objects.InterProHit>();
+        SimpleRegionGroup otherMatches = new SimpleRegionGroup ("Other matches");
 
         for (PolypeptideDomain domain: polypeptide.getRegions(PolypeptideDomain.class)) {
-            FeatureLoc domainLoc = domain.getRankZeroFeatureLoc();
-            DbXRef dbxref = domain.getDbXRef();
-            if (dbxref == null) {
-                logger.error(String.format("The polypeptide domain '%s' has no DbXRef",
-                    domain.getUniqueName()));
+
+            org.genedb.db.domain.objects.DatabasePolypeptideRegion thisHit
+                = org.genedb.db.domain.objects.DatabasePolypeptideRegion.build(domain);
+
+            if (thisHit == null) {
                 continue;
             }
-
-            Map<String, Object> thisHit = new HashMap<String, Object>();
-            thisHit.put("dbxref", dbxref);
-            thisHit.put("fmin", domainLoc.getFmin());
-            thisHit.put("fmax", domainLoc.getFmax());
-            thisHit.put("score", domain.getScore());
 
             DbXRef interProDbXRef = domain.getInterProDbXRef();
             Hibernate.initialize(interProDbXRef);
             if (interProDbXRef == null)
-                otherMatches.add(thisHit);
+                otherMatches.addDomain(thisHit);
             else {
-                if (!detailsByInterProHit.containsKey(interProDbXRef))
-                    detailsByInterProHit.put(interProDbXRef,
-                        new TreeSet<Map<String, Object>>(hitComparator));
-                detailsByInterProHit.get(interProDbXRef).add(thisHit);
+                if (!interProHitsByDbXRef.containsKey(interProDbXRef))
+                    interProHitsByDbXRef.put(interProDbXRef,
+                        new InterProHit(interProDbXRef));
+                interProHitsByDbXRef.get(interProDbXRef).addDomain(thisHit);
             }
         }
 
-        List<Map<String,Object>> domainInformation = new ArrayList<Map<String,Object>>();
-
-        for (Map.Entry<DbXRef,Set<Map<String,Object>>> entry: detailsByInterProHit.entrySet()) {
-            DbXRef interProDbXRef = entry.getKey();
-            Set<Map<String,Object>> hits = entry.getValue();
-
-            Map<String,Object> subsection = new HashMap<String,Object>();
-            subsection.put("interproDbXRef", interProDbXRef);
-            subsection.put("hits", hits);
-            domainInformation.add(subsection);
-        }
-
-        Set<Map<String,Object>> transmembraneHits = new TreeSet<Map<String, Object>>(hitComparator);
-        for (TransmembraneRegion domain: polypeptide.getRegions(TransmembraneRegion.class)) {
-            FeatureLoc domainLoc = domain.getRankZeroFeatureLoc();
-            Map<String, Object> thisHit = new HashMap<String, Object>();
-            thisHit.put("name", String.format("TMHelix %d-%d", 1 + domainLoc.getFmin(), domainLoc.getFmax()));
-            thisHit.put("description", "Predicted transmembrane helix");
-            thisHit.put("fmin", domainLoc.getFmin());
-            thisHit.put("fmax", domainLoc.getFmax());
-            transmembraneHits.add(thisHit);
-        }
-        if (!transmembraneHits.isEmpty()) {
-            Map<String,Object> transmembraneSubsection = new HashMap<String,Object>();
-            transmembraneSubsection.put("title", "Transmembrane regions");
-            transmembraneSubsection.put("hits", transmembraneHits);
-            domainInformation.add(transmembraneSubsection);
-        }
+        List<PolypeptideRegionGroup> domainInformation = new ArrayList<PolypeptideRegionGroup>(interProHitsByDbXRef.values());
 
         if (!otherMatches.isEmpty()) {
-            Map<String,Object> otherMatchesSubsection = new HashMap<String,Object>();
-            otherMatchesSubsection.put("title", "Other matches");
-            otherMatchesSubsection.put("hits", otherMatches);
-            domainInformation.add(otherMatchesSubsection);
+            domainInformation.add(otherMatches);
         }
 
         return domainInformation;
     }
 
     private <S> void putIfNotEmpty(Map<S,? super Map<?,?>> map, S key, Map<?,?> value) {
+        if (!value.isEmpty()) {
+            map.put(key, value);
+        }
+    }
+    private <S> void putIfNotEmpty(Map<S,? super Collection<?>> map, S key, Collection<?> value) {
         if (!value.isEmpty()) {
             map.put(key, value);
         }
@@ -272,6 +223,7 @@ public class ModelBuilder {
         putIfNotEmpty(algorithmData, "SignalP", prepareSignalPData(polypeptide));
         putIfNotEmpty(algorithmData, "DGPI", prepareDGPIData(polypeptide));
         putIfNotEmpty(algorithmData, "PlasmoAP", preparePlasmoAPData(polypeptide));
+        putIfNotEmpty(algorithmData, "TMHMM", prepareTMHMMData(polypeptide));
         return algorithmData;
     }
 
@@ -347,6 +299,29 @@ public class ModelBuilder {
         return plasmoAPData;
     }
 
+    private List<String> prepareTMHMMData(Polypeptide polypeptide) {
+        SortedSet<TransmembraneRegion> sortedTransmembraneRegions = new TreeSet<TransmembraneRegion>(
+                new Comparator<TransmembraneRegion>() {
+
+                    @Override
+                    public int compare(TransmembraneRegion a, TransmembraneRegion b) {
+                        FeatureLoc aLoc = a.getRankZeroFeatureLoc();
+                        FeatureLoc bLoc = b.getRankZeroFeatureLoc();
+                        return aLoc.getFmin() - bLoc.getFmin();
+                    }
+                });
+        sortedTransmembraneRegions.addAll(polypeptide.getRegions(TransmembraneRegion.class));
+
+        List<String> tmhmmData = new ArrayList<String>();
+
+        for (TransmembraneRegion transmembraneRegion: sortedTransmembraneRegions) {
+            tmhmmData.add(String.format("%d-%d",
+                1 + transmembraneRegion.getRankZeroFeatureLoc().getFmin(),
+                transmembraneRegion.getRankZeroFeatureLoc().getFmax()));
+        }
+
+        return tmhmmData;
+    }
 
     private SequenceDao sequenceDao;
     private GeneralDao generalDao;
