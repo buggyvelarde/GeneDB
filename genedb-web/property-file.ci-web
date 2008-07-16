@@ -7,3 +7,4 @@ dbuser=genedb
 dbpassword=genedb
 lucene.indexDirectory=/software/pathogen/projects/genedb/indexes/malaria/
 contextMap.render.directory=/includes/images/cmap
+proteinMap.render.directory=/includes/images/pmap
