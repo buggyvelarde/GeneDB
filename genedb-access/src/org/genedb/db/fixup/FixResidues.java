@@ -307,6 +307,12 @@ public class FixResidues {
             +"    , exonloc.phase"
             +"    , exonloc.fmin"
             +"    , exonloc.fmax"
+            +", exists ("
+            +"     select 8"
+            +"     from featureprop"
+            +"     where feature_id = transcript.feature_id"
+            +"     and type_id = ?"
+            +" ) as stop_codon_redefined"
             +" from feature exon"
             +" join featureloc exonloc"
             +"      on exonloc.feature_id = exon.feature_id"
@@ -322,15 +328,16 @@ public class FixResidues {
         );
         Map<Integer,Transcript> transcriptsById = new HashMap<Integer,Transcript>();
         try {
-            st.setInt(1, geneFeatureId);
-            st.setInt(2, typeCodes.typeId("sequence", "exon"));
-            st.setInt(3, typeCodes.typeId("sequence", "pseudogenic_exon"));
+            st.setInt(1, typeCodes.typeId("sequence", "stop_codon_redefined_as_selenocysteine"));
+            st.setInt(2, geneFeatureId);
+            st.setInt(3, typeCodes.typeId("sequence", "exon"));
+            st.setInt(4, typeCodes.typeId("sequence", "pseudogenic_exon"));
 
-            st.setInt(4, typeCodes.typeId("sequence", "mRNA"));
-            st.setInt(5, typeCodes.typeId("sequence", "rRNA"));
-            st.setInt(6, typeCodes.typeId("sequence", "tRNA"));
-            st.setInt(7, typeCodes.typeId("sequence", "snRNA"));
-            st.setInt(8, typeCodes.typeId("sequence", "pseudogenic_transcript"));
+            st.setInt(5, typeCodes.typeId("sequence", "mRNA"));
+            st.setInt(6, typeCodes.typeId("sequence", "rRNA"));
+            st.setInt(7, typeCodes.typeId("sequence", "tRNA"));
+            st.setInt(8, typeCodes.typeId("sequence", "snRNA"));
+            st.setInt(9, typeCodes.typeId("sequence", "pseudogenic_transcript"));
             ResultSet rs = st.executeQuery();
 
             while (rs.next()) {
@@ -345,6 +352,7 @@ public class FixResidues {
                 int fmax = rs.getInt("fmax");
 
                 if (!transcriptsById.containsKey(transcriptId)) {
+                    boolean stopCodonRedefined = rs.getBoolean("stop_codon_redefined");
                     boolean isCoding = transcriptType == typeCodes.typeId("sequence", "mRNA")
                                     || transcriptType == typeCodes.typeId("sequence", "pseudogenic_transcript");
                     boolean isPseudo = transcriptType == typeCodes.typeId("sequence", "pseudogenic_transcript");
@@ -352,7 +360,7 @@ public class FixResidues {
                         transcriptId, transcriptName,
                         isCoding,
                         translationTableId, phase,
-                        isPseudo);
+                        isPseudo, stopCodonRedefined);
                     transcriptsById.put(transcriptId, transcript);
                 }
                 Transcript transcript = transcriptsById.get(transcriptId);
@@ -519,16 +527,19 @@ class Transcript {
     public String uniqueName;
     public boolean isCoding;
     public boolean isPseudo;
+    public boolean stopCodonTranslatedAsSelenocysteine;
     public int translationTableId;
     public int phase = 0;
     public String cds;
-    public Transcript(int featureId, String uniqueName, boolean isCoding, int translationTableId, int phase, boolean isPseudo) {
+    public Transcript(int featureId, String uniqueName, boolean isCoding, int translationTableId,
+            int phase, boolean isPseudo, boolean stopCodonTranslatedAsSelenocysteine) {
         this.featureId = featureId;
         this.uniqueName = uniqueName;
         this.isCoding = isCoding;
         this.translationTableId = translationTableId;
         this.phase = phase;
         this.isPseudo = isPseudo;
+        this.stopCodonTranslatedAsSelenocysteine = stopCodonTranslatedAsSelenocysteine;
     }
     public SortedSet<Exon> exons = new TreeSet<Exon>();
     public void addExon(Exon exon) {

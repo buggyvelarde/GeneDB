@@ -22,7 +22,7 @@ import org.biojava.bio.symbol.TranslationTable;
 /**
  * For translating DNA sequences into proteins. Each instance corresponds
  * to a particular genetic code.
- * 
+ *
  * @author rh11
  *
  */
@@ -37,14 +37,14 @@ public class Translator {
             throw new IllegalStateException("BioJava appears to be broken", e);
         }
     }
-    
+
     private TranslationTable translationTable;
     private StartCodonTable startCodonTable;
-    
+
     /**
      * Get the Translator corresponding to the specified genetic code,
      * as defined by NCBI.
-     * 
+     *
      * @see http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
      * @param geneticCodeId the ID number of the genetic code
      * @return
@@ -52,25 +52,41 @@ public class Translator {
     public static Translator getTranslator(int geneticCodeId) {
         return new Translator(geneticCodeId);
     }
-    
+
     private Translator(int translationTableId) {
         this.translationTable = RNATools.getGeneticCode(translationTableId);
         this.startCodonTable = StartCodonTable.getTable(translationTableId);
     }
-    
+
     public String translate(String dnaSequence, int phase) throws TranslationException {
+        return translate(dnaSequence, phase, false);
+    }
+
+    public String translate(String dnaSequence, int phase, boolean stopCodonTranslatedAsSelenocysteine)
+        throws TranslationException {
+
         try {
             SymbolList dna = new SimpleSymbolList(dnaTokenization, dnaSequence);
             SymbolList rna = SymbolListViews.translate(dna, transcriptionTable);
             rna = rna.subList(phase + 1, phase + 3 * ((rna.length() - phase) / 3));
-            
+
             SymbolList rnaWindowed = SymbolListViews.windowedSymbolList(rna, 3);
             SymbolList protein = SymbolListViews.translate(rnaWindowed, translationTable);
             String naiveTranslation = protein.seqString();
-            
-            if (startCodonTable.contains(rnaWindowed.symbolAt(1)))
+
+            if (startCodonTable.contains(rnaWindowed.symbolAt(1))) {
                 return "M" + naiveTranslation.substring(1);
-            
+            }
+
+            if (stopCodonTranslatedAsSelenocysteine) {
+                if (naiveTranslation.endsWith("*")) {
+                    return naiveTranslation.substring(0, naiveTranslation.length() - 1).replaceAll("\\*", "U") + '*';
+                }
+                else {
+                    return naiveTranslation.replaceAll("\\*", "U");
+                }
+            }
+
             return naiveTranslation;
         }
         catch (BioException e) {
@@ -82,7 +98,7 @@ public class Translator {
 /**
  * Represents the start codons used by a particular genetic code,
  * as a set of BioJava Symbols in the alphabet <code>RNA x RNA x RNA</code>.
- * 
+ *
  * @author rh11
  */
 class StartCodonTable {
@@ -108,7 +124,7 @@ class StartCodonTable {
     }
 
     private Set<Symbol> symbols = new HashSet<Symbol> ();
-    
+
     private static final StartCodonTable[] tables = new StartCodonTable[] {
         /*  0 */ null,
         /*  1 */ new StartCodonTable("---M---------------M---------------M----------------------------"),
@@ -135,11 +151,11 @@ class StartCodonTable {
         /* 22 */ new StartCodonTable("-----------------------------------M----------------------------"),
         /* 23 */ new StartCodonTable("--------------------------------M--M---------------M------------"),
     };
-    
+
     /**
      * Create a new StartCodonTableImpl from a string representing the 'starts'
      * line in the NCBI format.
-     * 
+     *
      * @param starts
      */
     private StartCodonTable(String starts) {
@@ -165,7 +181,7 @@ class StartCodonTable {
 
     /**
      * Does this set contain the specified symbol?
-     * 
+     *
      * @param symbol
      * @return
      */
