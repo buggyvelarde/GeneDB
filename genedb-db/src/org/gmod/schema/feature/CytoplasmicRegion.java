@@ -15,6 +15,10 @@ import javax.persistence.Entity;
 @FeatureType(cv="sequence", accession="0001073")
 public class CytoplasmicRegion extends PolypeptideRegion {
 
+    CytoplasmicRegion() {
+        // empty
+    }
+
     public CytoplasmicRegion(Organism organism, CvTerm cvTerm, String uniqueName) {
         this(organism, cvTerm, uniqueName, true, false);
     }

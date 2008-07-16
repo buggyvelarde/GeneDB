@@ -15,6 +15,10 @@ import javax.persistence.Entity;
 @FeatureType(cv="sequence", accession="0001074")
 public class NonCytoplasmicRegion extends PolypeptideRegion {
 
+    NonCytoplasmicRegion() {
+        // empty
+    }
+
     public NonCytoplasmicRegion(Organism organism, CvTerm cvTerm, String uniqueName) {
         this(organism, cvTerm, uniqueName, true, false);
     }
