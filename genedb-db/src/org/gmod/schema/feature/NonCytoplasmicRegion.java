@@ -8,6 +8,9 @@ import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 
+/*
+ * The term name has recently changed from 'non_cytoplasm_location' to 'non_cytoplasmic_region'
+ */
 @Entity
 @FeatureType(cv="sequence", accession="0001074")
 public class NonCytoplasmicRegion extends PolypeptideRegion {
