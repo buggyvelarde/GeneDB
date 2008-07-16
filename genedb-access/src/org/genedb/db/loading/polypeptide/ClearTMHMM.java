@@ -18,7 +18,11 @@ public class ClearTMHMM extends Clear {
         +" join dbxref feature_type_dbxref using (dbxref_id)"
         +"    , organism"
         +" where feature_type.cvterm_id = feature.type_id"
-        +" and feature_type_dbxref.accession = '0001077'" // transmembrane region
+        +" and feature_type_dbxref.accession in ("
+        +"     '0001077'" // transmembrane region
+        +"   , '0001073'" // cytoplasmic region
+        +"   , '0001074'" // non-cytoplasmic region
+        +" )"
         +" and feature_type_cv.name = 'sequence'"
         +" and feature.organism_id = organism.organism_id"
         +" and organism.common_name = ?";
