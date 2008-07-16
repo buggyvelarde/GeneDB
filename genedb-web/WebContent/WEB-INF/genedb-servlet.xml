@@ -280,15 +280,6 @@
         <property name="genePage" value="redirect:NamedFeature" />
     </bean>
 
-    <bean id="GenesByCvTermAndCvController"
-    	class="org.genedb.web.mvc.controller.GenesByCvTermAndCvController">
-		<property name="sequenceDao" ref="sequenceDao" />
-		<property name="luceneDao" ref="luceneDao" />
-        <property name="listResultsView" value="list/features" />
-        <property name="jsonView" ref="jsonView" />
-        <property name="historyManagerFactory" ref="historyManagerFactory" />
-    </bean>
-
     <bean id="BrowseCategoryController"
         class="org.genedb.web.mvc.controller.BrowseCategoryController">
         <property name="sessionForm" value="true" />
@@ -314,12 +305,13 @@
         <property name="commandClass"
             value="org.genedb.web.mvc.controller.BrowseTermBean" />
         <property name="sequenceDao" ref="sequenceDao" />
+        <property name="luceneDao" ref="luceneDao" />
         <property name="successView" value="list/terms" />
         <property name="formView" value="search/browseTerm" />
         <property name="geneView" value="redirect:NamedFeature" />
+        <property name="jsonView" ref="jsonView" />
+        <property name="historyManagerFactory" ref="historyManagerFactory" />
         <property name="bindOnNewForm" value="true" />
-        <property name="taxonNodeArrayPropertyEditor"
-            ref="taxonNodeArrayPropertyEditor" />
     </bean>
 
     <bean id="ComplexQueryController"

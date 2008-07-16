@@ -19,14 +19,6 @@
 
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.SequenceDao;
-
-import org.gmod.schema.mapped.Feature;
-
-import org.apache.log4j.Logger;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,20 +27,35 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.spring.web.servlet.view.JsonView;
+
+import org.apache.log4j.Logger;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.TermQuery;
+import org.genedb.db.dao.SequenceDao;
+import org.gmod.schema.utils.GeneNameOrganism;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+
 /**
  * Looks up a feature by uniquename, and possibly synonyms
  *
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class BrowseTermController extends TaxonNodeBindingFormController {
+public class BrowseTermController extends PostOrGetFormController {
 
     private static final Logger logger = Logger.getLogger(BrowseTermController.class);
     private SequenceDao sequenceDao;
+    private LuceneDao luceneDao;
     private String geneView;
+    private JsonView jsonView;
+    private HistoryManagerFactory historyManagerFactory;
 
     @Override
-    protected Map<?,?> referenceData(@SuppressWarnings("unused") HttpServletRequest request) throws Exception {
+    protected Map<?,?> referenceData(HttpServletRequest request) throws Exception {
         Map<String,Object> reference = new HashMap<String,Object>();
         reference.put("categories", BrowseCategory.values());
         return reference;
@@ -59,47 +66,71 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
             Object command, BindException be) throws Exception {
 
         BrowseTermBean btb = (BrowseTermBean) command;
-        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrganism());
         Map<String, Object> model = new HashMap<String, Object>();
+        
+        if(!btb.isJson()) {
+            model.put("category", btb.getCategory().toString());
+            model.put("term",btb.getTerm());
+            model.put("organism", btb.getOrganism());
+            return new ModelAndView(getSuccessView(),model);
+        }
+        
+        String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrganism());
+        
         String category = btb.getCategory().toString();
-
+        
         /* This is to include all the cvs starting with CC.
          * In future when the other cvs have more terms in,
          * this can be removed and the other cvs starting
          * with CC can be added to BrowseCategory
          */
-        List<Feature> results;
-        if(category.equals("ControlledCuration"))
-            results = sequenceDao.getFeaturesByCvNamePatternAndCvTermNameAndOrganisms(
-                "CC\\_%", btb.getTerm(), orgNames);
-        else
-            results = sequenceDao.getFeaturesByCvNameAndCvTermNameAndOrganisms(
-        		category, btb.getTerm(), orgNames);
-
-        if (results == null || results.size() == 0) {
+        List<GeneNameOrganism> features;
+        
+        if(category.equals("ControlledCuration")) {
+            features = sequenceDao
+                .getGeneNameOrganismsByCvTermNameAndCvNamePattern(btb.getTerm(), "CC\\_%", orgNames);
+        } else {
+            features = sequenceDao
+                .getGeneNameOrganismsByCvTermNameAndCvName(btb.getTerm(), category, orgNames);
+        }
+        
+        if (features == null || features.size() == 0) {
             logger.info("result is null");
             be.reject("no.results");
             return showForm(request, response, be);
         }
 
-        if (results.size() == 1) {
-            model.put("name", results.get(0).getUniqueName());
+        if (features.size() == 1) {
+            model.put("name", features.get(0).getGeneName());
             return new ModelAndView(geneView, model);
         }
 
-        List<Feature> newResults = new ArrayList<Feature>(results.size());
-        for (Feature feature : results) {
-            if (!GeneUtils.isPartOfGene(feature)) {
-                newResults.add(feature);
-            } else {
-                newResults.add(GeneUtils.getGeneFromPart(feature));
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(
+                request.getSession());
+
+        String args = String.format("organism:%s %s:%s ", btb.getOrganism(), btb.getCategory(), btb.getTerm());
+
+        List<String> ids = new ArrayList<String>();
+
+        IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
+
+        for (GeneNameOrganism feature : features) {
+            ids.add(feature.getGeneName());
+
+            TermQuery query = new TermQuery(new Term("uniqueName", feature.getGeneName()));
+            Hits hits = luceneDao.search(ir, query);
+
+            if (hits.length() > 0) {
+                feature.setProduct(hits.doc(0).get("product"));
             }
         }
+        
+        historyManager.addHistoryItems(String.format("Browse Term -%s", args),
+            HistoryType.QUERY, ids);
+        
+        model.put("features", features);
 
-        model.put("results", newResults);
-        model.put("controllerPath", "/BrowseTerm");
-
-        return new ModelAndView(getSuccessView(), model);
+        return new ModelAndView(jsonView, model);
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
@@ -113,6 +144,18 @@ public class BrowseTermController extends TaxonNodeBindingFormController {
     public void setGeneView(String geneView) {
         this.geneView = geneView;
     }
+
+    public void setLuceneDao(LuceneDao luceneDao) {
+        this.luceneDao = luceneDao;
+    }
+
+    public void setJsonView(JsonView jsonView) {
+        this.jsonView = jsonView;
+    }
+
+    public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
+        this.historyManagerFactory = historyManagerFactory;
+    }
 }
 
 class BrowseTermBean {
@@ -120,6 +163,15 @@ class BrowseTermBean {
     private BrowseCategory category;
     private String term;
     private String organism;
+    private boolean json = false;
+    
+    public boolean isJson() {
+        return json;
+    }
+
+    public void setJson(boolean json) {
+        this.json = json;
+    }
 
     public BrowseCategory getCategory() {
         return this.category;

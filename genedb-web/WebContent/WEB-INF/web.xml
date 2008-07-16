@@ -173,10 +173,6 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/GenesByCvTermAndCv</url-pattern>
-     </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>genedb</servlet-name>
         <url-pattern>/Orthologs</url-pattern>
      </servlet-mapping>
      <servlet-mapping>

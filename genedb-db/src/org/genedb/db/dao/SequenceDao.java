@@ -408,13 +408,13 @@ public class SequenceDao extends BaseDao {
                             "FeatureRelationship transcript_gene, FeatureRelationship polypeptide_transcript " +
                             "where transcript_gene.subjectFeature=polypeptide_transcript.objectFeature and " +
                             "polypeptide_transcript.type.name='derives_from' and " +
-                            " transcript_gene.objectFeature.organism.commonName=:organism and " +
+                            " transcript_gene.objectFeature.organism.commonName in ("+organism+") and " +
                             "polypeptide_transcript.subjectFeature in ( " +
                             "select fct.feature from FeatureCvTerm fct where " +
                             "fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name=:cvName) " +
                             "order by transcript_gene.objectFeature.organism.abbreviation",
-                            new String[] { "organism","cvTermName", "cvName" },
-                            new Object[] { organism,cvTermName, cvName });
+                            new String[] { "cvTermName", "cvName" },
+                            new Object[] { cvTermName, cvName });
         } else {
             features = getHibernateTemplate()
             .findByNamedParam(
@@ -434,7 +434,49 @@ public class SequenceDao extends BaseDao {
 
         return features;
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvNamePattern(String cvTermName, String cvNamePattern,
+            String organism) {
 
+        List<GeneNameOrganism> features;
+        if(organism != null) {
+
+            features = getHibernateTemplate()
+                    .findByNamedParam(
+                            "select new org.gmod.schema.utils.GeneNameOrganism( " +
+                            "transcript_gene.objectFeature.uniqueName, transcript_gene.objectFeature.organism.abbreviation) " +
+                            "from " +
+                            "FeatureRelationship transcript_gene, FeatureRelationship polypeptide_transcript " +
+                            "where transcript_gene.subjectFeature=polypeptide_transcript.objectFeature and " +
+                            "polypeptide_transcript.type.name='derives_from' and " +
+                            " transcript_gene.objectFeature.organism.commonName in ("+organism+") and " +
+                            "polypeptide_transcript.subjectFeature in ( " +
+                            "select fct.feature from FeatureCvTerm fct where " +
+                            "fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name like :cvNamePattern) " +
+                            "order by transcript_gene.objectFeature.organism.abbreviation",
+                            new String[] { "cvTermName", "cvNamePattern" },
+                            new Object[] { cvTermName, cvNamePattern });
+        } else {
+            features = getHibernateTemplate()
+            .findByNamedParam(
+                    "select new org.gmod.schema.utils.GeneNameOrganism( " +
+                    "transcript_gene.objectFeature.uniqueName, transcript_gene.objectFeature.organism.abbreviation) " +
+                    "from " +
+                    "FeatureRelationship transcript_gene, FeatureRelationship polypeptide_transcript " +
+                    "where transcript_gene.subjectFeature=polypeptide_transcript.objectFeature and " +
+                    "polypeptide_transcript.type.name='derives_from' and " +
+                    "polypeptide_transcript.subjectFeature in ( " +
+                    "select fct.feature from FeatureCvTerm fct where " +
+                    "fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name like :cvNamePattern) " +
+                    "order by transcript_gene.objectFeature.organism.abbreviation",
+                    new String[] { "cvTermName", "cvNamePattern" },
+                    new Object[] { cvTermName, cvNamePattern });
+        }
+
+        return features;
+    }
+    
     /**
      * Return a list of feature uniquename based on cvterm for auto-completion
      *
