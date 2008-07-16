@@ -1,19 +1,20 @@
 package org.genedb.db.dao;
 
+import org.gmod.schema.cfg.FeatureType;
+import org.gmod.schema.cfg.FeatureTypeUtils;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.Cv;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.utils.CountedName;
 
 import org.apache.log4j.Logger;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,17 @@ public class CvDao extends BaseDao {
         return cvTerms;
     }
 
+    private Map<String,Map<String,CvTerm>> cvTermsByNameByCv = Collections.synchronizedMap(new HashMap<String,Map<String,CvTerm>>());
     public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName) {
+        synchronized (cvTermsByNameByCv) {
+            if (!cvTermsByNameByCv.containsKey(cvName)) {
+                cvTermsByNameByCv.put(cvName, Collections.synchronizedMap(new HashMap<String,CvTerm>()));
+            }
+        }
+        if (cvTermsByNameByCv.get(cvName).containsKey(cvTermName)) {
+            return cvTermsByNameByCv.get(cvName).get(cvTermName);
+        }
+
         @SuppressWarnings("unchecked")
         List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
             "from CvTerm cvTerm where cvTerm.name = :cvTermName and cvTerm.cv.name = :cvName",
@@ -126,7 +137,39 @@ public class CvDao extends BaseDao {
                 cvTermList.size(), cvName, cvTermName));
         }
 
-        return cvTermList.get(0);
+        CvTerm cvTerm = cvTermList.get(0);
+        cvTermsByNameByCv.get(cvName).put(cvTermName, cvTerm);
+        return cvTerm;
+    }
+
+    private Map<String,Map<String,CvTerm>> cvTermsByAccessionByCv = Collections.synchronizedMap(new HashMap<String,Map<String,CvTerm>>());
+    public CvTerm getCvTermByAccessionAndCvName(String accession, String cvName) {
+        synchronized (cvTermsByAccessionByCv) {
+            if (!cvTermsByAccessionByCv.containsKey(cvName)) {
+                cvTermsByAccessionByCv.put(cvName, Collections.synchronizedMap(new HashMap<String,CvTerm>()));
+            }
+        }
+        if (cvTermsByAccessionByCv.get(cvName).containsKey(accession)) {
+            return cvTermsByAccessionByCv.get(cvName).get(accession);
+        }
+
+        @SuppressWarnings("unchecked")
+        List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
+            "from CvTerm cvTerm where cvTerm.dbXRef.accession = :accession and cvTerm.cv.name = :cvName",
+            new String[] { "accession", "cvName" }, new Object[] { accession, cvName });
+        if (cvTermList == null || cvTermList.size() == 0) {
+            logger.warn("No cvterms found for accession '" + accession + "' in '" + cvName + "'");
+            return null;
+        }
+
+        if (cvTermList.size() > 1) {
+            logger.error(String.format("Found %d CvTerms with cv '%s' and accession ID '%s'",
+                cvTermList.size(), cvName, accession));
+        }
+
+        CvTerm cvTerm = cvTermList.get(0);
+        cvTermsByAccessionByCv.get(cvName).put(accession, cvTerm);
+        return cvTerm;
     }
 
     public CvTerm getCvTermByNameAndCvNamePattern(String cvTermName, String cvNamePattern) {
@@ -350,7 +393,37 @@ public class CvDao extends BaseDao {
             new Object[] { polypeptide, cvNamePattern, polypeptide.getOrganism().getCommonName() });
 
         return countedNames;
+    }
 
+    private Map<Class<? extends Feature>, CvTerm> cvTermsByClass = Collections.synchronizedMap(new HashMap<Class<? extends Feature>, CvTerm>());
+
+    /**
+     * Get the CvTerm that represents the type of a particular feature class.
+     *
+     * @param annotatedClass the feature class
+     * @return the corresponding CV term
+     */
+    public CvTerm getCvTermForAnnotatedClass(Class<? extends Feature> annotatedClass) {
+        if (cvTermsByClass.containsKey(annotatedClass)) {
+            return cvTermsByClass.get(annotatedClass);
+        }
+
+        org.gmod.schema.cfg.FeatureType featureType = FeatureTypeUtils.getFeatureTypeForClass(annotatedClass);
+        if (featureType == null) {
+            throw new IllegalArgumentException(String.format("The class '%s' has no @FeatureType annotation", annotatedClass.getName()));
+        }
+        CvTerm cvTerm = getCvTermForFeatureType(featureType);
+        cvTermsByClass.put(annotatedClass, cvTerm);
+        return cvTerm;
+    }
+
+    private CvTerm getCvTermForFeatureType(FeatureType featureType) {
+        if (!"".equals(featureType.term())) {
+            return this.getCvTermByNameAndCvName(featureType.term(), featureType.cv());
+        }
+        else {
+            return this.getCvTermByAccessionAndCvName(featureType.accession(), featureType.cv());
+        }
     }
 
 }
