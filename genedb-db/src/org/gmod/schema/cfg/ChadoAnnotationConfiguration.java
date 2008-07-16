@@ -12,7 +12,6 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 
-import java.lang.annotation.Annotation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -106,38 +105,21 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
 
             logger.trace(String.format("Processing class '%s'", className));
             Class<?> mappedClass = persistentClass.getMappedClass();
-            for (Annotation annotation: mappedClass.getDeclaredAnnotations()) {
-                if (annotation instanceof FeatureType) {
-                    FeatureType featureType = (FeatureType) annotation;
-
-                    validate(className, featureType);
-                    Integer cvTermId = getCvTermIdForFeatureType(featureType);
-                    if (cvTermId == null) {
-                        throw new HibernateException(String.format("Failed to initialise class '%s': could not find %s",
-                            className, description(featureType)));
-                    }
-
-                    logger.debug(String.format("Setting discriminator column of '%s' to %d (for %s)",
-                        className, cvTermId, description(featureType)));
-                    persistentClass.setDiscriminatorValue(String.valueOf(cvTermId));
+            FeatureType featureType = FeatureTypeUtils.getFeatureTypeForClass(mappedClass);
+            if (featureType != null) {
+                Integer cvTermId = getCvTermIdForFeatureType(featureType);
+                if (cvTermId == null) {
+                    throw new HibernateException(String.format("Failed to initialise class '%s': could not find %s",
+                        className, description(featureType)));
                 }
+
+                logger.debug(String.format("Setting discriminator column of '%s' to %d (for %s)",
+                    className, cvTermId, description(featureType)));
+                persistentClass.setDiscriminatorValue(String.valueOf(cvTermId));
             }
         }
 
         return super.buildSessionFactory();
-    }
-
-    private void validate(String className, FeatureType featureType) throws HibernateException {
-        String term = featureType.term();
-        String accession = featureType.accession();
-
-        if ("".equals(term) && "".equals(accession)) {
-            throw new ChadoAnnotationException(String.format("@FeatureType annotation for class '%s' has neither 'term' nor 'accession'", className));
-        }
-            
-        if (!"".equals(term) && !"".equals(accession)) {
-            throw new ChadoAnnotationException(String.format("@FeatureType annotation for class '%s' has both 'term' and 'accession'", className));
-        }
     }
 
     private String description(FeatureType featureType) {
