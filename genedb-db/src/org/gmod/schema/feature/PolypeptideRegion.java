@@ -6,7 +6,16 @@ import org.gmod.schema.mapped.Organism;
 import java.sql.Timestamp;
 import java.util.Date;
 
-public class PolypeptideRegion extends Region {
+/**
+ * A region of a polypeptide.
+ * <p>
+ * All concrete implementing classes must have a three-argument constructor
+ * with arguments <code>(Organism organism, CvTerm type, String uniqueName)</code>.
+ * This constructor is invoked introspectively by {@link SequenceDao#createPolypeptideRegion()}.
+ *
+ * @author rh11
+ */
+public abstract class PolypeptideRegion extends Region {
 
     public PolypeptideRegion() {}
 
