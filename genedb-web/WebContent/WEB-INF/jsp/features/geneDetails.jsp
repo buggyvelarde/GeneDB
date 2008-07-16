@@ -191,32 +191,46 @@
             <c:if test="${hasAlgorithmData}">
                 <format:genePageSection id="peptideAlgorithms" className="rightBox">
                     <div class="heading">Algorithmic Predictions</div>
+                    <table>
                     <c:if test="${algorithmData.SignalP != null}">
-                        <div class="comment">
-                            <div class="label">SignalP</div>
-                            Predicted ${algorithmData.SignalP.prediction}
+                        <tr>
+                            <td class="label">SignalP</td>
+                            <td class="value">Predicted ${algorithmData.SignalP.prediction}
                             (Signal peptide probability ${algorithmData.SignalP.peptideProb},
                             signal anchor probability ${algorithmData.SignalP.anchorProb}).
                             <c:if test="${algorithmData.SignalP.cleavageSite != null}">
                                 Predicted cleavage site at ${algorithmData.SignalP.cleavageSite}
                                 with probability ${algorithmData.SignalP.cleavageSiteProb}.
-                            </c:if>
-                        </div>
+                            </c:if></td>
+                        </tr>
+                    </c:if>
+                    <c:if test="${algorithmData.TMHMM != null}">
+                        <tr>
+                            <td class="label">TMHMM</td>
+                            <td class="value">Predicted ${fn:length(algorithmData.TMHMM)}
+                            transmembrane region<c:if test="${fn:length(algorithmData.TMHMM) > 1}">s</c:if>
+                            at locations
+                            <c:forEach var="helix" varStatus="status" items="${algorithmData.TMHMM}"><%--
+                                --%><c:if test="${!status.first && !status.last}">,</c:if>
+                                <c:if test="${status.last && !status.first}">and </c:if>
+                                ${helix}</c:forEach>.</td>
+                        </tr>
                     </c:if>
                     <c:if test="${algorithmData.DGPI != null}">
-                        <div class="comment">
-                            <div class="label">DGPI</div>
-                            <c:if test="${algorithmData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
-                            <c:if test="${algorithmData.DGPI.location != null}">Predicted cleavage site at ${algorithmData.DGPI.location} with score ${algorithmData.DGPI.score}.</c:if>
-                        </div>
+                        <tr>
+                            <td class="label">DGPI</td>
+                            <td class="value"><c:if test="${algorithmData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
+                                <c:if test="${algorithmData.DGPI.location != null}">Predicted cleavage site at ${algorithmData.DGPI.location} with score ${algorithmData.DGPI.score}.</c:if>
+                            </td>
+                        </tr>
                     </c:if>
                     <c:if test="${algorithmData.PlasmoAP != null}">
-                        <div class="comment">
-                            <div class="label">PlasmoAP</div>
-                            ${algorithmData.PlasmoAP.description} apicoplast-targeting protein (score ${algorithmData.PlasmoAP.score}).
-                        </div>
+                        <tr>
+                            <td class="label">PlasmoAP</td>
+                            <td class="value">${algorithmData.PlasmoAP.description} apicoplast-targeting protein (score ${algorithmData.PlasmoAP.score}).</td>
+                        </tr>
                     </c:if>
-                </format:genePageSection>
+                </table></format:genePageSection>
             </c:if>
         </div>
     </c:if>
@@ -234,30 +248,27 @@
                 <c:forEach var="subsection" varStatus="status" items="${domainInformation}">
                     <tr>
                         <td colspan="2" class="domainTitle<c:if test="${status.first}">First</c:if>">
-                            <c:if test="${subsection.interproDbXRef != null}">
-                                <a href="${subsection.interproDbXRef.db.urlPrefix}${subsection.interproDbXRef.accession}"
-                                    >${subsection.interproDbXRef.db.name}:${subsection.interproDbXRef.accession}</a>
-                                    <i>${subsection.interproDbXRef.description}</i>
+                            <c:if test="${subsection.url != null}">
+                                <a href="${subsection.url}">${subsection.uniqueName}</a>
+                                    <i>${subsection.description}</i>
                                     matches:
                             </c:if>
-                            <c:if test="${subsection.interproDbXRef == null}">
-                                ${subsection.title}:
+                            <c:if test="${subsection.url == null}">
+                                ${subsection.uniqueName}:
                             </c:if>
                         </td>
                     </tr>
-                    <c:forEach var="hit" items="${subsection.hits}">
+                    <c:forEach var="hit" items="${subsection.subfeatures}">
                         <tr>
-                            <c:if test="${hit.dbxref != null}">
-                                <td class="domainAccession">
-                                    <a href="${hit.dbxref.db.urlPrefix}${hit.dbxref.accession}"
-                                        >${hit.dbxref.db.name}:${hit.dbxref.accession}</a>
-                                </td>
-                                <td class="domainDescription">${hit.dbxref.description}</td>
-                            </c:if>
-                            <c:if test="${hit.dbxref == null}">
-                                <td class="domainName">${hit.name}</td>
-                                <td class="domainDescription">${hit.description}</td>
-                            </c:if>
+                            <td class="domainAccession">
+                                <c:if test="${hit.url != null}">
+                                    <a href="${hit.url}">${hit.uniqueName}</a>
+                                </c:if>
+                                <c:if test="${hit.url == null}">
+                                    ${hit.uniqueName}
+                                </c:if>
+                            </td>
+                            <td class="domainDescription">${hit.description}</td>
                             <td class="domainPosition">${1 + hit.fmin} - ${hit.fmax}</td>
                             <td class="domainScore">${hit.score}</td>
                         </tr>
@@ -266,6 +277,14 @@
             </tbody></table>
         </format:genePageSection>
     </c:if>
+    <!-- Protein map section -->
+    <c:if test="${proteinMap != null}">
+        <format:genePageSection id="proteinMap">
+            <div class="heading">Protein map</div>
+            <img src="${proteinMap}">
+        </format:genePageSection>
+    </c:if>
+
     <!-- Ortholog / Paralog Section -->
     <db:filterByType items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>
     <c:if test="${fn:length(orthologs) > 0}">
