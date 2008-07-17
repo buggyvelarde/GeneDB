@@ -53,6 +53,7 @@ import org.genedb.web.mvc.controller.HistoryItem;
 import org.genedb.web.mvc.controller.HistoryManager;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
 import org.genedb.web.mvc.controller.LuceneDao;
+import org.genedb.web.mvc.controller.PostOrGetFormController;
 import org.genedb.web.mvc.controller.ResultHit;
 import org.genedb.web.mvc.controller.TaxonNodeBindingFormController;
 
@@ -69,7 +70,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class DownloadFeaturesController extends TaxonNodeBindingFormController {
+public class DownloadFeaturesController extends PostOrGetFormController {
 
     private SequenceDao sequenceDao;
     private LuceneDao luceneDao;
