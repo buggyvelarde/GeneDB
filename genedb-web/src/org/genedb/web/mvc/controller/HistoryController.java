@@ -3,7 +3,9 @@ package org.genedb.web.mvc.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,9 @@ public class HistoryController extends MultiActionController implements Initiali
     private JsonView jsonView;
     private String downloadView;
     private String editView;
+    private static final String TIME_FORMAT = "HH:mm:ss";
+    private static final SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT);
+
     
     public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
         this.viewChecker = viewChecker;
@@ -102,11 +107,10 @@ public class HistoryController extends MultiActionController implements Initiali
         return new ModelAndView(jsonView, model);
     }
     
-    public ModelAndView Download(HttpServletRequest request,HttpServletResponse response, BindException be) {
+    public ModelAndView Download(HttpServletRequest request,HttpServletResponse response) {
         String history = ServletRequestUtils.getStringParameter(request, "history","0");
         
         if(history == "0") {
-            be.reject("no.download.history");
             return new ModelAndView(downloadView);
         }
 
@@ -123,17 +127,18 @@ public class HistoryController extends MultiActionController implements Initiali
             //be.reject("no.download.history");
             return new ModelAndView(editView);
         }
-        
+        HttpSession session = request.getSession(false);
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
         if(remove.equals("true")) {
             logger.info("history is " + remove);
-            HttpSession session = request.getSession(false);
-            HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
             historyManager.removeItem(Integer.parseInt(history)-1, historyManager.getVersion());
             return new ModelAndView("redirect:/History/View");
         }
         
         Map<String,Object> model = new HashMap<String,Object>();
         model.put("history", history);
+        int item = Integer.parseInt(history);
+        model.put("historyName", historyManager.getHistoryItems().get(item-1).getName());
         return new ModelAndView(editView,model);
     }
     
@@ -161,7 +166,7 @@ public class HistoryController extends MultiActionController implements Initiali
         
         ArrayList<String> ids = new ArrayList<String>();
         String list[] = id.split(",");
-        for (String s : ids) {
+        for (String s : list) {
             ids.add(s);
         }
         HistoryItem item = historyManager.getHistoryItems().get(Integer.parseInt(history)-1);
@@ -169,10 +174,12 @@ public class HistoryController extends MultiActionController implements Initiali
         if(type.equals("MODIFY")) {
             item.setIds(ids);
             item.setHistoryType(HistoryType.MANUAL);
+        } else {
+            String name = item.getName();
+            String time = sdf.format(Calendar.getInstance().getTime());
+            name = String.format("%s Modified %s", name,time);
+            historyManager.addHistoryItems(name,HistoryType.MANUAL,ids);
         }
-        
-        String name = String.format("%s - Modified", item.getName());
-        historyManager.addHistoryItems(name,HistoryType.MANUAL,ids);
         return new ModelAndView("redirect:/History/View");
     }
 
