@@ -22,9 +22,14 @@
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/list.js"/>"></script>
 </format:headerRound>
 <br>
-<div id="queryName" align="center">
+<div id="queryName" align="center" style="clear: both;">
 Genes with Cv: ${category} and CvTerm: ${term}
 </div>
-<br>
+<div align="center" style="float:right;font-size: 1.3em;">	
+		<span>
+			<a href="<c:url value="/"/>History/View">History View</a>
+		</span>
+</div>
+<br><br>
 <div id="list" style="clear: both;"></div>
 <format:footer />

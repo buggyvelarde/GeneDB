@@ -405,3 +405,7 @@ fieldset {
 .sequenceButton {
 	padding: 5px;
 }
+
+.yui-button {
+	margin: 0.25em;
+}

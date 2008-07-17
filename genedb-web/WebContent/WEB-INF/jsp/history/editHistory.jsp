@@ -24,7 +24,28 @@
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:headerRound>
 <br>
-<div id="buttons" style="float: left;width:300px;"></div>
-<div id="historyEdit" align="center" style="float: left;"></div>
+<div id="queryName" align="center">
+<span>Editing History Item ${historyName}</span>
+</div>
+<br><br>
+<div id="historyEditLeft">
+	<div id="historyEditButtons" align="center">
+		<br>
+		<div id="historyEditActionButtons"></div>
+		<br>
+		<div id="historyEditSaveButtons"></div>
+	</div>
+	<br>
+	<div id="historyEditSelectedId" align="center">
+		<span>Selected Ids</span>
+		<br>
+		<div id="selection">
+		</div>
+	</div>
+</div>
+<div id="historyEdit" align="center"></div>
 <div id="img" align="center" style="clear: both;"></div>
+	<style type="text/css">
+		span {margin: 0.25em}
+	</style>
 <format:footer/>

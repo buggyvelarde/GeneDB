@@ -2,7 +2,9 @@ function ArrayList() {
   this.array = new Array();
   
   this.add = function(obj){
-    this.array[this.array.length] = obj;
+    if(!this.contains(obj)) {
+    	this.array[this.array.length] = obj;
+    }
   }
   
   this.iterator = function (){
@@ -60,6 +62,13 @@ function ArrayList() {
 	  return str.replace(/(.*),/,"$1");
   }
   
+  this.toStringWithSpace = function() {
+	  var str = "";
+	  for (var i=0;i<this.array.length;i++) {
+		  str += this.array[i] + ", ";
+	  }
+	  return str.replace(/(.*),/,"$1");
+  }
 }
 
 

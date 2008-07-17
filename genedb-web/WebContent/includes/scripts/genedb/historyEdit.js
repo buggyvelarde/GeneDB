@@ -21,48 +21,48 @@ function initHistoryEdit(b,h) {
 
 function makeButtons() {
 	var selectAll = new YAHOO.widget.Button({type: "push",label:"Select All",value:"selectAll", 
-							id:"selectAll",container: "buttons"});
+							id:"selectAll",container: "historyEditActionButtons"});
 	
 	selectAll.addListener("click", onSelectAllClicked);
-	selectAll.addClass("edit-history-button");
+	//selectAll.addClass("edit-history-button");
 	
 	var unselectAll = new YAHOO.widget.Button({type: "push",label:"Unselect All",value:"unselectAll", 
-							id:"unselectAll",container: "buttons"});
+							id:"unselectAll",container: "historyEditActionButtons"});
 
 	unselectAll.addListener("click", onSelectAllClicked);
-	unselectAll.addClass("edit-history-button");
+	//unselectAll.addClass("edit-history-button");
 	
-	var invertSelect = new YAHOO.widget.Button({type: "push",label:"Invert Select",value:"invertSelect", 
-							id:"invertSelect",container: "buttons"});
+	var invertSelect = new YAHOO.widget.Button({type: "push",label:"Invert Selection",value:"invertSelect", 
+							id:"invertSelect",container: "historyEditActionButtons"});
 
 	invertSelect.addListener("click", onInvertSelectClicked);
-	invertSelect.addClass("edit-history-button");
+	//invertSelect.addClass("edit-history-button");
 	
 	var deleteSelected = new YAHOO.widget.Button({type: "push",label:"Delete Selected",value:"delete", 
-								id:"delete",container: "buttons"});
+								id:"delete",container: "historyEditActionButtons"});
 
 	deleteSelected.addListener("click", onDeleteClicked);
-	deleteSelected.addClass("edit-history-button");
+	//deleteSelected.addClass("edit-history-button");
 	
 	
 	saveOptions = new YAHOO.widget.ButtonGroup({ 
 				        id:  "saveOptions", 
 				        name:  "saveOptions", 
-				        container:  "buttons" });
+				        container:  "historyEditSaveButtons" });
 
 	saveOptions.addButtons([
 	
-		{ label: "Modify existing result set", value: "modify", checked: true },
-		{ label: "Create New History Item", value: "new" }
+		{ label: "Modify", value: "modify", checked: true },
+		{ label: "Create New", value: "new" }
 	
 	]);
 
 	
 	var save = new YAHOO.widget.Button({type: "push",label:"Save & Exit",value:"save", 
-					id:"save",container: "buttons"});
+					id:"save",container: "historyEditSaveButtons"});
 
 	save.addListener("click", onSaveClicked);
-	save.addClass("edit-history-button");
+	//save.addClass("edit-history-button");
 }
 
 function onSelectAllClicked(e) {
@@ -79,8 +79,10 @@ function onSelectAllClicked(e) {
 				myDT.unselectRow(record);
 				ids.remove(data.name);
 			}
-			myDT.updateRow(records[i],data);
+			myDT.updateRow(record,data);
 		}
+		var div = document.getElementById("selection");
+		div.innerHTML = ids.toStringWithSpace();
 		myDT.refreshView();
 } 
 
@@ -89,7 +91,10 @@ function onDeleteClicked(e) {
     	for(var i=0;i<rows.length;i++) {
     		var record = myDT.getRecord(rows[i]);
     		myDT.deleteRow(record);
+    		ids.remove(record.getData().name);
     	}
+    	var div = document.getElementById("selection");
+		div.innerHTML = ids.toStringWithSpace();
 }
 
 function onInvertSelectClicked(e) {
@@ -109,6 +114,8 @@ function onInvertSelectClicked(e) {
 			}
 			myDT.updateRow(records[i],data);
 		}
+		var div = document.getElementById("selection");
+		div.innerHTML = ids.toStringWithSpace();
 		myDT.refreshView();
 	}
 }
@@ -121,11 +128,13 @@ var callback =
 
 function onSaveClicked(e) {
 	var button = saveOptions.getButton(0);
+	var url = base + "History/AddItem?history=" + hist + "&ids=" + ids.toString();
 	if(button.get("checked")) {
-		alert(button.get("value"))
+		url += "&type=MODIFY";
+		
+	} else {
+		url += "&type=NEW";
 	}
-	var id = ids.toString();
-	var url = base + "History/AddItem?history=" + hist + "&ids=" + id;
 	
 	var div = document.getElementById('img');
 	div.innerHTML = "<img src=\"" + base  + "includes/YUI-2.5.2/assets/skins/sam/treeview-loading.gif\"></img>";
@@ -186,6 +195,7 @@ function makeDataTable(url, params) {
 
 
 function checkboxClicked(e) {
+    var div = document.getElementById("selection");
     var checkbox = e.target;
     var record = this.getRecord(checkbox);
     var data = record.getData();
@@ -198,5 +208,6 @@ function checkboxClicked(e) {
     	ids.remove(data.name);
     	data.checkbox = false;
     }
+    div.innerHTML = ids.toStringWithSpace();
     myDT.updateRow(record,data);
 }

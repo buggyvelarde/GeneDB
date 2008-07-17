@@ -16,8 +16,31 @@
 
 #queryName {
 	background-color: #F0F0E4;
+	float:left;
 	font-size: 1.5em;
 	height: 20px;
 	margin: auto;
-	width:95%;
+	width:90%;
+}
+
+#historyEditLeft {
+	float: left;
+	width:300px;
+}
+
+#historyEditButtons {
+	border: 1px solid gray;
+	margin: 2px;
+}
+
+#historyEditSelectedId {
+	border: 1px solid gray;
+	margin: 2px;
+	background-color: #F0F0E4;
+}
+
+#historyEdit {
+	float: left;
+	margin-left: 5px;
+	border: 1px solid gray;
 }
