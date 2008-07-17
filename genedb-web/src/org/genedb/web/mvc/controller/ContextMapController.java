@@ -2,7 +2,7 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
 import org.genedb.db.domain.services.BasicGeneService;
-import org.genedb.web.gui.DiagramCache;
+//import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.ContextMapDiagram;
 import org.genedb.web.gui.RenderedContextMap;
 
@@ -74,7 +74,7 @@ public class ContextMapController extends PostOrGetFormController {
 
     private Map<String,Object> populateModel(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap,
             List<RenderedContextMap.Tile> tiles) throws IOException {
-        String chromosomeThumbnailURI = DiagramCache.fileForDiagram(chromosomeThumbnail, getServletContext());
+//       String chromosomeThumbnailURI = DiagramCache.fileForDiagram(chromosomeThumbnail, getServletContext());
 
         ContextMapDiagram diagram = contextMap.getDiagram();
 
@@ -99,7 +99,7 @@ public class ContextMapController extends PostOrGetFormController {
         model.put("tiles", tiles);
 
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
-        chromosomeThumbnailModel.put("src", chromosomeThumbnailURI);
+//        chromosomeThumbnailModel.put("src", chromosomeThumbnailURI);
         chromosomeThumbnailModel.put("width", chromosomeThumbnail.getWidth());
         model.put("chromosomeThumbnail", chromosomeThumbnailModel);
 

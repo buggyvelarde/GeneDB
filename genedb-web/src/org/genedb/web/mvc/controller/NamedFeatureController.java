@@ -20,10 +20,10 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.domain.objects.PolypeptideRegionGroup;
-import org.genedb.web.gui.DiagramCache;
-import org.genedb.web.gui.ProteinMapDiagram;
-import org.genedb.web.gui.RenderedProteinMap;
+//import org.genedb.db.domain.objects.PolypeptideRegionGroup;
+//import org.genedb.web.gui.DiagramCache;
+//import org.genedb.web.gui.ProteinMapDiagram;
+//import org.genedb.web.gui.RenderedProteinMap;
 
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.Feature;
@@ -69,15 +69,15 @@ public class NamedFeatureController extends PostOrGetFormController {
 
         if (model.containsKey("polypeptide")) {
             Polypeptide polypeptide = (Polypeptide) model.get("polypeptide");
-            @SuppressWarnings("unchecked")
-            List<PolypeptideRegionGroup> domainInformation = (List<PolypeptideRegionGroup>) model.get("domainInformation");
-
-            if (!domainInformation.isEmpty()) {
-                ProteinMapDiagram diagram = new ProteinMapDiagram(polypeptide, domainInformation);
-                RenderedProteinMap renderedProteinMap = new RenderedProteinMap(diagram);
-
-                model.put("proteinMap", DiagramCache.fileForDiagram(renderedProteinMap, getServletContext()));
-            }
+//            @SuppressWarnings("unchecked")
+//            List<PolypeptideRegionGroup> domainInformation = (List<PolypeptideRegionGroup>) model.get("domainInformation");
+//
+//            if (!domainInformation.isEmpty()) {
+//                ProteinMapDiagram diagram = new ProteinMapDiagram(polypeptide, domainInformation);
+//                RenderedProteinMap renderedProteinMap = new RenderedProteinMap(diagram);
+//
+//                model.put("proteinMap", DiagramCache.fileForDiagram(renderedProteinMap, getServletContext()));
+//            }
         }
 
         return new ModelAndView(viewName, model);
