@@ -3,12 +3,12 @@ package org.genedb.web.mvc.controller;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.domain.objects.InterProHit;
-import org.genedb.db.domain.objects.PolypeptideRegionGroup;
-import org.genedb.db.domain.objects.SimpleRegionGroup;
+//import org.genedb.db.domain.objects.InterProHit;
+//import org.genedb.db.domain.objects.PolypeptideRegionGroup;
+//import org.genedb.db.domain.objects.SimpleRegionGroup;
 
 import org.gmod.schema.feature.AbstractGene;
-import org.gmod.schema.feature.GPIAnchorCleavageSite;
+//import org.gmod.schema.feature.GPIAnchorCleavageSite;
 import org.gmod.schema.feature.MRNA;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.PolypeptideDomain;
@@ -160,47 +160,47 @@ public class ModelBuilder {
             model.put("CellularC", cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("cellular_component", polypeptide));
             model.put("MF",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("molecular_function", polypeptide));
 
-            List<PolypeptideRegionGroup> domainInformation = prepareDomainInformation(polypeptide);
-            model.put("domainInformation", domainInformation);
+            //List<PolypeptideRegionGroup> domainInformation = prepareDomainInformation(polypeptide);
+            //model.put("domainInformation", domainInformation);
             model.put("algorithmData", prepareAlgorithmData(polypeptide));
         }
         return model;
     }
 
-    private List<PolypeptideRegionGroup> prepareDomainInformation(Polypeptide polypeptide) {
-        Map<DbXRef, org.genedb.db.domain.objects.InterProHit> interProHitsByDbXRef
-            = new HashMap<DbXRef, org.genedb.db.domain.objects.InterProHit>();
-        SimpleRegionGroup otherMatches = new SimpleRegionGroup ("Other matches");
-
-        for (PolypeptideDomain domain: polypeptide.getRegions(PolypeptideDomain.class)) {
-
-            org.genedb.db.domain.objects.DatabasePolypeptideRegion thisHit
-                = org.genedb.db.domain.objects.DatabasePolypeptideRegion.build(domain);
-
-            if (thisHit == null) {
-                continue;
-            }
-
-            DbXRef interProDbXRef = domain.getInterProDbXRef();
-            Hibernate.initialize(interProDbXRef);
-            if (interProDbXRef == null)
-                otherMatches.addDomain(thisHit);
-            else {
-                if (!interProHitsByDbXRef.containsKey(interProDbXRef))
-                    interProHitsByDbXRef.put(interProDbXRef,
-                        new InterProHit(interProDbXRef));
-                interProHitsByDbXRef.get(interProDbXRef).addDomain(thisHit);
-            }
-        }
-
-        List<PolypeptideRegionGroup> domainInformation = new ArrayList<PolypeptideRegionGroup>(interProHitsByDbXRef.values());
-
-        if (!otherMatches.isEmpty()) {
-            domainInformation.add(otherMatches);
-        }
-
-        return domainInformation;
-    }
+//    private List<PolypeptideRegionGroup> prepareDomainInformation(Polypeptide polypeptide) {
+//        Map<DbXRef, org.genedb.db.domain.objects.InterProHit> interProHitsByDbXRef
+//            = new HashMap<DbXRef, org.genedb.db.domain.objects.InterProHit>();
+//        SimpleRegionGroup otherMatches = new SimpleRegionGroup ("Other matches");
+//
+//        for (PolypeptideDomain domain: polypeptide.getRegions(PolypeptideDomain.class)) {
+//
+//            org.genedb.db.domain.objects.DatabasePolypeptideRegion thisHit
+//                = org.genedb.db.domain.objects.DatabasePolypeptideRegion.build(domain);
+//
+//            if (thisHit == null) {
+//                continue;
+//            }
+//
+//            DbXRef interProDbXRef = domain.getInterProDbXRef();
+//            Hibernate.initialize(interProDbXRef);
+//            if (interProDbXRef == null)
+//                otherMatches.addDomain(thisHit);
+//            else {
+//                if (!interProHitsByDbXRef.containsKey(interProDbXRef))
+//                    interProHitsByDbXRef.put(interProDbXRef,
+//                        new InterProHit(interProDbXRef));
+//                interProHitsByDbXRef.get(interProDbXRef).addDomain(thisHit);
+//            }
+//        }
+//
+//        List<PolypeptideRegionGroup> domainInformation = new ArrayList<PolypeptideRegionGroup>(interProHitsByDbXRef.values());
+//
+//        if (!otherMatches.isEmpty()) {
+//            domainInformation.add(otherMatches);
+//        }
+//
+//        return domainInformation;
+//    }
 
     private <S> void putIfNotEmpty(Map<S,? super Map<?,?>> map, S key, Map<?,?> value) {
         if (!value.isEmpty()) {
@@ -221,7 +221,7 @@ public class ModelBuilder {
     private Map<String,Object> prepareAlgorithmData(Polypeptide polypeptide) {
         Map<String,Object> algorithmData = new HashMap<String,Object>();
         putIfNotEmpty(algorithmData, "SignalP", prepareSignalPData(polypeptide));
-        putIfNotEmpty(algorithmData, "DGPI", prepareDGPIData(polypeptide));
+        //putIfNotEmpty(algorithmData, "DGPI", prepareDGPIData(polypeptide));
         putIfNotEmpty(algorithmData, "PlasmoAP", preparePlasmoAPData(polypeptide));
         putIfNotEmpty(algorithmData, "TMHMM", prepareTMHMMData(polypeptide));
         return algorithmData;
@@ -254,31 +254,31 @@ public class ModelBuilder {
         return signalPData;
     }
 
-    private Map<String,Object> prepareDGPIData(Polypeptide polypeptide) {
-        Map<String,Object> dgpiData = new HashMap<String,Object>();
-
-        /* If the GPI_anchored property is not present, we do not add
-         * anything here. That way, an empty map indicates that there
-         * is no DGPI data.
-         */
-        if (polypeptide.hasProperty("genedb_misc", "GPI_anchored")) {
-            dgpiData.put("anchored", true);
-        }
-
-        Collection<GPIAnchorCleavageSite> cleavageSites = polypeptide.getRegions(GPIAnchorCleavageSite.class);
-        if (!cleavageSites.isEmpty()) {
-            if (cleavageSites.size() > 1) {
-                logger.error(String.format("There are %d GPI anchor cleavage sites on polypeptide '%s'; only expected one",
-                    cleavageSites.size(), polypeptide.getUniqueName()));
-            }
-            GPIAnchorCleavageSite cleavageSite = cleavageSites.iterator().next();
-            FeatureLoc cleavageSiteLoc = cleavageSite.getRankZeroFeatureLoc();
-            dgpiData.put("location", cleavageSiteLoc.getFmax());
-            dgpiData.put("score", cleavageSite.getScore());
-        }
-
-        return dgpiData;
-    }
+//    private Map<String,Object> prepareDGPIData(Polypeptide polypeptide) {
+//        Map<String,Object> dgpiData = new HashMap<String,Object>();
+//
+//        /* If the GPI_anchored property is not present, we do not add
+//         * anything here. That way, an empty map indicates that there
+//         * is no DGPI data.
+//         */
+//        if (polypeptide.hasProperty("genedb_misc", "GPI_anchored")) {
+//            dgpiData.put("anchored", true);
+//        }
+//
+//        Collection<GPIAnchorCleavageSite> cleavageSites = polypeptide.getRegions(GPIAnchorCleavageSite.class);
+//        if (!cleavageSites.isEmpty()) {
+//            if (cleavageSites.size() > 1) {
+//                logger.error(String.format("There are %d GPI anchor cleavage sites on polypeptide '%s'; only expected one",
+//                    cleavageSites.size(), polypeptide.getUniqueName()));
+//            }
+//            GPIAnchorCleavageSite cleavageSite = cleavageSites.iterator().next();
+//            FeatureLoc cleavageSiteLoc = cleavageSite.getRankZeroFeatureLoc();
+//            dgpiData.put("location", cleavageSiteLoc.getFmax());
+//            dgpiData.put("score", cleavageSite.getScore());
+//        }
+//
+//        return dgpiData;
+//    }
 
     private Map<String,Object> preparePlasmoAPData(Polypeptide polypeptide) {
         Map<String,Object> plasmoAPData = new HashMap<String,Object>();
