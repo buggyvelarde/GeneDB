@@ -155,24 +155,6 @@
             <classpath path="${imported.basedir.db}/ant-build/classes-interface" />
         </javac>
 
-        <jar jarfile="${imported.basedir.db}/ant-build/jars/genedb-hibernate.jar">
-            <fileset dir="${imported.basedir.db}/ant-build/classes-implementation">
-                <include name="**/*.class"/>
-            </fileset>
-
-            <!-- These HBM files are used only by genedb-access -
-                 and only then for historical reasons, i.e. there's
-                 a lot of code that instantiates Feature directly.
-              -->
-            <fileset dir="${imported.basedir.db}/input">
-                <include name="org/gmod/**/*.hbm.xml" />
-            </fileset>
-            <manifest>
-                <attribute name="Implementation-Title" value="GeneDB Hibernate"/>
-                <attribute name="Implementation-Version" value="${version}"/>
-            </manifest>
-        </jar>
-
     </target>
 
     <!-- To Sort -->
