@@ -143,7 +143,37 @@ public class HistoryController extends MultiActionController implements Initiali
     }
     
     private static final String GENEDB_HISTORY = "_GeneDB_History_List";
-
+    
+    public ModelAndView EditName(HttpServletRequest request,HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+        String history = ServletRequestUtils.getStringParameter(request, "history","0");
+        String newName = ServletRequestUtils.getStringParameter(request, "value","");
+        
+        int count = Integer.parseInt(history) - 1;
+        
+        List<HistoryItem> historyItems = historyManager.getHistoryItems();
+        HistoryItem changedItem = historyItems.get(count);
+        boolean exists = false;
+        
+        for (HistoryItem historyItem : historyItems) {
+            if(historyItem.getName().equals(newName) && 
+                    historyItem.getHistoryType().equals(changedItem.getHistoryType())) {
+                exists = true;
+            }
+        }
+        
+        if(!exists) {
+            changedItem.setName(newName);
+        } else {
+            try {
+                response.sendError(511);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
     public ModelAndView AddItem(HttpServletRequest request,HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
