@@ -19,6 +19,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.gmod.schema.utils.StrandedLocation;
+
 @Entity
 @Table(name = "featureloc")
 public class FeatureLoc implements Serializable {
@@ -213,4 +215,21 @@ public class FeatureLoc implements Serializable {
     public void addPub(Pub pub) {
         this.featureLocPubs.add(new FeatureLocPub(this, pub));
     }
+    
+    
+    FeatureLoc(Feature parent, Feature child, StrandedLocation location) {
+    	StrandedLocation loc = location.getInterbaseVersion();
+        this.featureBySrcFeatureId = parent;
+        this.featureByFeatureId = child;
+        this.fmin = loc.getMin();
+        this.fminPartial = loc.isMinPartial();
+        this.fmax = loc.getMax();
+        this.fmaxPartial = loc.isMaxPartial();
+        this.strand = loc.getStrand().getValue();
+        this.phase = 0;
+        this.locGroup = 0;
+        this.rank = 0;
+    }
+    
+    
 }
