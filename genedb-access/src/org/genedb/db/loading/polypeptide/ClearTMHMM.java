@@ -22,6 +22,7 @@ public class ClearTMHMM extends Clear {
         +"     '0001077'" // transmembrane region
         +"   , '0001073'" // cytoplasmic region
         +"   , '0001074'" // non-cytoplasmic region
+        +"   , '0001071'" // membrane structure region
         +" )"
         +" and feature_type_cv.name = 'sequence'"
         +" and feature.organism_id = organism.organism_id"

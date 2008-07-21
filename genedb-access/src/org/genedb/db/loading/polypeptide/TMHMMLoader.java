@@ -1,5 +1,12 @@
 package org.genedb.db.loading.polypeptide;
 
+import org.gmod.schema.feature.MembraneStructure;
+import org.gmod.schema.feature.Polypeptide;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,16 +14,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
-
-import org.gmod.schema.feature.Polypeptide;
-import org.gmod.schema.feature.TransmembraneRegion;
-
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 public class TMHMMLoader extends Loader {
 
@@ -33,9 +33,7 @@ public class TMHMMLoader extends Loader {
             Polypeptide polypeptide = getPolypeptideByMangledName(key);
 
             transaction.begin();
-            for (TMHelix helix: file.helicesForKey(key)) {
-                loadHelix(polypeptide, helix);
-            }
+            loadMembraneStructure(polypeptide, file.regionsForKey(key));
             transaction.commit();
             /*
              * If the session isn't cleared out every so often, it
@@ -52,22 +50,61 @@ public class TMHMMLoader extends Loader {
         }
     }
 
-    private void loadHelix(Polypeptide polypeptide, TMHelix helix) {
-        logger.debug(String.format("Adding transmembrane region for '%s' at %d-%d",
-            helix.getKey(), helix.getFmin(), helix.getFmax()));
-        TransmembraneRegion tmr = sequenceDao.createTransmembraneRegion(polypeptide,
-                helix.getFmin(), helix.getFmax());
-        sequenceDao.persist(tmr);
+    private void loadMembraneStructure(Polypeptide polypeptide, Iterable<TMHMMRegion> regions) {
+        MembraneStructure membraneStructure = sequenceDao.createMembraneStructure(polypeptide);
+        sequenceDao.persist(membraneStructure);
+        for (TMHMMRegion region: regions) {
+            loadRegion(membraneStructure, region);
+        }
+    }
+
+    private void loadRegion(MembraneStructure membraneStructure, TMHMMRegion region) {
+        logger.debug(String.format("Adding membrane structure region (%s) for '%s' at %d-%d",
+            region.getType(), region.getKey(), region.getFmin(), region.getFmax()));
+
+        switch(region.getType()) {
+        case INSIDE:
+            sequenceDao.persist(sequenceDao.createCytoplasmicRegion(membraneStructure,
+                region.getFmin(), region.getFmax()));
+            break;
+        case TMHELIX:
+            sequenceDao.persist(sequenceDao.createTransmembraneRegion(membraneStructure,
+                region.getFmin(), region.getFmax()));
+            break;
+        case OUTSIDE:
+            sequenceDao.persist(sequenceDao.createNonCytoplasmicRegion(membraneStructure,
+                region.getFmin(), region.getFmax()));
+            break;
+        }
     }
 }
 
-class TMHelix {
+class TMHMMRegion {
+    public enum Type {
+        INSIDE, TMHELIX, OUTSIDE;
+        public static Type decode(String typeString) {
+            if (typeString.equals("inside")) {
+                return INSIDE;
+            }
+            else if (typeString.equals("TMhelix")) {
+                return TMHELIX;
+            }
+            else if (typeString.equals("outside")) {
+                return OUTSIDE;
+            }
+            else {
+                throw new IllegalArgumentException(String.format("Unrecognised type '%s'", typeString));
+            }
+        }
+    };
     private String key;
+    private Type type;
     private int fmin, fmax;
-    public TMHelix(String key, int fmin, int fmax) {
+    public TMHMMRegion(String key, int fmin, int fmax, Type type) {
         this.key = key;
         this.fmin = fmin;
         this.fmax = fmax;
+        this.type = type;
     }
     public String getKey() {
         return key;
@@ -78,34 +115,46 @@ class TMHelix {
     public int getFmax() {
         return fmax;
     }
+    public Type getType() {
+        return type;
+    }
+    public boolean isTMHelix() {
+        return type == Type.TMHELIX;
+    }
 }
 
 class TMHMMFile {
-    private Map<String,Collection<TMHelix>> helicesByKey = new HashMap<String,Collection<TMHelix>>();
+    private Set<String> keysWithHelices = new HashSet<String> ();
+    private Map<String,Collection<TMHMMRegion>> regionsByKey = new HashMap<String,Collection<TMHMMRegion>>();
     public TMHMMFile(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         while (null != (line = reader.readLine())) {
-            if (line.startsWith("#"))
+            if (line.startsWith("#")) {
                 continue;
-            String[] fields = line.split("\t");
-            if (fields[2].equals("TMhelix")) {
-                String key = fields[0];
-                String startString = fields[3];
-                String stopString = fields[4];
-
-                TMHelix helix = new TMHelix(key, Integer.parseInt(startString) - 1, Integer.parseInt(stopString));
-
-                if (!helicesByKey.containsKey(key))
-                    helicesByKey.put(key, new ArrayList<TMHelix>());
-                helicesByKey.get(key).add(helix);
             }
+            String[] fields = line.split("\t");
+            String key = fields[0];
+            TMHMMRegion.Type type = TMHMMRegion.Type.decode(fields[2]);
+            String startString = fields[3];
+            String stopString = fields[4];
+
+            TMHMMRegion region = new TMHMMRegion(key, Integer.parseInt(startString) - 1, Integer.parseInt(stopString), type);
+
+            if (region.isTMHelix()) {
+                keysWithHelices.add(key);
+            }
+
+            if (!regionsByKey.containsKey(key)) {
+                regionsByKey.put(key, new ArrayList<TMHMMRegion>());
+            }
+            regionsByKey.get(key).add(region);
         }
     }
     public Set<String> keys() {
-        return helicesByKey.keySet();
+        return keysWithHelices;
     }
-    public Collection<TMHelix> helicesForKey(String key) {
-        return helicesByKey.get(key);
+    public Collection<TMHMMRegion> regionsForKey(String key) {
+        return regionsByKey.get(key);
     }
 }
