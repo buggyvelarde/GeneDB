@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -59,11 +60,11 @@ public class FeatureRelationship implements Serializable,PropertyI {
      * </ol>
      */
 
-    @ManyToOne(cascade = {}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature subjectFeature;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinColumn(name = "object_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature objectFeature;
 

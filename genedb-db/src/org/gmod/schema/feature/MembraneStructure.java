@@ -51,4 +51,9 @@ public class MembraneStructure extends PolypeptideRegion {
 
         return components;
     }
+
+    @Transient
+    public Polypeptide getPolypeptide() {
+        return (Polypeptide) this.getSourceFeature();
+    }
 }

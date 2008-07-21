@@ -391,6 +391,12 @@ public class Feature implements java.io.Serializable {
         this.featureRelationshipsForSubjectId.add(featureRelationshipForSubjectId);
     }
 
+    public void addFeatureRelationshipsForObjectId(
+            FeatureRelationship featureRelationshipForObjectId) {
+        featureRelationshipForObjectId.setObjectFeature(this);
+        this.featureRelationshipsForObjectId.add(featureRelationshipForObjectId);
+    }
+
     public Collection<FeatureDbXRef> getFeatureDbXRefs() {
         return Collections.unmodifiableCollection(this.featureDbXRefs);
     }
@@ -656,5 +662,14 @@ public class Feature implements java.io.Serializable {
             }
         }
         return false;
+    }
+
+    @Transient
+    public Feature getSourceFeature() {
+        FeatureLoc featureLoc = this.getRankZeroFeatureLoc();
+        if (featureLoc == null) {
+            return null;
+        }
+        return featureLoc.getSourceFeature();
     }
 }

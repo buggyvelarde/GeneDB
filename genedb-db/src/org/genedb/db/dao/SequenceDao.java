@@ -2,6 +2,8 @@ package org.genedb.db.dao;
 
 import org.gmod.schema.feature.CytoplasmicRegion;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
+import org.gmod.schema.feature.MembraneStructure;
+import org.gmod.schema.feature.MembraneStructureComponent;
 import org.gmod.schema.feature.NonCytoplasmicRegion;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.PolypeptideDomain;
@@ -437,7 +439,7 @@ public class SequenceDao extends BaseDao {
 
         return features;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvNamePattern(String cvTermName, String cvNamePattern,
             String organism) {
@@ -479,7 +481,7 @@ public class SequenceDao extends BaseDao {
 
         return features;
     }
-    
+
     /**
      * Return a list of feature uniquename based on cvterm for auto-completion
      *
@@ -702,18 +704,44 @@ public class SequenceDao extends BaseDao {
         // TODO Add interproDbxref as additional parameter?
     }
 
-    public TransmembraneRegion createTransmembraneRegion(Polypeptide polypeptide, int start, int end) {
-        return createPolypeptideRegion(TransmembraneRegion.class, polypeptide, start, end);
+    public MembraneStructure createMembraneStructure(Polypeptide polypeptide) {
+        return createPolypeptideRegion(MembraneStructure.class, polypeptide, 0, polypeptide.getSeqLen());
     }
-    public CytoplasmicRegion createCytoplasmicRegion(Polypeptide polypeptide, int start, int end) {
-        return createPolypeptideRegion(CytoplasmicRegion.class, polypeptide, start, end);
+
+    public TransmembraneRegion createTransmembraneRegion(MembraneStructure membraneStructure, int start, int end) {
+        return createMembraneStructureComponent(TransmembraneRegion.class, start, end, membraneStructure);
     }
-    public NonCytoplasmicRegion createNonCytoplasmicRegion(Polypeptide polypeptide, int start, int end) {
-        return createPolypeptideRegion(NonCytoplasmicRegion.class, polypeptide, start, end);
+    public CytoplasmicRegion createCytoplasmicRegion(MembraneStructure membraneStructure, int start, int end) {
+        return createMembraneStructureComponent(CytoplasmicRegion.class, start, end, membraneStructure);
+    }
+    public NonCytoplasmicRegion createNonCytoplasmicRegion(MembraneStructure membraneStructure, int start, int end) {
+        return createMembraneStructureComponent(NonCytoplasmicRegion.class, start, end, membraneStructure);
+    }
+
+    private <T extends MembraneStructureComponent> T createMembraneStructureComponent(Class<T> componentClass,
+            int start, int end, MembraneStructure membraneStructure) {
+        return createPolypeptideRegion(componentClass, membraneStructure.getPolypeptide(), start, end, membraneStructure);
     }
     private <T extends PolypeptideRegion> T createPolypeptideRegion(Class<T> regionClass,
-            Polypeptide polypeptide, int start, int end) {
+            Polypeptide polypeptide, int start, int end, PolypeptideRegion containingRegion) {
+        T region = createPolypeptideRegion(regionClass, polypeptide, start, end);
+        addPart(containingRegion, region);
+        return region;
+    }
 
+    private CvTerm partType = null;
+    private FeatureRelationship addPart(Feature whole, Feature part) {
+        if (partType == null) {
+            partType = cvDao.getCvTermByNameAndCvName("has_part", "relationship");
+        }
+        FeatureRelationship featureRelationship = new FeatureRelationship(whole, part, partType, 0);
+        whole.addFeatureRelationshipsForSubjectId(featureRelationship);
+        part.addFeatureRelationshipsForObjectId(featureRelationship);
+        return featureRelationship;
+    }
+
+    private <T extends PolypeptideRegion> T createPolypeptideRegion(Class<T> regionClass,
+            Polypeptide polypeptide, int start, int end) {
         CvTerm regionTerm = cvDao.getCvTermForAnnotatedClass(regionClass);
         String regionUniqueName = String.format("%s:%d-%d", polypeptide.getUniqueName(), start, end);
 
