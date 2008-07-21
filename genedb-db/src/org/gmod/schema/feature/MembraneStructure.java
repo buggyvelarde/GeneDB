@@ -38,6 +38,10 @@ public class MembraneStructure extends PolypeptideRegion {
         super(organism, cvTerm, uniqueName, analysis, obsolete);
     }
 
+    public MembraneStructure(Organism organism, CvTerm cvTerm, String uniqueName) {
+        this(organism, cvTerm, uniqueName, true, false);
+    }
+
     @Transient
     public <T extends MembraneStructureComponent> SortedSet<T> getComponents(Class<T> clazz) {
         SortedSet<T> components = new TreeSet<T>();
