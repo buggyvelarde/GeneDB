@@ -70,17 +70,6 @@
 
     <!-- General building, cleaning, JARing type targets -->
 
-    <target name="cleanGenerated" >
-        <delete quiet="true" dir="${imported.basedir.db}/ant-build"/>
-        <delete quiet="true">
-            <fileset dir="${imported.basedir.db}/out-beta7">
-                <include name="org/genedb/**/*.java"/>
-                <exclude name="**/Feature.java"/>
-            </fileset>
-        </delete>
-    </target>
-
-
     <target name="clean-build-db" >
         <delete dir="${imported.basedir.db}/ant-build" includeemptydirs="true" defaultexcludes="no" />
     </target>
@@ -155,24 +144,13 @@
             <classpath path="${imported.basedir.db}/ant-build/classes-interface" />
         </javac>
 
-    </target>
-
-    <!-- To Sort -->
-
-    <target name="fulljar" depends="cleanGenerated"
-        description="Create full JAR file with all Hibernate classes">
-
-        <delete file="genedb-hibernate.jar"/>
-
-        <jar jarfile="genedb-hibernate.jar">
-            <fileset dir="${imported.basedir.db}/bin" />
-            <manifest>
-                <attribute name="Implementation-Title" value="GeneDB Hibernate"/>
-                <attribute name="Implementation-Version" value="0.1"/>
-            </manifest>
+        <jar jarfile="${imported.basedir.db}/ant-build/jars/genedb-hibernate.jar">
+            <fileset dir="${imported.basedir.db}/ant-build/classes-implementation" />
         </jar>
 
     </target>
+
+    <!-- To Sort -->
 
     <target name="alljars" description="Create all 1.5+ JAR files with interface/implementation split"
         depends="clean-build-db,make-interface, make-hibernate3-implementation">
