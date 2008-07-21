@@ -42,7 +42,7 @@
     <path location="${imported.basedir.access}/lib/chado-interface.jar"/>
   </path>
 
-  <target name="genedb-access.get-latest-jars" depends="genedb-db.alljars"
+  <target name="genedb-access.get-latest-jars" depends="genedb-db.make-db-jar"
     description="Copy over JAR files from other projects">
     <copy file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-db.jar" todir="${imported.basedir.access}/lib" />
   </target>
@@ -162,7 +162,7 @@
 	      <jvmarg line="-server"/>
 	    </java>
 	  </target>
-	
+
   <target name="load-senteritidisPT4" depends="genedb-access.jar">
     <java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
       <arg line="Senteritidis_PT4 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SEN.config.xml"/>

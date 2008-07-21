@@ -49,7 +49,7 @@
 	<path id="aspect.path">
 			<pathelement location ="${lib-dir}/spring-aspects.jar" />
 	</path>
-	
+
 	<!-- Define extra tasks -->
 
     <!-- This task is used to instrument the Feature class to enable lazy property fetching -->
@@ -81,7 +81,7 @@
         <mkdir dir="${imported.basedir.db}/ant-build/jars" />
     </target>
 
-	
+
     <target name="make-db-jar" depends="setup-db"
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
@@ -93,12 +93,12 @@
         </copy>
 
         <javac srcdir="${imported.basedir.db}/ant-build/src"
-            classpathref="tools-interface-compile-lib"
+            classpathref="db-compile-lib"
             destdir="${imported.basedir.db}/ant-build/classes"
             encoding="utf-8" debug="on" />
 
     	<antcall target="build-time-weave" />
-    	
+
         <jar jarfile="${imported.basedir.db}/ant-build/jars/genedb-db.jar">
             <fileset dir="${imported.basedir.db}/ant-build/classes" />
             <manifest>
@@ -122,18 +122,18 @@
 
 	<!-- Internal target for calling the hibernate instrumentation and compile-time weaving -->
 	<target name="build-time-weave">
-		
+
         <antcall target="hibernate-instrumentation">
             <param name="directory" value="${imported.basedir.db}/ant-build/classes"/>
         </antcall>
-		
+
 	    <iajc verbose="true"
 	    inpath="${imported.basedir.db}/ant-build/classes"
 	    	aspectpathref="aspect.path"
-	    	classpathRef ="tools-interface-compile-lib"
+	    	classpathRef ="db-compile-lib"
 	    	destdir="${imported.basedir.db}/ant-build/classes"
 	    />
 	  </target>
 
-	
+
 </project>
