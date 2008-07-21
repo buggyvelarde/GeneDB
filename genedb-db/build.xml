@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="genedb-db" default="alljars" basedir=".">
+<project name="genedb-db" default="make-db-jar" basedir=".">
     <description>This project will build the GeneDB (or any generic Chado) interface</description>
 
     <!-- If this file is imported into another build.xml, resolve filenames
@@ -18,7 +18,7 @@
 
     <!-- Classpaths -->
 
-    <path id="tools-interface-compile-lib">
+    <path id="db-compile-lib">
         <path location="${genedb-db.libdir}/hibernate-extras/hibernate-tools.jar" />
         <path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
         <path location="${genedb-db.libdir}/spring-2.5.4.jar" />
@@ -33,20 +33,6 @@
         <path location="${genedb-db.libdir}/biojava-1.6.jar" />
     </path>
 
-    <path id="tools-hibernate-compile-lib">
-        <path refid="tools-interface-compile-lib" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
-        <path location="${genedb-db.libdir}/spring-2.5.4.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate3.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
-        <path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar" />
-        <path location="${genedb-db.libdir}/postgresql-8.2dev-501.jdbc3.jar"/>
-        <path location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
-    </path>
-
     <path id="tools-instrument-lib">
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
@@ -59,34 +45,44 @@
         <path location="${genedb-db.libdir}/asm-attrs-1.5.3.jar"/>
     </path>
 
-    <!-- Define extra tasks -->
+	<!-- the path to the aspects already created by the Spring dudes -->
+	<path id="aspect.path">
+			<pathelement location ="${lib-dir}/spring-aspects.jar" />
+	</path>
+	
+	<!-- Define extra tasks -->
 
     <!-- This task is used to instrument the Feature class to enable lazy property fetching -->
     <taskdef name="instrument"
         classname="org.hibernate.tool.instrument.cglib.InstrumentTask"
         classpathref="tools-instrument-lib"/>
 
+	<!-- need to tell ant where the aspectj tooling jar is -->
+	  <taskdef
+	      resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+	    <classpath>
+	      <pathelement location="${lib-dir}/aspectjtools.jar"/>
+	    </classpath>
+	  </taskdef>
 
     <!-- Targets -->
 
     <!-- General building, cleaning, JARing type targets -->
 
-    <target name="clean-build-db" >
+    <target name="clean-build-db" description="Clean all build artifacts" >
         <delete dir="${imported.basedir.db}/ant-build" includeemptydirs="true" defaultexcludes="no" verbose="false"/>
     </target>
 
-    <target name="setup-db" >
+	<!-- An internal init target -->
+    <target name="setup-db" depends="clean-build-db">
         <mkdir dir="${imported.basedir.db}/ant-build" />
         <mkdir dir="${imported.basedir.db}/ant-build/src" />
         <mkdir dir="${imported.basedir.db}/ant-build/classes" />
         <mkdir dir="${imported.basedir.db}/ant-build/jars" />
     </target>
 
-
-    <!-- =================================
-          target: make-interface
-         ================================= -->
-    <target name="make-interface" depends="setup-db"
+	
+    <target name="make-db-jar" depends="setup-db"
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
         <copy todir="${imported.basedir.db}/ant-build/src">
@@ -124,34 +120,7 @@
     </target>
 
 
-    <target name="alljars" description="Create all 1.5+ JAR files with interface/implementation split"
-        depends="clean-build-db,make-interface">
-
-    </target>
-
-	<!-- need to tell ant where the aspectj tooling jar is -->
-	  <taskdef
-	      resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-	    <classpath>
-	      <pathelement location="${lib-dir}/aspectjtools.jar"/>
-	    </classpath>
-	  </taskdef>
-	<!-- the path to the aspects already created by the Spring dudes -->
-	<path id="aspect.path">
-			<pathelement location ="${lib-dir}/spring-aspects.jar" />
-	</path>
-	<!-- the projects buildpath -->
-	<path id="classpath.path">
-	<fileset dir="build/lib">
-	<include name="**/*.jar" />
-	</fileset>
-	</path>
-	<!-- here, I'm using the output dir as both the input (where are the .class files)
-	but also where to put the instrumeneted files as well -->
-	<path id="output.path" >
-		<pathelement location="../classes"/>
-	</path>
-
+	<!-- Internal target for calling the hibernate instrumentation and compile-time weaving -->
 	<target name="build-time-weave">
 		
         <antcall target="hibernate-instrumentation">
