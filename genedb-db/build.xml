@@ -127,14 +127,12 @@
             <param name="directory" value="${imported.basedir.db}/ant-build/classes"/>
         </antcall>
 
-	    <!--
 	    <iajc verbose="true"
 	    inpath="${imported.basedir.db}/ant-build/classes"
 	    	aspectpathref="aspect.path"
 	    	classpathRef ="db-compile-lib"
 	    	destdir="${imported.basedir.db}/ant-build/classes"
 	    />
-        -->
 	  </target>
 
 </project>
