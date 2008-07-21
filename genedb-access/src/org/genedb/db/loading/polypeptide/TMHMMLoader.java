@@ -51,6 +51,7 @@ public class TMHMMLoader extends Loader {
     }
 
     private void loadMembraneStructure(Polypeptide polypeptide, Iterable<TMHMMRegion> regions) {
+        logger.debug(String.format("Creating membrane structure region for '%s'", polypeptide.getUniqueName()));
         MembraneStructure membraneStructure = sequenceDao.createMembraneStructure(polypeptide);
         sequenceDao.persist(membraneStructure);
         for (TMHMMRegion region: regions) {
@@ -59,7 +60,7 @@ public class TMHMMLoader extends Loader {
     }
 
     private void loadRegion(MembraneStructure membraneStructure, TMHMMRegion region) {
-        logger.debug(String.format("Adding membrane structure region (%s) for '%s' at %d-%d",
+        logger.debug(String.format("Adding membrane structure subregion (%s) for '%s' at %d-%d",
             region.getType(), region.getKey(), region.getFmin(), region.getFmax()));
 
         switch(region.getType()) {
