@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 
 <project name="genedb-domain" default="fulljar-domain" basedir=".">
-	
+
 	<dirname property="imported.basedir.domain" file="${ant.file.genedb-domain}"/>
-	
+
 	<property name="lib-dir" value="${imported.basedir.domain}/../genedb-libs/lib/"/>
-	
+
 	<import file="${imported.basedir.domain}/../genedb-db/build.xml" />
-	
+
 	<target name="clean-build-domain" >
 		<delete dir="${imported.basedir.domain}/ant-build" quiet="true"/>
 	</target>
-		
+
 	<target name="setup-domain" >
 		<mkdir dir="${imported.basedir.domain}/ant-build" />
 		<mkdir dir="${imported.basedir.domain}/ant-build/src" />
 		<mkdir dir="${imported.basedir.domain}/ant-build/classes" />
 		<mkdir dir="${imported.basedir.domain}/ant-build/jars" />
 	</target>
-	
+
 	<path id="compile-lib-domain">
 		<path location="${imported.basedir.domain}/../genedb-db/ant-build/jars/genedb-db.jar"/>
 		<path location="${lib-dir}/spring-2.5.4.jar" />
@@ -36,23 +36,23 @@
 		<path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
 		<path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
 	</path>
-	
-	<target name="fulljar-domain" depends="genedb-db.alljars,clean-build-domain,setup-domain" description="Create full JAR file with all Spring classes">
-		
+
+	<target name="fulljar-domain" depends="genedb-db.make-db-jar,clean-build-domain,setup-domain" description="Create full JAR file with all Spring classes">
+
 		<copy todir="${imported.basedir.domain}/ant-build/src">
 			<fileset dir="${imported.basedir.domain}/src">
 			    <include name="org/genedb/db/domain/**/*.java"/>
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${imported.basedir.domain}/ant-build/classes">
 			<fileset dir="${imported.basedir.domain}/conf">
 				<include name="*.xml"/>
 			</fileset>
 		</copy>
-		
+
 		<javac srcdir="${imported.basedir.domain}/ant-build/src" classpathref="compile-lib-domain" destdir="${imported.basedir.domain}/ant-build/classes" debug="on" />
-    	
+
 		<jar jarfile="${imported.basedir.domain}/ant-build/jars/genedb-domain.jar">
 			<fileset dir="${imported.basedir.domain}/ant-build/classes" />
 			<manifest>
@@ -61,5 +61,5 @@
 			</manifest>
 		</jar>
 	</target>
-	
+
 </project>
