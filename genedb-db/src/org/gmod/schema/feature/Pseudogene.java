@@ -3,12 +3,14 @@ package org.gmod.schema.feature;
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.mapped.Organism;
 
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -19,6 +21,12 @@ import javax.persistence.Transient;
 @FeatureType(cv="sequence", term="pseudogene")
 @Indexed
 public class Pseudogene extends AbstractGene {
+	
+	public Pseudogene(Organism organism, String systematicId, boolean analysis,
+			boolean obsolete, Timestamp dateAccessioned) {
+		super(organism, systematicId, analysis, obsolete, dateAccessioned);
+	}
+	
     @Transient
     public Collection<PseudogenicTranscript> getPseudogenicTranscripts() {
         Collection<PseudogenicTranscript> ret = new ArrayList<PseudogenicTranscript>();
