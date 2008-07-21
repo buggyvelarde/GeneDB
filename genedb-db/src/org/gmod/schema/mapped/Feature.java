@@ -1,8 +1,11 @@
 package org.gmod.schema.mapped;
 
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.helpers.LocationBridge;
+import org.genedb.db.services.CvService;
 
 import org.gmod.schema.utils.CollectionUtils;
+import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cascade;
@@ -18,10 +21,14 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
+import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -46,6 +53,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+
+@Configurable
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type_id")
@@ -70,7 +79,9 @@ import javax.persistence.Transient;
 @FilterDef(name="excludeObsoleteFeatures")
 @Filter(name="excludeObsoleteFeatures", condition="not is_obsolete")
 @Indexed
-public class Feature implements java.io.Serializable {
+public abstract class Feature implements java.io.Serializable {
+	
+	@Autowired transient private CvService cvService;
 
     @GenericGenerator(name = "generator", strategy = "seqhilo", parameters = {
             @Parameter(name = "max_lo", value = "100"),
@@ -148,11 +159,11 @@ public class Feature implements java.io.Serializable {
      */
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "objectFeature")
     @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
-    private Collection<FeatureRelationship> featureRelationshipsForObjectId;
+    protected Collection<FeatureRelationship> featureRelationshipsForObjectId;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "subjectFeature")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "subjectFeature")
     @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
-    private Collection<FeatureRelationship> featureRelationshipsForSubjectId;
+    protected Collection<FeatureRelationship> featureRelationshipsForSubjectId;
 
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
@@ -198,8 +209,20 @@ public class Feature implements java.io.Serializable {
         this.timeAccessioned = timeAccessioned;
         this.timeLastModified = timeLastModified;
     }
+    
+    protected Feature(Organism organism, String uniqueName, boolean analysis,
+            boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {
+        this.organism = organism;
+        //this.cvTerm = getSoType();
+        this.uniqueName = uniqueName;
+        this.analysis = analysis;
+        this.obsolete = obsolete;
+        this.timeAccessioned = timeAccessioned;
+        this.timeLastModified = timeLastModified;
+    }
 
-    // Property accessors
+
+	// Property accessors
 
     public int getFeatureId() {
         return this.featureId;
@@ -664,7 +687,73 @@ public class Feature implements java.io.Serializable {
         return false;
     }
 
-    @Transient
+
+//	protected void addFeatureRelationship(Feature subject, String cvName,
+//			String termName) {
+//    CvTerm type = cvService.findCvTermByCvAndName(cvName, termName);
+//		if (type == null) {
+//			throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
+//		}
+//		FeatureRelationship relationship =  new FeatureRelationship(this, subject, type, 0);
+//		if (this.featureRelationshipsForObjectId == null) {
+//			featureRelationshipsForObjectId = new ArrayList<FeatureRelationship>();
+//		}
+//		this.featureRelationshipsForObjectId.add(relationship);
+//		
+//		if (subject.featureRelationshipsForSubjectId == null) {
+//			subject.featureRelationshipsForSubjectId = new ArrayList<FeatureRelationship>();
+//		}
+//		subject.featureRelationshipsForSubjectId.add(relationship);
+//	}
+	
+
+
+	protected void addFeatureRelationship(Feature subject, String cvName,
+			String termName) {
+		CvTerm type = cvService.findCvTermByCvAndName(cvName, termName);
+		if (type == null) {
+			throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
+		}
+		FeatureRelationship relationship =  new FeatureRelationship(subject, this, type, 0);
+		if (this.featureRelationshipsForSubjectId == null) {
+			featureRelationshipsForSubjectId = new ArrayList<FeatureRelationship>();
+		}
+		this.featureRelationshipsForSubjectId.add(relationship);
+		
+		if (subject.featureRelationshipsForObjectId == null) {
+			subject.featureRelationshipsForObjectId = new ArrayList<FeatureRelationship>();
+		}
+		subject.featureRelationshipsForObjectId.add(relationship);
+	}
+	
+	public void addLocatedChild(Feature child, StrandedLocation location) {
+		FeatureLoc loc = new FeatureLoc(this, child, location);
+		
+		if (this.featureLocsForSrcFeatureId == null) {
+			this.featureLocsForSrcFeatureId = new ArrayList<FeatureLoc>();
+		}
+		this.featureLocsForSrcFeatureId.add(loc);
+		
+		if (child.featureLocsForFeatureId == null) {
+			child.featureLocsForFeatureId = new ArrayList<FeatureLoc>();
+		}
+		child.featureLocsForFeatureId.add(loc);
+	}
+	
+	protected void addFeatureProp(String value, String cvName, String termName) {
+		CvTerm type = cvService.findCvTermByCvAndName(cvName, termName);
+		if (type == null) {
+			throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
+		}
+		int rank = 0; // FIXME - Should check what ranks are already used
+		FeatureProp fp = new FeatureProp(this, type, value, rank);
+		if (featureProps == null) {
+			featureProps = new ArrayList<FeatureProp>();
+		}
+		this.featureProps.add(fp);
+	}
+	
+	    @Transient
     public Feature getSourceFeature() {
         FeatureLoc featureLoc = this.getRankZeroFeatureLoc();
         if (featureLoc == null) {
