@@ -47,7 +47,7 @@
 
 	<!-- the path to the aspects already created by the Spring dudes -->
 	<path id="aspect.path">
-			<pathelement location ="${lib-dir}/spring-aspects.jar" />
+			<pathelement location ="${genedb-db.libdir}/spring-aspects.jar" />
 	</path>
 
 	<!-- Define extra tasks -->
