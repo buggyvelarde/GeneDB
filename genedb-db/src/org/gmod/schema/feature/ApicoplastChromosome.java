@@ -1,6 +1,9 @@
 package org.gmod.schema.feature;
 
+import java.sql.Timestamp;
+
 import org.gmod.schema.cfg.FeatureType;
+import org.gmod.schema.mapped.Organism;
 
 import javax.persistence.Entity;
 
@@ -16,4 +19,8 @@ import javax.persistence.Entity;
 @FeatureType(cv="sequence", term="apicoplast_sequence")
 public class ApicoplastChromosome extends Chromosome {
     // Deliberately empty
+	public ApicoplastChromosome(Organism organism, String systematicId, boolean analysis,
+			boolean obsolete, Timestamp dateAccessioned) {
+		super(organism, systematicId, analysis, obsolete, dateAccessioned);
+	}
 }

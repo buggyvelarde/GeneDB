@@ -16,6 +16,12 @@ import javax.persistence.Transient;
 public class Region extends Feature implements Comparable<Region> {
 
     public Region() {}
+    
+	public Region(Organism organism, String systematicId, boolean analysis,
+			boolean obsolete, Timestamp dateAccessioned) {
+		super(organism, systematicId, analysis, obsolete, dateAccessioned, dateAccessioned);
+	}
+    
     public Region(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {
         super(organism, cvTerm, uniqueName, analysis, obsolete, timeAccessioned, timeLastModified);

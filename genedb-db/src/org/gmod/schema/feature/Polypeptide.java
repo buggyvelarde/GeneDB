@@ -5,6 +5,8 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.utils.StrandedLocation;
 import org.gmod.schema.utils.PeptideProperties;
 
 import org.apache.log4j.Logger;
@@ -17,6 +19,7 @@ import org.biojava.bio.symbol.SimpleSymbolList;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,12 @@ public class Polypeptide extends Region {
     @Transient
     private AbstractGene gene;
 
+
+	public Polypeptide(Organism organism, String systematicId, boolean analysis,
+			boolean obsolete, Timestamp dateAccessioned) {
+		super(organism, systematicId, analysis, obsolete, dateAccessioned);
+	}
+    
     public Transcript getTranscript() {
         if (transcript != null) {
             return transcript;
@@ -92,13 +101,13 @@ public class Polypeptide extends Region {
         /* Sometimes there is no colour property at all,
         and sometimes there is a colour property with a null value.
 
-        I don't know why this inconsistency exists. —rh11 */
+        I don't know why this inconsistency exists. rh11 */
 
         String colourIdString = getProperty("genedb_misc", "colour");
         if (colourIdString == null) {
             return null;
         }
-        return new Integer(colourIdString);
+        return Integer.valueOf(colourIdString);
     }
 
     /**
@@ -209,4 +218,12 @@ public class Polypeptide extends Region {
         return charge;
     }
 
+	public static Polypeptide make(Feature parent, StrandedLocation location,
+			String systematicId, Organism organism, Timestamp now) {
+		
+		Polypeptide polypeptide = new Polypeptide(organism, systematicId, false, false, now);
+		parent.addLocatedChild(polypeptide, location);
+		return polypeptide;
+	}
+	
 }
