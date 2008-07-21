@@ -96,7 +96,7 @@
 		<copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/WEB-INF/lib" />
     </target>
 
-    <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,make-db-jar" />
+    <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.make-db-jar" />
 
     <target name="make-all-and-deploy" depends="make-other-projects, compile, final-deploy, get-latest-jars"/>
 
