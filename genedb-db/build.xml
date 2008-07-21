@@ -28,6 +28,7 @@
         <path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/j2ee/persistence.jar"/>
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
+        <path location="${genedb-db.libdir}/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
         <path location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
         <path location="${genedb-db.libdir}/biojava-1.6.jar" />
     </path>
@@ -160,7 +161,7 @@
 	    <iajc verbose="true"
 	    inpath="${imported.basedir.db}/ant-build/classes"
 	    	aspectpathref="aspect.path"
-	    	classpathRef ="genedb-access.libs"
+	    	classpathRef ="tools-interface-compile-lib"
 	    	destdir="${imported.basedir.db}/ant-build/classes"
 	    />
 	  </target>
