@@ -38,8 +38,7 @@
     <path location="${lib-dir}/saxon8-xom.jar"/>
     <path location="${lib-dir}/xom-1.0.jar"/>
     <path location="${lib-dir}/jsr173_api.jar"/>
-    <path location="${imported.basedir.access}/lib/genedb-hibernate.jar"/>
-    <path location="${imported.basedir.access}/lib/chado-interface.jar"/>
+    <path location="${imported.basedir.access}/lib/genedb-db.jar"/>
   </path>
 
   <target name="genedb-access.get-latest-jars" depends="genedb-db.make-db-jar"
