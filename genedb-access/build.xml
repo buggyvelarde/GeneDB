@@ -23,6 +23,8 @@
     <path location="${lib-dir}/spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar"/>
     <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
     <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
+    <path location="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
+    <path location="${lib-dir}/spring-aspects.jar"/>
     <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
     <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jta.jar"/>
     <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar"/>
@@ -42,8 +44,7 @@
 
   <target name="genedb-access.get-latest-jars" depends="genedb-db.alljars"
     description="Copy over JAR files from other projects">
-    <copy file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-hibernate.jar" todir="${imported.basedir.access}/lib" />
-    <copy file="${imported.basedir.access}/../genedb-db/ant-build/jars/chado-interface.jar" todir="${imported.basedir.access}/lib" />
+    <copy file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-db.jar" todir="${imported.basedir.access}/lib" />
   </target>
 
   <target name="compile-access" depends="genedb-access.get-latest-jars">
@@ -112,10 +113,11 @@
     <fileset file="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
     <fileset file="${lib-dir}/saxon8.jar"/>
     <fileset file="${lib-dir}/saxon8-xom.jar"/>
+    <fileset file="${lib-dir}/spring-aspects.jar"/>
+    <fileset file="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
     <fileset file="${lib-dir}/xom-1.0.jar"/>
     <fileset file="${lib-dir}/jsr173_api.jar"/>
-    <fileset file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
-    <fileset file="${imported.basedir.access}/../genedb-db/ant-build/jars/chado-interface.jar" />
+    <fileset file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-db.jar" />
     <fileset file="genedb-access.jar" />
   </path>
 
@@ -154,6 +156,13 @@
     </java>
   </target>
 
+  <target name="load-tbrucei2" depends="genedb-access.jar">
+	 <java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner2">
+	      <arg line="Tbruceibrucei927 /nfs/team81/art/tryptest/tryp/tbrucei.config.xml"/>
+	      <jvmarg line="-server"/>
+	    </java>
+	  </target>
+	
   <target name="load-senteritidisPT4" depends="genedb-access.jar">
     <java fork="true" classpathref="exec-classpath" classname="org.genedb.db.loading.NewRunner">
       <arg line="Senteritidis_PT4 /software/pathogen/projects/genedb/cp2/mh3Data/Salmonela/SEN.config.xml"/>
@@ -601,4 +610,5 @@
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues" />
     </target>
     <target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
+
 </project>
