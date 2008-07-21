@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="genedb-domain" default="fulljar" basedir=".">
+<project name="genedb-domain" default="fulljar-domain" basedir=".">
 	
 	<dirname property="imported.basedir.domain" file="${ant.file.genedb-domain}"/>
 	
@@ -20,8 +20,7 @@
 	</target>
 	
 	<path id="compile-lib-domain">
-		<path location="${imported.basedir.domain}/../genedb-db/ant-build/jars/genedb-hibernate.jar"/>
-		<path location="${imported.basedir.domain}/../genedb-db/ant-build/jars/chado-interface.jar"/>
+		<path location="${imported.basedir.domain}/../genedb-db/ant-build/jars/genedb-db.jar"/>
 		<path location="${lib-dir}/spring-2.5.4.jar" />
 		<path location="${lib-dir}/postgresql-8.2dev-501.jdbc3.jar" />
 		<path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
