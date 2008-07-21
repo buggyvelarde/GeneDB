@@ -39,10 +39,14 @@ import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
 import org.biojava.utils.ChangeVetoException;
+import org.gmod.schema.feature.Chromosome;
+import org.gmod.schema.mapped.Organism;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -174,15 +178,13 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
         // System.err.println("Would like to create a '"+foundType+"' with name
         // '"+uniqueName+"'");
 
-        org.gmod.schema.mapped.Feature topLevel = this.featureUtils
-                .createFeature(foundType, uniqueName, this.organism);
-        // System.err.println("Got a feature to persist");
+        Timestamp now = new Timestamp(new Date().getTime()); 
+        Chromosome topLevel = Chromosome.make(uniqueName, organism, now);
 
         topLevel.setResidues(seq.seqString().getBytes());
 
         sequenceDao.persist(topLevel);
-        // System.err.println("Have persisted feature");
-
+        
         sources.remove(fullLengthSource);
         seq.removeFeature(fullLengthSource);
 

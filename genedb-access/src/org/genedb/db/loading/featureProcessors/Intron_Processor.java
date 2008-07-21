@@ -4,6 +4,7 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 
 import org.genedb.db.loading.ProcessingPhase;
 
+import org.gmod.schema.feature.Intron;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
@@ -12,8 +13,10 @@ import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,13 +69,15 @@ public class Intron_Processor extends BaseFeatureProcessor {
         	}
         	systematicId = systematicId + ":" + j;
         	
-	        org.gmod.schema.mapped.Feature intron = this.featureUtils.createFeature("intron", systematicId, this.organism);
-	        sequenceDao.persist(intron);
-	        FeatureRelationship intronFr = featureUtils.createRelationship(intron,l.get(0), REL_PART_OF, 0); // FIXME Rank wrong
-	        sequenceDao.persist(intronFr);
-	        FeatureLoc intronFl = featureUtils.createLocation(parent,intron,loc.getMin()-1,loc.getMax(),
-	                                                        strand);
-	        sequenceDao.persist(intronFl);
+        	Timestamp now = new Timestamp(new Date().getTime());
+        	Intron intron = Intron.make(parent, loc, systematicId, organism, now);
+	        //org.gmod.schema.mapped.Feature intron = this.featureUtils.createFeature("intron", systematicId, this.organism);
+	        //sequenceDao.persist(intron);
+//	        FeatureRelationship intronFr = featureUtils.createRelationship(intron,l.get(0), REL_PART_OF, 0); // FIXME Rank wrong
+//	        sequenceDao.persist(intronFr);
+//	        FeatureLoc intronFl = featureUtils.createLocation(parent,intron,loc.getMin()-1,loc.getMax(),
+//	                                                        strand);
+//	        sequenceDao.persist(intronFl);
 	        //featureLocs.add(pepFl);
 	        //featureRelationships.add(pepFr);
 	        

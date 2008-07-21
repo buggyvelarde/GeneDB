@@ -24,6 +24,7 @@
  */
 package org.genedb.db.loading.featureProcessors;
 
+import org.gmod.schema.feature.MRNA;
 import org.gmod.schema.mapped.Feature;
 
 import org.biojava.bio.seq.StrandedFeature;
@@ -41,7 +42,7 @@ public class MRNA_Processor extends BaseRnaProcessor {
     
     @Override
     public void processStrandedFeature(Feature parent, StrandedFeature ft, int offset) {
-    	processRna(parent, ft, "mRNA", offset);	
+    	processRna(parent, ft, MRNA.class, offset);	
     }
 
 }

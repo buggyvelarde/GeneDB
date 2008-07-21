@@ -42,7 +42,6 @@ import java.util.Set;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
 import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.GoInstance;
 import org.genedb.db.loading.GoParser;
@@ -53,6 +52,8 @@ import org.genedb.db.loading.ParsedString;
 import org.genedb.db.loading.ProcessingPhase;
 import org.genedb.db.loading.SimilarityInstance;
 import org.genedb.db.loading.SimilarityParser;
+import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.MRNA;
 import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.AnalysisFeature;
 import org.gmod.schema.mapped.Cv;
@@ -67,6 +68,10 @@ import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.FeaturePub;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Pub;
+import org.gmod.schema.utils.StrandedLocation;
+import org.gmod.schema.utils.LocationUtils;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -127,13 +132,21 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
         try {
 
-            Location loc = cds.getLocation().translate(offset);
-            Names names = this.nomenclatureHandler.findNames(an);
-            sysId = names.getSystematicId();
-            logger.debug("Looking at systematic id '" + sysId+"'");
-            int transcriptNum = 1;
+        	org.biojava.bio.symbol.Location loc = cds.getLocation().translate(offset);
+            //Annotation an = cds.getAnnotation();
 
-            short strand = (short) cds.getStrand().getValue();
+            StrandedLocation location = LocationUtils.make(loc, cds.getStrand());
+            Names names = this.nomenclatureHandler.findNames(an);
+            String systematicId = names.getSystematicId();
+            if (systematicId == null) {
+                logger.warn(String.format("Skipping CDS '%s' as no id found", loc));
+                return;
+            }
+            logger.debug("Looking at systematic id '" + sysId+"'");
+            // Gene
+            Gene gene = Gene.makeHeirachy(parent, location, systematicId, MRNA.class, true);
+        	
+            //int transcriptNum = 1;
 
 //            List<Feature> features = new ArrayList<Feature>();
 //            List<FeatureLoc> featureLocs = new ArrayList<FeatureLoc>();
@@ -153,146 +166,153 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             //Db DB_PRODUCTS = this.daoFactory.getDbDao().findByName("genedb_products_db");
 
             // Is this a multiply spliced gene?
-            Feature gene = null;
+            //Feature gene = null;
             boolean altSplicing = false;
             String sharedId = MiningUtils.getProperty("shared_id", an, null);
             if (sharedId != null) {
                 // TODO Tidy
                 List<Feature> featureList = sequenceDao.getFeaturesByUniqueNamePattern(sharedId);
                 if (featureList != null && featureList.size()==1) {
-                	gene = featureList.get(0);
+                	//gene = featureList.get(0);
                 }
                 altSplicing = true;
             }
 
-            if (gene == null) {
-                if (altSplicing) {
-                    gene = this.featureUtils.createFeature(soTypeGene, sharedId,
-                            this.organism);
-                    sequenceDao.persist(gene);
-                    this.featureUtils.createSynonym(SYNONYM_SYS_ID, sharedId, gene,
-                            true);
-                } else {
-                    gene = this.featureUtils.createFeature(soTypeGene, this.gns
-                            .getGene(sysId), this.organism);
-                    if (names.getPrimary()!= null) {
-                        gene.setName(names.getPrimary());
-                    }
-                    sequenceDao.persist(gene);
-                    storeNames(names, SYNONYM_RESERVED, SYNONYM_SYNONYM,
-                            SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS,
-                            gene);
-                }
-                // features.add(gene);
-                // this.daoFactory.persist(gene);
-
-                FeatureLoc geneFl = this.featureUtils.createLocation(parent, gene,
-                        loc.getMin()-1, loc.getMax(), strand);
-                gene.getFeatureLocsForFeatureId().add(geneFl);
-                sequenceDao.persist(geneFl);
-            } else {
-                if (altSplicing) {
-                    // Gene already exists and it's alternately spliced.
-                    // It may not have the right coords - may need extending
-                    int newMin = loc.getMin()-1;
-                    int newMax = loc.getMax();
-                    Collection<FeatureLoc> locs = gene.getFeatureLocsForFeatureId();
-                    FeatureLoc currentLoc = locs.iterator().next();  // FIXME - Assumes that only 1 feature loc.
-                    int currentMin = currentLoc.getFmin();
-                    int currentMax = currentLoc.getFmax();
-                    if (currentMin > newMin) {
-                        currentLoc.setFmin(newMin);
-                        logger.debug("Would like to change min to '"+newMin+"' from '"+currentMin+"' for '"+sysId+"'");
-                    }
-                    if (currentMax < newMax) {
-                        currentLoc.setFmax(newMax);
-                        logger.debug("Would like to change max to '"+newMax+"' from '"+currentMax+"' for '"+sysId+"'");
-                    }
-                }
-            }
-
-            String mRnaName = this.gns.getTranscript(sysId, transcriptNum);
-            String baseName = sysId;
             if (altSplicing) {
-                mRnaName = this.gns.getGene(sysId);
-                baseName = mRnaName;
+            	throw new NotImplementedException(); // TODO
             }
-            Feature mRNA = this.featureUtils
-            .createFeature(soTypeTranscript, mRnaName, this.organism);
-            if (!loc.isContiguous()) {
-                mRNA.setResidues(cds.getSymbols().seqString().getBytes());
-            }
-            sequenceDao.persist(mRNA);
-            if (altSplicing) {
-                storeNames(names, SYNONYM_RESERVED, SYNONYM_SYNONYM,
-                        SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS, mRNA);
-            }
-            FeatureLoc mRNAFl = this.featureUtils.createLocation(parent, mRNA, loc
-                    .getMin()-1, loc.getMax(), strand);
-            mRNA.getFeatureLocsForFeatureId().add(mRNAFl);
-            FeatureRelationship mRNAFr = this.featureUtils.createRelationship(mRNA,
-                    gene, REL_PART_OF, 0);
-            // features.add(mRNA);
-            sequenceDao.persist(mRNAFl);
-            sequenceDao.persist(mRNAFr);
-            mRNA.addFeatureRelationshipsForSubjectId(mRNAFr);
-            // Store exons
-            Iterator<Location> it = loc.blockIterator();
-            int exonCount = 0;
-            while (it.hasNext()) {
-                exonCount++;
-                Location l = it.next();
-                Feature exon = this.featureUtils
-                .createFeature(soTypeExon, this.gns.getExon(baseName,
-                        transcriptNum, exonCount), this.organism);
-                FeatureRelationship exonFr = this.featureUtils.createRelationship(
-                        exon, mRNA, REL_PART_OF, exonCount -1);
-                FeatureLoc exonFl = this.featureUtils.createLocation(parent, exon, l
-                        .getMin()-1, l.getMax(), strand);
+            
+            
+            sequenceDao.persist(gene);
+            
+//            if (gene == null) {
+//                if (altSplicing) {
+//                    gene = this.featureUtils.createFeature(soTypeGene, sharedId,
+//                            this.organism);
+//                    sequenceDao.persist(gene);
+//                    this.featureUtils.createSynonym(SYNONYM_SYS_ID, sharedId, gene,
+//                            true);
+//                } else {
+//                    gene = this.featureUtils.createFeature(soTypeGene, this.gns
+//                            .getGene(sysId), this.organism);
+//                    if (names.getPrimary()!= null) {
+//                        gene.setName(names.getPrimary());
+//                    }
+//                    sequenceDao.persist(gene);
+//                    storeNames(names, SYNONYM_RESERVED, SYNONYM_SYNONYM,
+//                            SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS,
+//                            gene);
+//                }
+//                // features.add(gene);
+//                // this.daoFactory.persist(gene);
+//
+//                FeatureLoc geneFl = this.featureUtils.createLocation(parent, gene,
+//                        loc.getMin()-1, loc.getMax(), strand);
+//                gene.getFeatureLocsForFeatureId().add(geneFl);
+//                sequenceDao.persist(geneFl);
+//            } else {
+//                if (altSplicing) {
+//                    // Gene already exists and it's alternately spliced.
+//                    // It may not have the right coords - may need extending
+//                    int newMin = loc.getMin()-1;
+//                    int newMax = loc.getMax();
+//                    Collection<FeatureLoc> locs = gene.getFeatureLocsForFeatureId();
+//                    FeatureLoc currentLoc = locs.iterator().next();  // FIXME - Assumes that only 1 feature loc.
+//                    int currentMin = currentLoc.getFmin();
+//                    int currentMax = currentLoc.getFmax();
+//                    if (currentMin > newMin) {
+//                        currentLoc.setFmin(newMin);
+//                        logger.debug("Would like to change min to '"+newMin+"' from '"+currentMin+"' for '"+sysId+"'");
+//                    }
+//                    if (currentMax < newMax) {
+//                        currentLoc.setFmax(newMax);
+//                        logger.debug("Would like to change max to '"+newMax+"' from '"+currentMax+"' for '"+sysId+"'");
+//                    }
+//                }
+//            }
 
-                sequenceDao.persist(exon);
-                sequenceDao.persist(exonFl);
-                sequenceDao.persist(exonFr);
-                exon.addFeatureLocsForFeatureId(exonFl);
-                exon.addFeatureRelationshipsForSubjectId(exonFr);
-            }
-
-            Feature polypeptide = this.featureUtils
-            .createFeature("polypeptide", this.gns.getPolypeptide(
-                    baseName, transcriptNum), this.organism);
-            // TODO Protein name - derived from gene name in some cases.
-            // TODO where store protein name synonym - on polypeptide or
-            // gene
-            if (names.getProtein() != null) {
-                polypeptide.setName(names.getProtein());
-                this.featureUtils.createSynonym(SYNONYM_PROTEIN, names.getProtein(),
-                        polypeptide, true);
-            }
-            FeatureRelationship pepFr = this.featureUtils.createRelationship(
-                    polypeptide, mRNA, REL_DERIVES_FROM, 0);
-            //features.add(polypeptide);
-            FeatureLoc pepFl = this.featureUtils.createLocation(parent, polypeptide,
-                    loc.getMin()-1, loc.getMax(), strand);
-            // TODO store protein translation
-            // calculatePepstats(polypeptide); // TODO Uncomment once checked if currently working
-            sequenceDao.persist(polypeptide);
-            sequenceDao.persist(pepFl);
-            sequenceDao.persist(pepFr);
-            polypeptide.addFeatureLocsForFeatureId(pepFl);
-            polypeptide.addFeatureRelationshipsForSubjectId(pepFr);
-            createProducts(polypeptide, an, "product", CV_PRODUCTS);
-
-            // Store feature properties based on original annotation
-            sequenceDao.persist(createFeatureProp(polypeptide, an, "colour", "colour", CV_GENEDB));
-            //
-            // Cvterm cvTerm =
-            // daoFactory.getCvTermDao().findByNameInCv("note",
-            // MISC).get(0);
-
-            processQualifiers(polypeptide, an);
-
-            createTranslation(parent, polypeptide, an, loc);
-            //System.err.print(".");
+//            String mRnaName = this.gns.getTranscript(sysId, transcriptNum);
+//            String baseName = sysId;
+//            if (altSplicing) {
+//                mRnaName = this.gns.getGene(sysId);
+//                baseName = mRnaName;
+//            }
+//            Feature mRNA = this.featureUtils
+//            .createFeature(soTypeTranscript, mRnaName, this.organism);
+//            if (!loc.isContiguous()) {
+//                mRNA.setResidues(cds.getSymbols().seqString().getBytes());
+//            }
+//            sequenceDao.persist(mRNA);
+//            if (altSplicing) {
+//                storeNames(names, SYNONYM_RESERVED, SYNONYM_SYNONYM,
+//                        SYNONYM_PRIMARY, SYNONYM_SYS_ID, SYNONYM_TMP_SYS, mRNA);
+//            }
+//            FeatureLoc mRNAFl = this.featureUtils.createLocation(parent, mRNA, loc
+//                    .getMin()-1, loc.getMax(), strand);
+//            mRNA.getFeatureLocsForFeatureId().add(mRNAFl);
+//            FeatureRelationship mRNAFr = this.featureUtils.createRelationship(mRNA,
+//                    gene, REL_PART_OF, 0);
+//            // features.add(mRNA);
+//            sequenceDao.persist(mRNAFl);
+//            sequenceDao.persist(mRNAFr);
+//            mRNA.addFeatureRelationshipsForSubjectId(mRNAFr);
+//            // Store exons
+//            Iterator<Location> it = loc.blockIterator();
+//            int exonCount = 0;
+//            while (it.hasNext()) {
+//                exonCount++;
+//                Location l = it.next();
+//                Feature exon = this.featureUtils
+//                .createFeature(soTypeExon, this.gns.getExon(baseName,
+//                        transcriptNum, exonCount), this.organism);
+//                FeatureRelationship exonFr = this.featureUtils.createRelationship(
+//                        exon, mRNA, REL_PART_OF, exonCount -1);
+//                FeatureLoc exonFl = this.featureUtils.createLocation(parent, exon, l
+//                        .getMin()-1, l.getMax(), strand);
+//
+//                sequenceDao.persist(exon);
+//                sequenceDao.persist(exonFl);
+//                sequenceDao.persist(exonFr);
+//                exon.addFeatureLocsForFeatureId(exonFl);
+//                exon.addFeatureRelationshipsForSubjectId(exonFr);
+//            }
+//
+//            Feature polypeptide = this.featureUtils
+//            .createFeature("polypeptide", this.gns.getPolypeptide(
+//                    baseName, transcriptNum), this.organism);
+//            // TODO Protein name - derived from gene name in some cases.
+//            // TODO where store protein name synonym - on polypeptide or
+//            // gene
+//            if (names.getProtein() != null) {
+//                polypeptide.setName(names.getProtein());
+//                this.featureUtils.createSynonym(SYNONYM_PROTEIN, names.getProtein(),
+//                        polypeptide, true);
+//            }
+//            FeatureRelationship pepFr = this.featureUtils.createRelationship(
+//                    polypeptide, mRNA, REL_DERIVES_FROM, 0);
+//            //features.add(polypeptide);
+//            FeatureLoc pepFl = this.featureUtils.createLocation(parent, polypeptide,
+//                    loc.getMin()-1, loc.getMax(), strand);
+//            // TODO store protein translation
+//            // calculatePepstats(polypeptide); // TODO Uncomment once checked if currently working
+//            sequenceDao.persist(polypeptide);
+//            sequenceDao.persist(pepFl);
+//            sequenceDao.persist(pepFr);
+//            polypeptide.addFeatureLocsForFeatureId(pepFl);
+//            polypeptide.addFeatureRelationshipsForSubjectId(pepFr);
+//            createProducts(polypeptide, an, "product", CV_PRODUCTS);
+//
+//            // Store feature properties based on original annotation
+//            sequenceDao.persist(createFeatureProp(polypeptide, an, "colour", "colour", CV_GENEDB));
+//            //
+//            // Cvterm cvTerm =
+//            // daoFactory.getCvTermDao().findByNameInCv("note",
+//            // MISC).get(0);
+//
+//            processQualifiers(polypeptide, an);
+//
+//            createTranslation(parent, polypeptide, an, loc);
+//            //System.err.print(".");
         } catch (RuntimeException exp) {
             System.err.println("\n\nWas looking at '" + sysId + "'");
             throw exp;
@@ -355,7 +375,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 //        return in;
 //    }
 
-    private void createTranslation(Feature parent, Feature polypeptide, Annotation an, Location loc) {
+    private void createTranslation(Feature parent, Feature polypeptide, Annotation an, StrandedLocation loc) {
         String nucleic = new String(parent.getResidues(), loc.getMin(), loc.getMax()-loc.getMin()); // TODO Check offsets
         //String protein =null;//= translate(nucleic, an); FIXME
         polypeptide.setResidues(nucleic.getBytes());
@@ -439,213 +459,213 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 	}
 
 
-	/**
-     * @param polypeptide
-     * @param an
-     */
-    private void createSimilarity(Feature polypeptide, Feature transcript, Annotation an) {
-
-        String cv = "genedb_misc";
-        List<SimilarityInstance> similarities = this.siParser.getAllSimilarityInstance(an);
-        int count = 0;
-        if (similarities.size() > 0)  {
-            for (SimilarityInstance si : similarities) {
-
-                count++;
-
-                Feature queryFeature = null;
-                String cvTerm = null;
-
-                if (si.getAlgorithm().equals("fasta")) {
-                    queryFeature = polypeptide;
-                    cvTerm = "protein_match";
-                } else {
-                    queryFeature = transcript;
-                    cvTerm = "nucleotide_match";
-                }
-                /* look for analysis and create new if one does not already exists */
-
-                Analysis analysis = null;
-                analysis = this.generalDao.getAnalysisByProgram(si.getAlgorithm());
-                if (analysis == null){
-                    analysis = new Analysis();
-                    analysis.setAlgorithm(si.getAlgorithm());
-                    analysis.setProgram(si.getAlgorithm());
-                    analysis.setProgramVersion("1.0");
-                    analysis.setSourceName(si.getAlgorithm());
-                    Date epoch = new Date(0);
-                    analysis.setTimeExecuted(epoch);
-                    this.generalDao.persist(analysis);
-                }
-
-                /* create match feature
-                 * create new dbxref for match feature if one does not already exsists
-                 */
-
-                Feature matchFeature = null;
-                String uniqueName = null;
-
-                uniqueName = "MATCH_" + queryFeature.getUniqueName() + "_" + count;
-
-                matchFeature = this.featureUtils.createFeature(cvTerm, uniqueName, organism);
-                this.sequenceDao.persist(matchFeature);
-
-                CvTerm uId = this.cvDao.getCvTermByNameAndCvName("ungapped id",cv );
-                FeatureProp ungappedId = new FeatureProp(matchFeature,uId,si.getUngappedId(),0);
-                this.sequenceDao.persist(ungappedId);
-
-                CvTerm olap = this.cvDao.getCvTermByNameAndCvName("overlap", cv);
-                FeatureProp overlap = new FeatureProp(matchFeature,olap,si.getOverlap(),0);
-                this.sequenceDao.persist(overlap);
-
-                /* create analysisfeature
-                 *
-                 */
-                Double score = null;
-                if (si.getScore() != null) {
-                    score = Double.parseDouble(si.getScore());
-                }
-
-                Double evalue = null;
-                if (si.getEvalue() != null) {
-                    evalue = Double.parseDouble(si.getEvalue());
-                }
-
-                Double id = null;
-                if (si.getId() != null) {
-                    id = Double.parseDouble(si.getId());
-                }
-
-                AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
-                this.generalDao.persist(analysisFeature);
-
-                /* create subject feature if one does not already exists. If two database are
-                 * referenced; seperate the primary and the secondary. Create feature.dbxref
-                 * for primary and featuredbxref for secondary. Also add organism, product, gene,
-                 * overlap and ungappedid as featureprop to this feature. Create featureloc from
-                 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id
-                 * of featureloc to 0.
-                 */
-                Feature subjectFeature = null;
-
-                String sections[] = parseDbString(si.getPriDatabase());
-                String values[] = parseDbString(si.getSecDatabase());
-                if (sections[0].equals("SWALL") && sections[1].contains("_")) {
-                   subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+values[1],"region");
-                } else if(sections[0].equals("SWALL")){
-                    subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+sections[1],"region");
-                } else {
-                    subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getPriDatabase(),"region");
-                }
-                if (subjectFeature == null) {
-                    subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getSecDatabase(),"region");
-                }
-
-                if (subjectFeature == null) {
-
-                    /* hmm...looks like encountered this for the first time so create
-                     * subject feature
-                     */
-
-                    DbXRef dbXRef = null;
-
-
-                    String priDatabase = sections[0];
-                    String priId = sections[1];
-
-                    String secDatabase = values[0];
-                   String secId = values[1];
-
-                    String accession = null;
-                    uniqueName = null;
-
-                    Db db = null;
-                    if (priDatabase.equals("SWALL")){
-                        db = this.generalDao.getDbByName("UniProt");
-                    } else {
-                        db = this.generalDao.getDbByName(priDatabase);
-                    }
-
-                    if (priDatabase.equals(secDatabase)) {
-                        if (priId.contains("_")) {
-                            accession = secId;
-                        } else {
-                            accession = priId;
-                        }
-                        if (priDatabase.equals("SWALL")) {
-                            priDatabase = "UniProt";
-                        }
-                        uniqueName = priDatabase + ":" + accession;
-                        subjectFeature = this.featureUtils.createFeature("region", uniqueName, organism);
-
-                        dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, accession);
-                        if (dbXRef == null) {
-                            dbXRef = new DbXRef(db,accession);
-                            this.generalDao.persist(dbXRef);
-                        }
-                        subjectFeature.setDbXRef(dbXRef);
-                        subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
-                        this.sequenceDao.persist(subjectFeature);
-                    }  else {
-                        if (priDatabase.equals("SWALL")) {
-                            priDatabase = "UniProt";
-                        }
-                        subjectFeature = this.featureUtils.createFeature("region", priDatabase + ":" + sections[1], organism);
-
-                        dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, priId);
-                        if (dbXRef == null) {
-                            dbXRef = new DbXRef(db,priId);
-                            this.generalDao.persist(dbXRef);
-                        }
-                        subjectFeature.setDbXRef(dbXRef);
-                        subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
-                        this.sequenceDao.persist(subjectFeature);
-
-                        DbXRef secDbXRef = null;
-                        Db secDb = this.generalDao.getDbByName(secDatabase);
-                        secDbXRef = this.generalDao.getDbXRefByDbAndAcc(secDb, secId);
-                        if (secDbXRef == null) {
-                            secDbXRef = new DbXRef(secDb,secId);
-                            this.generalDao.persist(secDbXRef);
-                        }
-                        FeatureDbXRef featureDbXRef = new FeatureDbXRef(secDbXRef,subjectFeature,true);
-                        this.sequenceDao.persist(featureDbXRef);
-                    }
-
-                    /* once the dbxrefs are set create featureprop for gene, organism and product
-                     *
-                     */
-                    CvTerm org = this.cvDao.getCvTermByNameAndCvName("organism", cv);
-                    FeatureProp propOrganism = new FeatureProp(subjectFeature,org,si.getOrganism(),0);
-                    this.sequenceDao.persist(propOrganism);
-
-                    CvTerm pro = this.cvDao.getCvTermByNameAndCvName("product", cv);
-                    FeatureProp propProduct = new FeatureProp(subjectFeature,pro,si.getProduct(),1);
-                    this.sequenceDao.persist(propProduct);
-
-                    CvTerm gene = this.cvDao.getCvTermByNameAndCvName("gene", cv);
-                    FeatureProp propGene = new FeatureProp(subjectFeature,gene,si.getGene(),2);
-                    this.sequenceDao.persist(propGene);
-
-                }
-
-                /* create featureloc and attach 'em to matchFeature
-                 *
-                 */
-                short strand = 1;
-                String sCoords[] = si.getSubject().split("-");
-                FeatureLoc subjectFLoc = this.featureUtils.createLocation(subjectFeature, matchFeature,Integer.parseInt(sCoords[0]) ,Integer.parseInt(sCoords[1]), strand);
-                subjectFLoc.setRank(0);
-                this.sequenceDao.persist(subjectFLoc);
-
-                String qCoords[] = si.getQuery().split("-");
-                FeatureLoc queryFLoc = this.featureUtils.createLocation(queryFeature, matchFeature,Integer.parseInt(qCoords[0]) ,Integer.parseInt(qCoords[1]), strand);
-                queryFLoc.setRank(1);
-                this.sequenceDao.persist(queryFLoc);
-
-            }
-        }
-    }
+//	/**
+//     * @param polypeptide
+//     * @param an
+//     */
+//    private void createSimilarity(Feature polypeptide, Feature transcript, Annotation an) {
+//
+//        String cv = "genedb_misc";
+//        List<SimilarityInstance> similarities = this.siParser.getAllSimilarityInstance(an);
+//        int count = 0;
+//        if (similarities.size() > 0)  {
+//            for (SimilarityInstance si : similarities) {
+//
+//                count++;
+//
+//                Feature queryFeature = null;
+//                String cvTerm = null;
+//
+//                if (si.getAlgorithm().equals("fasta")) {
+//                    queryFeature = polypeptide;
+//                    cvTerm = "protein_match";
+//                } else {
+//                    queryFeature = transcript;
+//                    cvTerm = "nucleotide_match";
+//                }
+//                /* look for analysis and create new if one does not already exists */
+//
+//                Analysis analysis = null;
+//                analysis = this.generalDao.getAnalysisByProgram(si.getAlgorithm());
+//                if (analysis == null){
+//                    analysis = new Analysis();
+//                    analysis.setAlgorithm(si.getAlgorithm());
+//                    analysis.setProgram(si.getAlgorithm());
+//                    analysis.setProgramVersion("1.0");
+//                    analysis.setSourceName(si.getAlgorithm());
+//                    Date epoch = new Date(0);
+//                    analysis.setTimeExecuted(epoch);
+//                    this.generalDao.persist(analysis);
+//                }
+//
+//                /* create match feature
+//                 * create new dbxref for match feature if one does not already exsists
+//                 */
+//
+//                Feature matchFeature = null;
+//                String uniqueName = null;
+//
+//                uniqueName = "MATCH_" + queryFeature.getUniqueName() + "_" + count;
+//
+//                matchFeature = this.featureUtils.createFeature(cvTerm, uniqueName, organism);
+//                this.sequenceDao.persist(matchFeature);
+//
+//                CvTerm uId = this.cvDao.getCvTermByNameAndCvName("ungapped id",cv );
+//                FeatureProp ungappedId = new FeatureProp(matchFeature,uId,si.getUngappedId(),0);
+//                this.sequenceDao.persist(ungappedId);
+//
+//                CvTerm olap = this.cvDao.getCvTermByNameAndCvName("overlap", cv);
+//                FeatureProp overlap = new FeatureProp(matchFeature,olap,si.getOverlap(),0);
+//                this.sequenceDao.persist(overlap);
+//
+//                /* create analysisfeature
+//                 *
+//                 */
+//                Double score = null;
+//                if (si.getScore() != null) {
+//                    score = Double.parseDouble(si.getScore());
+//                }
+//
+//                Double evalue = null;
+//                if (si.getEvalue() != null) {
+//                    evalue = Double.parseDouble(si.getEvalue());
+//                }
+//
+//                Double id = null;
+//                if (si.getId() != null) {
+//                    id = Double.parseDouble(si.getId());
+//                }
+//
+//                AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
+//                this.generalDao.persist(analysisFeature);
+//
+//                /* create subject feature if one does not already exists. If two database are
+//                 * referenced; seperate the primary and the secondary. Create feature.dbxref
+//                 * for primary and featuredbxref for secondary. Also add organism, product, gene,
+//                 * overlap and ungappedid as featureprop to this feature. Create featureloc from
+//                 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id
+//                 * of featureloc to 0.
+//                 */
+//                Feature subjectFeature = null;
+//
+//                String sections[] = parseDbString(si.getPriDatabase());
+//                String values[] = parseDbString(si.getSecDatabase());
+//                if (sections[0].equals("SWALL") && sections[1].contains("_")) {
+//                   subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+values[1],"region");
+//                } else if(sections[0].equals("SWALL")){
+//                    subjectFeature = this.sequenceDao.getFeatureByUniqueName("UniProt:"+sections[1],"region");
+//                } else {
+//                    subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getPriDatabase(),"region");
+//                }
+//                if (subjectFeature == null) {
+//                    subjectFeature = this.sequenceDao.getFeatureByUniqueName(si.getSecDatabase(),"region");
+//                }
+//
+//                if (subjectFeature == null) {
+//
+//                    /* hmm...looks like encountered this for the first time so create
+//                     * subject feature
+//                     */
+//
+//                    DbXRef dbXRef = null;
+//
+//
+//                    String priDatabase = sections[0];
+//                    String priId = sections[1];
+//
+//                    String secDatabase = values[0];
+//                   String secId = values[1];
+//
+//                    String accession = null;
+//                    uniqueName = null;
+//
+//                    Db db = null;
+//                    if (priDatabase.equals("SWALL")){
+//                        db = this.generalDao.getDbByName("UniProt");
+//                    } else {
+//                        db = this.generalDao.getDbByName(priDatabase);
+//                    }
+//
+//                    if (priDatabase.equals(secDatabase)) {
+//                        if (priId.contains("_")) {
+//                            accession = secId;
+//                        } else {
+//                            accession = priId;
+//                        }
+//                        if (priDatabase.equals("SWALL")) {
+//                            priDatabase = "UniProt";
+//                        }
+//                        uniqueName = priDatabase + ":" + accession;
+//                        subjectFeature = this.featureUtils.createFeature("region", uniqueName, organism);
+//
+//                        dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, accession);
+//                        if (dbXRef == null) {
+//                            dbXRef = new DbXRef(db,accession);
+//                            this.generalDao.persist(dbXRef);
+//                        }
+//                        subjectFeature.setDbXRef(dbXRef);
+//                        subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
+//                        this.sequenceDao.persist(subjectFeature);
+//                    }  else {
+//                        if (priDatabase.equals("SWALL")) {
+//                            priDatabase = "UniProt";
+//                        }
+//                        subjectFeature = this.featureUtils.createFeature("region", priDatabase + ":" + sections[1], organism);
+//
+//                        dbXRef = this.generalDao.getDbXRefByDbAndAcc(db, priId);
+//                        if (dbXRef == null) {
+//                            dbXRef = new DbXRef(db,priId);
+//                            this.generalDao.persist(dbXRef);
+//                        }
+//                        subjectFeature.setDbXRef(dbXRef);
+//                        subjectFeature.setSeqLen(Integer.parseInt(si.getLength()));
+//                        this.sequenceDao.persist(subjectFeature);
+//
+//                        DbXRef secDbXRef = null;
+//                        Db secDb = this.generalDao.getDbByName(secDatabase);
+//                        secDbXRef = this.generalDao.getDbXRefByDbAndAcc(secDb, secId);
+//                        if (secDbXRef == null) {
+//                            secDbXRef = new DbXRef(secDb,secId);
+//                            this.generalDao.persist(secDbXRef);
+//                        }
+//                        FeatureDbXRef featureDbXRef = new FeatureDbXRef(secDbXRef,subjectFeature,true);
+//                        this.sequenceDao.persist(featureDbXRef);
+//                    }
+//
+//                    /* once the dbxrefs are set create featureprop for gene, organism and product
+//                     *
+//                     */
+//                    CvTerm org = this.cvDao.getCvTermByNameAndCvName("organism", cv);
+//                    FeatureProp propOrganism = new FeatureProp(subjectFeature,org,si.getOrganism(),0);
+//                    this.sequenceDao.persist(propOrganism);
+//
+//                    CvTerm pro = this.cvDao.getCvTermByNameAndCvName("product", cv);
+//                    FeatureProp propProduct = new FeatureProp(subjectFeature,pro,si.getProduct(),1);
+//                    this.sequenceDao.persist(propProduct);
+//
+//                    CvTerm gene = this.cvDao.getCvTermByNameAndCvName("gene", cv);
+//                    FeatureProp propGene = new FeatureProp(subjectFeature,gene,si.getGene(),2);
+//                    this.sequenceDao.persist(propGene);
+//
+//                }
+//
+//                /* create featureloc and attach 'em to matchFeature
+//                 *
+//                 */
+//                short strand = 1;
+//                String sCoords[] = si.getSubject().split("-");
+//                FeatureLoc subjectFLoc = this.featureUtils.createLocation(subjectFeature, matchFeature,Integer.parseInt(sCoords[0]) ,Integer.parseInt(sCoords[1]), strand);
+//                subjectFLoc.setRank(0);
+//                this.sequenceDao.persist(subjectFLoc);
+//
+//                String qCoords[] = si.getQuery().split("-");
+//                FeatureLoc queryFLoc = this.featureUtils.createLocation(queryFeature, matchFeature,Integer.parseInt(qCoords[0]) ,Integer.parseInt(qCoords[1]), strand);
+//                queryFLoc.setRank(1);
+//                this.sequenceDao.persist(queryFLoc);
+//
+//            }
+//        }
+//    }
 
     private String[] parseDbString(String db) {
     	String[] ret = db.split(":");

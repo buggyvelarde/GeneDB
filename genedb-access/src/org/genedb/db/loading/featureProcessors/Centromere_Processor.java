@@ -1,5 +1,8 @@
 package org.genedb.db.loading.featureProcessors;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.symbol.Location;
@@ -8,6 +11,7 @@ import org.genedb.db.loading.EmblQualifiers;
 import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.ProcessingPhase;
 
+import org.gmod.schema.feature.Centromere;
 import org.gmod.schema.mapped.Cv;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
@@ -32,16 +36,10 @@ public class Centromere_Processor extends BaseFeatureProcessor implements Featur
         short strand = (short)f.getStrand().getValue();
         String systematicId = (String) an.getProperty("systematic_id");
 
-        Feature centromere = this.featureUtils.createFeature("centromere", systematicId,
-                this.organism);
-        this.sequenceDao.persist(centromere);
-
-        FeatureLoc trnaFl = featureUtils.createLocation(parent,centromere,loc.getMin(),loc.getMax(),
-                                                        strand);
-        this.sequenceDao.persist(trnaFl);
+        Timestamp now = new Timestamp(new Date().getTime());
+        Centromere centromere = Centromere.make(parent, loc, systematicId, organism, now);
         createFeaturePropsFromNotes(centromere, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE, 0);
         createDbXRefs(centromere, an);
-        // TODO Handle controlled curation
         Cv CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration");
         createControlledCuration(centromere, an, CV_CONTROLLEDCURATION);
 	}

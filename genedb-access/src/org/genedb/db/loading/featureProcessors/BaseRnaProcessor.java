@@ -46,14 +46,18 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_TEMP_SYS_ID;
 import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.ProcessingPhase;
 
+import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.utils.StrandedLocation;
+import org.gmod.schema.utils.LocationUtils;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
+
 
 import java.util.Iterator;
 
@@ -81,65 +85,52 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected void processRna(Feature parent, StrandedFeature f, String type, int offset) {
-        logger.debug("Entering processing for "+type);
-        Location loc = f.getLocation().translate(offset);
+    protected void processRna(Feature parent, StrandedFeature f, Class rnaClass, int offset) {
+        //logger.debug("Entering processing for "+type);
+    	org.biojava.bio.symbol.Location loc = f.getLocation().translate(offset);
         Annotation an = f.getAnnotation();
         short strand = (short)f.getStrand().getValue();
-        String systematicId = findName(an, type);
+        String systematicId = findName(an);
         if (systematicId == null) {
-            System.err.println("Skipping '"+type+"' as no id found");
+            logger.warn(String.format("Skipping '%s' as no id found", rnaClass.getName()));
             return;
         }
         
+        
+        StrandedLocation location = LocationUtils.make(loc, f.getStrand());
         // Gene
-        Feature gene = this.featureUtils.createFeature(GENE, systematicId, this.organism);
-        sequenceDao.persist(gene);
-        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-        FeatureLoc geneFl = this.featureUtils.createLocation(parent,gene,loc.getMin()-1,loc.getMax(),
-                                                        strand);
-        sequenceDao.persist(geneFl);
+        Gene gene = Gene.makeHeirachy(parent, location, systematicId, rnaClass, false);
+//        Feature gene = this.featureUtils.createFeature(GENE, systematicId, this.organism);
+//        sequenceDao.persist(gene);
+//        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
+//        FeatureLoc geneFl = this.featureUtils.createLocation(parent,gene,loc.getMin()-1,loc.getMax(),
+//                                                        strand);
+        //sequenceDao.persist(gene);
+//        
+//        // RNA
+//        Feature rna = this.featureUtils.createFeature(type, systematicId, this.organism);
+//        sequenceDao.persist(rna);
+//        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
+//        FeatureLoc rnaFl = this.featureUtils.createLocation(parent,rna,loc.getMin()-1,loc.getMax(),
+//                                                        strand);
+//        sequenceDao.persist(rnaFl);
+//        //featureLocs.add(pepFl);
+//        //featureRelationships.add(pepFr);
         
-        // RNA
-        Feature rna = this.featureUtils.createFeature(type, systematicId, this.organism);
-        sequenceDao.persist(rna);
-        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
-        FeatureLoc rnaFl = this.featureUtils.createLocation(parent,rna,loc.getMin()-1,loc.getMax(),
-                                                        strand);
-        sequenceDao.persist(rnaFl);
-        //featureLocs.add(pepFl);
-        //featureRelationships.add(pepFr);
+//        Transcript transcript = gene.getTranscripts().iterator().next();
         
-        FeatureProp fp = createFeatureProp(rna, an, "colour", "colour", CV_GENEDB);
-        sequenceDao.persist(fp);
-        createFeaturePropsFromNotes(rna, an, QUAL_NOTE, MISC_NOTE, 0);
-        createFeaturePropsFromNotes(rna, an, QUAL_CURATION, MISC_CURATION, 0);
-        createFeaturePropsFromNotes(rna, an, QUAL_PRIVATE, MISC_PRIVATE, 0);
-        createDbXRefs(rna, an);
+//        String colour = MiningUtils.getProperty("colour", an, systematicId);
+        //transcript.addFeatureProperty(CV_GENEDB, "colour", colour);
         
-        
-        // Store exons
-        Iterator<Location> it = loc.blockIterator();
-        int exonCount = 0;
-        while (it.hasNext()) {
-            exonCount++;
-            Location l = it.next();
-            Feature exon = this.featureUtils
-            .createFeature("exon", this.gns.getExon(systematicId,
-                    1, exonCount), this.organism);
-            FeatureRelationship exonFr = this.featureUtils.createRelationship(
-                    exon, rna, REL_PART_OF, exonCount -1);
-            FeatureLoc exonFl = this.featureUtils.createLocation(parent, exon, l
-                    .getMin()-1, l.getMax(), strand);
-            sequenceDao.persist(exon);
-            sequenceDao.persist(exonFl);
-            sequenceDao.persist(exonFr);
-        }
+//        createFeaturePropsFromNotes(transcript, an, QUAL_NOTE, MISC_NOTE, 0);
+//        createFeaturePropsFromNotes(transcript, an, QUAL_CURATION, MISC_CURATION, 0);
+//        createFeaturePropsFromNotes(transcript, an, QUAL_PRIVATE, MISC_PRIVATE, 0);
+//        createDbXRefs(transcript, an);
         
         
     }
     
-    protected String findName(Annotation an, String type) {
+    protected String findName(Annotation an) {
         String[] keys = {QUAL_SYS_ID, "temporary_systematic_id", "gene"};
         for (String key : keys) {
             if (an.containsProperty(key)) {

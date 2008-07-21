@@ -32,14 +32,16 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_SYS_ID;
 
 import org.genedb.db.loading.ProcessingPhase;
 
+import org.gmod.schema.feature.FivePrimeUTR;
+import org.gmod.schema.feature.ThreePrimeUTR;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.utils.StrandedLocation;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.seq.StrandedFeature.Strand;
-import org.biojava.bio.symbol.Location;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,7 +72,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
         //logger.warn("Trying to process "+type);
         
         Annotation an = feat.getAnnotation();
-        Location loc = feat.getLocation().translate(offset);
+        StrandedLocation loc = feat.getLocation().translate(offset);
         Feature above = null;
         above = tieFeatureByNameInQualifier("systematic_id", parent, feat, an, loc);
         if (above == null) {
@@ -94,7 +96,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
         
     }
 
-    private Feature tieToGeneByLocation(String type, Feature parent, StrandedFeature feat, Location loc) {
+    private Feature tieToGeneByLocation(String type, Feature parent, StrandedFeature feat, StrandedLocation loc) {
 
         // Try and store via location
 
@@ -141,7 +143,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
 
     
     @SuppressWarnings("unchecked")
-    private void storeUtr(String type, Feature above, Feature parent, StrandedFeature feat, Location loc) {
+    private void storeUtr(String type, Feature above, Feature parent, StrandedFeature feat, StrandedLocation loc) {
         // FIXME Doesn't cope with splicing
 
        Feature gene = null;
@@ -170,7 +172,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
            }
        }
         
-       Iterator<Location> it = loc.blockIterator();
+       Iterator<StrandedLocation> it = loc.blockIterator();
        int exonCount = 0;
        while (it.hasNext()) {
            String utrName = this.gns.get5pUtr(transcript.getUniqueName(), exonCount);
@@ -178,24 +180,30 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
                utrName = this.gns.get3pUtr(transcript.getUniqueName(), exonCount);
            }
            exonCount++;
-           Location exonLoc = it.next();      
+           StrandedLocation exonLoc = it.next();
+           StrandedLocation location = new StrandedLocation(exonLoc);
            System.out.println("creating utr with name " + "exon:"+(exonCount-1)+":"+utrName);
-           Feature utr = this.featureUtils.createFeature(type, "exon:"+(exonCount-1)+":"+utrName, this.organism);
-           FeatureRelationship utrFr = this.featureUtils.createRelationship(utr, transcript, REL_PART_OF, exonCount-1);
-           FeatureLoc utrFl = this.featureUtils.createLocation(parent, utr, 
-                   exonLoc.getMin()-1, exonLoc.getMax(), (short)feat.getStrand().getValue());
+           
+           Feature utr;
+           if ("three_prime_UTR".equals(type)) {
+        	   utr = ThreePrimeUTR.make(transcript, location, utrName, organism, now);
+           } else {
+        	   utr = FivePrimeUTR.make(transcript, location, utrName, organism, now);
+           }
+           
+           //Feature utr = this.featureUtils.createFeature(type, "exon:"+(exonCount-1)+":"+utrName, this.organism);
+           //FeatureRelationship utrFr = this.featureUtils.createRelationship(utr, transcript, REL_PART_OF, exonCount-1);
+           //FeatureLoc utrFl = this.featureUtils.createLocation(parent, utr, 
+           //        exonLoc.getMin()-1, exonLoc.getMax(), (short)feat.getStrand().getValue());
 
-           sequenceDao.persist(utr);
-           sequenceDao.persist(utrFr);
-           sequenceDao.persist(utrFl);
        }
         
-        changeFeatureBounds(loc, gene);
-        changeFeatureBounds(loc, transcript);
+        //changeFeatureBounds(loc, gene);
+        //changeFeatureBounds(loc, transcript);
         
     }
 
-    private void changeFeatureBounds(Location loc, Feature feature) {
+    private void changeFeatureBounds(StrandedLocation loc, Feature feature) {
         int newMin = loc.getMin()-1;
         int newMax = loc.getMax();
         Collection<FeatureLoc> locs = feature.getFeatureLocsForFeatureId();
