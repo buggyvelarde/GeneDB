@@ -14,7 +14,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @FeatureType(cv="sequence", accession="0001077")
-public class TransmembraneRegion extends PolypeptideRegion {
+public class TransmembraneRegion extends IntramembraneRegion {
 
     public TransmembraneRegion() {
         super();

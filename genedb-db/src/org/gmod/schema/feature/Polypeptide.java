@@ -19,10 +19,9 @@ import org.biojava.bio.symbol.SymbolPropertyTable;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -106,11 +105,11 @@ public class Polypeptide extends Region {
      * Get all the polypeptide regions of the specified type.
      * @param <T> the type of region. Must be a subclass of <code>PolypeptideRegion</code>
      * @param type a class object representing the region type. For example, <code>PolypeptideDomain.class</code>
-     * @return a collection of those regions of the requested type
+     * @return a sorted set of those regions of the requested type
      */
     @Transient
-    public <T extends PolypeptideRegion> Collection<T> getRegions(Class<T> type) {
-        Set<T> domains = new HashSet<T>();
+    public <T extends PolypeptideRegion> SortedSet<T> getRegions(Class<T> type) {
+        SortedSet<T> domains = new TreeSet<T>();
 
         for (FeatureLoc domainLoc: this.getFeatureLocsForSrcFeatureId()) {
             Feature domain = domainLoc.getFeature();
