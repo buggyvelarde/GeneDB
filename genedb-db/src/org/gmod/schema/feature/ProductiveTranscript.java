@@ -1,12 +1,15 @@
 package org.gmod.schema.feature;
 
+import org.apache.log4j.Logger;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.mapped.Organism;
 
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -20,6 +23,14 @@ import javax.persistence.Transient;
  */
 @Entity
 public abstract class ProductiveTranscript extends Transcript {
+	
+    private static Logger logger = Logger.getLogger(ProductiveTranscript.class);
+	
+	public ProductiveTranscript(Organism organism, String systematicId, boolean analysis,
+			boolean obsolete, Timestamp dateAccessioned) {
+		super(organism, systematicId, analysis, obsolete, dateAccessioned);
+	}
+	
     /**
      * Return the uniqueName of the associated polypeptide.
      *
@@ -57,6 +68,16 @@ public abstract class ProductiveTranscript extends Transcript {
             }
         }
         return null;
+    }
+    
+    @Transient 
+    public void setProtein(Polypeptide polypeptide) {
+    	if (getProtein() != null) {
+    		logger.error("Attempting to set a protein on a transcript which already has one");
+    		throw new RuntimeException("Attempting to set a protein on a transcript which already has one");
+    		// FIXME Is this right error handling - should report ids at least
+    	}
+    	addFeatureRelationship(polypeptide, "sequence", "derives_from");
     }
 
     @Transient
