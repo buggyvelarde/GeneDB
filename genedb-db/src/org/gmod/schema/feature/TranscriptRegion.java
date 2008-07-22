@@ -1,6 +1,11 @@
 package org.gmod.schema.feature;
 
 
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Organism;
+
+import java.sql.Timestamp;
+
 import javax.persistence.Entity;
 
 /**
@@ -11,5 +16,19 @@ import javax.persistence.Entity;
  */
 @Entity
 public abstract class TranscriptRegion extends Region {
-    // empty
+
+    public TranscriptRegion() {
+        super();
+    }
+
+    public TranscriptRegion(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis,
+            boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {
+        super(organism, cvTerm, uniqueName, analysis, obsolete, timeAccessioned, timeLastModified);
+    }
+
+    public TranscriptRegion(Organism organism, String systematicId, boolean analysis,
+            boolean obsolete, Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
+
 }

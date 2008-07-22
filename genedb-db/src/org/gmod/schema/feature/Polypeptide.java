@@ -6,8 +6,8 @@ import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
-import org.gmod.schema.utils.StrandedLocation;
 import org.gmod.schema.utils.PeptideProperties;
+import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -39,12 +40,15 @@ public class Polypeptide extends Region {
     @Transient
     private AbstractGene gene;
 
+    Polypeptide() {
+        // empty
+    }
 
-	public Polypeptide(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned);
-	}
-    
+    public Polypeptide(Organism organism, String systematicId, boolean analysis,
+            boolean obsolete, Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
+
     public Transcript getTranscript() {
         if (transcript != null) {
             return transcript;
@@ -128,6 +132,24 @@ public class Polypeptide extends Region {
         }
 
         return domains;
+    }
+
+    /**
+     * Get the (predicted) MembraneStructure of this protein.
+     * @return the (predicted) MembraneStructure of this protein, or <code>null</code>
+     * if there is none.
+     */
+    @Transient
+    public MembraneStructure getMembraneStructure() {
+        Set<MembraneStructure> membraneStructures = getRegions(MembraneStructure.class);
+        if (membraneStructures.isEmpty()) {
+            return null;
+        }
+        if (membraneStructures.size() > 1) {
+            throw new IllegalStateException(String.format("Found more than one MembraneStructure for polypeptide '%s'",
+                getUniqueName()));
+        }
+        return membraneStructures.iterator().next();
     }
 
     /**
@@ -218,12 +240,12 @@ public class Polypeptide extends Region {
         return charge;
     }
 
-	public static Polypeptide make(Feature parent, StrandedLocation location,
-			String systematicId, Organism organism, Timestamp now) {
-		
-		Polypeptide polypeptide = new Polypeptide(organism, systematicId, false, false, now);
-		parent.addLocatedChild(polypeptide, location);
-		return polypeptide;
-	}
-	
+    public static Polypeptide make(Feature parent, StrandedLocation location,
+            String systematicId, Organism organism, Timestamp now) {
+
+        Polypeptide polypeptide = new Polypeptide(organism, systematicId, false, false, now);
+        parent.addLocatedChild(polypeptide, location);
+        return polypeptide;
+    }
+
 }

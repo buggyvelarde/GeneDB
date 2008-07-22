@@ -19,6 +19,10 @@ import javax.persistence.Transient;
 @Indexed
 public class MRNA extends ProductiveTranscript {
     private static final Logger logger = Logger.getLogger(MRNA.class);
+    
+    MRNA() {
+        // empty
+    }
 
 	public MRNA(Organism organism, String systematicId, boolean analysis,
 			boolean obsolete, Timestamp dateAccessioned) {
@@ -60,8 +64,4 @@ public class MRNA extends ProductiveTranscript {
         }
         return protein.getColourId();
     }
-    
-    
-
-    
 }

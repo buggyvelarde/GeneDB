@@ -57,6 +57,11 @@ public class MembraneStructure extends PolypeptideRegion {
     }
 
     @Transient
+    public SortedSet<MembraneStructureComponent> getComponents() {
+        return getComponents(MembraneStructureComponent.class);
+    }
+
+    @Transient
     public Polypeptide getPolypeptide() {
         return (Polypeptide) this.getSourceFeature();
     }

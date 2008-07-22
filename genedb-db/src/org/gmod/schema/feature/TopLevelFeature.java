@@ -12,14 +12,14 @@ import org.gmod.schema.mapped.Organism;
  * @author rh11
  */
 @Entity
-public abstract class TopLevelFeature extends Region { 
-	
-	// TODO Should this be an interface
-	
-	public TopLevelFeature(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned);
-	}
-	
-	
+public abstract class TopLevelFeature extends Region {
+
+    TopLevelFeature() {
+        // empty
+    }
+
+    public TopLevelFeature(Organism organism, String systematicId, boolean analysis,
+            boolean obsolete, Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
 }

@@ -1,11 +1,10 @@
 package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
-import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Organism;
-import org.gmod.schema.utils.StrandedLocation;
 import org.gmod.schema.utils.SingleLocation;
+import org.gmod.schema.utils.StrandedLocation;
 
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -13,12 +12,10 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.CodingErrorAction;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -28,12 +25,16 @@ import javax.persistence.Transient;
 @Indexed
 public class Gene extends AbstractGene {
 
-	public Gene(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned);
-	}
-	
-	@Transient
+    Gene () {
+        // empty
+    }
+
+    public Gene(Organism organism, String systematicId, boolean analysis,
+            boolean obsolete, Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
+
+    @Transient
     public Collection<MRNA> getCodingTranscripts() {
         Collection<MRNA> ret = new ArrayList<MRNA>();
 
@@ -78,38 +79,38 @@ public class Gene extends AbstractGene {
         return products.toString();
     }
 
-      
-	public static Gene make(Feature parent, StrandedLocation location, String systematicId, Organism organism, Timestamp now) {
-		Gene gene = new Gene(organism, systematicId, false, false, now);
-		parent.addLocatedChild(gene, location);
-		return gene;
-	}
-    
-	@Transactional
-	public static Gene makeHeirachy(Feature parent, StrandedLocation location, String systematicId,
-			Class transcriptType, boolean coding) {
-      
-		Organism organism = parent.getOrganism();
-		
-		Timestamp now = new Timestamp(new Date().getTime());
+
+    public static Gene make(Feature parent, StrandedLocation location, String systematicId, Organism organism, Timestamp now) {
+        Gene gene = new Gene(organism, systematicId, false, false, now);
+        parent.addLocatedChild(gene, location);
+        return gene;
+    }
+
+    @Transactional
+    public static Gene makeHierarchy(Feature parent, StrandedLocation location, String systematicId,
+            Class<? extends Transcript> transcriptType, boolean coding) {
+
+        Organism organism = parent.getOrganism();
+
+        Timestamp now = new Timestamp(new Date().getTime());
 
 
       Gene gene = make(parent, location, systematicId, organism, now);
-      
+
       // TODO Do by reflection
       String transcriptId = systematicId + ":mRNA";
       Transcript transcript = MRNA.make(parent, location, transcriptId, organism, now);
-      
+
       gene.addTranscript(transcript);
-      
+
       // Store exons
       int exonCount = 0;
       for (SingleLocation exonLocation : location.getLocations()) {
           exonCount++;
-          
+
           String exonSystematicId = systematicId + ":exon:"+ exonCount;
           Exon exon = Exon.make(parent, exonLocation, exonSystematicId, organism, now);
-          
+
           transcript.addExon(exon);
       }
 //          Feature exon = this.featureUtils
@@ -120,16 +121,16 @@ public class Gene extends AbstractGene {
 //          FeatureLoc exonFl = this.featureUtils.createLocation(parent, exon, l
 //                  .getMin()-1, l.getMax(), strand);
       if (transcript instanceof ProductiveTranscript) {
-    	 Polypeptide polypeptide = Polypeptide.make(parent, location, systematicId+":pep", organism, now);
-    	 ProductiveTranscript pt = (ProductiveTranscript) transcript;
-    	 pt.setProtein(polypeptide);
+         Polypeptide polypeptide = Polypeptide.make(parent, location, systematicId+":pep", organism, now);
+         ProductiveTranscript pt = (ProductiveTranscript) transcript;
+         pt.setProtein(polypeptide);
       }
-      
-		return gene;
-	}
-    
 
-	public void addTranscript(Transcript transcript) {
-		addFeatureRelationship(transcript, "relationship", "part_of");
-	}
+        return gene;
+    }
+
+
+    public void addTranscript(Transcript transcript) {
+        addFeatureRelationship(transcript, "relationship", "part_of");
+    }
 }

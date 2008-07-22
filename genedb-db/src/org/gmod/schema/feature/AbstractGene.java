@@ -19,12 +19,16 @@ import javax.persistence.Transient;
  */
 @Entity
 public abstract class AbstractGene extends Region {
-	
-	public AbstractGene(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned);
-	}
-	
+
+    AbstractGene() {
+        // empty
+    }
+
+    public AbstractGene(Organism organism, String systematicId, boolean analysis,
+            boolean obsolete, Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
+
     @Transient
     public Collection<Transcript> getTranscripts() {
         Collection<Transcript> ret = new ArrayList<Transcript>();

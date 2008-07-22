@@ -5,7 +5,6 @@ import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
-import org.biojava.bio.symbol.Location;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
@@ -25,11 +24,15 @@ public abstract class Transcript extends Region {
     @Transient
     private AbstractGene gene;
 
-	public Transcript(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned);
-	}
-    
+    Transcript() {
+        // empty
+    }
+
+    public Transcript(Organism organism, String systematicId, boolean analysis,
+            boolean obsolete, Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
+
     public abstract Integer getColourId();
 
     public AbstractGene getGene() {
@@ -163,9 +166,9 @@ public abstract class Transcript extends Region {
 
         return locs.toString();
     }
-	
-    
-	void addExon(Exon exon) {
-		addFeatureRelationship(exon, "relationship", "part_of");
-	}
+
+
+    void addExon(Exon exon) {
+        addFeatureRelationship(exon, "relationship", "part_of");
+    }
 }

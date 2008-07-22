@@ -13,15 +13,15 @@ import javax.persistence.Transient;
 
 @FeatureType(cv="sequence", term="region")
 @Entity
-public class Region extends Feature implements Comparable<Region> {
+public abstract class Region extends Feature implements Comparable<Region> {
 
     public Region() {}
-    
-	public Region(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned, dateAccessioned);
-	}
-    
+
+    public Region(Organism organism, String systematicId, boolean analysis,
+            boolean obsolete, Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned, dateAccessioned);
+    }
+
     public Region(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {
         super(organism, cvTerm, uniqueName, analysis, obsolete, timeAccessioned, timeLastModified);
@@ -67,6 +67,17 @@ public class Region extends Feature implements Comparable<Region> {
         }
         return this.getFeatureId() - other.getFeatureId();
     }
+
+    public int getFmin() {
+        loadLoc();
+        return fmin;
+    }
+
+    public int getFmax() {
+        loadLoc();
+        return fmax;
+    }
+
     /**
      * Get the exon location as a string, in interbase coordinates.
      *
