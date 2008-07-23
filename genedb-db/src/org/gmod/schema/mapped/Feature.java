@@ -1,8 +1,8 @@
 package org.gmod.schema.mapped;
 
+import org.genedb.db.dao.TempCvDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.helpers.LocationBridge;
-import org.genedb.db.services.CvService;
 
 import org.gmod.schema.utils.CollectionUtils;
 import org.gmod.schema.utils.StrandedLocation;
@@ -81,7 +81,7 @@ import javax.persistence.Transient;
 @Indexed
 public abstract class Feature implements java.io.Serializable {
 	
-	@Autowired transient private CvService cvService;
+	@Autowired transient private TempCvDao cvDao;
 
     @GenericGenerator(name = "generator", strategy = "seqhilo", parameters = {
             @Parameter(name = "max_lo", value = "100"),
@@ -710,7 +710,7 @@ public abstract class Feature implements java.io.Serializable {
 
 	protected void addFeatureRelationship(Feature subject, String cvName,
 			String termName) {
-		CvTerm type = cvService.findCvTermByCvAndName(cvName, termName);
+		CvTerm type = cvDao.findCvTermByCvAndName(cvName, termName);
 		if (type == null) {
 			throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
 		}
@@ -741,7 +741,7 @@ public abstract class Feature implements java.io.Serializable {
 	}
 	
 	protected void addFeatureProp(String value, String cvName, String termName) {
-		CvTerm type = cvService.findCvTermByCvAndName(cvName, termName);
+		CvTerm type = cvDao.findCvTermByCvAndName(cvName, termName);
 		if (type == null) {
 			throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
 		}
