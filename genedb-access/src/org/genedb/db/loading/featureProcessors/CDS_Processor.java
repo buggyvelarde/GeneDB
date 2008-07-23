@@ -71,7 +71,6 @@ import org.gmod.schema.mapped.Pub;
 import org.gmod.schema.utils.StrandedLocation;
 import org.gmod.schema.utils.LocationUtils;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
@@ -144,7 +143,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             }
             logger.debug("Looking at systematic id '" + sysId+"'");
             // Gene
-            Gene gene = Gene.makeHeirachy(parent, location, systematicId, MRNA.class, true);
+            Gene gene = Gene.makeHierarchy(parent, location, systematicId, MRNA.class, true);
         	
             //int transcriptNum = 1;
 
@@ -179,7 +178,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             }
 
             if (altSplicing) {
-            	throw new NotImplementedException(); // TODO
+            	throw new RuntimeException("Alternate splicing not handled in new code"); // TODO
             }
             
             
