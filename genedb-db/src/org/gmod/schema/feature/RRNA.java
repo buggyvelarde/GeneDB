@@ -11,16 +11,21 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 @Entity
-@FeatureType(cv="sequence", term="rRNA")
+@FeatureType(cv = "sequence", term = "rRNA")
 @Indexed
 public class RRNA extends Transcript {
 
-	public RRNA(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned);
-	}
-	
-    @Override @Transient
+    RRNA() {
+        // empty
+    }
+
+    public RRNA(Organism organism, String systematicId, boolean analysis, boolean obsolete,
+            Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
+
+    @Override
+    @Transient
     public Integer getColourId() {
         return null;
     }

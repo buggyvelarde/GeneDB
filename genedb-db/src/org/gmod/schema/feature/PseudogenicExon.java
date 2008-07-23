@@ -6,4 +6,8 @@ import javax.persistence.Entity;
 
 @Entity
 @FeatureType(cv="sequence", term="pseudogenic_exon")
-public class PseudogenicExon extends AbstractExon {}
+public class PseudogenicExon extends AbstractExon {
+    PseudogenicExon() {
+        // empty
+    }
+}

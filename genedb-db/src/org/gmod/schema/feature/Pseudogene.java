@@ -18,15 +18,19 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 @Entity
-@FeatureType(cv="sequence", term="pseudogene")
+@FeatureType(cv = "sequence", term = "pseudogene")
 @Indexed
 public class Pseudogene extends AbstractGene {
-	
-	public Pseudogene(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned);
-	}
-	
+
+    Pseudogene() {
+        // empty
+    }
+
+    public Pseudogene(Organism organism, String systematicId, boolean analysis, boolean obsolete,
+            Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
+
     @Transient
     public Collection<PseudogenicTranscript> getPseudogenicTranscripts() {
         Collection<PseudogenicTranscript> ret = new ArrayList<PseudogenicTranscript>();
@@ -42,7 +46,8 @@ public class Pseudogene extends AbstractGene {
     }
 
     @Override
-    @Transient @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
+    @Transient
+    @Field(name = "product", index = Index.TOKENIZED, store = Store.YES)
     public String getProductsAsTabSeparatedString() {
         StringBuilder products = new StringBuilder();
 

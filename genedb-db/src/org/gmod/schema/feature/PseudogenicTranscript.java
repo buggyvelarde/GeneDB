@@ -13,10 +13,13 @@ import javax.persistence.Entity;
 @FeatureType(cv="sequence", term="pseudogenic_transcript")
 @Indexed
 public class PseudogenicTranscript extends ProductiveTranscript {
-	
+	PseudogenicTranscript() {
+	    // empty
+	}
+
 	public PseudogenicTranscript(Organism organism, String systematicId, boolean analysis,
 			boolean obsolete, Timestamp dateAccessioned) {
 		super(organism, systematicId, analysis, obsolete, dateAccessioned);
 	}
-	
+
 }

@@ -17,7 +17,9 @@ import java.util.Date;
  */
 public abstract class PolypeptideRegion extends Region {
 
-    public PolypeptideRegion() {}
+    PolypeptideRegion() {
+        // empty
+    }
 
     public PolypeptideRegion(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {

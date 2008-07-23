@@ -17,7 +17,9 @@ import javax.persistence.Transient;
 public class PolypeptideDomain extends PolypeptideRegion {
     private static final Logger logger = Logger.getLogger(PolypeptideDomain.class);
 
-    public PolypeptideDomain() { }
+    PolypeptideDomain() {
+        // empty
+    }
     public PolypeptideDomain(Organism organism, CvTerm type, String uniqueName) {
         this(organism, type, uniqueName, true, false);
     }

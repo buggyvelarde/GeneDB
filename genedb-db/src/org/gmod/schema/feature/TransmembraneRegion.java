@@ -17,7 +17,7 @@ import javax.persistence.Entity;
 public class TransmembraneRegion extends IntramembraneRegion {
 
     public TransmembraneRegion() {
-        super();
+        // empty
     }
 
     public TransmembraneRegion(Organism organism, CvTerm cvTerm, String uniqueName) {

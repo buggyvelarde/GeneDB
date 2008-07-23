@@ -9,4 +9,8 @@ import javax.persistence.Entity;
 @Entity
 @FeatureType(cv="sequence", term="gap")
 @Indexed
-public class Gap extends Region {}
+public class Gap extends Region {
+    Gap() {
+        // empty
+    }
+}

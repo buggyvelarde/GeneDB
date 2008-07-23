@@ -6,4 +6,8 @@ import javax.persistence.Entity;
 
 @Entity
 @FeatureType(cv="sequence", term="five_prime_UTR")
-public class FivePrimeUTR extends UTR {}
+public class FivePrimeUTR extends UTR {
+    FivePrimeUTR() {
+        // empty
+    }
+}

@@ -7,4 +7,8 @@ import javax.persistence.Entity;
 @SuppressWarnings("serial")
 @Entity
 @FeatureType(cv="sequence", term="repeat_region")
-public class RepeatRegion extends Region { }
+public class RepeatRegion extends Region {
+    RepeatRegion() {
+        // empty
+    }
+}

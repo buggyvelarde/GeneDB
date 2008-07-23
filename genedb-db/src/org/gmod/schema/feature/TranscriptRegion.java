@@ -17,8 +17,8 @@ import javax.persistence.Entity;
 @Entity
 public abstract class TranscriptRegion extends Region {
 
-    public TranscriptRegion() {
-        super();
+    TranscriptRegion() {
+        // empty
     }
 
     public TranscriptRegion(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis,

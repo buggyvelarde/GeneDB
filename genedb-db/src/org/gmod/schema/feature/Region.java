@@ -15,7 +15,9 @@ import javax.persistence.Transient;
 @Entity
 public abstract class Region extends Feature implements Comparable<Region> {
 
-    public Region() {}
+    Region() {
+        // empty
+    }
 
     public Region(Organism organism, String systematicId, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {

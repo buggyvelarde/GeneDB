@@ -11,4 +11,8 @@ import javax.persistence.Entity;
  */
 @Entity
 @FeatureType(cv="sequence", term="SECIS_element")
-public class SECISElement extends TranscriptRegion {}
+public class SECISElement extends TranscriptRegion {
+    SECISElement() {
+        // empty
+    }
+}

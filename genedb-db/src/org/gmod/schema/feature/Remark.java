@@ -19,6 +19,10 @@ import javax.persistence.Transient;
 public class Remark extends Region {
     private static final Logger logger = Logger.getLogger(Remark.class);
 
+    Remark() {
+        // empty
+    }
+
     /**
      * Get the comment attached to this Remark feature.
      * @return the comment, or null if no comment was found

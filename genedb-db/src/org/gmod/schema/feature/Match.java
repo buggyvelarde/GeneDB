@@ -1,4 +1,8 @@
 package org.gmod.schema.feature;
 
 
-public abstract class Match extends Region {}
+public abstract class Match extends Region {
+    Match() {
+        // empty
+    }
+}
