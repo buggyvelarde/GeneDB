@@ -10,16 +10,16 @@ import org.hibernate.search.annotations.Indexed;
 import javax.persistence.Entity;
 
 @Entity
-@FeatureType(cv="sequence", term="pseudogenic_transcript")
+@FeatureType(cv = "sequence", term = "pseudogenic_transcript")
 @Indexed
 public class PseudogenicTranscript extends ProductiveTranscript {
-	PseudogenicTranscript() {
-	    // empty
-	}
+    PseudogenicTranscript() {
+        // empty
+    }
 
-	public PseudogenicTranscript(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned);
-	}
+    public PseudogenicTranscript(Organism organism, String systematicId, boolean analysis,
+            boolean obsolete, Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
 
 }
