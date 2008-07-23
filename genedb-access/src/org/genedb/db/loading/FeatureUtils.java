@@ -50,22 +50,22 @@ public class FeatureUtils implements InitializingBean {
 
     protected static final Pattern PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
 
-    public Feature createFeature(String typeName, String uniqueName, Organism organism) {
-        List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(typeName, so);
-        if (cvTerms.size() == 0) {
-            System.err.println("Unable to find name '" + typeName + "' in ontology '"
-                    + so.getName() + "'");
-            throw new ExpectedLookupMissing("Unable to find name '" + typeName + "' in ontology '"
-                    + so.getName() + "'");
-        }
-        CvTerm type = cvTerms.get(0);
-        // System.err.println("Got cvterm type:"+type);
-        Date now = new Date();
-        Timestamp ts = new Timestamp(now.getTime());
-        Feature feature = null;
-        feature = new Feature(organism, type, uniqueName, false, false, ts, ts);
-        return feature;
-    }
+//    public Feature createFeature(String typeName, String uniqueName, Organism organism) {
+//        List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(typeName, so);
+//        if (cvTerms.size() == 0) {
+//            System.err.println("Unable to find name '" + typeName + "' in ontology '"
+//                    + so.getName() + "'");
+//            throw new ExpectedLookupMissing("Unable to find name '" + typeName + "' in ontology '"
+//                    + so.getName() + "'");
+//        }
+//        CvTerm type = cvTerms.get(0);
+//        // System.err.println("Got cvterm type:"+type);
+//        Date now = new Date();
+//        Timestamp ts = new Timestamp(now.getTime());
+//        Feature feature = null;
+//        feature = new Feature(organism, type, uniqueName, false, false, ts, ts);
+//        return feature;
+//    }
 
     public static void dumpFeature(org.biojava.bio.seq.Feature f, String msg) {
         System.err.print("--- ");

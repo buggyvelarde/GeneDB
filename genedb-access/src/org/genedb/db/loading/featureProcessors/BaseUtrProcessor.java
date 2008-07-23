@@ -34,17 +34,21 @@ import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.feature.FivePrimeUTR;
 import org.gmod.schema.feature.ThreePrimeUTR;
+import org.gmod.schema.feature.UTR;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.utils.LocationUtils;
 import org.gmod.schema.utils.StrandedLocation;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.seq.StrandedFeature.Strand;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -172,6 +176,8 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
            }
        }
         
+       Timestamp now = new Timestamp(new Date().getTime());
+       org.gmod.schema.utils.Strand strand = org.gmod.schema.utils.Strand.FORWARD; // FIXME - v broken
        Iterator<StrandedLocation> it = loc.blockIterator();
        int exonCount = 0;
        while (it.hasNext()) {
@@ -181,10 +187,10 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
            }
            exonCount++;
            StrandedLocation exonLoc = it.next();
-           StrandedLocation location = new StrandedLocation(exonLoc);
+           StrandedLocation location = LocationUtils.make(loc, strand);
            System.out.println("creating utr with name " + "exon:"+(exonCount-1)+":"+utrName);
            
-           Feature utr;
+           UTR utr;
            if ("three_prime_UTR".equals(type)) {
         	   utr = ThreePrimeUTR.make(transcript, location, utrName, organism, now);
            } else {
