@@ -45,6 +45,7 @@ import org.gmod.schema.utils.StrandedLocation;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
 import org.biojava.bio.seq.StrandedFeature.Strand;
+import org.biojava.bio.symbol.Location;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -77,7 +78,8 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
         //logger.warn("Trying to process "+type);
 
         Annotation an = feat.getAnnotation();
-        StrandedLocation loc = feat.getLocation().translate(offset);
+        Location location = feat.getLocation().translate(offset);
+        StrandedLocation loc = LocationUtils.make(location, feat.getStrand());
         Feature above = null;
         above = tieFeatureByNameInQualifier("systematic_id", parent, feat, an, loc);
         if (above == null) {

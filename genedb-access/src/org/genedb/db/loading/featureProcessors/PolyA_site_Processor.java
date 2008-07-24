@@ -71,7 +71,7 @@ public class PolyA_site_Processor extends BaseFeatureProcessor {
 
         Annotation an = feat.getAnnotation();
         Location loc = feat.getLocation().translate(offset);
-        StrandedLocation location = LocationUtils.make(loc, strand);
+        StrandedLocation location = LocationUtils.make(loc, feat.getStrand());
         Feature above = null;
         above = tieFeatureByNameInQualifier("systematic_id", parent, feat, an, location);
         if (above == null) {

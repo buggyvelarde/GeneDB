@@ -33,6 +33,8 @@ import org.genedb.db.loading.ProcessingPhase;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
+import org.gmod.schema.utils.LocationUtils;
+import org.gmod.schema.utils.StrandedLocation;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
@@ -66,8 +68,9 @@ public class Promoter_Processor extends BaseFeatureProcessor {
 
         final Annotation an = feat.getAnnotation();
         final Location loc = feat.getLocation().translate(offset);
+        StrandedLocation location = LocationUtils.make(loc, feat.getStrand());
         Feature above = null;
-        above = tieFeatureByNameInQualifier("gene", parent, feat, an, loc);
+        above = tieFeatureByNameInQualifier("gene", parent, feat, an, location);
         if (above == null) {
             logger.warn("Unable to tie promoter to a gene");
             return;
