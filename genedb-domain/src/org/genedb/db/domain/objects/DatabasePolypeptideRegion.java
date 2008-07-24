@@ -24,14 +24,6 @@ public class DatabasePolypeptideRegion extends PolypeptideRegion {
         this.url         = url;
     }
 
-    public static DatabasePolypeptideRegion build(org.gmod.schema.feature.PolypeptideDomain domain) {
-        DatabasePolypeptideRegion result = build((org.gmod.schema.feature.PolypeptideRegion) domain);
-        if (result == null) {
-            return null;
-        }
-        return result;
-    }
-
     public static DatabasePolypeptideRegion build(org.gmod.schema.feature.PolypeptideRegion region) {
         FeatureLoc domainLoc = region.getRankZeroFeatureLoc();
         DbXRef dbxref = region.getDbXRef();
@@ -42,7 +34,7 @@ public class DatabasePolypeptideRegion extends PolypeptideRegion {
         }
 
         return new DatabasePolypeptideRegion(dbxref.getDb().getName(), dbxref.getAccession(), dbxref.getDescription(),
-            dbxref.getUrl(), null, domainLoc.getFmin(), domainLoc.getFmax());
+            dbxref.getUrl(), region.getScore(), domainLoc.getFmin(), domainLoc.getFmax());
     }
 
     String getDatabase() {
