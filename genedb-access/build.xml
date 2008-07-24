@@ -87,7 +87,6 @@
     <fileset dir="resources/"/>
     <pathelement location="conf"/>
     <fileset file="${imported.basedir.access}/../genedb-domain/genedb-domain.jar"  />
-    <fileset file="${imported.basedir.access}/../genedb-query/ant-build/jars/genedb-query.jar"  />
     <fileset file="${lib-dir}/spring-2.5.4.jar"  />
     <fileset file="${lib-dir}/biojava-1.6.jar"/>
     <fileset file="${lib-dir}/bytecode-0.91.jar"/>
