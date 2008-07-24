@@ -74,7 +74,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 	private static CvTerm PARALOGOUS_RELATIONSHIP;
 
 	private static CvTerm ORTHOLOGOUS_RELATIONSHIP;
-	
+
 	Set<String> clusterNames = new HashSet<String>();
 
 //    private FeatureHandler featureHandler;
@@ -96,28 +96,28 @@ public class OrthologueStorerImpl implements OrthologueStorer {
     private OrganismDao organismDao;
 
     private CvDao cvDao;
-//    
+//
     private PubDao pubDao;
 
     private GeneralDao generalDao;
-    
+
     private HibernateTransactionManager hibernateTransactionManager;
-    
+
     private SessionFactory sessionFactory;
-    
+
     Organism DUMMY_ORG;
-    
+
     private OrthologueRelationsParser xmlParser;
-    
+
     private OrthologueRelationsParser orthoMclParser;
 //
 //    Map<String,String> cdsQualifiers = new HashMap<String,String>();
-//    
+//
 //	private Set<String> handeledQualifiers = new HashSet<String>();
-//    
+//
 //    private OrthologueStorage orthologueStorage = new OrthologueStorage();
-    
-    
+
+
     public void setHibernateTransactionManager(
 			HibernateTransactionManager hibernateTransactionManager) {
 		this.hibernateTransactionManager = hibernateTransactionManager;
@@ -139,8 +139,8 @@ public class OrthologueStorerImpl implements OrthologueStorer {
      * the command-line.
      *
      * @param args organism_common_name, [conf file path]
-     * @throws XMLStreamException 
-     * @throws FileNotFoundException 
+     * @throws XMLStreamException
+     * @throws FileNotFoundException
      */
 //    public static void main (String[] args) throws FileNotFoundException, XMLStreamException {
 //
@@ -150,7 +150,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //        	System.err.println("No input files specified");
 //        	System.exit(-1);
 //        }
-//        
+//
 //        // Override properties in Spring config file (using a
 //        // BeanFactoryPostProcessor) based on command-line args
 //        Properties overrideProps = new Properties();
@@ -183,14 +183,14 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //    }
 
     public void writeToDb() {
-    	
+
     	System.err.println("orthologues='"+orthologues.size()+"' paralogues='"+paralogues.size()+"' cluster keys='"+clusters.keySet().size()+"'");
     	System.err.println("cvDao is '"+this.cvDao+"'");
-    	
+
     	CvTerm ORTHOLOGOUS_TO = cvDao.getCvTermByNameAndCvName("orthologous_to", "sequence");
     	CvTerm PARALOGOUS_TO = cvDao.getCvTermByNameAndCvName("paralogous_to", "sequence");
     	ORTHOLOGOUS_RELATIONSHIP = ORTHOLOGOUS_TO;
-    	
+
     	logger.info("About to store '"+orthologues.size()+"' orthologues");
 		for (GenePair pair : orthologues) {
 			storePairs(pair, ORTHOLOGOUS_TO);
@@ -207,10 +207,10 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 			storeCluster(cluster, ORTHOLOGOUS_TO);
 			clusterCount++;
 		}
-		
+
 		finishClusterHandling();
-		
-		
+
+
 //		TransactionTemplate tt = hibernateTransactionManager.
 //      tt.execute(
 //		  new TransactionCallbackWithoutResult() {
@@ -219,7 +219,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //				  finishClusterHandling();
 //			  }
 //		  });
-		
+
 	}
 
 
@@ -249,17 +249,17 @@ public class OrthologueStorerImpl implements OrthologueStorer {
     			// Need to store camouflage - a parent feature so it looks like a cluster
     	    	String uniqueName = "ORTHO_PARA_" +pair.getFirst() + "_" + pair.getSecond();
 
-    	    	Feature matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
-    	    	sequenceDao.persist(matchFeature);
-    	    	fr = new FeatureRelationship(gene1, matchFeature, relationship, 0);
-    	    	sequenceDao.persist(fr);
-    	    	fr = new FeatureRelationship(gene2, matchFeature, relationship, 0);
-    	    	sequenceDao.persist(fr);
+//    	    	Feature matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
+//    	    	sequenceDao.persist(matchFeature);
+//    	    	fr = new FeatureRelationship(gene1, matchFeature, relationship, 0);
+//    	    	sequenceDao.persist(fr);
+//    	    	fr = new FeatureRelationship(gene2, matchFeature, relationship, 0);
+//    	    	sequenceDao.persist(fr);
     		}
     	}
-    	
-    	
-    	
+
+
+
 	}
 
 //	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
@@ -295,7 +295,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 		//transaction.commit();
 //		session.close();
 	}
-	
+
     public void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship) {
     	String clusterName = entry.getKey();
     	String uniqueName = "CLUSTER_" +clusterName;
@@ -303,8 +303,8 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 
     	Feature matchFeature = sequenceDao.getFeatureByUniqueName(uniqueName, "protein_match");
     	if (matchFeature == null) {
-    		matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
-    		sequenceDao.persist(matchFeature);
+//    		matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
+//    		sequenceDao.persist(matchFeature);
     		clusterNames.add(uniqueName);
 
     		Analysis analysis = generalDao.getAnalysisByProgram("TRIBE");
@@ -318,21 +318,21 @@ public class OrthologueStorerImpl implements OrthologueStorer {
     			analysis.setTimeExecuted(today);
     			generalDao.persist(analysis);
 
-    			// create analysisfeature 
+    			// create analysisfeature
     			Double score = null;
 //  			if (si.getScore() != null) {
 //  			score = Double.parseDouble(si.getScore());
-//  			} 
+//  			}
 
     			Double evalue = null;
 //  			if (si.getEvalue() != null) {
 //  			evalue = Double.parseDouble(si.getEvalue());
-//  			} 
+//  			}
 
     			Double id = null;
 //  			if (si.getId() != null) {
 //  			id = Double.parseDouble(si.getId());
-//  			} 
+//  			}
 
     			AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
     			generalDao.persist(analysisFeature);
@@ -355,8 +355,8 @@ public class OrthologueStorerImpl implements OrthologueStorer {
     	}
 
     }
-    
-    
+
+
 //    private void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship) {
 //    	String clusterName = entry.getKey();
 //    	String uniqueName = "CLUSTER_" +clusterName;
@@ -393,9 +393,9 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //                    generalDao.persist(analysis);
 //                }
 //
-//                /* create match feature 
-//                 * create new dbxref for match feature if one does not already exsists 
-//                 */ 
+//                /* create match feature
+//                 * create new dbxref for match feature if one does not already exsists
+//                 */
 //                Feature matchFeature = null;
 //                String uniqueName = null;
 //
@@ -412,36 +412,36 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //                FeatureProp overlap = new FeatureProp(matchFeature,olap,si.getOverlap(),0);
 //                this.sequenceDao.persist(overlap);
 //
-//                /* create analysisfeature 
-//                 * 
+//                /* create analysisfeature
+//                 *
 //                 */
 //                Double score = null;
 //                if (si.getScore() != null) {
 //                    score = Double.parseDouble(si.getScore());
-//                } 
+//                }
 //
 //                Double evalue = null;
 //                if (si.getEvalue() != null) {
 //                    evalue = Double.parseDouble(si.getEvalue());
-//                } 
+//                }
 //
 //                Double id = null;
 //                if (si.getId() != null) {
 //                    id = Double.parseDouble(si.getId());
-//                } 
+//                }
 //
 //                AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
 //                this.generalDao.persist(analysisFeature);
 //
-//                /* create subject feature if one does not already exists. If two database are 
-//                 * referenced; seperate the primary and the secondary. Create feature.dbxref 
-//                 * for primary and featuredbxref for secondary. Also add organism, product, gene, 
-//                 * overlap and ungappedid as featureprop to this feature. Create featureloc from 
-//                 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id 
-//                 * of featureloc to 0. 
+//                /* create subject feature if one does not already exists. If two database are
+//                 * referenced; seperate the primary and the secondary. Create feature.dbxref
+//                 * for primary and featuredbxref for secondary. Also add organism, product, gene,
+//                 * overlap and ungappedid as featureprop to this feature. Create featureloc from
+//                 * subject XX-XXX aa and link it to matchFeature. set the rank of src_feature_id
+//                 * of featureloc to 0.
 //                 */
 //                Feature subjectFeature = null;
-//                
+//
 //                String sections[] = parseDbString(si.getPriDatabase());
 //                String values[] = parseDbString(si.getSecDatabase());
 //                if (sections[0].equals("SWALL") && sections[1].contains("_")) {
@@ -528,7 +528,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //                    }
 //
 //                    /* once the dbxrefs are set create featureprop for gene, organism and product
-//                     * 
+//                     *
 //                     */
 //                    CvTerm org = this.cvDao.getCvTermByNameAndCvName("organism", cv);
 //                    FeatureProp propOrganism = new FeatureProp(subjectFeature,org,si.getOrganism(),0);
@@ -545,7 +545,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //                }
 //
 //                /* create featureloc and attach 'em to matchFeature
-//                 * 
+//                 *
 //                 */
 //                short strand = 1;
 //                String sCoords[] = si.getSubject().split("-");
@@ -561,7 +561,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //            }
 //        }
 //    }
-    
+
 
 	public void afterPropertiesSet() {
 		System.err.println("In aps cvDao='"+cvDao+"'");
@@ -592,14 +592,14 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 			}
 			parser.parseInput(r, orthologues, paralogues, clusters);
 		}
-		
+
 		writeToDb();
 	}
-    
+
     private boolean checkOrgs(File input) {
     	return true; // FIXME Should go through orgs to check all loaded
     }
-    
+
     private Set<GenePair> orthologues = new HashSet<GenePair>();
     private Set<GenePair> paralogues = new HashSet<GenePair>();
     private Map<String,List<String>> clusters = new HashMap<String,List<String>>();
@@ -642,5 +642,5 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 //        this.applicationContext = applicationContext;
 //    }
-    
+
 }
