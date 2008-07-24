@@ -19,8 +19,7 @@
     <path id="libs">
     	<path location="${in-lib-dir}/artemis.jar" />
 
-    	<path location="${imported.basedir.web}/../genedb-db/ant-build/jars/chado-interface.jar" />
-        <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/genedb-hibernate.jar" />
+    	<path location="${imported.basedir.web}/../genedb-db/ant-build/jars/genedb-db.jar" />
         <path location="${imported.basedir.web}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
         <path location="${imported.basedir.web}/../genedb-query/ant-build/jars/genedb-query.jar" />
 
@@ -35,7 +34,9 @@
         <path location="${lib-dir}/lucene-core-2.3.2.jar"/>
         <path location="${lib-dir}/postgresql-8.2dev-501.jdbc3.jar" />
         <path location="${lib-dir}/spring-2.5.4.jar" />
+        <path location="${lib-dir}/spring-aspects.jar" />
         <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/dom4j/jaxen-1.1-beta-7.jar"/>

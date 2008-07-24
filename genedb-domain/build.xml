@@ -24,6 +24,7 @@
 		<path location="${lib-dir}/spring-2.5.4.jar" />
 		<path location="${lib-dir}/spring-aspects.jar" />
 		<path location="${lib-dir}/postgresql-8.2dev-501.jdbc3.jar" />
+        <path location="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
 		<path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar" />
 		<path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-pool.jar" />
