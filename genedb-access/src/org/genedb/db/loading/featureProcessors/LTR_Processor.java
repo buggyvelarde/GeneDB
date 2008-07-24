@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2006 Genome Research Limited.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by the Free
  * Software Foundation; either version 2 of the License or (at your option) any
  * later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this program; see the file COPYING.LIB. If not, write to the Free
  * Software Foundation Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307
@@ -18,8 +18,8 @@
  */
 
 /**
- * 
- * 
+ *
+ *
  * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
  */
 package org.genedb.db.loading.featureProcessors;
@@ -41,10 +41,10 @@ import org.biojava.bio.symbol.Location;
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
  * be called from the command-line, or a Makefile.
- * 
+ *
  * Usage: GenericRunner organism [-show_ids] [-show_contigs]
- * 
- * 
+ *
+ *
  * @author Adrian Tivey (art)
  */
 public class LTR_Processor extends BaseFeatureProcessor {
@@ -55,7 +55,7 @@ public class LTR_Processor extends BaseFeatureProcessor {
                 new String[]{QUAL_D_COLOUR},
                 new String[]{QUAL_NOTE},
                 new String[]{});
-        
+
 		handledQualifiers = new String[]{"LTR:colour", "LTR:note"};
     }
 
@@ -66,19 +66,19 @@ public class LTR_Processor extends BaseFeatureProcessor {
         Location loc = f.getLocation();
         Annotation an = f.getAnnotation();
         short strand = (short)f.getStrand().getValue();
-        String systematicId = "LTR"+loc.getMin()+"-"+loc.getMax(); 
-        
-        org.gmod.schema.mapped.Feature ltr = this.featureUtils.createFeature("long_terminal_repeat", systematicId,
-                this.organism);
-        sequenceDao.persist(ltr);
+        String systematicId = "LTR"+loc.getMin()+"-"+loc.getMax();
 
-        FeatureLoc ltrFl = featureUtils.createLocation(parent,ltr,loc.getMin()-1,loc.getMax(),
-                                                        strand);
-        sequenceDao.persist(ltrFl);
-      
-        FeatureProp fp = createFeatureProp(ltr, an, "colour", "colour", CV_GENEDB);
-        sequenceDao.persist(fp);
-        createFeaturePropsFromNotes(ltr, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE, 0);
+        //org.gmod.schema.mapped.Feature ltr = this.featureUtils.createFeature("long_terminal_repeat", systematicId,
+        //        this.organism);
+//        sequenceDao.persist(ltr);
+//
+//        FeatureLoc ltrFl = featureUtils.createLocation(parent,ltr,loc.getMin()-1,loc.getMax(),
+//                                                        strand);
+//        sequenceDao.persist(ltrFl);
+//
+//        FeatureProp fp = createFeatureProp(ltr, an, "colour", "colour", CV_GENEDB);
+//        sequenceDao.persist(fp);
+//        createFeaturePropsFromNotes(ltr, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE, 0);
     }
 
 
@@ -86,5 +86,5 @@ public class LTR_Processor extends BaseFeatureProcessor {
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SIXTH;
     }
-    
+
 }

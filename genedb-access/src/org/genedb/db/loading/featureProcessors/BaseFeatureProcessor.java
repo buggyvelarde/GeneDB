@@ -58,6 +58,7 @@ import org.gmod.schema.mapped.FeaturePropPub;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Pub;
 import org.gmod.schema.mapped.PubDbXRef;
+import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -378,7 +379,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     }
 
 
-    protected org.gmod.schema.mapped.Feature tieFeatureByNameInQualifier(String qualifier, org.gmod.schema.mapped.Feature parent, StrandedFeature feat, Annotation an, Location loc) {
+    protected org.gmod.schema.mapped.Feature tieFeatureByNameInQualifier(String qualifier, org.gmod.schema.mapped.Feature parent, StrandedFeature feat, Annotation an, StrandedLocation loc) {
             org.gmod.schema.mapped.Feature ret = null;
             if (an.containsProperty(qualifier)) {
                 //logger.warn("Trying to tie UTR via '"+qualifier+"'");
