@@ -4,7 +4,6 @@ import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.FeatureDbXRef;
-import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
@@ -29,15 +28,13 @@ public class PolypeptideDomain extends PolypeptideRegion {
     }
 
     @Transient
+    @Override
     public String getScore() {
-        for (FeatureProp featureProp : this.getFeatureProps()) {
-            if (featureProp.getType().getName().equals("score")) {
-                return featureProp.getValue();
-            }
+        String score = super.getScore();
+        if (score == null) {
+            logger.error(String.format("Polypeptide domain '%s' has no score", getUniqueName()));
         }
-
-        logger.error(String.format("Polypeptide domain '%s' has no score", getUniqueName()));
-        return null;
+        return score;
     }
 
     @Transient

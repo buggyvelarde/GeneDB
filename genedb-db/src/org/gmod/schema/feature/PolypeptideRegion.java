@@ -1,10 +1,14 @@
 package org.gmod.schema.feature;
 
+import org.genedb.db.dao.SequenceDao;
+
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Organism;
 
 import java.sql.Timestamp;
 import java.util.Date;
+
+import javax.persistence.Transient;
 
 /**
  * A region of a polypeptide.
@@ -32,5 +36,10 @@ public abstract class PolypeptideRegion extends Region {
         // hence the duplicated Timestamp construction.
         super(organism, cvTerm, uniqueName, analysis, obsolete,
             new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
+    }
+
+    @Transient
+    public String getScore() {
+        return this.getProperty("null", "score");
     }
 }
