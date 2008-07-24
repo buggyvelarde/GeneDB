@@ -17,5 +17,6 @@ import java.util.List;
 public abstract class CompoundLocatedFeature extends LocatedFeature {
     public abstract int getStrand();
     public String getName() { return getUniqueName(); }
+    public String getDescription() { return null; }
     public abstract List<? extends LocatedFeature> getSubfeatures();
 }
