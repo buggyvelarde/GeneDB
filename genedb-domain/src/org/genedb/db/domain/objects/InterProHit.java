@@ -33,10 +33,16 @@ public class InterProHit extends PolypeptideRegionGroup {
     }
 
     @Override
+    public String getName() {
+        return accession;
+    }
+
+    @Override
     public String getUrl() {
         return urlPrefix + accession;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
