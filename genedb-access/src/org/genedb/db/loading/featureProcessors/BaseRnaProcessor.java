@@ -99,7 +99,7 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
         
         StrandedLocation location = LocationUtils.make(loc, f.getStrand());
         // Gene
-        Gene gene = Gene.makeHeirachy(parent, location, systematicId, rnaClass, false);
+        Gene gene = Gene.makeHierarchy(parent, location, systematicId, rnaClass, false);
 //        Feature gene = this.featureUtils.createFeature(GENE, systematicId, this.organism);
 //        sequenceDao.persist(gene);
 //        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
