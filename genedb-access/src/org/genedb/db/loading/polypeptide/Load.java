@@ -98,7 +98,7 @@ public class Load {
         float elapsedSeconds = (float) elapsedMilliseconds / 1000;
 
         System.out.printf("Total time taken: %.0fh %.0fm %.2fs\n",
-            elapsedSeconds / 3600, elapsedSeconds / 60, elapsedSeconds % 60);
+            elapsedSeconds / 3600, (elapsedSeconds / 60) % 60, elapsedSeconds % 60);
     }
 
     private static final Logger logger = Logger.getLogger(Load.class);
