@@ -97,18 +97,22 @@ class InterProRow {
     private static final int COL_DESC        = 12;
     private static final int COL_GO          = 13;
 
-    private static final HashMap<String, String> dbByProg = new HashMap<String, String>();
-    static {
-        dbByProg.put("HMMPfam", "Pfam");
-        dbByProg.put("ScanProsite", "Prosite");
-        dbByProg.put("FPrintScan", "PRINTS");
-        dbByProg.put("ProfileScan", "Prosite");
-        dbByProg.put("ScanRegExp", "Prosite");
-        dbByProg.put("HMMSmart", "SMART");
-        dbByProg.put("BlastProDom", "ProDom");
-        dbByProg.put("Superfamily", "Superfamily");
-        dbByProg.put("superfamily", "Superfamily");
-    }
+    private static final HashMap<String, String> dbByProg = new HashMap<String, String>() {{
+        put("HMMPfam", "Pfam");
+        put("FPrintScan", "PRINTS");
+        put("ProfileScan", "Prosite");
+        put("ScanRegExp", "Prosite");
+        put("HMMSmart", "SMART");
+        put("BlastProDom", "ProDom");
+        put("HMMTigr", "TIGR_TIGRFAMS");
+        put("HMMPIR", "PIRSF");
+
+        // These three have not been seen in the P. falciparum output, at least.
+        // Are they still possible?
+        put("Superfamily", "Superfamily");
+        put("superfamily", "Superfamily");
+        put("ScanProsite", "Prosite");
+    }};
 
     /**
      * Convert a row of an Interpro output file to an InterproRow object.
