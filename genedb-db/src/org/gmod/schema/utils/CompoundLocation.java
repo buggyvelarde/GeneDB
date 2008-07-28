@@ -7,65 +7,58 @@ import java.util.List;
 
 
 public class CompoundLocation implements StrandedLocation {
-	
-	List<SingleLocation> locs;
-	
 
-	public CompoundLocation(org.biojava.bio.symbol.Location loc, org.biojava.bio.seq.StrandedFeature.Strand strand) {
-		locs = new ArrayList<SingleLocation>();
-		Iterator<org.biojava.bio.symbol.Location> it = loc.blockIterator();
-		while (it.hasNext()) {
-			SingleLocation location = new SingleLocation(it.next(), strand);
-			locs.add(location);
-		}
-	}
-	
-	private CompoundLocation(CompoundLocation other, boolean convertToInterbase) {
-		this.locs = new ArrayList<SingleLocation>(other.getLocations().size());
-		for (SingleLocation loc : other.getLocations()) {
-			SingleLocation convert = new SingleLocation(loc, convertToInterbase);
-			this.locs.add(convert);
-		}
-	}
+    List<SingleLocation> locs = new ArrayList<SingleLocation>();
 
-	@Override
-	public int getMax() {
-		return locs.get(locs.size()-1).getMax();
-	}
+    public CompoundLocation(org.biojava.bio.symbol.Location loc, org.biojava.bio.seq.StrandedFeature.Strand strand) {
+        @SuppressWarnings("unchecked")
+        Iterator<org.biojava.bio.symbol.Location> it = loc.blockIterator();
+        while (it.hasNext()) {
+            SingleLocation location = new SingleLocation(it.next(), strand);
+            locs.add(location);
+        }
+    }
 
-	@Override
-	public int getMin() {
-		return locs.get(0).getMin();
-	}
+    private CompoundLocation(CompoundLocation other, boolean convertToInterbase) {
+        for (SingleLocation loc : other.getLocations()) {
+            SingleLocation convert = new SingleLocation(loc, convertToInterbase);
+            this.locs.add(convert);
+        }
+    }
 
-	public Strand getStrand() {
-		return locs.get(0).getStrand();
-	}
+    public int getMax() {
+        return locs.get(locs.size()-1).getMax();
+    }
 
-	public boolean isInterbase() {
-		return locs.get(0).isInterbase();
-	}
+    public int getMin() {
+        return locs.get(0).getMin();
+    }
 
-	public boolean isMaxPartial() {
-		return locs.get(locs.size()-1).isMaxPartial();
-	}
+    public Strand getStrand() {
+        return locs.get(0).getStrand();
+    }
 
-	public boolean isMinPartial() {
-		return locs.get(0).isMinPartial();
-	}
+    public boolean isInterbase() {
+        return locs.get(0).isInterbase();
+    }
 
-	@Override
-	public List<SingleLocation> getLocations() {
-		return Collections.unmodifiableList(locs);
-	}
+    public boolean isMaxPartial() {
+        return locs.get(locs.size()-1).isMaxPartial();
+    }
 
-	@Override
-	public StrandedLocation getInterbaseVersion() {
-		if (this.isInterbase()) {
-			return this;
-		}
-		return new CompoundLocation(this, true);
-	}
-	
+    public boolean isMinPartial() {
+        return locs.get(0).isMinPartial();
+    }
+
+    public List<SingleLocation> getLocations() {
+        return Collections.unmodifiableList(locs);
+    }
+
+    public StrandedLocation getInterbaseVersion() {
+        if (this.isInterbase()) {
+            return this;
+        }
+        return new CompoundLocation(this, true);
+    }
 }
 
