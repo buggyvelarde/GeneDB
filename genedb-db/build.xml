@@ -109,7 +109,6 @@
 
     </target>
 
-    <!-- Called from an Eclipse ant task, as well as from make-interface -->
     <target name="hibernate-instrumentation">
         <instrument verbose="true">
             <fileset dir="${directory}">
@@ -120,7 +119,8 @@
     </target>
 
 
-	<!-- Internal target for calling the hibernate instrumentation and compile-time weaving -->
+	<!-- Invoke the hibernate instrumentation and compile-time weaving -->
+    <!-- Called from an Eclipse ant task, as well as from make-interface -->
 	<target name="build-time-weave">
 
         <antcall target="hibernate-instrumentation">
