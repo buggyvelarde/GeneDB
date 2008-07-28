@@ -1,89 +1,46 @@
 package org.genedb.query.history;
 
-import java.util.Collection;
+import org.genedb.query.Result;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.genedb.query.Result;
-import org.genedb.util.MapUtils;
-
 public class SimpleHistory implements History {
-	
-	private Map<String, List<Result>> entries= new HashMap<String, List<Result>>();
-	
-	/* (non-Javadoc)
-	 * @see org.genedb.query.History2#getTypes()
-	 */
-	public Set<String> getTypes() {
-		return entries.keySet();
-	}
 
-	/* (non-Javadoc)
-	 * @see org.genedb.query.History2#getResultDataSets(java.lang.String)
-	 */
-	public List<Result> getResults(String type) {
-		return entries.get(type);
-	}
+    private Map<String, List<Result>> entries = new HashMap<String, List<Result>>();
 
-	/* (non-Javadoc)
-	 * @see org.genedb.query.History2#addResultDataset(org.genedb.query.Result)
-	 */
-	public void addResult(Result rds) {
-		MapUtils.addEntryAsPartOfList(entries, rds.getType(), rds);
-	}
+    public Set<String> getTypes() {
+        return entries.keySet();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.genedb.query.History2#clear()
-	 */
-	public void clear() {
-		entries.clear();
-	}
+    public List<Result> getResults(String type) {
+        return entries.get(type);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.genedb.query.History2#isEmpty()
-	 */
-	public boolean isFilled() {
-		return !entries.isEmpty();
-	}
+    public void addResult(Result rds) {
+        if (!entries.containsKey(rds.getType())) {
+            entries.put(rds.getType(), new ArrayList<Result>());
+        }
+        entries.get(rds.getType()).add(rds);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.genedb.query.History2#keyIterator()
-	 */
-	public Iterator keyIterator() {
-		return entries.keySet().iterator();
-	}
+    public void clear() {
+        entries.clear();
+    }
 
+    public boolean isFilled() {
+        return !entries.isEmpty();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.genedb.query.History2#size()
-	 */
-	public int size() {
-		return entries.size();
-	}
+    public Iterator<String> keyIterator() {
+        return entries.keySet().iterator();
+    }
 
-	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object[] toArray(Object[] arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-
-	public boolean containsAll(Collection arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-
-	public boolean remove(Object arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
+    public int size() {
+        return entries.size();
+    }
 }
