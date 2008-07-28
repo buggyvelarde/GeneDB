@@ -19,6 +19,7 @@
 
 package org.genedb.db.domain.objects;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
@@ -76,6 +77,35 @@ public class Transcript extends LocatedFeature implements Serializable {
     }
     public void setColourId(Integer colourId) {
         this.colourId = colourId;
+    }
+
+    private static Color[] artemisColours = new Color[] {
+        new Color(255, 255, 255),
+        new Color(100, 100, 100),
+        new Color(255, 0, 0),
+        new Color(0, 255, 0),
+        new Color(0, 0, 255),
+        new Color(0, 255, 255),
+        new Color(255, 0, 255),
+        new Color(224, 208, 0), // previously: new Color(245, 245, 0),
+        new Color(152, 251, 152),
+        new Color(135, 206, 250),
+        new Color(255, 165, 0),
+        new Color(200, 150, 100),
+        new Color(255, 200, 200),
+        new Color(170, 170, 170),
+        new Color(0, 0, 0),
+        new Color(255, 63,  63),
+        new Color(255, 127, 127),
+        new Color(255, 191, 191),
+    };
+
+    @Override
+    public Color getColor() {
+        if (colourId == null || colourId >= artemisColours.length) {
+            return null;
+        }
+        return artemisColours[colourId];
     }
 
     public Feature getProtein() {

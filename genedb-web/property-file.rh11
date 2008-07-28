@@ -1,4 +1,4 @@
-finaldest.webapps=/software/pathogen/projects/genedb/rh11/tomcat/webapps/genedb-web
+finaldest.webapps=/nfs/team81/rh11/genedb/tomcat/webapps/genedb-web
 webAppRootKey=genedb.new.root
 dbhost=localhost
 dbport=18000

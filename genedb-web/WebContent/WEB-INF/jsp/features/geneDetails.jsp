@@ -235,6 +235,15 @@
         </div>
     </c:if>
 
+    <!-- Protein map section -->
+    <c:if test="${proteinMap != null}">
+        <format:genePageSection id="proteinMap">
+            <div class="heading">Protein map</div>
+            ${proteinMapMap}
+            <img src="${proteinMap}" useMap="#proteinMapMap">
+        </format:genePageSection>
+    </c:if>
+
     <c:if test="${fn:length(domainInformation) > 0}">
         <!-- Domain Information -->
         <format:genePageSection id="domainInfo">
@@ -275,13 +284,6 @@
                     </c:forEach>
                 </c:forEach>
             </tbody></table>
-        </format:genePageSection>
-    </c:if>
-    <!-- Protein map section -->
-    <c:if test="${proteinMap != null}">
-        <format:genePageSection id="proteinMap">
-            <div class="heading">Protein map</div>
-            <img src="${proteinMap}">
         </format:genePageSection>
     </c:if>
 

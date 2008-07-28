@@ -39,18 +39,18 @@ public abstract class PolypeptideRegionGroup extends CompoundLocatedFeature {
     private SortedSet<PolypeptideRegion> domains = new TreeSet<PolypeptideRegion>(domainComparator);
 
     /**
-     * Add a domain to this InterPro hit.
+     * Add a region to this group.
      *
-     * @param domain the domain to add
+     * @param region the region to add
      * @return this object, for method chaining
      */
-    public PolypeptideRegionGroup addDomain(PolypeptideRegion domain) {
-        domains.add(domain);
-        if (domain.getFmin() < fmin) {
-            fmin = domain.getFmin();
+    public PolypeptideRegionGroup addRegion(PolypeptideRegion region) {
+        domains.add(region);
+        if (region.getFmin() < fmin) {
+            fmin = region.getFmin();
         }
-        if (domain.getFmax() > fmax) {
-            fmax = domain.getFmax();
+        if (region.getFmax() > fmax) {
+            fmax = region.getFmax();
         }
         return this;
     }
@@ -68,10 +68,6 @@ public abstract class PolypeptideRegionGroup extends CompoundLocatedFeature {
 
     public boolean isEmpty() {
         return domains.isEmpty();
-    }
-
-    public String getUrl() {
-        return null;
     }
 
     @Override

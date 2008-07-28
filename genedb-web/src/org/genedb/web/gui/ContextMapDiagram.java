@@ -6,6 +6,8 @@ import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.services.BasicGeneService;
 
+import org.apache.log4j.Logger;
+
 /**
  * This class represents a context map diagram in an abstract way, i.e.
  * independent of the specific technology used to display the diagram.
@@ -69,6 +71,8 @@ public class ContextMapDiagram extends TrackedDiagram {
      * or contig. (In practice it is unusual for the procedure to be
      * iterated at all, because overlaps are relatively rare.)
      */
+
+    private static final Logger logger = Logger.getLogger(ContextMapDiagram.class);
 
     private String organism, chromosome;
     /**

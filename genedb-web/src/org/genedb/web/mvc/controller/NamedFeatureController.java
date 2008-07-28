@@ -20,10 +20,10 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
-//import org.genedb.db.domain.objects.PolypeptideRegionGroup;
-//import org.genedb.web.gui.DiagramCache;
-//import org.genedb.web.gui.ProteinMapDiagram;
-//import org.genedb.web.gui.RenderedProteinMap;
+import org.genedb.db.domain.objects.PolypeptideRegionGroup;
+import org.genedb.web.gui.DiagramCache;
+import org.genedb.web.gui.ProteinMapDiagram;
+import org.genedb.web.gui.RenderedProteinMap;
 
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.Feature;
@@ -69,15 +69,16 @@ public class NamedFeatureController extends PostOrGetFormController {
 
         if (model.containsKey("polypeptide")) {
             Polypeptide polypeptide = (Polypeptide) model.get("polypeptide");
-//            @SuppressWarnings("unchecked")
-//            List<PolypeptideRegionGroup> domainInformation = (List<PolypeptideRegionGroup>) model.get("domainInformation");
-//
-//            if (!domainInformation.isEmpty()) {
-//                ProteinMapDiagram diagram = new ProteinMapDiagram(polypeptide, domainInformation);
-//                RenderedProteinMap renderedProteinMap = new RenderedProteinMap(diagram);
-//
-//                model.put("proteinMap", DiagramCache.fileForDiagram(renderedProteinMap, getServletContext()));
-//            }
+            @SuppressWarnings("unchecked")
+            List<PolypeptideRegionGroup> domainInformation = (List<PolypeptideRegionGroup>) model.get("domainInformation");
+
+            ProteinMapDiagram diagram = new ProteinMapDiagram(polypeptide, domainInformation);
+            if (!diagram.getAllocatedCompoundFeatures().isEmpty() && diagram.getSize() > 0) {
+                RenderedProteinMap renderedProteinMap = new RenderedProteinMap(diagram);
+
+                model.put("proteinMap", DiagramCache.fileForDiagram(renderedProteinMap, getServletContext()));
+                model.put("proteinMapMap", renderedProteinMap.getRenderedFeaturesAsHTML("proteinMapMap"));
+            }
         }
 
         return new ModelAndView(viewName, model);
@@ -105,13 +106,23 @@ public class NamedFeatureController extends PostOrGetFormController {
         private String name;
         private boolean detailsOnly = false;
 
+        public String getName() {
+            return this.name;
+        }
+
         public void setName(String name) {
             this.name = name;
         }
 
-        public String getName() {
-            return this.name;
+
+        public boolean isDetailsOnly() {
+            return detailsOnly;
         }
+
+        public void setDetailsOnly(boolean detailsOnly) {
+            this.detailsOnly = detailsOnly;
+        }
+
 
         /*
          * We need this because the form that is shown when the feature
@@ -120,14 +131,6 @@ public class NamedFeatureController extends PostOrGetFormController {
          */
         public String getOrganism() {
             return null;
-        }
-
-        public boolean isDetailsOnly() {
-            return detailsOnly;
-        }
-
-        public void setDetailsOnly(boolean detailsOnly) {
-            this.detailsOnly = detailsOnly;
         }
     }
 }

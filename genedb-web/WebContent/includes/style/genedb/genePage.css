@@ -25,6 +25,10 @@ div.highlighter {
 	z-index: 2;
 }
 
+#contextMapLoading {
+	margin-left: 20px;
+}
+
 img#contextMapLoadingImage {
 	position:absolute;
 	top:50%;
@@ -135,7 +139,18 @@ div#errorMessage {
     overflow: hidden;
 }
 
-/* Other .closeButton entries are in the page itself */
+.homeButton {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+    z-index: 5;
+}
+
+
+/* Other .closeButton and .homeButton entries are in gene.jsp */
 
 #geneDetailsLoading {
 	position: absolute;
@@ -219,7 +234,7 @@ div.leftBox .middle {
     width: 16em;
 }
 div.leftBox .inner {
-	height: 9em;
+	height: 11em;
 }
 div.rightBox {float: none;}
 div.rightBox .middle {
@@ -227,7 +242,7 @@ div.rightBox .middle {
 	padding-left: 5px;
 }
 div.rightBox .inner {
-    height: 9em;
+    height: 11em;
 }
 
 

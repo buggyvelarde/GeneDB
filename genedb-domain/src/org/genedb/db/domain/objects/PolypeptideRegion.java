@@ -24,6 +24,7 @@ public abstract class PolypeptideRegion extends LocatedFeature {
         return fmin;
     }
 
+    @Override
     public String getUrl() {
         return null;
     }

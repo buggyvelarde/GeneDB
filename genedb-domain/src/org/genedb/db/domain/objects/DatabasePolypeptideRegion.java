@@ -5,6 +5,10 @@ import org.gmod.schema.mapped.FeatureLoc;
 
 import org.apache.log4j.Logger;
 
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A region of a polypeptide that has an associated entry in an external database.
  *
@@ -12,6 +16,15 @@ import org.apache.log4j.Logger;
  */
 public class DatabasePolypeptideRegion extends PolypeptideRegion {
     private static final Logger logger = Logger.getLogger(DatabasePolypeptideRegion.class);
+
+    private static final Map<String,Color> colorsByDatabase = new HashMap<String,Color>() {{
+       put("Pfam",        new Color(255, 0,   255));
+       put("Prosite",     new Color(255, 0,   0));
+       put("SMART",       new Color(150, 170, 100));
+       put("PRINTS",      new Color(160, 140, 180));
+       put("ProDom",      new Color(100, 150, 180));
+       put("Superfamily", new Color(150, 120, 110));
+    }};
 
     private String url;
     String accession;
@@ -53,5 +66,14 @@ public class DatabasePolypeptideRegion extends PolypeptideRegion {
     @Override
     public String getUniqueName() {
         return String.format("%s:%s", database, accession);
+    }
+
+    @Override
+    public Color getColor() {
+        if (colorsByDatabase.containsKey(database)) {
+            return colorsByDatabase.get(database);
+        }
+        logger.info(String.format("The database '%s' has no default color; using red", database));
+        return Color.RED;
     }
 }

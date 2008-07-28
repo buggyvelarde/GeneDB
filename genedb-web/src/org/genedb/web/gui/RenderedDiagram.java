@@ -5,7 +5,8 @@ import net.sf.json.JSONString;
 import org.genedb.db.domain.objects.CompoundLocatedFeature;
 import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.objects.LocatedFeature;
-import org.genedb.web.gui.TrackedDiagram.AllocatedCompoundFeature;
+
+import org.gmod.schema.feature.Region;
 
 import org.apache.log4j.Logger;
 
@@ -24,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -169,6 +171,11 @@ public abstract class RenderedDiagram {
      * Height of each major scale tick below the axis, in pixels
      */
     private int majorTickHeightBelow = 4;
+
+    /**
+     * Height of the scale boundary markers, above and below, in pixels.
+     */
+    private int boundaryTickHeight = 6;
 
     /**
      * Vertical position of scale axis within scale track,
@@ -448,6 +455,10 @@ public abstract class RenderedDiagram {
         this.majorTickHeightBelow = majorTickHeightBelow;
     }
 
+    protected void setBoundaryTickHeight(int boundaryTickHeight) {
+        this.boundaryTickHeight = boundaryTickHeight;
+    }
+
     public abstract String getRelativeRenderDirectory();
 
     public List<RenderedContextMap.Tile> renderTilesTo(String directory, int tileWidth) {
@@ -580,22 +591,20 @@ public abstract class RenderedDiagram {
         afterRender();
     }
 
-    private void renderFeatures() {
+    protected void renderFeatures() {
         SortedSet<AllocatedCompoundFeature> features = diagram.getAllocatedCompoundFeatures();
         for (AllocatedCompoundFeature superfeature : features) {
             drawCompoundFeature(superfeature);
             int track = superfeature.getTrack();
             CompoundLocatedFeature compoundFeature = superfeature.getFeature();
-            List<? extends LocatedFeature> subfeatures = compoundFeature.getSubfeatures();
-            if (subfeatures.size() == 0) {
-                logger.error(String.format("Feature '%s' has no subfeatures!", compoundFeature.getUniqueName()));
-                continue;
-            }
+
             if (compoundFeature.getFmax() < this.getStart() || compoundFeature.getFmin() > this.getEnd())
                 continue;
 
-            for (LocatedFeature subfeature: subfeatures) {
-                drawFeature(track, subfeature, superfeature);
+            for (Collection<LocatedFeature> subfeatures: superfeature.getSubtracks()) {
+                for (LocatedFeature subfeature: subfeatures) {
+                    drawFeature(track, subfeature, superfeature);
+                }
                 track += Integer.signum(track);
             }
         }
@@ -639,6 +648,7 @@ public abstract class RenderedDiagram {
     }
 
     public void setBasesPerPixel(int bases, int pixels) {
+        logger.debug(String.format("Setting bases per pixel for bases=%d, pixels=%d", bases, pixels));
         if (pixels <= bases) {
             if (bases % pixels == 0) {
                 setBasesPerPixel(bases / pixels);
@@ -663,6 +673,16 @@ public abstract class RenderedDiagram {
     }
 
     /**
+     * Calculate the width in pixels of a region.
+     *
+     * @param region the region in question
+     * @return the width in pixels
+     */
+    protected int pixelWidth(Region region) {
+        return pixelWidth(region.getFmin(), region.getFmax());
+    }
+
+    /**
      * Calculate the width in pixels of a segment of the diagram.
      *
      * @param start the start location, in interbase coordinates
@@ -670,7 +690,7 @@ public abstract class RenderedDiagram {
      * @return the width in pixels
      */
     protected int pixelWidth(int start, int end) {
-        return xCoordinate(end) - xCoordinate(start);
+        return xCoordinate(end) - xCoordinate(start) + 1;
     }
 
     private double naivePixelWidth(int start, int end) {
@@ -754,6 +774,14 @@ public abstract class RenderedDiagram {
         return minorTickDistance;
     }
 
+    protected int getScaleVerticalPos() {
+        return scaleVerticalPos;
+    }
+
+    protected void setScaleVerticalPos(int scaleVerticalPos) {
+        this.scaleVerticalPos = scaleVerticalPos;
+    }
+
     /**
      * Set the distance between major (labelled) and minor (unlabelled) ticks on
      * the scale track of this diagram. The <code>majorTickDistance</code>
@@ -792,7 +820,7 @@ public abstract class RenderedDiagram {
      * @param trackNumber
      * @return
      */
-    int topOfTrack(int trackNumber) {
+    protected int topOfTrack(int trackNumber) {
         int firstGuess = (numberOfPositiveTracks - trackNumber) * trackHeight;
 
         // The first guess is right for non-negative tracks.
@@ -808,7 +836,7 @@ public abstract class RenderedDiagram {
     /**
      * Draw the scale line, marking any gaps. Does not draw ticks.
      */
-    private void drawScaleLine() {
+    protected void drawScaleLine() {
         graf.setColor(scaleColor);
         int x = xCoordinate(getStart()), y = yCoordinateOfAxis();
         for (Gap gap: gapsByStart.values()) {
@@ -832,13 +860,23 @@ public abstract class RenderedDiagram {
             x = xCoordinate(gap.getFmin()) + axisBreakGap;
         }
         graf.drawLine(x, y, xCoordinate(getEnd()), y);
+
+        drawBoundaryMarker(xCoordinate(getStart()));
+        drawBoundaryMarker(xCoordinate(getEnd()));
     }
 
-    private int yCoordinateOfAxis() {
+    protected void drawBoundaryMarker(int x) {
+        if (boundaryTickHeight > 0) {
+            int y = yCoordinateOfAxis();
+            graf.drawLine(x, y - boundaryTickHeight, x, y + boundaryTickHeight);
+        }
+    }
+
+    protected int yCoordinateOfAxis() {
         return topOfTrack(0) + scaleVerticalPos;
     }
 
-    private void drawScaleTrack() {
+    protected void drawScaleTrack() {
 
         drawScaleLine();
 

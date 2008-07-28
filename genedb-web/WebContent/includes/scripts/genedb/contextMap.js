@@ -188,11 +188,7 @@ function loadTiles(chrlen, tileData) {
     $("#contextMapInfoPanel").click(function(event) { event.stopPropagation(); });
     $("#geneDetails").click(deselectTranscript);
     $("#contextMapInfoPanel #loadDetails a").click(function() {
-        var hash = this.href;
-        hash = hash.replace(/^.*#/, '');
-        // moves to a new page.
-        // pageload is called at once.
-        $.historyLoad(hash);
+        loadSelectedTranscript();
         return false;
     });
 
@@ -289,7 +285,11 @@ function reloadDetails(name) {
     });
 }
 
-var areasByTranscriptName = new Array();
+var areasByTranscriptName = new Array(), loadedArea = null;
+function selectLoaded() {
+    if (loadedArea != null)
+        selectTranscript(loadedArea);
+}
 function createArea(transcript, topPx, heightPx) {
     // The only way I could get this to work in IE6 was to
     // use a transparent GIF here. (In proper browsers, you
@@ -316,10 +316,7 @@ function createArea(transcript, topPx, heightPx) {
             }
             return false;
         };
-        area.ondblclick = function() {
-            if (selectedTranscript[0] != loadedTranscriptName)
-                $.historyLoad(selectedTranscript[0]);
-        };
+        area.ondblclick = loadSelectedTranscript;
 
         area.setAttribute("title", geneName(transcript));
     }
@@ -343,8 +340,16 @@ function createArea(transcript, topPx, heightPx) {
 
     // On initial chromosome load, highlight the transcript we're here for.
     if (transcript[0] == loadedTranscriptName) {
+        loadedArea = area;
         selectTranscript(area, transcript);
         populateInfoPanel(transcript);
+    }
+}
+
+function loadSelectedTranscript() {
+    if (selectedTranscript[0] != loadedTranscriptName) {
+        $.historyLoad(selectedTranscript[0]);
+        loadedArea = selectedArea;
     }
 }
 

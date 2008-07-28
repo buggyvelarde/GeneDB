@@ -22,17 +22,25 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
     );
 }
 
-.closeButton a {
+.closeButton a, .homeButton a {
     position: absolute;
     top: 0px;
     left: 0px;
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background: transparent url(<c:url value="/includes/images/close-button.png"/>) 0px 0px no-repeat;
+}
+.closeButton a {
+    background: transparent url(<c:url value="/includes/images/chr-buttons.png"/>) 0px 0px no-repeat;
 }
 .closeButton a:hover {
-    background: transparent url(<c:url value="/includes/images/close-button.png"/>) 0px -16px no-repeat;
+    background: transparent url(<c:url value="/includes/images/chr-buttons.png"/>) 0px -16px no-repeat;
+}
+.homeButton a {
+    background: transparent url(<c:url value="/includes/images/chr-buttons.png"/>) -16px 0px no-repeat;
+}
+.homeButton a:hover {
+    background: transparent url(<c:url value="/includes/images/chr-buttons.png"/>) -16px -16px no-repeat;
 }
 </style>
 
@@ -49,6 +57,7 @@ onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.u
             <img src="<c:url value="/includes/images/default/grid/loading.gif"/>" id="contextMapLoadingImage">
             Loading...
         </div>
+        <div class="homeButton"><a href="#" title="Home" onclick="selectLoaded(); return false;"></a></div>
         <div id="contextMapContent" class="contextMapContent"><div class="highlighter"></div></div>
     </div>
 </div>

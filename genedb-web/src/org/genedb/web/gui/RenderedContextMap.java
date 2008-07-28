@@ -8,7 +8,6 @@ import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.objects.LocatedFeature;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
-import org.genedb.web.gui.TrackedDiagram.AllocatedCompoundFeature;
 
 import org.apache.log4j.Logger;
 
@@ -133,6 +132,7 @@ public class RenderedContextMap extends RenderedDiagram {
         setUTRRectHeight(2);
         setTickDistances(0, 0);
         setScaleColor(Color.GRAY);
+        setBoundaryTickHeight(0);
         return this;
     }
 
