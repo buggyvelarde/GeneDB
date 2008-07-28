@@ -729,14 +729,14 @@ public class SequenceDao extends BaseDao {
         return region;
     }
 
-    private CvTerm partType = null;
+    private CvTerm partOfType = null;
     private FeatureRelationship addPart(Feature whole, Feature part) {
-        if (partType == null) {
-            partType = cvDao.getCvTermByNameAndCvName("has_part", "relationship");
+        if (partOfType == null) {
+            partOfType = cvDao.getCvTermByNameAndCvName("part_of", "relationship");
         }
-        FeatureRelationship featureRelationship = new FeatureRelationship(whole, part, partType, 0);
-        whole.addFeatureRelationshipsForSubjectId(featureRelationship);
-        part.addFeatureRelationshipsForObjectId(featureRelationship);
+        FeatureRelationship featureRelationship = new FeatureRelationship(part, whole, partOfType, 0);
+        part.addFeatureRelationshipsForSubjectId(featureRelationship);
+        whole.addFeatureRelationshipsForObjectId(featureRelationship);
         return featureRelationship;
     }
 
