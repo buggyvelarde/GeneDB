@@ -1,10 +1,10 @@
 package org.gmod.schema.feature;
 
+import org.gmod.schema.mapped.Organism;
+
 import java.sql.Timestamp;
 
 import javax.persistence.Entity;
-
-import org.gmod.schema.mapped.Organism;
 
 /**
  * A chromosome or contig.

@@ -1,11 +1,12 @@
 package org.gmod.schema.feature;
 
-import java.sql.Timestamp;
-
-import org.biojava.bio.symbol.Location;
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Organism;
+
+import org.biojava.bio.symbol.Location;
+
+import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 

@@ -1,11 +1,11 @@
 package org.gmod.schema.feature;
 
-import java.sql.Timestamp;
-
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.Organism;
 
 import org.hibernate.search.annotations.Indexed;
+
+import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 

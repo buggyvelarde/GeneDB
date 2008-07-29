@@ -1,10 +1,10 @@
 package org.gmod.schema.feature;
 
+import org.gmod.schema.mapped.Organism;
+
 import java.sql.Timestamp;
 
 import javax.persistence.Entity;
-
-import org.gmod.schema.mapped.Organism;
 
 /**
  * An {@link Exon} or {@link PseudogenicExon}.
@@ -14,13 +14,13 @@ import org.gmod.schema.mapped.Organism;
  */
 @Entity
 public abstract class AbstractExon extends TranscriptRegion {
-	
-	public AbstractExon() {
-		// Deliberately empty
-	}
-	
-	public AbstractExon(Organism organism, String systematicId, boolean analysis,
-			boolean obsolete, Timestamp dateAccessioned) {
-		super(organism, systematicId, analysis, obsolete, dateAccessioned);
-	}
+
+    public AbstractExon() {
+        // Deliberately empty
+    }
+
+    public AbstractExon(Organism organism, String systematicId, boolean analysis, boolean obsolete,
+            Timestamp dateAccessioned) {
+        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    }
 }
