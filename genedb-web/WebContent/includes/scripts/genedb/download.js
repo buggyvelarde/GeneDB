@@ -38,6 +38,7 @@ function initDownload(base,history) {
         	var checked = this.get("checked");
         	if(value == "sequence") {
         		sequence.addClass("yui-checkbox-button-checked");
+        		sequence.disabled = false;
         		checked = column.hidden;
         	}
     		if(checked) {
@@ -45,6 +46,7 @@ function initDownload(base,history) {
         	} else {
         		if(value == "sequence") {
             		sequence.removeClass("yui-checkbox-button-checked");
+            		sequence.disabled = true;
         		}
         		myDT.hideColumn(column);
         	}
@@ -60,39 +62,60 @@ function initDownload(base,history) {
         	sequenceType = this.value;
         }
         
+        
+        makeDragDrop();
+        
         //Columns Show/ Hide Buttons
-        var organism = new YAHOO.widget.Button({type: "checkbox", name:"Organism",label:"Organism",value:"organism", id:"organism.commonName",container: "buttons", 
-            checked: true});
+        var organism = new YAHOO.widget.Button("organism.commonName", { label:"Organism" }); 
+        
+        /*var organism = new YAHOO.widget.Button({type: "checkbox", name:"Organism",label:"Organism",value:"organism", id:"organism.commonName",container: "buttons", 
+            checked: true});*/
         
         organism.addListener("click", onClick);
+        //new YAHOO.util.DD(organism);
         
-        var systematicId = new YAHOO.widget.Button({type: "checkbox", name:"Systematic Id",label:"Systematic Id",value:"systematicId", id:"uniqueName", container: "buttons", 
-            checked: true});
+        var systematicId = new YAHOO.widget.Button("uniqueName", { label:"Systematic Id" });
+        
+        /*var systematicId = new YAHOO.widget.Button({type: "checkbox", name:"Systematic Id",label:"Systematic Id",value:"systematicId", id:"uniqueName", container: "buttons", 
+            checked: true});*/
         
         systematicId.addListener("click", onClick);
+        //new YAHOO.util.DD(systematicId);
         
-        var synonym = new YAHOO.widget.Button({type: "checkbox", name:"Synonyms",label:"Synonyms",value:"synonym",id:"synonym", container: "buttons", 
-            checked: true});
+        var synonym = new YAHOO.widget.Button("synonym", { label:"Synonym" });
+        
+        /*var synonym = new YAHOO.widget.Button({type: "checkbox", name:"Synonyms",label:"Synonyms",value:"synonym",id:"synonym", container: "buttons", 
+            checked: true});*/
         
         synonym.addListener("click", onClick);
+        //new YAHOO.util.DD(synonym);
         
-        var chromosome = new YAHOO.widget.Button({type: "checkbox", name:"Chromosome",label:"Chromosome",value:"chromosome",id:"chr", container: "buttons", 
-            checked: true});
+        var chromosome = new YAHOO.widget.Button("chr", { label:"Chromosome" });
+        
+        /*var chromosome = new YAHOO.widget.Button({type: "checkbox", name:"Chromosome",label:"Chromosome",value:"chromosome",id:"chr", container: "buttons", 
+            checked: true});*/
         
         chromosome.addListener("click", onClick);
+        //new YAHOO.util.DD(chromosome);
         
-        var location = new YAHOO.widget.Button({type: "checkbox", name:"Location",label:"Location",value:"location",id:"locs", container: "buttons", 
-            checked: true});
+        var location = new YAHOO.widget.Button("locs", { label:"Location" });
+        
+        /*var location = new YAHOO.widget.Button({type: "checkbox", name:"Location",label:"Location",value:"location",id:"locs", container: "buttons", 
+            checked: true});*/
         
         location.addListener("click", onClick);
+        //new YAHOO.util.DD(location);
         
-        var product = new YAHOO.widget.Button({type: "checkbox", name:"Product",label:"Product",value:"product",id:"product", container: "buttons", 
-            checked: true});
+        var product = new YAHOO.widget.Button("product", { label:"Product" });
+        
+        /*var product = new YAHOO.widget.Button({type: "checkbox", name:"Product",label:"Product",value:"product",id:"product", container: "buttons", 
+            checked: true});*/
         
         product.addListener("click", onClick);
+        //new YAHOO.util.DD(product);
         
         //sequence options
-        var sequenceOptions = [
+        /*var sequenceOptions = [
 
                                  { text: "DNA (Unspliced sequence of CDS) or sequenced EST", value: "UNSPLICED_DNA", onclick: { fn: onMenuItemClick }},
                                  { text: "DNA (Spliced sequence)", value: "SPLICED_DNA", onclick: { fn: onMenuItemClick } },
@@ -101,13 +124,16 @@ function initDownload(base,history) {
                                  { text: "Intergenic Sequence (5' )", value: "INTERGENIC_5", onclick: { fn: onMenuItemClick } },
                                  { text: "Intergenic Sequence (3' )", value: "INTERGENIC_3", onclick: { fn: onMenuItemClick } },
                                  { text: "CDS/RNA with 5'/3' flanking sequence", value: "CDS_RNA", onclick: { fn: onMenuItemClick } }
-                             ];
-        var seqMenu = new YAHOO.widget.Menu('seqMenu');
-        seqMenu.addItems(sequenceOptions);
+                             ];*/
+        //var seqMenu = new YAHOO.widget.Menu('seqMenu');
+        //seqMenu.addItems(sequenceOptions);
         
-        var sequence = new YAHOO.widget.Button({type: "split", name:"Sequence",label:"Sequence",value:"sequence",id:"sequence", container: "sequence", 
-            menu:seqMenu, selectedMenuItem:0, disabled: true});
-        seqMenu.render();
+        //var sequence = new YAHOO.widget.Button("sequence", { label:"sequence",menu:seqMenu, selectedMenuItem:0, disabled: true });
+        var sequence = new YAHOO.widget.Button("sequence", { type: "split",menu: "sequenceselect" }); 
+        /*var sequence = new YAHOO.widget.Button({type: "split", name:"Sequence",label:"Sequence",value:"sequence",id:"sequence", container: "sequence", 
+            menu:seqMenu, selectedMenuItem:0, disabled: true});*/
+        //new YAHOO.util.DD(sequence);
+        //seqMenu.render();
         sequence.addListener("click", onClick);
         
         function onOutputClick(e) {
@@ -293,3 +319,138 @@ function initDownload(base,history) {
 		
     };
 } 
+
+function makeDragDrop() {
+
+
+    YAHOO.example.DDList = function(id, sGroup, config) {
+
+        YAHOO.example.DDList.superclass.constructor.call(this, id, sGroup, config);
+
+        var el = this.getDragEl();
+        Dom.setStyle(el, "opacity", 0.67); // The proxy is slightly transparent
+
+        this.goingUp = false;
+        this.lastY = 0;
+    };
+
+    YAHOO.extend(YAHOO.example.DDList, YAHOO.util.DDProxy, {
+
+        startDrag: function(x, y) {
+
+            // make the proxy look like the source element
+            var dragEl = this.getDragEl();
+            var clickEl = this.getEl();
+            Dom.setStyle(clickEl, "visibility", "hidden");
+
+            dragEl.innerHTML = clickEl.innerHTML;
+
+            Dom.setStyle(dragEl, "color", Dom.getStyle(clickEl, "color"));
+            Dom.setStyle(dragEl, "backgroundColor", Dom.getStyle(clickEl, "backgroundColor"));
+            Dom.setStyle(dragEl, "border", "2px solid gray");
+        },
+
+        endDrag: function(e) {
+
+            var srcEl = this.getEl();
+            var proxy = this.getDragEl();
+
+            // Show the proxy element and animate it to the src element's location
+            Dom.setStyle(proxy, "visibility", "");
+            var a = new YAHOO.util.Motion( 
+                proxy, { 
+                    points: { 
+                        to: Dom.getXY(srcEl)
+                    }
+                }, 
+                0.2, 
+                YAHOO.util.Easing.easeOut 
+            )
+            var proxyid = proxy.id;
+            var thisid = this.id;
+
+            // Hide the proxy and show the source element when finished with the animation
+            a.onComplete.subscribe(function() {
+                    Dom.setStyle(proxyid, "visibility", "hidden");
+                    Dom.setStyle(thisid, "visibility", "");
+                });
+            a.animate();
+        },
+
+        onDragDrop: function(e, id) {
+
+            // If there is one drop interaction, the li was dropped either on the list,
+            // or it was dropped on the current location of the source element.
+            if (DDM.interactionInfo.drop.length === 1) {
+
+                // The position of the cursor at the time of the drop (YAHOO.util.Point)
+                var pt = DDM.interactionInfo.point; 
+
+                // The region occupied by the source element at the time of the drop
+                var region = DDM.interactionInfo.sourceRegion; 
+
+                // Check to see if we are over the source element's location.  We will
+                // append to the bottom of the list once we are sure it was a drop in
+                // the negative space (the area of the list without any list items)
+                if (!region.intersect(pt)) {
+                    var destEl = Dom.get(id);
+                    var destDD = DDM.getDDById(id);
+                    destEl.appendChild(this.getEl());
+                    destDD.isEmpty = false;
+                    DDM.refreshCache();
+                }
+
+            }
+        },
+
+        onDrag: function(e) {
+
+            // Keep track of the direction of the drag for use during onDragOver
+            var y = Event.getPageY(e);
+
+            if (y < this.lastY) {
+                this.goingUp = true;
+            } else if (y > this.lastY) {
+                this.goingUp = false;
+            }
+
+            this.lastY = y;
+        },
+
+        onDragOver: function(e, id) {
+        
+            var srcEl = this.getEl();
+            var destEl = Dom.get(id);
+
+            // We are only concerned with list items, we ignore the dragover
+            // notifications for the list.
+            if (destEl.nodeName.toLowerCase() == "li") {
+                var orig_p = srcEl.parentNode;
+                var p = destEl.parentNode;
+
+                if (this.goingUp) {
+                    p.insertBefore(srcEl, destEl); // insert above
+                } else {
+                    p.insertBefore(srcEl, destEl.nextSibling); // insert below
+                }
+
+                DDM.refreshCache();
+            }
+        }
+    });
+    
+    var Dom = YAHOO.util.Dom;
+    var Event = YAHOO.util.Event;
+    var DDM = YAHOO.util.DragDropMgr;
+
+    new YAHOO.util.DDTarget("ul-buttons");
+
+    new YAHOO.example.DDList("org");
+    new YAHOO.example.DDList("nam");
+    new YAHOO.example.DDList("syn");
+    new YAHOO.example.DDList("chro");
+    new YAHOO.example.DDList("loc");
+    new YAHOO.example.DDList("pro");    
+    new YAHOO.example.DDList("seq");
+    
+}
