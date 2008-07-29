@@ -43,7 +43,7 @@ public class DisplayPhylogeny extends AbstractHomepageTag {
         StringBuffer top = new StringBuffer();
         int j = 1;
         sb
-                .append("<div id=\"start\" onmouseover=\"showfirst();\" onmouseout=\"hidefirst();\" style=\"position: relative; border: 1px solid black; width: 154px; background: rgb(153, 153, 255);\"><a href=\"null\" style=\"text-decoration: none; color: white;\">Start</a>");
+                .append("<div id=\"start\" onmouseover=\"showfirst();\" onmouseout=\"hidefirst();\" style=\"position: relative; border: 1px solid black; width: 154px; background: rgb(153, 153, 255);\"><a href=\"null\" style=\"text-decoration: none; color: white;\">Select Organism</a>");
         for (TaxonNode tnode : nodes) {
             CompositeMenu menu = new CompositeMenu(Integer.toString(Menu.counter++), tnode
                     .getLabel(), null, true);
@@ -58,10 +58,6 @@ public class DisplayPhylogeny extends AbstractHomepageTag {
         // System.out.println(sb.toString());
         sb.append("<input type=\"hidden\" id=\"itemsLength\" value=\"" + Menu.counter + "\"/>");
         sb.append("<input type=\"hidden\" id=\"topItems\" value=\"" + top.toString() + "\"/>");
-        PageContext pc = (PageContext) getJspContext();
-        String prefix = ((HttpServletRequest) pc.getRequest()).getContextPath();
-        sb.append("<script type=\"text/javascript\" src=\"" + prefix
-                + "/includes/scripts/phylogeny.js\"/></script>");
         Menu.counter = 0;
         out.print(sb.toString());
     }
