@@ -23,17 +23,57 @@
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/historyEdit.js"/>"></script>
 	<link rel="stylesheet" href="<c:url value="/"/>includes/style/alternative.css" type="text/css"/>
 </format:headerRound>
-<br>
-<div id="queryName" align="center">
-<span>Editing History Item ${historyName}</span>
+<div id="queryDetails" align="left">
+	<span style="font-size:1.3em;">
+		Query Name: <i><b>${historyName}</b></i>
+	</span>
+	<br>
+	<div style="float: left;width: 300px;">
+		<span style="font-size:1.3em;">Query Details:</span>
+	</div>
+	<div id="details">
+		<table>
+			<tr>
+				<td>Organisms:</td>
+				<td>${organism}</td>
+			</tr>
+			<tr>
+				<td>Type:</td>
+				<td>Indexed List</td>
+			</tr>
+			<tr>
+				<td>Fields:</td>
+				<td>${category}</td>
+			</tr>
+			<tr>
+				<td>Term:</td>
+				<td>${term}</td>
+			</tr>
+		</table>
+	</div>
 </div>
-<br><br>
-<div id="historyEditLeft">
+<div id="historyEditLeft" style="clear:both;">
 	<div id="historyEditButtons" align="center">
 		<br>
-		<div id="historyEditActionButtons"></div>
-		<br>
-		<div id="historyEditSaveButtons"></div>
+		<div id="historyEditSelect">
+			<div id="select" style="float:left;">Selection: </div>
+			<div id="historyEditActionButtons" style="float:right;">
+			</div>
+			<br><br>
+			<div id="manipulate" style="clear:both;float:left;">Manipulate: </div>
+			<div id="historyEditManipulateButtons" style="float:right;">
+			</div>
+			<br><br>
+			<div id="forSaveButtons">
+				<div style="float:left">
+					<span style="text-align: left">Save List:</span>
+				</div >
+				<div id="historyEditSaveButtons" style="float:right">
+					
+				</div>
+			</div>
+			<div id="temp" style="clear:both;"></div>
+		</div>
 	</div>
 	<br>
 	<div id="historyEditSelectedId" align="center">
@@ -45,7 +85,4 @@
 </div>
 <div id="historyEdit" align="center"></div>
 <div id="img" align="center" style="clear: both;"></div>
-	<style type="text/css">
-		span {margin: 0.25em}
-	</style>
 <format:footer/>
