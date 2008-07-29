@@ -24,45 +24,27 @@ function makeButtons() {
 							id:"selectAll",container: "historyEditActionButtons"});
 	
 	selectAll.addListener("click", onSelectAllClicked);
-	//selectAll.addClass("edit-history-button");
 	
-	var unselectAll = new YAHOO.widget.Button({type: "push",label:"Unselect All",value:"unselectAll", 
+	var unselectAll = new YAHOO.widget.Button({type: "push",label:"Deselect All",value:"unselectAll", 
 							id:"unselectAll",container: "historyEditActionButtons"});
 
 	unselectAll.addListener("click", onSelectAllClicked);
-	//unselectAll.addClass("edit-history-button");
 	
-	var invertSelect = new YAHOO.widget.Button({type: "push",label:"Invert Selection",value:"invertSelect", 
-							id:"invertSelect",container: "historyEditActionButtons"});
-
-	invertSelect.addListener("click", onInvertSelectClicked);
-	//invertSelect.addClass("edit-history-button");
-	
-	var deleteSelected = new YAHOO.widget.Button({type: "push",label:"Delete Selected",value:"delete", 
-								id:"delete",container: "historyEditActionButtons"});
+	var deleteSelected = new YAHOO.widget.Button({type: "push",label:"Delete items",value:"delete", 
+								id:"delete",container: "historyEditManipulateButtons"});
 
 	deleteSelected.addListener("click", onDeleteClicked);
-	//deleteSelected.addClass("edit-history-button");
-	
-	
-	saveOptions = new YAHOO.widget.ButtonGroup({ 
-				        id:  "saveOptions", 
-				        name:  "saveOptions", 
-				        container:  "historyEditSaveButtons" });
-
-	saveOptions.addButtons([
-	
-		{ label: "Modify", value: "modify", checked: true },
-		{ label: "Create New", value: "new" }
-	
-	]);
 
 	
-	var save = new YAHOO.widget.Button({type: "push",label:"Save & Exit",value:"save", 
+	var save = new YAHOO.widget.Button({type: "push",label:"Replace original query",value:"save", 
 					id:"save",container: "historyEditSaveButtons"});
 
 	save.addListener("click", onSaveClicked);
-	//save.addClass("edit-history-button");
+	
+	var newList = new YAHOO.widget.Button({type: "push",label:"Create new list",value:"newlist", 
+					id:"newlist",container: "historyEditSaveButtons"});
+
+	newList.addListener("click", onSaveClicked);
 }
 
 function onSelectAllClicked(e) {
@@ -127,9 +109,9 @@ var callback =
 };
 
 function onSaveClicked(e) {
-	var button = saveOptions.getButton(0);
+	var type = e.currentTarget.id;
 	var url = base + "History/AddItem?history=" + hist + "&ids=" + ids.toString();
-	if(button.get("checked")) {
+	if(type == 'save') {
 		url += "&type=MODIFY";
 		
 	} else {
