@@ -6,6 +6,7 @@
 <%@ attribute name="title"  required="true" %>
 <%@ attribute name="onLoad" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="db" uri="db" %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
@@ -19,24 +20,50 @@
     <!--  YUI dependencies -->
     <script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
     <script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/container/container_core.js"/>"></script>
-
+	<script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/animation/animation-min.js"/>"></script>
     <!-- YUI menu -->
     <script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/menu/menu.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/includes/scripts/phylogeny.js"/>"></script>
     <script type="text/javascript">
-        var navigationMenuBar;
+    	var navigationMenuBar;
         YAHOO.util.Event.onContentReady("navigation", function () {
             navigationMenuBar = new YAHOO.widget.MenuBar("navigation", {autosubmenudisplay: true, showdelay: 0, hidedelay: 500, lazyload: false});
             navigationMenuBar.clickEvent.unsubscribeAll();
             navigationMenuBar.render();
         });
+
+        function loadAdvanceSearch() {
+			var dom = YAHOO.util.Dom;
+			var div = dom.get("advanceSearch");
+			var attributes = {
+			        height: { to: 120 },
+			 };
+			 var anim = new YAHOO.util.Anim('advanceSearch', attributes);			
+			 anim.animate();
+			 dom.setStyle(div, "overflow", "visible");
+			 dom.setStyle(div, "border", "1 px solid grey");
+        }
+
+        function closeAdvanceSearch() {
+        	var dom = YAHOO.util.Dom;
+			var div = dom.get("advanceSearch");
+			dom.setStyle(div, "overflow", "hidden");
+			dom.setStyle(div, "border", "");
+			var attributes = {
+			        height: { to: 0 },
+		    };
+		 	var anim = new YAHOO.util.Anim('advanceSearch', attributes);
+			anim.animate();
+        }
+        
     </script>
 
     <jsp:doBody />
 </head>
 <% if (onLoad == null) { %>
-<body class="yui-skin-sam ${bodyClass}">
+<body class="yui-skin-sam ${bodyClass}" onLoad="adjustCoordinates();">
 <% } else { %>
-<body class="yui-skin-sam ${bodyClass}" onLoad="${onLoad}">
+<body class="yui-skin-sam ${bodyClass}" onLoad="adjustCoordinates();${onLoad}">
 <% } %>
 <table id="header"><tbody>
     <tr id="top-row">
@@ -50,7 +77,48 @@
             	<form name="searchForm" action="<c:url value="/NameSearch"/>" method="get">
             </c:if>
             	<input id="query" name="name" type="text" align="middle"/>
-            	<input id="submit" type="submit" value="Search" title="Search" align="middle" />
+            	<input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
+				<span align="top" style="font-size:0.65em;">
+					<a style="color:white;vertical-align:top;" href="#" onclick="loadAdvanceSearch()">
+						Advance Search
+					</a>
+				</span>
+				<div id="advanceSearch">
+					<form name="advSearchForm" action="<c:url value="/"/>NameSearch?organism=${organism}" method="get">
+						<table id="advSearchTable" cellpadding="2">
+							<tr>
+								<td width="20%" style="text-align:left;">Search </td>
+								<td width="80%"> 
+									<select>	
+										<option>Gene names</option>
+										<option>Product</option>
+										<option>curated annotations [comments & curation]</option>
+										<option>GO term/id</option>
+										<option>EC number</option>
+										<option>Pfam ID or keyword</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td width="20%" style="text-align:left;"> 
+									in
+								</td>
+								<td width="80%" style="text-align:center;"><db:phylogeny/></td>
+							</tr>
+							<tr>
+								<td width="20%" style="text-align:left;"> 
+									for
+								</td>
+								<td width="80%" style="text-align:left;">
+									<input id="query" name="name" type="text" align="middle">
+									<input id="submit" type="submit" value="Go" title="Search" align="middle" />
+								</td>
+							</tr>
+						</table>
+					</form>
+					<br>
+					<span><a href="#" onclick="closeAdvanceSearch()">Close</a></span>
+				</div>
             </form>
         </td>
     </tr>
@@ -128,6 +196,9 @@
                             </div>
                         </div>
                     </li>
+					<li class="yuimenubaritem">
+						<a class="yuimenuitemlabel" href="<c:url value="/History/View"/>">History</a>
+					</li>
                 </ul>
             </div>
     	</div></td>
