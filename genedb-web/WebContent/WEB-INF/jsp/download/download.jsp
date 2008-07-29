@@ -8,6 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/YUI-2.5.2/button/assets/skins/sam/button.css"/>" />
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/connection/connection-min.js"/>"></script>
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/animation/animation-min.js"/>"></script>
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/dragdrop/dragdrop-min.js"/>"></script>
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/json/json-min.js"/>"></script>
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/element/element-beta-min.js"/>"></script>
@@ -37,8 +38,29 @@
 		<legend>
 			Click on the buttons to show/hide columns
 		</legend>
-		<div id="buttons" align="center">
+		<div class="workarea">
+		  <ul id="ul-buttons">
+		    <li id="org" class="buttons"><input id="organism.commonName" type="checkbox" name="organism" value="Organism" checked></li>
+		    <li id="nam" class="buttons"><input id="uniqueName" type="checkbox" name="name" value="Systematic ID" checked></li>
+		    <li id="syn" class="buttons"><input id="synonym" type="checkbox" name="synonym" value="Synonym" checked></li>
+			<li id="chro"class="buttons" ><input id="chr" type="checkbox" name="chromosome" value="Chromosome" checked></li>
+			<li id="loc" class="buttons"><input id="locs" type="checkbox" name="location" value="Location" checked></li>
+			<li id="pro" class="buttons"><input id="product" type="checkbox" name="product" value="Product" checked></li>
+			<li id="seq" class="buttons">
+				<input type="submit" id="sequence" name="sequence" value="Sequence" disabled="disabled">
+				<select id="sequenceselect" name="sequenceselect" multiple>
+				    <option value="DNA (Unspliced sequence of CDS) or sequenced EST">UNSPLICED_DNA</option>
+				    <option value="DNA (Spliced sequence)">SPLICED_DNA</option>
+				    <option value="Intron sequence">INTRON</option>  
+					<option value="Protein sequence">PROTEIN</option>     
+					<option value="Intergenic Sequence (5' )">INTERGENIC_5</option>
+					<option value="Intergenic Sequence (3' )">INTERGENIC_3</option>     
+					<option value="CDS/RNA with 5'/3' flanking sequence">CDS_RNA</option>    
+				</select>
+			</li>
+		  </ul>
 		</div>
+<!--		<div id="buttons" align="center" style="padding:5px;"></div>-->
 		<div id="sequence" align="center" style="padding:5px;"></div>
 		<div id="seqMenu" align="center"></div>
 	</fieldset>
