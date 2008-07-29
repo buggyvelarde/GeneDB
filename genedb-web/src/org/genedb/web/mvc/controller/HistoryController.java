@@ -53,6 +53,7 @@ public class HistoryController extends MultiActionController implements Initiali
     private String editView;
     private static final String TIME_FORMAT = "HH:mm:ss";
     private static final SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT);
+	private static final int SESSION_FAILED_ERROR_CODE = 500;
 
     
     public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
@@ -63,7 +64,7 @@ public class HistoryController extends MultiActionController implements Initiali
     }
 
     /**
-     * Custom handler for examples
+     * Simple redirection to a JSP that does an AJAX-y request to viewData
      * 
      * @param request current HTTP request
      * @param response current HTTP response
@@ -72,17 +73,9 @@ public class HistoryController extends MultiActionController implements Initiali
     public ModelAndView View(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            // No session
-            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest",
-                "false");
-            if ("true".equals(secondTry)) {
-                // TODO Maybe use built in error handling
-                return new ModelAndView("history/noSession");
-            }
-            // Try and create session and return here
-            session = request.getSession(true);
-            return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
+        	return new ModelAndView("history/noSession");
         }
+        
         return new ModelAndView(historyView);
     }
     
@@ -90,16 +83,10 @@ public class HistoryController extends MultiActionController implements Initiali
         HttpSession session = request.getSession(false);
         if (session == null) {
             // No session
-            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest",
-                "false");
-            if ("true".equals(secondTry)) {
-                // TODO Maybe use built in error handling
-                return new ModelAndView("history/noSession");
-            }
-            // Try and create session and return here
-            session = request.getSession(true);
-            return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
+        	response.setStatus(SESSION_FAILED_ERROR_CODE);
+        	return null;
         }
+        
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
 
         Map<String,Object> model = new HashMap<String,Object>();
