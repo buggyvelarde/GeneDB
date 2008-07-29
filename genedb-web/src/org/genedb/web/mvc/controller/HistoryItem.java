@@ -9,6 +9,13 @@ public class HistoryItem {
 	
 	private String name;
 	
+	/*
+	 * the internal representation of the query
+	 * in the form 'Organisms:pfalciparum;;Category:biological_process;;
+	 * Term:cell-cell adhesion'
+	 */
+	private String internalName;
+	
 	private List<String> ids;
 	
 	private HistoryType historyType = HistoryType.QUERY;
@@ -72,5 +79,13 @@ public class HistoryItem {
 
     public void setHistoryType(HistoryType historyType) {
         this.historyType = historyType;
+    }
+
+    public String getInternalName() {
+        return internalName;
+    }
+
+    public void setInternalName(String internalName) {
+        this.internalName = internalName;
     }
 }

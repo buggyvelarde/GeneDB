@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -138,7 +140,28 @@ public class HistoryController extends MultiActionController implements Initiali
         Map<String,Object> model = new HashMap<String,Object>();
         model.put("history", history);
         int item = Integer.parseInt(history);
-        model.put("historyName", historyManager.getHistoryItems().get(item-1).getName());
+        HistoryItem historyItem = historyManager.getHistoryItems().get(item-1);
+        String internalName = historyItem.getInternalName();
+        
+        String compile = "Organism:([\\w\\W]+?);;Category:([\\w\\W]+?);;Term:([\\w\\W]*)";
+        Pattern pattern = Pattern.compile(compile);
+        Matcher matcher = pattern.matcher(internalName);
+        
+        String organism = null;
+        String category = null;
+        String term = null;
+        
+        while(matcher.find()) {
+            organism = matcher.group(1);
+            category = matcher.group(2);
+            term = matcher.group(3);
+        }
+        
+        model.put("historyName", historyItem.getName());
+        model.put("organism", organism);
+        model.put("category", category);
+        model.put("term", term);
+        
         return new ModelAndView(editView,model);
     }
     
@@ -208,7 +231,7 @@ public class HistoryController extends MultiActionController implements Initiali
             String name = item.getName();
             String time = sdf.format(Calendar.getInstance().getTime());
             name = String.format("%s Modified %s", name,time);
-            historyManager.addHistoryItems(name,HistoryType.MANUAL,ids);
+            historyManager.addHistoryItem(name,HistoryType.MANUAL,ids);
         }
         return new ModelAndView("redirect:/History/View");
     }

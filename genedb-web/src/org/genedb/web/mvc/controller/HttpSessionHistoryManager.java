@@ -66,7 +66,7 @@ public class HttpSessionHistoryManager implements HistoryManager {
 	/* (non-Javadoc)
 	 * @see org.genedb.web.mvc.controller.HistoryManager#addHistoryItem(java.lang.String, java.util.List)
 	 */
-	public void addHistoryItems(String name, HistoryType type, List<String> ids) {
+	public  HistoryItem addHistoryItem(String name, HistoryType type, List<String> ids) {
 		
 		List<HistoryItem> history = getHistoryItems();
 		boolean found = false;
@@ -80,11 +80,13 @@ public class HttpSessionHistoryManager implements HistoryManager {
 		  HistoryItem item = new HistoryItem(name, ids);
 		  item.setHistoryType(type);
 		  history.add(item);
+		  return item;
 		}
 		
+		return null;
 	}
 	
-	public void addHistoryItem(String name, String id) {
+	public HistoryItem addHistoryItem(String name, HistoryType type,String id) {
 		List<HistoryItem> history = getHistoryItems();
 		HistoryItem found = null;
 		for (HistoryItem item : history) {
@@ -96,9 +98,10 @@ public class HttpSessionHistoryManager implements HistoryManager {
 		if (found == null) {
 			found = new HistoryItem(name, id);
 			history.add(found);
-		} else {
-			found.addResult(id);
-		}
+			return found;
+		} 
+		
+		return null;
 	}
 
 	public String getCartName() {

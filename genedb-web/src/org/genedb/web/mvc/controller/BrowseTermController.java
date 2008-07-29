@@ -108,8 +108,12 @@ public class BrowseTermController extends PostOrGetFormController {
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(
                 request.getSession());
 
-        String args = String.format("organism:%s %s:%s ", btb.getOrganism(), btb.getCategory(), btb.getTerm());
-
+        String args = String.format("organism:%s %s:%s ", btb.getOrganism(), btb.getCategory(), 
+                           btb.getTerm());
+        
+        String internalName = String.format("Organism:%s;;Category:%s;;Term:%s ", btb.getOrganism(), 
+                                btb.getCategory(), btb.getTerm());
+        
         List<String> ids = new ArrayList<String>();
 
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
@@ -125,8 +129,10 @@ public class BrowseTermController extends PostOrGetFormController {
             }
         }
         
-        historyManager.addHistoryItems(String.format("Browse Term -%s", args),
+        HistoryItem historyItem = historyManager.addHistoryItem(String.format("Browse Term -%s", args),
             HistoryType.QUERY, ids);
+        
+        historyItem.setInternalName(internalName);
         
         model.put("features", features);
 

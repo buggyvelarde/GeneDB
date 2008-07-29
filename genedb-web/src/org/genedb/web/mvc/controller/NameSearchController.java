@@ -114,7 +114,7 @@ public class NameSearchController extends TaxonNodeBindingFormController {
             }
             HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(
                 request.getSession());
-            historyManager.addHistoryItems("name lookup '" + nlb + "'",HistoryType.QUERY, ids);
+            historyManager.addHistoryItem("name lookup '" + nlb + "'",HistoryType.QUERY, ids);
         }
 
         if (geneView.equals(viewName) && nlb.isDetailsOnly()) {

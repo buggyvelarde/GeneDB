@@ -6,9 +6,9 @@ public interface HistoryManager {
 
 	public abstract List<HistoryItem> getHistoryItems();
 
-	public abstract void addHistoryItems(String name, HistoryType type, List<String> ids);
+	public abstract  HistoryItem addHistoryItem(String name, HistoryType type, List<String> ids);
 	
-	public abstract void addHistoryItem(String name, String id);
+	public abstract HistoryItem addHistoryItem(String name,HistoryType type, String id);
 	
 	public abstract String getCartName();
 	
