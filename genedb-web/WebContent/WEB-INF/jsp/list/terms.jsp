@@ -19,17 +19,14 @@
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/datatable/datatable-beta-min.js"/>"></script>
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/resultsPage.css"/>" />
+	<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/ArrayList.js"/>"></script>
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/list.js"/>"></script>
 </format:headerRound>
-<br>
-<div id="queryName" align="center" style="clear: both;">
-Genes with Cv: ${category} and CvTerm: ${term}
+<div id="queryName">
+	Genes containing CvTerm: <i style="color: blue;">${term}</i>  in Vocabulary: <i style="color: blue;">${category}</i>
 </div>
-<div align="center" style="float:right;font-size: 1.3em;">	
-		<span>
-			<a href="<c:url value="/"/>History/View">History View</a>
-		</span>
+<div id="resultPage" align="center" style="clear:both;">
+	<div id="list">
+	</div>
 </div>
-<br><br>
-<div id="list" style="clear: both;"></div>
 <format:footer />

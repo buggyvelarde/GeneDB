@@ -1,3 +1,5 @@
+var myDT;
+
 function makeDataTable(base,params) {
 	
 	var url = base + "BrowseTerm";
@@ -41,6 +43,38 @@ function makeDataTable(base,params) {
                 width: 600
     }; 	 
     		
-    this.myDataTable = new YAHOO.widget.DataTable("list", myColumnDefs,
+    myDT = this.myDataTable = new YAHOO.widget.DataTable("list", myColumnDefs,
             this.myDataSource,oConfigs );	
+    
 }
+
+YAHOO.util.Event.onDOMReady(function() { 
+
+	var recordSet = myDT.getRecordSet();
+	var orgName = new ArrayList();
+	var orgCount = new Array();
+	var count = 0;
+	for(var i=0; i< recordSet.getLength(); i++) {
+		var record = recordSet.getRecord(i);
+		var organism = record.getData("organismName");
+		if(!orgName.contains(organism)) {
+			orgName.add(organism);
+			orgCount[count] = 0;
+			count++;
+		} else {
+			var index = orgName.getIndex(organism);
+			orgCount[index]++;
+		}
+	}
+	
+	var string = "";
+	for (var i=0; i< orgCount.length; i++) {
+		var name = orgName.get(i);
+		var count = orgCount[i];
+		
+		string += name + " (" + count + ")  "; 
+	}
+	
+	var div = document.getElementById("organism");
+	div.innerHTML = string;
+});
