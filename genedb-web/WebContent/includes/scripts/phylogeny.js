@@ -9,9 +9,11 @@ function hideAllMenus() {
 		//if (! inTops(i)) {
 			var elementID = "mi_0_" + i;
 			var element = document.getElementById(elementID);
-			element.style.visibility = "hidden";
+			element.style.display = 'none';
+			element.setAttribute('direction','');
 		//}
 	}
+	adjustCoordinates();
 }
 
 function inTops(i) {
@@ -56,10 +58,20 @@ function mouseover(id){
 		temp = active_item.getAttribute("name").split('_');
         var active = temp.slice(0, curr_item.style.zIndex).join('_');
         visib = (curr == active);
-		if(visib) {
-	        curr_item.style.visibility = 'visible';
+		if(visib && (curr_item.style.display == 'none')) {
+	        curr_item.style.display = '';
+	        var rect = curr_item.getClientRects();
+	        var right = rect[0].right;
+	        if(right > window.innerWidth || (active_item.getAttribute('direction') == 'left')
+	        		&& (!inTops(i)) && (curr_item.getAttribute('direction') != 'left')) {
+	        	curr_item.style.left = curr_item.offsetLeft - (154*2*curr_item.style.zIndex) + 'px';
+	        	active_item.setAttribute('direction','left');
+	        	curr_item.setAttribute('direction','left');
+	        }
+		} else if (visib){
+			curr_item.style.display = '';
 		} else {
-			curr_item.style.visibility = 'hidden';
+			curr_item.style.display = 'none';
 		}
 	}
 }
@@ -71,7 +83,7 @@ function showfirst() {
 		clearTimeout(this.timer);
 		for (i=0;i<tops.length;i++) {
 			var curr_item = document.getElementById("mi_0_" + tops[i]);
-			curr_item.style.visibility = 'visible';
+			curr_item.style.display = '';
 		}	
 	}
 
@@ -79,21 +91,83 @@ function showfirst() {
 		this.timer = setTimeout('hideAllMenus();',200);
 	}
 	
-/*
-function doSomething(obj) {
-		var name = obj.getAttribute("name");
-		var curleft = curtop = 0;
-		if (obj.offsetParent) {
-			curleft = obj.offsetLeft
-			curtop = obj.offsetTop
-			while (obj = obj.offsetParent) {
-				curleft += obj.offsetLeft
-				curtop += obj.offsetTop
-			}
-		}
-		alert("left for " + name + " is " + curleft);
-		alert("top for " + name + " is " + curtop);
-}*/
+
 function mouseout() {
 	this.hide_timer = setTimeout('hideAllMenus();',200);			
+}
+
+var ilength;
+
+function adjustCoordinates() {
+	var obj = document.getElementById("start");
+	var curleft = 0; 
+	var curtop = 0;
+	if (obj.offsetParent) {
+		curleft = obj.offsetLeft
+		curtop = obj.offsetTop
+		while (obj = obj.offsetParent) {
+			curleft += obj.offsetLeft
+			curtop += obj.offsetTop
+		}
+	}
+	var items = document.getElementById("itemsLength");
+	ilength = items.getAttribute("value");
+
+	for (var i=0; i< ilength; i++) {
+		var elementID = "mi_0_" + i;
+		var element = document.getElementById(elementID);
+		var depth = element.getAttribute("name").split('_');
+		element.style.left = ( depth.length * 154 ) + 1 + 'px';
+		var top = -1;
+		for (j=0;j<depth.length;j++) {
+			top = top + depth[j] * 29;
+			}
+			element.style.top = top + 'px';
+	}
+	//alert(curleft);
+	//alert(curtop);
+}
+
+function mouseclick(id) {
+	var selected = document.getElementById("selected");
+	selected.value = '';
+	for (var i=0; i< this.ilength; i++) {
+		var element = document.getElementById("check_" + i);
+		if(element.checked) {
+			if (selected.value == '') {
+				selected.value =  document.getElementById("menu_" + i).textContent;
+			} else {	
+				selected.value = selected.value + ',' + document.getElementById("menu_" + i).textContent;
+			}
+		}	
+	}
+}
+
+function resetall() {
+	for (var i=0; i< ilength; i++) {
+		this.checked[i] = false;
+		var element = document.getElementById("menu_" + i);
+		element.checked = false;
+	}
+	var selected = document.getElementById("selected");
+	selected.value = '';
+	var url = document.URL.split('?');
+	window.location = url[0];
+}
+
+function check() {
+	var selected = document.getElementById("selected");
+	if (selected.value == '') {
+		selected.style.border = "solid 1px red";
+		alert ("Please select an organism from the tree");
+		return false;
+	} 
+	var org = document.getElementById("textInput");
+	if (org.value == '') {
+		org.style.border = "solid 1px red";
+		alert ("Please enter the search term in the input box");
+		return false;
+	} 
+	
+	
 }
