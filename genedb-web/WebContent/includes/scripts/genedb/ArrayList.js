@@ -21,6 +21,15 @@ function ArrayList() {
 	  }
   }
   
+  this.getIndex = function (obj){
+	  for (var i=0;i<this.array.length;i++) {
+		  if(this.array[i] == obj) {
+			  return i;
+		  }
+	  }
+	  return -1;
+  }
+  
   this.addAll = function (obj) {
     if (obj instanceof Array) {
       for (var i=0;i<obj.length;i++) {
