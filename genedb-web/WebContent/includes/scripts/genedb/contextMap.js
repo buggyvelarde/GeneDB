@@ -525,7 +525,7 @@ function moveTo(newPos) {
         newContent = contextMapContent.previousSibling;
         if (newContent && newContent.nodeType == 3)
             newContent = newContent.previousSibling
-        if (!newContent || newContent.nodeType != 1) {
+        if (!newContent || newContent.nodeType != 1 || newContent.className != "contextMapContent") {
             newPos = 0;
             hitEnd = true;
         }
@@ -543,7 +543,7 @@ function moveTo(newPos) {
         velocity *= -0.1;
         cruise = false;
     }
-    else if (newContent && newContent.nodeType == 1) {
+    else if (newContent && !hitEnd) {
         contextMapContent.style.display="none";
         contextMapContent = newContent;
         contextMapContent.style.display="block";
