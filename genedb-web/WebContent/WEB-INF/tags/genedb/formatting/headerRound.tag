@@ -32,11 +32,16 @@
             navigationMenuBar.render();
         });
 
+        YAHOO.util.Event.onContentReady("start",function() {
+			init();
+            adjustCoordinates();
+        });
+        
         function loadAdvanceSearch() {
 			var dom = YAHOO.util.Dom;
 			var div = dom.get("advanceSearch");
 			var attributes = {
-			        height: { to: 120 },
+			        height: { to: 150 }
 			 };
 			 var anim = new YAHOO.util.Anim('advanceSearch', attributes);			
 			 anim.animate();
@@ -50,7 +55,7 @@
 			dom.setStyle(div, "overflow", "hidden");
 			dom.setStyle(div, "border", "");
 			var attributes = {
-			        height: { to: 0 },
+			        height: { to: 0 }
 		    };
 		 	var anim = new YAHOO.util.Anim('advanceSearch', attributes);
 			anim.animate();
@@ -61,9 +66,9 @@
     <jsp:doBody />
 </head>
 <% if (onLoad == null) { %>
-<body class="yui-skin-sam ${bodyClass}" onLoad="adjustCoordinates();">
+<body class="yui-skin-sam ${bodyClass}" onLoad="">
 <% } else { %>
-<body class="yui-skin-sam ${bodyClass}" onLoad="adjustCoordinates();${onLoad}">
+<body class="yui-skin-sam ${bodyClass}" onLoad="${onLoad}">
 <% } %>
 <table id="header"><tbody>
     <tr id="top-row">
@@ -78,25 +83,37 @@
             </c:if>
             	<input id="query" name="name" type="text" align="middle"/>
             	<input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
+				</form>
 				<span align="top" style="font-size:0.65em;">
 					<a style="color:white;vertical-align:top;" href="#" onclick="loadAdvanceSearch()">
 						Advance Search
 					</a>
 				</span>
 				<div id="advanceSearch">
-					<form name="advSearchForm" action="<c:url value="/"/>NameSearch?organism=${organism}" method="get">
+					<c:if test="${!empty organism}">
+						<form name="advSearchForm" action="<c:url value="/"/>AdvanceSearch?organism=${organism}" method="get">
+					</c:if>
+					<c:if test="${empty organism}">
+						<form name="advSearchForm" action="<c:url value="/"/>AdvanceSearch?" method="get">
+					</c:if>
 						<table id="advSearchTable" cellpadding="2">
 							<tr>
 								<td width="20%" style="text-align:left;">Search </td>
 								<td width="80%"> 
-									<select>	
-										<option>Gene names</option>
-										<option>Product</option>
-										<option>curated annotations [comments & curation]</option>
-										<option>GO term/id</option>
-										<option>EC number</option>
-										<option>Pfam ID or keyword</option>
+									<select name="category">	
+										<option value="allNames">Gene names</option>
+										<option value="product">Product</option>
+										<option value="curatedAnnotation">curated annotations [comments & curation]</option>
+										<option value="goTermId">GO term/id</option>
+										<option value="ecNumber">EC number</option>
+										<option value="pfamId">Pfam ID or keyword</option>
 									</select>
+								</td>
+							</tr>
+							<tr>
+								<td width="20%" style="text-align:left;"></td>
+								<td width="80%" style="text-align:left;">
+									<input id="organism" name="organism" type="text" align="middle">
 								</td>
 							</tr>
 							<tr>
@@ -110,7 +127,7 @@
 									for
 								</td>
 								<td width="80%" style="text-align:left;">
-									<input id="query" name="name" type="text" align="middle">
+									<input id="query" name="term" type="text" align="middle">
 									<input id="submit" type="submit" value="Go" title="Search" align="middle" />
 								</td>
 							</tr>
@@ -119,7 +136,6 @@
 					<br>
 					<span><a href="#" onclick="closeAdvanceSearch()">Close</a></span>
 				</div>
-            </form>
         </td>
     </tr>
     <tr id="navigation-row">
