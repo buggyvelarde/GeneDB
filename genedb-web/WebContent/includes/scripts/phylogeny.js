@@ -1,8 +1,16 @@
+var dom = YAHOO.util.Dom;
+var topItem;
 var tops;
-var topItem = document.getElementById("topItems");
-tops = topItem.getAttribute("value").split(',');
-var items = document.getElementById("itemsLength");
-var ilength = items.getAttribute("value");
+var items;
+var ilength;
+
+function init() {
+	
+	topItem = dom.get("topItems")
+	tops = topItem.getAttribute("value").split(',');
+	items = document.getElementById("itemsLength");
+	ilength = items.getAttribute("value");
+}
 
 function hideAllMenus() {
 	for(i=0;i<ilength;i++)	{
@@ -40,8 +48,11 @@ function boxclicked(id) {
 				break;
 			}
 		}
-		if(visib && !(inTops(i))) {
-	        curr_item.checked = active_element.checked;
+		if(visib && (curr_item != active_element)) {
+	        curr_item.disabled = active_element.checked;
+	        if(curr_item.checked) {
+	        	curr_item.checked = false;
+	        }
 		}
 	}
 }
@@ -60,8 +71,9 @@ function mouseover(id){
         visib = (curr == active);
 		if(visib && (curr_item.style.display == 'none')) {
 	        curr_item.style.display = '';
-	        var rect = curr_item.getClientRects();
-	        var right = rect[0].right;
+	        //alert(curr_item.attributes);
+	        var rect = getCoordinates(curr_item);
+	        var right = rect[0] + 154;
 	        if(right > window.innerWidth || (active_item.getAttribute('direction') == 'left')
 	        		&& (!inTops(i)) && (curr_item.getAttribute('direction') != 'left')) {
 	        	curr_item.style.left = curr_item.offsetLeft - (154*2*curr_item.style.zIndex) + 'px';
@@ -98,8 +110,7 @@ function mouseout() {
 
 var ilength;
 
-function adjustCoordinates() {
-	var obj = document.getElementById("start");
+function getCoordinates(obj) {
 	var curleft = 0; 
 	var curtop = 0;
 	if (obj.offsetParent) {
@@ -110,6 +121,10 @@ function adjustCoordinates() {
 			curtop += obj.offsetTop
 		}
 	}
+	return [curleft,curtop];
+}
+
+function adjustCoordinates() {
 	var items = document.getElementById("itemsLength");
 	ilength = items.getAttribute("value");
 
@@ -121,23 +136,21 @@ function adjustCoordinates() {
 		var top = -1;
 		for (j=0;j<depth.length;j++) {
 			top = top + depth[j] * 29;
-			}
+		}
 			element.style.top = top + 'px';
 	}
-	//alert(curleft);
-	//alert(curtop);
 }
 
 function mouseclick(id) {
-	var selected = document.getElementById("selected");
+	var selected = document.getElementById("organism");
 	selected.value = '';
 	for (var i=0; i< this.ilength; i++) {
 		var element = document.getElementById("check_" + i);
 		if(element.checked) {
 			if (selected.value == '') {
-				selected.value =  document.getElementById("menu_" + i).textContent;
+				selected.value =  element.value;
 			} else {	
-				selected.value = selected.value + ',' + document.getElementById("menu_" + i).textContent;
+				selected.value = selected.value + ',' + element.value;
 			}
 		}	
 	}
