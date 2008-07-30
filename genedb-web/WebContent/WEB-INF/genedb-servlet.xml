@@ -256,7 +256,20 @@
     <bean id="nameSearchValidator"
         class="org.genedb.web.mvc.validators.NameSearchFormValidator" />
 
-
+	<bean id="AdvanceSearchController"
+        class="org.genedb.web.mvc.controller.AdvanceSearchController">
+        <property name="sessionForm" value="true" />
+        <property name="commandName" value="advanceSearchLookup" />
+        <property name="commandClass"
+            value="org.genedb.web.mvc.controller.AdvanceSearchController$AdvanceSearchBean" />
+        <property name="luceneDao" ref="luceneDao" />
+        <property name="resultsView" value="list/terms" />
+        <property name="formView" value="search/advanceSearch" />
+        <property name="geneView" value="redirect:NamedFeature" />
+        <property name="jsonView" ref="jsonView" />
+        <property name="bindOnNewForm" value="true" />
+        <property name="historyManagerFactory" ref="historyManagerFactory" />
+    </bean>
 
     <bean id="FeatureDownloadController"
         class="org.genedb.web.mvc.controller.download.FeatureDownloadController">

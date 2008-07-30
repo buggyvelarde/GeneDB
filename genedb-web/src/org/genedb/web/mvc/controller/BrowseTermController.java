@@ -72,6 +72,7 @@ public class BrowseTermController extends PostOrGetFormController {
             model.put("category", btb.getCategory().toString());
             model.put("term",btb.getTerm());
             model.put("organism", btb.getOrganism());
+            model.put("controller", "BrowseTerm");
             return new ModelAndView(getSuccessView(),model);
         }
         
@@ -101,7 +102,7 @@ public class BrowseTermController extends PostOrGetFormController {
         }
 
         if (features.size() == 1) {
-            model.put("name", features.get(0).getGeneName());
+            model.put("name", features.get(0).getName());
             return new ModelAndView(geneView, model);
         }
 
@@ -119,9 +120,9 @@ public class BrowseTermController extends PostOrGetFormController {
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
 
         for (GeneNameOrganism feature : features) {
-            ids.add(feature.getGeneName());
+            ids.add(feature.getName());
 
-            TermQuery query = new TermQuery(new Term("uniqueName", feature.getGeneName()));
+            TermQuery query = new TermQuery(new Term("uniqueName", feature.getName()));
             Hits hits = luceneDao.search(ir, query);
 
             if (hits.length() > 0) {
@@ -132,7 +133,9 @@ public class BrowseTermController extends PostOrGetFormController {
         HistoryItem historyItem = historyManager.addHistoryItem(String.format("Browse Term -%s", args),
             HistoryType.QUERY, ids);
         
-        historyItem.setInternalName(internalName);
+        if(historyItem != null) {
+            historyItem.setInternalName(internalName);
+        }
         
         model.put("features", features);
 

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
-<c:url value="/" var="base"/>
+<c:url value="/${controller}" var="base"/>
 <c:url value="?" var="url">
 <c:param name="organism" value="${organism}"/>
 <c:param name="category" value="${category}"/>
@@ -22,9 +22,17 @@
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/ArrayList.js"/>"></script>
 	<script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/list.js"/>"></script>
 </format:headerRound>
-<div id="queryName">
-	Genes containing CvTerm: <i style="color: blue;">${term}</i>  in Vocabulary: <i style="color: blue;">${category}</i>
-</div>
+<c:if test="${controller eq 'BrowseTerm'}">
+	<div id="queryName">
+		Genes containing CvTerm: <i style="color: blue;">${term}</i>  in Vocabulary: <i style="color: blue;">${category}</i>
+	</div>
+</c:if>
+<c:if test="${controller eq 'AdvanceSearch'}">
+	<div id="queryName">
+		Genes containing <i style="color: blue;">${term}</i>  in: <i style="color: blue;">${category}</i><br>
+		in Organism: <i style="color: blue;">${organism}</i><br>
+	</div>
+</c:if>
 <div id="resultPage" align="center" style="clear:both;">
 	<div id="list">
 	</div>
