@@ -240,7 +240,20 @@
         <format:genePageSection id="proteinMap">
             <div class="heading">Protein map</div>
             ${proteinMapMap}
-            <img src="${proteinMap}" useMap="#proteinMapMap">
+         <!--[if lte IE 6]>
+                <div style="position:relative; height: ${proteinMapHeight}px">
+                    <div style="position:absolute; z-index: 1000;">
+                        <img src="<c:url value="/includes/images/transparentPixel.gif"/>" width="${proteinMapWidth}" height="${proteinMapHeight}" useMap="#proteinMapMap">
+                    </div>
+                    <div style="position:static; z-index: 900;">
+                        <img src="<c:url value="/includes/images/transparentPixel.gif"/>" width="${proteinMapWidth}" height="${proteinMapHeight}"
+                            style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${proteinMap}', sizingMethod='image')"/>
+                    </div>
+                </div>
+            <![endif]>
+            <![if ! lte IE 6]>
+                <img src="${proteinMap}" useMap="#proteinMapMap" id="proteinMapImage">
+            <![endif]>
         </format:genePageSection>
     </c:if>
 
@@ -290,18 +303,18 @@
     <!-- Ortholog / Paralog Section -->
     <db:filterByType items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>
     <c:if test="${fn:length(orthologs) > 0}">
-	    <format:genePageSection id="orthologs">
-	        <div class="heading">Orthologs / Paralogs</div>
-	        <db:filtered-loop items="${orthologs}" var="ortholog" varStatus="status">
-	        	<c:set var="feat" value="${ortholog.objectFeature}"/>
-	        	<c:if test="${feat.type.name eq 'protein_match'}">
-	        		<span>${feat.uniqueName} <a href="<c:url value="/"/>Orthologs?cluster=${feat.uniqueName}">${fn:length(feat.featureRelationshipsForObjectId)} Others</a></span><br>
-	        	</c:if>
-	        	<c:if test="${feat.type.name eq 'polypeptide'}">
-	        		<span><a href="<c:url value="/"/>NamedFeature?name=${feat.gene.uniqueName}">${feat.gene.uniqueName}</a></span><br>
-	        	</c:if>
-	        </db:filtered-loop>
-	    </format:genePageSection>
-	</c:if>
+        <format:genePageSection id="orthologs">
+            <div class="heading">Orthologues and Paralogues</div>
+            <db:filtered-loop items="${orthologs}" var="ortholog" varStatus="status">
+                <c:set var="feat" value="${ortholog.objectFeature}"/>
+                <c:if test="${feat.type.name eq 'protein_match'}">
+                    <span>${feat.uniqueName} <a href="<c:url value="/"/>Orthologs?cluster=${feat.uniqueName}">${fn:length(feat.featureRelationshipsForObjectId)} Others</a></span><br>
+                </c:if>
+                <c:if test="${feat.type.name eq 'polypeptide'}">
+                    <span><a href="<c:url value="/"/>NamedFeature?name=${feat.gene.uniqueName}">${feat.gene.uniqueName}</a></span><br>
+                </c:if>
+            </db:filtered-loop>
+        </format:genePageSection>
+    </c:if>
 
 </c:if>
