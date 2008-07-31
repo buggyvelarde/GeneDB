@@ -4,7 +4,7 @@
         codebase="http://www.sanger.ac.uk/Software/Artemis/v10/database">
          <information>
            <title>Artemis</title>
-           <vendor>Sanger Institute</vendor> 
+           <vendor>Sanger Institute</vendor>
            <homepage href="http://www.sanger.ac.uk/Software/Artemis/"/>
            <description>Artemis</description>
            <description kind="short">DNA sequence viewer and annotation tool.
@@ -21,7 +21,7 @@
            <property name="artemis.environment" value="UNIX" />
            <property name="j2ssh" value="" />
            <property name="ibatis" value="" />
-           <property name="chado" value="193.62.203.5:5432/malaria_workshop?genedb_ro" />
+           <property name="chado" value="193.62.203.5:5432/snapshot?genedb_ro" />
            <property name="jdbc.drivers" value="org.postgresql.Driver" />
            <property name="apple.laf.useScreenMenuBar" value="true" />
            <property name="com.apple.mrj.application.apple.menu.about.name" value="Artemis" />
