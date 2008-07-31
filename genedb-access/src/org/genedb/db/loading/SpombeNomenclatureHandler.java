@@ -14,15 +14,11 @@ import java.util.regex.Pattern;
 
 public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implements NomenclatureHandler {
 
-    private Pattern pattern;
-    
-    public SpombeNomenclatureHandler() {
-	pattern = Pattern.compile("SP(A|B|C)(P|C)(\\w+)\\.\\d+c?");
-    }
-    
+    private static final Pattern pattern = Pattern.compile("SP(A|B|C)(P|C)(\\w+)\\.\\d+c?");
+
     @Override
     public Names findNamesInternal(Annotation an) {
-	
+
 	Names ret = new Names();
 
         List<String> names = MiningUtils.getProperties("gene", an);
@@ -39,9 +35,9 @@ public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implement
 
         // Move all the systematics ids into a new list
         List<String> systematics = new ArrayList<String>();
-        Iterator nameIt = names.iterator();
+        Iterator<String> nameIt = names.iterator();
         while (nameIt.hasNext()) {
-            String test = (String) nameIt.next();
+            String test = nameIt.next();
             // SP(A|B|C)(P|C)$cosmid.num(c?)
             Matcher matcher = pattern.matcher(test);
             if (matcher.matches()) {
@@ -88,7 +84,7 @@ public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implement
         if (obsolete.size() > 0) {
             ret.setObsolete(obsolete);
         }
-        
+
 
         List<String> synonyms = MiningUtils.getProperties("synonym", an);
         if ( synonyms != null) {
@@ -103,7 +99,7 @@ public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implement
         	ret.getSynonyms().remove(ob);
             }
         }
-        
+
         List<String> reserved = MiningUtils.getProperties("reserved_name", an);
         if (reserved != null) {
             ret.setReserved(reserved);
@@ -111,5 +107,5 @@ public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implement
 
         return ret;
     }
-    
+
 }
