@@ -55,7 +55,7 @@ public class BrowseTermController extends PostOrGetFormController {
     private HistoryManagerFactory historyManagerFactory;
 
     @Override
-    protected Map<?,?> referenceData(HttpServletRequest request) throws Exception {
+    protected Map<?,?> referenceData(@SuppressWarnings("unused") HttpServletRequest request) throws Exception {
         Map<String,Object> reference = new HashMap<String,Object>();
         reference.put("categories", BrowseCategory.values());
         return reference;
@@ -67,7 +67,7 @@ public class BrowseTermController extends PostOrGetFormController {
 
         BrowseTermBean btb = (BrowseTermBean) command;
         Map<String, Object> model = new HashMap<String, Object>();
-        
+
         if(!btb.isJson()) {
             model.put("category", btb.getCategory().toString());
             model.put("term",btb.getTerm());
@@ -75,18 +75,18 @@ public class BrowseTermController extends PostOrGetFormController {
             model.put("controller", "BrowseTerm");
             return new ModelAndView(getSuccessView(),model);
         }
-        
+
         String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrganism());
-        
+
         String category = btb.getCategory().toString();
-        
+
         /* This is to include all the cvs starting with CC.
          * In future when the other cvs have more terms in,
          * this can be removed and the other cvs starting
          * with CC can be added to BrowseCategory
          */
         List<GeneNameOrganism> features;
-        
+
         if(category.equals("ControlledCuration")) {
             features = sequenceDao
                 .getGeneNameOrganismsByCvTermNameAndCvNamePattern(btb.getTerm(), "CC\\_%", orgNames);
@@ -94,7 +94,7 @@ public class BrowseTermController extends PostOrGetFormController {
             features = sequenceDao
                 .getGeneNameOrganismsByCvTermNameAndCvName(btb.getTerm(), category, orgNames);
         }
-        
+
         if (features == null || features.size() == 0) {
             logger.info("result is null");
             be.reject("no.results");
@@ -102,41 +102,41 @@ public class BrowseTermController extends PostOrGetFormController {
         }
 
         if (features.size() == 1) {
-            model.put("name", features.get(0).getName());
+            model.put("name", features.get(0).getGeneName());
             return new ModelAndView(geneView, model);
         }
 
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(
                 request.getSession());
 
-        String args = String.format("organism:%s %s:%s ", btb.getOrganism(), btb.getCategory(), 
+        String args = String.format("organism:%s %s:%s ", btb.getOrganism(), btb.getCategory(),
                            btb.getTerm());
-        
-        String internalName = String.format("Organism:%s;;Category:%s;;Term:%s ", btb.getOrganism(), 
+
+        String internalName = String.format("Organism:%s;;Category:%s;;Term:%s ", btb.getOrganism(),
                                 btb.getCategory(), btb.getTerm());
-        
+
         List<String> ids = new ArrayList<String>();
 
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
 
         for (GeneNameOrganism feature : features) {
-            ids.add(feature.getName());
+            ids.add(feature.getGeneName());
 
-            TermQuery query = new TermQuery(new Term("uniqueName", feature.getName()));
+            TermQuery query = new TermQuery(new Term("uniqueName", feature.getGeneName()));
             Hits hits = luceneDao.search(ir, query);
 
             if (hits.length() > 0) {
                 feature.setProduct(hits.doc(0).get("product"));
             }
         }
-        
+
         HistoryItem historyItem = historyManager.addHistoryItem(String.format("Browse Term -%s", args),
             HistoryType.QUERY, ids);
-        
+
         if(historyItem != null) {
             historyItem.setInternalName(internalName);
         }
-        
+
         model.put("features", features);
 
         return new ModelAndView(jsonView, model);
@@ -173,7 +173,7 @@ class BrowseTermBean {
     private String term;
     private String organism;
     private boolean json = false;
-    
+
     public boolean isJson() {
         return json;
     }
