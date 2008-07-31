@@ -178,8 +178,9 @@ public class Polypeptide extends Region {
 
              try {
                 // if the sequence ends with a termination symbol (*), we need to remove it
-                if (residuesSymbolList.symbolAt(residuesSymbolList.length()) == ProteinTools.ter())
+                if (residuesSymbolList.symbolAt(residuesSymbolList.length()) == ProteinTools.ter()) {
                     residuesSymbolList = residuesSymbolList.subList(1, residuesSymbolList.length() - 1);
+                }
 
              } catch (IndexOutOfBoundsException exception) {
                  throw new RuntimeException(exception);
