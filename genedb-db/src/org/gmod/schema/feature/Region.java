@@ -30,7 +30,7 @@ public abstract class Region extends Feature implements Comparable<Region> {
     }
 
     @Transient
-    private boolean locLoaded = false;
+    private boolean locLoaded;
     @Transient
     private int fmin;
     @Transient
