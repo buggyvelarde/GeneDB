@@ -19,6 +19,29 @@
 
 package org.genedb.db.loading;
 
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.GeneralDao;
+import org.genedb.db.dao.OrganismDao;
+import org.genedb.db.dao.PubDao;
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.db.loading.featureProcessors.CDS_Processor;
+
+import org.gmod.schema.mapped.Organism;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.biojava.bio.BioException;
+import org.biojava.bio.seq.Feature;
+import org.biojava.bio.seq.Sequence;
+import org.biojava.bio.seq.SequenceIterator;
+import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.utils.ChangeVetoException;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,38 +59,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.biojava.bio.Annotation;
-import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Feature;
-import org.biojava.bio.seq.Sequence;
-import org.biojava.bio.seq.SequenceIterator;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.utils.ChangeVetoException;
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.GeneralDao;
-import org.genedb.db.dao.OrganismDao;
-import org.genedb.db.dao.PubDao;
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.loading.featureProcessors.CDS_Processor;
-
-import org.gmod.schema.mapped.FeatureLoc;
-import org.gmod.schema.mapped.Organism;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
-
 
 
 /**
- * This class is the main entry point for the new GeneDB data miners. 
- * It's designed to be called from the command-line. It looks for a 
+ * This class is the main entry point for the new GeneDB data miners.
+ * It's designed to be called from the command-line. It looks for a
  * config. file which specifies which files to process.
  *
  * Usage: NewRunner common_nane [config_file]
@@ -101,22 +97,22 @@ public class NewRunner2 implements ApplicationContextAware {
     private OrganismDao organismDao;
 
     private CvDao cvDao;
-    
+
     private PubDao pubDao;
 
     private GeneralDao generalDao;
 
     private Map<String, FeatureProcessor> qualifierHandlerMap;
-    
+
 //    private HibernateTransactionManager hibernateTransactionManager;
 
     Map<String,String> cdsQualifiers = new HashMap<String,String>();
-    
+
 	private Set<String> handeledQualifiers = new HashSet<String>();
-    
+
     //private OrthologueStorage orthologueStorage = new OrthologueStorage();
-    
-    
+
+
 //    public void setHibernateTransactionManager(
 //			HibernateTransactionManager hibernateTransactionManager) {
 //		this.hibernateTransactionManager = hibernateTransactionManager;
@@ -148,8 +144,8 @@ public class NewRunner2 implements ApplicationContextAware {
 
 
         featureHandler.afterPropertiesSet();
-        
-        
+
+
         featureUtils = new FeatureUtils();
         featureUtils.setCvDao(cvDao);
         featureUtils.setSequenceDao(sequenceDao);
@@ -183,16 +179,6 @@ public class NewRunner2 implements ApplicationContextAware {
             fp.afterPropertiesSet();
         }
     }
-
-    private CharSequence blankString(char c, int size) {
-        StringBuilder buf = new StringBuilder(size);
-        for (int i =0; i < size; i++) {
-            buf.append(c);
-        }
-        return buf;
-    }
-
-
 
     /**
      * Populate maps based on InterPro result files, GO association files etc
@@ -366,14 +352,14 @@ public class NewRunner2 implements ApplicationContextAware {
 
             }
         }
-        
+
         this.postProcess();
         reportUnhandledQualifiers();
         reportUnknownRileyClass();
         long duration = (new Date().getTime()-start)/1000;
         logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
     }
-    
+
     private void reportUnknownRileyClass() {
     	logger.warn("Unknown Riley class are...");
     	List<String> rileys = qualifierHandlerMap.get("CDS").getUnknownRileyClass();
@@ -381,7 +367,7 @@ public class NewRunner2 implements ApplicationContextAware {
 			logger.warn(riley);
 		}
     }
-    
+
 	private void reportUnhandledQualifiers() {
 		Map<String, Boolean> merged = new HashMap<String, Boolean>();
 		for (FeatureProcessor processor : qualifierHandlerMap.values()) {
@@ -390,7 +376,7 @@ public class NewRunner2 implements ApplicationContextAware {
 		List<String> keys = new ArrayList<String>();
 		keys.addAll(merged.keySet());
 		Collections.sort(keys);
-		
+
 		StringBuilder out = new StringBuilder();
 		out.append("\n\nHandled qualifiers\n");
 		for (String key : keys) {
@@ -407,8 +393,8 @@ public class NewRunner2 implements ApplicationContextAware {
 			}
 		}
 		logger.warn(out.toString());
-		
-		
+
+
 //		Set temp = cdsQualifiers.keySet();
 //        for (Object key : temp) {
 //			System.out.println(key + " " + cdsQualifiers.get(key));
@@ -427,7 +413,7 @@ public class NewRunner2 implements ApplicationContextAware {
     @SuppressWarnings("unchecked")
     private void processSequence(File file, Sequence seq, org.gmod.schema.mapped.Feature parent, int offset) {
     	//Session session = hibernateTransactionManager.getSessionFactory().openSession();
-    	
+
     	try {
             org.gmod.schema.mapped.Feature topLevel = this.featureHandler.process(file, seq);
             logger.info("Processing '"+file.getAbsolutePath()+"'");
@@ -442,8 +428,8 @@ public class NewRunner2 implements ApplicationContextAware {
 
             Map<ProcessingPhase,List<Feature>> processingStagesFeatureMap =
                 new HashMap<ProcessingPhase, List<Feature>>();
-            
-            
+
+
             List<Feature> toRemove = new ArrayList<Feature>();
             Iterator featureIterator = seq.features();
             while (featureIterator.hasNext()) {
@@ -477,7 +463,7 @@ public class NewRunner2 implements ApplicationContextAware {
             // TODO Bother deleting as not looping thru' them - use index instead
             List<Feature> tmp = processingStagesFeatureMap.get(ProcessingPhase.FIRST);
             if (tmp != null) {
-            	
+
                 for (Feature feature : tmp) {
                         seq.removeFeature(feature);
                 }
@@ -521,17 +507,13 @@ public class NewRunner2 implements ApplicationContextAware {
             exp.printStackTrace();
         }
         //session.close();
-        
-        
+
+
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-
-    public void setOrganismCommonName(String organismCommonName) {
-    }
-
 
     public void setRunnerConfigParser(RunnerConfigParser runnerConfigParser) {
         this.runnerConfigParser = runnerConfigParser;
