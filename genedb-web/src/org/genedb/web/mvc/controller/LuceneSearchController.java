@@ -29,38 +29,38 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class LuceneSearchController extends TaxonNodeBindingFormController {
-	
+
 	private String listResultsView;
-    
+
     @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, 
-    		HttpServletResponse response, Object command, 
+    protected ModelAndView onSubmit(HttpServletRequest request,
+    		HttpServletResponse response, Object command,
     		BindException be) throws Exception {
-		
+
     	LuceneSearch luceneSearch = (LuceneSearch) command;
 		String queryString = null;
 		queryString = luceneSearch.getQuery();
-		
+
 		Map<String, Object> model = new HashMap<String, Object>(4);
 		String viewName = null;
-				
+
 		IndexReader ir = IndexReader.open("/Users/cp2/external/lucene/index/gff/");
 		Collection<String> c = ir.getFieldNames(IndexReader.FieldOption.INDEXED);
 		List<String> fields = new ArrayList<String>();
 		for (String object : c) {
 			fields.add(object);
 		}
-		
+
 		if (queryString.equals("")){
 			be.reject("no.results");
         	return showForm(request,response,be);
 		}
-		
+
 		Query query = null;
-		 
+
 		IndexSearcher searcher = null;
 		Hits hits = null;
-		
+
 		searcher = new IndexSearcher(ir);
 		/* we had the StopAnalyzer prior to Standard, but it didnt work properly
 		 * we had to put wildcard like '*' to make some queries work
@@ -88,13 +88,13 @@ public class LuceneSearchController extends TaxonNodeBindingFormController {
 			searchString = s.toString();
 		}
 		query = qp.parse(searchString);
-		
+
 		hits = searcher.search(query);
 		if (hits.length() == 0) {
         	be.reject("no.results");
         	return showForm(request, response, be);
 		}
-        
+
 		if(luceneSearch.isHistory()) {
 			List<String> ids = new ArrayList<String>(hits.length());
 			for (int i=0;i<hits.length();i++) {
@@ -102,12 +102,12 @@ public class LuceneSearchController extends TaxonNodeBindingFormController {
 			    ids.add(doc.get("ID"));
 			}
 			HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
-    		historyManager.addHistoryItems("lucene search '"+luceneSearch+"'", ids);
-    		
+    		historyManager.addHistoryItem("lucene search '"+luceneSearch+"'", HistoryType.QUERY,ids);
+
     		return new ModelAndView("redirect:/History/View",null);
 		}
 		List<SearchHit> results = new ArrayList<SearchHit>();
-		
+
 		for (int i=0;i<hits.length();i++) {
 		    Document doc = hits.doc(i);
 		    SearchHit sh = new SearchHit();
@@ -119,19 +119,19 @@ public class LuceneSearchController extends TaxonNodeBindingFormController {
 		    sh.setStrand(doc.get("strand"));
 		    results.add(sh);
 		}
-		
-		
+
+
 		model.put("results", results);
 		viewName = listResultsView;
 		return new ModelAndView(viewName,model);
     }
 
-  
+
 	public String getListResultsView() {
 		return listResultsView;
 	}
 	public void setListResultsView(String listResultsView) {
 		this.listResultsView = listResultsView;
 	}
-    
+
 }
