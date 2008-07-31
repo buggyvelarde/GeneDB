@@ -28,27 +28,27 @@ import java.util.Map;
 
 /**
  * The loading process is driven by config files, one per organism. See an annotated config example for details.
- * 
- * The config file parses an XML file which can set mining propeprties, which files to load etc
- * 
- * @author Adrian Tivey (art) 
+ *
+ * The config file parses an XML file which can set mining properties, which files to load etc
+ *
+ * @author Adrian Tivey (art)
  */
 public class RunnerConfig {
 
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     private String organismCommonName;
-    
+
     private List<String> fileNames = new ArrayList<String>(0);
 
     private List<Synthetic> synthetics = new ArrayList<Synthetic>();
-    
+
     private Map<String, String> nomenclatureOptions = new HashMap<String, String>(0);
 
     private Map<String, String> featureHandlerOptions = new HashMap<String, String>(0);
-    
+
     private Map<String, String> generalOptions;
-    
+
     public List<String> getFileNames() {
 	return this.fileNames;
     }
