@@ -75,7 +75,7 @@ public class Translator {
             String naiveTranslation = protein.seqString();
 
             if (startCodonTable.contains(rnaWindowed.symbolAt(1))) {
-                return "M" + naiveTranslation.substring(1);
+                naiveTranslation = "M" + naiveTranslation.substring(1);
             }
 
             if (stopCodonTranslatedAsSelenocysteine) {

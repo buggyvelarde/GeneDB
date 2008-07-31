@@ -551,7 +551,7 @@ class Transcript {
             throw new TranslationException(String.format("this '%s' is too short to translate (length=%d, phase=%d)",
                 this.uniqueName, this.cds.length(), this.phase));
         }
-        return Translator.getTranslator(this.translationTableId).translate(this.cds, this.phase);
+        return Translator.getTranslator(this.translationTableId).translate(this.cds, this.phase, this.stopCodonTranslatedAsSelenocysteine);
     }
 }
 

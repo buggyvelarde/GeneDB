@@ -11,7 +11,7 @@ import java.util.Map;
  * Caches the cvterms used to type features and organismprops,
  * and makes it easy to retrieve the ID from the name or vice versa.
  * Used by {@link FixResidues}.
- * 
+ *
  * @author rh11
  *
  */
@@ -19,7 +19,7 @@ public class TypeCodes {
     private Map<String,Map<String,Integer>> idByTermNameByCvName = new HashMap<String,Map<String,Integer>>();
     private Map<Integer,String> cvNameById = new HashMap<Integer,String>();
     private Map<Integer,String> termNameById = new HashMap<Integer,String>();
-    
+
     public TypeCodes(Connection conn) throws SQLException {
         PreparedStatement st = conn.prepareStatement(
             "select cvterm_id"
@@ -31,6 +31,8 @@ public class TypeCodes {
             +"    select distinct type_id as cvterm_id from feature"
             +"    union"
             +"    select distinct type_id as cvterm_id from organismprop"
+            +"    union"
+            +"    select distinct type_id as cvterm_id from featureprop"
             +") feature_types using (cvterm_id)"
         );
         try {
@@ -39,11 +41,11 @@ public class TypeCodes {
                 int cvTermId = rs.getInt("cvterm_id");
                 String cvName = rs.getString("cv_name");
                 String cvTermName = rs.getString("cvterm_name");
-                
+
                 if (!idByTermNameByCvName.containsKey(cvName))
                     idByTermNameByCvName.put(cvName, new HashMap<String,Integer>());
                 idByTermNameByCvName.get(cvName).put(cvTermName, cvTermId);
-                
+
                 cvNameById.put(cvTermId, cvName);
                 termNameById.put(cvTermId, cvTermName);
             }
@@ -58,7 +60,7 @@ public class TypeCodes {
             }
         }
     }
-    
+
     public int typeId(String cvName, String cvTermName) {
         Map<String,Integer> termMap = idByTermNameByCvName.get(cvName);
         if (termMap == null)
@@ -68,7 +70,7 @@ public class TypeCodes {
             throw new IllegalArgumentException(String.format("Term '%s' not found in CV '%s'", cvTermName, cvName));
         return result;
     }
-    
+
     public String cvName(int cvTermId) {
         if (!cvNameById.containsKey(cvTermId))
             throw new IllegalArgumentException(String.format("CV term ID=%d not found", cvTermId));
