@@ -215,10 +215,10 @@ public class FeatureLoc implements Serializable {
     public void addPub(Pub pub) {
         this.featureLocPubs.add(new FeatureLocPub(this, pub));
     }
-    
-    
+
+
     FeatureLoc(Feature parent, Feature child, StrandedLocation location) {
-    	StrandedLocation loc = location.getInterbaseVersion();
+        StrandedLocation loc = location.getInterbaseVersion();
         this.featureBySrcFeatureId = parent;
         this.featureByFeatureId = child;
         this.fmin = loc.getMin();
@@ -230,6 +230,6 @@ public class FeatureLoc implements Serializable {
         this.locGroup = 0;
         this.rank = 0;
     }
-    
-    
+
+
 }
