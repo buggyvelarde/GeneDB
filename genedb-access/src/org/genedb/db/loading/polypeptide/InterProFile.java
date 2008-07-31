@@ -16,13 +16,12 @@ import org.genedb.db.loading.GoEvidenceCode;
 import org.genedb.db.loading.GoInstance;
 
 class DateFormatConverter {
-    private static final Map<String, String> months = new HashMap<String, String>(12);
-    static {
-        months.put("Jan", "01"); months.put("May", "05"); months.put("Sep", "09");
-        months.put("Feb", "02"); months.put("Jun", "06"); months.put("Oct", "10");
-        months.put("Mar", "03"); months.put("Jul", "07"); months.put("Nov", "11");
-        months.put("Apr", "04"); months.put("Aug", "08"); months.put("Dec", "12");
-    }
+    private static final Map<String, String> months = new HashMap<String, String>(12) {{
+        put("Jan", "01"); put("May", "05"); put("Sep", "09");
+        put("Feb", "02"); put("Jun", "06"); put("Oct", "10");
+        put("Mar", "03"); put("Jul", "07"); put("Nov", "11");
+        put("Apr", "04"); put("Aug", "08"); put("Dec", "12");
+    }};
 
     private static final Pattern datePattern = Pattern.compile("(\\d\\d)-([A-Z][a-z][a-z])-(\\d{4})");
 
