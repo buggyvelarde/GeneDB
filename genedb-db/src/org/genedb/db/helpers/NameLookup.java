@@ -31,7 +31,7 @@ public class NameLookup {
     // private List<Taxon> taxons; // The organism(s) to search through
     private boolean needWildcards; // Whether to add wildcards at the beginning
                                     // and end
-    private int start = 0; // Which number to start at if paging
+    private int start; // Which number to start at if paging
     private int pageSize; // How many results per page, if paging
     // private FeatureTypeFilter filter;
     private Organism organism;
@@ -102,7 +102,7 @@ public class NameLookup {
     // public List<Taxon> getTaxons() {
     // return this.taxons;
     // }
-    //    
+    //
     // public void setTaxons(List<Taxon> taxons) {
     // this.taxons = taxons;
     // }

@@ -729,7 +729,7 @@ public class SequenceDao extends BaseDao {
         return region;
     }
 
-    private CvTerm partOfType = null;
+    private CvTerm partOfType;
     private FeatureRelationship addPart(Feature whole, Feature part) {
         if (partOfType == null) {
             partOfType = cvDao.getCvTermByNameAndCvName("part_of", "relationship");
