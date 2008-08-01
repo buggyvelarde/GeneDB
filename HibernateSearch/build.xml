@@ -18,6 +18,8 @@
             <file name="spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
             <file name="spring-bundle-2.5.4/j2ee/jta.jar" />
             <file name="spring-2.5.4.jar" />
+            <file name="spring-aspects.jar" />
+            <file name="spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
             <file name="spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
             <file name="spring-bundle-2.5.4/asm/asm-2.2.3.jar" />
             <file name="spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar" />
