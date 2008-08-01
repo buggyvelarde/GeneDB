@@ -32,10 +32,11 @@
         <property name="location" value="classpath:project.properties" />
     </bean>
 
-
+    <!--
     <bean name="proteinLength" class="org.genedb.web.mvc.controller.ProteinLengthController">
         <property name="query" ref="proteinLengthQuery" />
     </bean>
+    -->
 
     <bean name="proteinLengthQuery" class="org.genedb.query.hql.ProteinLengthQuery">
         <property name="sessionFactory" ref="sessionFactory" />
