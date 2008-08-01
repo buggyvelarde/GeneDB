@@ -1,0 +1,9 @@
+finaldest.webapps=/software/pathogen/projects/genedb/malaria_web_snapshot/external/apache-tomcat-6.0.16/webapps/ROOT
+webAppRootKey=genedb.malaria-snapshot.root
+dbhost=pathdbsrv1-dmz
+dbport=5432
+dbname=snapshot
+dbuser=genedb_ro
+dbpassword=genedb_ro
+lucene.indexDirectory=/nfs/pathdata/genedb/indexes/snapshot/
+contextMap.render.directory=/includes/images/cmap
