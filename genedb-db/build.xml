@@ -61,7 +61,7 @@
 	  <taskdef
 	      resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
 	    <classpath>
-	      <pathelement location="${lib-dir}/aspectjtools.jar"/>
+	      <pathelement location="${genedb-db.libdir}/aspectjtools.jar"/>
 	    </classpath>
 	  </taskdef>
 
