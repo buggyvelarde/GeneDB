@@ -78,6 +78,7 @@
         <mkdir dir="${imported.basedir.db}/ant-build" />
         <mkdir dir="${imported.basedir.db}/ant-build/src" />
         <mkdir dir="${imported.basedir.db}/ant-build/classes" />
+        <mkdir dir="${imported.basedir.db}/ant-build/springless-classes" />
         <mkdir dir="${imported.basedir.db}/ant-build/jars" />
     </target>
 
@@ -86,10 +87,7 @@
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
         <copy todir="${imported.basedir.db}/ant-build/src">
-            <fileset dir="${imported.basedir.db}/src">
-                <!-- <include name="org/gmod/schema/**/*.java"/>
-                <include name="org/genedb/db/helpers/LocationBridge.java"/> -->
-            </fileset>
+            <fileset dir="${imported.basedir.db}/src"/>
         </copy>
 
         <javac srcdir="${imported.basedir.db}/ant-build/src"
@@ -109,6 +107,31 @@
 
     </target>
 
+    <target name="make-springless-jar" depends="setup-db">
+
+        <copy todir="${imported.basedir.db}/ant-build/src">
+            <fileset dir="${imported.basedir.db}/src"/>
+        </copy>
+
+        <javac srcdir="${imported.basedir.db}/ant-build/src"
+            classpathref="db-compile-lib"
+            destdir="${imported.basedir.db}/ant-build/springless-classes"
+            encoding="utf-8" debug="on" />
+
+        <antcall target="hibernate-instrumentation">
+            <param name="directory" value="${imported.basedir.db}/ant-build/springless-classes"/>
+        </antcall>
+
+        <jar jarfile="${imported.basedir.db}/ant-build/jars/genedb-db-springless.jar">
+            <fileset dir="${imported.basedir.db}/ant-build/springless-classes" />
+            <manifest>
+                <attribute name="Implementation-Title" value="Chado Interface (Springless)"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+            </manifest>
+        </jar>
+
+    </target>
+
     <target name="hibernate-instrumentation">
         <instrument verbose="true">
             <fileset dir="${directory}">
@@ -120,7 +143,7 @@
 
 
 	<!-- Invoke the hibernate instrumentation and compile-time weaving -->
-    <!-- Called from an Eclipse ant task, as well as from make-interface -->
+    <!-- Called from an Eclipse ant task, as well as from make-db-jar -->
 	<target name="build-time-weave">
 
         <antcall target="hibernate-instrumentation">
