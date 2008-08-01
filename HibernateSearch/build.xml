@@ -7,8 +7,7 @@
 
     <path id="jars">
         <filelist dir="../genedb-db/ant-build/jars/">
-            <file name="chado-interface.jar" />
-            <file name="genedb-hibernate.jar" />
+            <file name="genedb-db.jar" />
         </filelist>
         <filelist dir="../genedb-libs/lib">
             <file name="postgresql-8.2dev-501.jdbc3.jar" />
@@ -61,7 +60,7 @@
     </target>
 
     <!-- The dependent target "make-hibernate3-implementation" is defined in genedb-db/build.xml -->
-    <target name="compile" depends="destdir,genedb-db.make-hibernate3-implementation">
+    <target name="compile" depends="destdir,genedb-db.make-db-jar">
         <javac srcdir="src" destdir="ant-build/classes" debug="true">
             <classpath refid="jars" />
         </javac>
