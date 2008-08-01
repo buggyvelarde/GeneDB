@@ -250,7 +250,7 @@
                             style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${proteinMap}', sizingMethod='image')"/>
                     </div>
                 </div>
-            <![endif]>
+            <![endif]-->
             <![if ! lte IE 6]>
                 <img src="${proteinMap}" useMap="#proteinMapMap" id="proteinMapImage">
             <![endif]>
