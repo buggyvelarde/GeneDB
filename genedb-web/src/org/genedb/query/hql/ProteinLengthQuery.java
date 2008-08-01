@@ -25,7 +25,7 @@ public class ProteinLengthQuery extends HqlQuery {
 
     @Override
     protected String getHql() {
-        return "f.transcript.featureId from feature f where f.residues.length >= :min and f.residues.length <= :max";
+        return "f.uniqueName from feature f where f.residues.length >= :min and f.residues.length <= :max";
     }
 
     public void setMin(int min) {

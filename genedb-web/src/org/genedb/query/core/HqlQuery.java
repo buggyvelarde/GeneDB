@@ -45,7 +45,12 @@ public abstract class HqlQuery implements Query {
     private String hql;
     private SessionFactory sessionFactory;
 
-    protected String[] paramNames;
+    public void setSessionFactory(SessionFactory sessionFactory) {
+    	System.err.println(String.format("~~ SessionFactory set to '%s'", sessionFactory));
+		this.sessionFactory = sessionFactory;
+	}
+
+	protected String[] paramNames;
     protected String name;
 
     private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
@@ -56,6 +61,7 @@ public abstract class HqlQuery implements Query {
     }
 
     protected List<String> runQuery() {
+    	System.err.println(String.format("~~ SessionFactory is '%s'", sessionFactory));
     	Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
     	return runQuery(session);
     }
