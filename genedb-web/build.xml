@@ -8,7 +8,7 @@
     <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
     <import file="${imported.basedir.web}/../genedb-query/build.xml"/>
     <import file="${imported.basedir.web}/../genedb-domain/build.xml"/>
-    <import file="${imported.basedir.web}/../Jogra/build.xml"/>
+    <!-- <import file="${imported.basedir.web}/../Jogra/build.xml"/> -->
     <property name="version" value="0.2"/>
     <property name="jar-build" value="ant-build/jar-build"/>
     <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
@@ -89,6 +89,7 @@
         </copy>
     </target>
 
+	<!--
 	<target name="make-Jogra" depends="Jogra.signed-jar" if="${jogra}"/>
 
 	<target name="deploy-Jogra" depends="make-Jogra" if="${jogra}">
@@ -96,6 +97,7 @@
 		<copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/Jogra" />
 		<copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/WEB-INF/lib" />
     </target>
+	-->
 
     <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.make-db-jar" />
 
