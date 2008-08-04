@@ -68,10 +68,10 @@ public class QueryController {
             // Problem
         }
 
-        QueryExecutor executor = queryExecutorFactory.retrieveExecutor(query);
+        //QueryExecutor executor = queryExecutorFactory.retrieveExecutor(query);
 
     	ModelAndView mav = new ModelAndView("features/stupid");
-    	List<String> results = executor.execute(query);
+    	List<String> results = null;// = executor.execute(query);
     	mav.addObject("results", results);
     	return mav;
     }
