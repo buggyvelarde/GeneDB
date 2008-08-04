@@ -103,6 +103,9 @@
 
     <target name="make-all-and-deploy" depends="make-other-projects, compile, final-deploy, get-latest-jars"/>
 
+
+    <target name="fast-deploy" depends="compile, final-deploy, get-latest-jars"/>
+
     <!-- =================================
           target: compile
          ================================= -->
@@ -145,7 +148,31 @@
         <move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
         <move file="${finaldest.webapps}.tmp" tofile="${finaldest.webapps}" />
         <delete dir="${finaldest.webapps}.old" failonerror="false"/> <!-- temp hack -->
+    </target>
 
+	<path id="groovy-script-jars">
+        <path location="${lib-dir}/spring-bundle-2.5.4/groovy/groovy-1.5.5.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.4/asm/asm-2.2.3.jar" />
+	    <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
+	</path>
+
+	<taskdef name="groovy"
+	         classname="org.codehaus.groovy.ant.Groovy"
+	         classpathref="groovy-script-jars"/>
+
+    <target name="test-deployment">
+    	   <groovy>
+    	   	<![CDATA[
+    	   	downloadAndGrep("https://www.genedb.org/index.html", "JIRA")
+
+    	   	def downloadAndGrep(address, searchPattern)
+    	   	{
+    	   	  if (!(new URL(address).getText() =~ searchPattern)) {
+    	   	    throw new RuntimeException("Pattern '$searchPattern' not found in '$address' - probable deployment problem");
+    	   	  }
+    	   	}
+    	   	]]>
+    	   </groovy>
     </target>
 
 </project>
