@@ -175,4 +175,12 @@
     	   </groovy>
     </target>
 
+	<target name="restart-ci-web">
+		<exec executable="/nfs/pathdata/jira/bin/shutdown.sh" />
+		<delete dir="/nfs/pathdata/jira/ci-deployment/logs" />
+        <mkdir dir="/nfs/pathdata/jira/ci-deployment/logs" />
+	    <exec executable="/nfs/pathdata/jira/bin/startup.sh" />
+		<sleep seconds="30" />
+	</target>
+
 </project>
