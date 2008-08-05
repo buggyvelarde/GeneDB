@@ -26,45 +26,46 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 public class AdvancedSearchController extends PostOrGetFormController{
-    
+
     private JsonView jsonView;
     private String resultsView;
     private String geneView;
     private LuceneDao luceneDao;
     private HistoryManagerFactory historyManagerFactory;
-    
+
     private static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
     static {
         geneOrPseudogeneQuery.add(new TermQuery(new Term("cvTerm.name","gene")), Occur.SHOULD);
         geneOrPseudogeneQuery.add(new TermQuery(new Term("cvTerm.name","pseudogene")), Occur.SHOULD);
     }
-    
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, 
+
+    @Override
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
             Object command, BindException be) throws Exception {
-        
+
         AdvanceSearchBean aSearch = (AdvanceSearchBean)command;
         Map<String,Object> model = new HashMap<String,Object>();
         String organism = aSearch.getOrganism();
         String term = aSearch.getTerm();
         String category = aSearch.getCategory().toString();
         String viewName = null;
-        
+
         if(aSearch.isJson()) {
             Collection<String> orgNames = TaxonUtils.getOrgNames(organism);
             Hits hits = lookupInLucene(term,category,orgNames);
             HistoryManager historyManager = historyManagerFactory.getHistoryManager(
                     request.getSession());
 
-            String args = String.format("organism:%s %s:%s ", organism, category, 
+            String args = String.format("organism:%s %s:%s ", organism, category,
                                term);
-            
-            String internalName = String.format("Organism:%s;;Category:%s;;Term:%s ", organism, 
+
+            String internalName = String.format("Organism:%s;;Category:%s;;Term:%s ", organism,
                                     category, term);
-            
+
             List<String> ids = new ArrayList<String>();
-            
+
             logger.info("found results -> " + hits.length());
-            
+
             switch (hits.length()) {
             case 0: {
                 logger.warn(String.format("Failed to find term '%s' in '%s'", term,category));
@@ -88,20 +89,20 @@ public class AdvancedSearchController extends PostOrGetFormController{
                     rh.setProduct(doc.get("product"));
                     rh.setOrganism(doc.get("organism.commonName"));
                     results.add(rh);
-                    
+
                     ids.add(doc.get("uniqueName"));
                 }
                 model.put("features", results);
                 return new ModelAndView(jsonView,model);
-            }  
-            
+            }
+
             HistoryItem historyItem = historyManager.addHistoryItem(String.format("Browse Term -%s", args),
                     HistoryType.QUERY, ids);
-                
+
             historyItem.setInternalName(internalName);
-            
+
             logger.info("added history item " + internalName);
-                
+
         } else {
             model.put("organism", organism);
             model.put("term", term);
@@ -109,36 +110,36 @@ public class AdvancedSearchController extends PostOrGetFormController{
             model.put("controller", "AdvanceSearch");
             viewName = resultsView;
         }
-        
+
         return new ModelAndView(viewName,model);
     }
-    
+
     private Hits lookupInLucene(String term, String category,
             Collection<String> orgNames) throws IOException {
-        
+
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
-        
+
         BooleanQuery advQuery = new BooleanQuery();
         if(term.indexOf("*") == -1) {
             advQuery.add(new TermQuery(new Term(category,term.toLowerCase())),Occur.SHOULD);
         } else {
             advQuery.add(new WildcardQuery(new Term(category,term.toLowerCase())),Occur.SHOULD);
         }
-        
+
         BooleanQuery booleanQuery = new BooleanQuery();
         booleanQuery.add(new BooleanClause(geneOrPseudogeneQuery, Occur.MUST));
         booleanQuery.add(new BooleanClause(advQuery, Occur.MUST));
-        
+
         Iterator<String> iterator = orgNames.iterator();
         BooleanQuery organismQuery = new BooleanQuery();
-        
+
         while(iterator.hasNext()) {
             String organism = iterator.next();
             organismQuery.add(new TermQuery(new Term("organism.commonName",organism)), Occur.SHOULD);
         }
-        
+
         booleanQuery.add(new BooleanClause(organismQuery,Occur.MUST));
-        
+
         logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
         Hits hits = luceneDao.search(ir, booleanQuery);
         return hits;
@@ -165,12 +166,12 @@ public class AdvancedSearchController extends PostOrGetFormController{
     }
 
     public static class AdvanceSearchBean {
-        
+
         private String term;
         private String organism;
         private AdvancedSearchCategory category;
         private boolean json = false;
-        
+
         public String getTerm() {
             return term;
         }
