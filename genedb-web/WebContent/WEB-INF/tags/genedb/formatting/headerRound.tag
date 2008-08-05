@@ -155,6 +155,14 @@
                                         <a class="yuimenuitemlabel" href="<c:url value="/NameSearch"/>" title="Name Search">By Name/Product</a>
             						</c:if>
                                     </li>
+                                    <li class="yuimenuitem">
+                                    <c:if test="${!empty organism}">
+                                        <a class="yuimenuitemlabel" href="<c:url value="/ProteinLength?organism=${organism}"/>" title="ProteinLength Search">By Protein Length</a>
+                                    </c:if>
+                                    <c:if test="${empty organism}">
+                                        <a class="yuimenuitemlabel" href="<c:url value="/ProteinLength"/>" title="ProteinLength Search">By Protein Length</a>
+                                    </c:if>
+                                    </li>
                                     <%-- Motif Search not yet implemented
                                     <li class="yuimenuitem">
                                         <a class="yuimenuitemlabel" href="<c:url value="/"/>" title="Motif Search">Motif Search</a>
