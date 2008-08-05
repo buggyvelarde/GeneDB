@@ -74,9 +74,10 @@
 	        <tr>
 	            <td class="label">See Also</td>
 	            <td class="value">
-	                <c:forEach items="${polypeptide.featureDbXRefs}" var="fdbxref">
+	                <c:forEach items="${polypeptide.featureDbXRefs}" var="fdbxref" varStatus="status">
 	                	<c:if test="${!empty fdbxref.dbXRef.db.urlPrefix}">
-	                		<span><a href="${fdbxref.dbXRef.db.urlPrefix}${fdbxref.dbXRef.accession}">${fdbxref.dbXRef.db.name}:${fdbxref.dbXRef.accession}</a></span>
+	                		<span><a href="${fdbxref.dbXRef.db.urlPrefix}${fdbxref.dbXRef.accession}">${fdbxref.dbXRef.db.name}:${fdbxref.dbXRef.accession}</a><%--
+                             --%><c:if test="${!status.last}">, </c:if></span>
 	                	</c:if>
 	                </c:forEach>
 	            </td>
