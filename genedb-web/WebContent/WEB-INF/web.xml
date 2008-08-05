@@ -193,7 +193,7 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/ProteinLength</url-pattern>
+        <url-pattern>/Query</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
