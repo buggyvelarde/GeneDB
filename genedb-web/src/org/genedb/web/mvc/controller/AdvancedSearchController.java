@@ -43,7 +43,7 @@ public class AdvancedSearchController extends PostOrGetFormController{
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
             Object command, BindException be) throws Exception {
 
-        AdvanceSearchBean aSearch = (AdvanceSearchBean)command;
+        AdvancedSearchBean aSearch = (AdvancedSearchBean)command;
         Map<String,Object> model = new HashMap<String,Object>();
         String organism = aSearch.getOrganism();
         String term = aSearch.getTerm();
@@ -107,7 +107,7 @@ public class AdvancedSearchController extends PostOrGetFormController{
             model.put("organism", organism);
             model.put("term", term);
             model.put("category", category);
-            model.put("controller", "AdvanceSearch");
+            model.put("controller", "AdvancedSearch");
             viewName = resultsView;
         }
 
@@ -165,7 +165,7 @@ public class AdvancedSearchController extends PostOrGetFormController{
         this.historyManagerFactory = historyManagerFactory;
     }
 
-    public static class AdvanceSearchBean {
+    public static class AdvancedSearchBean {
 
         private String term;
         private String organism;

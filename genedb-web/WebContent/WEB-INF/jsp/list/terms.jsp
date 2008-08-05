@@ -5,7 +5,7 @@
 <c:param name="category" value="${category}"/>
 <c:param name="term" value="${term}"/>
 <c:param name="json" value="true"/>
-</c:url> 
+</c:url>
 <format:headerRound title="Gene Results List" bodyClass="genePage" onLoad="makeDataTable('${base}','${url}');">
 		<st:init />
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/YUI-2.5.2/fonts/fonts-min.css"/>" />
@@ -27,7 +27,7 @@
 		Genes containing CvTerm: <i style="color: blue;">${term}</i>  in Vocabulary: <i style="color: blue;">${category}</i>
 	</div>
 </c:if>
-<c:if test="${controller eq 'AdvanceSearch'}">
+<c:if test="${controller eq 'AdvancedSearch'}">
 	<div id="queryName">
 		Genes containing <i style="color: blue;">${term}</i>  in: <i style="color: blue;">${category}</i><br>
 		in Organism: <i style="color: blue;">${organism}</i><br>
