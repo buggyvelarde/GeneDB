@@ -177,11 +177,11 @@
     </target>
 
 	<target name="restart-ci-web">
-		<exec executable="/nfs/pathdata/jira/bin/shutdown.sh" />
+		<exec failonerror="true" executable="/nfs/pathdata/jira/bin/shutdown.sh" />
 	    <sleep seconds="5" />
 		<delete dir="/nfs/pathdata/jira/ci-deployment/logs" failonerror="false"/>
         <mkdir dir="/nfs/pathdata/jira/ci-deployment/logs" />
-	    <exec executable="/nfs/pathdata/jira/bin/startup.sh" />
+	    <exec failonerror="true" executable="/nfs/pathdata/jira/bin/startup.sh" />
 		<sleep seconds="30" />
 	</target>
 
