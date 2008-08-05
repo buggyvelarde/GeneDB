@@ -80,4 +80,9 @@ public class ProteinMapDiagram extends TrackedDiagram {
     MembraneStructure getMembraneStructure() {
         return membraneStructure;
     }
+
+    public boolean isEmpty() {
+        return (getAllocatedCompoundFeatures().isEmpty() && membraneStructure == null)
+            || getSize() <= 0;
+    }
 }

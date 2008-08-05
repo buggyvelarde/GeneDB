@@ -73,10 +73,12 @@ public class NamedFeatureController extends PostOrGetFormController {
             List<PolypeptideRegionGroup> domainInformation = (List<PolypeptideRegionGroup>) model.get("domainInformation");
 
             ProteinMapDiagram diagram = new ProteinMapDiagram(polypeptide, domainInformation);
-            if (!diagram.getAllocatedCompoundFeatures().isEmpty() && diagram.getSize() > 0) {
+            if (!diagram.isEmpty()) {
                 RenderedProteinMap renderedProteinMap = new RenderedProteinMap(diagram);
 
                 model.put("proteinMap", DiagramCache.fileForDiagram(renderedProteinMap, getServletContext()));
+                model.put("proteinMapWidth",  renderedProteinMap.getWidth());
+                model.put("proteinMapHeight", renderedProteinMap.getHeight());
                 model.put("proteinMapMap", renderedProteinMap.getRenderedFeaturesAsHTML("proteinMapMap"));
             }
         }
