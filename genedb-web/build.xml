@@ -101,8 +101,11 @@
 
     <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.make-db-jar" />
 
-    <target name="make-all-and-deploy" depends="make-other-projects, compile, final-deploy, get-latest-jars"/>
+    <target name="make-all-and-deploy" depends="make-other-projects, clean-web, compile, final-deploy, get-latest-jars"/>
 
+	<target name="clean-web">
+		<delete dir="${imported.basedir.web}/ant-build" quiet="true"/>
+	</target>
 
     <target name="fast-deploy" depends="compile, final-deploy, get-latest-jars"/>
 
@@ -177,11 +180,11 @@
     </target>
 
 	<target name="restart-ci-web">
-		<exec failonerror="true" executable="/nfs/pathdata/jira/bin/shutdown.sh" />
+		<exec executable="/nfs/pathdata/jira/bin/shutdown.sh" failifexecutionfails="true" failonerror="true" />
 	    <sleep seconds="5" />
 		<delete dir="/nfs/pathdata/jira/ci-deployment/logs" failonerror="false"/>
         <mkdir dir="/nfs/pathdata/jira/ci-deployment/logs" />
-	    <exec failonerror="true" executable="/nfs/pathdata/jira/bin/startup.sh" />
+	    <exec executable="/nfs/pathdata/jira/bin/startup.sh"  failifexecutionfails="true" failonerror="true" />
 		<sleep seconds="30" />
 	</target>
 
