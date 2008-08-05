@@ -163,7 +163,8 @@
     <target name="test-deployment">
     	   <groovy>
     	   	<![CDATA[
-    	   	downloadAndGrep("https://www.genedb.org/index.html", "JIRA")
+    	   	downloadAndGrep("http://pathdbsrv1a.internal.sanger.ac.uk:9003/ci-web/Homepage", "yoelii")
+            downloadAndGrep("http://pathdbsrv1a.internal.sanger.ac.uk:9003/ci-web/NamedFeature?name=PF07_0048", "Duffy")
 
     	   	def downloadAndGrep(address, searchPattern)
     	   	{
