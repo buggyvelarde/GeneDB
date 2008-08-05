@@ -101,7 +101,7 @@
 
     <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.make-db-jar" />
 
-    <target name="make-all-and-deploy" depends="make-other-projects, clean-web, compile, final-deploy, get-latest-jars"/>
+    <target name="make-all-and-deploy" depends="make-other-projects, compile, final-deploy, get-latest-jars"/>
 
 	<target name="clean-web">
 		<delete dir="${imported.basedir.web}/ant-build" quiet="true"/>
@@ -112,7 +112,7 @@
     <!-- =================================
           target: compile
          ================================= -->
-    <target name="compile" depends=""
+    <target name="compile" depends="clean-web"
         description="--> Compile classes">
 
         <mkdir dir="ant-build/classes"/>
