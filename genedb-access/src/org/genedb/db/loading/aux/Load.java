@@ -1,4 +1,4 @@
-package org.genedb.db.loading.polypeptide;
+package org.genedb.db.loading.aux;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,10 +58,10 @@ public class Load {
         PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
 
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"PolypeptideContext.xml"});
+                new String[] {"AuxContext.xml"});
 
         Loader loader = (Loader) ctx.getBean(loaderBeanName, Loader.class);
-        Load lip = new Load(loader);
+        Load load = new Load(loader);
 
         Set<String> validOptions = loader.getOptionNames();
         int firstFilename = -1;
@@ -84,15 +84,19 @@ public class Load {
                 invalidOption(option, validOptions);
         }
 
-        if (firstFilename == -1)
-            dieUsage();
-        String[] filePaths = Arrays.copyOfRange(args, firstFilename, args.length);
-
-
         long startTime = new Date().getTime();
 
-        for (String filePath: filePaths)
-            lip.load(filePath);
+        if (loader.loadsFromFile()) {
+            if (firstFilename == -1)
+                dieUsage();
+            String[] filePaths = Arrays.copyOfRange(args, firstFilename, args.length);
+
+            for (String filePath: filePaths)
+                load.load(filePath);
+        }
+        else {
+            loader.load(null);
+        }
 
         long elapsedMilliseconds = new Date().getTime() - startTime;
         float elapsedSeconds = (float) elapsedMilliseconds / 1000;

@@ -1,4 +1,4 @@
-package org.genedb.db.loading.polypeptide;
+package org.genedb.db.loading.aux;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +42,7 @@ public class DeleteRedundantGOTerms {
     public static void main(String[] args) throws SQLException, IOException {
         PropertyOverrideHolder.setProperties("dataSourceMunging", new Properties());
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
-            new String[] {"PolypeptideContext.xml"});
+            new String[] {"AuxContext.xml"});
 
         DataSource dataSource = (DataSource) ctx.getBean("dataSource", DataSource.class);
         deleteRedundantGOTerms(dataSource);

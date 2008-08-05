@@ -1,4 +1,4 @@
-package org.genedb.db.loading.polypeptide;
+package org.genedb.db.loading.aux;
 
 import java.io.IOException;
 import java.io.InputStream;

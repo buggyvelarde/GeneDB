@@ -3,9 +3,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <context:component-scan base-package="org.gmod.schema"/>
+    <context:spring-configured/>
+      <tx:annotation-driven mode="aspectj" />
 
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="messages"/>
@@ -44,33 +50,40 @@
 		<property name="key" value="dataSourceMunging"/>
     </bean>
 
-    <bean id="iploader" class="org.genedb.db.loading.polypeptide.InterProLoader">
+    <bean id="iploader" class="org.genedb.db.loading.aux.InterProLoader">
         <property name="dbxrefManager" ref="dbxrefManager" />
     	<property name="featureUtils" ref="featureUtils" />
     	<property name="sequenceDao" ref="sequenceDao" />
     	<property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="tmhmmloader" class="org.genedb.db.loading.polypeptide.TMHMMLoader">
+    <bean id="tmhmmloader" class="org.genedb.db.loading.aux.TMHMMLoader">
         <property name="featureUtils" ref="featureUtils" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="signalploader" class="org.genedb.db.loading.polypeptide.SignalPLoader">
+    <bean id="signalploader" class="org.genedb.db.loading.aux.SignalPLoader">
         <property name="featureUtils" ref="featureUtils" />
         <property name="cvDao" ref="cvDao" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="dgpiloader" class="org.genedb.db.loading.polypeptide.DGPILoader">
+    <bean id="dgpiloader" class="org.genedb.db.loading.aux.DGPILoader">
         <property name="featureUtils" ref="featureUtils" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="plasmoaploader" class="org.genedb.db.loading.polypeptide.PlasmoAPLoader">
+    <bean id="plasmoaploader" class="org.genedb.db.loading.aux.PlasmoAPLoader">
+        <property name="featureUtils" ref="featureUtils" />
+        <property name="sequenceDao" ref="sequenceDao" />
+        <property name="hibernateTransactionManager" ref="transactionManager" />
+    </bean>
+
+    <bean id="opi-referencesloader" class="org.genedb.db.loading.aux.OPIReferenceLoader">
+        <property name="dbXRefManager" ref="dbxrefManager" />
         <property name="featureUtils" ref="featureUtils" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
@@ -84,7 +97,7 @@
 		<property name="generalDao" ref="generalDao" />
     </bean>
 
-    <bean id="dbxrefManager" class="org.genedb.db.loading.polypeptide.DbXRefManager">
+    <bean id="dbxrefManager" class="org.genedb.db.loading.aux.DbXRefManager">
         <property name="featureUtils" ref="featureUtils" />
     </bean>
 
@@ -109,6 +122,11 @@
 	</property>
 	</bean>
 
+    <!--  This is needed by the Feature class -->
+    <bean id="tempCvDao" class="org.genedb.db.dao.TempCvDao">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Hibernate SessionFactory -->
     <bean id="sessionFactory"
         class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
@@ -116,7 +134,8 @@
         <property name="hibernateProperties" ref="hibernateProperties" />
         <property name="annotatedPackages">
             <list>
-                <value>org.gmod.schema</value>
+                <value>org.gmod.schema.mapped</value>
+                <value>org.gmod.schema.feature</value>
             </list>
         </property>
     </bean>

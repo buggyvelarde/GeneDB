@@ -1,4 +1,4 @@
-package org.genedb.db.loading.polypeptide;
+package org.genedb.db.loading.aux;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +39,15 @@ public abstract class Loader {
         return Collections.emptySet();
     }
 
+    /**
+     * Does this loader expect input files?
+     * @return <code>true</code> if so, <code>false</code> if not.
+     *          The default implementation returns <code>true</code>.
+     */
+    protected boolean loadsFromFile() {
+        return true;
+    }
+
     protected boolean processOptionIfValid(String optionName, String optionValue) {
         if (getOptionNames().contains(optionName))
             return processOption(optionName, optionValue);
@@ -50,7 +59,7 @@ public abstract class Loader {
         throw new IllegalStateException("processOption() must be overridden if options are specified");
     }
 
-    public void load(InputStream inputStream) throws IOException {
+    void load(InputStream inputStream) throws IOException {
         SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
         Session session = SessionFactoryUtils.getSession(sessionFactory, dbxrefManager, null);
         TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
@@ -61,7 +70,15 @@ public abstract class Loader {
         SessionFactoryUtils.releaseSession(session, sessionFactory);
     }
 
-    public abstract void doLoad(InputStream inputStream, Session session) throws IOException;
+    /**
+     * Load data. This method must be implemented by all implementing classes.
+     * It will be called once for each input file.
+     * @param inputStream a stream from which the input data may be read, or <code>null</code>
+     *          if {@link #loadsFromFile()} returns <code>false</code>
+     * @param session the Hibernate session
+     * @throws IOException
+     */
+    protected abstract void doLoad(InputStream inputStream, Session session) throws IOException;
 
     public void setFeatureUtils(FeatureUtils featureUtils) {
         this.featureUtils = featureUtils;

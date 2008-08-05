@@ -1,4 +1,4 @@
-package org.genedb.db.loading.polypeptide;
+package org.genedb.db.loading.aux;
 
 import java.sql.SQLException;
 
@@ -17,7 +17,7 @@ public class ClearDGPI extends Clear {
         +"     , feature join organism using (organism_id)"
         +" where featureprop.type_id = cvterm.cvterm_id"
         +" and   featureprop.feature_id = feature.feature_id"
-        +" and cv.name = 'protein_property'"
+        +" and cv.name = 'genedb_misc'"
         +" and cvterm.name = 'GPI_anchored'"
         +" and organism.common_name = ?";
 
