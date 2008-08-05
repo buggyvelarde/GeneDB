@@ -36,31 +36,31 @@
 			init();
             adjustCoordinates();
         });
-        
-        function loadAdvanceSearch() {
+
+        function loadAdvancedSearch() {
 			var dom = YAHOO.util.Dom;
-			var div = dom.get("advanceSearch");
+			var div = dom.get("advancedSearch");
 			var attributes = {
 			        height: { to: 150 }
 			 };
-			 var anim = new YAHOO.util.Anim('advanceSearch', attributes);			
+			 var anim = new YAHOO.util.Anim('advancedSearch', attributes);
 			 anim.animate();
 			 dom.setStyle(div, "overflow", "visible");
 			 dom.setStyle(div, "border", "1 px solid grey");
         }
 
-        function closeAdvanceSearch() {
+        function closeAdvancedSearch() {
         	var dom = YAHOO.util.Dom;
-			var div = dom.get("advanceSearch");
+			var div = dom.get("advancedSearch");
 			dom.setStyle(div, "overflow", "hidden");
 			dom.setStyle(div, "border", "");
 			var attributes = {
 			        height: { to: 0 }
 		    };
-		 	var anim = new YAHOO.util.Anim('advanceSearch', attributes);
+		 	var anim = new YAHOO.util.Anim('advancedSearch', attributes);
 			anim.animate();
         }
-        
+
     </script>
 
     <jsp:doBody />
@@ -85,22 +85,22 @@
             	<input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
 				</form>
 				<span align="top" style="font-size:0.65em;">
-					<a style="color:white;vertical-align:top;" href="#" onclick="loadAdvanceSearch()">
-						Advance Search
+					<a style="color:white;vertical-align:top;" href="#" onclick="loadAdvancedSearch()">
+						Advanced Search
 					</a>
 				</span>
-				<div id="advanceSearch">
+				<div id="advancedSearch">
 					<c:if test="${!empty organism}">
-						<form name="advSearchForm" action="<c:url value="/"/>AdvanceSearch?organism=${organism}" method="get">
+						<form name="advSearchForm" action="<c:url value="/"/>AdvancedSearch?organism=${organism}" method="get">
 					</c:if>
 					<c:if test="${empty organism}">
-						<form name="advSearchForm" action="<c:url value="/"/>AdvanceSearch?" method="get">
+						<form name="advSearchForm" action="<c:url value="/"/>AdvancedSearch?" method="get">
 					</c:if>
 						<table id="advSearchTable" cellpadding="2">
 							<tr>
 								<td width="20%" style="text-align:left;">Search </td>
-								<td width="80%"> 
-									<select name="category">	
+								<td width="80%">
+									<select name="category">
 										<option value="allNames">Gene names</option>
 										<option value="product">Product</option>
 										<option value="curatedAnnotation">curated annotations [comments & curation]</option>
@@ -117,13 +117,13 @@
 								</td>
 							</tr>
 							<tr>
-								<td width="20%" style="text-align:left;"> 
+								<td width="20%" style="text-align:left;">
 									in
 								</td>
 								<td width="80%" style="text-align:center;"><db:phylogeny/></td>
 							</tr>
 							<tr>
-								<td width="20%" style="text-align:left;"> 
+								<td width="20%" style="text-align:left;">
 									for
 								</td>
 								<td width="80%" style="text-align:left;">
@@ -134,7 +134,7 @@
 						</table>
 					</form>
 					<br>
-					<span><a href="#" onclick="closeAdvanceSearch()">Close</a></span>
+					<span><a href="#" onclick="closeAdvancedSearch()">Close</a></span>
 				</div>
         </td>
     </tr>

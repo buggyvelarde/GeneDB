@@ -137,7 +137,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
-        <url-pattern>/AdvanceSearch</url-pattern>
+        <url-pattern>/AdvancedSearch</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>

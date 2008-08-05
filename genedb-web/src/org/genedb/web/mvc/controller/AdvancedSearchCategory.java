@@ -1,6 +1,6 @@
 package org.genedb.web.mvc.controller;
 
-public enum AdvanceSearchCategory {
+public enum AdvancedSearchCategory {
     allNames,
     product,
     curatedAnnotation,

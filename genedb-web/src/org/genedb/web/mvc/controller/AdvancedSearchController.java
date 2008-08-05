@@ -25,7 +25,7 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
-public class AdvanceSearchController extends PostOrGetFormController{
+public class AdvancedSearchController extends PostOrGetFormController{
     
     private JsonView jsonView;
     private String resultsView;
@@ -168,7 +168,7 @@ public class AdvanceSearchController extends PostOrGetFormController{
         
         private String term;
         private String organism;
-        private AdvanceSearchCategory category;
+        private AdvancedSearchCategory category;
         private boolean json = false;
         
         public String getTerm() {
@@ -183,10 +183,10 @@ public class AdvanceSearchController extends PostOrGetFormController{
         public void setOrganism(String organism) {
             this.organism = organism;
         }
-        public AdvanceSearchCategory getCategory() {
+        public AdvancedSearchCategory getCategory() {
             return category;
         }
-        public void setCategory(AdvanceSearchCategory category) {
+        public void setCategory(AdvancedSearchCategory category) {
             this.category = category;
         }
         public boolean isJson() {
