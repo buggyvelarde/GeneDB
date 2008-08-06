@@ -46,7 +46,7 @@
 			 var anim = new YAHOO.util.Anim('advancedSearch', attributes);
 			 anim.animate();
 			 dom.setStyle(div, "overflow", "visible");
-			 dom.setStyle(div, "border", "1 px solid grey");
+			 dom.setStyle(div, "border", "1px solid grey");
         }
 
         function closeAdvancedSearch() {
