@@ -1,12 +1,15 @@
 package org.genedb.web.gui;
 
-import java.util.Collection;
-
 import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.services.BasicGeneService;
 
 import org.apache.log4j.Logger;
+
+import java.util.Collection;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * This class represents a context map diagram in an abstract way, i.e.
@@ -143,8 +146,8 @@ public class ContextMapDiagram extends TrackedDiagram {
             String organismName, String chromosomeName, int start, int end) {
         ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, start, end);
 
-        diagram.allocateTracks(diagram.boundaries(basicGeneService, organismName, chromosomeName, +1, start, end), false);
-        diagram.allocateTracks(diagram.boundaries(basicGeneService, organismName, chromosomeName, -1, start, end), true);
+        diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, +1, start, end), false);
+        diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, -1, start, end), true);
 
         for (Gap gap: basicGeneService.findGapsOverlappingRange(organismName, chromosomeName, start, end))
             diagram.addGlobalFeature(gap);
@@ -156,8 +159,8 @@ public class ContextMapDiagram extends TrackedDiagram {
             String organismName, String chromosomeName, int chromosomeLength) {
         ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, 0, chromosomeLength);
 
-        diagram.allocateTracks(diagram.boundaries(basicGeneService, organismName, chromosomeName, +1), false);
-        diagram.allocateTracks(diagram.boundaries(basicGeneService, organismName, chromosomeName, -1), true);
+        diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, +1), false);
+        diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, -1), true);
 
         for (Gap gap: basicGeneService.findGapsOnChromosome(organismName, chromosomeName))
             diagram.addGlobalFeature(gap);
@@ -182,37 +185,36 @@ public class ContextMapDiagram extends TrackedDiagram {
         return chromosome;
     }
 
-    private BoundarySet<BasicGene> boundaries(BasicGeneService basicGeneService, String organismName,
+    private Set<BasicGene> genes(BasicGeneService basicGeneService, String organismName,
         String chromosomeName, int strand) {
-
-        return boundaries(basicGeneService, organismName, chromosomeName, strand, getStart(), getEnd());
+        return genes(basicGeneService, organismName, chromosomeName, strand, getStart(), getEnd());
     }
 
     /**
-     * Return a <code>BoundarySet</code> of matched boundaries, such that
+     * Return a set of BasicGene features, such that
      * the leftmost feature overlaps only with features included in the set. We may
      * need to include features beyond the left-hand end of the stated range in order to
      * achieve this; we include only as many as necessary.
      */
-    private BoundarySet<BasicGene> boundaries(BasicGeneService basicGeneService, String organismName,
+    private Set<BasicGene> genes(BasicGeneService basicGeneService, String organismName,
             String chromosomeName, int strand, int start, int end) {
 
-        Collection<BasicGene> genes = basicGeneService.findGenesOverlappingRange(organismName,
-            chromosomeName, strand, start, end);
+        SortedSet<BasicGene> genes = new TreeSet<BasicGene>(
+            basicGeneService.findGenesOverlappingRange(organismName,
+                chromosomeName, strand, start, end));
 
-        BoundarySet<BasicGene> boundaries = new BoundarySet<BasicGene>(genes);
-        if (boundaries.isEmpty())
-            return boundaries;
+        if (genes.isEmpty())
+            return genes;
 
         int newStart;
-        while ((newStart = boundaries.first().getLocation()) < start) {
+        while ((newStart = genes.first().getFmin()) < start) {
             Collection<BasicGene> moreGenes = basicGeneService.findGenesOverlappingRange(
                 organismName, chromosomeName, strand, newStart, start);
-            boundaries.addFeatures(moreGenes);
+            genes.addAll(moreGenes);
             start = newStart;
         }
 
-        return boundaries;
+        return genes;
     }
 
 }

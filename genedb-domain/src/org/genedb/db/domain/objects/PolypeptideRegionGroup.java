@@ -2,41 +2,15 @@ package org.genedb.db.domain.objects;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 public abstract class PolypeptideRegionGroup extends CompoundLocatedFeature {
 
-    /**
-     * How to order the domains within this group.
-     * Here we order them by database, accession ID and fmin.
-     */
-    private static final Comparator<PolypeptideRegion> domainComparator
-        = new Comparator<PolypeptideRegion> ()
-    {
-        public int compare(PolypeptideRegion a, PolypeptideRegion b) {
-            if (a instanceof DatabasePolypeptideRegion && b instanceof DatabasePolypeptideRegion) {
-                DatabasePolypeptideRegion da = (DatabasePolypeptideRegion) a;
-                DatabasePolypeptideRegion db = (DatabasePolypeptideRegion) b;
-
-                int dbNameComparison = da.getDatabase().compareTo(db.getDatabase());
-                if (dbNameComparison != 0)
-                    return dbNameComparison;
-
-                int accessionComparison = da.getAccession().compareToIgnoreCase(db.getAccession());
-                if (accessionComparison != 0)
-                    return accessionComparison;
-            }
-            return a.getFmin() - b.getFmin();
-        }
-    };
-
-
     private int fmin = Integer.MAX_VALUE;
     private int fmax = Integer.MIN_VALUE;
-    private SortedSet<PolypeptideRegion> domains = new TreeSet<PolypeptideRegion>(domainComparator);
+    private SortedSet<PolypeptideRegion> domains = new TreeSet<PolypeptideRegion>();
 
     /**
      * Add a region to this group.

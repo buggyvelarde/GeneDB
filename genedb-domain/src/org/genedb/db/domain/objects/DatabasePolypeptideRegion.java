@@ -18,13 +18,35 @@ public class DatabasePolypeptideRegion extends PolypeptideRegion {
     private static final Logger logger = Logger.getLogger(DatabasePolypeptideRegion.class);
 
     private static final Map<String,Color> colorsByDatabase = new HashMap<String,Color>() {{
-       put("Pfam",        new Color(255, 0,   255));
-       put("Prosite",     new Color(255, 0,   0));
-       put("SMART",       new Color(150, 170, 100));
-       put("PRINTS",      new Color(160, 140, 180));
-       put("ProDom",      new Color(100, 150, 180));
-       put("Superfamily", new Color(150, 120, 110));
+       put("Pfam",        new Color(248, 57,  217));
+       put("PIRSF",       new Color(52,  33,  135));
+       put("Prosite",     new Color(130, 68,  225));
+       put("SMART",       new Color(247, 65,  66));
+       put("PRINTS",      new Color(57,  45,  209));
+       put("ProDom",      new Color(0,   160, 9));
+       put("Superfamily", new Color(0,   199, 127));
     }};
+
+    /**
+     * Groups DatabasePolyPeptideRegions by database name.
+     * Within each database, the superclass comparison is used.
+     */
+    @Override
+    public int compareTo(LocatedFeature other) {
+        if (other instanceof DatabasePolypeptideRegion) {
+            int databaseComparison = this.database.compareTo(((DatabasePolypeptideRegion)other).database);
+            if (databaseComparison != 0) {
+                return databaseComparison;
+            }
+        }
+        return super.compareTo(other);
+    }
+
+    @Override
+    public String getStratumId() {
+        return database;
+    }
+
 
     private String url;
     String accession;

@@ -24,21 +24,19 @@ public class ProteinMapDiagram extends TrackedDiagram {
         this.polypeptideUniqueName = polypeptide.getUniqueName();
         this.membraneStructure = polypeptide.getMembraneStructure();
 
-        this.packSubfeatures = true;
+        this.packSubfeatures = AllocatedCompoundFeature.Mode.PACKED;
         this.numberOfBlankTracksAboveCompoundFeature = 2;
 
-        BoundarySet<PolypeptideRegionGroup> boundaries = new BoundarySet<PolypeptideRegionGroup>(regionGroups);
-
-        addRegion           (polypeptide, boundaries, "Signal peptide", "Sig. pep.",
+        addRegion           (polypeptide, regionGroups, "Signal peptide", "Sig. pep.",
             Color.GREEN,        SignalPeptide.class);
-        addRegionToNTerminus(polypeptide, boundaries, "GPI anchor", "GPI",
+        addRegionToNTerminus(polypeptide, regionGroups, "GPI anchor", "GPI",
             new Color(255, 165, 0), GPIAnchorCleavageSite.class);
 
-        allocateTracks(boundaries, false);
+        allocateTracks(regionGroups, false);
     }
 
     private <T extends PolypeptideRegion> void addRegion(Polypeptide polypeptide,
-            BoundarySet<PolypeptideRegionGroup> boundaries, String title, String abbreviation,
+            Collection<PolypeptideRegionGroup> regionGroups, String title, String abbreviation,
             Color color, Class<T> regionClass) {
 
         Collection<T> regions = polypeptide.getRegions(regionClass);
@@ -47,13 +45,13 @@ public class ProteinMapDiagram extends TrackedDiagram {
             for(T region: regions) {
                 regionGroup.addRegion(SimplePolypeptideRegion.build(region, title, null, color));
             }
-            boundaries.addFeature(regionGroup);
+            regionGroups.add(regionGroup);
         }
 
     }
 
     private <T extends PolypeptideRegion> void addRegionToNTerminus(Polypeptide polypeptide,
-            BoundarySet<PolypeptideRegionGroup> boundaries, String title, String abbreviation,
+            Collection<PolypeptideRegionGroup> regionGroups, String title, String abbreviation,
             Color color, Class<T> regionClass) {
 
         Collection<T> regions = polypeptide.getRegions(regionClass);
@@ -64,7 +62,7 @@ public class ProteinMapDiagram extends TrackedDiagram {
                     region.getFmin(), polypeptide.getSeqLen(), region.getUniqueName(), title, null, color);
                 regionGroup.addRegion(simplePolypeptideRegion);
             }
-            boundaries.addFeature(regionGroup);
+            regionGroups.add(regionGroup);
         }
 
     }

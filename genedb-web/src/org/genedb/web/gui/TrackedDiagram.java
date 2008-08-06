@@ -1,23 +1,21 @@
 package org.genedb.web.gui;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import org.apache.log4j.Logger;
 import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.CompoundLocatedFeature;
 import org.genedb.db.domain.objects.LocatedFeature;
+
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public abstract class TrackedDiagram {
 
     private static final Logger logger = Logger.getLogger(TrackedDiagram.class);
 
-    protected boolean packSubfeatures = false;
+    protected AllocatedCompoundFeature.Mode packSubfeatures = AllocatedCompoundFeature.Mode.UNPACKED;
 
     /**
      * The number of blank tracks to leave above (or,
@@ -124,39 +122,6 @@ public abstract class TrackedDiagram {
         return ret;
     }
 
-    /**
-     * Find the first gap large enough to contain <code>gapSize</code>
-     * entries.
-     *
-     * @param filled the set of unavailable indices
-     * @param gapSize the size of the required gap, >= 1
-     * @return the index of the start of the first sufficiently-large gap
-     */
-    private static int findGap(BitSet filled, int gapSize) {
-        /*
-         * Irrelevant note:
-         *
-         * This algorithm is linear-time and constant-space. I reckon it should
-         * be possible to do better with a special-purpose data structure;
-         * presumably there's a huge literature on this in the context of memory
-         * management / allocation. We could probably improve performance simply by
-         * using BitSet#nextClearBit(int). But we don't have a performance problem
-         * here, as far as I know.
-         */
-        if (gapSize < 1)
-            throw new IllegalArgumentException(String.format("gapSize is %d, must be >=1", gapSize));
-
-        int currentGapSize = 0;
-        for (int i = 0;; i++) {
-            if (filled.get(i))
-                currentGapSize = 0;
-            else {
-                if (++currentGapSize == gapSize)
-                    return i - gapSize + 1;
-            }
-        }
-    }
-
     public TrackedDiagram(int start, int end) {
         this.start = start;
         this.end = end;
@@ -198,52 +163,29 @@ public abstract class TrackedDiagram {
      * @param negativeHalf <code>true</code> for the negative
      * @return the diagram Half
      */
-    protected void allocateTracks(BoundarySet<? extends CompoundLocatedFeature> boundaries, boolean negativeHalf) {
-        int numTracks = 0;
-        BitSet activeTracks = new BitSet();
-        Map<CompoundLocatedFeature, Integer> activeFeatures = new HashMap<CompoundLocatedFeature, Integer>();
-        for (Boundary<? extends CompoundLocatedFeature> boundary : boundaries) {
-            AllocatedCompoundFeature feature = new AllocatedCompoundFeature(boundary.feature, 0, packSubfeatures);
-            int numSubfeatures = feature.getSubtracks().size();
-            if (numSubfeatures == 0) {
+    protected void allocateTracks(Iterable<? extends CompoundLocatedFeature> compoundFeatures, boolean negativeHalf) {
+        DiagramLayout layout = new DiagramLayout();
+
+        for (CompoundLocatedFeature compoundFeature : compoundFeatures) {
+            AllocatedCompoundFeature allocatedCompoundFeature
+                = new AllocatedCompoundFeature(compoundFeature, 0, packSubfeatures);
+            int numSubtracks = allocatedCompoundFeature.getSubtracks().size();
+            if (numSubtracks == 0) {
                 /*
                  * Give a more comprehensible error message if this is a gene.
                  */
-                if (boundary.feature instanceof BasicGene)
-                    logger.error(String.format("The gene '%s' has no transcripts!", boundary.feature
+                if (compoundFeature instanceof BasicGene)
+                    logger.error(String.format("The gene '%s' has no transcripts!", compoundFeature
                         .getUniqueName()));
                 else
-                    logger.error(String.format("The compound feature '%s' has no subfeatures!", boundary.feature
+                    logger.error(String.format("The compound feature '%s' has no subfeatures!", compoundFeature
                             .getUniqueName()));
                 continue;
             }
 
-            int track, lastUsedTrack;
-            switch (boundary.type) {
-            case START:
-                track = findGap(activeTracks, numSubfeatures);
-                lastUsedTrack = track + numSubfeatures - 1 + numberOfBlankTracksAboveCompoundFeature;
-                if (lastUsedTrack >= numTracks)
-                    numTracks = lastUsedTrack + 1;
-                for (int i = track; i <= lastUsedTrack; i++)
-                    activeTracks.set(i);
-                activeFeatures.put(boundary.feature, track);
-                addFeature(feature, (negativeHalf ? -1-track : 1+track));
-                break;
-
-            case END:
-                track = activeFeatures.get(boundary.feature);
-                lastUsedTrack = track + numSubfeatures - 1 + numberOfBlankTracksAboveCompoundFeature;
-                activeFeatures.remove(feature);
-
-                for (int i = track; i <= lastUsedTrack; i++)
-                    activeTracks.clear(i);
-                break;
-
-            default:
-                throw new IllegalStateException(
-                        "Boundary type is invalid. This should never happen!");
-            }
+            int track = layout.addBlock(compoundFeature.getFmin(), compoundFeature.getFmax(),
+                numSubtracks + numberOfBlankTracksAboveCompoundFeature);
+            addFeature(allocatedCompoundFeature, negativeHalf ? -track : track);
         }
     }
 

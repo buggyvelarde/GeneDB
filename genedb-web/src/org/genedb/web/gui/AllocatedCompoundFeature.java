@@ -3,19 +3,24 @@ package org.genedb.web.gui;
 import org.genedb.db.domain.objects.CompoundLocatedFeature;
 import org.genedb.db.domain.objects.LocatedFeature;
 
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a CompoundLocatedFeature that has been allocated a track
  * or tracks.
  */
 public class AllocatedCompoundFeature implements Comparable<AllocatedCompoundFeature> {
+    private static final Logger logger = Logger.getLogger(AllocatedCompoundFeature.class);
+
+    public enum Mode {
+        UNPACKED, PACKED, STRATIFIED, STRATIFIED_LTR
+    }
+
     private final CompoundLocatedFeature feature;
     private int track;
 
@@ -27,7 +32,7 @@ public class AllocatedCompoundFeature implements Comparable<AllocatedCompoundFea
      * @param track the number of the track
      */
     public AllocatedCompoundFeature(CompoundLocatedFeature feature, int track) {
-        this(feature, track, false);
+        this(feature, track, Mode.UNPACKED);
     }
 
     /**
@@ -38,42 +43,54 @@ public class AllocatedCompoundFeature implements Comparable<AllocatedCompoundFea
      * @param packSubfeatures whether to pack subfeatures into as few tracks as possible:
      *          if <code>false</code>, each subfeature is allocated its own track.
      */
-    public AllocatedCompoundFeature(CompoundLocatedFeature feature, int track, boolean packSubfeatures) {
+    public AllocatedCompoundFeature(CompoundLocatedFeature feature, int track, Mode mode) {
         this.feature = feature;
         this.track = track;
 
-        if (packSubfeatures) {
-            packSubfeatures();
-        }
-        else {
-            dontPackSubfeatures();
+        switch (mode) {
+        case UNPACKED:       dontPackSubfeatures();         break;
+        case PACKED:         packSubfeatures();             break;
+        case STRATIFIED:     stratifySubfeatures();         break;
+        case STRATIFIED_LTR: stratifySubfeaturesByFirst(); break;
         }
     }
 
     private List<Collection<LocatedFeature>> packedFeatures = new ArrayList<Collection<LocatedFeature>>();
+
+    private void addSubfeature(int track, LocatedFeature subfeature) {
+        for (int i = packedFeatures.size(); i <= track; i++) {
+            packedFeatures.add(new ArrayList<LocatedFeature>());
+        }
+        packedFeatures.get(track).add(subfeature);
+        logger.trace(String.format("Added '%s' to track %d", subfeature.getUniqueName(), track));
+    }
+
     private void packSubfeatures() {
-        BoundarySet<LocatedFeature> boundaries = new BoundarySet<LocatedFeature>(feature.getSubfeatures());
-        BitSet inUse = new BitSet();
-        Map<LocatedFeature,Integer> trackByFeature = new HashMap<LocatedFeature,Integer>();
+        DiagramLayout layout = new DiagramLayout();
+        for (LocatedFeature subfeature: feature.getSubfeaturesOrderedByPosition()) {
+            int track = layout.addBlock(subfeature.getFmin(), subfeature.getFmax(), 1) - 1;
+            addSubfeature(track, subfeature);
+        }
+    }
 
-        for (Boundary<LocatedFeature> boundary: boundaries) {
-            switch (boundary.type) {
-            case START:
-                int track = inUse.nextClearBit(0);
-                inUse.set(track);
-                trackByFeature.put(boundary.feature, track);
+    private void stratifySubfeatures() {
+        stratifySubfeatures(feature.getStratifiedSubfeatures());
+    }
 
-                assert track <= packedFeatures.size();
-                if (track == packedFeatures.size()) {
-                    packedFeatures.add(new ArrayList<LocatedFeature>());
-                }
-                packedFeatures.get(track).add(boundary.feature);
-                break;
-            case END:
-                inUse.clear(trackByFeature.get(boundary.feature));
-                trackByFeature.remove(boundary.feature);
-                break;
+    private void stratifySubfeaturesByFirst() {
+        stratifySubfeatures(feature.getStratifiedSubfeaturesByFirst());
+    }
+
+    private void stratifySubfeatures(Iterable<? extends Iterable<? extends LocatedFeature>> strata) {
+        int baseTrack = 0;
+        for (Iterable<? extends LocatedFeature> stratum: strata) {
+            logger.trace("Start of stratum");
+            DiagramLayout layout = new DiagramLayout();
+            for (LocatedFeature subfeature: stratum) {
+                int track = layout.addBlock(subfeature.getFmin(), subfeature.getFmax(), 1) - 1;
+                addSubfeature(track + baseTrack, subfeature);
             }
+            baseTrack += layout.numberOfTracks();
         }
     }
 

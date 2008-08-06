@@ -132,11 +132,6 @@ public abstract class RenderedDiagram {
     private Color labelBackgroundColor = null;
 
     /**
-     * The anti-aliasing mode used to draw label text.
-     */
-    private Object labelAntialiasingMode = RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
-
-    /**
      * Font used for printing figures on the scale track
      */
     private Font labelFont = new Font("FuturaTMed", Font.PLAIN, 12);
@@ -567,7 +562,7 @@ public abstract class RenderedDiagram {
             labelBuffer = new BufferedImage(MAX_LABEL_WIDTH, MAX_LABEL_HEIGHT, BufferedImage.TYPE_INT_ARGB_PRE);
             labelGraf = (Graphics2D) labelBuffer.getGraphics();
             labelGraf.setComposite(AlphaComposite.Src);
-            labelGraf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, labelAntialiasingMode);
+            setLabelRenderingHints(labelGraf);
             labelGraf.setFont(labelFont);
         }
     }
@@ -914,10 +909,15 @@ public abstract class RenderedDiagram {
         }
     }
 
+    protected void setLabelRenderingHints(Graphics2D graf) {
+        graf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        graf.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+    }
+
     private void drawLabelDirectly(int pos) {
         graf.setFont(labelFont);
         Color previousColor = graf.getColor();
-        graf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, labelAntialiasingMode);
+        setLabelRenderingHints(graf);
 
         FontRenderContext fontRenderContext = graf.getFontRenderContext();
         Font font = graf.getFont();
