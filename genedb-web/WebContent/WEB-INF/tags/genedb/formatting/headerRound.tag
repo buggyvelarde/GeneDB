@@ -85,7 +85,7 @@
             	<input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
 				</form>
 				<span align="top" style="font-size:0.65em;">
-					<a style="color:white;vertical-align:top;" href="#" onclick="loadAdvancedSearch()">
+					<a style="color:white;vertical-align:top;" href="#" onclick="loadAdvancedSearch(); return false;">
 						Advanced Search
 					</a>
 				</span>
@@ -134,7 +134,7 @@
 						</table>
 					</form>
 					<br>
-					<span><a href="#" onclick="closeAdvancedSearch()">Close</a></span>
+					<span><a href="#" onclick="closeAdvancedSearch(); return false;">Close</a></span>
 				</div>
         </td>
     </tr>
