@@ -111,7 +111,7 @@ update db set urlprefix='http://www.ebi.ac.uk/cgi-bin/expasyfetch?'
 update db set urlprefix='http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId='
 	where name='PDB';
 
-update db set urlprefix='http://pfam.janelia.org/family?type=Family&entry='
+update db set urlprefix='http://pfam.sanger.ac.uk/family?type=Family&entry='
 	where name='Pfam';
 
 update db set urlprefix='http://ca.expasy.org/cgi-bin/prosite-search-ac?'
@@ -125,6 +125,9 @@ update db set urlprefix='http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/search.
 
 update db set urlprefix='http://cmr.tigr.org/cgi-bin/CMR/HmmReport.cgi?hmm_acc='
     where name='TIGR_TIGRFAMS';
+
+update db set urlprefix='http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_='
+    where name='OPI';
 
 --
 -- ----------------------
