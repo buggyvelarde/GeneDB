@@ -26,7 +26,9 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Configurable
 public abstract class HqlQuery implements Query {
@@ -105,5 +107,9 @@ public abstract class HqlQuery implements Query {
 
     	return ret;
     }
+
+	public Map<String, Object> prepareModelData() {
+		return Collections.emptyMap();
+	}
 
 }

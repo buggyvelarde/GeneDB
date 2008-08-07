@@ -2,10 +2,12 @@ package org.genedb.querying.core;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class BooleanQuery implements Query {
-	
+
 	private BooleanQueryMode mode;
 	private Query left;
 	private Query right;
@@ -44,6 +46,10 @@ public class BooleanQuery implements Query {
 		sb.append(right.getParseableDescription());
 		sb.append(')');
 		return sb.toString();
+	}
+
+	public Map<String, Object> prepareModelData() {
+		return Collections.emptyMap();
 	}
 
 }
