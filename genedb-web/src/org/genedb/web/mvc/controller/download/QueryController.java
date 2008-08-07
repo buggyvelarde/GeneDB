@@ -1,28 +1,25 @@
 package org.genedb.web.mvc.controller.download;
 
-import org.genedb.query.core.Query;
-import org.genedb.query.core.QueryException;
-import org.genedb.query.core.QueryFactory;
-import org.genedb.query.hql.ProteinLengthQuery;
+import org.genedb.querying.core.Query;
+import org.genedb.querying.core.QueryException;
+import org.genedb.querying.core.QueryFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
-
-import com.sshtools.j2ssh.net.HttpRequest;
 
 
 @Controller
@@ -31,6 +28,7 @@ public class QueryController {
 
     @Autowired
     private QueryFactory queryFactory;
+
 
 
     @RequestMapping(method = RequestMethod.GET)
@@ -42,8 +40,16 @@ public class QueryController {
             return "redirect:/QueryList";
         }
         Query query = queryFactory.retrieveQuery(queryName);
+        if (query == null) {
+            return "redirect:/QueryList"; // FIXME - Send flash msg
+        }
         model.addAttribute("query", query);
-        return "search/query";
+        Map<String, Object> modelData = query.prepareModelData();
+        for (Map.Entry<String, Object> entry : modelData.entrySet()) {
+			model.addAttribute(entry.getKey(), entry.getValue());
+		}
+        //return "search/query";
+        return "search/"+queryName;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -68,10 +74,8 @@ public class QueryController {
             // Problem
         }
 
-        //QueryExecutor executor = queryExecutorFactory.retrieveExecutor(query);
-
-    	ModelAndView mav = new ModelAndView("features/stupid");
-    	List<String> results = null;// = executor.execute(query);
+    	ModelAndView mav = new ModelAndView("list/stupid");
+    	List<String> results = query.getResults();
     	mav.addObject("results", results);
     	return mav;
     }
