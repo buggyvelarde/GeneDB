@@ -25,6 +25,9 @@ import org.genedb.query.Result;
 import org.genedb.query.SimpleListResult;
 import org.genedb.query.history.History;
 import org.genedb.query.history.SimpleHistory;
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.querying.history.HistoryType;
 import org.genedb.web.mvc.history.commandline.HistoryParser;
 import org.genedb.web.mvc.history.commandline.ParseException;
 
@@ -33,6 +36,7 @@ import org.gmod.schema.mapped.Feature;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
@@ -54,7 +58,9 @@ public class HistoryController extends MultiActionController implements Initiali
     private static final String TIME_FORMAT = "HH:mm:ss";
     private static final SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT);
 	private static final int SESSION_FAILED_ERROR_CODE = 500;
-
+    private static final String GENEDB_HISTORY = "_GeneDB_History_List";
+    String compile = "Organism:([\\w\\W]+?);;Category:([\\w\\W]+?);;Term:([\\w\\W]*)";
+    Pattern pattern = Pattern.compile(compile);
     
     public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
         this.viewChecker = viewChecker;
@@ -79,6 +85,7 @@ public class HistoryController extends MultiActionController implements Initiali
         return new ModelAndView(historyView);
     }
     
+    
     public ModelAndView viewData(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
@@ -96,17 +103,32 @@ public class HistoryController extends MultiActionController implements Initiali
         return new ModelAndView(jsonView, model);
     }
     
+    
     public ModelAndView Download(HttpServletRequest request,HttpServletResponse response) {
-        String history = ServletRequestUtils.getStringParameter(request, "history","0");
+        String history = null;
+		try {
+			history = ServletRequestUtils.getRequiredStringParameter(request, "history");
+		} catch (ServletRequestBindingException exp) {
+			// No history item chosen - redirect to view history
+			// TODO Flash message
+		}
+		
+        HttpSession session = request.getSession(false);
+        // TODO Session may be null
+
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+        String formalHistoryName = historyManager.getFormalName(history);
         
-        if(history == "0") {
-            return new ModelAndView(downloadView);
+        if (formalHistoryName == null) {
+			// No history item chosen - redirect to view history
+			// TODO Flash message
         }
 
         Map<String,Object> model = new HashMap<String,Object>();
-        model.put("history", history);
+        model.put("history", formalHistoryName);
         return new ModelAndView(downloadView,model);
     }
+    
     
     public ModelAndView EditHistory(HttpServletRequest request,HttpServletResponse response) {
         String history = ServletRequestUtils.getStringParameter(request, "history","0");
@@ -130,8 +152,7 @@ public class HistoryController extends MultiActionController implements Initiali
         HistoryItem historyItem = historyManager.getHistoryItems().get(item-1);
         String internalName = historyItem.getInternalName();
         
-        String compile = "Organism:([\\w\\W]+?);;Category:([\\w\\W]+?);;Term:([\\w\\W]*)";
-        Pattern pattern = Pattern.compile(compile);
+
         Matcher matcher = pattern.matcher(internalName);
         
         String organism = null;
@@ -152,7 +173,9 @@ public class HistoryController extends MultiActionController implements Initiali
         return new ModelAndView(editView,model);
     }
     
-    private static final String GENEDB_HISTORY = "_GeneDB_History_List";
+    
+
+    
     
     public ModelAndView EditName(HttpServletRequest request,HttpServletResponse response) {
         HttpSession session = request.getSession(false);
@@ -184,6 +207,7 @@ public class HistoryController extends MultiActionController implements Initiali
         }
         return null;
     }
+    
     public ModelAndView AddItem(HttpServletRequest request,HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
@@ -477,37 +501,6 @@ public class HistoryController extends MultiActionController implements Initiali
         //historyManager.addHistoryItems("merged", historyItem.getIds());
 
         return new ModelAndView("redirect:/History/View");
-    }
-
-    public ModelAndView FillHistory(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            // No session
-            String secondTry = ServletRequestUtils.getStringParameter(request, "sessionTest",
-                "false");
-            if ("true".equals(secondTry)) {
-                // TODO Maybe use built in error handling
-                return new ModelAndView("history/noSession");
-            }
-            // Try and create session and return here
-            session = request.getSession(true);
-            return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
-        }
-        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-
-        tempNameSearch("Afu3*", "Afumigatus", historyManager);
-        tempNameSearch("Afu8*", "Afumigatus", historyManager);
-
-        return new ModelAndView("redirect:/History/View");
-    }
-
-    private void tempNameSearch(String name, String org, HistoryManager historyManager) {
-        List<Feature> results = sequenceDao.getFeaturesByAnyNameAndOrganism(name, org, "gene");
-        List<String> ids = new ArrayList<String>(results.size());
-        for (Feature feature : results) {
-            ids.add(feature.getUniqueName());
-        }
-        //historyManager.addHistoryItems("name lookup '" + name + "'", ids);
     }
 
     public String getHistoryView() {
