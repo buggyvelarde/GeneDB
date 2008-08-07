@@ -1,30 +1,13 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.query.BasicQueryI;
-import org.genedb.query.NumberedQueryI;
-import org.genedb.query.QueryPlaceHolder;
-import org.genedb.query.Result;
-import org.genedb.query.SimpleListResult;
-import org.genedb.query.bool.BooleanOp;
-import org.genedb.query.bool.BooleanQuery;
-import org.genedb.query.history.History;
-import org.genedb.query.history.SimpleHistory;
-import org.genedb.web.tags.bool.QueryTreeWalker;
-
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.querying.history.HistoryType;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -66,7 +49,7 @@ public class HttpSessionHistoryManager implements HistoryManager {
 	/* (non-Javadoc)
 	 * @see org.genedb.web.mvc.controller.HistoryManager#addHistoryItem(java.lang.String, java.util.List)
 	 */
-	public  HistoryItem addHistoryItem(String name, HistoryType type, List<String> ids) {
+	public HistoryItem addHistoryItem(String name, HistoryType type, List<String> ids) {
 		
 		List<HistoryItem> history = getHistoryItems();
 		boolean found = false;
@@ -80,6 +63,7 @@ public class HttpSessionHistoryManager implements HistoryManager {
 		  HistoryItem item = new HistoryItem(name, ids);
 		  item.setHistoryType(type);
 		  history.add(item);
+		  version++;
 		  return item;
 		}
 		
@@ -98,6 +82,7 @@ public class HttpSessionHistoryManager implements HistoryManager {
 		if (found == null) {
 			found = new HistoryItem(name, id);
 			history.add(found);
+			version++;
 			return found;
 		} 
 		
@@ -132,6 +117,12 @@ public class HttpSessionHistoryManager implements HistoryManager {
 
 	public int getNumHistoryItems() {
 		return getHistoryItems().size();
+	}
+
+	@Override
+	public String getFormalName(String name) {
+		// TODO Auto-generated method stub
+		return name;
 	}
 
 }
