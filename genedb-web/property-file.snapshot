@@ -1,4 +1,4 @@
-finaldest.webapps=/software/pathogen/projects/genedb/malaria_web_snapshot/external/apache-tomcat-6.0.16/webapps/ROOT
+finaldest.webapps=/software/pathogen/projects/genedb/snapshot/external/apache-tomcat-6.0.16/webapps/ROOT
 webAppRootKey=genedb.snapshot.root
 
 dbhost=pathdbsrv1-dmz
