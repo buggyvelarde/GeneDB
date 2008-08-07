@@ -12,6 +12,7 @@ import org.genedb.db.dao.SequenceDao;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,7 +27,8 @@ import org.springframework.web.context.request.WebRequest;
 @RequestMapping("/SequenceDownload")
 public class SequenceDownloadController {
 
-    private SequenceDao sequenceDao;
+    @Autowired
+	private SequenceDao sequenceDao;
 
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm() {
@@ -122,7 +124,4 @@ public class SequenceDownloadController {
 
     }
 
-    public void setSequenceDao(SequenceDao sequenceDao) {
-        this.sequenceDao = sequenceDao;
-    }
 }
