@@ -24,6 +24,9 @@ import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.querying.history.HistoryType;
+
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
