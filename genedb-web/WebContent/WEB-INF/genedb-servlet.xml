@@ -9,10 +9,14 @@
 	http://www.springframework.org/schema/util
 	http://www.springframework.org/schema/util/spring-util-2.5.xsd
 	http://www.springframework.org/schema/context
-	http://www.springframework.org/schema/util/spring-context-2.5.xsd"
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd"
     default-init-method="postConstruction">
 
 	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+
+    <context:component-scan base-package="org.genedb.web.mvc.controller.download, org.genedb.querying.core" />
+
+
 
 	<!--
 		- Message source for this context, loaded from localized "messages_xx" files.
@@ -32,22 +36,14 @@
         <property name="location" value="classpath:project.properties" />
     </bean>
 
-    <!--
-    <bean name="proteinLength" class="org.genedb.web.mvc.controller.ProteinLengthController">
-        <property name="query" ref="proteinLengthQuery" />
-    </bean>
-    -->
 
-    <bean name="proteinLengthQuery" class="org.genedb.query.hql.ProteinLengthQuery">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
+    <bean name="proteinLengthQuery" class="org.genedb.querying.tmpquery.ProteinLengthQuery" />
+    <bean name="proteinMassQuery" class="org.genedb.querying.tmpquery.ProteinMassQuery" />
+    <bean name="geneTypeQuery" class="org.genedb.querying.tmpquery.GeneTypeQuery" />
+
+    <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
-
-    <bean id="sequenceDownload"
-        class="org.genedb.web.mvc.controller.download.SequenceDownloadController">
-        <property name="sequenceDao" ref="sequenceDao" />
-    </bean>
 
     <bean id="goProcessBrowse"
         class="org.genedb.web.mvc.controller.BrowseBean">
@@ -140,6 +136,7 @@
     <bean id="urlMapping"
         class="org.genedb.web.mvc.controller.CaseSensitiveControllerClassNameHandlerMapping">
         <property name="alwaysUseFullPath" value="true" />
+        <property name="includeAnnotatedControllers" value="false" />
         <property name="interceptors">
             <list>
                 <ref bean="openSessionInView" />
@@ -147,6 +144,13 @@
         </property>
     </bean>
 
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="openSessionInView" />
+            </list>
+        </property>
+    </bean>
 
 
     <!-- ========================= CONTROLLER DEFINITIONS ========================= -->
