@@ -19,9 +19,9 @@
 
 package org.genedb.query.jdbc;
 
-import org.genedb.query.core.Query;
-import org.genedb.query.core.QueryException;
-import org.genedb.query.core.QueryUtils;
+import org.genedb.querying.core.Query;
+import org.genedb.querying.core.QueryException;
+import org.genedb.querying.core.QueryUtils;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -32,7 +32,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public abstract class JdbcQuery extends NamedParameterJdbcDaoSupport implements Query {
-    
+
     private String sql;
     protected String[] paramNames;
     protected String name;
@@ -40,20 +40,20 @@ public abstract class JdbcQuery extends NamedParameterJdbcDaoSupport implements 
     public String getParseableDescription() {
         return QueryUtils.makeParseableDescription(name, paramNames, this);
     }
-    
-    
+
+
 
     protected List<String> runQuery() {
-        
-        @SuppressWarnings("unchecked")        
-        List<String> results = getNamedParameterJdbcTemplate().query(sql, 
+
+        @SuppressWarnings("unchecked")
+        List<String> results = getNamedParameterJdbcTemplate().query(sql,
                 new BeanPropertySqlParameterSource(this),
                 new RowMapper() {
                     public Object mapRow(ResultSet rs, @SuppressWarnings("unused") int rowNum) throws SQLException {
                         return rs.getString(0);
                     }
         });
-        
+
         return results;
     }
 
@@ -72,5 +72,11 @@ public abstract class JdbcQuery extends NamedParameterJdbcDaoSupport implements 
     public void setParamNames(String[] paramNames) {
         this.paramNames = paramNames;
     }
+
+
+
+	public String[] prepareModelData(int count) {
+		return null;
+	}
 
 }

@@ -1,5 +1,7 @@
 package org.genedb.web.mvc.controller;
 
+import org.genedb.querying.history.HistoryManager;
+
 import javax.servlet.http.HttpSession;
 
 /**

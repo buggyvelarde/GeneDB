@@ -1,5 +1,9 @@
 package org.genedb.web.mvc.controller;
 
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.querying.history.HistoryType;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;

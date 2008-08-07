@@ -8,8 +8,8 @@ IGNORE_CASE = true;
 PARSER_BEGIN(HistoryParser) 
 package org.genedb.web.mvc.history.commandline;
 
-import org.genedb.web.mvc.controller.HistoryItem;
-import org.genedb.web.mvc.controller.HistoryManager;
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
 
 
 public class HistoryParser { 

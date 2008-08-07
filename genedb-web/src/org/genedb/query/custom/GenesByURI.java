@@ -1,7 +1,7 @@
 package org.genedb.query.custom;
 
-import org.genedb.query.core.Query;
-import org.genedb.query.core.QueryException;
+import org.genedb.querying.core.Query;
+import org.genedb.querying.core.QueryException;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Required;
@@ -12,14 +12,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLConnection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class GenesByURI implements Query {
 
 	private static final String NAME = "GenesByURI";
     private URI uri;
 	private List<String> results = null;
-	
+
 	public List<String> getResults() throws QueryException {
 		if (results != null) {
 			return results;
@@ -57,5 +59,16 @@ public class GenesByURI implements Query {
         // TODO Auto-generated method stub
         return NAME + "{uri=\""+uri.toASCIIString()+"\"}";
     }
+
+
+	public String[] prepareModelData(int count) {
+		return null;
+	}
+
+
+	@Override
+	public Map<String, Object> prepareModelData() {
+		return Collections.emptyMap();
+	}
 
 }

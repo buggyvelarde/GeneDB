@@ -19,14 +19,14 @@
 
 package org.genedb.query.hql;
 
-import org.genedb.query.core.QueryTemplate;
+import org.genedb.querying.core.QueryTemplate;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 
 public class HqlQueryTemplate extends QueryTemplate {
-    
+
     private String hql;
     private String sessionFactory;
 

@@ -35,6 +35,10 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.querying.history.HistoryType;
+
 import org.gmod.schema.utils.GeneNameOrganism;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;

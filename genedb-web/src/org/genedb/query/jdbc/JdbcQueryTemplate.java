@@ -19,14 +19,14 @@
 
 package org.genedb.query.jdbc;
 
-import org.genedb.query.core.QueryTemplate;
+import org.genedb.querying.core.QueryTemplate;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 
 public class JdbcQueryTemplate extends QueryTemplate {
-    
+
     private String sql;
     private String dataSource;
 
