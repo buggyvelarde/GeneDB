@@ -5,21 +5,21 @@ import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
 @QueryClass(
-        title="Coding and pseudogenes by protein length",
+        title="Coding and pseudogenes by protein mass",
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class ProteinLengthQuery extends HqlQuery {
+public class ProteinMassQuery extends HqlQuery {
 
     @QueryParam(
             order=1,
-            title="Minimum length of protein in bases"
+            title="Minimum mass of protein"
     )
     private int min = 0;
 
     @QueryParam(
             order=2,
-            title="Maximum length of protein in bases"
+            title="Maximum mass of protein"
     )
     private int max = 1000;
 
