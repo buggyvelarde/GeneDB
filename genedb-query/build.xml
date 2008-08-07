@@ -1,39 +1,59 @@
 <?xml version="1.0"?>
 
 <project name="genedb-query" default="fulljar-query" basedir=".">
-	
+
 	<dirname property="imported.basedir.query" file="${ant.file.genedb-query}"/>
-	
+
 	<import file="${imported.basedir.query}/../genedb-util/build.xml" />
 	<import file="${imported.basedir.query}/../genedb-access/build.xml" />
-	
+
 	<target name="clean-build-query" >
 		<delete dir="${imported.basedir.query}/ant-build"/>
 	</target>
-		
+
 	<target name="setup-query" >
 		<mkdir dir="${imported.basedir.query}/ant-build" />
 		<mkdir dir="${imported.basedir.query}/ant-build/src" />
 		<mkdir dir="${imported.basedir.query}/ant-build/classes" />
 		<mkdir dir="${imported.basedir.query}/ant-build/jars" />
 	</target>
-	
+
 	<path id="compile-lib-query">
 		<path location="${imported.basedir.query}/../genedb-libs/lib/spring-2.5.4.jar" />
+        <path location="${lib-dir}/antlr-runtime-3.0.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
 		<path location="${imported.basedir.query}/../genedb-util/ant-build/jars/genedb-util.jar" />
 	</path>
-	
-	<target name="fulljar-query" depends="clean-build-query,setup-query,genedb-util.fulljar,genedb-access.genedb-access.jar" description="Create full JAR file with all Spring classes">
-		
+
+	<target name="fulljar-query"
+		depends="clean-build-query,setup-query,genedb-util.fulljar,genedb-access.genedb-access.jar, query-compile, query-jar"
+		description="Create full JAR file with all Spring classes"
+	/>
+
+	<target name="query-compile">
 		<copy todir="${imported.basedir.query}/ant-build/src">
 			<fileset dir="${imported.basedir.query}/src">
-			    <include name="org/genedb/query/**/*.java"/>
-				<include name="org/genedb/query/*.java"/>
+                <exclude name="org/genedb/querying/parsing/*.java" />
+			    <include name="org/genedb/quer*/**/*.java"/>
+				<include name="org/genedb/quer*/*.java"/>
 			</fileset>
 		</copy>
-		    	
+
 		<javac srcdir="${imported.basedir.query}/ant-build/src" classpathref="compile-lib-query" destdir="${imported.basedir.query}/ant-build/classes" debug="on" />
-    	
+
+        <iajc
+            verbose="true"
+            inpath="${imported.basedir.query}/ant-build/classes"
+            aspectpathref="aspect.path"
+            classpathRef ="db-compile-lib"
+            destdir="${imported.basedir.query}/ant-build/classes" />
+
+	</target>
+
+
+	<target name="query-jar" depends="query-compile">
 		<jar jarfile="${imported.basedir.query}/ant-build/jars/genedb-query.jar">
 			<fileset dir="${imported.basedir.query}/ant-build/classes" />
 			<manifest>
@@ -42,5 +62,14 @@
 			</manifest>
 		</jar>
 	</target>
+
+
+    <!-- need to tell ant where the aspectj tooling jar is -->
+      <taskdef
+          resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+        <classpath>
+          <pathelement location="${lib-dir}/aspectjtools.jar"/>
+        </classpath>
+      </taskdef>
 
 </project>
