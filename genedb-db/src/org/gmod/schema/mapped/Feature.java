@@ -1,7 +1,6 @@
 package org.gmod.schema.mapped;
 
 import org.genedb.db.dao.TempCvDao;
-import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.helpers.LocationBridge;
 
 import org.gmod.schema.utils.CollectionUtils;
@@ -21,7 +20,6 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
