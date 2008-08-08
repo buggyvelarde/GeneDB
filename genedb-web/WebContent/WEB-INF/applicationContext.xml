@@ -45,9 +45,20 @@
         <property name="generalDao" ref="generalDao" />
     </bean>
 
-    <bean id="luceneDao" class="org.genedb.web.mvc.controller.LuceneDao">
+    <bean id="luceneDao" class="org.genedb.querying.core.LuceneDao">
         <property name="luceneIndexDirectoryName">
         	<value>${lucene.indexDirectory}</value>
+        </property>
+    </bean>
+
+    <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
+        <property name="luceneIndexList">
+        <list>
+            <bean class="org.genedb.querying.core.LuceneIndex">
+                <property name="indexDirectoryName" value="${lucene.indexDirectory}" />
+                <property name="indexName" value="org.gmod.schema.mapped.Feature" />
+            </bean>
+        </list>
         </property>
     </bean>
 

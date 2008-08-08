@@ -14,7 +14,7 @@
 
 	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
-    <context:component-scan base-package="org.genedb.web.mvc.controller.download, org.genedb.querying.core" />
+    <context:component-scan base-package="org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
 
 
 
@@ -36,10 +36,11 @@
         <property name="location" value="classpath:project.properties" />
     </bean>
 
-
     <bean name="proteinLengthQuery" class="org.genedb.querying.tmpquery.ProteinLengthQuery" />
     <bean name="proteinMassQuery" class="org.genedb.querying.tmpquery.ProteinMassQuery" />
     <bean name="geneTypeQuery" class="org.genedb.querying.tmpquery.GeneTypeQuery" />
+    <bean name="advancedQuery" class="org.genedb.querying.tmpquery.AdvancedQuery" />
+    <bean name="nameProductQuery" class="org.genedb.querying.tmpquery.NameProductQuery" />
 
     <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 

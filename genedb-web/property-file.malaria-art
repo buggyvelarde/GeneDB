@@ -1,0 +1,12 @@
+finaldest.webapps=/software/pathogen/projects/genedb/tomcat_workshop/tomcat.art/webapps/new
+webAppRootKey=genedb.new.root
+dbhost=pathdbsrv1a
+dbport=10101
+dbname=malaria_workshop
+dbuser=pathdb
+dbpassword=Pyrate_1
+lucene.indexDirectory=/nfs/pathdata/genedb/indexes/snapshot/
+contextMap.render.directory=/includes/images/cmap
+proteinMap.render.directory=/includes/images/cmap
+emboss.directory=/software/pathogen/external/applications/EMBOSS/
+psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/

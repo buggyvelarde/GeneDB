@@ -1,9 +1,11 @@
 package org.genedb.web.mvc.controller.download;
 
+import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +27,8 @@ import javax.servlet.ServletRequest;
 @Controller
 @RequestMapping("/Query")
 public class QueryController {
+
+    private static final Logger logger = Logger.getLogger(QueryController.class);
 
     @Autowired
     private QueryFactory queryFactory;
@@ -74,9 +78,22 @@ public class QueryController {
             // Problem
         }
 
-    	ModelAndView mav = new ModelAndView("list/stupid");
+    	ModelAndView mav = null;
     	List<String> results = query.getResults();
-    	mav.addObject("results", results);
+    	switch (results.size()) {
+    	case 0:
+    		logger.error("No results found for query");
+    		mav = new ModelAndView("search/"+queryName);
+    		break;
+    	case 1:
+    		mav = new ModelAndView("redirect:/NamedFeature");
+    		// TODO Send feature name
+    		break;
+    	default:
+    		mav = new ModelAndView("list/stupid");
+        	mav.addObject("results", results);
+        	break;
+    	}
     	return mav;
     }
 
