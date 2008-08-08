@@ -56,7 +56,7 @@ public class LTR_Processor extends BaseFeatureProcessor {
                 new String[]{QUAL_NOTE},
                 new String[]{});
 
-		handledQualifiers = new String[]{"LTR:colour", "LTR:note"};
+        handledQualifiers = new String[]{"LTR:colour", "LTR:note"};
     }
 
     @Override

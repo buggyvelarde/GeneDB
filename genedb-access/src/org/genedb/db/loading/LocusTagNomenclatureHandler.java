@@ -10,8 +10,8 @@ public class LocusTagNomenclatureHandler extends BaseNomenclatureHandler impleme
     
     @Override
     public Names findNamesInternal(Annotation an) {
-	
-	Names ret = new Names();
+    
+    Names ret = new Names();
 
         List<String> names = MiningUtils.getProperties("locus_tag", an);
         if (names.size() == 0) {

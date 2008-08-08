@@ -10,8 +10,8 @@ public class NoteMungingNomenclatureHandler extends BaseNomenclatureHandler impl
     
     @Override
     public Names findNamesInternal(Annotation an) {
-	
-	Names ret = new Names();
+    
+    Names ret = new Names();
 
         List<String> notes = MiningUtils.getProperties("note", an);
         if (notes == null) {
@@ -19,21 +19,21 @@ public class NoteMungingNomenclatureHandler extends BaseNomenclatureHandler impl
         }
         boolean found = false;
         for (String note : notes) {
-			if (note.startsWith("*systematic_id:")) {
-				String id = note.substring("*systematic_id:".length()).trim();
-				ret.setSystematicIdAndTemp(id, false);
-				found = true;
-				break;
-			}
-			if (note.startsWith("*temporary_systematic_id:")) {
-				String id = note.substring("*temporary_systematic_id:".length()).trim();
-				ret.setSystematicIdAndTemp(id, true);
-				found = true;
-				break;
-			}
-		}
+            if (note.startsWith("*systematic_id:")) {
+                String id = note.substring("*systematic_id:".length()).trim();
+                ret.setSystematicIdAndTemp(id, false);
+                found = true;
+                break;
+            }
+            if (note.startsWith("*temporary_systematic_id:")) {
+                String id = note.substring("*temporary_systematic_id:".length()).trim();
+                ret.setSystematicIdAndTemp(id, true);
+                found = true;
+                break;
+            }
+        }
         if (!found) {
-        	throw new RuntimeException("Unable to find a systematic id");
+            throw new RuntimeException("Unable to find a systematic id");
         }
         return ret;
     }

@@ -12,19 +12,19 @@ import java.util.Map;
 
 public interface OrthologueStorer {
 
-	void afterPropertiesSet();
+    void afterPropertiesSet();
 
-	void process(File[] files);
+    void process(File[] files);
 
-	void writeToDb();
+    void writeToDb();
 
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	public void storePairs(GenePair pair, CvTerm relationship);
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
+    public void storePairs(GenePair pair, CvTerm relationship);
 
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	public void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship);
-	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
+    public void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship);
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void finishClusterHandling();
-	
+    
 }

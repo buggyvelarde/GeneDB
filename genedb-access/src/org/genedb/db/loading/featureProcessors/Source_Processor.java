@@ -8,16 +8,16 @@ import org.gmod.schema.mapped.Feature;
 
 public class Source_Processor extends BaseFeatureProcessor implements FeatureProcessor {
 
-	@Override
-	public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
+        // TODO Auto-generated method stub
+        
+    }
 
-	@Override
+    @Override
     public ProcessingPhase getProcessingPhase() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

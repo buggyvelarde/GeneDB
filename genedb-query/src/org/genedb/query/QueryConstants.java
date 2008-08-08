@@ -6,7 +6,7 @@ package org.genedb.query;
  * @author art
  */
 public class QueryConstants {
-	
-	public static final String PARAM_NOT_SET = "__NOT-SET__";
+    
+    public static final String PARAM_NOT_SET = "__NOT-SET__";
 
 }

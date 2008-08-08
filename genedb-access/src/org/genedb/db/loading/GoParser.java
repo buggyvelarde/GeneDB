@@ -54,49 +54,49 @@ public class GoParser {
 
 
     public List<GoInstance> getAllGoTermsFromAnnotation(Annotation an) {
-	List<GoInstance> ret = new ArrayList<GoInstance>();
-	ret.addAll(getNewStyleGoTerm(an));
-	ret.addAll(getOldStyleGoTerms(an, "function"));
-	ret.addAll(getOldStyleGoTerms(an, "component"));
-	ret.addAll(getOldStyleGoTerms(an, "process"));
-	return ret;
+    List<GoInstance> ret = new ArrayList<GoInstance>();
+    ret.addAll(getNewStyleGoTerm(an));
+    ret.addAll(getOldStyleGoTerms(an, "function"));
+    ret.addAll(getOldStyleGoTerms(an, "component"));
+    ret.addAll(getOldStyleGoTerms(an, "process"));
+    return ret;
     }
 
 
     // FIXME - Tidy validation parsing
     public List<GoInstance> getNewStyleGoTerm(Annotation an) {
-	List<GoInstance> ret = new ArrayList<GoInstance>();
-	List<String> terms = MiningUtils.getProperties("GO", an );
-	if ( terms ==null) {
-	    return ret;
-	}
-	for (String term : terms) {
-	    GoInstance go = new GoInstance();
-	    go.setFromEMBL(true);
-	    int valid =0;
-	    String realName = null;
-	    String curatorName = null;
-	    String evidence = null;
+    List<GoInstance> ret = new ArrayList<GoInstance>();
+    List<String> terms = MiningUtils.getProperties("GO", an );
+    if ( terms ==null) {
+        return ret;
+    }
+    for (String term : terms) {
+        GoInstance go = new GoInstance();
+        go.setFromEMBL(true);
+        int valid =0;
+        String realName = null;
+        String curatorName = null;
+        String evidence = null;
 
-	    try {
-		String[] sections = term.split(";");
-		for (int j=0; j<sections.length ; j++) {
-		    String expression = sections[j].trim();
-		    int index = expression.indexOf("=");
-		    if ( index == -1) {
-			System.err.println("WARN: Got naked expression in GO term:" + term
-				+ ": (maybe need qualifier=?). Trying to store anyway but please fix");
-			go.addQualifier( expression );
-			continue;
-		    }
-		    String key = expression.substring(0,index).trim();
-		    String value = expression.substring(index+1).trim();
+        try {
+        String[] sections = term.split(";");
+        for (int j=0; j<sections.length ; j++) {
+            String expression = sections[j].trim();
+            int index = expression.indexOf("=");
+            if ( index == -1) {
+            System.err.println("WARN: Got naked expression in GO term:" + term
+                + ": (maybe need qualifier=?). Trying to store anyway but please fix");
+            go.addQualifier( expression );
+            continue;
+            }
+            String key = expression.substring(0,index).trim();
+            String value = expression.substring(index+1).trim();
 
-		    if ("qualifier".equals(key)) {
-			go.addQualifier( value );
-		    }
+            if ("qualifier".equals(key)) {
+            go.addQualifier( value );
+            }
 
-		    if ("aspect".equals(key)) {
+            if ("aspect".equals(key)) {
                 if (value.length() > 1) {
                     switch(Character.toUpperCase(value.charAt(0))) {
                         case 'F':
@@ -112,101 +112,101 @@ public class GoParser {
                             logger.fatal("Got an invalid aspect in '"+term+"'");
                         throw new ParsingException();
                     }
-		        } else {
-		            //System.err.println("WARN: Aspect key found but no value");
+                } else {
+                    //System.err.println("WARN: Aspect key found but no value");
                 }
-		    }
+            }
 
-		    if ("GOid".equals(key)) {
-			int bracket =  value.indexOf("(");
-			if ( bracket != -1) {
-			    value = value.substring(0,index).trim();
-			}
-			if ( value.length()==10) {
+            if ("GOid".equals(key)) {
+            int bracket =  value.indexOf("(");
+            if ( bracket != -1) {
+                value = value.substring(0,index).trim();
+            }
+            if ( value.length()==10) {
                 value = value.substring(3);
             }
             if (value.length() != 7) {
-			    System.err.println("WARN: GO id looks wrong: "+value);
-			    continue;
-			}
+                System.err.println("WARN: GO id looks wrong: "+value);
+                continue;
+            }
             go.setId(value);
-			String name = lookUpGoName( value);
-			go.setName( name );
-			realName = name;
-			if ( curatorName != null) {
-			    if (!curatorName.equals(realName)) {
-				System.err.println("WARN: GO:"+go.getId()+" has a mismatch between curator '"+curatorName+"' and real '"+realName+"' description");
-			    }
-			}
-			valid+=1;
-		    }
+            String name = lookUpGoName( value);
+            go.setName( name );
+            realName = name;
+            if ( curatorName != null) {
+                if (!curatorName.equals(realName)) {
+                System.err.println("WARN: GO:"+go.getId()+" has a mismatch between curator '"+curatorName+"' and real '"+realName+"' description");
+                }
+            }
+            valid+=1;
+            }
 
-		    if ("term".equals(key)) {
-			curatorName = value.trim();
-			if ( realName != null) {
-			    if (!curatorName.equals(realName)) {
-				System.err.println("WARN: "+go.getId()+" has a mismatch between curator ("+curatorName+") and real ("+realName+") description");
-			    }
-			}
-		    }
+            if ("term".equals(key)) {
+            curatorName = value.trim();
+            if ( realName != null) {
+                if (!curatorName.equals(realName)) {
+                System.err.println("WARN: "+go.getId()+" has a mismatch between curator ("+curatorName+") and real ("+realName+") description");
+                }
+            }
+            }
 
-		    if ("date".equals(key)) {
-			go.setDate( value );
-		    }
+            if ("date".equals(key)) {
+            go.setDate( value );
+            }
 
-		    if ("evidence".equals(key)) {
-			go.setEvidence( GoEvidenceCode.valueOf(value));
-			valid+=2;
-			evidence=value;
-		    }
+            if ("evidence".equals(key)) {
+            go.setEvidence( GoEvidenceCode.valueOf(value));
+            valid+=2;
+            evidence=value;
+            }
 
-		    if ("with".equals(key) || "from".equals(key)) {
-			go.setWithFrom( value );
-		    }
+            if ("with".equals(key) || "from".equals(key)) {
+            go.setWithFrom( value );
+            }
 
 
-		    if ("db_xref".equals(key)) {
-			go.setRef( value );
-			valid+=4;
-		    }
-		}
-		go.validate();
-	    }
-	    catch (IllegalArgumentException exp) {
-		logger.fatal("GO: Illegal argument in '"+term+ "' - " + exp.getMessage());
-		throw new ParsingException(exp);
-	    }
-	    // TODO Move following to validity check
-	    //	if (GOInst.EV_IC.equals(evidence) && !fromSet) {
-	    //	LogUtils.bprintln("WARN:GO: Ignoring invalid field due to missing from field "
-	    //	+"with IC evidence code in "+rna.getId());
-	    //	continue;
-	    //	}
-	    //	if ((GOInst.EV_IGI.equals(evidence)  || GOInst.EV_IPI.equals(evidence))
-	    //	&& !withSet) {
-	    //	LogUtils.bprintln("WARN:GO: Ignoring invalid field due to missing with field with "
-	    //	+ evidence + " evidence code in " + rna.getId());
-	    //	continue;
-	    //	}
-	    //	if (GOInst.EV_ISS.equals(evidence) && !withSet) {
-	    //	LogUtils.bprintln("WARN:GO: Ignoring invalid field due to missing with field with "
-	    //	+ evidence + " evidence code in " + rna.getId());
-	    //	}
-	    // Check qualification is valid
-	    //	if (!c.isQualifierPSUValid()) {
-	    //	System.err.println("WARN:GO: Ignoring invalid field due to missing/invalid qualifier value ("+c.getQualifierString()+") in "
-	    //	+ rna.getId());
-	    //	continue;
-	    //	}
-	    if (valid!=7 && !(valid==3 && GoEvidenceCode.ND.equals(evidence))) {
-		logger.fatal("WARN:GO: Ignoring incomplete or invalid field: (count "
-			+valid+") "+term+"'");
-		//throw new ParsingException();
+            if ("db_xref".equals(key)) {
+            go.setRef( value );
+            valid+=4;
+            }
+        }
+        go.validate();
+        }
+        catch (IllegalArgumentException exp) {
+        logger.fatal("GO: Illegal argument in '"+term+ "' - " + exp.getMessage());
+        throw new ParsingException(exp);
+        }
+        // TODO Move following to validity check
+        //  if (GOInst.EV_IC.equals(evidence) && !fromSet) {
+        //  LogUtils.bprintln("WARN:GO: Ignoring invalid field due to missing from field "
+        //  +"with IC evidence code in "+rna.getId());
+        //  continue;
+        //  }
+        //  if ((GOInst.EV_IGI.equals(evidence)  || GOInst.EV_IPI.equals(evidence))
+        //  && !withSet) {
+        //  LogUtils.bprintln("WARN:GO: Ignoring invalid field due to missing with field with "
+        //  + evidence + " evidence code in " + rna.getId());
+        //  continue;
+        //  }
+        //  if (GOInst.EV_ISS.equals(evidence) && !withSet) {
+        //  LogUtils.bprintln("WARN:GO: Ignoring invalid field due to missing with field with "
+        //  + evidence + " evidence code in " + rna.getId());
+        //  }
+        // Check qualification is valid
+        //  if (!c.isQualifierPSUValid()) {
+        //  System.err.println("WARN:GO: Ignoring invalid field due to missing/invalid qualifier value ("+c.getQualifierString()+") in "
+        //  + rna.getId());
+        //  continue;
+        //  }
+        if (valid!=7 && !(valid==3 && GoEvidenceCode.ND.equals(evidence))) {
+        logger.fatal("WARN:GO: Ignoring incomplete or invalid field: (count "
+            +valid+") "+term+"'");
+        //throw new ParsingException();
         continue;
-	    }
+        }
         ret.add(go);
-	}
-	return ret;
+    }
+    return ret;
     }
 
 
@@ -221,72 +221,72 @@ public class GoParser {
 
 
     protected List<GoInstance> getOldStyleGoTerms(Annotation an, String category) {
-	List<String> terms = MiningUtils.getProperties( "GO_" + category, an );
-	List<GoInstance> ret = new ArrayList<GoInstance>();
-	if (terms != null) {
-	    for (int i = 0 ; i <terms.size() ; i++ ) {
-		try {
-		    if(terms.get(i) == null || "".equals(terms.get(i)) ){
-			logger.fatal("WARN: Ignoring empty GO field: text= '"+terms.get(i)+"'");
-			throw new ParsingException();
-		    }
+    List<String> terms = MiningUtils.getProperties( "GO_" + category, an );
+    List<GoInstance> ret = new ArrayList<GoInstance>();
+    if (terms != null) {
+        for (int i = 0 ; i <terms.size() ; i++ ) {
+        try {
+            if(terms.get(i) == null || "".equals(terms.get(i)) ){
+            logger.fatal("WARN: Ignoring empty GO field: text= '"+terms.get(i)+"'");
+            throw new ParsingException();
+            }
 
-		    GoInstance go = new GoInstance();
-		    go.setSubtype( category );
-		    go.setFromEMBL(true);
-
-
+            GoInstance go = new GoInstance();
+            go.setSubtype( category );
+            go.setFromEMBL(true);
 
 
-		    String line = terms.get(i).trim();
-		    String[] parts = line.split(";");
 
-		    if (parts.length<4) {
-			System.err.println("Not enough sections for old-style go:"+line);
-		    }
-		    for (int j=0; j < parts.length; j++) {
-			parts[j] = parts[j].trim();
-		    }
 
-		    String id = parts[0];
+            String line = terms.get(i).trim();
+            String[] parts = line.split(";");
 
-		    int semicolon = line.indexOf(";");
-		    String rest = null;
+            if (parts.length<4) {
+            System.err.println("Not enough sections for old-style go:"+line);
+            }
+            for (int j=0; j < parts.length; j++) {
+            parts[j] = parts[j].trim();
+            }
 
-		    if ( semicolon != -1  ) {
-			rest = line.substring(semicolon + 1);
-			line = line.substring(0, semicolon);
-		    }
-		    int comma = id.indexOf("(");
-		    if ( comma != -1 ) {
-			id = id.substring(0, comma);
-		    }
-		    id = id.trim();
-		    go.setId( id );
-		    String name = lookUpGoName( id);
-		    go.setName(name);
-		    go.setWithFrom("none");
-		    if ( rest == null ) {
-			//c.setRef( "none" );
-			go.setEvidence(GoEvidenceCode.IEA);
-		    } else {
-			semicolon = rest.indexOf(";");
-			if ( semicolon != -1 ) {
-			    go.setRef( rest.substring(semicolon + 1).trim() );
-			    go.setEvidence(GoEvidenceCode.valueOf(rest.substring(0, semicolon).trim()));
-			} else {
-			    go.setEvidence(GoEvidenceCode.valueOf(rest.trim()));
-			}
-		    }
-		    ret.add(go);
-		}
-		catch (IllegalArgumentException exp) {
-		    System.err.println("Skipping GO term because of exception");
-		    exp.printStackTrace();
-		}
-	    }
-	}
-	return ret;
+            String id = parts[0];
+
+            int semicolon = line.indexOf(";");
+            String rest = null;
+
+            if ( semicolon != -1  ) {
+            rest = line.substring(semicolon + 1);
+            line = line.substring(0, semicolon);
+            }
+            int comma = id.indexOf("(");
+            if ( comma != -1 ) {
+            id = id.substring(0, comma);
+            }
+            id = id.trim();
+            go.setId( id );
+            String name = lookUpGoName( id);
+            go.setName(name);
+            go.setWithFrom("none");
+            if ( rest == null ) {
+            //c.setRef( "none" );
+            go.setEvidence(GoEvidenceCode.IEA);
+            } else {
+            semicolon = rest.indexOf(";");
+            if ( semicolon != -1 ) {
+                go.setRef( rest.substring(semicolon + 1).trim() );
+                go.setEvidence(GoEvidenceCode.valueOf(rest.substring(0, semicolon).trim()));
+            } else {
+                go.setEvidence(GoEvidenceCode.valueOf(rest.trim()));
+            }
+            }
+            ret.add(go);
+        }
+        catch (IllegalArgumentException exp) {
+            System.err.println("Skipping GO term because of exception");
+            exp.printStackTrace();
+        }
+        }
+    }
+    return ret;
     }
 
     // ------------------------------------------------------------------------

@@ -70,13 +70,13 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
 
     @Required
     public void setHibernateTransactionManager(
-			HibernateTransactionManager hibernateTransactionManager) {
-		this.hibernateTransactionManager = hibernateTransactionManager;
-	}
+            HibernateTransactionManager hibernateTransactionManager) {
+        this.hibernateTransactionManager = hibernateTransactionManager;
+    }
 
 
 
-//	private CharSequence blankString(char c, int size) {
+//  private CharSequence blankString(char c, int size) {
 //        StringBuilder buf = new StringBuilder(size);
 //        for (int i =0; i < size; i++) {
 //            buf.append(c);
@@ -172,7 +172,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
 
     private void loadRileyDb() throws IOException {
 
-    	hibernateTransactionManager.getSessionFactory().openSession();
+        hibernateTransactionManager.getSessionFactory().openSession();
         BufferedReader in = new BufferedReader(new FileReader("/nfs/pathdb/prod/data/input/linksManager/RILEY.dat"));
         String parent = null;
         CvTerm parentId = null;
@@ -188,7 +188,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
                 cvTerm = new CvTerm();
                 Db db = generalDao.getDbByName("RILEY");
                 if (db == null) {
-                	throw new RuntimeException("The database RILEY doesn't exist in the db");
+                    throw new RuntimeException("The database RILEY doesn't exist in the db");
                 }
                 DbXRef dbXRef = new DbXRef(db, sections[1]);
                 generalDao.persist(dbXRef);

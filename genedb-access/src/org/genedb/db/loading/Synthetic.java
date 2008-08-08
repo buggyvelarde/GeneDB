@@ -31,13 +31,13 @@ public class Synthetic {
         this.soType = soType;
     }
     public void addPart(Part part) {
-	this.parts.add(part);
-	part.setOffSet(offSet);
-	offSet += part.getSize();
+    this.parts.add(part);
+    part.setOffSet(offSet);
+    offSet += part.getSize();
     }
 
     public int getSize() {
-	return offSet;
+    return offSet;
     }
     public List<Part> getParts() {
         return this.parts;

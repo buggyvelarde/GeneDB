@@ -353,25 +353,25 @@ public class ExprLexer extends Lexer {
 
 
                 switch (alt1) {
-            	case 1 :
-            	    // Expr.g:
-            	    {
-            	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
-            	        input.consume();
+                case 1 :
+                    // Expr.g:
+                    {
+                    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
+                        input.consume();
 
-            	    }
-            	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+                    }
+                    else {
+                        MismatchedSetException mse =
+                            new MismatchedSetException(null,input);
+                        recover(mse);    throw mse;
+                    }
 
 
-            	    }
-            	    break;
+                    }
+                    break;
 
-            	default :
-            	    break loop1;
+                default :
+                    break loop1;
                 }
             } while (true);
 
@@ -514,79 +514,79 @@ public class ExprLexer extends Lexer {
                 }
 
                 switch (alt2) {
-            	case 1 :
-            	    // Expr.g:45:16: LCA
-            	    {
-            	    mLCA(); 
+                case 1 :
+                    // Expr.g:45:16: LCA
+                    {
+                    mLCA(); 
 
-            	    }
-            	    break;
-            	case 2 :
-            	    // Expr.g:45:20: UCA
-            	    {
-            	    mUCA(); 
+                    }
+                    break;
+                case 2 :
+                    // Expr.g:45:20: UCA
+                    {
+                    mUCA(); 
 
-            	    }
-            	    break;
-            	case 3 :
-            	    // Expr.g:45:24: '0' .. '9'
-            	    {
-            	    matchRange('0','9'); 
+                    }
+                    break;
+                case 3 :
+                    // Expr.g:45:24: '0' .. '9'
+                    {
+                    matchRange('0','9'); 
 
-            	    }
-            	    break;
-            	case 4 :
-            	    // Expr.g:45:33: WS
-            	    {
-            	    mWS(); 
+                    }
+                    break;
+                case 4 :
+                    // Expr.g:45:33: WS
+                    {
+                    mWS(); 
 
-            	    }
-            	    break;
-            	case 5 :
-            	    // Expr.g:45:36: ':'
-            	    {
-            	    match(':'); 
+                    }
+                    break;
+                case 5 :
+                    // Expr.g:45:36: ':'
+                    {
+                    match(':'); 
 
-            	    }
-            	    break;
-            	case 6 :
-            	    // Expr.g:45:40: '/'
-            	    {
-            	    match('/'); 
+                    }
+                    break;
+                case 6 :
+                    // Expr.g:45:40: '/'
+                    {
+                    match('/'); 
 
-            	    }
-            	    break;
-            	case 7 :
-            	    // Expr.g:45:44: '.'
-            	    {
-            	    match('.'); 
+                    }
+                    break;
+                case 7 :
+                    // Expr.g:45:44: '.'
+                    {
+                    match('.'); 
 
-            	    }
-            	    break;
-            	case 8 :
-            	    // Expr.g:45:48: '?'
-            	    {
-            	    match('?'); 
+                    }
+                    break;
+                case 8 :
+                    // Expr.g:45:48: '?'
+                    {
+                    match('?'); 
 
-            	    }
-            	    break;
-            	case 9 :
-            	    // Expr.g:45:52: '='
-            	    {
-            	    match('='); 
+                    }
+                    break;
+                case 9 :
+                    // Expr.g:45:52: '='
+                    {
+                    match('='); 
 
-            	    }
-            	    break;
-            	case 10 :
-            	    // Expr.g:45:56: '&'
-            	    {
-            	    match('&'); 
+                    }
+                    break;
+                case 10 :
+                    // Expr.g:45:56: '&'
+                    {
+                    match('&'); 
 
-            	    }
-            	    break;
+                    }
+                    break;
 
-            	default :
-            	    break loop2;
+                default :
+                    break loop2;
                 }
             } while (true);
 
@@ -621,16 +621,16 @@ public class ExprLexer extends Lexer {
 
 
                 switch (alt3) {
-            	case 1 :
-            	    // Expr.g:47:7: '0' .. '9'
-            	    {
-            	    matchRange('0','9'); 
+                case 1 :
+                    // Expr.g:47:7: '0' .. '9'
+                    {
+                    matchRange('0','9'); 
 
-            	    }
-            	    break;
+                    }
+                    break;
 
-            	default :
-            	    if ( cnt3 >= 1 ) break loop3;
+                default :
+                    if ( cnt3 >= 1 ) break loop3;
                         EarlyExitException eee =
                             new EarlyExitException(3, input);
                         throw eee;
@@ -668,25 +668,25 @@ public class ExprLexer extends Lexer {
 
 
                 switch (alt4) {
-            	case 1 :
-            	    // Expr.g:
-            	    {
-            	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
-            	        input.consume();
+                case 1 :
+                    // Expr.g:
+                    {
+                    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
+                        input.consume();
 
-            	    }
-            	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+                    }
+                    else {
+                        MismatchedSetException mse =
+                            new MismatchedSetException(null,input);
+                        recover(mse);    throw mse;
+                    }
 
 
-            	    }
-            	    break;
+                    }
+                    break;
 
-            	default :
-            	    if ( cnt4 >= 1 ) break loop4;
+                default :
+                    if ( cnt4 >= 1 ) break loop4;
                         EarlyExitException eee =
                             new EarlyExitException(4, input);
                         throw eee;

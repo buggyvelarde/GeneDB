@@ -157,7 +157,7 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
                 }
                 fullLengthSource = source;
             } else {
-            	System.err.println("Got a source with max of '"+loc.getMax()+"' but looking for '"+seq.length()+"'");
+                System.err.println("Got a source with max of '"+loc.getMax()+"' but looking for '"+seq.length()+"'");
             }
         }
         if (fullLengthSource == null) {

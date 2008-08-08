@@ -24,58 +24,58 @@ import javax.sql.DataSource;
  */
 public class SqlListConstraintDelegate implements ListConstraint, SimpleJdbcTemplateAware {
 
-	private String validSql;
-	private String allSql;
-	private String partialSql;
-	private SimpleJdbcTemplate sjt;
-	
-	public void setSimpleJdbcTemplate(SimpleJdbcTemplate sjt) {
-		this.sjt = sjt;
-	}
+    private String validSql;
+    private String allSql;
+    private String partialSql;
+    private SimpleJdbcTemplate sjt;
+    
+    public void setSimpleJdbcTemplate(SimpleJdbcTemplate sjt) {
+        this.sjt = sjt;
+    }
 
-	public void setAllSql(String allSql) {
-	    this.allSql = allSql;
-	}
+    public void setAllSql(String allSql) {
+        this.allSql = allSql;
+    }
 
-	public void setPartialSql(String partialSql) {
-	    this.partialSql = partialSql;
-	}
+    public void setPartialSql(String partialSql) {
+        this.partialSql = partialSql;
+    }
 
-	public void setValidSql(String validSql) {
-		this.validSql = validSql;
-	}
+    public void setValidSql(String validSql) {
+        this.validSql = validSql;
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<String> getAcceptableValues(final String partName, final boolean mustBePrefix) {
-	    JdbcTemplate jt = (JdbcTemplate) sjt.getJdbcOperations();
-	    return (List<String>) jt.query(partialSql, new Object[]{mustBePrefix}, new ResultSetExtractor() {
-		public String extractData(ResultSet rs) throws SQLException, DataAccessException {
-		    String test = rs.getString(0);
-		    int index = test.indexOf(partName);
-		    if (index == -1) {
-			return null;
-		    }
-		    if (mustBePrefix && index != 0) {
-			return null;
-		    }
-		    return test;
-		}
-	    }
-	    );
-	}
+    @SuppressWarnings("unchecked")
+    public List<String> getAcceptableValues(final String partName, final boolean mustBePrefix) {
+        JdbcTemplate jt = (JdbcTemplate) sjt.getJdbcOperations();
+        return (List<String>) jt.query(partialSql, new Object[]{mustBePrefix}, new ResultSetExtractor() {
+        public String extractData(ResultSet rs) throws SQLException, DataAccessException {
+            String test = rs.getString(0);
+            int index = test.indexOf(partName);
+            if (index == -1) {
+            return null;
+            }
+            if (mustBePrefix && index != 0) {
+            return null;
+            }
+            return test;
+        }
+        }
+        );
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<String> getAllAcceptableValues() {
-	    JdbcTemplate jt = (JdbcTemplate) sjt.getJdbcOperations();
-	    return (List<String>) jt.queryForList(allSql, new Object[]{}, String.class);
-	}
+    @SuppressWarnings("unchecked")
+    public List<String> getAllAcceptableValues() {
+        JdbcTemplate jt = (JdbcTemplate) sjt.getJdbcOperations();
+        return (List<String>) jt.queryForList(allSql, new Object[]{}, String.class);
+    }
 
-	public boolean isValid(String value) {
-	    Integer i = sjt.queryForInt(validSql, value);
-	    if (i.intValue() == 1) {
-		return true;
-	    }
-	    return false;
-	}
+    public boolean isValid(String value) {
+        Integer i = sjt.queryForInt(validSql, value);
+        if (i.intValue() == 1) {
+        return true;
+        }
+        return false;
+    }
 
 }

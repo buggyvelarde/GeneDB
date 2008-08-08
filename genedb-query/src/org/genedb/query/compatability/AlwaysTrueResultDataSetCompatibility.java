@@ -11,10 +11,10 @@ import org.genedb.query.ResultCompatibility;
  * @author art
  */
 public class AlwaysTrueResultDataSetCompatibility implements
-		ResultCompatibility {
+        ResultCompatibility {
 
-	public boolean areCompatible(Result one, Result two) {
-		return true;
-	}
+    public boolean areCompatible(Result one, Result two) {
+        return true;
+    }
 
 }

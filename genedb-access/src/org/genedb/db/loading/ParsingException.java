@@ -3,11 +3,11 @@ package org.genedb.db.loading;
 public class ParsingException extends RuntimeException {
     
     ParsingException() {
-	super();
+    super();
     }
     
     ParsingException(Exception exp) {
-	super(exp);
+    super(exp);
     }
 
 }

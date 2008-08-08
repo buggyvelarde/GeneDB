@@ -7,6 +7,6 @@ package org.genedb.query;
  */
 public interface QueryStringParser {
 
-	public QueryI parseQueryString(String queryString);
-	
+    public QueryI parseQueryString(String queryString);
+    
 }

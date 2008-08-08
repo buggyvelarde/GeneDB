@@ -21,55 +21,55 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
  */
 public class SqlQuery extends AbstractQuery implements DataSourceAware {
 
-	private String sql;
-	private DataSource dataSource;
-	
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-	
-	public void setSql(String sql) {
-		this.sql = sql;
-	}
+    private String sql;
+    private DataSource dataSource;
+    
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+    
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
 
-	
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) throws SQLException {
-		SqlQuery sq= new SqlQuery();
-		sq.setSql("select gp.geneId from GenePeri gp where gp.nickname like ? and gp.genename like ?");
-		//sq.setSql("select * from GenePeri");
-		SingleConnectionDataSource ds = new SingleConnectionDataSource();
-		ds.setDriverClassName("oracle.jdbc.driver.OracleDriver");
-		ds.setUrl("jdbc:oracle:thin:@ocs3:1534:pat");
-		ds.setUsername("gus2");
-		ds.setPassword("genedb2");
-		sq.setDataSource(ds);
-		Result res = sq.process();
-		System.out.println(res);
-		ds.destroy();
-	}
+    
+    
+    /**
+     * @param args
+     */
+    public static void main(String[] args) throws SQLException {
+        SqlQuery sq= new SqlQuery();
+        sq.setSql("select gp.geneId from GenePeri gp where gp.nickname like ? and gp.genename like ?");
+        //sq.setSql("select * from GenePeri");
+        SingleConnectionDataSource ds = new SingleConnectionDataSource();
+        ds.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+        ds.setUrl("jdbc:oracle:thin:@ocs3:1534:pat");
+        ds.setUsername("gus2");
+        ds.setPassword("genedb2");
+        sq.setDataSource(ds);
+        Result res = sq.process();
+        System.out.println(res);
+        ds.destroy();
+    }
 
-	/**
-	 * @see org.genedb.zoe.query.Query#process()
-	 */
-	public Result process() {
-		final SimpleListResult slr = new SimpleListResult();
-		//slr.setType();
-		JdbcTemplate jt = new JdbcTemplate(dataSource);
-		Object[] args = {"pombe", "cdc%"};
-		//Object[] args = new Object[0];
-		jt.query(sql, args,
-			new RowCallbackHandler() {
-		    public void processRow(ResultSet rs) throws SQLException {
-			slr.add(rs.getString("geneId"));
-		    }
-		}
-		);
-		return slr;
-	}
+    /**
+     * @see org.genedb.zoe.query.Query#process()
+     */
+    public Result process() {
+        final SimpleListResult slr = new SimpleListResult();
+        //slr.setType();
+        JdbcTemplate jt = new JdbcTemplate(dataSource);
+        Object[] args = {"pombe", "cdc%"};
+        //Object[] args = new Object[0];
+        jt.query(sql, args,
+            new RowCallbackHandler() {
+            public void processRow(ResultSet rs) throws SQLException {
+            slr.add(rs.getString("geneId"));
+            }
+        }
+        );
+        return slr;
+    }
 
     
 //    @Override
@@ -89,14 +89,14 @@ public class SqlQuery extends AbstractQuery implements DataSourceAware {
     }
 
     public int getIndex() {
-	// TODO Auto-generated method stub
-	return 0;
+    // TODO Auto-generated method stub
+    return 0;
     }
 
 
 
     public void setIndex(int index) {
-	// TODO Auto-generated method stub
-	
+    // TODO Auto-generated method stub
+    
     }
 }

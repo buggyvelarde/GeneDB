@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 public interface OrthologueRelationsParser {
-	
-	public void parseInput(Reader r, Set<GenePair> orthologues, Set<GenePair> paralogues, 
-			Map<String,List<String>> clusters);
+    
+    public void parseInput(Reader r, Set<GenePair> orthologues, Set<GenePair> paralogues, 
+            Map<String,List<String>> clusters);
 
 }

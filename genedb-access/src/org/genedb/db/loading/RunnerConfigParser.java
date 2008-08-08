@@ -79,89 +79,89 @@ public class RunnerConfigParser {
      * @param extension the file extension to match on
      */
     private void addFilesFromDirectory(final File directory, final String extension, final RunnerConfig rc) {
-    	logger.info("Called with '"+directory.getAbsolutePath()+"'");
-    	File[] files = directory.listFiles(new FileFilter() {
-	    public boolean accept(File file) {
-		if (file.isDirectory() && !file.equals(directory)) {
-		    RunnerConfigParser.this.addFilesFromDirectory(file, extension, rc);
-		} else {
-		    if (file.getName().endsWith("."+extension)) {
-			return true;
-		    }
-		}
-		return false;
-	    }
-	});
-	for (File file : files) {
-	    rc.getFileNames().add(file.getAbsolutePath());
-	}
+        logger.info("Called with '"+directory.getAbsolutePath()+"'");
+        File[] files = directory.listFiles(new FileFilter() {
+        public boolean accept(File file) {
+        if (file.isDirectory() && !file.equals(directory)) {
+            RunnerConfigParser.this.addFilesFromDirectory(file, extension, rc);
+        } else {
+            if (file.getName().endsWith("."+extension)) {
+            return true;
+            }
+        }
+        return false;
+        }
+    });
+    for (File file : files) {
+        rc.getFileNames().add(file.getAbsolutePath());
+    }
     }
 
     public void afterPropertiesSet() {
-	if (this.configFilePath == null) {
-	    this.configFilePath = DEFAULT_DATA_PREFIX + "/" + this.organismCommonName + "/" + this.organismCommonName + ".config.xml";
-	}
+    if (this.configFilePath == null) {
+        this.configFilePath = DEFAULT_DATA_PREFIX + "/" + this.organismCommonName + "/" + this.organismCommonName + ".config.xml";
+    }
     }
 
 
     @SuppressWarnings({ "unchecked", "cast" })
     private List<Element> elementListFromXPath(String pattern) {
-	try {
-	    return (List<Element>) this.xPathEval.evaluate(pattern);
-	} catch (XPathException exp) {
-	    System.err.println(exp);
-	}
-	catch (NullPointerException exp) {
-	    System.err.println("NPE- Is the config file valid?");
-	    System.exit(-1);
-	}
-	return Collections.EMPTY_LIST;
+    try {
+        return (List<Element>) this.xPathEval.evaluate(pattern);
+    } catch (XPathException exp) {
+        System.err.println(exp);
+    }
+    catch (NullPointerException exp) {
+        System.err.println("NPE- Is the config file valid?");
+        System.exit(-1);
+    }
+    return Collections.EMPTY_LIST;
     }
 
     
     public void initXPathEvaluator(Document doc) throws XPathException {
-	// Give DOM a Saxon wrapper
-	Configuration conf = new Configuration();
-	DocumentWrapper configDocWrapper = new DocumentWrapper(doc, "ConfigFile", conf);
-	this.xPathEval = new XPathEvaluator(configDocWrapper);
-	AxisIterator children = configDocWrapper.getDocumentRoot().iterateAxis(Axis.DESCENDANT);
-	NodeInfo loaderConfigNodeInfo = (NodeInfo) children.next();
+    // Give DOM a Saxon wrapper
+    Configuration conf = new Configuration();
+    DocumentWrapper configDocWrapper = new DocumentWrapper(doc, "ConfigFile", conf);
+    this.xPathEval = new XPathEvaluator(configDocWrapper);
+    AxisIterator children = configDocWrapper.getDocumentRoot().iterateAxis(Axis.DESCENDANT);
+    NodeInfo loaderConfigNodeInfo = (NodeInfo) children.next();
 
-	this.xPathEval.setContextNode(loaderConfigNodeInfo);
+    this.xPathEval.setContextNode(loaderConfigNodeInfo);
     }
 
     public RunnerConfig getConfig() {
-	RunnerConfig ret = new RunnerConfig();
-	ret.setOrganismCommonName(organismCommonName);
-	// Load into DOM
-	File configFile = null;
-	try {
-	    configFile = new File(this.configFilePath);
-	    if (!configFile.exists()) {
-		this.logger.fatal("Config file doesn't exist at '"+this.configFilePath+"'");
-		System.exit(-1);
-	    }
-	    if (!configFile.isFile()) {
-			this.logger.fatal("Config file isn't a file at '"+this.configFilePath+"'");
-			System.exit(-1);
-		}
-	    Document doc = new Builder().build(configFile);
-	    this.initXPathEvaluator(doc);
-	}
-	catch (IOException exp) {
-	    exp.printStackTrace();
-	} catch (XPathException exp) {
-	    // TODO Auto-generated catch block
-	    exp.printStackTrace();
-	} catch (ValidityException exp) {
-	    // TODO Auto-generated catch block
-	    exp.printStackTrace();
-	} catch (ParsingException exp) {
-	    // TODO Auto-generated catch block
-	    exp.printStackTrace();
-	}
-	
-	// Process code
+    RunnerConfig ret = new RunnerConfig();
+    ret.setOrganismCommonName(organismCommonName);
+    // Load into DOM
+    File configFile = null;
+    try {
+        configFile = new File(this.configFilePath);
+        if (!configFile.exists()) {
+        this.logger.fatal("Config file doesn't exist at '"+this.configFilePath+"'");
+        System.exit(-1);
+        }
+        if (!configFile.isFile()) {
+            this.logger.fatal("Config file isn't a file at '"+this.configFilePath+"'");
+            System.exit(-1);
+        }
+        Document doc = new Builder().build(configFile);
+        this.initXPathEvaluator(doc);
+    }
+    catch (IOException exp) {
+        exp.printStackTrace();
+    } catch (XPathException exp) {
+        // TODO Auto-generated catch block
+        exp.printStackTrace();
+    } catch (ValidityException exp) {
+        // TODO Auto-generated catch block
+        exp.printStackTrace();
+    } catch (ParsingException exp) {
+        // TODO Auto-generated catch block
+        exp.printStackTrace();
+    }
+    
+    // Process code
     
     List<Element> featureHandlerOptions = this.elementListFromXPath("code/feature-handler-options/*");
     if (featureHandlerOptions.size() > 0) {
@@ -172,14 +172,14 @@ public class RunnerConfigParser {
         ret.setFeatureHandlerOptions(map);
     }
     
-	List<Element> nomenclatureOptions = this.elementListFromXPath("code/nomenclature-handler-options/*");
-	if (nomenclatureOptions.size() > 0) {
-	    Map<String, String> map = new HashMap<String, String>(0);
-	    for (Element element : nomenclatureOptions) {
-		map.put(element.getAttribute("key").getValue(), element.getAttribute("value").getValue());
-	    }
-	    ret.setNomenclatureOptions(map);
-	}
+    List<Element> nomenclatureOptions = this.elementListFromXPath("code/nomenclature-handler-options/*");
+    if (nomenclatureOptions.size() > 0) {
+        Map<String, String> map = new HashMap<String, String>(0);
+        for (Element element : nomenclatureOptions) {
+        map.put(element.getAttribute("key").getValue(), element.getAttribute("value").getValue());
+        }
+        ret.setNomenclatureOptions(map);
+    }
     
     List<Element> propertyOptions = this.elementListFromXPath("code/options/*");
     if (propertyOptions.size() > 0) {
@@ -193,98 +193,98 @@ public class RunnerConfigParser {
         }
         ret.setGeneralOptions(options);
     }
-	
-	List<Element> files = this.elementListFromXPath("inputs/file");
-	for (Element element : files) {
-	    String fileName = element.getAttribute("name").getValue();
-	    if (fileName.startsWith("/")) {
-		ret.getFileNames().add(fileName);
-	    } else {
-		System.err.println("fileName is '"+fileName+"'");
-		File tmp = new File(configFile.getParentFile(), fileName);
-		ret.getFileNames().add(tmp.getAbsolutePath());
-	    }
-	}
+    
+    List<Element> files = this.elementListFromXPath("inputs/file");
+    for (Element element : files) {
+        String fileName = element.getAttribute("name").getValue();
+        if (fileName.startsWith("/")) {
+        ret.getFileNames().add(fileName);
+        } else {
+        System.err.println("fileName is '"+fileName+"'");
+        File tmp = new File(configFile.getParentFile(), fileName);
+        ret.getFileNames().add(tmp.getAbsolutePath());
+        }
+    }
 
-	List<Element> dirs = this.elementListFromXPath("inputs/directory");
-	for (Element element : dirs) {
-	    String dirName = element.getAttribute("name").getValue();
-	    File directory;
-	    if (dirName.startsWith("/")) {
-		directory = new File(dirName);
-	    } else {
-		directory = new File(configFile.getParentFile(), dirName);
-	    }
-	    String extension = element.getAttribute("extension").getValue();
-	    this.addFilesFromDirectory(directory, extension, ret);
-	}
+    List<Element> dirs = this.elementListFromXPath("inputs/directory");
+    for (Element element : dirs) {
+        String dirName = element.getAttribute("name").getValue();
+        File directory;
+        if (dirName.startsWith("/")) {
+        directory = new File(dirName);
+        } else {
+        directory = new File(configFile.getParentFile(), dirName);
+        }
+        String extension = element.getAttribute("extension").getValue();
+        this.addFilesFromDirectory(directory, extension, ret);
+    }
 
-	List<Element> synthetics = this.elementListFromXPath("inputs/synthetic");
-	int syntheticCount = 0;
-	for (Element element : synthetics) {
-	    syntheticCount++;
-	    Synthetic synthetic = new Synthetic();
-	    ret.getSynthetics().add(synthetic);
-	    synthetic.setName(element.getAttributeValue("name"));
-	    synthetic.setSoType(element.getAttributeValue("sotype"));
-	    synthetic.setProperties(findPropertySubElements(element));
-	    
-	    List<Element> parts = this.elementListFromXPath("inputs/synthetic["+syntheticCount+"]/primary/*");
-	    System.err.println("Parts list is '"+parts+"'");
-	    for (Element part : parts) {
-		if (part.getLocalName().equals("file-entry")) {
-		    FilePart fp = new FilePart();
-		    String fileName = part.getAttributeValue("name");
-		    if (fileName.startsWith("/")) {
-			fp.setName(fileName);
-		    } else {
-			File tmp = new File(configFile.getParentFile(), fileName);
-			fp.setName(tmp.getAbsolutePath());
-		    }
-		    int size = Integer.parseInt(part.getAttributeValue("length"));
-		    fp.setSize(size);
-		    fp.setReparent(Boolean.parseBoolean(part.getAttributeValue("reparent")));
-		    synthetic.addPart(fp);
-		}
-		if (part.getLocalName().equals("feature")) {
-		    FeaturePart fp = new FeaturePart();
-		    fp.setName(part.getAttributeValue("name"));
-		    int size = Integer.parseInt(part.getAttributeValue("length"));
-		    fp.setSize(size);
-		    fp.setSoType(part.getAttributeValue("sotype"));
-		    Short strand = +1;
-		    String strandAsString = part.getAttributeValue("strand");
-		    if ("-".equals(strandAsString)) {
-			strand = -1;
-		    }
-		    fp.setStrand(strand);
-		    fp.setProperties(findPropertySubElements(part));
-		    synthetic.addPart(fp);
-		}
-	    }
-	}
-	return ret;
-//	System.exit(0);
+    List<Element> synthetics = this.elementListFromXPath("inputs/synthetic");
+    int syntheticCount = 0;
+    for (Element element : synthetics) {
+        syntheticCount++;
+        Synthetic synthetic = new Synthetic();
+        ret.getSynthetics().add(synthetic);
+        synthetic.setName(element.getAttributeValue("name"));
+        synthetic.setSoType(element.getAttributeValue("sotype"));
+        synthetic.setProperties(findPropertySubElements(element));
+        
+        List<Element> parts = this.elementListFromXPath("inputs/synthetic["+syntheticCount+"]/primary/*");
+        System.err.println("Parts list is '"+parts+"'");
+        for (Element part : parts) {
+        if (part.getLocalName().equals("file-entry")) {
+            FilePart fp = new FilePart();
+            String fileName = part.getAttributeValue("name");
+            if (fileName.startsWith("/")) {
+            fp.setName(fileName);
+            } else {
+            File tmp = new File(configFile.getParentFile(), fileName);
+            fp.setName(tmp.getAbsolutePath());
+            }
+            int size = Integer.parseInt(part.getAttributeValue("length"));
+            fp.setSize(size);
+            fp.setReparent(Boolean.parseBoolean(part.getAttributeValue("reparent")));
+            synthetic.addPart(fp);
+        }
+        if (part.getLocalName().equals("feature")) {
+            FeaturePart fp = new FeaturePart();
+            fp.setName(part.getAttributeValue("name"));
+            int size = Integer.parseInt(part.getAttributeValue("length"));
+            fp.setSize(size);
+            fp.setSoType(part.getAttributeValue("sotype"));
+            Short strand = +1;
+            String strandAsString = part.getAttributeValue("strand");
+            if ("-".equals(strandAsString)) {
+            strand = -1;
+            }
+            fp.setStrand(strand);
+            fp.setProperties(findPropertySubElements(part));
+            synthetic.addPart(fp);
+        }
+        }
+    }
+    return ret;
+//  System.exit(0);
 
     }
     
     private Map<String,String> findPropertySubElements(Element element) {
-	Map<String,String> props = new HashMap<String,String>();
-	Elements properties = element.getChildElements();
-	for (int i=0; i < properties.size(); i++) {
-	    Element property = properties.get(i);
-	    props.put(property.getAttributeValue("key"),
-		    property.getAttributeValue("value"));
-	}
-	return props;
+    Map<String,String> props = new HashMap<String,String>();
+    Elements properties = element.getChildElements();
+    for (int i=0; i < properties.size(); i++) {
+        Element property = properties.get(i);
+        props.put(property.getAttributeValue("key"),
+            property.getAttributeValue("value"));
+    }
+    return props;
     }
 
     public void setConfigFilePath(String configFilePath) {
-	this.configFilePath = configFilePath;
+    this.configFilePath = configFilePath;
     }
 
     public void setOrganismCommonName(String commonOrganismName) {
-	this.organismCommonName = commonOrganismName;
+    this.organismCommonName = commonOrganismName;
     }
 
 

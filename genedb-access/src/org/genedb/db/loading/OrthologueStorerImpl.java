@@ -71,11 +71,11 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 
     protected static final Log logger = LogFactory.getLog(OrthologueStorerImpl.class);
 
-	private static CvTerm PARALOGOUS_RELATIONSHIP;
+    private static CvTerm PARALOGOUS_RELATIONSHIP;
 
-	private static CvTerm ORTHOLOGOUS_RELATIONSHIP;
+    private static CvTerm ORTHOLOGOUS_RELATIONSHIP;
 
-	Set<String> clusterNames = new HashSet<String>();
+    Set<String> clusterNames = new HashSet<String>();
 
 //    private FeatureHandler featureHandler;
 //
@@ -113,27 +113,27 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //
 //    Map<String,String> cdsQualifiers = new HashMap<String,String>();
 //
-//	private Set<String> handeledQualifiers = new HashSet<String>();
+//  private Set<String> handeledQualifiers = new HashSet<String>();
 //
 //    private OrthologueStorage orthologueStorage = new OrthologueStorage();
 
 
     public void setHibernateTransactionManager(
-			HibernateTransactionManager hibernateTransactionManager) {
-		this.hibernateTransactionManager = hibernateTransactionManager;
-	}
+            HibernateTransactionManager hibernateTransactionManager) {
+        this.hibernateTransactionManager = hibernateTransactionManager;
+    }
 
 
 
 
     public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+        this.sessionFactory = sessionFactory;
+    }
 
 
 
 
-	/**
+    /**
      * Main entry point. It uses a BeanPostProcessor to apply a set of overrides
      * based on a Properties file, based on the organism. This is passed in on
      * the command-line.
@@ -147,8 +147,8 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //        String[] filePaths = args;
 //
 //        if (filePaths.length == 0) {
-//        	System.err.println("No input files specified");
-//        	System.exit(-1);
+//          System.err.println("No input files specified");
+//          System.exit(-1);
 //        }
 //
 //        // Override properties in Spring config file (using a
@@ -173,10 +173,10 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //        ostore.afterPropertiesSet();
 //        long start = new Date().getTime();
 //        for (int i = 0; i < filePaths.length; i++) {
-//			File input = new File(filePaths[i]);
-//	        ostore.afterPropertiesSet();
-//			ostore.process(input);
-//		}
+//          File input = new File(filePaths[i]);
+//          ostore.afterPropertiesSet();
+//          ostore.process(input);
+//      }
 //        ostore.writeToDb();
 ////      long duration = (new Date().getTime()-start)/1000;
 ////      logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
@@ -184,183 +184,183 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 
     public void writeToDb() {
 
-    	System.err.println("orthologues='"+orthologues.size()+"' paralogues='"+paralogues.size()+"' cluster keys='"+clusters.keySet().size()+"'");
-    	System.err.println("cvDao is '"+this.cvDao+"'");
+        System.err.println("orthologues='"+orthologues.size()+"' paralogues='"+paralogues.size()+"' cluster keys='"+clusters.keySet().size()+"'");
+        System.err.println("cvDao is '"+this.cvDao+"'");
 
-    	CvTerm ORTHOLOGOUS_TO = cvDao.getCvTermByNameAndCvName("orthologous_to", "sequence");
-    	CvTerm PARALOGOUS_TO = cvDao.getCvTermByNameAndCvName("paralogous_to", "sequence");
-    	ORTHOLOGOUS_RELATIONSHIP = ORTHOLOGOUS_TO;
+        CvTerm ORTHOLOGOUS_TO = cvDao.getCvTermByNameAndCvName("orthologous_to", "sequence");
+        CvTerm PARALOGOUS_TO = cvDao.getCvTermByNameAndCvName("paralogous_to", "sequence");
+        ORTHOLOGOUS_RELATIONSHIP = ORTHOLOGOUS_TO;
 
-    	logger.info("About to store '"+orthologues.size()+"' orthologues");
-		for (GenePair pair : orthologues) {
-			storePairs(pair, ORTHOLOGOUS_TO);
-		}
-    	logger.info("About to store '"+paralogues.size()+"' paralogues");
-		for (GenePair pair : paralogues) {
-			storePairs(pair, PARALOGOUS_TO);
-		}
-		int clusterSize = clusters.keySet().size();
-    	logger.info("About to store '"+clusterSize+"' clusters");
-    	int clusterCount = 0;
-		for (Map.Entry<String, List<String>> cluster : clusters.entrySet()) {
-			logger.info("About to store cluster '"+cluster.getKey()+"' which is '"+clusterCount+"' of '"+clusterSize+"'");
-			storeCluster(cluster, ORTHOLOGOUS_TO);
-			clusterCount++;
-		}
+        logger.info("About to store '"+orthologues.size()+"' orthologues");
+        for (GenePair pair : orthologues) {
+            storePairs(pair, ORTHOLOGOUS_TO);
+        }
+        logger.info("About to store '"+paralogues.size()+"' paralogues");
+        for (GenePair pair : paralogues) {
+            storePairs(pair, PARALOGOUS_TO);
+        }
+        int clusterSize = clusters.keySet().size();
+        logger.info("About to store '"+clusterSize+"' clusters");
+        int clusterCount = 0;
+        for (Map.Entry<String, List<String>> cluster : clusters.entrySet()) {
+            logger.info("About to store cluster '"+cluster.getKey()+"' which is '"+clusterCount+"' of '"+clusterSize+"'");
+            storeCluster(cluster, ORTHOLOGOUS_TO);
+            clusterCount++;
+        }
 
-		finishClusterHandling();
+        finishClusterHandling();
 
 
-//		TransactionTemplate tt = hibernateTransactionManager.
+//      TransactionTemplate tt = hibernateTransactionManager.
 //      tt.execute(
-//		  new TransactionCallbackWithoutResult() {
-//			  @Override
-//			  public void doInTransactionWithoutResult(TransactionStatus status) {
-//				  finishClusterHandling();
-//			  }
-//		  });
+//        new TransactionCallbackWithoutResult() {
+//            @Override
+//            public void doInTransactionWithoutResult(TransactionStatus status) {
+//                finishClusterHandling();
+//            }
+//        });
 
-	}
-
-
-	public void storePairs(GenePair pair, CvTerm relationship) {
-    	if (pair.getFirst().equals(pair.getSecond())) {
-    		System.err.println("Skipping storing '"+pair.getFirst()+"' as an ortho/paralogue of itself");
-    		return;
-    	}
-    	Feature gene1 = sequenceDao.getFeatureByUniqueName(pair.getFirst()+":pep", "polypeptide");
-    	if (gene1 == null) {
-    		System.err.println("Failing lookup for '"+pair.getFirst()+"'");
-    		return;
-    	}
-    	Feature gene2 = sequenceDao.getFeatureByUniqueName(pair.getSecond()+":pep", "polypeptide");
-    	if (gene2 == null) {
-    		System.err.println("Failing lookup for '"+pair.getSecond()+"'");
-    		return;
-    	}
-    	System.err.println("About to persist FeatureRelationship for '"+pair.getFirst()+"' and '"+pair.getSecond()+"' as a '"+relationship.getName()+"'");
-    	FeatureRelationship frExists = null;
-    	frExists = sequenceDao.getFeatureRelationshipBySubjectObjectAndRelation(gene1, gene2, relationship);
-    	if (frExists == null) { //check whether or not the featureRelationship already exists
-    		frExists = sequenceDao.getFeatureRelationshipBySubjectObjectAndRelation(gene2, gene1, relationship);
-    		if (frExists == null) { //if not check the same thing using subject as object and object as subject
-    			FeatureRelationship fr = new FeatureRelationship(gene1, gene2, relationship, 0); //create one if it does not already exist
-    			sequenceDao.persist(fr);
-    			// Need to store camouflage - a parent feature so it looks like a cluster
-    	    	String uniqueName = "ORTHO_PARA_" +pair.getFirst() + "_" + pair.getSecond();
-
-//    	    	Feature matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
-//    	    	sequenceDao.persist(matchFeature);
-//    	    	fr = new FeatureRelationship(gene1, matchFeature, relationship, 0);
-//    	    	sequenceDao.persist(fr);
-//    	    	fr = new FeatureRelationship(gene2, matchFeature, relationship, 0);
-//    	    	sequenceDao.persist(fr);
-    		}
-    	}
+    }
 
 
+    public void storePairs(GenePair pair, CvTerm relationship) {
+        if (pair.getFirst().equals(pair.getSecond())) {
+            System.err.println("Skipping storing '"+pair.getFirst()+"' as an ortho/paralogue of itself");
+            return;
+        }
+        Feature gene1 = sequenceDao.getFeatureByUniqueName(pair.getFirst()+":pep", "polypeptide");
+        if (gene1 == null) {
+            System.err.println("Failing lookup for '"+pair.getFirst()+"'");
+            return;
+        }
+        Feature gene2 = sequenceDao.getFeatureByUniqueName(pair.getSecond()+":pep", "polypeptide");
+        if (gene2 == null) {
+            System.err.println("Failing lookup for '"+pair.getSecond()+"'");
+            return;
+        }
+        System.err.println("About to persist FeatureRelationship for '"+pair.getFirst()+"' and '"+pair.getSecond()+"' as a '"+relationship.getName()+"'");
+        FeatureRelationship frExists = null;
+        frExists = sequenceDao.getFeatureRelationshipBySubjectObjectAndRelation(gene1, gene2, relationship);
+        if (frExists == null) { //check whether or not the featureRelationship already exists
+            frExists = sequenceDao.getFeatureRelationshipBySubjectObjectAndRelation(gene2, gene1, relationship);
+            if (frExists == null) { //if not check the same thing using subject as object and object as subject
+                FeatureRelationship fr = new FeatureRelationship(gene1, gene2, relationship, 0); //create one if it does not already exist
+                sequenceDao.persist(fr);
+                // Need to store camouflage - a parent feature so it looks like a cluster
+                String uniqueName = "ORTHO_PARA_" +pair.getFirst() + "_" + pair.getSecond();
 
-	}
+//              Feature matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
+//              sequenceDao.persist(matchFeature);
+//              fr = new FeatureRelationship(gene1, matchFeature, relationship, 0);
+//              sequenceDao.persist(fr);
+//              fr = new FeatureRelationship(gene2, matchFeature, relationship, 0);
+//              sequenceDao.persist(fr);
+            }
+        }
 
-//	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+
+
+    }
+
+//  @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public void finishClusterHandling() {
-//		Session session = sessionFactory.openSession();
-		//Session session = SessionFactoryUtils.getSession(sessionFactory, false);
-		//System.err.println(session);
-		//hibernateTransactionManager.getTransaction(new SimpleTransactionStatus());
-		//Transaction transaction = session.beginTransaction();
-    	//System.err.println(session);
-    	//StatelessSession session = sessionFactory.openStatelessSession();
-    	//Transaction transaction = session.beginTransaction();
-    	System.err.println("Orthologous_relationship is '"+ORTHOLOGOUS_RELATIONSHIP+"'");
-		for (String clusterName : clusterNames) {
-			//System.err.println(clusterName);
-	    	Feature matchFeature = sequenceDao.getFeatureByUniqueName(clusterName, "protein_match");
-			Collection<FeatureRelationship> frs = matchFeature.getFeatureRelationshipsForObjectId();
-			System.err.println("There are '"+frs.size()+"' members for cluster '"+clusterName+"'");
-			List<Feature> features = new ArrayList<Feature>(frs.size());
-			for (FeatureRelationship relationship : frs) {
-				//System.err.println("  "+relationship.getFeatureBySubjectId().getUniqueName());
-				features.add(relationship.getSubjectFeature());
-			}
-			for (int i = 0; i < features.size()-1; i++) {
-				Feature f1 = features.get(i);
-				for (int j=i+1; j < features.size(); j++) {
-					Feature f2 = features.get(j);
-					FeatureRelationship fr = new FeatureRelationship(f1, f2, ORTHOLOGOUS_RELATIONSHIP, 0);
-			    	sequenceDao.persist(fr);
-				}
-			}
-		}
-		//transaction.commit();
-//		session.close();
-	}
+//      Session session = sessionFactory.openSession();
+        //Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+        //System.err.println(session);
+        //hibernateTransactionManager.getTransaction(new SimpleTransactionStatus());
+        //Transaction transaction = session.beginTransaction();
+        //System.err.println(session);
+        //StatelessSession session = sessionFactory.openStatelessSession();
+        //Transaction transaction = session.beginTransaction();
+        System.err.println("Orthologous_relationship is '"+ORTHOLOGOUS_RELATIONSHIP+"'");
+        for (String clusterName : clusterNames) {
+            //System.err.println(clusterName);
+            Feature matchFeature = sequenceDao.getFeatureByUniqueName(clusterName, "protein_match");
+            Collection<FeatureRelationship> frs = matchFeature.getFeatureRelationshipsForObjectId();
+            System.err.println("There are '"+frs.size()+"' members for cluster '"+clusterName+"'");
+            List<Feature> features = new ArrayList<Feature>(frs.size());
+            for (FeatureRelationship relationship : frs) {
+                //System.err.println("  "+relationship.getFeatureBySubjectId().getUniqueName());
+                features.add(relationship.getSubjectFeature());
+            }
+            for (int i = 0; i < features.size()-1; i++) {
+                Feature f1 = features.get(i);
+                for (int j=i+1; j < features.size(); j++) {
+                    Feature f2 = features.get(j);
+                    FeatureRelationship fr = new FeatureRelationship(f1, f2, ORTHOLOGOUS_RELATIONSHIP, 0);
+                    sequenceDao.persist(fr);
+                }
+            }
+        }
+        //transaction.commit();
+//      session.close();
+    }
 
     public void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship) {
-    	String clusterName = entry.getKey();
-    	String uniqueName = "CLUSTER_" +clusterName;
+        String clusterName = entry.getKey();
+        String uniqueName = "CLUSTER_" +clusterName;
 
 
-    	Feature matchFeature = sequenceDao.getFeatureByUniqueName(uniqueName, "protein_match");
-    	if (matchFeature == null) {
-//    		matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
-//    		sequenceDao.persist(matchFeature);
-    		clusterNames.add(uniqueName);
+        Feature matchFeature = sequenceDao.getFeatureByUniqueName(uniqueName, "protein_match");
+        if (matchFeature == null) {
+//          matchFeature = featureUtils.createFeature("protein_match", uniqueName, DUMMY_ORG);
+//          sequenceDao.persist(matchFeature);
+            clusterNames.add(uniqueName);
 
-    		Analysis analysis = generalDao.getAnalysisByProgram("TRIBE");
-    		if (analysis == null){
-    			analysis = new Analysis();
-    			analysis.setAlgorithm("OrthoMCL");
-    			analysis.setProgram("OrthoMCL");
-    			analysis.setProgramVersion("1.0");
-    			//analysis.setSourceName(si.getAlgorithm());
-    			Date today = new Date();
-    			analysis.setTimeExecuted(today);
-    			generalDao.persist(analysis);
+            Analysis analysis = generalDao.getAnalysisByProgram("TRIBE");
+            if (analysis == null){
+                analysis = new Analysis();
+                analysis.setAlgorithm("OrthoMCL");
+                analysis.setProgram("OrthoMCL");
+                analysis.setProgramVersion("1.0");
+                //analysis.setSourceName(si.getAlgorithm());
+                Date today = new Date();
+                analysis.setTimeExecuted(today);
+                generalDao.persist(analysis);
 
-    			// create analysisfeature
-    			Double score = null;
-//  			if (si.getScore() != null) {
-//  			score = Double.parseDouble(si.getScore());
-//  			}
+                // create analysisfeature
+                Double score = null;
+//              if (si.getScore() != null) {
+//              score = Double.parseDouble(si.getScore());
+//              }
 
-    			Double evalue = null;
-//  			if (si.getEvalue() != null) {
-//  			evalue = Double.parseDouble(si.getEvalue());
-//  			}
+                Double evalue = null;
+//              if (si.getEvalue() != null) {
+//              evalue = Double.parseDouble(si.getEvalue());
+//              }
 
-    			Double id = null;
-//  			if (si.getId() != null) {
-//  			id = Double.parseDouble(si.getId());
-//  			}
+                Double id = null;
+//              if (si.getId() != null) {
+//              id = Double.parseDouble(si.getId());
+//              }
 
-    			AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
-    			generalDao.persist(analysisFeature);
-
-
+                AnalysisFeature analysisFeature = new AnalysisFeature(analysis,matchFeature,0.0,score,evalue,id);
+                generalDao.persist(analysisFeature);
 
 
-    		}
-    	}
-    	clusterNames.add(uniqueName);
-    	List<String> genes = entry.getValue();
-    	for (String geneName : genes) {
-    		Feature gene = sequenceDao.getFeatureByUniqueName(geneName+":pep", "polypeptide");
-    		if (gene == null) {
-    			System.err.println("Failing lookup for '"+geneName+"'");
-    			return;
-    		}
-    		FeatureRelationship fr = new FeatureRelationship(gene, matchFeature, relationship, 0);
-    		sequenceDao.persist(fr);
-    	}
+
+
+            }
+        }
+        clusterNames.add(uniqueName);
+        List<String> genes = entry.getValue();
+        for (String geneName : genes) {
+            Feature gene = sequenceDao.getFeatureByUniqueName(geneName+":pep", "polypeptide");
+            if (gene == null) {
+                System.err.println("Failing lookup for '"+geneName+"'");
+                return;
+            }
+            FeatureRelationship fr = new FeatureRelationship(gene, matchFeature, relationship, 0);
+            sequenceDao.persist(fr);
+        }
 
     }
 
 
 //    private void storeCluster(Map.Entry<String, List<String>> entry, CvTerm relationship) {
-//    	String clusterName = entry.getKey();
-//    	String uniqueName = "CLUSTER_" +clusterName;
-//    	clusterNames.add(uniqueName);
+//      String clusterName = entry.getKey();
+//      String uniqueName = "CLUSTER_" +clusterName;
+//      clusterNames.add(uniqueName);
 //    }
 
 //    private void createSimilarity(Feature polypeptide, Feature transcript, Annotation an) {
@@ -563,41 +563,41 @@ public class OrthologueStorerImpl implements OrthologueStorer {
 //    }
 
 
-	public void afterPropertiesSet() {
-		System.err.println("In aps cvDao='"+cvDao+"'");
+    public void afterPropertiesSet() {
+        System.err.println("In aps cvDao='"+cvDao+"'");
         featureUtils = new FeatureUtils();
         featureUtils.setCvDao(cvDao);
         featureUtils.setSequenceDao(sequenceDao);
         featureUtils.setPubDao(pubDao);
         featureUtils.afterPropertiesSet();
-		System.err.println("In aps cvDao='"+cvDao+"', class is '"+cvDao.getClass()+"'");
+        System.err.println("In aps cvDao='"+cvDao+"', class is '"+cvDao.getClass()+"'");
         DUMMY_ORG = organismDao.getOrganismByCommonName("dummy");
     }
 
 
-	public void process(final File[] files) {
+    public void process(final File[] files) {
 
-		for (File file : files) {
-			System.err.println("Processing '"+file.getName()+"'");
-			Reader r = null;
-			try {
-				r = new FileReader(file);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			OrthologueRelationsParser parser = xmlParser;
-			if (!file.getName().endsWith("xml")) {
-				parser = orthoMclParser;
-			}
-			parser.parseInput(r, orthologues, paralogues, clusters);
-		}
+        for (File file : files) {
+            System.err.println("Processing '"+file.getName()+"'");
+            Reader r = null;
+            try {
+                r = new FileReader(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+            OrthologueRelationsParser parser = xmlParser;
+            if (!file.getName().endsWith("xml")) {
+                parser = orthoMclParser;
+            }
+            parser.parseInput(r, orthologues, paralogues, clusters);
+        }
 
-		writeToDb();
-	}
+        writeToDb();
+    }
 
     private boolean checkOrgs(File input) {
-    	return true; // FIXME Should go through orgs to check all loaded
+        return true; // FIXME Should go through orgs to check all loaded
     }
 
     private Set<GenePair> orthologues = new HashSet<GenePair>();
@@ -613,7 +613,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
     }
 
     public void setCvDao(CvDao cvDao) {
-    	System.err.println("Changing cvDao to '"+cvDao+"'");
+        System.err.println("Changing cvDao to '"+cvDao+"'");
         this.cvDao = cvDao;
     }
 
@@ -621,23 +621,23 @@ public class OrthologueStorerImpl implements OrthologueStorer {
         this.generalDao = generalDao;
     }
 
-	public void setPubDao(PubDao pubDao) {
-		this.pubDao = pubDao;
-	}
+    public void setPubDao(PubDao pubDao) {
+        this.pubDao = pubDao;
+    }
 
 
 
 
-	public void setOrthoMclParser(OrthologueRelationsParser orthoMclParser) {
-		this.orthoMclParser = orthoMclParser;
-	}
+    public void setOrthoMclParser(OrthologueRelationsParser orthoMclParser) {
+        this.orthoMclParser = orthoMclParser;
+    }
 
 
 
 
-	public void setXmlParser(OrthologueRelationsParser xmlParser) {
-		this.xmlParser = xmlParser;
-	}
+    public void setXmlParser(OrthologueRelationsParser xmlParser) {
+        this.xmlParser = xmlParser;
+    }
 
 //    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 //        this.applicationContext = applicationContext;

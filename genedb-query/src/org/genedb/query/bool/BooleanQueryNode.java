@@ -8,35 +8,35 @@ import org.genedb.query.Result;
 
 public class BooleanQueryNode implements NumberedQueryI {
 
-	private int index;
-	private BasicQueryI query;
-	
-	public BooleanQueryNode(BasicQueryI query) {
-	    this.query = query;
-	}
+    private int index;
+    private BasicQueryI query;
+    
+    public BooleanQueryNode(BasicQueryI query) {
+        this.query = query;
+    }
 
-	public int getIndex() {
-		return index;
-	}
+    public int getIndex() {
+        return index;
+    }
 
-	public void setIndex(int index) {
-		this.index = index;
-	}
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
-	public String getSimpleDescription() {
-	    return this.query.getSimpleDescription();
-	}
+    public String getSimpleDescription() {
+        return this.query.getSimpleDescription();
+    }
 
-	public boolean isComplete() {
-	    return this.query.isComplete();
-	}
+    public boolean isComplete() {
+        return this.query.isComplete();
+    }
 
-	public Result process() {
-	    return this.query.process();
-	}
+    public Result process() {
+        return this.query.process();
+    }
 
-	public String getName() {
-	    return this.query.getName();
-	}
+    public String getName() {
+        return this.query.getName();
+    }
 
 }

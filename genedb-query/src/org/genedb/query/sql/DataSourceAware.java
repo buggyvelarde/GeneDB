@@ -9,11 +9,11 @@ import javax.sql.DataSource;
  */
 public interface DataSourceAware {
 
-	/**
-	 * Set up a SQL data source for this class to use
-	 * 
-	 * @param ds The datasource
-	 */
-	public void setDataSource(DataSource ds);
-	
+    /**
+     * Set up a SQL data source for this class to use
+     * 
+     * @param ds The datasource
+     */
+    public void setDataSource(DataSource ds);
+    
 }

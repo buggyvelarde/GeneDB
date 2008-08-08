@@ -22,88 +22,88 @@ public abstract class AbstractQuery implements QueryI {
     private String help;
 
     public String getSimpleDescription() {
-	return this.simpleDescription;
+    return this.simpleDescription;
     }
 
     protected void setSimpleDescription(String simpleDescription) {
-	this.simpleDescription = simpleDescription;
+    this.simpleDescription = simpleDescription;
     }
 
     protected String getHelp() {
-	return this.help;
+    return this.help;
     }
 
     protected void setHelp(String help) {
-	this.help = help;
+    this.help = help;
     }
 
     protected void setName(String name) {
-	this.name = name;
+    this.name = name;
     }
 
     public String getName() {
-	return name;
+    return name;
     }
 
     public String getResultType() {
-	return type;
+    return type;
     }
 
     public boolean isStoredInHistory() {
-	return inHistory;
+    return inHistory;
     }
 
     public String getQueryAsString() {
-	// TODO Deal with query context perhaps
-	StringBuffer ret = new StringBuffer();
-	ret.append(name);
-	//ret.append(queryContext);
-	ret.append("{");
-	for (Param param : params) {
-	    ret.append("{");
-	    ret.append(param.getName());
-	    ret.append("=");
-	    ret.append(param.getValue());
-	    ret.append("}");			
-	}
-	ret.append("}");
+    // TODO Deal with query context perhaps
+    StringBuffer ret = new StringBuffer();
+    ret.append(name);
+    //ret.append(queryContext);
+    ret.append("{");
+    for (Param param : params) {
+        ret.append("{");
+        ret.append(param.getName());
+        ret.append("=");
+        ret.append(param.getValue());
+        ret.append("}");            
+    }
+    ret.append("}");
 
-	return ret.toString();
+    return ret.toString();
     }
 
     public void setFineDetailer(Detailer fineDetailer) {
-	this.fineDetailer = fineDetailer;
+    this.fineDetailer = fineDetailer;
     }
 
     public void setSummaryDetailer(Detailer summaryDetailer) {
-	this.summaryDetailer = summaryDetailer;
+    this.summaryDetailer = summaryDetailer;
     }
 
     protected Detailer getFineDetailer() {
-	return fineDetailer;
+    return fineDetailer;
     }
 
     protected Detailer getSummaryDetailer() {
-	return summaryDetailer;
+    return summaryDetailer;
     }
 
     List<Param> EMPTY_PARAMS_LIST = Collections.unmodifiableList(new ArrayList<Param>());
 
     public List<Param> getParameters() {
-	if (this.params == null) {
-	    return EMPTY_PARAMS_LIST;
-	}
-	return this.params;
+    if (this.params == null) {
+        return EMPTY_PARAMS_LIST;
+    }
+    return this.params;
     }
 
     //public abstract void writeSpringBean(PrintWriter pw);
     public boolean isComplete() {
-	for (Param param : params) {
-	    if (!param.isSet()) {
-		return false;
-	    }
-	}
-	return true;
+    for (Param param : params) {
+        if (!param.isSet()) {
+        return false;
+        }
+    }
+    return true;
     }
 
 }

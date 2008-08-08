@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface Goa2GeneDBI {
 
-	void afterPropertiesSet();
+    void afterPropertiesSet();
 
-	void process(File[] files);
+    void process(File[] files);
 
-	@Transactional
-	void writeToDb(List<GoInstance> goInstances);
-	
-	
-	
+    @Transactional
+    void writeToDb(List<GoInstance> goInstances);
+    
+    
+    
 }

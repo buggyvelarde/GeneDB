@@ -12,10 +12,10 @@ import java.util.List;
  */
 public interface ListConstraint {
     
-	public List<String> getAllAcceptableValues();
-	
-	public List<String> getAcceptableValues(String partName, boolean mustBePrefix);
-	
-	public boolean isValid(String value);
-	
+    public List<String> getAllAcceptableValues();
+    
+    public List<String> getAcceptableValues(String partName, boolean mustBePrefix);
+    
+    public boolean isValid(String value);
+    
 }

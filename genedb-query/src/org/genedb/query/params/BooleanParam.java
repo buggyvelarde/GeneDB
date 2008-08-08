@@ -9,34 +9,34 @@ import org.springframework.validation.Errors;
  */
 public class BooleanParam extends AbstractParam {
 
-	private Boolean value;
-	private boolean set = false;
-	private String validation;
-	
-	public void setValidation(String validation) {
-	    this.validation = validation;
-	}
-	
-	public void setValue(Boolean value) {
-		this.value = value;
-		this.set = true;
-	}
+    private Boolean value;
+    private boolean set = false;
+    private String validation;
+    
+    public void setValidation(String validation) {
+        this.validation = validation;
+    }
+    
+    public void setValue(Boolean value) {
+        this.value = value;
+        this.set = true;
+    }
 
 
-	@Override
-	public Boolean getValue() {
-		return value;
-	}
+    @Override
+    public Boolean getValue() {
+        return value;
+    }
 
-	public boolean supports(Class clazz) {
-	    return Boolean.class.isAssignableFrom(clazz);
-	}
+    public boolean supports(Class clazz) {
+        return Boolean.class.isAssignableFrom(clazz);
+    }
 
-	public void validate(Object value, Errors errors) {
-	    
-	}
+    public void validate(Object value, Errors errors) {
+        
+    }
 
-	public boolean isSet() {
-	    return this.set;
-	}
+    public boolean isSet() {
+        return this.set;
+    }
 }

@@ -42,7 +42,7 @@ public class TRNA_Processor extends BaseRnaProcessor {
     
     @Override
     public void processStrandedFeature(Feature parent, StrandedFeature ft, int offset) {
-    	processRna(parent, ft, TRNA.class, offset);	
+        processRna(parent, ft, TRNA.class, offset); 
     }
 
 }

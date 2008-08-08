@@ -50,7 +50,7 @@ public enum GoEvidenceCode {
     }
 
     public String getDescription() {
-	return descriptions.get(this);
+    return descriptions.get(this);
     }
 
 

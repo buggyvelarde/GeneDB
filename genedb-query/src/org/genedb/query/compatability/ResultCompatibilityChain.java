@@ -13,17 +13,17 @@ import java.util.List;
  * @author art
  */
 public class ResultCompatibilityChain implements
-		ResultCompatibility {
+        ResultCompatibility {
 
-	private List<ResultCompatibility> checkList = new ArrayList<ResultCompatibility>();
-	
-	public boolean areCompatible(Result one, Result two) {
-		for (ResultCompatibility rdsc : checkList) {
-			if (rdsc.areCompatible(one, two)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private List<ResultCompatibility> checkList = new ArrayList<ResultCompatibility>();
+    
+    public boolean areCompatible(Result one, Result two) {
+        for (ResultCompatibility rdsc : checkList) {
+            if (rdsc.areCompatible(one, two)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

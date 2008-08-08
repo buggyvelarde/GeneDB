@@ -7,16 +7,16 @@ import org.gmod.schema.mapped.Feature;
 
 public class DummyFeatureProcessor extends BaseFeatureProcessor {
 
-	@Override
-	public void processStrandedFeature(Feature parent, StrandedFeature f,
-			int offset) {
-		// Deliberately empty - it is a dummy class...
+    @Override
+    public void processStrandedFeature(Feature parent, StrandedFeature f,
+            int offset) {
+        // Deliberately empty - it is a dummy class...
 
-	}
+    }
 
-	@Override
+    @Override
     public ProcessingPhase getProcessingPhase() {
-		return ProcessingPhase.LAST;
-	}
+        return ProcessingPhase.LAST;
+    }
 
 }

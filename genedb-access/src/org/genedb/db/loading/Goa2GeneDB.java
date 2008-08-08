@@ -84,20 +84,20 @@ public class Goa2GeneDB implements Goa2GeneDBI{
 
     private HibernateTransactionManager hibernateTransactionManager;
 
-	private Pattern PUBMED_PATTERN;
+    private Pattern PUBMED_PATTERN;
 
-	protected CvTerm GO_KEY_EVIDENCE;
+    protected CvTerm GO_KEY_EVIDENCE;
     protected CvTerm GO_KEY_DATE;
     protected CvTerm GO_KEY_QUALIFIER;
 
     private Session session;
 
     public void setHibernateTransactionManager(
-			HibernateTransactionManager hibernateTransactionManager) {
-		this.hibernateTransactionManager = hibernateTransactionManager;
-	}
+            HibernateTransactionManager hibernateTransactionManager) {
+        this.hibernateTransactionManager = hibernateTransactionManager;
+    }
 
-    	/**
+        /**
          * Main entry point. It uses a BeanPostProcessor to apply a set of overrides
          * based on a Properties file, based on the organism. This is passed in on
          * the command-line.
@@ -111,8 +111,8 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             String[] filePaths = args;
 
             if (filePaths.length == 0) {
-            	System.err.println("No input files specified");
-            	System.exit(-1);
+                System.err.println("No input files specified");
+                System.exit(-1);
             }
 
             Properties overrideProps = new Properties();
@@ -128,12 +128,12 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             File[] inputs = new File[filePaths.length];
             long start = new Date().getTime();
             for (int i = 0; i < filePaths.length; i++) {
-            	inputs[i] = new File(filePaths[i]);
-    		}
+                inputs[i] = new File(filePaths[i]);
+            }
 
-			application.process(inputs);
-			long duration = (new Date().getTime()-start)/1000;
-			logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
+            application.process(inputs);
+            long duration = (new Date().getTime()-start)/1000;
+            logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
         }
 
         /**
@@ -143,19 +143,19 @@ public class Goa2GeneDB implements Goa2GeneDBI{
          * @return true if it looks like a PubMed reference
          */
         private boolean looksLikePub(String xref) {
-        	boolean ret =  PUBMED_PATTERN.matcher(xref).lookingAt();
-        	logger.warn("Returning '"+ret+"' for '"+xref+"' for looks like pubmed");
-        	return ret;
+            boolean ret =  PUBMED_PATTERN.matcher(xref).lookingAt();
+            logger.warn("Returning '"+ret+"' for '"+xref+"' for looks like pubmed");
+            return ret;
         }
 
         public void writeToDb(List<GoInstance> goInstances) {
-        	for (GoInstance go : goInstances) {
+            for (GoInstance go : goInstances) {
 
-        		Feature polypeptide = getPolypeptide(go.getGeneName());
+                Feature polypeptide = getPolypeptide(go.getGeneName());
 
-        		if(polypeptide != null) {
+                if(polypeptide != null) {
 
-        		String id = go.getId();
+                String id = go.getId();
 
                 CvTerm cvTerm = cvDao.getGoCvTermByAcc(id);
                 if (cvTerm == null) {
@@ -209,127 +209,127 @@ public class Goa2GeneDB implements Goa2GeneDBI{
                         }
                     }
                 }
-        		} else {
-        			logger.error("Gene Name " + go.getGeneName() + " does not exist in database");
-        		}
-			}
-    	}
+                } else {
+                    logger.error("Gene Name " + go.getGeneName() + " does not exist in database");
+                }
+            }
+        }
 
         private Feature getPolypeptide(String geneName) {
-        	geneName = geneName.concat(":pep");
-        	Feature polypeptide = sequenceDao.getFeatureByUniqueName(geneName, "polypeptide");
-        	if(polypeptide == null) {
-        		return null;
-        	}
-        	logger.warn("polypeptide is " + polypeptide + "gene name is " + geneName);
-        	int id = polypeptide.getFeatureId();
-        	polypeptide = (Feature)session.load(Feature.class,new Integer(id));
-        	return polypeptide;
-		}
+            geneName = geneName.concat(":pep");
+            Feature polypeptide = sequenceDao.getFeatureByUniqueName(geneName, "polypeptide");
+            if(polypeptide == null) {
+                return null;
+            }
+            logger.warn("polypeptide is " + polypeptide + "gene name is " + geneName);
+            int id = polypeptide.getFeatureId();
+            polypeptide = (Feature)session.load(Feature.class,new Integer(id));
+            return polypeptide;
+        }
 
-    	public void afterPropertiesSet() {
-    		System.err.println("In aps cvDao='"+cvDao+"'");
-    		session = hibernateTransactionManager.getSessionFactory().openSession();
-    		PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
-    		Cv CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property");
+        public void afterPropertiesSet() {
+            System.err.println("In aps cvDao='"+cvDao+"'");
+            session = hibernateTransactionManager.getSessionFactory().openSession();
+            PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
+            Cv CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property");
             Cv CV_GENEDB = cvDao.getCvByName("genedb_misc");
-    		GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
+            GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
             GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
             GO_KEY_DATE = cvDao.getCvTermByNameInCv("date", CV_FEATURE_PROPERTY).get(0);
         }
 
 
-    	public void process(final File[] files) {
-    		Transaction transaction = this.session.beginTransaction();
-    		for (File file : files) {
-    			System.err.println("Processing '"+file.getName()+"'");
-        		List<GoInstance> goInstances = null;
-    			Reader r = null;
-    			try {
-    				r = new FileReader(file);
-    				goInstances = parseFile(r);
+        public void process(final File[] files) {
+            Transaction transaction = this.session.beginTransaction();
+            for (File file : files) {
+                System.err.println("Processing '"+file.getName()+"'");
+                List<GoInstance> goInstances = null;
+                Reader r = null;
+                try {
+                    r = new FileReader(file);
+                    goInstances = parseFile(r);
 
-    			} catch (FileNotFoundException e) {
-    				e.printStackTrace();
-    				System.exit(-1);
-    			}
-    			writeToDb(goInstances);
-    			transaction.commit();
-    		}
-    	}
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    System.exit(-1);
+                }
+                writeToDb(goInstances);
+                transaction.commit();
+            }
+        }
 
-    	private List<GoInstance> parseFile(Reader r) {
-    		BufferedReader input = new BufferedReader(r);
-    		String line = null;
-    		List<GoInstance> goInstances = new ArrayList<GoInstance>();
-			try {
-				while((line = input.readLine()) != null) {
+        private List<GoInstance> parseFile(Reader r) {
+            BufferedReader input = new BufferedReader(r);
+            String line = null;
+            List<GoInstance> goInstances = new ArrayList<GoInstance>();
+            try {
+                while((line = input.readLine()) != null) {
 
-		    		String terms[] = line.split("\t");
+                    String terms[] = line.split("\t");
 
-		    		GoInstance goi = new GoInstance();
+                    GoInstance goi = new GoInstance();
 
-					goi.setGeneName(terms[1].trim());
+                    goi.setGeneName(terms[1].trim());
 
-					String qualifier = terms[3];
-			        if ( qualifier != null && qualifier.length()>0) {
-			            goi.addQualifier(qualifier);
-			        }
+                    String qualifier = terms[3];
+                    if ( qualifier != null && qualifier.length()>0) {
+                        goi.addQualifier(qualifier);
+                    }
 
-			        String id = terms[4];
-			        if (!id.startsWith("GO:")) {
-			            System.err.println("WARN: GO id doesn't start with GO: *"+id+"*");
-			            return null;
-			        }
-			        goi.setId( terms[4].substring(3) );
+                    String id = terms[4];
+                    if (!id.startsWith("GO:")) {
+                        System.err.println("WARN: GO id doesn't start with GO: *"+id+"*");
+                        return null;
+                    }
+                    goi.setId( terms[4].substring(3) );
 
-			        goi.setRef(terms[5]);
-			        goi.setEvidence(GoEvidenceCode.valueOf(terms[6].trim()));
-			        goi.setWithFrom(terms[7]);
+                    goi.setRef(terms[5]);
+                    goi.setEvidence(GoEvidenceCode.valueOf(terms[6].trim()));
+                    goi.setWithFrom(terms[7]);
 
-			        String aspect = terms[8].substring(0,1).toUpperCase();
+                    String aspect = terms[8].substring(0,1).toUpperCase();
 
-			        if( "P".equals(aspect) ){
-			            goi.setSubtype("process");
-			        } else {
-			            if( "C".equals(aspect) ){
-			                goi.setSubtype("component");
-			            } else {
-			                if( "F".equals(aspect) ){
-			                    goi.setSubtype("function");
-			                } else {
-			                    logger.warn("WARN: Unexpected aspect *"+goi.getAspect()+"* in GO association file");
-			                    return null;
-			                }
-			            }
-			        }
+                    if( "P".equals(aspect) ){
+                        goi.setSubtype("process");
+                    } else {
+                        if( "C".equals(aspect) ){
+                            goi.setSubtype("component");
+                        } else {
+                            if( "F".equals(aspect) ){
+                                goi.setSubtype("function");
+                            } else {
+                                logger.warn("WARN: Unexpected aspect *"+goi.getAspect()+"* in GO association file");
+                                return null;
+                            }
+                        }
+                    }
 
-			        goi.setDate(terms[13]);
+                    goi.setDate(terms[13]);
 
-			        if (terms.length > 13) {
-			        		goi.setAttribution(terms[14]);
-			        }
+                    if (terms.length > 13) {
+                            goi.setAttribution(terms[14]);
+                    }
 
-			        goInstances.add(goi);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+                    goInstances.add(goi);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-			return goInstances;
-    	}
+            return goInstances;
+        }
 
         public void setSequenceDao(SequenceDao sequenceDao) {
             this.sequenceDao = sequenceDao;
         }
 
         public void setCvDao(CvDao cvDao) {
-        	System.err.println("Changing cvDao to '"+cvDao+"'");
+            System.err.println("Changing cvDao to '"+cvDao+"'");
             this.cvDao = cvDao;
         }
 
-    	public void setPubDao(PubDao pubDao) {
-    		this.pubDao = pubDao;
-    	}
+        public void setPubDao(PubDao pubDao) {
+            this.pubDao = pubDao;
+        }
 
     }

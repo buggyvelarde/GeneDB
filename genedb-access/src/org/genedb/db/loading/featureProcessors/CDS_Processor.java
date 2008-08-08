@@ -91,20 +91,20 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 
     //private int count;
 
-	public CDS_Processor() {
-		handledQualifiers = new String[]{"CDS:EC_number", "CDS:primary_name",
-				"CDS:systematic_id", "CDS:previous_systematic_id", "CDS:product",
-				"CDS:db_xref", //"CDS:similarity",
-				"CDS:temporary_systematic_id",
-				"CDS:fasta_file", "CDS:blast_file", "CDS:blastn_file", "CDS:colour",
-				"CDS:blastpgo_file", "CDS:blastp_file", "CDS:blastx_file",
-				"CDS:obsolete_name", "CDS:synonym", "CDS:reserved_name",
-				"CDS:fastax_file", "CDS:tblastn_file", "CDS:tblastx_file",
-				"CDS:literature", "CDS:curation", "CDS:private", "CDS:clustalx_file",
-				"CDS:pseudo", "CDS:psu_db_xref", "CDS:note", "CDS:GO",
-				"CDS:controlled_curation", "CDS:sigcleave_file"};
-		unknownRileyClass = new ArrayList<String>();
-	}
+    public CDS_Processor() {
+        handledQualifiers = new String[]{"CDS:EC_number", "CDS:primary_name",
+                "CDS:systematic_id", "CDS:previous_systematic_id", "CDS:product",
+                "CDS:db_xref", //"CDS:similarity",
+                "CDS:temporary_systematic_id",
+                "CDS:fasta_file", "CDS:blast_file", "CDS:blastn_file", "CDS:colour",
+                "CDS:blastpgo_file", "CDS:blastp_file", "CDS:blastx_file",
+                "CDS:obsolete_name", "CDS:synonym", "CDS:reserved_name",
+                "CDS:fastax_file", "CDS:tblastn_file", "CDS:tblastx_file",
+                "CDS:literature", "CDS:curation", "CDS:private", "CDS:clustalx_file",
+                "CDS:pseudo", "CDS:psu_db_xref", "CDS:note", "CDS:GO",
+                "CDS:controlled_curation", "CDS:sigcleave_file"};
+        unknownRileyClass = new ArrayList<String>();
+    }
 
 
     @Override
@@ -117,21 +117,21 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     private void processCodingGene(StrandedFeature cds, Annotation an,
             Feature parent, int offset) {
 
-    	String sysId = null;
+        String sysId = null;
 
-    	String soTypeGene = "gene";
-    	String soTypeTranscript = "mRNA";
-    	String soTypeExon = "exon";
-    	boolean pseudo = an.containsProperty(QUAL_PSEUDO);
-    	if (pseudo) {
-        	soTypeGene = "pseudogene";
-        	soTypeTranscript = "pseudogenic_transcript";
-        	soTypeExon = "pseudogenic_exon";
-    	}
+        String soTypeGene = "gene";
+        String soTypeTranscript = "mRNA";
+        String soTypeExon = "exon";
+        boolean pseudo = an.containsProperty(QUAL_PSEUDO);
+        if (pseudo) {
+            soTypeGene = "pseudogene";
+            soTypeTranscript = "pseudogenic_transcript";
+            soTypeExon = "pseudogenic_exon";
+        }
 
         try {
 
-        	org.biojava.bio.symbol.Location loc = cds.getLocation().translate(offset);
+            org.biojava.bio.symbol.Location loc = cds.getLocation().translate(offset);
             //Annotation an = cds.getAnnotation();
 
             StrandedLocation location = LocationUtils.make(loc, cds.getStrand());
@@ -144,7 +144,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             logger.debug("Looking at systematic id '" + sysId+"'");
             // Gene
             Gene gene = Gene.makeHierarchy(parent, location, systematicId, MRNA.class, true);
-        	
+            
             //int transcriptNum = 1;
 
 //            List<Feature> features = new ArrayList<Feature>();
@@ -172,13 +172,13 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
                 // TODO Tidy
                 List<Feature> featureList = sequenceDao.getFeaturesByUniqueNamePattern(sharedId);
                 if (featureList != null && featureList.size()==1) {
-                	//gene = featureList.get(0);
+                    //gene = featureList.get(0);
                 }
                 altSplicing = true;
             }
 
             if (altSplicing) {
-            	throw new RuntimeException("Alternate splicing not handled in new code"); // TODO
+                throw new RuntimeException("Alternate splicing not handled in new code"); // TODO
             }
             
             
@@ -333,11 +333,11 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         Collection<FeatureRelationship> featureRels = polypeptide.getFeatureRelationshipsForSubjectId();
         Feature mRNA = null;
         for (FeatureRelationship featureRelationship : featureRels) {
-			Feature feature = featureRelationship.getObjectFeature();
-			if(feature.getType().getName().equals("mRNA")) {
-				mRNA = feature;
-			}
-		}
+            Feature feature = featureRelationship.getObjectFeature();
+            if(feature.getType().getName().equals("mRNA")) {
+                mRNA = feature;
+            }
+        }
         //createSimilarity(polypeptide,mRNA,an);
 
         processClass(polypeptide,an);
@@ -355,19 +355,19 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     }
 
     private void createGoEntries(Feature polypeptide,Annotation an) {
-    	List<GoInstance> gos = goParser.getNewStyleGoTerm(an);
+        List<GoInstance> gos = goParser.getNewStyleGoTerm(an);
         if (gos.size() == 0) {
             return;
         }
 
         for (GoInstance go : gos) {
-        	featureUtils.createGoEntries(polypeptide, go, null);
+            featureUtils.createGoEntries(polypeptide, go, null);
         }
 
-	}
+    }
 
 
-//	private String extractFromId(String in) {
+//  private String extractFromId(String in) {
 //        if (in.contains(":")) {
 //            in.substring(in.indexOf(":"));
 //        }
@@ -378,87 +378,87 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         String nucleic = new String(parent.getResidues(), loc.getMin(), loc.getMax()-loc.getMin()); // TODO Check offsets
         //String protein =null;//= translate(nucleic, an); FIXME
         polypeptide.setResidues(nucleic.getBytes());
-	}
+    }
 
 
 
-	private void createOtherNotes(Feature polypeptide, Annotation an, String key, CvTerm cvTerm) {
-    	List<String> notes = MiningUtils.getProperties(key, an);
-    	int rank = 0;
-    	for (String note : notes) {
-    		FeatureProp fp = new FeatureProp(polypeptide, cvTerm, note, rank);
-    		this.sequenceDao.persist(fp);
-    		rank++;
-    	}
-	}
+    private void createOtherNotes(Feature polypeptide, Annotation an, String key, CvTerm cvTerm) {
+        List<String> notes = MiningUtils.getProperties(key, an);
+        int rank = 0;
+        for (String note : notes) {
+            FeatureProp fp = new FeatureProp(polypeptide, cvTerm, note, rank);
+            this.sequenceDao.persist(fp);
+            rank++;
+        }
+    }
 
-	private void createLiterature(Feature polypeptide, Annotation an) {
-    	List<String> literatures = MiningUtils.getProperties("literature", an);
-    	if(literatures != null) {
-    		Set<String> ids = new HashSet<String>();
-    		for (String literature : literatures) {
-				String sections[] = literature.split(";");
-				String id = sections[0];
-				if (ids.contains(id)) {
-					logger.warn("Ignoring duplicate /literature of '"+id+"'");
-				} else {
-					ids.add(id);
-					Pub pub = this.pubDao.getPubByUniqueName(id);
-					if (pub == null) {
-						CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
-						pub = new Pub(id, cvt);
-						this.pubDao.persist(pub);
-					}
-					FeaturePub fp = new FeaturePub(polypeptide,pub);
-					this.sequenceDao.persist(fp);
-				}
-    		}
-    	}
-	}
+    private void createLiterature(Feature polypeptide, Annotation an) {
+        List<String> literatures = MiningUtils.getProperties("literature", an);
+        if(literatures != null) {
+            Set<String> ids = new HashSet<String>();
+            for (String literature : literatures) {
+                String sections[] = literature.split(";");
+                String id = sections[0];
+                if (ids.contains(id)) {
+                    logger.warn("Ignoring duplicate /literature of '"+id+"'");
+                } else {
+                    ids.add(id);
+                    Pub pub = this.pubDao.getPubByUniqueName(id);
+                    if (pub == null) {
+                        CvTerm cvt = this.cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
+                        pub = new Pub(id, cvt);
+                        this.pubDao.persist(pub);
+                    }
+                    FeaturePub fp = new FeaturePub(polypeptide,pub);
+                    this.sequenceDao.persist(fp);
+                }
+            }
+        }
+    }
 
-	private void createEC_number(Feature polypeptide, Annotation an) {
-    	List<String> ecNumbers = MiningUtils.getProperties("EC_number", an);
-    	int rank = 0;
-    	for (String ecNumber : ecNumbers) {
-    		FeatureProp fp = new FeatureProp(polypeptide, MISC_EC_NUMBER, ecNumber, rank);
-    		this.sequenceDao.persist(fp);
-    		rank++;
-    	}
-	}
-
-
-	private void processIndividualArtemisFile(Feature polypeptide, Annotation an, String propertyName) {
-		processIndividualArtemisFile(polypeptide, an, propertyName, propertyName);
-	}
-
-	private void processIndividualArtemisFile(Feature polypeptide, Annotation an, String propertyName, String cvTermName) {
-		List<String> bFile = MiningUtils.getProperties(propertyName, an);
-		int rank = 0;
-		CvTerm cvt = this.cvDao.getCvTermByNameAndCvName(cvTermName, "genedb_misc");
-		for (String file : bFile) {
-			file = file.replaceAll(" ", ""); // FIXME - Why - looks dubious
-			FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
-			this.sequenceDao.persist(fp);
-			rank++;
-		}
-	}
-
-	private void processArtemisFiles(Feature polypeptide, Annotation an) {
-    	processIndividualArtemisFile(polypeptide, an, "blast_file");
-    	processIndividualArtemisFile(polypeptide, an, "blastn_file");
-    	processIndividualArtemisFile(polypeptide, an, "blastp+go_file", "blastpgo_file");
-    	processIndividualArtemisFile(polypeptide, an, "blastp_file");
-    	processIndividualArtemisFile(polypeptide, an, "blastx_file");
-    	processIndividualArtemisFile(polypeptide, an, "fasta_file");
-    	processIndividualArtemisFile(polypeptide, an, "tblastn_file", "tBlastn_file");
-    	processIndividualArtemisFile(polypeptide, an, "tblastx_file", "tBlastx_file");
-    	processIndividualArtemisFile(polypeptide, an, "clustalx_file");
-    	processIndividualArtemisFile(polypeptide, an, "pepstats_file");
-    	processIndividualArtemisFile(polypeptide, an, "sigcleave_file");
-	}
+    private void createEC_number(Feature polypeptide, Annotation an) {
+        List<String> ecNumbers = MiningUtils.getProperties("EC_number", an);
+        int rank = 0;
+        for (String ecNumber : ecNumbers) {
+            FeatureProp fp = new FeatureProp(polypeptide, MISC_EC_NUMBER, ecNumber, rank);
+            this.sequenceDao.persist(fp);
+            rank++;
+        }
+    }
 
 
-//	/**
+    private void processIndividualArtemisFile(Feature polypeptide, Annotation an, String propertyName) {
+        processIndividualArtemisFile(polypeptide, an, propertyName, propertyName);
+    }
+
+    private void processIndividualArtemisFile(Feature polypeptide, Annotation an, String propertyName, String cvTermName) {
+        List<String> bFile = MiningUtils.getProperties(propertyName, an);
+        int rank = 0;
+        CvTerm cvt = this.cvDao.getCvTermByNameAndCvName(cvTermName, "genedb_misc");
+        for (String file : bFile) {
+            file = file.replaceAll(" ", ""); // FIXME - Why - looks dubious
+            FeatureProp fp = new FeatureProp(polypeptide,cvt,file,rank);
+            this.sequenceDao.persist(fp);
+            rank++;
+        }
+    }
+
+    private void processArtemisFiles(Feature polypeptide, Annotation an) {
+        processIndividualArtemisFile(polypeptide, an, "blast_file");
+        processIndividualArtemisFile(polypeptide, an, "blastn_file");
+        processIndividualArtemisFile(polypeptide, an, "blastp+go_file", "blastpgo_file");
+        processIndividualArtemisFile(polypeptide, an, "blastp_file");
+        processIndividualArtemisFile(polypeptide, an, "blastx_file");
+        processIndividualArtemisFile(polypeptide, an, "fasta_file");
+        processIndividualArtemisFile(polypeptide, an, "tblastn_file", "tBlastn_file");
+        processIndividualArtemisFile(polypeptide, an, "tblastx_file", "tBlastx_file");
+        processIndividualArtemisFile(polypeptide, an, "clustalx_file");
+        processIndividualArtemisFile(polypeptide, an, "pepstats_file");
+        processIndividualArtemisFile(polypeptide, an, "sigcleave_file");
+    }
+
+
+//  /**
 //     * @param polypeptide
 //     * @param an
 //     */
@@ -667,47 +667,47 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 //    }
 
     private String[] parseDbString(String db) {
-    	String[] ret = db.split(":");
-    	if (ret.length != 2) {
-    		System.err.println("Unable to parse '"+db+"' as a database adding SWALL as db");
-    		ret[0] = "SWALL";
-    		ret[1] = db;
-    	}
-    	return ret;
+        String[] ret = db.split(":");
+        if (ret.length != 2) {
+            System.err.println("Unable to parse '"+db+"' as a database adding SWALL as db");
+            ret[0] = "SWALL";
+            ret[1] = db;
+        }
+        return ret;
     }
 
     private void processClass(Feature polypeptide, Annotation an) {
         List<String> classes = MiningUtils.getProperties("class", an);
         for (String rileyClass : classes) {
-        	// Remove leading zeros from RILEY numbers
-        	if (rileyClass.contains(".")) {
-	        	String sections[] = rileyClass.split("\\.");
-	        	StringBuilder sb = new StringBuilder();
-	        	for (String string : sections) {
-	        		if (string.length() >= 2) {
-	        			if(string.charAt(0) == '0'){
-	        				sb.append(string.substring(1) + ".");
-	        			} else {
-	        				sb.append(string + ".");
-	        			}
-	        		} else {
-	        			sb.append(string + ".");
-	        		}
-	        	}
-	        	rileyClass = sb.toString().substring(0, sb.toString().length()-1);
-        	}
-        	Db db = this.generalDao.getDbByName("RILEY");
-        	DbXRef dbXRef = this.generalDao.getDbXRefByDbAndAcc(db,rileyClass);
-        	if (dbXRef == null) {
-        		if (!unknownRileyClass.contains(rileyClass)) {
-        			unknownRileyClass.add(rileyClass);
-        		}
-        	} else {
-	        	CvTerm cvTerm = this.cvDao.getCvTermByDbXRef(dbXRef);
-	        	Pub pub = DUMMY_PUB;
-	        	FeatureCvTerm fct = new FeatureCvTerm(cvTerm,polypeptide,pub,false,0);
-	        	this.sequenceDao.persist(fct);
-        	}
+            // Remove leading zeros from RILEY numbers
+            if (rileyClass.contains(".")) {
+                String sections[] = rileyClass.split("\\.");
+                StringBuilder sb = new StringBuilder();
+                for (String string : sections) {
+                    if (string.length() >= 2) {
+                        if(string.charAt(0) == '0'){
+                            sb.append(string.substring(1) + ".");
+                        } else {
+                            sb.append(string + ".");
+                        }
+                    } else {
+                        sb.append(string + ".");
+                    }
+                }
+                rileyClass = sb.toString().substring(0, sb.toString().length()-1);
+            }
+            Db db = this.generalDao.getDbByName("RILEY");
+            DbXRef dbXRef = this.generalDao.getDbXRefByDbAndAcc(db,rileyClass);
+            if (dbXRef == null) {
+                if (!unknownRileyClass.contains(rileyClass)) {
+                    unknownRileyClass.add(rileyClass);
+                }
+            } else {
+                CvTerm cvTerm = this.cvDao.getCvTermByDbXRef(dbXRef);
+                Pub pub = DUMMY_PUB;
+                FeatureCvTerm fct = new FeatureCvTerm(cvTerm,polypeptide,pub,false,0);
+                this.sequenceDao.persist(fct);
+            }
         }
     }
 
@@ -754,13 +754,13 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
         List<String> products = MiningUtils.getProperties(annotationKey, an);
         boolean not = false;
         if (products != null && products.size() != 0 ) {
-        	Set<String> unique = new HashSet<String>();
-        	unique.addAll(products);
-        	if (unique.size() != products.size()) {
-        		logger.warn("Removed duplicate products");
-        		products.clear();
-        		products.addAll(unique);
-        	}
+            Set<String> unique = new HashSet<String>();
+            unique.addAll(products);
+            if (unique.size() != products.size()) {
+                logger.warn("Removed duplicate products");
+                products.clear();
+                products.addAll(unique);
+            }
             for (String product : products) {
                 CvTerm cvTerm = null;
                 List<CvTerm> cvTermList = this.cvDao.getCvTermByNameInCv(product, cv);
@@ -782,64 +782,64 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
     }
 
   private ParsedString parseDbXref(String in, String prefix) {
-	  ParsedString ret;
-	  String lookFor = "(" + prefix;
-	  int index = in.indexOf(lookFor);
-	  if (index != -1) {
-	  int rbracket = in.indexOf(")", index);
-	  String part = in.substring(index + 1, rbracket);
-	  in = in.substring(0, index) + in.substring(rbracket + 1);
-	  ret = new ParsedString(in, part);
-	  } else {
-	  ret = new ParsedString(in, null);
-	  }
-	  return ret;
+      ParsedString ret;
+      String lookFor = "(" + prefix;
+      int index = in.indexOf(lookFor);
+      if (index != -1) {
+      int rbracket = in.indexOf(")", index);
+      String part = in.substring(index + 1, rbracket);
+      in = in.substring(0, index) + in.substring(rbracket + 1);
+      ret = new ParsedString(in, part);
+      } else {
+      ret = new ParsedString(in, null);
+      }
+      return ret;
   }
 
 //  private String translate(String nucleic) {
-//		  if (translation != null && translation.length() > 0 ) {
-//		  this.setSequence(SequenceType.SEQ_PROTEIN, translation);
-//		  return;
-//		  }
+//        if (translation != null && translation.length() > 0 ) {
+//        this.setSequence(SequenceType.SEQ_PROTEIN, translation);
+//        return;
+//        }
 //
-//		  if ( table != null) {
-//		  try {
-//		  int num = Integer.parseInt(table);
-//		  if (GeneticCodes.isValidTransTable(num)) {
-//		  setTranslationTableNum(num);
-//		  } else {
-//		  System.err.println("WARN: Attempted to set unrecognized translation table ("+table+") in "+getId());
-//		  }
-//		  }
-//		  catch (NumberFormatException exp) {
-//		  System.err.println("WARN: Attempted to set unrecognized translation table ("+table+") in "+getId());
-//		  }
-//		  }
+//        if ( table != null) {
+//        try {
+//        int num = Integer.parseInt(table);
+//        if (GeneticCodes.isValidTransTable(num)) {
+//        setTranslationTableNum(num);
+//        } else {
+//        System.err.println("WARN: Attempted to set unrecognized translation table ("+table+") in "+getId());
+//        }
+//        }
+//        catch (NumberFormatException exp) {
+//        System.err.println("WARN: Attempted to set unrecognized translation table ("+table+") in "+getId());
+//        }
+//        }
 //
-//		  int cdStartNum = 1;
-//		  if (cdStart != null && cdStart.length() != 0) {
-//		  cdStartNum = Integer.parseInt(cdStart);
-//		  }
-//		  if (cdStartNum < 1 || cdStartNum > 3) {
-//		  LogUtils.bprintln("WARN: Ignoring unexpected value of codon_start ("
-//		  + cdStart + ") in " + getId());
-//		  cdStartNum = 1;
-//		  }
-//		  if (cdStartNum != 1 && !isPartial()) {
-//		  LogUtils.bprintln("WARN: Got non '1' value for codon_start ("
-//		  + cdStart + ") but no /partial in " + getId());
-//		  setPartial(true);
-//		  }
+//        int cdStartNum = 1;
+//        if (cdStart != null && cdStart.length() != 0) {
+//        cdStartNum = Integer.parseInt(cdStart);
+//        }
+//        if (cdStartNum < 1 || cdStartNum > 3) {
+//        LogUtils.bprintln("WARN: Ignoring unexpected value of codon_start ("
+//        + cdStart + ") in " + getId());
+//        cdStartNum = 1;
+//        }
+//        if (cdStartNum != 1 && !isPartial()) {
+//        LogUtils.bprintln("WARN: Got non '1' value for codon_start ("
+//        + cdStart + ") but no /partial in " + getId());
+//        setPartial(true);
+//        }
 //
-//		  if (cdStartNum != 1) {
-//		  setCodonStart(cdStartNum);
-//		  }
+//        if (cdStartNum != 1) {
+//        setCodonStart(cdStartNum);
+//        }
 //
-//		  SeqTrans.SeqTransResult result =
-//		  SeqTrans.getInstance().translate(this, getTranslationTableNumber(),
-//		  getCodonStart().intValue(), codon, except);
-//		  setProteinWarning(result.getWarning());
-//		  setSequence(SequenceType.SEQ_PROTEIN, result.getSeq());
+//        SeqTrans.SeqTransResult result =
+//        SeqTrans.getInstance().translate(this, getTranslationTableNumber(),
+//        getCodonStart().intValue(), codon, except);
+//        setProteinWarning(result.getWarning());
+//        setSequence(SequenceType.SEQ_PROTEIN, result.getSeq());
 //
 //  }
 

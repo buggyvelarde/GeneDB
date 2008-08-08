@@ -19,7 +19,7 @@ public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implement
     @Override
     public Names findNamesInternal(Annotation an) {
 
-	Names ret = new Names();
+    Names ret = new Names();
 
         List<String> names = MiningUtils.getProperties("gene", an);
         if (names == null) {
@@ -96,7 +96,7 @@ public class SpombeNomenclatureHandler extends BaseNomenclatureHandler implement
 
         for (String ob : obsolete) {
             if (ret.getSynonyms().contains(ob)) {
-        	ret.getSynonyms().remove(ob);
+            ret.getSynonyms().remove(ob);
             }
         }
 

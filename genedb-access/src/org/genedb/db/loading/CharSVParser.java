@@ -72,9 +72,9 @@ public class CharSVParser {
         while ((line = in.readLine()) != null) {
             // Process line
             //System.err.println("Line is " + line);
-        		if (isComment(line)) {
-        			continue;
-        		}
+                if (isComment(line)) {
+                    continue;
+                }
             String[] sa = line.split(columnSeperator);
             //System.err.println(line);
             fireEvent(sa);

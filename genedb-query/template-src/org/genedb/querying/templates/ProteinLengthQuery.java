@@ -60,23 +60,23 @@ public class ProteinLengthQuery extends HqlQuery {
         this.max = max;
     }
 
-	public int getMin() {
-		return min;
-	}
+    public int getMin() {
+        return min;
+    }
 
-	public int getMax() {
-		return max;
-	}
+    public int getMax() {
+        return max;
+    }
 
-	@Override
-	protected String[] getParamNames() {
-		return new String[] {"min", "max"};
-	}
+    @Override
+    protected String[] getParamNames() {
+        return new String[] {"min", "max"};
+    }
 
-	@Override
-	protected void populateQueryWithParams(org.hibernate.Query query) {
-		query.setInteger("min", min);
-		query.setInteger("max", max);
-	}
+    @Override
+    protected void populateQueryWithParams(org.hibernate.Query query) {
+        query.setInteger("min", min);
+        query.setInteger("max", max);
+    }
 
 }

@@ -108,17 +108,17 @@ public class NewRunner2 implements ApplicationContextAware {
 
     Map<String,String> cdsQualifiers = new HashMap<String,String>();
 
-	private Set<String> handeledQualifiers = new HashSet<String>();
+    private Set<String> handeledQualifiers = new HashSet<String>();
 
     //private OrthologueStorage orthologueStorage = new OrthologueStorage();
 
 
 //    public void setHibernateTransactionManager(
-//			HibernateTransactionManager hibernateTransactionManager) {
-//		this.hibernateTransactionManager = hibernateTransactionManager;
-//	}
+//          HibernateTransactionManager hibernateTransactionManager) {
+//      this.hibernateTransactionManager = hibernateTransactionManager;
+//  }
 
-	/**
+    /**
      * This is called once the ApplicationContext has set up all of this
      * beans properties. It fetches/creates beans which can't be injected
      * as they depend on command-line args
@@ -184,29 +184,29 @@ public class NewRunner2 implements ApplicationContextAware {
      * Populate maps based on InterPro result files, GO association files etc
      */
     private void buildCaches() {
-    	handeledQualifiers.add("EC_number");
-    	handeledQualifiers.add("primary_name");
-    	handeledQualifiers.add("systematic_id");
-    	handeledQualifiers.add("previous_systematic_id");
-    	handeledQualifiers.add("product");
-    	handeledQualifiers.add("db_xref");
-    	handeledQualifiers.add("similarity");
-    	handeledQualifiers.add("temporary_systematic_id");
-    	handeledQualifiers.add("fasta_file");
-    	handeledQualifiers.add("blast_file");
-    	handeledQualifiers.add("blastn_file");
-    	handeledQualifiers.add("blastpgo_file");
-    	handeledQualifiers.add("blastp_file");
-    	handeledQualifiers.add("blastx_file");
-    	handeledQualifiers.add("fastax_file");
-    	handeledQualifiers.add("tblastn_file");
-    	handeledQualifiers.add("tblastx_file");
-    	handeledQualifiers.add("literature");
-    	handeledQualifiers.add("curation");
-    	handeledQualifiers.add("private");
-    	handeledQualifiers.add("pseudo");
-    	handeledQualifiers.add("psu_db_xref");
-    	handeledQualifiers.add("note");
+        handeledQualifiers.add("EC_number");
+        handeledQualifiers.add("primary_name");
+        handeledQualifiers.add("systematic_id");
+        handeledQualifiers.add("previous_systematic_id");
+        handeledQualifiers.add("product");
+        handeledQualifiers.add("db_xref");
+        handeledQualifiers.add("similarity");
+        handeledQualifiers.add("temporary_systematic_id");
+        handeledQualifiers.add("fasta_file");
+        handeledQualifiers.add("blast_file");
+        handeledQualifiers.add("blastn_file");
+        handeledQualifiers.add("blastpgo_file");
+        handeledQualifiers.add("blastp_file");
+        handeledQualifiers.add("blastx_file");
+        handeledQualifiers.add("fastax_file");
+        handeledQualifiers.add("tblastn_file");
+        handeledQualifiers.add("tblastx_file");
+        handeledQualifiers.add("literature");
+        handeledQualifiers.add("curation");
+        handeledQualifiers.add("private");
+        handeledQualifiers.add("pseudo");
+        handeledQualifiers.add("psu_db_xref");
+        handeledQualifiers.add("note");
     }
 
 
@@ -217,12 +217,12 @@ public class NewRunner2 implements ApplicationContextAware {
      * @param f The feature to dispatch on
      */
     private void despatchOnFeatureType(final FeatureProcessor fp, final Feature f, final org.gmod.schema.mapped.Feature parent, final int offset) {
-    //	TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
+    //  TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
      //   tt.execute(
               //  new TransactionCallbackWithoutResult() {
                  //   @Override
                  //   public void doInTransactionWithoutResult(TransactionStatus status) {
-    					//Transaction transaction = session.beginTransaction();
+                        //Transaction transaction = session.beginTransaction();
                         fp.process(parent, f, offset);
                         //transaction.commit();
                  //   }
@@ -361,45 +361,45 @@ public class NewRunner2 implements ApplicationContextAware {
     }
 
     private void reportUnknownRileyClass() {
-    	logger.warn("Unknown Riley class are...");
-    	List<String> rileys = qualifierHandlerMap.get("CDS").getUnknownRileyClass();
-    	for (String riley : rileys) {
-			logger.warn(riley);
-		}
+        logger.warn("Unknown Riley class are...");
+        List<String> rileys = qualifierHandlerMap.get("CDS").getUnknownRileyClass();
+        for (String riley : rileys) {
+            logger.warn(riley);
+        }
     }
 
-	private void reportUnhandledQualifiers() {
-		Map<String, Boolean> merged = new HashMap<String, Boolean>();
-		for (FeatureProcessor processor : qualifierHandlerMap.values()) {
-			merged.putAll(processor.getQualifierHandlingStatus());
-		}
-		List<String> keys = new ArrayList<String>();
-		keys.addAll(merged.keySet());
-		Collections.sort(keys);
+    private void reportUnhandledQualifiers() {
+        Map<String, Boolean> merged = new HashMap<String, Boolean>();
+        for (FeatureProcessor processor : qualifierHandlerMap.values()) {
+            merged.putAll(processor.getQualifierHandlingStatus());
+        }
+        List<String> keys = new ArrayList<String>();
+        keys.addAll(merged.keySet());
+        Collections.sort(keys);
 
-		StringBuilder out = new StringBuilder();
-		out.append("\n\nHandled qualifiers\n");
-		for (String key : keys) {
-			if (merged.get(key) == Boolean.TRUE) {
-				out.append(key);
-				out.append('\n');
-			}
-		}
-		out.append("\n\nUnhandled qualifiers\n");
-		for (String key : keys) {
-			if (merged.get(key) == Boolean.FALSE) {
-				out.append(key);
-				out.append('\n');
-			}
-		}
-		logger.warn(out.toString());
+        StringBuilder out = new StringBuilder();
+        out.append("\n\nHandled qualifiers\n");
+        for (String key : keys) {
+            if (merged.get(key) == Boolean.TRUE) {
+                out.append(key);
+                out.append('\n');
+            }
+        }
+        out.append("\n\nUnhandled qualifiers\n");
+        for (String key : keys) {
+            if (merged.get(key) == Boolean.FALSE) {
+                out.append(key);
+                out.append('\n');
+            }
+        }
+        logger.warn(out.toString());
 
 
-//		Set temp = cdsQualifiers.keySet();
+//      Set temp = cdsQualifiers.keySet();
 //        for (Object key : temp) {
-//			System.out.println(key + " " + cdsQualifiers.get(key));
-//		}
-	}
+//          System.out.println(key + " " + cdsQualifiers.get(key));
+//      }
+    }
 
 
     /**
@@ -412,9 +412,9 @@ public class NewRunner2 implements ApplicationContextAware {
      */
     @SuppressWarnings("unchecked")
     private void processSequence(File file, Sequence seq, org.gmod.schema.mapped.Feature parent, int offset) {
-    	//Session session = hibernateTransactionManager.getSessionFactory().openSession();
+        //Session session = hibernateTransactionManager.getSessionFactory().openSession();
 
-    	try {
+        try {
             org.gmod.schema.mapped.Feature topLevel = this.featureHandler.process(file, seq);
             logger.info("Processing '"+file.getAbsolutePath()+"'");
             if (parent == null) {
@@ -438,14 +438,14 @@ public class NewRunner2 implements ApplicationContextAware {
                 //System.err.println(feature);
                 FeatureProcessor fp = findFeatureProcessor(feature);
                 if (feature.getType().equals("CDS")) {
-                	Set keys = feature.getAnnotation().keys();
-                	for (Object key : keys) {
-            			if(handeledQualifiers.contains(key)){
-            				cdsQualifiers.put((String) key, "Handeled");
-            			} else {
-            				cdsQualifiers.put((String) key, "Un-Handeled");
-            			}
-            		}
+                    Set keys = feature.getAnnotation().keys();
+                    for (Object key : keys) {
+                        if(handeledQualifiers.contains(key)){
+                            cdsQualifiers.put((String) key, "Handeled");
+                        } else {
+                            cdsQualifiers.put((String) key, "Un-Handeled");
+                        }
+                    }
                 }
                 if (fp != null) {
                     ProcessingPhase pp = fp.getProcessingPhase();
@@ -469,7 +469,7 @@ public class NewRunner2 implements ApplicationContextAware {
                 }
             }
             processingStagesFeatureMap.put(ProcessingPhase.FIRST, Collections.EMPTY_LIST); // TO Keep this even if remove above & below
-        	logger.info("Removing features handled by featureProcessors at processing phase '"+ProcessingPhase.FIRST+"'");
+            logger.info("Removing features handled by featureProcessors at processing phase '"+ProcessingPhase.FIRST+"'");
             for (Feature feature : toRemove) {
                 seq.removeFeature(feature);
             }
@@ -491,7 +491,7 @@ public class NewRunner2 implements ApplicationContextAware {
                     if (pp == ProcessingPhase.LAST) {
                         continue; // Rely on GC to tidy up
                     }
-                	logger.info("Removing features handled by featureProcessors at processing phase '"+pp+"'");
+                    logger.info("Removing features handled by featureProcessors at processing phase '"+pp+"'");
                     for (Feature feature : features) {
                         seq.removeFeature(feature);
                     }
@@ -552,7 +552,7 @@ public class NewRunner2 implements ApplicationContextAware {
                 //loginName = args[2];
                 break;
             default:
-            	System.err.println("Too many arguments\n"+usage);
+                System.err.println("Too many arguments\n"+usage);
             System.exit(0);
         }
 
@@ -600,8 +600,8 @@ public class NewRunner2 implements ApplicationContextAware {
         this.qualifierHandlerMap = qualifierHandlerMap;
     }
 
-	public void setPubDao(PubDao pubDao) {
-		this.pubDao = pubDao;
-	}
+    public void setPubDao(PubDao pubDao) {
+        this.pubDao = pubDao;
+    }
 
 }

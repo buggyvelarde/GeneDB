@@ -9,10 +9,10 @@ import org.genedb.query.ResultCompatibility;
  * @author art
  */
 public class IdentityResultCompatibility implements
-		ResultCompatibility {
+        ResultCompatibility {
 
-	public boolean areCompatible(Result one, Result two) {
-		return one.getType().equals(two.getType());
-	}
+    public boolean areCompatible(Result one, Result two) {
+        return one.getType().equals(two.getType());
+    }
 
 }

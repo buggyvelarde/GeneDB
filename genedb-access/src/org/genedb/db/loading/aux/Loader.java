@@ -130,10 +130,10 @@ public abstract class Loader {
         }
         if (numberOfProductiveTranscripts > 1)
             logger.error(String.format("The gene '%s' is alternatively spliced: " +
-        		"we don't know to which transcript the protein data applies.\n" +
-        		"We've selected '%s', the first coding transcript by loading" +
-        		"order: there's no reason to believe that is right!",
-        		geneUniqueName, selectedTranscript.getUniqueName()));
+                "we don't know to which transcript the protein data applies.\n" +
+                "We've selected '%s', the first coding transcript by loading" +
+                "order: there's no reason to believe that is right!",
+                geneUniqueName, selectedTranscript.getUniqueName()));
 
         return selectedTranscript.getProtein();
     }

@@ -76,18 +76,18 @@ public class cDNA_match_Processor extends BaseFeatureProcessor {
         String systematicId = this.organism.getAbbreviation() + "_cDNAMatch_" + numProcessed;
 
         if (!cvDao.existsNameInOntology(soType, CV_SO)) {
-        	logger.warn("Can't create repeat feature of type '"+soType+"' at location '"+loc+"'");
+            logger.warn("Can't create repeat feature of type '"+soType+"' at location '"+loc+"'");
         } else {
             if (sequenceDao.getFeaturesByUniqueNamePattern(systematicId).size() == 0) {
-//            	Feature match = this.featureUtils.createFeature(soType, systematicId,
-//            			this.organism);
-//            	sequenceDao.persist(match);
-//            	FeatureLoc repeatFl = featureUtils.createLocation(parent,match,loc.getMin()-1,loc.getMax(),
-//            			strand);
-//            	sequenceDao.persist(repeatFl);
-//            	int rank = createFeaturePropsFromNotes(match, an, QUAL_NOTE, MISC_NOTE, 0);
-//            	createFeaturePropsFromNotes(match, an, "comment", MISC_NOTE, rank);
-            	//FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
+//              Feature match = this.featureUtils.createFeature(soType, systematicId,
+//                      this.organism);
+//              sequenceDao.persist(match);
+//              FeatureLoc repeatFl = featureUtils.createLocation(parent,match,loc.getMin()-1,loc.getMax(),
+//                      strand);
+//              sequenceDao.persist(repeatFl);
+//              int rank = createFeaturePropsFromNotes(match, an, QUAL_NOTE, MISC_NOTE, 0);
+//              createFeaturePropsFromNotes(match, an, "comment", MISC_NOTE, rank);
+                //FeatureProp fp = createFeatureProp(repeat, an, "colour", "colour", CV_MISC);
             }
         }
     }

@@ -17,11 +17,6 @@
  * USA
  */
 
-/**
- *
- *
- * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
- */
 package org.genedb.db.loading.featureProcessors;
 
 import static org.genedb.db.loading.EmblQualifiers.QUAL_CURATION;
@@ -54,7 +49,6 @@ import org.gmod.schema.mapped.FeatureCvTermDbXRef;
 import org.gmod.schema.mapped.FeatureCvTermProp;
 import org.gmod.schema.mapped.FeatureDbXRef;
 import org.gmod.schema.mapped.FeatureProp;
-import org.gmod.schema.mapped.FeaturePropPub;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Pub;
 import org.gmod.schema.mapped.PubDbXRef;
@@ -64,7 +58,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
-import org.biojava.bio.symbol.Location;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -77,15 +70,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * This class is the main entry point for GeneDB data miners. It's designed to
- * be called from the command-line, or a Makefile.
- *
- * Usage: GenericRunner organism [-show_ids] [-show_contigs]
- *
- *
- * @author Adrian Tivey (art)
- */
 public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     protected SequenceDao sequenceDao;
@@ -212,7 +196,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
       tt.execute(
               new TransactionCallbackWithoutResult() {
                 @Override
-                  public void doInTransactionWithoutResult(TransactionStatus status) {
+                  public void doInTransactionWithoutResult(@SuppressWarnings("unused") TransactionStatus status) {
                       @SuppressWarnings("unchecked") Set<String> keySet = feat.getAnnotation().asMap().keySet();
                       for (String key : keySet) {
                           if ("internal_data".equals(key)) {
@@ -389,8 +373,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
    //             System.err.println("Systematic id is " + sysId);
    //             List<Feature> features = sequenceDao.getFeaturesByUniqueName(sysId);
    //             if (features == null || features.size()!=1) {
-   //             	logger.error("Can't tie feature by name");
-   //             	return null;
+   //               logger.error("Can't tie feature by name");
+   //               return null;
    //            }
     //            ret = features.get(0);
     //                String utrName = this.gns.get5pUtr(gene.getUniquename(), 0);
@@ -624,49 +608,49 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 //            return ret;
 //        }
     //
-//	protected String translate(String nucleic, Annotation an, TaxonNode tn) {
-//		if (translation != null && translation.length() > 0 ) {
-//			this.setSequence(SequenceType.SEQ_PROTEIN, translation);
-//			return;
-//		}
-//		//tn.
+//  protected String translate(String nucleic, Annotation an, TaxonNode tn) {
+//      if (translation != null && translation.length() > 0 ) {
+//          this.setSequence(SequenceType.SEQ_PROTEIN, translation);
+//          return;
+//      }
+//      //tn.
 //
 //
-//		Map translationDetails = tn.getAppDetails("translation");
-//		String table = (String) translationDetails.get("table");
-//		if ( table != null) {
-//			TranslationTable tt = RNATools.getGeneticCode(table);
-//			if (tt == null) {
-//				throw new RuntimeException("WARN: Attempted to set unrecognized translation table '"+table+"'");
-//			}
-//		}
+//      Map translationDetails = tn.getAppDetails("translation");
+//      String table = (String) translationDetails.get("table");
+//      if ( table != null) {
+//          TranslationTable tt = RNATools.getGeneticCode(table);
+//          if (tt == null) {
+//              throw new RuntimeException("WARN: Attempted to set unrecognized translation table '"+table+"'");
+//          }
+//      }
 //
-//		int cdStartNum = 1;
-//		if (cdStart != null && cdStart.length() != 0) {
-//			cdStartNum = Integer.parseInt(cdStart);
-//		}
-//		if (cdStartNum < 1 || cdStartNum > 3) {
-//			LogUtils.bprintln("WARN: Ignoring unexpected value of codon_start ("
-//					+ cdStart + ") in " + getId());
-//			cdStartNum = 1;
-//		}
-//		if (cdStartNum != 1 && !isPartial()) {
-//			LogUtils.bprintln("WARN: Got non '1' value for codon_start ("
-//					+ cdStart + ") but no /partial in " + getId());
-//			setPartial(true);
-//		}
+//      int cdStartNum = 1;
+//      if (cdStart != null && cdStart.length() != 0) {
+//          cdStartNum = Integer.parseInt(cdStart);
+//      }
+//      if (cdStartNum < 1 || cdStartNum > 3) {
+//          LogUtils.bprintln("WARN: Ignoring unexpected value of codon_start ("
+//                  + cdStart + ") in " + getId());
+//          cdStartNum = 1;
+//      }
+//      if (cdStartNum != 1 && !isPartial()) {
+//          LogUtils.bprintln("WARN: Got non '1' value for codon_start ("
+//                  + cdStart + ") but no /partial in " + getId());
+//          setPartial(true);
+//      }
 //
-//		if (cdStartNum != 1) {
-//			setCodonStart(cdStartNum);
-//		}
+//      if (cdStartNum != 1) {
+//          setCodonStart(cdStartNum);
+//      }
 //
-//		SeqTrans.SeqTransResult result =
-//		SeqTrans.getInstance().translate(this, getTranslationTableNumber(),
-//		getCodonStart().intValue(), codon, except);
-//		setProteinWarning(result.getWarning());
-//		setSequence(SequenceType.SEQ_PROTEIN, result.getSeq());
+//      SeqTrans.SeqTransResult result =
+//      SeqTrans.getInstance().translate(this, getTranslationTableNumber(),
+//      getCodonStart().intValue(), codon, except);
+//      setProteinWarning(result.getWarning());
+//      setSequence(SequenceType.SEQ_PROTEIN, result.getSeq());
 //
-//	}
+//  }
     //
     //    /*
     //     * (non-Javadoc)

@@ -9,33 +9,33 @@ import org.springframework.validation.Errors;
  */
 public class FloatParam extends AbstractParam {
 
-	private Float value;
-	private boolean set = false;
-	private String validation;
-	
-	public void setValidation(String validation) {
-	    this.validation = validation;
-	}
-	
-	public void setValue(Float value) {
-		this.value = value;
-		this.set = true;
-	}
+    private Float value;
+    private boolean set = false;
+    private String validation;
+    
+    public void setValidation(String validation) {
+        this.validation = validation;
+    }
+    
+    public void setValue(Float value) {
+        this.value = value;
+        this.set = true;
+    }
 
-	@Override
-	public Float getValue() {
-		return value;
-	}
+    @Override
+    public Float getValue() {
+        return value;
+    }
 
-	public boolean supports(Class clazz) {
-	    return Float.class.isAssignableFrom(clazz);
-	}
+    public boolean supports(Class clazz) {
+        return Float.class.isAssignableFrom(clazz);
+    }
 
-	public void validate(Object value, Errors errors) {
-	    
-	}
+    public void validate(Object value, Errors errors) {
+        
+    }
 
-	public boolean isSet() {
-	    return this.set;
-	}
+    public boolean isSet() {
+        return this.set;
+    }
 }

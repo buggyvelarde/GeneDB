@@ -12,10 +12,10 @@ import java.util.Map;
 
 public class DbUtilsBean implements InitializingBean {
     
-	private GeneralDao generalDao;
+    private GeneralDao generalDao;
     private Map<String, String> aliases = new HashMap<String, String>(0);
-	
-	public Db getDbByName(String dbName) {
+    
+    public Db getDbByName(String dbName) {
         String lookup = dbName;
         String dbNameUpper = dbName.toUpperCase(); 
         if (aliases.containsKey(dbNameUpper)) {

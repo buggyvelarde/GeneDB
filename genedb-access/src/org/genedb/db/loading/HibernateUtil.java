@@ -10,7 +10,7 @@ public class HibernateUtil {
     static {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
-        	System.err.println("About to create SessionFactory");
+            System.err.println("About to create SessionFactory");
             sessionFactory = new Configuration().configure().buildSessionFactory();
         } catch (Throwable ex) {
             // Make sure you log the exception, as it might be swallowed

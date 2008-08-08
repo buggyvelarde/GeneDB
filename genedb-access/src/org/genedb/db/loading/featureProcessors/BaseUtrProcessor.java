@@ -84,7 +84,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
         above = tieFeatureByNameInQualifier("systematic_id", parent, feat, an, loc);
         if (above == null) {
             System.out.print("type : " + type);
-        	above = tieFeatureByNameInQualifier("temporary_systematic_id", parent, feat, an, loc);
+            above = tieFeatureByNameInQualifier("temporary_systematic_id", parent, feat, an, loc);
         }
         if (above == null) {
             above = tieFeatureByNameInQualifier("gene", parent, feat, an, loc);
@@ -193,9 +193,9 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
 
            UTR utr;
            if ("three_prime_UTR".equals(type)) {
-        	   utr = ThreePrimeUTR.make(transcript, location, utrName, organism, now);
+               utr = ThreePrimeUTR.make(transcript, location, utrName, organism, now);
            } else {
-        	   utr = FivePrimeUTR.make(transcript, location, utrName, organism, now);
+               utr = FivePrimeUTR.make(transcript, location, utrName, organism, now);
            }
 
            //Feature utr = this.featureUtils.createFeature(type, "exon:"+(exonCount-1)+":"+utrName, this.organism);

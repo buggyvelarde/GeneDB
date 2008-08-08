@@ -50,7 +50,7 @@ public class RunnerConfig {
     private Map<String, String> generalOptions;
 
     public List<String> getFileNames() {
-	return this.fileNames;
+    return this.fileNames;
     }
 
     public String getOrganismCommonName() {
@@ -62,7 +62,7 @@ public class RunnerConfig {
     }
 
     public void setOrganismCommonName(String commonOrganismName) {
-	this.organismCommonName = commonOrganismName;
+    this.organismCommonName = commonOrganismName;
     }
 
     public Map<String, String> getNomenclatureOptions() {

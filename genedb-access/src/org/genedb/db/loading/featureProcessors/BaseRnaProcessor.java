@@ -87,7 +87,7 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
     @SuppressWarnings("unchecked")
     protected void processRna(Feature parent, StrandedFeature f, Class rnaClass, int offset) {
         //logger.debug("Entering processing for "+type);
-    	org.biojava.bio.symbol.Location loc = f.getLocation().translate(offset);
+        org.biojava.bio.symbol.Location loc = f.getLocation().translate(offset);
         Annotation an = f.getAnnotation();
         short strand = (short)f.getStrand().getValue();
         String systematicId = findName(an);

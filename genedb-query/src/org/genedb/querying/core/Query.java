@@ -5,10 +5,10 @@ import java.util.Map;
 
 public interface Query {
 
-	List<String> getResults() throws QueryException;
+    List<String> getResults() throws QueryException;
 
     String getParseableDescription();
 
-	public Map<String, Object> prepareModelData();
+    public Map<String, Object> prepareModelData();
 
 }

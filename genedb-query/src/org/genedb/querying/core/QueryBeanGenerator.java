@@ -40,7 +40,7 @@ public class QueryBeanGenerator implements BeanFactoryPostProcessor,
     private ApplicationContext applicationContext;
 
 
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory factory)
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory factory)
             throws BeansException {
         
         List<String> templateNames = new ArrayList<String>();
@@ -49,7 +49,7 @@ public class QueryBeanGenerator implements BeanFactoryPostProcessor,
         Map<String, QueryTemplate> map = factory.getBeansOfType(QueryTemplate.class);
 
         for (Map.Entry<String, QueryTemplate> entry : map.entrySet()) {
-        	String beanName = entry.getKey();
+            String beanName = entry.getKey();
             templateNames.add(beanName);
             QueryTemplate template = entry.getValue();
             
@@ -58,7 +58,7 @@ public class QueryBeanGenerator implements BeanFactoryPostProcessor,
             List<String> paramNames = new ArrayList<String>();
             // Extend with properties
             for (Parameter parameter : template.getParams()) {
-            	bg.addProperty(parameter.name, parameter.getClass());
+                bg.addProperty(parameter.name, parameter.getClass());
                 paramNames.add(parameter.name);
             }
             Query bean = (Query) bg.create();

@@ -10,11 +10,11 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  */
 public interface SimpleJdbcTemplateAware {
 
-	/**
-	 * Set up a SQL data source for this class to use
-	 * 
-	 * @param ds The datasource
-	 */
-	public void setSimpleJdbcTemplate(SimpleJdbcTemplate sjt);
-	
+    /**
+     * Set up a SQL data source for this class to use
+     * 
+     * @param ds The datasource
+     */
+    public void setSimpleJdbcTemplate(SimpleJdbcTemplate sjt);
+    
 }

@@ -19,12 +19,12 @@ public abstract class BaseNomenclatureHandler implements NomenclatureHandler {
     private Map<String, String> options;
     
     public Names findNames(Annotation an) {
-	
+    
         String schemeTest = MiningUtils.getProperty("systematic_id", an, null);
         if (schemeTest != null) {
             return this.standardNomenclatureHandler.findNames(an);
         }
-	
+    
         return findNamesInternal(an);
     }
     

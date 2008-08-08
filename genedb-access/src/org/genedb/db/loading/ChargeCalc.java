@@ -40,31 +40,31 @@ public class ChargeCalc {
         
         float charge = 0.0f;
         for (int i = 0; i < chars.length; i++) {
-	    switch (chars[i]) {
-	    case 'B':
-		charge += minusHalf;
-		break;
-	    case 'D':
-		charge += minusOne;
-		break;
-	    case 'E':
-		charge += minusOne;
-		break;
-	    case 'H':
-		charge += half;
-		break;
-	    case 'K':
-		charge += one;
-		break;
-	    case 'R':
-		charge += one;
-		break;
-	    case 'Z':
-		charge += minusHalf;
-		break;
-	    default:
-		// A,C,F,G,I,L,M,N,P,Q,S,T,U,V,W,X,Y are all zero
-	    }
+        switch (chars[i]) {
+        case 'B':
+        charge += minusHalf;
+        break;
+        case 'D':
+        charge += minusOne;
+        break;
+        case 'E':
+        charge += minusOne;
+        break;
+        case 'H':
+        charge += half;
+        break;
+        case 'K':
+        charge += one;
+        break;
+        case 'R':
+        charge += one;
+        break;
+        case 'Z':
+        charge += minusHalf;
+        break;
+        default:
+        // A,C,F,G,I,L,M,N,P,Q,S,T,U,V,W,X,Y are all zero
+        }
         }
         return charge;
     }

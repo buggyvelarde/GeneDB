@@ -12,7 +12,7 @@ import java.util.Map;
 public interface FeatureHandler extends FeatureProcessor {
     
     public abstract Feature process(File file, Sequence seq)
-	    throws ChangeVetoException, BioException;
+        throws ChangeVetoException, BioException;
     
     public abstract void setOptions(Map<String, String> options);
 

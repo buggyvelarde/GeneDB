@@ -47,7 +47,7 @@ public class OrthoStoreRunner {
 
 
 
-	/**
+    /**
      * Main entry point. It uses a BeanPostProcessor to apply a set of overrides
      * based on a Properties file, based on the organism. This is passed in on
      * the command-line.
@@ -61,8 +61,8 @@ public class OrthoStoreRunner {
         String[] filePaths = args;
 
         if (filePaths.length == 0) {
-        	System.err.println("No input files specified");
-        	System.exit(-1);
+            System.err.println("No input files specified");
+            System.exit(-1);
         }
         
         // Override properties in Spring config file (using a
@@ -88,22 +88,22 @@ public class OrthoStoreRunner {
         File[] files = new File[filePaths.length];
         //long start = new Date().getTime();
         for (int i = 0; i < filePaths.length; i++) {
-			files[i] = new File(filePaths[i]);
-		}
+            files[i] = new File(filePaths[i]);
+        }
         ostore.process(files);
     }
-	
+    
 
     
 
-//	public void afterPropertiesSet() {
-//		System.err.println("In aps cvDao='"+cvDao+"'");
+//  public void afterPropertiesSet() {
+//      System.err.println("In aps cvDao='"+cvDao+"'");
 //        featureUtils = new FeatureUtils();
 //        featureUtils.setCvDao(cvDao);
 //        featureUtils.setSequenceDao(sequenceDao);
 //        featureUtils.setPubDao(pubDao);
 //        featureUtils.afterPropertiesSet();
-//		System.err.println("In aps cvDao='"+cvDao+"', class is '"+cvDao.getClass()+"'");
+//      System.err.println("In aps cvDao='"+cvDao+"', class is '"+cvDao.getClass()+"'");
 //        DUMMY_ORG = organismDao.getOrganismByCommonName("dummy");
 //    }
  

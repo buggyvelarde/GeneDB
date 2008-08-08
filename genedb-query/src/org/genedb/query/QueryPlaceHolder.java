@@ -22,18 +22,18 @@ public class QueryPlaceHolder implements NumberedQueryI {
     }
 
     public String getSimpleDescription() {
-	// TODO Auto-generated method stub
-	return null;
+    // TODO Auto-generated method stub
+    return null;
     }
 
     public boolean isComplete() {
-	// TODO Auto-generated method stub
-	return false;
+    // TODO Auto-generated method stub
+    return false;
     }
 
     public Result process() {
-	// TODO Auto-generated method stub
-	return null;
+    // TODO Auto-generated method stub
+    return null;
     }
 
 

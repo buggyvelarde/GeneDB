@@ -38,53 +38,53 @@ public abstract class HqlQuery implements Query {
     protected String name;
 
     //private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
-	//private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
+    //private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
 
     public String getParseableDescription() {
         return QueryUtils.makeParseableDescription(name, getParamNames(), this);
     }
 
     protected List<String> runQuery() {
-    	Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
+        Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
 
-    	org.hibernate.Query query = session.createQuery(getHql());
-    	populateQueryWithParams(query);
+        org.hibernate.Query query = session.createQuery(getHql());
+        populateQueryWithParams(query);
 
-    	@SuppressWarnings("unchecked") List<String> ret = query.list();
-    	return ret;
+        @SuppressWarnings("unchecked") List<String> ret = query.list();
+        return ret;
     }
 
 
-	protected abstract void populateQueryWithParams(org.hibernate.Query query);
+    protected abstract void populateQueryWithParams(org.hibernate.Query query);
 
-//	private void setQueryVarBasedOnType(org.hibernate.Query query, CachedParamDetails cpd) {
+//  private void setQueryVarBasedOnType(org.hibernate.Query query, CachedParamDetails cpd) {
 //
-//		Type type = cpd.getType();
+//      Type type = cpd.getType();
 //
-//		try {
+//      try {
 //
-//			if (type.equals(Integer.TYPE)) {
-//				query.setInteger(cpd.getName(), cpd.getField().getInt(this));
-//			}
+//          if (type.equals(Integer.TYPE)) {
+//              query.setInteger(cpd.getName(), cpd.getField().getInt(this));
+//          }
 //
-//		} catch (IllegalArgumentException exp) {
-//			throw new RuntimeException("Internal typing/access exception", exp);
-//		} catch (IllegalAccessException exp) {
-//			throw new RuntimeException("Internal typing/access exception", exp);
-//		}
-//	}
+//      } catch (IllegalArgumentException exp) {
+//          throw new RuntimeException("Internal typing/access exception", exp);
+//      } catch (IllegalAccessException exp) {
+//          throw new RuntimeException("Internal typing/access exception", exp);
+//      }
+//  }
 
-//	private void prepareCachedParamDetailsList() {
-//		for (Field field : this.getClass().getFields()) {
-//    		Annotation annotation = field.getAnnotation(QueryParam.class);
-//			if (annotation != null) {
-//				CachedParamDetails cpd = new CachedParamDetails(field, annotation);
-//				cachedParamDetailsList.add(cpd);
-//				cachedParamDetailsMap.put(cpd.getName(), cpd);
-//			}
-//		}
-//    	Collections.sort(cachedParamDetailsList);
-//	}
+//  private void prepareCachedParamDetailsList() {
+//      for (Field field : this.getClass().getFields()) {
+//          Annotation annotation = field.getAnnotation(QueryParam.class);
+//          if (annotation != null) {
+//              CachedParamDetails cpd = new CachedParamDetails(field, annotation);
+//              cachedParamDetailsList.add(cpd);
+//              cachedParamDetailsMap.put(cpd.getName(), cpd);
+//          }
+//      }
+//      Collections.sort(cachedParamDetailsList);
+//  }
 
     public List<String> getResults() throws QueryException {
         return runQuery();
@@ -95,21 +95,21 @@ public abstract class HqlQuery implements Query {
     protected abstract String[] getParamNames();
 
     public List<HtmlFormDetails> getFormDetails() {
-    	List<HtmlFormDetails> ret = new ArrayList<HtmlFormDetails>();
+        List<HtmlFormDetails> ret = new ArrayList<HtmlFormDetails>();
 
-    	for (String name : getParamNames()) {
-			HtmlFormDetails htd = new HtmlFormDetails();
-			//htd.setName(name);
-			//htd.setDefaultValue
-		}
+        for (String name : getParamNames()) {
+            HtmlFormDetails htd = new HtmlFormDetails();
+            //htd.setName(name);
+            //htd.setDefaultValue
+        }
 
 
 
-    	return ret;
+        return ret;
     }
 
-	public Map<String, Object> prepareModelData() {
-		return Collections.emptyMap();
-	}
+    public Map<String, Object> prepareModelData() {
+        return Collections.emptyMap();
+    }
 
 }

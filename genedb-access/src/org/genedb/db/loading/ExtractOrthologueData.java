@@ -86,12 +86,12 @@ public class ExtractOrthologueData implements ApplicationContextAware {
 
     private Map<String, List<String>> globalClusters = new HashMap<String, List<String>>();
     
-	private NomenclatureHandler nomenclatureHandler;
+    private NomenclatureHandler nomenclatureHandler;
 
-	private String organismCommonName;
+    private String organismCommonName;
     
 
-	/**
+    /**
      * This is called once the ApplicationContext has set up all of this
      * beans properties. It fetches/creates beans which can't be injected
      * as they depend on command-line args
@@ -175,50 +175,50 @@ public class ExtractOrthologueData implements ApplicationContextAware {
     }
 
     private void postProcess() throws IOException {
-    	File outFile = new File(organismCommonName+".orthologue.xml");
-    	PrintWriter out = new PrintWriter(new FileWriter(outFile));
-    	out.println("<relationships>");
-    	
-    	// Write curated orthologues
-    	if (globalCuratedOrthologues.size()>0) {
-    		out.println("<orthologues>");
-    		for (Map.Entry<String, List<String>> entry : globalCuratedOrthologues.entrySet()) {
-    			out.println("\t<orthologue id=\""+entry.getKey()+"\" >");
-    			for (String other : entry.getValue()) {
-    				out.println("\t\t<other id=\""+other+"\" />");
-    			}
-    			out.println("\t</orthologue>");
-    		}
-    		out.println("</orthologues>");
-    	}
-    	
-    	// Write curated paralogues
-    	if (globalCuratedParalogues.size()>0) {
-    		out.println("<paralogues>");
-    		for (Map.Entry<String, List<String>> entry : globalCuratedParalogues.entrySet()) {
-    			out.println("\t<paralogue id=\""+entry.getKey()+"\">");
-    			for (String id : entry.getValue()) {
-    				out.println("\t\t<other id=\""+id               +"\" />");
-    			}
-    			out.println("\t</paralogue>");
-    		}
-    		out.println("</paralogues>");
-    	}
-    	
-    	// Write curated paralogues
-    	if (globalClusters.size()>0) {
-    		out.println("<clusters>");
-    		for (Map.Entry<String, List<String>> entry : globalClusters.entrySet()) {
-    			out.println("\t<cluster id=\""+entry.getKey()+"\">");
-    			for (String id : entry.getValue()) {
-    				out.println("\t\t<other id=\""+id               +"\" />");
-    			}
-    			out.println("\t</cluster>");
-    		}
-    		out.println("</clusters>");
-    	}
-    	out.println("</relationships>");
-    	out.close();
+        File outFile = new File(organismCommonName+".orthologue.xml");
+        PrintWriter out = new PrintWriter(new FileWriter(outFile));
+        out.println("<relationships>");
+        
+        // Write curated orthologues
+        if (globalCuratedOrthologues.size()>0) {
+            out.println("<orthologues>");
+            for (Map.Entry<String, List<String>> entry : globalCuratedOrthologues.entrySet()) {
+                out.println("\t<orthologue id=\""+entry.getKey()+"\" >");
+                for (String other : entry.getValue()) {
+                    out.println("\t\t<other id=\""+other+"\" />");
+                }
+                out.println("\t</orthologue>");
+            }
+            out.println("</orthologues>");
+        }
+        
+        // Write curated paralogues
+        if (globalCuratedParalogues.size()>0) {
+            out.println("<paralogues>");
+            for (Map.Entry<String, List<String>> entry : globalCuratedParalogues.entrySet()) {
+                out.println("\t<paralogue id=\""+entry.getKey()+"\">");
+                for (String id : entry.getValue()) {
+                    out.println("\t\t<other id=\""+id               +"\" />");
+                }
+                out.println("\t</paralogue>");
+            }
+            out.println("</paralogues>");
+        }
+        
+        // Write curated paralogues
+        if (globalClusters.size()>0) {
+            out.println("<clusters>");
+            for (Map.Entry<String, List<String>> entry : globalClusters.entrySet()) {
+                out.println("\t<cluster id=\""+entry.getKey()+"\">");
+                for (String id : entry.getValue()) {
+                    out.println("\t\t<other id=\""+id               +"\" />");
+                }
+                out.println("\t</cluster>");
+            }
+            out.println("</clusters>");
+        }
+        out.println("</relationships>");
+        out.close();
         //            writeReports(config.getBooleanProperty("mining.writeReports"), organism, outDir);
 
     }
@@ -266,8 +266,8 @@ public class ExtractOrthologueData implements ApplicationContextAware {
      */
     @SuppressWarnings("unchecked")
     private void processSequence(File file, Sequence seq, org.gmod.schema.mapped.Feature parent, int offset) {
-    	
-   // 	try {
+        
+   //   try {
             logger.info("Processing '"+file.getAbsolutePath()+"'");
 
             // Loop over all features, setting up feature processors and index them by ProcessingPhase
@@ -294,83 +294,83 @@ public class ExtractOrthologueData implements ApplicationContextAware {
     }
 
     private void processCDS(Feature feature) {
-		Annotation an = feature.getAnnotation();
-		List<String> qualifiers = new ArrayList<String>();
-		Iterator it = an.keys().iterator();
-		while(it.hasNext()) {
-			Object o = it.next();
-			String qualifier = o.toString();
-			if(qualifier.contains("ortholog")) {
-				qualifiers.add(qualifier);
-			}
-		}
-		String id = findId(an);
-		List<String> curatedOrthologues = new ArrayList<String>();
-		for (String qualifier : qualifiers) {
-			curatedOrthologues.addAll(MiningUtils.getProperties(qualifier, an));
-		}
-    	
-    	stripGeneDBPrefix(curatedOrthologues);
-    	for (String otherId : curatedOrthologues) {
-			GenePair pair = new GenePair(id, otherId);
-        	CollectionUtils.addItemToMultiValuedMap(pair.getFirst(), pair.getSecond(), globalCuratedOrthologues);
-		}
-    	
-    	List<String> curatedParalogues = MiningUtils.getProperties("paralog", an);
-    	if (curatedParalogues.size()>0) {
-    		stripGeneDBPrefix(curatedParalogues);
-    		globalCuratedParalogues.put(id, curatedParalogues);
-    	}
-    		
-    	List<String> clusters = MiningUtils.getProperties("cluster", an);
-    	for (String string : clusters) {
-    		String clusterId = string.substring(0, string.indexOf(' ')-1);
-        	CollectionUtils.addItemToMultiValuedMap(clusterId, id, globalClusters);
-			//System.err.println(clusterId);
-		}
+        Annotation an = feature.getAnnotation();
+        List<String> qualifiers = new ArrayList<String>();
+        Iterator it = an.keys().iterator();
+        while(it.hasNext()) {
+            Object o = it.next();
+            String qualifier = o.toString();
+            if(qualifier.contains("ortholog")) {
+                qualifiers.add(qualifier);
+            }
+        }
+        String id = findId(an);
+        List<String> curatedOrthologues = new ArrayList<String>();
+        for (String qualifier : qualifiers) {
+            curatedOrthologues.addAll(MiningUtils.getProperties(qualifier, an));
+        }
+        
+        stripGeneDBPrefix(curatedOrthologues);
+        for (String otherId : curatedOrthologues) {
+            GenePair pair = new GenePair(id, otherId);
+            CollectionUtils.addItemToMultiValuedMap(pair.getFirst(), pair.getSecond(), globalCuratedOrthologues);
+        }
+        
+        List<String> curatedParalogues = MiningUtils.getProperties("paralog", an);
+        if (curatedParalogues.size()>0) {
+            stripGeneDBPrefix(curatedParalogues);
+            globalCuratedParalogues.put(id, curatedParalogues);
+        }
+            
+        List<String> clusters = MiningUtils.getProperties("cluster", an);
+        for (String string : clusters) {
+            String clusterId = string.substring(0, string.indexOf(' ')-1);
+            CollectionUtils.addItemToMultiValuedMap(clusterId, id, globalClusters);
+            //System.err.println(clusterId);
+        }
 
-    	//stripGeneDBPrefix(clusters);
-    	
-    	
-	}
-
-
-
-	private String findId(Annotation an) {
-    	String sysId = null;
-        	
-    	Names names = this.nomenclatureHandler.findNames(an);
-    	sysId = names.getSystematicId();
-    	//logger.debug("Looking at systematic id '" + sysId+"'");
-    	// TODO Auto-generated method stub
-		return sysId;
-	}
+        //stripGeneDBPrefix(clusters);
+        
+        
+    }
 
 
 
-	private void stripGeneDBPrefix(List<String> list) {
-		for (int i = 0; i < list.size(); i++) {
-			String entry = list.get(i);
-			if (entry.startsWith("GeneDB_")) {
-				entry = entry.substring(entry.indexOf(":")+1);
-				int semi = entry.indexOf(";");
-				if (semi != -1) {
-					entry = entry.substring(0, semi);
-				}
-				list.remove(i);
-				list.add(i, entry);
-			}
-		}
-	}
+    private String findId(Annotation an) {
+        String sysId = null;
+            
+        Names names = this.nomenclatureHandler.findNames(an);
+        sysId = names.getSystematicId();
+        //logger.debug("Looking at systematic id '" + sysId+"'");
+        // TODO Auto-generated method stub
+        return sysId;
+    }
 
 
 
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    private void stripGeneDBPrefix(List<String> list) {
+        for (int i = 0; i < list.size(); i++) {
+            String entry = list.get(i);
+            if (entry.startsWith("GeneDB_")) {
+                entry = entry.substring(entry.indexOf(":")+1);
+                int semi = entry.indexOf(";");
+                if (semi != -1) {
+                    entry = entry.substring(0, semi);
+                }
+                list.remove(i);
+                list.add(i, entry);
+            }
+        }
+    }
+
+
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
     public void setOrganismCommonName(String organismCommonName) {
-    	this.organismCommonName  = organismCommonName;
+        this.organismCommonName  = organismCommonName;
     }
 
 

@@ -5,8 +5,8 @@ public class ParsedString {
     private String extract;
     
     public ParsedString(String main, String extract) {
-	this.main = main;
-	this.extract = extract;
+    this.main = main;
+    this.extract = extract;
     }
 
     public String getExtract() {
@@ -18,6 +18,6 @@ public class ParsedString {
     }
     
     public boolean isSplit() {
-	return extract != null;
+    return extract != null;
     }
 }

@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface QueryParam {
 
-	int order();
+    int order();
 
-	String title();
+    String title();
 
 }

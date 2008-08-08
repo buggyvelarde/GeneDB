@@ -9,10 +9,10 @@ public class QueryFactory {
     private ApplicationContext applicationContext;
 
     public Query retrieveQuery(String queryName) {
-    	String fullName = queryName + "Query";
-    	if (!applicationContext.containsBean(fullName)) {
-    		return null;
-    	}
+        String fullName = queryName + "Query";
+        if (!applicationContext.containsBean(fullName)) {
+            return null;
+        }
         Query ret = (Query) applicationContext.getBean(fullName, Query.class);
         return ret;
     }

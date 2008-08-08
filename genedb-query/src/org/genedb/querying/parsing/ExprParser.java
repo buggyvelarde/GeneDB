@@ -94,20 +94,20 @@ public class ExprParser extends Parser {
 
 
                 switch (alt1) {
-            	case 1 :
-            	    // Expr.g:9:10: expr
-            	    {
-            	    pushFollow(FOLLOW_expr_in_prog36);
-            	    expr1=expr();
-            	    _fsp--;
+                case 1 :
+                    // Expr.g:9:10: expr
+                    {
+                    pushFollow(FOLLOW_expr_in_prog36);
+                    expr1=expr();
+                    _fsp--;
 
-            	    adaptor.addChild(root_0, expr1.getTree());
+                    adaptor.addChild(root_0, expr1.getTree());
 
-            	    }
-            	    break;
+                    }
+                    break;
 
-            	default :
-            	    if ( cnt1 >= 1 ) break loop1;
+                default :
+                    if ( cnt1 >= 1 ) break loop1;
                         EarlyExitException eee =
                             new EarlyExitException(1, input);
                         throw eee;
@@ -179,25 +179,25 @@ public class ExprParser extends Parser {
 
 
                 switch (alt2) {
-            	case 1 :
-            	    // Expr.g:11:14: operator atom
-            	    {
-            	    pushFollow(FOLLOW_operator_in_expr51);
-            	    operator3=operator();
-            	    _fsp--;
+                case 1 :
+                    // Expr.g:11:14: operator atom
+                    {
+                    pushFollow(FOLLOW_operator_in_expr51);
+                    operator3=operator();
+                    _fsp--;
 
-            	    root_0 = (CommonTree)adaptor.becomeRoot(operator3.getTree(), root_0);
-            	    pushFollow(FOLLOW_atom_in_expr54);
-            	    atom4=atom();
-            	    _fsp--;
+                    root_0 = (CommonTree)adaptor.becomeRoot(operator3.getTree(), root_0);
+                    pushFollow(FOLLOW_atom_in_expr54);
+                    atom4=atom();
+                    _fsp--;
 
-            	    adaptor.addChild(root_0, atom4.getTree());
+                    adaptor.addChild(root_0, atom4.getTree());
 
-            	    }
-            	    break;
+                    }
+                    break;
 
-            	default :
-            	    break loop2;
+                default :
+                    break loop2;
                 }
             } while (true);
 
@@ -548,24 +548,24 @@ public class ExprParser extends Parser {
 
 
                 switch (alt4) {
-            	case 1 :
-            	    // Expr.g:21:18: ';' param
-            	    {
-            	    char_literal16=(Token)input.LT(1);
-            	    match(input,22,FOLLOW_22_in_params151); 
-            	    stream_22.add(char_literal16);
+                case 1 :
+                    // Expr.g:21:18: ';' param
+                    {
+                    char_literal16=(Token)input.LT(1);
+                    match(input,22,FOLLOW_22_in_params151); 
+                    stream_22.add(char_literal16);
 
-            	    pushFollow(FOLLOW_param_in_params153);
-            	    param17=param();
-            	    _fsp--;
+                    pushFollow(FOLLOW_param_in_params153);
+                    param17=param();
+                    _fsp--;
 
-            	    stream_param.add(param17.getTree());
+                    stream_param.add(param17.getTree());
 
-            	    }
-            	    break;
+                    }
+                    break;
 
-            	default :
-            	    break loop4;
+                default :
+                    break loop4;
                 }
             } while (true);
 

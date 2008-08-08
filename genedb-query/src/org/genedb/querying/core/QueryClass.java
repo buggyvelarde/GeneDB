@@ -2,10 +2,10 @@ package org.genedb.querying.core;
 
 public @interface QueryClass {
 
-	String title();
+    String title();
 
-	String shortDesc();
+    String shortDesc();
 
-	String longDesc();
+    String longDesc();
 
 }
