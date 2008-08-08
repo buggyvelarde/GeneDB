@@ -312,10 +312,10 @@ public class RenderedProteinMap extends RenderedDiagram {
                     renderedFeature.description));
             }
             else {
-                sb.append(String.format(" <area shape='rect' coords='%d,%d,%d,%d' title='%s' href='%s' />\n",
+                sb.append(String.format(" <area shape='rect' coords='%d,%d,%d,%d' title=\"%s\" href='%s' />\n",
                     renderedFeature.x, renderedFeature.y,
                     renderedFeature.x + renderedFeature.w, renderedFeature.y + renderedFeature.h,
-                    renderedFeature.description, renderedFeature.url));
+                    renderedFeature.description.replaceAll("\"", "&quot;"), renderedFeature.url));
             }
         }
         sb.append("</map>\n");
