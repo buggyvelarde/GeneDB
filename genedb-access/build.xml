@@ -67,7 +67,7 @@
 
     <delete dir="${imported.basedir.access}/ant-build/jar"/>
     <mkdir dir="${imported.basedir.access}/ant-build/jar"/>
-    <copy todir="${imported.basedir.access}/ant-build/jar">
+    <copy todir="${imported.basedir.access}/ant-build/jar" overwrite="true">
       <fileset dir="${imported.basedir.access}/ant-build/classes" />
       <fileset dir="${imported.basedir.access}/resources" />
             <fileset dir="${imported.basedir.access}/conf" />
