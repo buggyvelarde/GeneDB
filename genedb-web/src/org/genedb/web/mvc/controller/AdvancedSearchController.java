@@ -1,8 +1,10 @@
 package org.genedb.web.mvc.controller;
 
+import org.genedb.querying.core.LuceneDao;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
+import org.genedb.querying.tmpquery.AdvancedSearchCategory;
 
 import java.io.IOException;
 import java.util.ArrayList;

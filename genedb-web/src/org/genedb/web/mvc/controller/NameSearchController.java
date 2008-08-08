@@ -20,6 +20,7 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.taxon.TaxonNode;
+import org.genedb.querying.core.LuceneDao;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
 

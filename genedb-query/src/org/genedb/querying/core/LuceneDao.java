@@ -1,4 +1,4 @@
-package org.genedb.web.mvc.controller;
+package org.genedb.querying.core;
 
 import java.io.IOException;
 

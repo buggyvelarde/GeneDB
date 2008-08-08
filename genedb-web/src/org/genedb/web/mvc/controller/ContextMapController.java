@@ -2,6 +2,7 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
 import org.genedb.db.domain.services.BasicGeneService;
+import org.genedb.querying.core.LuceneDao;
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.ContextMapDiagram;
 import org.genedb.web.gui.RenderedContextMap;
