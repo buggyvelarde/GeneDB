@@ -35,7 +35,7 @@ public abstract class TopLevelFeature extends Region {
      * @return true if acting as a top-level feature ie a primary location reference
      */
     public boolean isTopLevelFeature() {
-    	return hasProperty("genedb_misc", "top_level_seq");
+        return hasProperty("genedb_misc", "top_level_seq");
     }
 
 
