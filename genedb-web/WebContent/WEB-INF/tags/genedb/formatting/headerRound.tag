@@ -94,7 +94,7 @@
 						<form name="advSearchForm" action="<c:url value="/"/>Query?organism=${organism}" method="get">
 					</c:if>
 					<c:if test="${empty organism}">
-						<form name="advSearchForm" action="<c:url value="/"/>Query?" method="get">
+						<form name="advSearchForm" action="<c:url value="/"/>Query" method="get">
 					</c:if>
 						<table id="advSearchTable" cellpadding="2">
 							<tr>
