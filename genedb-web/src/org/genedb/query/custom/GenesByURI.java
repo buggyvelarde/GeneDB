@@ -66,9 +66,13 @@ public class GenesByURI implements Query {
 	}
 
 
-	@Override
 	public Map<String, Object> prepareModelData() {
 		return Collections.emptyMap();
 	}
+
+
+    public int getOrder() {
+        return 0;
+    }
 
 }
