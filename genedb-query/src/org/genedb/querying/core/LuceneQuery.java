@@ -61,6 +61,8 @@ public abstract class LuceneQuery implements Query {
 
     private static final Logger logger = Logger.getLogger(LuceneQuery.class);
 
+    private int order;
+
     @Autowired
     private LuceneIndexFactory luceneIndexFactory;
 
@@ -201,6 +203,14 @@ public abstract class LuceneQuery implements Query {
             organismQuery.add(new TermQuery(new Term("organism.commonName",organism)), Occur.SHOULD);
 		}
 		return organismQuery;
+	}
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
 	}
 
 }

@@ -36,6 +36,7 @@ public abstract class HqlQuery implements Query {
     @Autowired
     private SessionFactory sessionFactory;
     protected String name;
+    private int order;
 
     //private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
     //private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
@@ -112,4 +113,11 @@ public abstract class HqlQuery implements Query {
         return Collections.emptyMap();
     }
 
+    public int getOrder() {
+    	return order;
+    }
+
+    public void setOrder(int order) {
+    	this.order = order;
+    }
 }
