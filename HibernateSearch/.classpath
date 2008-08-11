@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="anttasks"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar">

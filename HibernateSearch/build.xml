@@ -3,6 +3,7 @@
 <project name="hibernate-index" default="index.jar" basedir=".">
 
     <import file="../genedb-db/build.xml" />
+    <import file="../genedb-util/build.xml" />
     <property file="hibernate-properties.${config}"/>
 
     <path id="jars">
@@ -70,19 +71,13 @@
         <copy file="hibernate-properties.${config}" tofile="ant-build/classes/hibernate.properties"/>
     </target>
 
-    <target name="anttasks" depends="destdir">
-        <javac srcdir="anttasks" destdir="ant-build/tasks" debug="true">
-            <classpath path="jars" />
-        </javac>
-    </target>
-
     <path id="exec-classpath">
         <path refid="jars" />
         <pathelement location="index.jar" />
     </path>
 
-    <target name="IndexChado" depends="anttasks,index.jar">
-        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="ant-build/tasks" />
+    <target name="IndexChado" depends="genedb-util.anttasks,index.jar">
+        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="../genedb-util/ant-build/jars/genedb-anttasks.jar" />
         <password name="database.password" prompt="Password for ${database.user}@${database.url}" />
         <propertyset id="indexProperties">
             <propertyref name="database.url" />
