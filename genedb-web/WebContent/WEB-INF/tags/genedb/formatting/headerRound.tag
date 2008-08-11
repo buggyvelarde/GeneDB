@@ -72,14 +72,14 @@
 <% } %>
 <table id="header"><tbody>
     <tr id="top-row">
-        <td id="logo"><a href="<c:url value="/Homepage"/>">GeneDB<!--<img src="<c:url value="/includes/image/"/>" alt="GeneDB"></img>--></a></td>
+        <td id="logo" valign="top" align="left"><a href="<c:url value="/Homepage"/>"><img border="0" width="144" height="53" src="<c:url value="/includes/images/newlogo4.png"/>" alt="GeneDB"></img></a></td>
         <td id="name">${name}</td>
         <td id="search">
         	<c:if test="${!empty organism}">
-            	<form name="searchForm" action="<c:url value="/"/>NameSearch?organism=${organism}" method="get">
+            	<form name="searchForm" action="<c:url value="/"/>Query?q=nameProduct&organism=${organism}" method="get">
             </c:if>
             <c:if test="${empty organism}">
-            	<form name="searchForm" action="<c:url value="/NameSearch"/>" method="get">
+            	<form name="searchForm" action="<c:url value="/Query?q=nameProduct"/>" method="get">
             </c:if>
             	<input id="query" name="name" type="text" align="middle"/>
             	<input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
@@ -91,22 +91,22 @@
 				</span>
 				<div id="advancedSearch">
 					<c:if test="${!empty organism}">
-						<form name="advSearchForm" action="<c:url value="/"/>AdvancedSearch?organism=${organism}" method="get">
+						<form name="advSearchForm" action="<c:url value="/"/>Query?organism=${organism}" method="get">
 					</c:if>
 					<c:if test="${empty organism}">
-						<form name="advSearchForm" action="<c:url value="/"/>AdvancedSearch?" method="get">
+						<form name="advSearchForm" action="<c:url value="/"/>Query?" method="get">
 					</c:if>
 						<table id="advSearchTable" cellpadding="2">
 							<tr>
 								<td width="20%" style="text-align:left;">Search </td>
 								<td width="80%">
-									<select name="category">
+									<select name="q">
 										<option value="allNames">Gene names</option>
 										<option value="product">Product</option>
-										<option value="curatedAnnotation">curated annotations [comments & curation]</option>
-										<option value="goTermId">GO term/id</option>
-										<option value="ecNumber">EC number</option>
-										<option value="pfamId">Pfam ID or keyword</option>
+										<option value="annotation">curated annotations [comments & curation]</option>
+										<option value="goTerm">GO term/id</option>
+										<option value="ecNum">EC number</option>
+										<option value="pfam">Pfam ID or keyword</option>
 									</select>
 								</td>
 							</tr>
