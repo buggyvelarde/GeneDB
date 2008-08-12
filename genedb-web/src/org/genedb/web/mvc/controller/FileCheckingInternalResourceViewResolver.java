@@ -13,44 +13,44 @@ import java.util.Locale;
 import java.util.Set;
 
 public class FileCheckingInternalResourceViewResolver extends
-	InternalResourceViewResolver {
+    InternalResourceViewResolver {
     
     private Set<String> validViews = new HashSet<String>();
     private boolean valid = false;
     
     public void postConstruction() {
-	String prefix = getPrefix().substring(1);
-	final String suffix = getSuffix();
-	ApplicationContext appCxt = getWebApplicationContext();
-	Resource viewRoot = appCxt.getResource(prefix);
-	try {
-	    File viewRootDir = viewRoot.getFile();
-	    String[] fileNames = viewRootDir.list(new FilenameFilter() {
-	        @SuppressWarnings("unused")
-		public boolean accept(File file, String arg1) {
-		    if (file.getName().endsWith(suffix)) {
-			return true;
-		    }
-		    return false;
-		}
-	    }
-	    );
-	    for (String fileName : fileNames) {
-		validViews.add(fileName);
-		System.err.println(fileName);
-	    }
-	} catch (IOException exp) {
-	    //
-	    exp.printStackTrace();
-	}
-	
+    String prefix = getPrefix().substring(1);
+    final String suffix = getSuffix();
+    ApplicationContext appCxt = getWebApplicationContext();
+    Resource viewRoot = appCxt.getResource(prefix);
+    try {
+        File viewRootDir = viewRoot.getFile();
+        String[] fileNames = viewRootDir.list(new FilenameFilter() {
+            @SuppressWarnings("unused")
+        public boolean accept(File file, String arg1) {
+            if (file.getName().endsWith(suffix)) {
+            return true;
+            }
+            return false;
+        }
+        }
+        );
+        for (String fileName : fileNames) {
+        validViews.add(fileName);
+        System.err.println(fileName);
+        }
+    } catch (IOException exp) {
+        //
+        exp.printStackTrace();
+    }
+    
     }
 
     @Override
     public View resolveViewName(String viewName, Locale locale) throws Exception {
-	if (valid && !validViews.contains(viewName)) {
-	    return null;
-	}
-	return super.resolveViewName(viewName, locale);
+    if (valid && !validViews.contains(viewName)) {
+        return null;
+    }
+    return super.resolveViewName(viewName, locale);
     }
 }

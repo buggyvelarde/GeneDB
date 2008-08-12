@@ -11,17 +11,17 @@ import javax.servlet.http.HttpSession;
  */
 public class HttpSessionHistoryManagerFactory implements HistoryManagerFactory {
     
-	private static final String HISTORY_MANAGER = "_HISTORY_MANAGER";
+    private static final String HISTORY_MANAGER = "_HISTORY_MANAGER";
 
-	public HistoryManager getHistoryManager(Object key) {
-		HttpSession session = (HttpSession) key;
-		HistoryManager ret = null;
-		ret = (HistoryManager) session.getAttribute(HISTORY_MANAGER);
-		if (ret == null) {
-			ret = new HttpSessionHistoryManager(session);
-			session.setAttribute(HISTORY_MANAGER, ret);
-		}
-		return ret;
-	}
+    public HistoryManager getHistoryManager(Object key) {
+        HttpSession session = (HttpSession) key;
+        HistoryManager ret = null;
+        ret = (HistoryManager) session.getAttribute(HISTORY_MANAGER);
+        if (ret == null) {
+            ret = new HttpSessionHistoryManager(session);
+            session.setAttribute(HISTORY_MANAGER, ret);
+        }
+        return ret;
+    }
 
 }

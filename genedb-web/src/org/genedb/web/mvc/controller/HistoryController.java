@@ -57,7 +57,7 @@ public class HistoryController extends MultiActionController implements Initiali
     private String editView;
     private static final String TIME_FORMAT = "HH:mm:ss";
     private static final SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT);
-	private static final int SESSION_FAILED_ERROR_CODE = 500;
+    private static final int SESSION_FAILED_ERROR_CODE = 500;
     private static final String GENEDB_HISTORY = "_GeneDB_History_List";
     String compile = "Organism:([\\w\\W]+?);;Category:([\\w\\W]+?);;Term:([\\w\\W]*)";
     Pattern pattern = Pattern.compile(compile);
@@ -79,7 +79,7 @@ public class HistoryController extends MultiActionController implements Initiali
     public ModelAndView View(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
-        	return new ModelAndView("history/noSession");
+            return new ModelAndView("history/noSession");
         }
         
         return new ModelAndView(historyView);
@@ -90,8 +90,8 @@ public class HistoryController extends MultiActionController implements Initiali
         HttpSession session = request.getSession(false);
         if (session == null) {
             // No session
-        	response.setStatus(SESSION_FAILED_ERROR_CODE);
-        	return null;
+            response.setStatus(SESSION_FAILED_ERROR_CODE);
+            return null;
         }
         
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
@@ -106,13 +106,13 @@ public class HistoryController extends MultiActionController implements Initiali
     
     public ModelAndView Download(HttpServletRequest request,HttpServletResponse response) {
         String history = null;
-		try {
-			history = ServletRequestUtils.getRequiredStringParameter(request, "history");
-		} catch (ServletRequestBindingException exp) {
-			// No history item chosen - redirect to view history
-			// TODO Flash message
-		}
-		
+        try {
+            history = ServletRequestUtils.getRequiredStringParameter(request, "history");
+        } catch (ServletRequestBindingException exp) {
+            // No history item chosen - redirect to view history
+            // TODO Flash message
+        }
+        
         HttpSession session = request.getSession(false);
         // TODO Session may be null
 
@@ -120,8 +120,8 @@ public class HistoryController extends MultiActionController implements Initiali
         String formalHistoryName = historyManager.getFormalName(history);
         
         if (formalHistoryName == null) {
-			// No history item chosen - redirect to view history
-			// TODO Flash message
+            // No history item chosen - redirect to view history
+            // TODO Flash message
         }
 
         Map<String,Object> model = new HashMap<String,Object>();
@@ -279,7 +279,7 @@ public class HistoryController extends MultiActionController implements Initiali
     // // String name = ServletRequestUtils.getStringParameter(request, "name",
     // NO_VALUE_SUPPLIED);
     // // if (name.equals(NO_VALUE_SUPPLIED)) {
-    //		    
+    //          
     // // }
     // // Feature feat = featureDao.findByUniqueName(name);
     // Map model = new HashMap(3);
@@ -327,7 +327,7 @@ public class HistoryController extends MultiActionController implements Initiali
     // }
     // return new ModelAndView(viewName, model);
     // }
-    //	
+    //  
     //
     // public ModelAndView CvTermByCvName(HttpServletRequest request,
     // HttpServletResponse response) {
@@ -343,7 +343,7 @@ public class HistoryController extends MultiActionController implements Initiali
     // List cvTerms = cvTermDao.findByNameInCv(cvTermName, cv);
     // String viewName = "db/listCvTerms";
     // Map model = new HashMap();
-    //	    
+    //      
     // if (cvTerms.size()==1) {
     // viewName = "db/cvTerm";
     // model.put("cvTerm", cvTerms.get(0));
@@ -359,7 +359,7 @@ public class HistoryController extends MultiActionController implements Initiali
     // HttpServletResponse response) {
     // int id = ServletRequestUtils.getIntParameter(request, "id", -1);
     // if (id == -1) {
-    //		    
+    //          
     // }
     // Pub pub = pubHome.findById(id);
     // Map model = new HashMap(3);

@@ -32,13 +32,13 @@ public class NameLookup {
         this.lookup = lookup;
     }
 
-	public String getOrganism() {
-		return organism;
-	}
+    public String getOrganism() {
+        return organism;
+    }
 
-	public void setOrganism(String organism) {
-		this.organism = organism;
-	}
+    public void setOrganism(String organism) {
+        this.organism = organism;
+    }
     
     
 }

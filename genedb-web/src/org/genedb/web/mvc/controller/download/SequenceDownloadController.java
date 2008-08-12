@@ -28,7 +28,7 @@ import org.springframework.web.context.request.WebRequest;
 public class SequenceDownloadController {
 
     @Autowired
-	private SequenceDao sequenceDao;
+    private SequenceDao sequenceDao;
 
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm() {

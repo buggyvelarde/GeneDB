@@ -32,18 +32,18 @@ public class JdbcQueryTemplate extends QueryTemplate {
 
     @Override
     public void processNewPrototype(BeanDefinitionBuilder bdb) {
-    	bdb.addPropertyValue("sql", sql);
+        bdb.addPropertyValue("sql", sql);
         bdb.addPropertyReference("dataSource", dataSource);
     }
 
     @Required
-	public void setSql(String sql) {
-		this.sql = sql;
-	}
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
 
     @Required
-	public void setDataSource(String dataSource) {
-		this.dataSource = dataSource;
-	}
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
+    }
 
 }

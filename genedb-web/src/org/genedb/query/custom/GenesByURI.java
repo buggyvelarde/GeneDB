@@ -18,15 +18,15 @@ import java.util.Map;
 
 public class GenesByURI implements Query {
 
-	private static final String NAME = "GenesByURI";
+    private static final String NAME = "GenesByURI";
     private URI uri;
-	private List<String> results = null;
+    private List<String> results = null;
 
-	public List<String> getResults() throws QueryException {
-		if (results != null) {
-			return results;
-		}
-		// Fetch from URI
+    public List<String> getResults() throws QueryException {
+        if (results != null) {
+            return results;
+        }
+        // Fetch from URI
         BufferedReader br = null;
         try {
             URLConnection connection = uri.toURL().openConnection();
@@ -42,16 +42,16 @@ public class GenesByURI implements Query {
             IOUtils.closeQuietly(br);
         }
             return null;
-	}
+    }
 
 
-	public URI getUri() {
-		return uri;
-	}
+    public URI getUri() {
+        return uri;
+    }
 
-	@Required
-	public void setUri(URI uri) {
-		this.uri = uri.normalize();
+    @Required
+    public void setUri(URI uri) {
+        this.uri = uri.normalize();
     }
 
 
@@ -61,14 +61,15 @@ public class GenesByURI implements Query {
     }
 
 
-	public String[] prepareModelData(int count) {
-		return null;
-	}
+    public String[] prepareModelData(int count) {
+        return null;
+    }
 
 
-	public Map<String, Object> prepareModelData() {
-		return Collections.emptyMap();
-	}
+    @Override
+    public Map<String, Object> prepareModelData() {
+        return Collections.emptyMap();
+    }
 
 
     public int getOrder() {

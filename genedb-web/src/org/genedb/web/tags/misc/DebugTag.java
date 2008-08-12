@@ -13,7 +13,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class DebugTag extends SimpleTagSupport {
-	
+    
     @Override
     public void doTag() throws JspException, IOException {
         
@@ -29,7 +29,7 @@ public class DebugTag extends SimpleTagSupport {
     }
     
 
-	private void displayAttrsInScope(JspWriter out, PageContext pc, String scopeName, int scope) throws IOException {
+    private void displayAttrsInScope(JspWriter out, PageContext pc, String scopeName, int scope) throws IOException {
         StringBuilder ret = new StringBuilder();
         ret.append("<h2>");
         ret.append(scopeName+ " ("+scope+")");

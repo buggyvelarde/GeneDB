@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/Tracer")
 public class TracerController {
 
-	public String trace(@RequestParam("type") String type, 
-			@RequestParam("var1") String var1, HttpSession session) {
-		
-		// Decode and update history
-		
-		// Return an image
-		return "redirect:/includes/images/onepixel.gif";
-	}
-	
+    public String trace(@RequestParam("type") String type, 
+            @RequestParam("var1") String var1, HttpSession session) {
+        
+        // Decode and update history
+        
+        // Return an image
+        return "redirect:/includes/images/onepixel.gif";
+    }
+    
 }

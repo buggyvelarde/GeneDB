@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/Homepage")
 public class HomepageController {
 
-	public static final String DUMMY_UNKNOWN = "XXX";
+    public static final String DUMMY_UNKNOWN = "XXX";
 
     private static String HOMEPAGE = "homepages/";
     private static String DEFAULT_HOMEPAGE = HOMEPAGE + "malariaReleasePage";
@@ -51,7 +51,7 @@ public class HomepageController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-    	String originalOrg = ServletRequestUtils.getStringParameter(request, "organism", DUMMY_UNKNOWN);
+        String originalOrg = ServletRequestUtils.getStringParameter(request, "organism", DUMMY_UNKNOWN);
 
 //        TaxonNodeArrayHolder tnah = new TaxonNodeArrayHolder();
 //
@@ -65,7 +65,7 @@ public class HomepageController {
         String pageName = null;
 
 //        if (bindResult.hasGlobalErrors()) {
-//        	// TODO Add error message
+//          // TODO Add error message
 //            logger.debug("Binding errors - go home");
 //            return new ModelAndView(DEFAULT_HOMEPAGE);
 //        }
@@ -85,8 +85,8 @@ public class HomepageController {
         String viewName = DEFAULT_HOMEPAGE;
         //String viewName = HOMEPAGE + DEFAULT_STYLE;
         if (!originalOrg.equals(DUMMY_UNKNOWN)) {
-        	pageName = originalOrg;
-        	organism = originalOrg;
+            pageName = originalOrg;
+            organism = originalOrg;
         //pageName = node.getName(TaxonNameType.HTML_SHORT); // TODO Pass in taxon node
         //logger.warn(String.format("Retrieved a page name of '%s'", pageName));
         //organism = node.getName(TaxonNameType.LABEL);
@@ -107,12 +107,12 @@ public class HomepageController {
         //mav.addObject(TAXON_NODE, node);
         mav.addObject(CRUMB, "Homepage");
         if (organism != null) {
-        	mav.addObject("organism", organism);
+            mav.addObject("organism", organism);
         }
         if (pageName != null) {
-        	mav.addObject("pageName", pageName);
+            mav.addObject("pageName", pageName);
         } else {
-        	mav.addObject("pageName", "GeneDB");
+            mav.addObject("pageName", "GeneDB");
         }
 
         return mav;

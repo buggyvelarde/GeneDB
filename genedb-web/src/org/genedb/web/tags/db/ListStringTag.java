@@ -12,10 +12,10 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class ListStringTag extends SimpleTagSupport {
 
-	private Collection<FeatureSynonym> collection;
-	private String seperator = ", ";
+    private Collection<FeatureSynonym> collection;
+    private String seperator = ", ";
 
-	public void setSeperator(String seperator) {
+    public void setSeperator(String seperator) {
         this.seperator = seperator;
     }
 
@@ -24,7 +24,7 @@ public class ListStringTag extends SimpleTagSupport {
     }
 
     @Override
-	public void doTag() throws JspException, IOException {
+    public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
         boolean first = true;
         for (FeatureSynonym featSynonym : collection) {
@@ -35,6 +35,6 @@ public class ListStringTag extends SimpleTagSupport {
             out.write(synonym.getName());
             first = false;
         }
-	}
-	
+    }
+    
 }

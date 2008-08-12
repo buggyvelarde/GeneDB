@@ -50,17 +50,17 @@ public class QueryController {
         model.addAttribute("query", query);
         Map<String, Object> modelData = query.prepareModelData();
         for (Map.Entry<String, Object> entry : modelData.entrySet()) {
-			model.addAttribute(entry.getKey(), entry.getValue());
-		}
+            model.addAttribute(entry.getKey(), entry.getValue());
+        }
         //return "search/query";
         return "search/"+queryName;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-	public ModelAndView processSubmit(
+    public ModelAndView processSubmit(
             @RequestParam(value="q", required=false) String queryName,
-	        ServletRequest request
-	        ) throws QueryException {
+            ServletRequest request
+            ) throws QueryException {
 
         if (!StringUtils.hasText(queryName)) {
             return new ModelAndView("redirect:/QueryList"); // FIXME - Send flash msg
@@ -82,17 +82,17 @@ public class QueryController {
     	List<String> results = query.getResults();
     	switch (results.size()) {
     	case 0:
-    		logger.error("No results found for query");
-    		mav = new ModelAndView("search/"+queryName);
-    		break;
+    	    logger.error("No results found for query");
+    	    mav = new ModelAndView("search/"+queryName);
+    	    break;
     	case 1:
-    		mav = new ModelAndView("redirect:/NamedFeature");
-    		// TODO Send feature name
-    		break;
+    	    mav = new ModelAndView("redirect:/NamedFeature");
+    	    // TODO Send feature name
+    	    break;
     	default:
-    		mav = new ModelAndView("list/stupid");
-        	mav.addObject("results", results);
-        	break;
+    	    mav = new ModelAndView("list/stupid");
+            mav.addObject("results", results);
+            break;
     	}
     	return mav;
     }

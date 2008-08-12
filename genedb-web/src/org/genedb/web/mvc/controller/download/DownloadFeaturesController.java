@@ -78,10 +78,10 @@ public class DownloadFeaturesController extends PostOrGetFormController {
     private String downloadView;
     private JsonView jsonView;
 
-	@Override
+    @Override
     protected ModelAndView onSubmit(HttpServletRequest request,
-    		HttpServletResponse response, Object command,
-    		BindException be) throws Exception {
+            HttpServletResponse response, Object command,
+            BindException be) throws Exception {
 
         DownloadBean db = (DownloadBean) command;
         if(!db.isJson()) {
@@ -90,16 +90,16 @@ public class DownloadFeaturesController extends PostOrGetFormController {
 
         int historyItem = db.getHistoryItem()-1;
 
-    	HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
-		List<HistoryItem> historyItems = historyManager.getHistoryItems();
-		if(historyItem >= historyItems.size()) {
-		    response.sendError(511);
-		    return null;
-		}
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(request.getSession());
+        List<HistoryItem> historyItems = historyManager.getHistoryItems();
+        if(historyItem >= historyItems.size()) {
+            response.sendError(511);
+            return null;
+        }
 
-		HistoryItem hItem = historyItems.get(historyItem);
-		List<String> ids = hItem.getIds();
-		Hits hits = lookupInLucene(ids);
+        HistoryItem hItem = historyItems.get(historyItem);
+        List<String> ids = hItem.getIds();
+        Hits hits = lookupInLucene(ids);
 
         OutputFormat format = db.getOutputFormat();
         SequenceType sequenceType = db.getSequenceType();
@@ -107,34 +107,34 @@ public class DownloadFeaturesController extends PostOrGetFormController {
         String file = request.getSession().getId();
         String columns[] = request.getParameter("columns").split(",");
 
-		File output = null;
+        File output = null;
 
-		switch (format) {
-    		case EXCEL:
-    				output = createExcel(hits,file,columns);
-    				response.setContentType("application/vnd.ms-excel");
-    				response.setHeader("Content-Disposition", "attachment");
-    	            response.setHeader("filename", output.getName());
-    				break;
-    		case CSV:
-    				output = createCsv(hits,file,columns,format);
-    				response.setContentType("application/x-download");
-    				response.setHeader("Content-Disposition", "attachment");
-    	            response.setHeader("filename", output.getName());
-    				break;
-    		case TAB:
+        switch (format) {
+            case EXCEL:
+                    output = createExcel(hits,file,columns);
+                    response.setContentType("application/vnd.ms-excel");
+                    response.setHeader("Content-Disposition", "attachment");
+                    response.setHeader("filename", output.getName());
+                    break;
+            case CSV:
                     output = createCsv(hits,file,columns,format);
                     response.setContentType("application/x-download");
                     response.setHeader("Content-Disposition", "attachment");
                     response.setHeader("filename", output.getName());
                     break;
-    		case HTML:
-    		        Map<String,Object> model = new HashMap<String,Object>();
-    		        List<ResultHit> jHits = new ArrayList<ResultHit>();
-    		        for(int i=0;i<hits.length();i++) {
-    		            Document doc = hits.doc(i);
-    		            ResultHit rh = new ResultHit();
-    		            for (String column : columns) {
+            case TAB:
+                    output = createCsv(hits,file,columns,format);
+                    response.setContentType("application/x-download");
+                    response.setHeader("Content-Disposition", "attachment");
+                    response.setHeader("filename", output.getName());
+                    break;
+            case HTML:
+                    Map<String,Object> model = new HashMap<String,Object>();
+                    List<ResultHit> jHits = new ArrayList<ResultHit>();
+                    for(int i=0;i<hits.length();i++) {
+                        Document doc = hits.doc(i);
+                        ResultHit rh = new ResultHit();
+                        for (String column : columns) {
                             if(column.equals("chr")) {
                                 rh.setChromosome(getValue(column, doc));
                             } else if(column.equals("locs")) {
@@ -149,22 +149,22 @@ public class DownloadFeaturesController extends PostOrGetFormController {
                                 rh.setOrganism(getValue(column, doc));
                             }
                         }
-    		            jHits.add(rh);
-    		        }
+                        jHits.add(rh);
+                    }
 
-    		        model.put("hits",jHits );
-    		        model.put("hitsLength", hits.length());
-    		        return new ModelAndView(jsonView,model);
-    		case FASTA:
-    		        output = createFasta(hits,file,columns,sequenceType);
-    		        response.setContentType("application/x-download");
+                    model.put("hits",jHits );
+                    model.put("hitsLength", hits.length());
+                    return new ModelAndView(jsonView,model);
+            case FASTA:
+                    output = createFasta(hits,file,columns,sequenceType);
+                    response.setContentType("application/x-download");
                     response.setHeader("Content-Disposition", "attachment");
                     response.setHeader("filename", output.getName());
-        	}
+            }
         return null;
     }
 
-	private Hits lookupInLucene(List<String> ids) throws IOException {
+    private Hits lookupInLucene(List<String> ids) throws IOException {
         IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
         BooleanQuery bQuery = new BooleanQuery();
         for (String id : ids) {
@@ -175,7 +175,7 @@ public class DownloadFeaturesController extends PostOrGetFormController {
     }
 
 
-	private File createFasta(Hits hits,String file,String[] columns, SequenceType sequenceType) {
+    private File createFasta(Hits hits,String file,String[] columns, SequenceType sequenceType) {
 
         StringBuffer whole = new StringBuffer();
         StringBuffer row = new StringBuffer();
@@ -232,7 +232,7 @@ public class DownloadFeaturesController extends PostOrGetFormController {
         }
 
         return outFile;
-	}
+    }
 
     private File createExcel(Hits hits,String file,String[] columns) throws IOException {
         int rcount = 2;
@@ -393,9 +393,9 @@ public class DownloadFeaturesController extends PostOrGetFormController {
         this.sequenceDao = sequenceDao;
     }
 
-	public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
-		this.historyManagerFactory = historyManagerFactory;
-	}
+    public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
+        this.historyManagerFactory = historyManagerFactory;
+    }
 
     public String getDownloadView() {
         return downloadView;

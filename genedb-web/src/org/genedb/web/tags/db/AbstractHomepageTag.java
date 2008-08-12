@@ -14,9 +14,9 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public abstract class AbstractHomepageTag extends SimpleTagSupport {
 
-	private String top = "Root"; // FIXME
+    private String top = "Root"; // FIXME
     
-	
+    
     @Override
     public void doTag() throws JspException, IOException {
         TaxonNodeManager tnm = (TaxonNodeManager) 
@@ -34,8 +34,8 @@ public abstract class AbstractHomepageTag extends SimpleTagSupport {
     
     abstract protected void display(TaxonNode node, JspWriter out, int indent) throws IOException;
 
-	public void setTop(String top) {
-		this.top = top;
-	}
+    public void setTop(String top) {
+        this.top = top;
+    }
 
 }

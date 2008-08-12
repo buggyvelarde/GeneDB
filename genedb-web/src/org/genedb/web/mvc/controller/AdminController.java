@@ -20,40 +20,40 @@ import javax.sql.DataSource;
  */
 public class AdminController extends MultiActionController implements InitializingBean {
     
- //   	private FeatureDao featureDao;
-    	private DataSource dataSource;
+ //     private FeatureDao featureDao;
+        private DataSource dataSource;
 
-	public void afterPropertiesSet() throws Exception {
-//		if (clinic == null) {
-//			throw new ApplicationContextException("Must set clinic bean property on " + getClass());
-//		}
-	}
+    public void afterPropertiesSet() throws Exception {
+//      if (clinic == null) {
+//          throw new ApplicationContextException("Must set clinic bean property on " + getClass());
+//      }
+    }
 
-	private static final String LOCK_QUERY_STRING = 
-	    "select a.procpid, a.usename, a.current_query, a.backend_start, "+
-	    " l.relation, c.relname, l.transactionid, l.mode, l.granted " +
-	    "from pg_stat_activity a, pg_locks l, pg_class c " +
-	    "where a.procpid = l.pid " +
-	    " and l.relation = c.oid " +
-	    "order by a.backend_start";
-	
-	// handlers
-	@SuppressWarnings("unchecked")
-	public ModelAndView LockExaminer(HttpServletRequest request, HttpServletResponse response) {
-	    SimpleJdbcTemplate sjt = new SimpleJdbcTemplate(dataSource);
-	    
-	    List<Map<String, Object>> rows = sjt.queryForList(LOCK_QUERY_STRING);
-	    Map model = new HashMap(3);
-	    model.put("rows", rows);
-	    return new ModelAndView("db/locks", model);
-	}
+    private static final String LOCK_QUERY_STRING = 
+        "select a.procpid, a.usename, a.current_query, a.backend_start, "+
+        " l.relation, c.relname, l.transactionid, l.mode, l.granted " +
+        "from pg_stat_activity a, pg_locks l, pg_class c " +
+        "where a.procpid = l.pid " +
+        " and l.relation = c.oid " +
+        "order by a.backend_start";
+    
+    // handlers
+    @SuppressWarnings("unchecked")
+    public ModelAndView LockExaminer(HttpServletRequest request, HttpServletResponse response) {
+        SimpleJdbcTemplate sjt = new SimpleJdbcTemplate(dataSource);
+        
+        List<Map<String, Object>> rows = sjt.queryForList(LOCK_QUERY_STRING);
+        Map model = new HashMap(3);
+        model.put("rows", rows);
+        return new ModelAndView("db/locks", model);
+    }
 
-	public void setDataSource(DataSource dataSource) {
-	    this.dataSource = dataSource;
-	}
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-//	public void setFeatureDao(FeatureDao featureDao) {
-//	    this.featureDao = featureDao;
-//	}
+//  public void setFeatureDao(FeatureDao featureDao) {
+//      this.featureDao = featureDao;
+//  }
 
 }

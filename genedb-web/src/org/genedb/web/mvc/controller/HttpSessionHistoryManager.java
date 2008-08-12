@@ -16,113 +16,113 @@ import javax.servlet.http.HttpSession;
  * @author Adrian Tivey
  */
 public class HttpSessionHistoryManager implements HistoryManager {
-	// TODO use map for storage
-	// Synch
+    // TODO use map for storage
+    // Synch
     
-	private int nextNumber = 1;
-	private int version = 1;
-	
-	private static final String HISTORY_LIST = "_HISTORY_LIST";
-	private static final String DEFAULT_CART_NAME = "Feature Basket";
-	
-	private WeakReference<HttpSession> sessionReference;
-	private String cartName = DEFAULT_CART_NAME;
-	
-	
-	public HttpSessionHistoryManager(HttpSession session) {
-		this.sessionReference = new WeakReference<HttpSession>(session);
-	}
+    private int nextNumber = 1;
+    private int version = 1;
+    
+    private static final String HISTORY_LIST = "_HISTORY_LIST";
+    private static final String DEFAULT_CART_NAME = "Feature Basket";
+    
+    private WeakReference<HttpSession> sessionReference;
+    private String cartName = DEFAULT_CART_NAME;
+    
+    
+    public HttpSessionHistoryManager(HttpSession session) {
+        this.sessionReference = new WeakReference<HttpSession>(session);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.genedb.web.mvc.controller.HistoryManager#getHistoryItems()
-	 */
-	@SuppressWarnings("unchecked")
-	public List<HistoryItem> getHistoryItems() {
-		List<HistoryItem> ret = (List<HistoryItem>) sessionReference.get().getAttribute(HISTORY_LIST);
-		if (ret == null) {
-			ret = new ArrayList<HistoryItem>();
-			sessionReference.get().setAttribute(HISTORY_LIST, ret);
-		}
-		return ret;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.genedb.web.mvc.controller.HistoryManager#addHistoryItem(java.lang.String, java.util.List)
-	 */
-	public HistoryItem addHistoryItem(String name, HistoryType type, List<String> ids) {
-		
-		List<HistoryItem> history = getHistoryItems();
-		boolean found = false;
-		for (HistoryItem hi : history) {
+    /* (non-Javadoc)
+     * @see org.genedb.web.mvc.controller.HistoryManager#getHistoryItems()
+     */
+    @SuppressWarnings("unchecked")
+    public List<HistoryItem> getHistoryItems() {
+        List<HistoryItem> ret = (List<HistoryItem>) sessionReference.get().getAttribute(HISTORY_LIST);
+        if (ret == null) {
+            ret = new ArrayList<HistoryItem>();
+            sessionReference.get().setAttribute(HISTORY_LIST, ret);
+        }
+        return ret;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.genedb.web.mvc.controller.HistoryManager#addHistoryItem(java.lang.String, java.util.List)
+     */
+    public HistoryItem addHistoryItem(String name, HistoryType type, List<String> ids) {
+        
+        List<HistoryItem> history = getHistoryItems();
+        boolean found = false;
+        for (HistoryItem hi : history) {
             if (hi.getName().equals(name) && hi.getHistoryType().equals(type)) {
                 found = true;
                 break;
             }
         }
-		if(!found) {
-		  HistoryItem item = new HistoryItem(name, ids);
-		  item.setHistoryType(type);
-		  history.add(item);
-		  version++;
-		  return item;
-		}
-		
-		return null;
-	}
-	
-	public HistoryItem addHistoryItem(String name, HistoryType type,String id) {
-		List<HistoryItem> history = getHistoryItems();
-		HistoryItem found = null;
-		for (HistoryItem item : history) {
-			if (item.getName().equals(name)) {
-				found = item;
-				break;
-			}
-		}
-		if (found == null) {
-			found = new HistoryItem(name, id);
-			history.add(found);
-			version++;
-			return found;
-		} 
-		
-		return null;
-	}
+        if(!found) {
+          HistoryItem item = new HistoryItem(name, ids);
+          item.setHistoryType(type);
+          history.add(item);
+          version++;
+          return item;
+        }
+        
+        return null;
+    }
+    
+    public HistoryItem addHistoryItem(String name, HistoryType type,String id) {
+        List<HistoryItem> history = getHistoryItems();
+        HistoryItem found = null;
+        for (HistoryItem item : history) {
+            if (item.getName().equals(name)) {
+                found = item;
+                break;
+            }
+        }
+        if (found == null) {
+            found = new HistoryItem(name, id);
+            history.add(found);
+            version++;
+            return found;
+        } 
+        
+        return null;
+    }
 
-	public String getCartName() {
-		return cartName;
-	}
+    public String getCartName() {
+        return cartName;
+    }
 
-	public void removeItem(int index, int version) {
-		List<HistoryItem> history = getHistoryItems();
-		if (version != this.version) {
-			throw new RuntimeException("Version mismatch");
-		}
-		if (index < 0 || index > history.size()) {
-			throw new IllegalArgumentException("Index is out of range");
-		}
-		history.remove(index);
-		version++;
-	}
+    public void removeItem(int index, int version) {
+        List<HistoryItem> history = getHistoryItems();
+        if (version != this.version) {
+            throw new RuntimeException("Version mismatch");
+        }
+        if (index < 0 || index > history.size()) {
+            throw new IllegalArgumentException("Index is out of range");
+        }
+        history.remove(index);
+        version++;
+    }
 
-	public String getNextName() {
-		String ret = NumberNameConverter.convert(nextNumber);
-		nextNumber++;
-		return ret;
-	}
+    public String getNextName() {
+        String ret = NumberNameConverter.convert(nextNumber);
+        nextNumber++;
+        return ret;
+    }
 
-	public int getVersion() {
-		return version;
-	}
+    public int getVersion() {
+        return version;
+    }
 
-	public int getNumHistoryItems() {
-		return getHistoryItems().size();
-	}
+    public int getNumHistoryItems() {
+        return getHistoryItems().size();
+    }
 
-	@Override
-	public String getFormalName(String name) {
-		// TODO Auto-generated method stub
-		return name;
-	}
+    @Override
+    public String getFormalName(String name) {
+        // TODO Auto-generated method stub
+        return name;
+    }
 
 }

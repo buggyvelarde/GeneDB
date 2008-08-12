@@ -27,35 +27,35 @@ public class DownloadBean {
     
     private int historyItem = 0;
     private int version;
-	private OutputDestination outputDestination = OutputDestination.TO_BROWSER;
-	private OutputFormat outputFormat;
-	private List<OutputOption> outputOption;
-	private boolean json = false;
-	private SequenceType sequenceType;
-	
-	public OutputDestination getOutputDestination() {
-		return outputDestination;
-	}
+    private OutputDestination outputDestination = OutputDestination.TO_BROWSER;
+    private OutputFormat outputFormat;
+    private List<OutputOption> outputOption;
+    private boolean json = false;
+    private SequenceType sequenceType;
+    
+    public OutputDestination getOutputDestination() {
+        return outputDestination;
+    }
 
-	public void setOutputDestination(OutputDestination outputDestination) {
-		this.outputDestination = outputDestination;
-	}
+    public void setOutputDestination(OutputDestination outputDestination) {
+        this.outputDestination = outputDestination;
+    }
 
-	public OutputFormat getOutputFormat() {
-		return outputFormat;
-	}
+    public OutputFormat getOutputFormat() {
+        return outputFormat;
+    }
 
-	public void setOutputFormat(OutputFormat outputFormat) {
-		this.outputFormat = outputFormat;
-	}
+    public void setOutputFormat(OutputFormat outputFormat) {
+        this.outputFormat = outputFormat;
+    }
 
-	public List<OutputOption> getOutputOption() {
-		return outputOption;
-	}
+    public List<OutputOption> getOutputOption() {
+        return outputOption;
+    }
 
-	public void setOutputOption(List<OutputOption> outputOption) {
-		this.outputOption = outputOption;
-	}
+    public void setOutputOption(List<OutputOption> outputOption) {
+        this.outputOption = outputOption;
+    }
 
     public int getHistoryItem() {
         return this.historyItem;

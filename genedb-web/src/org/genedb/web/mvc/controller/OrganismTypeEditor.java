@@ -8,18 +8,18 @@ import org.gmod.schema.mapped.Organism;
 
 public class OrganismTypeEditor extends java.beans.PropertyEditorSupport {
 
-	private OrganismDao organismDao;
+    private OrganismDao organismDao;
 
-	public OrganismDao getOrganismDao() {
-		return organismDao;
-	}
+    public OrganismDao getOrganismDao() {
+        return organismDao;
+    }
 
-	public void setOrganismDao(OrganismDao organismDao) {
-		this.organismDao = organismDao;
-	}
-	
-	public void setAsOrganism(String org) {
-		Organism o = organismDao.getOrganismByCommonName(org);
-		setValue(o);
-	}
+    public void setOrganismDao(OrganismDao organismDao) {
+        this.organismDao = organismDao;
+    }
+    
+    public void setAsOrganism(String org) {
+        Organism o = organismDao.getOrganismByCommonName(org);
+        setValue(o);
+    }
 }

@@ -33,108 +33,108 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class LuceneSearchController extends TaxonNodeBindingFormController {
 
-	private String listResultsView;
+    private String listResultsView;
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request,
-    		HttpServletResponse response, Object command,
-    		BindException be) throws Exception {
+            HttpServletResponse response, Object command,
+            BindException be) throws Exception {
 
-    	LuceneSearch luceneSearch = (LuceneSearch) command;
-		String queryString = null;
-		queryString = luceneSearch.getQuery();
+        LuceneSearch luceneSearch = (LuceneSearch) command;
+        String queryString = null;
+        queryString = luceneSearch.getQuery();
 
-		Map<String, Object> model = new HashMap<String, Object>(4);
-		String viewName = null;
+        Map<String, Object> model = new HashMap<String, Object>(4);
+        String viewName = null;
 
-		IndexReader ir = IndexReader.open("/Users/cp2/external/lucene/index/gff/");
-		Collection<String> c = ir.getFieldNames(IndexReader.FieldOption.INDEXED);
-		List<String> fields = new ArrayList<String>();
-		for (String object : c) {
-			fields.add(object);
-		}
+        IndexReader ir = IndexReader.open("/Users/cp2/external/lucene/index/gff/");
+        Collection<String> c = ir.getFieldNames(IndexReader.FieldOption.INDEXED);
+        List<String> fields = new ArrayList<String>();
+        for (String object : c) {
+            fields.add(object);
+        }
 
-		if (queryString.equals("")){
-			be.reject("no.results");
-        	return showForm(request,response,be);
-		}
+        if (queryString.equals("")){
+            be.reject("no.results");
+            return showForm(request,response,be);
+        }
 
-		Query query = null;
+        Query query = null;
 
-		IndexSearcher searcher = null;
-		Hits hits = null;
+        IndexSearcher searcher = null;
+        Hits hits = null;
 
-		searcher = new IndexSearcher(ir);
-		/* we had the StopAnalyzer prior to Standard, but it didnt work properly
-		 * we had to put wildcard like '*' to make some queries work
-		 */
-		Analyzer analyzer = new StandardAnalyzer();
-		String field = luceneSearch.getField();
-		String searchFields[] = new String[fields.size()];
-		QueryParser qp = null;
-		if ("ALL".equals(field)){
-			for(int i=0; i<fields.size();i++){
-				searchFields[i] = fields.get(i);
-			}
-			qp = new MultiFieldQueryParser(searchFields,analyzer);
-		} else {
-			qp = new QueryParser(field,analyzer);
-		}
-		String searchString = luceneSearch.getQuery();
-		if(searchString.matches("\\d+") && searchString.length() < 11) {
-			StringBuffer s = new StringBuffer();
-			int length = 11 - searchString.length();
-			for(int i=0;i<length;i++){
-				s.append("0");
-			}
-			s.append(searchString);
-			searchString = s.toString();
-		}
-		query = qp.parse(searchString);
+        searcher = new IndexSearcher(ir);
+        /* we had the StopAnalyzer prior to Standard, but it didnt work properly
+         * we had to put wildcard like '*' to make some queries work
+         */
+        Analyzer analyzer = new StandardAnalyzer();
+        String field = luceneSearch.getField();
+        String searchFields[] = new String[fields.size()];
+        QueryParser qp = null;
+        if ("ALL".equals(field)){
+            for(int i=0; i<fields.size();i++){
+                searchFields[i] = fields.get(i);
+            }
+            qp = new MultiFieldQueryParser(searchFields,analyzer);
+        } else {
+            qp = new QueryParser(field,analyzer);
+        }
+        String searchString = luceneSearch.getQuery();
+        if(searchString.matches("\\d+") && searchString.length() < 11) {
+            StringBuffer s = new StringBuffer();
+            int length = 11 - searchString.length();
+            for(int i=0;i<length;i++){
+                s.append("0");
+            }
+            s.append(searchString);
+            searchString = s.toString();
+        }
+        query = qp.parse(searchString);
 
-		hits = searcher.search(query);
-		if (hits.length() == 0) {
-        	be.reject("no.results");
-        	return showForm(request, response, be);
-		}
+        hits = searcher.search(query);
+        if (hits.length() == 0) {
+            be.reject("no.results");
+            return showForm(request, response, be);
+        }
 
-		if(luceneSearch.isHistory()) {
-			List<String> ids = new ArrayList<String>(hits.length());
-			for (int i=0;i<hits.length();i++) {
-			    Document doc = hits.doc(i);
-			    ids.add(doc.get("ID"));
-			}
-			HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
-    		historyManager.addHistoryItem("lucene search '"+luceneSearch+"'", HistoryType.QUERY,ids);
+        if(luceneSearch.isHistory()) {
+            List<String> ids = new ArrayList<String>(hits.length());
+            for (int i=0;i<hits.length();i++) {
+                Document doc = hits.doc(i);
+                ids.add(doc.get("ID"));
+            }
+            HistoryManager historyManager = getHistoryManagerFactory().getHistoryManager(request.getSession());
+            historyManager.addHistoryItem("lucene search '"+luceneSearch+"'", HistoryType.QUERY,ids);
 
-    		return new ModelAndView("redirect:/History/View",null);
-		}
-		List<SearchHit> results = new ArrayList<SearchHit>();
+            return new ModelAndView("redirect:/History/View",null);
+        }
+        List<SearchHit> results = new ArrayList<SearchHit>();
 
-		for (int i=0;i<hits.length();i++) {
-		    Document doc = hits.doc(i);
-		    SearchHit sh = new SearchHit();
-		    sh.setTitle(doc.get("ID"));
-		    sh.setUrl(doc.get("url"));
-		    sh.setChr(doc.get("chr"));
-		    sh.setStart(doc.get("start"));
-		    sh.setStop(doc.get("stop"));
-		    sh.setStrand(doc.get("strand"));
-		    results.add(sh);
-		}
+        for (int i=0;i<hits.length();i++) {
+            Document doc = hits.doc(i);
+            SearchHit sh = new SearchHit();
+            sh.setTitle(doc.get("ID"));
+            sh.setUrl(doc.get("url"));
+            sh.setChr(doc.get("chr"));
+            sh.setStart(doc.get("start"));
+            sh.setStop(doc.get("stop"));
+            sh.setStrand(doc.get("strand"));
+            results.add(sh);
+        }
 
 
-		model.put("results", results);
-		viewName = listResultsView;
-		return new ModelAndView(viewName,model);
+        model.put("results", results);
+        viewName = listResultsView;
+        return new ModelAndView(viewName,model);
     }
 
 
-	public String getListResultsView() {
-		return listResultsView;
-	}
-	public void setListResultsView(String listResultsView) {
-		this.listResultsView = listResultsView;
-	}
+    public String getListResultsView() {
+        return listResultsView;
+    }
+    public void setListResultsView(String listResultsView) {
+        this.listResultsView = listResultsView;
+    }
 
 }

@@ -32,18 +32,18 @@ public class HqlQueryTemplate extends QueryTemplate {
 
     @Override
     public void processNewPrototype(BeanDefinitionBuilder bdb) {
-    	bdb.addPropertyValue("hql", hql);
+        bdb.addPropertyValue("hql", hql);
         bdb.addPropertyReference("sessionFactory", sessionFactory);
     }
 
     @Required
-	public void setHql(String hql) {
-		this.hql = hql;
-	}
+    public void setHql(String hql) {
+        this.hql = hql;
+    }
 
     @Required
-	public void setSessionFactory(String sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+    public void setSessionFactory(String sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
 }

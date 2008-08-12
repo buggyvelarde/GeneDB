@@ -75,8 +75,8 @@ public abstract class JdbcQuery extends NamedParameterJdbcDaoSupport implements 
 
 
 
-	public String[] prepareModelData(int count) {
-		return null;
-	}
+    public String[] prepareModelData(int count) {
+        return null;
+    }
 
 }

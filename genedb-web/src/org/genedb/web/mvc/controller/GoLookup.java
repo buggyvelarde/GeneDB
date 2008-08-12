@@ -1,7 +1,7 @@
 package org.genedb.web.mvc.controller;
 
 public class GoLookup {
-	private String lookup; // The name to lookup, using * for wildcards
+    private String lookup; // The name to lookup, using * for wildcards
     private int start = 0; // Which number to start at if paging
     private int pageSize; // How many results per page, if paging
 
