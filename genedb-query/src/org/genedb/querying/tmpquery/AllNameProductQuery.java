@@ -24,31 +24,31 @@ public class AllNameProductQuery extends LuceneQuery {
 
     @QueryParam(
             order=1,
-            title="Minimum length of protein in bases"
+            title="The search string"
     )
     private String search = "";
 
     @QueryParam(
             order=1,
-            title="Minimum length of protein in bases"
+            title="Search gene products?"
     )
     private boolean product;
 
     @QueryParam(
             order=1,
-            title="Minimum length of protein in bases"
+            title="Search gene names and synonyms?"
     )
     private boolean allNames;
 
     @QueryParam(
             order=1,
-            title="Minimum length of protein in bases"
+            title="Include pseudogenes"
     )
     private boolean pseudogenes;
 
     @QueryParam(
             order=1,
-            title="Minimum length of protein in bases"
+            title="Include obsolete features"
     )
     private boolean obsolete;
 
@@ -68,17 +68,32 @@ public class AllNameProductQuery extends LuceneQuery {
             }
         } else {
             if (search.indexOf('*') == -1) {
-                bq.add(new TermQuery(new Term("allNames",search.toLowerCase())), Occur.SHOULD);
-               bq.add(new TermQuery(new Term("product",search.toLowerCase())), Occur.SHOULD);
+                if (allNames) {
+                    bq.add(new TermQuery(new Term("allNames",search.toLowerCase())), Occur.SHOULD);
+                }
+                if (product) {
+                    bq.add(new TermQuery(new Term("product",search.toLowerCase())), Occur.SHOULD);
+                }
             } else {
-                bq.add(new WildcardQuery(new Term("allNames", search.toLowerCase())), Occur.SHOULD);
-                bq.add(new WildcardQuery(new Term("product", search.toLowerCase())), Occur.SHOULD);
+                if (allNames) {
+                    bq.add(new WildcardQuery(new Term("allNames", search.toLowerCase())), Occur.SHOULD);
+                }
+                if (product) {
+                    bq.add(new WildcardQuery(new Term("product", search.toLowerCase())), Occur.SHOULD);
+                }
             }
         }
 
         queries.add(bq);
-        queries.add(geneOrPseudogeneQuery);
+        if (pseudogenes) {
+            queries.add(geneOrPseudogeneQuery);
+        } else {
+            queries.add(geneQuery);
+        }
 
+        if (!obsolete) {
+            queries.add(isCurrentQuery);
+        }
 
 //        BooleanQuery organismQuery = makeQueryForOrganisms(orgNames);
 //        queries.add(organismQuery);
