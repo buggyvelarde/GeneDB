@@ -52,10 +52,8 @@ public class BooleanQuery implements Query {
         return Collections.emptyMap();
     }
 
-	@Override
-	public int getOrder() {
-		// Not used for boolean queries
-		return 0;
-	}
-
+    public int getOrder() {
+        // Not used for boolean queries
+        return 0;
+    }
 }
