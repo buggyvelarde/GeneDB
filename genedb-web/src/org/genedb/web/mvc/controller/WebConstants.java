@@ -12,4 +12,6 @@ public class WebConstants {
     public static final String TAXON_NODE = "tn";
     public static final String CRUMB = "BREAD_CRUMB";
 
+    public static final String FLASH_MSG = "_FLASH_MSG";
+
 }
