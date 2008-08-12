@@ -76,12 +76,12 @@
         <td id="name">${name}</td>
         <td id="search">
         	<c:if test="${!empty organism}">
-            	<form name="searchForm" action="<c:url value="/"/>Query?q=nameProduct&organism=${organism}" method="get">
+            	<form name="searchForm" action="<c:url value="/"/>Query?q=allNameProduct&organism=${organism}&pseudogene=true&obsolete=false&product=true&allNames=true" method="GET">
             </c:if>
             <c:if test="${empty organism}">
-            	<form name="searchForm" action="<c:url value="/Query?q=nameProduct"/>" method="get">
+            	<form name="searchForm" action="<c:url value="/Query?q=allNameProduct?pseudogene=true&obsolete=false&product=true&allNames=true"/>" method="GET">
             </c:if>
-            	<input id="query" name="name" type="text" align="middle"/>
+            	<input id="query" name="query" type="text" align="middle"/>
             	<input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
 				</form>
 				<span align="top" style="font-size:0.65em;">
