@@ -20,10 +20,10 @@
 package org.genedb.web.mvc.controller.download;
 
 public class SequenceDownloadBean {
-    
+
     OutputDestination outputDestination = OutputDestination.TO_BROWSER;
     OutputFormat outputFormat;
     String topLevelFeature;
-    
+
 }
 
