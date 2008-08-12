@@ -78,6 +78,14 @@ public abstract class LuceneQuery implements Query {
 
     protected abstract String getluceneIndexName();
 
+    protected static final TermQuery isCurrentQuery = new TermQuery(new Term("isCurrent", "true"));
+    protected static final TermQuery geneQuery = new TermQuery(new Term("cvTerm.name","gene"));
+    protected static final TermQuery pseudogeneQuery = new TermQuery(new Term("cvTerm.name","pseudogene"));
+    protected static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
+    static {
+        geneOrPseudogeneQuery.add(geneQuery, Occur.SHOULD);
+        geneOrPseudogeneQuery.add(pseudogeneQuery, Occur.SHOULD);
+    }
 
 	//private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
 	//private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
@@ -166,11 +174,6 @@ public abstract class LuceneQuery implements Query {
 		return Collections.emptyMap();
 	}
 
-    protected static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
-    static {
-        geneOrPseudogeneQuery.add(new TermQuery(new Term("cvTerm.name","gene")), Occur.SHOULD);
-        geneOrPseudogeneQuery.add(new TermQuery(new Term("cvTerm.name","pseudogene")), Occur.SHOULD);
-    }
 
     private Hits lookupInLucene(List<org.apache.lucene.search.Query> queries) throws IOException {
 
