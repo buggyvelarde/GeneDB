@@ -41,6 +41,7 @@
     <bean name="geneTypeQuery" class="org.genedb.querying.tmpquery.GeneTypeQuery" />
     <bean name="advancedQuery" class="org.genedb.querying.tmpquery.AdvancedQuery" />
     <bean name="nameProductQuery" class="org.genedb.querying.tmpquery.NameProductQuery" />
+    <bean name="allNameProductQuery" class="org.genedb.querying.tmpquery.AllNameProductQuery" />
 
     <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 
