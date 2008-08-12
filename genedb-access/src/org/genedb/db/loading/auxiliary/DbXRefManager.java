@@ -1,4 +1,4 @@
-package org.genedb.db.loading.aux;
+package org.genedb.db.loading.auxiliary;
 
 import java.util.HashMap;
 import java.util.Iterator;

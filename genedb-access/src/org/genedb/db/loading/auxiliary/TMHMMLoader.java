@@ -1,4 +1,4 @@
-package org.genedb.db.loading.aux;
+package org.genedb.db.loading.auxiliary;
 
 import org.gmod.schema.feature.MembraneStructure;
 import org.gmod.schema.feature.Polypeptide;

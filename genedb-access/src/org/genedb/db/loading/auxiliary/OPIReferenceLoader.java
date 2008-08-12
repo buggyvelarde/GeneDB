@@ -1,4 +1,4 @@
-package org.genedb.db.loading.aux;
+package org.genedb.db.loading.auxiliary;
 
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.DbXRef;

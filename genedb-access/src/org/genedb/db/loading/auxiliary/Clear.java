@@ -1,4 +1,4 @@
-package org.genedb.db.loading.aux;
+package org.genedb.db.loading.auxiliary;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
