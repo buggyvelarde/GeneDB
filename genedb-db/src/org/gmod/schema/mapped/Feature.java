@@ -116,7 +116,7 @@ public abstract class Feature implements java.io.Serializable {
     private String md5Checksum;
 
     @Column(name = "is_analysis", unique = false, nullable = false, insertable = true, updatable = true)
-    @Field(index = Index.UN_TOKENIZED, store = Store.YES)
+    @Field(index = Index.UN_TOKENIZED, store = Store.NO)
     private boolean analysis;
 
     @Column(name = "is_obsolete", unique = false, nullable = false, insertable = true, updatable = true)
