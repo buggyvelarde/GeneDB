@@ -42,8 +42,9 @@ public class QueryController {
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm(
             @RequestParam(value="q", required=false) String queryName,
+            ServletRequest request,
             HttpSession session,
-            Model model) {
+            Model model) throws QueryException {
 
         if (!StringUtils.hasText(queryName)) {
                session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
@@ -57,33 +58,20 @@ public class QueryController {
         }
 
         model.addAttribute("query", query);
+        logger.error(String.format("The number of parameters is '%d'", request.getParameterMap().keySet().size()));
+        if (request.getParameterMap().keySet().size() == 1) {
+            // That'll be q so the user has only chosen the query so far, not any values
 
-        Map<String, Object> modelData = query.prepareModelData();
-        for (Map.Entry<String, Object> entry : modelData.entrySet()) {
-            model.addAttribute(entry.getKey(), entry.getValue());
+
+            Map<String, Object> modelData = query.prepareModelData();
+            for (Map.Entry<String, Object> entry : modelData.entrySet()) {
+                model.addAttribute(entry.getKey(), entry.getValue());
+            }
+
+            return "search/"+queryName;
         }
 
-        return "search/"+queryName;
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView processSubmit(
-            @RequestParam(value="q", required=false) String queryName,
-            ServletRequest request,
-            HttpSession session
-            ) throws QueryException {
-
-        if (!StringUtils.hasText(queryName)) {
-            session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
-            return new ModelAndView("redirect:/QueryList");
-        }
-
-        Query query = queryFactory.retrieveQuery(queryName);
-        if (query == null) {
-            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
-            return new ModelAndView("redirect:/QueryList");
-        }
-
+        // Attempt to fill in form
         ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
         // register custom editors, if desired
         //binder.registerCustomEditor(...);
@@ -93,26 +81,23 @@ public class QueryController {
 
         if (errors.getErrorCount() != 0) {
             // Problem
+
         }
 
-        ModelAndView mav = null;
         List<String> results = query.getResults();
 
         switch (results.size()) {
         case 0:
             logger.error("No results found for query");
-            mav = new ModelAndView("search/"+queryName);
-            break;
+            session.setAttribute(WebConstants.FLASH_MSG, "No results found - please try again");
+            return "search/"+queryName;
         case 1:
-            mav = new ModelAndView("redirect:/NamedFeature");
+            return "redirect:/NamedFeature?name="+results.get(0);
             // TODO Send feature name
-            break;
         default:
-            mav = new ModelAndView("list/stupid");
-            mav.addObject("results", results);
-            break;
+            model.addAttribute("results", results);
+            return "list/stupid";
         }
-        return mav;
     }
 
 }
