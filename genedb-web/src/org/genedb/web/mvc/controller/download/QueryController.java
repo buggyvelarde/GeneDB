@@ -69,7 +69,7 @@ public class QueryController {
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView processSubmit(
             @RequestParam(value="q", required=false) String queryName,
-            HttpServletRequest request,
+            ServletRequest request,
             HttpSession session
             ) throws QueryException {
 
