@@ -510,7 +510,7 @@
 
 
   <target name="load-interpro" depends="genedb-access.jar">
-    <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.Load">
+    <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
       <arg line="iploader --key-type=polypeptide ${file}"/>
       <jvmarg line="-server -Xmx256m"/>
     </java>
@@ -518,7 +518,7 @@
   </target>
 
     <target name="clear-interpro" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.ClearInterPro">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearInterPro">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
@@ -528,14 +528,14 @@
 
 
     <target name="load-tmhmm" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.Load">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="tmhmmloader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
 
     <target name="clear-tmhmm" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.ClearTMHMM">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearTMHMM">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
@@ -545,14 +545,14 @@
 
 
     <target name="load-dgpi" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.Load">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="dgpiloader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
 
     <target name="clear-dgpi" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.ClearDGPI">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearDGPI">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
@@ -562,14 +562,14 @@
 
 
     <target name="load-signalp" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.Load">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="signalploader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
 
     <target name="clear-signalp" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.ClearSignalP">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearSignalP">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
@@ -579,14 +579,14 @@
 
 
     <target name="load-plasmoap" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.Load">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="plasmoaploader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
 
     <target name="clear-plasmoap" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.ClearPlasmoAP">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearPlasmoAP">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
@@ -596,7 +596,7 @@
 
 
     <target name="delete-redundant-go" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.DeleteRedundantGOTerms"/>
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.DeleteRedundantGOTerms"/>
     </target>
 
 
@@ -611,13 +611,13 @@
     <target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
 
     <target name="load-opi-references" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.Load">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="opi-referencesloader"/>
         </java>
     </target>
 
     <target name="clear-opi-references" depends="genedb-access.jar">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.aux.ClearOPIReferences"/>
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearOPIReferences"/>
     </target>
 
     <target name="reload-opi-references" depends="clear-opi-references,load-opi-references"/>
