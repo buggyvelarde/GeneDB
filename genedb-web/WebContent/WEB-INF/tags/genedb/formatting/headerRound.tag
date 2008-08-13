@@ -79,7 +79,7 @@
             	<form name="searchForm" action="<c:url value="/"/>Query?q=allNameProduct&organism=${organism}&pseudogene=true&obsolete=false&product=true&allNames=true" method="GET">
             </c:if>
             <c:if test="${empty organism}">
-            	<form name="searchForm" action="<c:url value="/Query?q=allNameProduct?pseudogene=true&obsolete=false&product=true&allNames=true"/>" method="GET">
+            	<form name="searchForm" action="<c:url value="/Query?q=allNameProduct&pseudogene=true&obsolete=false&product=true&allNames=true"/>" method="GET">
             </c:if>
             	<input id="query" name="query" type="text" align="middle"/>
             	<input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
