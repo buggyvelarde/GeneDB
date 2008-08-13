@@ -56,10 +56,11 @@ public class DGPILoader extends Loader {
 
     private void loadResult(Polypeptide polypeptide, DGPIResult result) {
         logger.debug(String.format("Processing result for '%s'", polypeptide.getUniqueName()));
-        if (result.getBestCleavageSite() >= 0)
-            addCleavageSite(polypeptide, result.getBestCleavageSite(), result.getCleavageSiteScore());
-        if (result.isAnchored())
+        if (result.isAnchored()) {
             addAnchoredProperty(polypeptide);
+            if (result.getBestCleavageSite() >= 0)
+                addCleavageSite(polypeptide, result.getBestCleavageSite(), result.getCleavageSiteScore());
+        }
     }
 
     private void addCleavageSite(Polypeptide polypeptide, int bestCleavageSite, String cleavageSiteScore) {
