@@ -24,7 +24,7 @@ public class ProteinMapDiagram extends TrackedDiagram {
         this.polypeptideUniqueName = polypeptide.getUniqueName();
         this.membraneStructure = polypeptide.getMembraneStructure();
 
-        this.packSubfeatures = AllocatedCompoundFeature.Mode.PACKED;
+        this.packSubfeatures = AllocatedCompoundFeature.Mode.STRATIFIED_LTR;
         this.numberOfBlankTracksAboveCompoundFeature = 2;
 
         addRegion           (polypeptide, regionGroups, "Signal peptide", "Sig. pep.",
@@ -47,7 +47,6 @@ public class ProteinMapDiagram extends TrackedDiagram {
             }
             regionGroups.add(regionGroup);
         }
-
     }
 
     private <T extends PolypeptideRegion> void addRegionToNTerminus(Polypeptide polypeptide,
@@ -64,7 +63,6 @@ public class ProteinMapDiagram extends TrackedDiagram {
             }
             regionGroups.add(regionGroup);
         }
-
     }
 
     String getOrganism() {
