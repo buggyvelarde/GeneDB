@@ -42,8 +42,9 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
     private static final Logger logger = Logger.getLogger(ChadoAnnotationConfiguration.class);
 
     private DataSource dataSource;
-    public void setDataSource(DataSource dataSource) {
+    public ChadoAnnotationConfiguration setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+        return this;
     }
 
     private ClassLoader classLoader = getClass().getClassLoader();
@@ -141,7 +142,12 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
     private Integer getCvTermIdForTermFeatureType(FeatureType featureType) throws ChadoAnnotationException {
         try {
             Connection conn = dataSource.getConnection();
-            PreparedStatement st = conn.prepareStatement("select cvterm_id from cvterm join cv using (cv_id) where cv.name = ? and cvterm.name = ?");
+            PreparedStatement st = conn.prepareStatement(
+                "select cvterm_id" +
+                " from cvterm" +
+                " join cv on cvterm.cv_id = cv.cv_id" +
+                " where cv.name = ?" +
+                " and cvterm.name = ?");
             try {
                 st.setString(1, featureType.cv());
                 st.setString(2, featureType.term());
@@ -164,7 +170,13 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
     private Integer getCvTermIdForAccessionFeatureType(FeatureType featureType) throws ChadoAnnotationException {
         try {
             Connection conn = dataSource.getConnection();
-            PreparedStatement st = conn.prepareStatement("select cvterm_id from cvterm join cv using (cv_id) join dbxref using (dbxref_id) where cv.name = ? and dbxref.accession = ?");
+            PreparedStatement st = conn.prepareStatement(
+                "select cvterm_id" +
+                " from cvterm" +
+                " join cv on cvterm.cv_id = cv.cv_id" +
+                " join dbxref on cvterm.dbxref_id = dbxref.dbxref_id" +
+                " where cv.name = ?" +
+                " and dbxref.accession = ?");
             try {
                 st.setString(1, featureType.cv());
                 st.setString(2, featureType.accession());
