@@ -23,8 +23,8 @@ public class DbXRefProp implements Serializable, PropertyI {
     // Fields
     @SequenceGenerator(name="generator", sequenceName="dbxrefprop_dbxrefprop_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
-    @Column(unique=false, nullable=false, insertable=true, updatable=true)
-     private int dbXRefPropId;
+    @Column(name="dbxrefprop_id", unique=false, nullable=false, insertable=true, updatable=true)
+    private int dbXRefPropId;
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
         @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)

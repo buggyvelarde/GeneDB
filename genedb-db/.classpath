@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-libs"/>
 	<classpathentry kind="lib" path="lib/backport-util-concurrent.jar"/>
@@ -55,6 +56,12 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.2.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/cglib-2.1_3.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar" sourcepath="/genedb-libs/lib-src/biojava-1.6-src.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/junit/junit-4.4.jar" sourcepath="/genedb-libs/lib-src/junit-4.4-src.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://junit.sourceforge.net/javadoc_40"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hsqldb/hsqldb.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
