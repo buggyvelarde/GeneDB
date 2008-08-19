@@ -228,13 +228,12 @@
         <pathelement path="${genedb-db.libdir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
     </path>
 
-    <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.db}/../genedb-util/ant-build/jars/genedb-anttasks.jar" />
-
-    <target name="prompt-for-password" unless="source.password">
+    <target name="prompt-for-password" depends="genedb-util.anttasks" unless="source.password">
+        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.db}/../genedb-util/ant-build/jars/genedb-anttasks.jar" />
         <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
     </target>
 
-    <target name="make-schema-database" depends="prompt-for-password,genedb-util.anttasks,make-test-jar">
+    <target name="make-schema-database" depends="prompt-for-password,make-test-jar">
         <fail message="The attribute source.url must be supplied" unless="source.url"/>
         <fail message="The attribute source.username must be supplied" unless="source.username"/>
 
