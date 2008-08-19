@@ -63,10 +63,11 @@ public abstract class TrackedDiagram {
         allocatedCompoundFeatures.add(feature);
 
         int numberOfSubtracks = feature.getSubtracks().size();
-        if (track + numberOfSubtracks - 1 > numberOfPositiveTracks)
+        if (track + numberOfSubtracks - 1 + numberOfBlankTracksAboveCompoundFeature > numberOfPositiveTracks) {
             numberOfPositiveTracks = track + numberOfSubtracks - 1 + numberOfBlankTracksAboveCompoundFeature;
-        else if (-track + numberOfSubtracks - 1 > numberOfNegativeTracks)
+        } else if (-track + numberOfSubtracks - 1 + numberOfBlankTracksAboveCompoundFeature > numberOfNegativeTracks) {
             numberOfNegativeTracks = -track + numberOfSubtracks - 1 + numberOfBlankTracksAboveCompoundFeature;
+        }
     }
 
     /**
