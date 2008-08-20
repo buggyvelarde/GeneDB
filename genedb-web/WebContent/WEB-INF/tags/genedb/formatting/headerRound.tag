@@ -178,10 +178,10 @@
                                         <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=proteinNumTM&organism=${organism}"/>" title="ProteinLength Search">By No. TM domains</a>
                                     </li>
 
-                                    <%-- Motif Search not yet implemented --%>
-                                    <%-- <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>" title="Motif Search">Motif Search</a>
-                                    </li>--%>
+                                    <%-- Motif Search --%>
+                                    <li class="yuimenuitem">
+                                        <a class="yuimenuitemlabel" href="<c:url value="/MotifSearch"/>" title="Motif Search">Motif Search</a>
+                                    </li>
 
                                     <%-- Proteins By Targeting Sequence --%>
                                     <li class="yuimenuitem">
@@ -190,7 +190,7 @@
 
                                     <%-- Proteins By Annotation Status --%>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=proteinAnnotationStatus&organism=${organism}"/>" title="ProteinLength Search">By Annotation Status</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinAnnotationStatus&organism=${organism}"/>" title="ProteinLength Search">By Annotation Status</a>
                                     </li>
 
                                 </ul>
