@@ -79,9 +79,7 @@ public class HibernateTest {
     public void foo() {
         @SuppressWarnings("unchecked")
         Map<String,ClassMetadata> classMetadataByName = sessionFactory.getAllClassMetadata();
-        for (Map.Entry<String, ClassMetadata> entry: classMetadataByName.entrySet()) {
-            String name = entry.getKey();
-            //ClassMetadata metadata = entry.getValue();
+        for (String name: classMetadataByName.keySet()) {
             logger.info(name);
             session.createQuery("from " + name).setMaxResults(100).list();
         }
