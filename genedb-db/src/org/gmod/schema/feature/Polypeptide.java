@@ -7,6 +7,7 @@ import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.utils.PeptideProperties;
+import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
@@ -235,6 +236,14 @@ public class Polypeptide extends Region {
             }
         }
         return charge;
+    }
+
+    public static Polypeptide make(Feature parent, StrandedLocation location,
+            String systematicId, Organism organism, Timestamp now) {
+
+        Polypeptide polypeptide = new Polypeptide(organism, systematicId, false, false, now);
+        parent.addLocatedChild(polypeptide, location);
+        return polypeptide;
     }
 
     @Transient
