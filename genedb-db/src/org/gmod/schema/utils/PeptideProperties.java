@@ -1,76 +1,68 @@
 package org.gmod.schema.utils;
 
+import java.text.DecimalFormat;
+
+/**
+ * Represents computed properties of a polypeptide.
+ *
+ */
 public class PeptideProperties {
 
-    private String mass;
+    private double massInDaltons;
+    private int aminoAcids;
+    private double isoelectricPoint;
+    private double charge;
 
-    private String aminoAcids;
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
-    private String isoelectricPoint;
-
-    private String charge;
-
-    private String signalPeptide;
-
-    private String transmembraneDomain;
-
-    private String gpiAnchor;
-
-    public String getAminoAcids() {
+    /**
+     * Get the number of amino acids in the polypeptide.
+     * @return the number of amino acids in the polypeptide
+     */
+    public int getAminoAcids() {
         return aminoAcids;
     }
 
-    public void setAminoAcids(String aminoAcids) {
+    public void setAminoAcids(int aminoAcids) {
         this.aminoAcids = aminoAcids;
     }
 
+    /**
+     * Get the charge.
+     * @return the charge, formatted as a string. Nobody seems to know what units
+     * this is in, or what it actually means. Should always be a (positive or negative)
+     * multiple of 0.5.
+     */
     public String getCharge() {
-        return charge;
+        return decimalFormat.format(charge);
     }
 
-    public void setCharge(String charge) {
+    public void setCharge(double charge) {
         this.charge = charge;
     }
 
-    public String getGpiAnchor() {
-        return gpiAnchor;
-    }
-
-    public void setGpiAnchor(String gpiAnchor) {
-        this.gpiAnchor = gpiAnchor;
-    }
-
+    /**
+     * Get the isoelectric point.
+     * @return the isoelectric point, rounded to two decimal places and formatted
+     * as a string
+     */
     public String getIsoelectricPoint() {
-        return isoelectricPoint;
+        return decimalFormat.format(isoelectricPoint);
     }
 
-    public void setIsoelectricPoint(String isoelectricPoint) {
+    public void setIsoelectricPoint(double isoelectricPoint) {
         this.isoelectricPoint = isoelectricPoint;
     }
 
+    /**
+     * Get the mass.
+     * @return the mass in kiloDaltons, formatted as a string like "1.23kDa"
+     */
     public String getMass() {
-        return mass;
+        return decimalFormat.format(massInDaltons / 1000) + " kDa";
     }
 
-    public void setMass(String mass) {
-        this.mass = mass;
+    public void setMass(double massInDaltons) {
+        this.massInDaltons = massInDaltons;
     }
-
-    public String getSignalPeptide() {
-        return signalPeptide;
-    }
-
-    public void setSignalPeptide(String signalPeptide) {
-        this.signalPeptide = signalPeptide;
-    }
-
-    public String getTransmembraneDomain() {
-        return transmembraneDomain;
-    }
-
-    public void setTransmembraneDomain(String transmembraneDomain) {
-        this.transmembraneDomain = transmembraneDomain;
-    }
-
-
 }
