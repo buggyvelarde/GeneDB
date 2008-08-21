@@ -7,7 +7,6 @@ import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.utils.PeptideProperties;
-import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
@@ -20,7 +19,6 @@ import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
 
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -44,9 +42,9 @@ public class Polypeptide extends Region {
         // empty
     }
 
-    public Polypeptide(Organism organism, String systematicId, boolean analysis,
+    public Polypeptide(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
     public Transcript getTranscript() {
@@ -190,26 +188,24 @@ public class Polypeptide extends Region {
             return pp;
         }
 
-        pp.setAminoAcids(Integer.toString(residuesSymbolList.length()));
-
-        DecimalFormat twoDecimalPlaces = new DecimalFormat("#.##");
+        pp.setAminoAcids(residuesSymbolList.length());
 
         try {
             double isoElectricPoint = new IsoelectricPointCalc().getPI(residuesSymbolList, false, false);
-            pp.setIsoelectricPoint(twoDecimalPlaces.format(isoElectricPoint));
+            pp.setIsoelectricPoint(isoElectricPoint);
         } catch (Exception e) {
             logger.error(String.format("Error computing protein isoelectric point for '%s'", residuesSymbolList), e);
         }
 
         try {
             double massInDaltons = MassCalc.getMass(residuesSymbolList, SymbolPropertyTable.AVG_MASS, true);
-            pp.setMass(twoDecimalPlaces.format(massInDaltons / 1000));
+            pp.setMass(massInDaltons);
         } catch (Exception e) {
             logger.error("Error computing protein mass", e);
         }
 
         double charge = calculateCharge(residuesString);
-        pp.setCharge(twoDecimalPlaces.format(charge));
+        pp.setCharge(charge);
 
         return pp;
     }
@@ -241,12 +237,8 @@ public class Polypeptide extends Region {
         return charge;
     }
 
-    public static Polypeptide make(Feature parent, StrandedLocation location,
-            String systematicId, Organism organism, Timestamp now) {
-
-        Polypeptide polypeptide = new Polypeptide(organism, systematicId, false, false, now);
-        parent.addLocatedChild(polypeptide, location);
-        return polypeptide;
+    @Transient
+    public boolean isGPIAnchored() {
+        return hasProperty("genedb_misc", "GPI_anchored");
     }
-
 }
