@@ -25,6 +25,7 @@ import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -252,15 +253,15 @@ public class ModelBuilder {
     }
 
     private Map<String,Object> prepareDGPIData(Polypeptide polypeptide) {
-        Map<String,Object> dgpiData = new HashMap<String,Object>();
-
-        /* If the GPI_anchored property is not present, we do not add
-         * anything here. That way, an empty map indicates that there
-         * is no DGPI data.
+        /* If the GPI_anchored property is not present, we do not add the
+         * predicted cleavage site, even if there is one.
          */
-        if (polypeptide.hasProperty("genedb_misc", "GPI_anchored")) {
-            dgpiData.put("anchored", true);
+        if (!polypeptide.hasProperty("genedb_misc", "GPI_anchored")) {
+            return Collections.emptyMap();
         }
+
+        Map<String,Object> dgpiData = new HashMap<String,Object>();
+        dgpiData.put("anchored", true);
 
         Collection<GPIAnchorCleavageSite> cleavageSites = polypeptide.getRegions(GPIAnchorCleavageSite.class);
         if (!cleavageSites.isEmpty()) {
