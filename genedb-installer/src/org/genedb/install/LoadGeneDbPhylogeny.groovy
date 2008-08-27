@@ -4,80 +4,80 @@ import groovy.sql.Sql
 import java.util.regex.Matcher
 
 /**
-* Simple class for loading organism and related 
+* Simple class for loading organism and related
 * phylogeny tables, from the  XML file at the bottom
 */
 class LoadGeneDbPhylogeny {
 
     def db
-    
+
     int index
-    
+
     def orgDataSet
     def orgId
-    
+
     def nodeDataSet
     def nodeId
-    
+
     def dbDataSet
-    
+
     def nodeOrgDataSet
     def nodeOrgId
-    
+
     def dbxref
     def dbRefId
-    
+
     def orgPropDataSet
     def orgPropId
-    
+
     def dbId;
-    
+
     def genedbMiscCvId;
-    
+
     def cvTerm;
-    
+
     def organismDbXRefSet;
-    
+
     def nodePropDataSet;
-    
+
     boolean writeBack = true;
-    
+
     LoadGeneDbPhylogeny() {
 		db = Sql.newInstance(
 			'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10301/chado',
 			'chado',
 			'chado',
 			'org.postgresql.Driver')
-			
+
      	orgDataSet = db.dataSet("organism")
-		
+
 		orgPropDataSet = db.dataSet("organismprop")
-		
+
 		dbDataSet = db.dataSet("db")
-		
+
      	nodeDataSet = db.dataSet("phylonode")
-		
+
      	nodePropDataSet = db.dataSet("phylonodeprop")
-		
+
 		nodeOrgDataSet = db.dataSet("phylonode_organism")
-		
+
 		orgPropDataSet = db.dataSet("organismprop");
-		
+
 		List trees =   db.rows("SELECT * from db where name='null'");
 	    dbId = trees[0]."db_id";
-	    
+
 	    trees = db.rows("select * from cv where name='genedb_misc'");
 	    genedbMiscCvId = trees[0]."cv_id";
-	    
+
 	    dbxref = db.dataSet("dbxref");
 	    cvTerm = db.dataSet("cvterm");
-	    
+
 	    organismDbXRefSet = db.dataSet("organism_dbxref")
 
     }
 
 
-	// Find the maximum current value of the primary key for this table 
+	// Find the maximum current value of the primary key for this table
 	def getMaxIdFromPrimaryKey(String tableName) {
 		def col = tableName + "_id";
 	    int id = db.rows("SELECT max("+col+") as "+col+" from " + tableName)[0]["${col}"];
@@ -86,27 +86,27 @@ class LoadGeneDbPhylogeny {
 	    }
 	    return id;
 	}
-	
-	
+
+
 	void process(def inp) {
-	    List trees = db.rows("SELECT * from phylotree where name='org_heirachy'");
+	    List trees = db.rows("SELECT * from phylotree where name='org_hierarchy'");
 	    def tree = trees[0]."phylotree_id";
-	    def heirachy = new XmlParser().parseText(inp) 
-  
+	    def hierarchy = new XmlParser().parseText(inp)
+
 	    index = getMaxIdFromPrimaryKey("phylonode")
-	    heirachy.children().each(
+	    hierarchy.children().each(
 	            {setLeftAndRight(it, 1)}
         )
 //def rootNode = createPhylonode(, null, );
-//      setLeftAndRight(heirachy.node, 1)
+//      setLeftAndRight(hierarchy.node, 1)
 //        )
-	    //createNode(hierachy.node, null, tree)
-	    heirachy.children().each(
+	    //createNode(hierarchy.node, null, tree)
+	    hierarchy.children().each(
 	            {createNode(it, null, tree)}
-        )		
+        )
 	}
 
-	// Walk the tree for node and organism nodes, storing values for 
+	// Walk the tree for node and organism nodes, storing values for
 	// depth and left on the way down, and right and taxonIds on the way back up
 	List setLeftAndRight(def node, int depth) {
 		if (node.name() != 'node' && node.name() != 'organism') {
@@ -121,8 +121,8 @@ class LoadGeneDbPhylogeny {
 			nestedTaxons.addAll(setLeftAndRight(child, depth))
 		}
 		node.attributes().put('right', ++index)
-		
-		// Move values from organism props to attributes 
+
+		// Move values from organism props to attributes
 		if (node.name() == 'organism') {
 			node.children().each({
 				def key
@@ -144,8 +144,8 @@ class LoadGeneDbPhylogeny {
 		node.attributes().put('taxonList', nestedTaxons.join(" "));
 		return nestedTaxons;
 	}
-	
-	// Now walk the tree creating db entries  
+
+	// Now walk the tree creating db entries
 	void createNode(def node, def parentId, def tree) {
 		assert node != null
 		switch (node.name()) {
@@ -155,17 +155,17 @@ class LoadGeneDbPhylogeny {
 					{createNode(it, newNodeId, tree)}
 				)
 			break
-			
+
 			case 'organism':
 				def newNodeId = createPhylonode(node, parentId, tree)
-          	  
+
 				Map props = node.attributes()
 				String temp = props.remove("fullName")
 
 				List sections = temp.split(" ", 2);
-          	  
+
 				createOrganism(node,sections[0],sections[1])
-              
+
 				if (writeBack) {
 				    try {
 						nodeOrgDataSet.add(
@@ -177,10 +177,10 @@ class LoadGeneDbPhylogeny {
 		    		  	 System.err.println("Problem storing phylonode_organism - duplicate?");
 		   			 }
 				}
-					
+
 				checkAttributeExists(node, "translationTable")
 				checkAttributeExists(node,"curatorEmail")
-				
+
 				if (!props.containsKey("nickname") && !props.containsKey("newOrg")) {
 					println "No nickname for '"+node.'@name'+"'"
 					throw new RuntimeException("Found an old organism without a nickname")
@@ -191,7 +191,7 @@ class LoadGeneDbPhylogeny {
 				}
 				props.remove("newOrg")
 				//props.put("fullName",temp)
-          	  
+
 				int orgId = getMaxIdFromPrimaryKey("organism")
 				props.each({
 					List rows = db.rows("select * from cvterm where name='"+it.key+"'")
@@ -213,8 +213,8 @@ class LoadGeneDbPhylogeny {
 		   				 }
 					}
 				})
-				
-				
+
+
 /*				if (writeBack) {
 					try {
 					    orgDbXRefDataSet.add(
@@ -232,14 +232,14 @@ class LoadGeneDbPhylogeny {
 				        +"' when expecting node or organism");
 		}
 	}
-  
-	// Sanity check that an expected property is present 
+
+	// Sanity check that an expected property is present
 	void checkAttributeExists(def node, String key) {
 	    if (!node.attributes().containsKey(key)) {
 	        throw new RuntimeException("No "+key+" for '"+node.'@name'+"'")
 		}
 	}
-  
+
 	// Create a set of db entries when a phylogeny node is encountered
 	int createPhylonode(def node, def parent, def tree) {
 		//double dist = node.parent().size();
@@ -257,9 +257,9 @@ class LoadGeneDbPhylogeny {
 				nodeDataSet.add(
 					phylotree_id:        ptree,
         			parent_phylonode_id: parent,
-       			 	left_idx:            left, 	
-       		 		right_idx:           right, 	
-       			 	label:               nodeName,		
+       			 	left_idx:            left,
+       		 		right_idx:           right,
+       			 	label:               nodeName,
        			 	distance:            depth,
       			)
 	 	 	 } catch (Exception exp) {
@@ -271,12 +271,12 @@ class LoadGeneDbPhylogeny {
 		node.attributes().remove("right");
 		node.attributes().remove("depth")
 		node.attributes().remove("shortName") // TODO Is this right
-		
+
 		Set skipAttributeNames = new HashSet();
 		skipAttributeNames.add("fullName");
 		skipAttributeNames.add("newOrg");
 		skipAttributeNames.add("name")
-		
+
       	for (attr in node.attributes()) {
       		// println "CreatePhylonodeProp: '"+attr.key+"'='"+attr.value+"'"
       		if (skipAttributeNames.contains(attr.key)) {
@@ -301,8 +301,8 @@ class LoadGeneDbPhylogeny {
 		node.attributes().remove("taxonList");
 		return getMaxIdFromPrimaryKey("phylonode")
 	}
-  
-	
+
+
 	int findCvTerm(String termName) {
 	    def rows = db.rows("select cvterm_id from cvterm where name='"+termName
 	            +"' and cv_id='"+genedbMiscCvId+"'")
@@ -311,8 +311,8 @@ class LoadGeneDbPhylogeny {
 	    }
 	    return rows[0]["cvterm_id"]
 	}
-	
-	
+
+
 	// Create a set of db entries when an organism node is encountered
 	void createOrganism(def node,def genus,def species) {
 		//println "CreateOrganism called with '"+node.'@name'+"'"
@@ -321,7 +321,7 @@ class LoadGeneDbPhylogeny {
 		String sp = species;
 		if (writeBack) {
 		    try {
-				orgDataSet.add(		
+				orgDataSet.add(
 					abbreviation: abb,
         		    genus:        gen,
 					species:      sp,
@@ -332,7 +332,7 @@ class LoadGeneDbPhylogeny {
 				System.err.println("Problem storing org - duplicate?");
 			}
 		}
-		
+
 		String accession = node.'@name'
 		//Create dbxref
 //		if (writeBack) {
@@ -347,7 +347,7 @@ class LoadGeneDbPhylogeny {
 //        		  May be a duplicate
 //        	  	 System.err.println("Problem storing cvterm - duplicate?");
 //       		 }
-        
+
 //	         Create organism dbxref
 //	         try {
 //				organismDbXRefSet.add(
@@ -361,18 +361,18 @@ class LoadGeneDbPhylogeny {
 //		}
         node.attributes().remove("name");
 	}
-	
-        
+
+
 	static void main(args) {
     	LoadGeneDbPhylogeny lgp = new LoadGeneDbPhylogeny()
     	lgp.process(input);
     	System.err.println("Done");
 	}
-	
+
 
 	// The XML config file for loading the organism and phylogeny modules
 	static String input = '''<?xml version="1.0" encoding="UTF-8"?>
-<org-heirachy>
+<org-hierarchy>
     <node name="Root">
 		<node name="Helminths">
 			<node name="Platyhelminths">
@@ -542,7 +542,7 @@ class LoadGeneDbPhylogeny {
 						<property name="curatorName" value="" />
 				  	</organism>
 					<organism name="Tannulata">
-						<property name="taxonId" value="5874" />				
+						<property name="taxonId" value="5874" />
 						<property name="fullName" value="Theileria annulata" />
 						<property name="nickname" value="annulata" />
 						<property name="translationTable" value="1"/>
@@ -953,7 +953,7 @@ class LoadGeneDbPhylogeny {
 					<property name="htmlShortName" value=""/>
 					<property name="shortName" value="" />
 					<property name="curatorName" value="" />
-				</organism>	
+				</organism>
 				<organism name="Senteritidis_PT4">
 					<property name="taxonId" value="592" />
 					<property name="fullName" value="Salmonella enteritidis PT4" />
@@ -988,7 +988,7 @@ class LoadGeneDbPhylogeny {
 					<property name="htmlShortName" value=""/>
 					<property name="shortName" value="" />
 					<property name="curatorName" value="" />
-				</organism>	
+				</organism>
 				<organism name="Saureus_MSSA476">
 					<property name="taxonId" value="282459" />
 					<property name="fullName" value="Staphylococcus aureus (MSSA476)" />
@@ -1023,7 +1023,7 @@ class LoadGeneDbPhylogeny {
 					<property name="htmlShortName" value=""/>
 					<property name="shortName" value="" />
 					<property name="curatorName" value="" />
-				</organism>	
+				</organism>
 				<organism name="Suberis">
 					<property name="taxonId" value="1349" />
 					<property name="fullName" value="Streptococcus uberis" />
@@ -1046,7 +1046,7 @@ class LoadGeneDbPhylogeny {
 				<property name="htmlShortName" value=""/>
 				<property name="shortName" value="" />
 				<property name="curatorName" value="" />
-			</organism>	
+			</organism>
 			<node name="Yersinia">
 				<organism name="Ypestis">
 					<property name="taxonId" value="632" />
@@ -1058,7 +1058,7 @@ class LoadGeneDbPhylogeny {
 					<property name="htmlShortName" value=""/>
 					<property name="shortName" value="" />
 					<property name="curatorName" value="" />
-				</organism>	
+				</organism>
 				<organism name="Yenterocolitica">
 					<property name="taxonId" value="630" />
 					<property name="fullName" value="Yersinia enterocolitica" />
@@ -1073,7 +1073,7 @@ class LoadGeneDbPhylogeny {
 			</node>
 		</node>
     </node>
-</org-heirachy>
+</org-hierarchy>
 ''';
-  
+
 }

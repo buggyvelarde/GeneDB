@@ -60,9 +60,9 @@ class LoadGeneDbCv {
 
 
 	void process(def inp) {
-	    def heirachy = new XmlParser().parseText(inp)
+	    def hierarchy = new XmlParser().parseText(inp)
 
-	    heirachy.children().each(
+	    hierarchy.children().each(
 	            {createNode(it, null, -1)}
         )
 	}
