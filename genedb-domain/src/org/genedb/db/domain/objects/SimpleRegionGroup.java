@@ -17,25 +17,11 @@ public class SimpleRegionGroup extends PolypeptideRegionGroup {
 
     @Override
     public String getUniqueName() {
-        if (getSubfeatures().size() == 1) {
-            return getSubfeatures().get(0).getUniqueName();
-        }
         return title;
     }
 
     @Override
     public String getShortName() {
-        if (getSubfeatures().size() == 1) {
-            return getSubfeatures().get(0).getUniqueName();
-        }
         return abbreviation;
-    }
-
-    @Override
-    public String getDescription() {
-        if (getSubfeatures().size() == 1) {
-            return getSubfeatures().get(0).getDescription();
-        }
-        return super.getDescription();
     }
 }
