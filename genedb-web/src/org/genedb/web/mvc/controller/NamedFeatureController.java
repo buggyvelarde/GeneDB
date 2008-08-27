@@ -50,6 +50,7 @@ public class NamedFeatureController extends PostOrGetFormController {
     private SequenceDao sequenceDao;
     private String geneView;
     private String geneDetailsView;
+    private String geneSequenceView;
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
@@ -65,6 +66,9 @@ public class NamedFeatureController extends PostOrGetFormController {
         }
 
         String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
+        if (nlb.isSequenceView()) {
+            viewName = geneSequenceView;
+        }
         Map<String, Object> model = modelBuilder.prepareFeature(feature);
 
         if (model.containsKey("polypeptide")) {
@@ -98,6 +102,12 @@ public class NamedFeatureController extends PostOrGetFormController {
         this.geneDetailsView = geneDetailsView;
     }
 
+    public void setGeneSequenceView(String geneSequenceView) {
+        this.geneSequenceView = geneSequenceView;
+    }
+
+
+
     private ModelBuilder modelBuilder;
 
     public void setModelBuilder(ModelBuilder modelBuilder) {
@@ -107,6 +117,7 @@ public class NamedFeatureController extends PostOrGetFormController {
     public static class NameLookupBean {
         private String name;
         private boolean detailsOnly = false;
+        private boolean sequenceView = false;
 
         public String getName() {
             return this.name;
@@ -125,6 +136,13 @@ public class NamedFeatureController extends PostOrGetFormController {
             this.detailsOnly = detailsOnly;
         }
 
+        public boolean isSequenceView() {
+            return sequenceView;
+        }
+
+        public void setSequenceView(boolean sequenceView) {
+            this.sequenceView = sequenceView;
+        }
 
         /*
          * We need this because the form that is shown when the feature

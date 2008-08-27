@@ -87,7 +87,13 @@
     </format:genePageSection>
 
     <format:genePageSection id="analysisTools" className="whiteBox">
-        <form name="downloadRegion" action="FeatureDownload" method="get">
+        <div style="clear: both; margin-top: 1ex;">
+             <a href="">Add gene to basket</a>
+         </div>
+        <div style="clear: both; margin-top: 1ex;">
+             <a href="/new/NamedFeature?name=PF14_0641&seqs=true">View/analyze/download sequence</a>
+         </div>
+        <%-- <form name="downloadRegion" action="FeatureDownload" method="get">
             <div>Download Region as</div><br>
             <select name="downloadType">
                 <option value="SPLICED_DNA">Spliced DNA</option>
@@ -98,9 +104,11 @@
             <input type="hidden" name="featureType" value="${transcript.type.name}" />
             <input type="hidden" name="featureName" value="<c:out value="${transcript.uniqueName}" />">
             <input type="submit" value="Submit">
-        </form>
+        </form> --%>
         <div style="clear: both; margin-top: 1ex;">
-             <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Show region in Artemis</a>
+            Show region in
+            <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Artemis</a>,
+            GBrowse
          </div>
     </format:genePageSection>
 </div>
