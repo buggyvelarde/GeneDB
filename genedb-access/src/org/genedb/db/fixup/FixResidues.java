@@ -1,6 +1,7 @@
 package org.genedb.db.fixup;
 
 import org.genedb.util.SequenceUtils;
+import org.genedb.util.TranslationException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -525,7 +526,7 @@ class Transcript {
             throw new TranslationException(String.format("this '%s' is too short to translate (length=%d, phase=%d)",
                 this.uniqueName, this.cds.length(), this.phase));
         }
-        return Translator.getTranslator(this.translationTableId).translate(this.cds, this.phase, this.stopCodonTranslatedAsSelenocysteine);
+        return SequenceUtils.translate(this.translationTableId, this.cds, this.phase, this.stopCodonTranslatedAsSelenocysteine);
     }
 }
 
