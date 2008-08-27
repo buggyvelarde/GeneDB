@@ -17,9 +17,9 @@
     <!-- Classpaths -->
 
     <path id="libs">
-    	<path location="${in-lib-dir}/artemis.jar" />
+      <path location="${in-lib-dir}/artemis.jar" />
 
-    	<path location="${imported.basedir.web}/../genedb-db/ant-build/jars/genedb-db.jar" />
+      <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/genedb-db.jar" />
         <path location="${imported.basedir.web}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
         <path location="${imported.basedir.web}/../genedb-query/ant-build/jars/genedb-query.jar" />
 
@@ -89,23 +89,23 @@
         </copy>
     </target>
 
-	<!--
-	<target name="make-Jogra" depends="Jogra.signed-jar" if="${jogra}"/>
+  <!--
+  <target name="make-Jogra" depends="Jogra.signed-jar" if="${jogra}"/>
 
-	<target name="deploy-Jogra" depends="make-Jogra" if="${jogra}">
-		<mkdir dir="${finaldest.webapps}.tmp/Jogra" />
-		<copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/Jogra" />
-		<copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/WEB-INF/lib" />
+  <target name="deploy-Jogra" depends="make-Jogra" if="${jogra}">
+    <mkdir dir="${finaldest.webapps}.tmp/Jogra" />
+    <copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/Jogra" />
+    <copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/WEB-INF/lib" />
     </target>
-	-->
+  -->
 
     <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.make-db-jar" />
 
     <target name="make-all-and-deploy" depends="make-other-projects, compile, final-deploy, get-latest-jars"/>
 
-	<target name="clean-web">
-		<delete dir="${imported.basedir.web}/ant-build" quiet="true"/>
-	</target>
+  <target name="clean-web">
+    <delete dir="${imported.basedir.web}/ant-build" quiet="true"/>
+  </target>
 
     <target name="fast-deploy" depends="compile, final-deploy, get-latest-jars"/>
 
@@ -122,7 +122,7 @@
 
     </target>
 
-	<target name="deploy" depends="pre-deploy, application-deploy, post-deploy" />
+  <target name="deploy" depends="pre-deploy, application-deploy, post-deploy" />
 
     <target name="pre-deploy">
         <filter token="webAppRootKey" value="${webAppRootKey}" />
@@ -141,11 +141,11 @@
         <copy file="property-file.${deploy}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
     </target>
 
-	<target name="application-deploy" /> <!-- depends="deploy-Jogra" -->
+  <target name="application-deploy" /> <!-- depends="deploy-Jogra" -->
 
-	<target name="post-deploy" />
+  <target name="post-deploy" />
 
-	<target name="final-deploy" depends="deploy" description="">
+  <target name="final-deploy" depends="deploy" description="">
         <echo>About to delete ${finaldest.webapps}.old</echo>
         <delete dir="${finaldest.webapps}.old" failonerror="false"/>
         <move file="${finaldest.webapps}" tofile="${finaldest.webapps}.old" failonerror="false" />
@@ -153,39 +153,39 @@
         <delete dir="${finaldest.webapps}.old" failonerror="false"/> <!-- temp hack -->
     </target>
 
-	<path id="groovy-script-jars">
+  <path id="groovy-script-jars">
         <path location="${lib-dir}/spring-bundle-2.5.4/groovy/groovy-1.5.5.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/asm/asm-2.2.3.jar" />
-	    <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
-	</path>
+      <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
+  </path>
 
-	<taskdef name="groovy"
-	         classname="org.codehaus.groovy.ant.Groovy"
-	         classpathref="groovy-script-jars"/>
+  <taskdef name="groovy"
+           classname="org.codehaus.groovy.ant.Groovy"
+           classpathref="groovy-script-jars"/>
 
     <target name="test-deployment">
-    	   <groovy>
-    	   	<![CDATA[
-    	   	downloadAndGrep("http://pathdbsrv1a.internal.sanger.ac.uk:9003/ci-web/Homepage", "yoelii")
-            downloadAndGrep("http://pathdbsrv1a.internal.sanger.ac.uk:9003/ci-web/NamedFeature?name=PF07_0048", "Duffy")
+         <groovy>
+           <![CDATA[
+           downloadAndGrep("https://www.genedb.org/ci-web/Homepage", "yoelii")
+            downloadAndGrep("https://www.genedb.org/ci-web/NamedFeature?name=PF07_0048", "Duffy")
 
-    	   	def downloadAndGrep(address, searchPattern)
-    	   	{
-    	   	  if (!(new URL(address).getText() =~ searchPattern)) {
-    	   	    throw new RuntimeException("Pattern '$searchPattern' not found in '$address' - probable deployment problem");
-    	   	  }
-    	   	}
-    	   	]]>
-    	   </groovy>
+           def downloadAndGrep(address, searchPattern)
+           {
+             if (!(new URL(address).getText() =~ searchPattern)) {
+               throw new RuntimeException("Pattern '$searchPattern' not found in '$address' - probable deployment problem");
+             }
+           }
+           ]]>
+         </groovy>
     </target>
 
-	<target name="restart-ci-web">
-		<exec executable="/nfs/pathdata/jira/bin/shutdown.sh" failifexecutionfails="true" failonerror="true" />
-	    <sleep seconds="5" />
-		<delete dir="/nfs/pathdata/jira/ci-deployment/logs" failonerror="false"/>
+  <target name="restart-ci-web">
+    <exec executable="/nfs/pathdata/jira/bin/shutdown.sh" failifexecutionfails="true" failonerror="true" />
+      <sleep seconds="5" />
+    <delete dir="/nfs/pathdata/jira/ci-deployment/logs" failonerror="false"/>
         <mkdir dir="/nfs/pathdata/jira/ci-deployment/logs" />
-	    <exec executable="/nfs/pathdata/jira/bin/startup.sh"  failifexecutionfails="true" failonerror="true" />
-		<sleep seconds="30" />
-	</target>
+      <exec executable="/nfs/pathdata/jira/bin/startup.sh"  failifexecutionfails="true" failonerror="true" />
+    <sleep seconds="30" />
+  </target>
 
 </project>
