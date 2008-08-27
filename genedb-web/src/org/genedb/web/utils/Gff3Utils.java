@@ -17,7 +17,10 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.web.mvc.controller;
+package org.genedb.web.utils;
+
+import org.genedb.web.mvc.controller.Strand;
+import org.genedb.web.mvc.controller.Taxon;
 
 import org.gmod.schema.mapped.Feature;
 
@@ -37,11 +40,11 @@ public class Gff3Utils {
             exportGff3(w, feature, false, internal);
         }
         for (Feature feature : top) {
-            FastaUtils.exportFeatureFasta(w, false, feature);
+            //FastaUtils.exportFeatureFasta(w, false, feature);
         }
     }
-    
-    
+
+
     public static String URLencode(String text) {
         try {
             return URLEncoder.encode(text, "UTF-8");
@@ -52,10 +55,10 @@ public class Gff3Utils {
         }
         return "";
     }
-    
+
     public void exportGff3(Writer w, Feature feat, boolean top, boolean internal) throws IOException {
         // Write line for this feature
-        
+
         // TODO dummy values above
         String seqId = null;
         String source = null;
@@ -65,38 +68,24 @@ public class Gff3Utils {
         Strand strand = null;
         int phase = -4;
         String attributes = null;
-        // TODO dummy values above 
+        // TODO dummy values above
         writeGFFLine(w, seqId, source, feat.getType().getName(), start, end, score, strand, phase, attributes);
         // Get immediate children of feature
         // Loop over children, call this but with top not true
         // If top, write FASTA sequence
     }
-    
-    public static void writeGFFLine(Writer w, String seqid, String source, String type, int start, 
-            int end, String score, Strand strand, int phase, String attributes) throws IOException {
-        w.write(seqid);
-        w.write('\t');
-        w.write(source);
-        w.write('\t');
-        w.write(type);
-        w.write('\t');
-        w.write(start);
-        w.write('\t');
-        w.write(end);
-        w.write('\t');
-        w.write(score);
-        w.write('\t');
-        w.write(""+strand);
-        w.write('\t');
-        w.write(phase);
-        w.write('\t');
-        w.write(attributes);
-        w.write('\n');
-    }
 
-    private void pln(Writer w, String line) throws IOException {
-        w.write(line);
-        w.write('\n');
+    public static void writeGFFLine(Writer w, String seqid, String source, String type, int start,
+            int end, String score, Strand strand, int phase, String attributes) throws IOException {
+        w.write(String.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+                seqid,
+                source,
+                type,
+                start,
+                end,
+                score,
+                strand,
+                phase,
+                attributes));
     }
-    
 }
