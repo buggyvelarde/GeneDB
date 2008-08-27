@@ -194,6 +194,10 @@
      </servlet-mapping>
      <servlet-mapping>
         <servlet-name>genedb</servlet-name>
+        <url-pattern>/MotifSearch</url-pattern>
+     </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/SequenceDownload</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
