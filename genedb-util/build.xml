@@ -1,6 +1,6 @@
 <project name="genedb-util" default="fulljar" basedir=".">
 
-	<dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
+    <dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
 
     <path id="anttasks-jars">
         <filelist dir="${imported.basedir.util}/../genedb-libs/lib">
@@ -8,41 +8,41 @@
         </filelist>
     </path>
 
-	<target name="clean-build-util" >
-		<delete dir="${imported.basedir.util}/ant-build" quiet="true"/>
-	</target>
+    <target name="clean-build-util" >
+        <delete dir="${imported.basedir.util}/ant-build" quiet="true"/>
+    </target>
 
-	<target name="setup-util" >
-		<mkdir dir="${imported.basedir.util}/ant-build" />
-		<mkdir dir="${imported.basedir.util}/ant-build/src" />
+    <target name="setup-util" >
+        <mkdir dir="${imported.basedir.util}/ant-build" />
+        <mkdir dir="${imported.basedir.util}/ant-build/src" />
         <mkdir dir="${imported.basedir.util}/ant-build/anttasks" />
-		<mkdir dir="${imported.basedir.util}/ant-build/classes" />
+        <mkdir dir="${imported.basedir.util}/ant-build/classes" />
         <mkdir dir="${imported.basedir.util}/ant-build/anttasks-classes" />
-		<mkdir dir="${imported.basedir.util}/ant-build/jars" />
-	</target>
+        <mkdir dir="${imported.basedir.util}/ant-build/jars" />
+    </target>
 
-	<target name="fulljar" depends="clean-build-util,setup-util" description="Create full JAR file">
+    <target name="fulljar" depends="clean-build-util,setup-util" description="Create full JAR file">
 
-		<copy todir="${imported.basedir.util}/ant-build/src">
-			<fileset dir="${imported.basedir.util}/src">
-			    <include name="org/genedb/util/*.java"/>
-			</fileset>
-		</copy>
+        <copy todir="${imported.basedir.util}/ant-build/src">
+            <fileset dir="${imported.basedir.util}/src">
+                <include name="org/genedb/util/*.java"/>
+            </fileset>
+        </copy>
 
-		<javac srcdir="${imported.basedir.util}/ant-build/src" destdir="${imported.basedir.util}/ant-build/classes" debug="on">
-		    <classpath>
-		        <pathelement location="${imported.basedir.util}/../genedb-libs/lib/biojava-1.6.jar"/>
-		    </classpath>
-		</javac>
+        <javac srcdir="${imported.basedir.util}/ant-build/src" destdir="${imported.basedir.util}/ant-build/classes" debug="on">
+            <classpath>
+                <pathelement location="${imported.basedir.util}/../genedb-libs/lib/biojava-1.6.jar"/>
+            </classpath>
+        </javac>
 
-		<jar jarfile="${imported.basedir.util}/ant-build/jars/genedb-util.jar">
-			<fileset dir="${imported.basedir.util}/ant-build/classes" />
-			<manifest>
-				<attribute name="Implementation-Title" value="GeneDB Util"/>
-				<attribute name="Implementation-Version" value="0.1"/>
-			</manifest>
-		</jar>
-	</target>
+        <jar jarfile="${imported.basedir.util}/ant-build/jars/genedb-util.jar">
+            <fileset dir="${imported.basedir.util}/ant-build/classes" />
+            <manifest>
+                <attribute name="Implementation-Title" value="GeneDB Util"/>
+                <attribute name="Implementation-Version" value="0.1"/>
+            </manifest>
+        </jar>
+    </target>
 
     <target name="anttasks" depends="clean-build-util,setup-util" description="Create anttasks.jar">
         <copy todir="${imported.basedir.util}/ant-build/anttasks">
