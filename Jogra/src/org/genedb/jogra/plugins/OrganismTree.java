@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2007 Genome Research Limited.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by the Free
  * Software Foundation; either version 2 of the License or (at your option) any
  * later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this program; see the file COPYING.LIB. If not, write to the Free
  * Software Foundation Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307
@@ -91,24 +91,24 @@ public class OrganismTree implements JograPlugin {
         final JScrollPane scrollPane = new JScrollPane(tree);
         //ret.getContentPane().add(scrollPane);
         ret.add(scrollPane, BorderLayout.CENTER);
-        
+
         Box buttons = Box.createHorizontalBox();
         buttons.add(Box.createHorizontalGlue());
         JCheckBox box1 = new JCheckBox("Loaded", true);
         buttons.add(box1);
         buttons.add(Box.createHorizontalStrut(10));
-        JCheckBox box2 = new JCheckBox("Heirachy", false);
+        JCheckBox box2 = new JCheckBox("Hierarchy", false);
         buttons.add(box2);
         buttons.add(Box.createHorizontalGlue());
-        
+
         ret.add(buttons, BorderLayout.SOUTH);
-        
+
         new SwingWorker<Void, Pair<MutableTreeNode, MutableTreeNode>>() {
             @Override
             protected Void doInBackground() throws Exception {
                 final ExtendedOrganism rootOrg = organismManager.getByName("Home");
                 // TODO Set user object of root node to root of extended org.
-                // heirachy
+                // hierarchy
                 traverseNodes(rootOrg, root);
 
                 return null;
@@ -149,7 +149,7 @@ public class OrganismTree implements JograPlugin {
 
                     @Override
                     protected JFrame doInBackground() throws Exception {
-                        return getMainPanel("Organism Heirachy");
+                        return getMainPanel("Organism Hierarchy");
                     }
 
                     @Override
@@ -205,7 +205,7 @@ public class OrganismTree implements JograPlugin {
 
 	public void process(List<String> newArgs) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

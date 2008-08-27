@@ -11,12 +11,12 @@ package org.genedb.jogra.plugins;
  * @author  admin
  */
 public class OrganismPanel extends javax.swing.JPanel {
-    
+
     /** Creates new form OrganismPanel */
     public OrganismPanel() {
         initComponents();
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -153,7 +153,7 @@ public class OrganismPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jXPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Heirachy"));
+        jXPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Hierarchy"));
 
         jScrollPane1.setViewportView(jXTree1);
 
@@ -374,8 +374,8 @@ public class OrganismPanel extends javax.swing.JPanel {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -418,5 +418,5 @@ public class OrganismPanel extends javax.swing.JPanel {
     private org.jdesktop.swingx.JXTree jXTree1;
     private java.lang.String string1;
     // End of variables declaration//GEN-END:variables
-    
+
 }
