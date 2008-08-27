@@ -104,15 +104,4 @@ public class SingleLocation implements StrandedLocation {
         SingleLocation ret = new SingleLocation(this, true);
         return ret;
     }
-//
-//    public static SingleLocation make(org.biojava.bio.symbol.Location loc) {
-//        SingleLocation ret;
-//        if (!loc.isContiguous()) {
-//            ret = new CompoundLocation(loc);
-//        } else {
-//            ret = new SingleLocation(loc);
-//        }
-//        return ret;
-//    }
-
 }
