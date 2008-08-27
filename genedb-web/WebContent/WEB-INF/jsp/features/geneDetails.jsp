@@ -87,7 +87,6 @@
     </format:genePageSection>
 
     <format:genePageSection id="analysisTools" className="whiteBox">
-        <div class="heading">Analysis tools</div>
         <form name="downloadRegion" action="FeatureDownload" method="get">
             <div>Download Region as</div><br>
             <select name="downloadType">
