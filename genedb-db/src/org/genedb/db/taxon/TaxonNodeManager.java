@@ -124,7 +124,7 @@ public class TaxonNodeManager implements InitializingBean{
     }
 
 
-    public List<TaxonNode> getHierachy(TaxonNode start) {
+    public List<TaxonNode> getHierarchy(TaxonNode start) {
         TaxonNode node = start;
         List<TaxonNode> ret = new LinkedList<TaxonNode>();
         ret.add(node);
