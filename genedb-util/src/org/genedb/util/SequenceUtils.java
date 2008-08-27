@@ -34,4 +34,20 @@ public class SequenceUtils {
         return result;
     }
 
+    /**
+     * Translate a DNA sequence to a polypeptide sequence.
+     *
+     * @see http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+     *
+     * @param translationTableId the genetic code ID, as defined by NCBI
+     * @param dnaSequence the DNA sequence
+     * @param phase the phase (0-2)
+     * @param stopCodonTranslatedAsSelenocysteine whether a stop codon should be
+     *          treated as read-through and translated to Selenocysteine
+     * @return the translated sequence
+     * @throws TranslationException
+     */
+    public static String translate(int translationTableId, String dnaSequence, int phase, boolean stopCodonTranslatedAsSelenocysteine) throws TranslationException {
+        return Translator.getTranslator(translationTableId).translate(dnaSequence, phase, stopCodonTranslatedAsSelenocysteine);
+    }
 }
