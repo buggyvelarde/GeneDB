@@ -37,6 +37,7 @@
         <path location="${genedb-db.libdir}/dbunit-2.2.2.jar" />
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/junit/junit-4.4.jar" />
         <path location="${genedb-db.libdir}/spring-bundle-2.5.4/hsqldb/hsqldb.jar" />
+        <path location="${imported.basedir.db}/../genedb-util/ant-build/jars/genedb-util.jar"/>
     </path>
 
     <path id="tools-instrument-lib">
@@ -79,7 +80,7 @@
     </target>
 
 	<!-- An internal init target -->
-    <target name="setup-db" depends="clean-build-db">
+    <target name="setup-db" depends="clean-build-db,genedb-util.fulljar">
         <mkdir dir="${imported.basedir.db}/ant-build" />
         <mkdir dir="${imported.basedir.db}/ant-build/src" />
         <mkdir dir="${imported.basedir.db}/ant-build/test" />

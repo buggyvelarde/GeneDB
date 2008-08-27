@@ -2,6 +2,7 @@ package org.gmod.schema.mapped;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.helpers.LocationBridge;
+import org.genedb.util.SequenceUtils;
 
 import org.gmod.schema.utils.CollectionUtils;
 import org.gmod.schema.utils.StrandedLocation;
@@ -12,7 +13,6 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -141,8 +141,7 @@ public abstract class Feature implements java.io.Serializable {
 
     @Column(name = "residues", unique = false, nullable = true, insertable = true, updatable = true)
     @Basic(fetch = FetchType.LAZY)
-    @Type(type = "org.genedb.db.helpers.TextByteType")
-    private byte[] residues;
+    private String residues;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureBySrcFeatureId")
     private Collection<FeatureLoc> featureLocsForSrcFeatureId;
@@ -289,7 +288,7 @@ public abstract class Feature implements java.io.Serializable {
         this.uniqueName = uniqueName;
     }
 
-    public byte[] getResidues() {
+    public String getResidues() {
         return this.residues;
     }
 
@@ -300,21 +299,33 @@ public abstract class Feature implements java.io.Serializable {
      * @param max the upper bound, in interbase coordinates
      * @return
      */
-    public byte[] getResidues(int min, int max) {
-        int length = max - min;
-        byte[] results = new byte[length+1];
-        System.arraycopy(getResidues(), min,results,0,length);
-        return results;
+    public String getResidues(int min, int max) {
+        return getResidues(min, max, false);
     }
 
-    public void setResidues(byte[] residues) {
+    /**
+     * Fetch a substring of the sequence, possibly reverse-complemented
+     * @param min the lower bound, in interbase coordinates
+     * @param max the upper bound, in interbase coordinates
+     * @param reverseComplement whether to take the reverse complement
+     * @return the subsequence
+     */
+    public String getResidues(int min, int max, boolean reverseComplement) {
+        String sequence = getResidues().substring(min, max);
+        if (reverseComplement) {
+            return SequenceUtils.reverseComplement(sequence);
+        }
+        return sequence;
+    }
+
+    public void setResidues(String residues) {
         this.residues = residues;
         if (residues == null) {
             seqLen = 0;
             md5Checksum = "";
             return;
         }
-        seqLen = residues.length;
+        seqLen = residues.length();
         this.md5Checksum = calcMD5(this.residues);
     }
 
@@ -325,7 +336,7 @@ public abstract class Feature implements java.io.Serializable {
      */
     public int getSeqLen() {
         if (this.seqLen.intValue() == -1 && residues != null) {
-            return getResidues().length;
+            return getResidues().length();
         }
         return this.seqLen.intValue();
     }
@@ -549,15 +560,14 @@ public abstract class Feature implements java.io.Serializable {
         return this.phylonodes;
     }
 
-    private String calcMD5(byte[] residue) {
+    private String calcMD5(String residue) {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
-            byte[] md5Bytes = md5.digest(residue);
-
             StringBuilder hexValue = new StringBuilder();
-            for (int i = 0; i < md5Bytes.length; i++) {
-                hexValue.append(String.format("%02x", md5Bytes[i]));
+            for (byte b: md5.digest(residue.getBytes())) {
+                hexValue.append(String.format("%02x", b));
             }
+
             return hexValue.toString();
         } catch (NoSuchAlgorithmException exp) {
             // Shouldn't happen - MD5 is a supported algorithm

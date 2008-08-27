@@ -63,5 +63,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hsqldb/hsqldb.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/genedb-util"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -58,10 +58,8 @@ public abstract class AbstractGene extends Region {
      */
     @Transient
     @Override
-    public byte[] getResidues() {
-        byte[] sequence = null;
+    public String getResidues() {
         Feature parent = this.getRankZeroFeatureLoc().getSourceFeature();
-        sequence = parent.getResidues(this.getStart(), this.getStop());
-        return sequence;
+        return parent.getResidues(this.getStart(), this.getStop());
     }
 }

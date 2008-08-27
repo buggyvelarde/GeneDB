@@ -36,11 +36,11 @@ public class EmblUtils {
 
     private static void exportSequence(Writer w, Feature feat, int min, int max) throws IOException {
         // TODO - ignores strand
-        byte[] seq = feat.getResidues(min, max);
+        String seq = feat.getResidues(min, max);
         exportSequence(w, seq);
     }
 
-    private static void exportSequence(Writer w, byte[] seq) throws IOException {
+    private static void exportSequence(Writer w, String seq) throws IOException {
         // XX
         // SQ   Sequence 29663 BP; 9792 A; 5106 C; 5232 G; 9533 T; 0 other;
         //     gatcacgtac atcaccttgt aagaatttat ctgcaatagt ccttcggtat tgtacattgt        60
@@ -49,16 +49,16 @@ public class EmblUtils {
         //     ttctttatcg ttttcatgat ccc                                             29663
         // //
         pln(w, "XX");
-        
-        
+
+
         w.write("SQ   Sequence ");
-        w.write(seq.length);
+        w.write(seq.length());
         w.write(" BP;");
         // TODO stats
         w.write('\n');
-        
-        for (int i = 0; i < seq.length; i++) {
-            char c = (char) seq[i];
+
+        for (int i = 0; i < seq.length(); i++) {
+            char c = seq.charAt(i);
             if (i % 60 == 0) {
                 String count = Integer.toString(i);
                 w.write(StringUtils.leftPad(" ", 10, count));
@@ -70,11 +70,11 @@ public class EmblUtils {
             }
             w.write(c);
         }
-        if (seq.length % 60 != 0) {
+        if (seq.length() % 60 != 0) {
             // TODO cope with remainder on last line
-            int used = seq.length % 60;
+            int used = seq.length() % 60;
             int toPad = 75; // 10 *6 + 1 *5 + 10
-            String count = Integer.toString(seq.length);
+            String count = Integer.toString(seq.length());
             w.write(StringUtils.leftPad(" ", toPad, count));
             w.write('\n');
         }
@@ -85,7 +85,7 @@ public class EmblUtils {
         w.write(line);
         w.write('\n');
     }
-    
+
     private static void exportTab() {
         // TODO Auto-generated method stub
     }
@@ -93,5 +93,5 @@ public class EmblUtils {
     private static void exportHeader() {
         // TODO Auto-generated method stub
     }
-    
+
 }

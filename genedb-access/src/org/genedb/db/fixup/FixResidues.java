@@ -1,5 +1,7 @@
 package org.genedb.db.fixup;
 
+import org.genedb.util.SequenceUtils;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -385,34 +387,6 @@ public class FixResidues {
         }
     }
 
-    private static final char[] COMPLEMENT_FROM = "acgtmrwsykvhdbnx".toCharArray();
-    private static final char[] COMPLEMENT_TO   = "tgcakywsrmbdhvnx".toCharArray();
-
-    private static String reverseComplement(String sequence) {
-        StringBuilder sb = transliterate(sequence, COMPLEMENT_FROM, COMPLEMENT_TO);
-        sb.reverse();
-        return sb.toString();
-    }
-
-    private static StringBuilder transliterate(String string, char[] from, char[] to) {
-        if (from.length != to.length)
-            throw new IllegalArgumentException("Source and destination alphabets have different lengths");
-        StringBuilder result = new StringBuilder();
-        for (char c: string.toCharArray()) {
-            boolean foundChar = false;
-            for (int i=0; i < from.length; i++) {
-                if (c == from[i]) {
-                    result.append(to[i]);
-                    foundChar = true;
-                    break;
-                }
-            }
-            if (!foundChar)
-                throw new IllegalArgumentException(String.format("String contains character '%c' not in alphabet", c));
-        }
-        return result;
-    }
-
     private void fixTranscript(String topLevelSequence, int strand, Transcript transcript) throws SQLException {
         StringBuilder cdsBuilder = new StringBuilder();
         for (Exon exon: transcript.exons) {
@@ -423,7 +397,7 @@ public class FixResidues {
         if (strand == 1)
             cds = cdsBuilder.toString();
         else if (strand == -1)
-            cds = reverseComplement(cdsBuilder.toString());
+            cds = SequenceUtils.reverseComplement(cdsBuilder.toString());
         else
             throw new IllegalStateException(String.format("Strand is neither +1 nor -1 (%d)", strand));
 

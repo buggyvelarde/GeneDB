@@ -29,21 +29,18 @@ public class FastaUtils {
     public static void exportFeatureFasta(Writer w, boolean spaces, Feature feat) throws IOException {
         exportFasta(w, feat.getType().getName()+":"+feat.getUniqueName(), feat.getResidues(), spaces);
     }
-    
-    public static void exportFastaRegion(Writer w, String header, boolean spaces, 
+
+    public static void exportFastaRegion(Writer w, String header, boolean spaces,
             Feature feat, Strand strand, int min, int max) throws IOException {
-        // TODO - ignores strand
-        //w.write('>' + header + '\n');
-        byte[] seq = feat.getResidues(min, max);
+        String seq = feat.getResidues(min, max, (strand == Strand.REVERSE));
         exportFasta(w, header, seq, spaces);
     }
 
 
-    public static void exportFasta(Writer w, String header, byte[] seq, boolean spaces) throws IOException {
+    public static void exportFasta(Writer w, String header, String seq, boolean spaces) throws IOException {
         w.write('>' + header + '\n');
         int count = 0;
-        for (byte b : seq) {
-            char c = (char) b;
+        for (char c : seq.toCharArray()) {
             if (count % 60 == 0) {
                 w.write('\n');
             } else {
@@ -56,5 +53,5 @@ public class FastaUtils {
             count++;
         }
     }
-    
+
 }
