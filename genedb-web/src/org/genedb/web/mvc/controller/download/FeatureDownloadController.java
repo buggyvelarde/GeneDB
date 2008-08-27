@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.web.mvc.controller.TaxonNodeBindingFormController;
+import org.genedb.web.utils.DownloadUtils;
 
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;

@@ -56,6 +56,7 @@ import org.genedb.web.mvc.controller.HistoryManagerFactory;
 import org.genedb.web.mvc.controller.PostOrGetFormController;
 import org.genedb.web.mvc.controller.ResultHit;
 import org.genedb.web.mvc.controller.TaxonNodeBindingFormController;
+import org.genedb.web.utils.DownloadUtils;
 
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.mapped.Feature;
@@ -205,7 +206,7 @@ public class DownloadFeaturesController extends PostOrGetFormController {
             if(sequence != null) {
                 entry = DownloadUtils.writeFasta(row.toString(), sequence);
             } else {
-                entry = String.format("%s \n Alternatey Spliced or sequence not attached ", row.toString());
+                entry = String.format("%s \n Alternately spliced or sequence not attached ", row.toString());
             }
 
             whole.append(entry);
