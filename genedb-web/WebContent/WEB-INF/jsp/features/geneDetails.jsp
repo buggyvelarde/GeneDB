@@ -91,7 +91,7 @@
              <a href="">Add gene to basket</a>
          </div>
         <div style="clear: both; margin-top: 1ex;">
-             <a href="/new/NamedFeature?name=PF14_0641&seqs=true">View/analyze/download sequence</a>
+             <a href="/new/NamedFeature?name=${transcript.uniquename}&seqs=true">View/analyze/download sequence</a>
          </div>
         <%-- <form name="downloadRegion" action="FeatureDownload" method="get">
             <div>Download Region as</div><br>
