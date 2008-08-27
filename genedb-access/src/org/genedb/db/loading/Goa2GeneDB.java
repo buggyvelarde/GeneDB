@@ -233,9 +233,9 @@ public class Goa2GeneDB implements Goa2GeneDBI{
             PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
             Cv CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property");
             Cv CV_GENEDB = cvDao.getCvByName("genedb_misc");
-            GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
-            GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
-            GO_KEY_DATE = cvDao.getCvTermByNameInCv("date", CV_FEATURE_PROPERTY).get(0);
+            GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
+            GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
+            GO_KEY_DATE = cvDao.getCvTermByNamePatternInCv("date", CV_FEATURE_PROPERTY).get(0);
         }
 
 

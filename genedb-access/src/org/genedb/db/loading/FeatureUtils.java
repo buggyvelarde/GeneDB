@@ -160,11 +160,11 @@ public class FeatureUtils implements InitializingBean {
     public void afterPropertiesSet() {
         so = cvDao.getCvByName("sequence");
         CV_GENEDB = cvDao.getCvByName("genedb_misc");
-        GENEDB_TOP_LEVEL = cvDao.getCvTermByNameInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
+        GENEDB_TOP_LEVEL = cvDao.getCvTermByNamePatternInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
         DUMMY_PUB = pubDao.getPubByUniqueName("null");
-        GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
-        GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
-        GENEDB_AUTOCOMMENT = cvDao.getCvTermByNameInCv("autocomment", CV_GENEDB).get(0);
+        GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
+        GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
+        GENEDB_AUTOCOMMENT = cvDao.getCvTermByNamePatternInCv("autocomment", CV_GENEDB).get(0);
     }
 
     public void markTopLevelFeature(org.gmod.schema.mapped.Feature topLevel) {

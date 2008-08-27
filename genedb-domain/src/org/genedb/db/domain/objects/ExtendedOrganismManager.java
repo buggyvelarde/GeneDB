@@ -49,9 +49,9 @@ public class ExtendedOrganismManager {
 
     public void afterPropertiesSet() {
         Cv cv = cvDao.getCvByName("wibble"); // FIXME
-        rootType = cvDao.getCvTermByNameInCv("root", cv).get(0);
-        interiorType = cvDao.getCvTermByNameInCv("interior", cv).get(0);
-        leafType = cvDao.getCvTermByNameInCv("leaf", cv).get(0);
+        rootType = cvDao.getCvTermByNamePatternInCv("root", cv).get(0);
+        interiorType = cvDao.getCvTermByNamePatternInCv("interior", cv).get(0);
+        leafType = cvDao.getCvTermByNamePatternInCv("leaf", cv).get(0);
 
         Phylotree tree = phylogenyDao.getPhyloTreeByName("wibble"); // FIXME
         Phylonode rootNode = phylogenyDao.getPhyloNodesByCvTermInTree(rootType, tree).get(0);

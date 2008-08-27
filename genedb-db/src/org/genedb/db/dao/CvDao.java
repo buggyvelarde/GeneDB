@@ -51,14 +51,14 @@ public class CvDao extends BaseDao {
         return (CvTerm) getHibernateTemplate().load(CvTerm.class, id);
     }
 
-    public List<CvTerm> getCvTermByNameInCv(String cvTermName, Cv cv) {
+    public List<CvTerm> getCvTermByNamePatternInCv(String cvTermNamePattern, Cv cv) {
         @SuppressWarnings("unchecked")
         List<CvTerm> cvTermList = getHibernateTemplate().findByNamedParam(
             "from CvTerm cvTerm where cvTerm.name like :cvTermName and cvTerm.cv = :cv",
-            new String[] { "cvTermName", "cv" }, new Object[] { cvTermName, cv });
+            new String[] { "cvTermName", "cv" }, new Object[] { cvTermNamePattern, cv });
 
         if (cvTermList == null || cvTermList.size() == 0) {
-            logger.warn("No cvterms found for '" + cvTermName + "' in '" + cv.getName() + "'");
+            logger.warn("No cvterms found for '" + cvTermNamePattern + "' in '" + cv.getName() + "'");
             return null;
         }
         return cvTermList;
@@ -99,7 +99,7 @@ public class CvDao extends BaseDao {
     }
 
     public boolean existsNameInOntology(String name, Cv ontology) {
-        List<CvTerm> tmp = this.getCvTermByNameInCv(name, ontology);
+        List<CvTerm> tmp = this.getCvTermByNamePatternInCv(name, ontology);
         if (tmp == null || tmp.size() == 0) {
             return false;
         }
@@ -206,7 +206,7 @@ public class CvDao extends BaseDao {
             return null;
         }
 
-        List<CvTerm> cvTerms = this.getCvTermByNameInCv(cvTermName, cv);
+        List<CvTerm> cvTerms = this.getCvTermByNamePatternInCv(cvTermName, cv);
         if (cvTerms == null || cvTerms.size() == 0) {
             Db db = generalDao.getDbByName("null");
             DbXRef dbXRef = new DbXRef(db, cvTermName);

@@ -179,7 +179,7 @@ public class LoadControlledCurationCVs implements ApplicationContextAware {
         String child = null;
         CvTerm childId = null;
         Cv CV_RELATION = cvDao.getCvByName("relationship");
-        CvTerm REL_IS_A = cvDao.getCvTermByNameInCv("is_a", CV_RELATION).get(0);
+        CvTerm REL_IS_A = cvDao.getCvTermByNamePatternInCv("is_a", CV_RELATION).get(0);
         String str;
         while ((str = in.readLine()) != null) {
             String sections[] = str.split("\t");
