@@ -1,6 +1,6 @@
 package org.gmod.schema.mapped;
 
-import org.genedb.db.dao.TempCvDao;
+import org.genedb.db.dao.CvDao;
 import org.genedb.db.helpers.LocationBridge;
 
 import org.gmod.schema.utils.CollectionUtils;
@@ -80,7 +80,7 @@ import javax.persistence.Transient;
 public abstract class Feature implements java.io.Serializable {
 
     @Autowired
-    private transient TempCvDao cvDao;
+    private transient CvDao cvDao;
 
     @GenericGenerator(name = "generator", strategy = "seqhilo", parameters = {
             @Parameter(name = "max_lo", value = "100"),
@@ -223,7 +223,7 @@ public abstract class Feature implements java.io.Serializable {
     }
 
 
-	// Property accessors
+    // Property accessors
 
     public int getFeatureId() {
         return this.featureId;
@@ -520,13 +520,13 @@ public abstract class Feature implements java.io.Serializable {
      */
     @Transient
     public String getSystematicId() {
-        for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
+        for (FeatureSynonym featureSynonym : getFeatureSynonyms()) {
             Synonym synonym = featureSynonym.getSynonym();
             if (("systematic_id".equals(synonym.getCvTerm().getName())
             || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
             && featureSynonym.isCurrent()) {
                 return synonym.getSynonymSgml();
-        }
+            }
         }
         return getUniqueName();
     }
@@ -556,11 +556,7 @@ public abstract class Feature implements java.io.Serializable {
 
             StringBuilder hexValue = new StringBuilder();
             for (int i = 0; i < md5Bytes.length; i++) {
-                int val = md5Bytes[i] & 0xff;
-                if (val < 16) {
-                    hexValue.append("0");
-                }
-                hexValue.append(Integer.toHexString(val));
+                hexValue.append(String.format("%02x", md5Bytes[i]));
             }
             return hexValue.toString();
         } catch (NoSuchAlgorithmException exp) {
@@ -690,73 +686,77 @@ public abstract class Feature implements java.io.Serializable {
         return false;
     }
 
+    /**
+     * Add a FeatureRelationship of which this Feature is the object.
+     *
+     * @param subject the subject of the relationship
+     * @param cvName the CV to which the relationship type belongs
+     * @param termName the CV term denoting the relationship type
+     */
+    protected void addFeatureRelationship(Feature subject, String cvName,
+            String termName) {
+        CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
+        if (type == null) {
+            throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
+        }
+        FeatureRelationship relationship =  new FeatureRelationship(subject, this, type, 0);
+        if (this.featureRelationshipsForObjectId == null) {
+            this.featureRelationshipsForObjectId = new ArrayList<FeatureRelationship>();
+        }
+        this.featureRelationshipsForObjectId.add(relationship);
 
-//	protected void addFeatureRelationship(Feature subject, String cvName,
-//			String termName) {
-//    CvTerm type = cvService.findCvTermByCvAndName(cvName, termName);
-//		if (type == null) {
-//			throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
-//		}
-//		FeatureRelationship relationship =  new FeatureRelationship(this, subject, type, 0);
-//		if (this.featureRelationshipsForObjectId == null) {
-//			featureRelationshipsForObjectId = new ArrayList<FeatureRelationship>();
-//		}
-//		this.featureRelationshipsForObjectId.add(relationship);
-//
-//		if (subject.featureRelationshipsForSubjectId == null) {
-//			subject.featureRelationshipsForSubjectId = new ArrayList<FeatureRelationship>();
-//		}
-//		subject.featureRelationshipsForSubjectId.add(relationship);
-//	}
+        if (subject.featureRelationshipsForSubjectId == null) {
+            subject.featureRelationshipsForSubjectId = new ArrayList<FeatureRelationship>();
+        }
+        subject.featureRelationshipsForSubjectId.add(relationship);
+    }
 
+    public FeatureLoc addLocatedChild(Feature child, StrandedLocation location) {
+        FeatureLoc loc = new FeatureLoc(this, child, location);
 
+        if (this.featureLocsForSrcFeatureId == null) {
+            this.featureLocsForSrcFeatureId = new ArrayList<FeatureLoc>();
+        }
+        this.featureLocsForSrcFeatureId.add(loc);
 
-	protected void addFeatureRelationship(Feature subject, String cvName,
-			String termName) {
-		CvTerm type = cvDao.findCvTermByCvAndName(cvName, termName);
-		if (type == null) {
-			throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
-		}
-		FeatureRelationship relationship =  new FeatureRelationship(subject, this, type, 0);
-		if (this.featureRelationshipsForSubjectId == null) {
-			featureRelationshipsForSubjectId = new ArrayList<FeatureRelationship>();
-		}
-		this.featureRelationshipsForSubjectId.add(relationship);
+        if (child.featureLocsForFeatureId == null) {
+            child.featureLocsForFeatureId = new ArrayList<FeatureLoc>();
+        }
+        child.featureLocsForFeatureId.add(loc);
 
-		if (subject.featureRelationshipsForObjectId == null) {
-			subject.featureRelationshipsForObjectId = new ArrayList<FeatureRelationship>();
-		}
-		subject.featureRelationshipsForObjectId.add(relationship);
-	}
+        return loc;
+    }
 
-	public void addLocatedChild(Feature child, StrandedLocation location) {
-		FeatureLoc loc = new FeatureLoc(this, child, location);
+    public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, short strand, int phase) {
+        FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, strand, phase);
 
-		if (this.featureLocsForSrcFeatureId == null) {
-			this.featureLocsForSrcFeatureId = new ArrayList<FeatureLoc>();
-		}
-		this.featureLocsForSrcFeatureId.add(loc);
+        if (this.featureLocsForSrcFeatureId == null) {
+            this.featureLocsForSrcFeatureId = new ArrayList<FeatureLoc>();
+        }
+        this.featureLocsForSrcFeatureId.add(loc);
 
-		if (child.featureLocsForFeatureId == null) {
-			child.featureLocsForFeatureId = new ArrayList<FeatureLoc>();
-		}
-		child.featureLocsForFeatureId.add(loc);
-	}
+        if (child.featureLocsForFeatureId == null) {
+            child.featureLocsForFeatureId = new ArrayList<FeatureLoc>();
+        }
+        child.featureLocsForFeatureId.add(loc);
 
-	protected void addFeatureProp(String value, String cvName, String termName) {
-		CvTerm type = cvDao.findCvTermByCvAndName(cvName, termName);
-		if (type == null) {
-			throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
-		}
-		int rank = 0; // FIXME - Should check what ranks are already used
-		FeatureProp fp = new FeatureProp(this, type, value, rank);
-		if (featureProps == null) {
-			featureProps = new ArrayList<FeatureProp>();
-		}
-		this.featureProps.add(fp);
-	}
+        return loc;
+    }
 
-	    @Transient
+    protected void addFeatureProp(String value, String cvName, String termName) {
+        CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
+        if (type == null) {
+            throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
+        }
+        int rank = 0; // FIXME - Should check what ranks are already used
+        FeatureProp fp = new FeatureProp(this, type, value, rank);
+        if (featureProps == null) {
+            featureProps = new ArrayList<FeatureProp>();
+        }
+        this.featureProps.add(fp);
+    }
+
+    @Transient
     public Feature getSourceFeature() {
         FeatureLoc featureLoc = this.getRankZeroFeatureLoc();
         if (featureLoc == null) {
