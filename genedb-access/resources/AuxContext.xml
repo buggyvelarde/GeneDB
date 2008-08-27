@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
     <context:component-scan base-package="org.gmod.schema"/>
     <context:spring-configured/>
-      <tx:annotation-driven mode="aspectj" />
+    <tx:annotation-driven mode="aspectj" />
 
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="messages"/>
@@ -45,44 +43,43 @@
     	<property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
-
     <bean id="beanFactoryPostProcessor" class="org.genedb.db.loading.PropertyOverrideConfigurerByCoding">
 		<property name="key" value="dataSourceMunging"/>
     </bean>
 
-    <bean id="iploader" class="org.genedb.db.loading.aux.InterProLoader">
+    <bean id="iploader" class="org.genedb.db.loading.auxiliary.InterProLoader">
         <property name="dbxrefManager" ref="dbxrefManager" />
     	<property name="featureUtils" ref="featureUtils" />
     	<property name="sequenceDao" ref="sequenceDao" />
     	<property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="tmhmmloader" class="org.genedb.db.loading.aux.TMHMMLoader">
+    <bean id="tmhmmloader" class="org.genedb.db.loading.auxiliary.TMHMMLoader">
         <property name="featureUtils" ref="featureUtils" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="signalploader" class="org.genedb.db.loading.aux.SignalPLoader">
+    <bean id="signalploader" class="org.genedb.db.loading.auxiliary.SignalPLoader">
         <property name="featureUtils" ref="featureUtils" />
         <property name="cvDao" ref="cvDao" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="dgpiloader" class="org.genedb.db.loading.aux.DGPILoader">
+    <bean id="dgpiloader" class="org.genedb.db.loading.auxiliary.DGPILoader">
         <property name="featureUtils" ref="featureUtils" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="plasmoaploader" class="org.genedb.db.loading.aux.PlasmoAPLoader">
+    <bean id="plasmoaploader" class="org.genedb.db.loading.auxiliary.PlasmoAPLoader">
         <property name="featureUtils" ref="featureUtils" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="opi-referencesloader" class="org.genedb.db.loading.aux.OPIReferenceLoader">
+    <bean id="opi-referencesloader" class="org.genedb.db.loading.auxiliary.OPIReferenceLoader">
         <property name="dbXRefManager" ref="dbxrefManager" />
         <property name="featureUtils" ref="featureUtils" />
         <property name="sequenceDao" ref="sequenceDao" />
@@ -97,7 +94,7 @@
 		<property name="generalDao" ref="generalDao" />
     </bean>
 
-    <bean id="dbxrefManager" class="org.genedb.db.loading.aux.DbXRefManager">
+    <bean id="dbxrefManager" class="org.genedb.db.loading.auxiliary.DbXRefManager">
         <property name="featureUtils" ref="featureUtils" />
     </bean>
 
@@ -121,11 +118,6 @@
 	</props>
 	</property>
 	</bean>
-
-    <!--  This is needed by the Feature class -->
-    <bean id="tempCvDao" class="org.genedb.db.dao.TempCvDao">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
 
     <!-- Hibernate SessionFactory -->
     <bean id="sessionFactory"
