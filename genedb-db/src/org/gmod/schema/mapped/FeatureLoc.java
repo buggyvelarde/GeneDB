@@ -78,6 +78,7 @@ public class FeatureLoc implements Serializable {
         // Deliberately empty default constructor
     }
 
+
     /** large constructor */
     public FeatureLoc(Feature sourceFeature, Feature feature, Integer fmin,
             boolean fminPartial, Integer fmax, boolean fmaxPartial, Short strand, Integer phase,
@@ -93,6 +94,25 @@ public class FeatureLoc implements Serializable {
         this.locGroup = locGroup;
         this.rank = rank;
     }
+
+    public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, short strand, int phase) {
+        this(sourceFeature, feature, fmin, false, fmax, false, strand, phase, 0, 0);
+    }
+
+    FeatureLoc(Feature parent, Feature child, StrandedLocation location) {
+        StrandedLocation loc = location.getInterbaseVersion();
+        this.featureBySrcFeatureId = parent;
+        this.featureByFeatureId = child;
+        this.fmin = loc.getMin();
+        this.fminPartial = loc.isMinPartial();
+        this.fmax = loc.getMax();
+        this.fmaxPartial = loc.isMaxPartial();
+        this.strand = loc.getStrand().getValue();
+        this.phase = 0;
+        this.locGroup = 0;
+        this.rank = 0;
+    }
+
 
     // Property accessors
 
@@ -215,21 +235,5 @@ public class FeatureLoc implements Serializable {
     public void addPub(Pub pub) {
         this.featureLocPubs.add(new FeatureLocPub(this, pub));
     }
-
-
-    FeatureLoc(Feature parent, Feature child, StrandedLocation location) {
-        StrandedLocation loc = location.getInterbaseVersion();
-        this.featureBySrcFeatureId = parent;
-        this.featureByFeatureId = child;
-        this.fmin = loc.getMin();
-        this.fminPartial = loc.isMinPartial();
-        this.fmax = loc.getMax();
-        this.fmaxPartial = loc.isMaxPartial();
-        this.strand = loc.getStrand().getValue();
-        this.phase = 0;
-        this.locGroup = 0;
-        this.rank = 0;
-    }
-
 
 }
