@@ -14,13 +14,18 @@
 </format:headerRound>
 
     <format:genePageSection id="sequence1">
-        <div class="heading">Sequence 1</div>
-        <div class="comment">ACCTGTGACTGTACGTGA</div>
+        <div class="heading">Unspliced</div>
+        <div class="comment">ACCTGTGACTGTACGTGATHISISJUNK</div>
     </format:genePageSection>
 
     <format:genePageSection id="sequence1">
-        <div class="heading">Sequence 2</div>
-        <div class="comment">ACCTGTGACTGTACGTGA</div>
+        <div class="heading">Spliced</div>
+        <div class="comment">${transcript.residues}</div>
+    </format:genePageSection>
+
+    <format:genePageSection id="sequence1">
+        <div class="heading">Protein</div>
+        <div class="comment">${polypeptide.residues}</div>
     </format:genePageSection>
 
 <format:footer />
