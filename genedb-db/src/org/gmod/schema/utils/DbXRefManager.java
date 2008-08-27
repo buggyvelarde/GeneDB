@@ -1,12 +1,14 @@
-package org.genedb.db.loading.auxiliary;
+package org.gmod.schema.utils;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.genedb.db.loading.FeatureUtils;
 
+import org.genedb.db.dao.GeneralDao;
+
+import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.DbXRef;
 
 import org.hibernate.EmptyInterceptor;
@@ -24,15 +26,11 @@ import org.hibernate.EmptyInterceptor;
  *
  * @author rh11
  */
-class DbXRefManager extends EmptyInterceptor {
+public class DbXRefManager extends EmptyInterceptor {
     private static final Logger logger = Logger.getLogger(DbXRefManager.class);
-    private FeatureUtils featureUtils;
+    private GeneralDao generalDao;
     private Map<String,Map<String,DbXRef>> dbxrefsByAccByDb
         = new HashMap<String,Map<String,DbXRef>>();
-
-    public void setFeatureUtils(FeatureUtils featureUtils) {
-        this.featureUtils = featureUtils;
-    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -73,7 +71,7 @@ class DbXRefManager extends EmptyInterceptor {
                 && dbxrefsByAccByDb.get(dbName).containsKey(accession))
             return dbxrefsByAccByDb.get(dbName).get(accession);
 
-        DbXRef dbxref = featureUtils.findOrCreateDbXRefFromDbAndAccession(dbName, accession);
+        DbXRef dbxref = findOrCreateDbXRefFromDbAndAccession(dbName, accession);
 
         /* The above statement can trigger a flush, which is why we
          * need this check afterwards rather than before. That was
@@ -105,5 +103,23 @@ class DbXRefManager extends EmptyInterceptor {
         if (dbxref.getDescription() == null)
             dbxref.setDescription(description);
         return dbxref;
+    }
+
+    private DbXRef findOrCreateDbXRefFromDbAndAccession(String dbName, String accession) {
+        Db db = generalDao.getDbByName(dbName);
+        if (db == null) {
+            return null;
+        }
+        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(db, accession);
+        if (dbXRef == null) {
+            logger.debug(String.format("Creating new dbxref '%s:%s'", dbName, accession));
+            dbXRef = new DbXRef(db, accession);
+            generalDao.persist(dbXRef);
+        }
+        return dbXRef;
+    }
+
+    public void setGeneralDao(GeneralDao generalDao) {
+        this.generalDao = generalDao;
     }
 }
