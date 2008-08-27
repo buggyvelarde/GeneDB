@@ -19,9 +19,9 @@ public class RRNA extends Transcript {
         // empty
     }
 
-    public RRNA(Organism organism, String systematicId, boolean analysis, boolean obsolete,
+    public RRNA(Organism organism, String uniqueName, boolean analysis, boolean obsolete,
             Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
     @Override

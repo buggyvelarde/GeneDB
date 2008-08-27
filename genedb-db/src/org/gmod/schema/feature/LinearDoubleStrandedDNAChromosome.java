@@ -15,9 +15,9 @@ public class LinearDoubleStrandedDNAChromosome extends Chromosome {
         // empty
     }
 
-    public LinearDoubleStrandedDNAChromosome(Organism organism, String systematicId, boolean analysis,
+    public LinearDoubleStrandedDNAChromosome(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
 }

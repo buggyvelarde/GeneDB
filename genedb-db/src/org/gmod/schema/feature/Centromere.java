@@ -1,10 +1,7 @@
 package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
-import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Organism;
-
-import org.biojava.bio.symbol.Location;
 
 import java.sql.Timestamp;
 
@@ -18,15 +15,19 @@ public class Centromere extends Region {
         // empty
     }
 
-    public Centromere(Organism organism, String systematicId, boolean analysis,
+    public Centromere(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
-    public static Centromere make(Feature parent, Location exonLocation,
-            String exonSystematicId, Organism organism, Timestamp now) {
-
-        Centromere centromere = new Centromere(organism, exonSystematicId, false, false, now);
+    public Centromere make(TopLevelFeature sourceFeature, int fmin, int fmax) {
+        String centromereUniqueName = String.format("%s:centromere", sourceFeature.getUniqueName());
+        return make(sourceFeature, centromereUniqueName, fmin, fmax);
+    }
+    public Centromere make(TopLevelFeature sourceFeature, String uniqueName, int fmin, int fmax) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Centromere centromere = new Centromere(sourceFeature.getOrganism(), uniqueName, false, false, now);
+        sourceFeature.addLocatedChild(this, fmin, fmax, (short) 0, 0);
         return centromere;
     }
 }

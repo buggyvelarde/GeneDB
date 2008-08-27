@@ -20,7 +20,7 @@ public class GPIAnchorCleavageSite extends PolypeptideRegion {
         super(organism, cvTerm, uniqueName, true /*analysis*/, false /*obsolete*/);
     }
 
-    @Transient
+    @Transient @Override
     public String getScore() {
         return getProperty("genedb_misc", "GPI_cleavage_site_score");
     }

@@ -19,9 +19,9 @@ public abstract class Region extends Feature implements Comparable<Region> {
         // empty
     }
 
-    public Region(Organism organism, String systematicId, boolean analysis,
+    public Region(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned, dateAccessioned);
     }
 
     public Region(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis,

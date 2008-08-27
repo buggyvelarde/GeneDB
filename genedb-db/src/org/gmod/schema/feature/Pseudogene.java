@@ -4,6 +4,7 @@ import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.utils.StrandedLocation;
 
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -26,9 +27,9 @@ public class Pseudogene extends AbstractGene {
         // empty
     }
 
-    public Pseudogene(Organism organism, String systematicId, boolean analysis, boolean obsolete,
+    public Pseudogene(Organism organism, String uniqueName, boolean analysis, boolean obsolete,
             Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
     @Transient
@@ -63,4 +64,13 @@ public class Pseudogene extends AbstractGene {
         return products.toString();
     }
 
+    public static Pseudogene make(Feature sourceFeature, StrandedLocation location, String uniqueName, Timestamp now) {
+        Pseudogene gene = new Pseudogene(sourceFeature.getOrganism(), uniqueName, false, false, now);
+        sourceFeature.addLocatedChild(gene, location);
+        return gene;
+    }
+
+    public void addPseudogenicTranscript(PseudogenicTranscript transcript) {
+        addFeatureRelationship(transcript, "relationship", "part_of");
+    }
 }

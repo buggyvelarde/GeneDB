@@ -18,9 +18,9 @@ public class LongTerminalRepeat extends RepeatRegion {
         // empty
     }
 
-    public LongTerminalRepeat(Organism organism, String systematicId, boolean analysis,
+    public LongTerminalRepeat(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
 }

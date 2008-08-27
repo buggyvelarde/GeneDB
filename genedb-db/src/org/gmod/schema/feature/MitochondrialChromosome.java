@@ -15,9 +15,9 @@ public class MitochondrialChromosome extends Chromosome {
         // empty
     }
 
-    public MitochondrialChromosome(Organism organism, String systematicId, boolean analysis,
+    public MitochondrialChromosome(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
 }

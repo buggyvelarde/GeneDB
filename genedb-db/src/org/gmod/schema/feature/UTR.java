@@ -13,9 +13,9 @@ public abstract class UTR extends TranscriptRegion {
         // empty
     }
 
-    public UTR(Organism organism, String systematicId, boolean analysis,
+    public UTR(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
 }

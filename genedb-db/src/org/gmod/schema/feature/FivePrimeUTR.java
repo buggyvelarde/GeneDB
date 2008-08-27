@@ -17,18 +17,17 @@ public class FivePrimeUTR extends UTR {
         // empty
     }
 
-    public FivePrimeUTR(Organism organism, String systematicId, boolean analysis,
+    public FivePrimeUTR(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
     public static FivePrimeUTR make(Feature parent, StrandedLocation location,
-            String systematicId, Organism organism, Timestamp now) {
+            String uniqueName, Organism organism, Timestamp now) {
 
-        FivePrimeUTR utr = new FivePrimeUTR(organism, systematicId, false, false, now);
+        FivePrimeUTR utr = new FivePrimeUTR(organism, uniqueName, false, false, now);
         parent.addLocatedChild(utr, location);
         return utr;
     }
-
 
 }

@@ -24,9 +24,9 @@ public abstract class AbstractGene extends Region {
         // empty
     }
 
-    public AbstractGene(Organism organism, String systematicId, boolean analysis,
-            boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+    public AbstractGene(Organism organism, String uniqueName, boolean analysis, boolean obsolete,
+            Timestamp dateAccessioned) {
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
     @Transient
@@ -52,11 +52,12 @@ public abstract class AbstractGene extends Region {
     }
 
     /**
-     * Rather than returning the residues stored in the database,
-     * this method extracts the appropriate subsequence of the
-     * residues of the source feature (chromosome or contig).
+     * Rather than returning the residues stored in the database, this method
+     * extracts the appropriate subsequence of the residues of the source
+     * feature (chromosome or contig).
      */
-    @Transient @Override
+    @Transient
+    @Override
     public byte[] getResidues() {
         byte[] sequence = null;
         Feature parent = this.getRankZeroFeatureLoc().getSourceFeature();

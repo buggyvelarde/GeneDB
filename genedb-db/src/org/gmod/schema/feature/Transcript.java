@@ -1,5 +1,6 @@
 package org.gmod.schema.feature;
 
+import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
@@ -7,6 +8,7 @@ import org.gmod.schema.mapped.Organism;
 import org.apache.log4j.Logger;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
 import java.sql.Timestamp;
@@ -18,7 +20,9 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 @Entity
-public abstract class Transcript extends Region {
+@FeatureType(cv = "sequence", term = "transcript")
+@Indexed
+public class Transcript extends Region {
 
     private static Logger logger = Logger.getLogger(Transcript.class);
     @Transient
@@ -28,12 +32,14 @@ public abstract class Transcript extends Region {
         // empty
     }
 
-    public Transcript(Organism organism, String systematicId, boolean analysis,
+    public Transcript(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
-    public abstract Integer getColourId();
+    public Integer getColourId() {
+        return null;
+    }
 
     public AbstractGene getGene() {
         if (gene != null) {
@@ -86,7 +92,7 @@ public abstract class Transcript extends Region {
             }
         }
         if (!foundGene) {
-            logger.error(String.format("The mRNA transcript '%s' has no associated gene", getUniqueName()));
+            logger.error(String.format("The transcript '%s' has no associated gene", getUniqueName()));
         }
     }
 
@@ -96,13 +102,13 @@ public abstract class Transcript extends Region {
     }
 
     @Transient
-    public <T extends TranscriptRegion> SortedSet<T> getComponents(Class<T> clazz) {
+    public <T extends TranscriptRegion> SortedSet<T> getComponents(Class<T> regionClass) {
         SortedSet<T> components = new TreeSet<T>();
 
         for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
             Feature feature = relation.getSubjectFeature();
-            if (clazz.isInstance(feature)) {
-                components.add(clazz.cast(feature));
+            if (regionClass.isInstance(feature)) {
+                components.add(regionClass.cast(feature));
             }
         }
 
@@ -169,6 +175,6 @@ public abstract class Transcript extends Region {
 
 
     void addExon(Exon exon) {
-        addFeatureRelationship(exon, "relationship", "part_of");
+        this.addFeatureRelationship(exon, "relationship", "part_of");
     }
 }

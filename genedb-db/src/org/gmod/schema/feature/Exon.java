@@ -17,16 +17,16 @@ public class Exon extends AbstractExon {
         // empty
     }
 
-    public Exon(Organism organism, String systematicId, boolean analysis,
+    public Exon(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
-    public static Exon make(Feature parent, StrandedLocation location,
-            String systematicId, Organism organism, Timestamp now) {
+    public static Exon make(Feature sourceFeature, StrandedLocation location,
+            String uniqueName, Timestamp now) {
 
-        Exon exon = new Exon(organism, systematicId, false, false, now);
-        parent.addLocatedChild(exon, location);
+        Exon exon = new Exon(sourceFeature.getOrganism(), uniqueName, false, false, now);
+        sourceFeature.addLocatedChild(exon, location);
         return exon;
     }
 

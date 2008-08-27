@@ -4,7 +4,6 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
-import org.apache.log4j.Logger;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
@@ -24,15 +23,13 @@ import javax.persistence.Transient;
 @Entity
 public abstract class ProductiveTranscript extends Transcript {
 
-    private static Logger logger = Logger.getLogger(ProductiveTranscript.class);
-
     ProductiveTranscript() {
         // empty
     }
 
-    public ProductiveTranscript(Organism organism, String systematicId, boolean analysis,
+    public ProductiveTranscript(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
     /**
@@ -77,9 +74,9 @@ public abstract class ProductiveTranscript extends Transcript {
     @Transient
     public void setProtein(Polypeptide polypeptide) {
         if (getProtein() != null) {
-            logger.error("Attempting to set a protein on a transcript which already has one");
-            throw new RuntimeException("Attempting to set a protein on a transcript which already has one");
-            // FIXME Is this right error handling - should report ids at least
+            throw new RuntimeException(String.format(
+                "Attempting to set a protein on transcript '%s' which already has one",
+                getUniqueName()));
         }
         addFeatureRelationship(polypeptide, "sequence", "derives_from");
     }

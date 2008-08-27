@@ -20,14 +20,12 @@ public class Chromosome extends TopLevelFeature {
         // empty
     }
 
-    public Chromosome(Organism organism, String systematicId, boolean analysis,
+    public Chromosome(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
-        super(organism, systematicId, analysis, obsolete, dateAccessioned);
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
-    public static Chromosome make(String exonSystematicId, Organism organism, Timestamp now) {
-
-        Chromosome chromosome = new Chromosome(organism, exonSystematicId, false, false, now);
-        return chromosome;
+    public static Chromosome make(String uniqueName, Organism organism, Timestamp now) {
+        return new Chromosome(organism, uniqueName, false, false, now);
     }
 }
