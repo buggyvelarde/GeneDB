@@ -14,7 +14,7 @@
 
 	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
-    <context:component-scan base-package="org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
+    <context:component-scan base-package="org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
 
 
 
@@ -247,6 +247,7 @@
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="features/gene" />
         <property name="geneDetailsView" value="features/geneDetails" />
+        <property name="geneSequenceView" value="features/geneSequence" />
         <property name="bindOnNewForm" value="true" />
         <property name="validator" ref="namedFeatureValidator" />
         <property name="cacheSeconds" value="86400" />
