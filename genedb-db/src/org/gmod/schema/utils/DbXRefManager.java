@@ -74,12 +74,7 @@ public class DbXRefManager extends EmptyInterceptor {
         DbXRef dbxref = findOrCreateDbXRefFromDbAndAccession(dbName, accession);
 
         /* The above statement can trigger a flush, which is why we
-         * need this check afterwards rather than before. That was
-         * a hell of a bug to discover at 6am, I can tell you!
-         * (Especially when it conspired with a classpath misconfguration
-         * that meant the logging didn't work. If the logging had worked
-         * it would have been pretty easy to see what was happening, to
-         * tell you the truth.) -rh11
+         * need the following check afterwards rather than before.
          */
         if (!dbxrefsByAccByDb.containsKey(dbName))
             dbxrefsByAccByDb.put(dbName, new HashMap<String,DbXRef>());
