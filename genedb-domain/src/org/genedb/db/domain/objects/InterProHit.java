@@ -2,8 +2,6 @@ package org.genedb.db.domain.objects;
 
 import org.gmod.schema.mapped.DbXRef;
 
-import java.util.List;
-
 
 /**
  * A group of polypeptide domains.
@@ -31,21 +29,11 @@ public class InterProHit extends PolypeptideRegionGroup {
 
     @Override
     public String getUniqueName() {
-        List<PolypeptideRegion> subfeatures = getSubfeatures();
-        if (subfeatures.size() == 1) {
-            return subfeatures.get(0).getUniqueName();
-        }
-
         return String.format("%s:%s", database, accession);
     }
 
     @Override
     public String getName() {
-        List<PolypeptideRegion> subfeatures = getSubfeatures();
-        if (subfeatures.size() == 1) {
-            return subfeatures.get(0).getUniqueName();
-        }
-
         return accession;
     }
 
@@ -56,11 +44,6 @@ public class InterProHit extends PolypeptideRegionGroup {
 
     @Override
     public String getDescription() {
-        List<PolypeptideRegion> subfeatures = getSubfeatures();
-        if (subfeatures.size() == 1) {
-            return subfeatures.get(0).getDescription();
-        }
-
         return description;
     }
 }
