@@ -29,8 +29,11 @@ public class ProteinMapDiagram extends TrackedDiagram {
 
         addRegion           (polypeptide, regionGroups, "Signal peptide", "Sig. pep.",
             Color.GREEN,        SignalPeptide.class);
-        addRegionToNTerminus(polypeptide, regionGroups, "GPI anchor", "GPI",
-            new Color(255, 165, 0), GPIAnchorCleavageSite.class);
+
+        if (polypeptide.isGPIAnchored()) {
+            addRegionToNTerminus(polypeptide, regionGroups, "GPI anchor", "GPI",
+                new Color(255, 165, 0), GPIAnchorCleavageSite.class);
+        }
 
         allocateTracks(regionGroups, false);
     }
