@@ -26,7 +26,7 @@ import org.biojava.bio.symbol.TranslationTable;
  * @author rh11
  *
  */
-public class Translator {
+class Translator {
 
     private static final TranslationTable transcriptionTable = RNATools.transcriptionTable();
     private static final SymbolTokenization dnaTokenization;
@@ -161,9 +161,9 @@ class StartCodonTable {
     private StartCodonTable(String starts) {
         char[] startsChars = starts.toCharArray();
         int i = 0;
-        for (char base1 : bases)
-            for (char base2 : bases)
-                for (char base3 : bases)
+        for (char base1 : bases) {
+            for (char base2 : bases) {
+                for (char base3 : bases) {
                     if (startsChars[i++] == 'M') {
                         final String codonString = String.format("(%c %c %c)", base1, base2, base3);
                         try {
@@ -177,6 +177,9 @@ class StartCodonTable {
                                     exception);
                         }
                     }
+                }
+            }
+        }
     }
 
     /**
