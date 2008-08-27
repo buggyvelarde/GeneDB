@@ -22,7 +22,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class BreadcrumbTag extends SimpleTagSupport {
     private static final Logger logger = Logger.getLogger(BreadcrumbTag.class);
-    String seperator = "<small> >> </small>";
+    String separator = "<small> >> </small>";
 
     @Override
     public void doTag() throws JspException, IOException {
@@ -44,11 +44,11 @@ public class BreadcrumbTag extends SimpleTagSupport {
         String trail = checkCache(taxonNode);
         if (trail == null) {
             StringBuilder buf = new StringBuilder();
-            List<TaxonNode> nodes = tnm.getHierachy(taxonNode);
+            List<TaxonNode> nodes = tnm.getHierarchy(taxonNode);
             boolean first = true;
             for (TaxonNode node : nodes) {
                 if (!first) {
-                    buf.append(seperator);
+                    buf.append(separator);
                 }
                 if (node.isWebLinkable()) {
                     buf.append("<a href=\"");
@@ -68,7 +68,7 @@ public class BreadcrumbTag extends SimpleTagSupport {
             // Store in cache
         }
 
-        trail += seperator + getJspContext().getAttribute(WebConstants.CRUMB, REQUEST_SCOPE);
+        trail += separator + getJspContext().getAttribute(WebConstants.CRUMB, REQUEST_SCOPE);
 
         JspWriter out = getJspContext().getOut();
         out.write(trail);

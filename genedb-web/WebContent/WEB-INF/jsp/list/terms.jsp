@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
-<c:url value="/${controller}" var="base"/>
+<c:url value="/" var="base"/>
 <c:url value="?" var="url">
 <c:param name="organism" value="${organism}"/>
 <c:param name="category" value="${category}"/>

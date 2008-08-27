@@ -13,10 +13,10 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 public class ListStringTag extends SimpleTagSupport {
 
     private Collection<FeatureSynonym> collection;
-    private String seperator = ", ";
+    private String separator = ", ";
 
-    public void setSeperator(String seperator) {
-        this.seperator = seperator;
+    public void setSeparator(String separator) {
+        this.separator = separator;
     }
 
     public void setCollection(Collection<FeatureSynonym> collection) {
@@ -29,12 +29,12 @@ public class ListStringTag extends SimpleTagSupport {
         boolean first = true;
         for (FeatureSynonym featSynonym : collection) {
             if (!first) {
-                out.write(seperator);
+                out.write(separator);
             }
             Synonym synonym = featSynonym.getSynonym();
             out.write(synonym.getName());
             first = false;
         }
     }
-    
+
 }

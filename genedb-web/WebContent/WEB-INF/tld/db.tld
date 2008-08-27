@@ -102,7 +102,7 @@
    <tag-class>org.genedb.web.tags.db.ListStringTag</tag-class>
    <body-content>empty</body-content>
     <attribute>
-       <name>seperator</name>
+       <name>separator</name>
        <rtexprvalue>true</rtexprvalue>
        <required>false</required>
     </attribute>
