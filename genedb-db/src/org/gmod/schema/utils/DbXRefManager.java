@@ -20,9 +20,9 @@ import org.hibernate.EmptyInterceptor;
  * of this class as a Hibernate interceptor, the cache is cleared
  * whenever Hibernate flushes.
  * <p>
- * This mechanism is available to {@link Loader} subclasses via
+ * This mechanism is available to {@link org.genedb.db.loading.auxiliary.Loader} subclasses via
  * the protected Loader field <code>dbxrefManager</code>. At the time of
- * writing, it's only used by {@link InterProLoader}.
+ * writing, it's only used by {@link org.genedb.db.loading.auxiliary.InterProLoader}.
  *
  * @author rh11
  */
