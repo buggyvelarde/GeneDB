@@ -20,24 +20,24 @@
          <tr>
             <td class="label">Systematic Name</td>
             <td class="value">
-				<c:choose>
+                <c:choose>
                 <c:when test="${fn:length(gene.transcripts) > 1}">
                     ${transcript.uniqueName} (one splice form of ${gene.systematicId})
-				</c:when>
-				<c:otherwise>
-					${gene.systematicId}
-				</c:otherwise>
+                </c:when>
+                <c:otherwise>
+                  ${gene.systematicId}
+                </c:otherwise>
                 </c:choose>
             </td>
         </tr>
         <tr>
             <td class="label">Feature Type</td>
             <td class="value">
-				<c:choose>
-					<c:when test="${transcript.type.name == 'mRNA'}">Protein coding gene</c:when>
-					<c:when test="${transcript.type.name == 'pseudogenic_transcript'}">Pseudogene</c:when>
-					<c:otherwise>${transcript.type.name}</c:otherwise>
-				</c:choose>
+        <c:choose>
+          <c:when test="${transcript.type.name == 'mRNA'}">Protein coding gene</c:when>
+          <c:when test="${transcript.type.name == 'pseudogenic_transcript'}">Pseudogene</c:when>
+          <c:otherwise>${transcript.type.name}</c:otherwise>
+        </c:choose>
             </td>
         </tr>
         <db:synonym name="obsolete_name" var="name" collection="${gene.featureSynonyms}">
@@ -71,18 +71,18 @@
             </td>
         </tr>
         <c:if test="${!empty(polypeptide.featureDbXRefs)}">
-	        <tr>
-	            <td class="label">See Also</td>
-	            <td class="value">
-	                <c:forEach items="${polypeptide.featureDbXRefs}" var="fdbxref" varStatus="status">
-	                	<c:if test="${!empty fdbxref.dbXRef.db.urlPrefix}">
-	                		<span><a href="${fdbxref.dbXRef.db.urlPrefix}${fdbxref.dbXRef.accession}">${fdbxref.dbXRef.db.name}:${fdbxref.dbXRef.accession}</a><%--
+          <tr>
+              <td class="label">See Also</td>
+              <td class="value">
+                  <c:forEach items="${polypeptide.featureDbXRefs}" var="fdbxref" varStatus="status">
+                    <c:if test="${!empty fdbxref.dbXRef.db.urlPrefix}">
+                      <span><a href="${fdbxref.dbXRef.db.urlPrefix}${fdbxref.dbXRef.accession}">${fdbxref.dbXRef.db.name}:${fdbxref.dbXRef.accession}</a><%--
                              --%><c:if test="${!status.last}">, </c:if></span>
-	                	</c:if>
-	                </c:forEach>
-	            </td>
-	        </tr>
-	    </c:if>
+                    </c:if>
+                  </c:forEach>
+              </td>
+          </tr>
+      </c:if>
         </table>
     </format:genePageSection>
 
@@ -175,7 +175,7 @@
                 <c:if test="${pepstats.mass != null}">
                     <tr>
                         <td class="label">Mass</td>
-                        <td class="value">${pepstats.mass} kDa</td>
+                        <td class="value">${pepstats.mass}</td>
                     </tr>
                 </c:if>
                 <tr>
@@ -217,10 +217,12 @@
                                 ${helix}</c:forEach>.</td>
                         </tr>
                     </c:if>
-                    <c:if test="${algorithmData.DGPI != null}">
+                    <c:if test="${algorithmData.DGPI != null && algorithmData.DGPI.anchored}">
                         <tr>
                             <td class="label">DGPI</td>
-                            <td class="value"><c:if test="${algorithmData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
+                            <td class="value">
+                                <c:if test="${algorithmData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
+                                <c:if test="${!algorithmData.DGPI.anchored}">This protein is <b>not</b> GPI-anchored.</c:if>
                                 <c:if test="${algorithmData.DGPI.location != null}">Predicted cleavage site at ${algorithmData.DGPI.location} with score ${algorithmData.DGPI.score}.</c:if>
                             </td>
                         </tr>
