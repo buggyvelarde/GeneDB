@@ -87,7 +87,7 @@ public class Pub implements Serializable {
 
      // Constructors
 
-     Pub() {
+     public Pub() {
          // Deliberately empty default constructor
      }
 
