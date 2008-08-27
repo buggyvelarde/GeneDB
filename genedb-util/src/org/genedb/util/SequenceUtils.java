@@ -42,7 +42,7 @@ public class SequenceUtils {
      * @param translationTableId the genetic code ID, as defined by NCBI
      * @param dnaSequence the DNA sequence
      * @param phase the phase (0-2)
-     * @param stopCodonTranslatedAsSelenocysteine whether a stop codon should be
+     * @param stopCodonTranslatedAsSelenocysteine whether an internal stop codon should be
      *          treated as read-through and translated to Selenocysteine
      * @return the translated sequence
      * @throws TranslationException
