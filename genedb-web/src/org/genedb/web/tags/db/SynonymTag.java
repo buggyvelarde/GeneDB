@@ -51,11 +51,11 @@ public class SynonymTag extends SimpleTagSupport {
         List<FeatureSynonym> filtered = new ArrayList<FeatureSynonym>();
         for (FeatureSynonym featSynonym : collection) {
             Synonym synonym = featSynonym.getSynonym();
-            if (name.equals(synonym.getCvTerm().getName())) {
+            if (name.equals(synonym.getType().getName())) {
                 filtered.add(featSynonym);
             } else {
                 if (name.equals(QUAL_SYS_ID)
-                        && QUAL_TEMP_SYS_ID.equals(synonym.getCvTerm().getName())) {
+                        && QUAL_TEMP_SYS_ID.equals(synonym.getType().getName())) {
                     filtered.add(featSynonym);
                     if (tmpSysId != null) {
                         getJspContext().setAttribute(tmpSysId, Boolean.TRUE);
