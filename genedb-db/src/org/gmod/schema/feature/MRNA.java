@@ -26,6 +26,11 @@ public class MRNA extends ProductiveTranscript {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+    MRNA(Organism organism, String uniqueName, String name) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+        setName(name);
+    }
+
     @Override
     @Transient
     public Polypeptide getProtein() {

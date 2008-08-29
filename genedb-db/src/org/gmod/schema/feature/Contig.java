@@ -19,4 +19,7 @@ public class Contig extends TopLevelFeature {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+    public static Contig make(String uniqueName, Organism organism) {
+        return new Contig(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+    }
 }

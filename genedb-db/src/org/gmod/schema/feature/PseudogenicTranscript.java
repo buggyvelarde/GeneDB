@@ -21,4 +21,9 @@ public class PseudogenicTranscript extends ProductiveTranscript {
             boolean obsolete, Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
+
+    PseudogenicTranscript(Organism organism, String uniqueName, String name) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+        setName(name);
+    }
 }

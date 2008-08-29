@@ -23,6 +23,10 @@ public class RRNA extends Transcript {
             Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
+    RRNA(Organism organism, String uniqueName, String name) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+        setName(name);
+    }
 
     @Override
     @Transient

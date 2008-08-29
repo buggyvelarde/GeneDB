@@ -2,6 +2,7 @@ package org.gmod.schema.feature;
 
 import org.gmod.schema.mapped.Organism;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 
 import javax.persistence.Entity;
@@ -28,6 +29,25 @@ public abstract class TopLevelFeature extends Region {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+    public static <T extends TopLevelFeature> T make(Class<T> featureClass, String uniqueName, Organism organism) {
+        try {
+            return featureClass.getConstructor(Organism.class, String.class, Boolean.TYPE, Boolean.TYPE, Timestamp.class)
+                .newInstance(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (SecurityException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Is this feature acting as a top-level feature in this case? Checks presence of
      * top_level_feature FeatureProp
@@ -38,4 +58,13 @@ public abstract class TopLevelFeature extends Region {
         return hasProperty("genedb_misc", "top_level_seq");
     }
 
+    public void markAsTopLevelFeature() {
+        addFeatureProp("true", "genedb_misc", "top_level_seq");
+    }
+
+    public Gap addGap(int fmin, int fmax) {
+        Gap gap = new Gap(getOrganism(), String.format("%s:gap:%d-%d", getUniqueName(), fmin, fmax));
+        this.addLocatedChild(gap, fmin, fmax, (short)0, 0);
+        return gap;
+    }
 }

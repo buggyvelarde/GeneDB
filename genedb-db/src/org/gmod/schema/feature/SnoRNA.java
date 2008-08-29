@@ -23,6 +23,10 @@ public class SnoRNA extends Transcript {
             Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
+    SnoRNA(Organism organism, String uniqueName, String name) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+        setName(name);
+    }
 
     @Override
     @Transient

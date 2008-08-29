@@ -24,8 +24,4 @@ public class Chromosome extends TopLevelFeature {
             boolean obsolete, Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
-
-    public static Chromosome make(String uniqueName, Organism organism, Timestamp now) {
-        return new Chromosome(organism, uniqueName, false, false, now);
-    }
 }

@@ -48,6 +48,10 @@ public class Polypeptide extends Region {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+    public Polypeptide(Organism organism, String uniqueName) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+    }
+
     public Transcript getTranscript() {
         if (transcript != null) {
             return transcript;

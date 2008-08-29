@@ -52,11 +52,11 @@ public abstract class ProductiveTranscript extends Transcript {
     /**
      * Get the associated polypeptide feature.
      *
-     * Every mRNA transcript should have one, though this constraint
-     * cannot be enforced at the database level: i.e. in practice
-     * this method may return <code>null</code>, which indicates
-     * a curation issue with the transcript. A pseudogenic transcript
-     * may or may not have an associated polypeptide.
+     * A pseudogenic transcript may or may not have an associated
+     * polypeptide.Every mRNA transcript should have one, though this
+     * constraint cannot be enforced at the database level, so in practice
+     * this method may return <code>null</code> even for an mRNA, which
+     * indicates a curation issue with that transcript.
      *
      * @return
      */

@@ -32,6 +32,11 @@ public class Pseudogene extends AbstractGene {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+    Pseudogene(Organism organism, String uniqueName, String name) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+        setName(name);
+    }
+
     @Transient
     public Collection<PseudogenicTranscript> getPseudogenicTranscripts() {
         Collection<PseudogenicTranscript> ret = new ArrayList<PseudogenicTranscript>();

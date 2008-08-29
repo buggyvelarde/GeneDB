@@ -1,9 +1,7 @@
 package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
-import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Organism;
-import org.gmod.schema.utils.StrandedLocation;
 
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -29,6 +27,11 @@ public class Gene extends AbstractGene {
     public Gene(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
+    }
+
+    Gene(Organism organism, String uniqueName, String name) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+        setName(name);
     }
 
     @Transient
@@ -74,13 +77,6 @@ public class Gene extends AbstractGene {
             products.append(transcript.getProductsAsTabSeparatedString());
         }
         return products.toString();
-    }
-
-
-    public static Gene make(Feature sourceFeature, StrandedLocation location, String uniqueName, Timestamp now) {
-        Gene gene = new Gene(sourceFeature.getOrganism(), uniqueName, false, false, now);
-        sourceFeature.addLocatedChild(gene, location);
-        return gene;
     }
 
     public void addTranscript(Transcript transcript) {
