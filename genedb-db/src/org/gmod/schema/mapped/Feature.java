@@ -80,7 +80,7 @@ import javax.persistence.Transient;
 public abstract class Feature implements java.io.Serializable {
 
     @Autowired
-    private transient CvDao cvDao;
+    protected transient CvDao cvDao;
 
     @GenericGenerator(name = "generator", strategy = "seqhilo", parameters = {
             @Parameter(name = "max_lo", value = "100"),
@@ -173,20 +173,20 @@ public abstract class Feature implements java.io.Serializable {
     @OrderBy("rank ASC")
     private List<FeatureLoc> featureLocsForFeatureId;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<FeatureCvTerm> featureCvTerms;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Collection<FeatureProp> featureProps;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<FeaturePub> featurePubs;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<AnalysisFeature> analysisFeatures;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<FeatureSynonym> featureSynonyms;
 
     @Transient
@@ -212,8 +212,10 @@ public abstract class Feature implements java.io.Serializable {
 
     protected Feature(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {
+        // Note that this constructor does not initialise cvTerm. The type_id column
+        // will still be correctly populated when this object is persisted, because it's
+        // the discriminator
         this.organism = organism;
-        //this.cvTerm = getSoType();
         this.uniqueName = uniqueName;
         this.analysis = analysis;
         this.obsolete = obsolete;
@@ -533,10 +535,10 @@ public abstract class Feature implements java.io.Serializable {
     public String getSystematicId() {
         for (FeatureSynonym featureSynonym : getFeatureSynonyms()) {
             Synonym synonym = featureSynonym.getSynonym();
-            if (("systematic_id".equals(synonym.getCvTerm().getName())
-            || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
+            if (("systematic_id".equals(synonym.getType().getName())
+            || "temporary_systematic_id".equals(synonym.getType().getName()))
             && featureSynonym.isCurrent()) {
-                return synonym.getSynonymSgml();
+                return synonym.getSynonymSGML();
             }
         }
         return getUniqueName();
@@ -547,10 +549,10 @@ public abstract class Feature implements java.io.Serializable {
         Set<String> ret = new HashSet<String>();
         for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
             Synonym synonym = featureSynonym.getSynonym();
-            if (("systematic_id".equals(synonym.getCvTerm().getName())
-            || "temporary_systematic_id".equals(synonym.getCvTerm().getName()))
+            if (("systematic_id".equals(synonym.getType().getName())
+            || "temporary_systematic_id".equals(synonym.getType().getName()))
             && !featureSynonym.isCurrent()) {
-                ret.add(synonym.getSynonymSgml());
+                ret.add(synonym.getSynonymSGML());
         }
         }
         return ret;
@@ -580,7 +582,6 @@ public abstract class Feature implements java.io.Serializable {
     private String getSynonymsAsTabSeparatedString() {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
-        // TODO we have libraries
         for (FeatureSynonym featureSynonym : getFeatureSynonyms()) {
             if (first) {
                 first = false;
@@ -737,8 +738,15 @@ public abstract class Feature implements java.io.Serializable {
         return loc;
     }
 
-    public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, short strand, int phase) {
-        FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, strand, phase);
+    public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax) {
+        return addLocatedChild(child, fmin, fmax, 0, 0);
+    }
+    public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, int strand, int phase) {
+        return addLocatedChild(child, fmin, fmax, strand, phase, 0);
+    }
+
+    public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, int strand, int phase, int rank) {
+        FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, (short) strand, phase, rank);
 
         if (this.featureLocsForSrcFeatureId == null) {
             this.featureLocsForSrcFeatureId = new ArrayList<FeatureLoc>();
@@ -753,7 +761,7 @@ public abstract class Feature implements java.io.Serializable {
         return loc;
     }
 
-    protected void addFeatureProp(String value, String cvName, String termName) {
+    public FeatureProp addFeatureProp(String value, String cvName, String termName) {
         CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
         if (type == null) {
             throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
@@ -764,6 +772,7 @@ public abstract class Feature implements java.io.Serializable {
             featureProps = new ArrayList<FeatureProp>();
         }
         this.featureProps.add(fp);
+        return fp;
     }
 
     @Transient

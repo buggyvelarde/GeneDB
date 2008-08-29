@@ -3,9 +3,9 @@ package org.gmod.schema.mapped;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,18 +27,15 @@ public class FeatureSynonym implements Serializable {
     @Column(name="feature_synonym_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureSynonymId;
 
-    @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-
+    @ManyToOne(cascade={CascadeType.PERSIST}, fetch=FetchType.LAZY)
     @JoinColumn(name="synonym_id", unique=false, nullable=false, insertable=true, updatable=true)
     private Synonym synonym;
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-
     @JoinColumn(name="feature_id", unique=false, nullable=false, insertable=true, updatable=true)
     private Feature feature;
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-
     @JoinColumn(name="pub_id", unique=false, nullable=false, insertable=true, updatable=true)
     private Pub pub;
 

@@ -99,6 +99,10 @@ public class FeatureLoc implements Serializable {
         this(sourceFeature, feature, fmin, false, fmax, false, strand, phase, 0, 0);
     }
 
+    public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, short strand, int phase, int rank) {
+        this(sourceFeature, feature, fmin, false, fmax, false, strand, phase, 0, rank);
+    }
+
     FeatureLoc(Feature parent, Feature child, StrandedLocation location) {
         StrandedLocation loc = location.getInterbaseVersion();
         this.featureBySrcFeatureId = parent;

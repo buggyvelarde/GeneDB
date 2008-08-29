@@ -241,7 +241,4 @@ public class Pub implements Serializable {
     public Collection<PubRelationship> getPubRelationshipsForSubjectId() {
         return Collections.unmodifiableCollection(this.pubRelationshipsForSubjectId);
     }
-
 }
-
-

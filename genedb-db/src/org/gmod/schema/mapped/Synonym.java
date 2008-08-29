@@ -33,13 +33,13 @@ public class Synonym implements Serializable {
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", unique = false, nullable = false, insertable = true, updatable = true)
-    private CvTerm cvTerm;
+    private CvTerm type;
 
     @Column(name = "name", unique = false, nullable = false, insertable = true, updatable = true)
     private String name;
 
     @Column(name = "synonym_sgml", unique = false, nullable = false, insertable = true, updatable = true)
-    private String synonymSgml;
+    private String synonymSGML;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "synonym")
     private Collection<FeatureSynonym> featureSynonyms;
@@ -52,10 +52,10 @@ public class Synonym implements Serializable {
     }
 
     /** minimal constructor */
-    public Synonym(CvTerm cvTerm, String name, String synonymSgml) {
-        this.cvTerm = cvTerm;
+    public Synonym(CvTerm cvTerm, String name, String synonymSGML) {
+        this.type = cvTerm;
         this.name = name;
-        this.synonymSgml = synonymSgml;
+        this.synonymSGML = synonymSGML;
     }
 
     // Property accessors
@@ -64,30 +64,27 @@ public class Synonym implements Serializable {
         return this.synonymId;
     }
 
-    public CvTerm getCvTerm() {
-        return this.cvTerm;
+    public CvTerm getType() {
+        return this.type;
     }
 
-    public void setCvTerm(CvTerm cvterm) {
-        this.cvTerm = cvterm;
+    public void setType(CvTerm type) {
+        this.type = type;
     }
 
     public String getName() {
         return this.name;
     }
-
-    @SuppressWarnings("unused") // Called by Hibernate only
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getSynonymSgml() {
-        return this.synonymSgml;
+    public String getSynonymSGML() {
+        return this.synonymSGML;
     }
 
-    @SuppressWarnings("unused") // Called by Hibernate only
-    private void setSynonymSgml(String synonymSgml) {
-        this.synonymSgml = synonymSgml;
+    public void setSynonymSGML(String synonymSgml) {
+        this.synonymSGML = synonymSgml;
     }
 
     public Collection<FeatureSynonym> getFeatureSynonyms() {
