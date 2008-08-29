@@ -34,36 +34,32 @@ public class CvTerm implements Serializable {
     @Id @GeneratedValue(generator="generator")
     @Column(name="cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
     @DocumentId
-     private int cvTermId;
+    private int cvTermId;
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-        @JoinColumn(name="dbxref_id", unique=true, nullable=false, insertable=true, updatable=true)
+    @JoinColumn(name="dbxref_id", unique=true, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
 
     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
-        @JoinColumn(name="cv_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private Cv cv;
+    @JoinColumn(name="cv_id", unique=false, nullable=false, insertable=true, updatable=true)
+    private Cv cv;
 
     @Column(name="name", unique=false, nullable=false, insertable=true, updatable=true, length=1024)
     @Field(index = Index.UN_TOKENIZED,store=Store.YES)
-     private String name;
+    private String name;
 
     @Column(name="definition", unique=false, nullable=true, insertable=true, updatable=true)
-     private String definition;
+    private String definition;
 
     @Column(name="is_obsolete", unique=false, nullable=false, insertable=true, updatable=true)
-     private boolean obsolete;
+    private boolean obsolete;
 
     @Column(name="is_relationshiptype", unique=false, nullable=false, insertable=true, updatable=true)
-     private boolean isRelationshipType;
+    private boolean isRelationshipType;
 
     @OneToMany(cascade={CascadeType.PERSIST}, fetch=FetchType.LAZY, mappedBy="cvTerm")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-     private Collection<Synonym> synonyms;
-
-    @OneToMany(cascade={CascadeType.PERSIST}, fetch=FetchType.LAZY, mappedBy="cvTerm")
-    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-     private Collection<CvTermDbXRef> cvTermDbXRefs;
+    private Collection<CvTermDbXRef> cvTermDbXRefs;
 
      // Constructors
 
@@ -126,20 +122,6 @@ public class CvTerm implements Serializable {
 
     public void setRelationshipType(boolean isRelationshipType) {
         this.isRelationshipType = isRelationshipType;
-    }
-
-    public Collection<Synonym> getSynonyms() {
-        return Collections.unmodifiableCollection(this.synonyms);
-    }
-
-    public void addSynonym(Synonym synonym) {
-        this.synonyms.add(synonym);
-        synonym.setCvTerm(this);
-    }
-
-    public void removeSynonym(Synonym synonym) {
-        this.synonyms.remove(synonym);
-        synonym.setCvTerm(null);
     }
 
     public Collection<CvTermDbXRef> getCvTermDbXRefs() {
