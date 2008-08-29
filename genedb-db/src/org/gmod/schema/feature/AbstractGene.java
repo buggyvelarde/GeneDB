@@ -112,6 +112,7 @@ public abstract class AbstractGene extends Region {
         }
     }
 
+    @Transient
     private CvTerm synonymType = null;
     public FeatureSynonym addSynonym(String synonymString) {
         if (synonymType == null) {
@@ -153,6 +154,7 @@ public abstract class AbstractGene extends Region {
         return false;
     }
 
+    @Transient
     private CvTerm systematicIdType = null;
     public void setSystematicId(String systematicId) {
         if (systematicIdType == null) {
@@ -163,6 +165,7 @@ public abstract class AbstractGene extends Region {
         }
     }
 
+    @Transient
     private CvTerm temporarySystematicIdType = null;
     public void setTemporarySystematicId(String temporarySystematicId) {
         if (temporarySystematicIdType == null) {
