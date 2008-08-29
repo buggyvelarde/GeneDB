@@ -112,12 +112,8 @@ public abstract class AbstractGene extends Region {
         }
     }
 
-    @Transient
-    private CvTerm synonymType = null;
-    public FeatureSynonym addSynonym(String synonymString) {
-        if (synonymType == null) {
-            synonymType = cvDao.findOrCreateCvTermByNameAndCvName("synonym", "genedb_synonym_type");
-        }
+    public synchronized FeatureSynonym addSynonym(String synonymString) {
+        CvTerm synonymType = cvDao.findOrCreateCvTermByNameAndCvName("synonym", "genedb_synonym_type");
         return addSynonym(synonymType, synonymString);
     }
 
@@ -154,23 +150,17 @@ public abstract class AbstractGene extends Region {
         return false;
     }
 
-    @Transient
-    private CvTerm systematicIdType = null;
     public void setSystematicId(String systematicId) {
-        if (systematicIdType == null) {
-            systematicIdType = cvDao.findOrCreateCvTermByNameAndCvName("systematic_id", "genedb_synonym_type");
-        }
+        CvTerm systematicIdType = cvDao.findOrCreateCvTermByNameAndCvName("systematic_id", "genedb_synonym_type");
+
         if (!setSynonymIfPresent(systematicIdType, systematicId)) {
             addSynonym(systematicIdType, systematicId);
         }
     }
 
     @Transient
-    private CvTerm temporarySystematicIdType = null;
     public void setTemporarySystematicId(String temporarySystematicId) {
-        if (temporarySystematicIdType == null) {
-            temporarySystematicIdType = cvDao.findOrCreateCvTermByNameAndCvName("temporary_systematic_id", "genedb_synonym_type");
-        }
+        CvTerm temporarySystematicIdType = cvDao.findOrCreateCvTermByNameAndCvName("temporary_systematic_id", "genedb_synonym_type");
         if (!setSynonymIfPresent(temporarySystematicIdType, temporarySystematicId)) {
             addSynonym(temporarySystematicIdType, temporarySystematicId);
         }
