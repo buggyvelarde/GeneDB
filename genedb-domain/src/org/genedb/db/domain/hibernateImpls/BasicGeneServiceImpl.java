@@ -68,7 +68,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
         List<String> synonyms = new ArrayList<String>();
         for (FeatureSynonym fs : feat.getFeatureSynonyms()) {
-            String type = fs.getSynonym().getCvTerm().getName();
+            String type = fs.getSynonym().getType().getName();
             if (type.equals("synonym")) {
                 synonyms.add(fs.getSynonym().getName());
             }

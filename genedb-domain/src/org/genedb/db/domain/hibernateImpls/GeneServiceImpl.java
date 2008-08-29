@@ -25,7 +25,7 @@ public class GeneServiceImpl extends BasicGeneServiceImpl implements GeneService
         Gene ret = new Gene(super.geneFromFeature(feat));
 
         for (FeatureSynonym fs : feat.getFeatureSynonyms()) {
-            String type = fs.getSynonym().getCvTerm().getName();
+            String type = fs.getSynonym().getType().getName();
             if (type.equals("reserved_name")) {
                 ret.setReservedName(fs.getSynonym().getName());
             }
