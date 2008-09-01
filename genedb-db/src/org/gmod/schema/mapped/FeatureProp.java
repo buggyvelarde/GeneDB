@@ -106,6 +106,9 @@ public class FeatureProp implements Serializable, PropertyI, Rankable {
     public void setFeaturePropPubs(Collection<FeaturePropPub> featurePropPubs) {
         this.featurePropPubs = featurePropPubs;
     }
+
+
+
 }
 
 
