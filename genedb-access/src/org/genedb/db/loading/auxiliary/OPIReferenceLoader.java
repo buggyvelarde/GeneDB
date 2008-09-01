@@ -3,6 +3,7 @@ package org.genedb.db.loading.auxiliary;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.FeatureDbXRef;
+import org.gmod.schema.utils.DbXRefManager;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;

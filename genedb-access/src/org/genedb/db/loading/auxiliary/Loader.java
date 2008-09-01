@@ -14,6 +14,7 @@ import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
+import org.gmod.schema.utils.DbXRefManager;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
