@@ -2,14 +2,17 @@ package org.genedb.db.dao;
 
 import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.AnalysisFeature;
+import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.Synonym;
 
 import java.util.List;
 
 public class GeneralDao extends BaseDao {
 
+    private CvDao cvDao;
     public Db getDbByName(String name) {
         @SuppressWarnings("unchecked")
         List<Db> results = getHibernateTemplate().findByNamedParam(
@@ -41,6 +44,23 @@ public class GeneralDao extends BaseDao {
         List<AnalysisFeature> results = getHibernateTemplate().findByNamedParam("from AnalysisFeature where feature = :feature",
             "feature", feature);
         return firstFromList(results,"feature",feature);
+    }
+
+    public Synonym getOrCreateSynonym(String synonymType, String synonymString) {
+        @SuppressWarnings("unchecked")
+        List<Synonym> synonyms = getHibernateTemplate().findByNamedParam(
+            "from Synonym where type.cv.name='genedb_synonym_type' and type.name=:type and name=:name",
+            new String[] {"type", "name"}, new String[] {synonymType, synonymString});
+        if (!synonyms.isEmpty()) {
+            return synonyms.get(0);
+        }
+
+        CvTerm synonymTypeCvTerm = cvDao.findOrCreateCvTermByNameAndCvName(synonymType, "genedb_synonym_type");
+        return new Synonym(synonymTypeCvTerm, synonymString, synonymString);
+    }
+
+    public void setCvDao(CvDao cvDao) {
+        this.cvDao = cvDao;
     }
 
 }

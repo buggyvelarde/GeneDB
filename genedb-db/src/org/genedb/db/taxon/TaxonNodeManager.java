@@ -28,7 +28,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -43,8 +42,7 @@ import java.util.Set;
 public class TaxonNodeManager implements InitializingBean{
 
     private PhylogenyDao phylogenyDao;
-
-    private HibernateTransactionManager hibernateTransactionManager;
+    private SessionFactory sessionFactory;
 
     private Map<String, TaxonNode> labelTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> taxonTaxonNodeMap = new HashMap<String, TaxonNode>();
@@ -52,7 +50,6 @@ public class TaxonNodeManager implements InitializingBean{
     private Map<String, TaxonNode> nickNameTaxonNodeMap = new HashMap<String, TaxonNode>();
 
     public void afterPropertiesSet() throws Exception {
-        SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
         TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
         try {
@@ -173,9 +170,8 @@ public class TaxonNodeManager implements InitializingBean{
     }
 
     @Required
-    public void setHibernateTransactionManager(
-            HibernateTransactionManager hibernateTransactionManager) {
-        this.hibernateTransactionManager = hibernateTransactionManager;
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
 }

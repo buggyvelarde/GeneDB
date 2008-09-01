@@ -26,7 +26,7 @@
 
     <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
-        <property name="hibernateTransactionManager" ref="transactionManager" />
+        <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
     <bean id="taxonUtils" class="org.genedb.web.mvc.controller.TaxonUtils">
@@ -35,7 +35,6 @@
 
     <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
         <property name="sessionFactory" ref="sessionFactory" />
-        <property name="platformTransactionManager" ref="transactionManager" />
     </bean>
 
     <bean id="cvDao" class="org.genedb.db.dao.CvDao" init-method="afterPropertiesSet">
@@ -62,7 +61,6 @@
 
     <bean id="generalDao" class="org.genedb.db.dao.GeneralDao" init-method="afterPropertiesSet">
         <property name="sessionFactory" ref="sessionFactory" />
-        <property name="platformTransactionManager" ref="transactionManager" />
     </bean>
 
     <bean id="organismDao" class="org.genedb.db.dao.OrganismDao" init-method="afterPropertiesSet">
@@ -84,10 +82,6 @@
         <property name="url"><value>jdbc:postgresql://${dbhost}:${dbport}/${dbname}</value></property>
         <property name="username"><value>${dbuser}</value></property>
         <property name="password"><value>${dbpassword}</value></property>
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
     <!-- Database Property -->
