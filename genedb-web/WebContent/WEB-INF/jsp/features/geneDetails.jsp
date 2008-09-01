@@ -6,7 +6,7 @@
 <c:set var="organism" value="${gene.organism.commonName}" />
 
 <div id="firstRow" class="row">
-    <!-- General Information -->
+    <%-- General Information --%>
     <format:genePageSection id="generalInformation">
         <div class="heading">General Information</div>
         <table>
@@ -32,13 +32,7 @@
         </tr>
         <tr>
             <td class="label">Feature Type</td>
-            <td class="value">
-        <c:choose>
-          <c:when test="${transcript.type.name == 'mRNA'}">Protein coding gene</c:when>
-          <c:when test="${transcript.type.name == 'pseudogenic_transcript'}">Pseudogene</c:when>
-          <c:otherwise>${transcript.type.name}</c:otherwise>
-        </c:choose>
-            </td>
+            <td class="value">${dto.typeDescription}</td>
         </tr>
         <db:synonym name="obsolete_name" var="name" collection="${gene.featureSynonyms}">
             <tr>
@@ -115,29 +109,27 @@
 
 <c:if test="${polypeptide != null}">
 
-    <!-- Comments Section -->
-    <db:filterByType items="${polypeptide.featureProps}" cvTerm="comment" var="comment"/>
-    <c:if test="${fn:length(comment) > 0}">
+    <%-- Notes Section --%>
+    <c:if test="${fn:length(dto.notes) > 0}">
         <format:genePageSection id="comment">
             <div class="heading">Comments</div>
-            <db:filtered-loop items="${polypeptide.featureProps}" cvTerm="comment" var="comment" varStatus="status">
-                <div class="comment">${comment.value}</div>
-            </db:filtered-loop>
+            <c:forEach items="${dto.notes}" var="note">
+                <div class="comment">${note}</div>
+            </c:forEach>
         </format:genePageSection>
     </c:if>
 
-    <!-- Curation Section -->
-    <db:filterByType items="${polypeptide.featureProps}" cvTerm="curation" var="curation"/>
-    <c:if test="${fn:length(curation) > 0}">
+    <%-- Comment Section --%>
+    <c:if test="${fn:length(dto.comments) > 0}">
         <format:genePageSection id="curation">
             <div class="heading">Curation</div>
-            <db:filtered-loop items="${polypeptide.featureProps}" cvTerm="curation" var="curation" varStatus="status">
-                <div class="comment">${curation.value}</div>
-            </db:filtered-loop>
+            <c:forEach items="${dto.comments}" var="comment">
+                <div class="comment">${comment}</div>
+            </c:forEach>
         </format:genePageSection>
     </c:if>
 
-    <!-- Controlled Curation Section -->
+    <%-- Controlled Curation Section --%>
     <db:filterByType items="${polypeptide.featureCvTerms}" cvPattern="CC_.*" var="controlledCurationTerms"/>
     <c:if test="${fn:length(controlledCurationTerms) > 0}">
         <format:genePageSection id="controlCur">
@@ -148,7 +140,7 @@
         </format:genePageSection>
     </c:if>
 
-    <!-- Gene Ontology Section -->
+    <%-- Gene Ontology Section --%>
     <db:filterByType items="${polypeptide.featureCvTerms}" cv="biological_process" var="biologicalProcessTerms"/>
     <db:filterByType items="${polypeptide.featureCvTerms}" cv="molecular_function" var="molecularFunctionTerms"/>
     <db:filterByType items="${polypeptide.featureCvTerms}" cv="cellular_component" var="cellularComponentTerms"/>
@@ -163,8 +155,8 @@
         </format:genePageSection>
     </c:if>
 
-    <c:if test="${!gene.pseudo}">
-        <!-- Predicted Peptide Section -->
+    <c:if test="${!dto.pseudo}">
+        <%-- Predicted Peptide Section --%>
         <div id="peptideRow" class="row">
             <c:set var="hasAlgorithmData" value="${fn:length(algorithmData) > 0}"/>
             <c:if test="${hasAlgorithmData}">
@@ -245,7 +237,7 @@
         </div>
     </c:if>
 
-    <!-- Protein map section -->
+    <%-- Protein map section --%>
     <c:if test="${proteinMap != null}">
         <format:genePageSection id="proteinMap">
             <div class="heading">Protein map</div>
@@ -268,7 +260,7 @@
     </c:if>
 
     <c:if test="${fn:length(domainInformation) > 0}">
-        <!-- Domain Information -->
+        <%-- Domain Information --%>
         <format:genePageSection id="domainInfo">
             <div class="heading">Domain Information</div>
             <table class="domainTable"><tbody>
@@ -310,7 +302,7 @@
         </format:genePageSection>
     </c:if>
 
-    <!-- Ortholog / Paralog Section -->
+    <%-- Ortholog / Paralog Section --%>
     <db:filterByType items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>
     <c:if test="${fn:length(orthologs) > 0}">
         <format:genePageSection id="orthologs">
