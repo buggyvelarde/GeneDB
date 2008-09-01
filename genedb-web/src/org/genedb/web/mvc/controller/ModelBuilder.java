@@ -6,6 +6,7 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.domain.objects.InterProHit;
 import org.genedb.db.domain.objects.PolypeptideRegionGroup;
 import org.genedb.db.domain.objects.SimpleRegionGroup;
+import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
@@ -127,10 +128,15 @@ public class ModelBuilder {
      */
     public Map<String,Object> prepareTranscript(Transcript transcript, Map<String,Object> model) {
 
-        if (!model.containsKey("gene"))
+        if (!model.containsKey("gene")) {
             model.put("gene", transcript.getGene());
+        }
 
         model.put("transcript", transcript);
+
+        TranscriptDTO dto = new TranscriptDTO();
+        dto.populate(transcript);
+        model.put("dto", dto);
 
         if (transcript instanceof ProductiveTranscript) {
             model.put("PMID", generalDao.getDbByName("PMID").getUrlPrefix());
@@ -144,9 +150,10 @@ public class ModelBuilder {
                  * that has no polypeptide, we log an error and continue
                  * as best we can.
                  */
-                if (transcript instanceof MRNA)
+                if (transcript instanceof MRNA) {
                     logger.error(String.format("Transcript '%s' has no polypeptide!",
                         codingTranscript.getUniqueName()));
+                }
                 return model;
             }
 
