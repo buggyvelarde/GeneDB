@@ -582,6 +582,7 @@ public abstract class Feature implements java.io.Serializable {
     private String getSynonymsAsTabSeparatedString() {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
+        // TODO we have libraries
         for (FeatureSynonym featureSynonym : getFeatureSynonyms()) {
             if (first) {
                 first = false;
@@ -773,6 +774,28 @@ public abstract class Feature implements java.io.Serializable {
         }
         this.featureProps.add(fp);
         return fp;
+    }
+
+    public List<FeatureProp> getFeaturePropsFilteredByCvNameAndTermName(String cvName, String termName) {
+        List<FeatureProp> ret = new ArrayList<FeatureProp>();
+        CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
+        if (type == null) {
+            throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
+        }
+        Collection<FeatureProp> featureProps = getFeatureProps();
+        for (FeatureProp featureProp : featureProps) {
+            logger.warn("In loop Looking at "+featureProp.getType().getName());
+            if (featureProp.getType().equals(type)) {
+                logger.warn("Have a match for "+featureProp.getType().getName());
+                ret.add(featureProp);
+            } else {
+                logger.warn(String.format("No match for '%s' and '%s'", type.getName()+type.getCv().getName(), featureProp.getType().getName()+featureProp.getType().getCv().getName()));
+            }
+        }
+        if (ret.size() == 0) {
+            return Collections.emptyList();
+        }
+        return ret;
     }
 
     @Transient
