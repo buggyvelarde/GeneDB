@@ -1,5 +1,12 @@
 package org.genedb.db.loading.auxiliary;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.connection.ConnectionProvider;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,17 +18,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 
 import javax.sql.DataSource;
-
-import org.apache.log4j.Logger;
-import org.genedb.db.loading.PropertyOverrideHolder;
-import org.hibernate.Session;
-import org.hibernate.connection.ConnectionProvider;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * A GO annotation is redundant when:
@@ -40,7 +38,6 @@ public class DeleteRedundantGOTerms {
     private static final Logger logger = Logger.getLogger(DeleteRedundantGOTerms.class);
 
     public static void main(String[] args) throws SQLException, IOException {
-        PropertyOverrideHolder.setProperties("dataSourceMunging", new Properties());
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
             new String[] {"AuxContext.xml"});
 
