@@ -137,4 +137,57 @@ public class CvTerm implements Serializable {
         this.cvTermDbXRefs.remove(cvTermDbXRef);
         cvTermDbXRef.setCvTerm(null);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((cv == null) ? 0 : cv.hashCode());
+        result = prime * result
+                + ((definition == null) ? 0 : definition.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (obsolete ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!getClass().isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        CvTerm other = (CvTerm) obj;
+        if (cv == null) {
+            if (other.getCv() != null) {
+                return false;
+            }
+        } else if (!cv.equals(other.getCv())) {
+            return false;
+        }
+        if (definition == null) {
+            if (other.getDefinition() != null) {
+                return false;
+            }
+        } else if (!definition.equals(other.getDefinition())) {
+            return false;
+        }
+        if (name == null) {
+            if (other.getName() != null) {
+                return false;
+            }
+        } else if (!name.equals(other.getName())) {
+            return false;
+        }
+        if (obsolete != other.isObsolete()) {
+            return false;
+        }
+        return true;
+    }
+
+
 }
