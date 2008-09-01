@@ -1,5 +1,9 @@
 package org.genedb.db.loading.auxiliary;
 
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -7,14 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
-
-import org.apache.log4j.Logger;
-import org.genedb.db.loading.PropertyOverrideHolder;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Run the specified loader on the specified files or directories.
@@ -53,9 +51,6 @@ public class Load {
         if (args.length < 1)
             dieUsage();
         String loaderBeanName = args[0];
-
-        Properties overrideProps = new Properties();
-        PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
 
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"AuxContext.xml"});
