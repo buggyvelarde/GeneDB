@@ -52,10 +52,10 @@ public class CvTerm implements Serializable {
     private String definition;
 
     @Column(name="is_obsolete", unique=false, nullable=false, insertable=true, updatable=true)
-    private boolean obsolete;
+    private int obsolete;
 
     @Column(name="is_relationshiptype", unique=false, nullable=false, insertable=true, updatable=true)
-    private boolean isRelationshipType;
+    private int isRelationshipType;
 
     @OneToMany(cascade={CascadeType.PERSIST}, fetch=FetchType.LAZY, mappedBy="cvTerm")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -109,19 +109,19 @@ public class CvTerm implements Serializable {
     }
 
     public boolean isObsolete() {
-        return this.obsolete;
+        return this.obsolete == 1;
     }
 
     public void setObsolete(boolean isObsolete) {
-        this.obsolete = isObsolete;
+        this.obsolete = isObsolete ? 1 : 0;
     }
 
     public boolean isRelationshipType() {
-        return this.isRelationshipType;
+        return this.isRelationshipType == 1;
     }
 
     public void setRelationshipType(boolean isRelationshipType) {
-        this.isRelationshipType = isRelationshipType;
+        this.isRelationshipType = isRelationshipType ? 1 : 0;
     }
 
     public Collection<CvTermDbXRef> getCvTermDbXRefs() {
@@ -146,7 +146,7 @@ public class CvTerm implements Serializable {
         result = prime * result
                 + ((definition == null) ? 0 : definition.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + (obsolete ? 1231 : 1237);
+        result = prime * result + ((obsolete == 1) ? 1231 : 1237);
         return result;
     }
 
@@ -183,11 +183,14 @@ public class CvTerm implements Serializable {
         } else if (!name.equals(other.getName())) {
             return false;
         }
-        if (obsolete != other.isObsolete()) {
+        if (this.isObsolete() != other.isObsolete()) {
             return false;
         }
         return true;
     }
 
-
+    @Override
+    public String toString() {
+        return String.format("%s:%s", getCv().getName(), getName());
+    }
 }
