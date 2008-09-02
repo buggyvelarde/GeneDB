@@ -106,7 +106,7 @@ public class InterProLoader extends Loader {
         if (acc != InterProAcc.NULL) {
             logger.debug(String.format("Creating InterPro dbxref for '%s' with description '%s'",
                 acc.getId(), acc.getDescription()));
-            interproDbxref = dbxrefManager.get("InterPro", acc.getId(), acc.getDescription());
+            interproDbxref = objectManager.getDbXRef("InterPro", acc.getId(), acc.getDescription());
         }
 
         int n = -1;
@@ -115,7 +115,7 @@ public class InterProLoader extends Loader {
             logger.debug(row);
 
             // Insert polypeptide_domain
-            DbXRef dbxref = dbxrefManager.get(row.db, row.nativeAcc, row.nativeDesc);
+            DbXRef dbxref = objectManager.getDbXRef(row.db, row.nativeAcc, row.nativeDesc);
             if (dbxref == null) {
                 logger.error(String.format("Could not find dbxref '%s'/'%s'", row.db, row.nativeAcc));
                 continue;
@@ -151,7 +151,7 @@ public class InterProLoader extends Loader {
                     goTerm.getId(), polypeptideDomain.getUniqueName()));
 
                 featureUtils.createGoEntries(polypeptide, goTerm,
-                    "From Interpro file", dbxrefManager.get(goTerm.getWithFrom()));
+                    "From Interpro file", objectManager.getDbXRef(goTerm.getWithFrom()));
             }
         }
     }

@@ -14,7 +14,7 @@ import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
-import org.gmod.schema.utils.DbXRefManager;
+import org.gmod.schema.utils.ObjectManager;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,7 +30,7 @@ public abstract class Loader {
     protected SequenceDao sequenceDao;
     protected FeatureUtils featureUtils;
     protected HibernateTransactionManager hibernateTransactionManager;
-    protected DbXRefManager dbxrefManager;
+    protected ObjectManager objectManager;
 
     /**
      * What options does this loader accept?
@@ -62,7 +62,7 @@ public abstract class Loader {
 
     void load(InputStream inputStream) throws IOException {
         SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
-        Session session = SessionFactoryUtils.getSession(sessionFactory, dbxrefManager, null);
+        Session session = SessionFactoryUtils.getSession(sessionFactory, objectManager, null);
         TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
 
         doLoad(inputStream, session);
@@ -93,8 +93,8 @@ public abstract class Loader {
         this.sequenceDao = sequenceDao;
     }
 
-    public void setDbxrefManager(DbXRefManager dbxrefManager) {
-        this.dbxrefManager = dbxrefManager;
+    public void setObjectManager(ObjectManager objectManager) {
+        this.objectManager = objectManager;
     }
 
     protected Polypeptide getPolypeptideForGene(String geneUniqueName) {

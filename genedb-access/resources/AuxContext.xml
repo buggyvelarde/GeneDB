@@ -44,7 +44,7 @@
     </bean>
 
     <bean id="iploader" class="org.genedb.db.loading.auxiliary.InterProLoader">
-        <property name="dbxrefManager" ref="dbxrefManager" />
+        <property name="objectManager" ref="objectManager" />
         <property name="featureUtils" ref="featureUtils" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
@@ -76,7 +76,7 @@
     </bean>
 
     <bean id="opi-referencesloader" class="org.genedb.db.loading.auxiliary.OPIReferenceLoader">
-        <property name="dbXRefManager" ref="dbxrefManager" />
+        <property name="objectManager" ref="objectManager" />
         <property name="featureUtils" ref="featureUtils" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="hibernateTransactionManager" ref="transactionManager" />
@@ -88,7 +88,7 @@
         <property name="pubDao" ref="pubDao" />
     </bean>
 
-    <bean id="dbxrefManager" class="org.gmod.schema.utils.DbXRefManager">
+    <bean id="objectManager" class="org.gmod.schema.utils.ObjectManager">
         <property name="generalDao" ref="generalDao" />
     </bean>
 
