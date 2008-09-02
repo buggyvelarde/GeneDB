@@ -20,6 +20,7 @@ import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.TransmembraneRegion;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureLoc;
 
 import org.apache.log4j.Logger;
@@ -165,9 +166,9 @@ public class ModelBuilder {
             model.put("polypeptide", polypeptide);
 
             model.put("CC",        cvDao.getCountedNamesByCvNamePatternAndFeatureAndOrganism("CC\\_*", polypeptide));
-            model.put("BP",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("biological_process", polypeptide));
-            model.put("CellularC", cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("cellular_component", polypeptide));
-            model.put("MF",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("molecular_function", polypeptide));
+            //model.put("BP",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("biological_process", polypeptide));
+            //model.put("CellularC", cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("cellular_component", polypeptide));
+            //model.put("MF",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("molecular_function", polypeptide));
 
             List<PolypeptideRegionGroup> domainInformation = prepareDomainInformation(polypeptide);
             model.put("domainInformation", domainInformation);

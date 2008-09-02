@@ -135,7 +135,7 @@
         <format:genePageSection id="controlCur">
             <div class="heading">Controlled Curation</div>
             <table width="100%" class="go-section">
-                <format:go-section featureCvTerms="${controlledCurationTerms}" featureCounts="${CC}" organism="${organism}"/>
+                <format:featureCvTerm-section featureCvTerms="${controlledCurationTerms}" featureCounts="${CC}" organism="${organism}"/>
             </table>
         </format:genePageSection>
     </c:if>
@@ -148,9 +148,9 @@
         <format:genePageSection id="geneOntology">
             <div class="heading">Gene Ontology</div>
             <table width="100%" class="go-section">
-                <format:go-section title="Biological Process" featureCvTerms="${biologicalProcessTerms}" featureCounts="${BP}" organism="${organism}"/>
-                <format:go-section title="Cellular Component" featureCvTerms="${cellularComponentTerms}" featureCounts="${CellularC}" organism="${organism}"/>
-                <format:go-section title="Molecular Function" featureCvTerms="${molecularFunctionTerms}" featureCounts="${MF}" organism="${organism}"/>
+                <format:go-section title="Biological Process" featureCvTerms="${biologicalProcessTerms}" organism="${organism}"/>
+                <format:go-section title="Cellular Component" featureCvTerms="${cellularComponentTerms}" organism="${organism}"/>
+                <format:go-section title="Molecular Function" featureCvTerms="${molecularFunctionTerms}" organism="${organism}"/>
             </table>
         </format:genePageSection>
     </c:if>
