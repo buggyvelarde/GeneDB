@@ -72,7 +72,7 @@
 <% } %>
 <table id="header"><tbody>
     <tr id="top-row">
-        <td id="logo" valign="top" align="left"><a href="<c:url value="/Homepage"/>"><img border="0" width="144" height="53" src="<c:url value="/includes/images/newlogo4.png"/>" alt="GeneDB"></img></a></td>
+        <td id="logo" valign="top" align="left"><a href="<c:url value="/Homepage"/>"><img border="0" width="170" height="49" src="<c:url value="/includes/images/genedb-logo.png"/>" alt="GeneDB"></img></a></td>
         <td id="name">${name}</td>
         <td id="search">
         	<c:if test="${!empty organism}">
