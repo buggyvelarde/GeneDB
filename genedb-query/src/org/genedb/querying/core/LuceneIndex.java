@@ -3,9 +3,10 @@ package org.genedb.querying.core;
 import java.io.File;
 import java.io.IOException;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -13,6 +14,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Sort;
 import org.springframework.util.StringUtils;
 
 public class LuceneIndex {
@@ -34,6 +36,7 @@ public class LuceneIndex {
     	BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
     }
 
+
     /**
      * Open the named Lucene index from the default location.
      *
@@ -41,6 +44,7 @@ public class LuceneIndex {
      * @return
      * @throws IOException
      */
+    @PostConstruct
     private void openIndex() {
     	if ( ! (StringUtils.hasText(indexDirectoryName) && StringUtils.hasText(indexName)) ) {
     		return;
@@ -79,6 +83,7 @@ public class LuceneIndex {
         }
     }
 
+
     /**
      * Perform a Lucene search using a prebuilt Query object.
      *
@@ -87,10 +92,25 @@ public class LuceneIndex {
      * @return The result of the search
      */
     public Hits search(Query query) {
+        return search(query, null);
+    }
+
+    /**
+     * Perform a Lucene search using a prebuilt Query object.
+     *
+     * @param ir A Lucene index, as returned by {@link #openIndex(String)}
+     * @param query The query
+     * @return The result of the search
+     */
+    public Hits search(Query query, Sort sort) {
         IndexSearcher searcher = new IndexSearcher(indexReader);
         logger.debug("searcher is -> " + searcher.toString());
         try {
-            return searcher.search(query);
+            if (sort == null) {
+                return searcher.search(query);
+            } else {
+                return searcher.search(query, sort);
+            }
         } catch (IOException e) {
             throw new RuntimeException(String.format("I/O error during Lucene query '%s'",
                 query), e);

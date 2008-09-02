@@ -2,7 +2,8 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
 import org.genedb.db.domain.services.BasicGeneService;
-import org.genedb.querying.core.LuceneDao;
+import org.genedb.querying.core.LuceneIndex;
+import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.ContextMapDiagram;
 import org.genedb.web.gui.RenderedContextMap;
@@ -24,7 +25,7 @@ public class ContextMapController extends PostOrGetFormController {
      */
     private static final int TILE_WIDTH = 5000; // in pixels
 
-    private LuceneDao luceneDao; // Injected by Spring
+    private LuceneIndexFactory luceneIndexFactory; // Injected by Spring
     private View view; // Defined in genedb-servlet.xml
 
     public static class Command {
@@ -116,8 +117,8 @@ public class ContextMapController extends PostOrGetFormController {
     protected ModelAndView onSubmit(Object rawCommand) throws Exception {
         Command command = (Command) rawCommand;
 
-        IndexReader indexReader = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
-        BasicGeneService basicGeneService = new BasicGeneServiceImpl(indexReader);
+        LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
+        BasicGeneService basicGeneService = new BasicGeneServiceImpl(luceneIndex);
 
         ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forChromosome(basicGeneService,
             command.getOrganism(), command.getChromosome(), command.getChromosomeLength());
@@ -133,12 +134,12 @@ public class ContextMapController extends PostOrGetFormController {
         return new ModelAndView(view, model);
     }
 
-    public LuceneDao getLuceneDao() {
-        return luceneDao;
+    public LuceneIndexFactory getLuceneDao() {
+        return luceneIndexFactory;
     }
 
-    public void setLuceneDao(LuceneDao luceneDao) {
-        this.luceneDao = luceneDao;
+    public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
+        this.luceneIndexFactory = luceneIndexFactory;
     }
 
     public View getView() {

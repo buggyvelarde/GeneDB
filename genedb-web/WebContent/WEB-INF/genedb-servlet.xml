@@ -185,7 +185,7 @@
         <property name="commandClass"
         	value="org.genedb.web.mvc.controller.download.DownloadBean" />
 		<property name="sequenceDao" ref="sequenceDao"/>
-		<property name="luceneDao" ref="luceneDao"/>
+		<property name="luceneIndexFactory" ref="luceneIndexFactory"/>
         <property name="formView" value="download/download" />
         <property name="downloadView" value="download/download" />
         <property name="jsonView" ref="jsonView"/>
@@ -264,7 +264,7 @@
         <property name="commandName" value="nameLookup" />
         <property name="commandClass"
             value="org.genedb.web.mvc.controller.NameSearchController$NameLookupBean" />
-        <property name="luceneDao" ref="luceneDao" />
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="listResultsView" value="list/features" />
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="redirect:NamedFeature" />
@@ -276,20 +276,20 @@
     <bean id="nameSearchValidator"
         class="org.genedb.web.mvc.validators.NameSearchFormValidator" />
 
-	<bean id="AdvancedSearchController"
+<!--  	<bean id="AdvancedSearchController"
         class="org.genedb.web.mvc.controller.AdvancedSearchController">
         <property name="sessionForm" value="true" />
         <property name="commandName" value="advancedSearchLookup" />
         <property name="commandClass"
             value="org.genedb.web.mvc.controller.AdvancedSearchController$AdvancedSearchBean" />
-        <property name="luceneDao" ref="luceneDao" />
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="resultsView" value="list/terms" />
         <property name="formView" value="search/advancedSearch" />
         <property name="geneView" value="redirect:NamedFeature" />
         <property name="jsonView" ref="jsonView" />
         <property name="bindOnNewForm" value="true" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
-    </bean>
+    </bean> -->
 
     <bean id="FeatureDownloadController"
         class="org.genedb.web.mvc.controller.download.FeatureDownloadController">
@@ -338,7 +338,7 @@
         <property name="commandClass"
             value="org.genedb.web.mvc.controller.BrowseTermBean" />
         <property name="sequenceDao" ref="sequenceDao" />
-        <property name="luceneDao" ref="luceneDao" />
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="successView" value="list/terms" />
         <property name="formView" value="search/browseTerm" />
         <property name="geneView" value="redirect:NamedFeature" />
@@ -376,7 +376,7 @@
         <property name="commandName" value="contextMap" />
         <property name="commandClass"
             value="org.genedb.web.mvc.controller.ContextMapController$Command" />
-        <property name="luceneDao" ref="luceneDao" />
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="view" ref="jsonView" />
         <property name="validator" ref="contextMapFormValidator" />
         <property name="cacheSeconds" value="86400" />

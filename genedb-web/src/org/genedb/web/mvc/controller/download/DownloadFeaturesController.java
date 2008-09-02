@@ -37,7 +37,6 @@ import net.sf.json.spring.web.servlet.view.JsonView;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
@@ -49,13 +48,13 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.querying.core.LuceneDao;
+import org.genedb.querying.core.LuceneIndex;
+import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
 import org.genedb.web.mvc.controller.PostOrGetFormController;
 import org.genedb.web.mvc.controller.ResultHit;
-import org.genedb.web.mvc.controller.TaxonNodeBindingFormController;
 import org.genedb.web.utils.DownloadUtils;
 
 import org.gmod.schema.feature.AbstractGene;
@@ -74,7 +73,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class DownloadFeaturesController extends PostOrGetFormController {
 
     private SequenceDao sequenceDao;
-    private LuceneDao luceneDao;
+    private LuceneIndexFactory luceneIndexFactory;
     private HistoryManagerFactory historyManagerFactory;
     private String downloadView;
     private JsonView jsonView;
@@ -166,12 +165,12 @@ public class DownloadFeaturesController extends PostOrGetFormController {
     }
 
     private Hits lookupInLucene(List<String> ids) throws IOException {
-        IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
+        LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         BooleanQuery bQuery = new BooleanQuery();
         for (String id : ids) {
             bQuery.add(new TermQuery(new Term("uniqueName",id)), Occur.SHOULD);
         }
-        Hits hits = luceneDao.search(ir, bQuery);
+        Hits hits = luceneIndex.search(bQuery);
         return hits;
     }
 
@@ -406,12 +405,12 @@ public class DownloadFeaturesController extends PostOrGetFormController {
         this.downloadView = downloadView;
     }
 
-    public LuceneDao getLuceneDao() {
-        return luceneDao;
-    }
+//    public LuceneDao getLuceneDao() {
+//        return luceneDao;
+//    }
 
-    public void setLuceneDao(LuceneDao luceneDao) {
-        this.luceneDao = luceneDao;
+    public void setLuceneIndexFactory(LuceneIndexFactory luceneDao) {
+        this.luceneIndexFactory = luceneIndexFactory;
     }
 
 

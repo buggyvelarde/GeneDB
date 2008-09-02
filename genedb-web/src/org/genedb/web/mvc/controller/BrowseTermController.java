@@ -30,12 +30,12 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.spring.web.servlet.view.JsonView;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.querying.core.LuceneDao;
+import org.genedb.querying.core.LuceneIndex;
+import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
@@ -54,10 +54,10 @@ public class BrowseTermController extends PostOrGetFormController {
 
     private static final Logger logger = Logger.getLogger(BrowseTermController.class);
     private SequenceDao sequenceDao;
-    private LuceneDao luceneDao;
     private String geneView;
     private JsonView jsonView;
     private HistoryManagerFactory historyManagerFactory;
+    private LuceneIndexFactory luceneIndexFactory;
 
     @Override
     protected Map<?,?> referenceData(@SuppressWarnings("unused") HttpServletRequest request) throws Exception {
@@ -122,13 +122,13 @@ public class BrowseTermController extends PostOrGetFormController {
 
         List<String> ids = new ArrayList<String>();
 
-        IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
+      LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
 
         for (GeneNameOrganism feature : features) {
             ids.add(feature.getGeneName());
 
             TermQuery query = new TermQuery(new Term("uniqueName", feature.getGeneName()));
-            Hits hits = luceneDao.search(ir, query);
+            Hits hits = luceneIndex.search(query);
 
             if (hits.length() > 0) {
                 feature.setProduct(hits.doc(0).get("product"));
@@ -159,9 +159,6 @@ public class BrowseTermController extends PostOrGetFormController {
         this.geneView = geneView;
     }
 
-    public void setLuceneDao(LuceneDao luceneDao) {
-        this.luceneDao = luceneDao;
-    }
 
     public void setJsonView(JsonView jsonView) {
         this.jsonView = jsonView;
@@ -169,6 +166,10 @@ public class BrowseTermController extends PostOrGetFormController {
 
     public void setHistoryManagerFactory(HistoryManagerFactory historyManagerFactory) {
         this.historyManagerFactory = historyManagerFactory;
+    }
+
+    public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
+        this.luceneIndexFactory = luceneIndexFactory;
     }
 }
 

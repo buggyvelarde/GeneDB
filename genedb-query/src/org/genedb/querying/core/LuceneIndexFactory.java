@@ -21,8 +21,8 @@ public class LuceneIndexFactory {
 
 	public void setLuceneIndexList(List<LuceneIndex> luceneIndexList) {
 		for (LuceneIndex luceneIndex : luceneIndexList) {
-			String shortName = StringUtils.unqualify(luceneIndex.getIndexName());
-			mapping.put(shortName, luceneIndex);
+			//String shortName = StringUtils.unqualify(luceneIndex.getIndexName());
+			mapping.put(luceneIndex.getIndexName(), luceneIndex);
 		}
 	}
 

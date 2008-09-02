@@ -20,7 +20,8 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.taxon.TaxonNode;
-import org.genedb.querying.core.LuceneDao;
+import org.genedb.querying.core.LuceneIndex;
+import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
 
@@ -59,7 +60,7 @@ public class NameSearchController extends TaxonNodeBindingFormController {
     // TODO LuceneTemplate
 
     private String listResultsView;
-    private LuceneDao luceneDao;
+    private LuceneIndexFactory luceneIndexFactory;
     private String geneView;
     private String geneDetailsView;
 
@@ -127,7 +128,7 @@ public class NameSearchController extends TaxonNodeBindingFormController {
     }
 
     private Hits lookupInLucene(String name, TaxonNode[] taxonNodes) throws IOException {
-        IndexReader ir = luceneDao.openIndex("org.gmod.schema.mapped.Feature");
+        LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
 
         BooleanQuery geneNameQuery = new BooleanQuery();
 
@@ -165,12 +166,12 @@ public class NameSearchController extends TaxonNodeBindingFormController {
         }
 
         logger.debug(String.format("Lucene query is '%s'", booleanQuery.toString()));
-        Hits hits = luceneDao.search(ir, booleanQuery);
+        Hits hits = luceneIndex.search(booleanQuery);
         return hits;
     }
 
-    public void setLuceneDao(LuceneDao luceneDao) {
-        this.luceneDao = luceneDao;
+    public void setLuceneIndexFactory(LuceneIndexFactory luceneDao) {
+        this.luceneIndexFactory = luceneIndexFactory;
     }
 
     public void setListResultsView(String listResultsView) {

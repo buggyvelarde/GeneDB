@@ -36,13 +36,14 @@ import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
 import org.genedb.db.domain.objects.UTR;
 import org.genedb.db.domain.services.BasicGeneService;
+import org.genedb.querying.core.LuceneIndex;
 
 public class BasicGeneServiceImpl implements BasicGeneService {
 
-    private IndexReader luceneIndex;
+    private LuceneIndex luceneIndex;
     private static Logger logger = Logger.getLogger(BasicGeneServiceImpl.class);
 
-    public BasicGeneServiceImpl(IndexReader luceneIndex) {
+    public BasicGeneServiceImpl(LuceneIndex luceneIndex) {
         this.luceneIndex = luceneIndex;
     }
 
@@ -222,18 +223,10 @@ public class BasicGeneServiceImpl implements BasicGeneService {
     private <T> List<T> findWithQuery(Query query, Sort sort, DocumentConverter<T> converter) {
         List<T> ret = new ArrayList<T>();
 
-        IndexSearcher searcher = new IndexSearcher(luceneIndex);
+        //IndexSearcher searcher = new IndexSearcher(luceneIndex);
         logger.debug("Running Lucene query: "+query);
 
-        Hits hits;
-        try {
-            if (sort == null)
-                hits = searcher.search(query);
-            else
-                hits = searcher.search(query, sort);
-        } catch (IOException e) {
-            throw new RuntimeException("IOException while running Lucene query", e);
-        }
+        Hits hits = luceneIndex.search(query, sort);
 
         logger.debug(String.format("Query returned %d results", hits.length()));
 
