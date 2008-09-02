@@ -281,6 +281,7 @@ class LoadGeneDbCv {
 
         <term name="feature_props" description="Keys for storing information, for any feature in general">
             <term name="method" description="Free text note field for method" />
+            <term name="status" description="Structured text field for status"/>
             <term name="curation" description="Free text note field for local curation" />
             <term name="private" description="Free text note field for comments not to be made publicly visible" />
  			<term name="EC_number" description="Free text note field for EC_number" />
