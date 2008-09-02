@@ -75,6 +75,8 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
+    <bean id="transcriptDtoFactory" class="org.genedb.web.mvc.model.TranscriptDtoFactory" />
+
 
     <!-- DataSource Property -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">

@@ -7,6 +7,7 @@ import org.genedb.db.domain.objects.InterProHit;
 import org.genedb.db.domain.objects.PolypeptideRegionGroup;
 import org.genedb.db.domain.objects.SimpleRegionGroup;
 import org.genedb.web.mvc.model.TranscriptDTO;
+import org.genedb.web.mvc.model.TranscriptDtoFactory;
 
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
@@ -23,6 +24,7 @@ import org.gmod.schema.mapped.FeatureLoc;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +35,9 @@ import java.util.Map;
 
 public class ModelBuilder {
     private static final Logger logger = Logger.getLogger(ModelBuilder.class);
+
+    @Autowired
+    private TranscriptDtoFactory transcriptDtoFactory;
 
     /**
      * Generate a model object with the details of the specified feature.
@@ -134,8 +139,8 @@ public class ModelBuilder {
 
         model.put("transcript", transcript);
 
-        TranscriptDTO dto = new TranscriptDTO();
-        dto.populate(transcript);
+
+        TranscriptDTO dto = transcriptDtoFactory.makeDto(transcript);
         model.put("dto", dto);
 
         if (transcript instanceof ProductiveTranscript) {
@@ -158,7 +163,6 @@ public class ModelBuilder {
             }
 
             model.put("polypeptide", polypeptide);
-            model.put("pepstats", polypeptide.calculateStats());
 
             model.put("CC",        cvDao.getCountedNamesByCvNamePatternAndFeatureAndOrganism("CC\\_*", polypeptide));
             model.put("BP",        cvDao.getCountedNamesByCvNameAndFeatureAndOrganism("biological_process", polypeptide));
@@ -167,7 +171,6 @@ public class ModelBuilder {
 
             List<PolypeptideRegionGroup> domainInformation = prepareDomainInformation(polypeptide);
             model.put("domainInformation", domainInformation);
-            model.put("algorithmData", prepareAlgorithmData(polypeptide));
         }
         return model;
     }
@@ -207,114 +210,7 @@ public class ModelBuilder {
         return domainInformation;
     }
 
-    private <S> void putIfNotEmpty(Map<S,? super Map<?,?>> map, S key, Map<?,?> value) {
-        if (!value.isEmpty()) {
-            map.put(key, value);
-        }
-    }
-    private <S> void putIfNotEmpty(Map<S,? super Collection<?>> map, S key, Collection<?> value) {
-        if (!value.isEmpty()) {
-            map.put(key, value);
-        }
-    }
-    private <S,T> void putIfNotNull(Map<S,T> map, S key, T value) {
-        if (value != null) {
-            map.put(key, value);
-        }
-    }
 
-    private Map<String,Object> prepareAlgorithmData(Polypeptide polypeptide) {
-        Map<String,Object> algorithmData = new HashMap<String,Object>();
-        putIfNotEmpty(algorithmData, "SignalP", prepareSignalPData(polypeptide));
-        putIfNotEmpty(algorithmData, "DGPI", prepareDGPIData(polypeptide));
-        putIfNotEmpty(algorithmData, "PlasmoAP", preparePlasmoAPData(polypeptide));
-        putIfNotEmpty(algorithmData, "TMHMM", prepareTMHMMData(polypeptide));
-        return algorithmData;
-    }
-
-    private Map<String,Object> prepareSignalPData(Polypeptide polypeptide) {
-        Map<String,Object> signalPData = new HashMap<String,Object>();
-
-        String prediction  = polypeptide.getProperty("genedb_misc", "SignalP_prediction");
-        String peptideProb = polypeptide.getProperty("genedb_misc", "signal_peptide_probability");
-        String anchorProb  = polypeptide.getProperty("genedb_misc", "signal_anchor_probability");
-
-        putIfNotNull(signalPData, "prediction",  prediction);
-        putIfNotNull(signalPData, "peptideProb", peptideProb);
-        putIfNotNull(signalPData, "anchorProb",  anchorProb);
-
-        Collection<SignalPeptide> signalPeptides = polypeptide.getRegions(SignalPeptide.class);
-        if (!signalPeptides.isEmpty()) {
-            if (signalPeptides.size() > 1) {
-                logger.error(String.format("Polypeptide '%s' has %d signal peptide regions; only expected one",
-                    polypeptide.getUniqueName(), signalPeptides.size()));
-            }
-            SignalPeptide signalPeptide = signalPeptides.iterator().next();
-            FeatureLoc signalPeptideLoc = signalPeptide.getRankZeroFeatureLoc();
-
-            signalPData.put("cleavageSite", signalPeptideLoc.getFmax());
-            signalPData.put("cleavageSiteProb", signalPeptide.getProbability());
-        }
-
-        return signalPData;
-    }
-
-    private Map<String,Object> prepareDGPIData(Polypeptide polypeptide) {
-        /* If the GPI_anchored property is not present, we do not add the
-         * predicted cleavage site, even if there is one.
-         */
-        if (!polypeptide.hasProperty("genedb_misc", "GPI_anchored")) {
-            return Collections.emptyMap();
-        }
-
-        Map<String,Object> dgpiData = new HashMap<String,Object>();
-        dgpiData.put("anchored", true);
-
-        Collection<GPIAnchorCleavageSite> cleavageSites = polypeptide.getRegions(GPIAnchorCleavageSite.class);
-        if (!cleavageSites.isEmpty()) {
-            if (cleavageSites.size() > 1) {
-                logger.error(String.format("There are %d GPI anchor cleavage sites on polypeptide '%s'; only expected one",
-                    cleavageSites.size(), polypeptide.getUniqueName()));
-            }
-            GPIAnchorCleavageSite cleavageSite = cleavageSites.iterator().next();
-            FeatureLoc cleavageSiteLoc = cleavageSite.getRankZeroFeatureLoc();
-            dgpiData.put("location", cleavageSiteLoc.getFmax());
-            dgpiData.put("score", cleavageSite.getScore());
-        }
-
-        return dgpiData;
-    }
-
-    private Map<String,Object> preparePlasmoAPData(Polypeptide polypeptide) {
-        Map<String,Object> plasmoAPData = new HashMap<String,Object>();
-        String score = polypeptide.getProperty("genedb_misc", "PlasmoAP_score");
-        if (score != null) {
-            plasmoAPData.put("score", score);
-            switch (Integer.parseInt(score)) {
-            case 0: case 1: case 2: plasmoAPData.put("description", "Unlikely"); break;
-            case 3: plasmoAPData.put("description", "Unknown"); break;
-            case 4: plasmoAPData.put("description", "Likely"); break;
-            case 5: plasmoAPData.put("description", "Very likely"); break;
-            default:
-                throw new RuntimeException(String.format("Polypeptide '%s' has unrecognised PlasmoAP score '%s'",
-                    polypeptide.getUniqueName(), score));
-            }
-        }
-
-        return plasmoAPData;
-    }
-
-    private List<String> prepareTMHMMData(Polypeptide polypeptide) {
-        List<String> tmhmmData = new ArrayList<String>();
-
-        for (TransmembraneRegion transmembraneRegion: polypeptide.getRegions(TransmembraneRegion.class)) {
-            tmhmmData.add(String.format("%d-%d",
-                1 + transmembraneRegion.getRankZeroFeatureLoc().getFmin(),
-                transmembraneRegion.getRankZeroFeatureLoc().getFmax()));
-        }
-
-        return tmhmmData;
-    }
 
     private SequenceDao sequenceDao;
     private GeneralDao generalDao;

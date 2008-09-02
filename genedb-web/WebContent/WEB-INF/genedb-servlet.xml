@@ -14,7 +14,7 @@
 
 	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
-    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
+    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
     <context:spring-configured/>
 
     <!-- <tx:annotation-driven mode="aspectj" /> -->

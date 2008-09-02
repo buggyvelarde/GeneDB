@@ -158,32 +158,32 @@
     <c:if test="${!dto.pseudo}">
         <%-- Predicted Peptide Section --%>
         <div id="peptideRow" class="row">
-            <c:set var="hasAlgorithmData" value="${fn:length(algorithmData) > 0}"/>
+            <c:set var="hasAlgorithmData" value="${fn:length(dto.algorithmData) > 0}"/>
             <c:if test="${hasAlgorithmData}">
                 <c:set var="peptidePropertiesClass" value="leftBox"/>
             </c:if>
             <format:genePageSection id="peptideProperties" className="${peptidePropertiesClass}">
                 <div class="heading">Predicted Peptide Data</div>
                 <table>
-                <c:if test="${pepstats.isoelectricPoint != null}">
+                <c:if test="${dto.polypeptideProperties.isoelectricPoint != null}">
                     <tr>
                         <td class="label">Isoelectric Point</td>
-                        <td class="value">pH ${pepstats.isoelectricPoint}</td>
+                        <td class="value">pH ${dto.polypeptideProperties.isoelectricPoint}</td>
                     </tr>
                 </c:if>
-                <c:if test="${pepstats.mass != null}">
+                <c:if test="${dto.polypeptideProperties.mass != null}">
                     <tr>
                         <td class="label">Mass</td>
-                        <td class="value">${pepstats.mass}</td>
+                        <td class="value">${dto.polypeptideProperties.mass}</td>
                     </tr>
                 </c:if>
                 <tr>
                     <td class="label">Charge</td>
-                    <td class="value">${pepstats.charge}</td>
+                    <td class="value">${dto.polypeptideProperties.charge}</td>
                 </tr>
                 <tr>
                     <td class="label">Amino Acids</td>
-                    <td class="value">${pepstats.aminoAcids}</td>
+                    <td class="value">${dto.polypeptideProperties.aminoAcids}</td>
                 </tr>
                 </table>
             </format:genePageSection>
@@ -192,44 +192,44 @@
                 <format:genePageSection id="peptideAlgorithms" className="rightBox">
                     <div class="heading">Algorithmic Predictions</div>
                     <table>
-                    <c:if test="${algorithmData.SignalP != null}">
+                    <c:if test="${dto.algorithmData.SignalP != null}">
                         <tr>
                             <td class="label">SignalP</td>
-                            <td class="value">Predicted ${algorithmData.SignalP.prediction}
-                            (Signal peptide probability ${algorithmData.SignalP.peptideProb},
-                            signal anchor probability ${algorithmData.SignalP.anchorProb}).
-                            <c:if test="${algorithmData.SignalP.cleavageSite != null}">
-                                Predicted cleavage site at ${algorithmData.SignalP.cleavageSite}
-                                with probability ${algorithmData.SignalP.cleavageSiteProb}.
+                            <td class="value">Predicted ${dto.algorithmData.SignalP.prediction}
+                            (Signal peptide probability ${dto.algorithmData.SignalP.peptideProb},
+                            signal anchor probability ${dto.algorithmData.SignalP.anchorProb}).
+                            <c:if test="${dto.algorithmData.SignalP.cleavageSite != null}">
+                                Predicted cleavage site at ${dto.algorithmData.SignalP.cleavageSite}
+                                with probability ${dto.algorithmData.SignalP.cleavageSiteProb}.
                             </c:if></td>
                         </tr>
                     </c:if>
-                    <c:if test="${algorithmData.TMHMM != null}">
+                    <c:if test="${dto.algorithmData.TMHMM != null}">
                         <tr>
                             <td class="label">TMHMM</td>
-                            <td class="value">Predicted ${fn:length(algorithmData.TMHMM)}
-                            transmembrane region<c:if test="${fn:length(algorithmData.TMHMM) > 1}">s</c:if>
+                            <td class="value">Predicted ${fn:length(dto.algorithmData.TMHMM)}
+                            transmembrane region<c:if test="${fn:length(dto.algorithmData.TMHMM) > 1}">s</c:if>
                             at locations
-                            <c:forEach var="helix" varStatus="status" items="${algorithmData.TMHMM}"><%--
+                            <c:forEach var="helix" varStatus="status" items="${dto.algorithmData.TMHMM}"><%--
                                 --%><c:if test="${!status.first && !status.last}">,</c:if>
                                 <c:if test="${status.last && !status.first}">and </c:if>
                                 ${helix}</c:forEach>.</td>
                         </tr>
                     </c:if>
-                    <c:if test="${algorithmData.DGPI != null && algorithmData.DGPI.anchored}">
+                    <c:if test="${dto.algorithmData.DGPI != null && dto.algorithmData.DGPI.anchored}">
                         <tr>
                             <td class="label">DGPI</td>
                             <td class="value">
-                                <c:if test="${algorithmData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
-                                <c:if test="${!algorithmData.DGPI.anchored}">This protein is <b>not</b> GPI-anchored.</c:if>
-                                <c:if test="${algorithmData.DGPI.location != null}">Predicted cleavage site at ${algorithmData.DGPI.location} with score ${algorithmData.DGPI.score}.</c:if>
+                                <c:if test="${dto.algorithmData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
+                                <c:if test="${!dto.algorithmData.DGPI.anchored}">This protein is <b>not</b> GPI-anchored.</c:if>
+                                <c:if test="${dto.algorithmData.DGPI.location != null}">Predicted cleavage site at ${algorithmData.DGPI.location} with score ${algorithmData.DGPI.score}.</c:if>
                             </td>
                         </tr>
                     </c:if>
-                    <c:if test="${algorithmData.PlasmoAP != null}">
+                    <c:if test="${dto.algorithmData.PlasmoAP != null}">
                         <tr>
                             <td class="label">PlasmoAP</td>
-                            <td class="value">${algorithmData.PlasmoAP.description} apicoplast-targeting protein (score ${algorithmData.PlasmoAP.score}).</td>
+                            <td class="value">${dto.algorithmData.PlasmoAP.description} apicoplast-targeting protein (score ${algorithmData.PlasmoAP.score}).</td>
                         </tr>
                     </c:if>
                 </table></format:genePageSection>
