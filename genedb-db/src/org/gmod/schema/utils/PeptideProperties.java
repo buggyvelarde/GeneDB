@@ -1,12 +1,13 @@
 package org.gmod.schema.utils;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 
 /**
  * Represents computed properties of a polypeptide.
  *
  */
-public class PeptideProperties {
+public class PeptideProperties implements Serializable {
 
     private double massInDaltons;
     private int aminoAcids;
