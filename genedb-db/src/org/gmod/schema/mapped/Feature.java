@@ -784,12 +784,8 @@ public abstract class Feature implements java.io.Serializable {
         }
         Collection<FeatureProp> featureProps = getFeatureProps();
         for (FeatureProp featureProp : featureProps) {
-            logger.warn("In loop Looking at "+featureProp.getType().getName());
             if (featureProp.getType().equals(type)) {
-                logger.warn("Have a match for "+featureProp.getType().getName());
                 ret.add(featureProp);
-            } else {
-                logger.warn(String.format("No match for '%s' and '%s'", type.getName()+type.getCv().getName(), featureProp.getType().getName()+featureProp.getType().getCv().getName()));
             }
         }
         if (ret.size() == 0) {
