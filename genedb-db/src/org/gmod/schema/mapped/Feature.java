@@ -1,6 +1,7 @@
 package org.gmod.schema.mapped;
 
 import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.helpers.LocationBridge;
 import org.genedb.util.SequenceUtils;
 
@@ -8,6 +9,7 @@ import org.gmod.schema.utils.CollectionUtils;
 import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
@@ -81,6 +83,9 @@ public abstract class Feature implements java.io.Serializable {
 
     @Autowired
     protected transient CvDao cvDao;
+
+    @Autowired
+    protected transient GeneralDao generalDao;
 
     @GenericGenerator(name = "generator", strategy = "seqhilo", parameters = {
             @Parameter(name = "max_lo", value = "100"),
@@ -510,6 +515,9 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     public void addFeatureSynonym(FeatureSynonym featureSynonym) {
+        if (featureSynonyms == null) {
+            featureSynonyms = new HashSet<FeatureSynonym>();
+        }
         this.featureSynonyms.add(featureSynonym);
         featureSynonym.setFeature(this);
     }
@@ -582,7 +590,6 @@ public abstract class Feature implements java.io.Serializable {
     private String getSynonymsAsTabSeparatedString() {
         StringBuilder ret = new StringBuilder();
         boolean first = true;
-        // TODO we have libraries
         for (FeatureSynonym featureSynonym : getFeatureSynonyms()) {
             if (first) {
                 first = false;
@@ -775,7 +782,7 @@ public abstract class Feature implements java.io.Serializable {
         this.featureProps.add(fp);
         return fp;
     }
-
+    
     public List<FeatureProp> getFeaturePropsFilteredByCvNameAndTermName(String cvName, String termName) {
         List<FeatureProp> ret = new ArrayList<FeatureProp>();
         CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
@@ -793,6 +800,17 @@ public abstract class Feature implements java.io.Serializable {
         }
         return ret;
     }
+    
+
+    public FeatureCvTerm addCvTerm(String cvName, String cvTermName) {
+        CvTerm cvTerm = cvDao.findOrCreateCvTermByNameAndCvName(cvTermName, cvName);
+        return addCvTerm(cvTerm);
+    }
+    public FeatureCvTerm addCvTerm(CvTerm cvTerm) {
+        FeatureCvTerm featureCvTerm = new FeatureCvTerm(cvTerm, this, nullPub(), false, 0);
+        addFeatureCvTerm(featureCvTerm);
+        return featureCvTerm;
+    }
 
     @Transient
     public Feature getSourceFeature() {
@@ -801,5 +819,74 @@ public abstract class Feature implements java.io.Serializable {
             return null;
         }
         return featureLoc.getSourceFeature();
+    }
+
+
+    public FeatureSynonym addSynonym(String synonymString) {
+        return addSynonym("synonym", synonymString);
+    }
+
+    protected Pub nullPub() {
+        Session session = cvDao.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        Pub pub = (Pub) session.get(Pub.class, 1);
+        session.getTransaction().commit();
+        return pub;
+    }
+
+    protected FeatureSynonym addSynonym(String synonymType, String synonymString) {
+        logger.trace(String.format("Adding synonym '%s' of type '%s' to feature '%s'",
+            synonymString, synonymType, getUniqueName()));
+        return addSynonym(generalDao.getOrCreateSynonym(synonymType, synonymString));
+    }
+
+    public FeatureSynonym addSynonym(Synonym synonym) {
+        return addSynonym(synonym, true, false);
+    }
+    public FeatureSynonym addNonCurrentSynonym(Synonym synonym) {
+        return addSynonym(synonym, false, false);
+    }
+
+    protected FeatureSynonym addSynonym(Synonym synonym, boolean isCurrent, boolean isInternal) {
+        Pub nullPub = nullPub();
+        FeatureSynonym featureSynonym = new FeatureSynonym(synonym, this, nullPub , isCurrent, isInternal);
+        this.addFeatureSynonym(featureSynonym);
+        return featureSynonym;
+    }
+
+    /**
+     * Move the lower bound of this feature leftwards. The new location is
+     * specified relative to the primary source feature, but all <code>FeatureLoc</code>s
+     * will be updated by the same relative amount.
+     *
+     * @param fmin the new <code>fmin</code>, relative to the primary location
+     */
+    public void lowerFminTo(int fmin) {
+        FeatureLoc primaryLoc = getRankZeroFeatureLoc();
+        int lowerByBases = primaryLoc.getFmin() - fmin;
+        if (lowerByBases <= 0) {
+            return;
+        }
+        for (FeatureLoc featureLoc: getFeatureLocsForFeatureId()) {
+            featureLoc.setFmin(featureLoc.getFmin() - lowerByBases);
+        }
+    }
+
+    /**
+     * Move the upper bound of this feature rightwards. The new location is
+     * specified relative to the primary source feature, but all <code>FeatureLoc</code>s
+     * will be updated by the same relative amount.
+     *
+     * @param fmax the new <code>fmax</code>, relative to the primary location
+     */
+    public void raiseFmaxTo(int fmax) {
+        FeatureLoc primaryLoc = getRankZeroFeatureLoc();
+        int raiseByBases = fmax - primaryLoc.getFmax();
+        if (raiseByBases <= 0) {
+            return;
+        }
+        for (FeatureLoc featureLoc: getFeatureLocsForFeatureId()) {
+            featureLoc.setFmax(featureLoc.getFmax() + raiseByBases);
+        }
     }
 }

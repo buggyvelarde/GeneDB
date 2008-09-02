@@ -15,8 +15,17 @@ public class Intron extends TranscriptRegion {
         // empty
     }
 
+    /*
+     * This constructor is invoked reflectively by Transcript.createRegion.
+     * All TranscriptRegions should have one.
+     */
+    public Intron(Organism organism, String uniqueName) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+    }
+
     public Intron(Organism organism, String uniqueName, boolean analysis, boolean obsolete,
             Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
+
 }

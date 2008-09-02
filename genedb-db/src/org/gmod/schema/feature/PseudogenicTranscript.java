@@ -26,4 +26,10 @@ public class PseudogenicTranscript extends ProductiveTranscript {
         this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
         setName(name);
     }
+
+    @Override
+    protected Class<? extends AbstractExon> getExonClass() {
+        return PseudogenicExon.class;
+    }
+
 }

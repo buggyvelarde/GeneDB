@@ -96,6 +96,10 @@ public class Polypeptide extends Region {
         return products;
     }
 
+    public void addProduct(String product) {
+        addCvTerm("genedb_products", product);
+    }
+
     /**
      * Get the ID number of the colour associated with this polypeptide.
      * It is often unassigned, in which case <code>null</code> is returned.

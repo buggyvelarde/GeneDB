@@ -1,9 +1,7 @@
 package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
-import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Organism;
-import org.gmod.schema.utils.StrandedLocation;
 
 import java.sql.Timestamp;
 
@@ -22,12 +20,12 @@ public class Exon extends AbstractExon {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
-    public static Exon make(Feature sourceFeature, StrandedLocation location,
-            String uniqueName, Timestamp now) {
-
-        Exon exon = new Exon(sourceFeature.getOrganism(), uniqueName, false, false, now);
-        sourceFeature.addLocatedChild(exon, location);
-        return exon;
+    /*
+     * This constructor is invoked reflectively by Transcript.createRegion.
+     * All TranscriptRegions should have one.
+     */
+    public Exon(Organism organism, String uniqueName) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
     }
 
 }

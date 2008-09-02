@@ -19,4 +19,12 @@ public class ThreePrimeUTR extends UTR {
         boolean obsolete, Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
+
+    /*
+     * This constructor is invoked reflectively by Transcript.createRegion.
+     * All TranscriptRegions should have one.
+     */
+    public ThreePrimeUTR(Organism organism, String uniqueName) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
+    }
 }

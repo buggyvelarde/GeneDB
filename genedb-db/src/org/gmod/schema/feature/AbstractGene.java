@@ -7,6 +7,8 @@ import org.gmod.schema.mapped.FeatureSynonym;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Synonym;
 
+import org.apache.log4j.Logger;
+
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import javax.persistence.Transient;
  */
 @Entity
 public abstract class AbstractGene extends Region {
+    private static final Logger logger = Logger.getLogger(AbstractGene.class);
 
     AbstractGene() {
         // empty
@@ -85,14 +88,29 @@ public abstract class AbstractGene extends Region {
         }
     }
 
-    public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String uniqueName) {
+    /**
+     * Create a transcript for this gene, which is assumed to be newly-created
+     * and not to have a transcript yet.
+     *
+     * @param <T>
+     * @param transcriptClass the class of the transcript to create
+     * @param transcriptUniqueName the uniqueName of the transcript to create
+     * @return
+     */
+    public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName) {
         try {
-            T transcript = transcriptClass.getDeclaredConstructor(Organism.class, String.class, String.class).newInstance(getOrganism(), uniqueName, null);
+            logger.trace(String.format("Creating transcipt '%s' for gene '%s'",
+                transcriptUniqueName, getUniqueName()));
+            T transcript = transcriptClass.getDeclaredConstructor(Organism.class, String.class, String.class)
+                .newInstance(getOrganism(), transcriptUniqueName, null);
             this.getSourceFeature().addLocatedChild(transcript, this.getFmin(), this.getFmax(), this.getStrand(), 0);
             this.addFeatureRelationship(transcript, "relationship", "part_of");
 
             if (ProductiveTranscript.class.isAssignableFrom(transcriptClass)) {
-                Polypeptide polypeptide = new Polypeptide(getOrganism(), String.format("%s:pep", uniqueName));
+                String polypeptideUniqueName = String.format("%s:pep", transcriptUniqueName);
+                logger.trace(String.format("Creating polypeptide '%s' for transcript '%s'",
+                    polypeptideUniqueName, getUniqueName()));
+                Polypeptide polypeptide = new Polypeptide(getOrganism(), polypeptideUniqueName);
                 ((ProductiveTranscript)transcript).setProtein(polypeptide);
             }
 
@@ -112,18 +130,6 @@ public abstract class AbstractGene extends Region {
         }
     }
 
-    public synchronized FeatureSynonym addSynonym(String synonymString) {
-        CvTerm synonymType = cvDao.findOrCreateCvTermByNameAndCvName("synonym", "genedb_synonym_type");
-        return addSynonym(synonymType, synonymString);
-    }
-
-    protected FeatureSynonym addSynonym(CvTerm synonymType, String synonymString) {
-        Synonym synonym = new Synonym(synonymType, synonymString, synonymString);
-        FeatureSynonym featureSynonym = new FeatureSynonym(synonym, this, null /*pub*/ , true, false);
-        this.addFeatureSynonym(featureSynonym);
-        return featureSynonym;
-    }
-
     /**
      * If this AbstractGene has a current synonym of the specified type,
      * the name and synonymSGML of that synonym are set to <code>synonymString</code>
@@ -133,7 +139,9 @@ public abstract class AbstractGene extends Region {
      * @param synonymString the string to which the synonym should be changed
      * @return whether or not a synonym was found
      */
-    protected boolean setSynonymIfPresent(CvTerm synonymType, String synonymString) {
+    protected boolean setSynonymIfPresent(String synonymType, String synonymString) {
+        logger.trace(String.format("Setting synonym (type %s) of gene '%s' to '%s' if present",
+            synonymType, getUniqueName(), synonymString));
         for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
             if (!featureSynonym.isCurrent()) {
                 continue;
@@ -141,28 +149,30 @@ public abstract class AbstractGene extends Region {
 
             Synonym thisSynonym = featureSynonym.getSynonym();
             CvTerm thisSynonymType = thisSynonym.getType();
-            if (thisSynonymType.getCvTermId() == synonymType.getCvTermId()) {
+            if (thisSynonymType.getCv().getName().equals("genedb_synonym_type") && synonymType.equals(thisSynonymType.getName())) {
+                logger.trace(String.format("Synonym of type %s already present on gene; resetting existing synonym", synonymType));
                 thisSynonym.setName(synonymString);
                 thisSynonym.setSynonymSGML(synonymString);
                 return true;
             }
         }
+        logger.trace("Synonym of required type is not already present");
         return false;
     }
 
     public void setSystematicId(String systematicId) {
-        CvTerm systematicIdType = cvDao.findOrCreateCvTermByNameAndCvName("systematic_id", "genedb_synonym_type");
+        logger.trace(String.format("Setting systematic_id of gene '%s' to '%s'", getUniqueName(), systematicId));
 
-        if (!setSynonymIfPresent(systematicIdType, systematicId)) {
-            addSynonym(systematicIdType, systematicId);
+        if (!setSynonymIfPresent("systematic_id", systematicId)) {
+            addSynonym("systematic_id", systematicId);
         }
     }
 
     @Transient
     public void setTemporarySystematicId(String temporarySystematicId) {
-        CvTerm temporarySystematicIdType = cvDao.findOrCreateCvTermByNameAndCvName("temporary_systematic_id", "genedb_synonym_type");
-        if (!setSynonymIfPresent(temporarySystematicIdType, temporarySystematicId)) {
-            addSynonym(temporarySystematicIdType, temporarySystematicId);
+        logger.trace(String.format("Setting temporary_systematic_id of gene '%s' to '%s'", getUniqueName(), temporarySystematicId));
+        if (!setSynonymIfPresent("temporary_systematic_id", temporarySystematicId)) {
+            addSynonym("temporary_systematic_id", temporarySystematicId);
         }
     }
 }

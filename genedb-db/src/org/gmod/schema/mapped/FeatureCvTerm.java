@@ -84,7 +84,7 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-     private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
+    private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
 
     // Constructors
 

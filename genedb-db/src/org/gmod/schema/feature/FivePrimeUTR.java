@@ -1,9 +1,7 @@
 package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
-import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Organism;
-import org.gmod.schema.utils.StrandedLocation;
 
 import java.sql.Timestamp;
 
@@ -22,12 +20,12 @@ public class FivePrimeUTR extends UTR {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
-    public static FivePrimeUTR make(Feature parent, StrandedLocation location,
-            String uniqueName, Organism organism, Timestamp now) {
-
-        FivePrimeUTR utr = new FivePrimeUTR(organism, uniqueName, false, false, now);
-        parent.addLocatedChild(utr, location);
-        return utr;
+    /*
+     * This constructor is invoked reflectively by Transcript.createRegion.
+     * All TranscriptRegions should have one.
+     */
+    public FivePrimeUTR(Organism organism, String uniqueName) {
+        this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
     }
 
 }

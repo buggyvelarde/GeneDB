@@ -2,6 +2,7 @@ package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
@@ -11,6 +12,7 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.SortedSet;
@@ -173,8 +175,98 @@ public class Transcript extends Region {
         return locs.toString();
     }
 
+    @Transient
+    protected Class<? extends AbstractExon> getExonClass() {
+        // This method is over-ridden in PseudogenicTranscript
+        return Exon.class;
+    }
 
-    void addExon(Exon exon) {
-        this.addFeatureRelationship(exon, "relationship", "part_of");
+    /**
+     * Create a new exon, and add it to this transcript.
+     *
+     * @param exonUniqueName
+     * @param fmin
+     * @param fmax
+     * @return the newly-created exon
+     */
+    public AbstractExon createExon(String exonUniqueName, int fmin, int fmax) {
+        return createRegion(getExonClass(), exonUniqueName, fmin, fmax);
+    }
+
+    public <T extends UTR> T createUTR(Class<T> utrClass, String utrUniqueName, int fmin, int fmax) {
+        return createRegion(utrClass, utrUniqueName, fmin, fmax);
+    }
+
+
+    private <T extends TranscriptRegion> T createRegion(Class<T> componentClass, String componentUniqueName, int fmin, int fmax) {
+        FeatureLoc ourLoc = getRankZeroFeatureLoc();
+        if (fmin < ourLoc.getFmin()) {
+            logger.info(String.format("The exon start (%d) is before the transcript start (%d). Resetting transcript start",
+                fmin, ourLoc.getFmin()));
+            lowerFminTo(fmin);
+        }
+        if (fmax > ourLoc.getFmax()) {
+            logger.info(String.format("The exon end (%d) is after the transcript end (%d). Resetting transcript end",
+                fmax, ourLoc.getFmax()));
+            raiseFmaxTo(fmax);
+        }
+        try {
+            T region = componentClass.getConstructor(Organism.class, String.class).newInstance(this.getOrganism(), componentUniqueName);
+            getSourceFeature().addLocatedChild(region, fmin, fmax, getStrand(), 0);
+            addRegion(region);
+            return region;
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Internal error: failed to instantiate region", e);
+        } catch (SecurityException e) {
+            throw new RuntimeException("Internal error: failed to instantiate region", e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException("Internal error: failed to instantiate region", e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Internal error: failed to instantiate region", e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("Internal error: failed to instantiate region", e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Internal error: failed to instantiate region", e);
+        }
+    }
+
+    /**
+     * Move the lower bound of this feature leftwards. The new location is
+     * specified relative to the primary source feature, but all <code>FeatureLoc</code>s
+     * will be updated by the same relative amount.
+     *
+     * On a transcript, we also update the <code>fmin</code> of the associated gene,
+     * if necessary.
+     *
+     * @param fmin the new <code>fmin</code> relative to the primary location
+     */
+    @Override
+    public void lowerFminTo(int fmin) {
+        super.lowerFminTo(fmin);
+        getGene().lowerFminTo(fmin);
+    }
+    /**
+     * Move the upper bound of this feature rightwards. The new location is
+     * specified relative to the primary source feature, but all <code>FeatureLoc</code>s
+     * will be updated by the same relative amount.
+     *
+     * On a transcript, we also update the <code>fmax</code> of the associated gene,
+     * if necessary.
+     *
+     * @param fmax the new <code>fmax</code>, relative to the primary location
+     */
+    @Override
+    public void raiseFmaxTo(int fmax) {
+        super.raiseFmaxTo(fmax);
+        getGene().lowerFminTo(fmax);
+    }
+
+    /**
+     * Add an (already-created) region to this transcript.
+     *
+     * @param exon
+     */
+    void addRegion(TranscriptRegion region) {
+        this.addFeatureRelationship(region, "relationship", "part_of");
     }
 }
