@@ -50,5 +50,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/genedb-query"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
