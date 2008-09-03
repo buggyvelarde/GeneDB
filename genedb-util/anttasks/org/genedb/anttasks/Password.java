@@ -21,10 +21,10 @@ import org.apache.tools.ant.Task;
 
 /**
  * A simple ant task that requests a password from the user.
- * 
+ *
  * If a console is available, the password will be requested on the console.
  * Otherwise a dialog box will pop up.
- * 
+ *
  * @author rh11
  */
 public class Password extends Task {
@@ -54,9 +54,14 @@ public class Password extends Task {
 
     private String readPassword(String prompt) {
         Console console = System.console();
-        if (console == null)
+        if (console == null) {
             return readPasswordFromDialog(prompt);
+        } else {
+            return readPasswordFromConsole(console, prompt);
+        }
+    }
 
+    private String readPasswordFromConsole(Console console, String prompt) {
         char[] password = console.readPassword("%s: ", prompt);
         if (password == null)
             return null;
@@ -95,10 +100,10 @@ public class Password extends Task {
 
         return dialogPassword;
     }
-    
+
     private Component passwordEntryField() {
         final TextField textField = new TextField(16);
-        textField.setEchoChar('¥');
+        textField.setEchoChar('ï¿½');
 
         textField.addTextListener(new TextListener() {
             public void textValueChanged(TextEvent e) {
@@ -106,7 +111,7 @@ public class Password extends Task {
                     dialogPassword = textField.getText();
             }
         });
-        
+
         textField.addActionListener(new ActionListener() {
             @SuppressWarnings("unused")
             public void actionPerformed(ActionEvent actionEvent) {
@@ -116,7 +121,7 @@ public class Password extends Task {
 
         return textField;
     }
-    
+
     private Component buttonPanel() {
         Panel buttonPanel = new Panel();
 
