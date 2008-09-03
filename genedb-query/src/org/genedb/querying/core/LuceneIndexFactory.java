@@ -16,14 +16,17 @@ public class LuceneIndexFactory {
     private Map<String, LuceneIndex> mapping = new HashMap<String, LuceneIndex>();
 
     public LuceneIndex getIndex(String key) {
-    	return mapping.get(key);
+        if (mapping.containsKey(key)) {
+            return mapping.get(key);
+        }
+        throw new RuntimeException(String.format("Unable to find a LuceneIndex of name '%s'", key));
     }
 
-	public void setLuceneIndexList(List<LuceneIndex> luceneIndexList) {
-		for (LuceneIndex luceneIndex : luceneIndexList) {
-			//String shortName = StringUtils.unqualify(luceneIndex.getIndexName());
-			mapping.put(luceneIndex.getIndexName(), luceneIndex);
-		}
-	}
+    public void setLuceneIndexList(List<LuceneIndex> luceneIndexList) {
+        for (LuceneIndex luceneIndex : luceneIndexList) {
+            //String shortName = StringUtils.unqualify(luceneIndex.getIndexName());
+            mapping.put(luceneIndex.getIndexName(), luceneIndex);
+        }
+    }
 
 }
