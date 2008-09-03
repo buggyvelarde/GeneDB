@@ -34,12 +34,14 @@ public class TranscriptDTO implements Serializable {
     private List<String> products;
     private String typeDescription;
     private String topLevelFeatureType;
-    private String topLevelFeatureName;
+    private String topLevelFeatureDisplayName;
     private String geneName;
     private List<String> notes;
     private List<String> comments;
     private boolean pseudo;
     private boolean anAlternateTranscript;
+    private String location;
+
 
 
 
@@ -60,7 +62,7 @@ public class TranscriptDTO implements Serializable {
         }
 
         populateNames(transcript, gene);
-        populateParentDetails();
+        populateParentDetails(gene);
         populateMisc(transcript);
 
         if (polypeptide != null) {
@@ -89,13 +91,16 @@ public class TranscriptDTO implements Serializable {
                 typeDescription = "Pseudogene";
             }
         }
+
+        this.location = transcript.getExonLocsTraditional();
     }
 
 
 
-    private void populateParentDetails() {
-        // TODO Auto-generated method stub
-
+    private void populateParentDetails(AbstractGene gene) {
+        Feature topLevelFeature = gene.getRankZeroFeatureLoc().getSourceFeature();
+        topLevelFeatureType = topLevelFeature.getType().getName();
+        topLevelFeatureDisplayName = topLevelFeature.getDisplayName();
     }
 
 
@@ -126,6 +131,9 @@ public class TranscriptDTO implements Serializable {
     private void populateNames(Transcript transcript, AbstractGene gene) {
         this.uniqueName = transcript.getUniqueName();
         this.geneName = gene.getDisplayName();
+        if (transcript.getName() != null && !transcript.getName().equals(uniqueName)) {
+            this.properName = transcript.getName();
+        }
 
         Collection<FeatureSynonym> featureSynonyms = gene.getFeatureSynonyms();
 
@@ -201,8 +209,8 @@ public class TranscriptDTO implements Serializable {
 
 
 
-    public String getTopLevelFeatureName() {
-        return topLevelFeatureName;
+    public String getTopLevelFeatureDisplayName() {
+        return topLevelFeatureDisplayName;
     }
 
 
@@ -233,6 +241,12 @@ public class TranscriptDTO implements Serializable {
 
     public boolean isPseudo() {
         return pseudo;
+    }
+
+
+
+    public String getLocation() {
+        return location;
     }
 
 }

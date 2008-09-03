@@ -11,10 +11,10 @@
         <div class="heading">General Information</div>
         <table>
         <col style="width: 9em;">
-        <c:if test="${!empty gene.name && gene.name != gene.systematicId}">
+        <c:if test="${!empty dto.properName && dto.properName != dto.uniqueName}">
             <tr>
                 <td class="label">Gene Name</td>
-                <td class="value">${gene.name}</td>
+                <td class="value">${dto.properName}</td>
             </tr>
          </c:if>
          <tr>
@@ -67,8 +67,8 @@
         <tr>
             <td class="label">Location</td>
             <td class="value">
-                Chromosome ${chromosome.displayName},
-                locations ${transcript.exonLocsTraditional}
+                ${dto.topLevelFeatureType} ${dto.topLevelFeatureDisplayName},
+                locations ${dto.location}
             </td>
         </tr>
         <c:if test="${!empty(polypeptide.featureDbXRefs)}">
@@ -229,14 +229,14 @@
                             <td class="value">
                                 <c:if test="${dto.algorithmData.DGPI.anchored}">This protein is GPI-anchored.</c:if>
                                 <c:if test="${!dto.algorithmData.DGPI.anchored}">This protein is <b>not</b> GPI-anchored.</c:if>
-                                <c:if test="${dto.algorithmData.DGPI.location != null}">Predicted cleavage site at ${algorithmData.DGPI.location} with score ${algorithmData.DGPI.score}.</c:if>
+                                <c:if test="${dto.algorithmData.DGPI.location != null}">Predicted cleavage site at ${dto.algorithmData.DGPI.location} with score ${dto.algorithmData.DGPI.score}.</c:if>
                             </td>
                         </tr>
                     </c:if>
                     <c:if test="${dto.algorithmData.PlasmoAP != null}">
                         <tr>
                             <td class="label">PlasmoAP</td>
-                            <td class="value">${dto.algorithmData.PlasmoAP.description} apicoplast-targeting protein (score ${algorithmData.PlasmoAP.score}).</td>
+                            <td class="value">${dto.algorithmData.PlasmoAP.description} apicoplast-targeting protein (score ${dto.algorithmData.PlasmoAP.score}).</td>
                         </tr>
                     </c:if>
                 </table></format:genePageSection>
