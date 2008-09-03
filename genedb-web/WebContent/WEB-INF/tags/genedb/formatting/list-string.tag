@@ -11,5 +11,5 @@
 
 
 <c:forEach items="${list}" var="element" varStatus="vs">
-<c:if test="${!vs.first}">${sep}</c:if>${element.class}
+<c:if test="${!vs.first}">${sep}</c:if>${element}
 </c:forEach>
