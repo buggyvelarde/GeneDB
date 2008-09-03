@@ -65,34 +65,11 @@ public class NamedFeatureController extends PostOrGetFormController {
     //private String geneSequenceView;
 
     private BlockingCache dtoCache;
-    private String dtoCacheName;
 
     private BlockingCache proteinMapCache;
-    private String proteinMapCacheName;
 
-    private CacheManager cacheManager;
 
     private ModelBuilder modelBuilder;
-
-    @PostConstruct
-    private synchronized void furtherCacheConfiguration() {
-        makeBlockingCache(dtoCache, dtoCacheName);
-        makeBlockingCache(proteinMapCache, proteinMapCacheName);
-    }
-
-
-    private BlockingCache makeBlockingCache(BlockingCache bc, String name) {
-        if (bc != null) {
-            return bc;
-        }
-        Ehcache cache = cacheManager.getEhcache(name);
-        if (!(cache instanceof BlockingCache)) {
-            //decorate and substitute
-            BlockingCache newBlockingCache = new BlockingCache(cache);
-            cacheManager.replaceCacheWithDecoratedCache(cache, newBlockingCache);
-        }
-        return (BlockingCache) cacheManager.getEhcache(name);
-    }
 
 
     @Override
@@ -189,20 +166,8 @@ public class NamedFeatureController extends PostOrGetFormController {
         this.dtoCache = dtoCache;
     }
 
-    public void setDtoCacheName(String dtoCacheName) {
-        this.dtoCacheName = dtoCacheName;
-    }
-
     public void setProteinMapCache(BlockingCache proteinMapCache) {
         this.proteinMapCache = proteinMapCache;
-    }
-
-    public void setProteinMapCacheName(String proteinMapCacheName) {
-        this.proteinMapCacheName = proteinMapCacheName;
-    }
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
     }
 
     public void setModelBuilder(ModelBuilder modelBuilder) {

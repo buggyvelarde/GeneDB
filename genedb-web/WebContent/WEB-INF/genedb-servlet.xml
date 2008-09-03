@@ -50,21 +50,31 @@
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
+<!--
     <bean id="systemproperty_initializer" class="com.rolfje.SystemPropertyInitiliazingBean">
        <property name="systemProperties">
           <map>
-             <entry key="ehcache.disk.store.dir" value="/u01/myapp/diskdir"/>
+             <entry key="ehcache.disk.store.dir" value="/"/>
          </map>
        </property>
     </bean>
+-->
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="classpath:ehcache-spring.xml" />
     </bean>
 
-    <bean id="methodCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <bean id="dtoCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
       <property name="cacheManager" ref="cacheManager" />
-      <property name="cacheName" value="org.genedb.web.CACHE" />
+      <property name="cacheName" value="org.genedb.web.DTO_CACHE" />
+      <property name="blocking" value="true" />
+    </bean>
+
+
+    <bean id="proteinMapCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+      <property name="cacheManager" ref="cacheManager" />
+      <property name="cacheName" value="org.genedb.web.PROTEIN_MAP_CACHE" />
+      <property name="blocking" value="true" />
     </bean>
 
 
@@ -268,7 +278,9 @@
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="features/gene" />
         <property name="geneDetailsView" value="features/geneDetails" />
-        <property name="geneSequenceView" value="features/geneSequence" />
+        <!-- <property name="geneSequenceView" value="features/geneSequence" /> -->
+        <property name="dtoCache" ref="dtoCache" />
+        <property name="proteinMapCache" ref="proteinMapCache" />
         <property name="bindOnNewForm" value="true" />
         <property name="validator" ref="namedFeatureValidator" />
         <property name="cacheSeconds" value="86400" />
