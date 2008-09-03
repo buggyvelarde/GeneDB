@@ -1,22 +1,27 @@
 package org.genedb.web.mvc.model;
 
 import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.FeatureSynonym;
+import org.gmod.schema.mapped.Synonym;
 
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Transient;
+import javax.servlet.jsp.JspWriter;
 
 public class TranscriptDTO implements Serializable {
 
@@ -50,7 +55,7 @@ public class TranscriptDTO implements Serializable {
             }
         }
 
-        populateNames(transcript);
+        populateNames(transcript, gene);
         populateParentDetails();
         populateMisc(transcript);
 
@@ -114,11 +119,30 @@ public class TranscriptDTO implements Serializable {
 
 
 
-    private void populateNames(Transcript transcript) {
+    private void populateNames(Transcript transcript, AbstractGene gene) {
         this.uniqueName = transcript.getUniqueName();
 
+        Collection<FeatureSynonym> featureSynonyms = gene.getFeatureSynonyms();
+
+        obsoleteNames = findFromSynonymsByType(featureSynonyms, "obsolete_name");
+        synonyms = findFromSynonymsByType(featureSynonyms, "synonym");
     }
 
+
+
+    private List<String> findFromSynonymsByType(Collection<FeatureSynonym> synonyms, String typeName) {
+        List<String> filtered = new ArrayList<String>();
+        for (FeatureSynonym featSynonym : synonyms) {
+            Synonym synonym = featSynonym.getSynonym();
+            if (typeName.equals(synonym.getType().getName())) {
+                filtered.add(synonym.getName());
+            }
+        }
+        if (filtered.size() > 0) {
+            return filtered;
+        }
+        return null;
+    }
 
 
     public String getUniqueName() {
@@ -134,22 +158,28 @@ public class TranscriptDTO implements Serializable {
 
 
     public List<String> getSynonyms() {
-        return synonyms;
+        return listOrEmptyList(synonyms);
     }
 
 
 
     public List<String> getObsoleteNames() {
-        return obsoleteNames;
+        return listOrEmptyList(obsoleteNames);
     }
 
 
 
     public List<String> getProducts() {
-        if (products == null) {
+        return listOrEmptyList(products);
+    }
+
+
+
+    private <T> List<T> listOrEmptyList(List<T> list) {
+        if (list == null || list.size() == 0) {
             return Collections.emptyList();
         }
-        return products;
+        return list;
     }
 
 

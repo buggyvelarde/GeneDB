@@ -30,23 +30,30 @@
                 </c:choose>
             </td>
         </tr>
+<%-- ------------------------------------------------------- --%>
         <tr>
             <td class="label">Feature Type</td>
             <td class="value">${dto.typeDescription}</td>
         </tr>
-        <db:synonym name="obsolete_name" var="name" collection="${gene.featureSynonyms}">
+<%-- ------------------------------------------------------- --%>
+        <c:if test="${!empty(dto.synonyms)}">
             <tr>
-                <th>Previous IDs</th>
-                <td><db:list-string collection="${name}" /></td>
-            </tr>
-        </db:synonym>
-        <db:synonym name="synonym" var="name" collection="${gene.featureSynonyms}">
-             <tr>
                 <td class="label">Synonyms</td>
-                <td class="value"><db:list-string collection="${name}" /></td>
-             </tr>
-        </db:synonym>
-
+                <td class="value">
+                    <format:list-string list="${dto.synonyms}"/>
+                </td>
+            </tr>
+        </c:if>
+<%-- ------------------------------------------------------- --%>
+        <c:if test="${!empty(dto.obsoleteNames)}">
+            <tr>
+                <td class="label">Obsolete names</td>
+                <td class="value">
+                    <format:list-string list="${dto.obsoleteNames}"/>
+                </td>
+            </tr>
+        </c:if>
+<%-- ------------------------------------------------------- --%>
         <c:if test="${!empty(dto.products)}">
             <tr>
                 <td class="label">Product</td>
