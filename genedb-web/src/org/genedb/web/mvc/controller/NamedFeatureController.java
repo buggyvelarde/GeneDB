@@ -19,22 +19,33 @@
 
 package org.genedb.web.mvc.controller;
 
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.constructs.blocking.BlockingCache;
+
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.domain.objects.PolypeptideRegionGroup;
 import org.genedb.web.gui.DiagramCache;
+import org.genedb.web.gui.ImageMapSummary;
 import org.genedb.web.gui.ProteinMapDiagram;
 import org.genedb.web.gui.RenderedProteinMap;
+import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,15 +55,48 @@ import javax.servlet.http.HttpServletResponse;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
+@Controller
 public class NamedFeatureController extends PostOrGetFormController {
      private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
 
     private SequenceDao sequenceDao;
     private String geneView;
     private String geneDetailsView;
-    private String geneSequenceView;
+    //private String geneSequenceView;
+
+    private BlockingCache dtoCache;
+    private String dtoCacheName;
+
+    private BlockingCache proteinMapCache;
+    private String proteinMapCacheName;
+
+    private CacheManager cacheManager;
+
+    private ModelBuilder modelBuilder;
+
+    @PostConstruct
+    private synchronized void furtherCacheConfiguration() {
+        makeBlockingCache(dtoCache, dtoCacheName);
+        makeBlockingCache(proteinMapCache, proteinMapCacheName);
+    }
+
+
+    private BlockingCache makeBlockingCache(BlockingCache bc, String name) {
+        if (bc != null) {
+            return bc;
+        }
+        Ehcache cache = cacheManager.getEhcache(name);
+        if (!(cache instanceof BlockingCache)) {
+            //decorate and substitute
+            BlockingCache newBlockingCache = new BlockingCache(cache);
+            cacheManager.replaceCacheWithDecoratedCache(cache, newBlockingCache);
+        }
+        return (BlockingCache) cacheManager.getEhcache(name);
+    }
+
 
     @Override
+    //@RequestMapping(method=Request)
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
             Object command, BindException be) throws Exception {
 
@@ -65,26 +109,61 @@ public class NamedFeatureController extends PostOrGetFormController {
             return showForm(request, response, be);
         }
 
-        String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
-        if (nlb.isSequenceView()) {
-            viewName = geneSequenceView;
+        if (!(feature instanceof Transcript)) {
+            // If feature isn't transcript redirect - include model
+            // is it part of a gene
         }
+
+        String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
+//        if (nlb.isSequenceView()) {
+//            viewName = geneSequenceView;
+//        }
+
+        TranscriptDTO dto = null;
+        Element element = dtoCache.get(feature.getUniqueName());
+        if (element == null) {
+            // Get model
+            dtoCache.put(new Element(feature.getUniqueName(), dto));
+        } else {
+            dto = (TranscriptDTO) element.getValue();
+        }
+
         Map<String, Object> model = modelBuilder.prepareFeature(feature);
+
+        ModelAndView mav = new ModelAndView(viewName);
+        mav.addObject("dto", dto);
 
         if (model.containsKey("polypeptide")) {
             Polypeptide polypeptide = (Polypeptide) model.get("polypeptide");
             @SuppressWarnings("unchecked")
             List<PolypeptideRegionGroup> domainInformation = (List<PolypeptideRegionGroup>) model.get("domainInformation");
 
-            ProteinMapDiagram diagram = new ProteinMapDiagram(polypeptide, domainInformation);
-            if (!diagram.isEmpty()) {
-                RenderedProteinMap renderedProteinMap = new RenderedProteinMap(diagram);
+            ImageMapSummary ims = null;
+            element = proteinMapCache.get(feature.getUniqueName());
+            if (element != null) {
+                ims = (ImageMapSummary) element.getValue();
+                if (ims.isValid()) {
+                    mav.addObject("proteinMap", ims);
+                }
+            } else {
+                // Get image
+                ProteinMapDiagram diagram = new ProteinMapDiagram(polypeptide, domainInformation);
+                if (!diagram.isEmpty()) {
+                    RenderedProteinMap renderedProteinMap = new RenderedProteinMap(diagram);
 
-                model.put("proteinMap", DiagramCache.fileForDiagram(renderedProteinMap, getServletContext()));
-                model.put("proteinMapWidth",  renderedProteinMap.getWidth());
-                model.put("proteinMapHeight", renderedProteinMap.getHeight());
-                model.put("proteinMapMap", renderedProteinMap.getRenderedFeaturesAsHTML("proteinMapMap"));
+                    ims = new ImageMapSummary(
+                            renderedProteinMap.getWidth(),
+                            renderedProteinMap.getHeight(),
+                            DiagramCache.fileForDiagram(renderedProteinMap, getServletContext()),
+                            renderedProteinMap.getRenderedFeaturesAsHTML("proteinMapMap"));
+                    mav.addObject("proteinMap", ims);
+
+                } else {
+                    ims = new ImageMapSummary();
+                }
+                proteinMapCache.put(new Element(feature.getUniqueName(), dto));
             }
+
         }
 
         return new ModelAndView(viewName, model);
@@ -102,22 +181,40 @@ public class NamedFeatureController extends PostOrGetFormController {
         this.geneDetailsView = geneDetailsView;
     }
 
-    public void setGeneSequenceView(String geneSequenceView) {
-        this.geneSequenceView = geneSequenceView;
+//    public void setGeneSequenceView(String geneSequenceView) {
+//        this.geneSequenceView = geneSequenceView;
+//    }
+
+    public void setDtoCache(BlockingCache dtoCache) {
+        this.dtoCache = dtoCache;
     }
 
+    public void setDtoCacheName(String dtoCacheName) {
+        this.dtoCacheName = dtoCacheName;
+    }
 
+    public void setProteinMapCache(BlockingCache proteinMapCache) {
+        this.proteinMapCache = proteinMapCache;
+    }
 
-    private ModelBuilder modelBuilder;
+    public void setProteinMapCacheName(String proteinMapCacheName) {
+        this.proteinMapCacheName = proteinMapCacheName;
+    }
+
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     public void setModelBuilder(ModelBuilder modelBuilder) {
         this.modelBuilder = modelBuilder;
     }
 
+
+
     public static class NameLookupBean {
         private String name;
         private boolean detailsOnly = false;
-        private boolean sequenceView = false;
+        //private boolean sequenceView = false;
 
         public String getName() {
             return this.name;
@@ -136,13 +233,13 @@ public class NamedFeatureController extends PostOrGetFormController {
             this.detailsOnly = detailsOnly;
         }
 
-        public boolean isSequenceView() {
-            return sequenceView;
-        }
-
-        public void setSequenceView(boolean sequenceView) {
-            this.sequenceView = sequenceView;
-        }
+//        public boolean isSequenceView() {
+//            return sequenceView;
+//        }
+//
+//        public void setSequenceView(boolean sequenceView) {
+//            this.sequenceView = sequenceView;
+//        }
 
         /*
          * We need this because the form that is shown when the feature

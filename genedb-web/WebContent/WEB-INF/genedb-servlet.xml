@@ -50,6 +50,24 @@
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
+    <bean id="systemproperty_initializer" class="com.rolfje.SystemPropertyInitiliazingBean">
+       <property name="systemProperties">
+          <map>
+             <entry key="ehcache.disk.store.dir" value="/u01/myapp/diskdir"/>
+         </map>
+       </property>
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:ehcache-spring.xml" />
+    </bean>
+
+    <bean id="methodCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+      <property name="cacheManager" ref="cacheManager" />
+      <property name="cacheName" value="org.genedb.web.CACHE" />
+    </bean>
+
+
     <bean id="goProcessBrowse"
         class="org.genedb.web.mvc.controller.BrowseBean">
         <property name="cvDao" ref="cvDao" />
