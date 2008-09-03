@@ -35,11 +35,11 @@ public class TranscriptDTO implements Serializable {
     private String typeDescription;
     private String topLevelFeatureType;
     private String topLevelFeatureName;
-    private boolean alternateTranscript;
     private String geneName;
     private List<String> notes;
     private List<String> comments;
     private boolean pseudo;
+    private boolean anAlternateTranscript;
 
 
 
@@ -53,6 +53,10 @@ public class TranscriptDTO implements Serializable {
             } else {
                 pseudo = false;
             }
+        }
+
+        if (gene.getTranscripts().size()>1) {
+            anAlternateTranscript = true;
         }
 
         populateNames(transcript, gene);
@@ -121,6 +125,7 @@ public class TranscriptDTO implements Serializable {
 
     private void populateNames(Transcript transcript, AbstractGene gene) {
         this.uniqueName = transcript.getUniqueName();
+        this.geneName = gene.getDisplayName();
 
         Collection<FeatureSynonym> featureSynonyms = gene.getFeatureSynonyms();
 
@@ -202,8 +207,8 @@ public class TranscriptDTO implements Serializable {
 
 
 
-    public boolean isAlternateTranscript() {
-        return alternateTranscript;
+    public boolean isAnAlternateTranscript() {
+        return anAlternateTranscript;
     }
 
 

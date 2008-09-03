@@ -21,11 +21,11 @@
             <td class="label">Systematic Name</td>
             <td class="value">
                 <c:choose>
-                <c:when test="${fn:length(gene.transcripts) > 1}">
-                    ${transcript.uniqueName} (one splice form of ${gene.systematicId})
+                <c:when test="${dto.anAlternateTranscript}">
+                    ${dto.uniqueName} (one splice form of ${dto.geneName})
                 </c:when>
                 <c:otherwise>
-                  ${gene.systematicId}
+                  ${dto.uniqueName}
                 </c:otherwise>
                 </c:choose>
             </td>
