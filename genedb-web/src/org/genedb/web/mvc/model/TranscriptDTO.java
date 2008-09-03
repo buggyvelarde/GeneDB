@@ -9,6 +9,7 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureProp;
 
 import org.apache.log4j.Logger;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,8 +56,16 @@ public class TranscriptDTO implements Serializable {
 
         if (polypeptide != null) {
             populateFromFeatureProps(polypeptide);
+            populateFromFeatureCvTerms(polypeptide);
         }
 
+    }
+
+
+
+    private void populateFromFeatureCvTerms(Polypeptide polypeptide) {
+        Assert.notNull(polypeptide);
+        this.products = polypeptide.getProducts();
     }
 
 
@@ -83,12 +92,9 @@ public class TranscriptDTO implements Serializable {
 
 
     private void populateFromFeatureProps(Polypeptide polypeptide) {
-
-        if (polypeptide != null) {
-            this.notes = stringListFromFeaturePropList(polypeptide, "feature_property", "comment");
-            this.comments = stringListFromFeaturePropList(polypeptide, "genedb_misc", "curation");
-        }
-
+        Assert.notNull(polypeptide);
+        this.notes = stringListFromFeaturePropList(polypeptide, "feature_property", "comment");
+        this.comments = stringListFromFeaturePropList(polypeptide, "genedb_misc", "curation");
     }
 
 
@@ -140,6 +146,9 @@ public class TranscriptDTO implements Serializable {
 
 
     public List<String> getProducts() {
+        if (products == null) {
+            return Collections.emptyList();
+        }
         return products;
     }
 

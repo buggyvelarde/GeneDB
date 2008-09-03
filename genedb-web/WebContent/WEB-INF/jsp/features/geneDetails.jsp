@@ -47,11 +47,11 @@
              </tr>
         </db:synonym>
 
-        <c:if test="${!empty(polypeptide.products)}">
+        <c:if test="${!empty(dto.products)}">
             <tr>
                 <td class="label">Product</td>
                 <td class="value">
-                    <c:forEach items="${polypeptide.products}" var="product">
+                    <c:forEach items="${dto.products}" var="product">
                         <span>${product}</span><br>
                     </c:forEach>
                 </td>
