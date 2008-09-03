@@ -103,9 +103,9 @@ public abstract class Region extends Feature implements Comparable<Region> {
     protected String getTraditionalLocAsString() {
         loadLoc();
         if (strand == -1) {
-            return "(" + (fmin+1) + "-" + fmax + ")";
+            return "(" + (fmin+1) + "..." + fmax + ")";
         } else {
-            return (fmin+1) + "-" + fmax;
+            return (fmin+1) + "..." + fmax;
         }
     }
 }
