@@ -71,13 +71,13 @@
                 locations ${dto.location}
             </td>
         </tr>
-        <c:if test="${!empty(polypeptide.featureDbXRefs)}">
+        <c:if test="${!empty(dto.dbXRefDTOs)}">
           <tr>
               <td class="label">See Also</td>
               <td class="value">
-                  <c:forEach items="${polypeptide.featureDbXRefs}" var="fdbxref" varStatus="status">
-                    <c:if test="${!empty fdbxref.dbXRef.db.urlPrefix}">
-                      <span><a href="${fdbxref.dbXRef.db.urlPrefix}${fdbxref.dbXRef.accession}">${fdbxref.dbXRef.db.name}:${fdbxref.dbXRef.accession}</a><%--
+                  <c:forEach items="${dto.dbXRefDTOs}" var="dbxref" varStatus="status">
+                    <c:if test="${!empty dbxref.urlPrefix}">
+                      <span><a href="${dbxref.urlPrefix}${dbxref.accession}">${dbxref.dbName}:${dbxref.accession}</a><%--
                              --%><c:if test="${!status.last}">, </c:if></span>
                     </c:if>
                   </c:forEach>
@@ -92,23 +92,11 @@
              <a href="">Add gene to basket</a>
          </div>
         <div style="clear: both; margin-top: 1ex;">
-             <a href="/new/FeatureSequence?name=${transcript.uniqueName}&seqs=true">View/analyze/download sequence</a>
+             <a href="/new/FeatureSequence?name=${dto.uniqueName}&seqs=true">View/analyze/download sequence</a>
          </div>
-        <%-- <form name="downloadRegion" action="FeatureDownload" method="get">
-            <div>Download Region as</div><br>
-            <select name="downloadType">
-                <option value="SPLICED_DNA">Spliced DNA</option>
-                <c:if test="${polypeptide != null}">
-                    <option value="PROTEIN">Protein</option>
-                </c:if>
-            </select>
-            <input type="hidden" name="featureType" value="${transcript.type.name}" />
-            <input type="hidden" name="featureName" value="<c:out value="${transcript.uniqueName}" />">
-            <input type="submit" value="Submit">
-        </form> --%>
         <div style="clear: both; margin-top: 1ex;">
             Show region in
-            <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${chromosome.uniqueName}&start=${primaryLoc.fmin}&end=${primaryLoc.fmax}">Artemis</a>,
+            <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${dto.topLevelFeatureUniqueName}&start=${dto.min}&end=${dto.max}">Artemis</a>,
             GBrowse
          </div>
     </format:genePageSection>

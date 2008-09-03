@@ -7,6 +7,8 @@ import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureDbXRef;
+import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.FeatureSynonym;
 import org.gmod.schema.mapped.Synonym;
@@ -35,13 +37,16 @@ public class TranscriptDTO implements Serializable {
     private String typeDescription;
     private String topLevelFeatureType;
     private String topLevelFeatureDisplayName;
+    private String topLevelFeatureUniqueName;
     private String geneName;
     private List<String> notes;
     private List<String> comments;
     private boolean pseudo;
     private boolean anAlternateTranscript;
     private String location;
-
+    private List<DbXRefDTO> dbXRefDTOs;
+    private int min;
+    private int max;
 
 
 
@@ -68,8 +73,23 @@ public class TranscriptDTO implements Serializable {
         if (polypeptide != null) {
             populateFromFeatureProps(polypeptide);
             populateFromFeatureCvTerms(polypeptide);
+            populateFromFeatureDbXrefs(polypeptide);
         }
 
+    }
+
+
+
+    private void populateFromFeatureDbXrefs(Polypeptide polypeptide) {
+        List<DbXRefDTO> ret = new ArrayList<DbXRefDTO>();
+        for(FeatureDbXRef fdx : polypeptide.getFeatureDbXRefs()) {
+            ret.add(new DbXRefDTO(fdx.getDbXRef().getDb().getName(),
+                    fdx.getDbXRef().getAccession(),
+                    fdx.getDbXRef().getDb().getUrlPrefix()));
+        }
+        if (ret.size() > 0) {
+            dbXRefDTOs = ret;
+        }
     }
 
 
@@ -77,6 +97,61 @@ public class TranscriptDTO implements Serializable {
     private void populateFromFeatureCvTerms(Polypeptide polypeptide) {
         Assert.notNull(polypeptide);
         this.products = polypeptide.getProducts();
+
+        FeatureCvTermDTO fctd = new FeatureCvTermDTO();
+
+
+//        <c:if test="${fn:length(featureCvTerms) > 0}">
+//          <td class="value evidence">
+//              <db:filtered-loop items="${featureCvTerm.featureCvTermProps}" cvTerm="evidence" var="evidence">
+//                      ${evidence.value}
+//              </db:filtered-loop>&nbsp;
+//              <c:forEach items="${featureCvTerm.pubs}" var="pub">
+//                  (${pub.uniqueName})
+//              </c:forEach>
+//          </td>
+//          <td class="value accession">
+//              <c:forEach items="${featureCvTerm.featureCvTermDbXRefs}" var="fctdbx">
+//                  <a href="${fctdbx.dbXRef.db.urlPrefix}${fctdbx.dbXRef.accession}">${fctdbx.dbXRef.db.name}:${fctdbx.dbXRef.accession}</a>
+//              </c:forEach>
+//              <c:if test="${featureCvTerm.pub.uniqueName != 'null'}">
+//                  <a href="${PMID}${featureCvTerm.pub.uniqueName}">${featureCvTerm.pub.uniqueName}</a>
+//              </c:if>
+//          </td>
+//          <c:if test="${featureCounts != null}">
+//          <td class="value others">
+//              <c:forEach items="${featureCounts}" var="nc">
+//                  <c:if test="${nc.name == featureCvTerm.cvTerm.name}">
+//                      <c:if test="${nc.count == 1}" >
+//                          0 Others
+//                      </c:if>
+//                      <c:if test="${nc.count > 1}" >
+//                          <c:url value="/BrowseTerm" var="othersUrl">
+//                              <c:param name="organism" value="${organism}"/>
+//                              <c:param name="term" value="${featureCvTerm.cvTerm.name}"/>
+//                              <c:param name="category" value="${featureCvTerm.cvTerm.cv.name}"/>
+//                              <c:param name="json" value="false"/>
+//                          </c:url>
+//                          <a href="${othersUrl}"> ${nc.count - 1} Others </a>
+//                      </c:if>
+//                  </c:if>
+//              </c:forEach>
+//          </td>
+//          </c:if>
+//          </tr>
+//        </c:forEach>
+//        <%-- Controlled Curation Section --%>
+//        <db:filterByType items="${polypeptide.featureCvTerms}" cvPattern="CC_.*" var="controlledCurationTerms"/>
+//        <c:if test="${fn:length(controlledCurationTerms) > 0}">
+//            <format:genePageSection id="controlCur">
+//                <div class="heading">Controlled Curation</div>
+//                <table width="100%" class="go-section">
+//                    <format:featureCvTerm-section featureCvTerms="${controlledCurationTerms}" featureCounts="${CC}" organism="${organism}"/>
+//                </table>
+//            </format:genePageSection>
+//        </c:if>
+
+
     }
 
 
@@ -98,9 +173,14 @@ public class TranscriptDTO implements Serializable {
 
 
     private void populateParentDetails(AbstractGene gene) {
-        Feature topLevelFeature = gene.getRankZeroFeatureLoc().getSourceFeature();
-        topLevelFeatureType = topLevelFeature.getType().getName();
-        topLevelFeatureDisplayName = topLevelFeature.getDisplayName();
+        FeatureLoc top = gene.getRankZeroFeatureLoc();
+        this.min = top.getFmin();
+        this.max = top.getFmax();
+
+        Feature topLevelFeature = top.getSourceFeature();
+        this.topLevelFeatureType = topLevelFeature.getType().getName();
+        this.topLevelFeatureDisplayName = topLevelFeature.getDisplayName();
+        this.topLevelFeatureUniqueName = topLevelFeature.getUniqueName();
     }
 
 
@@ -214,6 +294,9 @@ public class TranscriptDTO implements Serializable {
     }
 
 
+    public String getTopLevelFeatureUniqueName() {
+        return topLevelFeatureUniqueName;
+    }
 
     public boolean isAnAlternateTranscript() {
         return anAlternateTranscript;
@@ -249,4 +332,20 @@ public class TranscriptDTO implements Serializable {
         return location;
     }
 
+
+
+    public List<DbXRefDTO> getDbXRefDTOs() {
+        return listOrEmptyList(dbXRefDTOs);
+    }
+
+
+    public int getMin() {
+        return min;
+    }
+
+
+
+    public int getMax() {
+        return max;
+    }
 }
