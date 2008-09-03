@@ -36,7 +36,7 @@ public class NameProductQuery extends LuceneQuery {
 
 	@Override
 	protected String getluceneIndexName() {
-		return "Feature";
+		return "org.gmod.schema.mapped.Feature";
 	}
 
     protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {

@@ -40,7 +40,7 @@ public class AdvancedQuery extends LuceneQuery {
 
 	@Override
 	protected String getluceneIndexName() {
-		return "Feature";
+		return "org.gmod.schema.mapped.Feature";
 	}
 
 

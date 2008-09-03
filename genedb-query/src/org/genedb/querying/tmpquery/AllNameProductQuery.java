@@ -50,12 +50,12 @@ public class AllNameProductQuery extends LuceneQuery {
             order=1,
             title="Include obsolete features"
     )
-    private boolean obsolete;
+    private boolean obsolete = false;
 
 
 	@Override
 	protected String getluceneIndexName() {
-		return "Feature";
+		return "org.gmod.schema.mapped.Feature";
 	}
 
     protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
@@ -133,13 +133,13 @@ public class AllNameProductQuery extends LuceneQuery {
         this.pseudogenes = pseudogenes;
     }
 
-    public boolean isObsolete() {
-        return obsolete;
-    }
-
-    public void setObsolete(boolean obsolete) {
-        this.obsolete = obsolete;
-    }
+//    public boolean isObsolete() {
+//        return obsolete;
+//    }
+//
+//    public void setObsolete(boolean obsolete) {
+//        this.obsolete = obsolete;
+//    }
 
     @Override
 	protected String[] getParamNames() {
