@@ -40,6 +40,7 @@
         <path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/dom4j/jaxen-1.1-beta-7.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/freemarker/freemarker.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar"/>
