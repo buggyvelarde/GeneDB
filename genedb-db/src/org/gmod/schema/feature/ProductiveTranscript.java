@@ -62,6 +62,18 @@ public abstract class ProductiveTranscript extends Transcript {
      */
     @Transient
     public Polypeptide getProtein() {
+        // Note: Overridden on MRNA to complain if there isn't a protein.
+        return getProteinWithoutComplaining();
+    }
+
+    /**
+     * Get the associated polypeptide, but don't worry if there isn't one.
+     * This method is used internally while the gene model is being built,
+     * and should not be public.
+     *
+     * @return
+     */
+    protected final Polypeptide getProteinWithoutComplaining() {
         for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
             Feature feature = relation.getSubjectFeature();
             if (feature instanceof Polypeptide) {
@@ -73,7 +85,7 @@ public abstract class ProductiveTranscript extends Transcript {
 
     @Transient
     public void setProtein(Polypeptide polypeptide) {
-        if (getProtein() != null) {
+        if (getProteinWithoutComplaining() != null) {
             throw new RuntimeException(String.format(
                 "Attempting to set a protein on transcript '%s' which already has one",
                 getUniqueName()));
