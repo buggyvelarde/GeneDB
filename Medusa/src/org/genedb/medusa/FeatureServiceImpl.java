@@ -1,7 +1,7 @@
 package org.genedb.medusa;
 
-import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
@@ -46,7 +46,7 @@ public class FeatureServiceImpl implements FeatureService {
 //
 //        ret.setUniqueName(feat.getUniqueName());
 //        ret.setFeatureId(feat.getFeatureId());
-//        
+//
 //        List<String> synonyms = new ArrayList<String>();
 //        for (FeatureSynonym fs : feat.getFeatureSynonyms()) {
 //            String type = fs.getSynonym().getCvTerm().getName();
@@ -68,7 +68,7 @@ public class FeatureServiceImpl implements FeatureService {
 //        }
 //
 //        ret.setOrganism(feat.getOrganism().getCommonName());
-//        
+//
 //        FeatureLoc loc = feat.getRankZeroFeatureLoc();
 //        Feature chromosomeFeature = loc.getFeatureBySrcFeatureId();
 //        Chromosome chromosome = new Chromosome(chromosomeFeature.getDisplayName(), chromosomeFeature.getSeqLen());
@@ -79,7 +79,7 @@ public class FeatureServiceImpl implements FeatureService {
 //
 //        return ret;
 //    }
-//    
+//
 //    protected List<BasicGene> genesFromFeatures(List<Feature> features) {
 //        List<BasicGene> ret = new ArrayList<BasicGene>();
 //        for(Feature feature: features) {
@@ -87,13 +87,13 @@ public class FeatureServiceImpl implements FeatureService {
 //        }
 //        return ret;
 //    }
-//    
+//
 //    private static Transcript makeTranscript(Feature feature) {
 //        Transcript transcript = new Transcript();
 //        transcript.setFmin(feature.getRankZeroFeatureLoc().getFmin());
 //        transcript.setFmax(feature.getRankZeroFeatureLoc().getFmax());
 //        transcript.setName(feature.getDisplayName());
-//        
+//
 //        Set<Exon> exons = new HashSet<Exon> ();
 //        for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
 //            Feature relatedFeature = fr.getFeatureBySubjectId();
@@ -117,7 +117,7 @@ public class FeatureServiceImpl implements FeatureService {
 //            }
 //        }
 //        transcript.setProducts(products);
-//        
+//
 //        return transcript;
 //    }
 //
@@ -136,7 +136,7 @@ public class FeatureServiceImpl implements FeatureService {
 //        else
 //            return names;
 //    }
-// 
+//
 //    public Collection<BasicGene> findGenesOverlappingRange(String organismCommonName,
 //            String chromosomeUniqueName, int strand, long locMin, long locMax) {
 //
@@ -188,57 +188,57 @@ public class FeatureServiceImpl implements FeatureService {
     }
 
     Map<String, String> conventionalLocation = new HashMap<String, String>();
-	CvService cvService;
-    
-	@Override
-	public CvTerm findConventionalFeatureForProperty(CvTerm cvTerm) {
-		String key = cvTerm.getCv().getName()+"::"+cvTerm.getName();
-		String featureTypeName = conventionalLocation.get(key);
-		if (featureTypeName == null) {
-			log.error("Can't find where to store this");
-		}
+    CvService cvService;
 
-		CvTerm soType = cvService.findCvTermByCvAndName("sequence", featureTypeName);
-		if (soType == null) {
-			log.error("Can't find sequence type");
-			throw new RuntimeException();
-		}
-		return soType;
-	}
+    @Override
+    public CvTerm findConventionalFeatureForProperty(CvTerm cvTerm) {
+        String key = cvTerm.getCv().getName()+"::"+cvTerm.getName();
+        String featureTypeName = conventionalLocation.get(key);
+        if (featureTypeName == null) {
+            log.error("Can't find where to store this");
+        }
 
-	@Override
-	public Feature findFeature(String systematicId) {
-		try {
-			Feature feature = (Feature) sessionFactory.getCurrentSession().createQuery(
-			"select f from Feature f where f.uniqueName = :systematicId")
-			.setString("systematicId", systematicId)
-			.uniqueResult();
-			return feature;
-		}
-		catch (NonUniqueResultException exp) {
-			log.error(String.format("Got more than 1 result when should have had one for an uniquename of '%s'", systematicId), exp);
-			return null;
-		}
-	}
+        CvTerm soType = cvService.findCvTermByCvAndName("sequence", featureTypeName);
+        if (soType == null) {
+            log.error("Can't find sequence type");
+            throw new RuntimeException();
+        }
+        return soType;
+    }
 
-	@Override
-	public Feature findGenePart(String systematicId, CvTerm featureType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Feature findFeature(String systematicId) {
+        try {
+            Feature feature = (Feature) sessionFactory.getCurrentSession().createQuery(
+            "select f from Feature f where f.uniqueName = :systematicId")
+            .setString("systematicId", systematicId)
+            .uniqueResult();
+            return feature;
+        }
+        catch (NonUniqueResultException exp) {
+            log.error(String.format("Got more than 1 result when should have had one for an uniquename of '%s'", systematicId), exp);
+            return null;
+        }
+    }
 
-	@Override
-	public String findTypeNameForSystematicId(String systematicId) {
-		try {
-			String soTypeName =  (String) sessionFactory.getCurrentSession().createQuery(
-			"select f.cvTerm.name from Feature f where f.uniqueName = :systematicId")
-			.setString("systematicId", systematicId)
-			.uniqueResult();
-			return soTypeName;
-		}
-		catch (NonUniqueResultException exp) {
-			log.error(String.format("Got more than 1 result when should have had one for an uniquename of '%s'", systematicId), exp);
-			return null;
-		}
-	}
+    @Override
+    public Feature findGenePart(String systematicId, CvTerm featureType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String findTypeNameForSystematicId(String systematicId) {
+        try {
+            String soTypeName =  (String) sessionFactory.getCurrentSession().createQuery(
+            "select f.cvTerm.name from Feature f where f.uniqueName = :systematicId")
+            .setString("systematicId", systematicId)
+            .uniqueResult();
+            return soTypeName;
+        }
+        catch (NonUniqueResultException exp) {
+            log.error(String.format("Got more than 1 result when should have had one for an uniquename of '%s'", systematicId), exp);
+            return null;
+        }
+    }
 }
