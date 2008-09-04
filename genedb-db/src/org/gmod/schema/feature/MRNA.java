@@ -37,7 +37,7 @@ public class MRNA extends ProductiveTranscript {
         Polypeptide protein = super.getProtein();
         if (protein == null) {
             logger.error(String.format("The mRNA transcript '%s' (ID=%d) has no polypeptide",
-                getUniqueName(), getFeatureId()));
+                getUniqueName(), getFeatureId()), new Throwable("Stack trace"));
         }
         return protein;
     }
