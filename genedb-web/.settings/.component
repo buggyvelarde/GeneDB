@@ -133,6 +133,18 @@
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/biojava-1.6.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/genedb-util/genedb-util">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-aop.jar">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-aspects.jar">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/aspectj/aspectjrt.jar">
+<dependency-type>uses</dependency-type>
+</dependent-module>
         <property name="java-output-path" value="/build/classes/"/>
 <property name="context-root" value="genedb-web"/>
     </wb-module>
