@@ -3,6 +3,15 @@ package org.genedb.util;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A concurrency-safe wrapper around TwoKeyMap.
+ *
+ * @author rh11
+ *
+ * @param <S>
+ * @param <T>
+ * @param <V>
+ */
 public class SynchronizedTwoKeyMap<S,T,V> extends TwoKeyMap<S,T,V> {
     @Override
     public synchronized void clear() {
