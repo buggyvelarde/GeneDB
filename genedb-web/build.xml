@@ -8,7 +8,8 @@
     <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
     <import file="${imported.basedir.web}/../genedb-query/build.xml"/>
     <import file="${imported.basedir.web}/../genedb-domain/build.xml"/>
-    <!-- <import file="${imported.basedir.web}/../Jogra/build.xml"/> -->
+    <import file="${imported.basedir.web}/../genedb-util/build.xml"/>
+
     <property name="version" value="0.2"/>
     <property name="jar-build" value="ant-build/jar-build"/>
     <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
@@ -22,6 +23,7 @@
       <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/genedb-db.jar" />
         <path location="${imported.basedir.web}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
         <path location="${imported.basedir.web}/../genedb-query/ant-build/jars/genedb-query.jar" />
+        <path location="${imported.basedir.web}/../genedb-util/ant-build/jars/genedb-util.jar" />
 
         <path location="${lib-dir}/antlr-runtime-3.0.jar"/>
         <path location="${lib-dir}/biojava-1.4.jar"/>
@@ -90,17 +92,7 @@
         </copy>
     </target>
 
-  <!--
-  <target name="make-Jogra" depends="Jogra.signed-jar" if="${jogra}"/>
-
-  <target name="deploy-Jogra" depends="make-Jogra" if="${jogra}">
-    <mkdir dir="${finaldest.webapps}.tmp/Jogra" />
-    <copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/Jogra" />
-    <copy file="${imported.basedir.web}/../Jogra/dist/Jogra-signed.jar" todir="${finaldest.webapps}.tmp/WEB-INF/lib" />
-    </target>
-  -->
-
-    <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.make-db-jar" />
+    <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.make-db-jar,genedb-util.fulljar" />
 
     <target name="make-all-and-deploy" depends="make-other-projects, compile, final-deploy, get-latest-jars"/>
 
