@@ -201,13 +201,13 @@ public class Transcript extends Region {
     private <T extends TranscriptRegion> T createRegion(Class<T> componentClass, String componentUniqueName, int fmin, int fmax) {
         FeatureLoc ourLoc = getRankZeroFeatureLoc();
         if (fmin < ourLoc.getFmin()) {
-            logger.info(String.format("The exon start (%d) is before the transcript start (%d). Resetting transcript start",
-                fmin, ourLoc.getFmin()));
+            logger.debug(String.format("[%s] The %s start (%d) is before the transcript start (%d). Resetting transcript start",
+                getUniqueName(), componentClass.getSimpleName(), fmin, ourLoc.getFmin()));
             lowerFminTo(fmin);
         }
         if (fmax > ourLoc.getFmax()) {
-            logger.info(String.format("The exon end (%d) is after the transcript end (%d). Resetting transcript end",
-                fmax, ourLoc.getFmax()));
+            logger.debug(String.format("[%s] The %s end (%d) is after the transcript end (%d). Resetting transcript end",
+                getUniqueName(), componentClass.getSimpleName(), fmax, ourLoc.getFmax()));
             raiseFmaxTo(fmax);
         }
         try {
