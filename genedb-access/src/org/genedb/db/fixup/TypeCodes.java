@@ -1,5 +1,7 @@
 package org.genedb.db.fixup;
 
+import org.genedb.util.TwoKeyMap;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +18,7 @@ import java.util.Map;
  *
  */
 public class TypeCodes {
-    private Map<String,Map<String,Integer>> idByTermNameByCvName = new HashMap<String,Map<String,Integer>>();
+    private TwoKeyMap<String,String,Integer> idByCvNameAndTermName = new TwoKeyMap<String,String,Integer>();
     private Map<Integer,String> cvNameById = new HashMap<Integer,String>();
     private Map<Integer,String> termNameById = new HashMap<Integer,String>();
 
@@ -42,10 +44,7 @@ public class TypeCodes {
                 String cvName = rs.getString("cv_name");
                 String cvTermName = rs.getString("cvterm_name");
 
-                if (!idByTermNameByCvName.containsKey(cvName))
-                    idByTermNameByCvName.put(cvName, new HashMap<String,Integer>());
-                idByTermNameByCvName.get(cvName).put(cvTermName, cvTermId);
-
+                idByCvNameAndTermName.put(cvName, cvTermName, cvTermId);
                 cvNameById.put(cvTermId, cvName);
                 termNameById.put(cvTermId, cvTermName);
             }
@@ -62,10 +61,7 @@ public class TypeCodes {
     }
 
     public int typeId(String cvName, String cvTermName) {
-        Map<String,Integer> termMap = idByTermNameByCvName.get(cvName);
-        if (termMap == null)
-            throw new IllegalArgumentException(String.format("CV '%s' not found", cvName));
-        Integer result = termMap.get(cvTermName);
+        Integer result = idByCvNameAndTermName.get(cvName, cvTermName);
         if (result == null)
             throw new IllegalArgumentException(String.format("Term '%s' not found in CV '%s'", cvTermName, cvName));
         return result;
