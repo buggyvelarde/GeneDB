@@ -1,7 +1,9 @@
 package org.genedb.web.mvc.model;
 
 import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.Pub;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FeatureCvTermDTO {
@@ -12,6 +14,12 @@ public class FeatureCvTermDTO {
 
     public FeatureCvTermDTO(FeatureCvTerm fct) {
         // TODO Auto-generated constructor stub
+
+        pubs = new ArrayList<String>();
+        for (Pub pub : fct.getPubs()) {
+            pubs.add(pub.getUniqueName());
+        }
+
     }
 
 
@@ -21,9 +29,7 @@ public class FeatureCvTermDTO {
 //        <db:filtered-loop items="${featureCvTerm.featureCvTermProps}" cvTerm="evidence" var="evidence">
 //                ${evidence.value}
 //        </db:filtered-loop>&nbsp;
-//        <c:forEach items="${featureCvTerm.pubs}" var="pub">
-//            (${pub.uniqueName})
-//        </c:forEach>
+
 //    </td>
 //    <td class="value accession">
 //        <c:forEach items="${featureCvTerm.featureCvTermDbXRefs}" var="fctdbx">
