@@ -54,7 +54,11 @@ public class DbXRef implements Serializable {
     }
 
     public DbXRef(Db db, String accession) {
-        this(db, accession, null, "1");
+        this(db, accession, null);
+    }
+
+    public DbXRef(Db db, String accession, String description) {
+        this(db, accession, description, "1");
     }
 
     public DbXRef(Db db, String accession, String description, String version) {
