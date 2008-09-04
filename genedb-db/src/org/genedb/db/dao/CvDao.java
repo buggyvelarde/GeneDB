@@ -1,5 +1,8 @@
 package org.genedb.db.dao;
 
+import org.genedb.util.SynchronizedTwoKeyMap;
+import org.genedb.util.TwoKeyMap;
+
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.cfg.FeatureTypeUtils;
 import org.gmod.schema.feature.Polypeptide;
@@ -21,6 +24,9 @@ import java.util.Map;
 public class CvDao extends BaseDao {
 
     private static Logger logger = Logger.getLogger(CvDao.class);
+
+    private static final int CVTERM_MAX_LENGTH = 1024;
+    private static final int DBXREF_ACCESSION_MAX_LENGTH = 255;
 
     private GeneralDao generalDao;
 
@@ -115,15 +121,13 @@ public class CvDao extends BaseDao {
         return cvTerms;
     }
 
-    private Map<String,Map<String,CvTerm>> cvTermsByNameByCv = Collections.synchronizedMap(new HashMap<String,Map<String,CvTerm>>());
+    private TwoKeyMap<String,String,CvTerm> cvTermsByCvAndName = new SynchronizedTwoKeyMap<String,String,CvTerm>();
     public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName) {
-        synchronized (cvTermsByNameByCv) {
-            if (!cvTermsByNameByCv.containsKey(cvName)) {
-                cvTermsByNameByCv.put(cvName, Collections.synchronizedMap(new HashMap<String,CvTerm>()));
-            }
-        }
-        if (cvTermsByNameByCv.get(cvName).containsKey(cvTermName)) {
-            return cvTermsByNameByCv.get(cvName).get(cvTermName);
+        return getCvTermByNameAndCvName(cvTermName, cvName, true);
+    }
+    public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName, boolean complainIfNotFound) {
+        if (cvTermsByCvAndName.containsKey(cvName, cvTermName)) {
+            return cvTermsByCvAndName.get(cvName, cvTermName);
         }
 
         @SuppressWarnings("unchecked")
@@ -131,7 +135,9 @@ public class CvDao extends BaseDao {
             "from CvTerm cvTerm where cvTerm.name = :cvTermName and cvTerm.cv.name = :cvName")
             .setString("cvTermName", cvTermName).setString("cvName", cvName).list();
         if (cvTermList == null || cvTermList.size() == 0) {
-            logger.warn("No cvterms found for '" + cvTermName + "' in '" + cvName + "'");
+            if (complainIfNotFound) {
+                logger.warn("No cvterms found for '" + cvTermName + "' in '" + cvName + "'");
+            }
             return null;
         }
 
@@ -141,19 +147,14 @@ public class CvDao extends BaseDao {
         }
 
         CvTerm cvTerm = cvTermList.get(0);
-        cvTermsByNameByCv.get(cvName).put(cvTermName, cvTerm);
+        cvTermsByCvAndName.put(cvName, cvTermName, cvTerm);
         return cvTerm;
     }
 
-    private Map<String,Map<String,CvTerm>> cvTermsByAccessionByCv = Collections.synchronizedMap(new HashMap<String,Map<String,CvTerm>>());
+    private TwoKeyMap<String,String,CvTerm> cvTermsByAccessionByCv = new SynchronizedTwoKeyMap<String,String,CvTerm>();
     public CvTerm getCvTermByAccessionAndCvName(String accession, String cvName) {
-        synchronized (cvTermsByAccessionByCv) {
-            if (!cvTermsByAccessionByCv.containsKey(cvName)) {
-                cvTermsByAccessionByCv.put(cvName, Collections.synchronizedMap(new HashMap<String,CvTerm>()));
-            }
-        }
-        if (cvTermsByAccessionByCv.get(cvName).containsKey(accession)) {
-            return cvTermsByAccessionByCv.get(cvName).get(accession);
+        if (cvTermsByAccessionByCv.containsKey(cvName, accession)) {
+            return cvTermsByAccessionByCv.get(cvName, accession);
         }
 
         @SuppressWarnings("unchecked")
@@ -171,7 +172,7 @@ public class CvDao extends BaseDao {
         }
 
         CvTerm cvTerm = cvTermList.get(0);
-        cvTermsByAccessionByCv.get(cvName).put(accession, cvTerm);
+        cvTermsByAccessionByCv.put(cvName, accession, cvTerm);
         return cvTerm;
     }
 
@@ -205,12 +206,29 @@ public class CvDao extends BaseDao {
      * @return the created or looked-up CvTerm
      */
     public CvTerm findOrCreateCvTermByNameAndCvName(String cvTermName, String cvName) {
-        CvTerm cvTerm = this.getCvTermByNameAndCvName(cvTermName, cvName);
+        String cvTermNameTruncatedForCvTerm = cvTermName;
+        if (cvTermName.length() > CVTERM_MAX_LENGTH) {
+            logger.warn(String.format("CV Term name is longer than %d characters: %s\n" +
+                                      "Truncating to fit in cvterm.name.\n" +
+                                      "(The full name will be kept in the CvTerm definition.)",
+                CVTERM_MAX_LENGTH, cvTermName));
+            cvTermNameTruncatedForCvTerm = cvTermName.substring(0, CVTERM_MAX_LENGTH);
+        }
+        CvTerm cvTerm = this.getCvTermByNameAndCvName(cvTermNameTruncatedForCvTerm, cvName, false);
         if (cvTerm == null) {
+            String cvTermNameTruncatedForDbXRef = cvTermName;
+            if (cvTermName.length() > DBXREF_ACCESSION_MAX_LENGTH) {
+                logger.warn(String.format("CV Term name is longer than %d characters: %s\n" +
+                                          "Truncating to fit in dbxref.accession.\n"+
+                                          "(The full name will be kept in the DbXRef description.)",
+                    DBXREF_ACCESSION_MAX_LENGTH, cvTermName));
+                cvTermNameTruncatedForDbXRef = cvTermName.substring(0, DBXREF_ACCESSION_MAX_LENGTH);
+            }
+
             Db db = generalDao.getDbByName("null");
-            DbXRef dbXRef = new DbXRef(db, cvTermName);
+            DbXRef dbXRef = new DbXRef(db, cvTermNameTruncatedForDbXRef, cvTermName);
             generalDao.persist(dbXRef);
-            CvTerm cvterm = new CvTerm(this.getCvByName(cvName), dbXRef, cvTermName, cvTermName);
+            CvTerm cvterm = new CvTerm(this.getCvByName(cvName), dbXRef, cvTermNameTruncatedForCvTerm, cvTermName);
             this.persist(cvterm);
             return cvterm;
         }
