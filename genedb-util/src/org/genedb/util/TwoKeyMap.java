@@ -39,6 +39,10 @@ public class TwoKeyMap<S,T,V> {
         }
     }
 
+    public boolean containsFirstKey(S key1) {
+        return map.containsKey(key1);
+    }
+
     public boolean containsKey(S key1, T key2) {
         return map.containsKey(key1) && map.get(key1).containsKey(key2);
     }
@@ -56,5 +60,9 @@ public class TwoKeyMap<S,T,V> {
 
     public Set<S> firstKeySet() {
         return map.keySet();
+    }
+
+    public Map<T,V> getMap(S firstKey) {
+        return map.get(firstKey);
     }
 }
