@@ -69,7 +69,7 @@ public class TranscriptDTO implements Serializable {
 
         if (polypeptide != null) {
             populateFromFeatureProps(polypeptide);
-            populateFromFeatureCvTerms(polypeptide, "", "");
+            //populateFromFeatureCvTerms(polypeptide, "", "");
             populateFromFeatureDbXrefs(polypeptide);
         }
 
