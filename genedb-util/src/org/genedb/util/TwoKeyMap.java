@@ -2,6 +2,7 @@ package org.genedb.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A map with two keys.
@@ -51,5 +52,9 @@ public class TwoKeyMap<S,T,V> {
             return null;
         }
         return map.get(key1).remove(key2);
+    }
+
+    public Set<S> firstKeySet() {
+        return map.keySet();
     }
 }
