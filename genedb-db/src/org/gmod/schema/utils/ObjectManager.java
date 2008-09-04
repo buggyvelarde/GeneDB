@@ -1,6 +1,8 @@
 package org.gmod.schema.utils;
 
+import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
+import org.genedb.util.TwoKeyMap;
 
 import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.DbXRef;
@@ -9,9 +11,7 @@ import org.gmod.schema.mapped.Synonym;
 import org.apache.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Maintains a cache of objects that have been created but
@@ -29,10 +29,12 @@ import java.util.Map;
 public class ObjectManager extends EmptyInterceptor {
     private static final Logger logger = Logger.getLogger(ObjectManager.class);
     private GeneralDao generalDao;
-    private Map<String,Map<String,DbXRef>> dbxrefsByAccByDb
-        = new HashMap<String,Map<String,DbXRef>>();
-    private Map<String,Map<String,Synonym>> synonymsByNameByType
-        = new HashMap<String,Map<String,Synonym>>();
+    private CvDao cvDao;
+
+    private TwoKeyMap<String,String,DbXRef> dbxrefsByAccByDb
+        = new TwoKeyMap<String,String,DbXRef>();
+    private TwoKeyMap<String,String,Synonym> synonymsByTypeAndName
+        = new TwoKeyMap<String,String,Synonym>();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -40,7 +42,7 @@ public class ObjectManager extends EmptyInterceptor {
         logger.debug("Flushing dbxrefs");
         dbxrefsByAccByDb.clear();
         logger.debug("Flushing synonyms");
-        synonymsByNameByType.clear();
+        synonymsByTypeAndName.clear();
     }
 
     /**
@@ -71,19 +73,16 @@ public class ObjectManager extends EmptyInterceptor {
     public DbXRef getDbXRef(String dbName, String accession) {
         logger.debug(String.format("Getting DbXRef '%s'/'%s'", dbName, accession));
 
-        if (dbxrefsByAccByDb.containsKey(dbName)
-                && dbxrefsByAccByDb.get(dbName).containsKey(accession))
-            return dbxrefsByAccByDb.get(dbName).get(accession);
+        if (dbxrefsByAccByDb.containsKey(dbName,accession)) {
+            return dbxrefsByAccByDb.get(dbName, accession);
+        }
 
         DbXRef dbxref = findOrCreateDbXRefFromDbAndAccession(dbName, accession);
 
         /* The above statement can trigger a flush, which is why we
          * need the following check afterwards rather than before.
          */
-        if (!dbxrefsByAccByDb.containsKey(dbName))
-            dbxrefsByAccByDb.put(dbName, new HashMap<String,DbXRef>());
-
-        dbxrefsByAccByDb.get(dbName).put(accession, dbxref);
+        dbxrefsByAccByDb.put(dbName, accession, dbxref);
         return dbxref;
     }
 
@@ -104,6 +103,29 @@ public class ObjectManager extends EmptyInterceptor {
         return dbxref;
     }
 
+    private TwoKeyMap<String,String,Integer> cvTermIdsByCvAndName
+        = new TwoKeyMap<String,String,Integer>();
+    /**
+     * Get the ID number of an already-existing CvTerm, caching the results.
+     * This cache is never flushed.
+     *
+     * @param cvName the name of the CV
+     * @param cvTermName the term name
+     * @return the ID of the corresponding CvTerm object
+     */
+    public Integer getIdOfExistingCvTerm(String cvName, String cvTermName) {
+        logger.trace(String.format("Looking for cvterm '%s:%s'", cvName, cvTermName));
+        if (cvTermIdsByCvAndName.containsKey(cvName, cvTermName)) {
+            logger.trace("Found cvterm locally");
+            return cvTermIdsByCvAndName.get(cvName, cvTermName);
+        }
+
+        logger.trace("CV term not found locally. Falling back to CvDao");
+        int cvTermId = cvDao.getCvTermByNameAndCvName(cvTermName, cvName).getCvTermId();
+        cvTermIdsByCvAndName.put(cvName, cvTermName, cvTermId);
+        return cvTermId;
+    }
+
     /**
      * Get or create a synonym.
      *
@@ -111,21 +133,19 @@ public class ObjectManager extends EmptyInterceptor {
      * @param synonymString
      * @return
      */
-    public Synonym getSynonym(String synonymType, String synonymString) {
-        logger.trace(String.format("Looking for synonym '%s' of type '%s'", synonymString, synonymType));
-        if (synonymsByNameByType.containsKey(synonymType)) {
-            Map<String,Synonym> synonymsByName = synonymsByNameByType.get(synonymType);
-            if (synonymsByName.containsKey(synonymString)) {
-                logger.trace("Found synonym locally");
-                return synonymsByName.get(synonymString);
-            }
+    public Synonym getSynonym(String synonymTypeName, String synonymString) {
+        logger.trace(String.format("Looking for synonym '%s' of type '%s'", synonymString, synonymTypeName));
+        if (synonymsByTypeAndName.containsKey(synonymTypeName, synonymString)) {
+            logger.trace("Found synonym locally");
+            return synonymsByTypeAndName.get(synonymTypeName, synonymString);
         }
+
         logger.trace("Synonym not found locally. Falling back to GeneralDao");
-        Synonym synonym = generalDao.getOrCreateSynonym(synonymType, synonymString);
-        if (!synonymsByNameByType.containsKey(synonymType)) {
-            synonymsByNameByType.put(synonymType, new HashMap<String,Synonym>());
-        }
-        synonymsByNameByType.get(synonymType).put(synonymString, synonym);
+        int synonymTypeId = getIdOfExistingCvTerm("genedb_synonym_type", synonymTypeName);
+        Synonym synonym = generalDao.getOrCreateSynonym(synonymTypeId, synonymString);
+
+        synonymsByTypeAndName.put(synonymTypeName, synonymString, synonym);
+
         return synonym;
     }
 
@@ -146,5 +166,8 @@ public class ObjectManager extends EmptyInterceptor {
 
     public void setGeneralDao(GeneralDao generalDao) {
         this.generalDao = generalDao;
+    }
+    public void setCvDao(CvDao cvDao) {
+        this.cvDao = cvDao;
     }
 }
