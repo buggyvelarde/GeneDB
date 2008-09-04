@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.genedb.db.loading.GoEvidenceCode;
 import org.genedb.db.loading.GoInstance;
+import org.genedb.util.TwoKeyMap;
 
 class DateFormatConverter {
     private static final Map<String, String> months = new HashMap<String, String>(12) {{
@@ -262,8 +263,8 @@ class InterProAcc {
 public class InterProFile {
     private static final Logger logger = Logger.getLogger(InterProFile.class);
 
-    private Map<String, Map<InterProAcc, Set<InterProRow>>> rowsByAccByKey
-        = new HashMap<String, Map<InterProAcc, Set<InterProRow>>>();
+    private TwoKeyMap<String,InterProAcc,Set<InterProRow>> rowsByKeyAndAcc
+        = new TwoKeyMap<String, InterProAcc, Set<InterProRow>>();
 
     public InterProFile(InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader( inputStream ) );
@@ -283,30 +284,25 @@ public class InterProFile {
                 continue;
             }
 
-            if (!rowsByAccByKey.containsKey(row.key))
-                rowsByAccByKey.put(row.key, new HashMap<InterProAcc, Set<InterProRow>>());
-            if (!rowsByAccByKey.get(row.key).containsKey(row.acc))
-                rowsByAccByKey.get(row.key).put(row.acc, new HashSet<InterProRow>());
-            rowsByAccByKey.get(row.key).get(row.acc).add(row);
+            if (!rowsByKeyAndAcc.containsKey(row.key, row.acc))
+                rowsByKeyAndAcc.put(row.key, row.acc, new HashSet<InterProRow>());
+            rowsByKeyAndAcc.get(row.key, row.acc).add(row);
         }
     }
     public Set<String> keys() {
-        return rowsByAccByKey.keySet();
+        return rowsByKeyAndAcc.firstKeySet();
     }
     public Set<InterProAcc> accsForKey(String key) {
-        if (!rowsByAccByKey.containsKey(key))
+        if (!rowsByKeyAndAcc.containsFirstKey(key))
             throw new IllegalArgumentException(
                 String.format("Key '%s' not found", key));
-        return rowsByAccByKey.get(key).keySet();
+        return rowsByKeyAndAcc.getMap(key).keySet();
     }
     public Set<InterProRow> rows(String key, InterProAcc acc) {
-        if (!rowsByAccByKey.containsKey(key))
-            throw new IllegalArgumentException(
-                String.format("Key '%s' not found", key));
-        if (!rowsByAccByKey.get(key).containsKey(acc))
+        if (!rowsByKeyAndAcc.containsKey(key, acc))
             throw new IllegalArgumentException(
                 String.format("Accession number '%s' not found for key '%s'", acc, key));
 
-        return rowsByAccByKey.get(key).get(acc);
+        return rowsByKeyAndAcc.get(key, acc);
     }
 }
