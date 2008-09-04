@@ -31,17 +31,23 @@ public class ParsingException extends Exception {
         this.inputFile = inputFile;
         this.lineNumber = lineNumber;
     }
-    void setLocation(File inputFile) {
+    void setInputFile(File inputFile) {
         setLocation(inputFile.toString(), -1);
+    }
+    void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
     }
 
     @Override
     public String getMessage() {
-        if (inputFile == null) {
+        if (inputFile == null && lineNumber == -1) {
             return super.getMessage();
         }
         if (lineNumber == -1) {
             return String.format("Data error in '%s': %s", inputFile, super.getMessage());
+        }
+        if (inputFile == null) {
+            return String.format("Data error at line %d: %s", lineNumber, super.getMessage());
         }
         return String.format("Data error at '%s' line %d: %s", inputFile, lineNumber, super.getMessage());
     }

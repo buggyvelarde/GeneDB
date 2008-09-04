@@ -1,5 +1,6 @@
 package org.genedb.db.loading.alternative;
 
+import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.OrganismDao;
 
@@ -11,11 +12,13 @@ import org.gmod.schema.feature.FivePrimeUTR;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.MRNA;
+import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Pseudogene;
 import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.RepeatRegion;
 import org.gmod.schema.feature.Supercontig;
+import org.gmod.schema.feature.TRNA;
 import org.gmod.schema.feature.ThreePrimeUTR;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
@@ -34,23 +37,35 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-@Transactional
+/**
+ * Deals with loading an organism from an EMBL file into a Chado database.
+ * It's expected to be configured as a singleton Spring bean. The main
+ * calling point (and only public method, apart from the property setters)
+ * is {@link #load(EmblFile)}.
+ *
+ * @author rh11
+ *
+ */
+@Transactional(rollbackFor=DataError.class)
 class EmblLoader {
     private static final Logger logger = Logger.getLogger(EmblLoader.class);
 
     // Injected beans
-    private GeneralDao generalDao;     // See #afterPropertiesSet()
+    private CvDao cvDao;
+    private GeneralDao generalDao;
     private OrganismDao organismDao;
     private Organism organism;
-    private ObjectManager objectManager;
+    private ObjectManager objectManager;     // See #afterPropertiesSet()
     private SessionFactory sessionFactory;
+
+    private SynonymManager synonymManager = new SynonymManager();
 
     public void setOrganismCommonName(String organismCommonName) {
         this.organism = organismDao.getOrganismByCommonName(organismCommonName);
@@ -60,7 +75,25 @@ class EmblLoader {
     }
 
     private Session session;
+
+    /**
+     * The main calling point for this class. Takes a parsed EMBL file, and loads
+     * it into the database. Each call to this method constitutes a separate
+     * Hibernate transaction. Even though the EMBL file has been parsed before
+     * this method is called, its internal consistency has not been verified.
+     * If we encounter a problem, a <code>DataError</code> is thrown and the
+     * transaction is rolled back.
+     *
+     * @param emblFile the parsed EMBL file
+     * @throws DataError if a data problem is discovered
+     */
     public void load(EmblFile emblFile) throws DataError {
+        /*
+         * Thanks to the @Transactional annotation on this class,
+         * Spring will automatically initiate a transaction when
+         * we're called, which will be committed on successful
+         * return or rolled back if we throw an exception.
+         */
 
         this.session = SessionFactoryUtils.doGetSession(sessionFactory, false);
         boolean alreadyThere = session.createCriteria(Feature.class)
@@ -69,6 +102,8 @@ class EmblLoader {
             .uniqueResult() != null;
 
         if (!alreadyThere) {
+            synonymManager.startSession(session);
+
             logger.info("Creating supercontig: " + emblFile.getAccession());
             Supercontig supercontig = TopLevelFeature.make(Supercontig.class, emblFile.getAccession(), organism);
             supercontig.markAsTopLevelFeature();
@@ -85,13 +120,13 @@ class EmblLoader {
     }
 
     private Supercontig supercontig;
-    private Map<String,AbstractGene> genesBySharedId;
+    private Map<String,AbstractGene> genesByUniqueName;
     private Map<String,Transcript> transcriptsByUniqueName;
     private NavigableMap<Integer,Contig> contigsByStart;
 
     private void init(Supercontig supercontig) {
         this.supercontig = supercontig;
-        this.genesBySharedId = new HashMap<String,AbstractGene>();
+        this.genesByUniqueName = new HashMap<String,AbstractGene>();
         this.transcriptsByUniqueName = new HashMap<String,Transcript>();
         this.contigsByStart = new TreeMap<Integer,Contig>();
     }
@@ -103,7 +138,7 @@ class EmblLoader {
                 EmblLocation.External externalLocation = (EmblLocation.External) location;
                 int contigLength = externalLocation.simple.getLength();
 
-                logger.info(String.format("Creating contig '%s' at %d-%d", externalLocation.accession, pos, pos + contigLength));
+                logger.debug(String.format("Creating contig '%s' at %d-%d", externalLocation.accession, pos, pos + contigLength));
                 Contig contig = TopLevelFeature.make(Contig.class, externalLocation.accession, organism);
                 contig.setResidues(supercontig.getResidues(pos, pos + contigLength));
                 session.persist(contig);
@@ -116,7 +151,7 @@ class EmblLoader {
                 EmblLocation.Gap gapLocation = (EmblLocation.Gap) location;
                 int gapLength = gapLocation.getLength();
 
-                logger.info(String.format("Creating gap at %d-%d", pos, pos + gapLength));
+                logger.debug(String.format("Creating gap at %d-%d", pos, pos + gapLength));
                 Gap gap = supercontig.addGap(pos, pos + gapLength);
                 session.persist(gap);
 
@@ -135,46 +170,66 @@ class EmblLoader {
         supercontig.addLocatedChild(feature, fmin, fmax, strand, phase);
         Contig contig = contigsByStart.floorEntry(fmin).getValue();
         if (contig == null || fmax > contig.getFmax()) {
-            logger.error(String.format("The feature '%s' (%s) is not contained in a contig",
+            logger.debug(String.format("The feature '%s' (%s) is not contained in a contig",
                 feature.getUniqueName(), feature.getName()));
             return;
         }
-        logger.info(String.format("The feature '%s' lies on contig '%s'", feature.getUniqueName(), contig.getUniqueName()));
+        logger.debug(String.format("The feature '%s' lies on contig '%s'", feature.getUniqueName(), contig.getUniqueName()));
         contig.addLocatedChild(feature, fmin - contig.getFmin(), fmax - contig.getFmin(), strand, phase, 1);
     }
 
-    private void loadFeatures(EmblFile.FeatureTable featureTable) throws DataError {
-        List<EmblFile.FeatureTable.Feature> utrs = new ArrayList<EmblFile.FeatureTable.Feature>();
+    private void loadFeatures(FeatureTable featureTable) throws DataError {
+        List<FeatureTable.Feature> utrs = new ArrayList<FeatureTable.Feature>();
 
-        for (EmblFile.FeatureTable.Feature feature: featureTable.getFeatures()) {
-            String featureType = feature.type;
-
-            if (featureType.equals("repeat_region")) {
-                loadRepeatRegion(feature);
+        for (FeatureTable.Feature feature: featureTable.getFeatures()) {
+            try {
+                loadFeature(utrs, feature);
             }
-            else if (featureType.equals("CDS")) {
-                loadCDS(feature);
-            }
-            else if (featureType.equals("3'UTR") || featureType.equals("5'UTR")) {
-                utrs.add(feature);
-            }
-            else {
-                logger.warn(String.format("Ignoring '%s' feature", featureType));
+            catch (DataError e) {
+                e.setLineNumber(feature.lineNumber);
+                throw e;
             }
         }
 
-        for (EmblFile.FeatureTable.Feature utr: utrs) {
-            loadUTR(utr);
+        for (FeatureTable.Feature utr: utrs) {
+            try {
+                loadUTR(utr);
+            }
+            catch (DataError e) {
+                e.setLineNumber(utr.lineNumber);
+                throw e;
+            }
         }
     }
 
-    private void loadRepeatRegion(EmblFile.FeatureTable.Feature repeatRegionFeature) throws DataError {
+    private void loadFeature(List<FeatureTable.Feature> utrs,
+            FeatureTable.Feature feature) throws DataError {
+        String featureType = feature.type;
+
+        if (featureType.equals("repeat_region")) {
+            loadRepeatRegion(feature);
+        }
+        else if (featureType.equals("CDS")) {
+            loadCDS((FeatureTable.CDSFeature) feature);
+        }
+        else if (featureType.equals("tRNA")) {
+            loadTRNA(feature);
+        }
+        else if (featureType.equals("3'UTR") || featureType.equals("5'UTR")) {
+            utrs.add(feature);
+        }
+        else {
+            logger.warn(String.format("Ignoring '%s' feature on line %d", featureType, feature.lineNumber));
+        }
+    }
+
+    private void loadRepeatRegion(FeatureTable.Feature repeatRegionFeature) throws DataError {
         String repeatRegionName = repeatRegionFeature.getQualifierValue("FEAT_NAME");
         EmblLocation repeatRegionLocation = repeatRegionFeature.location;
         int fmin = repeatRegionLocation.getFmin();
         int fmax = repeatRegionLocation.getFmax();
 
-        logger.info(String.format("Creating repeat region '%s' at %d-%d", repeatRegionName, fmin, fmax));
+        logger.debug(String.format("Creating repeat region '%s' at %d-%d", repeatRegionName, fmin, fmax));
         String repeatType = repeatRegionFeature.getQualifierValue("rpt_type");
         if (repeatType == null) {
             throw new DataError("A repeat feature must have a /rpt_type qualifier");
@@ -194,131 +249,266 @@ class EmblLoader {
         locate(repeatRegion, fmin, fmax, (short)0, 0);
     }
 
-    private void loadCDS(EmblFile.FeatureTable.Feature cdsFeature) throws DataError {
-        EmblLocation cdsLocation = cdsFeature.location;
-        boolean isPseudo = cdsFeature.hasQualifier("pseudo");
+    /**
+     * Abstract superclass for gene loaders.
+     * <p>
+     * It is the responsibility of each implementing class to set at least
+     * the fields <code>geneUniqueName</code>, <code>transcriptUniqueName</code>
+     * and <code>geneName</code> in its constructor.
+     *
+     * @author rh11
+     *
+     */
+    abstract class GeneLoader {
+        protected FeatureTable.Feature feature;
+        protected EmblLocation location;
+        protected boolean isPseudo = false;
+        protected boolean singlySpliced = true;
+        protected String geneUniqueName = null;
+        protected String transcriptUniqueName = null;
+        protected String geneName;
+        protected Transcript transcript;
 
-        String sharedId = cdsFeature.getQualifierValue("shared_id");
-        List<String> otherTranscripts = cdsFeature.getQualifierValues("other_transcript");
-        String uniqueName = cdsFeature.getUniqueName();
+        public GeneLoader(FeatureTable.Feature feature) {
+            this.feature  = feature;
+            this.location = feature.location;
+        }
 
-        Class<? extends AbstractGene> geneClass = isPseudo ? Pseudogene.class : Gene.class;
-        AbstractGene gene;
-        if (sharedId == null && otherTranscripts.isEmpty()) {
-            // Not alternatively spliced
+        protected Class<? extends AbstractGene> getGeneClass() {
+            return isPseudo ? Pseudogene.class : Gene.class;
+        }
 
-            if (uniqueName.contains(".")) {
+        protected abstract void processTranscriptQualifiers();
+        protected abstract Class<? extends Transcript> getTranscriptClass();
+
+        /**
+         * The main entry point to a gene loader.
+         */
+        public void load() {
+            if (geneUniqueName == null) {
+                throw new RuntimeException("Cannot load a gene with no uniqueName");
+            }
+            if (transcriptUniqueName == null) {
+                throw new RuntimeException("Cannot load a transcript with no uniqueName");
+            }
+            loadTranscript(loadOrFetchGene());
+        }
+
+        private AbstractGene loadOrFetchGene() {
+            if (singlySpliced) {
+                AbstractGene gene = createSinglySplicedGene();
+                genesByUniqueName.put(geneUniqueName, gene);
+                return gene;
+            } else {
+                if (genesByUniqueName.containsKey(geneUniqueName)) {
+                    logger.debug(String.format("Gene for shared ID '%s' already exists", geneUniqueName));
+                    return genesByUniqueName.get(geneUniqueName);
+                } else {
+                    // This is the first transcript, so create the gene
+                    AbstractGene gene = createGene();
+                    genesByUniqueName.put(geneUniqueName, gene);
+                    return gene;
+                }
+            }
+        }
+
+        private AbstractGene createSinglySplicedGene() {
+            if (transcriptUniqueName.contains(".")) {
                 logger.warn(String.format(
                     "The transcript '%s' is not alternately spliced, yet its systematic name contains a dot",
-                    uniqueName));
+                    transcriptUniqueName));
             }
+            return createGene();
+        }
 
-            sharedId = uniqueName;
-            gene = AbstractGene.make(geneClass, organism, uniqueName, cdsFeature.getQualifierValue("FEAT_NAME"));
-            locate(gene, cdsLocation);
+        private AbstractGene createGene() {
+            logger.debug(String.format("Creating gene '%s' (%s)", geneUniqueName, geneName));
+            AbstractGene gene = AbstractGene.make(getGeneClass(), organism, geneUniqueName, geneName);
+            locate(gene, location);
             session.persist(gene);
-        } else {
-            if (sharedId == null) {
-                // An alternately-spliced transcript does not always have a /shared_id qualifier.
-                // Sometimes there are just a selection of /other_transcript qualifiers.
-                Matcher dotMatcher = Pattern.compile("(.*)\\.\\d+").matcher(uniqueName);
-                if (! dotMatcher.matches()) {
-                    logger.error(String.format(
-                        "Alternately-spliced transcript '%s' has no /shared_id qualifier, and its systematic name doesn't end with .<n>",
-                        uniqueName));
-                    return;
+            return gene;
+        }
+
+        private void loadTranscript(AbstractGene gene) {
+            logger.debug(String.format("Creating transcript '%s' for gene '%s'", transcriptUniqueName, gene.getUniqueName()));
+            this.transcript = gene.makeTranscript(getTranscriptClass(), transcriptUniqueName);
+
+            transcriptsByUniqueName.put(transcriptUniqueName, transcript);
+            processTranscriptQualifiers();
+
+            loadExons();
+        }
+
+        /**
+         * For each <code>/&lt;qualifierName%gt;</code> qualifier, add a synonym of type
+         * <code>synonymType</code> to the transcript.
+         *
+         * @param cdsFeature the CDS feature
+         * @param transcript the transcript to which the synonyms should be added
+         * @param qualifierName the name of the qualifer
+         * @param synonymType the type of synonym. Should be a term in the <code>genedb_synonym_type</code> CV
+         * @param isCurrent whether the synonym is current or not
+         */
+        protected void processSynonymQualifiers(String qualifierName, String synonymType, boolean isCurrent) {
+            Set<String> synonyms = new HashSet<String>();
+            for (String synonymString: feature.getQualifierValues(qualifierName)) {
+                if (synonyms.contains(synonymString)) {
+                    logger.error(String.format("The qualifier /%s=\"%s\" is repeated on transcript '%s'",
+                        qualifierName, synonymString, transcriptUniqueName));
+                    continue;
                 }
-                sharedId = dotMatcher.group(1);
-                logger.info(String.format("[CDS %s] assuming /shared_id of '%s'", uniqueName, sharedId));
+                synonyms.add(synonymString);
+
+                logger.debug(String.format("Adding %s '%s' for transcript", synonymType, synonymString));
+                Synonym synonym = synonymManager.getSynonym(synonymType, synonymString);
+                transcript.addSynonym(synonym, isCurrent, /*isInternal:*/ false);
             }
+        }
 
-            if (genesBySharedId.containsKey(sharedId)) {
-                logger.debug(String.format("Gene for shared ID '%s' already exists", sharedId));
-                gene = genesBySharedId.get(sharedId);
-            } else {
-                // This is the first transcript, so create the gene
-                logger.debug(String.format("Creating gene for shared ID '%s'", sharedId));
-                gene = AbstractGene.make(geneClass, organism, sharedId, null); // ??? Can the gene name be represented in the EMBL file? How?
-                locate(gene, cdsLocation);
+        /**
+         * For each <code>/&lt;qualifierName%gt;</code> qualifier, add a property of type
+         * <code>synonymType</code> to the polypeptide, if there is one, or else to the
+         * transcript.
+         *
+         * @param cdsFeature the CDS feature
+         * @param transcript the transcript
+         * @param qualifierName the qualifier name
+         * @param propertyCvName the name of the CV to which the property term belongs.
+         *          Should be either <code>feature_property</code> for built-in Chado
+         *          properties, or <code>genedb_misc</code> for local additions.
+         * @param propertyTermName the term name corresponding to the property to add.
+         *          If it belongs to the <code>genedb_misc</code> CV, it should be a child of
+         *          the term <code>genedb_misc:feature_props</code>.
+         */
+        protected void processPropertyQualifiers(String qualifierName, String propertyCvName, String propertyTermName) {
 
-                /*
-                 * Note that we're using whether or not the CDS has a /temporary_systematic_id
-                 * to decide whether the gene ID is temporary or not. This is a bit odd, but
-                 * I don't think there's any other way to decide.
-                 */
-                if (cdsFeature.hasQualifier("temporary_systematic_id")) {
-                    gene.setTemporarySystematicId(sharedId);
+            for(String qualifierValue: feature.getQualifierValues(qualifierName)) {
+                logger.debug(String.format("Adding %s:%s '%s' for transcript",
+                    propertyCvName, propertyTermName, qualifierValue));
+                if (transcript instanceof ProductiveTranscript) {
+                    ((ProductiveTranscript) transcript).getProtein()
+                        .addFeatureProp(qualifierValue, propertyCvName, propertyTermName);
+                } else {
+                    transcript.addFeatureProp(qualifierValue, propertyCvName, propertyTermName);
+                }
+            }
+        }
+
+        protected void processProductQualifiers() {
+            if (transcript instanceof ProductiveTranscript) {
+                ProductiveTranscript productiveTranscript = (ProductiveTranscript) transcript;
+                Polypeptide polypeptide = productiveTranscript.getProtein();
+                List<String> products = feature.getQualifierValues("product");
+
+                if (polypeptide != null) {
+                    for (String product: products) {
+                        polypeptide.addProduct(product);
+                    }
                 }
                 else {
-                    gene.setSystematicId(sharedId);
+                    for (String product: products) {
+                        transcript.addCvTerm("genedb_products", product);
+                    }
                 }
-
-                session.persist(gene);
             }
         }
 
-        genesBySharedId.put(sharedId, gene);
-
-        logger.debug(String.format("Creating transcript '%s' for gene '%s'", uniqueName, gene.getUniqueName()));
-        Class<? extends Transcript> transcriptClass = isPseudo ? PseudogenicTranscript.class : MRNA.class;
-        Transcript transcript = gene.makeTranscript(transcriptClass, uniqueName);
-
-        transcriptsByUniqueName.put(uniqueName, transcript);
-
-        for (String synonymString: cdsFeature.getQualifierValues("synonym")) {
-            logger.debug(String.format("Adding synonym '%s' for transcript", synonymString));
-            Synonym synonym = objectManager.getSynonym("synonym", synonymString);
-            session.persist(synonym);
-            transcript.addSynonym(synonym);
-        }
-
-        for (String previousSystematicIdString: cdsFeature.getQualifierValues("previous_systematic_id")) {
-            logger.debug(String.format("Adding previous systematic ID '%s' for transcript", previousSystematicIdString));
-            Synonym synonym = objectManager.getSynonym("systematic_id", previousSystematicIdString);
-            session.persist(synonym);
-            transcript.addNonCurrentSynonym(synonym);
-        }
-
-        for(String note: cdsFeature.getQualifierValues("note")) {
-            logger.debug(String.format("Adding comment '%s' for transcript", note));
-            if (transcript instanceof ProductiveTranscript) {
-                ((ProductiveTranscript) transcript).getProtein().addFeatureProp(note, "feature_property", "comment");
-            } else {
-                transcript.addFeatureProp(note, "feature_property", "comment");
+        private void loadExons() {
+            int exonIndex = 0;
+            for (EmblLocation exonLocation: location.getParts()) {
+                String exonUniqueName = String.format("%s:exon:%d", transcript.getUniqueName(), ++exonIndex);
+                logger.debug(String.format("Creating exon '%s' at %d-%d", exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax()));
+                AbstractExon exon = transcript.createExon(exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax());
+                session.persist(exon);
             }
-        }
-
-        for(String method: cdsFeature.getQualifierValues("method")) {
-            if (transcript instanceof ProductiveTranscript) {
-                ((ProductiveTranscript) transcript).getProtein().addFeatureProp(method, "genedb_misc", "method");
-            } else {
-                transcript.addFeatureProp(method, "genedb_misc", "method");
-            }
-        }
-
-        if (transcript instanceof ProductiveTranscript) {
-            ProductiveTranscript productiveTranscript = (ProductiveTranscript) transcript;
-            for (String product: cdsFeature.getQualifierValues("product")) {
-                productiveTranscript.getProtein().addProduct(product);
-            }
-        }
-
-        // Add exons
-        int exonIndex = 0;
-        for (EmblLocation exonLocation: cdsLocation.getParts()) {
-            String exonUniqueName = String.format("%s:exon:%d", transcript.getUniqueName(), ++exonIndex);
-            logger.debug(String.format("Creating exon '%s' at %d-%d", exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax()));
-            AbstractExon exon = transcript.createExon(exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax());
-            session.persist(exon);
         }
     }
 
-    private void loadUTR(EmblFile.FeatureTable.Feature utrFeature) throws DataError {
+    class CDSLoader extends GeneLoader {
+        public CDSLoader(FeatureTable.CDSFeature cdsFeature) throws DataError {
+            super(cdsFeature);
+
+            isPseudo = cdsFeature.isPseudo();
+            geneUniqueName = cdsFeature.getSharedId();
+            transcriptUniqueName = cdsFeature.getUniqueName();
+            geneName = cdsFeature.getGeneName();
+
+            singlySpliced = false;
+            if (geneUniqueName == null) {
+                singlySpliced = true;
+                geneUniqueName = transcriptUniqueName;
+            }
+        }
+
+        /**
+         * Use the qualifiers of the CDS feature to add various bits of annotation
+         * to the transcript (or to the polypeptide, if there is one). Specifically,
+         * add synonyms, properties and products.
+         *
+         * @param cdsFeature
+         * @param transcript
+         */
+        @Override
+        protected void processTranscriptQualifiers() {
+
+            processSynonymQualifiers("synonym", "synonym", true);
+            processSynonymQualifiers("previous_systematic_id", "systematic_id", false);
+
+            processPropertyQualifiers("note",   "feature_property", "comment");
+            processPropertyQualifiers("method", "genedb_misc",      "method");
+            processPropertyQualifiers("colour", "genedb_misc",      "colour");
+            processPropertyQualifiers("status", "genedb_misc",      "status");
+
+            processProductQualifiers();
+        }
+
+        @Override
+        protected Class<? extends Transcript> getTranscriptClass() {
+            return isPseudo ? PseudogenicTranscript.class : MRNA.class;
+        }
+    }
+
+    private void loadCDS(FeatureTable.CDSFeature cdsFeature) throws DataError {
+        new CDSLoader(cdsFeature).load();
+    }
+
+    private class TRNALoader extends GeneLoader {
+
+        public TRNALoader(FeatureTable.Feature feature) throws DataError {
+            super(feature);
+
+            String name = feature.getQualifierValue("FEAT_NAME");
+            if (name == null) {
+                throw new DataError("tRNA feature has no /FEAT_NAME qualifier");
+            }
+
+            geneUniqueName = transcriptUniqueName = name;
+        }
+
+        @Override
+        protected void processTranscriptQualifiers() {
+            processPropertyQualifiers("note",      "feature_property", "comment");
+            processPropertyQualifiers("anticodon", "feature_property", "anticodon");
+            processProductQualifiers();
+        }
+
+        @Override
+        protected Class<? extends Transcript> getTranscriptClass() {
+            return TRNA.class;
+        }
+
+    }
+
+    private void loadTRNA(FeatureTable.Feature feature) throws DataError {
+        new TRNALoader(feature).load();
+    }
+
+    private void loadUTR(FeatureTable.Feature utrFeature) throws DataError {
         String utrType = utrFeature.type;
         EmblLocation utrLocation = utrFeature.location;
         String uniqueName = utrFeature.getUniqueName();
 
-        logger.trace(String.format("Loading %s for '%s' at %s", utrType, uniqueName, utrLocation));
+        logger.debug(String.format("Loading %s for '%s' at %s", utrType, uniqueName, utrLocation));
 
         Transcript transcript = transcriptsByUniqueName.get(uniqueName);
         if (transcript == null) {
@@ -341,7 +531,7 @@ class EmblLoader {
                 utrUniqueName += ":" + part;
             }
 
-            logger.trace(String.format("Creating %s feature '%s' at %d-%d",
+            logger.debug(String.format("Creating %s feature '%s' at %d-%d",
                 utrType, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax()));
 
             transcript.createUTR(utrClass, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax());
@@ -353,6 +543,14 @@ class EmblLoader {
         this.organismDao = organismDao;
     }
 
+    /**
+     * Set the ObjectManager. This is expected to be called by Spring.
+     * We will inject the GeneralDao object into the ObjectManager ourselves from
+     * {@link #afterPropertiesSet}, so this ObjectManager need not have the GeneralDao
+     * injected yet. This avoids circularity.
+     *
+     * @param objectManager
+     */
     public void setObjectManager(ObjectManager objectManager) {
         this.objectManager = objectManager;
     }
@@ -365,15 +563,22 @@ class EmblLoader {
         this.generalDao = generalDao;
     }
 
+    public void setCvDao(CvDao cvDao) {
+        this.cvDao = cvDao;
+    }
+
     public void afterPropertiesSet() {
+        synonymManager.setObjectManager(objectManager);
+
         /*
-         * We cannot set the generalDao of the objectManager
+         * We cannot set the DAOs of the objectManager
          * directly in Load.xml, because that creates a circular
          * reference that (understandably) causes Spring to
-         * throw a tantrum. Thus we inject the generalDao into
-         * here, and pass it to the ObjectManager after Spring
+         * throw a tantrum. Thus we inject them into
+         * here, and pass them to the ObjectManager after Spring
          * configuration.
          */
         objectManager.setGeneralDao(generalDao);
+        objectManager.setCvDao(cvDao);
     }
 }
