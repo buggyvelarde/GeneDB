@@ -6,6 +6,7 @@ import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureDbXRef;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
@@ -68,7 +69,7 @@ public class TranscriptDTO implements Serializable {
 
         if (polypeptide != null) {
             populateFromFeatureProps(polypeptide);
-            populateFromFeatureCvTerms(polypeptide);
+            populateFromFeatureCvTerms(polypeptide, "", "");
             populateFromFeatureDbXrefs(polypeptide);
         }
 
@@ -90,66 +91,19 @@ public class TranscriptDTO implements Serializable {
 
 
 
-    private void populateFromFeatureCvTerms(Polypeptide polypeptide) {
+    private List<FeatureCvTermDTO> populateFromFeatureCvTerms(Polypeptide polypeptide, String cvName, String cvTermName) {
         Assert.notNull(polypeptide);
         this.products = polypeptide.getProducts();
 
-        FeatureCvTermDTO fctd = new FeatureCvTermDTO();
-
-
-//        <c:if test="${fn:length(featureCvTerms) > 0}">
-//          <td class="value evidence">
-//              <db:filtered-loop items="${featureCvTerm.featureCvTermProps}" cvTerm="evidence" var="evidence">
-//                      ${evidence.value}
-//              </db:filtered-loop>&nbsp;
-//              <c:forEach items="${featureCvTerm.pubs}" var="pub">
-//                  (${pub.uniqueName})
-//              </c:forEach>
-//          </td>
-//          <td class="value accession">
-//              <c:forEach items="${featureCvTerm.featureCvTermDbXRefs}" var="fctdbx">
-//                  <a href="${fctdbx.dbXRef.db.urlPrefix}${fctdbx.dbXRef.accession}">${fctdbx.dbXRef.db.name}:${fctdbx.dbXRef.accession}</a>
-//              </c:forEach>
-//              <c:if test="${featureCvTerm.pub.uniqueName != 'null'}">
-//                  <a href="${PMID}${featureCvTerm.pub.uniqueName}">${featureCvTerm.pub.uniqueName}</a>
-//              </c:if>
-//          </td>
-//          <c:if test="${featureCounts != null}">
-//          <td class="value others">
-//              <c:forEach items="${featureCounts}" var="nc">
-//                  <c:if test="${nc.name == featureCvTerm.cvTerm.name}">
-//                      <c:if test="${nc.count == 1}" >
-//                          0 Others
-//                      </c:if>
-//                      <c:if test="${nc.count > 1}" >
-//                          <c:url value="/BrowseTerm" var="othersUrl">
-//                              <c:param name="organism" value="${organism}"/>
-//                              <c:param name="term" value="${featureCvTerm.cvTerm.name}"/>
-//                              <c:param name="category" value="${featureCvTerm.cvTerm.cv.name}"/>
-//                              <c:param name="json" value="false"/>
-//                          </c:url>
-//                          <a href="${othersUrl}"> ${nc.count - 1} Others </a>
-//                      </c:if>
-//                  </c:if>
-//              </c:forEach>
-//          </td>
-//          </c:if>
-//          </tr>
-//        </c:forEach>
-//        <%-- Controlled Curation Section --%>
-//        <db:filterByType items="${polypeptide.featureCvTerms}" cvPattern="CC_.*" var="controlledCurationTerms"/>
-//        <c:if test="${fn:length(controlledCurationTerms) > 0}">
-//            <format:genePageSection id="controlCur">
-//                <div class="heading">Controlled Curation</div>
-//                <table width="100%" class="go-section">
-//                    <format:featureCvTerm-section featureCvTerms="${controlledCurationTerms}" featureCounts="${CC}" organism="${organism}"/>
-//                </table>
-//            </format:genePageSection>
-//        </c:if>
-
-
+        List<FeatureCvTermDTO> dtos = new ArrayList<FeatureCvTermDTO>();
+        for (FeatureCvTerm featureCvTerm : polypeptide.getFeatureCvTermsFilteredByCvNameAndCvTermName(cvName, cvTermName)) {
+           dtos.add(new FeatureCvTermDTO(featureCvTerm));
+        }
+        if (dtos.size() > 0) {
+            return dtos;
+        }
+        return null;
     }
-
 
 
     private void populateMisc(Transcript transcript) {
