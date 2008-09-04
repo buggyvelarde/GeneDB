@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * @author art
- * 
+ *
  */
 public class TaxonNode {
 
@@ -30,8 +30,7 @@ public class TaxonNode {
     private List<TaxonNode> children = new ArrayList<TaxonNode>();
     private boolean webLinkable = false;
     private boolean organism = false;
-    private Map<String, Map<String, Object>> appDetails = new HashMap<String, Map<String, Object>>(
-            0);
+    private Map<String, Map<String, Object>> appDetails = new HashMap<String, Map<String, Object>>();
     private Map<TaxonNameType, String> names = new HashMap<TaxonNameType, String>(7);
 
     public TaxonNode(Phylonode phylonode) {
