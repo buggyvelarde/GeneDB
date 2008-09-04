@@ -60,6 +60,22 @@ public class GeneralDao extends BaseDao {
         return super.firstFromList(synonyms, "type", synonymType, "name", synonymString);
     }
 
+    public Synonym getSynonym(int synonymTypeId, String synonymString) {
+        @SuppressWarnings("unchecked")
+        List<Synonym> synonyms = getSession(true).createQuery(
+            "from Synonym where type.cvTermId=:typeId and name=:name")
+            .setInteger("typeId", synonymTypeId).setString("name", synonymString).list();
+        return firstFromList(synonyms, "typeId", synonymTypeId, "name", synonymString);
+    }
+
+    public Synonym getSynonym(CvTerm synonymType, String synonymString) {
+        @SuppressWarnings("unchecked")
+        List<Synonym> synonyms = getSession(true).createQuery(
+            "from Synonym where type=:type and name=:name")
+            .setParameter("type", synonymType).setString("name", synonymString).list();
+        return super.firstFromList(synonyms, "type", synonymType, "name", synonymString);
+    }
+
     public Synonym getOrCreateSynonym(String synonymType, String synonymString) {
         logger.trace(String.format("Looking for synonym '%s' of type '%s'", synonymString, synonymType));
         Synonym synonym = getSynonym(synonymType, synonymString);
@@ -69,8 +85,33 @@ public class GeneralDao extends BaseDao {
         }
 
         logger.trace("Creating new synonym");
-        CvTerm synonymTypeCvTerm = cvDao.findOrCreateCvTermByNameAndCvName(synonymType, "genedb_synonym_type");
+        CvTerm synonymTypeCvTerm = cvDao.getCvTermByNameAndCvName(synonymType, "genedb_synonym_type");
         return new Synonym(synonymTypeCvTerm, synonymString, synonymString);
+    }
+
+    public Synonym getOrCreateSynonym(int synonymTypeId, String synonymString) {
+        logger.trace(String.format("Looking for synonym '%s' of type %d", synonymString, synonymTypeId));
+        Synonym synonym = getSynonym(synonymTypeId, synonymString);
+        if (synonym != null) {
+            logger.trace("Synonym found in database");
+            return synonym;
+        }
+
+        logger.trace("Creating new synonym");
+        CvTerm synonymTypeCvTerm = cvDao.getCvTermById(synonymTypeId);
+        return new Synonym(synonymTypeCvTerm, synonymString, synonymString);
+    }
+
+    public Synonym getOrCreateSynonym(CvTerm synonymType, String synonymString) {
+        logger.trace(String.format("Looking for synonym '%s' of type '%s'", synonymString, synonymType.getName()));
+        Synonym synonym = getSynonym(synonymType, synonymString);
+        if (synonym != null) {
+            logger.trace("Synonym found in database");
+            return synonym;
+        }
+
+        logger.trace("Creating new synonym");
+        return new Synonym(synonymType, synonymString, synonymString);
     }
 
     public void setCvDao(CvDao cvDao) {
