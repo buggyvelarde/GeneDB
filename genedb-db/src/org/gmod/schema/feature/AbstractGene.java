@@ -99,7 +99,7 @@ public abstract class AbstractGene extends Region {
      */
     public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName) {
         try {
-            logger.trace(String.format("Creating transcipt '%s' for gene '%s'",
+            logger.trace(String.format("Creating transcript '%s' for gene '%s'",
                 transcriptUniqueName, getUniqueName()));
             T transcript = transcriptClass.getDeclaredConstructor(Organism.class, String.class, String.class)
                 .newInstance(getOrganism(), transcriptUniqueName, null);
