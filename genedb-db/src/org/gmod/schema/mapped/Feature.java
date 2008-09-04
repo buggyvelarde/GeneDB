@@ -806,6 +806,7 @@ public abstract class Feature implements java.io.Serializable {
         CvTerm cvTerm = cvDao.findOrCreateCvTermByNameAndCvName(cvTermName, cvName);
         return addCvTerm(cvTerm);
     }
+
     public FeatureCvTerm addCvTerm(CvTerm cvTerm) {
         FeatureCvTerm featureCvTerm = new FeatureCvTerm(cvTerm, this, nullPub(), false, 0);
         addFeatureCvTerm(featureCvTerm);
@@ -885,5 +886,23 @@ public abstract class Feature implements java.io.Serializable {
         for (FeatureLoc featureLoc: getFeatureLocsForFeatureId()) {
             featureLoc.setFmax(featureLoc.getFmax() + raiseByBases);
         }
+    }
+
+
+    public List<FeatureCvTerm> getFeatureCvTermsFilteredByCvNameAndCvTermName(String cvName,
+            String termName) {
+
+        CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
+        if (type == null) {
+            throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
+        }
+
+        List<FeatureCvTerm> ret = new ArrayList<FeatureCvTerm>();
+        for (FeatureCvTerm featureCvTerm : this.getFeatureCvTerms()) {
+            if (featureCvTerm.getCvTerm().equals(type)) {
+                ret.add(featureCvTerm);
+            }
+        }
+        return ret;
     }
 }
