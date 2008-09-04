@@ -1,15 +1,5 @@
 package org.genedb.db.domain.test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Chromosome;
 import org.genedb.db.domain.objects.Exon;
@@ -17,6 +7,15 @@ import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
 import org.genedb.db.domain.services.BasicGeneService;
+import org.genedb.util.TwoKeyMap;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Used to generate BasicGene objects for testing.
@@ -182,7 +181,7 @@ class BasicGeneFactory {
 public class MockBasicGeneService implements BasicGeneService {
     private BasicGeneFactory factory;
     private Collection<BasicGene> genes;
-    private Map<String,Map<String,Collection<Gap>>> gapsByChromosomeByOrganism;
+    private TwoKeyMap<String,String,Collection<Gap>> gapsByOrganismAndChromosome;
 
     /**
      * Creates a new instance that uses the supplied organism, chromosome and strand
@@ -198,7 +197,7 @@ public class MockBasicGeneService implements BasicGeneService {
     public MockBasicGeneService (String organism, String chromosome, int strand) {
         factory = new BasicGeneFactory(organism, chromosome, strand);
         genes = new ArrayList<BasicGene> ();
-        gapsByChromosomeByOrganism = new HashMap<String,Map<String,Collection<Gap>>>();
+        gapsByOrganismAndChromosome = new TwoKeyMap<String,String,Collection<Gap>>();
     }
 
     /**
@@ -272,13 +271,11 @@ public class MockBasicGeneService implements BasicGeneService {
         String organism   = factory.getOrganism();
         String chromosome = factory.getChromosomeName();
 
-        if (!gapsByChromosomeByOrganism.containsKey(organism))
-            gapsByChromosomeByOrganism.put(organism, new HashMap<String,Collection<Gap>>());
-        Map<String,Collection<Gap>> gapsByChromosome = gapsByChromosomeByOrganism.get(organism);
-        if (!gapsByChromosome.containsKey(chromosome))
-            gapsByChromosome.put(chromosome, new TreeSet<Gap>());
+        if (!gapsByOrganismAndChromosome.containsKey(organism,chromosome)) {
+            gapsByOrganismAndChromosome.put(organism, chromosome, new TreeSet<Gap>());
+        }
 
-        gapsByChromosome.get(chromosome).add(new Gap(uniqueName, fmin, fmax));
+        gapsByOrganismAndChromosome.get(organism,chromosome).add(new Gap(uniqueName, fmin, fmax));
     }
 
     /**
@@ -289,12 +286,10 @@ public class MockBasicGeneService implements BasicGeneService {
      * @return
      */
     public Collection<Gap> findGapsOnChromosome(String organism, String chromosome) {
-        if (!gapsByChromosomeByOrganism.containsKey(organism))
-            return Collections.emptySet();
-        if (!gapsByChromosomeByOrganism.get(organism).containsKey(chromosome))
+        if (!gapsByOrganismAndChromosome.containsKey(organism, chromosome))
             return Collections.emptySet();
 
-        return gapsByChromosomeByOrganism.get(organism).get(chromosome);
+        return gapsByOrganismAndChromosome.get(organism, chromosome);
     }
 
 
