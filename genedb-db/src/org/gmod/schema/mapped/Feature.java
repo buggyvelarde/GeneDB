@@ -782,7 +782,7 @@ public abstract class Feature implements java.io.Serializable {
         this.featureProps.add(fp);
         return fp;
     }
-    
+
     public List<FeatureProp> getFeaturePropsFilteredByCvNameAndTermName(String cvName, String termName) {
         List<FeatureProp> ret = new ArrayList<FeatureProp>();
         CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
@@ -800,7 +800,7 @@ public abstract class Feature implements java.io.Serializable {
         }
         return ret;
     }
-    
+
 
     public FeatureCvTerm addCvTerm(String cvName, String cvTermName) {
         CvTerm cvTerm = cvDao.findOrCreateCvTermByNameAndCvName(cvTermName, cvName);
@@ -843,11 +843,8 @@ public abstract class Feature implements java.io.Serializable {
     public FeatureSynonym addSynonym(Synonym synonym) {
         return addSynonym(synonym, true, false);
     }
-    public FeatureSynonym addNonCurrentSynonym(Synonym synonym) {
-        return addSynonym(synonym, false, false);
-    }
 
-    protected FeatureSynonym addSynonym(Synonym synonym, boolean isCurrent, boolean isInternal) {
+    public FeatureSynonym addSynonym(Synonym synonym, boolean isCurrent, boolean isInternal) {
         Pub nullPub = nullPub();
         FeatureSynonym featureSynonym = new FeatureSynonym(synonym, this, nullPub , isCurrent, isInternal);
         this.addFeatureSynonym(featureSynonym);
