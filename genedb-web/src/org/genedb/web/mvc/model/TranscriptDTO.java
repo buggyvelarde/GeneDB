@@ -1,7 +1,6 @@
 package org.genedb.web.mvc.model;
 
 import org.gmod.schema.feature.AbstractGene;
-import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.PseudogenicTranscript;
@@ -21,9 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import javax.persistence.Transient;
-import javax.servlet.jsp.JspWriter;
 
 public class TranscriptDTO implements Serializable {
 

@@ -1,7 +1,5 @@
 package org.genedb.web.mvc.model;
 
-import org.genedb.web.mvc.controller.ModelBuilder;
-
 import org.gmod.schema.feature.GPIAnchorCleavageSite;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
