@@ -337,6 +337,190 @@ class LoadGeneDbCv {
         <term name="systematic_id"   description="Unique, permanent, accession name for feature" />
         <term name="temporary_systematic_id"   description="Unique accession name for feature. Unstable - will change in future" />
     </cv>
+
+    <cv name="RILEY" db="RILEY">
+        <term name="0.0.0" description="Unknown function, no known homologs"/>
+        <term name="0.0.1" description="Conserved in Escherichia coli"/>
+        <term name="0.0.2" description="Conserved in other organisms"/>
+        <term name="1.0.0" description="Cell processes"/>
+        <term name="1.1.1" description="Chemotaxis and mobility"/>
+        <term name="1.2.1" description="Chromosome replication"/>
+        <term name="1.3.1" description="Chaperones"/>
+        <term name="1.4.0" description="Protection responses"/>
+        <term name="1.4.1" description="Cell killing"/>
+        <term name="1.4.2" description="Detoxification"/>
+        <term name="1.4.3" description="Drug/analog sensitivity"/>
+        <term name="1.4.4" description="Radiation sensitivity"/>
+        <term name="1.5.0" description="Transport/binding proteins"/>
+        <term name="1.5.1" description="Amino acids and amines"/>
+        <term name="1.5.2" description="Cations"/>
+        <term name="1.5.3" description="Carbohydrates, organic acids and alcohols"/>
+        <term name="1.5.4" description="Anions"/>
+        <term name="1.5.5" description="Other Transport/binding proteins"/>
+        <term name="1.6.0" description="Adaptation"/>
+        <term name="1.6.1" description="Adaptations, atypical conditions"/>
+        <term name="1.6.2" description="Osmotic adaptation"/>
+        <term name="1.6.3" description="Fe storage"/>
+        <term name="1.7.1" description="Cell division"/>
+        <term name="1.8.1" description="Sporulation, differentiation and germination"/>
+        <term name="2.0.0" description="Macromolecule metabolism"/>
+        <term name="2.1.0" description="Macromolecule degradation"/>
+        <term name="2.1.1" description="Degradation of DNA"/>
+        <term name="2.1.2" description="Degradation of RNA"/>
+        <term name="2.1.3" description="Degradation of polysaccharides"/>
+        <term name="2.1.4" description="Degradation of proteins, peptides, glyco"/>
+        <term name="2.2.0" description="Macromolecule synthesis, modification"/>
+        <term name="2.2.1" description="Amino acyl tRNA synthesis; tRNA modification"/>
+        <term name="2.2.2" description="Basic proteins - synthesis, modification"/>
+        <term name="2.2.3" description="DNA - replication, repair, restriction/modification"/>
+        <term name="2.2.4" description="Glycoprotein"/>
+        <term name="2.2.5" description="Lipopolysaccharide"/>
+        <term name="2.2.6" description="Lipoprotein"/>
+        <term name="2.2.7" description="Phospholipids"/>
+        <term name="2.2.8" description="Polysaccharides - (cytoplasmic)"/>
+        <term name="2.2.9" description="Protein modification"/>
+        <term name="2.2.10" description="Proteins - translation and modification"/>
+        <term name="2.2.11" description="RNA synthesis, modification, DNA transcript'n"/>
+        <term name="2.2.12" description="tRNA"/>
+        <term name="3.0.0" description="Metabolism of small molecules"/>
+        <term name="3.1.0" description="Amino acid biosynthesis"/>
+        <term name="3.1.1" description="Alanine"/>
+        <term name="3.1.2" description="Arginine"/>
+        <term name="3.1.3" description="Asparagine"/>
+        <term name="3.1.4" description="Aspartate"/>
+        <term name="3.1.5" description="Chorismate"/>
+        <term name="3.1.6" description="Cysteine"/>
+        <term name="3.1.7" description="Glutamate"/>
+        <term name="3.1.8" description="Glutamine"/>
+        <term name="3.1.9" description="Glycine"/>
+        <term name="3.1.10" description="Histidine"/>
+        <term name="3.1.11" description="Isoleucine"/>
+        <term name="3.1.12" description="Leucine"/>
+        <term name="3.1.13" description="Lysine"/>
+        <term name="3.1.14" description="Methionine"/>
+        <term name="3.1.15" description="Phenylalanine"/>
+        <term name="3.1.16" description="Proline"/>
+        <term name="3.1.17" description="Serine"/>
+        <term name="3.1.18" description="Threonine"/>
+        <term name="3.1.19" description="Tryptophan"/>
+        <term name="3.1.20" description="Tyrosine"/>
+        <term name="3.1.21" description="Valine"/>
+        <term name="3.2.0" description="Biosynthesis of cofactors, carriers"/>
+        <term name="3.2.1" description="Acyl carrier protein (ACP)"/>
+        <term name="3.2.2" description="Biotin"/>
+        <term name="3.2.3" description="Cobalamin"/>
+        <term name="3.2.4" description="Enterochelin"/>
+        <term name="3.2.5" description="Folic acid"/>
+        <term name="3.2.6" description="Heme, porphyrin"/>
+        <term name="3.2.7" description="Lipoate"/>
+        <term name="3.2.8" description="Menaquinone, ubiquinone"/>
+        <term name="3.2.9" description="Molybdopterin"/>
+        <term name="3.2.10" description="Pantothenate"/>
+        <term name="3.2.11" description="Pyridine nucleotide"/>
+        <term name="3.2.12" description="Pyridoxine"/>
+        <term name="3.2.13" description="Riboflavin"/>
+        <term name="3.2.14" description="Thiamin"/>
+        <term name="3.2.15" description="Thioredoxin, glutaredoxin, glutathione"/>
+        <term name="3.2.16" description="biotin carboxyl carrier protein (BCCP)"/>
+        <term name="3.2.17" description="Ferredoxin"/>
+        <term name="3.3.0" description="Central intermediary metabolism"/>
+        <term name="3.3.1" description="2'-Deoxyribonucleotide metabolism"/>
+        <term name="3.3.2" description="Amino sugars"/>
+        <term name="3.3.3" description="Entner-Douderoff"/>
+        <term name="3.3.4" description="Gluconeogenesis"/>
+        <term name="3.3.5" description="Glyoxylate bypass"/>
+        <term name="3.3.6" description="Incorporation metal ions"/>
+        <term name="3.3.7" description="Misc. glucose metabolism"/>
+        <term name="3.3.8" description="Misc. glycerol metabolism"/>
+        <term name="3.3.9" description="Non-oxidative branch, pentose pwy"/>
+        <term name="3.3.10" description="Nucleotide hydrolysis"/>
+        <term name="3.3.11" description="Nucleotide interconversions"/>
+        <term name="3.3.12" description="Oligosaccharides"/>
+        <term name="3.3.13" description="Phosphorus compounds"/>
+        <term name="3.3.14" description="Polyamine biosynthesis"/>
+        <term name="3.3.15" description="Pool, multipurpose conversions of intermed. met'm"/>
+        <term name="3.3.16" description="S-adenosyl methionine"/>
+        <term name="3.3.17" description="Salvage of nucleosides and nucleotides"/>
+        <term name="3.3.18" description="Sugar-nucleotide biosynthesis, conversions"/>
+        <term name="3.3.19" description="Sulfur metabolism"/>
+        <term name="3.3.20" description="amino acids"/>
+        <term name="3.3.21" description="other"/>
+        <term name="3.4.0" description="Degradation of small molecules"/>
+        <term name="3.4.1" description="Amines"/>
+        <term name="3.4.2" description="Amino acids"/>
+        <term name="3.4.3" description="Carbon compounds"/>
+        <term name="3.4.4" description="Fatty acids"/>
+        <term name="3.4.5" description="Other Degradation of small molecules"/>
+        <term name="3.5.0" description="Energy metabolism, carbon"/>
+        <term name="3.5.1" description="Aerobic respiration"/>
+        <term name="3.5.2" description="Anaerobic respiration"/>
+        <term name="3.5.3" description="Electron transport"/>
+        <term name="3.5.4" description="Fermentation"/>
+        <term name="3.5.5" description="Glycolysis"/>
+        <term name="3.5.6" description="Oxidative branch, pentose pwy"/>
+        <term name="3.5.7" description="Pyruvate dehydrogenase"/>
+        <term name="3.5.8" description="TCA cycle"/>
+        <term name="3.5.9" description="ATP-proton motive force"/>
+        <term name="3.6.0" description="Fatty acid biosynthesis"/>
+        <term name="3.6.1" description="Fatty acid and phosphatidic acid biosynth"/>
+        <term name="3.7.0" description="Nucleotide biosynthesis"/>
+        <term name="3.7.1" description="Purine ribonucleotide biosynthesis"/>
+        <term name="3.7.2" description="Pyrimidine ribonucleotide biosynthesis"/>
+        <term name="3.8.0" description="related to secondary metabolism"/>
+        <term name="3.8.1" description="polylketide synthases (PKSs)"/>
+        <term name="3.8.2" description="non-ribosomal peptide synthases (NRPSs)"/>
+        <term name="4.0.0" description="Cell envelop"/>
+        <term name="4.1.0" description="Periplasmic/exported/lipoproteins"/>
+        <term name="4.1.1" description="Inner membrane"/>
+        <term name="4.1.2" description="Murein sacculus, peptidoglycan"/>
+        <term name="4.1.3" description="Outer membrane constituents"/>
+        <term name="4.1.4" description="Surface polysaccharides & antigens"/>
+        <term name="4.1.5" description="Surface structures"/>
+        <term name="4.1.6" description="G+ membrane"/>
+        <term name="4.1.7" description="G+ exported/lipoprotein"/>
+        <term name="4.1.8" description="G+ surface anchored"/>
+        <term name="4.1.9" description="G+ peptidoglycan, teichoic acid"/>
+        <term name="4.2.0" description="Ribosome constituents"/>
+        <term name="4.2.1" description="Ribosomal and stable RNAs"/>
+        <term name="4.2.2" description="Ribosomal proteins - synthesis, modification"/>
+        <term name="4.2.3" description="Ribosomes - maturation and modification"/>
+        <term name="5.0.0" description="Extrachromosomal"/>
+        <term name="5.1.0" description="Laterally acquirred elements"/>
+        <term name="5.1.1" description="Colicin-related functions"/>
+        <term name="5.1.2" description="Phage-related functions and prophages"/>
+        <term name="5.1.3" description="Plasmid-related functions"/>
+        <term name="5.1.4" description="Transposon-related functions"/>
+        <term name="5.1.5" description="Pathogenicity Islands/determinants"/>
+        <term name="6.0.0" description="Global functions"/>
+        <term name="6.1.1" description="Global regulatory functions"/>
+        <term name="6.1.2" description="Response regulator"/>
+        <term name="6.1.3" description="two-component fusion"/>
+        <term name="6.2.0" description="RNA polymerase core enzyme binding"/>
+        <term name="6.2.1" description="sigma factor"/>
+        <term name="6.2.2" description="anti sigma factor"/>
+        <term name="6.2.3" description="anti sigma factor antagonist"/>
+        <term name="6.3.1" description="AsnC"/>
+        <term name="6.3.2" description="AraC"/>
+        <term name="6.3.3" description="GntR"/>
+        <term name="6.3.4" description="IclR"/>
+        <term name="6.3.5" description="LacI"/>
+        <term name="6.3.6" description="LysR"/>
+        <term name="6.3.7" description="MarR"/>
+        <term name="6.3.8" description="TetR"/>
+        <term name="6.3.9" description="ROK"/>
+        <term name="6.3.10" description="DeoR"/>
+        <term name="6.3.11" description="LuxR (GerR)"/>
+        <term name="6.3.12" description="MerR"/>
+        <term name="6.3.13" description="ArsR"/>
+        <term name="6.3.14" description="PadR"/>
+        <term name="6.4.0" description="Protein kinases"/>
+        <term name="6.4.1" description="Serine/threonine"/>
+        <term name="6.5.0" description="Others"/>
+        <term name="6.6.0" description="LPS regulated regulatory functions"/>
+        <term name="7.0.0" description="Not classified (included putative assignments)"/>
+        <term name="7.1.1" description="DNA sites, no gene product"/>
+        <term name="7.2.1" description="Cryptic genes"/>
+    </cv>
 </cv-loading>
 ''';
 
