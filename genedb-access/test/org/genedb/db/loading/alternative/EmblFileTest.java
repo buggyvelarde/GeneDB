@@ -2,7 +2,8 @@ package org.genedb.db.loading.alternative;
 
 import static org.junit.Assert.*;
 
-import org.genedb.db.loading.alternative.EmblFile.FeatureTable.Feature;
+import org.genedb.db.loading.alternative.FeatureTable.Feature;
+
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +33,8 @@ public class EmblFileTest {
 
     @Test
     public void pseudo() throws ParsingException {
-        EmblFile.FeatureTable featureTable = emblFile.getFeatureTable();
-        Iterable<EmblFile.FeatureTable.Feature> features = featureTable.getFeatures();
+        FeatureTable featureTable = emblFile.getFeatureTable();
+        Iterable<FeatureTable.Feature> features = featureTable.getFeatures();
 
         int foundFeatures = 0;
         for (Feature feature: features) {

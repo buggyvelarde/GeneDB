@@ -42,7 +42,7 @@ public class LoadEmbl {
         String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.embl");
 
         LoadEmbl loadEmbl = new LoadEmbl(organismCommonName);
-        loadEmbl.processInputDirectory(inputDirectory, fileNamePattern);
+        loadEmbl.processFileOrDirectory(inputDirectory, fileNamePattern);
     }
 
     private static String getRequiredProperty(String key) throws MissingPropertyException {
@@ -70,25 +70,22 @@ public class LoadEmbl {
         loader.setOrganismCommonName(organismCommonName);
     }
 
-    private void processInputDirectory(String inputDirectoryName, String fileNamePattern) throws IOException, ParsingException {
-        processInputDirectory(new File(inputDirectoryName), fileNamePattern);
+    private void processFileOrDirectory(String inputDirectoryName, String fileNamePattern) throws IOException, ParsingException {
+        processFileOrDirectory(new File(inputDirectoryName), fileNamePattern);
     }
 
-    private void processInputDirectory(File inputDirectory, final String fileNamePattern) throws IOException, ParsingException {
-        String[] entries = inputDirectory.list(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                File file = new File(dir, name);
-                return file.isDirectory() || (file.isFile() && name.matches(fileNamePattern));
+    private void processFileOrDirectory(File file, final String fileNamePattern) throws IOException, ParsingException {
+        if (file.isDirectory()) {
+            String[] entries = file.list(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    File file = new File(dir, name);
+                    return file.isDirectory() || (file.isFile() && name.matches(fileNamePattern));
+                }});
+            for (String entry: entries) {
+                processFileOrDirectory(new File(file, entry), fileNamePattern);
             }
-        });
-
-        for (String entry: entries) {
-            File file = new File(inputDirectory, entry);
-            if (file.isDirectory()) {
-                processInputDirectory(file, fileNamePattern);
-            } else {
-                processEmblFile(file);
-            }
+        } else {
+            processEmblFile(file);
         }
     }
 

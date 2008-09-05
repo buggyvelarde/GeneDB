@@ -17,7 +17,6 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
-
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="messages"/>
     </bean>
@@ -60,6 +59,7 @@
 
     <bean id="emblLoader" class="org.genedb.db.loading.alternative.EmblLoader"
         init-method="afterPropertiesSet">
+        <property name="cvDao" ref="cvDao"/>
         <property name="generalDao" ref="generalDao"/>
         <property name="organismDao" ref="organismDao"/>
         <property name="objectManager" ref="objectManager"/>

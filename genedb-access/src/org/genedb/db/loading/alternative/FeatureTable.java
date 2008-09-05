@@ -110,15 +110,16 @@ class FeatureTable extends EmblFile.Section {
          */
         public String getGeneName() throws DataError {
             String primaryName = getQualifierValue("primary_name");
-            String geneQualifier = getQualifierValue("gene");
+            List<String> geneQualifiers = getQualifierValues("gene");
             String featName = getQualifierValue("FEAT_NAME");
 
-            if (primaryName != null && geneQualifier != null) {
-                throw new DataError(String.format("%s feature has both /primary_name and /gene"));
-            }
-            else if (primaryName != null) {
+            if (primaryName != null) {
                 return primaryName;
-            } else if (geneQualifier != null) {
+            } else if (featName != null) {
+                return featName;
+            } else if (geneQualifiers.size() == 1) {
+                String geneQualifier = geneQualifiers.get(0);
+
                 // S. mansoni has some qualifiers of the form /gene="RPN1; ORFNames=CaO19.4956;"
                 int semicolonIndex = geneQualifier.indexOf(';');
                 if (semicolonIndex < 0) {
@@ -126,8 +127,6 @@ class FeatureTable extends EmblFile.Section {
                 } else {
                     return geneQualifier.substring(0, semicolonIndex);
                 }
-            } else if (featName != null) {
-                return featName;
             } else {
                 return null;
             }

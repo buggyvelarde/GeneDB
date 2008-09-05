@@ -111,7 +111,10 @@ class EmblLoader {
             session.persist(supercontig);
 
             init(supercontig);
-            loadContigsAndGaps(emblFile.getContigLocations());
+            EmblLocation.Join contigLocations = emblFile.getContigLocations();
+            if (contigLocations != null) {
+                loadContigsAndGaps(contigLocations);
+            }
             loadFeatures(emblFile.getFeatureTable());
         } else {
             logger.error(String.format("The organism '%s' already has feature '%s'",
@@ -186,7 +189,9 @@ class EmblLoader {
                 loadFeature(utrs, feature);
             }
             catch (DataError e) {
+                logger.warn("Caught one! On line " + feature.lineNumber);
                 e.setLineNumber(feature.lineNumber);
+                logger.warn(String.format("Exception message is '%s'", e.getMessage()));
                 throw e;
             }
         }

@@ -21,22 +21,19 @@ import org.hibernate.Session;
  * is required, which (according to JProfiler, on the S. mansoni load)
  * is what the loader spent the majority of its time doing when
  * {@link ObjectManager#getSynonym(String,String)} was used to create synonyms.
- * With this single change, the loader went from being massively CPU-bound
+ * When this was changed, the loader went from being massively CPU-bound
  * to being database-bound (as one would hope it would be), so do not change
  * it without an excellent reason!
  * <p>
- * During the loading life-cycle, {@link EmblLoader} creates a new SynonymManager
- * instance for each EMBL file loaded. Therefore it is no problem for a synonym
- * to be used several times within a particular file.
+ * During the loading life-cycle, each {@link EmblLoader} has a single SynonymManager
+ * instance. For each EMBL file loaded, a new Hibernate session is created and
+ * {@link #startSession(Session)} is called. Therefore it is no problem for a synonym
+ * to be used several times within a particular organism.
  *
  * However we are implicitly assuming that synonyms are never
- * shared across chromosomes or top-level (super)contigs: if we come across one that is,
- * it will cause a constraint violation error when loaded. If that is ever a problem
- * in practice, we will need to adopt a more sophisticated strategy. Note that simply
- * extending the lifetime of this object will not work as one might hope: if a cached
- * synonym is found that was created in a different session (i.e. is from a different
- * EMBL file, since we create a new session for each EMBL file), Hibernate will not be
- * able to use it unless it's run through <code>Session.merge</code>.
+ * shared across organisms: if we come across one that is, it will cause a constraint
+ * violation error when loaded. If that is ever a problem in practice, we will need to
+ * preload the existing synonyms as well.
  *
  * @author rh11
  *
@@ -58,6 +55,10 @@ class SynonymManager {
         this.objectManager = objectManager;
     }
 
+    /**
+     * Must be called when a new Hibernate session is started.
+     * @param session the newly-started session
+     */
     public void startSession(Session session) {
         logger.debug("Starting new session");
         detachedSynonymsByType.putAll(synonymsByType);
@@ -69,6 +70,13 @@ class SynonymManager {
     private TwoKeyMap<String,String,Synonym> detachedSynonymsByType = new TwoKeyMap<String,String,Synonym>();
     private TwoKeyMap<String,String,Synonym> synonymsByType = new TwoKeyMap<String,String,Synonym>();
 
+    /**
+     * Fetch a synonym from the local cache. Failing that, create a new one.
+     *
+     * @param synonymType the synonym type (should be a term in the <code>genedb_synonym_type</code> CV).
+     * @param synonymString the actual synonym
+     * @return the cached or newly-created synonym object
+     */
     public synchronized Synonym getSynonym(String synonymType, String synonymString) {
         logger.debug(String.format("Looking for synonym '%s:%s'", synonymType, synonymString));
         if (session == null) {
