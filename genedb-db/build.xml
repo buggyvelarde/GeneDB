@@ -82,7 +82,6 @@
 	<!-- An internal init target -->
     <target name="setup-db" depends="clean-build-db,genedb-util.fulljar">
         <mkdir dir="${imported.basedir.db}/ant-build" />
-        <mkdir dir="${imported.basedir.db}/ant-build/src" />
         <mkdir dir="${imported.basedir.db}/ant-build/test" />
         <mkdir dir="${imported.basedir.db}/ant-build/classes" />
         <mkdir dir="${imported.basedir.db}/ant-build/test-classes" />
@@ -94,16 +93,14 @@
     <target name="make-db-jar" depends="setup-db"
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
-        <copy todir="${imported.basedir.db}/ant-build/src">
-            <fileset dir="${imported.basedir.db}/src"/>
-        </copy>
-
-        <javac srcdir="${imported.basedir.db}/ant-build/src"
+        <javac srcdir="${imported.basedir.db}/src"
             classpathref="db-compile-lib"
             destdir="${imported.basedir.db}/ant-build/classes"
             encoding="utf-8" debug="on" />
 
-    	<antcall target="build-time-weave" />
+        <antcall target="build-time-weave">
+            <param name="directory" value="${imported.basedir.db}/ant-build/classes"/>
+        </antcall>
 
         <jar jarfile="${imported.basedir.db}/ant-build/jars/genedb-db.jar">
             <fileset dir="${imported.basedir.db}/ant-build/classes" />
@@ -117,11 +114,7 @@
 
     <target name="make-springless-jar" depends="setup-db">
 
-        <copy todir="${imported.basedir.db}/ant-build/src">
-            <fileset dir="${imported.basedir.db}/src"/>
-        </copy>
-
-        <javac srcdir="${imported.basedir.db}/ant-build/src"
+        <javac srcdir="${imported.basedir.db}/src"
             classpathref="db-compile-lib"
             destdir="${imported.basedir.db}/ant-build/springless-classes"
             encoding="utf-8" debug="on" />
@@ -206,21 +199,19 @@
     </target>
 
 
-	<!-- Invoke the hibernate instrumentation and compile-time weaving -->
+    <!-- Invoke the hibernate instrumentation and compile-time weaving -->
     <!-- Called from an Eclipse ant task, as well as from make-db-jar -->
-	<target name="build-time-weave">
+    <target name="build-time-weave">
 
-        <antcall target="hibernate-instrumentation">
-            <param name="directory" value="${imported.basedir.db}/ant-build/classes"/>
-        </antcall>
+        <antcall target="hibernate-instrumentation"/>
 
-	    <iajc verbose="true"
-	    inpath="${imported.basedir.db}/ant-build/classes"
-	    	aspectpathref="aspect.path"
-	    	classpathRef ="db-compile-lib"
-	    	destdir="${imported.basedir.db}/ant-build/classes"
-	    />
-	</target>
+        <iajc verbose="false"
+            inpath="${directory}"
+            aspectpathref="aspect.path"
+            classpathRef ="db-compile-lib"
+            destdir="${directory}"
+        />
+    </target>
 
     <path id="build-test-database-classpath">
         <pathelement path="${imported.basedir.db}/ant-build/jars/genedb-db-test.jar"/>
