@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="src" path="conf"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
@@ -51,5 +50,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-query"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/genedb-util"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
