@@ -4,5 +4,7 @@
 	<classpathentry kind="src" path="anttasks"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/ant/ant.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
