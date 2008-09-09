@@ -55,6 +55,7 @@ public class CvDao extends BaseDao {
     }
 
     public CvTerm getCvTermById(int id) {
+        logger.trace(String.format("Fetching CvTerm with id %d", id));
         return (CvTerm) getSession().load(CvTerm.class, id);
     }
 
@@ -121,13 +122,13 @@ public class CvDao extends BaseDao {
         return cvTerms;
     }
 
-    private TwoKeyMap<String,String,CvTerm> cvTermsByCvAndName = new SynchronizedTwoKeyMap<String,String,CvTerm>();
+    private TwoKeyMap<String,String,Integer> cvTermIdsByCvAndName = new SynchronizedTwoKeyMap<String,String,Integer>();
     public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName) {
         return getCvTermByNameAndCvName(cvTermName, cvName, true);
     }
     public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName, boolean complainIfNotFound) {
-        if (cvTermsByCvAndName.containsKey(cvName, cvTermName)) {
-            return cvTermsByCvAndName.get(cvName, cvTermName);
+        if (cvTermIdsByCvAndName.containsKey(cvName, cvTermName)) {
+            return (CvTerm) getSession().load(CvTerm.class, cvTermIdsByCvAndName.get(cvName, cvTermName));
         }
 
         @SuppressWarnings("unchecked")
@@ -147,7 +148,7 @@ public class CvDao extends BaseDao {
         }
 
         CvTerm cvTerm = cvTermList.get(0);
-        cvTermsByCvAndName.put(cvName, cvTermName, cvTerm);
+        cvTermIdsByCvAndName.put(cvName, cvTermName, cvTerm.getCvTermId());
         return cvTerm;
     }
 
