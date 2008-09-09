@@ -221,14 +221,14 @@
     </path>
 
     <target name="prompt-for-password" depends="genedb-util.anttasks" unless="source.password">
+        <fail message="The attribute source.url must be supplied" unless="source.url"/>
+        <fail message="The attribute source.username must be supplied" unless="source.username"/>
+
         <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.db}/../genedb-util/ant-build/jars/genedb-anttasks.jar" />
         <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
     </target>
 
     <target name="make-schema-database" depends="prompt-for-password,make-test-jar">
-        <fail message="The attribute source.url must be supplied" unless="source.url"/>
-        <fail message="The attribute source.username must be supplied" unless="source.username"/>
-
         <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
             <jvmarg line="-server" />
@@ -241,9 +241,6 @@
     </target>
 
     <target name="make-skeleton-database" depends="prompt-for-password,genedb-util.anttasks,make-test-jar">
-        <fail message="The attribute source.url must be supplied" unless="source.url"/>
-        <fail message="The attribute source.username must be supplied" unless="source.username"/>
-
         <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
             <jvmarg line="-server" />
@@ -255,9 +252,6 @@
     </target>
 
     <target name="make-pfalciparum-database" depends="prompt-for-password,genedb-util.anttasks,make-test-jar">
-        <fail message="The attribute source.url must be supplied" unless="source.url"/>
-        <fail message="The attribute source.username must be supplied" unless="source.username"/>
-
         <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
             <jvmarg line="-server" />
