@@ -95,7 +95,7 @@ public class DisplaySimilarity extends SimpleTagSupport {
                 algorithm = aFeature.getAnalysis().getAlgorithm();
 
                 Feature subjectFeature = null;
-                for (FeatureLoc floc : matchFeature.getFeatureLocsForFeatureId()) {
+                for (FeatureLoc floc : matchFeature.getFeatureLocs()) {
                     System.out.println("subjecFeature can be : "
                             + floc.getSourceFeature().getType().getName());
                     if (floc.getSourceFeature().getType().getName().equals(

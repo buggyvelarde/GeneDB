@@ -145,7 +145,7 @@ public class GeneDBWebUtils {
             Element label = new Element("label");
             Element link = new Element("link");
 
-            Collection<FeatureLoc> temp = feature.getFeatureLocsForFeatureId();
+            Collection<FeatureLoc> temp = feature.getFeatureLocs();
             for (FeatureLoc fl : temp) {
                 String name = fl.getSourceFeature().getUniqueName();
                 String number = name.substring(name.length() - 1);
