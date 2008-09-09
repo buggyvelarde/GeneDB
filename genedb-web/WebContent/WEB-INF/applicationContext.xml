@@ -42,12 +42,6 @@
         <property name="generalDao" ref="generalDao" />
     </bean>
 
-    <!-- <bean id="luceneDao" class="org.genedb.querying.core.LuceneDao">
-        <property name="luceneIndexDirectoryName">
-        	<value>${lucene.indexDirectory}</value>
-        </property>
-    </bean>-->
-
     <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
         <property name="luceneIndexList">
         <list>
