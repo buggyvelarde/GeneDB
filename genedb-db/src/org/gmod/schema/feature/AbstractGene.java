@@ -2,6 +2,7 @@ package org.gmod.schema.feature;
 
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.FeatureSynonym;
 import org.gmod.schema.mapped.Organism;
@@ -95,15 +96,17 @@ public abstract class AbstractGene extends Region {
      * @param <T>
      * @param transcriptClass the class of the transcript to create
      * @param transcriptUniqueName the uniqueName of the transcript to create
+     * @param the phase
      * @return
      */
-    public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName) {
-        try {
+    public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName, int phase) {
             logger.trace(String.format("Creating transcript '%s' for gene '%s'",
                 transcriptUniqueName, getUniqueName()));
-            T transcript = transcriptClass.getDeclaredConstructor(Organism.class, String.class, String.class)
-                .newInstance(getOrganism(), transcriptUniqueName, null);
-            this.getSourceFeature().addLocatedChild(transcript, this.getFmin(), this.getFmax(), this.getStrand(), 0);
+            T transcript = Transcript.construct(transcriptClass, getOrganism(), transcriptUniqueName, null);
+            for (FeatureLoc featureLoc: getFeatureLocs()) {
+                featureLoc.getSourceFeature().addLocatedChild(transcript, featureLoc.getFmin(), featureLoc.getFmax(),
+                    featureLoc.getStrand(), phase, featureLoc.getLocGroup(), featureLoc.getRank());
+            }
             this.addFeatureRelationship(transcript, "relationship", "part_of");
 
             if (ProductiveTranscript.class.isAssignableFrom(transcriptClass)) {
@@ -115,19 +118,6 @@ public abstract class AbstractGene extends Region {
             }
 
             return transcript;
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Internal error: failed to construct transcript", e);
-        } catch (SecurityException e) {
-            throw new RuntimeException("Internal error: failed to construct transcript", e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException("Internal error: failed to construct transcript", e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Internal error: failed to construct transcript", e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException("Internal error: failed to construct transcript", e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Internal error: failed to construct transcript", e);
-        }
     }
 
     /**

@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -162,7 +163,7 @@ public abstract class Feature implements java.io.Serializable {
      * fetched eagerly. If they were not, we'd need a nested query
      * instead here.
      */
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "objectFeature")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "objectFeature")
     @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
     protected Collection<FeatureRelationship> featureRelationshipsForObjectId;
 
@@ -175,14 +176,15 @@ public abstract class Feature implements java.io.Serializable {
     private Collection<FeatureDbXRef> featureDbXRefs;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureByFeatureId")
+    @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @OrderBy("rank ASC")
-    private List<FeatureLoc> featureLocsForFeatureId;
+    private List<FeatureLoc> featureLocs;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Collection<FeatureCvTerm> featureCvTerms;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
-    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Collection<FeatureProp> featureProps;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
@@ -401,7 +403,7 @@ public abstract class Feature implements java.io.Serializable {
      */
     @Transient
     public FeatureLoc getRankZeroFeatureLoc() {
-        List<FeatureLoc> featureLocs = getFeatureLocsForFeatureId();
+        List<FeatureLoc> featureLocs = getFeatureLocs();
         if (featureLocs.size() == 0) {
             logger.error(String.format("getRankZeroFeatureLoc: Feature '%s' has no FeatureLocs",
                 uniqueName));
@@ -452,13 +454,25 @@ public abstract class Feature implements java.io.Serializable {
         featureDbXRef.setFeature(this);
     }
 
-    public List<FeatureLoc> getFeatureLocsForFeatureId() {
-        return (featureLocsForFeatureId = CollectionUtils.safeGetter(featureLocsForFeatureId));
+    public List<FeatureLoc> getFeatureLocs() {
+        return (featureLocs = CollectionUtils.safeGetter(featureLocs));
     }
 
     public void addFeatureLocsForFeatureId(FeatureLoc featureLocForFeatureId) {
         featureLocForFeatureId.setFeature(this);
-        getFeatureLocsForFeatureId().add(featureLocForFeatureId);
+        getFeatureLocs().add(featureLocForFeatureId);
+    }
+
+    protected void removeFeatureLoc(FeatureLoc featureLoc) {
+        Iterator<FeatureLoc> it = featureLocs.iterator();
+        while (it.hasNext()) {
+            if (it.next().getFeatureLocId() == featureLoc.getFeatureLocId()) {
+                logger.trace(String.format("Removing FeatureLoc (ID %d) from feature '%s'",
+                    featureLoc.getFeatureLocId(), getUniqueName()));
+                it.remove();
+            }
+        }
+        featureLoc.setSourceFeature(null);
     }
 
     public Collection<FeatureCvTerm> getFeatureCvTerms() {
@@ -738,10 +752,10 @@ public abstract class Feature implements java.io.Serializable {
         }
         this.featureLocsForSrcFeatureId.add(loc);
 
-        if (child.featureLocsForFeatureId == null) {
-            child.featureLocsForFeatureId = new ArrayList<FeatureLoc>();
+        if (child.featureLocs == null) {
+            child.featureLocs = new ArrayList<FeatureLoc>();
         }
-        child.featureLocsForFeatureId.add(loc);
+        child.featureLocs.add(loc);
 
         return loc;
     }
@@ -752,29 +766,30 @@ public abstract class Feature implements java.io.Serializable {
     public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, int strand, int phase) {
         return addLocatedChild(child, fmin, fmax, strand, phase, 0);
     }
-
     public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, int strand, int phase, int rank) {
-        FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, (short) strand, phase, rank);
+        return addLocatedChild(child, fmin, fmax, strand, phase, 0, rank);
+    }
+    public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, int strand, int phase, int locgroup, int rank) {
+        FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, (short) strand, phase, locgroup, rank);
 
         if (this.featureLocsForSrcFeatureId == null) {
             this.featureLocsForSrcFeatureId = new ArrayList<FeatureLoc>();
         }
         this.featureLocsForSrcFeatureId.add(loc);
 
-        if (child.featureLocsForFeatureId == null) {
-            child.featureLocsForFeatureId = new ArrayList<FeatureLoc>();
+        if (child.featureLocs == null) {
+            child.featureLocs = new ArrayList<FeatureLoc>();
         }
-        child.featureLocsForFeatureId.add(loc);
+        child.featureLocs.add(loc);
 
         return loc;
     }
 
-    public FeatureProp addFeatureProp(String value, String cvName, String termName) {
+    public FeatureProp addFeatureProp(String value, String cvName, String termName, int rank) {
         CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
         if (type == null) {
             throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
         }
-        int rank = 0; // FIXME - Should check what ranks are already used
         FeatureProp fp = new FeatureProp(this, type, value, rank);
         if (featureProps == null) {
             featureProps = new ArrayList<FeatureProp>();
@@ -784,27 +799,34 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     public List<FeatureProp> getFeaturePropsFilteredByCvNameAndTermName(String cvName, String termName) {
-        List<FeatureProp> ret = new ArrayList<FeatureProp>();
         CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
         if (type == null) {
             throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
         }
-        Collection<FeatureProp> featureProps = getFeatureProps();
-        for (FeatureProp featureProp : featureProps) {
+
+        List<FeatureProp> ret = new ArrayList<FeatureProp>();
+        for (FeatureProp featureProp : getFeatureProps()) {
             if (featureProp.getType().equals(type)) {
                 ret.add(featureProp);
             }
-        }
-        if (ret.size() == 0) {
-            return Collections.emptyList();
         }
         return ret;
     }
 
 
     public FeatureCvTerm addCvTerm(String cvName, String cvTermName) {
-        CvTerm cvTerm = cvDao.findOrCreateCvTermByNameAndCvName(cvTermName, cvName);
-        return addCvTerm(cvTerm);
+        return addCvTerm(cvName, cvTermName, true);
+    }
+    public FeatureCvTerm addCvTerm(String cvName, String cvTermName, boolean createIfNotFound) {
+        if (createIfNotFound) {
+            return addCvTerm(cvDao.findOrCreateCvTermByNameAndCvName(cvTermName, cvName));
+        } else {
+            CvTerm cvTerm = cvDao.getCvTermByNameAndCvName(cvTermName, cvName);
+            if (cvTerm == null) {
+                return null;
+            }
+            return addCvTerm(cvTerm);
+        }
     }
 
     public FeatureCvTerm addCvTerm(CvTerm cvTerm) {
@@ -814,12 +836,27 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     @Transient
-    public Feature getSourceFeature() {
+    public Feature getPrimarySourceFeature() {
         FeatureLoc featureLoc = this.getRankZeroFeatureLoc();
         if (featureLoc == null) {
             return null;
         }
         return featureLoc.getSourceFeature();
+    }
+
+    @Transient
+    public Iterable<Feature> getSourceFeatures() {
+        List<Feature> sourceFeatures = new ArrayList<Feature>();
+        for (FeatureLoc featureLoc: this.getFeatureLocs()) {
+            Feature sourceFeature = featureLoc.getSourceFeature();
+            if (sourceFeature == null) {
+                logger.warn(String.format("Feature '%s' has a location (FeatureLoc ID %d) with no source feature",
+                    this.getUniqueName(), featureLoc.getFeatureLocId()));
+            } else {
+                sourceFeatures.add(sourceFeature);
+            }
+        }
+        return sourceFeatures;
     }
 
 
@@ -861,12 +898,33 @@ public abstract class Feature implements java.io.Serializable {
      */
     public void lowerFminTo(int fmin) {
         FeatureLoc primaryLoc = getRankZeroFeatureLoc();
+        logger.trace(String.format("Feature '%s' starts at %s:%d; lowering to %d",
+            getUniqueName(), primaryLoc.getSourceFeature().getUniqueName(), primaryLoc.getFmin(), fmin));
+
         int lowerByBases = primaryLoc.getFmin() - fmin;
         if (lowerByBases <= 0) {
+            logger.trace("Nothing to be done for lowerFminTo");
             return;
         }
-        for (FeatureLoc featureLoc: getFeatureLocsForFeatureId()) {
-            featureLoc.setFmin(featureLoc.getFmin() - lowerByBases);
+        Iterator<FeatureLoc> it = featureLocs.iterator();
+        while (it.hasNext()) {
+            FeatureLoc featureLoc = it.next();
+
+            int newFmin = featureLoc.getFmin() - lowerByBases;
+            if (newFmin < 0) {
+                if (featureLoc.getRank() == 0) {
+                    throw new RuntimeException(String.format("New fmin (%d) of feature '%s' relative to '%s' is before start",
+                        newFmin, getUniqueName(), featureLoc.getSourceFeature().getUniqueName()));
+                }
+
+                logger.warn(String.format("Removing secondary location of '%s' on '%s' because new fmin would be %d",
+                    getUniqueName(), featureLoc.getSourceFeature().getUniqueName(), newFmin));
+
+                it.remove();
+                featureLoc.setSourceFeature(null);
+            } else {
+                featureLoc.setFmin(newFmin);
+            }
         }
     }
 
@@ -879,12 +937,34 @@ public abstract class Feature implements java.io.Serializable {
      */
     public void raiseFmaxTo(int fmax) {
         FeatureLoc primaryLoc = getRankZeroFeatureLoc();
+        logger.trace(String.format("Feature '%s' stops at %s:%d; raising to %d",
+            getUniqueName(), primaryLoc.getSourceFeature().getUniqueName(), primaryLoc.getFmax(), fmax));
+
         int raiseByBases = fmax - primaryLoc.getFmax();
         if (raiseByBases <= 0) {
+            logger.trace("Nothing to be done for raiseFmaxTo");
             return;
         }
-        for (FeatureLoc featureLoc: getFeatureLocsForFeatureId()) {
-            featureLoc.setFmax(featureLoc.getFmax() + raiseByBases);
+
+        Iterator<FeatureLoc> it = featureLocs.iterator();
+        while (it.hasNext()) {
+            FeatureLoc featureLoc = it.next();
+
+            int newFmax = featureLoc.getFmax() + raiseByBases;
+            if (newFmax > featureLoc.getSourceFeature().getSeqLen()) {
+                if (featureLoc.getRank() == 0) {
+                    throw new RuntimeException(String.format("New fmax (%d) of feature '%s' relative to '%s' is after end (%d)",
+                        newFmax, getUniqueName(), featureLoc.getSourceFeature().getUniqueName(), featureLoc.getSourceFeature().getSeqLen()));
+                }
+
+                logger.warn(String.format("Removing secondary location of '%s' on '%s' because new fmax would be %d (source seqlen = %d)",
+                    getUniqueName(), featureLoc.getSourceFeature().getUniqueName(), newFmax, featureLoc.getSourceFeature().getSeqLen()));
+
+                it.remove();
+                featureLoc.setSourceFeature(null);
+            } else {
+                featureLoc.setFmax(newFmax);
+            }
         }
     }
 

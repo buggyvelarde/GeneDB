@@ -39,6 +39,32 @@ public class Transcript extends Region {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+    static <T extends Transcript> T construct(Class<T> transcriptClass, Organism organism,
+            String uniqueName) {
+        return construct(transcriptClass, organism, uniqueName, null);
+    }
+
+    static <T extends Transcript> T construct(Class<T> transcriptClass, Organism organism,
+            String uniqueName, String name) {
+        try {
+            return transcriptClass.getDeclaredConstructor(Organism.class, String.class, String.class)
+            .newInstance(organism, uniqueName, name);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Internal error: failed to construct transcript", e);
+        } catch (SecurityException e) {
+            throw new RuntimeException("Internal error: failed to construct transcript", e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException("Internal error: failed to construct transcript", e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Internal error: failed to construct transcript", e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("Internal error: failed to construct transcript", e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Internal error: failed to construct transcript", e);
+        }
+    }
+
+
     public Integer getColourId() {
         return null;
     }
@@ -198,6 +224,17 @@ public class Transcript extends Region {
     }
 
 
+    /**
+     * Add a TranscriptRegion to this transcript. If the new region is not contained in the boundaries
+     * of this transcript, the transcript and gene boundaries are extended appropriately.
+     *
+     * @param <T>
+     * @param componentClass the class of region to add
+     * @param componentUniqueName the uniquename of the new region
+     * @param fmin the <code>fmin</code>, relative to the primary source feature, of the new region.
+     * @param fmax the <code>fmax</code>, relative to the primary source feature, of the new region
+     * @return
+     */
     private <T extends TranscriptRegion> T createRegion(Class<T> componentClass, String componentUniqueName, int fmin, int fmax) {
         FeatureLoc ourLoc = getRankZeroFeatureLoc();
         if (fmin < ourLoc.getFmin()) {
@@ -210,24 +247,25 @@ public class Transcript extends Region {
                 getUniqueName(), componentClass.getSimpleName(), fmax, ourLoc.getFmax()));
             raiseFmaxTo(fmax);
         }
-        try {
-            T region = componentClass.getConstructor(Organism.class, String.class).newInstance(this.getOrganism(), componentUniqueName);
-            getSourceFeature().addLocatedChild(region, fmin, fmax, getStrand(), 0);
-            addRegion(region);
-            return region;
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Internal error: failed to instantiate region", e);
-        } catch (SecurityException e) {
-            throw new RuntimeException("Internal error: failed to instantiate region", e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException("Internal error: failed to instantiate region", e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Internal error: failed to instantiate region", e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException("Internal error: failed to instantiate region", e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Internal error: failed to instantiate region", e);
+
+        int relativeFmin = fmin - getFmin();
+        int relativeFmax = fmax - getFmin();
+
+        T region = TranscriptRegion.construct(componentClass, this.getOrganism(), componentUniqueName);
+
+        for (FeatureLoc featureLoc: getFeatureLocs()) {
+            Feature sourceFeature = featureLoc.getSourceFeature();
+            if (sourceFeature == null) {
+                logger.error(String.format("Feature '%s' has a FeatureLoc (ID %d) with no source feature",
+                    getUniqueName(), featureLoc.getFeatureLocId()));
+            } else {
+                sourceFeature.addLocatedChild(region, featureLoc.getFmin() + relativeFmin, featureLoc.getFmin() + relativeFmax,
+                    featureLoc.getStrand(), 0, featureLoc.getLocGroup(), featureLoc.getRank());
+            }
         }
+
+        addRegion(region);
+        return region;
     }
 
     /**

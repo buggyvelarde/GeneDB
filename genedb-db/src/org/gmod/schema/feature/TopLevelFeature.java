@@ -59,7 +59,7 @@ public abstract class TopLevelFeature extends Region {
     }
 
     public void markAsTopLevelFeature() {
-        addFeatureProp("true", "genedb_misc", "top_level_seq");
+        addFeatureProp("true", "genedb_misc", "top_level_seq", 0);
     }
 
     public Gap addGap(int fmin, int fmax) {

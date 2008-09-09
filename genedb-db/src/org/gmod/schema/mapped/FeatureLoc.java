@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,9 +22,13 @@ import javax.persistence.Transient;
 
 import org.gmod.schema.utils.StrandedLocation;
 
+import org.apache.log4j.Logger;
+
 @Entity
 @Table(name = "featureloc")
 public class FeatureLoc implements Serializable {
+
+    private static final Logger logger = Logger.getLogger(FeatureLoc.class);
 
     // Fields
 
@@ -68,7 +73,7 @@ public class FeatureLoc implements Serializable {
     @Column(name = "rank", unique = false, nullable = false, insertable = true, updatable = true)
     private int rank;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureLoc")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureLoc")
     private Collection<FeatureLocPub> featureLocPubs;
 
     // Constructors
@@ -101,6 +106,10 @@ public class FeatureLoc implements Serializable {
 
     public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, int strand, int phase, int rank) {
         this(sourceFeature, feature, fmin, false, fmax, false, (short) strand, phase, 0, rank);
+    }
+
+    public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, int strand, int phase, int locgroup, int rank) {
+        this(sourceFeature, feature, fmin, false, fmax, false, (short) strand, phase, locgroup, rank);
     }
 
     FeatureLoc(Feature parent, Feature child, StrandedLocation location) {
@@ -145,6 +154,8 @@ public class FeatureLoc implements Serializable {
     }
 
     public void setFmin(Integer fmin) {
+        logger.trace(String.format("Feature '%s' located on '%s': setting fmin to %d",
+            getFeature().getUniqueName(), getSourceFeature().getUniqueName(), fmin));
         this.fmin = fmin;
     }
 
@@ -161,6 +172,8 @@ public class FeatureLoc implements Serializable {
     }
 
     public void setFmax(Integer fmax) {
+        logger.trace(String.format("Feature '%s' located on '%s': setting fmax to %d",
+            getFeature().getUniqueName(), getSourceFeature().getUniqueName(), fmax));
         this.fmax = fmax;
     }
 
