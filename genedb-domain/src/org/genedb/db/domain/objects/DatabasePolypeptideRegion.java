@@ -18,13 +18,14 @@ public class DatabasePolypeptideRegion extends PolypeptideRegion {
     private static final Logger logger = Logger.getLogger(DatabasePolypeptideRegion.class);
 
     private static final Map<String,Color> colorsByDatabase = new HashMap<String,Color>() {{
-       put("Pfam",        new Color(248, 57,  217));
-       put("PIRSF",       new Color(52,  33,  135));
-       put("Prosite",     new Color(130, 68,  225));
-       put("SMART",       new Color(247, 65,  66));
-       put("PRINTS",      new Color(57,  45,  209));
-       put("ProDom",      new Color(0,   160, 9));
-       put("Superfamily", new Color(0,   199, 127));
+       put("Pfam",          new Color(248, 57,  217));
+       put("PIRSF",         new Color(52,  33,  135));
+       put("Prosite",       new Color(130, 68,  225));
+       put("SMART",         new Color(247, 65,  66));
+       put("PRINTS",        new Color(57,  45,  209));
+       put("ProDom",        new Color(0,   160, 9));
+       put("Superfamily",   new Color(0,   199, 127));
+       put("TIGR_TIGRFAMS", new Color(0,   255, 255));
     }};
 
     /**
