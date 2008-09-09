@@ -55,6 +55,7 @@ public class HibernateTest {
         .addPackage("org.gmod.schema.mapped")
         .addPackage("org.gmod.schema.feature")
         .setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect")
+        .setProperty("hibernate.search.default.indexBase", "/tmp")
         .setProperty(Environment.CONNECTION_PROVIDER, UserSuppliedConnectionProvider.class.getName());
 
         sessionFactory = cfg.buildSessionFactory();
@@ -76,7 +77,7 @@ public class HibernateTest {
     }
 
     @Test
-    public void foo() {
+    public void loadMappedEntities() {
         @SuppressWarnings("unchecked")
         Map<String,ClassMetadata> classMetadataByName = sessionFactory.getAllClassMetadata();
         for (String name: classMetadataByName.keySet()) {
