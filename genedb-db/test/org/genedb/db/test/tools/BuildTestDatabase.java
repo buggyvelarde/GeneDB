@@ -71,10 +71,12 @@ public class BuildTestDatabase {
         source.setReadOnly(true);
 
         BuildTestDatabase buildTestDatabase = new BuildTestDatabase(source, target, organismId);
-        buildTestDatabase.copySchema(!onlySchema);
+        buildTestDatabase.copySchema(true); //!onlySchema);
         if (!onlySchema) {
             buildTestDatabase.copyData();
         }
+        target.createStatement().execute("shutdown");
+        target.close();
     }
 
     private Connection source, target;
@@ -97,6 +99,7 @@ public class BuildTestDatabase {
         }
 
         copyTableData("dbxref", "dbxref_id in (select dbxref_id from cvterm)");
+        copyTableData("pub",    "uniquename = 'null'");
 
         if (organismIdString != null) {
             copyOrganismData();
@@ -104,7 +107,7 @@ public class BuildTestDatabase {
     }
 
     private void copyOrganismData() throws SQLException {
-        copyTableData("pub", null);
+        copyTableData("pub", "uniquename <> 'null'");
 
         copyTableData("dbxref", "dbxref_id in (" +
             " select feature.dbxref_id from feature where organism_id = " + organismIdString
@@ -199,7 +202,6 @@ public class BuildTestDatabase {
             logger.info(String.format("Inserted %d rows", numberOfRows));
         }
         targetSt.close();
-
         sourceSt.close();
     }
 
@@ -207,6 +209,7 @@ public class BuildTestDatabase {
         logger.trace("Executing batch insert");
         try {
             int[] insertResults = st.executeBatch();
+            logger.debug(String.format("Batch execution returned %d results", insertResults.length));
             for (int r: insertResults) {
                 if (r <= 0) {
                     logger.warn("Insert failed");
@@ -269,21 +272,20 @@ public class BuildTestDatabase {
 
     private void copySchema(boolean createCached) throws SQLException {
         Set<String> tableNames = new HashSet<String>();
-        ResultSet tables = sourceMeta.getTables(null, SCHEMA, null, new String[] {"TABLE"});
+        ResultSet tables = sourceMeta.getTables(null, SCHEMA, null, new String[] {"TABLE", "SEQUENCE"});
         while (tables.next()) {
             String tableName = tables.getString("TABLE_NAME");
+            String tableType = tables.getString("TABLE_TYPE");
 
-            logger.info(String.format("Creating table \"%s\"", tableName));
-            tableNames.add(tableName);
-            Statement st = target.createStatement();
-            st.execute(String.format("drop table %s if exists cascade", tableName));
-            st.close();
-
-            st = target.createStatement();
-            String createStatement = createStatementForTable(tableName, createCached);
-            logger.trace(createStatement);
-            st.execute(createStatement);
-            st.close();
+            if (tableType.equals("TABLE")) {
+                tableNames.add(tableName);
+                createTable(tableName, createCached);
+            } else if (tableType.equals("SEQUENCE")) {
+                createSequence(tableName);
+            } else {
+                throw new RuntimeException(
+                    String.format("Encountered table '%s' of unrecognised type '%s'", tableName, tableType));
+            }
         }
         tables.close();
 
@@ -291,6 +293,40 @@ public class BuildTestDatabase {
             createForeignKeys(tableName);
             createIndices(tableName);
             createCheckConstraints(tableName);
+        }
+    }
+
+    private void createTable(String tableName, boolean createCached)
+            throws SQLException {
+        logger.info(String.format("Creating table \"%s\"", tableName));
+        Statement st = target.createStatement();
+        st.execute(String.format("drop table %s if exists cascade", tableName));
+        st.close();
+
+        st = target.createStatement();
+        String createStatement = createStatementForTable(tableName, createCached);
+        logger.trace(createStatement);
+        st.execute(createStatement);
+        st.close();
+    }
+
+    private void createSequence(String sequenceName) throws SQLException {
+        int nextval = getNextVal(sequenceName);
+        logger.info(String.format("Creating sequence '%s' with starting value %d", sequenceName, nextval));
+        Statement statement = target.createStatement();
+        statement.execute(String.format("create sequence %s start with %d", sequenceName, nextval));
+        statement.close();
+    }
+
+    private int getNextVal(String sequenceName) throws SQLException {
+        PreparedStatement st = source.prepareStatement("select nextval(?::regclass)");
+        try {
+            st.setString(1, sequenceName);
+            ResultSet rs = st.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } finally {
+            try { st.close(); } catch (SQLException e) { logger.error(e); }
         }
     }
 
