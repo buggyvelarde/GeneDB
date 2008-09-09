@@ -1,5 +1,30 @@
 package org.genedb.db.domain.luceneImpls;
 
+import org.genedb.db.domain.objects.BasicGene;
+import org.genedb.db.domain.objects.Chromosome;
+import org.genedb.db.domain.objects.Exon;
+import org.genedb.db.domain.objects.Gap;
+import org.genedb.db.domain.objects.Transcript;
+import org.genedb.db.domain.objects.TranscriptComponent;
+import org.genedb.db.domain.objects.UTR;
+import org.genedb.db.domain.services.BasicGeneService;
+import org.genedb.querying.core.LuceneIndex;
+
+import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.ConstantScoreRangeQuery;
+import org.apache.lucene.search.Hit;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.WildcardQuery;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,32 +36,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.ConstantScoreRangeQuery;
-import org.apache.lucene.search.Hit;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.WildcardQuery;
-import org.genedb.db.domain.objects.BasicGene;
-import org.genedb.db.domain.objects.Chromosome;
-import org.genedb.db.domain.objects.Exon;
-import org.genedb.db.domain.objects.Gap;
-import org.genedb.db.domain.objects.Transcript;
-import org.genedb.db.domain.objects.TranscriptComponent;
-import org.genedb.db.domain.objects.UTR;
-import org.genedb.db.domain.services.BasicGeneService;
-import org.genedb.querying.core.LuceneIndex;
 
 public class BasicGeneServiceImpl implements BasicGeneService {
 
