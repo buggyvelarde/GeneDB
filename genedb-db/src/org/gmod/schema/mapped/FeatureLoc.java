@@ -2,10 +2,15 @@ package org.gmod.schema.mapped;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import org.gmod.schema.utils.StrandedLocation;
+
+import org.apache.log4j.Logger;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,10 +24,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.gmod.schema.utils.StrandedLocation;
-
-import org.apache.log4j.Logger;
 
 @Entity
 @Table(name = "featureloc")
@@ -40,7 +41,7 @@ public class FeatureLoc implements Serializable {
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "srcfeature_id", unique = false, nullable = true, insertable = true, updatable = true)
-    private Feature featureBySrcFeatureId;
+    private Feature sourceFeature;
 
     @ManyToOne(cascade = {}, fetch = FetchType.EAGER)
     @JoinColumn(name = "feature_id", unique = false, nullable = false, insertable = true, updatable = true)
@@ -74,7 +75,7 @@ public class FeatureLoc implements Serializable {
     private int rank;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureLoc")
-    private Collection<FeatureLocPub> featureLocPubs;
+    private Set<FeatureLocPub> featureLocPubs;
 
     // Constructors
 
@@ -88,7 +89,7 @@ public class FeatureLoc implements Serializable {
     public FeatureLoc(Feature sourceFeature, Feature feature, Integer fmin,
             boolean fminPartial, Integer fmax, boolean fmaxPartial, Short strand, Integer phase,
             int locGroup, int rank) {
-        this.featureBySrcFeatureId = sourceFeature;
+        this.sourceFeature = sourceFeature;
         this.featureByFeatureId = feature;
         this.fmin = fmin;
         this.fminPartial = fminPartial;
@@ -114,7 +115,7 @@ public class FeatureLoc implements Serializable {
 
     FeatureLoc(Feature parent, Feature child, StrandedLocation location) {
         StrandedLocation loc = location.getInterbaseVersion();
-        this.featureBySrcFeatureId = parent;
+        this.sourceFeature = parent;
         this.featureByFeatureId = child;
         this.fmin = loc.getMin();
         this.fminPartial = loc.isMinPartial();
@@ -134,11 +135,11 @@ public class FeatureLoc implements Serializable {
     }
 
     public Feature getSourceFeature() {
-        return this.featureBySrcFeatureId;
+        return this.sourceFeature;
     }
 
     void setSourceFeature(Feature featureBySrcFeatureId) {
-        this.featureBySrcFeatureId = featureBySrcFeatureId;
+        this.sourceFeature = featureBySrcFeatureId;
     }
 
     public Feature getFeature() {

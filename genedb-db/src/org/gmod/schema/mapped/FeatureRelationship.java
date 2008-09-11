@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -80,10 +81,10 @@ public class FeatureRelationship implements Serializable,PropertyI {
     private int rank;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureRelationship")
-    private Collection<FeatureRelationshipProp> featureRelationshipProps;
+    private Set<FeatureRelationshipProp> featureRelationshipProps;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureRelationship")
-    private Collection<FeatureRelationshipPub> featureRelationshipPubs;
+    private Set<FeatureRelationshipPub> featureRelationshipPubs;
 
     // Constructors
 
@@ -111,8 +112,8 @@ public class FeatureRelationship implements Serializable,PropertyI {
         return this.subjectFeature;
     }
 
-    void setSubjectFeature(Feature featureBySubjectId) {
-        this.subjectFeature = featureBySubjectId;
+    void setSubjectFeature(Feature subjectFeature) {
+        this.subjectFeature = subjectFeature;
     }
 
     public Feature getObjectFeature() {

@@ -18,15 +18,15 @@ public class FeatureServiceImpl implements FeatureService {
 //        // Fetch all the data we're going to need in a single query
 //        Query query = sessionFactory.getCurrentSession().createQuery(
 //            "from Feature gene"
-//            +" left join fetch gene.featureLocsForFeatureId"
+//            +" left join fetch gene.featureLocs"
 //            +" left join fetch gene.featureSynonyms feature_synonym"
 //            +" inner join fetch feature_synonym.synonym synonym"
-//            +" inner join fetch synonym.cvTerm"
+//            +" inner join fetch synonym.type"
 //            +" inner join fetch gene.featureRelationshipsForObjectId gene_transcript"
-//            +" inner join fetch gene_transcript.featureBySubjectId transcript"
+//            +" inner join fetch gene_transcript.subjectFeature transcript"
 //            +" inner join fetch transcript.featureRelationshipsForObjectId transcript_exon"
-//            +" inner join fetch transcript_exon.featureBySubjectId exon"
-//            +" where gene.uniqueName=:name and gene.cvTerm.name='gene'")
+//            +" inner join fetch transcript_exon.subjectFeature exon"
+//            +" where gene.uniqueName=:name and gene.type.name='gene'")
 //            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 //        @SuppressWarnings("unchecked")
 //        List<Feature> features = query.setString("name", name).list();
@@ -49,7 +49,7 @@ public class FeatureServiceImpl implements FeatureService {
 //
 //        List<String> synonyms = new ArrayList<String>();
 //        for (FeatureSynonym fs : feat.getFeatureSynonyms()) {
-//            String type = fs.getSynonym().getCvTerm().getName();
+//            String type = fs.getSynonym().getType().getName();
 //            if (type.equals("synonym")) {
 //                synonyms.add(fs.getSynonym().getName());
 //            }
@@ -70,7 +70,7 @@ public class FeatureServiceImpl implements FeatureService {
 //        ret.setOrganism(feat.getOrganism().getCommonName());
 //
 //        FeatureLoc loc = feat.getRankZeroFeatureLoc();
-//        Feature chromosomeFeature = loc.getFeatureBySrcFeatureId();
+//        Feature chromosomeFeature = loc.getSourceFeature();
 //        Chromosome chromosome = new Chromosome(chromosomeFeature.getDisplayName(), chromosomeFeature.getSeqLen());
 //        ret.setChromosome(chromosome);
 //        ret.setStrand(loc.getStrand());
@@ -96,8 +96,8 @@ public class FeatureServiceImpl implements FeatureService {
 //
 //        Set<Exon> exons = new HashSet<Exon> ();
 //        for (FeatureRelationship fr : feature.getFeatureRelationshipsForObjectId()) {
-//            Feature relatedFeature = fr.getFeatureBySubjectId();
-//            String relatedFeatureName = relatedFeature.getCvTerm().getName();
+//            Feature relatedFeature = fr.getSubjectFeature();
+//            String relatedFeatureName = relatedFeature.getType().getName();
 //            if (relatedFeatureName.equals("polypeptide")) {
 //                transcript.setProtein(relatedFeature);
 //            }
@@ -127,7 +127,7 @@ public class FeatureServiceImpl implements FeatureService {
 //                "select f.uniqueName"
 //                +"from Feature f"
 //                +"where f.uniqueName like '%' || :partialName || '%'"
-//                +"and f.cvTerm.name='gene'")
+//                +"and f.type.name='gene'")
 //                .setString("partialName", partialName)
 //                .list();
 //
@@ -144,13 +144,13 @@ public class FeatureServiceImpl implements FeatureService {
 //        @SuppressWarnings("unchecked")
 //        List<Feature> geneFeatures = sessionFactory.getCurrentSession().createQuery(
 //                "select f from Feature f"
-//                +"inner join f.featureLocsForFeatureId fl"
+//                +"inner join f.featureLocs fl"
 //                +"    with fl.rank = 0"
 //                +"where fl.fmax >= :locMin and fl.fmin < :locMax"
 //                +"and fl.strand = :strand"
-//                +"and fl.featureBySrcFeatureId.uniqueName = :chr"
+//                +"and fl.sourceFeature.uniqueName = :chr"
 //                +"and f.organism.commonName = :org"
-//                +"and f.cvTerm.name='gene'")
+//                +"and f.type.name='gene'")
 //                .setLong   ("locMin", locMin)
 //                .setLong   ("locMax", locMax)
 //                .setInteger("strand", strand)
@@ -167,13 +167,13 @@ public class FeatureServiceImpl implements FeatureService {
 //        @SuppressWarnings("unchecked")
 //        List<Feature> geneFeatures = sessionFactory.getCurrentSession().createQuery(
 //                "select f from Feature f"
-//                +"inner join f.featureLocsForFeatureId fl"
+//                +"inner join f.featureLocs fl"
 //                +"    with fl.rank = 0"
 //                +" where fl.fmax >= :locMin and fl.fmax < :locMax" // <- this line differs from above!
 //                +"and fl.strand = :strand"
 //                +"and fl.featureBySrcFeatureId.uniqueName = :chr"
 //                +"and f.organism.commonName = :org"
-//                +"and f.cvTerm.name='gene'")
+//                +"and f.type.name='gene'")
 //                .setLong   ("locMin", locMin)
 //                .setLong   ("locMax", locMax)
 //                .setInteger("strand", strand)

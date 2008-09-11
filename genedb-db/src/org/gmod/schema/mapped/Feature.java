@@ -105,7 +105,7 @@ public abstract class Feature implements java.io.Serializable {
     @ManyToOne(cascade = {})
     @JoinColumn(name = "type_id", unique = false, nullable = false, insertable = false, updatable = false)
     @IndexedEmbedded(depth = 2)
-    private CvTerm cvTerm;
+    private CvTerm type;
 
     @Column(name = "name", unique = false, nullable = true, insertable = true, updatable = true)
     @Field(index = Index.UN_TOKENIZED, store = Store.YES)
@@ -150,7 +150,7 @@ public abstract class Feature implements java.io.Serializable {
     private String residues;
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureBySrcFeatureId")
-    private Collection<FeatureLoc> featureLocsForSrcFeatureId;
+    private Set<FeatureLoc> featureLocsForSrcFeatureId;
 
     /*
      * These collections respect the excludeObsoleteFeatures filter.
@@ -165,15 +165,15 @@ public abstract class Feature implements java.io.Serializable {
      */
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "objectFeature")
     @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
-    protected Collection<FeatureRelationship> featureRelationshipsForObjectId;
+    protected Set<FeatureRelationship> featureRelationshipsForObjectId;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "subjectFeature")
     @Filter(name="excludeObsoleteFeatures", condition="not feature1_.is_obsolete")
-    protected Collection<FeatureRelationship> featureRelationshipsForSubjectId;
+    protected Set<FeatureRelationship> featureRelationshipsForSubjectId;
 
 
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
-    private Collection<FeatureDbXRef> featureDbXRefs;
+    private Set<FeatureDbXRef> featureDbXRefs;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureByFeatureId")
     @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -181,20 +181,20 @@ public abstract class Feature implements java.io.Serializable {
     private List<FeatureLoc> featureLocs;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
-    private Collection<FeatureCvTerm> featureCvTerms;
+    private Set<FeatureCvTerm> featureCvTerms;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    private Collection<FeatureProp> featureProps;
+    private Set<FeatureProp> featureProps;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
-    private Collection<FeaturePub> featurePubs;
+    private Set<FeaturePub> featurePubs;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
-    private Collection<AnalysisFeature> analysisFeatures;
+    private Set<AnalysisFeature> analysisFeatures;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
-    private Collection<FeatureSynonym> featureSynonyms;
+    private Set<FeatureSynonym> featureSynonyms;
 
     @Transient
     private Logger logger = Logger.getLogger(Feature.class);
@@ -209,7 +209,7 @@ public abstract class Feature implements java.io.Serializable {
     public Feature(Organism organism, CvTerm cvTerm, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {
         this.organism = organism;
-        this.cvTerm = cvTerm;
+        this.type = cvTerm;
         this.uniqueName = uniqueName;
         this.analysis = analysis;
         this.obsolete = obsolete;
@@ -219,7 +219,7 @@ public abstract class Feature implements java.io.Serializable {
 
     protected Feature(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp timeAccessioned, Timestamp timeLastModified) {
-        // Note that this constructor does not initialise cvTerm. The type_id column
+        // Note that this constructor does not initialise type. The type_id column
         // will still be correctly populated when this object is persisted, because it's
         // the discriminator
         this.organism = organism;
@@ -242,11 +242,11 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     public CvTerm getType() {
-        return this.cvTerm;
+        return this.type;
     }
 
     void setType(CvTerm type) {
-        this.cvTerm = type;
+        this.type = type;
     }
 
     public DbXRef getDbXRef() {
@@ -391,7 +391,10 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     public Collection<FeatureLoc> getFeatureLocsForSrcFeatureId() {
-        return (featureLocsForSrcFeatureId = CollectionUtils.safeGetter(featureLocsForSrcFeatureId));
+        if (featureLocsForSrcFeatureId == null) {
+            featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
+        }
+        return featureLocsForSrcFeatureId;
     }
 
     /**
@@ -421,23 +424,33 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     public Collection<FeatureRelationship> getFeatureRelationshipsForObjectId() {
-        return (featureRelationshipsForObjectId = CollectionUtils
-                .safeGetter(featureRelationshipsForObjectId));
+        if (featureRelationshipsForObjectId == null) {
+            featureRelationshipsForObjectId = new HashSet<FeatureRelationship>();
+        }
+        return featureRelationshipsForObjectId;
     }
 
     public Collection<FeatureRelationship> getFeatureRelationshipsForSubjectId() {
-        return (featureRelationshipsForSubjectId = CollectionUtils
-                .safeGetter(featureRelationshipsForSubjectId));
+        if (featureRelationshipsForSubjectId == null) {
+            featureRelationshipsForSubjectId = new HashSet<FeatureRelationship>();
+        }
+        return featureRelationshipsForSubjectId;
     }
 
     public void addFeatureRelationshipsForSubjectId(
             FeatureRelationship featureRelationshipForSubjectId) {
+        if (featureRelationshipsForSubjectId == null) {
+            featureRelationshipsForSubjectId = new HashSet<FeatureRelationship>();
+        }
         featureRelationshipForSubjectId.setSubjectFeature(this);
         this.featureRelationshipsForSubjectId.add(featureRelationshipForSubjectId);
     }
 
     public void addFeatureRelationshipsForObjectId(
             FeatureRelationship featureRelationshipForObjectId) {
+        if (featureRelationshipsForObjectId == null) {
+            featureRelationshipsForObjectId = new HashSet<FeatureRelationship>();
+        }
         featureRelationshipForObjectId.setObjectFeature(this);
         this.featureRelationshipsForObjectId.add(featureRelationshipForObjectId);
     }
@@ -458,7 +471,7 @@ public abstract class Feature implements java.io.Serializable {
         return (featureLocs = CollectionUtils.safeGetter(featureLocs));
     }
 
-    public void addFeatureLocsForFeatureId(FeatureLoc featureLocForFeatureId) {
+    public void addFeatureLoc(FeatureLoc featureLocForFeatureId) {
         featureLocForFeatureId.setFeature(this);
         getFeatureLocs().add(featureLocForFeatureId);
     }
@@ -476,6 +489,9 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     public Collection<FeatureCvTerm> getFeatureCvTerms() {
+        if (this.featureCvTerms == null) {
+            featureCvTerms = new HashSet<FeatureCvTerm>();
+        }
         return this.featureCvTerms;
     }
 
@@ -487,7 +503,10 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     public Collection<FeatureProp> getFeatureProps() {
-        return (featureProps = CollectionUtils.safeGetter(featureProps));
+        if (featureProps == null) {
+            featureProps = new HashSet<FeatureProp>();
+        }
+        return featureProps;
     }
 
     public void addFeatureProp(FeatureProp featureProp) {
@@ -734,12 +753,12 @@ public abstract class Feature implements java.io.Serializable {
         }
         FeatureRelationship relationship =  new FeatureRelationship(subject, this, type, 0);
         if (this.featureRelationshipsForObjectId == null) {
-            this.featureRelationshipsForObjectId = new ArrayList<FeatureRelationship>();
+            this.featureRelationshipsForObjectId = new HashSet<FeatureRelationship>();
         }
         this.featureRelationshipsForObjectId.add(relationship);
 
         if (subject.featureRelationshipsForSubjectId == null) {
-            subject.featureRelationshipsForSubjectId = new ArrayList<FeatureRelationship>();
+            subject.featureRelationshipsForSubjectId = new HashSet<FeatureRelationship>();
         }
         subject.featureRelationshipsForSubjectId.add(relationship);
     }
@@ -748,7 +767,7 @@ public abstract class Feature implements java.io.Serializable {
         FeatureLoc loc = new FeatureLoc(this, child, location);
 
         if (this.featureLocsForSrcFeatureId == null) {
-            this.featureLocsForSrcFeatureId = new ArrayList<FeatureLoc>();
+            this.featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
         }
         this.featureLocsForSrcFeatureId.add(loc);
 
@@ -773,7 +792,7 @@ public abstract class Feature implements java.io.Serializable {
         FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, (short) strand, phase, locgroup, rank);
 
         if (this.featureLocsForSrcFeatureId == null) {
-            this.featureLocsForSrcFeatureId = new ArrayList<FeatureLoc>();
+            this.featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
         }
         this.featureLocsForSrcFeatureId.add(loc);
 
@@ -792,7 +811,7 @@ public abstract class Feature implements java.io.Serializable {
         }
         FeatureProp fp = new FeatureProp(this, type, value, rank);
         if (featureProps == null) {
-            featureProps = new ArrayList<FeatureProp>();
+            featureProps = new HashSet<FeatureProp>();
         }
         this.featureProps.add(fp);
         return fp;

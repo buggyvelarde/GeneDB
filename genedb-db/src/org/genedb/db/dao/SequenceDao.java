@@ -221,7 +221,7 @@ public class SequenceDao extends BaseDao {
     public Synonym getSynonymByNameAndCvTerm(String name, CvTerm type) {
         @SuppressWarnings("unchecked")
         List<Synonym> list = getHibernateTemplate().findByNamedParam(
-                "from Synonym s where s.name=:name and s.cvTerm=:cvterm",
+                "from Synonym s where s.name=:name and s.type=:cvterm",
                 new String[] { "name", "cvterm" }, new Object[] { name, type });
 
         return firstFromList(list, "name", name, "cvterm", type.getName());
@@ -688,7 +688,7 @@ public class SequenceDao extends BaseDao {
         PolypeptideDomain domain = new PolypeptideDomain(
             polypeptide.getOrganism(), polypeptideDomainType, domainUniqueName);
         FeatureLoc domainLoc = new FeatureLoc(polypeptide, domain, start, false, end, false, (short)0/*strand*/, null, 0, 0);
-        domain.addFeatureLocsForFeatureId(domainLoc);
+        domain.addFeatureLoc(domainLoc);
 
         FeatureProp scoreProp = new FeatureProp(domain, scoreType, score, 0);
         domain.addFeatureProp(scoreProp);
@@ -755,7 +755,7 @@ public class SequenceDao extends BaseDao {
         }
 
         FeatureLoc regionLoc = new FeatureLoc(polypeptide, region, start, false, end, false, (short)0/*strand*/, null, 0, 0);
-        region.addFeatureLocsForFeatureId(regionLoc);
+        region.addFeatureLoc(regionLoc);
 
         return region;
     }
@@ -773,7 +773,7 @@ public class SequenceDao extends BaseDao {
         String regionUniqueName = String.format("%s:sigp%d", polypeptide.getUniqueName(), loc);
         SignalPeptide signalPeptide = new SignalPeptide(polypeptide.getOrganism(), signalPeptideType, regionUniqueName);
         FeatureLoc signalPeptideLoc = new FeatureLoc(polypeptide, signalPeptide, 0, false, loc, false, (short)0/*strand*/, null, 0, 0);
-        signalPeptide.addFeatureLocsForFeatureId(signalPeptideLoc);
+        signalPeptide.addFeatureLoc(signalPeptideLoc);
 
         FeatureProp probabilityProp = new FeatureProp(signalPeptide, cleavageSiteProbabilityType, probability, 0);
         signalPeptide.addFeatureProp(probabilityProp);
@@ -804,7 +804,7 @@ public class SequenceDao extends BaseDao {
         String cleavageSiteUniqueName = String.format("%s:gpi", polypeptide.getUniqueName());
         GPIAnchorCleavageSite cleavageSite = new GPIAnchorCleavageSite(polypeptide.getOrganism(), gpiAnchorCleavageSiteType, cleavageSiteUniqueName);
         FeatureLoc cleavageSiteLoc = new FeatureLoc(polypeptide, cleavageSite, anchorLocation, false, anchorLocation, false, (short)0/*strand*/, null, 0, 0);
-        cleavageSite.addFeatureLocsForFeatureId(cleavageSiteLoc);
+        cleavageSite.addFeatureLoc(cleavageSiteLoc);
 
         FeatureProp scoreProp = new FeatureProp(cleavageSite, gpiCleavageSiteScoreType, score, 0);
         cleavageSite.addFeatureProp(scoreProp);
