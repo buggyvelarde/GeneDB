@@ -149,7 +149,7 @@ public abstract class Feature implements java.io.Serializable {
     @Basic(fetch = FetchType.LAZY)
     private String residues;
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "featureBySrcFeatureId")
+    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "sourceFeature")
     private Set<FeatureLoc> featureLocsForSrcFeatureId;
 
     /*
