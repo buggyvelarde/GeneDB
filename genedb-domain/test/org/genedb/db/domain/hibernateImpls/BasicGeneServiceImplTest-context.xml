@@ -15,7 +15,7 @@
         <property name="username"><value>pathdb</value></property>
         <property name="password"><value></value></property>
     </bean>
-        
+
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
@@ -30,87 +30,22 @@
      </props>
      </property>
     </bean>
-    
+
     <!-- Hibernate SessionFactory -->
-    <bean id="sessionFactory" 
-     class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration"/>
+    <bean id="sessionFactory"
+     class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="hibernateProperties" ref="hibernateProperties" />
-        <property name="annotatedClasses">
-            <list>
-               <value>org.gmod.schema.mapped.Analysis</value>
-               <value>org.gmod.schema.mapped.AnalysisFeature</value>
-               <value>org.gmod.schema.mapped.AnalysisProp</value>
-
-               <value>org.gmod.schema.mapped.Cv</value>
-               <value>org.gmod.schema.mapped.CvTerm</value>
-               <value>org.gmod.schema.mapped.CvTermDbXRef</value>
-               <value>org.gmod.schema.mapped.CvTermPath</value>
-               <value>org.gmod.schema.mapped.CvTermProp</value>
-               <value>org.gmod.schema.mapped.CvTermRelationship</value>
-               <value>org.gmod.schema.mapped.CvTermSynonym</value>
-               <value>org.gmod.schema.mapped.DbXRefProp</value>
- 
-               <value>org.gmod.schema.mapped.Db</value>
-               <value>org.gmod.schema.mapped.DbXRef</value>
-               <value>org.gmod.schema.mapped.Project</value>
-               <value>org.gmod.schema.mapped.Tableinfo</value>
-
-               <value>org.gmod.schema.mapped.Organism</value>
-               <value>org.gmod.schema.mapped.OrganismDbXRef</value>
-               <value>org.gmod.schema.mapped.OrganismProp</value>
-
-               <value>org.gmod.schema.mapped.Phylonode</value>
-               <value>org.gmod.schema.mapped.PhylonodeDbXRef</value>
-               <value>org.gmod.schema.mapped.PhylonodeOrganism</value>
-               <value>org.gmod.schema.mapped.PhylonodeProp</value>
-               <value>org.gmod.schema.mapped.PhylonodePub</value>
-               <value>org.gmod.schema.mapped.PhylonodeRelationship</value>
-               <value>org.gmod.schema.mapped.Phylotree</value>
-               <value>org.gmod.schema.mapped.PhylotreePub</value>
-
-               <value>org.gmod.schema.mapped.Pub</value>
-               <value>org.gmod.schema.mapped.PubAuthor</value>
-               <value>org.gmod.schema.mapped.PubDbXRef</value>
-               <value>org.gmod.schema.mapped.PubProp</value>
-               <value>org.gmod.schema.mapped.PubRelationship</value>
-
-               <value>org.gmod.schema.mapped.Feature</value>
-               <value>org.gmod.schema.mapped.FeatureCvTerm</value>
-               <value>org.gmod.schema.mapped.FeatureCvTermDbXRef</value>
-               <value>org.gmod.schema.mapped.FeatureCvTermProp</value>
-               <value>org.gmod.schema.mapped.FeatureCvTermPub</value>
-               <value>org.gmod.schema.mapped.FeatureDbXRef</value>
-               <value>org.gmod.schema.mapped.FeatureLoc</value>
-               <value>org.gmod.schema.mapped.FeatureLocPub</value>
-               <value>org.gmod.schema.mapped.FeatureProp</value>
-               <value>org.gmod.schema.mapped.FeaturePropPub</value>
-               <value>org.gmod.schema.mapped.FeaturePub</value>
-               <value>org.gmod.schema.mapped.FeatureRelationship</value>
-               <value>org.gmod.schema.mapped.FeatureRelationshipProp</value>
-               <value>org.gmod.schema.mapped.FeatureRelationshipPropPub</value>
-               <value>org.gmod.schema.mapped.FeatureRelationshipPub</value>
-               <value>org.gmod.schema.mapped.FeatureSynonym</value>
-               <value>org.gmod.schema.sequence.Gene</value>
-               <value>org.gmod.schema.mapped.Synonym</value>
-            </list>
-        </property>
         <property name="annotatedPackages">
 	        <list>
-               <value>org.gmod.schema.analyss</value>
-               <value>org.gmod.schema.cv</value>
-               <value>org.gmod.schema.general</value>
-               <value>org.gmod.schema.organism</value>
-               <value>org.gmod.schema.phylogeny</value>
-               <value>org.gmod.schema.pub</value>
-	           <value>org.gmod.schema.sequence</value>
+               <value>org.gmod.schema.mapped</value>
+               <value>org.gmod.schema.feature</value>
 	        </list>
         </property>
     </bean>
-    
+
     <bean name="basicGeneService" class="org.genedb.db.domain.hibernateImpls.BasicGeneServiceImpl">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
-    
+
 </beans>
