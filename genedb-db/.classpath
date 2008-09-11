@@ -44,7 +44,6 @@
 	<classpathentry kind="lib" path="/genedb-libs/lib/hibernate-extras/hibernate-tools.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/asm/asm-2.2.3.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/freemarker/freemarker.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/j2ee/jms.jar"/>
@@ -64,5 +63,10 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hsqldb/hsqldb.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-util"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-aop.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-aspects.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/asm-1.5.3.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
