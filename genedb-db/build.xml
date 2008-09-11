@@ -240,6 +240,12 @@
         </java>
     </target>
 
+    <target name="make-skeleton-database-if-necessary" depends="does-skeleton-database-exist" unless="db.skeleton.exists">
+        <antcall target="make-skeleton-database"/>
+    </target>
+    <target name="does-skeleton-database-exist">
+        <available property="db.skeleton.exists" file="${imported.basedir.db}/test-data/hsqldb/skeleton.data"/>
+    </target>
     <target name="make-skeleton-database" depends="prompt-for-password,genedb-util.anttasks,make-test-jar">
         <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
