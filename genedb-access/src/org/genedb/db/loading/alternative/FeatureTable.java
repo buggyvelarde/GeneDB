@@ -50,6 +50,14 @@ class FeatureTable extends EmblFile.Section {
             return !getQualifierValues(key).isEmpty();
         }
 
+        /**
+         * Get the (unique) value of the specified qualifier.
+         *
+         * @param key the name of the qualifier
+         * @return the value of the qualifier, or <code>null</code> if the qualifier
+         *              is not present on the feature
+         * @throws DataError if the qualifer appears more than once
+         */
         public String getQualifierValue(String key) throws DataError {
             List<String> values = getQualifierValues(key);
             if (values.isEmpty()) {

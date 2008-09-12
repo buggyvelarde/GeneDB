@@ -13,6 +13,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Console;
 
+/**
+ * Prompt the user whether to skip or retry a file that failed to load,
+ * or to abort the entire run. In many cases, loading errors result from
+ * minor infelicities in the input files that are easy to correct by hand.
+ * The user can correct the problem using a text editor, and then click
+ * 'Retry'. On the other hand, loading errors can also (God forbid) be the
+ * result of bugs in the loading code, in which case .
+ * <p>
+ * If a console is available, the prompt is textual. Otherwise, a dialog
+ * box is used. (In practice it is rare that a console is available, since
+ * LoadEmbl is usually invoked using an ant target.)
+ *
+ * @author rh11
+ *
+ */
 class SkipRetryAbort {
     public enum Response { SKIP, RETRY, ABORT };
 
@@ -24,7 +39,7 @@ class SkipRetryAbort {
      * @param e the parsing error
      * @return a response code indicating the user's choice
      */
-    public static Response prompt(ParsingException e) {
+    public static Response prompt(Throwable e) {
         Console console = System.console();
         if (console == null) {
             return new SkipRetryAbort().promptUsingDialog(e);
@@ -33,7 +48,7 @@ class SkipRetryAbort {
         }
     }
 
-    private static Response promptUsingConsole(Console console, ParsingException e) {
+    private static Response promptUsingConsole(Console console, Throwable e) {
         console.printf("%s\n", e.getMessage());
         while (true) {
             String response = console.readLine("Would you like to retry, skip the file, or abort the load?");
@@ -52,7 +67,7 @@ class SkipRetryAbort {
     Dialog dialog;
     Response dialogResponse;
 
-    private Response promptUsingDialog(ParsingException e) {
+    private Response promptUsingDialog(Throwable e) {
         String prompt = e.getMessage() + "\nWhat would you like to do?";
 
         Frame hiddenFrame = new Frame(getClass().getName());

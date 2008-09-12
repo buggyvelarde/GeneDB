@@ -32,7 +32,7 @@ public class ParsingException extends Exception {
         this.lineNumber = lineNumber;
     }
     void setInputFile(File inputFile) {
-        setLocation(inputFile.toString(), -1);
+        this.inputFile = inputFile.toString();
     }
     void setLineNumber(int lineNumber) {
         this.lineNumber = lineNumber;

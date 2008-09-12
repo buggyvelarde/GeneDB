@@ -90,13 +90,34 @@ public class LoadEmbl {
     }
 
     private void processEmblFile(File inputFile) throws IOException, ParsingException {
-        EmblFile emblFile = new EmblFile(inputFile);
         try {
+            EmblFile emblFile = new EmblFile(inputFile);
             loader.load(emblFile);
         } catch (ParsingException e) {
             e.setInputFile(inputFile);
             logger.error("Parsing error", e);
             switch (SkipRetryAbort.prompt(e)) {
+            case SKIP:
+                logger.info(String.format("Skipping file '%s'", inputFile));
+                return;
+            case RETRY:
+                logger.info(String.format("Retrying file '%s'", inputFile));
+                processEmblFile(inputFile);
+                return;
+            case ABORT:
+                throw e;
+            }
+        }
+        catch (org.springframework.dao.DataIntegrityViolationException e) {
+            logger.error("Data integrity violation", e);
+
+            /*
+             * The cause of the Spring exception is a Hibernate exception,
+             * and the cause of *that* is the underlying JDBC exception.
+             */
+            Throwable cause = e.getCause().getCause();
+
+            switch (SkipRetryAbort.prompt(cause)) {
             case SKIP:
                 logger.info(String.format("Skipping file '%s'", inputFile));
                 return;

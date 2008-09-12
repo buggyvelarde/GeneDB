@@ -50,8 +50,7 @@ FT                   /FEAT_NAME="29646.repeat000041"
 FT                   /note="AT_rich"
 FT                   /rpt_type=direct
 FT   CDS             complement(join(19067..19073,19150..19225,19673..19815,
-FT                   20971..21082,21115..21230,21268..21336,21371..21461,
-FT                   21503..21566))
+FT                   20971..21082,21115..21230,21268..21336,21371..21461))
 FT                   /domain="Pfam:PF01875; Protein of unknown function; 76.2;
 FT                   codon 10-224"
 FT                   /method="Isoform is the same from v3.1 to v4"
@@ -77,8 +76,6 @@ FT                   /synonym="29646.t000002"
 FT                   /synonym="29646.m000186"
 FT                   /temporary_systematic_id="Smp_097240.2"
 FT   3'UTR           complement(18495..19066)
-FT                   /temporary_systematic_id="Smp_097240.2"
-FT   5'UTR           complement(join(21567..21618,22288..22354))
 FT                   /temporary_systematic_id="Smp_097240.2"
 FT   CDS             complement(join(19067..19073,19150..19225,19673..19812,
 FT                   20971..21082,21115..21230,21268..21336,21371..21461,

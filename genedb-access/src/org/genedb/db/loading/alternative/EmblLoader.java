@@ -4,6 +4,7 @@ import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.OrganismDao;
 
+import org.gmod.schema.cfg.FeatureTypeUtils;
 import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Contig;
@@ -24,6 +25,7 @@ import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.UTR;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Synonym;
 import org.gmod.schema.utils.ObjectManager;
@@ -53,9 +55,20 @@ import java.util.TreeMap;
  * @author rh11
  *
  */
-@Transactional(rollbackFor=DataError.class)
+@Transactional(rollbackFor=DataError.class) // Will also rollback for runtime exceptions, by default
 class EmblLoader {
     private static final Logger logger = Logger.getLogger(EmblLoader.class);
+
+    // Constants
+
+    /**
+     * Whether or not the transcript type (mRNA, tRNA etc) should be appended
+     * to the uniquename of the transcript feature in the database. We are
+     * considering not doing this, but currently Artemis requires each feature
+     * to have a globally unique name, and does not work correctly if a transcript
+     * has the same uniquename as its gene.
+     */
+    private static final boolean APPEND_TYPE_TO_TRANSCRIPT_UNIQUENAME = true;
 
     // Injected beans
     private CvDao cvDao;
@@ -178,7 +191,7 @@ class EmblLoader {
             return;
         }
         logger.debug(String.format("The feature '%s' lies on contig '%s'", feature.getUniqueName(), contig.getUniqueName()));
-        contig.addLocatedChild(feature, fmin - contig.getFmin(), fmax - contig.getFmin(), strand, phase, 1);
+        contig.addLocatedChild(feature, fmin - contig.getFmin(), fmax - contig.getFmin(), strand, phase, 1, 1);
     }
 
     private void loadFeatures(FeatureTable featureTable) throws DataError {
@@ -189,9 +202,8 @@ class EmblLoader {
                 loadFeature(utrs, feature);
             }
             catch (DataError e) {
-                logger.warn("Caught one! On line " + feature.lineNumber);
+                logger.warn("Caught DataError while loading feature. Setting line number to " + feature.lineNumber);
                 e.setLineNumber(feature.lineNumber);
-                logger.warn(String.format("Exception message is '%s'", e.getMessage()));
                 throw e;
             }
         }
@@ -201,6 +213,7 @@ class EmblLoader {
                 loadUTR(utr);
             }
             catch (DataError e) {
+                logger.debug("Caught DataError while loading UTR. Setting line number to " + utr.lineNumber);
                 e.setLineNumber(utr.lineNumber);
                 throw e;
             }
@@ -246,10 +259,12 @@ class EmblLoader {
 
         RepeatRegion repeatRegion = RepeatRegion.make(repeatRegionClass,
             organism, String.format("%s:repeat:%d-%d", supercontig.getUniqueName(), fmin, fmax), repeatRegionName);
-        String note = repeatRegionFeature.getQualifierValue("note");
-        if (note != null) {
-            repeatRegion.addFeatureProp(note, "feature_property", "comment");
+
+        int rank=0;
+        for(String note : repeatRegionFeature.getQualifierValues("note")) {
+            repeatRegion.addFeatureProp(note, "feature_property", "comment", rank++);
         }
+
         session.persist(repeatRegion);
         locate(repeatRegion, fmin, fmax, (short)0, 0);
     }
@@ -273,6 +288,7 @@ class EmblLoader {
         protected String transcriptUniqueName = null;
         protected String geneName;
         protected Transcript transcript;
+        protected int phase = 0;
 
         public GeneLoader(FeatureTable.Feature feature) {
             this.feature  = feature;
@@ -283,13 +299,21 @@ class EmblLoader {
             return isPseudo ? Pseudogene.class : Gene.class;
         }
 
-        protected abstract void processTranscriptQualifiers();
+        protected abstract void processTranscriptQualifiers() throws DataError;
         protected abstract Class<? extends Transcript> getTranscriptClass();
+
+        protected String getTranscriptType() {
+            /*
+             * This assumes that transcript feature classes are annotated with term
+             * rather than accession, which is true at the time of writing.
+             */
+            return FeatureTypeUtils.getFeatureTypeForClass(getTranscriptClass()).term();
+        }
 
         /**
          * The main entry point to a gene loader.
          */
-        public void load() {
+        public void load() throws DataError {
             if (geneUniqueName == null) {
                 throw new RuntimeException("Cannot load a gene with no uniqueName");
             }
@@ -334,9 +358,14 @@ class EmblLoader {
             return gene;
         }
 
-        private void loadTranscript(AbstractGene gene) {
+        private void loadTranscript(AbstractGene gene) throws DataError {
             logger.debug(String.format("Creating transcript '%s' for gene '%s'", transcriptUniqueName, gene.getUniqueName()));
-            this.transcript = gene.makeTranscript(getTranscriptClass(), transcriptUniqueName);
+            if (APPEND_TYPE_TO_TRANSCRIPT_UNIQUENAME) {
+                this.transcript = gene.makeTranscript(getTranscriptClass(),
+                    String.format("%s:%s", transcriptUniqueName, getTranscriptType()), location.getFmin(), location.getFmax(), phase);
+            } else {
+                this.transcript = gene.makeTranscript(getTranscriptClass(), transcriptUniqueName, location.getFmin(), location.getFmax(), phase);
+            }
 
             transcriptsByUniqueName.put(transcriptUniqueName, transcript);
             processTranscriptQualifiers();
@@ -348,13 +377,11 @@ class EmblLoader {
          * For each <code>/&lt;qualifierName%gt;</code> qualifier, add a synonym of type
          * <code>synonymType</code> to the transcript.
          *
-         * @param cdsFeature the CDS feature
-         * @param transcript the transcript to which the synonyms should be added
          * @param qualifierName the name of the qualifer
          * @param synonymType the type of synonym. Should be a term in the <code>genedb_synonym_type</code> CV
          * @param isCurrent whether the synonym is current or not
          */
-        protected void processSynonymQualifiers(String qualifierName, String synonymType, boolean isCurrent) {
+        protected void addTranscriptSynonymsFromQualifier(String qualifierName, String synonymType, boolean isCurrent) {
             Set<String> synonyms = new HashSet<String>();
             for (String synonymString: feature.getQualifierValues(qualifierName)) {
                 if (synonyms.contains(synonymString)) {
@@ -375,8 +402,6 @@ class EmblLoader {
          * <code>synonymType</code> to the polypeptide, if there is one, or else to the
          * transcript.
          *
-         * @param cdsFeature the CDS feature
-         * @param transcript the transcript
          * @param qualifierName the qualifier name
          * @param propertyCvName the name of the CV to which the property term belongs.
          *          Should be either <code>feature_property</code> for built-in Chado
@@ -386,33 +411,42 @@ class EmblLoader {
          *          the term <code>genedb_misc:feature_props</code>.
          */
         protected void processPropertyQualifiers(String qualifierName, String propertyCvName, String propertyTermName) {
-
+            int rank = 0;
             for(String qualifierValue: feature.getQualifierValues(qualifierName)) {
                 logger.debug(String.format("Adding %s:%s '%s' for transcript",
                     propertyCvName, propertyTermName, qualifierValue));
                 if (transcript instanceof ProductiveTranscript) {
                     ((ProductiveTranscript) transcript).getProtein()
-                        .addFeatureProp(qualifierValue, propertyCvName, propertyTermName);
+                        .addFeatureProp(qualifierValue, propertyCvName, propertyTermName, rank);
                 } else {
-                    transcript.addFeatureProp(qualifierValue, propertyCvName, propertyTermName);
+                    transcript.addFeatureProp(qualifierValue, propertyCvName, propertyTermName, rank);
                 }
+                ++ rank;
             }
         }
 
-        protected void processProductQualifiers() {
+        protected void processCvTermQualifiers(String qualifierName, String cvName, boolean createTerms) throws DataError {
             if (transcript instanceof ProductiveTranscript) {
                 ProductiveTranscript productiveTranscript = (ProductiveTranscript) transcript;
                 Polypeptide polypeptide = productiveTranscript.getProtein();
-                List<String> products = feature.getQualifierValues("product");
+                List<String> terms = feature.getQualifierValues(qualifierName);
 
                 if (polypeptide != null) {
-                    for (String product: products) {
-                        polypeptide.addProduct(product);
+                    for (String term: terms) {
+                        FeatureCvTerm featureCvTerm = polypeptide.addCvTerm(cvName, term, createTerms);
+                        if (featureCvTerm == null) {
+                            throw new DataError(String.format("Failed to find term '%s' in CV '%s'", term, cvName));
+                        }
+                        session.persist(featureCvTerm);
                     }
                 }
                 else {
-                    for (String product: products) {
-                        transcript.addCvTerm("genedb_products", product);
+                    for (String term: terms) {
+                        FeatureCvTerm featureCvTerm = transcript.addCvTerm(cvName, term, createTerms);
+                        if (featureCvTerm == null) {
+                            throw new DataError(String.format("Failed to find term '%s' in CV '%s'", term, cvName));
+                        }
+                        session.persist(featureCvTerm);
                     }
                 }
             }
@@ -421,7 +455,7 @@ class EmblLoader {
         private void loadExons() {
             int exonIndex = 0;
             for (EmblLocation exonLocation: location.getParts()) {
-                String exonUniqueName = String.format("%s:exon:%d", transcript.getUniqueName(), ++exonIndex);
+                String exonUniqueName = String.format("%s:exon:%d", transcriptUniqueName, ++exonIndex);
                 logger.debug(String.format("Creating exon '%s' at %d-%d", exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax()));
                 AbstractExon exon = transcript.createExon(exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax());
                 session.persist(exon);
@@ -438,6 +472,20 @@ class EmblLoader {
             transcriptUniqueName = cdsFeature.getUniqueName();
             geneName = cdsFeature.getGeneName();
 
+            String codonStart = cdsFeature.getQualifierValue("codon_start");
+            if (codonStart != null) {
+                try {
+                    phase = Integer.parseInt(codonStart) - 1;
+                } catch (NumberFormatException e) {
+                    throw new DataError(
+                        String.format("Could not parse value of /codon_start qualifier ('%s')", codonStart));
+                }
+                if (phase < 0 || phase > 2) {
+                    throw new DataError(
+                        String.format("Value of /codon_start qualifier out of range (%d)", phase+1));
+                }
+            }
+
             singlySpliced = false;
             if (geneUniqueName == null) {
                 singlySpliced = true;
@@ -449,22 +497,23 @@ class EmblLoader {
          * Use the qualifiers of the CDS feature to add various bits of annotation
          * to the transcript (or to the polypeptide, if there is one). Specifically,
          * add synonyms, properties and products.
-         *
-         * @param cdsFeature
-         * @param transcript
          */
         @Override
-        protected void processTranscriptQualifiers() {
+        protected void processTranscriptQualifiers() throws DataError {
 
-            processSynonymQualifiers("synonym", "synonym", true);
-            processSynonymQualifiers("previous_systematic_id", "systematic_id", false);
+            addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
+            addTranscriptSynonymsFromQualifier("previous_systematic_id", "systematic_id", false);
+
+            List<String> geneQualifiers = feature.getQualifierValues("gene");
+            // TODO a /gene in MRSA252 (for example) denotes a gene name synonym
 
             processPropertyQualifiers("note",   "feature_property", "comment");
             processPropertyQualifiers("method", "genedb_misc",      "method");
             processPropertyQualifiers("colour", "genedb_misc",      "colour");
             processPropertyQualifiers("status", "genedb_misc",      "status");
 
-            processProductQualifiers();
+            processCvTermQualifiers("class", "RILEY", false);
+            processCvTermQualifiers("product", "genedb_products", true);
         }
 
         @Override
@@ -491,10 +540,10 @@ class EmblLoader {
         }
 
         @Override
-        protected void processTranscriptQualifiers() {
+        protected void processTranscriptQualifiers() throws DataError {
             processPropertyQualifiers("note",      "feature_property", "comment");
             processPropertyQualifiers("anticodon", "feature_property", "anticodon");
-            processProductQualifiers();
+            processCvTermQualifiers("product", "genedb_products", true);
         }
 
         @Override
@@ -529,17 +578,19 @@ class EmblLoader {
             throw new RuntimeException(String.format("Unrecognised UTR feature type '%s'", utrType));
         }
 
-        int part = 0;
-        for (EmblLocation utrPartLocation: utrLocation.getParts()) {
+        int part = 1;
+        List<EmblLocation> utrParts = utrLocation.getParts();
+        for (EmblLocation utrPartLocation: utrParts) {
             String utrUniqueName = String.format("%s:%dutr", uniqueName, utrClass == ThreePrimeUTR.class ? 3 : 5);
-            if (part > 0) {
+            if (utrParts.size() > 1) {
                 utrUniqueName += ":" + part;
             }
 
             logger.debug(String.format("Creating %s feature '%s' at %d-%d",
                 utrType, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax()));
 
-            transcript.createUTR(utrClass, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax());
+            UTR utr = transcript.createUTR(utrClass, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax());
+            session.persist(utr);
             ++ part;
         }
     }

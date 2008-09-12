@@ -9,16 +9,20 @@ import org.gmod.schema.utils.ObjectManager;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
+import java.util.List;
+
 /**
  * Manage the creation of synonyms during organism loading.
  *
- * A SynonymManager object contains a cache of synonyms that it personally
- * has created, and will return a cached object in preference to creating a
- * new one. At no time do we check whether the synonym already exists in the
- * database: if we did not create it, we simply make a new one.
+ * A SynonymManager object contains a cache of all existing synonyms,
+ * and will return a cached object in preference to creating a  new one.
+ * If the cached synonym was not previously requested in the current session,
+ * it is merged before returning. (Thus it is essential to call
+ * {@link #startSession(Session)} whenever a session is started in which
+ * {@link #getSynonym(String,String)} may be called.)
  * <p>
- * This saves the overhead of checking the database every time a synonym
- * is required, which (according to JProfiler, on the S. mansoni load)
+ * This mechanism saves the overhead of checking the database every time a synonym
+ * is required, which - according to JProfiler, on the S. mansoni load -
  * is what the loader spent the majority of its time doing when
  * {@link ObjectManager#getSynonym(String,String)} was used to create synonyms.
  * When this was changed, the loader went from being massively CPU-bound
@@ -27,13 +31,7 @@ import org.hibernate.Session;
  * <p>
  * During the loading life-cycle, each {@link EmblLoader} has a single SynonymManager
  * instance. For each EMBL file loaded, a new Hibernate session is created and
- * {@link #startSession(Session)} is called. Therefore it is no problem for a synonym
- * to be used several times within a particular organism.
- *
- * However we are implicitly assuming that synonyms are never
- * shared across organisms: if we come across one that is, it will cause a constraint
- * violation error when loaded. If that is ever a problem in practice, we will need to
- * preload the existing synonyms as well.
+ * {@link #startSession(Session)} is called.
  *
  * @author rh11
  *
@@ -55,17 +53,33 @@ class SynonymManager {
         this.objectManager = objectManager;
     }
 
+    private boolean preloaded = false;
+
     /**
      * Must be called when a new Hibernate session is started.
      * @param session the newly-started session
      */
     public void startSession(Session session) {
         logger.debug("Starting new session");
+        this.session = session;
+        if (!preloaded) {
+            preload();
+            preloaded = true;
+        }
         detachedSynonymsByType.putAll(synonymsByType);
         synonymsByType.clear();
-        this.session = session;
     }
 
+    private void preload() {
+        logger.debug("Preloading synonyms");
+        @SuppressWarnings("unchecked")
+        List<Object[]> list = session.createQuery(
+            "select s.type.name, s.name, s from Synonym s"
+        ).list();
+        for (Object[] array: list) {
+            synonymsByType.put( (String)array[0], (String)array[1], (Synonym)array[2]);
+        }
+    }
 
     private TwoKeyMap<String,String,Synonym> detachedSynonymsByType = new TwoKeyMap<String,String,Synonym>();
     private TwoKeyMap<String,String,Synonym> synonymsByType = new TwoKeyMap<String,String,Synonym>();
