@@ -39,7 +39,7 @@ public class DeleteRedundantGOTerms {
 
     public static void main(String[] args) throws SQLException, IOException {
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
-            new String[] {"AuxContext.xml"});
+            new String[] {"Aux.xml"});
 
         DataSource dataSource = (DataSource) ctx.getBean("dataSource", DataSource.class);
         deleteRedundantGOTerms(dataSource);

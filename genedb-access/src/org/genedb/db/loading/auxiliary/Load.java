@@ -53,7 +53,7 @@ public class Load {
         String loaderBeanName = args[0];
 
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"AuxContext.xml"});
+                new String[] {"Aux.xml"});
 
         Loader loader = (Loader) ctx.getBean(loaderBeanName, Loader.class);
         Load load = new Load(loader);
