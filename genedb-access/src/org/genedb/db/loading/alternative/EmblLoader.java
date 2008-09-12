@@ -197,6 +197,11 @@ class EmblLoader {
     private void loadFeatures(FeatureTable featureTable) throws DataError {
         List<FeatureTable.Feature> utrs = new ArrayList<FeatureTable.Feature>();
 
+        if (featureTable == null) {
+            logger.error("No feature table found!");
+            return;
+        }
+
         for (FeatureTable.Feature feature: featureTable.getFeatures()) {
             try {
                 loadFeature(utrs, feature);
@@ -223,6 +228,10 @@ class EmblLoader {
     private void loadFeature(List<FeatureTable.Feature> utrs,
             FeatureTable.Feature feature) throws DataError {
         String featureType = feature.type;
+
+        if (feature.location.getFmax() < feature.location.getFmin()) {
+            throw new DataError("Location has fmax before fmin");
+        }
 
         if (featureType.equals("repeat_region")) {
             loadRepeatRegion(feature);
@@ -452,9 +461,12 @@ class EmblLoader {
             }
         }
 
-        private void loadExons() {
+        private void loadExons() throws DataError {
             int exonIndex = 0;
             for (EmblLocation exonLocation: location.getParts()) {
+                if (exonLocation instanceof EmblLocation.External) {
+                    throw new DataError("Found an external exon (trans-splicing). We can't handle that yet.");
+                }
                 String exonUniqueName = String.format("%s:exon:%d", transcriptUniqueName, ++exonIndex);
                 logger.debug(String.format("Creating exon '%s' at %d-%d", exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax()));
                 AbstractExon exon = transcript.createExon(exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax());
@@ -508,6 +520,8 @@ class EmblLoader {
 
             List<String> geneQualifiers = feature.getQualifierValues("gene");
             // TODO a /gene in MRSA252 (for example) denotes a gene name synonym
+            // We need to reinstate something along the lines of Adrian's NomenclatureHandler
+            // mechanism to deal sensibly with these.
 
             processPropertyQualifiers("note",   "feature_property", "comment");
             processPropertyQualifiers("method", "genedb_misc",      "method");
@@ -533,12 +547,7 @@ class EmblLoader {
         public TRNALoader(FeatureTable.Feature feature) throws DataError {
             super(feature);
 
-            String name = feature.getQualifierValue("FEAT_NAME");
-            if (name == null) {
-                throw new DataError("tRNA feature has no /FEAT_NAME qualifier");
-            }
-
-            geneUniqueName = transcriptUniqueName = name;
+            geneUniqueName = transcriptUniqueName = feature.getUniqueName();
         }
 
         @Override
