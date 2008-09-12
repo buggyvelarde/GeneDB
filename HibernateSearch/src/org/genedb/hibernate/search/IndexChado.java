@@ -19,11 +19,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.event.FullTextIndexEventListener;
-import org.postgresql.jdbc3.Jdbc3SimpleDataSource;
+import org.postgresql.ds.PGSimpleDataSource;
 
 import java.io.Console;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -108,7 +109,7 @@ public class IndexChado {
 
     private static final Pattern POSTGRES_URL_PATTERN = Pattern.compile("jdbc:postgresql://([^:/]*)(?::(\\d+))?/([^/]+)");
     private DataSource getDataSource() {
-        Jdbc3SimpleDataSource dataSource = new Jdbc3SimpleDataSource();
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
         Matcher urlMatcher = POSTGRES_URL_PATTERN.matcher(databaseUrl);
         if (!urlMatcher.matches())
             throw new RuntimeException(String.format("Malformed PostgreSQL URL '%s'", databaseUrl));
@@ -226,6 +227,7 @@ public class IndexChado {
             thisBatch.add(feature.getFeatureId());
 
             boolean failed = false;
+            logger.debug(String.format("Feature start is %d", feature.getStart()));
             try {
                 logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
                     feature.getClass()));
@@ -286,6 +288,7 @@ public class IndexChado {
             throw new IllegalArgumentException("Unexpected command-line arguments");
 
         IndexChado indexer = IndexChado.configuredWithSystemProperties();
+
         indexer.indexFeatures(AbstractGene.class, numBatches);
         indexer.indexFeatures(Transcript.class, numBatches);
         indexer.indexFeatures(UTR.class, numBatches);
