@@ -1,6 +1,9 @@
 package org.genedb.db.loading.alternative;
 
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,6 +16,8 @@ import java.util.regex.Pattern;
  *
  */
 public abstract class EmblLocation {
+    private static final Logger logger = Logger.getLogger(EmblLocation.class);
+
     /**
      * A regular expression that matches an EMBL &lt;symbol&gt;, as defined in
      * Appendix II of the feature table definition.
@@ -28,10 +33,18 @@ public abstract class EmblLocation {
         if (locationString.startsWith("complement")) {
             return Complement.parse(locationString.substring(11, locationString.length() - 1));
         }
-        else if (locationString.startsWith("join")) {
+        else if (locationString.startsWith("join(")) {
+            if (!locationString.endsWith(")")) {
+                throw new SyntaxError(
+                    String.format("Failed to parse join location '%s': no closing parenthesis at end", locationString));
+            }
             return Join.parse(locationString.substring(5, locationString.length() - 1).split(","));
         }
-        else if (locationString.startsWith("order")) {
+        else if (locationString.startsWith("order(")) {
+            if (!locationString.endsWith(")")) {
+                throw new SyntaxError(
+                    String.format("Failed to parse order location '%s': no closing parenthesis at end", locationString));
+            }
             return Order.parse(locationString.substring(6, locationString.length() - 1).split(","));
         }
         else if (locationString.matches("<?\\d+\\.\\.>?\\d+|\\d+\\^\\d+|[<>]?\\d+")) {
@@ -82,11 +95,16 @@ public abstract class EmblLocation {
         }
         @Override
         public List<EmblLocation> getParts() {
-            List<EmblLocation> ret = new ArrayList<EmblLocation>();
-            for (EmblLocation part: location.getParts()) {
-                ret.add(new Complement(part));
+            // Reverse the order of the parts, and complement each one
+            List<EmblLocation> parts = location.getParts();
+            EmblLocation[] ret = new EmblLocation[parts.size()];
+
+            for (int i=0; i < parts.size(); i++) {
+                EmblLocation part = parts.get(i);
+                EmblLocation complementedPart = part instanceof Complement ? ((Complement)part).location : new Complement(part);
+                ret[parts.size() - i - 1] = complementedPart;
             }
-            return ret;
+            return Arrays.asList(ret);
         }
     }
 
@@ -119,14 +137,22 @@ public abstract class EmblLocation {
             if (locations.isEmpty()) {
                 throw new RuntimeException("A join that doesn't join anything?");
             }
-            return locations.get(0).getFmin();
+            if (getStrand() == -1) {
+                return locations.get(locations.size() - 1).getFmin();
+            } else {
+                return locations.get(0).getFmin();
+            }
         }
         @Override
         public int getFmax() {
             if (locations.isEmpty()) {
                 throw new RuntimeException("A join that doesn't join anything?");
             }
-            return locations.get(locations.size() - 1).getFmax();
+            if (getStrand() == -1) {
+                return locations.get(0).getFmax();
+            } else {
+                return locations.get(locations.size() - 1).getFmax();
+            }
         }
         @Override
         public String toString() {
@@ -221,9 +247,17 @@ public abstract class EmblLocation {
 
     static class Simple extends EmblLocation {
         int fmin, fmax;
+        boolean isFminPartial = false, isFmaxPartial = false;
         public Simple(int fmin, int fmax) {
             this.fmin = fmin;
             this.fmax = fmax;
+        }
+
+        public Simple(int fmin, boolean isFminPartial, int fmax, boolean isFmaxPartial) {
+            this.fmin = fmin;
+            this.isFminPartial = isFminPartial;
+            this.fmax = fmax;
+            this.isFmaxPartial = isFmaxPartial;
         }
 
         public int getLength() {
@@ -235,20 +269,22 @@ public abstract class EmblLocation {
          * because the < and > symbols are ignored. Notice that single-base locations
          * of the form <23 (say) are not even representable in Chado.
          */
-        private static final Pattern rangePattern = Pattern.compile("<?(\\d+)\\.\\.>?(\\d+)");
+        private static final Pattern rangePattern = Pattern.compile("(<)?(\\d+)\\.\\.(>)?(\\d+)");
         private static final Pattern interbasePattern = Pattern.compile("(\\d+)\\^(\\d+)");
-        private static final Pattern singleBasePattern = Pattern.compile("[<>]?(\\d+)");
+        private static final Pattern singleBasePattern = Pattern.compile("([<>])?(\\d+)");
         public static Simple parse(String locationString) throws ParsingException {
             Matcher rangeMatcher = rangePattern.matcher(locationString);
             Matcher interbaseMatcher = interbasePattern.matcher(locationString);
             Matcher singleBaseMatcher = singleBasePattern.matcher(locationString);
             if (rangeMatcher.matches()) {
-                int fmin = Integer.parseInt(rangeMatcher.group(1));
-                int fmax = Integer.parseInt(rangeMatcher.group(2));
+                boolean isFminPartial = rangeMatcher.group(1) != null;
+                int fmin = Integer.parseInt(rangeMatcher.group(2));
+                boolean isFmaxPartial = rangeMatcher.group(3) != null;
+                int fmax = Integer.parseInt(rangeMatcher.group(4));
                 if (fmin > fmax) {
                     throw new DataError("Range end is before range start. (We don't support wrap-around features on circular chromosomes.)");
                 }
-                return new Simple(fmin-1, fmax);
+                return new Simple(fmin-1, isFminPartial, fmax, isFmaxPartial);
             } else if (interbaseMatcher.matches()) {
                 int before = Integer.parseInt(interbaseMatcher.group(1));
                 int after  = Integer.parseInt(interbaseMatcher.group(2));
@@ -257,7 +293,12 @@ public abstract class EmblLocation {
                 }
                 return new Simple(before, before);
             } else if (singleBaseMatcher.matches()) {
-                int base = Integer.parseInt(singleBaseMatcher.group(1));
+                boolean isPartial = singleBaseMatcher.group(1) != null;
+                int base = Integer.parseInt(singleBaseMatcher.group(2));
+                if (isPartial) {
+                    logger.warn(String.format("Location string '%s' has a form that cannot be represented in Chado" +
+                            "(a single base of indeterminate location)", locationString));
+                }
                 return new Simple(base-1, base);
             } else {
                 throw new SyntaxError(String.format(
@@ -281,7 +322,7 @@ public abstract class EmblLocation {
             if (fmin == fmax) {
                 return String.format("%d^%d", fmin, fmin + 1);
             } else {
-                return String.format("%d..%d", fmin+1, fmax);
+                return String.format("%s%d..%s%d", isFminPartial ? "<" : "", fmin+1, isFmaxPartial ? ">" : "", fmax);
             }
         }
     }
