@@ -5,7 +5,6 @@
 	<dirname property="imported.basedir.query" file="${ant.file.genedb-query}"/>
 
 	<import file="${imported.basedir.query}/../genedb-util/build.xml" />
-	<import file="${imported.basedir.query}/../genedb-access/build.xml" />
 
 	<target name="clean-build-query" >
 		<delete dir="${imported.basedir.query}/ant-build"/>
@@ -31,7 +30,7 @@
 	</path>
 
 	<target name="fulljar-query"
-		depends="clean-build-query,setup-query,genedb-util.fulljar,genedb-access.genedb-access.jar, query-compile, query-jar"
+		depends="clean-build-query,setup-query,genedb-util.fulljar, query-compile, query-jar"
 		description="Create full JAR file with all Spring classes"
 	/>
 
