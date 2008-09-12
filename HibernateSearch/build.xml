@@ -10,19 +10,26 @@
         <filelist dir="../genedb-db/ant-build/jars/">
             <file name="genedb-db-springless.jar" />
         </filelist>
+        <filelist dir="../genedb-util/ant-build/jars/">
+            <file name="genedb-util.jar" />
+        </filelist>
         <filelist dir="../genedb-libs/lib">
-            <file name="postgresql-8.2dev-501.jdbc3.jar" />
             <file name="spring-bundle-2.5.4/ant/ant.jar" />
             <file name="lucene-core-2.3.2.jar" />
             <file name="spring-2.5.4.jar" />
             <file name="hibernate-extras/hibernate-search-3.0.1GA.jar" />
+            <file name="spring-bundle-2.5.4/hibernate/hibernate3.jar" />
             <file name="spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
             <file name="spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+            <file name="hibernate-extras/hibernate-tools.jar" />
             <file name="spring-bundle-2.5.4/j2ee/jta.jar" />
             <file name="spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
             <file name="spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
-            <file name="spring-bundle-2.5.4/asm/asm-2.2.3.jar" />
-            <file name="spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar" />
+
+            <file name="cglib-2.1_3.jar"/>
+            <file name="asm-1.5.3.jar"/>
+            <file name="asm-attrs-1.5.3.jar"/>
+
             <file name="spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
             <file name="spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar" />
             <file name="spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
@@ -30,8 +37,7 @@
             <file name="spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" />
             <file name="spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar" />
             <file name="spring-bundle-2.5.4/j2ee/persistence.jar" />
-            <file name="postgresql-8.2dev-501.jdbc3.jar" />
-            <file name="spring-bundle-2.5.4/hibernate/hibernate3.jar" />
+            <file name="postgresql-8.3-603.jdbc4.jar" />
             <file name="spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" />
             <file name="biojava-1.6.jar"/>
         </filelist>
@@ -61,14 +67,13 @@
         </jar>
     </target>
 
-    <!-- The dependent target "make-hibernate3-implementation" is defined in genedb-db/build.xml -->
     <target name="compile" depends="destdir,genedb-db.make-springless-jar">
         <javac srcdir="src" destdir="ant-build/classes" debug="true">
             <classpath refid="jars" />
         </javac>
         <copy todir="ant-build/classes" file="log4j.properties" />
         <copy todir="ant-build/classes" file="hibernate.cfg.xml" />
-        <copy file="hibernate-properties.${config}" tofile="ant-build/classes/hibernate.properties"/>
+        <copy file="hibernate-properties.${config}" tofile="ant-build/classes/hibernate.properties" overwrite="true"/>
     </target>
 
     <path id="exec-classpath">
