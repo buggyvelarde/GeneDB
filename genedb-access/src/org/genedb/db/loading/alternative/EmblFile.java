@@ -86,6 +86,8 @@ public class EmblFile {
         put("SQ", SequenceHeaderSection.class);
         put("  ", SequenceSection.class);
         put("XX", SilentlyIgnoredSection.class);
+        put("DE", SilentlyIgnoredSection.class);
+        put("KW", SilentlyIgnoredSection.class);
         put("//", SilentlyIgnoredSection.class);
     }};
 
@@ -177,15 +179,18 @@ public class EmblFile {
             }
             Matcher matcher = idPattern.matcher(data);
             if (!matcher.matches()) {
-                throw new SyntaxError("Failed to parse ID line: " + data);
+                logger.error("Failed to parse ID line: " + data);
+                accession = data.trim().substring(0, data.indexOf(' '));
+                logger.warn(String.format("Taking the sequence identifier to be '%s'", accession));
+            } else {
+                accession = matcher.group(1);
+                version = Integer.parseInt(matcher.group(2));
+                topology = matcher.group(3);
+                moleculeType = matcher.group(4);
+                dataClass = matcher.group(5);
+                taxonomicDivision = matcher.group(6);
+                sequenceLength = Integer.parseInt(matcher.group(7));
             }
-            accession = matcher.group(1);
-            version = Integer.parseInt(matcher.group(2));
-            topology = matcher.group(3);
-            moleculeType = matcher.group(4);
-            dataClass = matcher.group(5);
-            taxonomicDivision = matcher.group(6);
-            sequenceLength = Integer.parseInt(matcher.group(7));
         }
     }
 
