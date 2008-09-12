@@ -503,6 +503,8 @@ class EmblLoader {
 
             addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             addTranscriptSynonymsFromQualifier("previous_systematic_id", "systematic_id", false);
+            addTranscriptSynonymsFromQualifier("systematic_id", "systematic_id", true);
+            addTranscriptSynonymsFromQualifier("temporary_systematic_id", "temporary_systematic_id", true);
 
             List<String> geneQualifiers = feature.getQualifierValues("gene");
             // TODO a /gene in MRSA252 (for example) denotes a gene name synonym
