@@ -18,38 +18,53 @@ public class BaseDao extends HibernateDaoSupport {
      * @param o The object to store
      */
     public void persist(Object o) {
-        getHibernateTemplate().persist(o);
+        getSession().persist(o);
     }
 
     /**
-     * Merge (update) an already persistent object back to the database (at the
-     * end of the current transaction, or depending upon flush mode). This
-     * method is defined in all the DAOs. It's recommended to call it through an
-     * appropriate one eg SequenceDao for Feature
+     * Either save(Object) or update(Object) the given instance, depending upon resolution
+     * of the unsaved-value checks (see the Hibernate manual for discussion of unsaved-value checking).
+     * <p>
+     * This operation cascades to associated instances if the association is mapped with cascade="save-update".
+     * This method is defined in all the DAOs.
+     *
+     * @param o The object to save or update
+     */
+    public void saveOrUpdate(Object o) {
+        getSession().saveOrUpdate(o);
+    }
+
+    /**
+     * Copy the state of the given object onto the persistent object with the same identifier.
+     * If there is no persistent instance currently associated with the session, it will be loaded.
+     * Return the persistent instance. If the given instance is unsaved, save a copy of and return
+     * it as a newly persistent instance. The given instance does not become associated with the session.
+     * This operation cascades to associated instances if the association is mapped with cascade="merge".
+     * <p>
+     * This method is defined in all the DAOs.
      *
      * @param o The object to merge
      */
-    public void merge(Object o) {
-        getHibernateTemplate().merge(o);
+    public Object merge(Object o) {
+        return getSession().merge(o);
     }
 
     /**
      * Remove the object from the database (at the end of the current
      * transaction, or depending upon flush mode). This method is defined in all
-     * the DAOs. It's recommended to call it through an appropriate one eg
-     * SequenceDao for Feature
+     * the DAOs.
      *
      * @param o The object to delete
      */
     public void delete(Object o) {
-        getHibernateTemplate().delete(o);
+        getSession().delete(o);
     }
 
     /**
      * Flush the session.
      */
     public void flush() {
-        getHibernateTemplate().flush();
+        getSession().flush();
     }
 
     /**
