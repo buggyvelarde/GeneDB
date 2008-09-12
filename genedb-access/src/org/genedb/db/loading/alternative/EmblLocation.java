@@ -115,7 +115,24 @@ public abstract class EmblLocation {
      */
     abstract static class Joining extends EmblLocation {
         protected abstract String operator();
-        protected void add(EmblLocation location) {
+        private int fmin = Integer.MAX_VALUE, fmax = Integer.MIN_VALUE;
+        protected void add(EmblLocation location) throws DataError {
+            int locationFmin = location.getFmin();
+            int locationFmax = location.getFmax();
+            int locationStrand = location.getStrand();
+
+            if (locationFmin < fmin) {
+                if (locationStrand != -1 && !locations.isEmpty()) {
+                    throw new DataError("Locations are joined in the wrong order");
+                }
+                fmin = locationFmin;
+            }
+            if (locationFmax > fmax) {
+                if (locationStrand == -1 && !locations.isEmpty()) {
+                    throw new DataError("Locations are joined in the wrong order");
+                }
+                fmax = locationFmax;
+            }
             locations.add(location);
         }
         List<EmblLocation> locations = new ArrayList<EmblLocation>();
@@ -127,7 +144,10 @@ public abstract class EmblLocation {
                 if (strand == 0) {
                     strand = location.getStrand();
                 } else if (strand != location.getStrand()) {
-                    throw new RuntimeException("This EMBL location joins features from different strands");
+                    // This could occasionally be okay, if we have trans-splicing
+                    // between opposite strands (perhaps of different chromosomes).
+                    throw new RuntimeException("This EMBL location joins features from different strands. " +
+                        "That's probably a mistake; if not, the code needs to be extended to cope.");
                 }
             }
             return strand;
@@ -137,22 +157,14 @@ public abstract class EmblLocation {
             if (locations.isEmpty()) {
                 throw new RuntimeException("A join that doesn't join anything?");
             }
-            if (getStrand() == -1) {
-                return locations.get(locations.size() - 1).getFmin();
-            } else {
-                return locations.get(0).getFmin();
-            }
+            return fmin;
         }
         @Override
         public int getFmax() {
             if (locations.isEmpty()) {
                 throw new RuntimeException("A join that doesn't join anything?");
             }
-            if (getStrand() == -1) {
-                return locations.get(0).getFmax();
-            } else {
-                return locations.get(locations.size() - 1).getFmax();
-            }
+            return fmax;
         }
         @Override
         public String toString() {
