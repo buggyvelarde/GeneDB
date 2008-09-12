@@ -48,11 +48,11 @@ public class TestLoader {
         PropertyConfigurator.configure(url);
     }
 
-    public TestLoader(String filename) throws IOException, ParsingException {
+    public TestLoader(String organismCommonName, String filename) throws IOException, ParsingException {
         this.applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml", "Test.xml"});
 
         this.loader = (EmblLoader) applicationContext.getBean("emblLoader", EmblLoader.class);
-        loader.setOrganismCommonName("Smansoni");
+        loader.setOrganismCommonName(organismCommonName);
 
         this.sessionFactory = (SessionFactory) applicationContext.getBean("sessionFactory", SessionFactory.class);
         this.session = SessionFactoryUtils.doGetSession(sessionFactory, true);
