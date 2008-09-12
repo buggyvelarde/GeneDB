@@ -608,6 +608,18 @@ public abstract class Feature implements java.io.Serializable {
         return ret;
     }
 
+    @Transient
+    public Collection<Synonym> getSynonyms(String type) {
+        Collection<Synonym> ret = new HashSet<Synonym>();
+        for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
+            Synonym synonym = featureSynonym.getSynonym();
+            if (synonym.getType().getName().equals(type)) {
+                ret.add(synonym);
+            }
+        }
+        return ret;
+    }
+
     public Collection<Phylonode> getPhylonodes() {
         return this.phylonodes;
     }
