@@ -184,7 +184,7 @@ class EmblLoader {
 
     private void locate(Feature feature, int fmin, int fmax, short strand, int phase) {
         supercontig.addLocatedChild(feature, fmin, fmax, strand, phase);
-        Contig contig = contigsByStart.floorEntry(fmin).getValue();
+        Contig contig = contigsByStart.isEmpty() ? null : contigsByStart.floorEntry(fmin).getValue();
         if (contig == null || fmax > contig.getFmax()) {
             logger.debug(String.format("The feature '%s' (%s) is not contained in a contig",
                 feature.getUniqueName(), feature.getName()));
