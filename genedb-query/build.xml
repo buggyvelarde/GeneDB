@@ -3,6 +3,7 @@
 <project name="genedb-query" default="fulljar-query" basedir=".">
 
 	<dirname property="imported.basedir.query" file="${ant.file.genedb-query}"/>
+    <property name="lib-dir" value="${imported.basedir.query}/../genedb-libs/lib/"/>
 
 	<import file="${imported.basedir.query}/../genedb-util/build.xml" />
 
@@ -26,7 +27,7 @@
         <path location="${lib-dir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
         <path location="${lib-dir}/lucene-core-2.3.2.jar"/>
         <path location="${lib-dir}/lucene-queries-2.3.2.jar"/>
-		<path location="${imported.basedir.query}/../genedb-util/ant-build/jars/genedb-util.jar" />
+		<path location="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjrt.jar" />
 	</path>
 
 	<target name="fulljar-query"
@@ -34,6 +35,9 @@
 		description="Create full JAR file with all Spring classes"
 	/>
 
+    <path id="aspect.path">
+        <pathelement location="${lib-dir}/spring-aspects.jar" />
+    </path>
 	<target name="query-compile">
 		<copy todir="${imported.basedir.query}/ant-build/src">
 			<fileset dir="${imported.basedir.query}/src">
@@ -49,7 +53,7 @@
             verbose="true"
             inpath="${imported.basedir.query}/ant-build/classes"
             aspectpathref="aspect.path"
-            classpathRef ="db-compile-lib"
+            classpathRef ="compile-lib-query"
             destdir="${imported.basedir.query}/ant-build/classes" />
 
 	</target>
