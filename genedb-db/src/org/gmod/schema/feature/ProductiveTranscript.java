@@ -133,4 +133,14 @@ public abstract class ProductiveTranscript extends Transcript {
         return protein.getColourId();
     }
 
+    @Override
+    public AbstractExon createExon(String exonUniqueName, int fmin, int fmax) {
+        Polypeptide polypeptide = getProtein();
+        if (polypeptide != null) {
+            polypeptide.lowerFminTo(fmin);
+            polypeptide.raiseFmaxTo(fmax);
+        }
+        return super.createExon(exonUniqueName, fmin, fmax);
+    }
+
 }

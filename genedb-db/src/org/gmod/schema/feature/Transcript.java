@@ -216,6 +216,9 @@ public class Transcript extends Region {
      * @return the newly-created exon
      */
     public AbstractExon createExon(String exonUniqueName, int fmin, int fmax) {
+        /*
+         * NB This method is overridden in ProductiveTranscript.
+         */
         return createRegion(getExonClass(), exonUniqueName, fmin, fmax);
     }
 
