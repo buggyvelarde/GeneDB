@@ -3,7 +3,7 @@
 		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-    <session-factory name="java:hibernate/SessionFactory">
+    <session-factory>
         <mapping package="org.gmod.schema.mapped" />
         <mapping package="org.gmod.schema.feature" />
     </session-factory>
