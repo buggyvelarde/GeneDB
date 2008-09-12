@@ -177,7 +177,7 @@ public abstract class Feature implements java.io.Serializable {
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureByFeatureId")
     @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @OrderBy("rank ASC")
+    @OrderBy("locGroup ASC, rank ASC")
     private List<FeatureLoc> featureLocs;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
@@ -417,7 +417,7 @@ public abstract class Feature implements java.io.Serializable {
                 logger.warn(String.format("Feature '%s' has a null featureLoc", uniqueName));
             } else {
                 return featureLoc;
-        }
+            }
         }
         logger.error(String.format("Feature '%s' has no non-null featureLocs", uniqueName));
         return null;
