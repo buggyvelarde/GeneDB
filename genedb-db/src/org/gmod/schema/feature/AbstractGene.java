@@ -96,24 +96,56 @@ public abstract class AbstractGene extends Region {
      * @param <T>
      * @param transcriptClass the class of the transcript to create
      * @param transcriptUniqueName the uniqueName of the transcript to create
-     * @param the phase
+     * @param fmin
+     * @param fmax
+     * @param phase the phase
      * @return
      */
-    public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName, int phase) {
-            logger.trace(String.format("Creating transcript '%s' for gene '%s'",
-                transcriptUniqueName, getUniqueName()));
+    public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName,
+                int fmin, int fmax, int phase) {
+            logger.trace(String.format("Creating transcript '%s' for gene '%s' at locations %d..%d (gene locations %d..%d)",
+                transcriptUniqueName, getUniqueName(), fmin, fmax, getFmin(), getFmax()));
+
+            if (fmax < fmin) {
+                throw new IllegalArgumentException(String.format("fmax (%d) < fmin (%d)", fmax, fmin));
+            }
+
+            int relativeFmin = fmin - this.getFmin();
+            if (relativeFmin < 0) {
+                logger.trace(String.format("Start of transcript (%d) is before start of gene (%d). Resetting gene start",
+                    fmin, this.getFmin()));
+                this.lowerFminTo(fmin);
+            }
+
+            int relativeFmax = fmax - this.getFmin();
+            if (fmax > this.getFmax()) {
+                logger.trace(String.format("End of transcript (%d) is after end of gene (%d). Resetting gene end",
+                    fmax, this.getFmax()));
+                this.raiseFmaxTo(fmax);
+            }
+
             T transcript = Transcript.construct(transcriptClass, getOrganism(), transcriptUniqueName, null);
             for (FeatureLoc featureLoc: getFeatureLocs()) {
-                featureLoc.getSourceFeature().addLocatedChild(transcript, featureLoc.getFmin(), featureLoc.getFmax(),
+                featureLoc.getSourceFeature().addLocatedChild(transcript, featureLoc.getFmin() + relativeFmin,
+                    featureLoc.getFmin() + relativeFmax,
                     featureLoc.getStrand(), phase, featureLoc.getLocGroup(), featureLoc.getRank());
             }
             this.addFeatureRelationship(transcript, "relationship", "part_of");
 
             if (ProductiveTranscript.class.isAssignableFrom(transcriptClass)) {
-                String polypeptideUniqueName = String.format("%s:pep", transcriptUniqueName);
+                String polypeptideUniqueName;
+                if (transcriptUniqueName.endsWith(":mRNA")) {
+                    polypeptideUniqueName = String.format("%s:pep", transcriptUniqueName.substring(0, transcriptUniqueName.length() - 5));
+                } else {
+                    polypeptideUniqueName = String.format("%s:pep", transcriptUniqueName);
+                }
                 logger.trace(String.format("Creating polypeptide '%s' for transcript '%s'",
                     polypeptideUniqueName, getUniqueName()));
                 Polypeptide polypeptide = new Polypeptide(getOrganism(), polypeptideUniqueName);
+                for (FeatureLoc featureLoc: transcript.getFeatureLocs()) {
+                    featureLoc.getSourceFeature().addLocatedChild(polypeptide, featureLoc.getFmin(), featureLoc.getFmax(),
+                        featureLoc.getStrand(), phase, featureLoc.getLocGroup(), featureLoc.getRank());
+                }
                 ((ProductiveTranscript)transcript).setProtein(polypeptide);
             }
 
