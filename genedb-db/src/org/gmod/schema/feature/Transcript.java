@@ -296,7 +296,7 @@ public class Transcript extends Region {
     @Override
     public void raiseFmaxTo(int fmax) {
         super.raiseFmaxTo(fmax);
-        getGene().lowerFminTo(fmax);
+        getGene().raiseFmaxTo(fmax);
     }
 
     /**
