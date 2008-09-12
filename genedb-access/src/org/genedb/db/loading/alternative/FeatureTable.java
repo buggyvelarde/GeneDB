@@ -95,16 +95,23 @@ class FeatureTable extends EmblFile.Section {
         public String getUniqueName() throws DataError {
             String temporarySystematicId = this.getQualifierValue("temporary_systematic_id");
             String systematicId = this.getQualifierValue("systematic_id");
+            String featName = this.getQualifierValue("FEAT_NAME");
 
             if (temporarySystematicId != null && systematicId != null) {
-                throw new DataError(String.format("%s feature has both /systematic_id and /temporary_systematic_id", this.type));
+                throw new DataError(
+                    String.format("%s feature has both /systematic_id and /temporary_systematic_id", this.type));
             }
             else if (temporarySystematicId != null) {
                 return temporarySystematicId;
             } else if (systematicId != null) {
                 return systematicId;
+            } else if (featName != null) {
+                logger.warn(
+                    String.format("%s feature has neither /systematic_id nor /temporary_systematic_id; " +
+                                  "using /FEAT_NAME=\"%s\"", this.type, featName));
+                return featName;
             } else {
-                throw new DataError(String.format("%s feature has neither /systematic_id nor /temporary_systematic_id", this.type));
+                throw new DataError(String.format("%s feature has neither /systematic_id nor /temporary_systematic_id nor /FEAT_NAME", this.type));
             }
         }
     }
