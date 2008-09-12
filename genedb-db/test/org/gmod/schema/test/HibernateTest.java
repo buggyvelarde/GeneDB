@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import org.genedb.db.test.tools.BuildTestDatabase;
 
 import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
+import org.gmod.schema.feature.AbstractGene;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -22,6 +23,7 @@ import org.junit.Test;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 public class HibernateTest {
@@ -83,6 +85,15 @@ public class HibernateTest {
         for (String name: classMetadataByName.keySet()) {
             logger.info(name);
             session.createQuery("from " + name).setMaxResults(100).list();
+        }
+    }
+
+    @Test
+    public void fetchGeneStarts() {
+        @SuppressWarnings("unchecked")
+        List<AbstractGene> genes = session.createCriteria(AbstractGene.class).setMaxResults(100).list();
+        for (AbstractGene gene: genes) {
+            logger.info(String.format("Gene '%s' starts at %d", gene.getUniqueName(), gene.getStart()));
         }
     }
 }

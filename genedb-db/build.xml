@@ -162,7 +162,7 @@
 
     </target>
 
-    <target name="run-tests" depends="make-test-jar">
+    <target name="run-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
       <junit printsummary="no" haltonfailure="yes" fork="true">
         <jvmarg value="-Xmx256m"/>
         <jvmarg value="-classic"/>
@@ -257,6 +257,12 @@
         </java>
     </target>
 
+    <target name="make-pfalciparum-database-if-necessary" depends="does-pfalciparum-database-exist" unless="db.pfalciparum.exists">
+        <antcall target="make-pfalciparum-database"/>
+    </target>
+    <target name="does-pfalciparum-database-exist">
+        <available property="db.pfalciparum.exists" file="${imported.basedir.db}/test-data/hsqldb/pfalciparum.data"/>
+    </target>
     <target name="make-pfalciparum-database" depends="prompt-for-password,genedb-util.anttasks,make-test-jar">
         <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
