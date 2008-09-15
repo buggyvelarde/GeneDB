@@ -103,7 +103,7 @@ public class Password extends Task {
 
     private Component passwordEntryField() {
         final TextField textField = new TextField(16);
-        textField.setEchoChar('�');
+        textField.setEchoChar('*');
 
         textField.addTextListener(new TextListener() {
             public void textValueChanged(TextEvent e) {

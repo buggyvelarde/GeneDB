@@ -37,7 +37,7 @@
     </target>
 
     <target name="anttasks" depends="clean-build-util,setup-util" description="Create anttasks.jar">
-        <javac srcdir="${imported.basedir.util}/anttasks" destdir="${imported.basedir.util}/ant-build/anttasks-classes" debug="on" encoding="utf-8">
+        <javac srcdir="${imported.basedir.util}/anttasks" destdir="${imported.basedir.util}/ant-build/anttasks-classes" debug="on">
             <classpath refid="anttasks-jars"/>
         </javac>
 
