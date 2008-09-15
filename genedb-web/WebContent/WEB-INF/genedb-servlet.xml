@@ -16,6 +16,7 @@
 
     <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
     <context:spring-configured/>
+    <context:mbean-export/>
 
     <!-- <tx:annotation-driven mode="aspectj" /> -->
 
@@ -60,22 +61,7 @@
     </bean>
 -->
 
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="configLocation" value="classpath:ehcache-spring.xml" />
-    </bean>
 
-    <bean id="dtoCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-      <property name="cacheManager" ref="cacheManager" />
-      <property name="cacheName" value="org.genedb.web.DTO_CACHE" />
-      <property name="blocking" value="true" />
-    </bean>
-
-
-    <bean id="proteinMapCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-      <property name="cacheManager" ref="cacheManager" />
-      <property name="cacheName" value="org.genedb.web.PROTEIN_MAP_CACHE" />
-      <property name="blocking" value="true" />
-    </bean>
 
 
     <bean id="goProcessBrowse"
@@ -278,15 +264,27 @@
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="features/gene" />
         <property name="geneDetailsView" value="features/geneDetails" />
-        <!-- <property name="geneSequenceView" value="features/geneSequence" /> -->
         <property name="dtoCache" ref="dtoCache" />
-        <property name="proteinMapCache" ref="proteinMapCache" />
         <property name="bindOnNewForm" value="true" />
         <property name="validator" ref="namedFeatureValidator" />
         <property name="cacheSeconds" value="86400" />
     </bean>
     <bean id="namedFeatureValidator"
         class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
+
+
+    <bean id="ContextMapController"
+        class="org.genedb.web.mvc.controller.ContextMapController">
+        <property name="commandName" value="contextMap" />
+        <property name="commandClass"
+            value="org.genedb.web.mvc.controller.ContextMapController$Command" />
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
+        <property name="view" ref="jsonView" />
+        <property name="validator" ref="contextMapFormValidator" />
+        <property name="cacheSeconds" value="86400" />
+        <property name="diagramCache" ref="diagramCache" />
+        <property name="contextMapCache" ref="contextMapCache" />
+    </bean>
 
     <bean id="NameSearchController"
         class="org.genedb.web.mvc.controller.NameSearchController">
@@ -388,28 +386,10 @@
         <property name="sequenceDao" ref="sequenceDao" />
     </bean>
 
-    <bean id="modelBuilder"
-        class="org.genedb.web.mvc.controller.ModelBuilder">
-        <property name="sequenceDao" ref="sequenceDao" />
-        <property name="generalDao" ref="generalDao" />
-        <property name="cvDao" ref="cvDao" />
-    </bean>
-
     <bean id="jsonConfig" class="net.sf.json.JsonConfig" />
     <bean id="jsonView"
         class="net.sf.json.spring.web.servlet.view.JsonView">
         <property name="jsonConfig" ref="jsonConfig" />
-    </bean>
-
-    <bean id="ContextMapController"
-        class="org.genedb.web.mvc.controller.ContextMapController">
-        <property name="commandName" value="contextMap" />
-        <property name="commandClass"
-            value="org.genedb.web.mvc.controller.ContextMapController$Command" />
-        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
-        <property name="view" ref="jsonView" />
-        <property name="validator" ref="contextMapFormValidator" />
-        <property name="cacheSeconds" value="86400" />
     </bean>
 
     <bean id="contextMapFormValidator"
