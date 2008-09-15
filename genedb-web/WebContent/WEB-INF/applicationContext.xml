@@ -142,7 +142,6 @@
 
     <bean id="modelBuilder"
         class="org.genedb.web.mvc.controller.ModelBuilder">
-        <property name="generalDao" ref="generalDao" />
         <!-- <property name="cvDao" ref="cvDao" /> -->
         <property name="diagramCache" ref="diagramCache" />
     </bean>
