@@ -4,12 +4,14 @@
  * To change this generated comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-package org.genedb.web.mvc.controller;
+package org.genedb.web.mvc.controller.analysis;
 
 import org.gmod.schema.mapped.Organism;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,14 +32,16 @@ import java.util.regex.Pattern;
  *
  * @author Adrian Tivey (art)
  */
-public class MotifSearchController extends SimpleFormController {
-    
+@Controller
+@RequestMapping("/MotifSearch")
+public class MotifSearchController {
+
     private static final int MAX_RESULT_SIZE = 20000;
-    
+
     private static final Map<Character, String> PROTEIN_GROUP_MAP;
     private static final Map<Character, String> NUCLEOTIDE_GROUP_MAP;
     private static Pattern BY_LINE_PATTERN;
-    
+
     static {
         PROTEIN_GROUP_MAP = new HashMap<Character, String>();
         PROTEIN_GROUP_MAP.put('B', "[AGS]");          //tiny
@@ -64,28 +68,29 @@ public class MotifSearchController extends SimpleFormController {
         NUCLEOTIDE_GROUP_MAP.put('V', "[agc]"); // not T
         NUCLEOTIDE_GROUP_MAP.put('H', "[act]"); // not G
         NUCLEOTIDE_GROUP_MAP.put('B', "[gct]"); // not A
-        
+
         BY_LINE_PATTERN = Pattern.compile("^.*$", Pattern.MULTILINE);
     }
-    
 
-    @Override
-    protected ModelAndView onSubmit(Object command) throws Exception {
 
-        MotifSearchBean msb = (MotifSearchBean) command;
-        
+    private String buffer;
+    private String lastReturned;
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView onSubmit(MotifSearchBean msb) throws Exception {
+
 //        String startString = req.getParameter("start");
 //        if (startString == null) {
 //            startString = "0";
 //        }
-        
+
         // size or max hits
 
         int start = 0;
-        List results = runMainSearch(msb.getOrganism(), msb.getPattern(), 
+        List results = runMainSearch(msb.getOrganism(), msb.getPattern(),
                 msb.isProtein(), start);
-        
-        
+
+
         // Return results to page
 //        req.setAttribute("title", "Gene Results List");
         HashMap model = new HashMap();
@@ -111,88 +116,124 @@ public class MotifSearchController extends SimpleFormController {
      * @return
      * @throws IOException
      */
-    private List runMainSearch(Organism org, String patternString, boolean protein, int start,  
+    private List runMainSearch(Organism org, String patternString, boolean protein, int start,
             String customGroup1, String customGroup2, String customGroup3) throws IOException {
         // Work out db given org
 
         String dbFileName = "/tmp/motifTest"; // FIXME
-        
+
         CharSequence in = fromFile(dbFileName);
 
-        
+
         // Validate custom groups
 //      if (!validateCustomGroup(customGroup1)) {
-//          
+//
 //      }
-        
-        Pattern pattern = manipulateRegExp(patternString, customGroup1, customGroup2, customGroup3);
-        
+
+//        Pattern pattern = manipulateRegExp(patternString, customGroup1, customGroup2, customGroup3);
+
+        Pattern pattern = Pattern.compile("CAD");
         // Run search
         return runSearch(in, pattern, start);
     }
-    
 
-    
-    
-    
+
+
+
+
     /**
      * @return
      */
     private static Pattern validatePattern(String patternString) {
-        
+
 //      # Check search
 //      if ($syn !~ /^[A-Za-z0-9\.\+\?\{\}\,\[\]\*\^\$]+$/) {
 //      print qq(Your query contained invalid characters. Please alter your query and try again.);
-        
+
         return Pattern.compile(patternString);
     }
 
-    
-    private List runSearch(CharSequence in, Pattern pattern, int start) throws IllegalStateException {
+
+    private List<MotifMatch> runSearch(CharSequence in, Pattern pattern, int start) throws IllegalStateException {
         // Read in pairs of lines
         // Compile the pattern
 
-        ArrayList results = new ArrayList();
-        
+        List<MotifMatch> results = new ArrayList<MotifMatch>();
+
         Matcher matcher = BY_LINE_PATTERN.matcher(in);
-        
-        // Read the lines
-        while (matcher.find()) { 
-            // Get the line with the line termination character sequence
-            String idLine = matcher.group(0);
+
+        int count = 0;
+        boolean stillContent = true;
+        while (stillContent) {
+            String idLine = getLine(matcher);
             if (!idLine.startsWith(">")) {
                 throw new IllegalStateException("db (flat-file) isn't correctly formatted. Expecting header but got:"+idLine);
             }
-            idLine = idLine.substring(1);
-            // Try and match on second line
-            if (matcher.find()) { 
-                // Get the line without the line termination character sequence
-                String sequence = matcher.group(0);
-                MotifMatch mm = runLineSearch(sequence, idLine, pattern);
-                if (mm != null) {
-                    results.add(mm);
+            count++;
+            System.err.println("" + count + idLine);
+
+            boolean inSequence = true;
+            StringBuilder sequence = new StringBuilder();
+            while (inSequence) {
+                String line = getLine(matcher);
+                if (line == null) {
+                    inSequence = false;
+                    stillContent = false;
+                } else {
+                    if (line.startsWith(">")) {
+                        pushBackLine();
+                        inSequence = false;
+                    } else {
+                        sequence.append(line);
+                    }
                 }
-            } else {
-                throw new IllegalStateException("db (flat-file) isn't correctly formatted. Got no corresponding sequence to "+idLine);
             }
+
+            MotifMatch mm = runLineSearch(sequence.toString(), idLine, pattern);
+            if (mm != null) {
+                results.add(mm);
+            }
+//                throw new IllegalStateException("db (flat-file) isn't correctly formatted. Got no corresponding sequence to "+idLine);
         }
         return results;
     }
-    
-    
-    
+
+
+
+    private String getLine(Matcher matcher) {
+        if (buffer != null) {
+            lastReturned = buffer;
+            buffer = null;
+            return lastReturned;
+        }
+        if (!matcher.find()) {
+            return null;
+        }
+        lastReturned = matcher.group(0);
+        return lastReturned;
+    }
+
+    private void pushBackLine() {
+       if (buffer != null) {
+           throw new RuntimeException("Internal error - pushbackLine called when buffer not empty");
+       }
+       buffer = lastReturned;
+    }
+
+
+
     /**
      * @param sequence
      * @param pattern
      * @return
      */
     private MotifMatch runLineSearch(String sequence, String idLine, Pattern pattern) {
-        
+
         MotifMatch motifMatch = null;
         Matcher matcher = pattern.matcher(sequence);
-        
+
         // Read the lines
-        while (matcher.find()) { 
+        while (matcher.find()) {
             // Get the line without the line termination character sequence
             String hit = matcher.group();
             if (motifMatch == null) {
@@ -200,18 +241,18 @@ public class MotifSearchController extends SimpleFormController {
             }
             motifMatch.addCoords(matcher.start(), matcher.end());
         }
-        
+
         return motifMatch;
     }
 
     private Pattern manipulateRegExp(String in, String cg1, String cg2, String cg3) {
         StringBuffer pb = new StringBuffer();
-//    
-        
+//
+
         int leftSquareBracket = -1;
         int leftCurlyBracket = -1;
-        
-        
+
+
         for (int i=0; i < in.length(); i++) {
             char c = in.charAt(i);
             switch (c) {
@@ -224,7 +265,7 @@ public class MotifSearchController extends SimpleFormController {
                 leftSquareBracket = -1;
                 pb.append(c);
                 break;
-                    
+
                 // Curly brackets
             case '{':
                 leftCurlyBracket = i;
@@ -234,7 +275,7 @@ public class MotifSearchController extends SimpleFormController {
                 leftCurlyBracket = -1;
                 pb.append(c);
                 break;
-                
+
                 // Special characters
             case '.':
             case '+':
@@ -242,7 +283,7 @@ public class MotifSearchController extends SimpleFormController {
             case ',':
                 pb.append(c);
                 break;
-                
+
                 // Numbers
             case '0':
             case '1':
@@ -260,9 +301,9 @@ public class MotifSearchController extends SimpleFormController {
                     pb.append(expandGroup(c));
                 }
                 break;
-                
+
             default:
-                pb.append(expandGroup(c));  
+                pb.append(expandGroup(c));
             }
         }
 //$syn =~ s|\{|_\{|g;
@@ -278,13 +319,13 @@ public class MotifSearchController extends SimpleFormController {
 //    }
 //    $newExp .= $cur;
 //}
-//    
+//
 //# $syn =~ m/(.*)/s;
 //      $syn = $newExp;
-//      
+//
         return Pattern.compile(pb.toString());
     }
-      
+
     public String expandGroup(char c) {
         return ""; // FIXME
     }
@@ -295,7 +336,7 @@ public class MotifSearchController extends SimpleFormController {
     private static CharSequence fromFile(String filename) throws IOException {
         FileInputStream fis = new FileInputStream(filename);
         FileChannel fc = fis.getChannel();
-    
+
         // Create a read-only CharBuffer on the file
         ByteBuffer bbuf = fc.map(FileChannel.MapMode.READ_ONLY, 0, (int)fc.size());
         CharBuffer cbuf = Charset.forName("8859_1").newDecoder().decode(bbuf);
@@ -308,8 +349,8 @@ public class MotifSearchController extends SimpleFormController {
         private String idLine;
         private String sequence;
         private List<int[]> coords = new ArrayList<int[]>();
-        
-        
+
+
         /**
          * @param idLine
          * @param sequence
@@ -330,9 +371,9 @@ public class MotifSearchController extends SimpleFormController {
             coordPair[1] = j;
             coords.add(coordPair);
         }
-        
-        
-        
+
+
+
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
@@ -349,19 +390,78 @@ public class MotifSearchController extends SimpleFormController {
             return ret.toString();
         }
     }
- 
-//    public static void main(String[] args) throws IOException {
-//      String org=args[0];
-//      String pattern=args[1];
-//      
-//      MotifSearchController ms = new MotifSearchController();
-//      List results = ms.runMainSearch(org, pattern, true, 0);
-//      System.out.println("Number of results: "+results.size());
-//      for (int i = 0; i < results.size(); i++) {
-//          MotifMatch match = (MotifMatch) results.get(i);
-//          System.out.print(i+"  "+match);
-//      }
-//    }
 
-    
+    public static void main(String[] args) throws IOException {
+      //String org=args[0];
+      String pattern=args[1];
+
+      MotifSearchController ms = new MotifSearchController();
+      Organism org = null;
+      List<MotifMatch> results = ms.runMainSearch(org, pattern, true, 0);
+      System.err.println("Number of results: "+results.size());
+      for (MotifMatch match : results) {
+          //System.err.println(match.idLine);
+      }
+    }
+
+}
+
+
+class MotifSearchBean {
+
+    private boolean protein;
+    private String pattern;
+    private String extJ;
+    private String extX;
+    private Organism organism;
+    private String dbName;
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public String getExtJ() {
+        return this.extJ;
+    }
+
+    public void setExtJ(String extJ) {
+        this.extJ = extJ;
+    }
+
+    public String getExtX() {
+        return this.extX;
+    }
+
+    public void setExtX(String extX) {
+        this.extX = extX;
+    }
+
+    public String getPattern() {
+        return this.pattern;
+    }
+
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+    public Organism getOrganism() {
+        return this.organism;
+    }
+
+    public void setOrganism(Organism organism) {
+        this.organism = organism;
+    }
+
+    public boolean isProtein() {
+        return this.protein;
+    }
+
+    public void setProtein(boolean protein) {
+        this.protein = protein;
+    }
+
 }

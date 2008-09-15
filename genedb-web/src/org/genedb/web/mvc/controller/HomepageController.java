@@ -123,7 +123,6 @@ public class HomepageController {
         return new ArrayList<NewsItem>(0);
     }
 
-    @Required
     public void setTaxonNodeArrayPropertyEditor(
             TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
         this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;

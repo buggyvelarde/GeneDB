@@ -20,23 +20,22 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.domain.objects.PolypeptideRegionGroup;
-import org.genedb.web.gui.DiagramCache;
-import org.genedb.web.gui.ProteinMapDiagram;
-import org.genedb.web.gui.RenderedProteinMap;
 
 import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.common.collect.Maps;
 
 /**
  * Looks up a feature by unique name
@@ -65,7 +64,20 @@ public class FeatureSequenceController extends PostOrGetFormController {
 
         String viewName = geneSequenceView;
 
-        Map<String, Object> model = modelBuilder.prepareFeature(feature);
+        Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
+        Map<String, String> model = Maps.newHashMap();
+
+        model.put("unspliced", transcript.getGene().getResidues());
+        if (transcript.getExons().size() > 1) {
+            model.put("spliced", transcript.getResidues());
+        }
+        if (transcript instanceof ProductiveTranscript) {
+            Polypeptide pp = ((ProductiveTranscript) transcript).getProtein();
+            if (pp != null) {
+//                model.put("protein", pp.getResidues());
+            }
+        }
+        model.put("unspliced", transcript.getGene().getResidues());
 
         return new ModelAndView(viewName, model);
     }

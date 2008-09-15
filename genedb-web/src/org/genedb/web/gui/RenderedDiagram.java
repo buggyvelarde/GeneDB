@@ -38,8 +38,8 @@ public abstract class RenderedDiagram {
     private static final Logger logger = Logger.getLogger(RenderedDiagram.class);
 
     private String filenamePrefix = "";
-    private static final String FILE_FORMAT = "png";
-    private static final String FILE_EXT = "png";
+    protected static final String FILE_FORMAT = "png";
+    protected static final String FILE_EXT = "png";
 
     protected enum ColorModel { DIRECT, INDEXED }
 

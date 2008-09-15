@@ -19,35 +19,28 @@
 
 package org.genedb.web.mvc.controller;
 
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.BlockingCache;
 
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.domain.objects.PolypeptideRegionGroup;
-import org.genedb.web.gui.DiagramCache;
-import org.genedb.web.gui.ImageMapSummary;
-import org.genedb.web.gui.ProteinMapDiagram;
-import org.genedb.web.gui.RenderedProteinMap;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
-import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.common.collect.Maps;
 
 /**
  * Looks up a feature by unique name
@@ -56,18 +49,17 @@ import javax.servlet.http.HttpServletResponse;
  * @author Adrian Tivey (art)
  */
 @Controller
+@ManagedResource(objectName="bean:name=namedFeatureController", description="NamedFeature Controller")
 public class NamedFeatureController extends PostOrGetFormController {
      private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
 
     private SequenceDao sequenceDao;
     private String geneView;
     private String geneDetailsView;
-    //private String geneSequenceView;
+    private int cacheHit = 0;
+    private int cacheMiss = 0;
 
     private BlockingCache dtoCache;
-
-    private BlockingCache proteinMapCache;
-
 
     private ModelBuilder modelBuilder;
 
@@ -86,63 +78,33 @@ public class NamedFeatureController extends PostOrGetFormController {
             return showForm(request, response, be);
         }
 
-        if (!(feature instanceof Transcript)) {
+        Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
+        if (transcript == null) {
             // If feature isn't transcript redirect - include model
             // is it part of a gene
+            logger.warn(String.format("Failed to find transcript for an id of '%s'", nlb.getName()));
+            be.reject("no.results");
+            return showForm(request, response, be);
         }
 
         String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
-//        if (nlb.isSequenceView()) {
-//            viewName = geneSequenceView;
-//        }
 
         TranscriptDTO dto = null;
-        Element element = dtoCache.get(feature.getUniqueName());
+        Element element = dtoCache.get(transcript.getUniqueName());
+
         if (element == null) {
-            // Get model
+            cacheMiss++;
+            logger.error("dto cache miss for '"+feature.getUniqueName());
+            dto = modelBuilder.prepareTranscript(transcript);
             dtoCache.put(new Element(feature.getUniqueName(), dto));
         } else {
+            logger.debug("dto cache hit for '"+feature.getUniqueName());
             dto = (TranscriptDTO) element.getValue();
+            cacheHit++;
         }
 
-        Map<String, Object> model = modelBuilder.prepareFeature(feature);
-
-        ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject("dto", dto);
-
-        if (model.containsKey("polypeptide")) {
-            Polypeptide polypeptide = (Polypeptide) model.get("polypeptide");
-            @SuppressWarnings("unchecked")
-            List<PolypeptideRegionGroup> domainInformation = (List<PolypeptideRegionGroup>) model.get("domainInformation");
-
-            ImageMapSummary ims = null;
-            element = proteinMapCache.get(feature.getUniqueName());
-            if (element != null) {
-                ims = (ImageMapSummary) element.getValue();
-                if (ims.isValid()) {
-                    mav.addObject("proteinMap", ims);
-                }
-            } else {
-                // Get image
-                ProteinMapDiagram diagram = new ProteinMapDiagram(polypeptide, domainInformation);
-                if (!diagram.isEmpty()) {
-                    RenderedProteinMap renderedProteinMap = new RenderedProteinMap(diagram);
-
-                    ims = new ImageMapSummary(
-                            renderedProteinMap.getWidth(),
-                            renderedProteinMap.getHeight(),
-                            DiagramCache.fileForDiagram(renderedProteinMap, getServletContext()),
-                            renderedProteinMap.getRenderedFeaturesAsHTML("proteinMapMap"));
-                    mav.addObject("proteinMap", ims);
-
-                } else {
-                    ims = new ImageMapSummary();
-                }
-                proteinMapCache.put(new Element(feature.getUniqueName(), dto));
-            }
-
-        }
-
+        HashMap<String, TranscriptDTO> model = Maps.newHashMap();
+        model.put("dto", dto);
         return new ModelAndView(viewName, model);
     }
 
@@ -158,16 +120,8 @@ public class NamedFeatureController extends PostOrGetFormController {
         this.geneDetailsView = geneDetailsView;
     }
 
-//    public void setGeneSequenceView(String geneSequenceView) {
-//        this.geneSequenceView = geneSequenceView;
-//    }
-
     public void setDtoCache(BlockingCache dtoCache) {
         this.dtoCache = dtoCache;
-    }
-
-    public void setProteinMapCache(BlockingCache proteinMapCache) {
-        this.proteinMapCache = proteinMapCache;
     }
 
     public void setModelBuilder(ModelBuilder modelBuilder) {
@@ -175,11 +129,21 @@ public class NamedFeatureController extends PostOrGetFormController {
     }
 
 
+    @ManagedAttribute(description="The no. of times the controller found the entry in the cache")
+    public int getCacheHit() {
+        return cacheHit;
+    }
+
+    @ManagedAttribute(description="The no. of times the controller didn't find the entry in the cache")
+    public int getCacheMiss() {
+        return cacheMiss;
+    }
+
+
 
     public static class NameLookupBean {
         private String name;
         private boolean detailsOnly = false;
-        //private boolean sequenceView = false;
 
         public String getName() {
             return this.name;
@@ -198,14 +162,6 @@ public class NamedFeatureController extends PostOrGetFormController {
             this.detailsOnly = detailsOnly;
         }
 
-//        public boolean isSequenceView() {
-//            return sequenceView;
-//        }
-//
-//        public void setSequenceView(boolean sequenceView) {
-//            this.sequenceView = sequenceView;
-//        }
-
         /*
          * We need this because the form that is shown when the feature
          * can't be found (search/nameLookup.jsp) expects an 'organism'
@@ -215,4 +171,5 @@ public class NamedFeatureController extends PostOrGetFormController {
             return null;
         }
     }
+
 }

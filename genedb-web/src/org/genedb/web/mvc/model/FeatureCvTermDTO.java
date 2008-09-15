@@ -1,75 +1,76 @@
 package org.genedb.web.mvc.model;
 
 import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.FeatureCvTermDbXRef;
+import org.gmod.schema.mapped.FeatureCvTermProp;
 import org.gmod.schema.mapped.Pub;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
-public class FeatureCvTermDTO {
-    String typeName;
-    List<String> qualifiers;
-    String evidence;
-    List<String> pubs;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+
+public class FeatureCvTermDTO implements Serializable {
+    private String typeName;
+    private String typeAccession;
+    private List<String> pubs;
+    private String withFrom;
+    private List<DbXRefDTO> dbXRefDtoList;
+    private Multimap<String, String> props = Multimaps.newArrayListMultimap();
 
     public FeatureCvTermDTO(FeatureCvTerm fct) {
-        // TODO Auto-generated constructor stub
 
+        for (FeatureCvTermProp fctProp : fct.getFeatureCvTermProps()) {
+            props.put(fctProp.getType().getName(), fctProp.getValue());
+        }
+
+        typeName = fct.getCvTerm().getName();
+        typeAccession = fct.getCvTerm().getDbXRef().getAccession();
+
+
+        // TODO Double check logic with original page
         pubs = new ArrayList<String>();
         for (Pub pub : fct.getPubs()) {
             pubs.add(pub.getUniqueName());
         }
 
+        if (fct.getPub() != null) {
+            withFrom = fct.getPub().getUniqueName();
+        }
+
+        dbXRefDtoList = new ArrayList<DbXRefDTO>();
+        for (FeatureCvTermDbXRef featureCvTermDbXRef : fct.getFeatureCvTermDbXRefs()) {
+            dbXRefDtoList.add(new DbXRefDTO(featureCvTermDbXRef.getDbXRef()));
+        }
+
     }
 
+    public String getTypeName() {
+        return typeName;
+    }
 
+    public String getTypeAccession() {
+        return typeAccession;
+    }
 
-//  <c:if test="${fn:length(featureCvTerms) > 0}">
-//    <td class="value evidence">
-//        <db:filtered-loop items="${featureCvTerm.featureCvTermProps}" cvTerm="evidence" var="evidence">
-//                ${evidence.value}
-//        </db:filtered-loop>&nbsp;
+    public List<String> getPubs() {
+        return pubs;
+    }
 
-//    </td>
-//    <td class="value accession">
-//        <c:forEach items="${featureCvTerm.featureCvTermDbXRefs}" var="fctdbx">
-//            <a href="${fctdbx.dbXRef.db.urlPrefix}${fctdbx.dbXRef.accession}">${fctdbx.dbXRef.db.name}:${fctdbx.dbXRef.accession}</a>
-//        </c:forEach>
-//        <c:if test="${featureCvTerm.pub.uniqueName != 'null'}">
-//            <a href="${PMID}${featureCvTerm.pub.uniqueName}">${featureCvTerm.pub.uniqueName}</a>
-//        </c:if>
-//    </td>
-//    <c:if test="${featureCounts != null}">
-//    <td class="value others">
-//        <c:forEach items="${featureCounts}" var="nc">
-//            <c:if test="${nc.name == featureCvTerm.cvTerm.name}">
-//                <c:if test="${nc.count == 1}" >
-//                    0 Others
-//                </c:if>
-//                <c:if test="${nc.count > 1}" >
-//                    <c:url value="/BrowseTerm" var="othersUrl">
-//                        <c:param name="organism" value="${organism}"/>
-//                        <c:param name="term" value="${featureCvTerm.cvTerm.name}"/>
-//                        <c:param name="category" value="${featureCvTerm.cvTerm.cv.name}"/>
-//                        <c:param name="json" value="false"/>
-//                    </c:url>
-//                    <a href="${othersUrl}"> ${nc.count - 1} Others </a>
-//                </c:if>
-//            </c:if>
-//        </c:forEach>
-//    </td>
-//    </c:if>
-//    </tr>
-//  </c:forEach>
-//  <%-- Controlled Curation Section --%>
-//  <db:filterByType items="${polypeptide.featureCvTerms}" cvPattern="CC_.*" var="controlledCurationTerms"/>
-//  <c:if test="${fn:length(controlledCurationTerms) > 0}">
-//      <format:genePageSection id="controlCur">
-//          <div class="heading">Controlled Curation</div>
-//          <table width="100%" class="go-section">
-//              <format:featureCvTerm-section featureCvTerms="${controlledCurationTerms}" featureCounts="${CC}" organism="${organism}"/>
-//          </table>
-//      </format:genePageSection>
-//  </c:if>
+    public String getWithFrom() {
+        return withFrom;
+    }
+
+    public List<DbXRefDTO> getDbXRefDtoList() {
+        return dbXRefDtoList;
+    }
+
+    public Map<String, Collection<String>> getProps() {
+        return props.asMap();
+    }
 
 }

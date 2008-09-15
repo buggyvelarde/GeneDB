@@ -33,6 +33,7 @@ public class RenderedProteinMap extends RenderedDiagram {
     private int membraneStructureMargin = 2;
     private int cytoplasmicRegionHeight = 2;
     private Color compoundFeatureBackgroundColor = new Color(200, 200, 200);
+    private String transcriptName;
 
     private boolean hasMembraneStructure;
 
@@ -47,6 +48,7 @@ public class RenderedProteinMap extends RenderedDiagram {
         setMajorTickHeightAbove(0);
         setScaleVerticalPos(0);
         hasMembraneStructure = (getDiagram().getMembraneStructure() != null);
+        transcriptName = diagram.getTranscriptUniqueName();
     }
 
     private void setTickDistancesInPixels(int pixels) {
@@ -81,6 +83,10 @@ public class RenderedProteinMap extends RenderedDiagram {
             throw new IllegalStateException("This diagram has no membrane structure");
         }
         return topOfTrack(0) - membraneStructureTrackHeight;
+    }
+
+    public String getPreferredFilename() {
+        return String.format("%s.0f.%s", transcriptName, getBasesPerPixel(), FILE_EXT);
     }
 
     @Override
@@ -175,6 +181,7 @@ public class RenderedProteinMap extends RenderedDiagram {
         private String url;
         private int trackBelowLabel;
         private int x;
+        private String uniqueName;
 
         public Label(String shortLabel, String longLabel, int trackBelowLabel, int x, String url) {
             this.shortLabel = shortLabel;

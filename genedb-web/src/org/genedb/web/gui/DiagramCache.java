@@ -1,6 +1,8 @@
 package org.genedb.web.gui;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,16 +10,45 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 
 public class DiagramCache {
     private static final Logger logger = Logger.getLogger(DiagramCache.class);
 
-    private static final ResourceBundle projectProperties = ResourceBundle.getBundle("project");
-    private static final String contextMapRenderDirectory = projectProperties
-            .getString("contextMap.render.directory");
-    private static final String proteinMapRenderDirectory = projectProperties
-        .getString("proteinMap.render.directory");
+
+    private String baseDiagramDirectory;
+    private String baseUri = "";
+    private String contextMapRenderDirectory;
+    private String proteinMapRenderDirectory;
+
+
+    private File contextMapRootDir;
+
+
+    private File proteinMapRootDir;
+
+
+    @PostConstruct
+    private void initDirs() {
+        logger.error("In initDirs for diagramcache");
+        File baseDir = new File(baseDiagramDirectory);
+        if (!baseDir.exists() || !baseDir.canWrite()) {
+            throw new RuntimeException(String.format("The diagram cache '%s' doesn't exist or isn't writable", baseDiagramDirectory));
+        }
+
+        contextMapRootDir = new File(baseDir, contextMapRenderDirectory);
+        if (!contextMapRootDir.exists()) {
+            contextMapRootDir.mkdirs();
+        }
+
+        proteinMapRootDir = new File(baseDir, proteinMapRenderDirectory);
+        if (!proteinMapRootDir.exists()) {
+            proteinMapRootDir.mkdirs();
+        }
+    }
+
+
 
     /**
      * Get the path of a file containing an image representing this diagram,
@@ -29,22 +60,18 @@ public class DiagramCache {
      * @return
      * @throws IOException
      */
-    public static String fileForDiagram(RenderedContextMap renderedContextMap,
-            ServletContext servletContext) throws IOException {
+    public String fileForDiagram(RenderedContextMap renderedContextMap) throws IOException {
 
         ContextMapDiagram diagram = renderedContextMap.getDiagram();
 
-        File cacheRootDir = new File(servletContext.getRealPath(contextMapRenderDirectory));
-        if (!cacheRootDir.exists())
-            throw new FileNotFoundException(contextMapRenderDirectory);
-
-        File organismDir = new File(cacheRootDir, diagram.getOrganism());
+        File organismDir = new File(contextMapRootDir, diagram.getOrganism());
         if (!organismDir.exists()) {
             logger.warn(String
                     .format("Directory '%s' not found; attempting to create", organismDir));
             boolean success = organismDir.mkdir();
-            if (!success)
+            if (!success) {
                 throw new IOException("Failed to create directory: " + organismDir);
+            }
         }
 
         File chromosomeDir = new File(organismDir, diagram.getChromosome());
@@ -52,26 +79,24 @@ public class DiagramCache {
             logger.warn(String
                     .format("Directory '%s' not found; attempting to create", organismDir));
             boolean success = chromosomeDir.mkdir();
-            if (!success)
+            if (!success) {
                 throw new IOException("Failed to create directory: " + chromosomeDir);
+            }
         }
 
         String cacheFileName = fileForDiagram(renderedContextMap, chromosomeDir);
 
-        return servletContext.getContextPath() + contextMapRenderDirectory + '/'
+        return baseUri + contextMapRenderDirectory + '/'
         + diagram.getOrganism() + '/' + diagram.getChromosome() + '/' + cacheFileName;
     }
 
-    public static String fileForDiagram(RenderedProteinMap renderedProteinMap,
-            ServletContext servletContext) throws IOException {
+    public String fileForDiagram(RenderedProteinMap renderedProteinMap) throws IOException {
+
+        Assert.notNull(proteinMapRootDir);
 
         ProteinMapDiagram diagram = renderedProteinMap.getDiagram();
 
-        File cacheRootDir = new File(servletContext.getRealPath(proteinMapRenderDirectory));
-        if (!cacheRootDir.exists())
-            throw new FileNotFoundException(proteinMapRenderDirectory);
-
-        File organismDir = new File(cacheRootDir, diagram.getOrganism());
+        File organismDir = new File(proteinMapRootDir, diagram.getOrganism());
         if (!organismDir.exists()) {
             logger.warn(String
                     .format("Directory '%s' not found; attempting to create", organismDir));
@@ -81,7 +106,7 @@ public class DiagramCache {
         }
 
         String cacheFileName = fileForDiagram(renderedProteinMap, organismDir);
-        return servletContext.getContextPath() + proteinMapRenderDirectory
+        return baseUri + proteinMapRenderDirectory
             + '/' + diagram.getOrganism() + '/' + cacheFileName;
     }
 
@@ -132,4 +157,25 @@ public class DiagramCache {
         assert cacheFile.exists();
         return cacheFileName;
     }
+
+    @Required
+    public void setBaseDiagramDirectory(String baseDiagramDirectory) {
+        this.baseDiagramDirectory = baseDiagramDirectory;
+    }
+
+    @Required
+    public void setContextMapRenderDirectory(String contextMapRenderDirectory) {
+        this.contextMapRenderDirectory = contextMapRenderDirectory;
+    }
+
+    @Required
+    public void setProteinMapRenderDirectory(String proteinMapRenderDirectory) {
+        this.proteinMapRenderDirectory = proteinMapRenderDirectory;
+    }
+
+    @Required
+    public void setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
+    }
+
 }

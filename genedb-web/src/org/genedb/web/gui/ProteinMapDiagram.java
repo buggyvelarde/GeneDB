@@ -9,19 +9,24 @@ import org.gmod.schema.feature.MembraneStructure;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.PolypeptideRegion;
 import org.gmod.schema.feature.SignalPeptide;
+import org.gmod.schema.feature.Transcript;
 
 import java.awt.Color;
 import java.util.Collection;
 
 public class ProteinMapDiagram extends TrackedDiagram {
 
-    private String organism, polypeptideUniqueName;
+    private String organism;
+    private String polypeptideUniqueName;
+    private String transcriptUniqueName;
     private MembraneStructure membraneStructure;
 
-    public ProteinMapDiagram(Polypeptide polypeptide, Collection<PolypeptideRegionGroup> regionGroups) {
+    public ProteinMapDiagram(Polypeptide polypeptide, Transcript transcript,
+            Collection<PolypeptideRegionGroup> regionGroups) {
         super(0, polypeptide.getSeqLen());
         this.organism = polypeptide.getOrganism().getCommonName();
         this.polypeptideUniqueName = polypeptide.getUniqueName();
+        this.transcriptUniqueName = transcript.getUniqueName();
         this.membraneStructure = polypeptide.getMembraneStructure();
 
         this.packSubfeatures = AllocatedCompoundFeature.Mode.STRATIFIED_LTR;
@@ -76,6 +81,9 @@ public class ProteinMapDiagram extends TrackedDiagram {
         return polypeptideUniqueName;
     }
 
+    String getTranscriptUniqueName() {
+        return transcriptUniqueName;
+    }
     MembraneStructure getMembraneStructure() {
         return membraneStructure;
     }
