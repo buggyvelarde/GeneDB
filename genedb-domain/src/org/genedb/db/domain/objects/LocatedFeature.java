@@ -1,6 +1,7 @@
 package org.genedb.db.domain.objects;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Comparator;
  *
  * @author rh11
  */
-public abstract class LocatedFeature implements Comparable<LocatedFeature> {
+public abstract class LocatedFeature implements Comparable<LocatedFeature>, Serializable {
     public abstract String getUniqueName();
     public abstract int getFmin();
     public abstract int getFmax();
