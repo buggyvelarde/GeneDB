@@ -348,7 +348,7 @@ public class SequenceDao extends BaseDao {
     public List<Feature> getFeaturesByCvTermName(String cvTermName) {
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
-                "select f.feature from FeatureCvTerm f where f.type.name like :cvTermName",
+                "select fct.feature from FeatureCvTerm fct where fct.type.name like :cvTermName",
                 "cvTermName", cvTermName);
         return features;
     }
@@ -360,7 +360,7 @@ public class SequenceDao extends BaseDao {
      * @return a (possibly empty) List<Feature> of children
      */
     public List<Feature> getTopLevelFeatures() {
-        String name = "chromosome%";
+        String name = "%chromosome%";
         @SuppressWarnings("unchecked")
         List<Feature> topLevels = getHibernateTemplate().findByNamedParam(
                 "from Feature where cvTerm.name like :name", "name", name);
