@@ -2,10 +2,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
-         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd"
+         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+
     default-init-method="postConstruction">
+
+    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
+    <context:spring-configured/>
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+    <tx:annotation-driven />
 
     <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
@@ -18,6 +28,13 @@
     </bean>
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+    <bean name="diagramCache" class="org.genedb.web.gui.DiagramCache">
+        <property name="baseDiagramDirectory" value="${baseDiagramDirectory}" />
+        <property name="baseUri" value="${baseUri}" />
+        <property name="contextMapRenderDirectory" value="${contextMap.render.directory}" />
+        <property name="proteinMapRenderDirectory" value="${proteinMap.render.directory}" />
+    </bean>
 
 
     <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
@@ -41,6 +58,12 @@
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="generalDao" ref="generalDao" />
     </bean>
+
+    <!-- <bean id="luceneDao" class="org.genedb.querying.core.LuceneDao">
+        <property name="luceneIndexDirectoryName">
+        	<value>${lucene.indexDirectory}</value>
+        </property>
+    </bean>-->
 
     <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
         <property name="luceneIndexList">
@@ -90,6 +113,10 @@
      </property>
     </bean>
 
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+         <property name="sessionFactory" ref="sessionFactory" />
+     </bean>
+
     <bean id="sessionFactory"
         class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
@@ -104,4 +131,53 @@
             <list><value>excludeObsoleteFeatures</value></list>
         </property>
     </bean>
+
+    <bean id="populateCaches" class="org.genedb.web.mvc.model.PopulateCaches">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="diagramCache" ref="diagramCache" />
+        <property name="modelBuilder" ref="modelBuilder" />
+        <property name="dtoCache" ref="dtoCache" />
+        <property name="contextMapCache" ref="contextMapCache" />
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
+    </bean>
+
+
+    <bean id="modelBuilder"
+        class="org.genedb.web.mvc.controller.ModelBuilder">
+        <property name="sequenceDao" ref="sequenceDao" />
+        <property name="generalDao" ref="generalDao" />
+        <!-- <property name="cvDao" ref="cvDao" /> -->
+        <property name="diagramCache" ref="diagramCache" />
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <!-- <property name="configLocation" value="classpath:ehcache-spring.xml" /> -->
+    </bean>
+
+    <bean id="dtoCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager" ref="cacheManager" />
+        <property name="cacheName" value="org.genedb.web.DTO_CACHE" />
+        <property name="blocking" value="true" />
+        <property name="maxElementsInMemory" value="1" />
+        <property name="eternal" value="true" />
+        <property name="overflowToDisk" value="true" />
+        <property name="maxElementsOnDisk" value="0" />
+        <property name="diskPersistent" value="true"/>
+        <property name="diskStorePath" value="/nfs/pathdata/genedb.art/dtoCache" />
+    </bean>
+
+
+
+    <bean id="contextMapCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager" ref="cacheManager" />
+        <property name="cacheName" value="org.genedb.web.CONTEXT_MAP_CACHE" />
+        <property name="blocking" value="true" />
+        <property name="maxElementsInMemory" value="1" />
+        <property name="eternal" value="true" />
+        <property name="overflowToDisk" value="true" />
+        <property name="maxElementsOnDisk" value="0" />
+        <property name="diskPersistent" value="true"/>
+        <property name="diskStorePath" value="/nfs/pathdata/genedb.art/contextMapCache" />
+    </bean>
+
 </beans>
