@@ -186,6 +186,10 @@ public class Polypeptide extends Region {
              try {
                 // if the sequence ends with a termination symbol (*), we need to remove it
                 if (residuesSymbolList.symbolAt(residuesSymbolList.length()) == ProteinTools.ter()) {
+                    if (residuesSymbolList.length() == 1) {
+                        logger.error(String.format("Polypeptide feature '%s' only has termination symbol", this.getUniqueName()));
+                        return pp;
+                    }
                     residuesSymbolList = residuesSymbolList.subList(1, residuesSymbolList.length() - 1);
                 }
 
@@ -209,8 +213,8 @@ public class Polypeptide extends Region {
         try {
             double massInDaltons = MassCalc.getMass(residuesSymbolList, SymbolPropertyTable.AVG_MASS, true);
             pp.setMass(massInDaltons);
-        } catch (Exception e) {
-            logger.error("Error computing protein mass", e);
+        } catch (Exception exp) {
+            logger.error(String.format("Error computing protein mass in '%s' because '%s'", getUniqueName(), exp.getMessage()));
         }
 
         double charge = calculateCharge(residuesString);
@@ -258,4 +262,5 @@ public class Polypeptide extends Region {
     public boolean isGPIAnchored() {
         return hasProperty("genedb_misc", "GPI_anchored");
     }
+
 }
