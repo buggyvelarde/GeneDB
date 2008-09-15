@@ -153,8 +153,8 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
      * Get the <code>FeatureCvTermProp</code> objects that describe properties of this FeatureCvTerm.
      * @return an unmodifiable collection of <code>FeatureCvTermProp</code> objects
      */
-    public Collection<FeatureCvTermProp> getFeatureCvTermProps() {
-        return Collections.unmodifiableCollection(this.featureCvTermProps);
+    public List<FeatureCvTermProp> getFeatureCvTermProps() {
+        return Collections.unmodifiableList(this.featureCvTermProps);
     }
 
     /**
