@@ -25,5 +25,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-domain"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/misc/google-collect-snapshot-20080820.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
