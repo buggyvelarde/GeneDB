@@ -96,7 +96,7 @@
          </div>
         <div style="clear: both; margin-top: 1ex;">
             Show region in
-            <a href="ArtemisLaunch?organism=${gene.organism.commonName}&chromosome=${dto.topLevelFeatureUniqueName}&start=${dto.min}&end=${dto.max}">Artemis</a>,
+            <a href="ArtemisLaunch?organism=${organism}&chromosome=${dto.topLevelFeatureUniqueName}&start=${dto.min}&end=${dto.max}">Artemis</a>,
             GBrowse
          </div>
     </format:genePageSection>
@@ -125,27 +125,23 @@
     </c:if>
 
     <%-- Controlled Curation Section --%>
-    <db:filterByType items="${polypeptide.featureCvTerms}" cvPattern="CC_.*" var="controlledCurationTerms"/>
-    <c:if test="${fn:length(controlledCurationTerms) > 0}">
+    <c:if test="${fn:length(dto.controlledCurations) > 0}">
         <format:genePageSection id="controlCur">
             <div class="heading">Controlled Curation</div>
             <table width="100%" class="go-section">
-                <format:featureCvTerm-section featureCvTerms="${controlledCurationTerms}" featureCounts="${CC}" organism="${organism}"/>
+                <format:featureCvTerm-section featureCvTerms="${dto.controlledCurations}" organism="${organism}"/>
             </table>
         </format:genePageSection>
     </c:if>
 
     <%-- Gene Ontology Section --%>
-    <db:filterByType items="${polypeptide.featureCvTerms}" cv="biological_process" var="biologicalProcessTerms"/>
-    <db:filterByType items="${polypeptide.featureCvTerms}" cv="molecular_function" var="molecularFunctionTerms"/>
-    <db:filterByType items="${polypeptide.featureCvTerms}" cv="cellular_component" var="cellularComponentTerms"/>
-    <c:if test="${fn:length(biologicalProcessTerms) + fn:length(molecularFunctionTerms) + fn:length(cellularComponentTerms) > 0}">
+    <c:if test="${fn:length(dto.goBiologicalProcesses) + fn:length(dto.goMolecularFunctions) + fn:length(dto.goCellularComponents) > 0}">
         <format:genePageSection id="geneOntology">
             <div class="heading">Gene Ontology</div>
             <table width="100%" class="go-section">
-                <format:go-section title="Biological Process" featureCvTerms="${biologicalProcessTerms}" organism="${organism}"/>
-                <format:go-section title="Cellular Component" featureCvTerms="${cellularComponentTerms}" organism="${organism}"/>
-                <format:go-section title="Molecular Function" featureCvTerms="${molecularFunctionTerms}" organism="${organism}"/>
+                <format:go-section title="Biological Process" featureCvTerms="${dto.goBiologicalProcesses}" organism="${organism}"/>
+                <format:go-section title="Cellular Component" featureCvTerms="${dto.goCellularComponents}" organism="${organism}"/>
+                <format:go-section title="Molecular Function" featureCvTerms="${dto.goMolecularFunctions}" organism="${organism}"/>
             </table>
         </format:genePageSection>
     </c:if>
@@ -233,28 +229,28 @@
     </c:if>
 
     <%-- Protein map section --%>
-    <c:if test="${proteinMap != null}">
+    <c:if test="${dto.ims != null}">
         <format:genePageSection id="proteinMap">
             <div class="heading">Protein map</div>
-            ${proteinMapMap}
+            ${dto.ims.imageMap}
          <!--[if lte IE 6]>
-                <div style="position:relative; height: ${proteinMapHeight}px">
+                <div style="position:relative; height: ${dto.ims.height}px">
                     <div style="position:absolute; z-index: 1000;">
-                        <img src="<c:url value="/includes/images/transparentPixel.gif"/>" width="${proteinMapWidth}" height="${proteinMapHeight}" useMap="#proteinMapMap">
+                        <img src="<c:url value="/includes/images/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap">
                     </div>
                     <div style="position:static; z-index: 900;">
-                        <img src="<c:url value="/includes/images/transparentPixel.gif"/>" width="${proteinMapWidth}" height="${proteinMapHeight}"
-                            style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${proteinMap}', sizingMethod='image')"/>
+                        <img src="<c:url value="/includes/images/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}"
+                            style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${dto.ims.path}', sizingMethod='image')"/>
                     </div>
                 </div>
             <![endif]-->
             <![if ! lte IE 6]>
-                <img src="${proteinMap}" useMap="#proteinMapMap" id="proteinMapImage">
+                <img src="${dto.ims.path}" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap" id="proteinMapImage">
             <![endif]>
         </format:genePageSection>
     </c:if>
 
-    <c:if test="${fn:length(domainInformation) > 0}">
+    <c:if test="${fn:length(dto.domainInformation) > 0}">
         <%-- Domain Information --%>
         <format:genePageSection id="domainInfo">
             <div class="heading">Domain Information</div>
@@ -264,7 +260,7 @@
                     <td class="domainPosition">Position</td>
                     <td class="domainScore">E-value</td>
                 </tr>
-                <c:forEach var="subsection" varStatus="status" items="${domainInformation}">
+                <c:forEach var="subsection" varStatus="status" items="${dto.domainInformation}">
                     <tr>
                         <td colspan="2" class="domainTitle<c:if test="${status.first}">First</c:if>">
                             <c:if test="${subsection.url != null}">
@@ -298,19 +294,15 @@
     </c:if>
 
     <%-- Ortholog / Paralog Section --%>
-    <db:filterByType items="${polypeptide.featureRelationshipsForSubjectId}" cvTerm="orthologous_to" var="orthologs"/>
-    <c:if test="${fn:length(orthologs) > 0}">
+    <c:if test="${fn:length(dto.clusterIds) + fn:length(dto.orthologueNames) > 0}">
         <format:genePageSection id="orthologs">
             <div class="heading">Orthologues and Paralogues</div>
-            <db:filtered-loop items="${orthologs}" var="ortholog" varStatus="status">
-                <c:set var="feat" value="${ortholog.objectFeature}"/>
-                <c:if test="${feat.type.name eq 'protein_match'}">
-                    <span>${feat.uniqueName} <a href="<c:url value="/"/>Orthologs?cluster=${feat.uniqueName}">${fn:length(feat.featureRelationshipsForObjectId)} Others</a></span><br>
-                </c:if>
-                <c:if test="${feat.type.name eq 'polypeptide'}">
-                    <span><a href="<c:url value="/"/>NamedFeature?name=${feat.gene.uniqueName}">${feat.gene.uniqueName}</a></span><br>
-                </c:if>
-            </db:filtered-loop>
+            <c:forEach items="${dto.clusterIds}" var="clusterId">
+                <span>${clusterId} <a href="<c:url value="/"/>Orthologs?cluster=${clusterId}">Look up others in cluster</a></span><br>
+            </c:forEach>
+            <c:forEach items="${dto.orthologueNames}" var="orthologueName">
+                <span><a href="<c:url value="/"/>NamedFeature?name=${orthologueName}">${orthologueName}</a></span><br>
+            </c:forEach>
         </format:genePageSection>
     </c:if>
 
