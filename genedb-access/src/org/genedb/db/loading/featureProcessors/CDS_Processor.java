@@ -144,7 +144,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             logger.debug("Looking at systematic id '" + sysId+"'");
             // Gene
             Gene gene = Gene.makeHierarchy(parent, location, systematicId, MRNA.class, true);
-            
+
             //int transcriptNum = 1;
 
 //            List<Feature> features = new ArrayList<Feature>();
@@ -152,12 +152,12 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 //            List<FeatureRelationship> featureRelationships = new ArrayList<FeatureRelationship>();
 
             Cv CV_NAMING = cvDao.getCvByName("genedb_synonym_type");
-            CvTerm SYNONYM_RESERVED = cvDao.getCvTermByNameInCv(QUAL_RESERVED, CV_NAMING).get(0);
-            CvTerm SYNONYM_SYNONYM = cvDao.getCvTermByNameInCv(QUAL_SYNONYM, CV_NAMING).get(0);
-            CvTerm SYNONYM_PRIMARY = cvDao.getCvTermByNameInCv(QUAL_PRIMARY, CV_NAMING).get(0);
-            CvTerm SYNONYM_SYS_ID = cvDao.getCvTermByNameInCv(QUAL_SYS_ID, CV_NAMING).get(0);
-            CvTerm SYNONYM_TMP_SYS = cvDao.getCvTermByNameInCv(QUAL_TEMP_SYS_ID, CV_NAMING).get(0);
-            CvTerm SYNONYM_PROTEIN = cvDao.getCvTermByNameInCv("protein_name", CV_NAMING).get(0);
+            CvTerm SYNONYM_RESERVED = cvDao.getCvTermByNamePatternInCv(QUAL_RESERVED, CV_NAMING).get(0);
+            CvTerm SYNONYM_SYNONYM = cvDao.getCvTermByNamePatternInCv(QUAL_SYNONYM, CV_NAMING).get(0);
+            CvTerm SYNONYM_PRIMARY = cvDao.getCvTermByNamePatternInCv(QUAL_PRIMARY, CV_NAMING).get(0);
+            CvTerm SYNONYM_SYS_ID = cvDao.getCvTermByNamePatternInCv(QUAL_SYS_ID, CV_NAMING).get(0);
+            CvTerm SYNONYM_TMP_SYS = cvDao.getCvTermByNamePatternInCv(QUAL_TEMP_SYS_ID, CV_NAMING).get(0);
+            CvTerm SYNONYM_PROTEIN = cvDao.getCvTermByNamePatternInCv("protein_name", CV_NAMING).get(0);
             this.DUMMY_PUB = pubDao.getPubByUniqueName("null");
             this.featureUtils.setDummyPub(this.DUMMY_PUB);
 
@@ -180,10 +180,10 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             if (altSplicing) {
                 throw new RuntimeException("Alternate splicing not handled in new code"); // TODO
             }
-            
-            
+
+
             sequenceDao.persist(gene);
-            
+
 //            if (gene == null) {
 //                if (altSplicing) {
 //                    gene = this.featureUtils.createFeature(soTypeGene, sharedId,
@@ -375,9 +375,9 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
 //    }
 
     private void createTranslation(Feature parent, Feature polypeptide, Annotation an, StrandedLocation loc) {
-        String nucleic = new String(parent.getResidues(), loc.getMin(), loc.getMax()-loc.getMin()); // TODO Check offsets
+        String nucleic = new String(parent.getResidues().getBytes(), loc.getMin(), loc.getMax()-loc.getMin()); // TODO Check offsets
         //String protein =null;//= translate(nucleic, an); FIXME
-        polypeptide.setResidues(nucleic.getBytes());
+        polypeptide.setResidues(nucleic);
     }
 
 
@@ -763,7 +763,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             }
             for (String product : products) {
                 CvTerm cvTerm = null;
-                List<CvTerm> cvTermList = this.cvDao.getCvTermByNameInCv(product, cv);
+                List<CvTerm> cvTermList = this.cvDao.getCvTermByNamePatternInCv(product, cv);
                 if(cvTermList == null || cvTermList.size() == 0){
                     cvTerm = new CvTerm();
                     DbXRef dbXRef = new DbXRef(this.generalDao.getDbByName("PRODUCT"), product);

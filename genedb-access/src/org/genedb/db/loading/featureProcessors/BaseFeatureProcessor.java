@@ -152,7 +152,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
     public void afterPropertiesSet() {
         CV_RELATION = cvDao.getCvByName("relationship");
 
-        REL_PART_OF = cvDao.getCvTermByNameInCv("proper_part_of", CV_RELATION).get(0); // FIXME Is this right
+        REL_PART_OF = cvDao.getCvTermByNamePatternInCv("proper_part_of", CV_RELATION).get(0); // FIXME Is this right
         CV_SO = cvDao.getCvByName("sequence");
         //CV_MISC = cvDao.getCvByName("autocreated").get(0);
         CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property");
@@ -161,20 +161,20 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration");
         CV_PRODUCT = cvDao.getCvByName("genedb_products");
         //REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
-        REL_DERIVES_FROM = cvDao.getCvTermByNameInCv("derives_from", CV_SO).get(0);
-        MISC_NOTE = cvDao.getCvTermByNameInCv("comment", CV_FEATURE_PROPERTY).get(0);
-        MISC_CURATION = cvDao.getCvTermByNameInCv(QUAL_CURATION, CV_GENEDB).get(0);
-        MISC_PRIVATE = cvDao.getCvTermByNameInCv(QUAL_PRIVATE, CV_GENEDB).get(0);
-        MISC_EC_NUMBER = cvDao.getCvTermByNameInCv(QUAL_EC_NUMBER, CV_GENEDB).get(0);
+        REL_DERIVES_FROM = cvDao.getCvTermByNamePatternInCv("derives_from", CV_SO).get(0);
+        MISC_NOTE = cvDao.getCvTermByNamePatternInCv("comment", CV_FEATURE_PROPERTY).get(0);
+        MISC_CURATION = cvDao.getCvTermByNamePatternInCv(QUAL_CURATION, CV_GENEDB).get(0);
+        MISC_PRIVATE = cvDao.getCvTermByNamePatternInCv(QUAL_PRIVATE, CV_GENEDB).get(0);
+        MISC_EC_NUMBER = cvDao.getCvTermByNamePatternInCv(QUAL_EC_NUMBER, CV_GENEDB).get(0);
         DB_GO = generalDao.getDbByName("GO");
 
         DUMMY_PUB = pubDao.getPubByUniqueName("null");
         //logger.warn("Just looked up DUMMY_PUB and it is '"+DUMMY_PUB+"'");
 
         //Cv goKeys = cvDao.getCvByName("genedb_fcvt_prop_keys").get(0);
-        GO_KEY_EVIDENCE = cvDao.getCvTermByNameInCv("evidence", CV_GENEDB).get(0);
-        GO_KEY_QUALIFIER = cvDao.getCvTermByNameInCv("qualifier", CV_GENEDB).get(0);
-        GO_KEY_DATE = cvDao.getCvTermByNameInCv("date", CV_FEATURE_PROPERTY).get(0);
+        GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
+        GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
+        GO_KEY_DATE = cvDao.getCvTermByNamePatternInCv("date", CV_FEATURE_PROPERTY).get(0);
 
     }
 
@@ -215,7 +215,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
 
     protected FeatureProp createFeatureProp(Feature f, Annotation an, String annotationKey, String dbKey, Cv cv) {
-        List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(annotationKey,cv);
+        List<CvTerm> cvTerms = cvDao.getCvTermByNamePatternInCv(annotationKey,cv);
 
         if (cvTerms == null || cvTerms.size() == 0) {
             throw new RuntimeException("No cvterm of name '"+annotationKey+"' in cv '"+cv.getName()+"'");
@@ -572,7 +572,7 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     private void thingy(String key, String value, Cv controlledCuration, FeatureCvTerm fct, String split) {
         if (value != null) {
-            List<CvTerm> cvtL = this.cvDao.getCvTermByNameInCv(key, controlledCuration);
+            List<CvTerm> cvtL = this.cvDao.getCvTermByNamePatternInCv(key, controlledCuration);
             if (cvtL == null || cvtL.size() == 0) {
                 throw new RuntimeException("Expected cvterm '"+key+"' not found");
             }

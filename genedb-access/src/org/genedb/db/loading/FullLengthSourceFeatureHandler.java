@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2006 Genome Research Limited.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by the Free
  * Software Foundation; either version 2 of the License or (at your option) any
  * later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this program; see the file COPYING.LIB. If not, write to the Free
  * Software Foundation Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307
@@ -18,8 +18,8 @@
  */
 
 /**
- * 
- * 
+ *
+ *
  * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
  */
 package org.genedb.db.loading;
@@ -53,22 +53,22 @@ import java.util.List;
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
  * be called from the command-line, or a Makefile.
- * 
+ *
  * Usage: GenericRunner organism [-show_ids] [-show_contigs]
- * 
- * 
+ *
+ *
  * @author Adrian Tivey (art)
  */
 public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implements FeatureHandler {
 
     //private List<FeatureListener> listeners = new ArrayList<FeatureListener>(0);
-    
-    
+
+
  //   public void afterPropertiesSet() {
 //        CV_SO = this.daoFactory.getCvDao().findByName("sequence").get(0);
 //        CV_MISC = daoFactory.getCvDao().findByName("autocreated").get(0);
 //        CV_RELATION = this.daoFactory.getCvDao().findByName("relationship").get(0);
-//        
+//
 //        REL_PART_OF = this.daoFactory.getCvTermDao().findByNameInCv("part_of", CV_RELATION).get(0);
 //        REL_DERIVES_FROM = this.daoFactory.getCvTermDao().findByNameInCv(
 //                "derives_from", CV_SO).get(0);
@@ -128,7 +128,7 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.genedb.db.loading.FeatureHandler#processSources(org.biojava.bio.seq.Sequence)
      */
     @SuppressWarnings("unchecked")
@@ -178,13 +178,13 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
         // System.err.println("Would like to create a '"+foundType+"' with name
         // '"+uniqueName+"'");
 
-        Timestamp now = new Timestamp(new Date().getTime()); 
+        Timestamp now = new Timestamp(new Date().getTime());
         Chromosome topLevel = Chromosome.make(uniqueName, organism, now);
 
-        topLevel.setResidues(seq.seqString().getBytes());
+        topLevel.setResidues(seq.seqString());
 
         sequenceDao.persist(topLevel);
-        
+
         sources.remove(fullLengthSource);
         seq.removeFeature(fullLengthSource);
 
