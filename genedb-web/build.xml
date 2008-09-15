@@ -34,6 +34,7 @@
         <path location="${lib-dir}/jdom.jar"/>
         <path location="${lib-dir}/json_simple.jar"/>
         <path location="${lib-dir}/lucene-core-2.3.2.jar"/>
+        <path location="${lib-dir}/misc/google-collect-snapshot-20080820.jar" />
         <path location="${lib-dir}/postgresql-8.2dev-501.jdbc3.jar" />
         <path location="${lib-dir}/spring-2.5.4.jar" />
         <path location="${lib-dir}/spring-aspects.jar" />
@@ -160,7 +161,7 @@
          <groovy>
            <![CDATA[
            downloadAndGrep("https://www.genedb.org/ci-web/Homepage", "yoelii")
-            downloadAndGrep("https://www.genedb.org/ci-web/NamedFeature?name=PF07_0048", "Duffy")
+           downloadAndGrep("https://www.genedb.org/ci-web/NamedFeature?name=PF07_0048", "Duffy")
 
            def downloadAndGrep(address, searchPattern)
            {
@@ -180,5 +181,21 @@
       <exec executable="/nfs/pathdata/jira/bin/startup.sh"  failifexecutionfails="true" failonerror="true" />
     <sleep seconds="30" />
   </target>
+
+	<path id="application-classpath">
+	    <path refid="libs" />
+		<path path="ant-build/classes" />
+		<path path="WebContent/WEB-INF" />
+		<path path="${lib-dir}/spring-bundle-2.5.4/j2ee/servlet-api.jar"/>
+        <path location="WebContent/WEB-INF/lib/backport-util-concurrent.jar"/>
+        <path path="${lib-dir}/misc/jsr107cache-1.0.jar" />
+	</path>
+
+    <target name="populate-caches" depends="compile">
+        <java fork="true" classpathref="application-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
+            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        </java>
+
+    </target>
 
 </project>
