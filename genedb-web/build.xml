@@ -66,6 +66,7 @@
         <path location="${lib-dir}/json-lib-2.2.1-jdk15.jar" />
         <path location="${lib-dir}/json-lib-ext-spring-1.0.1.jar" />
         <path location="${lib-dir}/ezmorph-1.0.4.jar" />
+        <path location="${lib-dir}/misc/jsr107cache-1.0.jar" />
     </path>
 
     <path id="compile-libs">
