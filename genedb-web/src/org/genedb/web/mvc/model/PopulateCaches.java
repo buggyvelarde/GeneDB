@@ -20,6 +20,9 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 
 import org.hibernate.SessionFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,7 +60,7 @@ public class PopulateCaches implements PopulateCachesI {
      */
     public static void main(String[] args) {
 
-        MyApplicationContext ctx = new MyApplicationContext();
+        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath:applicationContext.xml"});
         ctx.refresh();
         PopulateCachesI pc = (PopulateCachesI) ctx.getBean("populateCaches", PopulateCachesI.class);
         pc.fullCachePopulate();
@@ -82,14 +85,22 @@ public class PopulateCaches implements PopulateCachesI {
             "from Feature f where f.uniqueName = :uniqueName")
             .setString("uniqueName", featureName).uniqueResult();
 
-            populateContextMapCache(feature, basicGeneService);
+            if (!"Pf3D7_01".equals(featureName)) {
+                continue;
+            }
+
+            //populateContextMapCache(feature, basicGeneService);
 
             Collection<FeatureLoc> fls = feature.getFeatureLocsForSrcFeatureId();
-            System.err.print(feature.getUniqueName() + " : "+ fls.size() + " : ");
-            for (FeatureLoc fl : feature.getFeatureLocsForSrcFeatureId()) {
+            System.err.print(feature.getUniqueName() + " : size "+ fls.size() + " : ");
+            for (FeatureLoc fl : fls) {
                 Feature f = fl.getFeature();
+                //System.err.print("The type of '"+f.getClass().getName()+"'   ");
                 if (f instanceof Gene) {
+                    System.err.println("processing '"+f.getUniqueName()+"' as is a gene");
                     populateDtoCache((Gene) f);
+                } else {
+                    System.err.println(f.getUniqueName());
                 }
             }
 
@@ -111,7 +122,7 @@ public class PopulateCaches implements PopulateCachesI {
         RenderedContextMap renderedContextMap = new RenderedContextMap(chromosomeDiagram);
         RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
 
-        String renderDirectoryPath = "/nfs/team81/art/tmp";
+        String renderDirectoryPath = "/tmp";
         List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTilesTo(renderDirectoryPath, TILE_WIDTH);
 
         String text;
@@ -167,6 +178,7 @@ public class PopulateCaches implements PopulateCachesI {
     }
 
     private void populateDtoCache(Gene gene) {
+        System.err.println("Storing gene '"+gene.getUniqueName()+"'");
         for (Transcript transcript : gene.getTranscripts()) {
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
             dtoCache.put(new Element(transcript.getUniqueName(), dto));
