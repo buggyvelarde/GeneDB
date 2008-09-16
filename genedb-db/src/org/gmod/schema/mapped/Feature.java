@@ -391,7 +391,10 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     public Collection<FeatureLoc> getFeatureLocsForSrcFeatureId() {
-        return (featureLocsForSrcFeatureId = CollectionUtils.safeGetter(featureLocsForSrcFeatureId));
+        if (featureLocsForSrcFeatureId == null) {
+            featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
+        }
+        return featureLocsForSrcFeatureId;
     }
 
     /**
@@ -1058,29 +1061,29 @@ public abstract class Feature implements java.io.Serializable {
      * and depend only on the featureId field.
      */
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + featureId;
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof Feature)) {
-            logger.trace(String.format("Type of object (%s) is not a subtype of Feature", obj.getClass()));
-            return false;
-        }
-        final Feature other = (Feature) obj;
-        if (featureId != other.featureId) {
-            logger.trace(String.format("this.featureId (%d) != other.featureId (%d)", this.featureId, other.featureId));
-            return false;
-        }
-        return true;
-    }
+//    @Override
+//    public int hashCode() {
+//        final int prime = 31;
+//        int result = 1;
+//        result = prime * result + featureId;
+//        return result;
+//    }
+//
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (this == obj)
+//            return true;
+//        if (obj == null)
+//            return false;
+//        if (!(obj instanceof Feature)) {
+//            logger.trace(String.format("Type of object (%s) is not a subtype of Feature", obj.getClass()));
+//            return false;
+//        }
+//        final Feature other = (Feature) obj;
+//        if (featureId != other.featureId) {
+//            logger.trace(String.format("this.featureId (%d) != other.featureId (%d)", this.featureId, other.featureId));
+//            return false;
+//        }
+//        return true;
+//    }
 }
