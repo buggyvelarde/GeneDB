@@ -14,6 +14,7 @@ import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.RenderedContextMap;
 import org.genedb.web.mvc.controller.ModelBuilder;
 
+import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
@@ -75,7 +76,7 @@ public class PopulateCaches implements PopulateCachesI {
         long start = new Date().getTime();
 
         List<String> topLevelFeatures = (List<String>) sessionFactory.getCurrentSession().createQuery(
-        "select f.uniqueName from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq' and f.organism.commonName = 'Pfalciparum'")
+        "select f.uniqueName from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq'")// and f.organism.commonName = 'Pfalciparum'")
         //.setString("name", "%chromosome%").list();
         .list();
 
@@ -85,23 +86,28 @@ public class PopulateCaches implements PopulateCachesI {
             "from Feature f where f.uniqueName = :uniqueName")
             .setString("uniqueName", featureName).uniqueResult();
 
-            if (!"Pf3D7_01".equals(featureName)) {
-                continue;
-            }
+//            if (!"Pf3D7_01".equals(featureName)) {
+//                continue;
+//            }
 
-            //populateContextMapCache(feature, basicGeneService);
+            populateContextMapCache(feature, basicGeneService);
 
-            Collection<FeatureLoc> fls = feature.getFeatureLocsForSrcFeatureId();
-            System.err.print(feature.getUniqueName() + " : size "+ fls.size() + " : ");
-            for (FeatureLoc fl : fls) {
-                Feature f = fl.getFeature();
+            List<Feature> features = (List<Feature>) sessionFactory.getCurrentSession().createQuery(
+            "select f from Feature f, FeatureLoc fl where fl.sourceFeature.uniqueName=:feature and fl.feature=f")
+            .setString("feature", featureName).list();
+
+
+            //List<Feature> f = feature.getFeatureLocsForSrcFeatureId();
+            System.err.print(feature.getUniqueName() + " : size "+ features.size() + " : ");
+            for (Feature f : features) {
+                //Feature f = fl.getFeature();
                 //System.err.print("The type of '"+f.getClass().getName()+"'   ");
-                if (f instanceof Gene) {
+                if (f instanceof AbstractGene) {
                     System.err.println("processing '"+f.getUniqueName()+"' as is a gene");
-                    populateDtoCache((Gene) f);
-                } else {
-                    System.err.println(f.getUniqueName());
-                }
+                    populateDtoCache((AbstractGene) f);
+                }// else {
+                //    System.err.println(f.getUniqueName());
+                //}
             }
 
             dtoCache.flush();
@@ -158,7 +164,7 @@ public class PopulateCaches implements PopulateCachesI {
         model.put("start", diagram.getStart());
         model.put("end", diagram.getEnd());
 
-        model.put("tilePrefix", "file:///nfs/team81/art/tmp" + "/" + contextMap.getRelativeRenderDirectory());
+        model.put("tilePrefix", "/" + contextMap.getRelativeRenderDirectory());
         model.put("tiles", tiles);
 
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
@@ -177,7 +183,7 @@ public class PopulateCaches implements PopulateCachesI {
          return text;
     }
 
-    private void populateDtoCache(Gene gene) {
+    private void populateDtoCache(AbstractGene gene) {
         System.err.println("Storing gene '"+gene.getUniqueName()+"'");
         for (Transcript transcript : gene.getTranscripts()) {
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
