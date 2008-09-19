@@ -80,6 +80,7 @@ public class TranscriptDTO implements Serializable {
     private ImageMapSummary ims;
     private Map<String,Object> algorithmData;
     private PeptideProperties polypeptideProperties;
+    private boolean proteinCoding;
 
 
     private Map<String,Object> prepareAlgorithmData(Polypeptide polypeptide) {
@@ -219,7 +220,9 @@ public class TranscriptDTO implements Serializable {
         //---------------------
         if (polypeptide == null) {
             logger.error(String.format("The transcript '%s' has no polypeptide", transcript.getUniqueName()));
-            return;
+            //return;
+        } else {
+            proteinCoding = true;
         }
         this.algorithmData = prepareAlgorithmData(polypeptide);
         this.polypeptideProperties = polypeptide.calculateStats();
@@ -576,5 +579,10 @@ public class TranscriptDTO implements Serializable {
     public ImageMapSummary getIms() {
         return ims;
     }
+
+    public boolean isProteinCoding() {
+        return proteinCoding;
+    }
+
 
 }
