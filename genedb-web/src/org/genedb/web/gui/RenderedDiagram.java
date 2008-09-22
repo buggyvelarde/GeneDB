@@ -201,7 +201,8 @@ public abstract class RenderedDiagram {
     private int end;
     private int sizeExcludingGaps;
 
-
+    private BufferedImage image;
+    private BufferedImage labelBuffer;
 
     protected RenderedDiagram(TrackedDiagram diagram) {
         this.diagram = diagram;
@@ -512,8 +513,6 @@ public abstract class RenderedDiagram {
         return tiles;
     }
 
-    private BufferedImage image;
-    private BufferedImage labelBuffer;
     /**
      * A navigable map from base -> pixel, with an entry corresponding to
      * the beginning of each contiguous region. It is populated at the start
@@ -953,10 +952,11 @@ public abstract class RenderedDiagram {
 
         int w = (int) labelBounds.getWidth();
         int h = (int) labelBounds.getHeight();
-        if (labelBackgroundColor == null)
+        if (labelBackgroundColor == null) {
             labelGraf.setColor(TRANSPARENT);
-        else
+        } else {
             labelGraf.setColor(labelBackgroundColor);
+        }
         labelGraf.fillRect(0, 0, w, h);
 
         labelGraf.setColor(labelColor);
@@ -971,19 +971,32 @@ public abstract class RenderedDiagram {
          * intersects the image, at the left or right edge
          * of a tile.
          */
-        int offset = 0, destWidth = w;
+        int offset = 0;
+        int destWidth = w;
         if (x < 0) {
             offset = -x;
             destWidth += x;
             x = 0;
+        } else {
+            if (x+w > getWidth()) {
+                destWidth = getWidth() - x;
+                x = getWidth() - destWidth;
+            }
         }
-        else if (x+w > getWidth()) {
-            destWidth = getWidth() - x;
-            x = getWidth() - destWidth;
-        }
-        if (y + h > image.getHeight())
+        if (y + h > image.getHeight()) {
             h = image.getHeight() - y;
-        image.setRGB(x, y, destWidth, h, labelData, offset, w);
+        }
+        // Formula for looking up a (x,y) coordinate
+        // pixel   = rgbArray[offset + (y-startY)*scansize + (x-startX)];
+        try {
+            image.setRGB(x, y, destWidth, h, labelData, offset, w);
+        } catch (NullPointerException exp) {
+            // Passing in invalid coordinates - which ones
+            logger.error(String.format(
+                    "NullPointerException x='%d' y='%d' destWidth='%d' h='%d' labelData.size='%d' offset='%d' width='%d'",
+                    x, y, destWidth, h, labelData.length, offset, w));
+        }
+
     }
 
     /**
