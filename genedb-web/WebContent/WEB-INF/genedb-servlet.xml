@@ -253,6 +253,11 @@
     <bean name="historyManagerFactory"
         class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
 
+    <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
+
+
+    <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" />
+
     <bean id="NamedFeatureController"
         class="org.genedb.web.mvc.controller.NamedFeatureController">
         <property name="sessionForm" value="true" />
