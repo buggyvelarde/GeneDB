@@ -71,6 +71,8 @@ public class NamedFeatureController extends PostOrGetFormController {
 
         NameLookupBean nlb = (NameLookupBean) command;
 
+        logger.error("Trying to find NamedFeature of '"+nlb.getName()+"'");
+
         Feature feature = sequenceDao.getFeatureByUniqueName(nlb.getName(), Feature.class);
         if (feature == null) {
             logger.warn(String.format("Failed to find feature '%s'", nlb.getName()));

@@ -170,7 +170,7 @@ public class NameSearchController extends TaxonNodeBindingFormController {
         return hits;
     }
 
-    public void setLuceneIndexFactory(LuceneIndexFactory luceneDao) {
+    public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
         this.luceneIndexFactory = luceneIndexFactory;
     }
 
