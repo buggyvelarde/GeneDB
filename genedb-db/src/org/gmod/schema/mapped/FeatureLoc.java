@@ -45,7 +45,7 @@ public class FeatureLoc implements Serializable {
 
     @ManyToOne(cascade = {}, fetch = FetchType.EAGER)
     @JoinColumn(name = "feature_id", unique = false, nullable = false, insertable = true, updatable = true)
-    private Feature featureByFeatureId;
+    private Feature feature;
 
     @Column(name = "fmin", unique = false, nullable = true, insertable = true, updatable = true)
     private Integer fmin;
@@ -90,7 +90,7 @@ public class FeatureLoc implements Serializable {
             boolean fminPartial, Integer fmax, boolean fmaxPartial, Short strand, Integer phase,
             int locGroup, int rank) {
         this.sourceFeature = sourceFeature;
-        this.featureByFeatureId = feature;
+        this.feature = feature;
         this.fmin = fmin;
         this.fminPartial = fminPartial;
         this.fmax = fmax;
@@ -116,7 +116,7 @@ public class FeatureLoc implements Serializable {
     FeatureLoc(Feature parent, Feature child, StrandedLocation location) {
         StrandedLocation loc = location.getInterbaseVersion();
         this.sourceFeature = parent;
-        this.featureByFeatureId = child;
+        this.feature = child;
         this.fmin = loc.getMin();
         this.fminPartial = loc.isMinPartial();
         this.fmax = loc.getMax();
@@ -143,11 +143,11 @@ public class FeatureLoc implements Serializable {
     }
 
     public Feature getFeature() {
-        return this.featureByFeatureId;
+        return this.feature;
     }
 
     void setFeature(Feature featureByFeatureId) {
-        this.featureByFeatureId = featureByFeatureId;
+        this.feature = featureByFeatureId;
     }
 
     public Integer getFmin() {
