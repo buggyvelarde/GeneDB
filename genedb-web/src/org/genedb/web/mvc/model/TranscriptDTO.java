@@ -224,8 +224,7 @@ public class TranscriptDTO implements Serializable {
         } else {
             proteinCoding = true;
         }
-        this.algorithmData = prepareAlgorithmData(polypeptide);
-        this.polypeptideProperties = polypeptide.calculateStats();
+
         // =-----------------------------
 
         if (gene.getTranscripts().size()>1) {
@@ -237,6 +236,8 @@ public class TranscriptDTO implements Serializable {
         populateMisc(transcript);
 
         if (polypeptide != null) {
+            this.algorithmData = prepareAlgorithmData(polypeptide);
+            this.polypeptideProperties = polypeptide.calculateStats();
             populateFromFeatureProps(polypeptide);
             controlledCurations = populateFromFeatureCvTerms(polypeptide, "CC_");
             goBiologicalProcesses = populateFromFeatureCvTerms(polypeptide, "biological_process");

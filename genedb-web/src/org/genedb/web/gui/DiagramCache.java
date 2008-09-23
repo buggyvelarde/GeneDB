@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +22,12 @@ public class DiagramCache {
 
     private String baseDiagramDirectory;
     private String baseUri = "";
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+
+
     private String contextMapRenderDirectory;
     private String proteinMapRenderDirectory;
 
@@ -106,19 +115,37 @@ public class DiagramCache {
         }
 
         String cacheFileName = fileForDiagram(renderedProteinMap, organismDir);
-        return baseUri + proteinMapRenderDirectory
-            + '/' + diagram.getOrganism() + '/' + cacheFileName;
+
+        return baseUri + cacheFileName.substring(baseDiagramDirectory.length());
     }
 
 
-    private static String fileForDiagram(RenderedDiagram renderedDiagram, File chromosomeDir)
+    private String fileForDiagram(RenderedDiagram renderedDiagram, File chromosomeDir)
         throws IOException {
 
-        String cacheFileName = renderedDiagram.getPreferredFilename();
+        String lastPartFileName = renderedDiagram.getPreferredFilename();
 
-        File cacheFile = new File(chromosomeDir, cacheFileName);
-        File tempFile  = new File(chromosomeDir, cacheFileName + ".new");
-        File lockFile  = new File(chromosomeDir, cacheFileName + ".lock");
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            // Should never happen
+        }
+        md.update(lastPartFileName.getBytes(), 0, lastPartFileName.length());
+        String tmp = new BigInteger(1, md.digest()).toString(16);
+
+        String intermediatePath = String.format("/%s/%s/%s",
+                tmp.substring(0, 2),
+                tmp.substring(2, 4),
+                lastPartFileName);
+
+        String cacheFileName = chromosomeDir.getCanonicalPath() + intermediatePath;
+
+        File cacheFile = new File(cacheFileName);
+        cacheFile.getParentFile().mkdirs();
+
+        File tempFile  = new File(cacheFileName + ".new");
+        File lockFile  = new File(cacheFileName + ".lock");
 
         /*
          * Currently we ALWAYS create the file, even if it already exists. The reason
@@ -136,14 +163,14 @@ public class DiagramCache {
         try {
             renderedDiagram.writeTo(tempOutputStream);
         }
-        catch (Exception e) {
+        catch (Exception exp) {
             tempOutputStream.close();
             tempFile.delete();
             lockOutputStream.close();
             lockFile.delete();
 
             throw new RuntimeException(
-                String.format("Failed to create image '%s'", cacheFile), e);
+                String.format("Failed to create image '%s'", cacheFile), exp);
         }
 
         tempOutputStream.close();
@@ -176,6 +203,12 @@ public class DiagramCache {
     @Required
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
+    }
+
+
+
+    public File getContextMapRootDir() {
+        return contextMapRootDir;
     }
 
 }

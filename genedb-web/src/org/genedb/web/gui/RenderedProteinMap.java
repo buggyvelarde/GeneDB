@@ -11,10 +11,14 @@ import org.gmod.schema.feature.NonCytoplasmicRegion;
 import org.gmod.schema.feature.TransmembraneRegion;
 
 import org.apache.log4j.Logger;
+import org.postgresql.util.MD5Digest;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.IndexColorModel;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -86,7 +90,7 @@ public class RenderedProteinMap extends RenderedDiagram {
     }
 
     public String getPreferredFilename() {
-        return String.format("%s.0f.%s", transcriptName, getBasesPerPixel(), FILE_EXT);
+        return transcriptName + "." + FILE_EXT;
     }
 
     @Override

@@ -283,6 +283,9 @@ public abstract class RenderedDiagram {
             getBasesPerPixel(), FILE_EXT);
     }
 
+
+//    public abstract String getPreferredFilename();
+
     private String getPreferredFilenameForTile(int tileIndex, int tileWidth) {
         return String.format("%s%09d-%09ds%.0ft%dw%d.%s", filenamePrefix, getStart(), getEnd(),
             getBasesPerPixel(), tileIndex, tileWidth, FILE_EXT);
@@ -457,14 +460,14 @@ public abstract class RenderedDiagram {
 
     public abstract String getRelativeRenderDirectory();
 
-    public List<RenderedContextMap.Tile> renderTilesTo(String directory, int tileWidth) {
-        String absoluteRenderDirectory = directory + "/" + getRelativeRenderDirectory();
-        logger.debug(String.format("Rendering tiles to '%s'", absoluteRenderDirectory));
+    public List<RenderedContextMap.Tile> renderTilesTo(File renderDirectory, int tileWidth) {
+        File dir = new File(renderDirectory, getRelativeRenderDirectory());
+        logger.debug(String.format("Rendering tiles to '%s'", dir.getAbsolutePath()));
 
-        File dir = new File(absoluteRenderDirectory);
         dir.mkdirs();
-        if (!dir.isDirectory())
+        if (!dir.isDirectory()) {
             throw new RuntimeException(String.format("Failed to create directory '%s'", dir));
+        }
 
         beforeRender();
         drawScaleTrack();

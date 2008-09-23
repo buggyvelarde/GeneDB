@@ -15,31 +15,36 @@ import org.genedb.web.gui.RenderedContextMap;
 import org.genedb.web.mvc.controller.ModelBuilder;
 
 import org.gmod.schema.feature.AbstractGene;
-import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
-import org.gmod.schema.mapped.FeatureLoc;
 
+
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
+import uk.co.flamingpenguin.jewel.cli.Cli;
+import uk.co.flamingpenguin.jewel.cli.CliFactory;
+import uk.co.flamingpenguin.jewel.cli.Option;
+
+import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+
 
 
 @Repository
 @Transactional
-public class PopulateCaches implements PopulateCachesI {
+public class PopulateCaches {//implements PopulateCachesI {
 
     private SessionFactory sessionFactory;
     private BlockingCache dtoCache;
@@ -51,6 +56,7 @@ public class PopulateCaches implements PopulateCachesI {
 
     private static final int TILE_WIDTH = 5000;
     private int THUMBNAIL_WIDTH = 200;
+    private PopulateCachesArgs config;
 
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -61,9 +67,24 @@ public class PopulateCaches implements PopulateCachesI {
      */
     public static void main(String[] args) {
 
+
+        Cli<PopulateCachesArgs> cli = CliFactory.createCli(PopulateCachesArgs.class);
+        PopulateCachesArgs pca = null;
+        try {
+          pca = cli.parseArguments(args);
+        }
+        catch(ArgumentValidationException exp) {
+            System.err.println("Unable to run:");
+            System.err.println(cli.getHelpMessage());
+            return;
+        }
+
+
+
         ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath:applicationContext.xml"});
         ctx.refresh();
-        PopulateCachesI pc = (PopulateCachesI) ctx.getBean("populateCaches", PopulateCachesI.class);
+        PopulateCaches pc = (PopulateCaches) ctx.getBean("populateCaches", PopulateCaches.class);
+        pc.setConfig(pca);
         pc.fullCachePopulate();
     }
 
@@ -75,20 +96,19 @@ public class PopulateCaches implements PopulateCachesI {
 
         long start = new Date().getTime();
 
-        List<String> topLevelFeatures = (List<String>) sessionFactory.getCurrentSession().createQuery(
-        "select f.uniqueName from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq'")// and f.organism.commonName = 'Pfalciparum'")
-        //.setString("name", "%chromosome%").list();
-        .list();
+        List<String> topLevelFeatures = getTopLevelFeatures();
 
         int count = 0;
         for (String featureName : topLevelFeatures) {
+
+            if (config.isDebugCount() && count >= config.getDebugCount()) {
+                break;
+            }
+
             Feature feature = (Feature) sessionFactory.getCurrentSession().createQuery(
             "from Feature f where f.uniqueName = :uniqueName")
-            .setString("uniqueName", featureName).uniqueResult();
-
-//            if (!"Pf3D7_01".equals(featureName)) {
-//                continue;
-//            }
+            .setString("uniqueName", featureName)
+            .uniqueResult();
 
             populateContextMapCache(feature, basicGeneService);
 
@@ -103,7 +123,7 @@ public class PopulateCaches implements PopulateCachesI {
                 //Feature f = fl.getFeature();
                 //System.err.print("The type of '"+f.getClass().getName()+"'   ");
                 if (f instanceof AbstractGene) {
-                    System.err.println("processing '"+f.getUniqueName()+"' as is a gene");
+                    //System.err.println("processing '"+f.getUniqueName()+"' as is a gene");
                     populateDtoCache((AbstractGene) f);
                 }// else {
                 //    System.err.println(f.getUniqueName());
@@ -118,6 +138,20 @@ public class PopulateCaches implements PopulateCachesI {
         }
     }
 
+    private List<String> getTopLevelFeatures() {
+
+        Query q = sessionFactory.getCurrentSession().createQuery(
+        "select f.uniqueName from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq'");
+
+        if (config.isOrganism()) {
+            q = sessionFactory.getCurrentSession().createQuery(
+            "select f.uniqueName from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq' and f.organism.commonName = :orgName");
+            q.setString("orgName", config.getOrganism());
+        }
+
+        return (List<String>) q.list();
+    }
+
 
 
     private void populateContextMapCache(Feature feature, BasicGeneService basicGeneService) {
@@ -128,14 +162,14 @@ public class PopulateCaches implements PopulateCachesI {
         RenderedContextMap renderedContextMap = new RenderedContextMap(chromosomeDiagram);
         RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
 
-        String renderDirectoryPath = "/tmp";
-        List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTilesTo(renderDirectoryPath, TILE_WIDTH);
+        File renderDirectory = diagramCache.getContextMapRootDir();
+        List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTilesTo(renderDirectory, TILE_WIDTH);
 
         String text;
         try {
             text = populateModel(renderedChromosomeThumbnail, renderedContextMap, tiles);
             contextMapCache.put(new Element(feature.getUniqueName(), text));
-            System.err.println("Stored contextMap for '"+feature.getUniqueName()+"'");
+            System.err.println("Stored contextMap for '"+feature.getUniqueName()+"' as '"+text+"'");
         } catch (IOException exp) {
             System.err.println(exp);
         }
@@ -164,7 +198,7 @@ public class PopulateCaches implements PopulateCachesI {
         model.put("start", diagram.getStart());
         model.put("end", diagram.getEnd());
 
-        model.put("tilePrefix", "/" + contextMap.getRelativeRenderDirectory());
+        model.put("tilePrefix", diagramCache.getBaseUri() + contextMap.getRelativeRenderDirectory());
         model.put("tiles", tiles);
 
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
@@ -184,7 +218,7 @@ public class PopulateCaches implements PopulateCachesI {
     }
 
     private void populateDtoCache(AbstractGene gene) {
-        System.err.println("Storing gene '"+gene.getUniqueName()+"'");
+        //System.err.println("Storing gene '"+gene.getUniqueName()+"'");
         for (Transcript transcript : gene.getTranscripts()) {
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
             dtoCache.put(new Element(transcript.getUniqueName(), dto));
@@ -209,6 +243,31 @@ public class PopulateCaches implements PopulateCachesI {
 
     public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
         this.luceneIndexFactory = luceneIndexFactory;
+    }
+
+
+    interface PopulateCachesArgs {
+
+        @Option(shortName="o", description="Only populate cache for this organism")
+        String getOrganism();
+
+        boolean isOrganism();
+
+        @Option
+        String getGlobalFileRoot();
+
+        boolean isGlobalFileRoot();
+
+        @Option
+        int getDebugCount();
+
+        boolean isDebugCount();
+
+    }
+
+
+    public void setConfig(PopulateCachesArgs pca) {
+        this.config = pca;
     }
 
 }

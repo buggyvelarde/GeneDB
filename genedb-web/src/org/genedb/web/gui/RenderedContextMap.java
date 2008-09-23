@@ -13,6 +13,9 @@ import org.apache.log4j.Logger;
 
 import java.awt.Color;
 import java.awt.image.IndexColorModel;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -322,7 +325,17 @@ public class RenderedContextMap extends RenderedDiagram {
 
     @Override
     public String getRelativeRenderDirectory() {
-        return String.format("%s/%s", getDiagram().getOrganism(), getDiagram().getChromosome());
+        String tlf = getDiagram().getChromosome();
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            // Should never happen
+        }
+        md.update(tlf.getBytes(), 0, tlf.length());
+        String tmp = new BigInteger(1, md.digest()).toString(16);
+
+        return String.format("%s/%s/%s/%s", getDiagram().getOrganism(), tmp.substring(0, 2), tmp.substring(2, 4), tlf);
     }
 
     /**
