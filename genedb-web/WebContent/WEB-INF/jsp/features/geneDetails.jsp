@@ -107,7 +107,7 @@
     </format:genePageSection>
 </div>
 
-<c:if test="${polypeptide != null}">
+<c:if test="${dto.proteinCoding}">
 
     <%-- Notes Section --%>
     <c:if test="${fn:length(dto.notes) > 0}">
