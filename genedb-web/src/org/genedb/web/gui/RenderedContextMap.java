@@ -10,6 +10,7 @@ import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hpsf.Thumbnail;
 
 import java.awt.Color;
 import java.awt.image.IndexColorModel;
@@ -323,19 +324,29 @@ public class RenderedContextMap extends RenderedDiagram {
         return ArtemisColours.colorModel(getLabelBackgroundColor());
     }
 
-    @Override
-    public String getRelativeRenderDirectory() {
-        String tlf = getDiagram().getChromosome();
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            // Should never happen
-        }
-        md.update(tlf.getBytes(), 0, tlf.length());
-        String tmp = new BigInteger(1, md.digest()).toString(16);
+//    @Override
+//    public String getRelativeRenderDirectory() {
+//        String tlf = getDiagram().getChromosome();
+//        MessageDigest md = null;
+//        try {
+//            md = MessageDigest.getInstance("MD5");
+//        } catch (NoSuchAlgorithmException e) {
+//            // Should never happen
+//        }
+//        md.update(tlf.getBytes(), 0, tlf.length());
+//        String tmp = new BigInteger(1, md.digest()).toString(16);
+//
+//        return String.format("%s/%s/%s/%s", getDiagram().getOrganism(), tmp.substring(0, 2), tmp.substring(2, 4), tlf);
+//    }
 
-        return String.format("%s/%s/%s/%s", getDiagram().getOrganism(), tmp.substring(0, 2), tmp.substring(2, 4), tlf);
+    public String getPreferredFilename() {
+        if (thumbNailMode) {
+            return String.format("%s/%s%09d-%09ds%.0f.%s", getDiagram().getChromosome(), filenamePrefix, getStart(), getEnd(),
+                    getBasesPerPixel(), FILE_EXT);
+        } else {
+            return String.format("%s%09d-%09ds%.0f.%s", filenamePrefix, getStart(), getEnd(),
+                    getBasesPerPixel(), FILE_EXT);
+        }
     }
 
     /**

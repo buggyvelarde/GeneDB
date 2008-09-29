@@ -93,10 +93,10 @@ public class RenderedProteinMap extends RenderedDiagram {
         return transcriptName + "." + FILE_EXT;
     }
 
-    @Override
-    public String getRelativeRenderDirectory() {
-        return getDiagram().getOrganism();
-    }
+//    @Override
+//    public String getRelativeRenderDirectory() {
+//        return getDiagram().getOrganism();
+//    }
 
     @Override
     public ProteinMapDiagram getDiagram() {

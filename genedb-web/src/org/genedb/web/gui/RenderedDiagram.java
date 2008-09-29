@@ -37,9 +37,10 @@ import javax.imageio.ImageIO;
 public abstract class RenderedDiagram {
     private static final Logger logger = Logger.getLogger(RenderedDiagram.class);
 
-    private String filenamePrefix = "";
+    protected String filenamePrefix = "";
     protected static final String FILE_FORMAT = "png";
     protected static final String FILE_EXT = "png";
+    protected boolean thumbNailMode;
 
     protected enum ColorModel { DIRECT, INDEXED }
 
@@ -195,7 +196,7 @@ public abstract class RenderedDiagram {
     private int numberOfPositiveTracks;
     private int numberOfNegativeTracks;
 
-    private TrackedDiagram diagram;
+    protected TrackedDiagram diagram;
     private NavigableMap<Integer,Gap> gapsByStart = new TreeMap<Integer,Gap>();
     private int start;
     private int end;
@@ -279,7 +280,7 @@ public abstract class RenderedDiagram {
     }
 
     public String getPreferredFilename() {
-        return String.format("%s%09d-%09ds%.0f.%s", filenamePrefix, getStart(), getEnd(),
+        return String.format("%s/%s%09d-%09ds%.0f.%s", filenamePrefix, getStart(), getEnd(),
             getBasesPerPixel(), FILE_EXT);
     }
 
@@ -307,6 +308,7 @@ public abstract class RenderedDiagram {
         setTrackHeight(2);
         setAxisBreakSlash(0, 0);
         filenamePrefix = "thumb-";
+        thumbNailMode=true;
         forceTracks(2, 2);
 
          /* For thumbnails, the resulting file is usually smaller with a direct color model.
@@ -458,16 +460,16 @@ public abstract class RenderedDiagram {
         this.boundaryTickHeight = boundaryTickHeight;
     }
 
-    public abstract String getRelativeRenderDirectory();
+    //public abstract String getRelativeRenderDirectory();
 
     public List<RenderedContextMap.Tile> renderTilesTo(File renderDirectory, int tileWidth) {
-        File dir = new File(renderDirectory, getRelativeRenderDirectory());
-        logger.debug(String.format("Rendering tiles to '%s'", dir.getAbsolutePath()));
+        //File dir = new File(renderDirectory, getRelativeRenderDirectory());
+        //logger.debug(String.format("Rendering tiles to '%s'", dir.getAbsolutePath()));
 
-        dir.mkdirs();
-        if (!dir.isDirectory()) {
-            throw new RuntimeException(String.format("Failed to create directory '%s'", dir));
-        }
+        //dir.mkdirs();
+        //if (!dir.isDirectory()) {
+        //    throw new RuntimeException(String.format("Failed to create directory '%s'", dir));
+        //}
 
         beforeRender();
         drawScaleTrack();
@@ -481,7 +483,7 @@ public abstract class RenderedDiagram {
 
         for (int startOfTile = 0, tileIndex = 1; startOfTile < getWidth(); startOfTile += tileWidth, tileIndex++) {
             String preferredFilename = getPreferredFilenameForTile(tileIndex, tileWidth);
-            File tileFile = new File(dir, preferredFilename);
+            File tileFile = new File(renderDirectory, preferredFilename);
 
             int widthOfThisTile = tileWidth;
             if (startOfTile + widthOfThisTile > getWidth())
@@ -490,11 +492,11 @@ public abstract class RenderedDiagram {
             if (!tileFile.exists()) {
                 File tileTempFile;
                 try {
-                    tileTempFile = File.createTempFile(preferredFilename, null, dir);
+                    tileTempFile = File.createTempFile(preferredFilename, null, renderDirectory);
                 }
                 catch (IOException e) {
                     throw new RuntimeException(String.format(
-                        "Failed to create temp file for tile %d in directory '%s'", tileIndex, dir), e);
+                        "Failed to create temp file for tile %d in directory '%s'", tileIndex, renderDirectory), e);
                 }
 
                 logger.debug(String.format("Rendering tile %d (start=%d,width=%d) to '%s'", tileIndex, startOfTile, widthOfThisTile, tileTempFile));
@@ -993,13 +995,19 @@ public abstract class RenderedDiagram {
         // pixel   = rgbArray[offset + (y-startY)*scansize + (x-startX)];
         try {
             image.setRGB(x, y, destWidth, h, labelData, offset, w);
-        } catch (NullPointerException exp) {
+        }
+        catch (NullPointerException exp) {
             // Passing in invalid coordinates - which ones
             logger.error(String.format(
                     "NullPointerException x='%d' y='%d' destWidth='%d' h='%d' labelData.size='%d' offset='%d' width='%d'",
                     x, y, destWidth, h, labelData.length, offset, w));
         }
-
+        catch (RuntimeException exp) {
+            // Passing in invalid coordinates - which ones
+            logger.error(String.format(
+                    "%s x='%d' y='%d' destWidth='%d' h='%d' labelData.size='%d' offset='%d' width='%d'",
+                    exp.getMessage(), x, y, destWidth, h, labelData.length, offset, w));
+        }
     }
 
     /**

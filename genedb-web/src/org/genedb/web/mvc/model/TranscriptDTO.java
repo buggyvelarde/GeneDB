@@ -261,7 +261,7 @@ public class TranscriptDTO implements Serializable {
                             ims = new ImageMapSummary(
                                     renderedProteinMap.getWidth(),
                                     renderedProteinMap.getHeight(),
-                                    diagramCache.fileForDiagram(renderedProteinMap),
+                                    diagramCache.fileForProteinMap(renderedProteinMap),
                                     renderedProteinMap.getRenderedFeaturesAsHTML("proteinMapMap"));
                         } catch (IOException exp) {
                             ims = new ImageMapSummary();

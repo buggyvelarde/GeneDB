@@ -33,8 +33,8 @@ import java.util.TreeSet;
  *
  * <li> Some organisms have nested genes, where a gene is contained wholly
  * within an exon belonging to another gene. (The reading frame of the "inner"
- * gene is often different.) At the time of writing (2008-04-28) the pathogen
- * database does not contain any nested genes, but this may change in future.
+ * gene is often different.) At the time of writing (2008-04-28) GeneDB
+ * does not contain any nested genes, but this may change in future.
  * </ul>
  *
  * A particular gene should always appear on the same track, no matter how far
@@ -162,8 +162,9 @@ public class ContextMapDiagram extends TrackedDiagram {
         diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, +1), false);
         diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, -1), true);
 
-        for (Gap gap: basicGeneService.findGapsOnChromosome(organismName, chromosomeName))
+        for (Gap gap: basicGeneService.findGapsOnChromosome(organismName, chromosomeName)) {
             diagram.addGlobalFeature(gap);
+        }
 
         return diagram;
     }

@@ -1,5 +1,7 @@
 package org.genedb.web.gui;
 
+import org.genedb.util.MD5Util;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
@@ -16,12 +18,19 @@ import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 
+/**
+ * Create a class responsible for the physical dumping of an image to a file,
+ * and all configuration for it's location and URL
+ *
+ * @author art
+ */
 public class DiagramCache {
     private static final Logger logger = Logger.getLogger(DiagramCache.class);
 
 
     private String baseDiagramDirectory;
     private String baseUri = "";
+
     public String getBaseUri() {
         return baseUri;
     }
@@ -69,7 +78,7 @@ public class DiagramCache {
      * @return
      * @throws IOException
      */
-    public String fileForDiagram(RenderedContextMap renderedContextMap) throws IOException {
+    public String fileForContextMap(RenderedContextMap renderedContextMap) throws IOException {
 
         ContextMapDiagram diagram = renderedContextMap.getDiagram();
 
@@ -83,23 +92,28 @@ public class DiagramCache {
             }
         }
 
-        File chromosomeDir = new File(organismDir, diagram.getChromosome());
-        if (!chromosomeDir.exists()) {
-            logger.warn(String
-                    .format("Directory '%s' not found; attempting to create", organismDir));
-            boolean success = chromosomeDir.mkdir();
-            if (!success) {
-                throw new IOException("Failed to create directory: " + chromosomeDir);
-            }
-        }
+//        File chromosomeDir = new File(organismDir, diagram.getChromosome());
+//        if (!chromosomeDir.exists()) {
+//            logger.warn(String
+//                    .format("Directory '%s' not found; attempting to create", organismDir));
+//            boolean success = chromosomeDir.mkdir();
+//            if (!success) {
+//                throw new IOException("Failed to create directory: " + chromosomeDir);
+//            }
+//        }
 
-        String cacheFileName = fileForDiagram(renderedContextMap, chromosomeDir);
+        String cacheFileName = fileForDiagram(renderedContextMap, organismDir);
 
-        return baseUri + contextMapRenderDirectory + '/'
-        + diagram.getOrganism() + '/' + diagram.getChromosome() + '/' + cacheFileName;
+//        return baseUri + contextMapRenderDirectory + '/'
+//        + diagram.getOrganism() + '/' + diagram.getChromosome() + '/' + cacheFileName;
+
+        String path = cacheFileName.substring(baseDiagramDirectory.length());
+
+        return baseUri + '/' + path;
     }
 
-    public String fileForDiagram(RenderedProteinMap renderedProteinMap) throws IOException {
+
+    public String fileForProteinMap(RenderedProteinMap renderedProteinMap) throws IOException {
 
         Assert.notNull(proteinMapRootDir);
 
@@ -110,8 +124,9 @@ public class DiagramCache {
             logger.warn(String
                     .format("Directory '%s' not found; attempting to create", organismDir));
             boolean success = organismDir.mkdir();
-            if (!success)
+            if (!success) {
                 throw new IOException("Failed to create directory: " + organismDir);
+            }
         }
 
         String cacheFileName = fileForDiagram(renderedProteinMap, organismDir);
@@ -125,21 +140,7 @@ public class DiagramCache {
 
         String lastPartFileName = renderedDiagram.getPreferredFilename();
 
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            // Should never happen
-        }
-        md.update(lastPartFileName.getBytes(), 0, lastPartFileName.length());
-        String tmp = new BigInteger(1, md.digest()).toString(16);
-
-        String intermediatePath = String.format("/%s/%s/%s",
-                tmp.substring(0, 2),
-                tmp.substring(2, 4),
-                lastPartFileName);
-
-        String cacheFileName = chromosomeDir.getCanonicalPath() + intermediatePath;
+        String cacheFileName = chromosomeDir.getCanonicalPath() + '/' + MD5Util.getPathBasedOnMD5(lastPartFileName, '/');
 
         File cacheFile = new File(cacheFileName);
         cacheFile.getParentFile().mkdirs();
@@ -204,7 +205,6 @@ public class DiagramCache {
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
     }
-
 
 
     public File getContextMapRootDir() {
