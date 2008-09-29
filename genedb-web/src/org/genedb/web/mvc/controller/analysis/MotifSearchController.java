@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Maps;
+
 /**
  * Servlet which provides a motif search using a regular expression against a protein database.
  *
@@ -36,7 +38,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/MotifSearch")
 public class MotifSearchController {
 
-    private static final int MAX_RESULT_SIZE = 20000;
+    //private static final int MAX_RESULT_SIZE = 20000;
 
     private static final Map<Character, String> PROTEIN_GROUP_MAP;
     private static final Map<Character, String> NUCLEOTIDE_GROUP_MAP;
@@ -87,13 +89,13 @@ public class MotifSearchController {
         // size or max hits
 
         int start = 0;
-        List results = runMainSearch(msb.getOrganism(), msb.getPattern(),
+        List<MotifMatch> results = runMainSearch(msb.getOrganism(), msb.getPattern(),
                 msb.isProtein(), start);
 
 
         // Return results to page
 //        req.setAttribute("title", "Gene Results List");
-        HashMap model = new HashMap();
+        HashMap<String, List<MotifMatch>> model = Maps.newHashMap();
         model.put("results", results);
 
         return new ModelAndView();
@@ -106,7 +108,7 @@ public class MotifSearchController {
      * @return
      * @throws IOException
      */
-    private List runMainSearch(Organism org, String patternString, boolean protein, int start) throws IOException {
+    private List<MotifMatch> runMainSearch(Organism org, String patternString, boolean protein, int start) throws IOException {
         return runMainSearch(org, patternString, protein, start, null, null, null);
     }
 
@@ -116,7 +118,7 @@ public class MotifSearchController {
      * @return
      * @throws IOException
      */
-    private List runMainSearch(Organism org, String patternString, boolean protein, int start,
+    private List<MotifMatch> runMainSearch(Organism org, String patternString, boolean protein, int start,
             String customGroup1, String customGroup2, String customGroup3) throws IOException {
         // Work out db given org
 
@@ -144,14 +146,14 @@ public class MotifSearchController {
     /**
      * @return
      */
-    private static Pattern validatePattern(String patternString) {
+    //private static Pattern validatePattern(String patternString) {
 
 //      # Check search
 //      if ($syn !~ /^[A-Za-z0-9\.\+\?\{\}\,\[\]\*\^\$]+$/) {
 //      print qq(Your query contained invalid characters. Please alter your query and try again.);
 
-        return Pattern.compile(patternString);
-    }
+       // return Pattern.compile(patternString);
+    //}
 
 
     private List<MotifMatch> runSearch(CharSequence in, Pattern pattern, int start) throws IllegalStateException {
@@ -235,7 +237,7 @@ public class MotifSearchController {
         // Read the lines
         while (matcher.find()) {
             // Get the line without the line termination character sequence
-            String hit = matcher.group();
+            @SuppressWarnings("unused") String hit = matcher.group();
             if (motifMatch == null) {
                 motifMatch = new MotifMatch(idLine, sequence);
             }
@@ -245,67 +247,69 @@ public class MotifSearchController {
         return motifMatch;
     }
 
-    private Pattern manipulateRegExp(String in, String cg1, String cg2, String cg3) {
-        StringBuffer pb = new StringBuffer();
+//    private Pattern manipulateRegExp(String in, String cg1, String cg2, String cg3) {
+//        StringBuffer pb = new StringBuffer();
+////
 //
+//        int leftSquareBracket = -1;
+//        int leftCurlyBracket = -1;
+//
+//
+//        for (int i=0; i < in.length(); i++) {
+//            char c = in.charAt(i);
+//            switch (c) {
+//            // Square brackets
+//            case '[':
+//                leftSquareBracket = i;
+//                pb.append(c);
+//                break;
+//            case ']':
+//                leftSquareBracket = -1;
+//                pb.append(c);
+//                break;
+//
+//                // Curly brackets
+//            case '{':
+//                leftCurlyBracket = i;
+//                pb.append(c);
+//                break;
+//            case '}':
+//                leftCurlyBracket = -1;
+//                pb.append(c);
+//                break;
+//
+//                // Special characters
+//            case '.':
+//            case '+':
+//            case '?':
+//            case ',':
+//                pb.append(c);
+//                break;
+//
+//                // Numbers
+//            case '0':
+//            case '1':
+//            case '2':
+//            case '3':
+//            case '4':
+//            case '5':
+//            case '6':
+//            case '7':
+//            case '8':
+//            case '9':
+//                if (leftCurlyBracket != -1) {
+//                    pb.append(c);
+//                } else {
+//                    pb.append(expandGroup(c));
+//                }
+//                break;
+//
+//            default:
+//                pb.append(expandGroup(c));
+//            }
+//        }
 
-        int leftSquareBracket = -1;
-        int leftCurlyBracket = -1;
 
-
-        for (int i=0; i < in.length(); i++) {
-            char c = in.charAt(i);
-            switch (c) {
-            // Square brackets
-            case '[':
-                leftSquareBracket = i;
-                pb.append(c);
-                break;
-            case ']':
-                leftSquareBracket = -1;
-                pb.append(c);
-                break;
-
-                // Curly brackets
-            case '{':
-                leftCurlyBracket = i;
-                pb.append(c);
-                break;
-            case '}':
-                leftCurlyBracket = -1;
-                pb.append(c);
-                break;
-
-                // Special characters
-            case '.':
-            case '+':
-            case '?':
-            case ',':
-                pb.append(c);
-                break;
-
-                // Numbers
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                if (leftCurlyBracket != -1) {
-                    pb.append(c);
-                } else {
-                    pb.append(expandGroup(c));
-                }
-                break;
-
-            default:
-                pb.append(expandGroup(c));
-            }
-        }
 //$syn =~ s|\{|_\{|g;
 //$syn =~ s|\}|\}_|g;
 //
@@ -323,8 +327,10 @@ public class MotifSearchController {
 //# $syn =~ m/(.*)/s;
 //      $syn = $newExp;
 //
-        return Pattern.compile(pb.toString());
-    }
+
+
+//        return Pattern.compile(pb.toString());
+//    }
 
     public String expandGroup(char c) {
         return ""; // FIXME
@@ -381,7 +387,7 @@ public class MotifSearchController {
         public String toString() {
             StringBuffer ret = new StringBuffer(idLine);
             ret.append('\n');
-            for (Iterator it = coords.iterator(); it.hasNext();) {
+            for (Iterator<int[]> it = coords.iterator(); it.hasNext();) {
                 int[] pair = (int[]) it.next();
                 ret.append("  ");
                 ret.append(sequence.substring(pair[0], pair[1]));
@@ -399,9 +405,9 @@ public class MotifSearchController {
       Organism org = null;
       List<MotifMatch> results = ms.runMainSearch(org, pattern, true, 0);
       System.err.println("Number of results: "+results.size());
-      for (MotifMatch match : results) {
+      //for (MotifMatch match : results) {
           //System.err.println(match.idLine);
-      }
+      //}
     }
 
 }

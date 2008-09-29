@@ -9,6 +9,7 @@ import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
 import org.genedb.db.domain.services.BasicGeneService;
 import org.genedb.querying.core.LuceneIndex;
 import org.genedb.querying.core.LuceneIndexFactory;
+import org.genedb.util.MD5Util;
 import org.genedb.web.gui.ContextMapDiagram;
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.RenderedContextMap;
@@ -88,6 +89,7 @@ public class PopulateCaches {//implements PopulateCachesI {
         pc.fullCachePopulate();
     }
 
+
     @Transactional
     public void fullCachePopulate() {
 
@@ -112,7 +114,7 @@ public class PopulateCaches {//implements PopulateCachesI {
 
             populateContextMapCache(feature, basicGeneService);
 
-            List<Feature> features = (List<Feature>) sessionFactory.getCurrentSession().createQuery(
+            @SuppressWarnings("unchecked") List<Feature> features = (List<Feature>) sessionFactory.getCurrentSession().createQuery(
             "select f from Feature f, FeatureLoc fl where fl.sourceFeature.uniqueName=:feature and fl.feature=f")
             .setString("feature", featureName).list();
 
@@ -136,8 +138,13 @@ public class PopulateCaches {//implements PopulateCachesI {
             count++;
             System.err.println(String.format("Count '%d' of '%d' : Total run time '%d's", count, topLevelFeatures.size(), (new Date().getTime() - start)/1000));
         }
+
+        dtoCache.dispose();
+        contextMapCache.flush();
+        contextMapCache.dispose();
     }
 
+    @SuppressWarnings("unchecked")
     private List<String> getTopLevelFeatures() {
 
         Query q = sessionFactory.getCurrentSession().createQuery(
@@ -162,22 +169,23 @@ public class PopulateCaches {//implements PopulateCachesI {
         RenderedContextMap renderedContextMap = new RenderedContextMap(chromosomeDiagram);
         RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
 
-        File renderDirectory = diagramCache.getContextMapRootDir();
+        File renderDirectory = new File(diagramCache.getContextMapRootDir() + "/" + feature.getOrganism().getCommonName() + "/" + MD5Util.getPathBasedOnMD5(feature.getUniqueName(), '/'));
+        renderDirectory.mkdirs();
         List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTilesTo(renderDirectory, TILE_WIDTH);
 
         String text;
         try {
-            text = populateModel(renderedChromosomeThumbnail, renderedContextMap, tiles);
+            text = populateModel(renderedChromosomeThumbnail, renderedContextMap, renderDirectory, tiles);
             contextMapCache.put(new Element(feature.getUniqueName(), text));
-            System.err.println("Stored contextMap for '"+feature.getUniqueName()+"' as '"+text+"'");
+            //System.err.println("Stored contextMap for '"+feature.getUniqueName()+"' as '"+text+"'");
         } catch (IOException exp) {
             System.err.println(exp);
         }
     }
 
-    private String populateModel(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap,
+    private String populateModel(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap, File renderDirectory,
             List<RenderedContextMap.Tile> tiles) throws IOException {
-        String chromosomeThumbnailURI = diagramCache.fileForDiagram(chromosomeThumbnail);
+        String chromosomeThumbnailURI = diagramCache.fileForContextMap(chromosomeThumbnail);
 
         ContextMapDiagram diagram = contextMap.getDiagram();
 
@@ -198,7 +206,9 @@ public class PopulateCaches {//implements PopulateCachesI {
         model.put("start", diagram.getStart());
         model.put("end", diagram.getEnd());
 
-        model.put("tilePrefix", diagramCache.getBaseUri() + contextMap.getRelativeRenderDirectory());
+        String path = renderDirectory.getAbsolutePath();
+
+        model.put("tilePrefix", diagramCache.getBaseUri()+path);
         model.put("tiles", tiles);
 
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
