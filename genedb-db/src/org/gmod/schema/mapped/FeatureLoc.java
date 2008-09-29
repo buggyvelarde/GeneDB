@@ -146,8 +146,8 @@ public class FeatureLoc implements Serializable {
         return this.feature;
     }
 
-    void setFeature(Feature featureByFeatureId) {
-        this.feature = featureByFeatureId;
+    void setFeature(Feature feature) {
+        this.feature = feature;
     }
 
     public Integer getFmin() {

@@ -130,7 +130,7 @@ public class SequenceDao extends BaseDao {
                 .findByNamedParam(
                         "select f "
                                 + "from Feature f, FeatureLoc loc where "
-                                + "f = loc.featureByFeatureId and f.type.name=:type and loc.strand="
+                                + "f = loc.feature and f.type.name=:type and loc.strand="
                                 + strand + " and" + " loc.featureBySrcFeatureId=" + fid + " and ("
                                 + " loc.fmin<=:min and loc.fmax>=:max)",
                         new String[] { "type", "min", "max" }, new Object[] { type, min, max });
@@ -557,7 +557,7 @@ public class SequenceDao extends BaseDao {
         @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
         List<Feature> features = getHibernateTemplate().findByNamedParam(
                 "select f from Feature f , FeatureLoc fl " + "where fl.fmin>=:min "
-                        + "and fl.fmax<=:max and fl.featureByFeatureId=f.featureId "
+                        + "and fl.fmax<=:max and fl.feature=f.featureId "
                         + "and fl.featureBySrcFeatureId=:parent and f.type.name=:type "
                         + "and f.organism.commonName=:organism",
                 new String[] { "min", "max", "type", "organism", "parent" },

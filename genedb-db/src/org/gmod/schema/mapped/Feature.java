@@ -175,7 +175,7 @@ public abstract class Feature implements java.io.Serializable {
     @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Set<FeatureDbXRef> featureDbXRefs;
 
-    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureByFeatureId")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @OrderBy("locGroup ASC, rank ASC")
     private List<FeatureLoc> featureLocs;
