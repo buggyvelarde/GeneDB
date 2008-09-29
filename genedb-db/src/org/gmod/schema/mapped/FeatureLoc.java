@@ -138,8 +138,8 @@ public class FeatureLoc implements Serializable {
         return this.sourceFeature;
     }
 
-    void setSourceFeature(Feature featureBySrcFeatureId) {
-        this.sourceFeature = featureBySrcFeatureId;
+    void setSourceFeature(Feature sourceFeature) {
+        this.sourceFeature = sourceFeature;
     }
 
     public Feature getFeature() {
