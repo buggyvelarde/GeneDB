@@ -35,6 +35,7 @@
         <path location="${lib-dir}/json_simple.jar"/>
         <path location="${lib-dir}/lucene-core-2.3.2.jar"/>
         <path location="${lib-dir}/misc/google-collect-snapshot-20080820.jar" />
+        <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
         <path location="${lib-dir}/postgresql-8.2dev-501.jdbc3.jar" />
         <path location="${lib-dir}/spring-2.5.4.jar" />
         <path location="${lib-dir}/spring-aspects.jar" />
@@ -67,6 +68,7 @@
         <path location="${lib-dir}/json-lib-ext-spring-1.0.1.jar" />
         <path location="${lib-dir}/ezmorph-1.0.4.jar" />
         <path location="${lib-dir}/misc/jsr107cache-1.0.jar" />
+        <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
     </path>
 
     <path id="compile-libs">
@@ -195,6 +197,8 @@
     <target name="populate-caches" depends="compile">
         <java fork="true" classpathref="application-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
             <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+            <!-- <arg line="-o Pfalciparum -debugCount 2"/> -->
+            <!-- <arg line="-o Pberghei_3x"/> -->
         </java>
 
     </target>
