@@ -117,22 +117,25 @@ public abstract class EmblLocation {
         protected abstract String operator();
         private int fmin = Integer.MAX_VALUE, fmax = Integer.MIN_VALUE;
         protected void add(EmblLocation location) throws DataError {
-            int locationFmin = location.getFmin();
-            int locationFmax = location.getFmax();
-            int locationStrand = location.getStrand();
+            if (! (location instanceof Gap)) {
+                int locationFmin = location.getFmin();
+                int locationFmax = location.getFmax();
+                int locationStrand = location.getStrand();
 
-            if (locationFmin < fmin) {
-                if (locationStrand != -1 && !locations.isEmpty()) {
-                    throw new DataError("Locations are joined in the wrong order");
+                if (locationFmin < fmin) {
+                    if (locationStrand != -1 && !locations.isEmpty()) {
+                        throw new DataError("Locations are joined in the wrong order");
+                    }
+                    fmin = locationFmin;
                 }
-                fmin = locationFmin;
-            }
-            if (locationFmax > fmax) {
-                if (locationStrand == -1 && !locations.isEmpty()) {
-                    throw new DataError("Locations are joined in the wrong order");
+                if (locationFmax > fmax) {
+                    if (locationStrand == -1 && !locations.isEmpty()) {
+                        throw new DataError("Locations are joined in the wrong order");
+                    }
+                    fmax = locationFmax;
                 }
-                fmax = locationFmax;
             }
+
             locations.add(location);
         }
         List<EmblLocation> locations = new ArrayList<EmblLocation>();

@@ -12,11 +12,13 @@ public class EmblLocationTest {
     private static String[] roundTripLocations = new String[] {
         "1..100",
         "12^13",
+        "complement(12^13)",
         "acc123.1:12..100",
         "Database::acc123.1:12..100",
         "complement(join(1..2,3..4,5^6))",
         "complement(join(1..2,3..4,XYZ1.5:5^6))",
-        "order(complement(1..5),complement(100..110))",
+        "order(complement(100..110),complement(1..5))",
+        "join(complement(100..110),complement(1..5))",
         "<1..100", "1..>100", "<1..>100"
     };
 
@@ -31,6 +33,7 @@ public class EmblLocationTest {
         ">10..100",
         "join(10..100",
         "join(10 .. 100)",
+        "join(complement(1..10),complement(20..30))",
         ""
     };
 
