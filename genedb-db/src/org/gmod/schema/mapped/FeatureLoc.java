@@ -325,7 +325,7 @@ public class FeatureLoc implements Serializable {
     @Override
     public String toString() {
         return String.format("{fmin=%d, fmax=%d, strand=%d, sourceFeatureId=%d}",
-            fmin, fmax, strand, sourceFeature.getFeatureId());
+            fmin, fmax, strand, sourceFeature == null ? -1 : sourceFeature.getFeatureId());
     }
 
 }
