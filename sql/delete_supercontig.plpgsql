@@ -1,0 +1,30 @@
+create or replace function delete_supercontig(varchar)
+returns integer
+as '
+DECLARE
+  supercontig_name alias for $1;
+  supercontig_id feature.feature_id%TYPE;
+  number_of_features integer;
+BEGIN
+  select into strict supercontig_id feature_id
+  from feature
+  where uniquename = supercontig_name;
+  
+  raise notice ''Deleting supercontig % with ID %'', supercontig_name, supercontig_id;
+  
+  delete from feature
+  using featureloc
+  where featureloc.feature_id = feature.feature_id
+  and featureloc.srcfeature_id = supercontig_id;
+  
+  get diagnostics number_of_features = ROW_COUNT;
+  raise notice ''Deleted % features located on supercontig'', number_of_features;
+  
+  delete from feature
+  where feature_id = supercontig_id;
+  raise notice ''Deleted supercontig itself'';
+  
+  return number_of_features;
+END;
+' language 'plpgsql'
+;
