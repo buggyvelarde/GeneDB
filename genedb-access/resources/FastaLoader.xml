@@ -10,7 +10,6 @@
     <context:component-scan base-package="org.gmod.schema"/>
     <context:spring-configured/>
 
-
     <tx:annotation-driven/>
 
     <bean id="runner" class="org.genedb.db.loading.FastaLoader">
@@ -33,7 +32,7 @@
         <property name="location" value="classpath:project.properties" />
     </bean>
 
-    <bean id="cvDao" class="org.genedb.db.dao.CvDao" init-method="afterPropertiesSet">
+     <bean id="cvDao" class="org.genedb.db.dao.CvDao" init-method="afterPropertiesSet">
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="generalDao" ref="generalDao" />
     </bean>
@@ -50,28 +49,6 @@
     <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="cvDao" ref="cvDao"/>
-    </bean>
-
-    <bean id="pubDao" class="org.genedb.db.dao.PubDao" init-method="afterPropertiesSet">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="featureUtils" class="org.genedb.db.loading.FeatureUtils">
-        <property name="cvDao" ref="cvDao" />
-        <property name="sequenceDao" ref="sequenceDao" />
-        <property name="pubDao" ref="pubDao" />
-        <property name="generalDao" ref="generalDao" />
-    </bean>
-
-    <bean id="objectManager" class="org.gmod.schema.utils.ObjectManager"/>
-
-    <bean id="emblLoader" class="org.genedb.db.loading.alternative.EmblLoader"
-        init-method="afterPropertiesSet">
-        <property name="cvDao" ref="cvDao"/>
-        <property name="generalDao" ref="generalDao"/>
-        <property name="organismDao" ref="organismDao"/>
-        <property name="objectManager" ref="objectManager"/>
-        <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
     <!-- DataSource Property -->
@@ -101,7 +78,7 @@
         class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="hibernateProperties" ref="hibernateProperties" />
-        <property name="entityInterceptor" ref="objectManager"/>
+        <!-- <property name="entityInterceptor" ref="objectManager"/> -->
         <property name="annotatedPackages">
             <list>
                 <value>org.gmod.schema.mapped</value>
