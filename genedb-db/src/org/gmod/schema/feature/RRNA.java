@@ -13,7 +13,7 @@ import javax.persistence.Transient;
 @Entity
 @FeatureType(cv = "sequence", term = "rRNA")
 @Indexed
-public class RRNA extends Transcript {
+public class RRNA extends NcRNA {
 
     RRNA() {
         // empty
