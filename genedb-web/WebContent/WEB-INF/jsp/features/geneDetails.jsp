@@ -41,7 +41,7 @@
             <td class="value">${dto.typeDescription}</td>
         </tr>
 <%-- ------------------------------------------------------- --%>
-        <c:if test="${!empty(dto.synonyms)}">
+        <c:if test="${!empty dto.synonyms}">
             <tr>
                 <td class="label">Synonyms</td>
                 <td class="value">
@@ -50,7 +50,7 @@
             </tr>
         </c:if>
 <%-- ------------------------------------------------------- --%>
-        <c:if test="${!empty(dto.obsoleteNames)}">
+        <c:if test="${!empty dto.obsoleteNames}">
             <tr>
                 <td class="label">Obsolete names</td>
                 <td class="value">
@@ -59,7 +59,7 @@
             </tr>
         </c:if>
 <%-- ------------------------------------------------------- --%>
-        <c:if test="${!empty(dto.products)}">
+        <c:if test="${!empty dto.products}">
             <tr>
                 <td class="label">Product</td>
                 <td class="value">
@@ -76,7 +76,7 @@
                 locations ${dto.location}
             </td>
         </tr>
-        <c:if test="${!empty(dto.dbXRefDTOs)}">
+        <c:if test="${!empty dto.dbXRefDTOs}">
           <tr>
               <td class="label">See Also</td>
               <td class="value">
@@ -97,7 +97,7 @@
              <a href="">Add gene to basket</a>
          </div>
         <div style="clear: both; margin-top: 1ex;">
-             <a href="/new/FeatureSequence?name=${dto.uniqueName}&seqs=true">View/analyze/download sequence</a>
+             <a href="<c:url  value="/" />/FeatureSequence?name=${dto.uniqueName}&seqs=true">View/analyze/ download sequence</a>
          </div>
         <div style="clear: both; margin-top: 1ex;">
             Show region in
