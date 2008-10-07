@@ -69,6 +69,7 @@
         <path location="${lib-dir}/ezmorph-1.0.4.jar" />
         <path location="${lib-dir}/misc/jsr107cache-1.0.jar" />
         <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
+        <path location="${lib-dir}/db/je-3.3.69.jar" />
     </path>
 
     <path id="compile-libs">
@@ -187,18 +188,22 @@
 
 	<path id="application-classpath">
 	    <path refid="libs" />
+	    <path path="property-file.${deploy}" />
 		<path path="ant-build/classes" />
 		<path path="WebContent/WEB-INF" />
 		<path path="${lib-dir}/spring-bundle-2.5.4/j2ee/servlet-api.jar"/>
         <path location="WebContent/WEB-INF/lib/backport-util-concurrent.jar"/>
         <path path="${lib-dir}/misc/jsr107cache-1.0.jar" />
+        <path path="${lib-dir}/db/je-3.3.69.jar" />
 	</path>
 
     <target name="populate-caches" depends="compile">
         <java fork="true" classpathref="application-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
             <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-            <!-- <arg line="-o Pfalciparum -debugCount 2"/> -->
+            <!-- <arg line="-o Pfalciparum -debugCount 30 -globalFileRoot /tmp"/> -->
+            <arg line="--globalFileRoot /tmp"/>
             <!-- <arg line="-o Pberghei_3x"/> -->
+        	<!-- <arg line="-ncm" /> -->
         </java>
 
     </target>
