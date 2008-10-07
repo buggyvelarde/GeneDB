@@ -134,11 +134,19 @@
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="diagramCache" ref="diagramCache" />
         <property name="modelBuilder" ref="modelBuilder" />
-        <property name="dtoCache" ref="dtoCache" />
-        <property name="contextMapCache" ref="contextMapCache" />
+        <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
         <property name="luceneIndexFactory" ref="luceneIndexFactory" />
     </bean>
 
+    <bean name="berkeleyReadWriteMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+        <property name="rootDirectory" value="/tmp"/>
+    </bean>
+
+
+    <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+        <property name="rootDirectory" value="/tmp/safe"/>
+        <property name="readOnly" value="true" />
+    </bean>
 
     <bean id="modelBuilder"
         class="org.genedb.web.mvc.controller.ModelBuilder">
@@ -159,7 +167,6 @@
         <property name="overflowToDisk" value="true" />
         <property name="maxElementsOnDisk" value="0" />
         <property name="diskPersistent" value="true"/>
-        <property name="diskStorePath" value="/nfs/pathdata/genedb.art/dtoCache" />
     </bean>
 
 
@@ -173,7 +180,6 @@
         <property name="overflowToDisk" value="true" />
         <property name="maxElementsOnDisk" value="0" />
         <property name="diskPersistent" value="true"/>
-        <property name="diskStorePath" value="/nfs/pathdata/genedb.art/contextMapCache" />
     </bean>
 
 </beans>
