@@ -20,36 +20,24 @@
 package org.genedb.querying.core;
 
 
-import org.genedb.querying.history.HistoryItem;
-import org.genedb.querying.history.HistoryManager;
-import org.genedb.querying.history.HistoryType;
-
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -78,9 +66,9 @@ public abstract class LuceneQuery implements Query {
 
     protected abstract String getluceneIndexName();
 
-    protected static final TermQuery isCurrentQuery = new TermQuery(new Term("isCurrent", "true"));
-    protected static final TermQuery geneQuery = new TermQuery(new Term("cvTerm.name","gene"));
-    protected static final TermQuery pseudogeneQuery = new TermQuery(new Term("cvTerm.name","pseudogene"));
+    protected static final TermQuery isCurrentQuery = new TermQuery(new Term("obsolete", "false"));
+    protected static final TermQuery geneQuery = new TermQuery(new Term("type.name","gene"));
+    protected static final TermQuery pseudogeneQuery = new TermQuery(new Term("type.name","pseudogene"));
     protected static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
     static {
         geneOrPseudogeneQuery.add(geneQuery, Occur.SHOULD);
