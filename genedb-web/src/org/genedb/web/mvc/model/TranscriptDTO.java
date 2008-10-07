@@ -61,6 +61,7 @@ public class TranscriptDTO implements Serializable {
     private String topLevelFeatureType;
     private String topLevelFeatureDisplayName;
     private String topLevelFeatureUniqueName;
+    private int topLevelFeatureLength;
     private String geneName;
     private List<String> notes;
     private List<String> comments;
@@ -81,7 +82,17 @@ public class TranscriptDTO implements Serializable {
     private Map<String,Object> algorithmData;
     private PeptideProperties polypeptideProperties;
     private boolean proteinCoding;
+    private String organismCommonName;
+    private String organismHtmlShortName;
 
+
+    public String getOrganismCommonName() {
+        return organismCommonName;
+    }
+
+    public String getOrganismHtmlShortName() {
+        return organismHtmlShortName;
+    }
 
     private Map<String,Object> prepareAlgorithmData(Polypeptide polypeptide) {
         Map<String,Object> algorithmData = new HashMap<String,Object>();
@@ -234,6 +245,7 @@ public class TranscriptDTO implements Serializable {
         populateNames(transcript, gene);
         populateParentDetails(gene);
         populateMisc(transcript);
+        populateOrganismDetails(transcript);
 
         if (polypeptide != null) {
             this.algorithmData = prepareAlgorithmData(polypeptide);
@@ -275,6 +287,11 @@ public class TranscriptDTO implements Serializable {
 
         }
 
+    }
+
+    private void populateOrganismDetails(Transcript transcript) {
+        this.organismCommonName = transcript.getOrganism().getCommonName();
+        this.organismHtmlShortName = transcript.getOrganism().getHtmlShortName();
     }
 
     private List<PolypeptideRegionGroup> prepareDomainInformation(Polypeptide polypeptide) {
@@ -386,6 +403,7 @@ public class TranscriptDTO implements Serializable {
         this.topLevelFeatureType = topLevelFeature.getType().getName();
         this.topLevelFeatureDisplayName = topLevelFeature.getDisplayName();
         this.topLevelFeatureUniqueName = topLevelFeature.getUniqueName();
+        this.topLevelFeatureLength = topLevelFeature.getSeqLen();
     }
 
 
@@ -583,6 +601,10 @@ public class TranscriptDTO implements Serializable {
 
     public boolean isProteinCoding() {
         return proteinCoding;
+    }
+
+    public int getTopLevelFeatureLength() {
+        return topLevelFeatureLength;
     }
 
 
