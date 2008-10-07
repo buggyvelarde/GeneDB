@@ -38,15 +38,16 @@
         });
 
         function loadAdvancedSearch() {
-      var dom = YAHOO.util.Dom;
-      var div = dom.get("advancedSearch");
-      var attributes = {
-              height: { to: 150 }
-       };
-       var anim = new YAHOO.util.Anim('advancedSearch', attributes);
-       anim.animate();
-       dom.setStyle(div, "overflow", "visible");
-       dom.setStyle(div, "border", "1px solid grey");
+            var dom = YAHOO.util.Dom;
+            var div = dom.get("advancedSearch");
+            var attributes = {
+                  height: { to: 150 },
+                  duration: 0.5
+                  };
+            var anim = new YAHOO.util.Anim('advancedSearch', attributes);
+            anim.animate();
+            dom.setStyle(div, "overflow", "visible");
+            dom.setStyle(div, "border", "1px solid grey");
         }
 
         function closeAdvancedSearch() {
@@ -55,7 +56,8 @@
       dom.setStyle(div, "overflow", "hidden");
       dom.setStyle(div, "border", "");
       var attributes = {
-              height: { to: 0 }
+              height: { to: 0 },
+              duration: 0.5
         };
        var anim = new YAHOO.util.Anim('advancedSearch', attributes);
       anim.animate();
@@ -74,17 +76,19 @@
     <tr id="top-row">
         <td id="logo" valign="top" align="left"><a href="<c:url value="/Homepage"/>"><img border="0" width="171" height="51" src="<c:url value="/includes/images/genedb-logo.gif"/>" alt="GeneDB"></img></a></td>
         <td id="name">${name}</td>
-        <td id="search"><!--
-          <c:if test="${!empty organism}">
-              <form name="searchForm" action="<c:url value="/"/>Query?q=allNameProduct&organism=${organism}&pseudogene=true&obsolete=false&product=true&allNames=true" method="GET">
-            </c:if>
-            <c:if test="${empty organism}">
-              <form name="searchForm" action="<c:url value="/Query?q=allNameProduct&pseudogene=true&obsolete=false&product=true&allNames=true"/>" method="GET">
-            </c:if>
-              <input id="query" name="query" type="text" align="middle"/>
-              <input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
-        </form>-->
-        <!-- <span align="top" style="font-size:0.65em;">
+        <td id="search">
+            <form name="searchForm" action="<c:url value="/"/>Query" method="GET">
+                <c:if test="${!empty organism}">
+                  <input type="hidden" name="organism" value="${organism}">
+                </c:if>
+                <input type="hidden" name="q" value="allNameProduct"/>
+                <input type="hidden" name="pseudogene" value="true"/>
+                <input type="hidden" name="product" value="true"/>
+                <input type="hidden" name="allNames" value="true"/>
+                <input id="query" name="search" type="text" align="middle"/>
+                <input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
+            </form>
+        <span align="top" style="font-size:0.65em;">
           <a style="color:white;vertical-align:top;" href="#" onclick="loadAdvancedSearch(); return false;">
             Advanced Search
           </a>
@@ -135,10 +139,10 @@
           </form>
           <br>
           <span><a href="#" onclick="closeAdvancedSearch(); return false;">Close</a></span>
-        </div>-->
+        </div>
         </td>
     </tr>
-    <!-- <tr id="navigation-row">
+    <tr id="navigation-row">
       <td colspan="3"><div id="navigation" class="yuimenubar yuimenubarnav">
             <div class="bd">
                 <ul class="first-of-type">
@@ -252,5 +256,5 @@
                 </ul>
             </div>
       </div></td>
-    </tr> -->
+    </tr>
 </tbody></table>
