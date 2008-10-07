@@ -30,12 +30,6 @@
                     <form:checkbox id="nameProduct" path="pseudogenes"/>
                   </td>
                 </tr>
-                <!--<tr>
-                  <td>Include obsolete:</td>
-                  <td>
-                    <form:checkbox id="nameProduct" path="obsolete"/>
-                  </td>
-                </tr>-->
                 <tr>
                   <td>All names:</td>
                   <td>
