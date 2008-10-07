@@ -1,7 +1,5 @@
 package org.genedb.web.mvc.model;
 
-import net.sf.ehcache.Element;
-import net.sf.ehcache.constructs.blocking.BlockingCache;
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
@@ -19,7 +17,6 @@ import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
-
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -34,28 +31,38 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.sleepycat.collections.StoredMap;
+import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.EnvironmentLockedException;
 
 
 
 
 @Repository
 @Transactional
-public class PopulateCaches {//implements PopulateCachesI {
+public class PopulateCaches {
+
+
+    private BerkeleyMapFactory bmf;
+
+    private StoredMap<String, TranscriptDTO> dtoMap;
+    private StoredMap<String, String> contextMapMap;
 
     private SessionFactory sessionFactory;
-    private BlockingCache dtoCache;
-    private BlockingCache contextMapCache;
+    //private BlockingCache dtoCache;
+    //private BlockingCache contextMapCache;
     private ModelBuilder modelBuilder;
     private DiagramCache diagramCache;
     private LuceneIndexFactory luceneIndexFactory;
     private BasicGeneService basicGeneService;
 
     private static final int TILE_WIDTH = 5000;
+
     private int THUMBNAIL_WIDTH = 200;
     private PopulateCachesArgs config;
 
@@ -65,6 +72,8 @@ public class PopulateCaches {//implements PopulateCachesI {
 
     /**
      * @param args
+     * @throws DatabaseException
+     * @throws EnvironmentLockedException
      */
     public static void main(String[] args) {
 
@@ -80,18 +89,20 @@ public class PopulateCaches {//implements PopulateCachesI {
             return;
         }
 
-
-
         ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath:applicationContext.xml"});
         ctx.refresh();
         PopulateCaches pc = (PopulateCaches) ctx.getBean("populateCaches", PopulateCaches.class);
         pc.setConfig(pca);
         pc.fullCachePopulate();
-    }
 
+    }
 
     @Transactional
     public void fullCachePopulate() {
+
+
+        dtoMap = bmf.getDtoMap(); // TODO More nicely
+        contextMapMap = bmf.getContextMapMap();
 
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         basicGeneService = new BasicGeneServiceImpl(luceneIndex);
@@ -112,7 +123,9 @@ public class PopulateCaches {//implements PopulateCachesI {
             .setString("uniqueName", featureName)
             .uniqueResult();
 
-            populateContextMapCache(feature, basicGeneService);
+            if (!config.isNoContextMap()) {
+                populateContextMapCache(feature, basicGeneService);
+            }
 
             @SuppressWarnings("unchecked") List<Feature> features = (List<Feature>) sessionFactory.getCurrentSession().createQuery(
             "select f from Feature f, FeatureLoc fl where fl.sourceFeature.uniqueName=:feature and fl.feature=f")
@@ -132,16 +145,17 @@ public class PopulateCaches {//implements PopulateCachesI {
                 //}
             }
 
-            dtoCache.flush();
+            //dtoCache.flush();
 
             sessionFactory.getCurrentSession().clear();
             count++;
             System.err.println(String.format("Count '%d' of '%d' : Total run time '%d's", count, topLevelFeatures.size(), (new Date().getTime() - start)/1000));
         }
 
-        dtoCache.dispose();
-        contextMapCache.flush();
-        contextMapCache.dispose();
+        //dtoCache.dispose();
+        //contextMapCache.flush();
+        //contextMapCache.dispose();
+
     }
 
     @SuppressWarnings("unchecked")
@@ -176,8 +190,10 @@ public class PopulateCaches {//implements PopulateCachesI {
         String text;
         try {
             text = populateModel(renderedChromosomeThumbnail, renderedContextMap, renderDirectory, tiles);
-            contextMapCache.put(new Element(feature.getUniqueName(), text));
-            //System.err.println("Stored contextMap for '"+feature.getUniqueName()+"' as '"+text+"'");
+
+            contextMapMap.put(feature.getUniqueName(), text);
+            //contextMapCache.put(new Element(feature.getUniqueName(), text));
+            System.err.println("Stored contextMap for '"+feature.getUniqueName()+"' as '"+text+"'");
         } catch (IOException exp) {
             System.err.println(exp);
         }
@@ -206,7 +222,7 @@ public class PopulateCaches {//implements PopulateCachesI {
         model.put("start", diagram.getStart());
         model.put("end", diagram.getEnd());
 
-        String path = renderDirectory.getAbsolutePath();
+        String path = renderDirectory.getAbsolutePath().substring(4); // FIXME - BUG
 
         model.put("tilePrefix", diagramCache.getBaseUri()+path);
         model.put("tiles", tiles);
@@ -231,7 +247,8 @@ public class PopulateCaches {//implements PopulateCachesI {
         //System.err.println("Storing gene '"+gene.getUniqueName()+"'");
         for (Transcript transcript : gene.getTranscripts()) {
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
-            dtoCache.put(new Element(transcript.getUniqueName(), dto));
+
+            dtoMap.put(transcript.getUniqueName(), dto);
         }
     }
 
@@ -243,16 +260,20 @@ public class PopulateCaches {//implements PopulateCachesI {
         this.diagramCache = diagramCache;
     }
 
-    public void setDtoCache(BlockingCache dtoCache) {
-        this.dtoCache = dtoCache;
-    }
-
-    public void setContextMapCache(BlockingCache contextMapCache) {
-        this.contextMapCache = contextMapCache;
-    }
-
     public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
         this.luceneIndexFactory = luceneIndexFactory;
+    }
+
+    public void setConfig(PopulateCachesArgs pca) {
+        this.config = pca;
+    }
+
+    public void setDtoMap(StoredMap<String, TranscriptDTO> dtoMap) {
+        this.dtoMap = dtoMap;
+    }
+
+    public void setContextMapMap(StoredMap<String, String> contextMapMap) {
+        this.contextMapMap = contextMapMap;
     }
 
 
@@ -273,11 +294,14 @@ public class PopulateCaches {//implements PopulateCachesI {
 
         boolean isDebugCount();
 
+        @Option(longName="ncm", description="Don't generate context maps")
+        boolean isNoContextMap();
+
     }
 
 
-    public void setConfig(PopulateCachesArgs pca) {
-        this.config = pca;
+    public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
+        this.bmf = bmf;
     }
 
 }

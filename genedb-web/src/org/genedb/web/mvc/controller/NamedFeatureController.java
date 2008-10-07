@@ -23,6 +23,7 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.BlockingCache;
 
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.feature.Transcript;
@@ -36,6 +37,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,7 +61,8 @@ public class NamedFeatureController extends PostOrGetFormController {
     private int cacheHit = 0;
     private int cacheMiss = 0;
 
-    private BlockingCache dtoCache;
+    private BerkeleyMapFactory bmf;
+    //private BlockingCache dtoCache;
 
     private ModelBuilder modelBuilder;
 
@@ -91,17 +94,22 @@ public class NamedFeatureController extends PostOrGetFormController {
 
         String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
 
-        TranscriptDTO dto = null;
-        Element element = dtoCache.get(transcript.getUniqueName());
+        TranscriptDTO dto = bmf.getDtoMap().get(transcript.getUniqueName());
 
-        if (element == null) {
+        if (dto == null) {
             cacheMiss++;
             logger.error("dto cache miss for '"+feature.getUniqueName());
-            dto = modelBuilder.prepareTranscript(transcript);
-            dtoCache.put(new Element(feature.getUniqueName(), dto));
+            //List<String> keys = dtoCache.getKeys();
+            //int count = 0;
+            //for (String key : keys) {
+            //    count++;
+            //    logger.error(""+ count + " Have got a key of '"+key+"'");
+            //}
+            //dto = modelBuilder.prepareTranscript(transcript);
+            //dtoCache.put(new Element(feature.getUniqueName(), dto));
         } else {
-            logger.debug("dto cache hit for '"+feature.getUniqueName());
-            dto = (TranscriptDTO) element.getValue();
+            logger.error("dto cache hit for '"+feature.getUniqueName());
+            //dto = (TranscriptDTO) element.getValue();
             cacheHit++;
         }
 
@@ -121,10 +129,10 @@ public class NamedFeatureController extends PostOrGetFormController {
     public void setGeneDetailsView(String geneDetailsView) {
         this.geneDetailsView = geneDetailsView;
     }
-
-    public void setDtoCache(BlockingCache dtoCache) {
-        this.dtoCache = dtoCache;
-    }
+//
+//    public void setDtoCache(BlockingCache dtoCache) {
+//        this.dtoCache = dtoCache;
+//    }
 
     public void setModelBuilder(ModelBuilder modelBuilder) {
         this.modelBuilder = modelBuilder;
@@ -172,6 +180,12 @@ public class NamedFeatureController extends PostOrGetFormController {
         public String getOrganism() {
             return null;
         }
+    }
+
+
+
+    public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
+        this.bmf = bmf;
     }
 
 }

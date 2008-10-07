@@ -8,10 +8,14 @@ import org.genedb.db.domain.services.BasicGeneService;
 import org.genedb.querying.core.LuceneIndex;
 import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.web.gui.DiagramCache;
+import org.genedb.web.mvc.model.BerkeleyMapFactory;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+
+import java.util.Collections;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +34,8 @@ public class ContextMapController extends PostOrGetFormController {
     private int cacheHit;
     private int cacheMiss;
 
-    private BlockingCache contextMapCache;
+//    private BlockingCache contextMapCache;
+    private BerkeleyMapFactory bmf;
 
     private BasicGeneService basicGeneService;
 
@@ -48,14 +53,13 @@ public class ContextMapController extends PostOrGetFormController {
 
         Command command = (Command) rawCommand;
 
-        String text = null;
-        Element element = (Element) contextMapCache.get(command.getChromosome());
-        if (element != null) {
-            text = (String) element.getValue();
+        String text = bmf.getContextMapMap().get(command.getChromosome());
+        if (text != null) {
+            logger.error("Cache hit for context map '"+command.getChromosome()+"' of '"+text+"'");
             cacheHit++;
         } else {
-            // Should generate them here
             logger.error(String.format("The context maps for '%s' aren't cached and need to be generated", command.getChromosome()));
+            //text = contextMapCache.getKeys().toString();
             cacheMiss++;
         }
 
@@ -82,10 +86,10 @@ public class ContextMapController extends PostOrGetFormController {
     public void setDiagramCache(DiagramCache diagramCache) {
         this.diagramCache = diagramCache;
     }
-
-    public void setContextMapCache(BlockingCache contextMapCache) {
-        this.contextMapCache = contextMapCache;
-    }
+//
+//    public void setContextMapCache(BlockingCache contextMapCache) {
+//        this.contextMapCache = contextMapCache;
+//    }
 
     public int getCacheHit() {
         return cacheHit;
@@ -142,6 +146,10 @@ public class ContextMapController extends PostOrGetFormController {
         public void setThumbnailDisplayWidth(int displayWidth) {
             this.thumbnailDisplayWidth = displayWidth;
         }
+    }
+
+    public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
+        this.bmf = bmf;
     }
 
 }

@@ -4,15 +4,15 @@
     xmlns:util="http://www.springframework.org/schema/util"
     xmlns:context="http://www.springframework.org/schema/context"
     xsi:schemaLocation="
-	http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-	http://www.springframework.org/schema/util
-	http://www.springframework.org/schema/util/spring-util-2.5.xsd
-	http://www.springframework.org/schema/context
-	http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util-2.5.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context-2.5.xsd"
     default-init-method="postConstruction">
 
-	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+  <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
     <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
     <context:spring-configured/>
@@ -22,13 +22,13 @@
 
 
 
-	<!--
-		- Message source for this context, loaded from localized "messages_xx" files.
-		- Could also reside in the root application context, as it is generic,
-		- but is currently just used within PetClinic's web tier.
+  <!--
+    - Message source for this context, loaded from localized "messages_xx" files.
+    - Could also reside in the root application context, as it is generic,
+    - but is currently just used within PetClinic's web tier.
     -->
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
+  <bean id="messageSource"
+    class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basenames">
             <list>
                 <value>exceptions</value>
@@ -36,7 +36,7 @@
         </property>
     </bean>
 
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:project.properties" />
     </bean>
 
@@ -178,11 +178,11 @@
       - It uses the "clinicControllerResolver" bean below for method name resolution.
       -->
     <bean id="HistoryController"
-    	class="org.genedb.web.mvc.controller.HistoryController">
+      class="org.genedb.web.mvc.controller.HistoryController">
         <property name="methodNameResolver"
-        	ref="historyControllerResolver"/>
+          ref="historyControllerResolver"/>
         <property name="historyManagerFactory"
-        	ref="historyManagerFactory" />
+          ref="historyManagerFactory" />
         <property name="sequenceDao" ref="sequenceDao"/>
         <property name="historyView" value="history/historyIndex"/>
         <property name="jsonView" ref="jsonView"/>
@@ -190,16 +190,16 @@
         <property name="editView" value="history/editHistory"/>
     </bean>
 
-  	<bean id="DownloadFeaturesController"
-  		class="org.genedb.web.mvc.controller.download.DownloadFeaturesController">
+    <bean id="DownloadFeaturesController"
+      class="org.genedb.web.mvc.controller.download.DownloadFeaturesController">
         <property name="historyManagerFactory"
-        	ref="historyManagerFactory" />
+          ref="historyManagerFactory" />
         <property name="sessionForm" value="true"/>
         <property name="commandName" value="download"/>
         <property name="commandClass"
-        	value="org.genedb.web.mvc.controller.download.DownloadBean" />
-		<property name="sequenceDao" ref="sequenceDao"/>
-		<property name="luceneIndexFactory" ref="luceneIndexFactory"/>
+          value="org.genedb.web.mvc.controller.download.DownloadBean" />
+    <property name="sequenceDao" ref="sequenceDao"/>
+    <property name="luceneIndexFactory" ref="luceneIndexFactory"/>
         <property name="formView" value="download/download" />
         <property name="downloadView" value="download/download" />
         <property name="jsonView" ref="jsonView"/>
@@ -207,10 +207,10 @@
         <property name="validator" ref="downloadFeaturesValidator"/>
     </bean>
 
-	<bean id="downloadFeaturesValidator" class="org.genedb.web.mvc.validators.DownloadFeaturesValidator" />
+  <bean id="downloadFeaturesValidator" class="org.genedb.web.mvc.validators.DownloadFeaturesValidator" />
 
     <bean id="pfamLookup"
-    	class="org.genedb.web.mvc.controller.PfamLookup" />
+      class="org.genedb.web.mvc.controller.PfamLookup" />
 
     <bean id="GoFeatureController"
         class="org.genedb.web.mvc.controller.GoFeatureController">
@@ -269,10 +269,10 @@
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="features/gene" />
         <property name="geneDetailsView" value="features/geneDetails" />
-        <property name="dtoCache" ref="dtoCache" />
         <property name="bindOnNewForm" value="true" />
         <property name="validator" ref="namedFeatureValidator" />
         <property name="cacheSeconds" value="86400" />
+        <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     </bean>
     <bean id="namedFeatureValidator"
         class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
@@ -288,7 +288,7 @@
         <property name="validator" ref="contextMapFormValidator" />
         <property name="cacheSeconds" value="86400" />
         <property name="diagramCache" ref="diagramCache" />
-        <property name="contextMapCache" ref="contextMapCache" />
+        <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     </bean>
 
     <bean id="NameSearchController"
@@ -400,7 +400,7 @@
     <bean id="contextMapFormValidator"
         class="org.genedb.web.mvc.validators.ContextMapFormValidator" />
 
-	<bean id="AdminController"
+  <bean id="AdminController"
         class="org.genedb.web.mvc.controller.AdminController">
         <property name="methodNameResolver"
             ref="searchControllerResolver" />
@@ -414,24 +414,24 @@
         </property>
     </bean>
 
-	<bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
+  <bean id="embossDigestParser" class="org.genedb.web.mvc.controller.cgview.EmbossDigestParser">
         <property name="embossDir">
-        	<value>${psu.emboss.directory}</value>
+          <value>${psu.emboss.directory}</value>
         </property>
     </bean>
 
-	<bean id="cachedFileFactory"
+  <bean id="cachedFileFactory"
         class="org.genedb.web.mvc.controller.cgview.CachedFileFactory" />
 
-	<bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
-			<property name="commandClass" value="org.genedb.web.mvc.controller.cgview.CircularGenomeCommandBean" />
-			<property name="formView" value="graphics/circularGenomeForm" />
+  <bean id="CircularGenomeController" class="org.genedb.web.mvc.controller.cgview.CircularGenomeFormController">
+      <property name="commandClass" value="org.genedb.web.mvc.controller.cgview.CircularGenomeCommandBean" />
+      <property name="formView" value="graphics/circularGenomeForm" />
             <property name="cachedFileFactory" ref="cachedFileFactory" />
             <property name="embossDigestParser" ref="embossDigestParser"/>
             <property name="embossDirectoryName">
-             	<value>${emboss.directory}</value>
+               <value>${emboss.directory}</value>
             </property>
-			<property name="diagramView" value="graphics/circularGenome" />
+      <property name="diagramView" value="graphics/circularGenome" />
     </bean>
 
     <bean id="HomepageController"

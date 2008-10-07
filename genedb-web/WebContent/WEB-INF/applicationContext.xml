@@ -59,12 +59,6 @@
         <property name="generalDao" ref="generalDao" />
     </bean>
 
-    <!-- <bean id="luceneDao" class="org.genedb.querying.core.LuceneDao">
-        <property name="luceneIndexDirectoryName">
-        	<value>${lucene.indexDirectory}</value>
-        </property>
-    </bean>-->
-
     <bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
         <property name="luceneIndexList">
         <list>
@@ -148,38 +142,9 @@
         <property name="readOnly" value="true" />
     </bean>
 
-    <bean id="modelBuilder"
-        class="org.genedb.web.mvc.controller.ModelBuilder">
-        <!-- <property name="cvDao" ref="cvDao" /> -->
+    <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
         <property name="diagramCache" ref="diagramCache" />
     </bean>
 
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <!-- <property name="configLocation" value="classpath:ehcache-spring.xml" /> -->
-    </bean>
-
-    <bean id="dtoCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-        <property name="cacheManager" ref="cacheManager" />
-        <property name="cacheName" value="org.genedb.web.DTO_CACHE" />
-        <property name="blocking" value="true" />
-        <property name="maxElementsInMemory" value="1" />
-        <property name="eternal" value="true" />
-        <property name="overflowToDisk" value="true" />
-        <property name="maxElementsOnDisk" value="0" />
-        <property name="diskPersistent" value="true"/>
-    </bean>
-
-
-
-    <bean id="contextMapCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-        <property name="cacheManager" ref="cacheManager" />
-        <property name="cacheName" value="org.genedb.web.CONTEXT_MAP_CACHE" />
-        <property name="blocking" value="true" />
-        <property name="maxElementsInMemory" value="1" />
-        <property name="eternal" value="true" />
-        <property name="overflowToDisk" value="true" />
-        <property name="maxElementsOnDisk" value="0" />
-        <property name="diskPersistent" value="true"/>
-    </bean>
 
 </beans>
