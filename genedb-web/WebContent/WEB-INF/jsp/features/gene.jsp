@@ -6,7 +6,7 @@
 <c:url value="/" var="base"/>
 
 <format:headerRound name="${gene.organism.htmlShortName}" organism="${gene.organism.commonName}" title="Gene Page ${gene.displayName}" bodyClass="genePage"
-onLoad="initContextMap('${base}', '${gene.organism.commonName}', '${chromosome.uniqueName}', ${chromosome.seqLen}, ${primaryLoc.fmin}, ${primaryLoc.fmax}, '${transcript.uniqueName}');">
+onLoad="initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFeatureUniqueName}', ${dto.topLevelFeatureLength}, ${dto.min}, ${dto.max}, '${dto.uniqueName}');">
 
 <st:init />
 <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
