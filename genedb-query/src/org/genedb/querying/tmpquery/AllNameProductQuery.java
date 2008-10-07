@@ -143,7 +143,7 @@ public class AllNameProductQuery extends LuceneQuery {
 
     @Override
 	protected String[] getParamNames() {
-		return new String[] {"search", "product", "allNames", "pseudogenes", "obsolete"};
+		return new String[] {"search", "product", "allNames", "pseudogenes"};
 	}
 
 }
