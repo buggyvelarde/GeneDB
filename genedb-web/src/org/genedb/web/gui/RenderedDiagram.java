@@ -1001,12 +1001,14 @@ public abstract class RenderedDiagram {
             logger.error(String.format(
                     "NullPointerException x='%d' y='%d' destWidth='%d' h='%d' labelData.size='%d' offset='%d' width='%d'",
                     x, y, destWidth, h, labelData.length, offset, w));
+            exp.printStackTrace();
         }
         catch (RuntimeException exp) {
             // Passing in invalid coordinates - which ones
             logger.error(String.format(
                     "%s x='%d' y='%d' destWidth='%d' h='%d' labelData.size='%d' offset='%d' width='%d'",
                     exp.getMessage(), x, y, destWidth, h, labelData.length, offset, w));
+            exp.printStackTrace();
         }
     }
 
