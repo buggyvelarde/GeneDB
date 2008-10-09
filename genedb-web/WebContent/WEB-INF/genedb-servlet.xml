@@ -46,22 +46,12 @@
     <bean name="advancedQuery" class="org.genedb.querying.tmpquery.AdvancedQuery" />
     <bean name="nameProductQuery" class="org.genedb.querying.tmpquery.NameProductQuery" />
     <bean name="allNameProductQuery" class="org.genedb.querying.tmpquery.AllNameProductQuery" />
+    <bean name="controlledCurationQuery" class="org.genedb.querying.tmpquery.ControlledCurationQuery" />
+    <bean name="dateQuery" class="org.genedb.querying.tmpquery.DateQuery" />
 
     <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
-
-<!--
-    <bean id="systemproperty_initializer" class="com.rolfje.SystemPropertyInitiliazingBean">
-       <property name="systemProperties">
-          <map>
-             <entry key="ehcache.disk.store.dir" value="/"/>
-         </map>
-       </property>
-    </bean>
--->
-
-
 
 
     <bean id="goProcessBrowse"
@@ -255,7 +245,6 @@
 
     <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
 
-
     <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" />
 
     <bean id="NamedFeatureController"
@@ -273,6 +262,7 @@
         <property name="validator" ref="namedFeatureValidator" />
         <property name="cacheSeconds" value="86400" />
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
+        <property name="historyManagerFactory" ref="historyManagerFactory" />
     </bean>
     <bean id="namedFeatureValidator"
         class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
