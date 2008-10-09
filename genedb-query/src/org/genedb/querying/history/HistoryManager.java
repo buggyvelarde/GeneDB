@@ -10,6 +10,8 @@ public interface HistoryManager {
 
     public abstract HistoryItem addHistoryItem(String name,HistoryType type, String id);
 
+    public abstract HistoryItem addHistoryItem(HistoryType type, String id);
+
     public abstract String getCartName();
 
     public abstract String getNextName();

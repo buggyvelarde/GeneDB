@@ -26,13 +26,22 @@ public class HistoryItem {
 
     private HistoryType historyType = HistoryType.QUERY;
 
+
+    public HistoryItem(String name) {
+        this.name = name;
+        this.internalName = name;
+        this.ids = new ArrayList<String>();
+    }
+
     public HistoryItem(String name, List<String> ids) {
         this.name = name;
+        this.internalName = name;
         this.ids = ids;
     }
 
     public HistoryItem(String name, String id) {
         this.name = name;
+        this.internalName = name;
         this.ids = new ArrayList<String>();
         this.ids.add(id);
     }
