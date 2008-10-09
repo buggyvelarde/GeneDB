@@ -100,7 +100,6 @@ public class PopulateCaches {
     @Transactional
     public void fullCachePopulate() {
 
-
         dtoMap = bmf.getDtoMap(); // TODO More nicely
         contextMapMap = bmf.getContextMapMap();
 

@@ -1,5 +1,12 @@
 package org.genedb.web.mvc.controller.download;
 
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.genedb.db.dao.SequenceDao;
 
 import org.gmod.schema.mapped.Feature;
@@ -7,17 +14,14 @@ import org.gmod.schema.mapped.FeatureLoc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.NativeWebRequest;
-
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.context.request.WebRequest;
 
 @Controller
 @RequestMapping("/SequenceDownload")
@@ -32,10 +36,17 @@ public class SequenceDownloadController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String processSubmit(@RequestParam("topLevelFeature") String tlf,
-            @RequestParam("downloadType") String downloadType,
-            @RequestParam("featureType") String featureType,
+    public String processSubmit(@RequestParam("topLevelFeature")
+    String tlf, @RequestParam("downloadType")
+    String downloadType, @RequestParam("featureType")
+    String featureType,
+    // BindingResult result,
+            // SessionStatus status,
             NativeWebRequest nwr, Writer writer) {
+
+        // if (result.hasErrors()) {
+        // return "err/formtest";
+        // }
 
         PrintWriter out;
         if (writer instanceof PrintWriter) {
@@ -54,6 +65,7 @@ public class SequenceDownloadController {
         }
         for (FeatureLoc fl : chromosome.getFeatureLocsForSrcFeatureId()) {
             Object ob = fl.getFeature();
+            // out.print(ob.getClass());
             if (ob instanceof Feature) {
                 Feature f = (Feature) ob;
                 Map<String, String> attributes = new HashMap<String, String>();
@@ -65,7 +77,18 @@ public class SequenceDownloadController {
                 writeEmblEntry(out, f.getType().getName(), strand, fl.getFmin(), fl.getFmax(),
                     attributes);
             }
+            // out.println();
         }
+
+        // Map<String, String> attributes = new HashMap<String, String>();
+        // attributes.put("systematic_id", "fred");
+        // out.println("topLevelFeature="+tlf);
+        // writeEmblEntry(out, tlf, true, 1, 10000, attributes);
+        // writeEmblEntry(out, "CDS", true, 1, 100, attributes);
+        // writeEmblEntry(out, "misc_feature", true, 100, 200, attributes);
+        // writeEmblEntry(out, "wibble", false, 1, 10, attributes);
+        // writeEmblEntry(out, "fred", false, 1045, 1096, attributes);
+        // writeEmblEntry(out, "foo", true, 1, 100, attributes);
 
         return null;
     }

@@ -133,16 +133,18 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             ret.setFmax(Integer.parseInt(doc.get("stop")));
 
             String synonyms = doc.get("synonym");
-            if (synonyms != null)
+            if (synonyms != null) {
                 ret.setSynonyms(Arrays.asList(synonyms.split("\t")));
+            }
 
             BooleanQuery transcriptQuery = new BooleanQuery();
             transcriptQuery.add(new TermQuery(new Term("gene", geneUniqueName)),
                 BooleanClause.Occur.MUST);
 
             List<Transcript> transcripts = findWithQuery(transcriptQuery, convertToTranscript);
-            if (transcripts.size() == 0)
+            if (transcripts.size() == 0) {
                 logger.warn(String.format("No mRNA transcripts found for gene '%s'", geneUniqueName));
+            }
             ret.setTranscripts(transcripts);
 
             return ret;
@@ -241,8 +243,9 @@ public class BasicGeneServiceImpl implements BasicGeneService {
                 throw new RuntimeException("IOException while fetching results of Lucene query", e);
             }
             T convertedDocument = converter.convert(doc);
-            if (convertedDocument != null)
+            if (convertedDocument != null) {
                 ret.add(convertedDocument);
+            }
         }
         return ret;
     }
