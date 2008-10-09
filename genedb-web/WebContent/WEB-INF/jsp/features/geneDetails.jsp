@@ -94,10 +94,10 @@
 
     <format:genePageSection id="analysisTools" className="whiteBox">
         <div style="clear: both; margin-top: 1ex;">
-             <a href="">Add gene to basket</a>
+             <a href="<c:url value="/" />NamedFeature?name=${dto.uniqueName}&addToBasket=true&geneDetails=true">Add gene to basket</a>
          </div>
         <div style="clear: both; margin-top: 1ex;">
-             <a href="<c:url  value="/" />/FeatureSequence?name=${dto.uniqueName}&seqs=true">View/analyze/ download sequence</a>
+             <a href="<c:url value="/" />FeatureSequence?name=${dto.uniqueName}&seqs=true">View/analyze/ download sequence</a>
          </div>
         <div style="clear: both; margin-top: 1ex;">
             Show region in
