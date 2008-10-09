@@ -16,7 +16,7 @@
 		   		<c:url value="${url}" var="final">
 					<c:param name="term" value="${row}"/>
 		   		</c:url>
-				<a href="/new/NamedFeature?name=${row}"><c:out value="${row}"/></a>
+				<a href="<c:url value="/NamedFeature"/>?name=${row}"><c:out value="${row}"/></a>
 		   	</display:column>
 		</display:table>
 	</format:genePageSection>
