@@ -119,9 +119,9 @@
                 <value>org.gmod.schema.feature</value>
             </list>
         </property>
-        <property name="defaultFilters">
+<!--         <property name="defaultFilters">
             <list><value>excludeObsoleteFeatures</value></list>
-        </property>
+        </property> -->
     </bean>
 
     <bean id="populateCaches" class="org.genedb.web.mvc.model.PopulateCaches">
