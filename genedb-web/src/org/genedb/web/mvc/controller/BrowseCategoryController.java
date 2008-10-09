@@ -64,10 +64,11 @@ public class BrowseCategoryController extends TaxonNodeBindingFormController {
          * with CC can be added to BrowseCategory
          */
         List<CountedName> results;
-        if(category.equals("ControlledCuration"))
+        if(category.equals("ControlledCuration")) {
             results = cvDao.getCountedNamesByCvNamePatternAndOrganism("CC\\_%", orgNames);
-        else
+        } else {
             results = cvDao.getCountedNamesByCvNameAndOrganism(category, orgNames);
+        }
 
         if (results .isEmpty()) {
             logger.info("result is null");
