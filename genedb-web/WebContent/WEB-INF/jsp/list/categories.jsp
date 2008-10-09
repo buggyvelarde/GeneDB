@@ -6,7 +6,7 @@
 	<st:init />
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
-<c:url value="BrowseTerm" var="url">
+<c:url value="/Search" var="url">
 	<c:param name="organism" value="${organism}"/>
 	<c:param name="category" value="${category}"/>
 </c:url>
@@ -17,7 +17,7 @@
 		   		<c:url value="${url}" var="final">
 					<c:param name="term" value="${row.name}"/>
 		   		</c:url>
-				<a href="${final}"><c:out value="${row.name}"/></a>
+				<a href="<c:url value="/Query?q=controlledCuration&cvTermName=${row.name}&cvName=${category}"/>"><c:out value="${row.name}"/></a>
 		   	</display:column>
 		   	<display:column property="count" title="Count"/>
 		</display:table>
