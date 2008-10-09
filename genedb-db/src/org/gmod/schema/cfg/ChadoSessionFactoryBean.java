@@ -58,7 +58,11 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
 
     @Override
     protected SessionFactory newSessionFactory(Configuration config) throws HibernateException {
-        FilteringSessionFactory filteringSessionFactory = new FilteringSessionFactory(super.newSessionFactory(config));
+        SessionFactory original = super.newSessionFactory(config);
+        if (defaultFilters.length == 0) {
+            return original;
+        }
+        FilteringSessionFactory filteringSessionFactory = new FilteringSessionFactory(original);
         for (String filterName: defaultFilters) {
             filteringSessionFactory.addFilter(filterName);
         }
