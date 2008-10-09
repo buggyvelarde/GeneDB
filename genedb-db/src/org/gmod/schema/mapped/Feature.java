@@ -344,8 +344,11 @@ public abstract class Feature implements java.io.Serializable {
      * @return the length
      */
     public int getSeqLen() {
-        if (this.seqLen.intValue() == -1 && residues != null) {
+        if (this.seqLen != null && this.seqLen.intValue() == -1 && residues != null) {
             return getResidues().length();
+        }
+        if (this.seqLen == null) {
+            return 0;
         }
         return this.seqLen.intValue();
     }
