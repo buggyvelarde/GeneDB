@@ -151,52 +151,33 @@
                         <div class="yuimenu">
                             <div class="bd">
                                 <ul>
-
-                                    <%-- Genes By Type --%>
-                                    <li class="yuimenuitem">
+                                    <li class="yuimenuitem"> <%-- Genes By Type --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneType&organism=${organism}"/>" title="ProteinLength Search">By Gene Type</a>
                                     </li>
-
-                                    <%-- Genes By Location --%>
-                                    <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=geneLocation&organism=${organism}"/>" title="ProteinLength Search">By Location</a>
+                                    <li class="yuimenuitem"> <%-- Genes By Location --%>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation&organism=${organism}"/>" title="ProteinLength Search">By Location</a>
                                     </li>
-
-                                    <%-- Genes By Prediction Method --%>
-                                    <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=genePredictionMethod&organism=${organism}"/>" title="ProteinLength Search">By Prediction Method</a>
+                                    <li class="yuimenuitem"> <%-- Genes By Prediction Method --%>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=genePredictionMethod&organism=${organism}"/>" title="ProteinLength Search">By Prediction Method</a>
                                     </li>
-
-                                    <%-- Proteins By Length --%>
-                                    <li class="yuimenuitem">
+                                    <li class="yuimenuitem"> <%-- Proteins By Length --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&organism=${organism}"/>" title="ProteinLength Search">By Protein Length</a>
                                     </li>
-
-                                    <%-- Proteins By Molecular Mass --%>
-                                    <li class="yuimenuitem">
+                                    <li class="yuimenuitem"> <%-- Proteins By Molecular Mass --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinMass&organism=${organism}"/>" title="ProteinLength Search">By Molecular Mass</a>
                                     </li>
-
-                                    <%-- Proteins By Num Transmembrane Domains --%>
-                                    <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=proteinNumTM&organism=${organism}"/>" title="ProteinLength Search">By No. TM domains</a>
+                                    <li class="yuimenuitem"> <%-- Proteins By Num Transmembrane Domains --%>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinNumTM&organism=${organism}"/>" title="ProteinLength Search">By No. TM domains</a>
                                     </li>
-
-                                    <%-- Motif Search --%>
-                                    <li class="yuimenuitem">
+                                    <li class="yuimenuitem"> <%-- Motif Search --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/MotifSearch"/>" title="Motif Search">Motif Search</a>
                                     </li>
-
-                                    <%-- Proteins By Targeting Sequence --%>
-                                    <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=proteinTargetingSeq&organism=${organism}"/>" title="ProteinLength Search">By Targetting Seqs.</a>
+                                    <li class="yuimenuitem"> <%-- Proteins By Targeting Sequence --%>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinTargetingSeq&organism=${organism}"/>" title="ProteinLength Search">By Targetting Seqs.</a>
                                     </li>
-
-                                    <%-- Proteins By Annotation Status --%>
-                                    <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinAnnotationStatus&organism=${organism}"/>" title="ProteinLength Search">By Annotation Status</a>
+                                    <li class="yuimenuitem"> <%-- Proteins By Annotation Status --%>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=annotationStatus&organism=${organism}"/>" title="ProteinLength Search">By Annotation Status</a>
                                     </li>
-
                                 </ul>
                             </div>
                         </div>
