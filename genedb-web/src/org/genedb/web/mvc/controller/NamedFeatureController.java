@@ -19,10 +19,9 @@
 
 package org.genedb.web.mvc.controller;
 
-import net.sf.ehcache.Element;
-import net.sf.ehcache.constructs.blocking.BlockingCache;
-
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.querying.history.HistoryType;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
@@ -66,6 +65,12 @@ public class NamedFeatureController extends PostOrGetFormController {
 
     private ModelBuilder modelBuilder;
 
+    private HistoryManagerFactory hmFactory;
+
+
+    public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
+        this.hmFactory = hmFactory;
+    }
 
     @Override
     //@RequestMapping(method=Request)
@@ -99,18 +104,16 @@ public class NamedFeatureController extends PostOrGetFormController {
         if (dto == null) {
             cacheMiss++;
             logger.error("dto cache miss for '"+feature.getUniqueName());
-            //List<String> keys = dtoCache.getKeys();
-            //int count = 0;
-            //for (String key : keys) {
-            //    count++;
-            //    logger.error(""+ count + " Have got a key of '"+key+"'");
-            //}
-            //dto = modelBuilder.prepareTranscript(transcript);
-            //dtoCache.put(new Element(feature.getUniqueName(), dto));
+            throw new RuntimeException(String.format("Unable to find '%s' in cache", feature.getUniqueName()));
         } else {
-            logger.error("dto cache hit for '"+feature.getUniqueName());
-            //dto = (TranscriptDTO) element.getValue();
             cacheHit++;
+            logger.error("dto cache hit for '"+feature.getUniqueName());
+            HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
+            hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
+            if (nlb.isAddToBasket()) {
+                hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
+                // Add message here
+            }
         }
 
         HashMap<String, TranscriptDTO> model = Maps.newHashMap();
@@ -154,6 +157,15 @@ public class NamedFeatureController extends PostOrGetFormController {
     public static class NameLookupBean {
         private String name;
         private boolean detailsOnly = false;
+        private boolean addToBasket = false;
+
+        public boolean isAddToBasket() {
+            return addToBasket;
+        }
+
+        public void setAddToBasket(boolean addToBasket) {
+            this.addToBasket = addToBasket;
+        }
 
         public String getName() {
             return this.name;
