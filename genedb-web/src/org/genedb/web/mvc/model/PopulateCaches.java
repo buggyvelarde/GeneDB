@@ -63,7 +63,7 @@ public class PopulateCaches {
 
     private static final int TILE_WIDTH = 5000;
 
-    private int THUMBNAIL_WIDTH = 200;
+    private int THUMBNAIL_WIDTH = 600;
     private PopulateCachesArgs config;
 
     public void setSessionFactory(SessionFactory sessionFactory) {
