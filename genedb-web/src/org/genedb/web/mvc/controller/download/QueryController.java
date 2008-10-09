@@ -8,6 +8,7 @@ import org.genedb.web.mvc.controller.WebConstants;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -20,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -74,7 +78,7 @@ public class QueryController {
         // Attempt to fill in form
         ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
         // register custom editors, if desired
-        //binder.registerCustomEditor(...);
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
         binder.bind(request);
         // optionally evaluate binding errors
         Errors errors = binder.getBindingResult();
