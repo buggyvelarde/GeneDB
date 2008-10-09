@@ -22,7 +22,7 @@ public class GeneTypeQuery extends HqlQuery {
 
     @Override
     protected String getHql() {
-        return "select f.uniqueName from Feature f where f.cvTerm.name=:type";
+        return "select f.uniqueName from Feature f where f.type.name=:type";
     }
 
 
