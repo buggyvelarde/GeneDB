@@ -18,17 +18,17 @@ import javax.servlet.http.HttpSession;
 public class HttpSessionHistoryManager implements HistoryManager {
     // TODO use map for storage
     // Synch
-    
+
     private int nextNumber = 1;
     private int version = 1;
-    
+
     private static final String HISTORY_LIST = "_HISTORY_LIST";
     private static final String DEFAULT_CART_NAME = "Feature Basket";
-    
+
     private WeakReference<HttpSession> sessionReference;
     private String cartName = DEFAULT_CART_NAME;
-    
-    
+
+
     public HttpSessionHistoryManager(HttpSession session) {
         this.sessionReference = new WeakReference<HttpSession>(session);
     }
@@ -45,12 +45,12 @@ public class HttpSessionHistoryManager implements HistoryManager {
         }
         return ret;
     }
-    
+
     /* (non-Javadoc)
      * @see org.genedb.web.mvc.controller.HistoryManager#addHistoryItem(java.lang.String, java.util.List)
      */
     public HistoryItem addHistoryItem(String name, HistoryType type, List<String> ids) {
-        
+
         List<HistoryItem> history = getHistoryItems();
         boolean found = false;
         for (HistoryItem hi : history) {
@@ -66,10 +66,40 @@ public class HttpSessionHistoryManager implements HistoryManager {
           version++;
           return item;
         }
-        
+
         return null;
     }
-    
+
+
+    public HistoryItem addHistoryItem(HistoryType type,String id) {
+        List<HistoryItem> history = getHistoryItems();
+        HistoryItem found = null;
+        for (HistoryItem item : history) {
+            if (item.getHistoryType().equals(type)) {
+                found = item;
+                break;
+            }
+        }
+        if (found == null) {
+            found = createNewHistoryItem(null, type);
+            found.addResult(id);
+            history.add(found);
+            version++;
+            return found;
+        }
+
+        return null;
+    }
+
+    private HistoryItem createNewHistoryItem(String name, HistoryType historyType) {
+        if (name == null) {
+            name = historyType.name();
+        }
+        HistoryItem ret = new HistoryItem(name);
+        ret.setHistoryType(historyType);
+        return ret;
+    }
+
     public HistoryItem addHistoryItem(String name, HistoryType type,String id) {
         List<HistoryItem> history = getHistoryItems();
         HistoryItem found = null;
@@ -84,8 +114,8 @@ public class HttpSessionHistoryManager implements HistoryManager {
             history.add(found);
             version++;
             return found;
-        } 
-        
+        }
+
         return null;
     }
 
