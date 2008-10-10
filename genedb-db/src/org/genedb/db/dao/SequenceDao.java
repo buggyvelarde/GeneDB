@@ -131,7 +131,7 @@ public class SequenceDao extends BaseDao {
                         "select f "
                                 + "from Feature f, FeatureLoc loc where "
                                 + "f = loc.feature and f.type.name=:type and loc.strand="
-                                + strand + " and" + " loc.featureBySrcFeatureId=" + fid + " and ("
+                                + strand + " and" + " loc.sourceFeature=" + fid + " and ("
                                 + " loc.fmin<=:min and loc.fmax>=:max)",
                         new String[] { "type", "min", "max" }, new Object[] { type, min, max });
         return features;
