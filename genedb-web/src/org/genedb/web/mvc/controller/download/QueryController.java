@@ -85,7 +85,7 @@ public class QueryController {
 
         if (errors.getErrorCount() != 0) {
             // Problem
-
+            throw new RuntimeException(errors.toString());
         }
 
         List<String> results = query.getResults();
