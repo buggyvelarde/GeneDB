@@ -32,24 +32,24 @@ import java.util.Map;
 public interface FeatureProcessor {
 
     public void process(org.gmod.schema.mapped.Feature parent, org.biojava.bio.seq.Feature feat, int offset);
-    
-    public void setFeatureUtils(FeatureUtils featureUtils);
-    
-    public void setOrganism(Organism organism);
-    
-    public void afterPropertiesSet();
 
-    public void setCvDao(CvDao cvDao);
-
-    public void setGeneralDao(GeneralDao generalDao);
-
-    public void setSequenceDao(SequenceDao sequenceDao);
-    
-    public void setPubDao(PubDao pubDao);
-    
+//    public void setFeatureUtils(FeatureUtils featureUtils);
+//
+//    public void setOrganism(Organism organism);
+//
+//    public void afterPropertiesSet();
+//
+//    public void setCvDao(CvDao cvDao);
+//
+//    public void setGeneralDao(GeneralDao generalDao);
+//
+//    public void setSequenceDao(SequenceDao sequenceDao);
+//
+//    public void setPubDao(PubDao pubDao);
+//
     public ProcessingPhase getProcessingPhase();
-    
+//
     public Map<String, Boolean> getQualifierHandlingStatus();
-    
-    public List<String> getUnknownRileyClass();
+//
+//    public List<String> getUnknownRileyClass();
 }

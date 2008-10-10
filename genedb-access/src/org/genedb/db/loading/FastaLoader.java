@@ -19,12 +19,8 @@
 
 package org.genedb.db.loading;
 
-import org.genedb.db.dao.CvDao;
-import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.OrganismDao;
-import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
-import org.genedb.db.loading.featureProcessors.CDS_Processor;
 
 import org.gmod.schema.feature.Chromosome;
 import org.gmod.schema.feature.Contig;
@@ -33,18 +29,15 @@ import org.gmod.schema.mapped.Organism;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Feature;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.utils.ChangeVetoException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,15 +55,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 
 
@@ -85,44 +72,31 @@ import java.util.Set;
  * @author Adrian Tivey (art)
  */
 @Transactional
+@Configurable
 public class FastaLoader implements FastaLoaderI {
 
     protected static final Log logger = LogFactory.getLog(FastaLoader.class);
 
-    private String dataDirectory;
-
-    public void setDataDirectory(String dataDirectory) {
-        this.dataDirectory = dataDirectory;
-    }
-
+    @Autowired
     private SessionFactory sessionFactory;
 
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-//
-    private Organism organism;
-
+    @Autowired
     private SequenceDao sequenceDao;
 
-    public void setSequenceDao(SequenceDao sequenceDao) {
-        this.sequenceDao = sequenceDao;
-    }
-
+    @Autowired
     private OrganismDao organismDao;
 
-    public void setOrganismDao(OrganismDao organismDao) {
-        if (organismDao == null) {
-            throw new RuntimeException("organismDao set but null");
-        }
-        this.organismDao = organismDao;
-    }
+    // These are set (directly or indirectly) from the command line
+    private String dataDirectory;
+
+    private Organism organism;
+
 
     /**
-     * Create a list of Biojava sequences from an EMBL file. It fails fatally if no sequences are found.
+     * Create a list of Biojava sequences from a FASTA file. It fails fatally if no sequences are found.
      *
-     * @param file the file to read in
-     * @return the list of sequences, >1 if an EMBL stream
+     * @param file the FASTA file to read in
+     * @return the list of sequences
      */
     public List<Sequence> extractSequencesFromFile(File file) {
         logger.debug("Parsing file '"+file.getAbsolutePath()+"'");
@@ -131,12 +105,11 @@ public class FastaLoader implements FastaLoaderI {
         Reader in = null;
         try {
             in = new FileReader(file);
-            SequenceIterator seqIt = SeqIOTools.readFastaDNA(new BufferedReader(in)); // TODO - biojava hack
+            SequenceIterator seqIt = SeqIOTools.readFastaDNA(new BufferedReader(in));
 
             while ( seqIt.hasNext() ) {
                 ret.add(seqIt.nextSequence());
             }
-
 
         } catch (FileNotFoundException exp) {
             System.err.println("Couldn't open input file: " + file);
@@ -176,12 +149,6 @@ public class FastaLoader implements FastaLoaderI {
         for (File file : files) {
             List<Sequence> seqs = this.extractSequencesFromFile(file);
             processSequence(file, seqs);
-
-
-            List<org.gmod.schema.mapped.Feature> fs = sequenceDao.getFeaturesByAnyName("%", "chromosome");
-            for (org.gmod.schema.mapped.Feature feature : fs) {
-                logger.error(feature.getUniqueName());
-            }
         }
 
         long duration = (new Date().getTime()-start)/1000;
@@ -202,7 +169,7 @@ public class FastaLoader implements FastaLoaderI {
      * @param parent The parent object, if reparenting is taking place, or null
      * @param offset The base offset, when reparenting is taking place
      */
-    private void processSequence(File file, List<Sequence> seqs) {
+    private void processSequence(File file, List<Sequence> sequenceList) {
 
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
 
@@ -211,34 +178,33 @@ public class FastaLoader implements FastaLoaderI {
 
             StringBuilder allResidues = new StringBuilder();
 
-            for (Sequence sequence : seqs) {
+            for (Sequence sequence : sequenceList) {
                 allResidues.append(sequence.seqString());
             }
             logger.info(String.format("The length of '%s' is '%d'", file.getAbsolutePath(), allResidues.length()));
 
             // Create chromosome from this sequence
             Timestamp now = new Timestamp(new Date().getTime());
-            Chromosome ch = new Chromosome(organism, file.getName(), false, false, now);
-            ch.setResidues(allResidues.toString());
-            ch.markAsTopLevelFeature();
+            Chromosome chromosome = new Chromosome(organism, file.getName(), false, false, now);
+            chromosome.setResidues(allResidues.toString());
+            chromosome.markAsTopLevelFeature();
 
-            session.persist(ch);
+            session.persist(chromosome);
 
             int start = 0;
-            for (Sequence sequence : seqs) {
+            for (Sequence sequence : sequenceList) {
                 int end = start + sequence.length();
                 logger.info(String.format("  Creating a contig from '%d' to '%d'", start, end));
-                Contig c = new Contig(organism, sequence.getName(), false, false, now);
-                ch.addLocatedChild(c, start, end);
-                session.persist(c);
+                Contig contig = new Contig(organism, sequence.getName(), false, false, now);
+                chromosome.addLocatedChild(contig, start, end);
+                session.persist(contig);
                 start = end;
             }
-
-
-
         } catch (ChangeVetoException exp) {
             exp.printStackTrace();
         }
+
+        session.flush();
     }
 
 
@@ -279,7 +245,6 @@ public class FastaLoader implements FastaLoaderI {
         runner.setOrganismName(arguments.getOrganismCommonName());
         runner.setDataDirectory(arguments.getDataDirectory());
         runner.process();
-
     }
 
     public void setOrganismName(String organismCommonName) {
@@ -287,6 +252,10 @@ public class FastaLoader implements FastaLoaderI {
         if (organism == null) {
             throw new IllegalArgumentException(String.format("Can't recognise '%s' as an organism name", organismCommonName));
         }
+    }
+
+    public void setDataDirectory(String dataDirectory) {
+        this.dataDirectory = dataDirectory;
     }
 
     interface Args {

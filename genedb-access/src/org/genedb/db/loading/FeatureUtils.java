@@ -26,7 +26,6 @@ import org.gmod.schema.mapped.Synonym;
 
 import org.apache.log4j.Logger;
 import org.biojava.bio.seq.StrandedFeature;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-public class FeatureUtils implements InitializingBean {
+public class FeatureUtils {
     private static final Logger logger = Logger.getLogger(FeatureUtils.class);
 
     private CvDao cvDao;
@@ -157,17 +156,19 @@ public class FeatureUtils implements InitializingBean {
 
     private Cv CV_GENEDB;
     private CvTerm GO_KEY_EVIDENCE, GO_KEY_QUALIFIER, GENEDB_AUTOCOMMENT;
-    public void afterPropertiesSet() {
-        so = cvDao.getCvByName("sequence");
-        CV_GENEDB = cvDao.getCvByName("genedb_misc");
-        GENEDB_TOP_LEVEL = cvDao.getCvTermByNamePatternInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
-        DUMMY_PUB = pubDao.getPubByUniqueName("null");
-        GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
-        GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
-        GENEDB_AUTOCOMMENT = cvDao.getCvTermByNamePatternInCv("autocomment", CV_GENEDB).get(0);
-    }
+//    public void afterPropertiesSet() {
+//        so = cvDao.getCvByName("sequence");
+//        CV_GENEDB = cvDao.getCvByName("genedb_misc");
+//        GENEDB_TOP_LEVEL = cvDao.getCvTermByNamePatternInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
+//        DUMMY_PUB = pubDao.getPubByUniqueName("null");
+//        GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
+//        GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
+//        //GENEDB_AUTOCOMMENT = cvDao.getCvTermByNamePatternInCv("autocomment", CV_GENEDB).get(0);
+//    }
 
     public void markTopLevelFeature(org.gmod.schema.mapped.Feature topLevel) {
+        CV_GENEDB = cvDao.getCvByName("genedb_misc");
+        GENEDB_TOP_LEVEL = cvDao.getCvTermByNamePatternInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
         sequenceDao.persist(new FeatureProp(topLevel, GENEDB_TOP_LEVEL, "true", 0));
     }
 

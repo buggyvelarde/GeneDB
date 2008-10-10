@@ -569,7 +569,7 @@ public class OrthologueStorerImpl implements OrthologueStorer {
         featureUtils.setCvDao(cvDao);
         featureUtils.setSequenceDao(sequenceDao);
         featureUtils.setPubDao(pubDao);
-        featureUtils.afterPropertiesSet();
+        //featureUtils.afterPropertiesSet();
         System.err.println("In aps cvDao='"+cvDao+"', class is '"+cvDao.getClass()+"'");
         DUMMY_ORG = organismDao.getOrganismByCommonName("dummy");
     }

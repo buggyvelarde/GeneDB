@@ -5,6 +5,7 @@ import org.genedb.db.loading.FeatureProcessor;
 import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.feature.Centromere;
+import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.mapped.Cv;
 import org.gmod.schema.mapped.Feature;
 
@@ -33,8 +34,7 @@ public class Centromere_Processor extends BaseFeatureProcessor implements Featur
         short strand = (short) f.getStrand().getValue();
         String systematicId = (String) an.getProperty("systematic_id");
 
-        Timestamp now = new Timestamp(new Date().getTime());
-        Centromere centromere = Centromere.make(parent, loc, systematicId, organism, now);
+        Centromere centromere = Centromere.make((TopLevelFeature) parent, systematicId, loc.getMin(), loc.getMax());
         createFeaturePropsFromNotes(centromere, an, EmblQualifiers.QUAL_NOTE, MISC_NOTE, 0);
         createDbXRefs(centromere, an);
         Cv CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration");

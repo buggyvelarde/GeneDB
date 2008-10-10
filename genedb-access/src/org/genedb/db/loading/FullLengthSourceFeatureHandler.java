@@ -179,7 +179,7 @@ public class FullLengthSourceFeatureHandler extends BaseFeatureHandler implement
         // '"+uniqueName+"'");
 
         Timestamp now = new Timestamp(new Date().getTime());
-        Chromosome topLevel = Chromosome.make(uniqueName, organism, now);
+        Chromosome topLevel = new Chromosome(runner.getOrganism(), uniqueName, false, false, now);
 
         topLevel.setResidues(seq.seqString());
 

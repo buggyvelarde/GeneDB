@@ -5,6 +5,9 @@ import static org.genedb.db.loading.EmblQualifiers.QUAL_NOTE;
 import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.feature.Intron;
+import org.gmod.schema.feature.TopLevelFeature;
+import org.gmod.schema.mapped.Cv;
+import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
@@ -22,13 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 public class Intron_Processor extends BaseFeatureProcessor {
-    
+
     private static Map<String,Integer> intr = new HashMap<String,Integer>();
-    
+
     public Intron_Processor() {
         super(new String[]{}, new String[]{}, new String[]{"note","citation"}, new String[]{},new String[]{});
     }
-    
+
     @Override
     public void processStrandedFeature(Feature parent, StrandedFeature f, int offset) {
         // TODO Auto-generated method stub
@@ -47,10 +50,10 @@ public class Intron_Processor extends BaseFeatureProcessor {
                                 f.getStrand().getValue(), parent,"mRNA");
           if(l.size()>0) {
             mrna = l.get(0);
-            
+
             featureRelations = mrna.getFeatureRelationshipsForObjectId();
             for (FeatureRelationship featureRelation : featureRelations) {
-                Feature feature = featureRelation.getSubjectFeature();   
+                Feature feature = featureRelation.getSubjectFeature();
                 logger.debug(feature.getUniqueName());
                 if(feature.getUniqueName().contains("exon")) {
                     ex.add(feature);
@@ -68,11 +71,11 @@ public class Intron_Processor extends BaseFeatureProcessor {
                 intr.put(systematicId, j);
             }
             systematicId = systematicId + ":" + j;
-            
+
             Timestamp now = new Timestamp(new Date().getTime());
-            Intron intron = Intron.make(parent, loc, systematicId, organism, now);
+            Intron intron = Intron.make((TopLevelFeature)parent, systematicId, loc.getMin(), loc.getMax());
             //org.gmod.schema.mapped.Feature intron = this.featureUtils.createFeature("intron", systematicId, this.organism);
-            //sequenceDao.persist(intron);
+            sequenceDao.persist(intron);
 //          FeatureRelationship intronFr = featureUtils.createRelationship(intron,l.get(0), REL_PART_OF, 0); // FIXME Rank wrong
 //          sequenceDao.persist(intronFr);
 //          FeatureLoc intronFl = featureUtils.createLocation(parent,intron,loc.getMin()-1,loc.getMax(),
@@ -80,13 +83,15 @@ public class Intron_Processor extends BaseFeatureProcessor {
 //          sequenceDao.persist(intronFl);
             //featureLocs.add(pepFl);
             //featureRelationships.add(pepFr);
-            
+
             //FeatureProp fp = createFeatureProp(intron, an, "colour", "colour", CV_GENEDB);
             //sequenceDao.persist(fp);
-            createFeaturePropsFromNotes(intron, an, QUAL_NOTE, MISC_NOTE, 0); 
+            Cv CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property");
+            CvTerm MISC_NOTE = cvDao.getCvTermByNamePatternInCv("comment", CV_FEATURE_PROPERTY).get(0);
+            createFeaturePropsFromNotes(intron, an, QUAL_NOTE, MISC_NOTE, 0);
         }
     }
-    
+
 //    protected String findName(Annotation an, String type) {
 //        String[] keys = {QUAL_SYS_ID, "temporary_systematic_id", "gene"};
 //        for (String key : keys) {
@@ -96,18 +101,18 @@ public class Intron_Processor extends BaseFeatureProcessor {
 //        }
 //        throw new RuntimeException("No systematic id found for "+type+" entry");
 //    }
-    
+
     private boolean checkIntron(Feature mrna, List<Feature> ex, int intronMin, int intronMax) {
         boolean right = false;
         boolean left = false;
         int mrnaMin = 0;
         int mrnaMax = 0;
-        
-        for (FeatureLoc fl : mrna.getFeatureLocsForFeatureId()) {
+
+        for (FeatureLoc fl : mrna.getFeatureLocs()) {
             mrnaMin = fl.getFmin();
             mrnaMax = fl.getFmax();
         }
-        
+
         if (mrnaMin == intronMin) {
             left = true;
         }
@@ -116,9 +121,9 @@ public class Intron_Processor extends BaseFeatureProcessor {
         }
         if (! right) {
             for (Feature exon : ex) {
-                for(FeatureLoc fl : exon.getFeatureLocsForFeatureId()) {
+                for(FeatureLoc fl : exon.getFeatureLocs()) {
                     int exonMin = fl.getFmin();
-                    
+
                     if (exonMin - intronMax == 1) {
                         right = true;
                     }
@@ -127,9 +132,9 @@ public class Intron_Processor extends BaseFeatureProcessor {
         }
         if (! left) {
             for (Feature exon : ex) {
-                for(FeatureLoc fl : exon.getFeatureLocsForFeatureId()) {
+                for(FeatureLoc fl : exon.getFeatureLocs()) {
                     int exonMax = fl.getFmax();
-                    
+
                     if (exonMax - intronMin == -1) {
                         left = true;
                     }

@@ -53,6 +53,7 @@ import org.genedb.db.loading.ProcessingPhase;
 import org.genedb.db.loading.SimilarityInstance;
 import org.genedb.db.loading.SimilarityParser;
 import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.GeneBuilder;
 import org.gmod.schema.feature.MRNA;
 import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.AnalysisFeature;
@@ -143,7 +144,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             }
             logger.debug("Looking at systematic id '" + sysId+"'");
             // Gene
-            Gene gene = Gene.makeHierarchy(parent, location, systematicId, MRNA.class, true);
+            Gene gene = GeneBuilder.makeHierarchy(parent, location, systematicId, MRNA.class, true);
 
             //int transcriptNum = 1;
 
@@ -159,7 +160,7 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             CvTerm SYNONYM_TMP_SYS = cvDao.getCvTermByNamePatternInCv(QUAL_TEMP_SYS_ID, CV_NAMING).get(0);
             CvTerm SYNONYM_PROTEIN = cvDao.getCvTermByNamePatternInCv("protein_name", CV_NAMING).get(0);
             this.DUMMY_PUB = pubDao.getPubByUniqueName("null");
-            this.featureUtils.setDummyPub(this.DUMMY_PUB);
+            //this.featureUtils.setDummyPub(this.DUMMY_PUB);
 
             Cv CV_PRODUCTS = cvDao.getCvByName("genedb_products");
             //Db DB_PRODUCTS = this.daoFactory.getDbDao().findByName("genedb_products_db");
@@ -178,12 +179,12 @@ public class CDS_Processor extends BaseFeatureProcessor implements FeatureProces
             }
 
             if (altSplicing) {
-                throw new RuntimeException("Alternate splicing not handled in new code"); // TODO
-            }
+                System.err.println(String.format("Alternate splicing not handled in new code, sharedId='%s'", sharedId)); // TODO
+            } else {
 
 
             sequenceDao.persist(gene);
-
+            }
 //            if (gene == null) {
 //                if (altSplicing) {
 //                    gene = this.featureUtils.createFeature(soTypeGene, sharedId,

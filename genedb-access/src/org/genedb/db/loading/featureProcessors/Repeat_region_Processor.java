@@ -86,7 +86,7 @@ public class Repeat_region_Processor extends BaseFeatureProcessor {
         if (an.containsProperty("systematic_id")) {
             systematicId = (String) an.getProperty("systematic_id");
         }*/
-        String systematicId = this.organism.getAbbreviation() + "_REP_" + Integer.toString(numProcessed);
+        String systematicId = runner.getOrganism().getAbbreviation() + "_REP_" + Integer.toString(numProcessed);
 
         if (!cvDao.existsNameInOntology(soType, CV_SO)) {
             logger.warn("Can't create repeat feature of type '"+soType+"' at location '"+loc+"'");

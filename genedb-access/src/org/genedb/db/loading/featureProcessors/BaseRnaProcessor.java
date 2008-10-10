@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2006 Genome Research Limited.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Library General Public License as published by the Free
  * Software Foundation; either version 2 of the License or (at your option) any
  * later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this program; see the file COPYING.LIB. If not, write to the Free
  * Software Foundation Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307
@@ -18,8 +18,8 @@
  */
 
 /**
- * 
- * 
+ *
+ *
  * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
  */
 package org.genedb.db.loading.featureProcessors;
@@ -47,6 +47,7 @@ import org.genedb.db.loading.MiningUtils;
 import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.GeneBuilder;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
@@ -65,21 +66,21 @@ import java.util.Iterator;
 /**
  * This class is the main entry point for GeneDB data miners. It's designed to
  * be called from the command-line, or a Makefile.
- * 
- * 
+ *
+ *
  * @author Chinmay Patel (cp2)
  */
 public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
- 
+
     private static final String GENE="gene";
-    
+
     public BaseRnaProcessor() {
-        super(new String[]{}, 
-                new String[]{}, 
-                new String[]{QUAL_SYS_ID, QUAL_TEMP_SYS_ID, QUAL_PRIMARY, QUAL_D_COLOUR, 
+        super(new String[]{},
+                new String[]{},
+                new String[]{QUAL_SYS_ID, QUAL_TEMP_SYS_ID, QUAL_PRIMARY, QUAL_D_COLOUR,
                 QUAL_PSEUDO, QUAL_D_FASTA_FILE},
                 new String[]{QUAL_EVIDENCE, QUAL_C_CURATION, QUAL_OBSOLETE, QUAL_DB_XREF,
-                QUAL_D_PSU_DB_XREF, QUAL_PRODUCT, QUAL_D_GENE,QUAL_NOTE,QUAL_SYNONYM, QUAL_GO, 
+                QUAL_D_PSU_DB_XREF, QUAL_PRODUCT, QUAL_D_GENE,QUAL_NOTE,QUAL_SYNONYM, QUAL_GO,
                 QUAL_CURATION, QUAL_OBSOLETE},
                 new String[]{QUAL_D_FASTA_FILE});
     }
@@ -95,18 +96,18 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
             logger.warn(String.format("Skipping '%s' as no id found", rnaClass.getName()));
             return;
         }
-        
-        
+
+
         StrandedLocation location = LocationUtils.make(loc, f.getStrand());
         // Gene
-        Gene gene = Gene.makeHierarchy(parent, location, systematicId, rnaClass, false);
+        Gene gene = GeneBuilder.makeHierarchy(parent, location, systematicId, rnaClass, false);
 //        Feature gene = this.featureUtils.createFeature(GENE, systematicId, this.organism);
 //        sequenceDao.persist(gene);
 //        //FeatureRelationship trnaFr = featureUtils.createRelationship(mRNA, REL_DERIVES_FROM);
 //        FeatureLoc geneFl = this.featureUtils.createLocation(parent,gene,loc.getMin()-1,loc.getMax(),
 //                                                        strand);
         //sequenceDao.persist(gene);
-//        
+//
 //        // RNA
 //        Feature rna = this.featureUtils.createFeature(type, systematicId, this.organism);
 //        sequenceDao.persist(rna);
@@ -116,20 +117,20 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
 //        sequenceDao.persist(rnaFl);
 //        //featureLocs.add(pepFl);
 //        //featureRelationships.add(pepFr);
-        
+
 //        Transcript transcript = gene.getTranscripts().iterator().next();
-        
+
 //        String colour = MiningUtils.getProperty("colour", an, systematicId);
         //transcript.addFeatureProperty(CV_GENEDB, "colour", colour);
-        
+
 //        createFeaturePropsFromNotes(transcript, an, QUAL_NOTE, MISC_NOTE, 0);
 //        createFeaturePropsFromNotes(transcript, an, QUAL_CURATION, MISC_CURATION, 0);
 //        createFeaturePropsFromNotes(transcript, an, QUAL_PRIVATE, MISC_PRIVATE, 0);
 //        createDbXRefs(transcript, an);
-        
-        
+
+
     }
-    
+
     protected String findName(Annotation an) {
         String[] keys = {QUAL_SYS_ID, "temporary_systematic_id", "gene"};
         for (String key : keys) {
@@ -140,7 +141,7 @@ public abstract class BaseRnaProcessor extends BaseFeatureProcessor {
         //throw new RuntimeException("No systematic id found for "+type+" entry");
         return null;
     }
-    
+
     @Override
     public ProcessingPhase getProcessingPhase() {
         return ProcessingPhase.SECOND;

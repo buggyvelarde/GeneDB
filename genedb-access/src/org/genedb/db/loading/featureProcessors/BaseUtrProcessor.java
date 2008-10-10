@@ -34,6 +34,7 @@ import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.feature.FivePrimeUTR;
 import org.gmod.schema.feature.ThreePrimeUTR;
+import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.UTR;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
@@ -193,9 +194,9 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
 
            UTR utr;
            if ("three_prime_UTR".equals(type)) {
-               utr = ThreePrimeUTR.make(transcript, location, utrName, organism, now);
+               utr = ThreePrimeUTR.make((TopLevelFeature)transcript, utrName, loc.getMin(), loc.getMax());
            } else {
-               utr = FivePrimeUTR.make(transcript, location, utrName, organism, now);
+               utr = FivePrimeUTR.make((TopLevelFeature)transcript, utrName, loc.getMin(), loc.getMax());
            }
 
            //Feature utr = this.featureUtils.createFeature(type, "exon:"+(exonCount-1)+":"+utrName, this.organism);
@@ -213,7 +214,7 @@ public abstract class BaseUtrProcessor extends BaseFeatureProcessor {
     private void changeFeatureBounds(StrandedLocation loc, Feature feature) {
         int newMin = loc.getMin()-1;
         int newMax = loc.getMax();
-        Collection<FeatureLoc> locs = feature.getFeatureLocsForFeatureId();
+        Collection<FeatureLoc> locs = feature.getFeatureLocs();
         FeatureLoc currentLoc = locs.iterator().next();  // FIXME - Assumes that only 1 feature loc.
         int currentMin = currentLoc.getFmin();
         int currentMax = currentLoc.getFmax();

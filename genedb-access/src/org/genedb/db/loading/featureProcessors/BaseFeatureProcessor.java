@@ -37,6 +37,7 @@ import org.genedb.db.loading.FeatureUtils;
 import org.genedb.db.loading.GeneDbGeneNamingStrategy;
 import org.genedb.db.loading.GeneNamingStrategy;
 import org.genedb.db.loading.MiningUtils;
+import org.genedb.db.loading.NewRunner3I;
 import org.genedb.db.loading.ProcessingPhase;
 
 import org.gmod.schema.mapped.Cv;
@@ -58,7 +59,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.StrandedFeature;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -70,8 +74,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Configurable
 public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
+    @Autowired
     protected SequenceDao sequenceDao;
 
     protected CvDao cvDao;
@@ -80,7 +86,8 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
 
     protected DbUtilsBean dbUtilsBean;
 
-    protected Organism organism;
+    @Autowired
+    protected NewRunner3I runner;
 
     protected final Log logger = LogFactory.getLog(this.getClass());
 
@@ -149,37 +156,37 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         this.discard = discard;
     }
 
-    public void afterPropertiesSet() {
-        CV_RELATION = cvDao.getCvByName("relationship");
+//    public void afterPropertiesSet() {
+//        CV_RELATION = cvDao.getCvByName("relationship");
+//
+//        REL_PART_OF = cvDao.getCvTermByNamePatternInCv("proper_part_of", CV_RELATION).get(0); // FIXME Is this right
+//        CV_SO = cvDao.getCvByName("sequence");
+//        //CV_MISC = cvDao.getCvByName("autocreated").get(0);
+//        CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property");
+//        CV_RELATION = cvDao.getCvByName("relationship");
+//        CV_GENEDB = cvDao.getCvByName("genedb_misc");
+//        CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration");
+//        CV_PRODUCT = cvDao.getCvByName("genedb_products");
+//        //REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
+//        REL_DERIVES_FROM = cvDao.getCvTermByNamePatternInCv("derives_from", CV_SO).get(0);
+//        MISC_NOTE = cvDao.getCvTermByNamePatternInCv("comment", CV_FEATURE_PROPERTY).get(0);
+//        MISC_CURATION = cvDao.getCvTermByNamePatternInCv(QUAL_CURATION, CV_GENEDB).get(0);
+//        MISC_PRIVATE = cvDao.getCvTermByNamePatternInCv(QUAL_PRIVATE, CV_GENEDB).get(0);
+//        MISC_EC_NUMBER = cvDao.getCvTermByNamePatternInCv(QUAL_EC_NUMBER, CV_GENEDB).get(0);
+//        DB_GO = generalDao.getDbByName("GO");
+//
+//        DUMMY_PUB = pubDao.getPubByUniqueName("null");
+//        //logger.warn("Just looked up DUMMY_PUB and it is '"+DUMMY_PUB+"'");
+//
+//        //Cv goKeys = cvDao.getCvByName("genedb_fcvt_prop_keys").get(0);
+//        GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
+//        GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
+//        GO_KEY_DATE = cvDao.getCvTermByNamePatternInCv("date", CV_FEATURE_PROPERTY).get(0);
+//
+//    }
 
-        REL_PART_OF = cvDao.getCvTermByNamePatternInCv("proper_part_of", CV_RELATION).get(0); // FIXME Is this right
-        CV_SO = cvDao.getCvByName("sequence");
-        //CV_MISC = cvDao.getCvByName("autocreated").get(0);
-        CV_FEATURE_PROPERTY = cvDao.getCvByName("feature_property");
-        CV_RELATION = cvDao.getCvByName("relationship");
-        CV_GENEDB = cvDao.getCvByName("genedb_misc");
-        CV_CONTROLLEDCURATION = cvDao.getCvByName("CC_genedb_controlledcuration");
-        CV_PRODUCT = cvDao.getCvByName("genedb_products");
-        //REL_PART_OF = cvDao.getCvTermByNameInCv("part_of", CV_RELATION).get(0);
-        REL_DERIVES_FROM = cvDao.getCvTermByNamePatternInCv("derives_from", CV_SO).get(0);
-        MISC_NOTE = cvDao.getCvTermByNamePatternInCv("comment", CV_FEATURE_PROPERTY).get(0);
-        MISC_CURATION = cvDao.getCvTermByNamePatternInCv(QUAL_CURATION, CV_GENEDB).get(0);
-        MISC_PRIVATE = cvDao.getCvTermByNamePatternInCv(QUAL_PRIVATE, CV_GENEDB).get(0);
-        MISC_EC_NUMBER = cvDao.getCvTermByNamePatternInCv(QUAL_EC_NUMBER, CV_GENEDB).get(0);
-        DB_GO = generalDao.getDbByName("GO");
-
-        DUMMY_PUB = pubDao.getPubByUniqueName("null");
-        //logger.warn("Just looked up DUMMY_PUB and it is '"+DUMMY_PUB+"'");
-
-        //Cv goKeys = cvDao.getCvByName("genedb_fcvt_prop_keys").get(0);
-        GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
-        GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
-        GO_KEY_DATE = cvDao.getCvTermByNamePatternInCv("date", CV_FEATURE_PROPERTY).get(0);
-
-    }
-
-    public void setOrganism(Organism organism) {
-        this.organism = organism;
+    public void setRunner(NewRunner3I newRunner3I) {
+        this.runner = newRunner3I;
     }
 
 
@@ -187,26 +194,19 @@ public abstract class BaseFeatureProcessor implements FeatureProcessor {
         this.featureUtils = featureUtils;
     }
 
-
+    @Transactional
     public void process(final Feature parent, final org.biojava.bio.seq.Feature feat, final int offset) {
         MiningUtils.sanityCheckAnnotation(feat, requiredSingle, requiredMultiple,
                 optionalSingle , optionalMultiple, discard, false, true);
 
-      TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
-      tt.execute(
-              new TransactionCallbackWithoutResult() {
-                @Override
-                  public void doInTransactionWithoutResult(@SuppressWarnings("unused") TransactionStatus status) {
-                      @SuppressWarnings("unchecked") Set<String> keySet = feat.getAnnotation().asMap().keySet();
-                      for (String key : keySet) {
-                          if ("internal_data".equals(key)) {
-                              continue; // Don't store internal data - a biojava artifact
-                          }
-                          seenQualifiers.add(feat.getType()+":"+key);
-                      }
-                      processStrandedFeature(parent, (StrandedFeature) feat, offset);
-                  }
-              });
+        @SuppressWarnings("unchecked") Set<String> keySet = feat.getAnnotation().asMap().keySet();
+        for (String key : keySet) {
+            if ("internal_data".equals(key)) {
+                continue; // Don't store internal data - a biojava artifact
+            }
+            seenQualifiers.add(feat.getType()+":"+key);
+        }
+        processStrandedFeature(parent, (StrandedFeature) feat, offset);
 
         //processStrandedFeature(parent, (StrandedFeature) feat);
     }

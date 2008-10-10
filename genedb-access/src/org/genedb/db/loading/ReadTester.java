@@ -26,7 +26,7 @@ public class ReadTester {
         if (args.length > 0) {
             uniqueName = args[0];
         }
-        
+
         test.displayDetails(uniqueName);
 
         HibernateUtil.getSessionFactory().close();
@@ -39,7 +39,7 @@ public class ReadTester {
 
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.openSession();
-        
+
 //        List<Cv> cvs = (List<Cv>) session.createQuery("from Cv as cv").list();
 //        for (Cv cv : cvs) {
 //          System.err.println(cv.getName()+"==="+cv.getDefinition());
@@ -50,54 +50,54 @@ public class ReadTester {
         List<Feature> features = q.list();
         for (Feature feature: features) {
             System.err.println("=== "+feature.getName()+" ===");
-            
+
             // Type
             System.err.println("Type: "+feature.getType().getName());
-            
+
             // Analysis
             System.err.println("Analysis Feature: "+feature.isAnalysis());
-            
+
             // Obsolete
             System.err.println("Obsolete?: "+feature.isObsolete());
-            
+
             // Timestamps
             System.err.println("Date created: "+feature.getTimeAccessioned()+"     Date last modified:"+feature.getTimeLastModified());
-            
+
             // Organism
             Organism org = feature.getOrganism();
             System.err.print("Organism: "+org.getGenus() + ' ' + org.getSpecies());
             System.err.println("     Common name: "+org.getCommonName());
-            
+
             // Synonyms
             System.err.println("Synonyms:");
             Collection<FeatureSynonym> synonyms = feature.getFeatureSynonyms();
             for (FeatureSynonym featSyn : synonyms) {
-                System.err.println("\t"+featSyn.getSynonym().getCvTerm().getName()+"="+featSyn.getSynonym().getName()+"   pub="+showPublication(featSyn.getPub())+"  isCurrent="+featSyn.isCurrent()+" isInternal="+featSyn.isInternal());
+                System.err.println("\t"+featSyn.getSynonym().getType().getName()+"="+featSyn.getSynonym().getName()+"   pub="+showPublication(featSyn.getPub())+"  isCurrent="+featSyn.isCurrent()+" isInternal="+featSyn.isInternal());
             }
-            
+
             // Properties
             System.err.println("Feature properties:");
             Collection<FeatureProp> props = feature.getFeatureProps();
             for (FeatureProp prop : props) {
                 System.err.println("\t"+prop.getRank()+"   "+prop.getType().getName()+"="+prop.getValue());
             }
-            
+
             DbXRef oneXref = feature.getDbXRef();
             if (oneXref != null) {
                 System.err.println("Xref: "+oneXref.getDb().getName()+":"+oneXref.getAccession()+" : "+oneXref.getDescription());
             }
-            
+
             System.err.println("Db xrefs:");
             for (FeatureDbXRef fdx : feature.getFeatureDbXRefs()) {
                 System.err.println("\t"+fdx.getDbXRef().getDb().getName()+":"+fdx.getDbXRef().getAccession()+" : "+fdx.getDbXRef().getDescription()+"  : isCurrent:"+fdx.isCurrent());
             }
-            
-            
-            
+
+
+
         }
-        
+
         System.err.println("======");
-        
+
         session.close();
     }
 
@@ -110,14 +110,14 @@ public class ReadTester {
         }
         return ret.toString();
     }
-    
+
 //  private static void testJdbcConnection() {
 //      Connection connection = null;
 //        try {
 //            // Load the JDBC driver
 //            String driverName = "org.postgresql.Driver";
 //            Class.forName(driverName);
-//        
+//
 //            // Create a connection to the database
 //            String serverName = "holly.internal.sanger.ac.uk";
 //            String portNumber = "5432";
@@ -140,5 +140,5 @@ public class ReadTester {
 //            e.printStackTrace();
 //        }
 //  }
-    
+
 }

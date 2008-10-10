@@ -36,11 +36,21 @@ import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.utils.ChangeVetoException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
+
+import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
+import uk.co.flamingpenguin.jewel.cli.Cli;
+import uk.co.flamingpenguin.jewel.cli.CliFactory;
+import uk.co.flamingpenguin.jewel.cli.Option;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -71,26 +81,28 @@ import java.util.Set;
  *
  * @author Adrian Tivey (art)
  */
-@Configurable
-public class NewRunner2 implements ApplicationContextAware {
+@Transactional
+public class NewRunner3 implements NewRunner3I {
 
     private static String usage="NewRunner commonname [config file]";
 
-    protected static final Log logger = LogFactory.getLog(NewRunner2.class);
+    protected static final Log logger = LogFactory.getLog(NewRunner3.class);
 
     private FeatureHandler featureHandler;
 
+    public void setFeatureHandler(FeatureHandler featureHandler) {
+        this.featureHandler = featureHandler;
+    }
+
     private RunnerConfig runnerConfig;
 
-    private RunnerConfigParser runnerConfigParser;
+    //private RunnerConfigParser runnerConfigParser;
 
     private Set<String> noInstance = new HashSet<String>();
 
     private FeatureUtils featureUtils;
 
     private Organism organism;
-
-    private ApplicationContext applicationContext;
 
     private SequenceDao sequenceDao;
 
@@ -104,19 +116,21 @@ public class NewRunner2 implements ApplicationContextAware {
 
     private Map<String, FeatureProcessor> qualifierHandlerMap;
 
-//    private HibernateTransactionManager hibernateTransactionManager;
-
     Map<String,String> cdsQualifiers = new HashMap<String,String>();
 
     private Set<String> handeledQualifiers = new HashSet<String>();
 
+    private OrganismCommonNameHolder organismCommonNameHolder;
+
+    private InputSources inputSources;
+
+    private SessionFactory sessionFactory;
+
     //private OrthologueStorage orthologueStorage = new OrthologueStorage();
 
-
-//    public void setHibernateTransactionManager(
-//          HibernateTransactionManager hibernateTransactionManager) {
-//      this.hibernateTransactionManager = hibernateTransactionManager;
-//  }
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     /**
      * This is called once the ApplicationContext has set up all of this
@@ -125,58 +139,28 @@ public class NewRunner2 implements ApplicationContextAware {
      */
     public void afterPropertiesSet() {
         //logger.warn("Skipping organism set as not connected to db");
-        runnerConfig = runnerConfigParser.getConfig();
-        organism = organismDao.getOrganismByCommonName(runnerConfig.getOrganismCommonName());
+        // runnerConfig; Inject, pull?
+        organism = organismDao.getOrganismByCommonName(organismCommonNameHolder.getOrganismCommonName());
 
-        Map<String, String> featureHandlerOptions = runnerConfig.getFeatureHandlerOptions();
-        String featureHandlerName = featureHandlerOptions.get("beanName");
-        if (featureHandlerName == null) {
-            featureHandlerName = "fullLengthSourceFeatureHandler";
-        }
-        featureHandler = (FeatureHandler)
-        this.applicationContext.getBean(featureHandlerName, FeatureHandler.class);
-        featureHandler.setOptions(featureHandlerOptions);
-        featureHandler.setOrganism(organism);
-        featureHandler.setCvDao(cvDao);
-        featureHandler.setGeneralDao(generalDao);
-        featureHandler.setSequenceDao(sequenceDao);
-        featureHandler.setPubDao(pubDao);
-
-
-        featureHandler.afterPropertiesSet();
-
+        logger.warn("Got organism");
 
         featureUtils = new FeatureUtils();
         featureUtils.setCvDao(cvDao);
         featureUtils.setSequenceDao(sequenceDao);
         featureUtils.setPubDao(pubDao);
         featureUtils.setGeneralDao(generalDao);
-        featureUtils.afterPropertiesSet();
+        //featureUtils.afterPropertiesSet();
 
-
-        featureHandler.setFeatureUtils(featureUtils);
-        featureHandler.afterPropertiesSet();
+        logger.warn("Set up featureUtils");
 
         //gp.setCvDao(cvDao);
 
-        Map<String, String> nomenclatureOptions = runnerConfig.getNomenclatureOptions();
-        String nomenclatureHandlerName = nomenclatureOptions.get("beanName");
-        if (nomenclatureHandlerName == null) {
-            nomenclatureHandlerName = "standardNomenclatureHandler";
-        }
-        NomenclatureHandler nomenclatureHandler = (NomenclatureHandler)
-        this.applicationContext.getBean(nomenclatureHandlerName, NomenclatureHandler.class);
-        nomenclatureHandler.setOptions(nomenclatureOptions);
 
-        CDS_Processor cdsProcessor =
-            (CDS_Processor) this.applicationContext.getBean("cdsProcessor", CDS_Processor.class);
-        cdsProcessor.setNomenclatureHandler(nomenclatureHandler);
-        cdsProcessor.afterPropertiesSet();
 
         for (FeatureProcessor fp : qualifierHandlerMap.values()) {
-            fp.setOrganism(organism);
-            fp.setFeatureUtils(featureUtils);
-            fp.afterPropertiesSet();
+            //fp.setOrganism(organism);
+            //fp.setFeatureUtils(featureUtils);
+            //fp.afterPropertiesSet();
         }
     }
 
@@ -217,16 +201,7 @@ public class NewRunner2 implements ApplicationContextAware {
      * @param f The feature to dispatch on
      */
     private void despatchOnFeatureType(final FeatureProcessor fp, final Feature f, final org.gmod.schema.mapped.Feature parent, final int offset) {
-    //  TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
-     //   tt.execute(
-              //  new TransactionCallbackWithoutResult() {
-                 //   @Override
-                 //   public void doInTransactionWithoutResult(TransactionStatus status) {
-                        //Transaction transaction = session.beginTransaction();
-                        fp.process(parent, f, offset);
-                        //transaction.commit();
-                 //   }
-               // });
+        fp.process(parent, f, offset);
     }
 
 
@@ -331,15 +306,17 @@ public class NewRunner2 implements ApplicationContextAware {
      * The core processing loop. Read the config file to find out which EMBL files to read,
      * and which 'synthetic' features to create
      */
-    private void process() {
+    public void process() {
         long start = new Date().getTime();
 
+        System.err.println("*** Building caches");
         this.buildCaches();
+        System.err.println("*** Done building caches");
         //loadCvTerms();
         // First process simple files ie simple EMBL files
-        List<String> fileNames = this.runnerConfig.getFileNames();
-        for (String fileName : fileNames) {
-            final File file = new File(fileName);
+        List<File> files = inputSources.inputFiles();
+        for (File file : files) {
+            System.err.println("*** Looking at '"+file.getAbsolutePath()+"'");
             for (final Sequence seq : this.extractSequencesFromFile(file)) {
                 //TransactionTemplate tt = new TransactionTemplate(sequenceDao.getPlatformTransactionManager());
                 //tt.execute(
@@ -355,18 +332,18 @@ public class NewRunner2 implements ApplicationContextAware {
 
         this.postProcess();
         reportUnhandledQualifiers();
-        reportUnknownRileyClass();
+        //reportUnknownRileyClass();
         long duration = (new Date().getTime()-start)/1000;
         logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
     }
 
-    private void reportUnknownRileyClass() {
-        logger.warn("Unknown Riley class are...");
-        List<String> rileys = qualifierHandlerMap.get("CDS").getUnknownRileyClass();
-        for (String riley : rileys) {
-            logger.warn(riley);
-        }
-    }
+//    private void reportUnknownRileyClass() {
+//        logger.warn("Unknown Riley class are...");
+//        List<String> rileys = qualifierHandlerMap.get("CDS").getUnknownRileyClass();
+//        for (String riley : rileys) {
+//            logger.warn(riley);
+//        }
+//    }
 
     private void reportUnhandledQualifiers() {
         Map<String, Boolean> merged = new HashMap<String, Boolean>();
@@ -411,8 +388,11 @@ public class NewRunner2 implements ApplicationContextAware {
      * @param offset The base offset, when reparenting is taking place
      */
     @SuppressWarnings("unchecked")
+    @Transactional
     private void processSequence(File file, Sequence seq, org.gmod.schema.mapped.Feature parent, int offset) {
         //Session session = hibernateTransactionManager.getSessionFactory().openSession();
+
+        Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
 
         try {
             org.gmod.schema.mapped.Feature topLevel = this.featureHandler.process(file, seq);
@@ -474,6 +454,7 @@ public class NewRunner2 implements ApplicationContextAware {
                 seq.removeFeature(feature);
             }
 
+            session.flush();
 
             // Loop through each processing phase, and use index to process features
             // then delete them
@@ -506,75 +487,57 @@ public class NewRunner2 implements ApplicationContextAware {
             // TODO Auto-generated catch block
             exp.printStackTrace();
         }
-        //session.close();
+        session.flush();
 
 
     }
 
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
 
-    public void setRunnerConfigParser(RunnerConfigParser runnerConfigParser) {
-        this.runnerConfigParser = runnerConfigParser;
+    interface Args {
+        @Option(shortName="c", description="Path to config file for this organism")
+        String getConfigFilePath();
     }
-
 
     /**
      * Main entry point. It uses a BeanPostProcessor to apply a set of overrides
      * based on a Properties file, based on the organism. This is passed in on
      * the command-line.
      *
-     * @param args organism_common_name, [conf file path]
+     * @param args conf-file-path
      */
     public static void main (String[] args) {
 
-        String organismCommonName = null;
-        String configFilePath = null;
-
-        switch (args.length) {
-            case 0:
-                System.err.println("No organism common name specified\n"+usage);
-                System.exit(0);
-                break; // To prevent fall-through warning
-            case 1:
-                organismCommonName = args[0];
-                //loginName = organismCommonName;
-                break;
-            case 2:
-                organismCommonName = args[0];
-                //loginName = organismCommonName;
-                configFilePath = args[1];
-                break;
-            case 3:
-                organismCommonName = args[0];
-                configFilePath = args[1];
-                //loginName = args[2];
-                break;
-            default:
-                System.err.println("Too many arguments\n"+usage);
-            System.exit(0);
+        Cli<Args> cli = CliFactory.createCli(Args.class);
+        Args arguments = null;
+        try {
+          arguments = cli.parseArguments(args);
+        }
+        catch(ArgumentValidationException exp) {
+            System.err.println("Unable to run:");
+            System.err.println(cli.getHelpMessage());
+            return;
         }
 
         // Override properties in Spring config file (using a
         // BeanFactoryPostProcessor) based on command-line args
         Properties overrideProps = new Properties();
         //overrideProps.setProperty("dataSource.username", "chado");
-        overrideProps.setProperty("runner.organismCommonName", organismCommonName);
-        overrideProps.setProperty("runnerConfigParser.organismCommonName", organismCommonName);
+        //overrideProps.setProperty("runner.organismCommonName", arguments.getOrganismCommonName());
+        //overrideProps.setProperty("runnerConfigParser.organismCommonName", arguments.getOrganismCommonName());
 
-        if (configFilePath != null) {
-            overrideProps.setProperty("runnerConfigParser.configFilePath", configFilePath);
+        String[] configs = new String[] {"classpath:NewRunner3.xml"};
+
+        if (arguments.getConfigFilePath() != null) {
+            configs = new String[] {"classpath:NewRunner3.xml", "file://"+arguments.getConfigFilePath()};
         }
 
         PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
 
+        ApplicationContext ctx = new FileSystemXmlApplicationContext(configs);
 
-        ApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"NewRunner2.xml"});
-
-//        NewRunner2 runner = new NewRunner2();
-        NewRunner2 runner = (NewRunner2) ctx.getBean("runner", NewRunner2.class);
+        logger.warn("*** About to retrieve Runner class");
+        NewRunner3I runner = (NewRunner3I) ctx.getBean("runner", NewRunner3I.class);
+        logger.warn("*** Retrieved Runner class");
         runner.process();
 
     }
@@ -602,6 +565,19 @@ public class NewRunner2 implements ApplicationContextAware {
 
     public void setPubDao(PubDao pubDao) {
         this.pubDao = pubDao;
+    }
+
+    public void setOrganismCommonNameHolder(
+            OrganismCommonNameHolder organismCommonNameHolder) {
+        this.organismCommonNameHolder = organismCommonNameHolder;
+    }
+
+    public void setInputSources(InputSources inputSources) {
+        this.inputSources = inputSources;
+    }
+
+    public Organism getOrganism() {
+        return organism;
     }
 
 }

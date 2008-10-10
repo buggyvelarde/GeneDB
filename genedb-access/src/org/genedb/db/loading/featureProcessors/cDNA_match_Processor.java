@@ -73,7 +73,7 @@ public class cDNA_match_Processor extends BaseFeatureProcessor {
 
         String soType = "cDNA_match";
 
-        String systematicId = this.organism.getAbbreviation() + "_cDNAMatch_" + numProcessed;
+        String systematicId = runner.getOrganism().getAbbreviation() + "_cDNAMatch_" + numProcessed;
 
         if (!cvDao.existsNameInOntology(soType, CV_SO)) {
             logger.warn("Can't create repeat feature of type '"+soType+"' at location '"+loc+"'");
