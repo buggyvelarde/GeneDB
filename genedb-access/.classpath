@@ -50,5 +50,7 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-util"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/misc/jewelcli-0.53.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/misc/google-collect-snapshot-20080820.jar"/>
 	<classpathentry kind="output" path="ant-build/classes"/>
 </classpath>
