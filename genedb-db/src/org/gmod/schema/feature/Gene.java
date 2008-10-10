@@ -82,4 +82,5 @@ public class Gene extends AbstractGene {
     public void addTranscript(Transcript transcript) {
         addFeatureRelationship(transcript, "relationship", "part_of");
     }
+
 }
