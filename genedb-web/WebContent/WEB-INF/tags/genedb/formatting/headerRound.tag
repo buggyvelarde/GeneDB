@@ -170,7 +170,7 @@
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinNumTM&organism=${organism}"/>" title="ProteinLength Search">By No. TM domains</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Motif Search --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/MotifSearch"/>" title="Motif Search">Motif Search</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/MotifSearch&organism=${organism}"/>" title="Motif Search">Motif Search</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Targeting Sequence --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinTargetingSeq&organism=${organism}"/>" title="ProteinLength Search">By Targetting Seqs.</a>
@@ -188,45 +188,20 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem">
-                        <c:if test="${!empty organism}">
                                         <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=genedb_products&organism=${organism}"/>" title="Browse Products">Products</a>
-                        </c:if>
-                        <c:if test="${empty organism}">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=genedb_products"/>" title="Browse Products">Products</a>
-                        </c:if>
                                     </li>
                                     <li class="yuimenuitem">
-                             <c:if test="${!empty organism}">
-                                            <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=ControlledCuration&organism=${organism}"/>" title="Browse Curation">Curation</a>
-                             </c:if>
-                             <c:if test="${empty organism}">
-                                            <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=ControlledCuration"/>" title="Browse Curation">Curation</a>
-                             </c:if>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=ControlledCuration&organism=${organism}"/>" title="Browse Curation">Curation</a>
                                     </li>
                                     <li class="yuimenuitem">
-                             <c:if test="${!empty organism}">
-                                            <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process&organism=${organism}"/>" title="Browse GO Terms">Biological Process</a>
-                             </c:if>
-                             <c:if test="${empty organism}">
-                                            <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process"/>" title="Browse GO Terms">Biological Process</a>
-                             </c:if>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process&organism=${organism}"/>" title="Browse GO Biological Process">Biological Process</a>
                                     </li>
                                     <li class="yuimenuitem">
-                             <c:if test="${!empty organism}">
-                                            <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=cellular_component&organism=${organism}"/>" title="Browse GO Terms">Cellular Component</a>
-                             </c:if>
-                             <c:if test="${empty organism}">
-                                            <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=cellular_component"/>" title="Browse GO Terms">Cellular Component</a>
-                             </c:if>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=cellular_component&organism=${organism}"/>" title="Browse GO Cellular Component">Cellular Component</a>
                                     </li>
-                             <li class="yuimenuitem">
-                             <c:if test="${!empty organism}">
-                                <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=molecular_function&organism=${organism}"/>" title="Browse GO Terms">Molecular Function</a>
-                             </c:if>
-                             <c:if test="${empty organism}">
-                                <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=molecular_function"/>" title="Browse GO Terms">Molecular Function</a>
-                             </c:if>
-                             </li>
+                                    <li class="yuimenuitem">
+                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=molecular_function&organism=${organism}"/>" title="Browse GO Molecular Function">Molecular Function</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
