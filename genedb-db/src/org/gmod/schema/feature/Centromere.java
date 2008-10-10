@@ -24,10 +24,10 @@ public class Centromere extends Region {
         String centromereUniqueName = String.format("%s:centromere", sourceFeature.getUniqueName());
         return make(sourceFeature, centromereUniqueName, fmin, fmax);
     }
-    public Centromere make(TopLevelFeature sourceFeature, String uniqueName, int fmin, int fmax) {
+    public static Centromere make(TopLevelFeature sourceFeature, String uniqueName, int fmin, int fmax) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         Centromere centromere = new Centromere(sourceFeature.getOrganism(), uniqueName, false, false, now);
-        sourceFeature.addLocatedChild(this, fmin, fmax, (short) 0, 0);
+        sourceFeature.addLocatedChild(centromere, fmin, fmax, (short) 0, 0);
         return centromere;
     }
 }

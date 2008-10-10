@@ -28,4 +28,10 @@ public class FivePrimeUTR extends UTR {
         this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
     }
 
+    public static FivePrimeUTR make(TopLevelFeature sourceFeature, String uniqueName, int fmin, int fmax) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        FivePrimeUTR fpu = new FivePrimeUTR(sourceFeature.getOrganism(), uniqueName, false, false, now);
+        sourceFeature.addLocatedChild(fpu, fmin, fmax, (short) 0, 0);
+        return fpu;
+    }
 }

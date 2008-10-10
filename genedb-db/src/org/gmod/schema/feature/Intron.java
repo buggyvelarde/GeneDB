@@ -28,4 +28,11 @@ public class Intron extends TranscriptRegion {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+    public static Intron make(TopLevelFeature sourceFeature, String uniqueName, int fmin, int fmax) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Intron intron = new Intron(sourceFeature.getOrganism(), uniqueName, false, false, now);
+        sourceFeature.addLocatedChild(intron, fmin, fmax, (short) 0, 0);
+        return intron;
+    }
+
 }

@@ -27,4 +27,11 @@ public class ThreePrimeUTR extends UTR {
     public ThreePrimeUTR(Organism organism, String uniqueName) {
         this(organism, uniqueName, false, false, new Timestamp(System.currentTimeMillis()));
     }
+
+    public static ThreePrimeUTR make(TopLevelFeature sourceFeature, String uniqueName, int fmin, int fmax) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        ThreePrimeUTR tpu = new ThreePrimeUTR(sourceFeature.getOrganism(), uniqueName, false, false, now);
+        sourceFeature.addLocatedChild(tpu, fmin, fmax, (short) 0, 0);
+        return tpu;
+    }
 }
