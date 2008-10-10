@@ -13,19 +13,15 @@
     <tx:annotation-driven/>
 
     <bean id="runner" class="org.genedb.db.loading.FastaLoader">
-        <property name="sequenceDao" ref="sequenceDao" />
+        <!-- <property name="sequenceDao" ref="sequenceDao" />
         <property name="organismDao" ref="organismDao" />
-        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="sessionFactory" ref="sessionFactory" /> -->
     </bean>
 
 
     <!-- Spring needs a bean called 'transactionManager' for annotation-driven transactions -->
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="messages"/>
     </bean>
 
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
