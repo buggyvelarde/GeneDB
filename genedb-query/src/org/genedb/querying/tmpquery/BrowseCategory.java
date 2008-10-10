@@ -17,12 +17,36 @@
  * Boston, MA  02111-1307 USA
  */
 
-package org.genedb.web.mvc.controller;
+package org.genedb.querying.tmpquery;
 
 public enum BrowseCategory {
-    biological_process,
-    cellular_component,
-    molecular_function,
-    genedb_products,
-    ControlledCuration;
+    biological_process("GO Biological Process"),
+    cellular_component("GO Cellular Component"),
+    molecular_function("GO Molecular Function"),
+    genedb_products("Products"),
+    ControlledCuration("Controlled Curation", "CC_%");
+
+    private String lookupName;
+    private String displayName;
+
+    private BrowseCategory(String displayName) {
+        this.displayName = displayName;
+    }
+
+    private BrowseCategory(String displayName, String lookupName) {
+        this.displayName = displayName;
+        this.lookupName = lookupName;
+    }
+
+    public String getLookupName() {
+        if (lookupName != null) {
+            return lookupName;
+        }
+        return name();
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
 }

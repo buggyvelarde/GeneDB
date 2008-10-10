@@ -39,6 +39,7 @@ import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
+import org.genedb.querying.tmpquery.BrowseCategory;
 
 import org.gmod.schema.utils.GeneNameOrganism;
 import org.springframework.validation.BindException;
