@@ -101,15 +101,15 @@ public class FeatureLoc implements Serializable {
         this.rank = rank;
     }
 
-    public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, int strand, int phase) {
+    public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, int strand, Integer phase) {
         this(sourceFeature, feature, fmin, false, fmax, false, (short) strand, phase, 0, 0);
     }
 
-    public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, int strand, int phase, int rank) {
+    public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, int strand, Integer phase, int rank) {
         this(sourceFeature, feature, fmin, false, fmax, false, (short) strand, phase, 0, rank);
     }
 
-    public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, int strand, int phase, int locgroup, int rank) {
+    public FeatureLoc(Feature sourceFeature, Feature feature, int fmin, int fmax, int strand, Integer phase, int locgroup, int rank) {
         this(sourceFeature, feature, fmin, false, fmax, false, (short) strand, phase, locgroup, rank);
     }
 
