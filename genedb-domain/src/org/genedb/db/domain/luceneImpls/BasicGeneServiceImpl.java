@@ -70,7 +70,6 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
     /**
      * Convert the document to a Transcript object. If the <code>_hibernate_class</code>
-     * of the document is not <code>org.gmod.schema.feature.MRNA</code>, returns null.
      */
     private final DocumentConverter<Transcript> convertToTranscript = new DocumentConverter<Transcript>() {
         public Transcript convert(Document doc) {
@@ -78,10 +77,11 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
             Transcript transcript = new Transcript();
             String colourString = doc.get("colour");
-            if (colourString == null || colourString.equals("null"))
+            if (colourString == null || colourString.equals("null")) {
                 transcript.setColourId(null);
-            else
+            } else {
                 transcript.setColourId(Integer.parseInt(colourString));
+            }
 
             transcript.setUniqueName(doc.get("uniqueName"));
 
@@ -96,8 +96,9 @@ public class BasicGeneServiceImpl implements BasicGeneService {
                  transcript.setComponents(NO_EXONS);
             }
             String productsTabSeparated = doc.get("product");
-            if (productsTabSeparated != null)
+            if (productsTabSeparated != null) {
                 transcript.setProducts(Arrays.asList(productsTabSeparated.split("\t")));
+            }
 
             return transcript;
         }
@@ -177,22 +178,25 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             int numberStart = colonIndex + 1;
             int numberEnd = loc.length();
             if (loc.charAt(numberStart) == '(') {
-                if (!loc.endsWith(")"))
+                if (!loc.endsWith(")")) {
                     throw new IllegalArgumentException(String.
                         format("Exon location '%s' starts with '(' but does not end with ')'; from string '%s'", loc, locs));
+                }
                 numberStart++;
                 numberEnd--;
             }
             int dots = loc.indexOf("..");
-            if (dots < 1)
+            if (dots < 1) {
                 throw new IllegalArgumentException(String.format("Failed to parse exon location '%s' from string '%s'", loc, locs));
+            }
             int componentStart = Integer.parseInt(loc.substring(numberStart, dots));
             int componentStop  = Integer.parseInt(loc.substring(dots+2, numberEnd));
 
-            if (isExon)
+            if (isExon) {
                 components.add(new Exon(componentStart, componentStop));
-            else
+            } else {
                 components.add(new UTR(componentStart, componentStop));
+            }
         }
         return components;
     }
