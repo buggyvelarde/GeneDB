@@ -42,7 +42,12 @@ public class CvDao extends BaseDao {
         return cvs;
     }
 
-    public Cv getCvByName(String name) {
+    private Map<String,Cv> cvByName = new HashMap<String,Cv>();
+    public synchronized Cv getCvByName(String name) {
+        if (cvByName.containsKey(name)) {
+            return cvByName.get(name);
+        }
+
         @SuppressWarnings("unchecked")
         List<Cv> cvs = getSession().createQuery(
             "from Cv cv where cv.name like :name")
@@ -51,7 +56,9 @@ public class CvDao extends BaseDao {
             logger.warn(String.format("Failed to find CV with name '%s'", name));
             return null;
         }
-        return cvs.get(0);
+        Cv cv = cvs.get(0);
+        cvByName.put(name, cv);
+        return cv;
     }
 
     public CvTerm getCvTermById(int id) {
@@ -199,6 +206,14 @@ public class CvDao extends BaseDao {
         return cvTermList.get(0);
     }
 
+    private Db nullDb = null;
+    private Db nullDb() {
+        if (nullDb == null) {
+            nullDb = generalDao.getDbByName("null");
+        }
+        return nullDb;
+    }
+
     /**
      * Take a cv and cvterm and look it up, or create it if it doesn't exist
      *
@@ -226,7 +241,7 @@ public class CvDao extends BaseDao {
                 cvTermNameTruncatedForDbXRef = cvTermName.substring(0, DBXREF_ACCESSION_MAX_LENGTH);
             }
 
-            Db db = generalDao.getDbByName("null");
+            Db db = nullDb();
             DbXRef dbXRef = new DbXRef(db, cvTermNameTruncatedForDbXRef, cvTermName);
             generalDao.persist(dbXRef);
             CvTerm cvterm = new CvTerm(this.getCvByName(cvName), dbXRef, cvTermNameTruncatedForCvTerm, cvTermName);
