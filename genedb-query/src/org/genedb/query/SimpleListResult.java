@@ -19,12 +19,12 @@ public class SimpleListResult implements Result {
     private List<Object> list = new ArrayList<Object>();
     private String query;
     private ResultCompatibility resultCompatability;
-    
+
     /**
-     * Get the <code>ResultCompatability</code> which this result is 
+     * Get the <code>ResultCompatability</code> which this result is
      * using for comparing
-     * 
-     * @return the compatability check, or NullResultCompatability 
+     *
+     * @return the compatability check, or NullResultCompatability
      */
     public ResultCompatibility getResultCompatability() {
         if (this.resultCompatability == null) {
@@ -35,7 +35,7 @@ public class SimpleListResult implements Result {
 
     /**
      * Set the ResultCompatability to use for this Result
-     * 
+     *
      * @param resultCompatability
      */
     public void setResultCompatability(ResultCompatibility resultCompatability) {
@@ -69,7 +69,7 @@ public class SimpleListResult implements Result {
     public int size() {
         return list.size();
     }
-    
+
     public void add(Object o) {
         list.add(o);
     }
@@ -77,11 +77,11 @@ public class SimpleListResult implements Result {
     public boolean remove(Object o) {
         return list.remove(o);
     }
-    
-    public Iterator iterator() {
+
+    public Iterator<Object> iterator() {
         return list.iterator();
     }
-    
+
     public Result union(Result result) {
         Result ret = new SimpleListResult();
         for (Object o : list) {
@@ -92,10 +92,7 @@ public class SimpleListResult implements Result {
         }
         return ret;
     }
-    
-    /**
-     * @see org.genedb.zoe.query.Result#except(org.genedb.zoe.query.Result)
-     */
+
     public Result except(Result except) {
         Result ret = new SimpleListResult();
         for (Object o : list) {
@@ -107,9 +104,6 @@ public class SimpleListResult implements Result {
         return ret;
     }
 
-    /**
-     * @see org.genedb.zoe.query.Result#intersect(org.genedb.zoe.query.Result)
-     */
     public Result intersect(Result intersect) {
         Result ret = new SimpleListResult();
         for (Object o : intersect) {
@@ -119,10 +113,7 @@ public class SimpleListResult implements Result {
         }
         return ret;
     }
-    
-    /**
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         StringBuilder ret = new StringBuilder("SimpleListResult name='");
@@ -131,8 +122,5 @@ public class SimpleListResult implements Result {
         ret.append(size());
         return ret.toString();
     }
-
-
-
 
 }
