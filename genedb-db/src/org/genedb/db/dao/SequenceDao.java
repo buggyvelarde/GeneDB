@@ -823,6 +823,17 @@ public class SequenceDao extends BaseDao {
         return featureProp;
     }
 
+    /**
+     * Delete all the features that are located on the specified source feature.
+     * @param sourceFeature
+     */
+    public void deleteFeaturesLocatedOn(Feature sourceFeature) {
+        getSession().createQuery(
+            "delete Feature f where f in (select fl.feature from FeatureLoc fl where fl.sourceFeature = :sourceFeature)"
+        ).setParameter("sourceFeature", sourceFeature)
+        .executeUpdate();
+    }
+
 
     /* Invoked by Spring */
     public void setCvDao(CvDao cvDao) {
