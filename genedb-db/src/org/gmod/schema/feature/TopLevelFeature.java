@@ -67,4 +67,27 @@ public abstract class TopLevelFeature extends Region {
         this.addLocatedChild(gap, fmin, fmax, (short)0, 0);
         return gap;
     }
+
+    /**
+     * Delete this feature. If it's a top-level feature
+     * (i.e. if {@link #isTopLevelFeature()} returns <code>true</code>)
+     * then also delete all features located on this feature.
+     */
+    @Override
+    public void delete() {
+        delete(isTopLevelFeature());
+    }
+
+    /**
+     * Delete this feature. If the parameter <code>deleteLocatedFeatures</code>
+     * is true, also delete all features located on this feature.
+     *
+     * @param deleteLocatedFeatures
+     */
+    public void delete(boolean deleteLocatedFeatures) {
+        if (deleteLocatedFeatures) {
+            sequenceDao.deleteFeaturesLocatedOn(this);
+        }
+        super.delete();
+    }
 }
