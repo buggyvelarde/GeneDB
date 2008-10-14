@@ -53,7 +53,7 @@ public class FeatureCvTermProp implements Serializable, PropertyI, Rankable {
      */
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", unique = false, nullable = false, insertable = true, updatable = true)
-    private CvTerm cvTerm;
+    private CvTerm type;
 
     /**
      * The FeatureCvTerm to which this property is attached
@@ -84,15 +84,15 @@ public class FeatureCvTermProp implements Serializable, PropertyI, Rankable {
     }
 
     /** minimal constructor */
-    public FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, int rank) {
-        this.cvTerm = cvTerm;
+    public FeatureCvTermProp(CvTerm type, FeatureCvTerm featureCvTerm, int rank) {
+        this.type = type;
         this.featureCvTerm = featureCvTerm;
         this.rank = rank;
     }
 
     /** full constructor */
-    public FeatureCvTermProp(CvTerm cvTerm, FeatureCvTerm featureCvTerm, String value, int rank) {
-        this.cvTerm = cvTerm;
+    public FeatureCvTermProp(CvTerm type, FeatureCvTerm featureCvTerm, String value, int rank) {
+        this.type = type;
         this.featureCvTerm = featureCvTerm;
         this.value = value;
         this.rank = rank;
@@ -105,7 +105,7 @@ public class FeatureCvTermProp implements Serializable, PropertyI, Rankable {
     }
 
     public CvTerm getType() {
-        return this.cvTerm;
+        return this.type;
     }
 
     public FeatureCvTerm getFeatureCvTerm() {
