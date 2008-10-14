@@ -2,11 +2,14 @@ package org.gmod.schema.mapped;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import org.genedb.db.dao.CvDao;
+
 import org.gmod.schema.utils.Rankable;
 import org.gmod.schema.utils.propinterface.PropertyI;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,6 +46,9 @@ import javax.persistence.Transient;
 public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
 
     // Fields
+
+    @Autowired
+    private transient CvDao cvDao;
 
     @SequenceGenerator(name = "generator", sequenceName = "feature_cvterm_feature_cvterm_id_seq")
     @Id @GeneratedValue(strategy=SEQUENCE, generator="generator")
@@ -155,6 +161,28 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
      */
     public List<FeatureCvTermProp> getFeatureCvTermProps() {
         return Collections.unmodifiableList(this.featureCvTermProps);
+    }
+
+    public FeatureCvTermProp addProp(String cvName, String cvTermName, String value) {
+        CvTerm propType = cvDao.getCvTermByNameAndCvName(cvTermName, cvName);
+        if (propType == null) {
+            throw new RuntimeException(String.format("Could not find CV term '%s' in CV '%s'",
+                cvTermName, cvName));
+        }
+        return addProp(propType, value);
+    }
+    public FeatureCvTermProp addProp(CvTerm type, String value) {
+        FeatureCvTermProp featureCvTermProp = new FeatureCvTermProp(type, this, value, 0);
+        this.featureCvTermProps.add(featureCvTermProp);
+        return featureCvTermProp;
+    }
+
+    public FeatureCvTermProp addPropIfNotNull(String cvName, String cvTermName, String value) {
+        if (value != null) {
+            return addProp(cvName, cvTermName, value);
+        } else {
+            return null;
+        }
     }
 
     /**
