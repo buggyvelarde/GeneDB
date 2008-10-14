@@ -64,7 +64,7 @@
 			<div class="fieldset" align="center" style="width: 98%;">
 				<div class="legend">Generic Feature</div>
 				<c:forEach items="${feature.featureSynonyms}" var="featSyn">
-					<p><b>${featSyn.synonym.cvTerm.name}</b> ${featSyn.synonym.name}
+					<p><b>${featSyn.synonym.type.name}</b> ${featSyn.synonym.name}
 					<c:if test="!${featSyn.current}">{Obsolete}</c:if></p>
 				</c:forEach>
 
