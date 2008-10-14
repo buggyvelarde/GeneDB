@@ -26,6 +26,7 @@ public class GeneTypeQuery extends HqlQuery {
     }
 
 
+    @Override
     public Map<String, Object> prepareModelData() {
         Map<String, String> typeMap = new HashMap<String, String>();
         typeMap.put("mRNA", "protein-coding");

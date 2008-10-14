@@ -98,13 +98,11 @@ public abstract class HqlQuery implements Query {
     public List<HtmlFormDetails> getFormDetails() {
         List<HtmlFormDetails> ret = new ArrayList<HtmlFormDetails>();
 
-        for (String name : getParamNames()) {
-            HtmlFormDetails htd = new HtmlFormDetails();
-            //htd.setName(name);
-            //htd.setDefaultValue
-        }
-
-
+//        for (String name : getParamNames()) {
+//            HtmlFormDetails htd = new HtmlFormDetails();
+//            htd.setName(name);
+//            htd.setDefaultValue
+//        }
 
         return ret;
     }

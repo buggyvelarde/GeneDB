@@ -5,8 +5,6 @@ import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @QueryClass(
         title="Transcripts by their type",

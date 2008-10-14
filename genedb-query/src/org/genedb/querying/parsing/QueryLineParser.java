@@ -5,7 +5,6 @@ import org.genedb.querying.core.BooleanQueryMode;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
-import org.genedb.querying.parsing.ExprParser.prog_return;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;

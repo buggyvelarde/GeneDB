@@ -6,9 +6,6 @@ import org.genedb.querying.core.QueryParam;
 
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @QueryClass(
         title="Transcripts by their type",
         shortDesc="Get a list of transcripts by type",

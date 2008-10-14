@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class QueryFactory {
 
-	private static Logger logger = Logger.getLogger(QueryFactory.class);
+    private static Logger logger = Logger.getLogger(QueryFactory.class);
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -29,12 +29,12 @@ public class QueryFactory {
 
 
 
-	public Map<String, Query> listQueries(String filterName) {
-		for (Map.Entry<String, Query> entry : queryMap.entrySet()) {
-			logger.error(entry.getKey()+" : "+entry.getValue());
-		}
-		return queryMap;
-	}
+    public Map<String, Query> listQueries(String filterName) {
+        for (Map.Entry<String, Query> entry : queryMap.entrySet()) {
+            logger.error(entry.getKey()+" : "+entry.getValue());
+        }
+        return queryMap;
+    }
 
 
 

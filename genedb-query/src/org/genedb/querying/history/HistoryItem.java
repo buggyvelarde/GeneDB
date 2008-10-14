@@ -88,8 +88,7 @@ public class HistoryItem {
     }
 
     public Query getQuery() {
-        // TODO Auto-generated method stub
-        return null;
+        return query;
     }
 
     public void setHistoryType(HistoryType historyType) {

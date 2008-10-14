@@ -60,7 +60,7 @@ public abstract class LuceneQuery implements Query {
 
     @PostConstruct
     protected void afterPropertiesSet() {
-    	luceneIndex = luceneIndexFactory.getIndex(getluceneIndexName());
+        luceneIndex = luceneIndexFactory.getIndex(getluceneIndexName());
     }
 
 
@@ -75,8 +75,8 @@ public abstract class LuceneQuery implements Query {
         geneOrPseudogeneQuery.add(pseudogeneQuery, Occur.SHOULD);
     }
 
-	//private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
-	//private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
+    //private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
+    //private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
 
     public String getParseableDescription() {
         return QueryUtils.makeParseableDescription(name, getParamNames(), this);
@@ -123,52 +123,53 @@ public abstract class LuceneQuery implements Query {
 //	}
 
     public List<String> getResults() throws QueryException {
-    	List<String> names;
-    	try {
-    		Hits hits = lookupInLucene();
-    		names = new ArrayList<String>();
-    		Iterator it = hits.iterator();
-    		while (it.hasNext()) {
-    			Hit hit = (Hit) it.next();
-    			Document document = hit.getDocument();
-    			logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
-    			names.add(document.get("uniqueName"));
-    		}
-    		return names;
-    	} catch (CorruptIndexException exp) {
-    		throw new QueryException(exp);
-    	} catch (IOException exp) {
-    		throw new QueryException(exp);
-    	}
+        List<String> names;
+        try {
+            Hits hits = lookupInLucene();
+            names = new ArrayList<String>();
+            @SuppressWarnings("unchecked")
+            Iterator<Hit> it = hits.iterator();
+            while (it.hasNext()) {
+                Hit hit = it.next();
+                Document document = hit.getDocument();
+                logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+                names.add(document.get("uniqueName"));
+            }
+            return names;
+        } catch (CorruptIndexException exp) {
+            throw new QueryException(exp);
+        } catch (IOException exp) {
+            throw new QueryException(exp);
+        }
     }
 
     protected abstract String[] getParamNames();
 
     public List<HtmlFormDetails> getFormDetails() {
-    	List<HtmlFormDetails> ret = new ArrayList<HtmlFormDetails>();
+        List<HtmlFormDetails> ret = new ArrayList<HtmlFormDetails>();
 
-    	for (String name : getParamNames()) {
-			HtmlFormDetails htd = new HtmlFormDetails();
-			//htd.setName(name);
-			//htd.setDefaultValue
-		}
+//        for (String name : getParamNames()) {
+//            HtmlFormDetails htd = new HtmlFormDetails();
+//            htd.setName(name);
+//            htd.setDefaultValue
+//        }
 
 
 
-    	return ret;
+        return ret;
     }
 
-	public Map<String, Object> prepareModelData() {
-		return Collections.emptyMap();
-	}
+    public Map<String, Object> prepareModelData() {
+        return Collections.emptyMap();
+    }
 
 
-    private Hits lookupInLucene(List<org.apache.lucene.search.Query> queries) throws IOException {
+    private Hits lookupInLucene(List<org.apache.lucene.search.Query> queries) {
 
         BooleanQuery booleanQuery = new BooleanQuery();
         for (org.apache.lucene.search.Query query : queries) {
-			booleanQuery.add(new BooleanClause(query, Occur.MUST));
-		}
+            booleanQuery.add(new BooleanClause(query, Occur.MUST));
+        }
 
         logger.error(String.format("Lucene query is '%s'", booleanQuery.toString()));
         Hits hits = luceneIndex.search(booleanQuery);
@@ -176,32 +177,32 @@ public abstract class LuceneQuery implements Query {
     }
 
 
-    private Hits lookupInLucene() throws IOException {
+    private Hits lookupInLucene() {
 
-    	List<org.apache.lucene.search.Query> queries = new ArrayList<org.apache.lucene.search.Query>();
-    	getQueryTerms(queries);
+        List<org.apache.lucene.search.Query> queries = new ArrayList<org.apache.lucene.search.Query>();
+        getQueryTerms(queries);
 
         return lookupInLucene(queries);
     }
 
-	protected abstract void getQueryTerms(List<org.apache.lucene.search.Query> queries);
+    protected abstract void getQueryTerms(List<org.apache.lucene.search.Query> queries);
 
 
-	protected BooleanQuery makeQueryForOrganisms(Collection<String> orgNames) {
+    protected BooleanQuery makeQueryForOrganisms(Collection<String> orgNames) {
         BooleanQuery organismQuery = new BooleanQuery();
 
         for (String organism : orgNames) {
             organismQuery.add(new TermQuery(new Term("organism.commonName",organism)), Occur.SHOULD);
-		}
-		return organismQuery;
-	}
+        }
+        return organismQuery;
+    }
 
-	public int getOrder() {
-		return order;
-	}
+    public int getOrder() {
+        return order;
+    }
 
-	public void setOrder(int order) {
-		this.order = order;
-	}
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
 }

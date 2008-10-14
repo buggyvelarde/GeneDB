@@ -4,19 +4,12 @@ import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
-import org.apache.log4j.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
-
 @QueryClass(
         title="Transcripts by their type",
         shortDesc="Get a list of transcripts by type",
         longDesc=""
     )
 public class GeneLocationQuery extends HqlQuery {
-
-    private static final Logger logger = Logger.getLogger(GeneLocationQuery.class);
 
     @QueryParam(
             order=1,
