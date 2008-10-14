@@ -263,4 +263,11 @@ public class Polypeptide extends Region {
         return hasProperty("genedb_misc", "GPI_anchored");
     }
 
+    /**
+     * Add an orthologue link from the specified polypeptide to this one.
+     * @param source the source polypeptide
+     */
+    public void addOrthologue(Polypeptide source) {
+        this.addFeatureRelationship(source, "sequence", "orthologous_to");
+    }
 }
