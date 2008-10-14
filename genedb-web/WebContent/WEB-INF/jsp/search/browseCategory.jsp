@@ -18,12 +18,12 @@
               <td>
                 <select name="organism">
                   <option value="Plasmodium">Plasmodium</option>
-                  <option value="Pfalciparum">Pfalciparum</option>
-                  <option value="Pberghei">Pberghei</option>
-                  <option value="Pchabaudi">Pchabaudi</option>
-                  <option value="Pknowlesi">Pknowlesi</option>
-                  <option value="Pvivax">Pvivax</option>
-                  <option value="Pyoelii">Pyoelii</option>
+                  <option value="Pfalciparum">P. falciparum</option>
+                  <option value="Pberghei_3x">P. berghei</option>
+                  <option value="Pchabaudi">P. chabaudi</option>
+                  <option value="Pknowlesi">P. knowlesi</option>
+                  <option value="Pvivax">P. vivax</option>
+                  <option value="Pyoelii">P. yoelii</option>
                 </select>
               </td>
           </tr>

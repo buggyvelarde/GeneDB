@@ -20,7 +20,7 @@
 			      		<form:select path="organism" multiple="false">
 			      			<form:option value="Plasmodium"/>
 			      			<form:option value="Pfalciparum"/>
-			      			<form:option value="Pberghei"/>
+			      			<form:option value="Pberghei_3x"/>
 			      			<form:option value="Pchabaudi"/>
 			      			<form:option value="Pknowlesi"/>
 			      			<form:option value="Pvivax"/>

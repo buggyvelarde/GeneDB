@@ -38,7 +38,7 @@
       <h3>Organism List</h3>
       <ul>
       <li><a href="<c:url value="/Homepage?organism=Pfalciparum"/>"><i>Plasmodium falciparum</i></a></li>
-        <li><a href="<c:url value="/Homepage?organism=Pberghei"/>"><i>Plasmodium berghei</i></a></li>
+        <li><a href="<c:url value="/Homepage?organism=Pberghei_3x"/>"><i>Plasmodium berghei</i></a></li>
         <li><a href="<c:url value="/Homepage?organism=Pchabaudi"/>"><i>Plasmodium chabaudi</i></a></li>
         <li><a href="<c:url value="/Homepage?organism=Pknowlesi"/>"><i>Plasmodium knowlesi</i></a></li>
         <li><a href="<c:url value="/Homepage?organism=Pvivax"/>"><i>Plasmodium vivax</i></a></li>
