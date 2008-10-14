@@ -78,10 +78,6 @@ public class ObjectManager extends EmptyInterceptor {
         }
 
         DbXRef dbxref = findOrCreateDbXRefFromDbAndAccession(dbName, accession);
-
-        /* The above statement can trigger a flush, which is why we
-         * need the following check afterwards rather than before.
-         */
         dbxrefsByAccByDb.put(dbName, accession, dbxref);
         return dbxref;
     }
