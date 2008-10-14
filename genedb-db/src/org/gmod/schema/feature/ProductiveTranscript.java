@@ -134,13 +134,13 @@ public abstract class ProductiveTranscript extends Transcript {
     }
 
     @Override
-    public AbstractExon createExon(String exonUniqueName, int fmin, int fmax) {
+    public AbstractExon createExon(String exonUniqueName, int fmin, int fmax, Integer phase) {
         Polypeptide polypeptide = getProtein();
         if (polypeptide != null) {
             polypeptide.lowerFminTo(fmin);
             polypeptide.raiseFmaxTo(fmax);
         }
-        return super.createExon(exonUniqueName, fmin, fmax);
+        return super.createExon(exonUniqueName, fmin, fmax, phase);
     }
 
 }

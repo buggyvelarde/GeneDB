@@ -215,15 +215,15 @@ public class Transcript extends Region {
      * @param fmax
      * @return the newly-created exon
      */
-    public AbstractExon createExon(String exonUniqueName, int fmin, int fmax) {
+    public AbstractExon createExon(String exonUniqueName, int fmin, int fmax, Integer phase) {
         /*
          * NB This method is overridden in ProductiveTranscript.
          */
-        return createRegion(getExonClass(), exonUniqueName, fmin, fmax);
+        return createRegion(getExonClass(), exonUniqueName, fmin, fmax, phase);
     }
 
     public <T extends UTR> T createUTR(Class<T> utrClass, String utrUniqueName, int fmin, int fmax) {
-        return createRegion(utrClass, utrUniqueName, fmin, fmax);
+        return createRegion(utrClass, utrUniqueName, fmin, fmax, null /*phase*/);
     }
 
 
@@ -236,9 +236,10 @@ public class Transcript extends Region {
      * @param componentUniqueName the uniquename of the new region
      * @param fmin the <code>fmin</code>, relative to the primary source feature, of the new region.
      * @param fmax the <code>fmax</code>, relative to the primary source feature, of the new region
+     * @param phase the <code>phase</code> of translation: 0, 1, 2, or <code>null</code>
      * @return
      */
-    private <T extends TranscriptRegion> T createRegion(Class<T> componentClass, String componentUniqueName, int fmin, int fmax) {
+    private <T extends TranscriptRegion> T createRegion(Class<T> componentClass, String componentUniqueName, int fmin, int fmax, Integer phase) {
         FeatureLoc ourLoc = getRankZeroFeatureLoc();
         if (fmin < ourLoc.getFmin()) {
             logger.debug(String.format("[%s] The %s start (%d) is before the transcript start (%d). Resetting transcript start",
@@ -263,7 +264,7 @@ public class Transcript extends Region {
                     getUniqueName(), featureLoc.getFeatureLocId()));
             } else {
                 sourceFeature.addLocatedChild(region, featureLoc.getFmin() + relativeFmin, featureLoc.getFmin() + relativeFmax,
-                    featureLoc.getStrand(), 0, featureLoc.getLocGroup(), featureLoc.getRank());
+                    featureLoc.getStrand(), phase, featureLoc.getLocGroup(), featureLoc.getRank());
             }
         }
 
