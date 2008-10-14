@@ -102,7 +102,7 @@ public abstract class AbstractGene extends Region {
      * @return
      */
     public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName,
-                int fmin, int fmax, int phase) {
+                int fmin, int fmax) {
             logger.trace(String.format("Creating transcript '%s' for gene '%s' at locations %d..%d (gene locations %d..%d)",
                 transcriptUniqueName, getUniqueName(), fmin, fmax, getFmin(), getFmax()));
 
@@ -128,7 +128,7 @@ public abstract class AbstractGene extends Region {
             for (FeatureLoc featureLoc: getFeatureLocs()) {
                 featureLoc.getSourceFeature().addLocatedChild(transcript, featureLoc.getFmin() + relativeFmin,
                     featureLoc.getFmin() + relativeFmax,
-                    featureLoc.getStrand(), phase, featureLoc.getLocGroup(), featureLoc.getRank());
+                    featureLoc.getStrand(), null /*phase*/, featureLoc.getLocGroup(), featureLoc.getRank());
             }
             this.addFeatureRelationship(transcript, "relationship", "part_of");
 
@@ -144,7 +144,7 @@ public abstract class AbstractGene extends Region {
                 Polypeptide polypeptide = new Polypeptide(getOrganism(), polypeptideUniqueName);
                 for (FeatureLoc featureLoc: transcript.getFeatureLocs()) {
                     featureLoc.getSourceFeature().addLocatedChild(polypeptide, featureLoc.getFmin(), featureLoc.getFmax(),
-                        featureLoc.getStrand(), phase, featureLoc.getLocGroup(), featureLoc.getRank());
+                        featureLoc.getStrand(), null /*phase*/, featureLoc.getLocGroup(), featureLoc.getRank());
                 }
                 ((ProductiveTranscript)transcript).setProtein(polypeptide);
             }
