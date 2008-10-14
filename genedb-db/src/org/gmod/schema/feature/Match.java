@@ -37,4 +37,15 @@ public abstract class Match extends Region {
 
         return parts;
     }
+
+    /**
+     * Delete this match and all its parts.
+     */
+    @Override
+    public void delete() {
+        for (MatchPart part: getParts()) {
+            part.delete();
+        }
+        super.delete();
+    }
 }
