@@ -117,11 +117,6 @@ public class DownloadFeaturesController extends PostOrGetFormController {
                     response.setHeader("filename", output.getName());
                     break;
             case CSV:
-                    output = createCsv(hits,file,columns,format);
-                    response.setContentType("application/x-download");
-                    response.setHeader("Content-Disposition", "attachment");
-                    response.setHeader("filename", output.getName());
-                    break;
             case TAB:
                     output = createCsv(hits,file,columns,format);
                     response.setContentType("application/x-download");
@@ -165,11 +160,13 @@ public class DownloadFeaturesController extends PostOrGetFormController {
     }
 
     private Hits lookupInLucene(List<String> ids) throws IOException {
+        logger.error(String.format("#~# luceneIndexFactory is '%s'", luceneIndexFactory));
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         BooleanQuery bQuery = new BooleanQuery();
         for (String id : ids) {
             bQuery.add(new TermQuery(new Term("uniqueName",id)), Occur.SHOULD);
         }
+        logger.error(String.format("#~# luceneIndex is '%s'", luceneIndex));
         Hits hits = luceneIndex.search(bQuery);
         return hits;
     }
@@ -409,10 +406,9 @@ public class DownloadFeaturesController extends PostOrGetFormController {
 //        return luceneDao;
 //    }
 
-    public void setLuceneIndexFactory(LuceneIndexFactory luceneDao) {
+    public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
         this.luceneIndexFactory = luceneIndexFactory;
     }
-
 
     public JsonView getJsonView() {
         return jsonView;
@@ -422,7 +418,6 @@ public class DownloadFeaturesController extends PostOrGetFormController {
     public void setJsonView(JsonView jsonView) {
         this.jsonView = jsonView;
     }
-
 
 }
 
