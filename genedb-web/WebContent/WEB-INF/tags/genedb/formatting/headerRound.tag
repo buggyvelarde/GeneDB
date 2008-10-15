@@ -152,31 +152,31 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem"> <%-- Genes By Type --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneType&organism=${organism}"/>" title="ProteinLength Search">By Gene Type</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneType"/>" title="ProteinLength Search">By Gene Type</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Genes By Location --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation&organism=${organism}"/>" title="ProteinLength Search">By Location</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation"/>" title="ProteinLength Search">By Location</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Genes By Prediction Method --%>
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=genePredictionMethod&organism=${organism}"/>" title="ProteinLength Search">By Prediction Method</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=genePredictionMethod"/>" title="ProteinLength Search">By Prediction Method</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Length --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&organism=${organism}"/>" title="ProteinLength Search">By Protein Length</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength"/>" title="ProteinLength Search">By Protein Length</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Molecular Mass --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinMass&organism=${organism}"/>" title="ProteinLength Search">By Molecular Mass</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinMass"/>" title="ProteinLength Search">By Molecular Mass</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Num Transmembrane Domains --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinNumTM&organism=${organism}"/>" title="ProteinLength Search">By No. TM domains</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinNumTM"/>" title="ProteinLength Search">By No. TM domains</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Motif Search --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/MotifSearch&organism=${organism}"/>" title="Motif Search">Motif Search</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/MotifSearch"/>" title="Motif Search">Motif Search</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Targeting Sequence --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinTargetingSeq&organism=${organism}"/>" title="ProteinLength Search">By Targetting Seqs.</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinTargetingSeq"/>" title="ProteinLength Search">By Targetting Seqs.</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Annotation Status --%>
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=annotationStatus&organism=${organism}"/>" title="ProteinLength Search">By Annotation Status</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=annotationStatus"/>" title="ProteinLength Search">By Annotation Status</a>
                                     </li>
                                 </ul>
                             </div>
@@ -188,19 +188,19 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=genedb_products&organism=${organism}"/>" title="Browse Products">Products</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=genedb_products"/>" title="Browse Products">Products</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=ControlledCuration&organism=${organism}"/>" title="Browse Curation">Curation</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=ControlledCuration"/>" title="Browse Curation">Curation</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process&organism=${organism}"/>" title="Browse GO Biological Process">Biological Process</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=biological_process"/>" title="Browse GO Biological Process">Biological Process</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=cellular_component&organism=${organism}"/>" title="Browse GO Cellular Component">Cellular Component</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=cellular_component"/>" title="Browse GO Cellular Component">Cellular Component</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=molecular_function&organism=${organism}"/>" title="Browse GO Molecular Function">Molecular Function</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/BrowseCategory?category=molecular_function"/>" title="Browse GO Molecular Function">Molecular Function</a>
                                     </li>
                                 </ul>
                             </div>
