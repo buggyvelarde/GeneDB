@@ -158,7 +158,7 @@
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation&organism=${organism}"/>" title="ProteinLength Search">By Location</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Genes By Prediction Method --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=genePredictionMethod&organism=${organism}"/>" title="ProteinLength Search">By Prediction Method</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=genePredictionMethod&organism=${organism}"/>" title="ProteinLength Search">By Prediction Method</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Length --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&organism=${organism}"/>" title="ProteinLength Search">By Protein Length</a>
@@ -176,7 +176,7 @@
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinTargetingSeq&organism=${organism}"/>" title="ProteinLength Search">By Targetting Seqs.</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Annotation Status --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=annotationStatus&organism=${organism}"/>" title="ProteinLength Search">By Annotation Status</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=annotationStatus&organism=${organism}"/>" title="ProteinLength Search">By Annotation Status</a>
                                     </li>
                                 </ul>
                             </div>
