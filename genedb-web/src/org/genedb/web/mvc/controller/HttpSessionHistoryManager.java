@@ -71,7 +71,7 @@ public class HttpSessionHistoryManager implements HistoryManager {
     }
 
 
-    public HistoryItem addHistoryItem(HistoryType type,String id) {
+    public HistoryItem addHistoryItem(HistoryType type, String id) {
         List<HistoryItem> history = getHistoryItems();
         HistoryItem found = null;
         for (HistoryItem item : history) {
@@ -82,13 +82,11 @@ public class HttpSessionHistoryManager implements HistoryManager {
         }
         if (found == null) {
             found = createNewHistoryItem(null, type);
-            found.addResult(id);
-            history.add(found);
-            version++;
-            return found;
         }
-
-        return null;
+        found.addUniqueResult(id);
+        history.add(found);
+        version++;
+        return found;
     }
 
     private HistoryItem createNewHistoryItem(String name, HistoryType historyType) {
