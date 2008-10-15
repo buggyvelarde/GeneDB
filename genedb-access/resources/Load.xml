@@ -55,15 +55,23 @@
         <property name="generalDao" ref="generalDao" />
     </bean>
 
-    <bean id="objectManager" class="org.gmod.schema.utils.ObjectManager"/>
+    <bean id="objectManager" class="org.gmod.schema.utils.ObjectManager">
+        <!--  We don't pass the DAOs in here: see EmblLoader#afterPropertiesSet() -->
+    </bean>
 
-    <bean id="emblLoader" class="org.genedb.db.loading.alternative.EmblLoader"
+    <bean id="emblLoader" class="org.genedb.db.loading.EmblLoader"
         init-method="afterPropertiesSet">
         <property name="cvDao" ref="cvDao"/>
         <property name="generalDao" ref="generalDao"/>
         <property name="organismDao" ref="organismDao"/>
         <property name="objectManager" ref="objectManager"/>
         <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="fastaLoader" class="org.genedb.db.loading.FastaLoader"/>
+
+    <bean id="orthologuesLoader" class="org.genedb.db.loading.OrthologuesLoader">
+        <property name="sequenceDao" ref="sequenceDao"/>
     </bean>
 
     <!-- DataSource Property -->

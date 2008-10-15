@@ -31,7 +31,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class Load {
     private static void dieUsage() {
-        System.err.println("Usage: java Load <loaderName> [<options>] <files>");
+        System.err.println("Usage: java FileProcessor <loaderName> [<options>] <files>");
         System.exit(1);
     }
     private static void invalidOption(String invalidOption, Set<String> validOptions) {

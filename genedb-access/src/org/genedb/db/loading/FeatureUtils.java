@@ -1,7 +1,5 @@
 package org.genedb.db.loading;
 
-import static org.genedb.db.loading.EmblQualifiers.QUAL_TOP_LEVEL;
-
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.PubDao;
@@ -15,132 +13,32 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureCvTermDbXRef;
 import org.gmod.schema.mapped.FeatureCvTermProp;
-import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
-import org.gmod.schema.mapped.FeatureRelationship;
-import org.gmod.schema.mapped.FeatureSynonym;
-import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Pub;
 import org.gmod.schema.mapped.PubDbXRef;
-import org.gmod.schema.mapped.Synonym;
+import org.gmod.schema.utils.Rankable;
 
 import org.apache.log4j.Logger;
-import org.biojava.bio.seq.StrandedFeature;
+import org.springframework.beans.factory.InitializingBean;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-public class FeatureUtils {
+public class FeatureUtils implements InitializingBean {
     private static final Logger logger = Logger.getLogger(FeatureUtils.class);
 
     private CvDao cvDao;
     private PubDao pubDao;
     private SequenceDao sequenceDao;
     private GeneralDao generalDao;
-    private Cv so;
     protected CvTerm GENEDB_TOP_LEVEL;
-    private Pub DUMMY_PUB;
 
     protected static final Pattern PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
-
-//    public Feature createFeature(String typeName, String uniqueName, Organism organism) {
-//        List<CvTerm> cvTerms = cvDao.getCvTermByNameInCv(typeName, so);
-//        if (cvTerms.size() == 0) {
-//            System.err.println("Unable to find name '" + typeName + "' in ontology '"
-//                    + so.getName() + "'");
-//            throw new ExpectedLookupMissing("Unable to find name '" + typeName + "' in ontology '"
-//                    + so.getName() + "'");
-//        }
-//        CvTerm type = cvTerms.get(0);
-//        // System.err.println("Got cvterm type:"+type);
-//        Date now = new Date();
-//        Timestamp ts = new Timestamp(now.getTime());
-//        Feature feature = null;
-//        feature = new Feature(organism, type, uniqueName, false, false, ts, ts);
-//        return feature;
-//    }
-
-    public static void dumpFeature(org.biojava.bio.seq.Feature f, String msg) {
-        System.err.print("--- ");
-        if (msg != null) {
-            System.err.print(msg);
-        }
-        System.err.println();
-        System.err.println("Type=" + f.getType());
-        System.err.print("Location=" + f.getLocation().getMin() + ".." + f.getLocation().getMax()
-                + "  ");
-        if (f instanceof StrandedFeature) {
-            System.err.print(((StrandedFeature) f).getStrand().getToken());
-        }
-        System.err.println();
-        // Annotation
-        Map<?,?> annotationMap = f.getAnnotation().asMap();
-        for (Map.Entry<?,?> entry: annotationMap.entrySet()) {
-            System.err.println("   " + entry.getKey() + "=" + entry.getValue());
-        }
-    }
-
-    /**
-     * Create a simple FeatureLocation object, tying an object to one parent,
-     * with rank 0, no fuzzy ends
-     *
-     * @param parent The feature this is located to
-     * @param child The feature to locate
-     * @param min The minimum position on the parent
-     * @param max The maximum position on the parent
-     * @param strand The strand-edness of the feature relative to the parent
-     * @return the newly constructed FeatureLocation, not persisted
-     */
-    public FeatureLoc createLocation(Feature parent, Feature child, int min, int max, short strand) {
-        return new FeatureLoc(parent, child, min, false, max, false, strand, null, 0, 0);
-    }
-
-    public FeatureRelationship createRelationship(Feature subject, Feature object, CvTerm relType,
-            int rank) {
-        FeatureRelationship fr = new FeatureRelationship(subject, object, relType, rank);
-
-        object.getFeatureRelationshipsForObjectId().add(fr);
-        subject.getFeatureRelationshipsForSubjectId().add(fr);
-
-        return fr;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void createSynonym(CvTerm type, String name, Feature gene, boolean isCurrent) {
-        Synonym synonym = null;
-        Synonym match = sequenceDao.getSynonymByNameAndCvTerm(name, type);
-        if (match == null) {
-            synonym = new Synonym(type, name, name);
-            sequenceDao.persist(synonym);
-        } else {
-            synonym = match;
-        }
-
-        FeatureSynonym fs = null;
-        List<FeatureSynonym> matches2 = sequenceDao.getFeatureSynonymsByFeatureAndSynonym(gene,
-            synonym);
-        if (matches2.size() == 0) {
-            fs = new FeatureSynonym(synonym, gene, this.DUMMY_PUB, isCurrent, false);
-            sequenceDao.persist(fs);
-        } else {
-            fs = matches2.get(0);
-        }
-        // daoFactory.persist(fs);
-        gene.getFeatureSynonyms().add(fs);
-    }
-
-    public void createSynonyms(CvTerm type, List<String> names, Feature feature, boolean isCurrent) {
-
-        for (String name : names) {
-            this.createSynonym(type, name, feature, isCurrent);
-        }
-    }
 
     public void setPubDao(PubDao pubDao) {
         this.pubDao = pubDao;
@@ -156,24 +54,16 @@ public class FeatureUtils {
 
     private Cv CV_GENEDB;
     private CvTerm GO_KEY_EVIDENCE, GO_KEY_QUALIFIER, GENEDB_AUTOCOMMENT;
-//    public void afterPropertiesSet() {
-//        so = cvDao.getCvByName("sequence");
-//        CV_GENEDB = cvDao.getCvByName("genedb_misc");
-//        GENEDB_TOP_LEVEL = cvDao.getCvTermByNamePatternInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
-//        DUMMY_PUB = pubDao.getPubByUniqueName("null");
-//        GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
-//        GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
-//        //GENEDB_AUTOCOMMENT = cvDao.getCvTermByNamePatternInCv("autocomment", CV_GENEDB).get(0);
-//    }
-
-    public void markTopLevelFeature(org.gmod.schema.mapped.Feature topLevel) {
+    public void afterPropertiesSet() {
         CV_GENEDB = cvDao.getCvByName("genedb_misc");
-        GENEDB_TOP_LEVEL = cvDao.getCvTermByNamePatternInCv(QUAL_TOP_LEVEL, CV_GENEDB).get(0);
-        sequenceDao.persist(new FeatureProp(topLevel, GENEDB_TOP_LEVEL, "true", 0));
+        GENEDB_TOP_LEVEL = cvDao.getCvTermByNamePatternInCv("top_level_seq", CV_GENEDB).get(0);
+        GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
+        GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
+        GENEDB_AUTOCOMMENT = cvDao.getCvTermByNamePatternInCv("autocomment", CV_GENEDB).get(0);
     }
 
-    public void setDummyPub(Pub dummyPub) {
-        DUMMY_PUB = dummyPub;
+    public void markTopLevelFeature(org.gmod.schema.mapped.Feature topLevel) {
+        sequenceDao.persist(new FeatureProp(topLevel, GENEDB_TOP_LEVEL, "true", 0));
     }
 
     /**
@@ -279,33 +169,6 @@ public class FeatureUtils {
         return cvDao.getCvTermById(goTermIdsByAcc.get(id));
     }
 
-    /**
-     * Take a polypeptide feature and GoInstance object to create GO entries
-     *
-     * @param polypeptide the polypeptide Feature to which GO entries are to be
-     *                attached
-     * @param go a GoInstance object
-     *
-     */
-    public void createGoEntries(Feature polypeptide, GoInstance go, String comment) {
-        List<DbXRef> withFromDbXRefs = new ArrayList<DbXRef>();
-
-        String xref = go.getWithFrom();
-        if (xref != null) {
-            if (!xref.contains(":"))
-                logger.error(String.format("Can't parse dbxref '%s'", xref));
-            else {
-                List<DbXRef> dbXRefs = findOrCreateDbXRefsFromString(xref);
-                for (DbXRef dbXRef : dbXRefs) {
-                    if (dbXRef != null) {
-                        withFromDbXRefs.add(dbXRef);
-                    }
-                }
-            }
-        }
-        createGoEntries(polypeptide, go, comment, withFromDbXRefs);
-    }
-
     public void createGoEntries(Feature polypeptide, GoInstance go, String comment,
             DbXRef withFromDbXRef) {
         if (withFromDbXRef == null)
@@ -329,33 +192,17 @@ public class FeatureUtils {
         if (ref != null && looksLikePub(ref)) {
             // The reference is a pubmed id - usual case
             refPub = findOrCreatePubFromPMID(ref);
-            // FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-            // sequenceDao.persist(fctp);
         }
-
-        // logger.warn("pub is '"+pub+"'");
 
         boolean not = go.getQualifierList().contains("not"); // FIXME - Working?
         List<FeatureCvTerm> fcts = sequenceDao.getFeatureCvTermsByFeatureAndCvTermAndNot(
             polypeptide, cvTerm, not);
         int rank = 0;
         if (fcts.size() != 0) {
-            rank = RankableUtils.getNextRank(fcts);
+            rank = getNextRank(fcts);
         }
-        // logger.warn("fcts size is '"+fcts.size()+"' and rank is '"+rank+"'");
         FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
         sequenceDao.persist(fct);
-
-        // Reference
-        // Pub refPub = null;
-        // if (ref != null && ref.startsWith("PMID:")) {
-        // // The reference is a pubmed id - usual case
-        // refPub = findOrCreatePubFromPMID(ref);
-        // FeatureCvTermPub fctp = new FeatureCvTermPub(refPub, fct);
-        // sequenceDao.persist(fctp);
-        // }
-        // GO_KEY_DATE = cvDao.getCvTermByNameInCv("unixdate",
-        // CV_FEATURE_PROPERTY).get(0);
 
         sequenceDao.persist(new FeatureCvTermProp(GENEDB_AUTOCOMMENT, fct, comment, 0));
 
@@ -377,11 +224,16 @@ public class FeatureUtils {
         for (DbXRef withFromDbXRef: withFromDbXRefs) {
             sequenceDao.persist(new FeatureCvTermDbXRef(withFromDbXRef, fct));
         }
-
-        // logger.info("Persisting new FeatureCvTerm for
-        // '"+polypeptide.getUniquename()+"' with a cvterm of
-        // '"+cvTerm.getName()+"'");
     }
+
+    private <T extends Rankable> int getNextRank(List<T> list) {
+        BitSet bs = new BitSet(list.size() + 1);
+        for (Rankable r : list) {
+            bs.set(r.getRank());
+        }
+        return bs.nextClearBit(0);
+    }
+
 
     public void setGeneralDao(GeneralDao generalDao) {
         this.generalDao = generalDao;

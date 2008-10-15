@@ -3,7 +3,6 @@ package org.genedb.db.loading.auxiliary;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.FeatureDbXRef;
-import org.gmod.schema.utils.ObjectManager;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -35,8 +34,6 @@ public class OPIReferenceLoader extends Loader {
 
     private static final String proxyURL = "http://wwwcache.sanger.ac.uk:3128";
     private static final String opiURL = "http://chemlims.com/OPI/MServlet.ChemInfo?module=Gene&DataSet=1&saveAll=YES";
-
-    private ObjectManager dbXRefManager;
 
     private Proxy getProxy() throws MalformedURLException {
         if (proxyURL == null) {
@@ -119,7 +116,7 @@ public class OPIReferenceLoader extends Loader {
     private void loadReference(String gene, String description) {
         Polypeptide polypeptide = this.getPolypeptideForGene(gene);
         if (polypeptide != null) {
-            DbXRef dbXRef = dbXRefManager.getDbXRef("OPI", gene, description);
+            DbXRef dbXRef = objectManager.getDbXRef("OPI", gene, description);
             FeatureDbXRef featureDbXRef = new FeatureDbXRef(dbXRef, polypeptide, true);
             sequenceDao.persist(featureDbXRef);
         }
@@ -153,11 +150,7 @@ public class OPIReferenceLoader extends Loader {
         return ret;
     }
 
-    public void setDbXRefManager(ObjectManager dbXRefManager) {
-        this.dbXRefManager = dbXRefManager;
-    }
-
     public void afterPropertiesSet() {
-        assert dbXRefManager != null;
+        assert objectManager != null;
     }
 }

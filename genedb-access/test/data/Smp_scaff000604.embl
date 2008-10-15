@@ -162,6 +162,7 @@ FT                   E()=8.3e-06; ; ; ;"
 FT                   /synonym="29646.t000003"
 FT                   /synonym="29646.m000187"
 FT                   /temporary_systematic_id="Smp_097250"
+FT                   /codon_start=2
 FT   5'UTR           28948..28973
 FT                   /temporary_systematic_id="Smp_097250"
 FT   CDS             complement(join(31435..31550,31594..31709,31743..31811,

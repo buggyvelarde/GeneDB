@@ -19,15 +19,17 @@
 
 package org.genedb.db.loading;
 
+import org.apache.log4j.Logger;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.log4j.Logger;
+import java.util.Set;
 
 /**
  * This class represents a specific GO entry
@@ -49,7 +51,6 @@ public class GoInstance {
     private String geneName;
 
     protected static final Logger logger = Logger.getLogger(GoInstance.class);
-    private static GoQualifierDictionary qualifierDictionary = new GoQualifierDictionary();
 
     private static String today;
     static {
@@ -104,7 +105,7 @@ public class GoInstance {
     }
 
     public String getName() {
-        return StringUtilities.emptyOrValue(name);
+        return name;
     }
 
     /**
@@ -130,9 +131,11 @@ public class GoInstance {
         }
     }
 
+    private static Set<String> validQualifiers = new HashSet<String>();
+    static { Collections.addAll(validQualifiers, "NOT", "contributes_to", "colocalizes_with"); }
+
     private boolean isQualifierValid(String qualifier) {
-        return qualifierDictionary.isQualifierGOValid(qualifier)
-            || qualifierDictionary.isQualifierPSUValid(qualifier);
+        return validQualifiers.contains(qualifier);
     }
 
     public String getQualifierDisplay(boolean officialOnly, String def, String separator,
@@ -148,7 +151,7 @@ public class GoInstance {
         } else {
             filteredList = new ArrayList<String>();
             for (String qualifier : allQualifier) {
-                if (qualifierDictionary.isQualifierGOValid(qualifier)) {
+                if (isQualifierValid(qualifier)) {
                     filteredList.add(qualifier);
                 }
             }
@@ -195,7 +198,7 @@ public class GoInstance {
      * @return The accession number
      */
     public String getId() {
-        return StringUtilities.emptyOrValue(id);
+        return id;
     }
 
     /**
@@ -216,7 +219,7 @@ public class GoInstance {
      * @return Value of ref.
      */
     public String getRef() {
-        return StringUtilities.emptyOrValue(ref);
+        return ref;
     }
 
     /**
@@ -271,13 +274,6 @@ public class GoInstance {
      */
     public void setFromEMBL(boolean v) {
         this.fromEMBL = v;
-    }
-
-    /**
-     * @return
-     */
-    public String getQualifierString() {
-        return qualifierDictionary.getQualifierString(qualifiers);
     }
 
     public void validate() {

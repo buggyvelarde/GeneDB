@@ -20,251 +20,132 @@
 package org.genedb.db.loading;
 
 import org.genedb.db.dao.OrganismDao;
-import org.genedb.db.dao.SequenceDao;
 
-import org.gmod.schema.feature.Chromosome;
 import org.gmod.schema.feature.Contig;
+import org.gmod.schema.feature.Supercontig;
+import org.gmod.schema.feature.TopLevelFeature;
+import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Organism;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Sequence;
-import org.biojava.bio.seq.SequenceIterator;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.utils.ChangeVetoException;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
-import uk.co.flamingpenguin.jewel.cli.Cli;
-import uk.co.flamingpenguin.jewel.cli.CliFactory;
-import uk.co.flamingpenguin.jewel.cli.Option;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-
 
 /**
- * This class is the main entry point for the new GeneDB data miners.
- * It's designed to be called from the command-line. It looks for a
- * config. file which specifies which files to process.
+ * Load a FASTA file into the database as a concatenated sequence of contigs.
  *
- * Usage: NewRunner common_nane [config_file]
- *
- *
- * @author Adrian Tivey (art)
  */
-@Transactional
+@Transactional(rollbackFor=DataError.class) // Will also rollback for runtime exceptions, by default
 @Configurable
-public class FastaLoader implements FastaLoaderI {
+public class FastaLoader {
 
-    protected static final Log logger = LogFactory.getLog(FastaLoader.class);
+    protected static final Logger logger = Logger.getLogger(FastaLoader.class);
 
     @Autowired
     private SessionFactory sessionFactory;
 
     @Autowired
-    private SequenceDao sequenceDao;
-
-    @Autowired
     private OrganismDao organismDao;
 
-    // These are set (directly or indirectly) from the command line
-    private String dataDirectory;
-
+    // Configurable parameters
     private Organism organism;
+    private Class<? extends TopLevelFeature> topLevelFeatureClass = Supercontig.class;
 
+    public enum OverwriteExisting {YES, NO}
+    private OverwriteExisting overwriteExisting = OverwriteExisting.NO;
 
     /**
-     * Create a list of Biojava sequences from a FASTA file. It fails fatally if no sequences are found.
+     * Set the organism into which to load data.
      *
-     * @param file the FASTA file to read in
-     * @return the list of sequences
+     * @param organismCommonName the common name of the organism
      */
-    public List<Sequence> extractSequencesFromFile(File file) {
-        logger.debug("Parsing file '"+file.getAbsolutePath()+"'");
-        List<Sequence> ret = new ArrayList<Sequence>();
-
-        Reader in = null;
-        try {
-            in = new FileReader(file);
-            SequenceIterator seqIt = SeqIOTools.readFastaDNA(new BufferedReader(in));
-
-            while ( seqIt.hasNext() ) {
-                ret.add(seqIt.nextSequence());
-            }
-
-        } catch (FileNotFoundException exp) {
-            System.err.println("Couldn't open input file: " + file);
-            exp.printStackTrace();
-            System.exit(-1);
-        } catch (BioException exp) {
-            System.err.println("Couldn't open input file: " + file);
-            exp.printStackTrace();
-            System.exit(-1);
-        }
-        finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // Shouldn't happen!
-                    e.printStackTrace();
-                }
-            }
-        }
-        if (ret.size() == 0) {
-            logger.fatal("No sequences found in '"+file.getAbsolutePath()+"'");
-            System.exit(-1);
-        }
-        return ret;
-    }
-
-    /**
-     * The core processing loop. Read the config file to find out which EMBL files to read,
-     * and which 'synthetic' features to create
-     */
-    @Transactional
-    public void process() {
-        long start = new Date().getTime();
-
-        File[] files = getFiles();
-        for (File file : files) {
-            List<Sequence> seqs = this.extractSequencesFromFile(file);
-            processSequence(file, seqs);
-        }
-
-        long duration = (new Date().getTime()-start)/1000;
-        logger.info("Processing completed: "+duration / 60 +" min "+duration  % 60+ " sec.");
-    }
-
-
-    private File[] getFiles() {
-        File f = new File(dataDirectory);
-        return f.listFiles();
-    }
-
-    /**
-     * This method is called once for each sequence. First it examines the source features,
-     * then CDSs, then other features
-     *
-     * @param seq The sequence to parse
-     * @param parent The parent object, if reparenting is taking place, or null
-     * @param offset The base offset, when reparenting is taking place
-     */
-    private void processSequence(File file, List<Sequence> sequenceList) {
-
-        Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
-
-        try {
-            logger.debug("Processing '"+file.getAbsolutePath()+"'");
-
-            StringBuilder allResidues = new StringBuilder();
-
-            for (Sequence sequence : sequenceList) {
-                allResidues.append(sequence.seqString());
-            }
-            logger.info(String.format("The length of '%s' is '%d'", file.getAbsolutePath(), allResidues.length()));
-
-            // Create chromosome from this sequence
-            Timestamp now = new Timestamp(new Date().getTime());
-            Chromosome chromosome = new Chromosome(organism, file.getName(), false, false, now);
-            chromosome.setResidues(allResidues.toString());
-            chromosome.markAsTopLevelFeature();
-
-            session.persist(chromosome);
-
-            int start = 0;
-            for (Sequence sequence : sequenceList) {
-                int end = start + sequence.length();
-                logger.info(String.format("  Creating a contig from '%d' to '%d'", start, end));
-                Contig contig = new Contig(organism, sequence.getName(), false, false, now);
-                chromosome.addLocatedChild(contig, start, end);
-                session.persist(contig);
-                start = end;
-            }
-        } catch (ChangeVetoException exp) {
-            exp.printStackTrace();
-        }
-
-        session.flush();
-    }
-
-
-    /**
-     * Main entry point. It uses a BeanPostProcessor to apply a set of overrides
-     * based on a Properties file, based on the organism. This is passed in on
-     * the command-line.
-     *
-     * @param args organism_common_name, [conf file path]
-     */
-    public static void main (String[] args) {
-
-        Cli<Args> cli = CliFactory.createCli(Args.class);
-        Args arguments = null;
-        try {
-          arguments = cli.parseArguments(args);
-        }
-        catch(ArgumentValidationException exp) {
-            System.err.println("Unable to run:");
-            System.err.println(cli.getHelpMessage());
-            return;
-        }
-
-        // Override properties in Spring config file (using a
-        // BeanFactoryPostProcessor) based on command-line args
-        Properties overrideProps = new Properties();
-        overrideProps.setProperty("datasource.dbname", "malaria_workshop");
-        overrideProps.setProperty("dataSource.username", "pathdb");
-        overrideProps.setProperty("datasource.dbport", "10101");
-        overrideProps.setProperty("dataSource.dbhost", "pathdbsrv1a");
-
-        PropertyOverrideHolder.setProperties("dataSourceMunging", overrideProps);
-
-        ApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"FastaLoader.xml"});
-
-        FastaLoaderI runner = (FastaLoaderI) ctx.getBean("runner", FastaLoaderI.class);
-        runner.setOrganismName(arguments.getOrganismCommonName());
-        runner.setDataDirectory(arguments.getDataDirectory());
-        runner.process();
-    }
-
-    public void setOrganismName(String organismCommonName) {
+    public void setOrganismCommonName(String organismCommonName) {
         this.organism = organismDao.getOrganismByCommonName(organismCommonName);
         if (organism == null) {
-            throw new IllegalArgumentException(String.format("Can't recognise '%s' as an organism name", organismCommonName));
+            throw new IllegalArgumentException(String.format("Organism '%s' not found", organismCommonName));
         }
     }
 
-    public void setDataDirectory(String dataDirectory) {
-        this.dataDirectory = dataDirectory;
+    /**
+     * Set the class of top-level feature that this EMBL file represents.
+     * The default, if this method is not called, is <code>Supercontig</code>.
+     *
+     * @param topLevelFeatureClass
+     */
+    public void setTopLevelFeatureClass(Class<? extends TopLevelFeature> topLevelFeatureClass) {
+        this.topLevelFeatureClass = topLevelFeatureClass;
     }
 
-    interface Args {
-        @Option(shortName="o", description="Organism common name")
-        String getOrganismCommonName();
-
-        @Option(shortName="d", description="Path to data directory")
-        String getDataDirectory();
-
+    /**
+     * Whether we should overwrite an existing top-level feature if it has
+     * the same name as the one specified in this file. The default, if this
+     * method is not called, is <code>NO</code>.
+     *
+     * If overwriteExisting is <code>NO</code>, the file will be skipped on the
+     * grounds that it's already loaded. If it's <code>YES</code>, the previously
+     * existing top-level feature, and features located on it, will
+     * be deleted first.
+     *
+     * @param overwriteExisting <code>YES</code> if we should overwrite an
+     * existing top-level feature, or <code>NO</code> if not.
+     */
+    public void setOverwriteExisting(OverwriteExisting overwriteExisting) {
+        this.overwriteExisting = overwriteExisting;
     }
 
+    /**
+     * This method is called once for each FASTA file.
+     *
+     * @param fileId the identifier of the file
+     * @param records the records the file contains
+     */
+    public void load(String fileId, Iterable<FastaRecord> records) {
+        logger.debug(String.format("beginFastaFile(%s)", fileId));
+
+        Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
+        StringBuilder concatenatedSequences = new StringBuilder();
+
+        Feature existingTopLevelFeature = (Feature) session.createCriteria(Feature.class)
+            .add(Restrictions.eq("organism", organism))
+            .add(Restrictions.eq("uniqueName", fileId))
+            .uniqueResult();
+
+        if (existingTopLevelFeature != null) {
+            switch (overwriteExisting) {
+            case YES:
+                existingTopLevelFeature.delete();
+                break;
+            case NO:
+                logger.error(String.format("The organism '%s' already has feature '%s'",
+                    organism.getCommonName(), fileId));
+                return;
+            }
+        }
+        TopLevelFeature topLevelFeature = TopLevelFeature.make(topLevelFeatureClass, fileId, organism);
+
+        topLevelFeature.markAsTopLevelFeature();
+        session.persist(topLevelFeature);
+
+        int start = 0;
+        for (FastaRecord record: records) {
+            String id = record.getId();
+            String sequence = record.getSequence();
+            concatenatedSequences.append(sequence);
+
+            int end = start + sequence.length();
+            Contig contig = Contig.make(id, organism);
+            contig.setResidues(sequence);
+            topLevelFeature.addLocatedChild(contig, start, end);
+            session.persist(contig);
+            start = end;
+        }
+
+        topLevelFeature.setResidues(concatenatedSequences.toString());
+    }
 }

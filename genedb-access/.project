@@ -3,6 +3,7 @@
 	<name>genedb-access</name>
 	<comment></comment>
 	<projects>
+		<project>genedb-util</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

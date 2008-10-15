@@ -72,7 +72,7 @@ public abstract class Loader {
     }
 
     /**
-     * Load data. This method must be implemented by all implementing classes.
+     * FileProcessor data. This method must be implemented by all implementing classes.
      * It will be called once for each input file.
      * @param inputStream a stream from which the input data may be read, or <code>null</code>
      *          if {@link #loadsFromFile()} returns <code>false</code>
