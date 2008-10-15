@@ -49,6 +49,9 @@
     <bean name="controlledCurationQuery" class="org.genedb.querying.tmpquery.ControlledCurationQuery" />
     <bean name="dateQuery" class="org.genedb.querying.tmpquery.DateQuery" />
     <bean name="geneLocationQuery" class="org.genedb.querying.tmpquery.GeneLocationQuery" />
+    <bean name="annotationStatusQuery" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" />
+    <bean name="proteinTargetingSeqQuery" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" />
+    <bean name="proteinNumTMQuery" class="org.genedb.querying.tmpquery.ProteinNumTMQuery" />
 
     <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 
@@ -189,8 +192,8 @@
         <property name="commandName" value="download"/>
         <property name="commandClass"
           value="org.genedb.web.mvc.controller.download.DownloadBean" />
-    <property name="sequenceDao" ref="sequenceDao"/>
-    <property name="luceneIndexFactory" ref="luceneIndexFactory"/>
+        <property name="sequenceDao" ref="sequenceDao"/>
+        <property name="luceneIndexFactory" ref="luceneIndexFactory"/>
         <property name="formView" value="download/download" />
         <property name="downloadView" value="download/download" />
         <property name="jsonView" ref="jsonView"/>
