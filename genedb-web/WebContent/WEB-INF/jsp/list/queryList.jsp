@@ -10,11 +10,11 @@
 <st:flashMessage />
 
 <div id="queryList">
-<ul>
+<table>
 <c:forEach items="${queries}" var="query">
-<li><a href="<c:url value="/Query" />?q=${query.key}">${query.key}</a></li>
+<tr><td><a href="<c:url value="/Query" />?q=${query.key}">${query.key}</a></td><td>${query.value.queryDescription}</td></tr>
 </c:forEach>
-</ul>
+</table>
 </div>
 
 <st:flashMessage />
