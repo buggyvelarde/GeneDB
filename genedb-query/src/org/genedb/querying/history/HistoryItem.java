@@ -88,7 +88,8 @@ public class HistoryItem {
     }
 
     public Query getQuery() {
-        return query;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public void setHistoryType(HistoryType historyType) {
@@ -101,5 +102,11 @@ public class HistoryItem {
 
     public void setInternalName(String internalName) {
         this.internalName = internalName;
+    }
+
+    public void addUniqueResult(String id) {
+        if (!ids.contains(id)) {
+            ids.add(id);
+        }
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Basic, abstract implementation of Query, designed to be extended.
- *
+ * 
  * @author art
  */
 public abstract class AbstractQuery implements QueryI {
@@ -64,7 +64,7 @@ public abstract class AbstractQuery implements QueryI {
         ret.append(param.getName());
         ret.append("=");
         ret.append(param.getValue());
-        ret.append("}");
+        ret.append("}");            
     }
     ret.append("}");
 

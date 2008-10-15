@@ -4,6 +4,9 @@ import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +29,6 @@ public class GeneTypeQuery extends HqlQuery {
     }
 
 
-    @Override
     public Map<String, Object> prepareModelData() {
         Map<String, String> typeMap = new HashMap<String, String>();
         typeMap.put("mRNA", "protein-coding");
@@ -57,6 +59,21 @@ public class GeneTypeQuery extends HqlQuery {
     @Override
     protected void populateQueryWithParams(org.hibernate.Query query) {
         query.setString("type", type);
+    }
+
+
+    public Validator getValidator() {
+        return new Validator() {
+            @Override
+            public void validate(Object target, Errors errors) {
+                return;
+            }
+
+            @Override
+            public boolean supports(Class clazz) {
+                return GeneTypeQuery.class.isAssignableFrom(clazz);
+            }
+        };
     }
 
 }

@@ -4,6 +4,9 @@ import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
 @QueryClass(
         title="Coding and pseudogenes by protein mass",
         shortDesc="Get a list of transcripts ",
@@ -58,7 +61,19 @@ public class ProteinMassQuery extends HqlQuery {
     }
 
 
+    public Validator getValidator() {
+        return new Validator() {
+            @Override
+            public void validate(Object target, Errors errors) {
+                return;
+            }
 
+            @Override
+            public boolean supports(Class clazz) {
+                return ProteinMassQuery.class.isAssignableFrom(clazz);
+            }
+        };
+    }
 
 
 }

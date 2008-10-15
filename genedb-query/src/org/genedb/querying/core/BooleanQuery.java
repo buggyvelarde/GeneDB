@@ -1,6 +1,11 @@
 package org.genedb.querying.core;
 
 
+import org.genedb.querying.tmpquery.ProteinLengthQuery;
+
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,5 +60,25 @@ public class BooleanQuery implements Query {
     public int getOrder() {
         // Not used for boolean queries
         return 0;
+    }
+
+
+    public String getQueryDescription() {
+        return "Boolean Query";
+    }
+
+
+    public Validator getValidator() {
+        return new Validator() {
+            @Override
+            public void validate(Object target, Errors errors) {
+                return;
+            }
+
+            @Override
+            public boolean supports(Class clazz) {
+                return BooleanQuery.class.isAssignableFrom(clazz);
+            }
+        };
     }
 }

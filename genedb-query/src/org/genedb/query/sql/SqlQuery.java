@@ -1,42 +1,43 @@
 package org.genedb.query.sql;
 
 import org.genedb.query.AbstractQuery;
+import org.genedb.query.Param;
 import org.genedb.query.Result;
 import org.genedb.query.SimpleListResult;
-
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+
 /**
  * Query that retrieves information from a database
- *
+ * 
  * @author art
  */
 public class SqlQuery extends AbstractQuery implements DataSourceAware {
 
     private String sql;
     private DataSource dataSource;
-
+    
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
+    
     public void setSql(String sql) {
         this.sql = sql;
     }
 
-
-
+    
+    
     /**
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         SqlQuery sq= new SqlQuery();
         sq.setSql("select gp.geneId from GenePeri gp where gp.nickname like ? and gp.genename like ?");
         //sq.setSql("select * from GenePeri");
@@ -70,15 +71,15 @@ public class SqlQuery extends AbstractQuery implements DataSourceAware {
         return slr;
     }
 
-
+    
 //    @Override
 //    public void writeSpringBean(PrintWriter pw) {
-//        pw.println("\tGot a sql query");
+//        pw.println("\tGot a sql query"); 
 //        addProperty(pw, "description", getDescription());
 //        addProperty(pw, "help", getHelp());
 //        addProperty(pw, "sql", getSql());
 //    }
-
+    
 //    private void addProperty(PrintWriter pw, String key, String value) {
 //        pw.println("\t\t<property name=\""+key+"\" value=\""+value+"\" />");
 //    }
@@ -96,6 +97,6 @@ public class SqlQuery extends AbstractQuery implements DataSourceAware {
 
     public void setIndex(int index) {
     // TODO Auto-generated method stub
-
+    
     }
 }

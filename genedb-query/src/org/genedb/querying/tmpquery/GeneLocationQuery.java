@@ -4,12 +4,21 @@ import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
+import org.apache.log4j.Logger;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
+import java.util.HashMap;
+import java.util.Map;
+
 @QueryClass(
         title="Transcripts by their type",
         shortDesc="Get a list of transcripts by type",
         longDesc=""
     )
 public class GeneLocationQuery extends HqlQuery {
+
+    private static final Logger logger = Logger.getLogger(GeneLocationQuery.class);
 
     @QueryParam(
             order=1,
@@ -89,6 +98,21 @@ public class GeneLocationQuery extends HqlQuery {
         query.setString("topLevelFeatureName", topLevelFeatureName);
         query.setInteger("min", min);
         query.setInteger("max", max);
+    }
+
+
+    public Validator getValidator() {
+        return new Validator() {
+            @Override
+            public void validate(Object target, Errors errors) {
+                return;
+            }
+
+            @Override
+            public boolean supports(Class clazz) {
+                return GeneLocationQuery.class.isAssignableFrom(clazz);
+            }
+        };
     }
 
 }

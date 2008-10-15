@@ -4,7 +4,12 @@ import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @QueryClass(
         title="Transcripts by their type",
@@ -80,6 +85,21 @@ public class DateQuery extends HqlQuery {
     @Override
     protected void populateQueryWithParams(org.hibernate.Query query) {
         query.setDate("date", date);
+    }
+
+
+    public Validator getValidator() {
+        return new Validator() {
+            @Override
+            public void validate(Object target, Errors errors) {
+                return;
+            }
+
+            @Override
+            public boolean supports(Class clazz) {
+                return DateQuery.class.isAssignableFrom(clazz);
+            }
+        };
     }
 
 }
