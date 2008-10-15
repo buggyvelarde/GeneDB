@@ -13,6 +13,8 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.Type;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -77,6 +79,21 @@ public class ProteinLengthQuery extends HqlQuery {
     protected void populateQueryWithParams(org.hibernate.Query query) {
         query.setInteger("min", min);
         query.setInteger("max", max);
+    }
+
+
+    public Validator getValidator() {
+        return new Validator() {
+            @Override
+            public void validate(Object target, Errors errors) {
+                return;
+            }
+
+            @Override
+            public boolean supports(Class clazz) {
+                return ProteinLengthQuery.class.isAssignableFrom(clazz);
+            }
+        };
     }
 
 }

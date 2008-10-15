@@ -2,9 +2,12 @@ package org.genedb.query.custom;
 
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
+import org.genedb.querying.tmpquery.ProteinLengthQuery;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -74,6 +77,26 @@ public class GenesByURI implements Query {
 
     public int getOrder() {
         return 0;
+    }
+
+
+    public String getQueryDescription() {
+        return "Fetch IDs by URL";
+    }
+
+
+    public Validator getValidator() {
+        return new Validator() {
+            @Override
+            public void validate(Object target, Errors errors) {
+                return;
+            }
+
+            @Override
+            public boolean supports(Class clazz) {
+                return GenesByURI.class.isAssignableFrom(clazz);
+            }
+        };
     }
 
 }
