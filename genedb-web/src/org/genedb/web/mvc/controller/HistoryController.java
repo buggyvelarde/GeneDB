@@ -34,6 +34,7 @@ import org.genedb.web.mvc.history.commandline.ParseException;
 import org.gmod.schema.mapped.Feature;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.ServletRequestBindingException;
@@ -46,6 +47,7 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
  * 
  * @author Adrian Tivey
  */
+@Controller
 public class HistoryController extends MultiActionController implements InitializingBean {
 
     private SequenceDao sequenceDao;
