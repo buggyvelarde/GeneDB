@@ -105,11 +105,11 @@
                 <td width="20%" style="text-align:left;">Search </td>
                 <td width="80%">
                   <select name="q">
-                    <option value="allNames">Gene names</option>
+                    <option value="simpleName">Gene names</option>
                     <option value="product">Product</option>
-                    <option value="annotation">curated annotations [comments & curation]</option>
-                    <option value="goTerm">GO term/id</option>
-                    <option value="ecNum">EC number</option>
+                    <option value="curation">Curated annotations [comments & curation]</option>
+                    <option value="go">GO term/id</option>
+                    <option value="ec">EC number</option>
                     <option value="pfam">Pfam ID or keyword</option>
                   </select>
                 </td>

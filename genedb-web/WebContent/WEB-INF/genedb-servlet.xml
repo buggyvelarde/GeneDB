@@ -52,6 +52,12 @@
     <bean name="annotationStatusQuery" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" />
     <bean name="proteinTargetingSeqQuery" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" />
     <bean name="proteinNumTMQuery" class="org.genedb.querying.tmpquery.ProteinNumTMQuery" />
+    <bean name="productQuery" class="org.genedb.querying.tmpquery.ProductQuery" />
+    <bean name="simpleNameQuery" class="org.genedb.querying.tmpquery.SimpleNameQuery" />
+    <bean name="goQuery" class="org.genedb.querying.tmpquery.GoQuery" />
+    <bean name="ecQuery" class="org.genedb.querying.tmpquery.EcQuery" />
+    <bean name="pfamQuery" class="org.genedb.querying.tmpquery.PfamQuery" />
+    <bean name="curationQuery" class="org.genedb.querying.tmpquery.CurationQuery" />
 
     <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 
