@@ -115,18 +115,6 @@
                 </td>
               </tr>
               <tr>
-                <td width="20%" style="text-align:left;"></td>
-                <td width="80%" style="text-align:left;">
-                  <input id="organism" name="organism" type="text" align="middle">
-                </td>
-              </tr>
-              <tr>
-                <td width="20%" style="text-align:left;">
-                  in
-                </td>
-                <td width="80%" style="text-align:center;"><db:phylogeny/></td>
-              </tr>
-              <tr>
                 <td width="20%" style="text-align:left;">
                   for
                 </td>
