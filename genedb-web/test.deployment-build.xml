@@ -5,6 +5,8 @@
 	<property name="host" value="developer.genedb.org"/>
     <property name="prefix" value=""/> <!-- Include trailing slash -->
 
+    <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
+    <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
 
   <path id="groovy-script-jars">
     <path location="${lib-dir}/spring-bundle-2.5.4/groovy/groovy-1.5.5.jar"/>
