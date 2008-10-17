@@ -2,7 +2,7 @@
 
 <project name="test-deployment" default="test-deployment" basedir=".">
 
-	<property name="host" value="developer.genedb.org"/>
+	<property name="host" value="http://developer.genedb.org"/>
     <property name="prefix" value=""/> <!-- Include trailing slash -->
 
     <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
@@ -20,11 +20,11 @@
 
   <target name="test-deployment">
     <groovy>
-      <arg value="${host}"/>
-      <arg value="${prefix}" />
+      <arg value="$host"/>
+      <arg value="$prefix" />
       <![CDATA[
-        downloadAndGrep("http://$args[0]/$args[1]Homepage", "yoelii")
-        downloadAndGrep("http://$args[0]/$args[1]NamedFeature?name=PF07_0048", "Duffy")
+        downloadAndGrep("$args[0]/$args[1]Homepage", "yoelii")
+        downloadAndGrep("$args[0]/$args[1]NamedFeature?name=PF07_0048", "Duffy")
 
         def downloadAndGrep(address, searchPattern) {
           if (!(new URL(address).getText() =~ searchPattern)) {
