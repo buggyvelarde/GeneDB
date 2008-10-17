@@ -23,8 +23,8 @@
       <arg value="${host}"/>
       <arg value="${prefix}" />
       <![CDATA[
-        downloadAndGrep("http://${0}/${1}Homepage", "yoelii")
-        downloadAndGrep("http://${0}/${1}NamedFeature?name=PF07_0048", "Duffy")
+        downloadAndGrep("http://args[0]/args[1]Homepage", "yoelii")
+        downloadAndGrep("http://args[0]/args[1]NamedFeature?name=PF07_0048", "Duffy")
 
         def downloadAndGrep(address, searchPattern) {
           if (!(new URL(address).getText() =~ searchPattern)) {
