@@ -151,31 +151,6 @@
         <delete dir="${finaldest.webapps}.old" failonerror="false"/> <!-- temp hack -->
     </target>
 
-  <path id="groovy-script-jars">
-        <path location="${lib-dir}/spring-bundle-2.5.4/groovy/groovy-1.5.5.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.4/asm/asm-2.2.3.jar" />
-      <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
-  </path>
-
-  <taskdef name="groovy"
-           classname="org.codehaus.groovy.ant.Groovy"
-           classpathref="groovy-script-jars"/>
-
-    <target name="test-deployment">
-         <groovy>
-           <![CDATA[
-           downloadAndGrep("https://www.genedb.org/ci-web/Homepage", "yoelii")
-           downloadAndGrep("https://www.genedb.org/ci-web/NamedFeature?name=PF07_0048", "Duffy")
-
-           def downloadAndGrep(address, searchPattern)
-           {
-             if (!(new URL(address).getText() =~ searchPattern)) {
-               throw new RuntimeException("Pattern '$searchPattern' not found in '$address' - probable deployment problem");
-             }
-           }
-           ]]>
-         </groovy>
-    </target>
 
   <target name="restart-ci-web">
     <exec executable="/nfs/pathdata/jira/bin/shutdown.sh" failifexecutionfails="true" failonerror="true" />
