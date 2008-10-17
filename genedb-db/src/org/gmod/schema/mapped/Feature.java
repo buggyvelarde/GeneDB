@@ -486,6 +486,15 @@ public abstract class Feature implements java.io.Serializable {
         return (featureLocs = CollectionUtils.safeGetter(featureLocs));
     }
 
+    public FeatureLoc getFeatureLoc(int locGroup, int rank) {
+        for (FeatureLoc featureLoc: getFeatureLocs()) {
+            if (featureLoc.getLocGroup() == locGroup && featureLoc.getRank() == rank) {
+                return featureLoc;
+            }
+        }
+        return null;
+    }
+
     public void addFeatureLoc(FeatureLoc featureLoc) {
         featureLoc.setFeature(this);
         getFeatureLocs().add(featureLoc);
@@ -820,7 +829,7 @@ public abstract class Feature implements java.io.Serializable {
         return addLocatedChild(child, fmin, fmax, strand, phase, 0, rank);
     }
     public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, int strand, Integer phase, int locgroup, int rank) {
-        FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, (short) strand, phase, locgroup, rank);
+        FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, strand, phase, locgroup, rank);
 
         if (this.featureLocsForSrcFeatureId == null) {
             this.featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
@@ -832,6 +841,20 @@ public abstract class Feature implements java.io.Serializable {
         }
         child.featureLocs.add(loc);
 
+        /*
+        // If we ourselves have featurelocs (e.g. we are a contig and have a supercontig),
+        // give the child redundant locations to these.
+        if (locgroup == 0) {
+            for (FeatureLoc featureLoc: getFeatureLocs()) {
+                logger.trace(String.format("Adding redundant featureloc (locgroup=%d) for '%s' on '%s' with rank %d",
+                    1 + featureLoc.getLocGroup(), child.getUniqueName(), featureLoc.getSourceFeature().getUniqueName(),
+                    rank));
+
+                featureLoc.getSourceFeature().addLocatedChild(child,
+                    fmin + featureLoc.getFmin(), fmax + featureLoc.getFmin(), strand, phase, 1 + featureLoc.getLocGroup(), rank);
+            }
+        }
+        */
         return loc;
     }
 
