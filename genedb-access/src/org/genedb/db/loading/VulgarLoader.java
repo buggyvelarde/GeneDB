@@ -1,26 +1,18 @@
 package org.genedb.db.loading;
 
-import org.genedb.db.dao.OrganismDao;
-import org.genedb.db.dao.SequenceDao;
-
-import org.gmod.schema.feature.EST;
-import org.gmod.schema.feature.ESTMatch;
-import org.gmod.schema.feature.MatchPart;
-import org.gmod.schema.feature.TopLevelFeature;
-import org.gmod.schema.mapped.Organism;
-
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Load EST matches from an Exonerate Vulgar file.
@@ -29,22 +21,21 @@ import java.io.IOException;
  */
 @Configurable
 public class VulgarLoader {
+    /*
+     * Implementation note: the first version of this code used Hibernate, but
+     * was heavily CPU-bound and unacceptably slow. Thus it has been rewritten
+     * to use JDBC, and is now thoroughly database-bound and reasonably fast.
+     */
+
     private static final Logger logger = Logger.getLogger(VulgarLoader.class);
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private SimpleJdbcTemplate simpleJdbcTemplate;
 
-    @Autowired
     private PlatformTransactionManager transactionManager;
 
-    @Autowired
-    private OrganismDao organismDao;
-
-    @Autowired
-    private SequenceDao sequenceDao;
-
     // Configurable parameters
-    private Organism organism;
+    private int organismId;
 
     /**
      * Set the organism into which to load data.
@@ -52,39 +43,44 @@ public class VulgarLoader {
      * @param organismCommonName the common name of the organism
      */
     public void setOrganismCommonName(String organismCommonName) {
-        this.organism = organismDao.getOrganismByCommonName(organismCommonName);
-        if (organism == null) {
-            throw new IllegalArgumentException(String.format("Organism '%s' not found", organismCommonName));
-        }
+        this.organismId = getOrganismIdFromCommonName(organismCommonName);
     }
 
-    private Session session;
+    private int getOrganismIdFromCommonName(String organismCommonName) {
+        Map<String,Object> idMap = simpleJdbcTemplate.queryForMap(
+            "select organism_id from organism where common_name = ?",
+            organismCommonName);
+        int organismId =  (Integer) idMap.get("organism_id");
+        logger.trace(String.format("Organism '%s' has ID %d", organismCommonName, organismId));
+        return organismId;
+    }
+
     private TransactionStatus transactionStatus;
     private TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
     public synchronized void load(VulgarFile file) throws ParsingException, IOException {
         /*
          * This class does not use the declarative @Transactional annotation,
-         * because we need to split the load into a number of consecutive
-         * transactions if we are not to run out of heap space.
+         * because we wish to split the load into a number of consecutive
+         * transactions.
          */
 
         transactionStatus = transactionManager.getTransaction(transactionDefinition);
-        session = SessionFactoryUtils.doGetSession(sessionFactory, false);
+        init();
 
         try {
             int i = 0;
             // The iteration in the for(:) loop might cause a VulgarFileException
             for (VulgarMapping mapping: file) {
                 loadMapping(mapping);
-                if (++i % 10 == 0) {
+                if (++i % 100 == 0) {
                     logger.info(String.format("Loaded %d mappings", i));
-                    logger.debug("Committing transaction and clearing session");
-                    transactionManager.commit(transactionStatus); // Also closes session!
+                    logger.debug("Committing transaction.");
+                    transactionManager.commit(transactionStatus);
                     transactionStatus = transactionManager.getTransaction(transactionDefinition);
-                    session = SessionFactoryUtils.doGetSession(sessionFactory, false);
                 }
             }
         } catch (VulgarFileException e) {
+            logger.trace("Exception caught. Rolling back.");
             transactionManager.rollback(transactionStatus);
             Throwable t = e.getCause();
             if (t == null) {
@@ -99,32 +95,39 @@ public class VulgarLoader {
             throw new RuntimeException("VulgarFileException of unknown type", e);
         }
         catch (RuntimeException e) {
+            logger.trace("Exception caught. Rolling back.");
             transactionManager.rollback(transactionStatus);
             throw e;
         }
     }
 
+
+    private int estMatchTypeId;
+    private int matchPartTypeId;
+    private int partOfTypeId;
+    private void init() {
+        estMatchTypeId  = getCvTermId("sequence", "EST_match");
+        matchPartTypeId = getCvTermId("sequence", "match_part");
+        partOfTypeId    = getCvTermId("relationship", "part_of");
+    }
+
+    private int getCvTermId(String cvName, String cvTermName) {
+        return (Integer) simpleJdbcTemplate.queryForMap(
+            "select cvterm_id "+
+            "from cvterm "+
+            "join cv using (cv_id) "+
+            "where cv.name = ? "+
+            "and cvterm.name = ?",
+            cvName, cvTermName
+        ).get("cvterm_id");
+    }
+
     private void loadMapping(VulgarMapping mapping) throws VulgarFileException, DataError {
-        EST est = sequenceDao.getFeatureByUniqueName(mapping.getQuery(), EST.class);
-        if (est == null) {
-            throw new DataError(String.format("Could not find EST feature '%s'", mapping.getQuery()));
-        }
-        TopLevelFeature target = sequenceDao.getFeatureByUniqueName(mapping.getTarget(), TopLevelFeature.class);
-        if (target == null) {
-            throw new DataError(String.format("Could not find target feature '%s'", mapping.getTarget()));
-        }
 
-        logger.debug(String.format("Creating ESTMatch '%s'(%d-%d s%d)->'%s'(%d-%d s%d)",
-            est.getUniqueName(), mapping.getQMin(), mapping.getQMax(), mapping.getQStrand(),
-            target.getUniqueName(), mapping.getTMin(), mapping.getTMax(), mapping.getTStrand()));
-
-        // ESTMatch.create(EST est, TopLevelFeature target,
-        //          int sourceFmin, int sourceFmax, int sourceStrand,
-        //          int targetFmin, int targetFmax, int targetStrand)
-        ESTMatch estMatch = ESTMatch.create(est, target,
-            mapping.getQMin(), mapping.getQMax(), mapping.getQStrand(),
-            mapping.getTMin(), mapping.getTMax(), mapping.getTStrand());
-        session.persist(estMatch);
+        String matchUniqueName = insertESTMatch(mapping);
+        int matchId = currentFeatureId();
+        insertFeatureLoc(matchId, mapping.getQuery(),  mapping.getQMin(), mapping.getQMax(), mapping.getQStrand(), 0);
+        insertFeatureLoc(matchId, mapping.getTarget(), mapping.getTMin(), mapping.getTMax(), mapping.getTStrand(), 1);
 
         int sourcePos = 0;
         int targetPos = 0;
@@ -132,16 +135,145 @@ public class VulgarLoader {
         for (VulgarMapping.Match match: mapping.getMatches()) {
             switch (match.getType()) {
             case MATCH:
-                String partName = String.format("%s:part%d", estMatch.getUniqueName(), partIndex++);
-                logger.debug(String.format("Creating match part '%s'", partName));
-                MatchPart matchPart = estMatch.createPart(partName, sourcePos, match.getQueryLength(),
+                createMatchPart(matchId, matchUniqueName, partIndex++,
+                    sourcePos, match.getQueryLength(),
                     targetPos, match.getTargetLength());
-                session.persist(matchPart);
                 /*FALL THROUGH*/
             default:
                 sourcePos += match.getQueryLength();
                 targetPos += match.getTargetLength();
             }
         }
+    }
+
+    private int currentFeatureId() {
+        long featureId = (Long) simpleJdbcTemplate.queryForMap(
+            "select currval('feature_feature_id_seq'::regclass) as feature_id")
+            .get("feature_id");
+
+        return (int) featureId;
+    }
+
+    private Set<String> matchUniqueNames = new HashSet<String>();
+    private String insertESTMatch(VulgarMapping mapping) {
+        String matchUniqueName;
+        if (mapping.getTStrand() >= 0) {
+            matchUniqueName = String.format("%s:estMatch%d-%d", mapping.getTarget(), mapping.getTMin(), mapping.getTMax());
+        } else {
+            matchUniqueName = String.format("%s:estMatch(%d-%d)", mapping.getTarget(), mapping.getTMin(), mapping.getTMax());
+        }
+
+        // It's possible to have more than one match at the same location,
+        // so make sure the name is unique;
+        String originalMatchUniqueName = matchUniqueName;
+        int i = 1;
+        while (matchUniqueNames.contains(matchUniqueName)) {
+            matchUniqueName = originalMatchUniqueName + ":" + i++;
+        }
+        matchUniqueNames.add(matchUniqueName);
+
+        simpleJdbcTemplate.update(
+            "insert into feature ("+
+            " organism_id, uniquename, type_id, is_analysis"+
+            ") values ("+
+            " ?, ?, ?, true"+
+            ")",
+            organismId, matchUniqueName, estMatchTypeId);
+        logger.trace(String.format("Inserted ESTMatch feature '%s'", matchUniqueName));
+        return matchUniqueName;
+    }
+
+    private void insertFeatureLoc(int featureId, String sourceFeature, int fmin, int fmax, int strand, int rank)
+            throws DataError {
+        int n = simpleJdbcTemplate.update(
+            "insert into featureloc ("+
+            " feature_id, srcfeature_id, fmin, fmax, strand, locgroup, rank"+
+            ") ("+
+            "  select ?"+
+            "       , feature.feature_id"+
+            "       , ?, ?, ?, 0, ?"+
+            "  from feature"+
+            "  where feature.uniqueName = ?"+
+            ")",
+            featureId, fmin, fmax, strand, rank, sourceFeature);
+
+        if (n != 1) {
+            throw new DataError(String.format("Feature '%s' not found", sourceFeature));
+        }
+        logger.trace(String.format("Inserted featureLoc (featureId=%d, fmin=%d, fmax=%d, strand=%d, rank=%d) to '%s'",
+            featureId, fmin, fmax, strand, rank, sourceFeature));
+
+        n = simpleJdbcTemplate.update(
+            "insert into featureloc ("+
+            " feature_id, srcfeature_id, fmin, fmax, strand, locgroup, rank"+
+            ") ("+
+            "  select ? as feature_id"+
+            "       , feature.feature_id as srcfeature_id"+
+            "       , ? + featureloc.fmin as fmin" +
+            "       , ? + featureloc.fmin as fmax" +
+            "       , ? as strand" +
+            "       , featureloc.locgroup + 1 as locgroup" +
+            "       , ? as rank"+
+            "  from feature"+
+            "  join featureloc using (feature_id)"+
+            "  where feature.uniqueName = ?"+
+            "  and featureloc.rank = 0"+
+            ")",
+            featureId, fmin, fmax, strand, rank, sourceFeature);
+        logger.trace(String.format("Inserted %d dependent featureLocs for '%s'", n, sourceFeature));
+    }
+
+    private void createMatchPart(int matchId, String matchUniqueName, int partIndex,
+            int sourcePos, int sourceLength, int targetPos, int targetLength)
+    {
+        String partUniqueName = String.format("%s:part%d", matchUniqueName, partIndex);
+        simpleJdbcTemplate.update(
+            "insert into feature ("+
+            " organism_id, uniquename, type_id, is_analysis"+
+            ") values ("+
+            " ?, ?, ?, true"+
+            ")",
+            organismId, partUniqueName, matchPartTypeId);
+        logger.trace(String.format("Inserted MatchPart '%s'", partUniqueName));
+
+        int partId = currentFeatureId();
+
+        simpleJdbcTemplate.update(
+            "insert into feature_relationship ("+
+            "  subject_id, type_id, object_id"+
+            ") values ("+
+            "  ?, ?, ?"+
+            ")",
+            partId, partOfTypeId, matchId);
+        logger.trace("Inserted FeatureRelationship");
+
+        createPartLoc(partId, matchId, sourcePos, sourceLength, 0);
+        createPartLoc(partId, matchId, targetPos, targetLength, 1);
+    }
+
+    private void createPartLoc(int partId, int matchId, int pos, int length, int rank) {
+        int n = simpleJdbcTemplate.update(
+            "insert into featureloc ("+
+            " feature_id, srcfeature_id, fmin, fmax, strand, locgroup, rank"+
+            ") ("+
+            "  select ? as feature_id"+
+            "       , featureloc.srcfeature_id"+
+            "       , featureloc.fmin + ?"+
+            "       , featureloc.fmin + ?"+
+            "       , featureloc.strand"+
+            "       , featureloc.locgroup"+
+            "       , featureloc.rank"+
+            "  from featureloc"+
+            "  where featureloc.feature_id = ?"+
+            "  and featureloc.rank = ?"+
+            ")",
+            partId, pos, pos + length, matchId, rank
+        );
+        logger.trace(String.format("Created %d featurelocs for part ID=%d of match ID=%d at %d, length %d with rank %d",
+            n, partId, matchId, pos, length, rank));
+    }
+
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 }

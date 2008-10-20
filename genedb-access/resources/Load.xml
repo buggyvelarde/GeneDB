@@ -17,6 +17,10 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
+    <bean id="jdbcTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="messages"/>
     </bean>
@@ -59,6 +63,12 @@
         <!--  We don't pass the DAOs in here: see EmblLoader#afterPropertiesSet() -->
     </bean>
 
+    <bean id="simpleJdbcTemplate" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+        <constructor-arg>
+            <ref bean="dataSource"/>
+        </constructor-arg>
+    </bean>
+
     <bean id="emblLoader" class="org.genedb.db.loading.EmblLoader"
         init-method="afterPropertiesSet">
         <property name="cvDao" ref="cvDao"/>
@@ -70,7 +80,9 @@
 
     <bean id="fastaLoader" class="org.genedb.db.loading.FastaLoader"/>
 
-    <bean id="vulgarLoader" class="org.genedb.db.loading.VulgarLoader"/>
+    <bean id="vulgarLoader" class="org.genedb.db.loading.VulgarLoader">
+        <property name="transactionManager" ref="jdbcTransactionManager"/>
+    </bean>
 
     <bean id="orthologuesLoader" class="org.genedb.db.loading.OrthologuesLoader">
         <property name="sequenceDao" ref="sequenceDao"/>

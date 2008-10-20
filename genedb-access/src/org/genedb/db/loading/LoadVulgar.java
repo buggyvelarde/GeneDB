@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
 public class LoadVulgar extends FileProcessor {
     private static final Logger logger = Logger.getLogger(LoadVulgar.class);
 
-    public static void main(String[] args) throws MissingPropertyException, IOException, ParsingException {
+    public static void main(String[] args) throws MissingPropertyException, IOException, ParsingException, SQLException {
         if (args.length > 0) {
             logger.warn("Ignoring command-line arguments");
         }

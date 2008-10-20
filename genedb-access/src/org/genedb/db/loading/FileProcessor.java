@@ -9,6 +9,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.sql.SQLException;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -81,13 +82,13 @@ public abstract class FileProcessor {
      * @throws ParsingException
      */
     protected void processFileOrDirectory(String inputDirectoryName, String fileNamePattern)
-        throws IOException, ParsingException
+        throws IOException, ParsingException, SQLException
     {
         processFileOrDirectory(new File(inputDirectoryName), fileNamePattern);
     }
 
     private void processFileOrDirectory(File file, final String fileNamePattern)
-        throws IOException, ParsingException
+        throws IOException, ParsingException, SQLException
     {
         if (file.isDirectory()) {
             String[] entries = file.list(new FilenameFilter() {
@@ -121,7 +122,7 @@ public abstract class FileProcessor {
     }
 
     private void processFileAndHandleExceptions(File inputFile)
-        throws IOException, ParsingException
+        throws IOException, ParsingException, SQLException
     {
         try {
             Reader reader = new FileReader(inputFile);
@@ -142,8 +143,15 @@ public abstract class FileProcessor {
             /*
              * The cause of the Spring exception is a Hibernate exception,
              * and the cause of *that* is the underlying JDBC exception.
+             *
+             * On the other hand, we might be using JDBC directly (e.g. VulgarLoader),
+             * in which case the cause of the Spring exception is just the JDBC
+             * exception.
              */
             Throwable cause = e.getCause().getCause();
+            if (cause == null) {
+                cause = e.getCause();
+            }
             skipRetryAbort(inputFile, cause);
         }
         /*
@@ -192,7 +200,7 @@ public abstract class FileProcessor {
      *          a retry).
      */
     private void skipRetryAbort(File inputFile, Throwable e)
-        throws IOException, ParsingException
+        throws IOException, ParsingException, SQLException
     {
         switch (SkipRetryAbort.prompt(e)) {
         case SKIP:
@@ -207,6 +215,8 @@ public abstract class FileProcessor {
                 throw (ParsingException) e;
             } else if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
+            } else if (e instanceof SQLException) {
+                throw (SQLException) e;
             } else {
                 throw new RuntimeException("Unexpected exception (should not happen)", e);
             }

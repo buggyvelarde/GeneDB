@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import java.util.List;
  */
 public class LoadOrthologues extends FileProcessor {
     private static final Logger logger = Logger.getLogger(LoadOrthologues.class);
-    public static void main(String[] args) throws MissingPropertyException, IOException, ParsingException {
+    public static void main(String[] args) throws MissingPropertyException, IOException, ParsingException, SQLException {
         if (args.length > 0) {
             logger.warn("Ignoring command-line arguments");
         }

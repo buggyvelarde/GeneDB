@@ -12,6 +12,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.SQLException;
 
 /**
  * Command-line entry point for loading EMBL files.
@@ -55,7 +56,7 @@ public class LoadEmbl extends FileProcessor {
      * @throws ParsingException if an EMBL file cannot be parsed
      * @throws IOException if there's a problem opening or reading a file or directory
      */
-    public static void main(String[] args) throws MissingPropertyException, IOException, ParsingException {
+    public static void main(String[] args) throws MissingPropertyException, IOException, ParsingException, SQLException {
         if (args.length > 0) {
             logger.warn("Ignoring command-line arguments");
         }
