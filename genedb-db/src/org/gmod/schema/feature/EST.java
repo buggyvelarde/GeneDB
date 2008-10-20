@@ -14,7 +14,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @FeatureType(cv = "sequence", term = "EST")
-public class EST extends Region {
+public class EST extends TopLevelFeature {
     EST() {
         // empty
     }

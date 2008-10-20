@@ -2,6 +2,7 @@ package org.genedb.db.loading;
 
 
 import org.gmod.schema.feature.Chromosome;
+import org.gmod.schema.feature.EST;
 import org.gmod.schema.feature.Supercontig;
 
 import org.apache.log4j.Logger;
@@ -10,16 +11,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 
 /**
- * Command-line entry point for loadng EMBL files.
+ * Command-line entry point for loading EMBL files.
  * The class {@link EmblLoader} is used to do the heavy lifting.
  *
  * @author rh11
  *
  */
 public class LoadEmbl extends FileProcessor {
-    static final Logger logger = Logger.getLogger(LoadEmbl.class);
+    private static final Logger logger = Logger.getLogger(LoadEmbl.class);
     /**
      * Recurse through a directory structure, loading each EMBL file we encounter.
      * <p>
@@ -27,8 +29,8 @@ public class LoadEmbl extends FileProcessor {
      * <code>load.organismCommonName</code> and <code>load.startingDirectory</code>.
      * Optionally, the property <code>load.fileNamePattern</code> may contain a regular
      * expression aganst which file names are matched. If this property is not specified,
-     * we default to <code>.*\.embl</code>, which matches any file name with the extension
-     * <code>.embl</code>.
+     * we default to <code>.*\.embl(?:\\.gz)?</code>, which matches any file name with
+     * the extension <code>.embl</code> or <code>.embl.gz</code>.
      * <p>
      * Other system properties control various options:
      * <ul>
@@ -59,7 +61,7 @@ public class LoadEmbl extends FileProcessor {
         }
         String organismCommonName = getRequiredProperty("load.organismCommonName");
         String inputDirectory = getRequiredProperty("load.inputDirectory");
-        String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.embl");
+        String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.embl(?:\\.gz)?");
         String overwriteExisting = getPropertyWithDefault("load.overwriteExisting", "no").toLowerCase();
         String topLevelFeatureType = getPropertyWithDefault("load.topLevel", "supercontig");
         boolean sloppyControlledCuration = hasProperty("load.sloppyControlledCuration");
@@ -100,6 +102,8 @@ public class LoadEmbl extends FileProcessor {
             loader.setTopLevelFeatureClass(Chromosome.class);
         } else if (topLevelFeatureType.equals("supercontig")) {
             loader.setTopLevelFeatureClass(Supercontig.class);
+        } else if (topLevelFeatureType.equals("EST")) {
+            loader.setTopLevelFeatureClass(EST.class);
         } else {
             throw new RuntimeException(
                 String.format("Unrecognised value for load.topLevel: '%s'", topLevelFeatureType));
@@ -107,8 +111,8 @@ public class LoadEmbl extends FileProcessor {
     }
 
     @Override
-    protected void processFile(File inputFile) throws IOException, ParsingException {
-        EmblFile emblFile = new EmblFile(inputFile);
+    protected void processFile(File inputFile, Reader reader) throws IOException, ParsingException {
+        EmblFile emblFile = new EmblFile(inputFile, reader);
         loader.load(emblFile);
     }
 }

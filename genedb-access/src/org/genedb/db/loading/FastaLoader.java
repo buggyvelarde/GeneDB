@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Configurable
 public class FastaLoader {
 
-    protected static final Logger logger = Logger.getLogger(FastaLoader.class);
+    private static final Logger logger = Logger.getLogger(FastaLoader.class);
 
     @Autowired
     private SessionFactory sessionFactory;

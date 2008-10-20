@@ -13,6 +13,7 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 
@@ -46,7 +47,7 @@ public class FastaLoaderTest {
         this.sessionFactory = (SessionFactory) applicationContext.getBean("sessionFactory", SessionFactory.class);
         this.session = SessionFactoryUtils.doGetSession(sessionFactory, true);
 
-        FastaFile fastaFile = new FastaFile(new File(filename));
+        FastaFile fastaFile = new FastaFile(new FileReader(new File(filename)));
         loader.load("test1", fastaFile);
 
         tester = new FeatureTester(session);

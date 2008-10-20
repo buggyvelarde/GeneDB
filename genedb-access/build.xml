@@ -221,6 +221,17 @@
 
     <target name="reload-embl" depends="delete-organism,load-embl"/>
 
+    <target name="load-vulgar" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadVulgar">
+            <sysproperty key="load.organismCommonName" value="${organism}"/>
+            <sysproperty key="load.inputDirectory" value="${file}"/>
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <jvmarg line="-Xmx768M"/>
+        </java>
+    </target>
+
 
     <target name="load-interpro" depends="genedb-access.jar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">

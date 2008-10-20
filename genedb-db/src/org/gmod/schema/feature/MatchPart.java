@@ -32,4 +32,8 @@ public class MatchPart extends Region {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+    public MatchPart(Organism organism, String uniqueName) {
+        this(organism, uniqueName, true, false, new Timestamp(System.currentTimeMillis()));
+    }
+
 }

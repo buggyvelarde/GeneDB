@@ -1,17 +1,15 @@
 package org.genedb.db.loading;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.genedb.db.loading.EmblFile;
-import org.genedb.db.loading.FeatureTable;
-import org.genedb.db.loading.ParsingException;
 import org.genedb.db.loading.FeatureTable.Feature;
-
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 public class EmblFileTest {
@@ -19,7 +17,8 @@ public class EmblFileTest {
 
     @Before
     public void loadEmblFile() throws IOException, ParsingException {
-        emblFile = new EmblFile(new File("test/data/smp_scaff000604.embl"));
+        File file = new File("test/data/smp_scaff000604.embl");
+        emblFile = new EmblFile(file, new FileReader(file));
     }
 
     @Test

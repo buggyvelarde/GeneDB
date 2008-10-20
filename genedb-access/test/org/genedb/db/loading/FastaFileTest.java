@@ -2,9 +2,11 @@ package org.genedb.db.loading;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +14,16 @@ import java.util.List;
 
 public class FastaFileTest {
 
+    private File testFile = new File("test/data/test1.fasta");
+    private FastaFile test1;
+
+    @Before
+    public void setup() throws IOException {
+        test1 = new FastaFile(new FileReader(testFile));
+    }
+
     @Test
-    public void test1_size() throws IOException {
-        FastaFile test1 = new FastaFile(new File("test/data/test1.fasta"));
+    public void test1_size() {
         int count = 0;
         for (FastaRecord record: test1) {
             assertNotNull(record);
@@ -24,9 +33,9 @@ public class FastaFileTest {
     }
 
     @Test
-    public void test1_ids() throws IOException {
+    public void test1_ids() {
         List<FastaRecord> records = new ArrayList<FastaRecord>();
-        for(FastaRecord record: new FastaFile(new File("test/data/test1.fasta"))) {
+        for(FastaRecord record: test1) {
             records.add(record);
         }
 
@@ -37,9 +46,22 @@ public class FastaFileTest {
     }
 
     @Test
-    public void test1_seqs() throws IOException {
+    public void test1_lineNumbers() {
         List<FastaRecord> records = new ArrayList<FastaRecord>();
-        for(FastaRecord record: new FastaFile(new File("test/data/test1.fasta"))) {
+        for(FastaRecord record: test1) {
+            records.add(record);
+        }
+
+        assertEquals(1, records.get(0).getLineNumber());
+        assertEquals(3, records.get(1).getLineNumber());
+        assertEquals(7, records.get(2).getLineNumber());
+        assertEquals(8, records.get(3).getLineNumber());
+    }
+
+    @Test
+    public void test1_seqs() {
+        List<FastaRecord> records = new ArrayList<FastaRecord>();
+        for(FastaRecord record: test1) {
             records.add(record);
         }
 
@@ -52,9 +74,7 @@ public class FastaFileTest {
     }
 
     @Test
-    public void iterateTwice() throws IOException {
-        FastaFile test1 = new FastaFile(new File("test/data/test1.fasta"));
-
+    public void iterateTwice() {
         List<FastaRecord> records = new ArrayList<FastaRecord>();
         for(FastaRecord record: test1) {
             records.add(record);

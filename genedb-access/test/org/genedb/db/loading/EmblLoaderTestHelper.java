@@ -8,6 +8,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 
@@ -45,7 +46,8 @@ public class EmblLoaderTestHelper {
         this.sessionFactory = (SessionFactory) applicationContext.getBean("sessionFactory", SessionFactory.class);
         this.session = SessionFactoryUtils.doGetSession(sessionFactory, true);
 
-        EmblFile emblFile = new EmblFile(new File(filename));
+        File file = new File(filename);
+        EmblFile emblFile = new EmblFile(file, new FileReader(file));
         loader.load(emblFile);
     }
 

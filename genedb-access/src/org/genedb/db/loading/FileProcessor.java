@@ -3,8 +3,13 @@ package org.genedb.db.loading;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.zip.GZIPInputStream;
 
 /**
  * This class deals with the mundane details of recursing over a directory
@@ -119,7 +124,12 @@ public abstract class FileProcessor {
         throws IOException, ParsingException
     {
         try {
-            processFile(inputFile);
+            Reader reader = new FileReader(inputFile);
+            if (inputFile.getName().endsWith(".gz")) {
+                reader = new InputStreamReader(new GZIPInputStream(new FileInputStream(inputFile)));
+            }
+            processFile(inputFile, reader);
+            reader.close();
         } catch (ParsingException e) {
             e.setInputFile(inputFile);
             logger.error("Parsing error", e);
@@ -155,11 +165,12 @@ public abstract class FileProcessor {
      * Process the file. Subclasses should implement this method to do whatever is
      * appropriate with the file.
      *
-     * @param inputFile
+     * @param inputFile the input file
+     * @param reader a reader for the
      * @throws IOException
      * @throws ParsingException
      */
-    protected abstract void processFile(File inputFile)
+    protected abstract void processFile(File inputFile, Reader reader)
         throws IOException, ParsingException;
 
     /**

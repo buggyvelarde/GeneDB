@@ -1,112 +1,74 @@
 package org.genedb.db.loading;
 
-import org.apache.log4j.Logger;
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.List;
 
 /**
  * Represents a FASTA file, and allows the records in the file to
- * be iterated over, lazily, in order.
+ * be iterated over in order.
  *
  * @author rh11
  *
  */
 public class FastaFile implements Iterable<FastaRecord> {
-    private static final Logger logger = Logger.getLogger(FastaFile.class);
+    private List<FastaRecord> records = new ArrayList<FastaRecord>();
 
-    private File file;
-    private BufferedReader br;
+    /**
+     * Create a new FastaFile from the specified reader.
+     * @param reader the reader to read from
+     * @throws IOException
+     */
+    public FastaFile(Reader reader) throws IOException {
+        int lineNumber = 1;
+        int lineNumberOfHeader = 0;
+        String id = null;
+        String line;
 
-    public FastaFile(File file) throws IOException {
-        this.file = file;
-        this.br = new BufferedReader(new FileReader(file));
+        BufferedReader br = new BufferedReader(reader);
+        StringBuilder sequence = new StringBuilder();
+        while (null != (line = br.readLine())) {
+            if (line.startsWith(">")) {
+                if (id != null) {
+                    records.add(new FastaRecord(id, sequence.toString(), lineNumberOfHeader));
+                }
+                lineNumberOfHeader = lineNumber;
+
+                id = line.substring(1);
+                int pipeIndex = line.indexOf("|");
+                if (pipeIndex > -1) {
+                    id = line.substring(1, pipeIndex);
+                }
+                sequence = new StringBuilder();
+            } else {
+                sequence.append(line.toLowerCase());
+            }
+
+            lineNumber++;
+        }
+        if (id != null) {
+            records.add(new FastaRecord(id, sequence.toString(), lineNumberOfHeader));
+        }
+        br.close();
     }
 
     public Iterator<FastaRecord> iterator() {
-        if (br == null) {
-            try {
-                br = new BufferedReader(new FileReader(file));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return new Iterator<FastaRecord>() {
-            int lineNumber = 1;
-            private String nextLine;
-
-            { // Instance initializer
-                try {
-                    nextLine = br.readLine();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            public boolean hasNext() {
-                boolean hasNext = (nextLine != null);
-                if (!hasNext) {
-                    try {
-                        br.close();
-                        br = null;
-                    } catch (IOException e) {
-                        logger.warn("Error while closing file", e);
-                    }
-                }
-                return hasNext;
-            }
-
-            public FastaRecord next() {
-                if (nextLine == null) {
-                    throw new NoSuchElementException();
-                }
-                if (! nextLine.startsWith(">")) {
-                    throw new RuntimeException("FASTA record does not begin with '>' at line " + lineNumber);
-                }
-                String id = nextLine.substring(1);
-                int pipeIndex = nextLine.indexOf("|");
-                if (pipeIndex > -1) {
-                    id = nextLine.substring(1, pipeIndex);
-                }
-
-                StringBuilder sequence = new StringBuilder();
-                String thisLine;
-                for(;;) {
-                    try {
-                        thisLine = br.readLine();
-                        lineNumber++;
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (thisLine == null || thisLine.startsWith(">")) {
-                        break;
-                    } else {
-                        sequence.append(thisLine.toLowerCase());
-                    }
-                }
-                this.nextLine = thisLine;
-
-                return new FastaRecord(id, sequence.toString());
-            }
-
-            public void remove() {
-                throw new UnsupportedOperationException("remove() not supported");
-            }
-        };
+        return records.iterator();
     }
 }
 
 class FastaRecord {
     private String id;
     private String sequence;
+    private int lineNumber;
 
-    FastaRecord(String id, String sequence) {
+    FastaRecord(String id, String sequence, int lineNumber) {
         this.id = id;
         this.sequence = sequence;
+        this.lineNumber = lineNumber;
     }
 
     public String getId() {
@@ -115,6 +77,10 @@ class FastaRecord {
 
     public String getSequence() {
         return this.sequence;
+    }
+
+    public int getLineNumber() {
+        return this.lineNumber;
     }
 
     // hashCode and equals methods generated by Eclipse.

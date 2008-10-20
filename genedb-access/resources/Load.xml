@@ -70,6 +70,8 @@
 
     <bean id="fastaLoader" class="org.genedb.db.loading.FastaLoader"/>
 
+    <bean id="vulgarLoader" class="org.genedb.db.loading.VulgarLoader"/>
+
     <bean id="orthologuesLoader" class="org.genedb.db.loading.OrthologuesLoader">
         <property name="sequenceDao" ref="sequenceDao"/>
     </bean>

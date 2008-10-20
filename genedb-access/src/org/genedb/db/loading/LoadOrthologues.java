@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +53,8 @@ public class LoadOrthologues extends FileProcessor {
     }
 
     @Override
-    protected void processFile(File inputFile) throws IOException, ParsingException {
-        OrthologueFile orthologueFile = new OrthologueFile(inputFile);
+    protected void processFile(File inputFile, Reader reader) throws IOException, ParsingException {
+        OrthologueFile orthologueFile = new OrthologueFile(inputFile, reader);
         loader.load(orthologueFile);
     }
 }
@@ -110,9 +110,9 @@ class OrthologueFile {
     private File file;
     private List<Line> lines = new ArrayList<Line>();
 
-    public OrthologueFile(File file) throws IOException, ParsingException {
+    public OrthologueFile(File file, Reader reader) throws IOException, ParsingException {
         this.file = file;
-        BufferedReader br = new BufferedReader(new FileReader(file));
+        BufferedReader br = new BufferedReader(reader);
         String line;
         int lineNumber = 0;
         while (null != (line = br.readLine())) {

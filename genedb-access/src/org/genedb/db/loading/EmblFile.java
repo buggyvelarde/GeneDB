@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
 public class EmblFile {
     private static final Logger logger = Logger.getLogger(EmblFile.class);
 
-    public EmblFile(File inputFile) throws IOException, ParsingException {
-        this (inputFile.toString(), new BufferedReader(new FileReader(inputFile)));
+    public EmblFile(File inputFile, Reader reader) throws IOException, ParsingException {
+        this (inputFile.toString(), new BufferedReader(reader));
     }
 
     public EmblFile(String inputFile, BufferedReader reader) throws IOException, ParsingException {

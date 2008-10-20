@@ -226,6 +226,11 @@ public class FeatureLoc implements Serializable {
         this.rank = rank;
     }
 
+    @Transient
+    public int getLength() {
+        return fmax - fmin;
+    }
+
     /**
      * Get all the FeatureLocPub relations associated with this
      * object. Usually the {@link #getPubs()} method is more

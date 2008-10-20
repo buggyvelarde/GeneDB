@@ -734,9 +734,10 @@ class EmblLoader {
             addTranscriptSynonymsFromQualifier("temporary_systematic_id", "temporary_systematic_id", true);
 
             processPropertyQualifiers("note",     "feature_property", "comment");
-            processPropertyQualifiers("method",   "genedb_misc",      "method");
-            processPropertyQualifiers("colour",   "genedb_misc",      "colour");
-            processPropertyQualifiers("status",   "genedb_misc",      "status");
+            processPropertyQualifiers("method",     "genedb_misc",      "method");
+            processPropertyQualifiers("colour",     "genedb_misc",      "colour");
+            processPropertyQualifiers("status",     "genedb_misc",      "status");
+            processPropertyQualifiers("fasta_file", "genedb_misc",      "fasta_file");
 
             processCvTermQualifiers("class", "RILEY", false, normaliseRileyNumber);
             processCvTermQualifiers("product", "genedb_products", true);
