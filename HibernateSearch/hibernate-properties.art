@@ -1,3 +1,5 @@
+hibernate.bytecode.provider=javassist
+
 # the default directory provider
 hibernate.search.default.directory_provider = org.hibernate.search.store.FSDirectoryProvider
 

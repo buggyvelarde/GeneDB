@@ -26,9 +26,7 @@
             <file name="spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
             <file name="spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
 
-            <file name="cglib-2.1_3.jar"/>
-            <file name="asm-1.5.3.jar"/>
-            <file name="asm-attrs-1.5.3.jar"/>
+            <file name="misc/javassist-3.4.GA.jar" />
 
             <file name="spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
             <file name="spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar" />

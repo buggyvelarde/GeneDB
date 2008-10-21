@@ -101,6 +101,7 @@
         <props>
             <prop key="hibernate.hbm2dll.auto">validate</prop>
             <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+            <prop key="hibernate.bytecode.provider">javassist</prop>
         </props>
      </property>
     </bean>
