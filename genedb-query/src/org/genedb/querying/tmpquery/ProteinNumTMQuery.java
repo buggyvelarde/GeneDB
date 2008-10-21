@@ -38,8 +38,8 @@ public class ProteinNumTMQuery extends LuceneQuery {
 
     protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
 
-        Term lowerTerm = new Term("numTMDomains", Integer.toString(min));
-        Term upperTerm = new Term("numTMDomains", Integer.toString(max));
+        Term lowerTerm = new Term("numberTMDomains", Integer.toString(min));
+        Term upperTerm = new Term("numberTMDomains", Integer.toString(max));
     	RangeQuery rq = new RangeQuery(lowerTerm, upperTerm, true);
 
         queries.add(rq);

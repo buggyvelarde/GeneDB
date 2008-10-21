@@ -6,6 +6,7 @@ import org.genedb.querying.core.QueryParam;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -36,21 +37,9 @@ public class EcQuery extends LuceneQuery {
 
     protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
 
-    	BooleanQuery bq = new BooleanQuery();
-        if(StringUtils.containsWhitespace(search)) {
-            for(String term : search.split(" ")) {
-                bq.add(new TermQuery(new Term("product",term.toLowerCase()
-                    )), Occur.SHOULD);
-            }
-        } else {
-            if (search.indexOf('*') == -1) {
-                bq.add(new TermQuery(new Term("allNames",search.toLowerCase())), Occur.SHOULD);
-            } else {
-                bq.add(new WildcardQuery(new Term("allNames", search.toLowerCase())), Occur.SHOULD);
-            }
-        }
+        Query q = new TermQuery(new Term("ecNumber",search.toLowerCase()));
 
-        queries.add(bq);
+        queries.add(q);
         queries.add(geneQuery);
 
     }
