@@ -122,7 +122,7 @@ public class MotifSearchController {
             String customGroup1, String customGroup2, String customGroup3) throws IOException {
         // Work out db given org
 
-        String dbFileName = "/tmp/motifTest"; // FIXME
+        String dbFileName = "/tmp/Pf_3D7.chromsomes.fa"; // FIXME
 
         CharSequence in = fromFile(dbFileName);
 
