@@ -23,6 +23,11 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
+/**
+ * This controller is for whole sequence downloads eg FASTA or EMBL for a whole
+ * top-level feature.
+ *
+ */
 @Controller
 @RequestMapping("/SequenceDownload")
 public class SequenceDownloadController {
@@ -36,10 +41,11 @@ public class SequenceDownloadController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String processSubmit(@RequestParam("topLevelFeature")
-    String tlf, @RequestParam("downloadType")
-    String downloadType, @RequestParam("featureType")
-    String featureType,
+    public String processSubmit(
+            @RequestParam("topLevelFeature") String tlf,
+            @RequestParam("outputFormat") OutputFormat outputFormat,
+            @RequestParam("featureType") String featureType,
+            //@RequestParam("") boolean ,
     // BindingResult result,
             // SessionStatus status,
             NativeWebRequest nwr, Writer writer) {
@@ -54,6 +60,10 @@ public class SequenceDownloadController {
         } else {
             out = new PrintWriter(writer);
         }
+
+        OutputManager om = new OutputManager();
+        om.setOutputFormat(outputFormat);
+
 
         HttpServletResponse hsr = (HttpServletResponse) nwr.getNativeResponse();
         hsr.setContentType("text/plain");

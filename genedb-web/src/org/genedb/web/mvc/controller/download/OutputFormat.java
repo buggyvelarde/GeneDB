@@ -26,7 +26,7 @@ public enum OutputFormat {
     ODF,
     HTML,
     GO_ASSOC,
-    FASTA, 
+    FASTA,
     EMBL_REMAPPING,
     EMBL_SUBMISSION,
     EMBL_PATHOGEN_FLATTENED,
