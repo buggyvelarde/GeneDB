@@ -1,7 +1,5 @@
 package org.genedb.web.mvc.model;
 
-import net.sf.ehcache.Element;
-
 import org.genedb.db.domain.objects.DatabasePolypeptideRegion;
 import org.genedb.db.domain.objects.InterProHit;
 import org.genedb.db.domain.objects.PolypeptideRegionGroup;
@@ -251,6 +249,8 @@ public class TranscriptDTO implements Serializable {
             this.algorithmData = prepareAlgorithmData(polypeptide);
             this.polypeptideProperties = polypeptide.calculateStats();
             populateFromFeatureProps(polypeptide);
+
+            this.products = polypeptide.getProducts();
             controlledCurations = populateFromFeatureCvTerms(polypeptide, "CC_");
             goBiologicalProcesses = populateFromFeatureCvTerms(polypeptide, "biological_process");
             goMolecularFunctions = populateFromFeatureCvTerms(polypeptide, "molecular_function");
@@ -277,7 +277,7 @@ public class TranscriptDTO implements Serializable {
                                     renderedProteinMap.getRenderedFeaturesAsHTML("proteinMapMap"));
                         } catch (IOException exp) {
                             ims = new ImageMapSummary();
-                            logger.log(Priority.ERROR, "Failed to create an imageMapSummary", exp);
+                            logger.error("Failed to create an imageMapSummary", exp);
                         }
             } else {
                 ims = new ImageMapSummary();
@@ -365,7 +365,6 @@ public class TranscriptDTO implements Serializable {
 
     private List<FeatureCvTermDTO> populateFromFeatureCvTerms(Polypeptide polypeptide, String cvNamePrefix) {
         Assert.notNull(polypeptide);
-        this.products = polypeptide.getProducts();
 
         List<FeatureCvTermDTO> dtos = new ArrayList<FeatureCvTermDTO>();
         for (FeatureCvTerm featureCvTerm : polypeptide.getFeatureCvTermsFilteredByCvNameStartsWith(cvNamePrefix)) {
