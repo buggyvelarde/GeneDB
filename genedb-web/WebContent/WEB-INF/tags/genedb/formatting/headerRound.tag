@@ -107,7 +107,7 @@
                   <select name="q">
                     <option value="simpleName">Gene names</option>
                     <option value="product">Product</option>
-                    <option value="curation">Curated annotations [comments & curation]</option>
+                    <option value="curation">Curated annotations [comments & notes]</option>
                     <option value="go">GO term/id</option>
                     <option value="ec">EC number</option>
                     <option value="pfam">Pfam ID or keyword</option>
