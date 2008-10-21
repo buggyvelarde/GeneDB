@@ -177,6 +177,10 @@
       - This bean is a MultiActionController that manages general View rendering.
       - It uses the "clinicControllerResolver" bean below for method name resolution.
       -->
+
+    <bean id="MotifSearchController" class="org.genedb.web.mvc.controller.analysis.MotifSearchController">
+    </bean>
+
     <bean id="HistoryController"
       class="org.genedb.web.mvc.controller.HistoryController">
         <property name="methodNameResolver"
