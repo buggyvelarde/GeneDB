@@ -49,11 +49,12 @@ public class OutputManager {
             DownloadUtils.writeFasta(out, feature.getUniqueName(), feature.getResidues());
             return;
         case TRANSCRIPT:
-            List<Transcript> transcripts = feature.getLocatedChildrenByClass(Transcript.class);
+            List<Transcript> transcripts = null;//feature.getLocatedChildrenByClass(Transcript.class);
             for (Transcript transcript : transcripts) {
                 DownloadUtils.writeFasta(out, feature.getUniqueName(), feature.getResidues());
             }
             return;
+        }
 
     }
 

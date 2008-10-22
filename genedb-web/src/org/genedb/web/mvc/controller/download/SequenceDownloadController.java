@@ -61,8 +61,7 @@ public class SequenceDownloadController {
             out = new PrintWriter(writer);
         }
 
-        OutputManager om = new OutputManager();
-        om.setOutputFormat(outputFormat);
+        OutputManager om = new OutputManager(outputFormat, OutputContent.ALL);
 
 
         HttpServletResponse hsr = (HttpServletResponse) nwr.getNativeResponse();
