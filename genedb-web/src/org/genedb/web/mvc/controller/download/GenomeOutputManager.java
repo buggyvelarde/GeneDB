@@ -28,7 +28,7 @@ public class GenomeOutputManager {
 
         OutputManager outputManager = new OutputManager(of, OutputContent.ALL);
 
-        List<TopLevelFeature> topLevelFeatures = organism.getTopLevelFeatures();
+        List<TopLevelFeature> topLevelFeatures = null;//organism.getTopLevelFeatures();
         for (TopLevelFeature topLevelFeature : topLevelFeatures) {
             outputManager.write(topLevelFeature, pw);
         }
@@ -40,7 +40,7 @@ public class GenomeOutputManager {
         }
         OutputManager outputManager = new OutputManager(of, OutputContent.ALL);
 
-        List<TopLevelFeature> topLevelFeatures = organism.getTopLevelFeatures();
+        List<TopLevelFeature> topLevelFeatures = null;//organism.getTopLevelFeatures();
         for (TopLevelFeature topLevelFeature : topLevelFeatures) {
             File out = new File(outputDir, topLevelFeature.getUniqueName());
             PrintWriter pw = new PrintWriter(new FileWriter(out));
