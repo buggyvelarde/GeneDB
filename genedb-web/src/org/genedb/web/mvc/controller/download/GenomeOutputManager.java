@@ -26,7 +26,7 @@ public class GenomeOutputManager {
             return;
         }
 
-        OutputManager outputManager = new OutputManager(of);
+        OutputManager outputManager = new OutputManager(of, OutputContent.ALL);
 
         List<TopLevelFeature> topLevelFeatures = organism.getTopLevelFeatures();
         for (TopLevelFeature topLevelFeature : topLevelFeatures) {
@@ -38,7 +38,7 @@ public class GenomeOutputManager {
         if (!goodOutputFormat(of)) {
             return;
         }
-        OutputManager outputManager = new OutputManager(of);
+        OutputManager outputManager = new OutputManager(of, OutputContent.ALL);
 
         List<TopLevelFeature> topLevelFeatures = organism.getTopLevelFeatures();
         for (TopLevelFeature topLevelFeature : topLevelFeatures) {
