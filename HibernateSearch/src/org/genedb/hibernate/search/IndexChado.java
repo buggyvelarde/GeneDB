@@ -226,7 +226,6 @@ public class IndexChado {
             thisBatch.add(feature.getFeatureId());
 
             boolean failed = false;
-            logger.debug(String.format("Feature start is %d", feature.getStart()));
             try {
                 logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
                     feature.getClass()));
