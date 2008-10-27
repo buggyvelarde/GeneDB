@@ -1,0 +1,15 @@
+<!DOCTYPE aspectj PUBLIC
+"-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+
+<!--  Tell the AspectJ weaver that we only want to weave the loader classes.
+
+      If we do not have this, it will weave the genedb-db classes (which have
+      already been subjected to build-time weaving) and we'll get a VerifyError
+      at run-time.
+  -->
+
+<aspectj>
+<weaver>
+  <include within="org.genedb.db.loading.*"/>
+</weaver>
+</aspectj>

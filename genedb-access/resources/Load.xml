@@ -9,9 +9,9 @@
 
     <context:component-scan base-package="org.gmod.schema"/>
     <context:spring-configured/>
+    <context:load-time-weaver aspectj-weaving="on"/>
+    <tx:annotation-driven mode="aspectj"/>
 
-
-    <tx:annotation-driven/>
     <!-- Spring needs a bean called 'transactionManager' for annotation-driven transactions -->
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />

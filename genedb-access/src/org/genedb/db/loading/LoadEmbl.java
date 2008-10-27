@@ -64,7 +64,7 @@ public class LoadEmbl extends FileProcessor {
         String inputDirectory = getRequiredProperty("load.inputDirectory");
         String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.embl(?:\\.gz)?");
         String overwriteExisting = getPropertyWithDefault("load.overwriteExisting", "no").toLowerCase();
-        String topLevelFeatureType = getPropertyWithDefault("load.topLevel", "supercontig");
+        String topLevelFeatureType = getRequiredProperty("load.topLevel");
         boolean sloppyControlledCuration = hasProperty("load.sloppyControlledCuration");
 
         logger.info(String.format("Options: organismCommonName=%s, inputDirectory=%s, fileNamePattern=%s," +

@@ -20,6 +20,8 @@ import org.gmod.schema.feature.Pseudogene;
 import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.RRNA;
 import org.gmod.schema.feature.RepeatRegion;
+import org.gmod.schema.feature.SnRNA;
+import org.gmod.schema.feature.SnoRNA;
 import org.gmod.schema.feature.Supercontig;
 import org.gmod.schema.feature.TRNA;
 import org.gmod.schema.feature.ThreePrimeUTR;
@@ -62,7 +64,6 @@ import java.util.regex.Pattern;
  * @author rh11
  *
  */
-@Transactional(rollbackFor=DataError.class) // Will also rollback for runtime exceptions, by default
 class EmblLoader {
     private static final Logger logger = Logger.getLogger(EmblLoader.class);
 
@@ -166,47 +167,27 @@ class EmblLoader {
      * @throws DataError if a data problem is discovered
      */
     public void load(EmblFile emblFile) throws DataError {
+        TopLevelFeature topLevelFeature;
+        try {
+            topLevelFeature = getTopLevelFeature(emblFile.getAccession());
+        } catch (TopLevelFeatureException e) {
+            logger.error(e.getMessage());
+            return;
+        }
+
+        doLoad(emblFile, topLevelFeature);
+    }
+
+
+    @Transactional(rollbackFor=DataError.class) // Will also rollback for runtime exceptions, by default
+    private void doLoad(EmblFile emblFile, TopLevelFeature topLevelFeature) throws DataError {
         /*
-         * Thanks to the @Transactional annotation on this class,
+         * Thanks to the @Transactional annotation,
          * Spring will automatically initiate a transaction when
          * we're called, which will be committed on successful
          * return or rolled back if we throw an exception.
          */
-
         this.session = SessionFactoryUtils.doGetSession(sessionFactory, false);
-        Feature existingTopLevelFeature = (Feature) session.createCriteria(Feature.class)
-            .add(Restrictions.eq("organism", organism))
-            .add(Restrictions.eq("uniqueName", emblFile.getAccession()))
-            .uniqueResult();
-
-        TopLevelFeature topLevelFeature = null;
-
-        if (existingTopLevelFeature != null) {
-            switch (overwriteExisting) {
-            case YES:
-                logger.trace(String.format("Deleting existing feature '%s' (ID=%d)",
-                    existingTopLevelFeature.getUniqueName(), existingTopLevelFeature.getFeatureId()));
-
-                existingTopLevelFeature.delete();
-                break;
-            case NO:
-                logger.error(String.format("The organism '%s' already has feature '%s'",
-                    organism.getCommonName(), emblFile.getAccession()));
-                return;
-            case MERGE:
-                if (existingTopLevelFeature instanceof TopLevelFeature) {
-                    topLevelFeature = (TopLevelFeature) existingTopLevelFeature;
-                } else {
-                    logger.error(String.format("We can't merge onto the feature '%s', because it's not a top-level feature",
-                        existingTopLevelFeature.getUniqueName()));
-                    return;
-                }
-                break;
-            }
-        } else if (overwriteExisting == OverwriteExisting.MERGE) {
-            logger.error(String.format("Cannot MERGE because feature '%s' does not exist", emblFile.getAccession()));
-            return;
-        }
 
         synonymManager.startSession(session);
         taxonomicDivision = emblFile.getTaxonomicDivision();
@@ -218,6 +199,8 @@ class EmblLoader {
             topLevelFeature.markAsTopLevelFeature();
             topLevelFeature.setResidues(emblFile.getSequence());
             session.persist(topLevelFeature);
+        } else {
+            topLevelFeature = (TopLevelFeature) session.merge(topLevelFeature);
         }
 
         init(topLevelFeature);
@@ -226,6 +209,65 @@ class EmblLoader {
             loadContigsAndGaps(contigLocations);
         }
         loadFeatures(emblFile.getFeatureTable());
+    }
+
+    /**
+     * This exception is thrown by the <code>getTopLevelFeature</code> method
+     *
+     * @author rh11
+     *
+     */
+    private static class TopLevelFeatureException extends Exception {
+        public TopLevelFeatureException(String message) {
+            super(message);
+        }
+    }
+
+    /**
+     * Get the top-level feature onto which we should add our features, based on
+     * the <code>overwriteExisting</code> policy. In the commonest case, overwriteExisting
+     * will have its default value of <code>NO</code>, and this method will either return
+     * </code>null</code> if the feature doesn't already exist or throw an exception if it
+     * does.
+     *
+     * @param uniqueName the unique name of the top-level feature we are loading
+     * @return the existing top-level feature to use, or <code>null</code> if we should create a new one.
+     * @throws TopLevelFeatureException if there is a problem; i.e. the feature exists when it shouldn't,
+     *                  or fails to exist (or isn't a top-level feature) when it should.
+     */
+    @Transactional(rollbackFor=TopLevelFeatureException.class) // Will also rollback for runtime exceptions, by default
+    private TopLevelFeature getTopLevelFeature(String uniqueName)
+            throws TopLevelFeatureException {
+
+        Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
+        Feature existingTopLevelFeature = (Feature) session.createCriteria(Feature.class)
+            .add(Restrictions.eq("organism", organism))
+            .add(Restrictions.eq("uniqueName", uniqueName))
+            .uniqueResult();
+
+        if (existingTopLevelFeature != null) {
+            switch (overwriteExisting) {
+            case YES:
+                logger.trace(String.format("Deleting existing feature '%s' (ID=%d)",
+                    existingTopLevelFeature.getUniqueName(), existingTopLevelFeature.getFeatureId()));
+
+                existingTopLevelFeature.delete();
+                break;
+            case NO:
+                throw new TopLevelFeatureException(String.format("The organism '%s' already has feature '%s'",
+                    organism.getCommonName(), uniqueName));
+            case MERGE:
+                if (existingTopLevelFeature instanceof TopLevelFeature) {
+                    return (TopLevelFeature) existingTopLevelFeature;
+                } else {
+                    throw new TopLevelFeatureException(String.format("We can't merge onto the feature '%s', because it's not a top-level feature",
+                        existingTopLevelFeature.getUniqueName()));
+                }
+            }
+        } else if (overwriteExisting == OverwriteExisting.MERGE) {
+            throw new TopLevelFeatureException(String.format("Cannot MERGE because feature '%s' does not exist", uniqueName));
+        }
+        return null;
     }
 
     private String taxonomicDivision;
@@ -342,11 +384,20 @@ class EmblLoader {
         else if (featureType.equals("rRNA")) {
             loadRRNA(feature);
         }
+        else if (featureType.equals("snRNA")) {
+            loadSnRNA(feature);
+        }
+        else if (featureType.equals("snoRNA")) {
+            loadSnoRNA(feature);
+        }
         else if (featureType.equals("misc_RNA")) {
             loadNcRNA(feature);
         }
         else if (featureType.equals("3'UTR") || featureType.equals("5'UTR")) {
             utrs.add(feature);
+        }
+        else if (featureType.equals("LTR")) {
+            // TODO
         }
         else {
             logger.warn(String.format("Ignoring '%s' feature on line %d", featureType, feature.lineNumber));
@@ -419,7 +470,6 @@ class EmblLoader {
             return isPseudo ? Pseudogene.class : Gene.class;
         }
 
-        protected abstract void processTranscriptQualifiers() throws DataError;
         protected abstract Class<? extends Transcript> getTranscriptClass();
 
         protected String getTranscriptType() {
@@ -526,8 +576,8 @@ class EmblLoader {
         }
 
         /**
-         * For each <code>/&lt;qualifierName&gt;</code> qualifier, add a property of type
-         * <code>synonymType</code> to the polypeptide, if there is one, or else to the
+         * For each <code>/&lt;qualifierName&gt;</code> qualifier, add a property of
+         * the specified type to the polypeptide, if there is one, or else to the
          * transcript.
          *
          * @param qualifierName the qualifier name
@@ -538,7 +588,7 @@ class EmblLoader {
          *          If it belongs to the <code>genedb_misc</code> CV, it should be a child of
          *          the term <code>genedb_misc:feature_props</code>.
          */
-        protected void processPropertyQualifiers(String qualifierName, String propertyCvName, String propertyTermName) {
+        protected void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName) {
             int rank = 0;
             for(String qualifierValue: feature.getQualifierValues(qualifierName)) {
                 logger.debug(String.format("Adding %s:%s '%s' for transcript",
@@ -547,12 +597,12 @@ class EmblLoader {
             }
         }
 
-        protected void processCvTermQualifiers(String qualifierName, String cvName, boolean createTerms)
-        throws DataError {
-            processCvTermQualifiers(qualifierName, cvName, createTerms, null);
+        protected void processCvTermQualifier(String qualifierName, String cvName, boolean createTerms)
+                throws DataError {
+            processCvTermQualifier(qualifierName, cvName, createTerms, null);
         }
 
-        protected void processCvTermQualifiers(String qualifierName, String cvName,
+        protected void processCvTermQualifier(String qualifierName, String cvName,
                 boolean createTerms, TermNormaliser termNormaliser)
                 throws DataError {
             List<String> terms = feature.getQualifierValues(qualifierName);
@@ -588,7 +638,7 @@ class EmblLoader {
         private Pattern subqualifierPattern = Pattern.compile("\\G\\s*([^=]+)=\\s*([^;]*)\\s*(?:;|\\z)");
 
         protected void processCuration() throws DataError {
-            processPropertyQualifiers("curation", "genedb_misc", "curation");
+            processPropertyQualifier("curation", "genedb_misc", "curation");
 
             if (sloppyControlledCuration) {
                 processControlledCurationSloppy();
@@ -681,6 +731,49 @@ class EmblLoader {
                 focalFeature.addDbXRef(dbXRef);
             }
         }
+
+        /**
+         * Use the qualifiers of the CDS feature to add various bits of annotation
+         * to the transcript (or to the polypeptide, if there is one). Specifically,
+         * add synonyms, properties and products.
+         */
+        protected void processTranscriptQualifiers() throws DataError {
+
+            addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
+            addTranscriptSynonymsFromQualifier("previous_systematic_id", "systematic_id", false);
+            addTranscriptSynonymsFromQualifier("systematic_id", "systematic_id", true);
+            addTranscriptSynonymsFromQualifier("temporary_systematic_id", "temporary_systematic_id", true);
+
+            processPropertyQualifier("note",     "feature_property", "comment");
+            for (String name: qualifierProperties) {
+                processPropertyQualifier(name, "genedb_misc", name);
+            }
+
+            processCvTermQualifier("class", "RILEY", false, normaliseRileyNumber);
+            processCvTermQualifier("product", "genedb_products", true);
+
+            if (taxonomicDivision.equals("PRO")) {
+                // Bacteria don't have splicing, so a CDS feature is a gene and
+                // a transcript and that is the end of it. One or more /gene
+                // qualifiers may be used to indicate synonyms.
+                addTranscriptSynonymsFromQualifier("gene", "synonym", true);
+            }
+
+            processCuration();
+        }
+    }
+
+    /**
+     * A list of the qualifiers that correspond directly to similarly-named
+     * properties in the <code>genedb_misc</code> CV.
+     */
+    private static final List<String> qualifierProperties = new ArrayList<String>();
+    static {
+        Collections.addAll(qualifierProperties,
+            "method", "colour", "status",
+            "blast_file", "blastn_file", "blastp+go_file", "blastp_file",
+            "blastx_file", "fasta_file", "fastx_file", "tblastn_file",
+            "tblastx_file", "clustalx_file", "sigcleave_file", "pepstats_file");
     }
 
     class CDSLoader extends GeneLoader {
@@ -720,37 +813,6 @@ class EmblLoader {
             }
         }
 
-        /**
-         * Use the qualifiers of the CDS feature to add various bits of annotation
-         * to the transcript (or to the polypeptide, if there is one). Specifically,
-         * add synonyms, properties and products.
-         */
-        @Override
-        protected void processTranscriptQualifiers() throws DataError {
-
-            addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
-            addTranscriptSynonymsFromQualifier("previous_systematic_id", "systematic_id", false);
-            addTranscriptSynonymsFromQualifier("systematic_id", "systematic_id", true);
-            addTranscriptSynonymsFromQualifier("temporary_systematic_id", "temporary_systematic_id", true);
-
-            processPropertyQualifiers("note",     "feature_property", "comment");
-            processPropertyQualifiers("method",     "genedb_misc",      "method");
-            processPropertyQualifiers("colour",     "genedb_misc",      "colour");
-            processPropertyQualifiers("status",     "genedb_misc",      "status");
-            processPropertyQualifiers("fasta_file", "genedb_misc",      "fasta_file");
-
-            processCvTermQualifiers("class", "RILEY", false, normaliseRileyNumber);
-            processCvTermQualifiers("product", "genedb_products", true);
-
-            if (taxonomicDivision.equals("PRO")) {
-                // Bacteria don't have splicing, so a CDS feature is a gene and
-                // a transcript and that is the end of it. One or more /gene
-                // qualifiers may be used to indicate synonyms.
-                addTranscriptSynonymsFromQualifier("gene", "synonym", true);
-            }
-
-            processCuration();
-        }
 
         @Override
         protected Class<? extends Transcript> getTranscriptClass() {
@@ -760,7 +822,7 @@ class EmblLoader {
 
     /**
      * Convert the qualifier value into a canonical form before treating it as
-     * a term name. What this means will depend
+     * a term name. What this means will depend on the specific normalizer used.
      */
     private static interface TermNormaliser {
         public String normalise(String term) throws DataError;
@@ -789,78 +851,18 @@ class EmblLoader {
     }
 
 
-    /* tRNA */
-    private int syntheticTRNAIndex = 1;
-    private class TRNALoader extends GeneLoader {
-
-        public TRNALoader(FeatureTable.Feature feature) throws DataError {
-            super(feature);
-
-            geneUniqueName = transcriptUniqueName = feature.getUniqueName(false);
-            if (geneUniqueName == null) {
-                geneUniqueName = transcriptUniqueName = makeSyntheticName();
-            }
-        }
-
-        private String makeSyntheticName() {
-            return String.format("%s_tRNA%d", topLevelFeature.getUniqueName(), syntheticTRNAIndex++);
-        }
-
-        @Override
-        protected void processTranscriptQualifiers() throws DataError {
-            processPropertyQualifiers("note",      "feature_property", "comment");
-            processPropertyQualifiers("anticodon", "feature_property", "anticodon");
-            processCvTermQualifiers("product", "genedb_products", true);
-        }
-
-        @Override
-        protected Class<? extends Transcript> getTranscriptClass() {
-            return TRNA.class;
-        }
-    }
-
-    private void loadTRNA(FeatureTable.Feature feature) throws DataError {
-        new TRNALoader(feature).load();
-    }
-
-
-    /* rRNA */
-    private int syntheticRRNAIndex = 1;
-    private class RRNALoader extends GeneLoader {
-        public RRNALoader(FeatureTable.Feature feature) throws DataError {
-            super(feature);
-
-            geneUniqueName = transcriptUniqueName = feature.getUniqueName(false);
-            if (geneUniqueName == null) {
-                geneUniqueName = transcriptUniqueName = makeSyntheticName();
-            }
-        }
-
-        private String makeSyntheticName() {
-            return String.format("%s_rRNA%d", topLevelFeature.getUniqueName(), syntheticRRNAIndex++);
-        }
-
-        @Override
-        protected void processTranscriptQualifiers() throws DataError {
-            processPropertyQualifiers("note",      "feature_property", "comment");
-            processCvTermQualifiers("product", "genedb_products", true);
-        }
-
-        @Override
-        protected Class<? extends Transcript> getTranscriptClass() {
-            return RRNA.class;
-        }
-    }
-    private void loadRRNA(FeatureTable.Feature feature) throws DataError {
-        new RRNALoader(feature).load();
-    }
-
-
-    /* ncRNA (from misc_RNA features) */
-    private int syntheticNcRNAIndex = 1;
+    /* Loader for non-coding RNA features */
+    private Map<String,Integer> syntheticNcRNAIndexByType = new HashMap<String,Integer>();
     private class NcRNALoader extends GeneLoader {
-        public NcRNALoader(FeatureTable.Feature feature) throws DataError {
+        private Class<? extends NcRNA> transcriptClass;
+        private String type;
+        public NcRNALoader(Class<? extends NcRNA> transcriptClass, String type,
+                FeatureTable.Feature feature)
+            throws DataError
+        {
             super(feature);
+            this.transcriptClass = transcriptClass;
+            this.type = type;
 
             geneUniqueName = transcriptUniqueName = feature.getUniqueName(false);
             if (geneUniqueName == null) {
@@ -869,13 +871,22 @@ class EmblLoader {
         }
 
         private String makeSyntheticName() {
-            return String.format("%s_ncRNA%d", topLevelFeature.getUniqueName(), syntheticNcRNAIndex++);
+            if (syntheticNcRNAIndexByType.containsKey(type)) {
+                syntheticNcRNAIndexByType.put(type, 1 + syntheticNcRNAIndexByType.get(type));
+            } else {
+                syntheticNcRNAIndexByType.put(type, 1);
+            }
+            return String.format("%s_%s%d",
+                topLevelFeature.getUniqueName(), type, syntheticNcRNAIndexByType.get(type));
         }
 
         @Override
         protected void processTranscriptQualifiers() throws DataError {
-            processPropertyQualifiers("note",  "feature_property", "comment");
-            processCvTermQualifiers("product", "genedb_products", true);
+            processPropertyQualifier("note",  "feature_property", "comment");
+            if (TRNA.class.isAssignableFrom(transcriptClass)) {
+                processPropertyQualifier("anticodon", "feature_property", "anticodon");
+            }
+            processCvTermQualifier("product", "genedb_products", true);
 
             if (taxonomicDivision.equals("PRO")) {
                 // Bacteria don't have splicing, so a CDS feature is a gene and
@@ -889,11 +900,23 @@ class EmblLoader {
 
         @Override
         protected Class<? extends Transcript> getTranscriptClass() {
-            return NcRNA.class;
+            return transcriptClass;
         }
     }
     private void loadNcRNA(FeatureTable.Feature feature) throws DataError {
-        new NcRNALoader(feature).load();
+        new NcRNALoader(NcRNA.class, "ncRNA", feature).load();
+    }
+    private void loadRRNA(FeatureTable.Feature feature) throws DataError {
+        new NcRNALoader(RRNA.class, "rRNA", feature).load();
+    }
+    private void loadTRNA(FeatureTable.Feature feature) throws DataError {
+        new NcRNALoader(TRNA.class, "tRNA", feature).load();
+    }
+    private void loadSnRNA(FeatureTable.Feature feature) throws DataError {
+        new NcRNALoader(SnRNA.class, "snRNA", feature).load();
+    }
+    private void loadSnoRNA(FeatureTable.Feature feature) throws DataError {
+        new NcRNALoader(SnoRNA.class, "snoRNA", feature).load();
     }
 
 
@@ -970,7 +993,7 @@ class EmblLoader {
 
         /*
          * We cannot set the DAOs of the objectManager
-         * directly in FileProcessor.xml, because that creates a circular
+         * directly in Load.xml, because that creates a circular
          * reference that (understandably) causes Spring to
          * throw a tantrum. Thus we inject them into
          * here, and pass them to the ObjectManager after Spring

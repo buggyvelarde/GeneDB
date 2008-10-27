@@ -26,7 +26,9 @@
       <path location="${lib-dir}/spring-aspects.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.4/asm/asm-2.2.3.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjweaver.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
+      <path location="${lib-dir}/spring-2.5.4-weaving/spring-aspects.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
@@ -170,6 +172,7 @@
     <target name="run-specific-loader-test">
         <antcall target="copy-skeleton-database"/>
         <junit printsummary="yes" haltonfailure="yes" fork="true" maxmemory="256M">
+            <jvmarg value="-javaagent:${lib-dir}/spring-2.5.4-weaving/spring-agent.jar"/>
             <classpath refid="test-classpath"/>
             <formatter type="brief" usefile="false" />
             <test name="org.genedb.db.loading.EmblLoader${subtest}Test"/>
@@ -220,6 +223,17 @@
     </target>
 
     <target name="reload-embl" depends="delete-organism,load-embl"/>
+
+    <target name="load-orthologues" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadOrthologues">
+            <sysproperty key="load.organismCommonName" value="${organism}"/>
+            <sysproperty key="load.inputDirectory" value="${file}"/>
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <jvmarg line="-Xmx256M"/>
+        </java>
+    </target>
 
     <target name="load-vulgar" depends="genedb-access.jar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadVulgar">
