@@ -22,6 +22,8 @@ import org.hibernate.search.event.FullTextIndexEventListener;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import java.io.Console;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,8 +33,24 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+/**
+ * Create Lucene indices.
+ * <p>
+ * The way it works is as follows. Each indexed feature type is treated in turn; currently
+ * the classes <code>AbstractGene</code>, <code>Transcript</code>, <code>UTR</code> and <code>Gap</code>
+ * are indexed (in that order). For each type, all features of that type are loaded and indexed
+ * in batches of 10.
+ * If an exception is thrown while indexing a particular feature, the exception is caught and
+ * the whole batch will fail.
+ * The members of the failed batch are then put into a queue. When all batches of the relevant type
+ * have been processed, the queued members of failed batches are indexed individually. If a feature
+ * fails this time, that means it cannot be indexed (due to bad data, or a bug in the code).
+ * An error is logged.
+ *
+ * @author rh11
+ */
 public class IndexChado {
-    private static Logger logger = Logger.getLogger(IndexChado.class);
+    private static final Logger logger = Logger.getLogger(IndexChado.class);
 
     private static void die(String message) {
         System.err.println(message);
@@ -45,6 +63,20 @@ public class IndexChado {
      * high, we run out of heap space.
      */
     private static final int BATCH_SIZE = 10;
+
+    /**
+     * Which types of feature to index.
+     */
+    private static final Collection<Class<? extends Feature>> INDEXED_CLASSES
+        = new ArrayList<Class<? extends Feature>>();
+    static {
+        INDEXED_CLASSES.add(AbstractGene.class);
+        INDEXED_CLASSES.add(Transcript.class);
+        INDEXED_CLASSES.add(UTR.class);
+        INDEXED_CLASSES.add(Gap.class);
+        // Add feature types here, if a new type of feature should be indexed.
+        // Don't forget to update the class doc comment!
+    };
 
     private String databaseUrl;
     private String databaseUsername;
@@ -231,7 +263,7 @@ public class IndexChado {
                     feature.getClass()));
                 session.index(feature);
             } catch (Exception e) {
-                logger.error("Batch failed", e);
+                logger.warn("Batch failed", e);
                 failed = true;
             }
 
@@ -267,7 +299,7 @@ public class IndexChado {
                 session.index(feature);
                 logger.debug("Feature successfully indexed");
             } catch (Exception e) {
-                logger.info(String.format("Failed to index feature '%s' on the second attempt",
+                logger.error(String.format("Failed to index feature '%s' on the second attempt",
                     feature.getUniqueName()), e);
             }
             session.clear();
@@ -277,6 +309,15 @@ public class IndexChado {
     }
 
 
+    /**
+     * If a command-line argument is passed, it should specify a number of batches.
+     * For each feature type, just that many batches are indexed. This is useful for
+     * rapid testing: for example if you have changed the structure of the index and
+     * want to see whether the resulting indices look plausible. It is not useful for
+     * anything else, as far as I know.
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         // The numBatches argument is only useful for quick-and-dirty testing
         int numBatches = -1;
@@ -286,10 +327,8 @@ public class IndexChado {
             throw new IllegalArgumentException("Unexpected command-line arguments");
 
         IndexChado indexer = IndexChado.configuredWithSystemProperties();
-
-        indexer.indexFeatures(AbstractGene.class, numBatches);
-        indexer.indexFeatures(Transcript.class, numBatches);
-        indexer.indexFeatures(UTR.class, numBatches);
-        indexer.indexFeatures(Gap.class, numBatches);
+        for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
+            indexer.indexFeatures(featureClass, numBatches);
+        }
     }
 }
