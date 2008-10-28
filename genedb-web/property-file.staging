@@ -14,3 +14,4 @@ emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
 
 baseDiagramDirectory=/tmp
+baseUri=/gi
