@@ -13,5 +13,5 @@ proteinMap.render.directory=/includes/images/pmap
 emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
 
-baseDiagramDirectory=/tmp
-baseUri=/gi
+baseDiagramDirectory=/software/pathogen/projects/genedb/staging/external/apache-tomcat-6.0.18/webapps/ROOT
+baseUri=/
