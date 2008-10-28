@@ -1,5 +1,5 @@
-finaldest.webapps=/software/pathogen/projects/genedb/snapshot/external/apache-tomcat-6.0.18/webapps/ROOT
-webAppRootKey=genedb.snapshot.root
+finaldest.webapps=/software/pathogen/projects/genedb/staging/external/apache-tomcat-6.0.18/webapps/ROOT
+webAppRootKey=genedb.staging.root
 
 dbhost=pathdbsrv1-dmz
 dbport=5432
