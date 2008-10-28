@@ -12,3 +12,6 @@ contextMap.render.directory=/includes/images/cmap
 proteinMap.render.directory=/includes/images/pmap
 emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
+
+baseDiagramDirectory=/software/pathogen/projects/genedb/snapshot/external/apache-tomcat-6.0.16/webapps/ROOT
+baseUri=/
