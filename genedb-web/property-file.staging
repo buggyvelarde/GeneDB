@@ -1,4 +1,4 @@
-finaldest.webapps=/software/pathogen/projects/genedb/staging/external/apache-tomcat-6.0.18/webapps/ROOT
+finaldest.webapps=/nfs/pathsoft/projects/genedb/webapps/staging/ROOT
 webAppRootKey=genedb.staging.root
 
 dbhost=pathdbsrv1-dmz
@@ -13,5 +13,5 @@ proteinMap.render.directory=/includes/images/pmap
 emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
 
-baseDiagramDirectory=/software/pathogen/projects/genedb/staging/external/apache-tomcat-6.0.18/webapps/ROOT
+baseDiagramDirectory=/nfs/pathsoft/projects/genedb/webapps/staging/ROOT
 baseUri=/
