@@ -101,8 +101,8 @@
          </div>
         <div style="clear: both; margin-top: 1ex;">
             Show region in
-            <a href="ArtemisLaunch?organism=${organism}&chromosome=${dto.topLevelFeatureUniqueName}&start=${dto.min}&end=${dto.max}">Artemis</a>,
-            GBrowse
+            <a href="ArtemisLaunch?organism=${organism}&chromosome=${dto.topLevelFeatureUniqueName}&start=${dto.min}&end=${dto.max}"><img src="<c:url value="/" />includes/images/launchArtemis.gif"></a>,
+            <img src="<c:url value="/" />includes/images/launchGBrowse.gif">
          </div>
     </format:genePageSection>
 </div>
