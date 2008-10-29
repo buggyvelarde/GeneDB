@@ -43,7 +43,7 @@
             var attributes = {
                   height: { to: 150 }
                   };
-            var anim = new YAHOO.util.Anim('advancedSearch', attributes, 0.3s);
+            var anim = new YAHOO.util.Anim('advancedSearch', attributes, 0.3);
             anim.animate();
             dom.setStyle(div, "overflow", "visible");
             dom.setStyle(div, "border", "1px solid grey");
@@ -57,7 +57,7 @@
       var attributes = {
               height: { to: 0 }
         };
-       var anim = new YAHOO.util.Anim('advancedSearch', attributes, 0.3s);
+       var anim = new YAHOO.util.Anim('advancedSearch', attributes, 0.3);
        anim.animate();
         }
 
