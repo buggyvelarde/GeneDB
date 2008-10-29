@@ -61,7 +61,7 @@ public class SequenceDao extends BaseDao {
 
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
-            "from Feature where uniqueName=:name and cvTerm.name=:featureType",
+            "from Feature where uniqueName=:name and type.name=:featureType",
             new String[] { "name", "featureType" }, new Object[] { uniqueName, featureType });
 
         if (features.size() > 0) {
