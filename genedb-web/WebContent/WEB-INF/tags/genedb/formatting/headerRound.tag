@@ -41,10 +41,9 @@
             var dom = YAHOO.util.Dom;
             var div = dom.get("advancedSearch");
             var attributes = {
-                  height: { to: 150 },
-                  duration: 0.1
+                  height: { to: 150 }
                   };
-            var anim = new YAHOO.util.Anim('advancedSearch', attributes);
+            var anim = new YAHOO.util.Anim('advancedSearch', attributes, 0.3s);
             anim.animate();
             dom.setStyle(div, "overflow", "visible");
             dom.setStyle(div, "border", "1px solid grey");
@@ -56,11 +55,10 @@
       dom.setStyle(div, "overflow", "hidden");
       dom.setStyle(div, "border", "");
       var attributes = {
-              height: { to: 0 },
-              duration: 0.1
+              height: { to: 0 }
         };
-       var anim = new YAHOO.util.Anim('advancedSearch', attributes);
-      anim.animate();
+       var anim = new YAHOO.util.Anim('advancedSearch', attributes, 0.3s);
+       anim.animate();
         }
 
     </script>
@@ -158,7 +156,7 @@
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinNumTM"/>" title="ProteinLength Search">By No. TM domains</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Motif Search --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/MotifSearch"/>" title="Motif Search">Motif Search</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/MotifSearch"/>" title="Motif Search">Motif Search</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Targeting Sequence --%>
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinTargetingSeq"/>" title="ProteinLength Search">By Targetting Seqs.</a>
