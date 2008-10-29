@@ -42,7 +42,7 @@
             var div = dom.get("advancedSearch");
             var attributes = {
                   height: { to: 150 },
-                  duration: 0.5
+                  duration: 0.1
                   };
             var anim = new YAHOO.util.Anim('advancedSearch', attributes);
             anim.animate();
@@ -57,7 +57,7 @@
       dom.setStyle(div, "border", "");
       var attributes = {
               height: { to: 0 },
-              duration: 0.5
+              duration: 0.1
         };
        var anim = new YAHOO.util.Anim('advancedSearch', attributes);
       anim.animate();
