@@ -94,7 +94,7 @@
 
     <format:genePageSection id="analysisTools" className="whiteBox">
         <div style="clear: both; margin-top: 1ex;">
-             <a href="<c:url value="/" />NamedFeature?name=${dto.uniqueName}&addToBasket=true&geneDetails=true">Add gene to basket</a>
+            <format:moveToBasket uniqueName="${dto.uniqueName}" />
          </div>
         <div style="clear: both; margin-top: 1ex;">
              <a href="<c:url value="/" />FeatureSequence?name=${dto.uniqueName}&seqs=true">View/analyze/ download sequence</a>
