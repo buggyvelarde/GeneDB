@@ -22,13 +22,13 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Min mass:</td>
+                  <td>Min location:</td>
                   <td>
                     <form:input id="minLocation" path="min"/>
                   </td>
                 </tr>
                 <tr>
-                  <td>Max mass:</td>
+                  <td>Max location:</td>
                   <td>
                     <form:input id="maxLocation" path="max"/>
                   </td>
