@@ -88,9 +88,11 @@ public class FixResidues {
         FixResidues fr = new FixResidues(verbose);
         if (i == args.length)
             fr.fixAll();
-        else
+        else {
+            System.out.printf("i=%d, args.length=%d%n", i, args.length);
             for (; i < args.length; i++)
                 fr.fixOrganismByName(args[i]);
+        }
     }
 
 
@@ -125,12 +127,15 @@ public class FixResidues {
     }
 
     private void fixOrganismByName(String organismName) throws SQLException {
+        System.out.printf("Attempting to fix '%s'%n", organismName);
         for (Organism organism: getOrganisms(conn)) {
             if (!organism.commonName.equals(organismName))
                 continue;
 
             fixOrganism(organism);
+            return;
         }
+        throw new IllegalArgumentException(String.format("Could not find organism '%s'", organismName));
     }
 
     private List<Organism> getOrganisms(Connection conn) throws SQLException {
@@ -203,6 +208,7 @@ public class FixResidues {
             +"     from feature gene"
             +"     join featureloc geneloc using (feature_id)"
             +"     where gene.type_id in (?, ?)"
+            +"     and geneloc.locgroup = 0"
             +" ) gene_srcfeature using (feature_id)"
             +" where toplevel.organism_id = ?",
             ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
