@@ -19,19 +19,19 @@ function initDownload(base,history) {
         this.myDataSource.responseSchema = {
             fields: ["organism.commonName","uniqueName","synonym","chr","locs","product","sequence"]
         }	;
-        
-        var oConfigs = {   
+
+        var oConfigs = {
 	                id:"download-list",
         			draggableColumns:true,
 	                width: 600
-	        }; 	 
-        		
+	        };
+
         var myDT = this.myDataTable = new YAHOO.widget.DataTable("download", myColumnDefs,
                 this.myDataSource,oConfigs );
-        
+
         YAHOO.widget.DataTable.MSG_EMPTY = "";
         myDT.hideTableMessage();
-        
+
         function onClick(e) {
         	var value = this.get("id");
         	var column = myDT.getColumn(value);
@@ -51,9 +51,9 @@ function initDownload(base,history) {
         		myDT.hideColumn(column);
         	}
         }
-        
+
         var sequenceType;
-        
+
         function onMenuItemClick(p_sType, p_aArgs, p_oValue) {
         	for (var i=0; i<seqMenu.getItems().length;i++) {
         		seqMenu.getItem(i).cfg.setProperty("checked",false);
@@ -61,59 +61,59 @@ function initDownload(base,history) {
         	this.cfg.setProperty("checked", true);
         	sequenceType = this.value;
         }
-        
-        
+
+
         makeDragDrop();
-        
+
         //Columns Show/ Hide Buttons
-        var organism = new YAHOO.widget.Button("organism.commonName", { label:"Organism" }); 
-        
-        /*var organism = new YAHOO.widget.Button({type: "checkbox", name:"Organism",label:"Organism",value:"organism", id:"organism.commonName",container: "buttons", 
+        var organism = new YAHOO.widget.Button("organism.commonName", { label:"Organism" });
+
+        /*var organism = new YAHOO.widget.Button({type: "checkbox", name:"Organism",label:"Organism",value:"organism", id:"organism.commonName",container: "buttons",
             checked: true});*/
-        
+
         organism.addListener("click", onClick);
         //new YAHOO.util.DD(organism);
-        
+
         var systematicId = new YAHOO.widget.Button("uniqueName", { label:"Systematic Id" });
-        
-        /*var systematicId = new YAHOO.widget.Button({type: "checkbox", name:"Systematic Id",label:"Systematic Id",value:"systematicId", id:"uniqueName", container: "buttons", 
+
+        /*var systematicId = new YAHOO.widget.Button({type: "checkbox", name:"Systematic Id",label:"Systematic Id",value:"systematicId", id:"uniqueName", container: "buttons",
             checked: true});*/
-        
+
         systematicId.addListener("click", onClick);
         //new YAHOO.util.DD(systematicId);
-        
+
         var synonym = new YAHOO.widget.Button("synonym", { label:"Synonym" });
-        
-        /*var synonym = new YAHOO.widget.Button({type: "checkbox", name:"Synonyms",label:"Synonyms",value:"synonym",id:"synonym", container: "buttons", 
+
+        /*var synonym = new YAHOO.widget.Button({type: "checkbox", name:"Synonyms",label:"Synonyms",value:"synonym",id:"synonym", container: "buttons",
             checked: true});*/
-        
+
         synonym.addListener("click", onClick);
         //new YAHOO.util.DD(synonym);
-        
+
         var chromosome = new YAHOO.widget.Button("chr", { label:"Chromosome" });
-        
-        /*var chromosome = new YAHOO.widget.Button({type: "checkbox", name:"Chromosome",label:"Chromosome",value:"chromosome",id:"chr", container: "buttons", 
+
+        /*var chromosome = new YAHOO.widget.Button({type: "checkbox", name:"Chromosome",label:"Chromosome",value:"chromosome",id:"chr", container: "buttons",
             checked: true});*/
-        
+
         chromosome.addListener("click", onClick);
         //new YAHOO.util.DD(chromosome);
-        
+
         var location = new YAHOO.widget.Button("locs", { label:"Location" });
-        
-        /*var location = new YAHOO.widget.Button({type: "checkbox", name:"Location",label:"Location",value:"location",id:"locs", container: "buttons", 
+
+        /*var location = new YAHOO.widget.Button({type: "checkbox", name:"Location",label:"Location",value:"location",id:"locs", container: "buttons",
             checked: true});*/
-        
+
         location.addListener("click", onClick);
         //new YAHOO.util.DD(location);
-        
+
         var product = new YAHOO.widget.Button("product", { label:"Product" });
-        
-        /*var product = new YAHOO.widget.Button({type: "checkbox", name:"Product",label:"Product",value:"product",id:"product", container: "buttons", 
+
+        /*var product = new YAHOO.widget.Button({type: "checkbox", name:"Product",label:"Product",value:"product",id:"product", container: "buttons",
             checked: true});*/
-        
+
         product.addListener("click", onClick);
         //new YAHOO.util.DD(product);
-        
+
         //sequence options
         /*var sequenceOptions = [
 
@@ -127,15 +127,15 @@ function initDownload(base,history) {
                              ];*/
         //var seqMenu = new YAHOO.widget.Menu('seqMenu');
         //seqMenu.addItems(sequenceOptions);
-        
+
         //var sequence = new YAHOO.widget.Button("sequence", { label:"sequence",menu:seqMenu, selectedMenuItem:0, disabled: true });
-        var sequence = new YAHOO.widget.Button("sequence", { type: "split",menu: "sequenceselect" }); 
-        /*var sequence = new YAHOO.widget.Button({type: "split", name:"Sequence",label:"Sequence",value:"sequence",id:"sequence", container: "sequence", 
+        var sequence = new YAHOO.widget.Button("sequence", { type: "split",menu: "sequenceselect" });
+        /*var sequence = new YAHOO.widget.Button({type: "split", name:"Sequence",label:"Sequence",value:"sequence",id:"sequence", container: "sequence",
             menu:seqMenu, selectedMenuItem:0, disabled: true});*/
         //new YAHOO.util.DD(sequence);
         //seqMenu.render();
         sequence.addListener("click", onClick);
-        
+
         function onOutputClick(e) {
         	var current = e.newValue;
         	var value = current.get("value");
@@ -148,39 +148,39 @@ function initDownload(base,history) {
                 myDT.hideColumn(myDT.getColumn("sequence"));
         	}
         }
-        
+
         //output format buttons
-        var outputButtonGroup = new YAHOO.widget.ButtonGroup({ 
-            id:  "buttongroup", 
-            name:  "outputFormat", 
+        var outputButtonGroup = new YAHOO.widget.ButtonGroup({
+            id:  "buttongroup",
+            name:  "outputFormat",
             container:  "outputFormat" });
 
 		outputButtonGroup.addButtons([
-		
+
 		{ type: "radio", label: "Tab-delimited file", value: "TAB", checked: true },
 		{ type: "radio", label: "CSV file", value: "CSV"},
-		{ type: "radio", label: "HTML Table", value: "HTML" },  
+		{ type: "radio", label: "HTML Table", value: "HTML" },
 		{ type: "radio", label: "Excel File", value: "EXCEL" },
 		{ type: "radio", label: "Fasta File", value: "FASTA" }
 		]);
-		
+
 		outputButtonGroup.addListener("checkedButtonChange",onOutputClick);
-		
+
 		//submit button
-		var submitButton = new YAHOO.widget.Button({ 
-            type: "submit", 
-            label: "Submit", 
-            id: "submitButton", 
-            name: "submitButton", 
-            value: "submit", 
+		var submitButton = new YAHOO.widget.Button({
+            type: "submit",
+            label: "Submit",
+            id: "submitButton",
+            name: "submitButton",
+            value: "submit",
             container: "submitButton" });
-		
+
 		submitButton.addListener("click",onSubmitClick);
-		
+
 		//div where the revolving image and html table are displayed
 		var div = document.getElementById('container');
-		
-		
+
+
 		var handleSuccess = function(o){
 			if(o.responseText !== undefined){
 				div.innerHTML = "";
@@ -207,19 +207,19 @@ function initDownload(base,history) {
 		  failure: handleFailure,
 		  argument: {}
 		};
-		
+
 		//array to hold colum keys and labels
 		var columns = new Array();
-		
+
 		//create table if output format is HTML Table
 		function createTable(initialRequest) {
-			
+
 			var myColumns = new Array();
 			var fields = new Array();
 			for(var i=0;i<columns.length;i++) {
 				var column = new YAHOO.widget.Column();
 				var key = columns[i][0];
-				
+
 				column.label = columns[i][1];
 				myColumns[i] = column;
 				if(key == "uniqueName") {
@@ -246,32 +246,32 @@ function initDownload(base,history) {
 	        		resultsList: "hits",
 	        		fields: fields
 	        }	;
-	        
-	        var configs = {   
+
+	        var configs = {
 		                id:"HTML-RESULTS",
-		                paginator: new YAHOO.widget.Paginator({ 
+		                paginator: new YAHOO.widget.Paginator({
 		                    rowsPerPage: 25,
 		                    template : "{FirstPageLink} {PreviousPageLink} <span>{CurrentPageReport}</span> {PageLinks} {NextPageLink}",
 		                    previousPageLinkLabel : '&lt;',
 		                    nextPageLinkLabel : '&gt;',
 		                    pageReportTemplate : 'Showing records <strong>{startRecord} - {endRecord}</strong> of {totalRecords}'
-		                }),  
+		                }),
 		                initialRequest: initialRequest,
 	        			draggableColumns:true,
 		                width: 600
-		        }; 	 
-	        		
+		        };
+
 	        var dataTable = this.myDataTable = new YAHOO.widget.DataTable("container", myColumns,
 	                this.dataSource,configs );
 		}
-		
+
 		//called when submit button is clicked
 		function onSubmitClick(e) {
 			var columnSet = myDT.getColumnSet();
 			var size = columnSet.keys.length;
 			var cols = "";
 			var j = 0;
-			
+
 			for(var i=0;i<size;i++) {
 				var column = columnSet.keys[i];
 				if(column.hidden == false) {
@@ -282,9 +282,9 @@ function initDownload(base,history) {
 					j++;
 				}
 			}
-			
+
 			var outputFormat;
-			
+
 			var bg = outputButtonGroup.getButtons();
 			for(j=0; j<bg.length;j++) {
 				var button = bg[j];
@@ -293,32 +293,33 @@ function initDownload(base,history) {
 					break;
 				}
 			}
-			
+
 			//send request
-			var initialRequest = "?json=true&historyItem=" + history + "&columns=" + cols + 
+			var initialRequest = "?json=true&historyItem=" + history + "&columns=" + cols +
 				  "&outputFormat=" + outputFormat;
-			
+
 			if(outputFormat == "FASTA") {
 				initialRequest += "&sequenceType=" + sequenceType;
 			}
-			
+
 			var url = base + "DownloadFeatures" + initialRequest;
 			div.innerHTML = "<img src=\"" + base  + "includes/YUI-2.5.2/assets/skins/sam/treeview-loading.gif\"></img>";
-			
+
 			if(history<=0) {
 				div.innerHTML = "History number cannot be less than or equal to zero.";
 			} else {
 				if(outputFormat == "HTML") {
 					createTable(initialRequest);
 				} else {
-					var request = YAHOO.util.Connect.asyncRequest('GET', url,callback);
+					window.location.replace(url);
+					//var request = YAHOO.util.Connect.asyncRequest('GET', url,callback);
 				}
 			}
 		}
-		
-		
+
+
     };
-} 
+}
 
 function makeDragDrop() {
 
@@ -357,14 +358,14 @@ function makeDragDrop() {
 
             // Show the proxy element and animate it to the src element's location
             Dom.setStyle(proxy, "visibility", "");
-            var a = new YAHOO.util.Motion( 
-                proxy, { 
-                    points: { 
+            var a = new YAHOO.util.Motion(
+                proxy, {
+                    points: {
                         to: Dom.getXY(srcEl)
                     }
-                }, 
-                0.2, 
-                YAHOO.util.Easing.easeOut 
+                },
+                0.2,
+                YAHOO.util.Easing.easeOut
             )
             var proxyid = proxy.id;
             var thisid = this.id;
@@ -384,10 +385,10 @@ function makeDragDrop() {
             if (DDM.interactionInfo.drop.length === 1) {
 
                 // The position of the cursor at the time of the drop (YAHOO.util.Point)
-                var pt = DDM.interactionInfo.point; 
+                var pt = DDM.interactionInfo.point;
 
                 // The region occupied by the source element at the time of the drop
-                var region = DDM.interactionInfo.sourceRegion; 
+                var region = DDM.interactionInfo.sourceRegion;
 
                 // Check to see if we are over the source element's location.  We will
                 // append to the bottom of the list once we are sure it was a drop in
@@ -418,7 +419,7 @@ function makeDragDrop() {
         },
 
         onDragOver: function(e, id) {
-        
+
             var srcEl = this.getEl();
             var destEl = Dom.get(id);
 
@@ -438,7 +439,7 @@ function makeDragDrop() {
             }
         }
     });
-    
+
     var Dom = YAHOO.util.Dom;
     var Event = YAHOO.util.Event;
     var DDM = YAHOO.util.DragDropMgr;
@@ -450,7 +451,7 @@ function makeDragDrop() {
     new YAHOO.example.DDList("syn");
     new YAHOO.example.DDList("chro");
     new YAHOO.example.DDList("loc");
-    new YAHOO.example.DDList("pro");    
+    new YAHOO.example.DDList("pro");
     new YAHOO.example.DDList("seq");
-    
+
 }
