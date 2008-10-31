@@ -159,10 +159,20 @@ public class TranscriptDTO implements Serializable {
         if (score != null) {
             plasmoAPData.put("score", score);
             switch (Integer.parseInt(score)) {
-            case 0: case 1: case 2: plasmoAPData.put("description", "Unlikely"); break;
-            case 3: plasmoAPData.put("description", "Unknown"); break;
-            case 4: plasmoAPData.put("description", "Likely"); break;
-            case 5: plasmoAPData.put("description", "Very likely"); break;
+            case 0:
+            case 1:
+            case 2:
+                plasmoAPData.put("description", "Unlikely");
+                break;
+            case 3:
+                plasmoAPData.put("description", "Unknown");
+                break;
+            case 4:
+                plasmoAPData.put("description", "Likely");
+                break;
+            case 5:
+                plasmoAPData.put("description", "Very likely");
+                break;
             default:
                 throw new RuntimeException(String.format("Polypeptide '%s' has unrecognised PlasmoAP score '%s'",
                     polypeptide.getUniqueName(), score));
