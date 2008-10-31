@@ -21,6 +21,11 @@
 <textarea name="ids" rows="20" cols="70">
 </textarea>
 
+        <form method="post" action="upload.form" enctype="multipart/form-data">
+            <input type="file" name="file"/>
+            <input type="submit"/>
+        </form>
+
 
 <p>
 
