@@ -100,9 +100,8 @@
              <a href="<c:url value="/" />FeatureSequence?name=${dto.uniqueName}&seqs=true">View/analyze/ download sequence</a>
          </div>
         <div style="clear: both; margin-top: 1ex;">
-            Show region in
             <a href="ArtemisLaunch?organism=${organism}&chromosome=${dto.topLevelFeatureUniqueName}&start=${dto.min}&end=${dto.max}"><img src="<c:url value="/" />includes/images/launchArtemis.gif"></a>,
-            <img src="<c:url value="/" />includes/images/launchGBrowse.gif">
+            <!--<img src="<c:url value="/" />includes/images/launchGBrowse.gif">-->
          </div>
     </format:genePageSection>
 </div>
