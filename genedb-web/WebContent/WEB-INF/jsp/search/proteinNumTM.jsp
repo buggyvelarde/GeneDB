@@ -8,7 +8,7 @@
 <div id="geneDetails">
 	<format:genePageSection id="nameSearch" className="whiteBox">
 		<form:form commandName="query" action="Query" method="post">
-        <input type="hidden" name="q" value="proteinLength" />
+        <input type="hidden" name="q" value="proteinNumTM" />
             <table>
                 <tr>
                     <td colspan="3">
