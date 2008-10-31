@@ -27,6 +27,7 @@ import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -43,6 +44,7 @@ import com.google.common.collect.Maps;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
+@Controller
 public class FeatureSequenceController extends PostOrGetFormController {
      private static final Logger logger = Logger.getLogger(FeatureSequenceController.class);
 
