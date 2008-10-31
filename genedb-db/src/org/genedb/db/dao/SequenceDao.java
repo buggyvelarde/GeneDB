@@ -61,8 +61,22 @@ public class SequenceDao extends BaseDao {
 
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
-            "from Feature where uniqueName=:name and cvTerm.name=:featureType",
+            "from Feature where uniqueName=:name and type.name=:featureType",
             new String[] { "name", "featureType" }, new Object[] { uniqueName, featureType });
+
+        if (features.size() > 0) {
+            return features.get(0);
+        }
+        return null;
+    }
+
+    @Deprecated
+    public Feature getFeatureByUniqueName(String uniqueName) {
+
+        @SuppressWarnings("unchecked")
+        List<Feature> features = getHibernateTemplate().findByNamedParam(
+            "from Feature where uniqueName=:name",
+            new String[] { "name" }, new Object[] { uniqueName });
 
         if (features.size() > 0) {
             return features.get(0);
@@ -79,21 +93,6 @@ public class SequenceDao extends BaseDao {
         if (features.size() == 0) {
             logger.warn(String.format("Hibernate found no feature of type '%s' with uniqueName '%s'",
                 featureClass.getSimpleName(), uniqueName));
-            return null;
-        }
-
-        return features.get(0);
-    }
-
-    public Object getFeatureByUniqueName(String uniqueName) {
-        @SuppressWarnings("unchecked")
-        List<Object> features = getHibernateTemplate().findByNamedParam(
-            "from feature where uniqueName=:name",
-            "name", uniqueName);
-
-        if (features.size() == 0) {
-            logger.warn(String.format("Hibernate found no feature with uniqueName '%s'",
-                uniqueName));
             return null;
         }
 
@@ -836,6 +835,17 @@ public class SequenceDao extends BaseDao {
         FeatureProp featureProp = new FeatureProp(polypeptide, plasmoAPScoreType, score, 0);
         polypeptide.addFeatureProp(featureProp);
         return featureProp;
+    }
+
+    /**
+     * Delete all the features that are located on the specified source feature.
+     * @param sourceFeature
+     */
+    public void deleteFeaturesLocatedOn(Feature sourceFeature) {
+        getSession().createQuery(
+            "delete Feature f where f in (select fl.feature from FeatureLoc fl where fl.sourceFeature = :sourceFeature)"
+        ).setParameter("sourceFeature", sourceFeature)
+        .executeUpdate();
     }
 
 
