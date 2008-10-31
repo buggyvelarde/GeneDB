@@ -13,17 +13,19 @@
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
 </format:headerRound>
 
+    <!--
     <format:genePageSection id="sequence1">
         <div class="heading">Unspliced</div>
         <div class="comment">ACCTGTGACTGTACGTGATHISISJUNK</div>
     </format:genePageSection>
+    -->
 
-    <format:genePageSection id="sequence1">
+    <format:genePageSection id="splicedSequence">
         <div class="heading">Spliced</div>
         <div class="comment">${transcript.residues}</div>
     </format:genePageSection>
 
-    <format:genePageSection id="sequence1">
+    <format:genePageSection id="proteinSequence">
         <div class="heading">Protein</div>
         <div class="comment">${polypeptide.residues}</div>
     </format:genePageSection>
