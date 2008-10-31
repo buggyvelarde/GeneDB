@@ -22,6 +22,9 @@
                 <tr><td colspan="2">GPI anchor</td>
                     <td><form:checkbox id="gpi" path="gpi"/></td>
                 </tr>
+                <tr><td colspan="2">Apicoplast</td>
+                    <td><form:checkbox id="apicoplast" path="apicoplast"/></td>
+                </tr>
                 <tr>
                   <td>&nbsp;</td>
                   <td colspan="2">
