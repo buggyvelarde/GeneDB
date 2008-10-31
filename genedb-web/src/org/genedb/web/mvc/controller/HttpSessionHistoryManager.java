@@ -82,9 +82,9 @@ public class HttpSessionHistoryManager implements HistoryManager {
         }
         if (found == null) {
             found = createNewHistoryItem(null, type);
+            history.add(found);
         }
         found.addUniqueResult(id);
-        history.add(found);
         version++;
         return found;
     }
