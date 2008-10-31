@@ -30,7 +30,6 @@ import org.gmod.schema.mapped.Synonym;
 import org.gmod.schema.utils.PeptideProperties;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.hibernate.Hibernate;
 import org.springframework.util.Assert;
 

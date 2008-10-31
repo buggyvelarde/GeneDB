@@ -9,6 +9,8 @@ import java.text.DecimalFormat;
  */
 public class PeptideProperties implements Serializable {
 
+    private static final long serialVersionUID = -2268543289671241155L;
+
     private double massInDaltons;
     private int aminoAcids;
     private double isoelectricPoint;
@@ -53,6 +55,10 @@ public class PeptideProperties implements Serializable {
 
     public void setIsoelectricPoint(double isoelectricPoint) {
         this.isoelectricPoint = isoelectricPoint;
+    }
+
+    public boolean isHasMass() {
+        return massInDaltons != 0;
     }
 
     /**

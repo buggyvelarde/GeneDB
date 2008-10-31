@@ -166,7 +166,7 @@
                         <td class="value">pH ${dto.polypeptideProperties.isoelectricPoint}</td>
                     </tr>
                 </c:if>
-                <c:if test="${dto.polypeptideProperties.mass != null}">
+                <c:if test="${dto.polypeptideProperties.hasMass}">
                     <tr>
                         <td class="label">Mass</td>
                         <td class="value">${dto.polypeptideProperties.mass}</td>
