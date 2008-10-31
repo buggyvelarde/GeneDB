@@ -70,22 +70,6 @@ public class SequenceDao extends BaseDao {
         return null;
     }
 
-    /**
-     * Does there exist a feature with the given uniqueName?
-     *
-     * @param uniqueName
-     * @return
-     */
-    public boolean existsFeatureWithUniqueName(String uniqueName) {
-
-        @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate().findByNamedParam(
-            "from Feature where uniqueName=:name",
-            new String[] { "name" }, new Object[] { uniqueName });
-
-        return features.size() > 0;
-    }
-
     public <T extends Feature> T getFeatureByUniqueName(String uniqueName, Class<T> featureClass) {
         @SuppressWarnings("unchecked")
         List<T> features = getHibernateTemplate().findByNamedParam(
@@ -93,9 +77,13 @@ public class SequenceDao extends BaseDao {
             "name", uniqueName);
 
         if (features.size() == 0) {
-            logger.warn(String.format("Hibernate found no feature of type '%s' with uniqueName '%s'",
+            logger.info(String.format("Hibernate found no feature of type '%s' with uniqueName '%s'",
                 featureClass.getSimpleName(), uniqueName));
             return null;
+        }
+        else if (features.size() > 1) {
+            logger.warn(String.format("Found more than one feature of type '%s' with uniqueName '%s'",
+                featureClass.getSimpleName(), uniqueName));
         }
 
         return features.get(0);

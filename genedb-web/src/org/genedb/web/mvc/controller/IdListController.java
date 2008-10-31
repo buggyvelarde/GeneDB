@@ -121,7 +121,7 @@ public class IdListController {
 
 
     private boolean validatePrimaryId(String id) {
-        return sequenceDao.existsFeatureWithUniqueName(id);
+        return sequenceDao.getFeatureByUniqueName(id, Feature.class) != null;
     }
 
 
