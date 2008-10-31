@@ -18,13 +18,13 @@ public class ProteinLengthQuery extends HqlQuery {
             order=1,
             title="Minimum length of protein in bases"
     )
-    private int min = 0;
+    private int min = 50;
 
     @QueryParam(
             order=2,
             title="Maximum length of protein in bases"
     )
-    private int max = 1000;
+    private int max = 500;
 
     @Override
     protected String getHql() {
