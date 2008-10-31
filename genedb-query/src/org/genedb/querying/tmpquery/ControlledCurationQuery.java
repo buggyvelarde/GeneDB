@@ -35,7 +35,7 @@ public class ControlledCurationQuery extends HqlQuery {
 
     @Override
     protected String getHql() {
-        return "select f.uniqueName from Feature f, FeatureCvTerm fct where fct.feature=f and fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name like :cvName";
+        return "select f.uniqueName from Feature f, FeatureCvTerm fct where fct.feature=f and fct.cvTerm.name=:cvTermName and fct.cvTerm.cv.name like :cvName order by f.organism";
     }
 
 
