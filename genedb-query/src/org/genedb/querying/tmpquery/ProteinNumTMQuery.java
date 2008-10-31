@@ -43,7 +43,7 @@ public class ProteinNumTMQuery extends LuceneQuery {
     	RangeQuery rq = new RangeQuery(lowerTerm, upperTerm, true);
 
         queries.add(rq);
-        queries.add(geneOrPseudogeneQuery);
+        //queries.add(geneOrPseudogeneQuery);
 
 
 //        BooleanQuery organismQuery = makeQueryForOrganisms(orgNames);
