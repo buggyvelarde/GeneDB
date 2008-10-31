@@ -1,4 +1,4 @@
-<%@ page session="false"%>
+<%@ page session="true" %>
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
