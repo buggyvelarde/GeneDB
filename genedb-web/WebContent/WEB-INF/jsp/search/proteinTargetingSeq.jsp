@@ -8,7 +8,7 @@
 <div id="geneDetails">
 	<format:genePageSection id="nameSearch" className="whiteBox">
 		<form:form commandName="query" action="Query" method="post">
-        <input type="hidden" name="q" value="proteinTargett" />
+        <input type="hidden" name="q" value="proteinTargetingSeq" />
             <table>
                 <tr>
                     <td colspan="3">
@@ -19,10 +19,10 @@
                 <tr><td>Signal Peptide</td>
                     <td><form:checkbox id="sigP" path="sigP"/></td>
                 </tr>
-                <tr><td colspan="2">GPI anchor</td>
+                <tr><td>GPI anchor</td>
                     <td><form:checkbox id="gpi" path="gpi"/></td>
                 </tr>
-                <tr><td colspan="2">Apicoplast</td>
+                <tr><td>Apicoplast</td>
                     <td><form:checkbox id="apicoplast" path="apicoplast"/></td>
                 </tr>
                 <tr>
