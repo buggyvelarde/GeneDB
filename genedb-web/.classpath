@@ -29,5 +29,6 @@
 	<classpathentry kind="lib" path="/genedb-libs/lib/misc/jewelcli-0.53.jar"/>
 	<classpathentry kind="src" path="/genedb-util"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/db/je-3.3.69.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-aspects.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
