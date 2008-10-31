@@ -115,16 +115,14 @@ public class DownloadFeaturesController extends PostOrGetFormController {
             case EXCEL:
                     OutputStream outStream = response.getOutputStream();
                     response.setContentType("application/vnd.ms-excel");
-                    response.setHeader("Content-Disposition", "attachment");
-                    response.setHeader("filename", output.getName());
+                    response.setHeader("Content-Disposition", "attachment; filename=results.xls");
                     createExcel(hits,file,columns, outStream);
                     return null;
             case CSV:
             case TAB:
                     String outString = createCsv(hits,file,columns,format);
                     response.setContentType("application/x-download");
-                    response.setHeader("Content-Disposition", "attachment");
-                    response.setHeader("filename", "results.txt");
+                    response.setHeader("Content-Disposition", "attachment; filename=results.txt");
                     Writer w = response.getWriter();
                     w.write(outString);
                     return null;
