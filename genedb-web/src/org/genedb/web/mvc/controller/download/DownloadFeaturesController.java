@@ -26,6 +26,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,18 +113,21 @@ public class DownloadFeaturesController extends PostOrGetFormController {
 
         switch (format) {
             case EXCEL:
-                    output = createExcel(hits,file,columns);
+                    OutputStream outStream = response.getOutputStream();
                     response.setContentType("application/vnd.ms-excel");
                     response.setHeader("Content-Disposition", "attachment");
                     response.setHeader("filename", output.getName());
-                    break;
+                    createExcel(hits,file,columns, outStream);
+                    return null;
             case CSV:
             case TAB:
-                    output = createCsv(hits,file,columns,format);
+                    String outString = createCsv(hits,file,columns,format);
                     response.setContentType("application/x-download");
                     response.setHeader("Content-Disposition", "attachment");
-                    response.setHeader("filename", output.getName());
-                    break;
+                    response.setHeader("filename", "results.txt");
+                    Writer w = response.getWriter();
+                    w.write(outString);
+                    return null;
             case HTML:
                     Map<String,Object> model = new HashMap<String,Object>();
                     List<ResultHit> jHits = new ArrayList<ResultHit>();
@@ -231,7 +236,7 @@ public class DownloadFeaturesController extends PostOrGetFormController {
         return outFile;
     }
 
-    private File createExcel(Hits hits,String file,String[] columns) throws IOException {
+    private void createExcel(Hits hits,String file,String[] columns, OutputStream out) throws IOException {
         int rcount = 2;
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
@@ -282,21 +287,21 @@ public class DownloadFeaturesController extends PostOrGetFormController {
             }
         }
 
-        File dir = new File(getServletContext().getRealPath("/"));
-        File f = File.createTempFile(file, ".xls",dir);
-
-        FileOutputStream stream=null;
+//        File dir = new File(getServletContext().getRealPath("/"));
+//        File f = File.createTempFile(file, ".xls",dir);
+//
+//        FileOutputStream stream=null;
+//        try {
+//            stream = new FileOutputStream(f);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
         try {
-            stream = new FileOutputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            workbook.write(stream);
+            workbook.write(out);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return f;
+        //return f;
     }
 
     private String getValue(String column, Document doc) {
@@ -315,7 +320,7 @@ public class DownloadFeaturesController extends PostOrGetFormController {
     }
 
 
-    private File createCsv(Hits hits,String file,String[] columns,OutputFormat format) {
+    private String createCsv(Hits hits,String file,String[] columns,OutputFormat format) {
         String separator = ",";
         StringBuffer whole = new StringBuffer();
         StringBuffer row = new StringBuffer();
@@ -366,24 +371,24 @@ public class DownloadFeaturesController extends PostOrGetFormController {
             whole.append("\n");
         }
 
-        BufferedWriter out = null;
-        File outFile = new File(getServletContext().getRealPath("/" + file));
-        try {
-            out = new BufferedWriter(new FileWriter(outFile));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
+//        BufferedWriter out = null;
+//        File outFile = new File(getServletContext().getRealPath("/" + file));
+//        try {
+//            out = new BufferedWriter(new FileWriter(outFile));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (IllegalStateException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            out.write(whole.toString());
+//            out.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        try {
-            out.write(whole.toString());
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return outFile;
+        return whole.toString();
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
