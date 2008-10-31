@@ -70,18 +70,20 @@ public class SequenceDao extends BaseDao {
         return null;
     }
 
-    @Deprecated
-    public Feature getFeatureByUniqueName(String uniqueName) {
+    /**
+     * Does there exist a feature with the given uniqueName?
+     *
+     * @param uniqueName
+     * @return
+     */
+    public boolean existsFeatureWithUniqueName(String uniqueName) {
 
         @SuppressWarnings("unchecked")
         List<Feature> features = getHibernateTemplate().findByNamedParam(
             "from Feature where uniqueName=:name",
             new String[] { "name" }, new Object[] { uniqueName });
 
-        if (features.size() > 0) {
-            return features.get(0);
-        }
-        return null;
+        return features.size() > 0;
     }
 
     public <T extends Feature> T getFeatureByUniqueName(String uniqueName, Class<T> featureClass) {

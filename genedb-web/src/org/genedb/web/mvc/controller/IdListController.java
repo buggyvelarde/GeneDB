@@ -6,7 +6,6 @@ import org.genedb.querying.history.HistoryType;
 
 import org.gmod.schema.mapped.Feature;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -122,8 +121,7 @@ public class IdListController {
 
 
     private boolean validatePrimaryId(String id) {
-        Object f = sequenceDao.getFeatureByUniqueName(id);
-        return f!= null;
+        return sequenceDao.existsFeatureWithUniqueName(id);
     }
 
 
