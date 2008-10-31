@@ -1,11 +1,9 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="primaryLoc" value="${gene.rankZeroFeatureLoc}" />
-<c:set var="chromosome" value="${primaryLoc.sourceFeature}" />
 <c:url value="/" var="base"/>
 
-<format:headerRound name="${gene.organism.htmlShortName}" organism="${gene.organism.commonName}" title="Gene Page ${gene.displayName}" bodyClass="genePage"
+<format:headerRound name="${dto.organismHtmlShortName}" organism="${dto.organismCommonName}" title="Gene Page ${dto.geneName}" bodyClass="genePage"
 onLoad="initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFeatureUniqueName}', ${dto.topLevelFeatureLength}, ${dto.min}, ${dto.max}, '${dto.uniqueName}');">
 
 <st:init />
