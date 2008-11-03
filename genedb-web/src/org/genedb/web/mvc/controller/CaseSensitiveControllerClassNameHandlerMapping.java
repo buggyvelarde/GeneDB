@@ -1,34 +1,40 @@
 package org.genedb.web.mvc.controller;
 
-
+import org.apache.log4j.Logger;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping;
 
 /**
- * Implementation of {@link HandlerMapping} that follows a simple convention for generating
- * URL path mappings from the class names of registered {@link Controller} beans.
+ * Implementation of {@link HandlerMapping} that follows a simple convention for
+ * generating URL path mappings from the class names of registered
+ * {@link Controller} beans.
  *
- * <p>For simple {@link Controller} implementations (those that handle a single request type),
- * the convention is to take the {@link ClassUtils#getShortName short name} of the <code>Class</code>,
+ * <p>
+ * For simple {@link Controller} implementations (those that handle a single
+ * request type), the convention is to take the
+ * {@link ClassUtils#getShortName short name} of the <code>Class</code>,
  * remove the 'Controller' suffix if it exists and return the remaining text as
  * the mapping, with a leading <code>/</code>. For example:
  * <ul>
- *  <li><code>WelcomeController</code> -> <code>/welcome</code></li>
- *  <li><code>HomeController</code> -> <code>/home</code></li>
+ * <li><code>WelcomeController</code> -> <code>/welcome</code></li>
+ * <li><code>HomeController</code> -> <code>/home</code></li>
  * </ul>
  *
- * <p>For {@link MultiActionController MultiActionControllers} then a similar mapping is registed
- * except that all sub-paths are registed using the trailing wildcard pattern <code>/*</code>.
- * For example:
+ * <p>
+ * For {@link MultiActionController MultiActionControllers} then a similar
+ * mapping is registed except that all sub-paths are registed using the trailing
+ * wildcard pattern <code>/*</code>. For example:
  * <ul>
- *  <li><code>AdminController</code> -> <code>/welcome/*</code></li>
- *  <li><code>CatalogController</code> -> <code>/catalog/*</code></li>
+ * <li><code>AdminController</code> -> <code>/welcome/*</code></li>
+ * <li><code>CatalogController</code> -> <code>/catalog/*</code></li>
  * </ul>
  *
- * <p>For {@link MultiActionController} it is often useful to use
- * this mapping strategy in conjunction with the
+ * <p>
+ * For {@link MultiActionController} it is often useful to use this mapping
+ * strategy in conjunction with the
  * {@link org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver}.
  *
  * @author Rob Harrop
@@ -36,32 +42,33 @@ import org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMap
  * @see org.springframework.web.servlet.mvc.Controller
  * @see org.springframework.web.servlet.mvc.multiaction.MultiActionController
  */
-public class CaseSensitiveControllerClassNameHandlerMapping extends ControllerClassNameHandlerMapping {
+public class CaseSensitiveControllerClassNameHandlerMapping extends
+        ControllerClassNameHandlerMapping {
+    private static final Logger logger = Logger
+            .getLogger(CaseSensitiveControllerClassNameHandlerMapping.class);
 
-        /**
-         * Common suffix at the end of {@link Controller} implementation classes.
-         * Removed when generating the URL path.
-         */
-        private static final String CONTROLLER_SUFFIX = "Controller";
+    /**
+     * Common suffix at the end of {@link Controller} implementation classes.
+     * Removed when generating the URL path.
+     */
+    private static final String CONTROLLER_SUFFIX = "Controller";
 
+    @Override
+    protected String[] generatePathMappings(@SuppressWarnings("unchecked") Class controllerClass) {
+        logger.debug("Generating path mappings for " + controllerClass);
+        StringBuffer pathMapping = new StringBuffer("/");
 
-        @SuppressWarnings("unchecked")
-        @Override
-        protected String[] generatePathMappings(Class controllerClass) {
-                StringBuffer pathMapping = new StringBuffer("/");
+        String className = ClassUtils.getShortName(controllerClass.getName());
+        String path = className.endsWith(CONTROLLER_SUFFIX)
+                ? className.substring(0, className.indexOf(CONTROLLER_SUFFIX))
+                : className;
+        pathMapping.append(path);
 
-                String className = ClassUtils.getShortName(controllerClass.getName());
-                String path = className.endsWith(CONTROLLER_SUFFIX)
-                                ? className.substring(0, className.indexOf(CONTROLLER_SUFFIX))
-                                : className;
-                pathMapping.append(path);
-
-                if (MultiActionController.class.isAssignableFrom(controllerClass)) {
-                        pathMapping.append("/*");
-                }
-
-                return new String[] { pathMapping.toString() };
+        if (MultiActionController.class.isAssignableFrom(controllerClass)) {
+            pathMapping.append("/*");
         }
 
+        return new String[] { pathMapping.toString() };
+    }
 
 }
