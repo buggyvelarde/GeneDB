@@ -23,7 +23,7 @@ public class BerkeleyMapFactory {
     private StoredClassCatalog javaCatalog;
     private Database dtoDb;
 
-    private  StoredMap<String, TranscriptDTO> dtoMap;
+    private StoredMap<String, TranscriptDTO> dtoMap;
 
     public StoredMap<String, TranscriptDTO> getDtoMap() {
         openDb();
@@ -63,7 +63,8 @@ public class BerkeleyMapFactory {
         });
 
 
-        System.out.println("Opening environment in: " + rootDirectory);
+        logger.debug("Opening environment in: " + rootDirectory);
+        logger.debug("Read-only status: " + readOnly);
 
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setTransactional(true);
@@ -73,11 +74,9 @@ public class BerkeleyMapFactory {
         try {
             env = new Environment(new File(rootDirectory), envConfig);
         } catch (EnvironmentLockedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException("Unable to open Berkeley databases", e);
         } catch (DatabaseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException("Unable to open Berkeley databases", e);
         }
 
         DatabaseConfig dbConfig = new DatabaseConfig();
