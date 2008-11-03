@@ -17,6 +17,7 @@ import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,12 +42,10 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.EnvironmentLockedException;
 
 
-
-
 @Repository
 @Transactional
 public class PopulateCaches {
-
+    private static final Logger logger = Logger.getLogger(PopulateCaches.class);
 
     private BerkeleyMapFactory bmf;
 
@@ -54,8 +53,6 @@ public class PopulateCaches {
     private StoredMap<String, String> contextMapMap;
 
     private SessionFactory sessionFactory;
-    //private BlockingCache dtoCache;
-    //private BlockingCache contextMapCache;
     private ModelBuilder modelBuilder;
     private DiagramCache diagramCache;
     private LuceneIndexFactory luceneIndexFactory;
@@ -94,7 +91,6 @@ public class PopulateCaches {
         PopulateCaches pc = (PopulateCaches) ctx.getBean("populateCaches", PopulateCaches.class);
         pc.setConfig(pca);
         pc.fullCachePopulate();
-
     }
 
     @Transactional
@@ -106,70 +102,51 @@ public class PopulateCaches {
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         basicGeneService = new BasicGeneServiceImpl(luceneIndex);
 
-        long start = new Date().getTime();
+        long start = System.currentTimeMillis();
 
-        List<String> topLevelFeatures = getTopLevelFeatures();
+        List<Feature> topLevelFeatures = getTopLevelFeatures();
 
         int count = 0;
-        for (String featureName : topLevelFeatures) {
+        for (Feature feature : topLevelFeatures) {
 
             if (config.isDebugCount() && count >= config.getDebugCount()) {
                 break;
             }
 
-            Feature feature = (Feature) sessionFactory.getCurrentSession().createQuery(
-            "from Feature f where f.uniqueName = :uniqueName")
-            .setString("uniqueName", featureName)
-            .uniqueResult();
-
             if (!config.isNoContextMap()) {
                 populateContextMapCache(feature, basicGeneService);
             }
 
-            @SuppressWarnings("unchecked") List<Feature> features = (List<Feature>) sessionFactory.getCurrentSession().createQuery(
-            "select f from Feature f, FeatureLoc fl where fl.sourceFeature.uniqueName=:feature and fl.feature=f")
-            .setString("feature", featureName).list();
+            @SuppressWarnings("unchecked") List<Feature> features = sessionFactory.getCurrentSession().createQuery(
+            "select f from Feature f, FeatureLoc fl where fl.sourceFeature=:feature and fl.feature=f")
+            .setParameter("feature", feature).list();
 
-
-            //List<Feature> f = feature.getFeatureLocsForSrcFeatureId();
             System.err.print(feature.getUniqueName() + " : size "+ features.size() + " : ");
             for (Feature f : features) {
-                //Feature f = fl.getFeature();
-                //System.err.print("The type of '"+f.getClass().getName()+"'   ");
                 if (f instanceof AbstractGene) {
-                    //System.err.println("processing '"+f.getUniqueName()+"' as is a gene");
                     populateDtoCache((AbstractGene) f);
-                }// else {
-                //    System.err.println(f.getUniqueName());
-                //}
+                }
             }
-
-            //dtoCache.flush();
 
             sessionFactory.getCurrentSession().clear();
             count++;
             System.err.println(String.format("Count '%d' of '%d' : Total run time '%d's", count, topLevelFeatures.size(), (new Date().getTime() - start)/1000));
         }
-
-        //dtoCache.dispose();
-        //contextMapCache.flush();
-        //contextMapCache.dispose();
-
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> getTopLevelFeatures() {
+    private List<Feature> getTopLevelFeatures() {
 
         Query q = sessionFactory.getCurrentSession().createQuery(
-        "select f.uniqueName from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq'");
+        "select f from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq'");
 
         if (config.isOrganism()) {
             q = sessionFactory.getCurrentSession().createQuery(
-            "select f.uniqueName from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq' and f.organism.commonName = :orgName");
+            "select f from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq' and f.organism.commonName = :orgName");
             q.setString("orgName", config.getOrganism());
         }
 
-        return (List<String>) q.list();
+        return q.list();
     }
 
 
@@ -191,10 +168,9 @@ public class PopulateCaches {
             text = populateModel(renderedChromosomeThumbnail, renderedContextMap, renderDirectory, tiles);
 
             contextMapMap.put(feature.getUniqueName(), text);
-            //contextMapCache.put(new Element(feature.getUniqueName(), text));
-            System.err.println("Stored contextMap for '"+feature.getUniqueName()+"' as '"+text+"'");
+            logger.info("Stored contextMap for '"+feature.getUniqueName()+"' as '"+text+"'");
         } catch (IOException exp) {
-            System.err.println(exp);
+            logger.error(exp);
         }
     }
 
@@ -231,13 +207,7 @@ public class PopulateCaches {
         chromosomeThumbnailModel.put("width", chromosomeThumbnail.getWidth());
         model.put("chromosomeThumbnail", chromosomeThumbnailModel);
 
-//        if( skipBindingResult && jsonConfig.getJsonPropertyFilter() == null ){
-//            this.jsonConfig.setJsonPropertyFilter( new BindingResultPropertyFilter() );
-//         }
          JSON json =  JSONSerializer.toJSON(model);
-         //if( forceTopLevelArray ){
-         //  json = new JSONArray().element(json);
-        //}
          String text = json.toString(0);
          return text;
     }
