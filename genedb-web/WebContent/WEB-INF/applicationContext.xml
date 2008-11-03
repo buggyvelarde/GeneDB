@@ -137,7 +137,6 @@
         <property name="rootDirectory" value="/tmp"/>
     </bean>
 
-
     <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
         <property name="rootDirectory" value="/tmp/safe"/>
         <property name="readOnly" value="true" />
@@ -146,6 +145,5 @@
     <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
         <property name="diagramCache" ref="diagramCache" />
     </bean>
-
 
 </beans>
