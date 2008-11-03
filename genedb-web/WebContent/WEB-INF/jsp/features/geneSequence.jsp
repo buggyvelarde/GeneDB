@@ -13,21 +13,21 @@
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
 </format:headerRound>
 
-    <c:if test="${!empty(unspliced)}">
+    <c:if test="${!empty (unspliced)}">
     <format:genePageSection id="unsplicedSequence">
         <div class="heading">Unspliced</div>
         <misc:format-sequence sequence="${unspliced}"/>
     </format:genePageSection>
     </c:if>
 
-    <c:if test="${!empty(spliced)}">
+    <c:if test="${!empty (spliced)}">
     <format:genePageSection id="splicedSequence">
         <div class="heading">Spliced</div>
         <misc:format-sequence sequence="${spliced}"/>
     </format:genePageSection>
     </c:if>
 
-    <c:if test="${!empty(protein)}">
+    <c:if test="${!empty (protein)}">
     <format:genePageSection id="proteinSequence">
         <div class="heading">Protein</div>
         <misc:format-sequence sequence="${protein}"/>
