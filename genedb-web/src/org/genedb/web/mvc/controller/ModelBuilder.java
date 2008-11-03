@@ -1,11 +1,6 @@
 package org.genedb.web.mvc.controller;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONSerializer;
-
-import org.genedb.web.gui.ContextMapDiagram;
 import org.genedb.web.gui.DiagramCache;
-import org.genedb.web.gui.RenderedContextMap;
 import org.genedb.web.mvc.model.TranscriptDTO;
 
 import org.gmod.schema.feature.AbstractGene;
@@ -15,11 +10,7 @@ import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class ModelBuilder {
