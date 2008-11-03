@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,6 @@ public class FixResidues {
         logger.info(String.format(format, args));
     }
 
-    private void error(Exception exception) {
-        error(exception.getMessage(), exception);
-    }
     private void error(String message, Exception exception) {
         logger.error(message, exception);
     }
@@ -56,6 +54,9 @@ public class FixResidues {
         logger.error(String.format("Error: "+format, args));
     }
 
+    private void warn(String format, Object... args) {
+        warn(Collections.<String>emptyList(), format, args);
+    }
     private void warn(List<String> warnings, String format, Object... args) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(format, args));
@@ -69,14 +70,23 @@ public class FixResidues {
     public static void main(String[] args) throws Exception {
 
         boolean verbose = false;
+        boolean markFragments = false;
+        boolean guessFrame = false;
+        boolean forceGuessFrame = false;
         int i;
         for (i=0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
                 if (args[i].equals("-verbose")
                         || args[i].equals("-v")
-                        || args[i].equals("--verbose"))
+                        || args[i].equals("--verbose")) {
                     verbose = true;
-                else {
+                } else if (args[i].equals("--mark-fragments")) {
+                    markFragments = true;
+                } else if (args[i].equals("--guess-frame")) {
+                    guessFrame = true;
+                } else if (args[i].equals("--guess-frame=force")) {
+                    forceGuessFrame = true;
+                } else {
                     System.err.printf("Unrecognised option '%s'\n", args[i]);
                     System.exit(1);
                 }
@@ -85,13 +95,15 @@ public class FixResidues {
                 break;
         }
 
-        FixResidues fr = new FixResidues(verbose);
+        FixResidues fr = new FixResidues()
+            .setVerbose(verbose).setMarkFragments(markFragments)
+            .setGuessFrame(guessFrame).setForceGuessFrame(forceGuessFrame);
         if (i == args.length)
             fr.fixAll();
         else {
-            System.out.printf("i=%d, args.length=%d%n", i, args.length);
-            for (; i < args.length; i++)
+            for (; i < args.length; i++) {
                 fr.fixOrganismByName(args[i]);
+            }
         }
     }
 
@@ -99,13 +111,12 @@ public class FixResidues {
     private Connection conn;
     private static ResourceBundle config = ResourceBundle.getBundle("project");
     private TypeCodes typeCodes;
+    private boolean markFragments = false;
+    private boolean guessFrame = false;
+    private boolean forceGuessFrame = false;
 
-    private FixResidues (boolean verbose)
+    private FixResidues ()
         throws SQLException, ClassNotFoundException {
-
-        if (verbose) {
-            logger.setLevel(Level.DEBUG);
-        }
 
         String url = String.format("jdbc:postgresql://%s:%s/%s",
             config.getString("dbhost"),
@@ -120,13 +131,38 @@ public class FixResidues {
         this.typeCodes = new TypeCodes(conn);
     }
 
-    private void fixAll() throws SQLException {
+    private FixResidues setVerbose(boolean verbose) {
+        if (verbose) {
+            logger.setLevel(Level.DEBUG);
+        }
+        else {
+            logger.setLevel(Level.INFO);
+        }
+        return this;
+    }
+
+    private FixResidues setMarkFragments(boolean markFragments) {
+        this.markFragments = markFragments;
+        return this;
+    }
+
+    private FixResidues setGuessFrame(boolean guessFrame) {
+        this.guessFrame = guessFrame;
+        return this;
+    }
+
+    private FixResidues setForceGuessFrame(boolean forceGuessFrame) {
+        this.forceGuessFrame = forceGuessFrame;
+        return this;
+    }
+
+    private void fixAll() throws SQLException, TranslationException {
         for (Organism organism: getOrganisms(conn)) {
             fixOrganism(organism);
         }
     }
 
-    private void fixOrganismByName(String organismName) throws SQLException {
+    private void fixOrganismByName(String organismName) throws SQLException, TranslationException {
         System.out.printf("Attempting to fix '%s'%n", organismName);
         for (Organism organism: getOrganisms(conn)) {
             if (!organism.commonName.equals(organismName))
@@ -192,7 +228,7 @@ public class FixResidues {
         }
     }
 
-    private void fixOrganism(Organism organism) throws SQLException {
+    private void fixOrganism(Organism organism) throws SQLException, TranslationException {
         info("Processing organism: %s", organism.commonName);
         info("\t(translation table = %d, mitochondrial = %d)", organism.translationTable, organism.mitochondrialTranslationTable);
 
@@ -249,7 +285,7 @@ public class FixResidues {
         }
     }
 
-    private void fixTopLevelFeature(int translationTableId, int topLevelFeatureId) throws SQLException {
+    private void fixTopLevelFeature(int translationTableId, int topLevelFeatureId) throws SQLException, TranslationException {
         String topLevelSequence = loadResidues(topLevelFeatureId);
         PreparedStatement st = conn.prepareStatement(
             "select gene.feature_id"
@@ -258,6 +294,7 @@ public class FixResidues {
             +" from feature gene"
             +" join featureloc geneloc using (feature_id)"
             +" where gene.type_id in (?, ?)"
+            +" and geneloc.locgroup = 0"
             +" and geneloc.rank = 0"
             +" and geneloc.srcfeature_id = ?"
         );
@@ -304,7 +341,7 @@ public class FixResidues {
         }
     }
 
-    private void fixGene(int translationTableId, String topLevelSequence, int strand, int geneFeatureId, String geneUniqueName) throws SQLException {
+    private void fixGene(int translationTableId, String topLevelSequence, int strand, int geneFeatureId, String geneUniqueName) throws SQLException, TranslationException {
         debug("Processing gene '%s' (ID=%d) on strand %d", geneUniqueName, geneFeatureId, strand);
 
         PreparedStatement st = conn.prepareStatement(
@@ -334,6 +371,8 @@ public class FixResidues {
             +" where transcript_gene.object_id = ?"
             +" and exon.type_id in (?, ?)"
             +" and transcript.type_id in (?, ?, ?, ?, ?)"
+            +" and exonloc.locgroup = 0"
+            +" and exonloc.rank = 0"
         );
         Map<Integer,Transcript> transcriptsById = new HashMap<Integer,Transcript>();
         try {
@@ -357,6 +396,7 @@ public class FixResidues {
                 int exonId = rs.getInt("exon_id");
                 String exonName = rs.getString("exon_uniquename");
                 int phase = rs.getInt("phase");
+                boolean phaseAbsent = rs.wasNull();
                 int fmin = rs.getInt("fmin");
                 int fmax = rs.getInt("fmax");
 
@@ -368,7 +408,7 @@ public class FixResidues {
                     Transcript transcript = new Transcript(
                         transcriptId, transcriptName,
                         isCoding,
-                        translationTableId, phase,
+                        translationTableId, phaseAbsent ? null : new Integer(phase),
                         isPseudo, stopCodonRedefined);
                     transcriptsById.put(transcriptId, transcript);
                 }
@@ -394,7 +434,7 @@ public class FixResidues {
         }
     }
 
-    private void fixTranscript(String topLevelSequence, int strand, Transcript transcript) throws SQLException {
+    private void fixTranscript(String topLevelSequence, int strand, Transcript transcript) throws SQLException, TranslationException {
         StringBuilder cdsBuilder = new StringBuilder();
         for (Exon exon: transcript.exons) {
             debug("\tExon %s (%d-%d)", exon.uniqueName, exon.fmin, exon.fmax);
@@ -454,38 +494,163 @@ public class FixResidues {
         }
     }
 
-    private void fixPolypeptide(Transcript transcript, int polypeptideId) throws SQLException {
-        try {
-            debug("Translating to protein sequence with phase %d", transcript.phase);
-            String protein = transcript.translateToProteinSequence();
-            debug("Translated sequence: %s", protein);
+    private void fixPolypeptide(Transcript transcript, int polypeptideId) throws SQLException, TranslationException {
+        boolean fragmentary = false;
+        if (forceGuessFrame || (guessFrame && transcript.phase != null)) {
+            String translation;
+            int bestPhase = 0;
+            int maxORF = 0;
 
-            if (logger.isEnabledFor(Level.WARN) && !transcript.isPseudo) {
-                List<String> warnings = new ArrayList<String>();
-                if (protein.length()==0)
-                    warnings.add("Translated protein sequence is empty");
-                else {
-                    if (!protein.startsWith("M"))
-                        warnings.add("Translated protein sequence does not start with Methionine");
-                    if (!protein.endsWith("*"))
-                        warnings.add("Translated protein sequence does not end with a stop codon");
-                    int firstStar = protein.indexOf('*');
-                    if (firstStar >= 0 && firstStar != protein.length()-1)
-                        warnings.add("Translated protein sequence contains an internal stop codon");
+            for (int phase = 0; phase < 3; ++phase) {
+                translation = transcript.translateToProteinSequence(phase);
+                int orf = translation.indexOf('*');
+                if (orf < 0) {
+                    orf = translation.length();
                 }
-                if (!warnings.isEmpty()) {
-                    warn(warnings, "%s: problems with translated protein sequence:\n%s", transcript.uniqueName, protein);
+                if (orf > maxORF) {
+                    maxORF = orf;
+                    bestPhase = phase;
                 }
             }
 
-            setResidues(polypeptideId, protein);
+            logger.debug(String.format("Best phase for '%s' is %d (ORF size = %d)", transcript.uniqueName, bestPhase, maxORF));
+            fragmentary = fixPolypeptideWithExtrinsicPhase(transcript, polypeptideId, bestPhase);
+            setPhase(transcript, bestPhase);
+
+            if (fragmentary) {
+                warn("Could not find a suitable reading frame for transcript '%s'", transcript.uniqueName);
+            }
+        } else {
+            fragmentary = fixPolypeptideWithIntrinsicPhase(transcript, polypeptideId);
         }
-        catch (TranslationException e) {
-            error(e);
+
+        if (markFragments && fragmentary) {
+            markAsFragmentary(transcript);
         }
     }
 
-    PreparedStatement updateResiduesSt = null;
+    private boolean fixPolypeptideWithIntrinsicPhase(Transcript transcript, int polypeptideId)
+            throws SQLException, TranslationException
+    {
+        int phase = (transcript.phase == null ? 0 : transcript.phase);
+        return fixPolypeptideWithExtrinsicPhase(transcript, polypeptideId, phase);
+    }
+
+    private boolean fixPolypeptideWithExtrinsicPhase(Transcript transcript, int polypeptideId, int phase)
+    throws SQLException, TranslationException
+    {
+        boolean fragmentary = false;
+
+        debug("Translating to protein sequence with phase %d", phase);
+        String protein = transcript.translateToProteinSequence(phase);
+        debug("Translated sequence: %s", protein);
+
+        if (!transcript.isPseudo) {
+            List<String> warnings = new ArrayList<String>();
+            if (protein.length()==0)
+                warnings.add("Translated protein sequence is empty");
+            else {
+                if (!protein.startsWith("M")) {
+                    warnings.add("Translated protein sequence does not start with Methionine");
+                    fragmentary = true;
+                }
+                if (!protein.endsWith("*")) {
+                    warnings.add("Translated protein sequence does not end with a stop codon");
+                    // Not flagged as fragmentary, because the annotator might simply
+                    // have forgotten to include the stop codon.
+                }
+                int firstStar = protein.indexOf('*');
+                if (firstStar >= 0 && firstStar != protein.length()-1) {
+                    warnings.add("Translated protein sequence contains an internal stop codon");
+                    fragmentary = true;
+                }
+            }
+            if (!warnings.isEmpty()) {
+                warn(warnings, "%s: problems with translated protein sequence:\n%s", transcript.uniqueName, protein);
+            }
+        }
+
+        setResidues(polypeptideId, protein);
+        return fragmentary;
+    }
+
+    private PreparedStatement setPhaseSt = null;
+    private void setPhase(Transcript transcript, int phase) throws SQLException {
+        debug("Setting phase of transcript '%s' to %d", transcript.uniqueName, phase);
+        if (setPhaseSt == null) {
+            setPhaseSt = conn.prepareStatement(
+                "update featureloc" +
+                " set phase = ?" +
+                " where feature_id = ?"
+            );
+        }
+        for (Exon exon: transcript.exons) {
+            setPhaseSt.setInt(1, phase);
+            setPhaseSt.setInt(2, exon.featureId);
+            int updatedRows = setPhaseSt.executeUpdate();
+            if (updatedRows == 0) {
+                throw new IllegalStateException(
+                    String.format("Unexpected result (%d) setting phase for feature %d", updatedRows, exon.featureId));
+            }
+        }
+    }
+
+    private PreparedStatement markAsFragmentarySt = null;
+    private Integer fragmentaryTypeId = null;
+    private void markAsFragmentary(Transcript transcript) throws SQLException {
+        debug("Marking transcript '%s' as fragmentary", transcript.uniqueName);
+        if (markAsFragmentarySt == null) {
+            markAsFragmentarySt = conn.prepareStatement(
+                "insert into featureprop (" +
+                " feature_id, type_id" +
+                ") values (" +
+                " ?, ?" +
+                ")"
+            );
+        }
+        if (fragmentaryTypeId == null) {
+            fragmentaryTypeId = getFragmentaryTypeId();
+        }
+
+        markAsFragmentarySt.setInt(1, transcript.featureId);
+        markAsFragmentarySt.setInt(2, fragmentaryTypeId);
+        try {
+        int numberOfRows = markAsFragmentarySt.executeUpdate();
+        if (numberOfRows != 1) {
+            throw new RuntimeException(
+                String.format("More than one row affected by insert of featureprop for feature %d", transcript.featureId));
+        }
+        } catch (SQLException e) {
+            if (e.getMessage().startsWith("ERROR: duplicate key violates unique constraint")) {
+                debug("Feature is already marked as fragmentary (SQL state: %s)", e.getSQLState());
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    private int getFragmentaryTypeId() throws SQLException {
+        PreparedStatement st = conn.prepareStatement(
+            "select cvterm.cvterm_id "+
+            "from cvterm "+
+            "join cv using (cv_id) "+
+            "join dbxref using (dbxref_id) "+
+            "where cv.name = 'sequence' "+
+            "and dbxref.accession = '0000731'"
+        );
+        try {
+            ResultSet rs = st.executeQuery();
+            rs.next();
+            if (!rs.isLast()) {
+                throw new RuntimeException("More than one row returned from query");
+            }
+            return rs.getInt(1);
+        } finally {
+            st.close();
+        }
+    }
+
+    private PreparedStatement updateResiduesSt = null;
     private void setResidues(int featureId, String residues) throws SQLException {
         if (updateResiduesSt == null) {
             updateResiduesSt = conn.prepareStatement(
@@ -510,10 +675,11 @@ class Transcript {
     public boolean isPseudo;
     public boolean stopCodonTranslatedAsSelenocysteine;
     public int translationTableId;
-    public int phase = 0;
+    public Integer phase;
     public String cds;
+
     public Transcript(int featureId, String uniqueName, boolean isCoding, int translationTableId,
-            int phase, boolean isPseudo, boolean stopCodonTranslatedAsSelenocysteine) {
+            Integer phase, boolean isPseudo, boolean stopCodonTranslatedAsSelenocysteine) {
         this.featureId = featureId;
         this.uniqueName = uniqueName;
         this.isCoding = isCoding;
@@ -528,11 +694,15 @@ class Transcript {
     }
 
     public String translateToProteinSequence() throws TranslationException {
-        if (this.cds.length() < 3 + this.phase) {
+        return translateToProteinSequence(phase == null ? 0 : phase);
+    }
+
+    public String translateToProteinSequence(int phase) throws TranslationException {
+        if (this.cds.length() < 3 + phase) {
             throw new TranslationException(String.format("this '%s' is too short to translate (length=%d, phase=%d)",
-                this.uniqueName, this.cds.length(), this.phase));
+                this.uniqueName, this.cds.length(), phase));
         }
-        return SequenceUtils.translate(this.translationTableId, this.cds, this.phase, this.stopCodonTranslatedAsSelenocysteine);
+        return SequenceUtils.translate(this.translationTableId, this.cds, phase, this.stopCodonTranslatedAsSelenocysteine);
     }
 }
 
