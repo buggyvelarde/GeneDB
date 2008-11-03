@@ -421,3 +421,8 @@ fieldset {
 	padding-top: 5px;
 	width: 100px;
 }
+
+.sequence {
+    font-family: monospace;
+    font-size: 1.3em;
+}
