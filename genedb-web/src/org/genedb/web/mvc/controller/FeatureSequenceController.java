@@ -70,16 +70,14 @@ public class FeatureSequenceController extends PostOrGetFormController {
         Map<String, String> model = Maps.newHashMap();
 
         model.put("unspliced", transcript.getGene().getResidues());
-        if (transcript.getExons().size() > 1) {
-            model.put("spliced", transcript.getResidues());
-        }
+        model.put("spliced", transcript.getResidues());
+
         if (transcript instanceof ProductiveTranscript) {
             Polypeptide pp = ((ProductiveTranscript) transcript).getProtein();
             if (pp != null) {
-//                model.put("protein", pp.getResidues());
+                model.put("protein", pp.getResidues());
             }
         }
-        model.put("unspliced", transcript.getGene().getResidues());
 
         return new ModelAndView(viewName, model);
     }

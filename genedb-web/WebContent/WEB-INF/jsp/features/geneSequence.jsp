@@ -16,18 +16,18 @@
     <!--
     <format:genePageSection id="sequence1">
         <div class="heading">Unspliced</div>
-        <div class="comment">ACCTGTGACTGTACGTGATHISISJUNK</div>
+        <div class="comment">${unspliced}</div>
     </format:genePageSection>
     -->
 
     <format:genePageSection id="splicedSequence">
         <div class="heading">Spliced</div>
-        <div class="comment">${transcript.residues}</div>
+        <div class="comment">${spliced}</div>
     </format:genePageSection>
 
     <format:genePageSection id="proteinSequence">
         <div class="heading">Protein</div>
-        <div class="comment">${polypeptide.residues}</div>
+        <div class="comment">${protein}</div>
     </format:genePageSection>
 
 <format:footer />
