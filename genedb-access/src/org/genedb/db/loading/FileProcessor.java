@@ -202,7 +202,7 @@ public abstract class FileProcessor {
     private void skipRetryAbort(File inputFile, Throwable e)
         throws IOException, ParsingException, SQLException
     {
-        switch (SkipRetryAbort.prompt(e)) {
+        switch (skipRetryAbort.getResponse(e)) {
         case SKIP:
             logger.info(String.format("Skipping file '%s'", inputFile));
             break;
@@ -221,6 +221,18 @@ public abstract class FileProcessor {
                 throw new RuntimeException("Unexpected exception (should not happen)", e);
             }
         }
+    }
+
+    private SkipRetryAbort skipRetryAbort = new SkipRetryAbort();
+
+    /**
+     * Configure this file processor always to skip a file that causes
+     * an error, without prompting the user. This may be used to do a mass
+     * load of dirty data for testing purposes. It should not be used for
+     * a live data load.
+     */
+    public void alwaysSkip() {
+        this.skipRetryAbort = new AlwaysSkip();
     }
 }
 

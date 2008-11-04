@@ -19,11 +19,12 @@ import java.io.Console;
  * minor infelicities in the input files that are easy to correct by hand.
  * The user can correct the problem using a text editor, and then click
  * 'Retry'. On the other hand, loading errors can also (God forbid) be the
- * result of bugs in the loading code, in which case .
+ * result of bugs in the loading code, in which case the only reasonable
+ * response is to abort.
  * <p>
  * If a console is available, the prompt is textual. Otherwise, a dialog
- * box is used. (In practice it is rare that a console is available, since
- * LoadEmbl is usually invoked using an ant target.)
+ * box is used. In practice it is rare that a console is available, since
+ * LoadEmbl is usually invoked using an ant target.
  *
  * @author rh11
  *
@@ -39,7 +40,7 @@ class SkipRetryAbort {
      * @param e the parsing error
      * @return a response code indicating the user's choice
      */
-    public static Response prompt(Throwable e) {
+    public Response getResponse(Throwable e) {
         Console console = System.console();
         if (console == null) {
             return new SkipRetryAbort().promptUsingDialog(e);
@@ -48,7 +49,7 @@ class SkipRetryAbort {
         }
     }
 
-    private static Response promptUsingConsole(Console console, Throwable e) {
+    private Response promptUsingConsole(Console console, Throwable e) {
         console.printf("%s\n", e.getMessage());
         while (true) {
             String response = console.readLine("Would you like to retry, skip the file, or abort the load?");
@@ -113,5 +114,12 @@ class SkipRetryAbort {
         buttonPanel.add(new ResponseButton("Abort", Response.ABORT));
 
         return buttonPanel;
+    }
+}
+
+class AlwaysSkip extends SkipRetryAbort {
+    @Override
+    public Response getResponse(@SuppressWarnings("unused") Throwable e) {
+        return Response.SKIP;
     }
 }
