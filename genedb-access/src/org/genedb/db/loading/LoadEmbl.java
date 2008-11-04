@@ -2,6 +2,7 @@ package org.genedb.db.loading;
 
 
 import org.gmod.schema.feature.Chromosome;
+import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.EST;
 import org.gmod.schema.feature.Supercontig;
 
@@ -107,6 +108,8 @@ public class LoadEmbl extends FileProcessor {
             loader.setTopLevelFeatureClass(Chromosome.class);
         } else if (topLevelFeatureType.equals("supercontig")) {
             loader.setTopLevelFeatureClass(Supercontig.class);
+        } else if (topLevelFeatureType.equals("contig")) {
+            loader.setTopLevelFeatureClass(Contig.class);
         } else if (topLevelFeatureType.equals("EST")) {
             loader.setTopLevelFeatureClass(EST.class);
         } else {
