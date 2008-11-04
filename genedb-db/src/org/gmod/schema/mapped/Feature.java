@@ -97,7 +97,7 @@ public abstract class Feature implements java.io.Serializable {
             @Parameter(name = "sequence", value = "feature_feature_id_seq") })
     @Id
     @GeneratedValue(generator = "generator")
-    @Column(name = "feature_id", unique = false, nullable = false, insertable = true, updatable = true)
+    @Column(name = "feature_id", unique = true, nullable = false, insertable = true, updatable = false)
     @DocumentId
     private int featureId;
 
@@ -831,6 +831,10 @@ public abstract class Feature implements java.io.Serializable {
     public FeatureLoc addLocatedChild(Feature child, int fmin, int fmax, int strand, Integer phase, int locgroup, int rank) {
         FeatureLoc loc = new FeatureLoc(this, child, fmin, fmax, strand, phase, locgroup, rank);
 
+        if (logger.isTraceEnabled()) {
+            logger.trace(String.format("Adding location for '%s' on '%s' %d-%d strand %d with phase=%s, locgroup=%d, rank=%d",
+                child.getUniqueName(), this.getUniqueName(), fmin, fmax, strand, phase, locgroup, rank));
+        }
         if (this.featureLocsForSrcFeatureId == null) {
             this.featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
         }
