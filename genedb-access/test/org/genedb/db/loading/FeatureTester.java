@@ -58,39 +58,89 @@ public class FeatureTester {
     }
 
     private void assertLoc(FeatureLoc loc, int strand, int fmin, int fmax) {
+        assertNotNull(loc);
         assertEquals(strand, loc.getStrand().shortValue());
         assertEquals(fmin, loc.getFmin().intValue());
         assertEquals(fmax, loc.getFmax().intValue());
     }
 
-    public void uniqueNames(Class<? extends Feature> featureClass, String... expectedUniqueNames) {
+    public FeatureTester uniqueNames(Class<? extends Feature> featureClass, String... expectedUniqueNames) {
         @SuppressWarnings("unchecked")
         List<String> actualUniqueNames = session.createCriteria(featureClass)
             .setProjection(Projections.property("uniqueName")).list();
         assertSetEquals(actualUniqueNames, expectedUniqueNames);
+        return this;
     }
 
-    public void names(Class<? extends Feature> featureClass, String... expectedNames) {
+    public FeatureTester names(Class<? extends Feature> featureClass, String... expectedNames) {
         @SuppressWarnings("unchecked")
         List<String> actualNames = session.createCriteria(featureClass)
             .setProjection(Projections.property("name")).list();
         assertSetEquals(actualNames, expectedNames);
+        return this;
     }
 
     public GeneTester geneTester(String uniqueName) {
         return new GeneTester(uniqueName);
     }
 
-    public <T extends TopLevelFeature> TLFTester<T> tlfTester(Class<T> tlfClass, String uniqueName) {
-        return new TLFTester<T>(tlfClass, uniqueName);
+    public TLFTester tlfTester(Class<? extends TopLevelFeature> tlfClass, String uniqueName) {
+        return new TLFTester(tlfClass, uniqueName);
     }
 
-    class GeneTester {
+    /*
+     * The purpose of this rather complicated type trickery is to ensure
+     * that the return type of these methods is the type of the subclass,
+     * for method chaining.
+     *
+     * Although the definition may be a little mind-bending, it's easy to
+     * use. Just define <code>class FooTester extends AbstractTester&lt;FooTester&gt;</code>,
+     * and pass <code>FooTester.class</code> to the super constructor.
+     */
+    abstract class AbstractTester<T extends AbstractTester<T>> {
+        private Class<T> ourClass;
+        protected Feature feature;
+
+        /*
+         * Because generics are implemented using type erasure, we have
+         * to use a Class object to explicitly pass the type information
+         * from compile-time to run-time. We're using a completely constrained
+         * Class object, so the compiler will only accept precisely the
+         * correct Class object here.
+         */
+        protected AbstractTester(Class<T> ourClass, Feature feature) {
+            assert ourClass.isInstance(this);
+            this.ourClass = ourClass;
+            this.feature = feature;
+        }
+        public T loc(int strand, int fmin, int fmax) {
+            assertLoc(feature.getRankZeroFeatureLoc(), strand, fmin, fmax);
+            return ourClass.cast(this);
+        }
+        public T loc(int locgroup, int rank, int strand, int fmin, int fmax) {
+            assertLoc(feature.getFeatureLoc(locgroup, rank), strand, fmin, fmax);
+            return ourClass.cast(this);
+        }
+        public T source(String sourceUniqueName) {
+            assertEquals(sourceUniqueName, feature.getRankZeroFeatureLoc().getSourceFeature().getUniqueName());
+            return ourClass.cast(this);
+        }
+        public T phaseIsNull() {
+            for (FeatureLoc featureLoc: feature.getFeatureLocs()) {
+                assertNull(featureLoc.getPhase());
+            }
+            return ourClass.cast(this);
+        }
+    }
+
+    class GeneTester extends AbstractTester<GeneTester> {
         private AbstractGene gene;
         private GeneTester(String uniqueName) {
-            gene = (AbstractGene) session.createCriteria(AbstractGene.class)
-                        .add(Restrictions.eq("uniqueName", uniqueName))
-                        .uniqueResult();
+            super(GeneTester.class, (Feature) session.createCriteria(AbstractGene.class)
+                .add(Restrictions.eq("uniqueName", uniqueName))
+                .uniqueResult());
+
+            this.gene = (AbstractGene) feature;
             assertNotNull(gene);
             boundaries();
         }
@@ -127,16 +177,6 @@ public class FeatureTester {
             return this;
         }
 
-        public GeneTester loc(int strand, int fmin, int fmax) {
-            assertLoc(gene.getRankZeroFeatureLoc(), strand, fmin, fmax);
-            return this;
-        }
-
-        public GeneTester source(String sourceUniqueName) {
-            assertEquals(sourceUniqueName, gene.getRankZeroFeatureLoc().getSourceFeature().getUniqueName());
-            return this;
-        }
-
         public GeneTester transcripts(String... uniqueNames) {
             assertFeatureUniqueNamesEqual(gene.getTranscripts(), uniqueNames);
             return this;
@@ -160,19 +200,13 @@ public class FeatureTester {
                 uniqueName, gene.getUniqueName(), transcriptNames));
             return null; // Not reached; silly compiler
         }
-
-        public GeneTester phaseIsNull() {
-            for (FeatureLoc featureLoc: gene.getFeatureLocs()) {
-                assertNull(featureLoc.getPhase());
-            }
-            return this;
-        }
     }
 
-    class TranscriptTester {
+    class TranscriptTester extends AbstractTester<TranscriptTester> {
         private Transcript transcript;
         private TranscriptTester(Transcript transcript) {
-            this.transcript = transcript;
+            super(TranscriptTester.class, transcript);
+            this.transcript = (Transcript) feature;
         }
 
         public TranscriptTester synonyms(String synonymType, String... expectedUniqueNames) {
@@ -218,19 +252,13 @@ public class FeatureTester {
             fail(String.format("Exon '%s' not found on transcript '%s'", uniqueName, transcript.getUniqueName()));
             return null; // Not reached, but makes compiler happy
         }
-
-        public TranscriptTester phaseIsNull() {
-            for (FeatureLoc featureLoc: transcript.getFeatureLocs()) {
-                assertNull(featureLoc.getPhase());
-            }
-            return this;
-        }
 }
 
-    class ExonTester {
+    class ExonTester extends AbstractTester<ExonTester> {
         private AbstractExon exon;
         private ExonTester(AbstractExon exon) {
-            this.exon = exon;
+            super(ExonTester.class, exon);
+            this.exon = (AbstractExon) feature;
         }
 
         public ExonTester fmin(int fmin) {
@@ -253,29 +281,25 @@ public class FeatureTester {
         }
     }
 
-    class TLFTester<T extends TopLevelFeature> {
-        private T tlf;
+    class TLFTester extends AbstractTester<TLFTester> {
+        private TopLevelFeature tlf;
 
         @SuppressWarnings("unchecked")
-        private TLFTester(Class<T> tlfClass, String uniqueName) {
-            tlf = (T) session.createCriteria(tlfClass)
+        private TLFTester(Class<? extends TopLevelFeature> tlfClass, String uniqueName) {
+            super(TLFTester.class, (Feature) session.createCriteria(tlfClass)
                         .add(Restrictions.eq("uniqueName", uniqueName))
-                        .uniqueResult();
+                        .uniqueResult());
+            tlf = tlfClass.cast(feature);
             assertNotNull(tlf);
         }
 
-        public TLFTester<T> seqLen(int len) {
+        public TLFTester seqLen(int len) {
             assertEquals(len, tlf.getSeqLen());
             return this;
         }
 
-        public TLFTester<T> residues(String residues) {
+        public TLFTester residues(String residues) {
             assertEquals(residues, tlf.getResidues());
-            return this;
-        }
-
-        public TLFTester<T> loc(int strand, int fmin, int fmax) {
-            assertLoc(tlf.getRankZeroFeatureLoc(), strand, fmin, fmax);
             return this;
         }
 }

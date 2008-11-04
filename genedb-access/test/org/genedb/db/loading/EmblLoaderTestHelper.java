@@ -1,16 +1,25 @@
 package org.genedb.db.loading;
 
+import org.genedb.db.dao.OrganismDao;
+
+import org.gmod.schema.mapped.Organism;
+
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 
 /**
  * A utility class to help in writing tests for the EMBL loader.
@@ -23,9 +32,13 @@ import java.net.URL;
  *
  */
 public class EmblLoaderTestHelper {
-    private ApplicationContext applicationContext;
+    private static final Logger logger = Logger.getLogger(EmblLoaderTestHelper.class);
+
     private EmblLoader loader;
+    private BasicDataSource dataSource;
     private SessionFactory sessionFactory;
+    private OrganismDao organismDao;
+
     private Session session;
 
     static {
@@ -37,22 +50,106 @@ public class EmblLoaderTestHelper {
         PropertyConfigurator.configure(url);
     }
 
-    public EmblLoaderTestHelper(String organismCommonName, String filename) throws IOException, ParsingException {
-        this.applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml", "Test.xml"});
+    EmblLoaderTestHelper() {
+        // empty
+    }
 
-        this.loader = (EmblLoader) applicationContext.getBean("emblLoader", EmblLoader.class);
+    public static EmblLoaderTestHelper create(String organismCommonName, String filename)
+        throws IOException, ParsingException
+    {
+        return create(organismCommonName, null, null, null, filename);
+    }
+
+    public static EmblLoaderTestHelper create(String organismCommonName, String organismGenus,
+            String organismSpecies, String organismStrain, String filename)
+                throws IOException, ParsingException {
+
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml", "Test.xml"});
+        EmblLoaderTestHelper helper = (EmblLoaderTestHelper) applicationContext.getBean("emblLoaderTestHelper", EmblLoaderTestHelper.class);
+
+        helper.doLoad(organismCommonName, organismGenus,
+                organismSpecies, organismStrain, filename);
+        return helper;
+    }
+
+    private void doLoad(String organismCommonName, String organismGenus,
+            String organismSpecies, String organismStrain, String filename)
+    throws IOException, ParsingException {
+
+        if (organismGenus != null) {
+            createOrganismIfNecessary(organismCommonName, organismGenus,
+                organismSpecies, organismStrain);
+        }
+
         loader.setOrganismCommonName(organismCommonName);
+        loadFile(filename);
 
-        this.sessionFactory = (SessionFactory) applicationContext.getBean("sessionFactory", SessionFactory.class);
         this.session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+    }
 
+    public void cleanUp() throws SQLException {
+        /*
+         * If the database is not shutdown, the changes will not be
+         * persisted to the data file. It's useful to be able to inspect
+         * the loaded data directly sometimes, so it's important to do
+         * this. (The HSLQDB documentation suggests that comitted changes
+         * will never be lost even if the database is not shut down. That
+         * does not appear to be true.)
+         */
+        logger.debug("Shutting down database");
+        dataSource.getConnection().createStatement().execute("shutdown");
+    }
+
+    @Transactional
+    private void createOrganismIfNecessary(String organismCommonName,
+            String organismGenus,String organismSpecies, String organismStrain)
+    {
+        Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+        Organism organism = organismDao.getOrganismByCommonName(organismCommonName);
+        if (organism != null) {
+            logger.debug(String.format("Organism '%s' already exists", organismCommonName));
+            return;
+        }
+        if (organismStrain != null) {
+            organismSpecies += " " + organismStrain;
+        }
+        logger.debug(String.format("Creating organism '%s' (%s %s)",
+            organismCommonName, organismGenus, organismSpecies));
+        organism = new Organism(organismGenus, organismSpecies, organismCommonName,
+            organismCommonName, null);
+        session.persist(organism);
+        session.flush();
+    }
+
+    @Transactional
+    private void loadFile(String filename) throws IOException, ParsingException,
+            FileNotFoundException, DataError {
         File file = new File(filename);
         EmblFile emblFile = new EmblFile(file, new FileReader(file));
         loader.load(emblFile);
+        logger.debug("Finished loading");
     }
 
+
+    /* Setters for Spring injection */
     public FeatureTester tester() {
         return new FeatureTester(session);
+    }
+
+    public void setLoader(EmblLoader loader) {
+        this.loader = loader;
+    }
+
+    public void setDataSource(BasicDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    public void setOrganismDao(OrganismDao organismDao) {
+        this.organismDao = organismDao;
     }
 
 }

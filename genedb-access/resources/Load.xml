@@ -9,6 +9,7 @@
 
     <context:component-scan base-package="org.gmod.schema"/>
     <context:spring-configured/>
+
     <context:load-time-weaver aspectj-weaving="on"/>
     <tx:annotation-driven mode="aspectj"/>
 
@@ -102,9 +103,6 @@
     <props>
         <prop key="hibernate.hbm2dll.auto">validate</prop>
         <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
-        <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
-        <prop key="hibernate.search.default.indexBase">${indexDir}</prop>
-        <prop key="hibernate.search.autoregister_listeners">false</prop>
         <prop key="hibernate.current_session_context_class">thread</prop>
     </props>
     </property>

@@ -53,6 +53,6 @@
 	<classpathentry kind="lib" path="/genedb-libs/lib/misc/jewelcli-0.53.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/misc/google-collect-snapshot-20080820.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-aspects.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.4-weaving/spring-aspects.jar"/>
 	<classpathentry kind="output" path="ant-build/classes"/>
 </classpath>

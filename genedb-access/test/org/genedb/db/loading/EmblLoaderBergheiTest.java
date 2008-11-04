@@ -15,7 +15,7 @@ public class EmblLoaderBergheiTest {
 
     @BeforeClass
     public static void setupAndLoad() throws IOException, ParsingException {
-        tester = new EmblLoaderTestHelper("Pberghei", "test/data/PB_PH0001.embl").tester();
+        tester = EmblLoaderTestHelper.create("Pberghei", "test/data/PB_PH0001.embl").tester();
     }
 
     @Test

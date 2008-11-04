@@ -18,7 +18,7 @@ public class EmblLoaderMansoniTest {
 
     @BeforeClass
     public static void setupAndLoad() throws IOException, ParsingException {
-        tester = new EmblLoaderTestHelper("Smansoni", "test/data/Smp_scaff000604.embl").tester();
+        tester = EmblLoaderTestHelper.create("Smansoni", "test/data/Smp_scaff000604.embl").tester();
     }
 
     @Test

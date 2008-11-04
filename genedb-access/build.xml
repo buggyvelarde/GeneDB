@@ -61,16 +61,21 @@
       </copy>
   </target>
 
-    <target name="compile-tests" depends="genedb-access.get-latest-jars">
-        <mkdir dir="${imported.basedir.access}/ant-build/test-classes"/>
-        <javac srcdir="${imported.basedir.access}/test" destdir="${imported.basedir.access}/ant-build/test-classes" debug="true">
-            <classpath>
-                <path refid="genedb-access.libs"/>
-                <pathelement location="${lib-dir}/spring-bundle-2.5.4/junit/junit-4.4.jar"/>
-                <pathelement location="${imported.basedir.access}/ant-build/classes"/>
-            </classpath>
-        </javac>
-    </target>
+  <target name="compile-tests" depends="genedb-access.get-latest-jars">
+      <mkdir dir="${imported.basedir.access}/ant-build/test-classes"/>
+      <javac srcdir="${imported.basedir.access}/test" destdir="${imported.basedir.access}/ant-build/test-classes" debug="true">
+          <classpath>
+              <path refid="genedb-access.libs"/>
+              <pathelement location="${lib-dir}/spring-bundle-2.5.4/junit/junit-4.4.jar"/>
+              <pathelement location="${imported.basedir.access}/ant-build/classes"/>
+          </classpath>
+      </javac>
+      <copy todir="${imported.basedir.access}/ant-build/test-classes" overwrite="true">
+          <fileset dir="${imported.basedir.access}/test">
+              <include name="*.properties"/>
+          </fileset>
+      </copy>
+  </target>
 
   <target name="replace">
       <fail message="The 'load' property must be set" unless="load"/>
@@ -124,10 +129,10 @@
     </path>
 
     <path id="test-classpath">
+        <pathelement location="${imported.basedir.access}/ant-build/test-classes"/>
         <path refid="exec-classpath"/>
         <pathelement location="${lib-dir}/spring-bundle-2.5.4/junit/junit-4.4.jar"/>
         <pathelement location="${lib-dir}/spring-bundle-2.5.4/hsqldb/hsqldb.jar"/>
-        <pathelement location="${imported.basedir.access}/ant-build/test-classes"/>
     </path>
 
     <target name="all-tests" depends="file-test,location-test,loader-test"/>
@@ -168,6 +173,7 @@
     <target name="loader-test" depends="genedb-access.jar,compile-tests">
         <antcall target="run-specific-loader-test"><param name="subtest" value="Berghei"/></antcall>
         <antcall target="run-specific-loader-test"><param name="subtest" value="Mansoni"/></antcall>
+        <antcall target="run-specific-loader-test"><param name="subtest" value="Synthetic"/></antcall>
     </target>
     <target name="run-specific-loader-test">
         <antcall target="copy-skeleton-database"/>
@@ -194,6 +200,7 @@
             <syspropertyset>
                 <propertyref builtin="commandline"/>
             </syspropertyset>
+            <jvmarg value="-javaagent:${lib-dir}/spring-2.5.4-weaving/spring-agent.jar"/>
             <jvmarg line="-Xmx350M"/>
         </java>
     </target>
@@ -337,6 +344,15 @@
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues" />
     </target>
     <target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
+
+    <target name="fix-residues-mansoni" depends="genedb-access.jar">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
+            <arg value="-v" />
+            <arg value="--mark-fragments"/>
+            <arg value="--guess-frame=force"/>
+            <arg value="Smansoni" />
+        </java>
+    </target>
 
     <target name="load-opi-references" depends="genedb-access.jar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
