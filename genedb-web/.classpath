@@ -25,10 +25,22 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-domain"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/misc/google-collect-snapshot-20080820.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/misc/jewelcli-0.53.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/misc/google-collect-snapshot-20080820.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/misc/jewelcli-0.53.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path="/genedb-util"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/db/je-3.3.69.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-aspects.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/db/je-3.3.69.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.4-weaving/spring-aspects.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

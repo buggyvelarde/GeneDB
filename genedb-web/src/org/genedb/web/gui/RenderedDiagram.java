@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
@@ -21,14 +22,18 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeMap;
 
@@ -135,7 +140,42 @@ public abstract class RenderedDiagram {
     /**
      * Font used for printing figures on the scale track
      */
-    private Font labelFont = new Font("FuturaTMed", Font.PLAIN, 12);
+    //private Font labelFont = new Font("FuturaTMed", Font.PLAIN, 12);
+    private Font labelFont;
+    {
+        Properties properties = new Properties();
+        try {
+            InputStream propertyFileInputStream = getClass().getResourceAsStream("/project.properties");
+            if (propertyFileInputStream == null) {
+                throw new FileNotFoundException("Failed to locate project.properties on classpath");
+            }
+            properties.load(propertyFileInputStream);
+            propertyFileInputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to open project.properties", e);
+        }
+
+        String fontFileName = properties.getProperty("diagram.fontFile");
+        if (fontFileName == null) {
+            throw new RuntimeException("Property 'diagram.fontFile' not found in project.properties");
+        }
+        File fontFile = new File(fontFileName);
+        try {
+            InputStream is = new FileInputStream(fontFile);
+
+            // Creates the font at 1pt size
+            Font baseFont = Font.createFont(Font.TRUETYPE_FONT, is);
+
+            is.close();
+
+            // Makes a derived font at 12pt
+            labelFont = baseFont.deriveFont(12);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to open diagram font file", e);
+        } catch (FontFormatException e) {
+            throw new RuntimeException("Failed to open diagram font file", e);
+        }
+    }
 
     /**
      * Distance between minor scale ticks, in bases

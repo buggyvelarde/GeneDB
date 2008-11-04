@@ -1,7 +1,0 @@
-finaldest.webapps=/software/pathogen/projects/genedb/tomcat_workshop/tomcat/webapps/test
-webAppRootKey=genedb.test.root
-dbhost=pathdbsrv1a
-dbport=10101
-dbname=malaria_workshop
-dbuser=pathdb
-dbpassword=Pyrate_1

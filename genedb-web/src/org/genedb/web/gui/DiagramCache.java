@@ -7,16 +7,10 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
 
 /**
  * Create a class responsible for the physical dumping of an image to a file,
@@ -49,7 +43,7 @@ public class DiagramCache {
 
     @PostConstruct
     private void initDirs() {
-        logger.error("In initDirs for diagramcache");
+        logger.debug("In initDirs for diagramcache");
         File baseDir = new File(baseDiagramDirectory);
         if (!baseDir.exists() || !baseDir.canWrite()) {
             throw new RuntimeException(String.format("The diagram cache '%s' doesn't exist or isn't writable", baseDiagramDirectory));
@@ -203,6 +197,7 @@ public class DiagramCache {
 
     @Required
     public void setBaseUri(String baseUri) {
+        logger.trace("Setting baseUri to "+ baseUri);
         this.baseUri = baseUri;
     }
 

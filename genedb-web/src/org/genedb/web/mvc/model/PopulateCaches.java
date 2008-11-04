@@ -32,7 +32,6 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +129,7 @@ public class PopulateCaches {
 
             sessionFactory.getCurrentSession().clear();
             count++;
-            System.err.println(String.format("Count '%d' of '%d' : Total run time '%d's", count, topLevelFeatures.size(), (new Date().getTime() - start)/1000));
+            logger.info(String.format("Count %d of %d : Total run time %.02fs", count, topLevelFeatures.size(), (double)(System.currentTimeMillis() - start)/1000));
         }
     }
 
@@ -159,13 +158,16 @@ public class PopulateCaches {
         RenderedContextMap renderedContextMap = new RenderedContextMap(chromosomeDiagram);
         RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
 
-        File renderDirectory = new File(diagramCache.getContextMapRootDir() + "/" + feature.getOrganism().getCommonName() + "/" + MD5Util.getPathBasedOnMD5(feature.getUniqueName(), '/'));
+        String relativePath = feature.getOrganism().getCommonName() + "/" + MD5Util.getPathBasedOnMD5(feature.getUniqueName(), '/');
+        File renderDirectory = new File(diagramCache.getContextMapRootDir() + "/" + relativePath);
+        String renderURI = diagramCache.getBaseUri() + "/" + relativePath;
         renderDirectory.mkdirs();
+        logger.trace("Rendering context map files to " + renderDirectory);
         List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTilesTo(renderDirectory, TILE_WIDTH);
 
         String text;
         try {
-            text = populateModel(renderedChromosomeThumbnail, renderedContextMap, renderDirectory, tiles);
+            text = populateModel(renderedChromosomeThumbnail, renderedContextMap, renderURI, tiles);
 
             contextMapMap.put(feature.getUniqueName(), text);
             logger.info("Stored contextMap for '"+feature.getUniqueName()+"' as '"+text+"'");
@@ -174,8 +176,8 @@ public class PopulateCaches {
         }
     }
 
-    private String populateModel(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap, File renderDirectory,
-            List<RenderedContextMap.Tile> tiles) throws IOException {
+    private String populateModel(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap,
+            String renderURI, List<RenderedContextMap.Tile> tiles) throws IOException {
         String chromosomeThumbnailURI = diagramCache.fileForContextMap(chromosomeThumbnail);
 
         ContextMapDiagram diagram = contextMap.getDiagram();
@@ -197,9 +199,7 @@ public class PopulateCaches {
         model.put("start", diagram.getStart());
         model.put("end", diagram.getEnd());
 
-        String path = renderDirectory.getAbsolutePath().substring(4); // FIXME - BUG
-
-        model.put("tilePrefix", diagramCache.getBaseUri()+path);
+        model.put("tilePrefix", renderURI);
         model.put("tiles", tiles);
 
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();

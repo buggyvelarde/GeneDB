@@ -19,31 +19,26 @@
 
 package org.genedb.web.mvc.controller;
 
+import org.genedb.db.dao.CvDao;
+import org.genedb.querying.tmpquery.BrowseCategory;
+
+import org.gmod.schema.utils.CountedName;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.genedb.db.dao.CvDao;
-import org.genedb.querying.core.Query;
-import org.genedb.querying.tmpquery.BrowseCategory;
-
-import org.gmod.schema.utils.CountedName;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Returns cvterms based on a particular cv
