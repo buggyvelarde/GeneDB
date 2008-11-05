@@ -43,7 +43,7 @@
     <path id="tools-instrument-lib">
         <path location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
         <path location="${genedb-db.libdir}/spring-bundle-2.5.6/jakarta-commons/commons-logging.jar"/>
-        <path location="${genedb-db.libdir}/misc/javassist-3.4.GA.jar"/>
+        <path location="${genedb-db.libdir}/spring-bundle-2.5.6/javassist/javassist-3.4.GA.jar"/>
         <path location="${genedb-db.libdir}/misc/slf4j-api-1.5.2.jar"/>
         <path location="${genedb-db.libdir}/misc/slf4j-nop-1.5.2.jar"/>
 
