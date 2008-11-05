@@ -3,37 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/genedb-libs"/>
 	<classpathentry kind="lib" path="lib/backport-util-concurrent.jar"/>
 	<classpathentry kind="lib" path="lib/jtidy-r8-21122004.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://jtidy.sourceforge.net/apidocs"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.4.jar" sourcepath="/genedb-libs/lib-src/spring-sources-2.5.4.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.5.x/api"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar" sourcepath="/genedb-libs/lib-src/hibernate-3.2-src.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/v3/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" sourcepath="/genedb-libs/lib-src/hibernate-annotations-3.4.0.CR1-src.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/annotations/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-entitymanager.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/entitymanager/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://logging.apache.org/log4j/1.2/apidocs"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar">
@@ -42,31 +15,30 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/genedb-libs/lib/hibernate-extras/hibernate-tools.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/freemarker/freemarker.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/j2ee/jms.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.2.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/cglib-2.1_3.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/junit/junit-4.4.jar" sourcepath="/genedb-libs/lib-src/junit-4.4-src.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://junit.sourceforge.net/javadoc_40"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hsqldb/hsqldb.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-util"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-aop.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-aspects.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/asm-1.5.3.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/antlr/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/dom4j/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/freemarker/freemarker.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-entitymanager.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hsqldb/hsqldb.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/j2ee/jms.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-collections.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-logging.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-core-2.5.6/spring-aspects.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-core-2.5.6/spring.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/j2ee/persistence.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/biojava/biojava-1.6.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/lucene/lucene-core-2.3.2.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/misc/asm-1.5.3.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/misc/cglib-2.1_3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

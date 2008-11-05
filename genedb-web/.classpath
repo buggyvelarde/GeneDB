@@ -4,43 +4,12 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/junit/junit-4.4.jar" sourcepath="/genedb-libs/lib-src/junit-4.4-src.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://junit.sourceforge.net/javadoc_40"/>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-query"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/genedb-libs"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/postgresql-8.2dev-501.jdbc3.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/lucene-core-2.3.2.jar" sourcepath="/genedb-libs/lib-src/lucene-2.3.2-src.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://lucene.apache.org/java/2_3_2/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-domain"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/misc/google-collect-snapshot-20080820.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/misc/jewelcli-0.53.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-libs/lib/misc/jewelcli-0.53.jar"/>
 	<classpathentry kind="src" path="/genedb-util"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/db/je-3.3.69.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.4-weaving/spring-aspects.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK 6"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

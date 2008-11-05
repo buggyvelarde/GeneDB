@@ -4,7 +4,7 @@
 
     <path id="anttasks-jars">
         <filelist dir="${imported.basedir.util}/../genedb-libs/lib">
-            <file name="spring-bundle-2.5.4/ant/ant.jar" />
+            <file name="spring-bundle-2.5.6/ant/ant.jar" />
         </filelist>
     </path>
 
@@ -23,7 +23,7 @@
 
         <javac srcdir="${imported.basedir.util}/src" destdir="${imported.basedir.util}/ant-build/classes" debug="on">
             <classpath>
-                <pathelement location="${imported.basedir.util}/../genedb-libs/lib/biojava-1.6.jar"/>
+                <pathelement location="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar"/>
             </classpath>
         </javac>
 

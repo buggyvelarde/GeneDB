@@ -19,15 +19,15 @@
 	</target>
 
 	<path id="compile-lib-query">
-		<path location="${imported.basedir.query}/../genedb-libs/lib/spring-2.5.4.jar" />
+		<path location="${imported.basedir.query}/../genedb-libs/lib/spring-core-2.5.6/spring.jar" />
         <path location="${lib-dir}/antlr-runtime-3.0.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar"/>
-        <path location="${lib-dir}/lucene-core-2.3.2.jar"/>
-        <path location="${lib-dir}/lucene-queries-2.3.2.jar"/>
-		<path location="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjrt.jar" />
+        <path location="${lib-dir}/spring-bundle-2.5.6/antlr/antlr-2.7.6.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.6/cglib/cglib-nodep-2.1_3.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
+        <path location="${lib-dir}/lucene/lucene-core-2.3.2.jar"/>
+        <path location="${lib-dir}/lucene/lucene-queries-2.3.2.jar"/>
+		<path location="${lib-dir}/spring-bundle-2.5.6/aspectj/aspectjrt.jar" />
 	</path>
 
 	<target name="fulljar-query"

@@ -4,148 +4,77 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/" source-path="/WebContent"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/genedb-query/genedb-query">
-<dependency-type>uses</dependency-type>
-</dependent-module>
+        <wb-resource deploy-path="/" source-path="/ejbModule"/>
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/genedb-db/genedb-db">
 <dependency-type>uses</dependency-type>
 </dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/genedb-domain/genedb-domain">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/genedb-domain/genedb-domain">
 <dependency-type>uses</dependency-type>
 </dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/hibernate-extras/hibernate-search-3.0.1GA.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/antlr-runtime-3.0.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/asm/asm-2.2.3.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-beanutils.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-fileupload.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-io.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-lang.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-pool.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/freemarker/freemarker.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/j2ee/jstl.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/j2ee/jta.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-2.5.4.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-webmvc-2.5.4.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/jakarta-taglibs/standard.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/poi/poi-3.0.1.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/bytecode-0.91.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/saxon8.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/saxon8-xom.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/xom-1.0.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/lucene-core-2.3.2.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/displaytag-1.1.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/json_simple.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/jdom.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/dwr-2.0rc1.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/json-lib-2.2.1-jdk15.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/json-lib-ext-spring-1.0.1.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/ezmorph-1.0.4.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/biojava-1.6.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/genedb-util/genedb-util">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-aop.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-aspects.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.4/aspectj/aspectjrt.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-        <property name="java-output-path" value="/build/classes/"/>
-<property name="context-root" value="genedb-web"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-core-2.5.6/spring-webmvc.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-core-2.5.6/spring.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.6/j2ee/jstl.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.6/jakarta-taglibs/standard.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/db/je-3.3.69.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/misc/google-collect-snapshot-20080820.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/misc/javassist-3.4.GA.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/xml/jdom.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.6/poi/poi-3.0.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-io.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-lang.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-core-2.5.6/spring-aspects.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.6/aspectj/aspectjrt.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/genedb-query/genedb-query">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/lucene/lucene-core-2.3.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/json/json_simple.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/json/json-lib-2.2.1-jdk15.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/json/json-lib-ext-spring-1.0.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/misc/displaytag-1.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="java-output-path"/>
+        <property name="context-root" value="genedb-web"/>
     </wb-module>
 </project-modules>
