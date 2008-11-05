@@ -64,8 +64,19 @@ class FeatureTable extends EmblFile.Section {
                 return null;
             }
             if (values.size() > 1) {
-                throw new DataError(String.format("The qualifier '%s' appears more than once in feature '%s'",
-                    key, type));
+                logger.warn(String.format("The qualifier '%s' appears more than once in feature '%s'", key, type));
+
+                // If the qualifier is simply repeated, with the same value, that's okay.
+                String uniqueValue = null;
+                for (String value: values) {
+                    if (uniqueValue == null) {
+                        uniqueValue = value;
+                    } else if (!uniqueValue.equals(value)) {
+                        throw new DataError(String.format("The qualifier '%s' appears more than once in feature '%s' (with different values)",
+                            key, type));
+                    }
+                }
+                return uniqueValue;
             }
             return values.get(0);
         }
