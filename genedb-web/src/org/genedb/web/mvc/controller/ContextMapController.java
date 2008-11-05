@@ -1,8 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-import net.sf.ehcache.Element;
-import net.sf.ehcache.constructs.blocking.BlockingCache;
-
 import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
 import org.genedb.db.domain.services.BasicGeneService;
 import org.genedb.querying.core.LuceneIndex;
