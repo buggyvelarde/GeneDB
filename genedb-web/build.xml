@@ -51,6 +51,7 @@
         <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.6/javassist/javassist-3.4.GA.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jstl.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jta.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/persistence.jar" />
