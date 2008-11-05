@@ -10,7 +10,6 @@
     <context:component-scan base-package="org.gmod.schema"/>
     <context:spring-configured/>
 
-    <context:load-time-weaver aspectj-weaving="on"/>
     <tx:annotation-driven mode="aspectj"/>
 
     <!-- Spring needs a bean called 'transactionManager' for annotation-driven transactions -->
@@ -104,6 +103,7 @@
         <prop key="hibernate.hbm2dll.auto">validate</prop>
         <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
         <prop key="hibernate.current_session_context_class">thread</prop>
+        <prop key="hibernate.search.autoregister_listeners"/>
     </props>
     </property>
     </bean>
