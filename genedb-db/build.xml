@@ -81,6 +81,7 @@
 
 	<!-- An internal init target -->
     <target name="setup-db" depends="genedb-util.fulljar">
+        <mkdir dir="${imported.basedir.db}/bin" />
         <mkdir dir="${imported.basedir.db}/ant-build" />
         <mkdir dir="${imported.basedir.db}/ant-build/test" />
         <mkdir dir="${imported.basedir.db}/ant-build/classes" />
