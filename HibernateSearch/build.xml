@@ -14,30 +14,30 @@
             <file name="genedb-util.jar" />
         </filelist>
         <filelist dir="../genedb-libs/lib">
-            <file name="spring-bundle-2.5.4/ant/ant.jar" />
-            <file name="lucene-core-2.3.2.jar" />
-            <file name="spring-2.5.4.jar" />
+            <file name="spring-bundle-2.5.6/ant/ant.jar" />
+            <file name="lucene/lucene-core-2.3.2.jar" />
+            <file name="spring-core-2.5.6/spring.jar" />
             <file name="hibernate-extras/hibernate-search-3.0.1GA.jar" />
-            <file name="spring-bundle-2.5.4/hibernate/hibernate3.jar" />
-            <file name="spring-bundle-2.5.4/hibernate/hibernate-annotations.jar" />
-            <file name="spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
+            <file name="spring-bundle-2.5.6/hibernate/hibernate3.jar" />
+            <file name="spring-bundle-2.5.6/hibernate/hibernate-annotations.jar" />
+            <file name="spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar" />
             <file name="hibernate-extras/hibernate-tools.jar" />
-            <file name="spring-bundle-2.5.4/j2ee/jta.jar" />
-            <file name="spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
-            <file name="spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
+            <file name="spring-bundle-2.5.6/j2ee/jta.jar" />
+            <file name="spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
+            <file name="spring-bundle-2.5.6/antlr/antlr-2.7.6.jar" />
 
             <file name="misc/javassist-3.4.GA.jar" />
+            <file name="misc/jewelcli-0.53.jar" />
 
-            <file name="spring-bundle-2.5.4/jakarta-commons/commons-collections.jar" />
-            <file name="spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar" />
-            <file name="spring-bundle-2.5.4/jakarta-commons/commons-logging.jar" />
-            <file name="spring-bundle-2.5.4/jakarta-commons/commons-pool.jar" />
-            <file name="spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" />
-            <file name="spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar" />
-            <file name="spring-bundle-2.5.4/j2ee/persistence.jar" />
-            <file name="postgresql-8.3-603.jdbc4.jar" />
-            <file name="spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" />
-            <file name="biojava-1.6.jar"/>
+            <file name="spring-bundle-2.5.6/jakarta-commons/commons-collections.jar" />
+            <file name="spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar" />
+            <file name="spring-bundle-2.5.6/jakarta-commons/commons-logging.jar" />
+            <file name="spring-bundle-2.5.6/jakarta-commons/commons-pool.jar" />
+            <file name="spring-bundle-2.5.6/dom4j/dom4j-1.6.1.jar" />
+            <file name="spring-bundle-2.5.6/j2ee/persistence.jar" />
+            <file name="db/postgresql-8.3-603.jdbc4.jar" />
+            <file name="spring-bundle-2.5.6/log4j/log4j-1.2.15.jar" />
+            <file name="biojava/biojava-1.6.jar"/>
         </filelist>
     </path>
 
@@ -89,6 +89,7 @@
             <propertyref name="password" />
         </propertyset>
         <java fork="true" maxmemory="256m" failonerror="true" classpathref="exec-classpath" classname="org.genedb.hibernate.search.IndexChado">
+            <!-- <arg line="-o Pfalciparum" /> -->
             <syspropertyset refid="indexProperties" />
             <sysproperty key="index.base" value="${hibernate.search.default.indexBase}" />
             <jvmarg line="-server" />
