@@ -6,53 +6,22 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/asm/asm-2.2.3.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/jakarta-commons/commons-pool.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate3.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/v3/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/annotations/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/j2ee/jta.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/j2ee/persistence.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/postgresql-8.2dev-501.jdbc3.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.4.jar" sourcepath="/genedb-libs/lib-src/spring-sources-2.5.4.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.5.x/api"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/bytecode-0.91.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/saxon8.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/saxon8-xom.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/xom-1.0.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://logging.apache.org/log4j/1.2/apidocs"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/junit/junit-4.4.jar" sourcepath="/genedb-libs/lib-src/junit-4.4-src.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://junit.sourceforge.net/javadoc_40"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-util"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/biojava-1.6.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/misc/jewelcli-0.53.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/misc/google-collect-snapshot-20080820.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-2.5.4-weaving/spring-aspects.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/ehcache/ehcache-1.5.0.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/j2ee/common-annotations.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/j2ee/jta.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/j2ee/persistence.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-core-2.5.6/spring.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-core-2.5.6/spring-aspects.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar"/>
 	<classpathentry kind="output" path="ant-build/classes"/>
 </classpath>

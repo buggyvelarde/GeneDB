@@ -9,6 +9,13 @@
   <import file="${imported.basedir.access}/../genedb-db/build.xml"/>
   <import file="${imported.basedir.access}/../genedb-util/build.xml"/>
 
+    <!-- need to tell ant where the aspectj tooling jar is -->
+    <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+        <classpath>
+            <pathelement location="${genedb-db.libdir}/aspectj-1.6.2/aspectjtools.jar"/>
+        </classpath>
+    </taskdef>
+
   <property file="property-file.${load}" />
 
   <property name="lib-dir" value="${imported.basedir.access}/../genedb-libs/lib/"/>
@@ -22,24 +29,24 @@
       <path location="${lib-dir}/postgresql-8.3-603.jdbc4.jar"/>
       <path location="${lib-dir}/saxon8-xom.jar"/>
       <path location="${lib-dir}/saxon8.jar"/>
-      <path location="${lib-dir}/spring-2.5.4.jar"/>
-      <path location="${lib-dir}/spring-aspects.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/asm/asm-2.2.3.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjweaver.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/aspectj/aspectjrt.jar"/>
-      <path location="${lib-dir}/spring-2.5.4-weaving/spring-aspects.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/cglib/cglib-nodep-2.1_3.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/ehcache/ehcache-1.4.1.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-annotations.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate3.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/jta.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/j2ee/persistence.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-collections.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-dbcp.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-logging.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-pool.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.4/log4j/log4j-1.2.15.jar" />
+      <path location="${lib-dir}/spring-core-2.5.6/spring.jar"/>
+      <path location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/antlr/antlr-2.7.6.jar"/>
+      <!-- path location="${lib-dir}/spring-bundle-2.5.6/asm/asm-2.2.3.jar"/ -->
+      <path location="${lib-dir}/spring-bundle-2.5.6/aspectj/aspectjweaver.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
+      <path location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/cglib/cglib-nodep-2.1_3.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/ehcache/ehcache-1.4.1.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jta.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/persistence.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-collections.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-logging.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-pool.jar"/>
+      <path location="${lib-dir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar" />
       <path location="${lib-dir}/xom-1.0.jar"/>
       <path location="${imported.basedir.access}/lib/genedb-db.jar"/>
       <path location="${imported.basedir.access}/lib/genedb-util.jar"/>
@@ -51,6 +58,11 @@
     <copy file="${imported.basedir.access}/../genedb-util/ant-build/jars/genedb-util.jar" todir="${imported.basedir.access}/lib" />
   </target>
 
+    <!-- the path to the Spring-defined aspects -->
+    <path id="genedb-access.aspect.path">
+        <pathelement location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar" />
+    </path>
+
   <target name="compile-access" depends="genedb-access.get-latest-jars">
       <mkdir dir="${imported.basedir.access}/ant-build/classes"/>
       <javac srcdir="${imported.basedir.access}/src" destdir="${imported.basedir.access}/ant-build/classes" debug="true" classpathref="genedb-access.libs"/>
@@ -59,6 +71,13 @@
               <exclude name="**/*.java"/>
           </fileset>
       </copy>
+
+      <iajc verbose="false"
+          inpath="${imported.basedir.access}/ant-build/classes"
+          aspectpathref="genedb-access.aspect.path"
+          classpathRef ="genedb-access.libs"
+          destdir="${imported.basedir.access}/ant-build/classes"
+      />
   </target>
 
   <target name="compile-tests" depends="genedb-access.get-latest-jars">
@@ -66,7 +85,7 @@
       <javac srcdir="${imported.basedir.access}/test" destdir="${imported.basedir.access}/ant-build/test-classes" debug="true">
           <classpath>
               <path refid="genedb-access.libs"/>
-              <pathelement location="${lib-dir}/spring-bundle-2.5.4/junit/junit-4.4.jar"/>
+              <pathelement location="${lib-dir}/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
               <pathelement location="${imported.basedir.access}/ant-build/classes"/>
           </classpath>
       </javac>
@@ -121,18 +140,18 @@
         <fileset file="${imported.basedir.access}/../genedb-domain/genedb-domain.jar"  />
         <fileset file="${lib-dir}/antlr-runtime-3.0.jar" />
         <fileset file="${lib-dir}/lucene-core-2.3.2.jar" />
-        <fileset file="${lib-dir}/spring-bundle-2.5.4/dom4j/dom4j-1.6.1.jar" />
-        <fileset file="${lib-dir}/spring-bundle-2.5.4/dom4j/jaxen-1.1-beta-7.jar" />
-        <fileset file="${lib-dir}/spring-bundle-2.5.4/hibernate/hibernate-commons-annotations.jar" />
-        <fileset file="${lib-dir}/spring-bundle-2.5.4/jakarta-commons/commons-lang.jar" />
+        <fileset file="${lib-dir}/spring-bundle-2.5.6/dom4j/dom4j-1.6.1.jar" />
+        <fileset file="${lib-dir}/spring-bundle-2.5.6/dom4j/jaxen-1.1-beta-7.jar" />
+        <fileset file="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar" />
+        <fileset file="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-lang.jar" />
         <fileset file="genedb-access.jar" />
     </path>
 
     <path id="test-classpath">
         <pathelement location="${imported.basedir.access}/ant-build/test-classes"/>
         <path refid="exec-classpath"/>
-        <pathelement location="${lib-dir}/spring-bundle-2.5.4/junit/junit-4.4.jar"/>
-        <pathelement location="${lib-dir}/spring-bundle-2.5.4/hsqldb/hsqldb.jar"/>
+        <pathelement location="${lib-dir}/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
+        <pathelement location="${lib-dir}/spring-bundle-2.5.6/hsqldb/hsqldb.jar"/>
     </path>
 
     <target name="all-tests" depends="file-test,location-test,loader-test"/>
@@ -178,7 +197,6 @@
     <target name="run-specific-loader-test">
         <antcall target="copy-skeleton-database"/>
         <junit printsummary="yes" haltonfailure="yes" fork="true" maxmemory="256M">
-            <jvmarg value="-javaagent:${lib-dir}/spring-2.5.4-weaving/spring-agent.jar"/>
             <classpath refid="test-classpath"/>
             <formatter type="brief" usefile="false" />
             <test name="org.genedb.db.loading.EmblLoader${subtest}Test"/>
@@ -200,7 +218,6 @@
             <syspropertyset>
                 <propertyref builtin="commandline"/>
             </syspropertyset>
-            <jvmarg value="-javaagent:${lib-dir}/spring-2.5.4-weaving/spring-agent.jar"/>
             <jvmarg line="-Xmx350M"/>
         </java>
     </target>
