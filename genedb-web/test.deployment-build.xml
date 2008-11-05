@@ -9,9 +9,9 @@
     <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
 
   <path id="groovy-script-jars">
-    <path location="${lib-dir}/spring-bundle-2.5.4/groovy/groovy-1.5.5.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.4/asm/asm-2.2.3.jar" />
-    <path location="${lib-dir}/spring-bundle-2.5.4/antlr/antlr-2.7.6.jar" />
+    <path location="${lib-dir}/spring-bundle-2.5.6/groovy/groovy-1.5.5.jar"/>
+    <path location="${lib-dir}/spring-bundle-2.5.6/asm/asm-2.2.3.jar" />
+    <path location="${lib-dir}/spring-bundle-2.5.6/antlr/antlr-2.7.6.jar" />
   </path>
 
   <taskdef name="groovy"
