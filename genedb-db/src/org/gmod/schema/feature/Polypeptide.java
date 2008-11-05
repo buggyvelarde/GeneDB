@@ -1,9 +1,11 @@
 package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
+import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.utils.PeptideProperties;
@@ -18,9 +20,14 @@ import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojava.bio.symbol.SimpleSymbolList;
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Store;
+import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -38,6 +45,8 @@ public class Polypeptide extends Region {
 
     @Transient
     private AbstractGene gene;
+
+    @Transient private double mass = -1;
 
     Polypeptide() {
         // empty
@@ -210,17 +219,26 @@ public class Polypeptide extends Region {
             logger.error(String.format("Error computing protein isoelectric point for '%s'", residuesSymbolList), e);
         }
 
-        try {
-            double massInDaltons = MassCalc.getMass(residuesSymbolList, SymbolPropertyTable.AVG_MASS, true);
-            pp.setMass(massInDaltons);
-        } catch (Exception exp) {
-            logger.error(String.format("Error computing protein mass in '%s' because '%s'", getUniqueName(), exp.getMessage()));
+        double mass2 = calculateMass(residuesSymbolList);
+        if (mass2 != -1) {
+            //mass = mass2;
+            pp.setMass(mass2);
         }
 
         double charge = calculateCharge(residuesString);
         pp.setCharge(charge);
 
         return pp;
+    }
+
+    private double calculateMass(SymbolList residuesSymbolList) {
+        try {
+            double massInDaltons = MassCalc.getMass(residuesSymbolList, SymbolPropertyTable.AVG_MASS, true);
+            return massInDaltons;
+        } catch (Exception exp) {
+            logger.error(String.format("Error computing protein mass in '%s' because '%s'", getUniqueName(), exp.getMessage()));
+        }
+        return -1;
     }
 
 
@@ -259,6 +277,7 @@ public class Polypeptide extends Region {
     }
 
     @Transient
+    @Field(name="gpiAnchored", index=Index.UN_TOKENIZED, store=Store.NO)
     public boolean isGPIAnchored() {
         return hasProperty("genedb_misc", "GPI_anchored");
     }
@@ -270,4 +289,109 @@ public class Polypeptide extends Region {
     public void addOrthologue(Polypeptide source) {
         this.addFeatureRelationship(source, "sequence", "orthologous_to");
     }
+
+
+    @Transient
+    @Field(name="signalP", index=Index.UN_TOKENIZED, store=Store.NO)
+    public boolean isSignalP() {
+        if (hasProperty("genedb_misc", "SignalP_prediction")
+        || hasProperty("genedb_misc", "signal_peptide_probability")
+        || hasProperty("genedb_misc", "signal_anchor_probability")) {
+            return true;
+        }
+        return false;
+    }
+
+
+    @Transient
+    @Field(name="apicoplast", index=Index.UN_TOKENIZED, store=Store.NO)
+    public boolean isApicoplast() {
+        String s = getProperty("genedb_misc", "PlasmoAP_score");
+        int score;
+        try {
+            score = Integer.parseInt(s);
+        }
+        catch (RuntimeException exp) {
+            return false;
+        }
+        if (score > 4) {
+            return true;
+        }
+        return false;
+    }
+
+    @Transient
+    @Field(index=Index.UN_TOKENIZED, store=Store.NO)
+    public int numberTMDomains() {
+        return this.getRegions(TransmembraneRegion.class).size();
+    }
+
+
+    @Transient
+    @Field(index=Index.UN_TOKENIZED, store=Store.NO)
+    public double mass() {
+        if (mass == -1) {
+            SymbolTokenization proteinTokenization;
+            try {
+                proteinTokenization = ProteinTools.getTAlphabet().getTokenization("token");
+                SymbolList residuesSymbolList = new SimpleSymbolList(proteinTokenization, getResidues());
+                calculateMass(residuesSymbolList);
+            } catch (BioException exp) {
+                logger.error("Failed to calculate mass", exp);
+            }
+;
+        }
+        return mass;
+    }
+
+    @Transient
+    @Field(index=Index.TOKENIZED, store=Store.NO)
+    public String ecNums() {
+        List<String> ecNums = new ArrayList<String>();
+        for (FeatureProp fp : getFeatureProps()) {
+            CvTerm type = fp.getType();
+            if (type.getName().equals("EC_number") && type.getCv().getName().equals("genedb_misc")) {
+                ecNums.add(fp.getValue());
+            }
+        }
+        return StringUtils.collectionToDelimitedString(ecNums, " ");
+    }
+
+
+    @Transient
+    @Field(index=Index.TOKENIZED, store=Store.NO)
+    public String allCuration() {
+        List<String> curation = new ArrayList<String>();
+        for (FeatureProp fp : getFeatureProps()) {
+            CvTerm type = fp.getType();
+            if (type.getCv().getName().equals("genedb_misc") && type.getName().equals("curation")) {
+                curation.add(fp.getValue());
+            }
+            if (type.getCv().getName().equals("feature_property") && type.getName().equals("comment")) {
+                curation.add(fp.getValue());
+            }
+        }
+        return StringUtils.collectionToDelimitedString(curation, " ");
+    }
+
+
+
+    @Transient
+    @Field(index=Index.TOKENIZED, store=Store.NO)
+    public String go() {
+        List<String> go = new ArrayList<String>();
+        go.addAll(populateFromFeatureCvTerms("biological_process"));
+        go.addAll(populateFromFeatureCvTerms("molecular_function"));
+        go.addAll(populateFromFeatureCvTerms("cellular_component"));
+        return StringUtils.collectionToDelimitedString(go, " ");
+    }
+
+    private Collection<String> populateFromFeatureCvTerms(String cvNamePrefix) {
+        List<String> ret = new ArrayList<String>();
+        for (FeatureCvTerm fct : getFeatureCvTermsFilteredByCvNameStartsWith(cvNamePrefix)) {
+           ret.add(String.format("%s %s", fct.getCvTerm().getName(), fct.getCvTerm().getDbXRef().getAccession()));
+        }
+        return ret;
+    }
+
 }
