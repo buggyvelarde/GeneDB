@@ -36,8 +36,8 @@
         <path location="${lib-dir}/lucene/lucene-core-2.3.2.jar"/>
         <path location="${lib-dir}/misc/google-collect-snapshot-20080820.jar" />
         <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
-        <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-api-1.5.2.jar" />
-        <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-log4j12-1.5.2.jar" />
+        <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-api-1.5.0.jar" />
+        <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-log4j12-1.5.0.jar" />
         <path location="${lib-dir}/db/postgresql-8.2dev-501.jdbc3.jar" />
         <path location="${lib-dir}/spring-core-2.5.6/spring.jar" />
         <path location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar" />
