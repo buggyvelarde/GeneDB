@@ -29,7 +29,7 @@
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
-    <bean name="diagramCache" class="org.genedb.web.gui.DiagramCache">
+    <bean name="diagramCache" class="org.genedb.web.gui.FileDiagramCache">
         <property name="baseDiagramDirectory" value="${baseDiagramDirectory}" />
         <property name="baseUri" value="${baseUri}" />
         <property name="contextMapRenderDirectory" value="${contextMap.render.directory}" />

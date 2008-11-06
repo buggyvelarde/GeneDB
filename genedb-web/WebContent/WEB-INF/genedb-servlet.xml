@@ -269,6 +269,10 @@
 
     <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" />
 
+    <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">
+        <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
+    </bean>
+
     <bean id="NamedFeatureController"
         class="org.genedb.web.mvc.controller.NamedFeatureController">
         <property name="sessionForm" value="true" />
