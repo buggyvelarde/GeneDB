@@ -38,7 +38,7 @@ public class FeatureUtils implements InitializingBean {
     private GeneralDao generalDao;
     protected CvTerm GENEDB_TOP_LEVEL;
 
-    protected static final Pattern PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
 
     public void setPubDao(PubDao pubDao) {
         this.pubDao = pubDao;
@@ -54,12 +54,16 @@ public class FeatureUtils implements InitializingBean {
 
     private Cv CV_GENEDB;
     private CvTerm GO_KEY_EVIDENCE, GO_KEY_QUALIFIER, GENEDB_AUTOCOMMENT;
+    private CvTerm PUB_TYPE_UNFETCHED;
+    private Db PUBMED_DB;
     public void afterPropertiesSet() {
         CV_GENEDB = cvDao.getCvByName("genedb_misc");
         GENEDB_TOP_LEVEL = cvDao.getCvTermByNamePatternInCv("top_level_seq", CV_GENEDB).get(0);
         GO_KEY_EVIDENCE = cvDao.getCvTermByNamePatternInCv("evidence", CV_GENEDB).get(0);
         GO_KEY_QUALIFIER = cvDao.getCvTermByNamePatternInCv("qualifier", CV_GENEDB).get(0);
         GENEDB_AUTOCOMMENT = cvDao.getCvTermByNamePatternInCv("autocomment", CV_GENEDB).get(0);
+        PUBMED_DB = generalDao.getDbByName("MEDLINE");
+        PUB_TYPE_UNFETCHED = cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
     }
 
     public void markTopLevelFeature(org.gmod.schema.mapped.Feature topLevel) {
@@ -74,19 +78,17 @@ public class FeatureUtils implements InitializingBean {
      * @return the Pub object
      */
     public Pub findOrCreatePubFromPMID(String ref) {
-        Db DB_PUBMED = generalDao.getDbByName("MEDLINE");
         int colon = ref.indexOf(":");
         String accession = ref;
         if (colon != -1) {
             accession = ref.substring(colon + 1);
         }
-        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(DB_PUBMED, accession);
+        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(PUBMED_DB, accession);
         Pub pub;
         if (dbXRef == null) {
-            dbXRef = new DbXRef(DB_PUBMED, accession);
+            dbXRef = new DbXRef(PUBMED_DB, accession);
             generalDao.persist(dbXRef);
-            CvTerm cvTerm = cvDao.getCvTermById(1); // TODO -Hack
-            pub = new Pub("PMID:" + accession, cvTerm);
+            pub = new Pub("PMID:" + accession, PUB_TYPE_UNFETCHED);
             generalDao.persist(pub);
             PubDbXRef pubDbXRef = new PubDbXRef(pub, dbXRef, true);
             generalDao.persist(pubDbXRef);
@@ -143,14 +145,13 @@ public class FeatureUtils implements InitializingBean {
     }
 
     /**
-     * Does a string look likes it's a PubMed reference
+     * Does a string look like a PubMed reference?
      *
      * @param xref The string to examine
      * @return true if it looks like a PubMed reference
      */
     public boolean looksLikePub(String xref) {
-        boolean ret = PUBMED_PATTERN.matcher(xref).lookingAt();
-        return ret;
+        return PUBMED_PATTERN.matcher(xref).lookingAt();
     }
 
     /*
@@ -160,17 +161,24 @@ public class FeatureUtils implements InitializingBean {
      * would give a better time/space tradeoff.
      */
 
-    private Map<String, Integer> goTermIdsByAcc = null;
+    private volatile Map<String, Integer> goTermIdsByAcc = null;
     private CvTerm getGoTerm(String id) {
-        if (goTermIdsByAcc == null)
-            goTermIdsByAcc = cvDao.getGoTermIdsByAcc();
+        if (goTermIdsByAcc == null) {
+            // Double-checked locking of a volatile variable is
+            // JMM-compliant in modern JVMs.
+            synchronized (this) {
+                if (goTermIdsByAcc == null) {
+                    goTermIdsByAcc = cvDao.getGoTermIdsByAcc();
+                }
+            }
+        }
         if (!goTermIdsByAcc.containsKey(id))
             return null;
         return cvDao.getCvTermById(goTermIdsByAcc.get(id));
     }
 
     public void createGoEntries(Feature polypeptide, GoInstance go, String comment,
-            DbXRef withFromDbXRef) {
+            DbXRef withFromDbXRef) throws DataError {
         if (withFromDbXRef == null)
             createGoEntries(polypeptide, go, comment, Collections.<DbXRef>emptyList());
         else
@@ -178,11 +186,10 @@ public class FeatureUtils implements InitializingBean {
     }
 
     public void createGoEntries(Feature polypeptide, GoInstance go, String comment,
-            List<DbXRef> withFromDbXRefs) {
+            List<DbXRef> withFromDbXRefs) throws DataError {
         CvTerm cvTerm = getGoTerm(go.getId());
         if (cvTerm == null) {
-            logger.error("Unable to find a CvTerm for the GO id of '" + go.getId() + "'. Skipping");
-            return;
+            throw new DataError("Unable to find a CvTerm for the GO id of '" + go.getId() + "'.");
         }
 
         Pub pub = pubDao.getPubByUniqueName("null");
