@@ -22,6 +22,7 @@ import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.SymbolPropertyTable;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.springframework.util.StringUtils;
 
@@ -38,6 +39,7 @@ import javax.persistence.Transient;
 
 @Entity
 @FeatureType(cv="sequence", term="polypeptide")
+@Indexed
 public class Polypeptide extends Region {
     private static Logger logger = Logger.getLogger(Polypeptide.class);
     @Transient
