@@ -1,5 +1,12 @@
 package org.genedb.db.loading.auxiliary;
 
+import org.genedb.db.loading.GoEvidenceCode;
+import org.genedb.db.loading.GoInstance;
+import org.genedb.db.loading.ParsingException;
+import org.genedb.util.TwoKeyMap;
+
+import org.apache.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,11 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
-import org.genedb.db.loading.GoEvidenceCode;
-import org.genedb.db.loading.GoInstance;
-import org.genedb.util.TwoKeyMap;
 
 class DateFormatConverter {
     private static final Map<String, String> months = new HashMap<String, String>(12) {{
@@ -164,12 +166,16 @@ class InterProRow {
             logger.debug(String.format("Parsed GO term: %s/%s/%s", type, description, goId));
 
             GoInstance goTerm = new GoInstance();
-            goTerm.setId(goId);
-            goTerm.setEvidence(GoEvidenceCode.IEA);
-            goTerm.setWithFrom("InterPro:" + this.acc.getId());
-            goTerm.setRef("GOC:interpro2go");
-            goTerm.setDate(this.date.withoutDashes());
-            goTerm.setSubtype(type);
+            try {
+                goTerm.setId(goId);
+                goTerm.setEvidence(GoEvidenceCode.IEA);
+                goTerm.setWithFrom("InterPro:" + this.acc.getId());
+                goTerm.setRef("GOC:interpro2go");
+                goTerm.setDate(this.date.withoutDashes());
+                goTerm.setSubtype(type);
+            } catch (ParsingException e) {
+                throw new RuntimeException(e);
+            }
 
             /*
              * We do not set the <code>geneName</code> field of the GoInstance,
