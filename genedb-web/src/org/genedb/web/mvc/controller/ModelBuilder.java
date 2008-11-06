@@ -17,7 +17,7 @@ public class ModelBuilder {
 
     private static final Logger logger = Logger.getLogger(ModelBuilder.class);
 
-    private DiagramCache diagramCache;
+    private DiagramCache fileDiagramCache;
 
     /**
      * Populate a model object with the details of the specified feature.
@@ -77,12 +77,12 @@ public class ModelBuilder {
     public TranscriptDTO prepareTranscript(Transcript transcript) {
 
         TranscriptDTO dto = new TranscriptDTO();
-        dto.populate(transcript, diagramCache);
+        dto.populate(transcript, fileDiagramCache);
         return dto;
     }
 
 
-    public void setDiagramCache(DiagramCache diagramCache) {
-        this.diagramCache = diagramCache;
+    public void setDiagramCache(DiagramCache fileDiagramCache) {
+        this.fileDiagramCache = fileDiagramCache;
     }
 }

@@ -178,10 +178,11 @@ public class RenderedContextMap extends RenderedDiagram {
         int x = xCoordinate(component.getStart());
         int width = pixelWidth(component);
 
-        if (component instanceof Exon)
+        if (component instanceof Exon) {
             drawExon(trackNumber, x, width);
-        else
+        } else {
             drawUTR(trackNumber, x, width);
+        }
     }
 
     /**
