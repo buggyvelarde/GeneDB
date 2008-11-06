@@ -1,5 +1,17 @@
 package org.genedb.db.loading.auxiliary;
 
+import org.genedb.db.loading.GoInstance;
+import org.genedb.db.loading.ParsingException;
+
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.PolypeptideDomain;
+import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.FeatureDbXRef;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -7,16 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.genedb.db.loading.GoInstance;
-
-import org.gmod.schema.feature.Polypeptide;
-import org.gmod.schema.feature.PolypeptideDomain;
-import org.gmod.schema.mapped.DbXRef;
-import org.gmod.schema.mapped.FeatureDbXRef;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 
 public class InterProLoader extends Loader {
@@ -122,11 +124,13 @@ public class InterProLoader extends Loader {
             }
 
             String domainUniqueName;
-            if (n == 0)
-                domainUniqueName = String.format("%s:%s", polypeptide.getUniqueName(), row.nativeAcc);
-            else
+            if (n == 0) {
+                domainUniqueName = String.format("%s:%s",
+                    polypeptide.getUniqueName(), row.nativeAcc);
+            } else {
                 domainUniqueName = String.format("%s:%s:%d",
                     polypeptide.getUniqueName(), row.nativeAcc, n);
+            }
 
             PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(
                 domainUniqueName, polypeptide, row.score, row.acc.getDescription(), row.fmin, row.fmax, dbxref);
@@ -150,8 +154,12 @@ public class InterProLoader extends Loader {
                 logger.debug(String.format("Creating GO term '%s' for domain '%s'",
                     goTerm.getId(), polypeptideDomain.getUniqueName()));
 
-                featureUtils.createGoEntries(polypeptide, goTerm,
-                    "From Interpro file", objectManager.getDbXRef(goTerm.getWithFrom()));
+                try {
+                    featureUtils.createGoEntries(polypeptide, goTerm,
+                        "From Interpro file", objectManager.getDbXRef(goTerm.getWithFrom()));
+                } catch (ParsingException e) {
+                    logger.error(e);
+                }
             }
         }
     }
