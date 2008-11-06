@@ -22,22 +22,23 @@
     <!-- Classpaths -->
 
     <path id="db-compile-lib">
-        <path location="${genedb-db.libdir}/hibernate-extras/hibernate-tools.jar" />
-        <path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-        <path location="${genedb-db.libdir}/spring-core-2.5.6/spring.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar" />
-        <path location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.6/j2ee/persistence.jar"/>
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
-        <path location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
-        <path location="${genedb-db.libdir}/biojava/biojava-1.6.jar" />
-        <path location="${genedb-db.libdir}/db/dbunit-2.2.2.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.6/junit/junit-4.4.jar" />
-        <path location="${genedb-db.libdir}/spring-bundle-2.5.6/hsqldb/hsqldb.jar" />
-        <path location="${imported.basedir.db}/../genedb-util/ant-build/jars/genedb-util.jar"/>
+        <pathelement location="${genedb-db.libdir}/hibernate-extras/hibernate-tools.jar" />
+        <pathelement location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
+        <pathelement location="${genedb-db.libdir}/spring-core-2.5.6/spring.jar" />
+        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
+        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
+        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar" />
+        <pathelement location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
+        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/j2ee/persistence.jar"/>
+        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
+        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
+        <pathelement location="${genedb-db.libdir}/spring-core-2.5.6/spring-aspects.jar" />
+        <pathelement location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
+        <pathelement location="${genedb-db.libdir}/biojava/biojava-1.6.jar" />
+        <pathelement location="${genedb-db.libdir}/db/dbunit-2.2.2.jar" />
+        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/junit/junit-4.4.jar" />
+        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/hsqldb/hsqldb.jar" />
+        <pathelement location="${imported.basedir.db}/../genedb-util/ant-build/jars/genedb-util.jar"/>
     </path>
 
     <path id="tools-instrument-lib">
