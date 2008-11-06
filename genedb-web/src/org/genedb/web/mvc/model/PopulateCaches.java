@@ -50,6 +50,7 @@ public class PopulateCaches {
 
     private StoredMap<String, TranscriptDTO> dtoMap;
     private StoredMap<String, String> contextMapMap;
+    private StoredMap<String, byte[]> imageMap;
 
     private SessionFactory sessionFactory;
     private ModelBuilder modelBuilder;
@@ -97,6 +98,7 @@ public class PopulateCaches {
 
         dtoMap = bmf.getDtoMap(); // TODO More nicely
         contextMapMap = bmf.getContextMapMap();
+        imageMap = bmf.getImageMap();
 
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         basicGeneService = new BasicGeneServiceImpl(luceneIndex);
@@ -159,7 +161,7 @@ public class PopulateCaches {
         RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
 
         String relativePath = feature.getOrganism().getCommonName() + "/" + MD5Util.getPathBasedOnMD5(feature.getUniqueName(), '/');
-        File renderDirectory = new File(diagramCache.getContextMapRootDir() + "/" + relativePath);
+        File renderDirectory = null;// FIXME = new File(diagramCache.getContextMapRootDir() + "/" + relativePath);
         String renderURI = diagramCache.getBaseUri() + "/" + relativePath;
         renderDirectory.mkdirs();
         logger.trace("Rendering context map files to " + renderDirectory);

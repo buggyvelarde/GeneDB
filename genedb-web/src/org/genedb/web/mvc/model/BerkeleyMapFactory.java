@@ -39,7 +39,13 @@ public class BerkeleyMapFactory {
         return contextMapMap;
     }
 
+    public StoredMap<String, byte[]> getImageMap() {
+        openDb();
+        return imageMap;
+    }
 
+    private StoredMap<String, byte[]> imageMap;
+    private Database imageDb;
     private StoredMap<String, String> contextMapMap;
     private Database contextMapDb;
 
@@ -49,6 +55,7 @@ public class BerkeleyMapFactory {
 
     private final String DTO_STORE = "dtos";
     private String CONTEXT_MAP_STORE = "context";
+    private String IMAGE_MAP_STORE = "images";
 
     private void openDb() {
         if (env != null) {
@@ -90,6 +97,7 @@ public class BerkeleyMapFactory {
 
             dtoDb = env.openDatabase(null, DTO_STORE, dbConfig);
             contextMapDb = env.openDatabase(null, CONTEXT_MAP_STORE, dbConfig);
+            imageDb = env.openDatabase(null, IMAGE_MAP_STORE, dbConfig);
         }
         catch (DatabaseException exp) {
             throw new RuntimeException("Unable to open Berkeley databases", exp);
@@ -99,12 +107,17 @@ public class BerkeleyMapFactory {
             new SerialBinding<String>(javaCatalog, String.class);
         EntryBinding<TranscriptDTO> dtoValueBinding =
             new SerialBinding<TranscriptDTO>(javaCatalog, TranscriptDTO.class);
+        EntryBinding<byte[]> byteArrayBinding =
+            new SerialBinding<byte[]>(javaCatalog, byte[].class);
 
         dtoMap =
             new StoredMap<String, TranscriptDTO>(dtoDb, stringBinding, dtoValueBinding, true);
 
         contextMapMap =
             new StoredMap<String, String>(contextMapDb, stringBinding, stringBinding, true);
+
+        imageMap =
+            new StoredMap<String, byte[]>(imageDb, stringBinding, byteArrayBinding, true);
     }
 
 
@@ -112,6 +125,7 @@ public class BerkeleyMapFactory {
         try {
             dtoDb.close();
             contextMapDb.close();
+            imageDb.close();
             javaCatalog.close();
             env.close();
         } catch (DatabaseException exp) {
@@ -128,5 +142,6 @@ public class BerkeleyMapFactory {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
+
 
 }
