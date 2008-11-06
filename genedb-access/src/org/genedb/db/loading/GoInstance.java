@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * This class represents a specific GO entry
@@ -201,14 +202,15 @@ public class GoInstance {
         return id;
     }
 
+    private static final Pattern GO_ID_PATTERN = Pattern.compile("\\d{7}");
     /**
      * Set the accession number of the entry
      *
      * @param v The accession number
      */
-    public void setId(String id) {
-        if (id.length() != 7) {
-            throw new IllegalArgumentException("GO id doesn't look right '" + id + "'");
+    public void setId(String id) throws DataError {
+        if (GO_ID_PATTERN.matcher(id).matches()) {
+            throw new DataError("GO id doesn't look right '" + id + "'");
         }
         this.id = id;
     }
