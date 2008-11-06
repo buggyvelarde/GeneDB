@@ -186,12 +186,12 @@
             <fileset dir="${imported.basedir.access}/../genedb-db/test-data/hsqldb" includes="skeleton.*"/>
         </copy>
     </target>
-    <target name="loader-test" depends="genedb-access.jar,compile-tests">
+    <target name="loader-test">
         <antcall target="run-specific-loader-test"><param name="subtest" value="Berghei"/></antcall>
         <antcall target="run-specific-loader-test"><param name="subtest" value="Mansoni"/></antcall>
         <antcall target="run-specific-loader-test"><param name="subtest" value="Synthetic"/></antcall>
     </target>
-    <target name="run-specific-loader-test">
+    <target name="run-specific-loader-test" depends="genedb-access.jar,compile-tests">
         <antcall target="copy-skeleton-database"/>
         <junit printsummary="yes" haltonfailure="yes" fork="true" maxmemory="256M">
             <classpath refid="test-classpath"/>
