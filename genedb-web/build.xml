@@ -25,20 +25,23 @@
         <path location="${imported.basedir.web}/../genedb-query/ant-build/jars/genedb-query.jar" />
         <path location="${imported.basedir.web}/../genedb-util/ant-build/jars/genedb-util.jar" />
 
-        <path location="${lib-dir}/misc/antlr-runtime-3.0.jar"/>
         <path location="${lib-dir}/biojava/biojava-1.4.jar"/>
+        <path location="${lib-dir}/db/je-3.3.69.jar" />
+        <path location="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" />
+        <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
+        <path location="${lib-dir}/json/json_simple.jar"/>
+        <path location="${lib-dir}/json/json-lib-2.2.1-jdk15.jar" />
+        <path location="${lib-dir}/json/json-lib-ext-spring-1.0.1.jar" />
+        <path location="${lib-dir}/json/ezmorph-1.0.4.jar" />
+        <path location="${lib-dir}/lucene/lucene-core-2.3.2.jar"/>
+        <path location="${lib-dir}/misc/antlr-runtime-3.0.jar"/>
         <path location="${lib-dir}/misc/displaytag-1.1.jar"/>
         <path location="${lib-dir}/misc/dwr-2.0rc1.jar"/>
-        <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
-        <path location="${lib-dir}/misc/jakarta-oro-2.0.8.jar"/>
-        <path location="${lib-dir}/xml/jdom.jar"/>
-        <path location="${lib-dir}/json/json_simple.jar"/>
-        <path location="${lib-dir}/lucene/lucene-core-2.3.2.jar"/>
         <path location="${lib-dir}/misc/google-collect-snapshot-20080820.jar" />
+        <path location="${lib-dir}/misc/jakarta-oro-2.0.8.jar"/>
         <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
         <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-api-1.5.0.jar" />
         <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-log4j12-1.5.0.jar" />
-        <path location="${lib-dir}/db/postgresql-8.2dev-501.jdbc3.jar" />
         <path location="${lib-dir}/spring-core-2.5.6/spring.jar" />
         <path location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar" />
         <path location="${lib-dir}/spring-bundle-2.5.6/antlr/antlr-2.7.6.jar"/>
@@ -46,15 +49,10 @@
         <path location="${lib-dir}/spring-bundle-2.5.6/cglib/cglib-nodep-2.1_3.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/dom4j/dom4j-1.6.1.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/dom4j/jaxen-1.1-beta-7.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.6/ehcache/ehcache-1.4.1.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/freemarker/freemarker.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.6/javassist/javassist-3.4.GA.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jstl.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jta.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/persistence.jar" />
         <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-beanutils.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-collections.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar"/>
@@ -64,15 +62,16 @@
         <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-logging.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-pool.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-taglibs/standard.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.6/javassist/javassist-3.4.GA.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jstl.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jta.jar"/>
+        <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/persistence.jar" />
         <path location="${lib-dir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/poi/poi-3.0.1.jar"/>
         <path location="${lib-dir}/spring-core-2.5.6/spring-webmvc.jar" />
-        <path location="${lib-dir}/json/json-lib-2.2.1-jdk15.jar" />
-        <path location="${lib-dir}/json/json-lib-ext-spring-1.0.1.jar" />
-        <path location="${lib-dir}/json/ezmorph-1.0.4.jar" />
         <path location="${lib-dir}/misc/jsr107cache-1.0.jar" />
         <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
-        <path location="${lib-dir}/db/je-3.3.69.jar" />
+        <path location="${lib-dir}/xml/jdom.jar"/>
     </path>
 
     <path id="compile-libs">
