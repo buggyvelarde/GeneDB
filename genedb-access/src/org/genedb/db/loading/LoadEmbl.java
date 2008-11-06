@@ -67,7 +67,7 @@ public class LoadEmbl extends FileProcessor {
         String overwriteExisting = getPropertyWithDefault("load.overwriteExisting", "no").toLowerCase();
         String topLevelFeatureType = getRequiredProperty("load.topLevel");
         boolean sloppyControlledCuration = hasProperty("load.sloppyControlledCuration");
-        boolean alwaysSkip = hasProperty("load.alwaysSkip");
+        boolean quickAndDirty = hasProperty("load.quickAndDirty");
 
         logger.info(String.format("Options: organismCommonName=%s, inputDirectory=%s, fileNamePattern=%s," +
                    "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%s",
@@ -76,8 +76,8 @@ public class LoadEmbl extends FileProcessor {
 
         LoadEmbl loadEmbl = new LoadEmbl(organismCommonName, overwriteExisting,
             topLevelFeatureType, sloppyControlledCuration);
-        if (alwaysSkip) {
-            loadEmbl.alwaysSkip();
+        if (quickAndDirty) {
+            loadEmbl.quickAndDirty();
         }
 
         loadEmbl.processFileOrDirectory(inputDirectory, fileNamePattern);
@@ -122,5 +122,10 @@ public class LoadEmbl extends FileProcessor {
     protected void processFile(File inputFile, Reader reader) throws IOException, ParsingException {
         EmblFile emblFile = new EmblFile(inputFile, reader);
         loader.load(emblFile);
+    }
+
+    private void quickAndDirty() {
+        alwaysSkip();
+        loader.setContinueOnError(true);
     }
 }
