@@ -86,12 +86,14 @@ class EmblLoader {
     private OrganismDao organismDao;
     private ObjectManager objectManager;     // See #afterPropertiesSet()
     private SessionFactory sessionFactory;
+    private FeatureUtils featureUtils;
 
     private SynonymManager synonymManager = new SynonymManager();
 
     // Configurable parameters
     private Organism organism;
     private Class<? extends TopLevelFeature> topLevelFeatureClass = Supercontig.class;
+    private boolean continueOnError = false;
 
     public enum OverwriteExisting {YES, NO, MERGE}
     private OverwriteExisting overwriteExisting = OverwriteExisting.NO;
@@ -151,6 +153,23 @@ class EmblLoader {
      */
     public void setSloppyControlledCuration(boolean sloppyControlledCuration) {
         this.sloppyControlledCuration = sloppyControlledCuration;
+    }
+
+    /**
+     * Whether we should continue if we encounter an error while loading a feature.
+     * You should not usually set this option; it can be useful if you need to load
+     * a file quickly and don't mind if some features are missing from the result.
+     * <p>
+     * In particular, you should <b>not</b> use this option when loading production
+     * data!
+     *
+     * @param continueOnError
+     */
+    public void setContinueOnError(boolean continueOnError) {
+        if (continueOnError) {
+            logger.warn("We will continue if an error is encountered loading a feature");
+        }
+        this.continueOnError = continueOnError;
     }
 
     private Session session;
@@ -346,9 +365,12 @@ class EmblLoader {
                 loadFeature(utrs, feature);
             }
             catch (DataError e) {
-                logger.warn("Caught DataError while loading feature. Setting line number to " + feature.lineNumber);
                 e.setLineNumber(feature.lineNumber);
-                throw e;
+                if (continueOnError) {
+                    logger.error(e);
+                } else {
+                    throw e;
+                }
             }
         }
 
@@ -397,6 +419,7 @@ class EmblLoader {
             utrs.add(feature);
         }
         else if (featureType.equals("LTR")) {
+            throw new DataError("Tell Robin he needs to write code for loading LTR features!");
             // TODO
         }
         else {
@@ -420,17 +443,26 @@ class EmblLoader {
             throw new DataError(String.format("Unknown repeat type '%s'", repeatType));
         }
 
-        logger.debug(String.format("Creating repeat region '%s' of type '%s' at %d-%d", repeatRegionName, repeatRegionClass, fmin, fmax));
+        logger.debug(String.format("Creating repeat region '%s' of type '%s' at %d-%d",
+            repeatRegionName, repeatRegionClass.getSimpleName(), fmin, fmax));
         RepeatRegion repeatRegion = RepeatRegion.make(repeatRegionClass,
-            organism, String.format("%s:repeat:%d-%d", topLevelFeature.getUniqueName(), fmin, fmax), repeatRegionName);
+            organism, String.format("%s:repeat:%d-%d", topLevelFeature.getUniqueName(), fmin, fmax),
+            repeatRegionName);
 
-        int rank=0;
+        int rank = 0;
         for(String note : repeatRegionFeature.getQualifierValues("note")) {
             repeatRegion.addFeatureProp(note, "feature_property", "comment", rank++);
         }
 
         session.persist(repeatRegion);
         locate(repeatRegion, fmin, fmax, (short)0, 0);
+    }
+
+
+    // Can't define static fields in inner classes, grr.
+    private static final Set<String> goQualifiers = new HashSet<String>();
+    static {
+        Collections.addAll(goQualifiers, "aspect", "GOid", "term", "qualifier", "evidence", "db_xref", "with", "date");
     }
 
     /**
@@ -587,13 +619,22 @@ class EmblLoader {
          * @param propertyTermName the term name corresponding to the property to add.
          *          If it belongs to the <code>genedb_misc</code> CV, it should be a child of
          *          the term <code>genedb_misc:feature_props</code>.
+         * @throws DataError
          */
-        protected void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName) {
+        protected void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName) throws DataError {
+            processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null);
+        }
+
+        private void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName, TermNormaliser normaliser) throws DataError {
             int rank = 0;
             for(String qualifierValue: feature.getQualifierValues(qualifierName)) {
+                String normalisedValue = qualifierValue;
+                if (normaliser != null) {
+                    normalisedValue = normaliser.normalise(qualifierValue);
+                }
                 logger.debug(String.format("Adding %s:%s '%s' for transcript",
-                                propertyCvName, propertyTermName, qualifierValue));
-                focalFeature.addFeatureProp(qualifierValue, propertyCvName, propertyTermName, rank++);
+                                propertyCvName, propertyTermName, normalisedValue));
+                focalFeature.addFeatureProp(normalisedValue, propertyCvName, propertyTermName, rank++);
             }
         }
 
@@ -602,16 +643,26 @@ class EmblLoader {
             processCvTermQualifier(qualifierName, cvName, createTerms, null);
         }
 
-        protected void processCvTermQualifier(String qualifierName, String cvName,
+        private void processCvTermQualifier(String qualifierName, String cvName,
                 boolean createTerms, TermNormaliser termNormaliser)
                 throws DataError {
-            List<String> terms = feature.getQualifierValues(qualifierName);
 
-            for (String term: terms) {
+            Set<String> terms = new HashSet<String>();
+            for (String term: feature.getQualifierValues(qualifierName)) {
                 String normalisedTerm = term;
                 if (termNormaliser != null) {
                     normalisedTerm = termNormaliser.normalise(term);
                 }
+
+                if (terms.contains(normalisedTerm)) {
+                    logger.warn(
+                        String.format("The qualifier /%s=\"%s\" appears more than once. Ignoring subsequent copies.",
+                            qualifierName, term));
+                    continue;
+                } else {
+                    terms.add(normalisedTerm);
+                }
+
                 FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cvName, normalisedTerm, createTerms);
                 if (featureCvTerm == null) {
                     throw new DataError(
@@ -631,6 +682,44 @@ class EmblLoader {
                 logger.debug(String.format("Creating exon '%s' at %d-%d", exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax()));
                 AbstractExon exon = transcript.createExon(exonUniqueName, exonLocation.getFmin(), exonLocation.getFmax(), phase);
                 session.persist(exon);
+            }
+        }
+
+        protected void processGO() throws DataError {
+            for (String go: feature.getQualifierValues("GO")) {
+                GoInstance goInstance = new GoInstance();
+                for (String subqualifier: go.split("; ?")) {
+                    subqualifier = subqualifier.trim();
+                    if (subqualifier.length() == 0) {
+                        continue;
+                    }
+                    int equalsIndex = subqualifier.indexOf('=');
+                    if (equalsIndex == -1) {
+                        throw new DataError(String.format("Failed to parse /GO=\"%s\"", go));
+                    }
+
+                    String key = subqualifier.substring(0, equalsIndex);
+                    String value = subqualifier.substring(equalsIndex + 1);
+                    if (!goQualifiers.contains(key)) {
+                        throw new DataError(String.format("Failed to parse /GO=\"%s\"; don't know what to do with %s=%s", go, key, value));
+                    }
+                    if (key.equals("GOid")) {
+                        goInstance.setId(value);
+                    } else if (key.equals("date")) {
+                        goInstance.setDate(value);
+                    } else if (key.equals("evidence")) {
+                        try {
+                            goInstance.setEvidence(GoEvidenceCode.valueOf(value));
+                        } catch (IllegalArgumentException e) {
+                            throw new DataError(String.format("Failed to parse GO evidence code '%s'", value));
+                        }
+                    } else if (key.equals("qualifier")) {
+                        goInstance.addQualifier(value);
+                    } else if (key.equals("with")) {
+                        goInstance.setWithFrom(value);
+                    }
+                }
+                featureUtils.createGoEntries(focalFeature, goInstance, "From EMBL file", (DbXRef) null);
             }
         }
 
@@ -746,7 +835,8 @@ class EmblLoader {
 
             processPropertyQualifier("note",     "feature_property", "comment");
             for (String name: qualifierProperties) {
-                processPropertyQualifier(name, "genedb_misc", name);
+                TermNormaliser normaliser = qualifierNormalisers.get(name);
+                processPropertyQualifier(name, "genedb_misc", name, normaliser);
             }
 
             processCvTermQualifier("class", "RILEY", false, normaliseRileyNumber);
@@ -755,25 +845,73 @@ class EmblLoader {
             if (taxonomicDivision.equals("PRO")) {
                 // Bacteria don't have splicing, so a CDS feature is a gene and
                 // a transcript and that is the end of it. One or more /gene
-                // qualifiers may be used to indicate synonyms.
+                // or /synonym qualifiers may be used to indicate synonyms.
                 addTranscriptSynonymsFromQualifier("gene", "synonym", true);
+                addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             }
 
+            processGO();
             processCuration();
         }
     }
+
+    /**
+     * Convert the qualifier value into a canonical form before treating it as
+     * a term name. What this means will depend on the specific normalizer used.
+     */
+    private static interface TermNormaliser {
+        public String normalise(String term) throws DataError;
+    }
+
+    /**
+     * A term normaliser for Riley classification numbers, which for example
+     * will normalise "2.2.07" to "2.2.7".
+     */
+    private static final TermNormaliser normaliseRileyNumber = new TermNormaliser() {
+        private final Pattern RILEY_PATTERN = Pattern.compile("(\\d{1,2})\\.(\\d{1,2})\\.(\\d{1,2})");
+        public String normalise(String term) throws DataError {
+            Matcher matcher = RILEY_PATTERN.matcher(term);
+            if (!matcher.matches()) {
+                throw new DataError(String.format("Failed to parse Riley number '%s'", term));
+            }
+            return String.format("%d.%d.%d",
+                Integer.parseInt(matcher.group(1)),
+                Integer.parseInt(matcher.group(2)),
+                Integer.parseInt(matcher.group(3)));
+        }
+    };
+
+    /**
+     * A term normaliser (and format validator) for integers.
+     */
+    private static final TermNormaliser normaliseInteger = new TermNormaliser() {
+        public String normalise(String term) throws DataError {
+            try {
+                return String.valueOf(Integer.parseInt(term));
+            } catch (NumberFormatException e) {
+                throw new DataError(String.format("Failed to parse integer '%s'", term));
+            }
+        }
+    };
 
     /**
      * A list of the qualifiers that correspond directly to similarly-named
      * properties in the <code>genedb_misc</code> CV.
      */
     private static final List<String> qualifierProperties = new ArrayList<String>();
+    private static final Map<String,TermNormaliser> qualifierNormalisers = new HashMap<String,TermNormaliser>();
     static {
         Collections.addAll(qualifierProperties,
             "method", "colour", "status",
             "blast_file", "blastn_file", "blastp+go_file", "blastp_file",
             "blastx_file", "fasta_file", "fastx_file", "tblastn_file",
-            "tblastx_file", "clustalx_file", "sigcleave_file", "pepstats_file");
+            "tblastx_file", "clustalx_file", "sigcleave_file", "pepstats_file",
+            "EC_number");
+
+        qualifierNormalisers.put("colour", normaliseInteger);
+
+        // Some files (e.g. Streptococcus_pneumoniae_D39.embl) have things other than integers in /status.
+        // qualifierNormalisers.put("status", normaliseInteger);
     }
 
     class CDSLoader extends GeneLoader {
@@ -789,7 +927,7 @@ class EmblLoader {
                 // a transcript and that is the end of it. One or more /gene
                 // qualifiers may be used to indicate synonyms. The genes do
                 // not have primary names.
-                geneName = null;
+                geneName = cdsFeature.getQualifierValue("primary_name");
             }
 
             String codonStart = cdsFeature.getQualifierValue("codon_start");
@@ -819,32 +957,6 @@ class EmblLoader {
             return isPseudo ? PseudogenicTranscript.class : MRNA.class;
         }
     }
-
-    /**
-     * Convert the qualifier value into a canonical form before treating it as
-     * a term name. What this means will depend on the specific normalizer used.
-     */
-    private static interface TermNormaliser {
-        public String normalise(String term) throws DataError;
-    }
-
-    /**
-     * A term normaliser for Riley classification numbers, which for example
-     * will normalise "2.2.07" to "2.2.7".
-     */
-    private static TermNormaliser normaliseRileyNumber = new TermNormaliser() {
-        private final Pattern RILEY_PATTERN = Pattern.compile("(\\d{1,2})\\.(\\d{1,2})\\.(\\d{1,2})");
-        public String normalise(String term) throws DataError {
-            Matcher matcher = RILEY_PATTERN.matcher(term);
-            if (!matcher.matches()) {
-                throw new DataError(String.format("Failed to parse Riley number '%s'", term));
-            }
-            return String.format("%d.%d.%d",
-                Integer.parseInt(matcher.group(1)),
-                Integer.parseInt(matcher.group(2)),
-                Integer.parseInt(matcher.group(3)));
-        }
-    };
 
     private void loadCDS(FeatureTable.CDSFeature cdsFeature) throws DataError {
         new CDSLoader(cdsFeature).load();
@@ -892,7 +1004,8 @@ class EmblLoader {
                 // Bacteria don't have splicing, so a CDS feature is a gene and
                 // a transcript and that is the end of it. One or more /gene
                 // qualifiers may be used to indicate synonyms.
-                addTranscriptSynonymsFromQualifier("gene", "synonym", true);
+                addTranscriptSynonymsFromQualifier("gene",    "synonym", true);
+                addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             }
 
             processCuration();
@@ -986,6 +1099,10 @@ class EmblLoader {
 
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
+    }
+
+    public void setFeatureUtils(FeatureUtils featureUtils) {
+        this.featureUtils = featureUtils;
     }
 
     public void afterPropertiesSet() {
