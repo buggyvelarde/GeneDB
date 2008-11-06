@@ -121,6 +121,17 @@ public class FeatureTester {
             assertLoc(feature.getFeatureLoc(locgroup, rank), strand, fmin, fmax);
             return ourClass.cast(this);
         }
+        public T loc(String sourceFeatureUniqueName, int locgroup, int rank, int strand, int fmin, int fmax) {
+            FeatureLoc featureLoc = feature.getFeatureLoc(locgroup, rank);
+            assertLoc(featureLoc, strand, fmin, fmax);
+            assertNotNull(featureLoc.getSourceFeature());
+            assertEquals(sourceFeatureUniqueName, featureLoc.getSourceFeature().getUniqueName());
+            return ourClass.cast(this);
+        }
+        public T noLoc(int locgroup, int rank) {
+            assertNull(feature.getFeatureLoc(locgroup, rank));
+            return ourClass.cast(this);
+        }
         public T source(String sourceUniqueName) {
             assertEquals(sourceUniqueName, feature.getRankZeroFeatureLoc().getSourceFeature().getUniqueName());
             return ourClass.cast(this);

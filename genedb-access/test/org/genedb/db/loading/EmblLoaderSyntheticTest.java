@@ -1,5 +1,7 @@
 package org.genedb.db.loading;
 
+import org.genedb.db.loading.FeatureTester.TranscriptTester;
+
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.Gene;
@@ -104,6 +106,29 @@ public class EmblLoaderSyntheticTest {
      */
     @Test
     public void s2genelocs() {
+        TranscriptTester s2_1 = tester.geneTester("s2").transcript("s2_1:mRNA");
+        TranscriptTester s2_2 = tester.geneTester("s2").transcript("s2_2:mRNA");
 
+        s2_1.loc("super1", 0, 0, +1, 89, 100)
+            .loc("con1a", 1, 1, +1, 89, 100)
+            .noLoc(0,1).noLoc(1,0);
+
+        s2_1.exon("s2_1:exon:1")
+            .loc("super1", 0, 0, +1, 89, 100)
+            .loc("con1a", 1, 1, +1, 89, 100)
+            .noLoc(0,1).noLoc(1,0);
+
+        s2_2.loc(0, 0, +1, 89, 120)
+            .noLoc(0,1).noLoc(1,0).noLoc(1,1);
+
+        s2_2.exon("s2_2:exon:1")
+            .loc("super1", 0, 0, +1, 89, 100)
+            //.loc("con1a",  1, 1, +1, 89, 100)
+            .noLoc(0,1).noLoc(1,0);
+
+        s2_2.exon("s2_2:exon:2")
+            .loc("super1", 0, 0, +1, 109, 120)
+            .loc("con2c",  1, 1, +1, 0, 10)
+            .noLoc(0,1).noLoc(1,0);
     }
 }
