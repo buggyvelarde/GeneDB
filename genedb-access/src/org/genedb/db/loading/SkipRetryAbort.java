@@ -72,7 +72,8 @@ class SkipRetryAbort {
         String prompt = e.getMessage() + "\nWhat would you like to do?";
 
         Frame hiddenFrame = new Frame(getClass().getName());
-        dialog = new Dialog(hiddenFrame, "Password", true);
+        dialog = new Dialog(hiddenFrame, "Skip, retry, or abort?", true);
+        dialog.setAlwaysOnTop(true);
         dialog.setLocation(100, 100);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
