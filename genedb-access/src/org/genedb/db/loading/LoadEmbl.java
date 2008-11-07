@@ -6,6 +6,8 @@ import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.EST;
 import org.gmod.schema.feature.Supercontig;
 
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -74,6 +76,9 @@ public class LoadEmbl extends FileProcessor {
                    organismCommonName, inputDirectory, fileNamePattern, overwriteExisting,
                    topLevelFeatureType, sloppyControlledCuration));
 
+        if (quickAndDirty) {
+            ((AppenderSkeleton) Logger.getRootLogger().getAppender("stdout")).setThreshold(Level.WARN);
+        }
         LoadEmbl loadEmbl = new LoadEmbl(organismCommonName, overwriteExisting,
             topLevelFeatureType, sloppyControlledCuration);
         if (quickAndDirty) {
