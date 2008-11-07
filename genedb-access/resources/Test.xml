@@ -22,9 +22,8 @@
        -->
 
     <!-- DataSource Property -->
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <!-- <property name="maxWait" value="5"/>
-        <property name="maxActive" value="50"/> -->
+    <bean id="dataSource" class="org.genedb.db.loading.LoggingDataSource">
+        <property name="maxWait" value="5"/>
         <property name="logAbandoned" value="true"/>
         <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
         <property name="url"><value>jdbc:hsqldb:file:test/data/skeleton</value></property>
@@ -40,6 +39,7 @@
         <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
         <prop key="hibernate.current_session_context_class">thread</prop>
         <prop key="hibernate.search.autoregister_listeners">false</prop>
+        <prop key="hibernate.connection.release_mode">after_transaction</prop>
     </props>
     </property>
     </bean>
