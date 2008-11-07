@@ -367,7 +367,7 @@ class EmblLoader {
             catch (DataError e) {
                 e.setLineNumber(feature.lineNumber);
                 if (continueOnError) {
-                    logger.error(e);
+                    logger.error("Continuing after error", e);
                 } else {
                     throw e;
                 }
@@ -925,9 +925,11 @@ class EmblLoader {
             if (taxonomicDivision.equals("PRO")) {
                 // Bacteria don't have splicing, so a CDS feature is a gene and
                 // a transcript and that is the end of it. One or more /gene
-                // qualifiers may be used to indicate synonyms. The genes do
-                // not have primary names.
+                // qualifiers may be used to indicate synonyms. The primary_name
+                // is optional, as usual.
                 geneName = cdsFeature.getQualifierValue("primary_name");
+            } else {
+                geneName = cdsFeature.getGeneName();
             }
 
             String codonStart = cdsFeature.getQualifierValue("codon_start");
