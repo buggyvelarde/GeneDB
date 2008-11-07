@@ -847,7 +847,6 @@ class EmblLoader {
                 // a transcript and that is the end of it. One or more /gene
                 // or /synonym qualifiers may be used to indicate synonyms.
                 addTranscriptSynonymsFromQualifier("gene", "synonym", true);
-                addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             }
 
             processGO();
