@@ -32,7 +32,6 @@
       <path location="${lib-dir}/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
       <path location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.6/cglib/cglib-nodep-2.1_3.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/ehcache/ehcache-1.4.1.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
       <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jta.jar"/>
