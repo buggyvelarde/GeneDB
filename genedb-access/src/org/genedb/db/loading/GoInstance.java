@@ -44,7 +44,7 @@ public class GoInstance {
     private String id;
     private String ref;
     private String withFrom;
-    private GoEvidenceCode evidence;
+    private GoEvidenceCode evidence = GoEvidenceCode.NR;
     private String subtype;
     private String name;
     private String date;
