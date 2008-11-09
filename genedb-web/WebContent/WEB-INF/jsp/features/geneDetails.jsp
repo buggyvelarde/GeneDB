@@ -244,12 +244,12 @@
                     </div>
                     <div style="position:static; z-index: 900;">
                         <img src="<c:url value="/includes/images/transparentPixel.gif"/>" width="${dto.ims.width}" height="${dto.ims.height}"
-                            style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${dto.ims.path}', sizingMethod='image')"/>
+                            style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<c:url value="/Image?key=" />${dto.ims.path}', sizingMethod='image')"/>
                     </div>
                 </div>
             <![endif]-->
             <![if ! lte IE 6]>
-                <img src="${dto.ims.path}" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap" id="proteinMapImage">
+                <img src="<c:url value="/Image?key=" />${dto.ims.path}" width="${dto.ims.width}" height="${dto.ims.height}" useMap="#proteinMapMap" id="proteinMapImage">
             <![endif]>
         </format:genePageSection>
     </c:if>
