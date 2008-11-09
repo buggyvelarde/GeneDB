@@ -157,8 +157,8 @@
     <target name="restart-ci-web">
       <exec executable="/nfs/pathdata/jira/bin/shutdown.sh" failifexecutionfails="true" failonerror="true" />
       <sleep seconds="5" />
-      <delete dir="/nfs/pathdata/jira/ci-deployment/logs" failonerror="false"/>
-      <mkdir dir="/nfs/pathdata/jira/ci-deployment/logs" />
+      <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
+      <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
       <exec executable="/nfs/pathdata/jira/bin/startup.sh"  failifexecutionfails="true" failonerror="true" />
       <sleep seconds="30" />
     </target>
