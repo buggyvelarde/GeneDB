@@ -14,5 +14,6 @@ proteinMap.render.directory=/includes/images/pmap
 baseUri=/ci-web
 emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
+cacheDirectory=/nfs/pathdb/genedb/ci-web/cache
 
 diagram.fontFile=/nfs/pathsoft/projects/genedb/fonts/f011004t.ttf

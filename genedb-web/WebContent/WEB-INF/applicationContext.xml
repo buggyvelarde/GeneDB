@@ -138,7 +138,7 @@
     </bean>
 
     <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
-        <property name="rootDirectory" value="/tmp/safe"/>
+        <property name="rootDirectory" value="${cacheDirectory}"/>
         <property name="readOnly" value="true" />
     </bean>
 
