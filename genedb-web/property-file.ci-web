@@ -1,4 +1,4 @@
-finaldest.webapps=/nfs/pathdata/jira/ci-deployment/webapps/ci-web
+finaldest.webapps=/nfs/pathdb/genedb/ci-web/webapps/ci-web
 webAppRootKey=genedb.ci-web.root
 
 dbhost=pathdbsrv1-dmz
@@ -7,10 +7,10 @@ dbname=snapshot
 dbuser=genedb_ro
 dbpassword=genedb_ro
 
-lucene.indexDirectory=/nfs/pathdata/genedb/indexes/snapshot/
+lucene.indexDirectory=/nfs/pathdb/genedb/ci-web/lucene/
 baseDiagramDirectory=/nfs/pathdata/jira/ci-deployment/webapps/ci-web
-contextMap.render.directory=includes/images/cmap
-proteinMap.render.directory=includes/images/pmap
+contextMap.render.directory=/includes/images/cmap
+proteinMap.render.directory=/includes/images/pmap
 baseUri=/ci-web
 emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
