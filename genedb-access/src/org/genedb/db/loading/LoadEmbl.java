@@ -4,6 +4,7 @@ package org.genedb.db.loading;
 import org.gmod.schema.feature.Chromosome;
 import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.EST;
+import org.gmod.schema.feature.Plasmid;
 import org.gmod.schema.feature.Supercontig;
 
 import org.apache.log4j.AppenderSkeleton;
@@ -115,6 +116,8 @@ public class LoadEmbl extends FileProcessor {
             loader.setTopLevelFeatureClass(Supercontig.class);
         } else if (topLevelFeatureType.equals("contig")) {
             loader.setTopLevelFeatureClass(Contig.class);
+        } else if (topLevelFeatureType.equals("plasmid")) {
+            loader.setTopLevelFeatureClass(Plasmid.class);
         } else if (topLevelFeatureType.equals("EST")) {
             loader.setTopLevelFeatureClass(EST.class);
         } else {
