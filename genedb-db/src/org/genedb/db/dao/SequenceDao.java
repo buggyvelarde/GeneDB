@@ -25,15 +25,12 @@ import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
 
 import org.apache.log4j.Logger;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author rh11
- *
- */
+@Transactional
 public class SequenceDao extends BaseDao {
 
     private static final Logger logger = Logger.getLogger(SequenceDao.class);
@@ -47,7 +44,7 @@ public class SequenceDao extends BaseDao {
      * @return the Feature, or null
      */
     public Feature getFeatureById(int id) {
-        return (Feature) getHibernateTemplate().load(Feature.class, id);
+        return (Feature) getSession().load(Feature.class, id);
     }
 
    /**
@@ -60,9 +57,10 @@ public class SequenceDao extends BaseDao {
     public Feature getFeatureByUniqueName(String uniqueName, String featureType) {
 
         @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate().findByNamedParam(
-            "from Feature where uniqueName=:name and type.name=:featureType",
-            new String[] { "name", "featureType" }, new Object[] { uniqueName, featureType });
+        List<Feature> features = getSession().createQuery(
+            "from Feature where uniqueName=:uniqueName and type.name=:featureType")
+            .setString("uniqueName", uniqueName).setString("featureType", featureType)
+            .list();
 
         if (features.size() > 0) {
             return features.get(0);
@@ -72,9 +70,10 @@ public class SequenceDao extends BaseDao {
 
     public <T extends Feature> T getFeatureByUniqueName(String uniqueName, Class<T> featureClass) {
         @SuppressWarnings("unchecked")
-        List<T> features = getHibernateTemplate().findByNamedParam(
-            "from "+featureClass.getName()+" where uniqueName=:name",
-            "name", uniqueName);
+        List<T> features = getSession().createQuery(
+            "from "+featureClass.getName()+" where uniqueName=:uniqueName")
+            .setString("uniqueName", uniqueName)
+            .list();
 
         if (features.size() == 0) {
             logger.info(String.format("Hibernate found no feature of type '%s' with uniqueName '%s'",
@@ -97,8 +96,9 @@ public class SequenceDao extends BaseDao {
      */
     @SuppressWarnings("unchecked")
     public List<Feature> getFeaturesByUniqueNamePattern(String namePattern) {
-        List features = getHibernateTemplate().findByNamedParam(
-                "from Feature where uniqueName like :name", "name", namePattern);
+        List features = getSession().createQuery(
+                "from Feature where uniqueName like :name")
+                .setString("name", namePattern).list();
         return features;
     }
 
@@ -110,10 +110,9 @@ public class SequenceDao extends BaseDao {
      */
     public List<Feature> getFeaturesByAnyCurrentName(String name) {
         @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate()
-                .findByNamedParam(
-                        "select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.current=true and s.name=:name",
-                        "name", name);
+        List<Feature> features = getSession().createQuery(
+                        "select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.current=true and s.name=:name")
+                        .setString("name", name).list();
         return features;
     }
 
@@ -130,20 +129,23 @@ public class SequenceDao extends BaseDao {
     public List<Feature> getFeaturesByRange(int min, int max, int strand, Feature feat, String type) {
         int fid = feat.getFeatureId();
         @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate()
-                .findByNamedParam(
+        List<Feature> features = getSession().createQuery(
                         "select f "
-                                + "from Feature f, FeatureLoc loc where "
-                                + "f = loc.feature and f.type.name=:type and loc.strand="
-                                + strand + " and" + " loc.sourceFeature=" + fid + " and ("
-                                + " loc.fmin<=:min and loc.fmax>=:max)",
-                        new String[] { "type", "min", "max" }, new Object[] { type, min, max });
+                        + "from Feature f, FeatureLoc loc where "
+                        + "f = loc.feature and f.type.name=:type and loc.strand="
+                        + strand + " and" + " loc.sourceFeature=" + fid + " and ("
+                        + " loc.fmin<=:min and loc.fmax>=:max)")
+                    .setString("type", type)
+                    .setInteger("min", min)
+                    .setInteger("max", max)
+                    .list();
         return features;
     }
 
     /**
      * Return a list of features with this name or synonym (including obsolete names). The
-     * name can contain an SQL wildcard (%)
+     * name can contain an SQL wildcard (%). Also, all asterisks will be replaced by <code>%</code>
+     * before the query is executed.
      *
      * @param name the lookup name
      * @param featureType the type of feature to return eg "gene"
@@ -152,14 +154,19 @@ public class SequenceDao extends BaseDao {
     public List<Feature> getFeaturesByAnyName(String name, String featureType) {
         // TODO Taxon and filter
         String lookup = name.replaceAll("\\*", "%");
+        logger.debug("getFeaturesByAnyName: searching for '" + lookup + "'");
 
-        logger.info("lookup is " + lookup);
         @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate()
-                .findByNamedParam(
-                        "select f from Feature f, FeatureSynonym fs, Synonym s, CvTerm cvt where f=fs.feature and fs.synonym=s and fs.current=true and f.type=cvt.cvTermId and cvt.name=:featureType and s.name like :lookup",
-                        new String[] { "lookup", "featureType" },
-                        new Object[] { lookup, featureType });
+        List<Feature> features = getSession().createQuery(
+                        "select f from Feature f, FeatureSynonym fs, CvTerm cvt " +
+                        "where f=fs.feature " +
+                        "and fs.current=true " +
+                        "and f.type=cvt.cvTermId " +
+                        "and cvt.name=:featureType " +
+                        "and fs.synonym.name like :lookup")
+                .setString("lookup", lookup)
+                .setString("featureType", featureType)
+                .list();
         return features;
     }
 
@@ -174,11 +181,12 @@ public class SequenceDao extends BaseDao {
     @SuppressWarnings("unchecked")
     public List<FeatureCvTerm> getFeatureCvTermsByFeatureAndCvTermAndNot(Feature feature,
             CvTerm cvTerm, boolean not) {
-        List<FeatureCvTerm> list = getHibernateTemplate()
-                .findByNamedParam(
-                        "from FeatureCvTerm fct where fct.feature=:feature and fct.cvTerm=:cvTerm and fct.not=:not",
-                        new String[] { "feature", "cvTerm", "not" },
-                        new Object[] { feature, cvTerm, not });
+        List<FeatureCvTerm> list = getSession().createQuery(
+                        "from FeatureCvTerm fct where fct.feature=:feature and fct.cvTerm=:cvTerm and fct.not=:not")
+                .setParameter("feature", feature)
+                .setParameter("cvTerm", cvTerm)
+                .setBoolean("not", not)
+                .list();
 
         return list;
     }
@@ -189,14 +197,15 @@ public class SequenceDao extends BaseDao {
             cvName, cvTermName, orgs));
 
         @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate()
-                .findByNamedParam(
+        List<Feature> features = getSession().createQuery(
                         "select feature"
                         +" from FeatureCvTerm fct"
                         +" where fct.feature.organism.commonName in ("+orgs+")"
-                        +" and fct.cvTerm.cv.name=:cvName and fct.cvTerm.name=:cvTermName",
-                        new String[] { "cvName", "cvTermName" },
-                        new Object[] { cvName, cvTermName });
+                        +" and fct.cvTerm.cv.name=:cvName and fct.cvTerm.name=:cvTermName")
+                  .setString("cvName", cvName)
+                  .setString("cvTermName", cvTermName)
+                  .list();
+
         return features;
     }
 
@@ -205,13 +214,15 @@ public class SequenceDao extends BaseDao {
         logger.info(String.format("Querying with cvName like '%s', cvTermName='%s', orgs in (%s)",
             cvNamePattern, cvTermName, orgs));
         @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate()
-                .findByNamedParam(
+        List<Feature> features = getSession().createQuery(
                     "select feature"
                     +" from FeatureCvTerm fct"
                     +" where fct.feature.organism.commonName in ("+orgs+")"
-                    +" and fct.cvTerm.cv.name like :cvNamePattern and fct.cvTerm.name=:cvTermName",
-                    new String[] { "cvNamePattern", "cvTermName" }, new Object[] { cvNamePattern, cvTermName });
+                    +" and fct.cvTerm.cv.name like :cvNamePattern and fct.cvTerm.name=:cvTermName")
+                .setString("cvNamePattern", cvNamePattern)
+                .setString("cvTermName", cvTermName)
+                .list();
+
         return features;
     }
 
@@ -224,11 +235,13 @@ public class SequenceDao extends BaseDao {
      */
     public Synonym getSynonymByNameAndCvTerm(String name, CvTerm type) {
         @SuppressWarnings("unchecked")
-        List<Synonym> list = getHibernateTemplate().findByNamedParam(
-                "from Synonym s where s.name=:name and s.type=:cvterm",
-                new String[] { "name", "cvterm" }, new Object[] { name, type });
+        List<Synonym> list = getSession().createQuery(
+                "from Synonym s where s.name=:name and s.type=:type")
+            .setString("name", name)
+            .setParameter("type", type)
+            .list();
 
-        return firstFromList(list, "name", name, "cvterm", type.getName());
+        return firstFromList(list, "name", name, "type", type);
     }
 
     /**
@@ -238,10 +251,9 @@ public class SequenceDao extends BaseDao {
      * @param synonym the test Synonym
      * @return a (possibly empty) list of feature synonyms
      */
-    @SuppressWarnings("unchecked")
     public List<FeatureSynonym> getFeatureSynonymsByFeatureAndSynonym(Feature feature,
             Synonym synonym) {
-        return getHibernateTemplate().findByNamedParam(
+        return performQuery(FeatureSynonym.class,
                 "from FeatureSynonym fs where fs.feature=:feature and fs.synonym=:synonym",
                 new String[] { "feature", "synonym" }, new Object[] { feature, synonym });
     }
@@ -250,38 +262,39 @@ public class SequenceDao extends BaseDao {
      * Deleted doc comment that was obviously wrong. - rh11
      * TODO work out what this actually does, and document it.
      */
-    @SuppressWarnings("unchecked")
     public List<List<?>> getFeatureByGO(final String go) {
         String[] temp = go.split(":");
         String number = temp[1];
         List<Feature> polypeptides;
         List<CvTerm> goName;
         List<Feature> features = new ArrayList<Feature>();
-        polypeptides = getHibernateTemplate().findByNamedParam(
+
+        polypeptides = performQuery(Feature.class,
                 "select f " + "from Feature f, CvTerm c, FeatureCvTerm fc where "
                         + "c.dbXRef.accession=:number and fc.cvTerm = c "
                         + "and fc.feature=f", new String[] { "number" },
                 new Object[] { number });
+
         for (Feature polypep : polypeptides) {
             logger.info(polypep.getUniqueName());
-            List<Feature> genes = getHibernateTemplate()
-                    .findByNamedParam(
+            List<Feature> genes = performQuery(Feature.class,
                             "select f "
                                     + "from Feature f,FeatureRelationship f1,FeatureRelationship f2 where "
                                     + "f2.subjectFeature=:polypep and f2.objectFeature=f1.subjectFeature "
-                                    + "and f1.objectFeature=f", new String[] { "polypep" },
+                                    + "and f1.objectFeature=f",
+                            new String[] { "polypep" },
                             new Object[] { polypep });
             if (genes.size() > 0) {
                 features.add(genes.get(0));
             }
         }
-        goName = getHibernateTemplate().findByNamedParam(
+        goName = performQuery(CvTerm.class,
                 "select cv " + "from CvTerm cv where cv.dbXRef.accession=:number",
                 new String[] { "number" }, new Object[] { number });
 
         List<Feature> flocs = new ArrayList<Feature>();
         String name = "chromosome";
-        flocs = getHibernateTemplate().findByNamedParam(
+        flocs = performQuery(Feature.class,
                 "select f from Feature f " + "where f.type.name=:name", new String[] { "name" },
                 new Object[] { name });
         List<List<?>> data = new ArrayList<List<?>>();
@@ -293,7 +306,7 @@ public class SequenceDao extends BaseDao {
 
     @SuppressWarnings("unchecked")
     public FeatureDbXRef getFeatureDbXRefByFeatureAndDbXRef(Feature feature, DbXRef dbXRef) {
-        List<FeatureDbXRef> results = getHibernateTemplate().findByNamedParam(
+        List<FeatureDbXRef> results = performQuery(FeatureDbXRef.class,
                 "from FeatureDbXRef fdxr where fdxr.feature=:feature and fdxr.dbXRef=:dbXRef",
                 new String[] { "feature", "dbXRef" }, new Object[] { feature, dbXRef });
         return firstFromList(results, feature, dbXRef);
@@ -318,8 +331,7 @@ public class SequenceDao extends BaseDao {
                 + "'");
         // The list of orgs is being included literally as it didn't seem to
         // work as a parameter
-        List<Feature> features = getHibernateTemplate()
-                .findByNamedParam(
+        List<Feature> features = performQuery(Feature.class,
                         "select f from Feature f where"
                                 + " f.uniqueName like :lookup and f.type.name=:featureType and f.organism.commonName in ( "
                                 + orgNames + " )", new String[] { "lookup", "featureType" },
@@ -334,10 +346,9 @@ public class SequenceDao extends BaseDao {
      *
      * @return a list of <code>CountedName</code> objects
      */
-    @SuppressWarnings("unchecked")
     // FIXME - Remove hard coded value - make more general?
     public List<CountedName> getAllProductsWithCount() {
-        return getHibernateTemplate().find(
+        return performQuery(CountedName.class,
                 "select new CountedName(cvt.name, count(fct.feature.uniqueName))"
                         + " from CvTerm cvt, FeatureCvTerm fct"
                         + " where cvt=fct.cvTerm and cvt.cv=15 group by cvt.name");
@@ -350,8 +361,7 @@ public class SequenceDao extends BaseDao {
      * @return a (possibly empty) List<Feature> of children
      */
     public List<Feature> getFeaturesByCvTermName(String cvTermName) {
-        @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate().findByNamedParam(
+        List<Feature> features = performQuery(Feature.class,
                 "select fct.feature from FeatureCvTerm fct where fct.type.name like :cvTermName",
                 "cvTermName", cvTermName);
         return features;
@@ -365,8 +375,7 @@ public class SequenceDao extends BaseDao {
      */
     public List<Feature> getTopLevelFeatures() {
         String name = "%chromosome%";
-        @SuppressWarnings("unchecked")
-        List<Feature> topLevels = getHibernateTemplate().findByNamedParam(
+        List<Feature> topLevels = performQuery(Feature.class,
                 "from Feature where cvTerm.name like :name", "name", name);
         return topLevels;
     }
@@ -379,9 +388,7 @@ public class SequenceDao extends BaseDao {
      * @return a (possibly empty) List<Feature> of matching features
      */
     public List<Feature> getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName) {
-        @SuppressWarnings("unchecked")
-        List<Feature> features = getHibernateTemplate()
-                .findByNamedParam(
+        List<Feature> features = performQuery(Feature.class,
                         "select f.feature from FeatureCvTerm f where f.type.name like :cvTermName"
                         +" and f.type.cv.name like :cvName",
                         new String[] { "cvTermName", "cvName" },
@@ -402,15 +409,13 @@ public class SequenceDao extends BaseDao {
      * across all organisms
      * @return a (possibly empty) List<GeneNameOrganism> of matches
      */
-    @SuppressWarnings("unchecked")
     public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvName(String cvTermName, String cvName,
             String organism) {
 
-        List<GeneNameOrganism> features;
+        List<GeneNameOrganism> geneNameOrganisms;
         if(organism != null) {
 
-            features = getHibernateTemplate()
-                    .findByNamedParam(
+            geneNameOrganisms = performQuery(GeneNameOrganism.class,
                             "select new org.gmod.schema.utils.GeneNameOrganism( " +
                             "transcript_gene.objectFeature.uniqueName, transcript_gene.objectFeature.organism.abbreviation) " +
                             "from " +
@@ -425,8 +430,7 @@ public class SequenceDao extends BaseDao {
                             new String[] { "cvTermName", "cvName" },
                             new Object[] { cvTermName, cvName });
         } else {
-            features = getHibernateTemplate()
-            .findByNamedParam(
+            geneNameOrganisms = performQuery(GeneNameOrganism.class,
                     "select new org.gmod.schema.utils.GeneNameOrganism( " +
                     "transcript_gene.objectFeature.uniqueName, transcript_gene.objectFeature.organism.abbreviation) " +
                     "from " +
@@ -441,18 +445,16 @@ public class SequenceDao extends BaseDao {
                     new Object[] { cvTermName, cvName });
         }
 
-        return features;
+        return geneNameOrganisms;
     }
 
-    @SuppressWarnings("unchecked")
     public List<GeneNameOrganism> getGeneNameOrganismsByCvTermNameAndCvNamePattern(String cvTermName, String cvNamePattern,
             String organism) {
 
-        List<GeneNameOrganism> features;
+        List<GeneNameOrganism> geneNameOrganisms;
         if(organism != null) {
 
-            features = getHibernateTemplate()
-                    .findByNamedParam(
+            geneNameOrganisms = performQuery(GeneNameOrganism.class,
                             "select new org.gmod.schema.utils.GeneNameOrganism( " +
                             "transcript_gene.objectFeature.uniqueName, transcript_gene.objectFeature.organism.abbreviation) " +
                             "from " +
@@ -467,8 +469,7 @@ public class SequenceDao extends BaseDao {
                             new String[] { "cvTermName", "cvNamePattern" },
                             new Object[] { cvTermName, cvNamePattern });
         } else {
-            features = getHibernateTemplate()
-            .findByNamedParam(
+            geneNameOrganisms = performQuery(GeneNameOrganism.class,
                     "select new org.gmod.schema.utils.GeneNameOrganism( " +
                     "transcript_gene.objectFeature.uniqueName, transcript_gene.objectFeature.organism.abbreviation) " +
                     "from " +
@@ -483,7 +484,7 @@ public class SequenceDao extends BaseDao {
                     new Object[] { cvTermName, cvNamePattern });
         }
 
-        return features;
+        return geneNameOrganisms;
     }
 
     /**
@@ -491,18 +492,17 @@ public class SequenceDao extends BaseDao {
      *
      * @param name the Feature uniquename
      * @param cvTerm the CvTerm
-     * @param limit the number of maximum results to return
+     * @param limit the maximum number of results to return
      * @return a (possibly empty) List<String> of feature uniquename
      */
     public List<String> getPossibleMatches(String name, CvTerm cvTerm, int limit) {
-        HibernateTemplate ht = new HibernateTemplate(getSessionFactory());
-        ht.setMaxResults(limit);
-
         @SuppressWarnings("unchecked")
-        List<String> result = ht.findByNamedParam(
+        List<String> result = createQuery(
                         "select f.uniqueName from Feature f where lower(f.uniqueName) like lower(:name) and f.type = :cvTerm",
                         new String[] { "name", "cvTerm" },
-                        new Object[] { "%" + name + "%", cvTerm });
+                        new Object[] { "%" + name + "%", cvTerm })
+                .setMaxResults(limit)
+                .list();
         return result;
     }
 
@@ -513,8 +513,7 @@ public class SequenceDao extends BaseDao {
      * @return a (possibly empty) List<String> of feature
      */
     public List<Feature> getFeaturesByOrganism(Organism org) {
-        @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
-        List<Feature> features = getHibernateTemplate().findByNamedParam(
+        List<Feature> features = performQuery(Feature.class,
                 "from Feature f where f.organism=:org", "org", org);
         return features;
     }
@@ -540,8 +539,7 @@ public class SequenceDao extends BaseDao {
         }
         String query = "from Feature f where f.uniqueName in (" + featureIds.toString() + ")";
 
-        @SuppressWarnings("unchecked") // find(query) returns a bare List
-        List<Feature> features = getHibernateTemplate().find(query);
+        List<Feature> features = performQuery(Feature.class, query);
 
         return features;
     }
@@ -559,7 +557,7 @@ public class SequenceDao extends BaseDao {
     public List<Feature> getFeaturesByLocation(int min, int max, String type, String organism,
             Feature parent) {
         @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
-        List<Feature> features = getHibernateTemplate().findByNamedParam(
+        List<Feature> features = performQuery(Feature.class,
                 "select f from Feature f , FeatureLoc fl " + "where fl.fmin>=:min "
                         + "and fl.fmax<=:max and fl.feature=f.featureId "
                         + "and fl.featureBySrcFeatureId=:parent and f.type.name=:type "
@@ -580,8 +578,7 @@ public class SequenceDao extends BaseDao {
      */
     public FeatureRelationship getFeatureRelationshipBySubjectObjectAndRelation(Feature subject,
             Feature object, CvTerm relation) {
-        @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
-        List<FeatureRelationship> frs = getHibernateTemplate().findByNamedParam(
+        List<FeatureRelationship> frs = performQuery(FeatureRelationship.class,
                 "from FeatureRelationship fr "
                         + "where fr.subjectFeature=:subject and fr.objectFeature=:object "
                         + "and fr.type=:relation",
@@ -594,12 +591,10 @@ public class SequenceDao extends BaseDao {
         return null;
     }
 
-    private static final String QUERY_UNIQUENAME
-        = "select uniqueName from Feature where uniqueName = :uniqueName";
-
     private boolean featureExists(String uniqueName) {
-        List<?> names = getHibernateTemplate().findByNamedParam(
-            QUERY_UNIQUENAME, "uniqueName", uniqueName);
+        List<?> names = performQuery(String.class,
+            "select uniqueName from Feature where uniqueName = :uniqueName",
+            "uniqueName", uniqueName);
         return !names.isEmpty();
     }
 

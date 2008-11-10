@@ -14,6 +14,7 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.utils.CountedName;
 
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Transactional(readOnly = true)
 public class CvDao extends BaseDao {
 
     private static Logger logger = Logger.getLogger(CvDao.class);

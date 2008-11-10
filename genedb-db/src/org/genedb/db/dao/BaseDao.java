@@ -1,13 +1,61 @@
 package org.genedb.db.dao;
 
 import org.apache.log4j.Logger;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 import java.util.List;
 
-public class BaseDao extends HibernateDaoSupport {
+public class BaseDao {
 
-    private static Logger logger = Logger.getLogger(org.genedb.db.dao.BaseDao.class);
+    private static final Logger logger = Logger.getLogger(BaseDao.class);
+
+    private SessionFactory sessionFactory;
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    protected Session getSession() {
+        return SessionFactoryUtils.getSession(sessionFactory, false);
+    }
+
+    protected <T> List<T> performQuery(Class<T> typeToken, String queryString) {
+        return performQuery(typeToken, queryString, new String[0], new Object[0]);
+    }
+
+    protected <T> List<T> performQuery(Class<T> typeToken, String queryString, String parameterName, Object parameterValue) {
+        return performQuery(typeToken, queryString, new String[] {parameterName}, new Object[] {parameterValue});
+    }
+
+    protected <T> List<T> performQuery(Class<T> typeToken, String queryString, String[] parameterNames, Object[] parameterValues) {
+        Query query = createQuery(queryString, parameterNames, parameterValues);
+
+        @SuppressWarnings("unchecked") // Checked at runtime below
+        List<T> list = query.list();
+
+        if (!list.isEmpty() && !typeToken.isInstance(list.get(0))) {
+            throw new RuntimeException(String.format("Returned value is of type '%s', expected '%s'",
+                list.get(0).getClass(), typeToken));
+        }
+
+        return list;
+    }
+
+    protected Query createQuery(String queryString, String[] parameterNames,
+            Object[] parameterValues) {
+        if (parameterNames.length != parameterValues.length) {
+            throw new IllegalArgumentException("Number of parameter values must equal number of parameter names");
+        }
+
+        Query query = getSession().createQuery(queryString);
+        for (int i = 0; i < parameterNames.length; i++) {
+            query.setParameter(parameterNames[i], parameterValues[i]);
+        }
+        return query;
+    }
 
     /**
      * Save the object to the database (at the end of the current transaction,

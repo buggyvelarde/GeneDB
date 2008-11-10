@@ -9,16 +9,18 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Synonym;
 
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional(readOnly = true)
 public class GeneralDao extends BaseDao {
     private static final Logger logger = Logger.getLogger(GeneralDao.class);
 
     private CvDao cvDao;
     public Db getDbByName(String name) {
         @SuppressWarnings("unchecked")
-        List<Db> results = getSession(true).createQuery(
+        List<Db> results = getSession().createQuery(
             "from Db db where upper(db.name)=:name")
         .setString("name", name.toUpperCase())
         .list();
@@ -27,7 +29,7 @@ public class GeneralDao extends BaseDao {
 
     public DbXRef getDbXRefByDbAndAcc(Db db, String accession) {
         @SuppressWarnings("unchecked")
-        List<DbXRef> xrefs = getSession(true).createQuery(
+        List<DbXRef> xrefs = getSession().createQuery(
                 "from DbXRef dbXRef where dbXRef.db=:db and dbXRef.accession=:accession")
                 .setParameter("db", db)
                 .setString("accession", accession)
@@ -37,7 +39,7 @@ public class GeneralDao extends BaseDao {
 
     public Analysis getAnalysisByProgram(String program) {
         @SuppressWarnings("unchecked")
-        List<Analysis> temp = getSession(true).createQuery("from Analysis where program=:program")
+        List<Analysis> temp = getSession().createQuery("from Analysis where program=:program")
             .setString("program",program).list();
         if (temp.size() > 0) {
             return temp.get(0);
@@ -47,14 +49,14 @@ public class GeneralDao extends BaseDao {
 
     public AnalysisFeature getAnalysisFeatureFromFeature(Feature feature) {
         @SuppressWarnings("unchecked")
-        List<AnalysisFeature> results = getSession(true).createQuery("from AnalysisFeature where feature = :feature")
+        List<AnalysisFeature> results = getSession().createQuery("from AnalysisFeature where feature = :feature")
             .setParameter("feature", feature).list();
         return firstFromList(results,"feature",feature);
     }
 
     public Synonym getSynonym(String synonymType, String synonymString) {
         @SuppressWarnings("unchecked")
-        List<Synonym> synonyms = getSession(true).createQuery(
+        List<Synonym> synonyms = getSession().createQuery(
             "from Synonym where type.cv.name='genedb_synonym_type' and type.name=:type and name=:name")
             .setString("type", synonymType).setString("name", synonymString).list();
         return super.firstFromList(synonyms, "type", synonymType, "name", synonymString);
@@ -62,7 +64,7 @@ public class GeneralDao extends BaseDao {
 
     public Synonym getSynonym(int synonymTypeId, String synonymString) {
         @SuppressWarnings("unchecked")
-        List<Synonym> synonyms = getSession(true).createQuery(
+        List<Synonym> synonyms = getSession().createQuery(
             "from Synonym where type.cvTermId=:typeId and name=:name")
             .setInteger("typeId", synonymTypeId).setString("name", synonymString).list();
         return firstFromList(synonyms, "typeId", synonymTypeId, "name", synonymString);
@@ -70,7 +72,7 @@ public class GeneralDao extends BaseDao {
 
     public Synonym getSynonym(CvTerm synonymType, String synonymString) {
         @SuppressWarnings("unchecked")
-        List<Synonym> synonyms = getSession(true).createQuery(
+        List<Synonym> synonyms = getSession().createQuery(
             "from Synonym where type=:type and name=:name")
             .setParameter("type", synonymType).setString("name", synonymString).list();
         return super.firstFromList(synonyms, "type", synonymType, "name", synonymString);
