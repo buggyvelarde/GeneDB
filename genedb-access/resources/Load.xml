@@ -29,26 +29,26 @@
         <property name="location" value="classpath:project.properties" />
     </bean>
 
-    <bean id="cvDao" class="org.genedb.db.dao.CvDao" init-method="afterPropertiesSet">
+    <bean id="cvDao" class="org.genedb.db.dao.CvDao">
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="generalDao" ref="generalDao" />
     </bean>
 
-    <bean id="generalDao" class="org.genedb.db.dao.GeneralDao" init-method="afterPropertiesSet">
+    <bean id="generalDao" class="org.genedb.db.dao.GeneralDao">
         <property name="cvDao" ref="cvDao"/>
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
-    <bean id="organismDao" class="org.genedb.db.dao.OrganismDao" init-method="afterPropertiesSet">
+    <bean id="organismDao" class="org.genedb.db.dao.OrganismDao">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
-    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao" init-method="afterPropertiesSet">
+    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao">
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="cvDao" ref="cvDao"/>
     </bean>
 
-    <bean id="pubDao" class="org.genedb.db.dao.PubDao" init-method="afterPropertiesSet">
+    <bean id="pubDao" class="org.genedb.db.dao.PubDao">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
