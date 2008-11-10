@@ -20,22 +20,31 @@ import java.sql.SQLException;
 public class LoggingDataSource extends BasicDataSource {
     private static final Logger logger = Logger.getLogger(LoggingDataSource.class);
 
+    private boolean logStackTrace = false;
+    public void setLogStackTrace(boolean logStackTrace) {
+        this.logStackTrace = logStackTrace;
+    }
 
     @Override
     public synchronized void close() throws SQLException {
-        logger.trace(String.format("close [active=%d, idle=%d]", getNumActive(), getNumIdle()), new Throwable("Stack trace"));
+        logger.trace(String.format("close [active=%d, idle=%d]", getNumActive(), getNumIdle()),
+            logStackTrace ? new Throwable("Stack trace") : null);
         super.close();
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        logger.trace(String.format("getConnection [active=%d, idle=%d]", getNumActive(), getNumIdle()), new Throwable("Stack trace"));
+        boolean logStackTrace = this.logStackTrace || getNumActive() > 0;
+
+        logger.trace(String.format("getConnection [active=%d, idle=%d]", getNumActive(), getNumIdle()),
+            logStackTrace ? new Throwable("Stack trace") : null);
         return super.getConnection();
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        logger.trace(String.format("getConnection(%s, %s)", username, password), new Throwable());
+        logger.trace(String.format("getConnection(%s, %s)", username, password),
+            logStackTrace ? new Throwable("Stack trace") : null);
         return super.getConnection(username, password);
     }
 

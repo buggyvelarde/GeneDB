@@ -12,7 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 /**
@@ -40,7 +39,7 @@ public class EmblLoaderSyntheticTest {
     }
 
     @AfterClass
-    public static void cleanUp() throws SQLException {
+    public static void cleanUp() {
         helper.cleanUp();
     }
 
@@ -89,6 +88,12 @@ public class EmblLoaderSyntheticTest {
             .loc(1, 1, -1, 3, 87);
     }
 
+    @Test
+    public void s2Names() {
+        tester.geneTester("s1").name(null);
+        tester.geneTester("s2").name("s2_name");
+    }
+
     /**
      * GENEDB-207: the gene <code>s2</code> has two transcripts. The first of them is
      * contained wholly within the contig <code>con1a</code>, whereas the
@@ -100,9 +105,10 @@ public class EmblLoaderSyntheticTest {
      * contig location.
      * <p>
      * The first exon (<code>s2_1:exon:1</code> and <code>s2_2:exon:1</code>) also lies
-     * wholly on <code>con1a</code>, and so it should have a location on that contig.
-     * The second exon <code>s2_2:exon:2</code> lies on contig <code>con2c</code>, and
-     * so should have a location there instead.
+     * wholly on <code>con1a</code>, but to avoid confusion the exon should NOT have a
+     * location on a contig unless its associated transcript does. So in this case,
+     * <code>s2_1:exon:1</code> should have a contig location but <code>s2_2:exon:1</code>
+     * should not.
      */
     @Test
     public void s2genelocs() {
@@ -123,12 +129,10 @@ public class EmblLoaderSyntheticTest {
 
         s2_2.exon("s2_2:exon:1")
             .loc("super1", 0, 0, +1, 89, 100)
-            //.loc("con1a",  1, 1, +1, 89, 100)
-            .noLoc(0,1).noLoc(1,0);
+            .noLoc(0,1).noLoc(1,0).noLoc(1,1);
 
         s2_2.exon("s2_2:exon:2")
             .loc("super1", 0, 0, +1, 109, 120)
-            .loc("con2c",  1, 1, +1, 0, 10)
-            .noLoc(0,1).noLoc(1,0);
+            .noLoc(0,1).noLoc(1,0).noLoc(1, 1);
     }
 }

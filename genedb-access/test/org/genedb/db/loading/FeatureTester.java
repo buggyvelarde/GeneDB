@@ -58,7 +58,9 @@ public class FeatureTester {
     }
 
     private void assertLoc(FeatureLoc loc, int strand, int fmin, int fmax) {
-        assertNotNull(loc);
+        if (loc == null) {
+            fail("FeatureLoc is null");
+        }
         assertEquals(strand, loc.getStrand().shortValue());
         assertEquals(fmin, loc.getFmin().intValue());
         assertEquals(fmax, loc.getFmax().intValue());
@@ -140,6 +142,10 @@ public class FeatureTester {
             for (FeatureLoc featureLoc: feature.getFeatureLocs()) {
                 assertNull(featureLoc.getPhase());
             }
+            return ourClass.cast(this);
+        }
+        public T name(String name) {
+            assertEquals(name, feature.getName());
             return ourClass.cast(this);
         }
     }

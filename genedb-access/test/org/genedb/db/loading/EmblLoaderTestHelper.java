@@ -4,11 +4,11 @@ import org.genedb.db.dao.OrganismDao;
 
 import org.gmod.schema.mapped.Organism;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.jdbc.Work;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -35,7 +36,6 @@ public class EmblLoaderTestHelper {
     private static final Logger logger = Logger.getLogger(EmblLoaderTestHelper.class);
 
     private EmblLoader loader;
-    private BasicDataSource dataSource;
     private SessionFactory sessionFactory;
     private OrganismDao organismDao;
 
@@ -83,11 +83,12 @@ public class EmblLoaderTestHelper {
 
         loader.setOrganismCommonName(organismCommonName);
         loadFile(filename);
-
-        this.session = SessionFactoryUtils.doGetSession(sessionFactory, true);
     }
 
-    public void cleanUp() throws SQLException {
+    /**
+     * Shut down the database and close the session.
+     */
+    public void cleanUp() {
         /*
          * If the database is not shutdown, the changes will not be
          * persisted to the data file. It's useful to be able to inspect
@@ -96,15 +97,21 @@ public class EmblLoaderTestHelper {
          * will never be lost even if the database is not shut down. That
          * does not appear to be true.)
          */
-        logger.debug("Shutting down database");
-        dataSource.getConnection().createStatement().execute("shutdown");
+        session.doWork(new Work() {
+            public void execute(Connection connection) throws SQLException {
+                logger.debug("Shutting down database");
+                connection.createStatement().execute("shutdown");
+            }
+        });
+        SessionFactoryUtils.releaseSession(session, sessionFactory);
+        session = null;
     }
 
     @Transactional
     private void createOrganismIfNecessary(String organismCommonName,
             String organismGenus,String organismSpecies, String organismStrain)
     {
-        Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
         Organism organism = organismDao.getOrganismByCommonName(organismCommonName);
         if (organism != null) {
             logger.debug(String.format("Organism '%s' already exists", organismCommonName));
@@ -130,22 +137,18 @@ public class EmblLoaderTestHelper {
         logger.debug("Finished loading");
     }
 
-
-    /* Setters for Spring injection */
     public FeatureTester tester() {
         return new FeatureTester(session);
     }
 
+    /* Setters for Spring injection */
     public void setLoader(EmblLoader loader) {
         this.loader = loader;
     }
 
-    public void setDataSource(BasicDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+        this.session = SessionFactoryUtils.getSession(sessionFactory, true);
     }
 
     public void setOrganismDao(OrganismDao organismDao) {
