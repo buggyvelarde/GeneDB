@@ -22,6 +22,6 @@
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-core-2.5.6/spring-aspects.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar" sourcepath="/genedb-libs/lib-src/commons-dbcp-1.2.2-src.zip"/>
 	<classpathentry kind="output" path="ant-build/classes"/>
 </classpath>
