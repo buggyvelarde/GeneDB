@@ -7,6 +7,7 @@ FT                   /pseudo
 FT   CDS             90..100
 FT                   /systematic_id="s2_1"
 FT                   /shared_id="s2"
+FT                   /primary_name="s2_name"
 FT   CDS             join(90..100,110..120)
 FT                   /systematic_id="s2_2"
 FT                   /shared_id="s2"
