@@ -140,42 +140,7 @@ public abstract class RenderedDiagram {
     /**
      * Font used for printing figures on the scale track
      */
-    //private Font labelFont = new Font("FuturaTMed", Font.PLAIN, 12);
-    private Font labelFont;
-    {
-        Properties properties = new Properties();
-        try {
-            InputStream propertyFileInputStream = getClass().getResourceAsStream("/project.properties");
-            if (propertyFileInputStream == null) {
-                throw new FileNotFoundException("Failed to locate project.properties on classpath");
-            }
-            properties.load(propertyFileInputStream);
-            propertyFileInputStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to open project.properties", e);
-        }
-
-        String fontFileName = properties.getProperty("diagram.fontFile");
-        if (fontFileName == null) {
-            throw new RuntimeException("Property 'diagram.fontFile' not found in project.properties");
-        }
-        File fontFile = new File(fontFileName);
-        try {
-            InputStream is = new FileInputStream(fontFile);
-
-            // Creates the font at 1pt size
-            Font baseFont = Font.createFont(Font.TRUETYPE_FONT, is);
-
-            is.close();
-
-            // Makes a derived font at 12pt
-            labelFont = baseFont.deriveFont(12);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to open diagram font file", e);
-        } catch (FontFormatException e) {
-            throw new RuntimeException("Failed to open diagram font file", e);
-        }
-    }
+    private Font labelFont = FUTURA_12;
 
     /**
      * Distance between minor scale ticks, in bases
@@ -1088,5 +1053,41 @@ public abstract class RenderedDiagram {
     protected void setMargins(int leftMargin, int rightMargin) {
         this.leftMargin  = leftMargin;
         this.rightMargin = rightMargin;
+    }
+
+    private static final Font FUTURA_12;
+    static {
+        Properties properties = new Properties();
+        try {
+            InputStream propertyFileInputStream = RenderedDiagram.class.getResourceAsStream("/project.properties");
+            if (propertyFileInputStream == null) {
+                throw new FileNotFoundException("Failed to locate project.properties on classpath");
+            }
+            properties.load(propertyFileInputStream);
+            propertyFileInputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to open project.properties", e);
+        }
+
+        String fontFileName = properties.getProperty("diagram.fontFile");
+        if (fontFileName == null) {
+            throw new RuntimeException("Property 'diagram.fontFile' not found in project.properties");
+        }
+        File fontFile = new File(fontFileName);
+        try {
+            InputStream is = new FileInputStream(fontFile);
+
+            // Creates the font at 1pt size
+            Font baseFont = Font.createFont(Font.TRUETYPE_FONT, is);
+
+            is.close();
+
+            // Makes a derived font at 12pt
+            FUTURA_12 = baseFont.deriveFont(12);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to open diagram font file", e);
+        } catch (FontFormatException e) {
+            throw new RuntimeException("Failed to open diagram font file", e);
+        }
     }
 }
