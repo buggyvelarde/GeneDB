@@ -11,6 +11,7 @@ import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
@@ -25,6 +26,8 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -91,6 +94,9 @@ public abstract class Feature implements java.io.Serializable {
 
     @Autowired
     protected transient SequenceDao sequenceDao;
+
+    @Autowired
+    private transient SessionFactory sessionFactory;
 
     @GenericGenerator(name = "generator", strategy = "seqhilo", parameters = {
             @Parameter(name = "max_lo", value = "100"),
@@ -944,12 +950,30 @@ public abstract class Feature implements java.io.Serializable {
         return addSynonym("synonym", synonymString);
     }
 
+    /*
+     * Avoid the overhead of transaction-creation and synchronisation
+     * where possible. This requires (build-time or load-time) AspectJ
+     * weaving, because we're calling a transactional private method
+     * from within this object.
+     */
+    private static volatile Pub nullPub = null;
+    private static Object nullPubLock = new Object();
+    @Transactional(readOnly = true)
+    private void populateNullPub() {
+        synchronized(nullPubLock) {
+            if (nullPub == null) {
+                Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+                nullPub = (Pub) session.get(Pub.class, 1);
+            }
+        }
+    }
     protected Pub nullPub() {
-        Session session = cvDao.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Pub pub = (Pub) session.get(Pub.class, 1);
-        session.getTransaction().commit();
-        return pub;
+        /* Double-checked locking is safe for volatile fields since JVM 1.5 */
+        if (nullPub == null) {
+            populateNullPub();
+        }
+
+        return nullPub;
     }
 
     protected FeatureSynonym addSynonym(String synonymType, String synonymString) {
