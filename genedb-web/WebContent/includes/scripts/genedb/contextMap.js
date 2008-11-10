@@ -3,12 +3,14 @@ var contextMapDiv, contextMapThumbnailDiv, contextMapGeneInfo;
 var originalTranscriptName = null;
 var loadedTranscriptName = null;
 var base;
+var imageController;
 var animationTimer = null;
 var cruise = false;
 
 function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax, transcript) {
     originalTranscriptName = loadedTranscriptName = transcript;
     base = baseArg;
+    imageController = base + "/Image?key=";
     contextMapDiv = document.getElementById("contextMapDiv");
     contextMapThumbnailDiv = document.getElementById("contextMapThumbnailDiv");
     contextMapGeneInfo = document.getElementById("contextMapGeneInfo");
@@ -164,7 +166,7 @@ function loadTiles(chrlen, tileData) {
 
     var chromosomeThumbnailImage = document.createElement("img");
     chromosomeThumbnailImage.id  = "chromosomeThumbnailImage";
-    chromosomeThumbnailImage.src = tileData.chromosomeThumbnail.src;
+    chromosomeThumbnailImage.src = imageController + tileData.chromosomeThumbnail.src;
     contextMapThumbnailDiv.appendChild(chromosomeThumbnailImage);
 
     var visibleBases = contextMapDiv.clientWidth * basesPerPixel;
@@ -200,7 +202,7 @@ function loadTiles(chrlen, tileData) {
 
         var contextMapImage = document.createElement("img");
         contextMapImage.className  = "contextMapImage";
-        contextMapImage.src    = tilePrefix + "/" + tile[1];
+        contextMapImage.src    = imageController + "/" + tilePrefix + "/" + tile[1];
         contextMapImage.width  = tile[0];
         contextMapImage.height = tileData.tileHeight; // IE6 needs this
         contextMapImage.style.left = (leftPx - contextMapContent.trueLeft) + "px";
