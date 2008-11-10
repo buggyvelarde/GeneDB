@@ -76,15 +76,24 @@
       />
   </target>
 
+    <path id="genedb-access.test-libs">
+        <path refid="genedb-access.libs"/>
+        <pathelement location="${lib-dir}/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
+        <pathelement location="${imported.basedir.access}/ant-build/classes"/>
+    </path>
+
   <target name="compile-tests" depends="genedb-access.get-latest-jars">
       <mkdir dir="${imported.basedir.access}/ant-build/test-classes"/>
-      <javac srcdir="${imported.basedir.access}/test" destdir="${imported.basedir.access}/ant-build/test-classes" debug="true">
-          <classpath>
-              <path refid="genedb-access.libs"/>
-              <pathelement location="${lib-dir}/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
-              <pathelement location="${imported.basedir.access}/ant-build/classes"/>
-          </classpath>
-      </javac>
+      <javac srcdir="${imported.basedir.access}/test" destdir="${imported.basedir.access}/ant-build/test-classes" debug="true"
+          classpathref="genedb-access.test-libs"/>
+
+      <iajc verbose="false"
+          inpath="${imported.basedir.access}/ant-build/test-classes"
+          aspectpathref="genedb-access.aspect.path"
+          classpathRef ="genedb-access.test-libs"
+          destdir="${imported.basedir.access}/ant-build/test-classes"
+      />
+
       <copy todir="${imported.basedir.access}/ant-build/test-classes" overwrite="true">
           <fileset dir="${imported.basedir.access}/test">
               <include name="*.properties"/>
