@@ -126,14 +126,18 @@ public class LoadEmbl extends FileProcessor {
         }
     }
 
+
+    private boolean continueOnError = false;
+
     @Override
     protected void processFile(File inputFile, Reader reader) throws IOException, ParsingException {
-        EmblFile emblFile = new EmblFile(inputFile, reader);
+        EmblFile emblFile = new EmblFile(inputFile, reader, continueOnError);
         loader.load(emblFile);
     }
 
     private void quickAndDirty() {
         alwaysSkip();
         loader.setContinueOnError(true);
+        continueOnError = true;
     }
 }

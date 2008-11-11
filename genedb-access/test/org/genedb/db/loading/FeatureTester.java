@@ -13,10 +13,13 @@ import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.TranscriptRegion;
+import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.Synonym;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -29,6 +32,8 @@ import java.util.SortedSet;
 
 
 public class FeatureTester {
+    private static final Logger logger = Logger.getLogger(FeatureTester.class);
+
     private Session session;
     public FeatureTester(Session session) {
         this.session = session;
@@ -148,6 +153,24 @@ public class FeatureTester {
             assertEquals(name, feature.getName());
             return ourClass.cast(this);
         }
+        public T property(String cv, String term, String value) {
+            boolean found = false;
+            for (FeatureProp featureProp: feature.getFeatureProps()) {
+                CvTerm propType = featureProp.getType();
+                String propValue = featureProp.getValue();
+
+                logger.trace(String.format("Found property (%s=%s) on '%s'", propType, propValue, feature.getUniqueName()));
+                if (propType.getCv().getName().equals(cv) && propType.getName().equals(term)) {
+                    if (found) {
+                        fail(String.format("Property '%s' found more than once on feature '%s'", propType, feature.getUniqueName()));
+                    }
+                    assertEquals(value, featureProp.getValue());
+                    found = true;
+                }
+            }
+            assertTrue (String.format("Property '%s:%s' not found on feature '%s'", cv, term, feature.getUniqueName()), found);
+            return null; // Not reached
+        }
     }
 
     class GeneTester extends AbstractTester<GeneTester> {
@@ -231,7 +254,7 @@ public class FeatureTester {
             return this;
         }
 
-        public TranscriptTester polypeptide(String uniqueName) {
+        public TranscriptTester hasPolypeptide(String uniqueName) {
             assertTrue (transcript instanceof ProductiveTranscript);
             ProductiveTranscript productiveTranscript = (ProductiveTranscript) transcript;
 
@@ -243,6 +266,16 @@ public class FeatureTester {
                 exons.first().getFmin(), exons.last().getFmax());
 
             return this;
+        }
+
+        public PolypeptideTester polypeptide(String uniqueName) {
+            assertTrue (transcript instanceof ProductiveTranscript);
+            ProductiveTranscript productiveTranscript = (ProductiveTranscript) transcript;
+
+            Polypeptide polypeptide = productiveTranscript.getProtein();
+            assertEquals(uniqueName, polypeptide.getUniqueName());
+
+            return new PolypeptideTester(polypeptide);
         }
 
         public TranscriptTester singleExon(int strand, int fmin, int fmax) {
@@ -270,6 +303,14 @@ public class FeatureTester {
             return null; // Not reached, but makes compiler happy
         }
 }
+
+    class PolypeptideTester extends AbstractTester<PolypeptideTester> {
+        // private Polypeptide polypeptide;
+        private PolypeptideTester(Polypeptide polypeptide) {
+            super(PolypeptideTester.class, polypeptide);
+            // this.polypeptide = (Polypeptide) feature;
+        }
+    }
 
     class ExonTester extends AbstractTester<ExonTester> {
         private AbstractExon exon;

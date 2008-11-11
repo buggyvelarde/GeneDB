@@ -1,4 +1,4 @@
-ID   super1; SV 1; linear; genomic DNA; CON; PRO; 206621 BP.
+ID   super1; SV 1; linear; genomic DNA; STD; PRO; 1200 BP.
 XX
 FH   Key             Location/Qualifiers
 FT   CDS             complement(4..87)
@@ -11,6 +11,8 @@ FT                   /primary_name="s2_name"
 FT   CDS             join(90..100,110..120)
 FT                   /systematic_id="s2_2"
 FT                   /shared_id="s2"
+FT                   /colour="9"
+FT                   /colour="9"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,

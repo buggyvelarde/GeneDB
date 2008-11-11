@@ -578,9 +578,8 @@ class EmblLoader {
             }
 
             transcriptsByUniqueName.put(transcriptUniqueName, transcript);
-            processTranscriptQualifiers();
-
             loadExons();
+            processTranscriptQualifiers();
         }
 
         /**
@@ -619,22 +618,39 @@ class EmblLoader {
          * @param propertyTermName the term name corresponding to the property to add.
          *          If it belongs to the <code>genedb_misc</code> CV, it should be a child of
          *          the term <code>genedb_misc:feature_props</code>.
+         * @param isUnique whether this qualifier may appear only once.
          * @throws DataError
          */
-        protected void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName) throws DataError {
-            processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null);
+        protected void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName, boolean isUnique) throws DataError {
+            processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null, isUnique);
         }
 
-        private void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName, TermNormaliser normaliser) throws DataError {
+        protected void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName) throws DataError {
+            processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null, false);
+        }
+
+        private void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName,
+                TermNormaliser normaliser, boolean isUnique) throws DataError {
+            Set<String> values = new HashSet<String>();
             int rank = 0;
             for(String qualifierValue: feature.getQualifierValues(qualifierName)) {
                 String normalisedValue = qualifierValue;
                 if (normaliser != null) {
                     normalisedValue = normaliser.normalise(qualifierValue);
                 }
-                logger.debug(String.format("Adding %s:%s '%s' for transcript",
-                                propertyCvName, propertyTermName, normalisedValue));
-                focalFeature.addFeatureProp(normalisedValue, propertyCvName, propertyTermName, rank++);
+                if (values.contains(normalisedValue)) {
+                    logger.warn(String.format("Qualifier /%s=\"%s\" appears more than once on feature at line %d. Ignoring subsequent occurrences.",
+                        qualifierName, normalisedValue, this.feature.lineNumber));
+                } else {
+                    if (isUnique && !values.isEmpty()) {
+                        throw new DataError(String.format("More than one /%s qualifier found", qualifierName));
+                    }
+
+                    logger.debug(String.format("Adding %s:%s '%s' for transcript",
+                                    propertyCvName, propertyTermName, normalisedValue));
+                    values.add(normalisedValue);
+                    focalFeature.addFeatureProp(normalisedValue, propertyCvName, propertyTermName, rank++);
+                }
             }
         }
 
@@ -836,8 +852,10 @@ class EmblLoader {
             processPropertyQualifier("note",     "feature_property", "comment");
             for (String name: qualifierProperties) {
                 TermNormaliser normaliser = qualifierNormalisers.get(name);
-                processPropertyQualifier(name, "genedb_misc", name, normaliser);
+                processPropertyQualifier(name, "genedb_misc", name, normaliser, uniqueQualifiers.contains(name));
             }
+
+            addColourToExons();
 
             processCvTermQualifier("class", "RILEY", false, normaliseRileyNumber);
             processCvTermQualifier("product", "genedb_products", true);
@@ -852,7 +870,28 @@ class EmblLoader {
             processGO();
             processCuration();
         }
-    }
+
+        private void addColourToExons() throws DataError {
+            String colour = feature.getQualifierValue("colour");
+            if (colour == null) {
+                return;
+            }
+
+            TermNormaliser colourNormaliser = qualifierNormalisers.get("colour");
+            String normalisedColour = colour;
+            if (colourNormaliser != null) {
+                normalisedColour = colourNormaliser.normalise(colour);
+            }
+
+            logger.trace(String.format("Adding /colour=\"%s\" to exons of '%s'", normalisedColour, transcript.getUniqueName()));
+
+            for (AbstractExon exon: transcript.getExons()) {
+                logger.trace(String.format("Adding /colour=\"%s\" to exon '%s'", normalisedColour, exon.getUniqueName()));
+                exon.addFeatureProp(normalisedColour, "genedb_misc", "colour", 0);
+            }
+        }
+}
+
 
     /**
      * Convert the qualifier value into a canonical form before treating it as
@@ -899,6 +938,7 @@ class EmblLoader {
      */
     private static final List<String> qualifierProperties = new ArrayList<String>();
     private static final Map<String,TermNormaliser> qualifierNormalisers = new HashMap<String,TermNormaliser>();
+    private static final Set<String> uniqueQualifiers = new HashSet<String>();
     static {
         Collections.addAll(qualifierProperties,
             "method", "colour", "status",
@@ -906,6 +946,8 @@ class EmblLoader {
             "blastx_file", "fasta_file", "fastx_file", "tblastn_file",
             "tblastx_file", "clustalx_file", "sigcleave_file", "pepstats_file",
             "EC_number");
+
+        Collections.addAll(uniqueQualifiers, "colour", "status", "EC_number");
 
         qualifierNormalisers.put("colour", normaliseInteger);
 
@@ -997,7 +1039,7 @@ class EmblLoader {
         protected void processTranscriptQualifiers() throws DataError {
             processPropertyQualifier("note",  "feature_property", "comment");
             if (TRNA.class.isAssignableFrom(transcriptClass)) {
-                processPropertyQualifier("anticodon", "feature_property", "anticodon");
+                processPropertyQualifier("anticodon", "feature_property", "anticodon", true);
             }
             processCvTermQualifier("product", "genedb_products", true);
 

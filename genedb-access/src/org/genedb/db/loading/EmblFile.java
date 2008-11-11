@@ -26,21 +26,54 @@ import java.util.regex.Pattern;
 public class EmblFile {
     private static final Logger logger = Logger.getLogger(EmblFile.class);
 
-    public EmblFile(File inputFile, Reader reader) throws IOException, ParsingException {
-        this (inputFile.toString(), new BufferedReader(reader));
+    private boolean continueOnError = false;
+
+    private void dataError(DataError dataError) throws DataError {
+        if (continueOnError) {
+            logger.error("DataError", dataError);
+        } else {
+            throw dataError;
+        }
     }
 
-    public EmblFile(String inputFile, BufferedReader reader) throws IOException, ParsingException {
+    private void syntaxError(SyntaxError syntaxError) throws SyntaxError {
+        if (continueOnError) {
+            logger.error("SyntaxError", syntaxError);
+        } else {
+            throw syntaxError;
+        }
+    }
+
+    private void parsingException(ParsingException parsingException) throws ParsingException {
+        if (continueOnError) {
+            logger.error("ParsingException", parsingException);
+        } else {
+            throw parsingException;
+        }
+    }
+
+
+    public EmblFile(File inputFile, Reader reader) throws IOException, ParsingException {
+        this(inputFile, reader, false);
+    }
+
+    public EmblFile(File inputFile, Reader reader, boolean continueOnError) throws IOException, ParsingException {
+        this (inputFile.toString(), new BufferedReader(reader), continueOnError);
+    }
+
+    public EmblFile(String inputFile, BufferedReader reader, boolean continueOnError) throws IOException, ParsingException {
+        this.continueOnError = continueOnError;
+
         String line;
         while (null != (line = reader.readLine())) {
             processLine(inputFile, line);
         }
 
         if (idSection == null) {
-            throw new DataError(inputFile, "Found no ID line");
+            dataError(new DataError(inputFile, "Found no ID line"));
         }
         if (sequenceSection == null) {
-            throw new DataError(inputFile, "Found no sequence data");
+            dataError(new DataError(inputFile, "Found no sequence data"));
         }
 
         logger.info(String.format("Loaded '%s' from '%s'", getAccession(), inputFile));
@@ -57,7 +90,8 @@ public class EmblFile {
         ++ lineNumber;
         Matcher matcher = linePattern.matcher(line);
         if (!matcher.matches()) {
-            throw new SyntaxError(inputFile, lineNumber, line);
+            syntaxError(new SyntaxError(inputFile, lineNumber, line));
+            return;
         }
         String identifier = matcher.group(1);
         String data = matcher.group(2);
@@ -74,7 +108,7 @@ public class EmblFile {
             currentSection.addData(lineNumber, data);
         } catch (ParsingException e) {
             e.setLocation(inputFile, lineNumber);
-            throw e;
+            parsingException(e);
         }
     }
 
@@ -100,8 +134,9 @@ public class EmblFile {
         if (sectionType == null) {
             return new UnknownSection(identifier);
         } else {
+            Section section = null;
             try {
-                Section section = sectionType.getDeclaredConstructor(EmblFile.class).newInstance(this);
+                section = sectionType.getDeclaredConstructor(EmblFile.class).newInstance(this);
 
                 /*
                  * For other section types, the section constructor leaves a reference to the
@@ -113,7 +148,7 @@ public class EmblFile {
                  */
                 if (section instanceof FeatureTable) {
                     if (featureTable != null) {
-                        throw new DataError("More than one feature table found");
+                        dataError(new DataError("More than one feature table found"));
                     }
                     featureTable = (FeatureTable) section;
                 }
@@ -123,7 +158,8 @@ public class EmblFile {
                 // The invoked constructor threw an exception
                 Throwable targetException = e.getCause();
                 if (targetException instanceof DataError) {
-                    throw (DataError) targetException;
+                    dataError((DataError) targetException);
+                    return section;
                 } else {
                     throw new RuntimeException(e);
                 }
@@ -160,7 +196,7 @@ public class EmblFile {
     private class IDSection extends Section {
         IDSection() throws DataError {
             if (idSection != null) {
-                throw new DataError("Found more than one ID line");
+                dataError(new DataError("Found more than one ID line"));
             }
             idSection = this;
         }
@@ -175,7 +211,7 @@ public class EmblFile {
                 return;
             }
             if (alreadySeen) {
-                throw new DataError("Found more than one ID line");
+                dataError(new DataError("Found more than one ID line"));
             }
             Matcher matcher = idPattern.matcher(data);
             if (!matcher.matches()) {
@@ -206,7 +242,7 @@ public class EmblFile {
         public void addData(@SuppressWarnings("unused") int lineNumber, @SuppressWarnings("unused") String data)
                 throws ParsingException {
             if (seenSequenceHeader) {
-                throw new DataError("Found more than one SQ line");
+                dataError(new DataError("Found more than one SQ line"));
             }
             seenSequenceHeader = true;
         }
@@ -219,7 +255,7 @@ public class EmblFile {
     private class ContigSection extends Section {
         ContigSection() throws DataError {
             if (contigSection != null) {
-                throw new DataError("More than one CO section found");
+                dataError(new DataError("More than one CO section found"));
             }
             contigSection = this;
         }
@@ -232,7 +268,7 @@ public class EmblFile {
         public void finished() throws ParsingException {
             EmblLocation locations = EmblLocation.parse(allData.toString());
             if (!(locations instanceof EmblLocation.Join)) {
-                throw new DataError("The CO section is not a join(...) location");
+                dataError(new DataError("The CO section is not a join(...) location"));
             }
             this.contigLocations = (EmblLocation.Join) locations;
         }
@@ -250,7 +286,7 @@ public class EmblFile {
     private class SequenceSection extends Section {
         SequenceSection() throws DataError {
             if (sequenceSection != null) {
-                throw new DataError("Found more than one sequence data section");
+                dataError(new DataError("Found more than one sequence data section"));
             }
             sequenceSection = this;
         }
@@ -259,7 +295,7 @@ public class EmblFile {
         public void addData(@SuppressWarnings("unused") int lineNumber, String data) throws ParsingException {
             Matcher matcher = sequencePattern.matcher(data);
             if (!matcher.matches()) {
-                throw new SyntaxError("Failed to parse sequence data: " + data);
+                syntaxError(new SyntaxError("Failed to parse sequence data: " + data));
             }
             sequence.append(matcher.group(1).replaceAll("\\s", ""));
         }

@@ -83,7 +83,7 @@ public class EmblLoaderSyntheticTest {
     public void s1PolypeptideLocs() {
         tester.geneTester("s1")
             .transcript("s1:pseudogenic_transcript")
-            .polypeptide("s1:pseudogenic_transcript:pep")
+            .hasPolypeptide("s1:pseudogenic_transcript:pep")
             .loc(0, 0, -1, 3, 87)
             .loc(1, 1, -1, 3, 87);
     }
@@ -92,6 +92,16 @@ public class EmblLoaderSyntheticTest {
     public void s2Names() {
         tester.geneTester("s1").name(null);
         tester.geneTester("s2").name("s2_name");
+    }
+
+    @Test
+    public void s2Colours() {
+        // Also check that the repetition of the qualifier /colour="9" does not cause
+        // two properties to be added.
+        TranscriptTester s2_2 = tester.geneTester("s2").transcript("s2_2:mRNA");
+        s2_2.polypeptide("s2_2:pep").property("genedb_misc", "colour", "9");
+        s2_2.exon("s2_2:exon:1").property("genedb_misc", "colour", "9");
+        s2_2.exon("s2_2:exon:2").property("genedb_misc", "colour", "9");
     }
 
     /**

@@ -56,6 +56,7 @@ public class FeatureUtils implements InitializingBean {
     private CvTerm GO_KEY_EVIDENCE, GO_KEY_QUALIFIER, GENEDB_AUTOCOMMENT;
     private CvTerm PUB_TYPE_UNFETCHED;
     private Db PUBMED_DB;
+    private Pub NULL_PUB;
     public void afterPropertiesSet() {
         CV_GENEDB = cvDao.getCvByName("genedb_misc");
         GENEDB_TOP_LEVEL = cvDao.getCvTermByNamePatternInCv("top_level_seq", CV_GENEDB).get(0);
@@ -64,6 +65,7 @@ public class FeatureUtils implements InitializingBean {
         GENEDB_AUTOCOMMENT = cvDao.getCvTermByNamePatternInCv("autocomment", CV_GENEDB).get(0);
         PUBMED_DB = generalDao.getDbByName("MEDLINE");
         PUB_TYPE_UNFETCHED = cvDao.getCvTermByNameAndCvName("unfetched", "genedb_literature");
+        NULL_PUB = pubDao.getPubByUniqueName("null");
     }
 
     public void markTopLevelFeature(org.gmod.schema.mapped.Feature topLevel) {
@@ -165,15 +167,16 @@ public class FeatureUtils implements InitializingBean {
     private CvTerm getGoTerm(String id) {
         if (goTermIdsByAcc == null) {
             // Double-checked locking of a volatile variable is
-            // JMM-compliant in modern JVMs.
+            // JMM-compliant since JVM 1.5.
             synchronized (this) {
                 if (goTermIdsByAcc == null) {
                     goTermIdsByAcc = cvDao.getGoTermIdsByAcc();
                 }
             }
         }
-        if (!goTermIdsByAcc.containsKey(id))
+        if (!goTermIdsByAcc.containsKey(id)) {
             return null;
+        }
         return cvDao.getCvTermById(goTermIdsByAcc.get(id));
     }
 
@@ -192,10 +195,9 @@ public class FeatureUtils implements InitializingBean {
             throw new DataError("Unable to find a CvTerm for the GO id of '" + go.getId() + "'.");
         }
 
-        Pub pub = pubDao.getPubByUniqueName("null");
         String ref = go.getRef();
         // Reference
-        Pub refPub = pub;
+        Pub refPub = NULL_PUB;
         if (ref != null && looksLikePub(ref)) {
             // The reference is a pubmed id - usual case
             refPub = findOrCreatePubFromPMID(ref);

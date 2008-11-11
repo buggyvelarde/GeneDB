@@ -32,7 +32,7 @@ public class EmblLoaderBergheiTest {
             .transcripts("PB400001.00.0:mRNA")
             .transcript("PB400001.00.0:mRNA")
             .synonyms("temporary_systematic_id", "PB400001.00.0")
-            .polypeptide("PB400001.00.0:pep")
+            .hasPolypeptide("PB400001.00.0:pep")
             .singleExon(1, 240, 312);
     }
 }

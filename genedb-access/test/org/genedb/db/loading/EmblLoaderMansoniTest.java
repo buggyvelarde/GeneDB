@@ -45,7 +45,7 @@ public class EmblLoaderMansoniTest {
         geneTester.transcript("Smp_097230:mRNA")
             .synonyms("synonym", "29646.t000001", "29646.m000185")
             .synonyms("temporary_systematic_id", "Smp_097230")
-            .polypeptide("Smp_097230:pep")
+            .hasPolypeptide("Smp_097230:pep")
             .singleExon(1, 18450, 18693);
     }
 
@@ -63,7 +63,7 @@ public class EmblLoaderMansoniTest {
             .components("Smp_097240.1:exon:1", "Smp_097240.1:exon:2", "Smp_097240.1:exon:3", "Smp_097240.1:exon:4",
                         "Smp_097240.1:exon:5", "Smp_097240.1:exon:6", "Smp_097240.1:exon:7", "Smp_097240.1:exon:8",
                         "Smp_097240.1:3utr",   "Smp_097240.1:5utr:1", "Smp_097240.1:5utr:2")
-            .polypeptide("Smp_097240.1:pep");
+            .hasPolypeptide("Smp_097240.1:pep");
     }
 
     /**
