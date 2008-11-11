@@ -619,17 +619,18 @@ class EmblLoader {
          *          If it belongs to the <code>genedb_misc</code> CV, it should be a child of
          *          the term <code>genedb_misc:feature_props</code>.
          * @param isUnique whether this qualifier may appear only once.
+         * @return the number of properties that were added
          * @throws DataError
          */
-        protected void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName, boolean isUnique) throws DataError {
-            processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null, isUnique);
+        protected int processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName, boolean isUnique) throws DataError {
+            return processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null, isUnique);
         }
 
-        protected void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName) throws DataError {
-            processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null, false);
+        protected int processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName) throws DataError {
+            return processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null, false);
         }
 
-        private void processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName,
+        private int processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName,
                 TermNormaliser normaliser, boolean isUnique) throws DataError {
             Set<String> values = new HashSet<String>();
             int rank = 0;
@@ -652,6 +653,7 @@ class EmblLoader {
                     focalFeature.addFeatureProp(normalisedValue, propertyCvName, propertyTermName, rank++);
                 }
             }
+            return rank;
         }
 
         protected void processCvTermQualifier(String qualifierName, String cvName, boolean createTerms)
@@ -849,7 +851,7 @@ class EmblLoader {
             addTranscriptSynonymsFromQualifier("systematic_id", "systematic_id", true);
             addTranscriptSynonymsFromQualifier("temporary_systematic_id", "temporary_systematic_id", true);
 
-            processPropertyQualifier("note",     "feature_property", "comment");
+            int commentRank = processPropertyQualifier("note",     "feature_property", "comment");
             for (String name: qualifierProperties) {
                 TermNormaliser normaliser = qualifierNormalisers.get(name);
                 processPropertyQualifier(name, "genedb_misc", name, normaliser, uniqueQualifiers.contains(name));
@@ -865,6 +867,11 @@ class EmblLoader {
                 // a transcript and that is the end of it. One or more /gene
                 // or /synonym qualifiers may be used to indicate synonyms.
                 addTranscriptSynonymsFromQualifier("gene", "synonym", true);
+            }
+
+            if (feature.hasQualifier("partial")) {
+                logger.trace(String.format("Marking feature '%s' as partial", focalFeature.getUniqueName()));
+                focalFeature.addFeatureProp("partial", "feature_property", "comment", commentRank++);
             }
 
             processGO();
