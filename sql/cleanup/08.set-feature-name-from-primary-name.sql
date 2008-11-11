@@ -36,7 +36,11 @@ left join (
 update feature
 set name = primary_name
 from feature_name where feature.feature_id = feature_name.feature_id
-and primary_name is not null and feature.name <> primary_name
+and primary_name is not null and (
+    feature.name is null
+        or
+    feature.name <> primary_name
+)
 ;
 
 commit;
