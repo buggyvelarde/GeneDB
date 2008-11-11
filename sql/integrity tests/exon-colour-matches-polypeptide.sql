@@ -2,6 +2,7 @@ select organism.common_name as organism
      , transcript.uniquename as transcript
      , transcript_exon.rank
      , exon.uniquename as exon
+     , exon_colour.featureprop_id as exon_colour_featureprop_id
      , exon_colour.value as exon_colour
      , polypeptide.uniquename as polypeptide
      , polypeptide_colour.value as polypeptide_colour
@@ -21,6 +22,7 @@ and   exon.type_id = 234 /*exon*/
 and   polypeptide.type_id = 191 /*polypeptide*/
 and   exon_colour.type_id = 26768 /*colour*/
 and   polypeptide_colour.type_id = 26768 /*colour*/
-and   product.cv_id = 25 /*genedb_products*/
-and   exon_colour.value <> polypeptide_colour.value
+and   (product.cv_id is null or product.cv_id = 25 /*genedb_products*/)
+and   (exon_colour.value is null <> polypeptide_colour.value is null
+        or exon_colour.value <> polypeptide_colour.value)
 ;

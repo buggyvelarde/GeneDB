@@ -5,6 +5,7 @@ where transcript.type_id in (
     , 339 /*rRNA*/
     , 340 /*tRNA*/
     , 361 /*snRNA*/
+    , 761 /*transcript*/
 )
 and 1 <> (
     select count(*)

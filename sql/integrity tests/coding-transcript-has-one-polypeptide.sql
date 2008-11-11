@@ -34,6 +34,9 @@ join (
        group by polypeptide_transcript.object_id
    ) polypeptides
    on transcript.feature_id = polypeptides.transcript_id
-where transcript.type_id = 321 /*mRNA*/
+where transcript.type_id in (
+    321 /*mRNA*/
+  , 604 /*pseudogenic_transcript*/
+)
 and polypeptides.count <> 1
 ;
