@@ -71,6 +71,10 @@ public class EmblFile {
 
         if (idSection == null) {
             dataError(new DataError(inputFile, "Found no ID line"));
+
+            // We only get here if we're running in quickAndDirty mode, i.e. continueOnError is set.
+            idSection = new IDSection();
+            idSection.accession = inputFile;
         }
         if (sequenceSection == null) {
             dataError(new DataError(inputFile, "Found no sequence data"));
@@ -357,6 +361,10 @@ public class EmblFile {
     }
 
     public String getSequence() {
+        if (sequenceSection == null) {
+            // Only if the sequence section is missing and we're in quickAndDirty mode.
+            return "";
+        }
         return sequenceSection.getSequence();
     }
 
