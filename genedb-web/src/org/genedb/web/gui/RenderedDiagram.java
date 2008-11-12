@@ -5,6 +5,7 @@ import net.sf.json.JSONString;
 import org.genedb.db.domain.objects.CompoundLocatedFeature;
 import org.genedb.db.domain.objects.Gap;
 import org.genedb.db.domain.objects.LocatedFeature;
+import org.genedb.web.mvc.model.BerkeleyMapFactory;
 
 import org.gmod.schema.feature.Region;
 
@@ -21,6 +22,7 @@ import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,24 +44,29 @@ import javax.imageio.ImageIO;
 public abstract class RenderedDiagram {
     private static final Logger logger = Logger.getLogger(RenderedDiagram.class);
 
-    protected String filenamePrefix = "";
     protected static final String FILE_FORMAT = "png";
     protected static final String FILE_EXT = "png";
     protected boolean thumbNailMode;
+
+    private BerkeleyMapFactory bmf;
+
+    public void setBerkelyMapFactory(BerkeleyMapFactory bmf) {
+        this.bmf = bmf;
+    }
 
     protected enum ColorModel { DIRECT, INDEXED }
 
     public class Tile implements JSONString {
         private int width;
-        private String filename;
+        private String key;
 
-        public Tile(int width, String filename) {
+        public Tile(int width, String key) {
             this.width = width;
-            this.filename = filename;
+            this.key = key;
         }
 
         public String toJSONString() {
-            return String.format("[%d,\"%s\"]", width, filename);
+            return String.format("[%d,\"%s\"]", width, key);
         }
     }
 
@@ -140,7 +147,8 @@ public abstract class RenderedDiagram {
     /**
      * Font used for printing figures on the scale track
      */
-    private Font labelFont = FUTURA_12;
+    private Font labelFont;
+
 
     /**
      * Distance between minor scale ticks, in bases
@@ -266,6 +274,9 @@ public abstract class RenderedDiagram {
         return this;
     }
 
+    abstract String getKey();
+
+
     /**
      * Get the location of the start of the diagram.
      *
@@ -284,18 +295,13 @@ public abstract class RenderedDiagram {
         return end;
     }
 
-    public String getPreferredFilename() {
-        return String.format("%s/%s%09d-%09ds%.0f.%s", filenamePrefix, getStart(), getEnd(),
-            getBasesPerPixel(), FILE_EXT);
-    }
-
 
 //    public abstract String getPreferredFilename();
 
-    private String getPreferredFilenameForTile(int tileIndex, int tileWidth) {
-        return String.format("%s%09d-%09ds%.0ft%dw%d.%s", filenamePrefix, getStart(), getEnd(),
-            getBasesPerPixel(), tileIndex, tileWidth, FILE_EXT);
-    }
+//    private String getPreferredFilenameForTile(int tileIndex, int tileWidth) {
+//        return String.format("%s%09d-%09ds%.0ft%dw%d.%s", filenamePrefix, getStart(), getEnd(),
+//            getBasesPerPixel(), tileIndex, tileWidth, FILE_EXT);
+//    }
 
     public TrackedDiagram getDiagram() {
         return this.diagram;
@@ -312,7 +318,6 @@ public abstract class RenderedDiagram {
         setScaleTrackHeight(1);
         setTrackHeight(2);
         setAxisBreakSlash(0, 0);
-        filenamePrefix = "thumb-";
         thumbNailMode=true;
         forceTracks(2, 2);
 
@@ -467,14 +472,13 @@ public abstract class RenderedDiagram {
 
     //public abstract String getRelativeRenderDirectory();
 
-    public List<RenderedContextMap.Tile> renderTilesTo(File renderDirectory, int tileWidth) {
-        //File dir = new File(renderDirectory, getRelativeRenderDirectory());
-        //logger.debug(String.format("Rendering tiles to '%s'", dir.getAbsolutePath()));
+    public void setLabelFont(Font labelFont) {
+        this.labelFont = labelFont;
+    }
 
-        //dir.mkdirs();
-        //if (!dir.isDirectory()) {
-        //    throw new RuntimeException(String.format("Failed to create directory '%s'", dir));
-        //}
+    abstract public String getKeyForTile(int index, int start, int width);
+
+    public List<RenderedContextMap.Tile> renderTiles(int tileWidth) {
 
         beforeRender();
         drawScaleTrack();
@@ -487,37 +491,28 @@ public abstract class RenderedDiagram {
                 "Image width: expected=%d, actual=%d", getWidth(), image.getWidth()));
 
         for (int startOfTile = 0, tileIndex = 1; startOfTile < getWidth(); startOfTile += tileWidth, tileIndex++) {
-            String preferredFilename = getPreferredFilenameForTile(tileIndex, tileWidth);
-            File tileFile = new File(renderDirectory, preferredFilename);
 
             int widthOfThisTile = tileWidth;
-            if (startOfTile + widthOfThisTile > getWidth())
+            if (startOfTile + widthOfThisTile > getWidth()) {
                 widthOfThisTile = getWidth() - startOfTile;
-
-            if (!tileFile.exists()) {
-                File tileTempFile;
-                try {
-                    tileTempFile = File.createTempFile(preferredFilename, null, renderDirectory);
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(String.format(
-                        "Failed to create temp file for tile %d in directory '%s'", tileIndex, renderDirectory), e);
-                }
-
-                logger.debug(String.format("Rendering tile %d (start=%d,width=%d) to '%s'", tileIndex, startOfTile, widthOfThisTile, tileTempFile));
-                BufferedImage tile = image.getSubimage(startOfTile, 0, widthOfThisTile, image.getHeight());
-                try {
-                    ImageIO.write(tile, FILE_FORMAT, new FileOutputStream(tileTempFile));
-                } catch (IOException e) {
-                    tileTempFile.delete();
-                    throw new RuntimeException(String.format("Failed to write image file '%s'", tileTempFile), e);
-                }
-
-                if (!tileTempFile.renameTo(tileFile))
-                    throw new RuntimeException(String.format("Failed to rename '%s' to '%s'", tileTempFile, tileFile));
             }
 
-            tiles.add(new Tile(widthOfThisTile, preferredFilename));
+            String key = getKeyForTile(tileIndex, startOfTile, tileWidth);
+
+            logger.debug(String.format("Rendering tile %d (start=%d,width=%d) to '%s'", tileIndex, startOfTile, widthOfThisTile, key));
+            BufferedImage tile = image.getSubimage(startOfTile, 0, widthOfThisTile, image.getHeight());
+
+            try {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(tile, FILE_FORMAT, out);
+                out.close();
+                bmf.getImageMap().put(key, out.toByteArray());
+            } catch (IOException exp) {
+                throw new RuntimeException(String.format("Failed to write image file '%s'", key), exp);
+            }
+
+
+            tiles.add(new Tile(widthOfThisTile, key));
         }
 
         return tiles;
@@ -1053,41 +1048,5 @@ public abstract class RenderedDiagram {
     protected void setMargins(int leftMargin, int rightMargin) {
         this.leftMargin  = leftMargin;
         this.rightMargin = rightMargin;
-    }
-
-    private static final Font FUTURA_12;
-    static {
-        Properties properties = new Properties();
-        try {
-            InputStream propertyFileInputStream = RenderedDiagram.class.getResourceAsStream("/project.properties");
-            if (propertyFileInputStream == null) {
-                throw new FileNotFoundException("Failed to locate project.properties on classpath");
-            }
-            properties.load(propertyFileInputStream);
-            propertyFileInputStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to open project.properties", e);
-        }
-
-        String fontFileName = properties.getProperty("diagram.fontFile");
-        if (fontFileName == null) {
-            throw new RuntimeException("Property 'diagram.fontFile' not found in project.properties");
-        }
-        File fontFile = new File(fontFileName);
-        try {
-            InputStream is = new FileInputStream(fontFile);
-
-            // Creates the font at 1pt size
-            Font baseFont = Font.createFont(Font.TRUETYPE_FONT, is);
-
-            is.close();
-
-            // Makes a derived font at 12pt
-            FUTURA_12 = baseFont.deriveFont(12);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to open diagram font file", e);
-        } catch (FontFormatException e) {
-            throw new RuntimeException("Failed to open diagram font file", e);
-        }
     }
 }
