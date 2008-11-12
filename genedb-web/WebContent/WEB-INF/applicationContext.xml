@@ -29,13 +29,14 @@
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
+<!--
     <bean name="diagramCache" class="org.genedb.web.gui.FileDiagramCache">
         <property name="baseDiagramDirectory" value="${baseDiagramDirectory}" />
         <property name="baseUri" value="${baseUri}" />
         <property name="contextMapRenderDirectory" value="${contextMap.render.directory}" />
         <property name="proteinMapRenderDirectory" value="${proteinMap.render.directory}" />
     </bean>
-
+-->
 
     <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
         <property name="taxonNodeManager" ref="taxonNodeManager" />
