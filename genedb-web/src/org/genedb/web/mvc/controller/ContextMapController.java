@@ -25,7 +25,7 @@ public class ContextMapController extends PostOrGetFormController {
      */
     private static final int TILE_WIDTH = 5000; // in pixels
 
-    private DiagramCache fileDiagramCache;
+    //private DiagramCache fileDiagramCache;
     private LuceneIndexFactory luceneIndexFactory; // Injected by Spring
     private View view; // Defined in genedb-servlet.xml
     private int cacheHit;
@@ -80,9 +80,9 @@ public class ContextMapController extends PostOrGetFormController {
         this.view = view;
     }
 
-    public void setDiagramCache(DiagramCache fileDiagramCache) {
-        this.fileDiagramCache = fileDiagramCache;
-    }
+//    public void setDiagramCache(DiagramCache fileDiagramCache) {
+//        this.fileDiagramCache = fileDiagramCache;
+//    }
 //
 //    public void setContextMapCache(BlockingCache contextMapCache) {
 //        this.contextMapCache = contextMapCache;

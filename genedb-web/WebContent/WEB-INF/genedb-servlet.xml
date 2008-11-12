@@ -303,7 +303,6 @@
         <property name="view" ref="jsonView" />
         <property name="validator" ref="contextMapFormValidator" />
         <property name="cacheSeconds" value="86400" />
-        <property name="diagramCache" ref="diagramCache" />
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     </bean>
 
