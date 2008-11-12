@@ -340,14 +340,21 @@ public class RenderedContextMap extends RenderedDiagram {
 //        return String.format("%s/%s/%s/%s", getDiagram().getOrganism(), tmp.substring(0, 2), tmp.substring(2, 4), tlf);
 //    }
 
-    public String getPreferredFilename() {
-        if (thumbNailMode) {
-            return String.format("%s/%s%09d-%09ds%.0f.%s", getDiagram().getChromosome(), filenamePrefix, getStart(), getEnd(),
-                    getBasesPerPixel(), FILE_EXT);
-        } else {
-            return String.format("%s%09d-%09ds%.0f.%s", filenamePrefix, getStart(), getEnd(),
-                    getBasesPerPixel(), FILE_EXT);
-        }
+    public String getKey() {
+        return getKeyForTile(1, getStart(), getEnd() - getStart());
+    }
+
+
+    public String getKeyForTile(int index, int start, int width) {
+        return String.format("%s:%s:%s:%d:%09d-%09ds%.0f.%s",
+                getDiagram().getOrganism(),
+                thumbNailMode ? "thumbnail": "context",
+                getDiagram().getChromosome(),
+                index,
+                start,
+                width,
+                getBasesPerPixel(),
+                FILE_EXT);
     }
 
     /**
@@ -359,4 +366,5 @@ public class RenderedContextMap extends RenderedDiagram {
     public List<RenderedFeature> getRenderedFeatures() {
         return renderedFeatures;
     }
+
 }

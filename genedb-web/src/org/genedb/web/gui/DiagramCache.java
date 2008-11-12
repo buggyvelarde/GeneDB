@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public interface DiagramCache {
 
-    public abstract String getBaseUri();
+    //public abstract String getBaseUri();
 
     /**
      * Get the path of a file containing an image representing this diagram,

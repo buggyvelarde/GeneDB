@@ -3,6 +3,7 @@ package org.genedb.web.gui;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,9 +22,8 @@ public class BdbDiagramCache implements DiagramCache {
         renderedContextMap.writeTo(out);
         out.close();
 
-        String key = "wibble";
-        bmf.getImageMap().put(key, out.toByteArray());
-        return key;
+        bmf.getImageMap().put(renderedContextMap.getKey(), out.toByteArray());
+        return renderedContextMap.getKey();
     }
 
     @Override
@@ -34,15 +34,19 @@ public class BdbDiagramCache implements DiagramCache {
         renderedProteinMap.writeTo(out);
         out.close();
 
-        String key = "wibble";
-        bmf.getImageMap().put(key, out.toByteArray());
-        return key;
+        bmf.getImageMap().put(renderedProteinMap.getKey(), out.toByteArray());
+        return renderedProteinMap.getKey();
     }
 
-    @Override
-    public String getBaseUri() {
-        // TODO Auto-generated method stub
-        return null;
+//    @Override
+//    public String getBaseUri() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+
+    @Required
+    public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
+        this.bmf = bmf;
     }
 
 }

@@ -11,6 +11,7 @@ import org.genedb.util.MD5Util;
 import org.genedb.web.gui.ContextMapDiagram;
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.RenderedContextMap;
+import org.genedb.web.gui.RenderedDiagramFactory;
 import org.genedb.web.mvc.controller.ModelBuilder;
 
 import org.gmod.schema.feature.AbstractGene;
@@ -33,6 +34,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +59,7 @@ public class PopulateCaches {
     private DiagramCache diagramCache;
     private LuceneIndexFactory luceneIndexFactory;
     private BasicGeneService basicGeneService;
+    private RenderedDiagramFactory renderedDiagramFactory;
 
     private static final int TILE_WIDTH = 5000;
 
@@ -86,7 +89,7 @@ public class PopulateCaches {
             return;
         }
 
-        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath:applicationContext.xml"});
+        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath:applicationContext.xml", "classpath:populateCaches.xml"});
         ctx.refresh();
         PopulateCaches pc = (PopulateCaches) ctx.getBean("populateCaches", PopulateCaches.class);
         pc.setConfig(pca);
@@ -105,16 +108,19 @@ public class PopulateCaches {
 
         long start = System.currentTimeMillis();
 
-        List<Feature> topLevelFeatures = getTopLevelFeatures();
+        Iterator<Feature> topLevelFeatures = getTopLevelFeatures();
 
         int count = 0;
-        for (Feature feature : topLevelFeatures) {
+        while (topLevelFeatures.hasNext()) {
+            Feature feature = topLevelFeatures.next();
 
             if (config.isDebugCount() && count >= config.getDebugCount()) {
                 break;
             }
 
-            if (!config.isNoContextMap()) {
+            final int MIN_CONTEXT_LENGTH_BASES = 5000;
+
+            if (!config.isNoContextMap() && feature.getSeqLen() > MIN_CONTEXT_LENGTH_BASES) {
                 populateContextMapCache(feature, basicGeneService);
             }
 
@@ -131,12 +137,12 @@ public class PopulateCaches {
 
             sessionFactory.getCurrentSession().clear();
             count++;
-            logger.info(String.format("Count %d of %d : Total run time %.02fs", count, topLevelFeatures.size(), (double)(System.currentTimeMillis() - start)/1000));
+            logger.info(String.format("Count %d of %s : Total run time %.02fs", count, "unknown", (double)(System.currentTimeMillis() - start)/1000));
         }
     }
 
     @SuppressWarnings("unchecked")
-    private List<Feature> getTopLevelFeatures() {
+    private Iterator<Feature> getTopLevelFeatures() {
 
         Query q = sessionFactory.getCurrentSession().createQuery(
         "select f from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq'");
@@ -146,8 +152,7 @@ public class PopulateCaches {
             "select f from Feature f, FeatureProp fp where fp.feature=f and fp.cvTerm.name='top_level_seq' and f.organism.commonName = :orgName");
             q.setString("orgName", config.getOrganism());
         }
-
-        return q.list();
+        return q.iterate();
     }
 
 
@@ -157,19 +162,14 @@ public class PopulateCaches {
         ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forChromosome(basicGeneService,
             feature.getOrganism().getCommonName(), feature.getUniqueName(), feature.getSeqLen());
 
-        RenderedContextMap renderedContextMap = new RenderedContextMap(chromosomeDiagram);
-        RenderedContextMap renderedChromosomeThumbnail = new RenderedContextMap(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
+        RenderedContextMap renderedContextMap = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram);
+        RenderedContextMap renderedChromosomeThumbnail = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
 
-        String relativePath = feature.getOrganism().getCommonName() + "/" + MD5Util.getPathBasedOnMD5(feature.getUniqueName(), '/');
-        File renderDirectory = null;// FIXME = new File(diagramCache.getContextMapRootDir() + "/" + relativePath);
-        String renderURI = diagramCache.getBaseUri() + "/" + relativePath;
-        renderDirectory.mkdirs();
-        logger.trace("Rendering context map files to " + renderDirectory);
-        List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTilesTo(renderDirectory, TILE_WIDTH);
+        List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTiles(TILE_WIDTH);
 
         String text;
         try {
-            text = populateModel(renderedChromosomeThumbnail, renderedContextMap, renderURI, tiles);
+            text = populateModel(renderedChromosomeThumbnail, renderedContextMap, tiles);
 
             contextMapMap.put(feature.getUniqueName(), text);
             logger.info("Stored contextMap for '"+feature.getUniqueName()+"' as '"+text+"'");
@@ -179,8 +179,8 @@ public class PopulateCaches {
     }
 
     private String populateModel(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap,
-            String renderURI, List<RenderedContextMap.Tile> tiles) throws IOException {
-        String chromosomeThumbnailURI = diagramCache.fileForContextMap(chromosomeThumbnail);
+            List<RenderedContextMap.Tile> tiles) throws IOException {
+        String chromosomeThumbnailKey = diagramCache.fileForContextMap(chromosomeThumbnail);
 
         ContextMapDiagram diagram = contextMap.getDiagram();
 
@@ -201,11 +201,11 @@ public class PopulateCaches {
         model.put("start", diagram.getStart());
         model.put("end", diagram.getEnd());
 
-        model.put("tilePrefix", renderURI);
+        model.put("tilePrefix", "/Image?key=");
         model.put("tiles", tiles);
 
         Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
-        chromosomeThumbnailModel.put("src", chromosomeThumbnailURI);
+        chromosomeThumbnailModel.put("src", chromosomeThumbnailKey);
         chromosomeThumbnailModel.put("width", chromosomeThumbnail.getWidth());
         model.put("chromosomeThumbnail", chromosomeThumbnailModel);
 
@@ -273,6 +273,10 @@ public class PopulateCaches {
 
     public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
         this.bmf = bmf;
+    }
+
+    public void setRenderedDiagramFactory(RenderedDiagramFactory renderedDiagramFactory) {
+        this.renderedDiagramFactory = renderedDiagramFactory;
     }
 
 }

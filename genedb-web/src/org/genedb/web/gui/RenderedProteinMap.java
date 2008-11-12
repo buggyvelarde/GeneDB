@@ -179,6 +179,23 @@ public class RenderedProteinMap extends RenderedDiagram {
         leftEdgesByTrack.get(track).add(x);
     }
 
+    public String getKey() {
+        return getKeyForTile(1, getStart(), getEnd() - getStart());
+    }
+
+
+    public String getKeyForTile(int index, int start, int width) {
+        return String.format("%s:%s:%s:%d:%09d-%09ds%.0f.%s",
+                getDiagram().getOrganism(),
+                thumbNailMode ? "thumbnailp": "protein",
+                getDiagram().getTranscriptUniqueName(),
+                index,
+                start,
+                width,
+                getBasesPerPixel(),
+                FILE_EXT);
+    }
+
     private class Label {
         private String shortLabel;
         private String longLabel;

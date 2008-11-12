@@ -107,22 +107,6 @@ public abstract class TrackedDiagram {
         return ret;
     }
 
-    @Deprecated
-    public List<List<LocatedFeature>> getPositiveTracks() {
-        List<List<LocatedFeature>> ret = new ArrayList<List<LocatedFeature>>();
-        for (int i = 1; i <= numberOfPositiveTracks(); i++)
-            ret.add(getTrack(i));
-        return ret;
-    }
-
-    @Deprecated
-    public List<List<LocatedFeature>> getNegativeTracks() {
-        List<List<LocatedFeature>> ret = new ArrayList<List<LocatedFeature>>();
-        for (int i = 1; i <= numberOfNegativeTracks(); i++)
-            ret.add(getTrack(-i));
-        return ret;
-    }
-
     public TrackedDiagram(int start, int end) {
         this.start = start;
         this.end = end;
