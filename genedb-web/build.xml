@@ -157,8 +157,8 @@
     <target name="restart-ci-web">
       <exec executable="/nfs/pathdata/jira/bin/shutdown.sh" failifexecutionfails="true" failonerror="true" />
       <sleep seconds="5" />
-      <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
-      <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
+      <delete dir="/nfs/pathdata/jira/ci-deployment/logs" failonerror="false"/>
+      <mkdir dir="/nfs/pathdata/jira/ci-deployment/logs" />
       <exec executable="/nfs/pathdata/jira/bin/startup.sh"  failifexecutionfails="true" failonerror="true" />
       <sleep seconds="30" />
     </target>
@@ -186,7 +186,8 @@
         <java fork="true" classpathref="application-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-            <!-- <arg line="-o Pfalciparum -debugCount 30 -globalFileRoot /tmp"/> -->
+            <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
+            <!-- <arg line="-o Pfalciparum -debugCount 3 -globalFileRoot /tmp"/> -->
             <arg line="--globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/>
             <!-- <arg line="-o Pberghei_3x"/> -->
             <!-- <arg line="-ncm" /> -->
