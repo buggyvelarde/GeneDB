@@ -954,7 +954,7 @@ class EmblLoader {
             "tblastx_file", "clustalx_file", "sigcleave_file", "pepstats_file",
             "EC_number");
 
-        Collections.addAll(uniqueQualifiers, "colour", "status", "EC_number");
+        Collections.addAll(uniqueQualifiers, "colour", "status");
 
         qualifierNormalisers.put("colour", normaliseInteger);
 
