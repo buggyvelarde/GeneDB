@@ -125,25 +125,9 @@
         </property> -->
     </bean>
 
-    <bean id="populateCaches" class="org.genedb.web.mvc.model.PopulateCaches">
-        <property name="sessionFactory" ref="sessionFactory" />
-        <property name="diagramCache" ref="diagramCache" />
-        <property name="modelBuilder" ref="modelBuilder" />
-        <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
-        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
-    </bean>
-
-    <bean name="berkeleyReadWriteMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
-        <property name="rootDirectory" value="/tmp"/>
-    </bean>
-
     <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
         <property name="rootDirectory" value="${cacheDirectory}"/>
         <property name="readOnly" value="true" />
-    </bean>
-
-    <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
-        <property name="diagramCache" ref="diagramCache" />
     </bean>
 
 </beans>
