@@ -10,6 +10,7 @@ import org.gmod.schema.utils.propinterface.PropertyI;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+@Configurable
 @Entity
 @Table(name = "feature_cvterm")
 /*
