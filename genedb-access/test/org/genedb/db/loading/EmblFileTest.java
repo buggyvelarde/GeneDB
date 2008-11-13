@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.genedb.db.loading.FeatureTable.Feature;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,10 +14,12 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class EmblFileTest {
+    private static final Logger logger = Logger.getLogger(EmblFileTest.class);
     private EmblFile emblFile;
 
     @Before
     public void loadEmblFile() throws IOException, ParsingException {
+        logger.debug("Current working directory is " + new File(".").getCanonicalPath());
         File file = new File("test/data/smp_scaff000604.embl");
         emblFile = new EmblFile(file, new FileReader(file));
     }
