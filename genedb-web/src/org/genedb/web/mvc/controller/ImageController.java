@@ -4,6 +4,7 @@ import org.genedb.web.mvc.model.BerkeleyMapFactory;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,10 +34,11 @@ public class ImageController {
             logger.error(String.format("Can't find image data for '%s'", key));
             return;
         }
+        String suffix = StringUtils.getFilenameExtension(key);
 
         ServletOutputStream out;
         try {
-            response.setContentType("image/png");
+            response.setContentType("image/"+suffix);
             out = response.getOutputStream();
 
             out.write(data);
