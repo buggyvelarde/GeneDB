@@ -21,10 +21,10 @@
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/dom4j/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/freemarker/freemarker.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar" sourcepath="/genedb-libs/lib-src/hibernate-annotations-3.4.0.CR1-src.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate-entitymanager.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hibernate/hibernate3.jar" sourcepath="/genedb-libs/lib-src/hibernate-3.3.1GA-src.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/hsqldb/hsqldb.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/j2ee/jms.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-collections.jar"/>
