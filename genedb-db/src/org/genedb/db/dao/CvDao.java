@@ -14,6 +14,7 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.utils.CountedName;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -136,12 +137,23 @@ public class CvDao extends BaseDao {
         return getCvTermByNameAndCvName(cvTermName, cvName, true);
     }
     public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName, boolean complainIfNotFound) {
+        Session session = getSession();
+
         if (cvTermIdsByCvAndName.containsKey(cvName, cvTermName)) {
-            return (CvTerm) getSession().load(CvTerm.class, cvTermIdsByCvAndName.get(cvName, cvTermName));
+            CvTerm cvTerm = (CvTerm) session.get(CvTerm.class, cvTermIdsByCvAndName.get(cvName, cvTermName));
+            if (cvTerm != null) {
+                /*
+                 * It is possible for the ID to be in the cache but the CvTerm not to exist
+                 * in the database, even if only a single thread is accessing the database
+                 * at a time: the CvTerm might have been added in a session that was later
+                 * rolled back.
+                 */
+                return cvTerm;
+            }
         }
 
         @SuppressWarnings("unchecked")
-        List<CvTerm> cvTermList = getSession().createQuery(
+        List<CvTerm> cvTermList = session.createQuery(
             "from CvTerm cvTerm where cvTerm.name = :cvTermName and cvTerm.cv.name = :cvName")
             .setString("cvTermName", cvTermName).setString("cvName", cvName).list();
         if (cvTermList == null || cvTermList.size() == 0) {
@@ -161,16 +173,28 @@ public class CvDao extends BaseDao {
         return cvTerm;
     }
 
-    private TwoKeyMap<String,String,CvTerm> cvTermsByAccessionByCv = new SynchronizedTwoKeyMap<String,String,CvTerm>();
+    private TwoKeyMap<String,String,Integer> cvTermIdsByAccessionAndCv = new SynchronizedTwoKeyMap<String,String,Integer>();
     public CvTerm getCvTermByAccessionAndCvName(String accession, String cvName) {
-        if (cvTermsByAccessionByCv.containsKey(cvName, accession)) {
-            return cvTermsByAccessionByCv.get(cvName, accession);
+        Session session = getSession();
+
+        if (cvTermIdsByAccessionAndCv.containsKey(cvName, accession)) {
+            CvTerm cvTerm = (CvTerm) session.get(CvTerm.class, cvTermIdsByAccessionAndCv.get(cvName, accession));
+            if (cvTerm != null) {
+                /*
+                 * It is possible for the ID to be in the cache but the CvTerm not to exist
+                 * in the database, even if only a single thread is accessing the database
+                 * at a time: the CvTerm might have been added in a session that was later
+                 * rolled back.
+                 */
+                return cvTerm;
+            }
         }
 
         @SuppressWarnings("unchecked")
-        List<CvTerm> cvTermList = getSession().createQuery(
+        List<CvTerm> cvTermList = session.createQuery(
             "from CvTerm cvTerm where cvTerm.dbXRef.accession = :accession and cvTerm.cv.name = :cvName")
             .setString("accession", accession).setString("cvName", cvName).list();
+
         if (cvTermList == null || cvTermList.size() == 0) {
             logger.warn("No cvterms found for accession '" + accession + "' in '" + cvName + "'");
             return null;
@@ -182,7 +206,7 @@ public class CvDao extends BaseDao {
         }
 
         CvTerm cvTerm = cvTermList.get(0);
-        cvTermsByAccessionByCv.put(cvName, accession, cvTerm);
+        cvTermIdsByAccessionAndCv.put(cvName, accession, cvTerm.getCvTermId());
         return cvTerm;
     }
 
@@ -208,11 +232,16 @@ public class CvDao extends BaseDao {
         return cvTermList.get(0);
     }
 
-    private Db nullDb = null;
+    private volatile Db nullDb = null;
     private Db nullDb() {
         if (nullDb == null) {
-            nullDb = generalDao.getDbByName("null");
+            synchronized(this) {
+                if (nullDb == null) {
+                    nullDb = generalDao.getDbByName("null");
+                }
+            }
         }
+
         return nullDb;
     }
 
@@ -245,9 +274,9 @@ public class CvDao extends BaseDao {
 
             Db db = nullDb();
             DbXRef dbXRef = new DbXRef(db, cvTermNameTruncatedForDbXRef, cvTermName);
-            generalDao.persist(dbXRef);
+            persist(dbXRef);
             CvTerm cvterm = new CvTerm(this.getCvByName(cvName), dbXRef, cvTermNameTruncatedForCvTerm, cvTermName);
-            this.persist(cvterm);
+            persist(cvterm);
             return cvterm;
         }
         return cvTerm;
