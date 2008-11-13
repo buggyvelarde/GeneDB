@@ -117,6 +117,11 @@ public class DbXRef implements Serializable {
         this.dbXRefProps.add(dbXRefProp);
         dbXRefProp.setDbXRef(this);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s:%s", db == null ? "null" : db.getName(), accession);
+    }
 }
 
 
