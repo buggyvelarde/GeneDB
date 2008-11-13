@@ -8,7 +8,6 @@ dbuser=genedb_ro
 dbpassword=genedb_ro
 
 lucene.indexDirectory=/nfs/pathdb/genedb/ci-web/lucene/
-baseDiagramDirectory=/nfs/pathdata/jira/ci-deployment/webapps/ci-web
 emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
 cacheDirectory=/nfs/pathdb/genedb/ci-web/cache
