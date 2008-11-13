@@ -6,7 +6,10 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.helpers.LocationBridge;
 import org.genedb.util.SequenceUtils;
 
+import org.gmod.schema.feature.ProteinMatch;
+import org.gmod.schema.feature.Region;
 import org.gmod.schema.utils.CollectionUtils;
+import org.gmod.schema.utils.Similarity;
 import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
@@ -1119,6 +1122,44 @@ public abstract class Feature implements java.io.Serializable {
             }
         }
         return ret;
+    }
+
+    @Transactional
+    public void addSimilarity(Similarity similarity) {
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+
+        Analysis analysis = new Analysis();
+        analysis.setProgram(similarity.getAnalysisProgram());
+        analysis.setProgramVersion(similarity.getAnalysisProgramVersion());
+        session.persist(analysis);
+
+        String matchUniqueName = String.format("MATCH_%s_%s", getUniqueName(), similarity.getPrimaryDbXRef());
+        ProteinMatch match = new ProteinMatch(getOrganism(), matchUniqueName);
+        session.persist(match);
+
+        AnalysisFeature analysisFeature = new AnalysisFeature(analysis, match);
+        analysisFeature.setRawScore(similarity.getRawScore());
+        analysisFeature.setSignificance(similarity.getEValue());
+        analysisFeature.setIdentity(similarity.getId());
+        session.persist(analysisFeature);
+
+        match.addFeatureProp(String.format("%.02g", similarity.getUngappedId()), "genedb_misc", "ungapped id", 0);
+        match.addFeatureProp(similarity.getOverlap() + " aa overlap", "genedb_misc", "overlap", 0);
+
+        String sourceUniqueName = String.format("%s_%s_%s", organism.getCommonName(), getUniqueName(), similarity.getPrimaryDbXRef());
+        Region source = new Region(getOrganism(), sourceUniqueName, true, false, new Timestamp(System.currentTimeMillis()));
+        source.setSeqLen(similarity.getLength());
+        source.setDbXRef(similarity.getPrimaryDbXRef());
+        for (DbXRef dbXRef: similarity.getSecondaryDbXRefs()) {
+            source.addDbXRef(dbXRef);
+        }
+
+        source.addFeatureProp(similarity.getOrganismName(), "feature_property", "organism", 0);
+        source.addFeatureProp(similarity.getGeneName(), "sequence", "gene", 0);
+        source.addFeatureProp(similarity.getProduct(), "genedb_misc", "product", 0);
+
+        this.addLocatedChild(source, 1 + similarity.getTargetStart(), similarity.getTargetEnd(), 0 /*strand*/, null /*phase*/, 0 /*locgroup */, 0 /*rank*/);
+        this.addLocatedChild(match, 1 + similarity.getQueryStart(), similarity.getQueryEnd(), 0 /*strand*/, null /*phase*/, 0 /*locgroup */, 1 /*rank*/);
     }
 
     /**
