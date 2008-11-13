@@ -11,9 +11,17 @@ import java.sql.Timestamp;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+/**
+ * This class is not abstract, because it's used - in a rather bogus way - to represent the query
+ * region (actually a region of the genome of a different organism altogether!) of a /similarity.
+ * {@see http://scratchy.internal.sanger.ac.uk/wiki/index.php/Chado_Data_Storage#Similarity}
+ *
+ * @author rh11
+ *
+ */
 @FeatureType(cv="sequence", term="region")
 @Entity
-public abstract class Region extends Feature implements Comparable<Region> {
+public class Region extends Feature implements Comparable<Region> {
 
     Region() {
         // empty
