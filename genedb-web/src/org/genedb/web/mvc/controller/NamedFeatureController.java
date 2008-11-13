@@ -106,7 +106,7 @@ public class NamedFeatureController extends PostOrGetFormController {
             throw new RuntimeException(String.format("Unable to find '%s' in cache", feature.getUniqueName()));
         } else {
             cacheHit++;
-            logger.error("dto cache hit for '"+feature.getUniqueName());
+            logger.trace("dto cache hit for '"+feature.getUniqueName());
             HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
             hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
             if (nlb.isAddToBasket()) {
