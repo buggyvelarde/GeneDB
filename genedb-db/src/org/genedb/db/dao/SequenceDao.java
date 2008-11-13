@@ -103,7 +103,7 @@ public class SequenceDao extends BaseDao {
     }
 
     /**
-     * Return a list of features with any current (ie non-obsolete) name or synonym
+     * Return a list of features with any current (ie non-obsolete) synonym
      *
      * @param name the lookup name
      * @return a (possibly empty) List<Feature> of children with this current name
@@ -111,7 +111,7 @@ public class SequenceDao extends BaseDao {
     public List<Feature> getFeaturesByAnyCurrentName(String name) {
         @SuppressWarnings("unchecked")
         List<Feature> features = getSession().createQuery(
-                        "select f from Feature f, FeatureSynonym fs, Synonym s where f=fs.feature and fs.synonym=s and fs.current=true and s.name=:name")
+                        "select fs.feature from FeatureSynonym fs where fs.current=true and fs.synonym.name=:name")
                         .setString("name", name).list();
         return features;
     }
@@ -139,34 +139,6 @@ public class SequenceDao extends BaseDao {
                     .setInteger("min", min)
                     .setInteger("max", max)
                     .list();
-        return features;
-    }
-
-    /**
-     * Return a list of features with this name or synonym (including obsolete names). The
-     * name can contain an SQL wildcard (%). Also, all asterisks will be replaced by <code>%</code>
-     * before the query is executed.
-     *
-     * @param name the lookup name
-     * @param featureType the type of feature to return eg "gene"
-     * @return a (possibly empty) List<Feature> of children with this name
-     */
-    public List<Feature> getFeaturesByAnyName(String name, String featureType) {
-        // TODO Taxon and filter
-        String lookup = name.replaceAll("\\*", "%");
-        logger.debug("getFeaturesByAnyName: searching for '" + lookup + "'");
-
-        @SuppressWarnings("unchecked")
-        List<Feature> features = getSession().createQuery(
-                        "select f from Feature f, FeatureSynonym fs, CvTerm cvt " +
-                        "where f=fs.feature " +
-                        "and fs.current=true " +
-                        "and f.type=cvt.cvTermId " +
-                        "and cvt.name=:featureType " +
-                        "and fs.synonym.name like :lookup")
-                .setString("lookup", lookup)
-                .setString("featureType", featureType)
-                .list();
         return features;
     }
 
