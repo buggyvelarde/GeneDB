@@ -20,7 +20,7 @@ public class EmblFileTest {
     @Before
     public void loadEmblFile() throws IOException, ParsingException {
         logger.debug("Current working directory is " + new File(".").getCanonicalPath());
-        File file = new File("test/data/smp_scaff000604.embl");
+        File file = new File("test/data/Smp_scaff000604.embl");
         emblFile = new EmblFile(file, new FileReader(file));
     }
 
