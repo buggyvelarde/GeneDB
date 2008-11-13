@@ -71,6 +71,9 @@ public class ObjectManager extends EmptyInterceptor {
      * @return the existing or newly-created DbXRef
      */
     public DbXRef getDbXRef(String dbName, String accession) {
+        if (dbName.equals("SWALL")) {
+            dbName = "UniProt";
+        }
         logger.debug(String.format("Getting DbXRef '%s'/'%s'", dbName, accession));
 
         if (dbxrefsByAccByDb.containsKey(dbName,accession)) {
