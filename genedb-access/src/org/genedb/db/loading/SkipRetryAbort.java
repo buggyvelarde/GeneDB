@@ -69,7 +69,7 @@ class SkipRetryAbort {
     Response dialogResponse;
 
     private Response promptUsingDialog(Throwable e) {
-        String prompt = e.getMessage() + "\nWhat would you like to do?";
+        String prompt = e.getMessage() + ". \nWhat would you like to do?";
 
         Frame hiddenFrame = new Frame(getClass().getName());
         dialog = new Dialog(hiddenFrame, "Skip, retry, or abort?", true);
