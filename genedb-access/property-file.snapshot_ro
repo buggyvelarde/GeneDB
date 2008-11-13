@@ -1,0 +1,6 @@
+dbhost=pathdbsrv1-dmz
+dbport=5432
+dbname=snapshot-new
+dbuser=genedb_rw
+dbpassword=HoHoHo&aBoOfRu
+indexDir=/tmp
