@@ -36,7 +36,9 @@ public class ImageController {
 
         ServletOutputStream out;
         try {
+            response.setContentType("image/png");
             out = response.getOutputStream();
+
             out.write(data);
         } catch (IOException exp) {
             logger.error(String.format("Problem returning image data for '%s'", key), exp);
