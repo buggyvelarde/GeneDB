@@ -57,8 +57,10 @@ public class BerkeleyMapFactory {
     private String CONTEXT_MAP_STORE = "context";
     private String IMAGE_MAP_STORE = "images";
 
-    private void openDb() {
-        if (env != null) {
+    private boolean databaseIsOpen = false;
+
+    private synchronized void openDb() {
+        if (databaseIsOpen) {
             return;
         }
 
@@ -98,6 +100,7 @@ public class BerkeleyMapFactory {
             dtoDb = env.openDatabase(null, DTO_STORE, dbConfig);
             contextMapDb = env.openDatabase(null, CONTEXT_MAP_STORE, dbConfig);
             imageDb = env.openDatabase(null, IMAGE_MAP_STORE, dbConfig);
+            databaseIsOpen = true;
         }
         catch (DatabaseException exp) {
             throw new RuntimeException("Unable to open Berkeley databases", exp);
@@ -121,16 +124,38 @@ public class BerkeleyMapFactory {
     }
 
 
-    public void closeDb() {
+    public synchronized void closeDb() {
         try {
             dtoDb.close();
-            contextMapDb.close();
-            imageDb.close();
-            javaCatalog.close();
-            env.close();
         } catch (DatabaseException exp) {
-            logger.error("Unable to shut down Berkeley DB cleanly", exp);
+            throw new RuntimeException("Unable to close DTO Berkeley DB", exp);
         }
+
+       try {
+            contextMapDb.close();
+       } catch (DatabaseException exp) {
+           throw new RuntimeException("Unable to close context map Berkeley DB", exp);
+       }
+
+       try {
+            imageDb.close();
+       } catch (DatabaseException exp) {
+           throw new RuntimeException("Unable to close image Berkeley DB", exp);
+       }
+
+       try {
+           javaCatalog.close();
+       } catch (DatabaseException exp) {
+           throw new RuntimeException("Unable to close stored class catalog", exp);
+       }
+
+       try {
+           env.close();
+       } catch (DatabaseException exp) {
+           throw new RuntimeException("Unable to close environment", exp);
+       }
+
+        databaseIsOpen = false;
     }
 
 
@@ -142,6 +167,4 @@ public class BerkeleyMapFactory {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
-
-
 }
