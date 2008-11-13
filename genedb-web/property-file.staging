@@ -1,4 +1,4 @@
-finaldest.webapps=/nfs/pathsoft/projects/genedb/webapps/staging/ROOT
+finaldest.webapps=/nfs/pathdb/genedb/staging/webapps/ROOT
 webAppRootKey=genedb.staging.root
 
 dbhost=pathdbsrv1-dmz
@@ -7,13 +7,9 @@ dbname=snapshot
 dbuser=genedb_ro
 dbpassword=genedb_ro
 
-lucene.indexDirectory=/nfs/pathdata/genedb/indexes/snapshot/
-contextMap.render.directory=includes/images/cmap
-proteinMap.render.directory=includes/images/pmap
+lucene.indexDirectory=/nfs/pathdb/genedb/staging/lucene
 emboss.directory=/software/pathogen/external/applications/EMBOSS/
 psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
-
-baseDiagramDirectory=/nfs/pathsoft/projects/genedb/webapps/staging/ROOT
-baseUri=
+cacheDirectory=/nfs/pathdb/genedb/staging/cache
 
 diagram.fontFile=/nfs/pathsoft/projects/genedb/fonts/f011004t.ttf
