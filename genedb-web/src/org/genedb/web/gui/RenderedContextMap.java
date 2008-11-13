@@ -10,13 +10,9 @@ import org.genedb.db.domain.objects.Transcript;
 import org.genedb.db.domain.objects.TranscriptComponent;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hpsf.Thumbnail;
 
 import java.awt.Color;
 import java.awt.image.IndexColorModel;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +24,12 @@ import java.util.Map;
  * The rendered diagram consists of a number of gene tracks (positive above and
  * negative below). In the centre is a scale track, which shows the scale of the
  * diagram.
- *
+ *<p>
  * Each exon is represented by an unbordered rectangle of the appropriate
  * colour, centred vertically within the gene track. An intron is represented by
  * a narrower rectangle of the same colour, also vertically centred and
  * continuous with the exons it separates.
- *
+ *<p>
  * If the rendered diagram is more than 32767 pixels wide, the image will still
  * be correctly generated but most decoding software will fail in one of several
  * amusing ways. Therefore it is advisable to use a ContextMapDiagram
@@ -325,26 +321,12 @@ public class RenderedContextMap extends RenderedDiagram {
         return ArtemisColours.colorModel(getLabelBackgroundColor());
     }
 
-//    @Override
-//    public String getRelativeRenderDirectory() {
-//        String tlf = getDiagram().getChromosome();
-//        MessageDigest md = null;
-//        try {
-//            md = MessageDigest.getInstance("MD5");
-//        } catch (NoSuchAlgorithmException e) {
-//            // Should never happen
-//        }
-//        md.update(tlf.getBytes(), 0, tlf.length());
-//        String tmp = new BigInteger(1, md.digest()).toString(16);
-//
-//        return String.format("%s/%s/%s/%s", getDiagram().getOrganism(), tmp.substring(0, 2), tmp.substring(2, 4), tlf);
-//    }
-
+    @Override
     public String getKey() {
         return getKeyForTile(1, getStart(), getEnd() - getStart());
     }
 
-
+    @Override
     public String getKeyForTile(int index, int start, int width) {
         return String.format("%s:%s:%s:%d:%09d-%09ds%.0f.%s",
                 getDiagram().getOrganism(),
