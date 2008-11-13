@@ -60,7 +60,7 @@ public class Analysis implements Serializable {
 
     // Constructors
     public Analysis() {
-        // Deliberately empty default constructor
+        timeExecuted = new Date();
     }
 
     // Property accessors
