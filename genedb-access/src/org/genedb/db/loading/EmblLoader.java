@@ -35,6 +35,7 @@ import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Synonym;
 import org.gmod.schema.utils.ObjectManager;
+import org.gmod.schema.utils.Similarity;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -598,6 +599,7 @@ class EmblLoader {
                         qualifierName, synonymString, transcriptUniqueName));
                     continue;
                 }
+
                 synonyms.add(synonymString);
 
                 logger.debug(String.format("Adding %s '%s' for transcript", synonymType, synonymString));
@@ -742,7 +744,131 @@ class EmblLoader {
         }
 
 
-        private Pattern subqualifierPattern = Pattern.compile("\\G\\s*([^=]+)=\\s*([^;]*)\\s*(?:;|\\z)");
+        /* Here are some examples of /similarity qualifiers from chromosome 1 of Trypanosoma brucei:
+
+            FT                   /similarity="blastp; SWALL:Q26723 (EMBL:M20871);
+            FT                   Trypanosoma brucei brucei; variant-specific antigen;
+            FT                   ESAG3; ; id=70%; ; E()=2e-42; score=438; ; ;"
+
+            FT                   /similarity="fasta; SWALL:P26328 (EMBL:56768); Trypanosoma
+            FT                   brucei brucei; variant surface glycoprotein ILTat 1.23
+            FT                   precursor; ; length 532 aa; id=30.35%; ungapped id=32.34%;
+            FT                   E()=1.2e-34; ; 537 aa overlap; query 9-528 aa; subject
+            FT                   10-530 aa"
+
+            FT                   /similarity="fasta; SWALL:O97352 (EMBL:AJ012199);
+            FT                   Trypanosoma brucei; ILTat 1.61 metacyclic VSG protein; ;
+            FT                   length 518 aa; id=29.83%; ungapped id=32.99%; E()=3.6e-31;
+            FT                   ; 543 aa overlap; query 2-528 aa; subject 10-516 aa"
+
+            FT                   /similarity="blastp; SWALL:Q8WPR3 (EMBL:AL671259);
+            FT                   Trypanosoma brucei; ESAG3; H25N7.29; ; id=74%; ;
+            FT                   E()=4e-28; score=310; ; ;"
+         */
+        private final Pattern similarityPattern = Pattern.compile(
+            "(\\w+);" +                                                 // 1.     Algorithm, e.g. fasta, blastp
+            "\\s*(\\w+):(\\w+)" +                                       // 2,3.   Primary dbxref, e.g. SWALL:Q26723
+            "(?:\\s+\\((\\w+):(\\w+)\\))?;" +                           // 4,5.   Optional secondary dbxref, e.g. EMBL:M20871
+            "\\s*([^;]+);" +                                            // 6.     Organism name
+            "\\s*([^;]+);" +                                            // 7.     Product name
+            "\\s*([^;]+);" +                                            // 8.     Gene name
+            "\\s*(?:length (\\d+) aa)?;" +                              // 9.     Optional match length
+            "\\s*id=(\\d{1,2}(?:\\.\\d{1,2})?)%;" +                     // 10.    Degree of identity (percentage)
+            "\\s*(?:ungapped id=(\\d{1,2}(?:\\.\\d{1,2})?)%)?;" +       // 11.    Optional ungapped identity (percentage)
+            "\\s*E\\(\\)=(\\d+(?:\\.\\d+)?(?:e[+-]?\\d+)?);" +          // 12.    E-value
+            "\\s*(?:score=(\\d+))?;" +                                  // 13.    Optional score
+            "\\s*(?:(\\d+) aa overlap)?;" +                             // 14.    Optional overlap length (integer)
+            "\\s*(?:query (\\d+)-(\\d+) aa)?;" +                        // 15,16. Optional query location
+            "\\s*(?:subject (\\d+)-(\\d+) aa)?");                       // 17,18. Optional subject location
+
+        protected void processSimilarity() throws DataError {
+            String similarityString = feature.getQualifierValue("similarity");
+            if (similarityString == null) {
+                return;
+            }
+
+            Matcher matcher = similarityPattern.matcher(similarityString);
+            if (!matcher.matches()) {
+                throw new DataError(String.format("Failed to parse /similarity=\"%s\"", similarityString));
+            }
+
+            Similarity similarity = new Similarity();
+            similarity.setAnalysisProgram(matcher.group(1));
+            similarity.setPrimaryDbXRef(objectManager.getDbXRef(matcher.group(2), matcher.group(3)));
+            if (matcher.group(4) != null) {
+                similarity.addDbXRef(objectManager.getDbXRef(matcher.group(4), matcher.group(5)));
+            }
+            similarity.setOrganismName(matcher.group(6));
+            similarity.setProduct(matcher.group(7));
+            similarity.setGeneName(matcher.group(8));
+
+            if (matcher.group(9) != null) {
+                try {
+                    similarity.setLength(Integer.parseInt(matcher.group(9)));
+                } catch (NumberFormatException e) {
+                    throw new DataError("Failed to parse length field of /similarity: " + matcher.group(9));
+                }
+            }
+
+            try {
+                similarity.setId(Double.parseDouble(matcher.group(10)));
+            } catch (NumberFormatException e) {
+                throw new DataError("Failed to parse id field of /similarity: " + matcher.group(10));
+            }
+
+            if (matcher.group(11) != null) {
+                try {
+                    similarity.setUngappedId(Double.parseDouble(matcher.group(11)));
+                } catch (NumberFormatException e) {
+                    throw new DataError("Failed to parse ungapped id field of /similarity: " + matcher.group(11));
+                }
+            }
+
+            try {
+                similarity.setEValue(Double.parseDouble(matcher.group(12)));
+            } catch (NumberFormatException e) {
+                throw new DataError("Failed to parse E() field of /similarity: " + matcher.group(12));
+            }
+
+            if (matcher.group(13) != null) {
+                try {
+                    similarity.setRawScore(Double.parseDouble(matcher.group(13)));
+                } catch (NumberFormatException e) {
+                    throw new DataError("Failed to parse score field of /similarity: " + matcher.group(13));
+                }
+            }
+
+            if (matcher.group(14) != null) {
+                try {
+                    similarity.setOverlap(Integer.parseInt(matcher.group(14)));
+                } catch (NumberFormatException e) {
+                    throw new DataError("Failed to parse score field of /similarity: " + matcher.group(13));
+                }
+            }
+
+            if (matcher.group(15) != null) {
+                try {
+                    similarity.setQueryStart(Integer.parseInt(matcher.group(15)));
+                    similarity.setQueryEnd(Integer.parseInt(matcher.group(16)));
+                } catch (NumberFormatException e) {
+                    throw new DataError(String.format("Failed to parse query location of /similarity: %s-%s", matcher.group(15), matcher.group(16)));
+                }
+            }
+
+            if (matcher.group(17) != null) {
+                try {
+                    similarity.setTargetStart(Integer.parseInt(matcher.group(17)));
+                    similarity.setTargetEnd(Integer.parseInt(matcher.group(18)));
+                } catch (NumberFormatException e) {
+                    throw new DataError(String.format("Failed to parse subject location of /similarity: %s-%s", matcher.group(17), matcher.group(18)));
+                }
+            }
+
+            focalFeature.addSimilarity(similarity);
+        }
+
+
+        private final Pattern subqualifierPattern = Pattern.compile("\\G\\s*([^=]+)=\\s*([^;]*)\\s*(?:;|\\z)");
 
         protected void processCuration() throws DataError {
             processPropertyQualifier("curation", "genedb_misc", "curation");
@@ -846,6 +972,8 @@ class EmblLoader {
          */
         protected void processTranscriptQualifiers() throws DataError {
 
+            checkForTemporarySystematicIdEqualToSystematicId();
+
             addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             addTranscriptSynonymsFromQualifier("previous_systematic_id", "systematic_id", false);
             addTranscriptSynonymsFromQualifier("systematic_id", "systematic_id", true);
@@ -875,6 +1003,7 @@ class EmblLoader {
             }
 
             processGO();
+            processSimilarity();
             processCuration();
         }
 
@@ -897,7 +1026,25 @@ class EmblLoader {
                 exon.addFeatureProp(normalisedColour, "genedb_misc", "colour", 0);
             }
         }
-}
+
+        /**
+         * Explicitly check for the case where /previous_systematic_id is equal to the
+         * actual systematic ID, because otherwise the resulting constraint violation
+         * error is difficult to understand and track down.
+         * @throws DataError if so
+         */
+        private void checkForTemporarySystematicIdEqualToSystematicId() throws DataError {
+            String systematicId = feature.getQualifierValue("systematic_id");
+            if (systematicId == null) {
+                return;
+            }
+            for (String temporarySystematicId: feature.getQualifierValues("temporary_systematic_id")) {
+                if (systematicId.equals(temporarySystematicId)) {
+                    throw new DataError("Feature has /temporary_systematic_id with the same value as /systematic_id");
+                }
+            }
+        }
+    }
 
 
     /**
