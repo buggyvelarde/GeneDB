@@ -10,7 +10,7 @@ var cruise = false;
 function initContextMap(baseArg, organism, chromosome, chrlen, fmin, fmax, transcript) {
     originalTranscriptName = loadedTranscriptName = transcript;
     base = baseArg;
-    imageController = base + "/Image?key=";
+    imageController = base + "Image?key=";
     contextMapDiv = document.getElementById("contextMapDiv");
     contextMapThumbnailDiv = document.getElementById("contextMapThumbnailDiv");
     contextMapGeneInfo = document.getElementById("contextMapGeneInfo");
