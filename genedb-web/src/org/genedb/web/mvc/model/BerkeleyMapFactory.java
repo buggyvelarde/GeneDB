@@ -57,6 +57,7 @@ public class BerkeleyMapFactory {
     private String CONTEXT_MAP_STORE = "context";
     private String IMAGE_MAP_STORE = "images";
 
+    // This field must only be accessed while holding a lock on this object
     private boolean databaseIsOpen = false;
 
     private synchronized void openDb() {
