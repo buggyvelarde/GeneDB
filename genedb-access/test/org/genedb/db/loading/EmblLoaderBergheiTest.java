@@ -5,11 +5,9 @@ import org.gmod.schema.feature.Gene;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
-@Transactional(rollbackFor=Throwable.class)
 public class EmblLoaderBergheiTest {
 
     private static EmblLoaderTestHelper helper;
