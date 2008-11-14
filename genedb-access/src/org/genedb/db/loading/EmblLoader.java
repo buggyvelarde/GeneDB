@@ -785,7 +785,7 @@ class EmblLoader {
             FT                   301 aa overlap; query 23-324 aa; subject 12-298 aa"
 
        I don't know how normal this is, but there's at least one with a line-break in the
-       middle of the E() value!
+       middle of the E() value! (Again from Leishmania major, chromosome 32.)
 
             FT                   /similarity="fasta; SWALL:EAA26969 (EMBL:AABX01000759,
             FT                   EAA26969); Neurospora crassa; hypothetical protein; ;
