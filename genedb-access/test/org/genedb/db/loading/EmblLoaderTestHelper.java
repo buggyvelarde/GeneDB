@@ -28,6 +28,9 @@ import java.sql.SQLException;
  * and utility methods make it easy to test specific properties of
  * the loaded data. See the test classes {@link EmblLoaderBergheiTest}
  * and {@link EmblLoaderMansoniTest} for examples of its use.
+ * <p>
+ * Note that this class explicitly manages the Hibernate session,
+ * so your test class should <b>not</b> be annotated as <code>@Transactional</code>.
  *
  * @author rh11
  *
@@ -54,12 +57,50 @@ public class EmblLoaderTestHelper {
         // empty
     }
 
+    /**
+     * Create a test helper for the given organism and filename. This loads the given
+     * file into the organism, and returns a helper object that should be used to test
+     * that the data have been loaded as expected.
+     * <p>
+     * This method should usually be called from a <code>@BeforeClass</code> method of
+     * the test class.
+     *
+     * @param organismCommonName the common name of the organism
+     * @param filename the filename
+     * @return the test helper, which is used to test that the data have been loaded as expected
+     * @throws IOException if there is a problem reading the file
+     * @throws ParsingException if there is a problem interpreting the file
+     */
     public static EmblLoaderTestHelper create(String organismCommonName, String filename)
         throws IOException, ParsingException
     {
         return create(organismCommonName, null, null, null, filename);
     }
 
+    /**
+     * Create a test helper for the given organism and filename. This loads the given
+     * file into the organism, and returns a helper object that should be used to test
+     * that the data have been loaded as expected.
+     * <p>
+     * This method will create the organism, if there is not already an organism with the
+     * given common name.
+     * <p>
+     * This method should usually be called from a <code>@BeforeClass</code> method of
+     * the test class.
+     *
+     * @param organismCommonName the common name of the organism. If there is already an organism
+     *                          with the given common name, that organism is used.
+     * @param organismGenus the genus assigned to the organism, if a new organism is created (because
+     *                          there is no organism with the given common name in the skeleton database)
+     * @param organismSpecies the species name assigned to the organism, if a new organism is created (because
+     *                          there is no organism with the given common name in the skeleton database)
+     * @param organismStrain the strain name assigned to the organism, if a new organism is created (because
+     *                          there is no organism with the given common name in the skeleton database)
+     * @param filename the filename
+     * @return the test helper, which is used to test that the data have been loaded as expected
+     * @throws IOException if there is a problem reading the file
+     * @throws ParsingException if there is a problem interpreting the file
+     */
     public static EmblLoaderTestHelper create(String organismCommonName, String organismGenus,
             String organismSpecies, String organismStrain, String filename)
                 throws IOException, ParsingException {
@@ -86,7 +127,10 @@ public class EmblLoaderTestHelper {
     }
 
     /**
-     * Shut down the database and close the session.
+     * Close the session and shut down the database.
+     * This method should be called once the tests are complete.
+     * It should ordinarily be called from an <code>@AfterClass</code> method
+     * of the test class.
      */
     public void cleanUp() {
         /*
@@ -137,6 +181,11 @@ public class EmblLoaderTestHelper {
         logger.debug("Finished loading");
     }
 
+    /**
+     * Create a FeatureTester for the loaded data.
+     *
+     * @return
+     */
     public FeatureTester tester() {
         return new FeatureTester(session);
     }

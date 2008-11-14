@@ -2,6 +2,7 @@ package org.genedb.db.loading;
 
 import org.gmod.schema.feature.Gene;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +12,18 @@ import java.io.IOException;
 @Transactional(rollbackFor=Throwable.class)
 public class EmblLoaderBergheiTest {
 
+    private static EmblLoaderTestHelper helper;
     private static FeatureTester tester;
 
     @BeforeClass
     public static void setupAndLoad() throws IOException, ParsingException {
-        tester = EmblLoaderTestHelper.create("Pberghei", "test/data/PB_PH0001.embl").tester();
+        helper = EmblLoaderTestHelper.create("Pberghei", "test/data/PB_PH0001.embl");
+        tester = helper.tester();
+    }
+
+    @AfterClass
+    public static void cleanUp() {
+        helper.cleanUp();
     }
 
     @Test

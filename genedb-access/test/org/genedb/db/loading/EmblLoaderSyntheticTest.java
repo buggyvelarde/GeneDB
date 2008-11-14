@@ -45,9 +45,9 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void featureNames() {
-        tester.uniqueNames(AbstractGene.class, "s1", "s2")
+        tester.uniqueNames(AbstractGene.class, "s1", "s2", "s3")
               .uniqueNames(Pseudogene.class, "s1")
-              .uniqueNames(Gene.class, "s2");
+              .uniqueNames(Gene.class, "s2", "s3");
     }
 
     @Test
