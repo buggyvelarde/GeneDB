@@ -26,6 +26,10 @@ FT                   322 aa; id=40.063%; ungapped id=46.691%; E()=1.2e-32; ;
 FT                   301 aa overlap; query 23-324 aa; subject 12-298 aa"
 FT                   /similarity="blastp; GB:BAD74067.1; ; ; ; ; id=54.4%; ;
 FT                   E()=2.6e-17; ; ; ;"
+FT                   /similarity="fasta; SWALL:EAA26969 (EMBL:AABX01000759,
+FT                   EAA26969); Neurospora crassa; hypothetical protein; ;
+FT                   length 335 aa; id=38.462%; ungapped id=47.273%; E()=6.4e-
+FT                   17; ; 303 aa overlap; query 3-306 aa; subject 13-321 aa"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,

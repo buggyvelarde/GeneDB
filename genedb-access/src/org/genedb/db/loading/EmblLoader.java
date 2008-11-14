@@ -784,6 +784,14 @@ class EmblLoader {
             FT                   322 aa; id=40.063%; ungapped id=46.691%; E()=1.2e-32; ;
             FT                   301 aa overlap; query 23-324 aa; subject 12-298 aa"
 
+       I don't know how normal this is, but there's at least one with a line-break in the
+       middle of the E() value!
+
+            FT                   /similarity="fasta; SWALL:EAA26969 (EMBL:AABX01000759,
+            FT                   EAA26969); Neurospora crassa; hypothetical protein; ;
+            FT                   length 335 aa; id=38.462%; ungapped id=47.273%; E()=6.4e-
+            FT                   17; ; 303 aa overlap; query 3-306 aa; subject 13-321 aa"
+
          */
         private final Pattern similarityPattern = Pattern.compile(
             "(\\w+);" +                                                 // 1.     Algorithm, e.g. fasta, blastp
@@ -795,7 +803,7 @@ class EmblLoader {
             "\\s*(?:length (\\d+) aa)?;" +                              // 9.     Optional match length
             "\\s*id=(\\d{1,2}(?:\\.\\d{1,3})?)%;" +                     // 10.    Degree of identity (percentage)
             "\\s*(?:ungapped id=(\\d{1,2}(?:\\.\\d{1,3})?)%)?;" +       // 11.    Optional ungapped identity (percentage)
-            "\\s*E\\(\\)=(\\d+(?:\\.\\d+)?(?:e[+-]?\\d+)?);" +          // 12.    E-value
+            "\\s*E\\(\\)=(\\d+(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +        // 12.    E-value
             "\\s*(?:score=(\\d+))?;" +                                  // 13.    Optional score
             "\\s*(?:(\\d+) aa overlap)?;" +                             // 14.    Optional overlap length (integer)
             "\\s*(?:query (\\d+)-(\\d+) aa)?;" +                        // 15,16. Optional query location
@@ -860,7 +868,7 @@ class EmblLoader {
             }
 
             try {
-                similarity.setEValue(Double.parseDouble(matcher.group(12)));
+                similarity.setEValue(Double.parseDouble(matcher.group(12).replaceAll("\\s+", "")));
             } catch (NumberFormatException e) {
                 throw new DataError("Failed to parse E() field of /similarity: " + matcher.group(12));
             }
