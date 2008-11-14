@@ -777,17 +777,24 @@ class EmblLoader {
             FT                   /similarity="blastp; GB:BAD74067.1; ; ; ; ; id=54.4%; ;
             FT                   E()=2.6e-17; ; ; ;"
 
+        And from Leishmania major chromosome 32, to show the use of multiple secondary cross-references:
+
+            FT                   /similarity="fasta; SWALL:Q9BUG7 (EMBL:BC002634,
+            FT                   AAH02634); Homo sapiens; hypothetical protein; ; length
+            FT                   322 aa; id=40.063%; ungapped id=46.691%; E()=1.2e-32; ;
+            FT                   301 aa overlap; query 23-324 aa; subject 12-298 aa"
+
          */
         private final Pattern similarityPattern = Pattern.compile(
             "(\\w+);" +                                                 // 1.     Algorithm, e.g. fasta, blastp
-            "\\s*(\\w+):(\\S+)" +                                       // 2,3.   Primary dbxref, e.g. SWALL:Q26723
-            "(?:\\s+\\((\\w+):(\\S+)\\))?;" +                           // 4,5.   Optional secondary dbxref, e.g. EMBL:M20871
-            "\\s*([^\\s;]+)?;" +                                        // 6.     Optional organism name
-            "\\s*([^\\s;]+)?;" +                                        // 7.     Optional product name
-            "\\s*([^\\s;]+)?;" +                                        // 8.     Optional gene name
+            "\\s*(\\w+):([\\w.]+)" +                                    // 2,3.   Primary dbxref, e.g. SWALL:Q26723
+            "(?:\\s+\\((\\w+):([\\w.]+(?:,\\s*[\\w.]+)*)\\))?;" +       // 4,5.   Optional secondary dbxrefs, e.g. "EMBL:M20871", "EMBL:BC002634, AAH02634"
+            "\\s*([^;]+)?;" +                                           // 6.     Organism name
+            "\\s*([^;]+)?;" +                                           // 7.     Product name
+            "\\s*([^;]+)?;" +                                           // 8.     Gene name
             "\\s*(?:length (\\d+) aa)?;" +                              // 9.     Optional match length
-            "\\s*id=(\\d{1,2}(?:\\.\\d{1,2})?)%;" +                     // 10.    Degree of identity (percentage)
-            "\\s*(?:ungapped id=(\\d{1,2}(?:\\.\\d{1,2})?)%)?;" +       // 11.    Optional ungapped identity (percentage)
+            "\\s*id=(\\d{1,2}(?:\\.\\d{1,3})?)%;" +                     // 10.    Degree of identity (percentage)
+            "\\s*(?:ungapped id=(\\d{1,2}(?:\\.\\d{1,3})?)%)?;" +       // 11.    Optional ungapped identity (percentage)
             "\\s*E\\(\\)=(\\d+(?:\\.\\d+)?(?:e[+-]?\\d+)?);" +          // 12.    E-value
             "\\s*(?:score=(\\d+))?;" +                                  // 13.    Optional score
             "\\s*(?:(\\d+) aa overlap)?;" +                             // 14.    Optional overlap length (integer)
@@ -815,11 +822,14 @@ class EmblLoader {
             similarity.setPrimaryDbXRef(primaryDbXRef);
 
             if (matcher.group(4) != null) {
-                DbXRef secondaryDbXRef = objectManager.getDbXRef(matcher.group(4), matcher.group(5));
-                if (secondaryDbXRef == null) {
-                    throw new DataError(String.format("Could not find database '%s' for secondary dbxref of /similarity", matcher.group(4)));
+                String dbName = matcher.group(4);
+                for (String accession: matcher.group(5).split(",\\s*")) {
+                    DbXRef secondaryDbXRef = objectManager.getDbXRef(dbName, accession);
+                    if (secondaryDbXRef == null) {
+                        throw new DataError(String.format("Could not find database '%s' for secondary dbxref of /similarity", matcher.group(4)));
+                    }
+                    similarity.addDbXRef(secondaryDbXRef);
                 }
-                similarity.addDbXRef(secondaryDbXRef);
             }
 
             // These three may be null, which is okay
