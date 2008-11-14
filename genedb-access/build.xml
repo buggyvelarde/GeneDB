@@ -233,7 +233,7 @@
            userid="${dbuser}" password="${dbpassword}">
 
            <classpath>
-              <pathelement location="${lib-dir}/postgresql-8.3-603.jdbc4.jar"/>
+              <pathelement location="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar"/>
            </classpath>
 
            delete from feature where organism_id in (
