@@ -36,193 +36,193 @@ class LoadGeneDbCv {
     boolean writeBack = true;
 
     LoadGeneDbCv() {
-		db = Sql.newInstance(
-			'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10120/pathdb',
-			'xxx',
-			'xxx',
-			'org.postgresql.Driver')
+        db = Sql.newInstance(
+            'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10120/pathdb',
+            'xxx',
+            'xxx',
+            'org.postgresql.Driver')
 
-     	cvDataSet = db.dataSet("cv")
+         cvDataSet = db.dataSet("cv")
 
-		cvTermDataSet = db.dataSet("cvterm")
+        cvTermDataSet = db.dataSet("cvterm")
 
-     	dbXRefDataSet = db.dataSet("dbxref")
+         dbXRefDataSet = db.dataSet("dbxref")
 
-     	dbDataSet = db.dataSet("db")
+         dbDataSet = db.dataSet("db")
 
-     	relationDataSet = db.dataSet("cvterm_relationship")
+         relationDataSet = db.dataSet("cvterm_relationship")
 
-	    List relations = db.rows("select * from cvterm cvt, cv cv where cv.name='relationship' and cvt.cv_id = cv.cv_id and cvt.name='is_a'");
-	    REL_IS_A = relations[0]."cvterm_id";
+        List relations = db.rows("select * from cvterm cvt, cv cv where cv.name='relationship' and cvt.cv_id = cv.cv_id and cvt.name='is_a'");
+        REL_IS_A = relations[0]."cvterm_id";
 
     }
 
 
 
-	void process(def inp) {
-	    def hierarchy = new XmlParser().parseText(inp)
+    void process(def inp) {
+        def hierarchy = new XmlParser().parseText(inp)
 
-	    hierarchy.children().each(
-	            {createNode(it, null, -1)}
+        hierarchy.children().each(
+                {createNode(it, null, -1)}
         )
-	}
+    }
 
 
-	// Now walk the tree creating db entries
-	void createNode(def node, def parent, int nestedCvTerm) {
-		assert node != null
-		switch (node.name()) {
+    // Now walk the tree creating db entries
+    void createNode(def node, def parent, int nestedCvTerm) {
+        assert node != null
+        switch (node.name()) {
 
-			case 'cv':
-				List rows = db.rows("select * from cv where name='"+node.'@name'+"'")
-				if (rows[0] == null) {
-				    throw new RuntimeException("Couldn't get cv for '"+node.'@name'+"'");
-				}
-				currentCv = rows[0]."cv_id"
+            case 'cv':
+                List rows = db.rows("select * from cv where name='"+node.'@name'+"'")
+                if (rows[0] == null) {
+                    throw new RuntimeException("Couldn't get cv for '"+node.'@name'+"'");
+                }
+                currentCv = rows[0]."cv_id"
 
-				rows = db.rows("select * from db where name='"+node.'@db'+"'")
-				if (rows[0] == null) {
-				    throw new RuntimeException("Couldn't get db for '"+node.'@db'+"'");
-				}
-				currentDb = rows[0]."db_id"
+                rows = db.rows("select * from db where name='"+node.'@db'+"'")
+                if (rows[0] == null) {
+                    throw new RuntimeException("Couldn't get db for '"+node.'@db'+"'");
+                }
+                currentDb = rows[0]."db_id"
 
-				node.children().each(
-					{createNode(it, node, -1)}
-				)
-				break
-
-
-			case 'term':
-				checkAttributeExists(node, "description")
-
-				int newDbXRef = createDbXRef(node)
-				int newCvTerm = createCvTerm(node, newDbXRef)
-
-				if (nestedCvTerm > 0) {
-				    // Create feature relationship
-				    if (writeBack) {
-				        try {
-						    relationDataSet.add(
-						        subject_id: newCvTerm,
-						        object_id:  nestedCvTerm,
-						        type_id:    REL_IS_A
-					  	 	 )
-				 	   } catch (Exception exp) {
-				  	      // May be a duplicate tree
-				  	      System.err.println("Problem storing cvterm - duplicate?")
-					   }
-				    }
-
-				}
-
-				node.children().each(
-						{createNode(it, node, newCvTerm)}
-				)
-				break
+                node.children().each(
+                    {createNode(it, node, -1)}
+                )
+                break
 
 
-			default:
-				throw new RuntimeException("Saw a node of '"+node.name()
-				        +"' when expecting node or organism");
-		}
-	}
+            case 'term':
+                checkAttributeExists(node, "description")
+
+                int newDbXRef = createDbXRef(node)
+                int newCvTerm = createCvTerm(node, newDbXRef)
+
+                if (nestedCvTerm > 0) {
+                    // Create feature relationship
+                    if (writeBack) {
+                        try {
+                            relationDataSet.add(
+                                subject_id: newCvTerm,
+                                object_id:  nestedCvTerm,
+                                type_id:    REL_IS_A
+                                )
+                        } catch (Exception exp) {
+                            // May be a duplicate tree
+                            System.err.println("Problem storing cvterm - duplicate?")
+                       }
+                    }
+
+                }
+
+                node.children().each(
+                        {createNode(it, node, newCvTerm)}
+                )
+                break
 
 
-	// Create a dbxref entry when a cvterm node is encountered
-	int createDbXRef(def node) {
-		String name = node.'@name';
-		String description = node.'@description';
-
-		if (writeBack) {
-		    try {
-				dbXRefDataSet.add(
-    	   		 	description: description,
-       			 	accession:   description,
-       			 	db_id:          currentDb,
-       			 	version:     1
-      			)
-		    } catch (Exception exp) {
-		        // May be a duplicate
-		       	System.err.println("Problem storing cvterm - duplicate?");
-		    }
-		}
-		return getMaxIdFromPrimaryKey("dbxref")
-	}
+            default:
+                throw new RuntimeException("Saw a node of '"+node.name()
+                        +"' when expecting node or organism");
+        }
+    }
 
 
-	// Create a set of db entries when an organism node is encountered
-	int createCvTerm(def node, def dbXRef) {
-		//println "CreateOrganism called with '"+node.'@name'+"'"
-		String name = node.'@name'
-		String description = node.'@description';
+    // Create a dbxref entry when a cvterm node is encountered
+    int createDbXRef(def node) {
+        String name = node.'@name';
+        String description = node.'@description';
 
-		if (writeBack) {
-		    try {
-				cvTermDataSet.add(
-			        dbxref_id:             dbXRef,
-	    	    	cv_id:                 currentCv,
-	        		name:               name,
-	        		is_obsolete:         0,
-	        		is_relationshiptype: 0
-     		   )
-	 	  	 } catch (Exception exp) {
-	    		 // May be a duplicate
-	    	  	 System.err.println("Problem storing cvterm - duplicate?");
-	   		 }
-		}
-		return getMaxIdFromPrimaryKey("cvterm")
-	}
+        if (writeBack) {
+            try {
+                dbXRefDataSet.add(
+                        description: description,
+                        accession:   description,
+                        db_id:          currentDb,
+                        version:     1
+                  )
+            } catch (Exception exp) {
+                // May be a duplicate
+                   System.err.println("Problem storing cvterm - duplicate?");
+            }
+        }
+        return getMaxIdFromPrimaryKey("dbxref")
+    }
 
 
-	// Find a cvterm by name
-	int findCvTerm(String termName) {
-	    def rows = db.rows("select cvterm_id from cvterm where name='"+termName
-	            +"' and cv_id='"+genedbMiscCvId+"'")
-	    if (rows[0] == null) {
-	        throw new RuntimeException("Couldn't get cvterm for '"+termName+"'");
-	    }
-	    return rows[0]["cvterm_id"]
-	}
+    // Create a set of db entries when an organism node is encountered
+    int createCvTerm(def node, def dbXRef) {
+        //println "CreateOrganism called with '"+node.'@name'+"'"
+        String name = node.'@name'
+        String description = node.'@description';
+
+        if (writeBack) {
+            try {
+                cvTermDataSet.add(
+                    dbxref_id:          dbXRef,
+                    cv_id:              currentCv,
+                    name:               name,
+                    is_obsolete:         0,
+                    is_relationshiptype: 0
+                )
+                } catch (Exception exp) {
+                 // May be a duplicate
+                   System.err.println("Problem storing cvterm - duplicate?");
+                }
+        }
+        return getMaxIdFromPrimaryKey("cvterm")
+    }
+
+
+    // Find a cvterm by name
+    int findCvTerm(String termName) {
+        def rows = db.rows("select cvterm_id from cvterm where name='"+termName
+                +"' and cv_id='"+genedbMiscCvId+"'")
+        if (rows[0] == null) {
+            throw new RuntimeException("Couldn't get cvterm for '"+termName+"'");
+        }
+        return rows[0]["cvterm_id"]
+    }
 
 
 
-	// Sanity check that an expected property is present
-	void checkAttributeExists(def node, String key) {
-	    if (!node.attributes().containsKey(key)) {
-	        throw new AppException("No "+key+" for '"+node.'@name'+"'")
-		}
-	    String attr = node.attributes().get(key)
-	    if (attr.length() == 0) {
-	        throw new AppException("The value for '"+key+"' is empty in '"+node.'@name'+"'")
-	    }
-	}
+    // Sanity check that an expected property is present
+    void checkAttributeExists(def node, String key) {
+        if (!node.attributes().containsKey(key)) {
+            throw new AppException("No "+key+" for '"+node.'@name'+"'")
+        }
+        String attr = node.attributes().get(key)
+        if (attr.length() == 0) {
+            throw new AppException("The value for '"+key+"' is empty in '"+node.'@name'+"'")
+        }
+    }
 
 
-	// Find the maximum current value of the primary key for this table
-	def getMaxIdFromPrimaryKey(String tableName) {
-		def col = tableName + "_id";
-	    int id = db.rows("SELECT max("+col+") as "+col+" from " + tableName)[0]["${col}"];
-	    if (id == null) {
-	        return 1
-	    }
-	    return id;
-	}
+    // Find the maximum current value of the primary key for this table
+    def getMaxIdFromPrimaryKey(String tableName) {
+        def col = tableName + "_id";
+        int id = db.rows("SELECT max("+col+") as "+col+" from " + tableName)[0]["${col}"];
+        if (id == null) {
+            return 1
+        }
+        return id;
+    }
 
 
-	static void main(args) {
-    	LoadGeneDbCv lgc = new LoadGeneDbCv()
-    	try {
-	    	lgc.process(input);
-    	}
-    	catch (AppException exp) {
-    	    System.err.println(exp.message);
-    	}
-    	System.err.println("Done (writeBack='"+lgc.writeBack+"')");
-	}
+    static void main(args) {
+        LoadGeneDbCv lgc = new LoadGeneDbCv()
+        try {
+            lgc.process(input);
+        }
+        catch (AppException exp) {
+            System.err.println(exp.message);
+        }
+        System.err.println("Done (writeBack='"+lgc.writeBack+"')");
+    }
 
 
-	// The XML config file for loading the organism and phylogeny modules
-	static String input = '''<?xml version="1.0" encoding="UTF-8"?>
+    // The XML config file for loading the organism and phylogeny modules
+    static String input = '''<?xml version="1.0" encoding="UTF-8"?>
 <cv-loading>
     <cv name="genedb_misc" db="genedb_misc">
         <term name="application" description="Programs that are run on a genome">
@@ -275,8 +275,8 @@ class LoadGeneDbCv {
         <term name="feature_cvterm_props" description="Keys for storing information specifically for FeatureCvTermProps">
             <term name="qualifier" description="eg NOT, colocalizes_with" />
             <term name="evidence" description="Typically an evidence code" />
-			<term name="residue" description="The residues affected by this" />
-			<term name="attribution" description="Who supplied this data" />
+            <term name="residue" description="The residues affected by this" />
+            <term name="attribution" description="Who supplied this data" />
         </term>
 
         <term name="feature_props" description="Keys for storing information, for any feature in general">
@@ -284,36 +284,42 @@ class LoadGeneDbCv {
             <term name="status" description="Structured text field for status"/>
             <term name="curation" description="Free text note field for local curation" />
             <term name="private" description="Free text note field for comments not to be made publicly visible" />
- 			<term name="EC_number" description="Free text note field for EC_number" />
- 			<term name="colour" description="Numeric key for storing a display colour" />
+            <term name="EC_number" description="Free text note field for EC_number" />
+            <term name="colour" description="Numeric key for storing a display colour" />
         </term>
 
         <term name="phylo_organism_prop" description="Parent term for CvTerms that act as keys for organism or phylonode props">
-                <term name="taxonList" description="List of taxon ids of this org and all its children recursively" />
-                <term name="taxonId" description="NCBI Taxonomy id" />
-                <term name="nickname" description="Nickname previously used on genedb website" />
-                <term name="curatorName" description="Name of organism curator" />
-                <term name="curatorEmail" description="Email of organism curator" />
-                <term name="mitochondrialTranslationTable" description="Translation table used for mitochondrial DNA" />
-                <term name="translationTable" description="Translation table" />
-				<term name="app_www_homePage" description="Style of homepage wanted, if any" />
-				<term name="htmlShortName" description="The short name in HTML format" />
-				<term name="htmlFullName" description="The full name in HTML format" />
+            <term name="taxonList" description="List of taxon ids of this org and all its children recursively" />
+            <term name="taxonId" description="NCBI Taxonomy id" />
+            <term name="nickname" description="Nickname previously used on genedb website" />
+            <term name="curatorName" description="Name of organism curator" />
+            <term name="curatorEmail" description="Email of organism curator" />
+            <term name="mitochondrialTranslationTable" description="Translation table used for mitochondrial DNA" />
+            <term name="translationTable" description="Translation table" />
+            <term name="app_www_homePage" description="Style of homepage wanted, if any" />
+            <term name="htmlShortName" description="The short name in HTML format" />
+            <term name="htmlFullName" description="The full name in HTML format" />
         </term>
-		<term name="artemis_specific" description="cvterm for various *_file qualifiers for artemis ">
-			<term name="blast_file"   description="Blast file location" />
-			<term name="blastn_file"   description="Blastn file location" />
-			<term name="blastpgo_file"   description="Blastp+go file location" />
-			<term name="blastp_file"   description="Blastp file location" />
-			<term name="blastx_file"   description="Blastx file location" />
-			<term name="fasta_file"   description="Fasta file location" />
-			<term name="fastax_file"   description="Fastax file location" />
-			<term name="tBlastn_file"   description="tBlastn file location" />
-			<term name="tBlastx_file"   description="tBlastx file location" />
-			<term name="clustalx_file"   description="Clustalx file location" />
-			<term name="sigcleave_file"   description="Sigcleave file location" />
-			<term name="pepstats_file"   description="Peptide statistics file location" />
-		</term>
+
+        <term name="artemis_specific" description="cvterm for various *_file qualifiers for artemis ">
+            <term name="blast_file"   description="Blast file location" />
+            <term name="blastn_file"   description="Blastn file location" />
+            <term name="blastpgo_file"   description="Blastp+go file location" />
+            <term name="blastp_file"   description="Blastp file location" />
+            <term name="blastx_file"   description="Blastx file location" />
+            <term name="fasta_file"   description="Fasta file location" />
+            <term name="fastax_file"   description="Fastax file location" />
+            <term name="tBlastn_file"   description="tBlastn file location" />
+            <term name="tBlastx_file"   description="tBlastx file location" />
+            <term name="clustalx_file"   description="Clustalx file location" />
+            <term name="sigcleave_file"   description="Sigcleave file location" />
+            <term name="pepstats_file"   description="Peptide statistics file location" />
+        </term>
+
+        <term name="application_params" description="These seems to be used for /similarity qualifiers">
+            <term name="ungapped id" description="The ungapped identity percentage"/>
+            <term name="overlap" description="Number of amino acids of overlap"/>
+        </term>
     </cv>
 
     <!-- Feature types used by GeneDB that are not SO terms.
