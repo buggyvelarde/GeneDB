@@ -764,14 +764,27 @@ class EmblLoader {
             FT                   /similarity="blastp; SWALL:Q8WPR3 (EMBL:AL671259);
             FT                   Trypanosoma brucei; ESAG3; H25N7.29; ; id=74%; ;
             FT                   E()=4e-28; score=310; ; ;"
+
+          And here are some examples from Schistosoma mansoni Smp_scaff000604, to show how minimal
+          the provided data can sometimes be:
+
+            FT                   /similarity="blastp; RF:XP_970827.1; ; ; ; ; id=61.0%; ;
+            FT                   E()=3.9e-21; ; ; ;"
+
+            FT                   /similarity="blastp; RF:NP_956088.1; ; ; ; ; id=58.4%; ;
+            FT                   E()=1.6e-17; ; ; ;"
+
+            FT                   /similarity="blastp; GB:BAD74067.1; ; ; ; ; id=54.4%; ;
+            FT                   E()=2.6e-17; ; ; ;"
+
          */
         private final Pattern similarityPattern = Pattern.compile(
             "(\\w+);" +                                                 // 1.     Algorithm, e.g. fasta, blastp
-            "\\s*(\\w+):(\\w+)" +                                       // 2,3.   Primary dbxref, e.g. SWALL:Q26723
-            "(?:\\s+\\((\\w+):(\\w+)\\))?;" +                           // 4,5.   Optional secondary dbxref, e.g. EMBL:M20871
-            "\\s*([^;]+);" +                                            // 6.     Organism name
-            "\\s*([^;]+);" +                                            // 7.     Product name
-            "\\s*([^;]+);" +                                            // 8.     Gene name
+            "\\s*(\\w+):(\\S+)" +                                       // 2,3.   Primary dbxref, e.g. SWALL:Q26723
+            "(?:\\s+\\((\\w+):(\\S+)\\))?;" +                           // 4,5.   Optional secondary dbxref, e.g. EMBL:M20871
+            "\\s*([^\\s;]+)?;" +                                        // 6.     Optional organism name
+            "\\s*([^\\s;]+)?;" +                                        // 7.     Optional product name
+            "\\s*([^\\s;]+)?;" +                                        // 8.     Optional gene name
             "\\s*(?:length (\\d+) aa)?;" +                              // 9.     Optional match length
             "\\s*id=(\\d{1,2}(?:\\.\\d{1,2})?)%;" +                     // 10.    Degree of identity (percentage)
             "\\s*(?:ungapped id=(\\d{1,2}(?:\\.\\d{1,2})?)%)?;" +       // 11.    Optional ungapped identity (percentage)
@@ -781,12 +794,13 @@ class EmblLoader {
             "\\s*(?:query (\\d+)-(\\d+) aa)?;" +                        // 15,16. Optional query location
             "\\s*(?:subject (\\d+)-(\\d+) aa)?");                       // 17,18. Optional subject location
 
-        protected void processSimilarity() throws DataError {
-            String similarityString = feature.getQualifierValue("similarity");
-            if (similarityString == null) {
-                return;
+        protected void processSimilarityQualifiers() throws DataError {
+            for (String similarityString: feature.getQualifierValues("similarity")) {
+                processSimilarityQualifier(similarityString);
             }
+        }
 
+        private void processSimilarityQualifier(String similarityString) throws DataError {
             Matcher matcher = similarityPattern.matcher(similarityString);
             if (!matcher.matches()) {
                 throw new DataError(String.format("Failed to parse /similarity=\"%s\"", similarityString));
@@ -794,10 +808,21 @@ class EmblLoader {
 
             Similarity similarity = new Similarity();
             similarity.setAnalysisProgram(matcher.group(1));
-            similarity.setPrimaryDbXRef(objectManager.getDbXRef(matcher.group(2), matcher.group(3)));
-            if (matcher.group(4) != null) {
-                similarity.addDbXRef(objectManager.getDbXRef(matcher.group(4), matcher.group(5)));
+            DbXRef primaryDbXRef = objectManager.getDbXRef(matcher.group(2), matcher.group(3));
+            if (primaryDbXRef == null) {
+                throw new DataError(String.format("Could not find database '%s' for primary dbxref of /similarity", matcher.group(2)));
             }
+            similarity.setPrimaryDbXRef(primaryDbXRef);
+
+            if (matcher.group(4) != null) {
+                DbXRef secondaryDbXRef = objectManager.getDbXRef(matcher.group(4), matcher.group(5));
+                if (secondaryDbXRef == null) {
+                    throw new DataError(String.format("Could not find database '%s' for secondary dbxref of /similarity", matcher.group(4)));
+                }
+                similarity.addDbXRef(secondaryDbXRef);
+            }
+
+            // These three may be null, which is okay
             similarity.setOrganismName(matcher.group(6));
             similarity.setProduct(matcher.group(7));
             similarity.setGeneName(matcher.group(8));
@@ -1003,7 +1028,7 @@ class EmblLoader {
             }
 
             processGO();
-            processSimilarity();
+            processSimilarityQualifiers();
             processCuration();
         }
 
