@@ -15,6 +15,17 @@ FT                   /systematic_id="s2_2"
 FT                   /shared_id="s2"
 FT                   /colour="9"
 FT                   /colour="9"
+FT   CDS             220..250
+FT                   /systematic_id="s3"
+FT                   /similarity="blastp; SWALL:Q26723 (EMBL:M20871);
+FT                   Trypanosoma brucei brucei; variant-specific antigen;
+FT                   ESAG3; ; id=70%; ; E()=2e-42; score=438; ; ;"
+FT                   /similarity="fasta; SWALL:Q9BUG7 (EMBL:BC002634,
+FT                   AAH02634); Homo sapiens; hypothetical protein; ; length
+FT                   322 aa; id=40.063%; ungapped id=46.691%; E()=1.2e-32; ;
+FT                   301 aa overlap; query 23-324 aa; subject 12-298 aa"
+FT                   /similarity="blastp; GB:BAD74067.1; ; ; ; ; id=54.4%; ;
+FT                   E()=2.6e-17; ; ; ;"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,
