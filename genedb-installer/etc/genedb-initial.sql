@@ -48,38 +48,48 @@ insert into db (name, description) values (
 
 insert into db (name, description, urlprefix) values (
         'SMART',
-        'Db where we store db entries corresponding to SMART terms',
+        'The SMART database',
         'http://smart.embl-heidelberg.de/smart/do_annotation.pl?&BLAST=DUMMY&DOMAIN=');
 
 insert into db (name, description, urlprefix) values (
         'TDRtargets',
-        'Db where we store db entries corresponding to TDRtargets terms',
+        'The TDRtargets database',
         'http://tdrtargets.org/targets/view?gene_name=');
 
 insert into db (name, description, urlprefix) values (
         'Superfamily',
-        'Db where we store db entries corresponding to Superfamily terms',
+        'The Superfamily database',
         'http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/search.cgi?search_field=');
 
 insert into db (name, description, urlprefix) values (
         'PRINTS',
-        'Db where we store db entries corresponding to PRINTS terms',
+        'The PRINTS database',
         'http://www.bioinf.manchester.ac.uk/cgi-bin/dbbrowser/PRINTS/DoPRINTS.pl?cmd_a=Display&fun_a=text&qst_a=');
 
 insert into db (name, description, urlprefix) values (
         'ProDom',
-        'Db where we store db entries corresponding to ProDom terms',
+        'The ProDom database',
         'http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query=');
 
 insert into db (name, description, urlprefix) values (
         'FlyBase',
-        'Db where we store db entries corresponding to FlyBase',
+        'The FlyBase database',
         'http://flybase.bio.indiana.edu/.bin/fbidq.html?');
 
 insert into db (name, description, urlprefix) values (
         'PIRSF',
         'Protein Information Resource PIRSF database',
         'http://pir.georgetown.edu/cgi-bin/ipcSF?id=');
+
+insert into db (name, description, urlprefix) values (
+        'RF',
+        'The RefSeq database',
+        'http://www.ncbi.nlm.nih.gov/sites/gquery?term=');
+
+insert into db (name, description, urlprefix) values (
+        'GB',
+        'The GenBank database',
+        'http://www.ncbi.nlm.nih.gov/sites/gquery?term=');
 
 --
 -- Add url prefix to existing dbs
@@ -128,6 +138,10 @@ update db set urlprefix='http://cmr.tigr.org/cgi-bin/CMR/HmmReport.cgi?hmm_acc='
 
 update db set urlprefix='http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_='
     where name='OPI';
+
+update db set urlprefix='http://www.expasy.org/cgi-bin/sprot-search-de?'
+            , description='The SwissProt database'
+    where name='SP';
 
 --
 -- ----------------------
