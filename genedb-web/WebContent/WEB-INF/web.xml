@@ -62,6 +62,15 @@
         <listener-class>org.genedb.web.mvc.controller.TaxonManagerListener</listener-class>
     </listener>
 
+	<filter>
+		<filter-name>UriSessionIdFilter</filter-name>
+  		<filter-class>org.genedb.web.filters.UriSessionIdFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>UriSessionIdFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
     <servlet>
         <servlet-name>headless-test</servlet-name>
         <servlet-class>org.genedb.web.gui.InitHeadlessToolkitServlet</servlet-class>
