@@ -1,7 +1,8 @@
-package org.gmod.schema.utils;
+package org.genedb.db.loading;
 
 import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.utils.SimilarityI;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +14,7 @@ import java.util.Collection;
  * @author rh11
  *
  */
-public class Similarity {
+public class Similarity implements SimilarityI {
     private String analysisProgram;
     private String analysisProgramVersion = "";
     private Analysis analysis; // If this is set, it's used instead of analysisProgram and analysisProgramVersion
@@ -129,13 +130,19 @@ public class Similarity {
     public Double getId() {
         return identity;
     }
-    public void setId(Double id) {
+    public void setId(Double id) throws DataError {
+        if (id != null && (id < 0.0 || id > 100.0)) {
+            throw new DataError(String.format("id percentage (%g) must be between 0 and 100", id));
+        }
         this.identity = id;
     }
     public Double getUngappedId() {
         return ungappedId;
     }
-    public void setUngappedId(Double ungappedId) {
+    public void setUngappedId(Double ungappedId) throws DataError {
+        if (ungappedId != null && (ungappedId < 0.0 || ungappedId > 100.0)) {
+            throw new DataError(String.format("ungapped id percentage (%g) must be between 0 and 100", ungappedId));
+        }
         this.ungappedId = ungappedId;
     }
 }

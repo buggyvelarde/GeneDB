@@ -9,7 +9,7 @@ import org.genedb.util.SequenceUtils;
 import org.gmod.schema.feature.ProteinMatch;
 import org.gmod.schema.feature.Region;
 import org.gmod.schema.utils.CollectionUtils;
-import org.gmod.schema.utils.Similarity;
+import org.gmod.schema.utils.SimilarityI;
 import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
@@ -1125,7 +1125,7 @@ public abstract class Feature implements java.io.Serializable {
     }
 
     @Transactional
-    public void addSimilarity(Similarity similarity) {
+    public void addSimilarity(SimilarityI similarity) {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
         Analysis analysis = similarity.getAnalysis();
