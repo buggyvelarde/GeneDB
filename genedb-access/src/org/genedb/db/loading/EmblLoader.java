@@ -35,7 +35,6 @@ import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Synonym;
 import org.gmod.schema.utils.ObjectManager;
-import org.gmod.schema.utils.Similarity;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -801,8 +800,8 @@ class EmblLoader {
             "\\s*([^;]+)?;" +                                           // 7.     Product name
             "\\s*([^;]+)?;" +                                           // 8.     Gene name
             "\\s*(?:length\\s+(\\d+)\\s+aa)?;" +                        // 9.     Optional match length
-            "\\s*id=(\\d{1,2}(?:\\.\\d{1,3})?)%;" +                     // 10.    Degree of identity (percentage)
-            "\\s*(?:ungapped\\s+id=(\\d{1,2}(?:\\.\\d{1,3})?)%)?;" +    // 11.    Optional ungapped identity (percentage)
+            "\\s*id=(\\d{1,3}(?:\\.\\d{1,3})?)%;" +                     // 10.    Degree of identity (percentage)
+            "\\s*(?:ungapped\\s+id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +    // 11.    Optional ungapped identity (percentage)
             "\\s*E\\(\\)=(\\d+(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +        // 12.    E-value
             "\\s*(?:score=(\\d+))?;" +                                  // 13.    Optional score
             "\\s*(?:(\\d+)\\s+aa\\s+overlap)?;" +                       // 14.    Optional overlap length (integer)
