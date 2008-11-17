@@ -1,5 +1,6 @@
 package org.gmod.schema.utils;
 
+import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.DbXRef;
 
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import java.util.Collection;
 public class Similarity {
     private String analysisProgram;
     private String analysisProgramVersion = "";
+    private Analysis analysis; // If this is set, it's used instead of analysisProgram and analysisProgramVersion
+
     private String organismName;
     private String geneName;
     private String product;
@@ -38,6 +41,12 @@ public class Similarity {
     }
     public void setAnalysisProgramVersion(String analysisProgramVersion) {
         this.analysisProgramVersion = analysisProgramVersion;
+    }
+    public Analysis getAnalysis() {
+        return analysis;
+    }
+    public void setAnalysis(Analysis analysis) {
+        this.analysis = analysis;
     }
     public String getOrganismName() {
         return organismName;

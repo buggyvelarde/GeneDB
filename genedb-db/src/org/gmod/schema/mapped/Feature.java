@@ -1128,10 +1128,13 @@ public abstract class Feature implements java.io.Serializable {
     public void addSimilarity(Similarity similarity) {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
-        Analysis analysis = new Analysis();
-        analysis.setProgram(similarity.getAnalysisProgram());
-        analysis.setProgramVersion(similarity.getAnalysisProgramVersion());
-        session.persist(analysis);
+        Analysis analysis = similarity.getAnalysis();
+        if (analysis == null) {
+            analysis = new Analysis();
+            analysis.setProgram(similarity.getAnalysisProgram());
+            analysis.setProgramVersion(similarity.getAnalysisProgramVersion());
+            session.persist(analysis);
+        }
 
         String matchUniqueName = String.format("MATCH_%s_%s", getUniqueName(), similarity.getPrimaryDbXRef());
         ProteinMatch match = new ProteinMatch(getOrganism(), matchUniqueName);
