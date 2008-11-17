@@ -800,14 +800,14 @@ class EmblLoader {
             "\\s*([^;]+)?;" +                                           // 6.     Organism name
             "\\s*([^;]+)?;" +                                           // 7.     Product name
             "\\s*([^;]+)?;" +                                           // 8.     Gene name
-            "\\s*(?:length (\\d+) aa)?;" +                              // 9.     Optional match length
+            "\\s*(?:length\\s+(\\d+)\\s+aa)?;" +                        // 9.     Optional match length
             "\\s*id=(\\d{1,2}(?:\\.\\d{1,3})?)%;" +                     // 10.    Degree of identity (percentage)
-            "\\s*(?:ungapped id=(\\d{1,2}(?:\\.\\d{1,3})?)%)?;" +       // 11.    Optional ungapped identity (percentage)
+            "\\s*(?:ungapped\\s+id=(\\d{1,2}(?:\\.\\d{1,3})?)%)?;" +    // 11.    Optional ungapped identity (percentage)
             "\\s*E\\(\\)=(\\d+(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +        // 12.    E-value
             "\\s*(?:score=(\\d+))?;" +                                  // 13.    Optional score
-            "\\s*(?:(\\d+) aa overlap)?;" +                             // 14.    Optional overlap length (integer)
-            "\\s*(?:query (\\d+)-(\\d+) aa)?;" +                        // 15,16. Optional query location
-            "\\s*(?:subject (\\d+)-(\\d+) aa)?");                       // 17,18. Optional subject location
+            "\\s*(?:(\\d+)\\s+aa\\s+overlap)?;" +                       // 14.    Optional overlap length (integer)
+            "\\s*(?:query\\s+(\\d+)-\\s*(\\d+) aa)?;" +                 // 15,16. Optional query location
+            "\\s*(?:subject\\s+(\\d+)-\\s*?(\\d+) aa)?");               // 17,18. Optional subject location
 
         protected void processSimilarityQualifiers() throws DataError {
             for (String similarityString: feature.getQualifierValues("similarity")) {
