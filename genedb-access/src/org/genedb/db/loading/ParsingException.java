@@ -76,6 +76,7 @@ class SyntaxError extends ParsingException {
         setLocation(inputFile, lineNumber);
     }
 }
+
 class DataError extends ParsingException {
     public DataError(File inputFile, int lineNumber, String message) {
         super(inputFile.toString(), lineNumber, message);
