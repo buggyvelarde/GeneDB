@@ -68,7 +68,8 @@ public class ObjectManager extends EmptyInterceptor {
      *
      * @param dbName The database name
      * @param accession The database-specific identifier
-     * @return the existing or newly-created DbXRef
+     * @return the existing or newly-created DbXRef,
+     *          or <code>null</code> if the named database does not exist.
      */
     public DbXRef getDbXRef(String dbName, String accession) {
         if (dbName.equals("SWALL")) {
@@ -93,7 +94,8 @@ public class ObjectManager extends EmptyInterceptor {
      * @param dbName The database name
      * @param accession The database-specific identifier
      * @param description The description to use
-     * @return the existing or newly-created DbXRef
+     * @return the existing or newly-created DbXRef,
+     *          or <code>null</code> if the named database does not exist.
      */
     public DbXRef getDbXRef(String dbName, String accession, String description) {
         DbXRef dbxref = getDbXRef(dbName, accession);
@@ -149,6 +151,15 @@ public class ObjectManager extends EmptyInterceptor {
     }
 
 
+    /**
+     * Find or create a DbXRef given an database name and accession identifier.
+     * If the DbXRef is created, it will be persisted before returning.
+     *
+     * @param dbName the name of the database, which must exist
+     * @param accession the accession identifier
+     * @return the persistent DbXRef that was found or created,
+     *          or <code>null</code> if the database does not exist.
+     */
     private DbXRef findOrCreateDbXRefFromDbAndAccession(String dbName, String accession) {
         Db db = generalDao.getDbByName(dbName);
         if (db == null) {
