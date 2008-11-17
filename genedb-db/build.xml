@@ -171,7 +171,7 @@
               <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/dom4j/dom4j-1.6.1.jar"/>
               <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/jakarta-commons/commons-logging.jar"/>
               <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/jakarta-commons/commons-collections.jar"/>
-              <pathelement location="${genedb-db.libdir}/lucene-core-2.3.2.jar"/>
+              <pathelement location="${genedb-db.libdir}/lucene/lucene-core-2.3.2.jar"/>
               <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/j2ee/jta.jar"/>
               <pathelement location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
               <pathelement location="${genedb-db.libdir}/asm-1.5.3.jar"/>
