@@ -264,7 +264,7 @@
         <available property="db.pfalciparum.exists" file="${imported.basedir.db}/test-data/hsqldb/pfalciparum.data"/>
     </target>
     <target name="make-pfalciparum-database" depends="prompt-for-password,genedb-util.anttasks,make-test-jar">
-        <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
+        <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
             <jvmarg line="-server" />
             <arg value="${source.url}"/>
