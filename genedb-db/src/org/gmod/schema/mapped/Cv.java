@@ -32,10 +32,10 @@ public class Cv implements Serializable {
     private String name;
 
     @Column(name="definition", unique=false, nullable=true, insertable=true, updatable=true)
-     private String definition;
+    private String definition;
 
     @OneToMany(cascade={}, fetch=FetchType.LAZY, mappedBy="cv")
-     private Collection<CvTerm> cvTerms;
+    private Collection<CvTerm> cvTerms;
 
 
     // Constructors
