@@ -5,6 +5,8 @@ import static javax.persistence.GenerationType.SEQUENCE;
 import org.gmod.schema.utils.StrandedLocation;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -39,7 +41,8 @@ public class FeatureLoc implements Serializable {
     @Column(name = "featureloc_id", unique = false, nullable = false, insertable = true, updatable = true)
     private int featureLocId;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {})
+    @LazyToOne(value=LazyToOneOption.NO_PROXY)
     @JoinColumn(name = "srcfeature_id", unique = false, nullable = true, insertable = true, updatable = true)
     private Feature sourceFeature;
 
