@@ -17,7 +17,7 @@
       <p>This site is to provide access to the latest annotation on the
       <i>P. falciparum</i> project. Periodic snapshots of the data are
       also made available at
-      <a href="http://www.plasmodb.org">PlasmoDB</a></p><br>
+      <a href="http://plasmodb.org">PlasmoDB</a></p><br>
 
       <p>It also provides a preview of the new GeneDB website. This site
       is currently under development, and not running on fault resistant
