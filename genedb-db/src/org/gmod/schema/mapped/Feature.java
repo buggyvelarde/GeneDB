@@ -99,7 +99,7 @@ public abstract class Feature implements java.io.Serializable {
     protected transient SequenceDao sequenceDao;
 
     @Autowired
-    private transient SessionFactory sessionFactory;
+    protected transient SessionFactory sessionFactory;
 
     @GenericGenerator(name = "generator", strategy = "seqhilo", parameters = {
             @Parameter(name = "max_lo", value = "100"),
@@ -1156,13 +1156,14 @@ public abstract class Feature implements java.io.Serializable {
         for (DbXRef dbXRef: similarity.getSecondaryDbXRefs()) {
             source.addDbXRef(dbXRef);
         }
+        session.persist(source);
 
         source.addFeatureProp(similarity.getOrganismName(), "feature_property", "organism", 0);
         source.addFeatureProp(similarity.getGeneName(), "sequence", "gene", 0);
         source.addFeatureProp(similarity.getProduct(), "genedb_misc", "product", 0);
 
-        this.addLocatedChild(source, 1 + similarity.getTargetStart(), similarity.getTargetEnd(), 0 /*strand*/, null /*phase*/, 0 /*locgroup */, 0 /*rank*/);
-        this.addLocatedChild(match, 1 + similarity.getQueryStart(), similarity.getQueryEnd(), 0 /*strand*/, null /*phase*/, 0 /*locgroup */, 1 /*rank*/);
+        source.addLocatedChild(match, 1 + similarity.getTargetStart(), similarity.getTargetEnd(), 0 /*strand*/, null /*phase*/, 0 /*locgroup */, 0 /*rank*/);
+        this.addLocatedChild  (match, 1 + similarity.getQueryStart(), similarity.getQueryEnd(), 0 /*strand*/, null /*phase*/, 0 /*locgroup */, 1 /*rank*/);
     }
 
     /**
