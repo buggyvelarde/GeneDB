@@ -1,5 +1,6 @@
 package org.genedb.db.loading;
 
+import org.genedb.db.loading.FeatureTester.PolypeptideTester;
 import org.genedb.db.loading.FeatureTester.TranscriptTester;
 
 import org.gmod.schema.feature.AbstractGene;
@@ -144,5 +145,11 @@ public class EmblLoaderSyntheticTest {
         s2_2.exon("s2_2:exon:2")
             .loc("super1", 0, 0, +1, 109, 120)
             .noLoc(0,1).noLoc(1,0).noLoc(1, 1);
+    }
+
+    @Test
+    public void s3similarities() {
+        PolypeptideTester s3 = tester.geneTester("s3").transcript("s3:mRNA").polypeptide("s3:pep");
+        s3.similarity("UniProt", "Q26723");
     }
 }

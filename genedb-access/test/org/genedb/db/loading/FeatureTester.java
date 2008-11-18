@@ -10,10 +10,12 @@ import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.ProteinMatch;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.TranscriptRegion;
 import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
@@ -305,10 +307,30 @@ public class FeatureTester {
 }
 
     class PolypeptideTester extends AbstractTester<PolypeptideTester> {
-        // private Polypeptide polypeptide;
+        private Polypeptide polypeptide;
         private PolypeptideTester(Polypeptide polypeptide) {
             super(PolypeptideTester.class, polypeptide);
-            // this.polypeptide = (Polypeptide) feature;
+            this.polypeptide = (Polypeptide) feature;
+        }
+
+        public SimilarityTester similarity(String db, String accession) {
+            for (ProteinMatch proteinMatch: polypeptide.getProteinMatches()) {
+                DbXRef dbXRef = proteinMatch.getQuery().getDbXRef();
+                if (dbXRef.getDb().getName().equals(db) && dbXRef.getAccession().equals(accession)) {
+                    return new SimilarityTester(proteinMatch);
+                }
+            }
+            fail(String.format("Could not find similarity '%s:%s' on polypeptide '%s'",
+                db, accession, polypeptide.getUniqueName()));
+            return null; // Not reached
+        }
+    }
+
+    class SimilarityTester extends AbstractTester<SimilarityTester> {
+        private ProteinMatch proteinMatch;
+        private SimilarityTester(ProteinMatch proteinMatch) {
+            super(SimilarityTester.class, proteinMatch);
+            this.proteinMatch = proteinMatch;
         }
     }
 
