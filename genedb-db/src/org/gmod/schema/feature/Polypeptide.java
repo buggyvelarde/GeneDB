@@ -396,4 +396,19 @@ public class Polypeptide extends Region {
         return ret;
     }
 
+    @Transient
+    public Collection<ProteinMatch> getProteinMatches() {
+        List<ProteinMatch> proteinMatches = new ArrayList<ProteinMatch>();
+        for (FeatureLoc featureLoc: this.getFeatureLocsForSrcFeatureId()) {
+            if (featureLoc.getRank() != 1) {
+                continue;
+            }
+            Feature feature = featureLoc.getFeature();
+            if (feature instanceof ProteinMatch) {
+                proteinMatches.add((ProteinMatch) feature);
+            }
+        }
+        return proteinMatches;
+    }
+
 }
