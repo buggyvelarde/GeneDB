@@ -24,6 +24,28 @@ import java.util.TreeSet;
  * Populate the 'residues' column of transcript features with the CDS,
  * and polypeptide features with the protein sequence, using the feature
  * location information and the top-level sequence.
+ * <p>
+ * The organism properties <code>translation_table</code> and
+ * <code>mitochondrial_translation_table</code> are used to decide which
+ * translation table to use for protein translations. If the transcript
+ * has the feature property <code>stop_codon_redefined_as_selenocysteind</code>,
+ * internal stop codons are translated as Selenocysteine.
+ * <p>
+ * Command-line arguments consist of (optional) options, followed by
+ * a list of organism common names. If no organism names are specified,
+ * then every organism in the database is processed. The supported
+ * options are:
+ * <dl>
+ * <dt><code>--verbose</code></dt><dd>Print detailed progress information</dd>
+ * <dt><code>--mark-fragments</code></dt><dd>If a coding transcript appears to be fragmentary,
+ *              because its translation does not begin with Methionine or contains internal
+ *              stop codons, set the property <code>SO:0000731</code> on the transcript.</dd>
+ * <dt><code>--guess-frame</code></dt><dd>If a transcript does not have a specified phase,
+ *              calculate translations in all three reading frames and choose the best one,
+ *              i.e. the one with the longest initial open reading frame.</dd>
+ * <dt><code>--guess-frame=force</code></dt><dd>Guess the frame even if the transcript <em>does</em>
+ *              have a phase specified in the database, i.e. ignore the specified phase.</dd>
+ * </dl>
  *
  * @author rh11
  *
@@ -67,6 +89,12 @@ public class FixResidues {
         logger.warn(sb.toString());
     }
 
+    /**
+     * See class comment for details of options etc.
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
         boolean verbose = false;
@@ -353,12 +381,12 @@ public class FixResidues {
             +"    , exonloc.phase"
             +"    , exonloc.fmin"
             +"    , exonloc.fmax"
-            +", exists ("
-            +"     select 8"
-            +"     from featureprop"
-            +"     where feature_id = transcript.feature_id"
-            +"     and type_id = ?"
-            +" ) as stop_codon_redefined"
+            +"    , exists ("
+            +"         select 8"
+            +"         from featureprop"
+            +"         where feature_id = transcript.feature_id"
+            +"         and type_id = ?"
+            +"      ) as stop_codon_redefined"
             +" from feature exon"
             +" join featureloc exonloc"
             +"      on exonloc.feature_id = exon.feature_id"
