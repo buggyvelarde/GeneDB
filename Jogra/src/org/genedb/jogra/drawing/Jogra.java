@@ -128,15 +128,15 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
     public void init() throws Exception {
 
-        LoginService ls = new JograLoginService();
-        JXLoginPane loginPane = new JXLoginPane(ls);
-        loginPane.setBannerText("Jogra Login");
-        final BufferedImage bi = ImageUtils.makeBackgroundFromClasspath("jogra.jpg");
-        loginPane.setBanner(bi);
-        Status status = JXLoginPane.showLoginDialog(null, loginPane);
-        if (status != Status.SUCCEEDED) {
-        	finalShutdown();
-        }
+//        LoginService ls = new JograLoginService();
+//        JXLoginPane loginPane = new JXLoginPane(ls);
+//        loginPane.setBannerText("Jogra Login");
+//        final BufferedImage bi = ImageUtils.makeBackgroundFromClasspath("jogra.jpg");
+//        loginPane.setBanner(bi);
+//        Status status = JXLoginPane.showLoginDialog(null, loginPane);
+//        if (status != Status.SUCCEEDED) {
+//        	finalShutdown();
+//        }
 
         try {
         	sis =
@@ -300,7 +300,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         //final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
           //      new String[] { "classpath:applicationContext.xml", "classpath:domain-client-applicationContext.xml" });
         final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] { "classpath:domain-client-applicationContext.xml", "classpath:/applicationContext.xml" });
+                new String[] { "classpath:/applicationContext.xml" });
         final Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
         ctx.registerShutdownHook();
 
