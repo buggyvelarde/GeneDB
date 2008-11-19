@@ -359,17 +359,20 @@
 
     <target name="fix-residues-verbose" depends="genedb-access.jar" if="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
-            <arg value="-v" />
+            <arg value="--verbose" />
+            <arg line="${organism}"/>
         </java>
     </target>
     <target name="fix-residues-nonverbose" depends="genedb-access.jar" unless="verbose">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues" />
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
+            <arg line="${organism}"/>
+        </java>
     </target>
     <target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
 
     <target name="fix-residues-mansoni" depends="genedb-access.jar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
-            <arg value="-v" />
+            <arg value="--verbose" />
             <arg value="--mark-fragments"/>
             <arg value="--guess-frame=force"/>
             <arg value="Smansoni" />
