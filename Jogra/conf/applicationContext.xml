@@ -16,12 +16,14 @@
 
   <bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
   </bean>
-<!--
+
+    <bean name="geneService" class="org.genedb.jogra.services.SqlGeneService" />
+
   <bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor">
     <property name="geneService" ref="geneService" />
-    <property name="lockAndNotificationService" ref="lockAndNotificationService" />
+    <!-- <property name="lockAndNotificationService" ref="lockAndNotificationService" /> -->
   </bean>
--->
+
   <bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
     <property name="productService" ref="productService" />
   </bean>
@@ -33,7 +35,7 @@
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url" value="jdbc:postgresql://pathdbsrv1b:10103/productrat" />
-        <property name="username" value="genedb" />
+        <property name="username" value="pathdb" />
         <property name="password" value="Pyrate_1" />
     </bean>
 
@@ -45,23 +47,24 @@
   <bean name="organismTree" class="org.genedb.jogra.plugins.OrganismTree">
   <property name="organismManager" ref="organismManager" />
   </bean>
-
+-->
 
   <bean name="organismEditor" class="org.genedb.jogra.plugins.OrganismEditor" />
 
+<!--
   <bean name="organismManager" class="org.genedb.db.domain.objects.ExtendedOrganismManager"/>
-     -->
+-->
 
    <bean id="application" class="org.genedb.jogra.drawing.Jogra">
      <property name="jograBusiness" ref="jograBusiness" />
      <!-- <property name="messageService" ref="messageService"/> -->
      <property name="pluginList">
        <list>
-<!-- 		  	 <ref bean="geneEditor" />
+          <ref bean="geneEditor" />
          <ref bean="geneList" />
          <ref bean="cvEditor" />
-         <ref bean="organismTree" />
-         <ref bean="organismEditor" /> -->
+         <!-- <ref bean="organismTree" /> -->
+         <ref bean="organismEditor" />
          <ref bean="productRationaliser" />
         <!-- <ref bean="integrityChecker" /> -->
        </list>
