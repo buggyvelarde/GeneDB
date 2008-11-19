@@ -204,15 +204,21 @@ public class FixResidues {
 
     private List<Organism> getOrganisms(Connection conn) throws SQLException {
         PreparedStatement st = conn.prepareStatement(
-             "select organism_id"
+            "select organism_id"
             +"    , common_name"
             +"    , translation_table_prop.value as translation_table"
             +"    , mitochondrial_translation_table_prop.value as mitochondrial_translation_table"
             +" from organism"
-            +" left join organismprop translation_table_prop using (organism_id)"
-            +" left join organismprop mitochondrial_translation_table_prop using (organism_id)"
-            +" where (translation_table_prop.type_id is null or translation_table_prop.type_id = ?)"
-            +" and   (mitochondrial_translation_table_prop.type_id is null or mitochondrial_translation_table_prop.type_id = ?)"
+            +" left join ("
+            +"        select organism_id, value"
+            +"        from organismprop"
+            +"        where type_id = ?"
+            +"     ) translation_table_prop using (organism_id)"
+            +" left join ("
+            +"         select organism_id, value"
+            +"         from organismprop"
+            +"         where type_id = ?"
+            +"     ) mitochondrial_translation_table_prop using (organism_id)"
         );
         List<Organism> organisms = new ArrayList<Organism>();
         try {
