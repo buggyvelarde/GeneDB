@@ -19,9 +19,9 @@
 
 package org.genedb.jogra.drawing;
 
-import org.genedb.db.domain.misc.GeneDBMessage;
-
 import javax.swing.JFrame;
+
+import org.genedb.jogra.domain.GeneDBMessage;
 
 public class OpenWindowEvent implements GeneDBMessage {
 

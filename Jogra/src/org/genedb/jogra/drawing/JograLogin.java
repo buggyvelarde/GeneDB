@@ -1,9 +1,5 @@
 package org.genedb.jogra.drawing;
 
-import org.genedb.jogra.controller.ImageUtils;
-
-import org.springframework.beans.factory.InitializingBean;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,6 +17,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import org.genedb.jogra.controller.ImageUtils;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;

@@ -19,13 +19,6 @@
 
 package org.genedb.jogra.plugins;
 
-import org.genedb.db.domain.misc.GeneDBMessage;
-import org.genedb.jogra.drawing.JograPlugin;
-import org.genedb.jogra.drawing.OpenWindowEvent;
-
-import org.bushe.swing.event.EventBus;
-import org.jdesktop.swingx.JXList;
-
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -34,18 +27,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+
+import org.bushe.swing.event.EventBus;
+import org.genedb.jogra.domain.GeneDBMessage;
+import org.genedb.jogra.drawing.JograPlugin;
+import org.genedb.jogra.drawing.OpenWindowEvent;
 
 public class RunIntegrityCheck implements JograPlugin {
 

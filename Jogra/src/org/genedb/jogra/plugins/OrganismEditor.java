@@ -19,13 +19,6 @@
 
 package org.genedb.jogra.plugins;
 
-import org.genedb.db.domain.misc.GeneDBMessage;
-import org.genedb.jogra.drawing.Jogra;
-import org.genedb.jogra.drawing.JograPlugin;
-import org.genedb.jogra.drawing.OpenWindowEvent;
-
-import org.bushe.swing.event.EventBus;
-
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -40,6 +33,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+
+import org.bushe.swing.event.EventBus;
+import org.genedb.jogra.domain.GeneDBMessage;
+import org.genedb.jogra.drawing.Jogra;
+import org.genedb.jogra.drawing.JograPlugin;
+import org.genedb.jogra.drawing.OpenWindowEvent;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;

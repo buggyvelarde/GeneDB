@@ -19,25 +19,9 @@
 
 package org.genedb.jogra.plugins;
 
-import org.genedb.db.domain.misc.GeneDBMessage;
-import org.genedb.db.domain.objects.Gene;
-import org.genedb.db.domain.services.GeneService;
-import org.genedb.db.domain.services.LockAndNotificationService;
-import org.genedb.db.domain.services.LockStatus;
-import org.genedb.jogra.drawing.Jogra;
-import org.genedb.jogra.drawing.JograPlugin;
-import org.genedb.jogra.drawing.OpenWindowEvent;
-
-import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
-import org.springframework.util.StringUtils;
-
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -47,20 +31,26 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
-import javax.swing.WindowConstants;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+import org.genedb.jogra.domain.Gene;
+import org.genedb.jogra.domain.GeneDBMessage;
+import org.genedb.jogra.drawing.Jogra;
+import org.genedb.jogra.drawing.JograPlugin;
+import org.genedb.jogra.drawing.OpenWindowEvent;
+import org.genedb.jogra.services.GeneService;
+import org.genedb.jogra.services.LockAndNotificationService;
+import org.genedb.jogra.services.LockStatus;
 
 public class GeneEditor implements JograPlugin {
-	
+
 	private static final Logger logger = Logger.getLogger(GeneEditor.class);
 	
-	private GeneService geneService;
 	private LockAndNotificationService lockAndNotificationService;
+	private GeneService geneService;
 
     public JFrame getMainPanel(final Gene gene) {
         JFrame ret = new JFrame();

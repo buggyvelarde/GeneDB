@@ -21,9 +21,9 @@ package org.genedb.jogra.drawing;
 
 import java.util.List;
 
-import org.springframework.core.Ordered;
-
 import javax.swing.JPanel;
+
+import org.springframework.core.Ordered;
 
 public interface JograPlugin extends Ordered {
 

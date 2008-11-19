@@ -1,18 +1,5 @@
 package org.genedb.jogra.drawing;
 
-import org.genedb.db.domain.misc.GeneDBMessage;
-import org.genedb.db.domain.misc.Message;
-import org.genedb.db.domain.services.MessageService;
-import org.genedb.jogra.controller.ImageUtils;
-import org.jdesktop.swingx.JXLoginPane;
-import org.jdesktop.swingx.JXLoginPane.Status;
-import org.jdesktop.swingx.auth.LoginService;
-
-import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.awt.Container;
 import java.awt.EventQueue;
@@ -25,7 +12,6 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +33,19 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
+
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
+import org.genedb.jogra.controller.ImageUtils;
+import org.genedb.jogra.domain.GeneDBMessage;
+import org.genedb.jogra.services.Message;
+import org.genedb.jogra.services.MessageService;
+import org.jdesktop.swingx.JXLoginPane;
+import org.jdesktop.swingx.JXLoginPane.Status;
+import org.jdesktop.swingx.auth.LoginService;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Jogra implements SingleInstanceListener, PropertyChangeListener, EventSubscriber<GeneDBMessage> {
 

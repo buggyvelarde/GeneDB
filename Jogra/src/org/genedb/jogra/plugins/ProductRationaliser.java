@@ -19,20 +19,6 @@
 
 package org.genedb.jogra.plugins;
 
-import org.genedb.db.domain.misc.GeneDBMessage;
-import org.genedb.db.domain.misc.MethodResult;
-import org.genedb.db.domain.objects.Product;
-import org.genedb.db.domain.services.ProductService;
-import org.genedb.jogra.drawing.Jogra;
-import org.genedb.jogra.drawing.JograPlugin;
-import org.genedb.jogra.drawing.OpenWindowEvent;
-
-import org.bushe.swing.event.EventBus;
-
-import skt.swing.SwingUtil;
-import skt.swing.search.IncrementalSearchKeyListener;
-import skt.swing.search.ListFindAction;
-
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -61,6 +47,19 @@ import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.bushe.swing.event.EventBus;
+import org.genedb.jogra.domain.GeneDBMessage;
+import org.genedb.jogra.domain.Product;
+import org.genedb.jogra.drawing.Jogra;
+import org.genedb.jogra.drawing.JograPlugin;
+import org.genedb.jogra.drawing.OpenWindowEvent;
+import org.genedb.jogra.services.MethodResult;
+import org.genedb.jogra.services.ProductService;
+
+import skt.swing.SwingUtil;
+import skt.swing.search.IncrementalSearchKeyListener;
+import skt.swing.search.ListFindAction;
 
 
 public class ProductRationaliser implements JograPlugin {

@@ -5,7 +5,9 @@
 
 package org.genedb.jogra.plugins;
 
-import org.genedb.db.domain.objects.Gene;
+import org.genedb.jogra.domain.Gene;
+
+
 
 /**
  *
