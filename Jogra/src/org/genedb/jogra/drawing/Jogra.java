@@ -105,20 +105,20 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 
         EventBus.subscribe(OpenWindowEvent.class, this);
 
-        TimerTask fetchMessage = new TimerTask() {
-        	@Override
-        	public void run() {
-
-        		String clientName = "dummy"; // FIXME
-				Collection<Message> messages = messageService.checkMessages(clientName);
-				if (messages != null) {
-					for (Message message : messages) {
-						EventBus.publish(message);
-					}
-				}
-        	}
-        };
-        timer.scheduleAtFixedRate(fetchMessage, TIMER_DELAY, TIMER_DELAY);
+//        TimerTask fetchMessage = new TimerTask() {
+//        	@Override
+//        	public void run() {
+//
+//        		String clientName = "dummy"; // FIXME
+//				Collection<Message> messages = messageService.checkMessages(clientName);
+//				if (messages != null) {
+//					for (Message message : messages) {
+//						EventBus.publish(message);
+//					}
+//				}
+//        	}
+//        };
+//        timer.scheduleAtFixedRate(fetchMessage, TIMER_DELAY, TIMER_DELAY);
 
     }
 

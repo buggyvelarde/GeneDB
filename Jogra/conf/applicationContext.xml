@@ -9,69 +9,75 @@
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
     default-init-method="postConstruction">
-            
+
 <!--     <bean id="loginForm" class="org.genedb.jogra.drawing.JograLogin">
         <property name="name" value="jogra.jpg" />
     </bean> -->
-        
-	<bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
-	</bean>
-<!-- 	        
-	<bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor">
-		<property name="geneService" ref="geneService" />
-		<property name="lockAndNotificationService" ref="lockAndNotificationService" />
-	</bean>
--->	        
-	<bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
-		<property name="productService" ref="productService" />
-	</bean>
-	
-	<bean name="productService" class="org.genedb.jogra.services.SqlProductService"/>
-		        
-	<bean name="geneList" class="org.genedb.jogra.plugins.GeneList">
-	</bean> 
-	     	        
-	<bean name="integrityChecker" class="org.genedb.jogra.plugins.RunIntegrityCheck" />
 
-<!-- 	     
-	<bean name="organismTree" class="org.genedb.jogra.plugins.OrganismTree">
-	<property name="organismManager" ref="organismManager" />
-	</bean> 
-	 
-	  
-	<bean name="organismEditor" class="org.genedb.jogra.plugins.OrganismEditor" />
-	        
-	<bean name="organismManager" class="org.genedb.db.domain.objects.ExtendedOrganismManager"/>
+  <bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
+  </bean>
+<!--
+  <bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor">
+    <property name="geneService" ref="geneService" />
+    <property name="lockAndNotificationService" ref="lockAndNotificationService" />
+  </bean>
+-->
+  <bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
+    <property name="productService" ref="productService" />
+  </bean>
+
+  <bean name="productService" class="org.genedb.jogra.services.SqlProductService">
+     <property name="dataSource" ref="dataSource" />
+  </bean>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://pathdbsrv1b:10103/productrat" />
+        <property name="username" value="genedb" />
+        <property name="password" value="Pyrate_1" />
+    </bean>
+
+  <bean name="geneList" class="org.genedb.jogra.plugins.GeneList" />
+
+  <bean name="integrityChecker" class="org.genedb.jogra.plugins.RunIntegrityCheck" />
+
+<!--
+  <bean name="organismTree" class="org.genedb.jogra.plugins.OrganismTree">
+  <property name="organismManager" ref="organismManager" />
+  </bean>
+
+
+  <bean name="organismEditor" class="org.genedb.jogra.plugins.OrganismEditor" />
+
+  <bean name="organismManager" class="org.genedb.db.domain.objects.ExtendedOrganismManager"/>
      -->
-        
+
    <bean id="application" class="org.genedb.jogra.drawing.Jogra">
-	   <property name="jograBusiness" ref="jograBusiness" />
-	   <!-- <property name="messageService" ref="messageService"/> -->
-	   <property name="pluginList">
-	  	 <list>
+     <property name="jograBusiness" ref="jograBusiness" />
+     <!-- <property name="messageService" ref="messageService"/> -->
+     <property name="pluginList">
+       <list>
 <!-- 		  	 <ref bean="geneEditor" />
-		  	 <ref bean="geneList" />
-		     <ref bean="cvEditor" />
-		  	 <ref bean="organismTree" />
-		  	 <ref bean="organismEditor" /> -->
-		  	 <ref bean="productRationaliser" />
-		  	<!-- <ref bean="integrityChecker" /> -->
-	  	 </list>
-	   </property>
+         <ref bean="geneList" />
+         <ref bean="cvEditor" />
+         <ref bean="organismTree" />
+         <ref bean="organismEditor" /> -->
+         <ref bean="productRationaliser" />
+        <!-- <ref bean="integrityChecker" /> -->
+       </list>
+     </property>
    </bean>
-   
+
    <bean id="jograBusiness" class="org.genedb.jogra.drawing.JograBusinessImpl">
    <!-- <property name="testService" ref="testService" /> -->
    </bean>
-        
-   <!-- <tx:annotation-driven/> -->
-        
+
    <!-- <bean id="testService" class="org.genedb.jogra.drawing.TestServiceImpl">
     <property name="sessionFactory" ref="sessionFactory" />
    </bean> -->
-        
-	<!--  <bean id="newSessionStartForm" class="org.genedb.jogra.drawing.NewSessionStartForm" />
-	
-	<bean id="primerSelectionForm" class="org.genedb.jogra.drawing.PrimerSelectionForm"/> -->
-    
+
+  <!--  <bean id="newSessionStartForm" class="org.genedb.jogra.drawing.NewSessionStartForm" />
+
+  <bean id="primerSelectionForm" class="org.genedb.jogra.drawing.PrimerSelectionForm"/> -->
+
 </beans>
