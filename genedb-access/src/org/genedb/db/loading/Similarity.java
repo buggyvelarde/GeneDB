@@ -31,6 +31,8 @@ public class Similarity implements SimilarityI {
     private int queryStart = -2, queryEnd = -1;
     private int targetStart = -2, targetEnd = -1;
     private Double identity, ungappedId;
+    private String uniqueIdentifier;
+
     public String getAnalysisProgram() {
         return analysisProgram;
     }
@@ -144,5 +146,14 @@ public class Similarity implements SimilarityI {
             throw new DataError(String.format("ungapped id percentage (%g) must be between 0 and 100", ungappedId));
         }
         this.ungappedId = ungappedId;
+    }
+    public String getUniqueIdentifier() {
+        if (uniqueIdentifier == null) {
+            throw new IllegalStateException("The unique identifier has not been set!");
+        }
+        return uniqueIdentifier;
+    }
+    public void setUniqueIdentifier(String uniqueIdentifier) {
+        this.uniqueIdentifier = uniqueIdentifier;
     }
 }
