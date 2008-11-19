@@ -1,19 +1,17 @@
 package org.genedb.db.loading;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.ProteinMatch;
+import org.gmod.schema.feature.Region;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.TranscriptRegion;
+import org.gmod.schema.mapped.AnalysisFeature;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
@@ -320,6 +318,7 @@ public class FeatureTester {
                     return new SimilarityTester(proteinMatch);
                 }
             }
+
             fail(String.format("Could not find similarity '%s:%s' on polypeptide '%s'",
                 db, accession, polypeptide.getUniqueName()));
             return null; // Not reached
@@ -328,9 +327,81 @@ public class FeatureTester {
 
     class SimilarityTester extends AbstractTester<SimilarityTester> {
         private ProteinMatch proteinMatch;
+        private Region query;
         private SimilarityTester(ProteinMatch proteinMatch) {
             super(SimilarityTester.class, proteinMatch);
             this.proteinMatch = proteinMatch;
+            this.query = proteinMatch.getQuery();
+        }
+        private AnalysisFeature analysisFeature;
+        private AnalysisFeature analysisFeature() {
+            if (analysisFeature != null) {
+                return analysisFeature;
+            }
+            Collection<AnalysisFeature> analysisFeatures = proteinMatch.getAnalysisFeatures();
+            assertFalse(String.format("Protein match '%s' (ID=%d) has no analysis features",
+                proteinMatch.getUniqueName(), proteinMatch.getFeatureId()), analysisFeatures.isEmpty());
+            assertEquals(String.format("Protein match '%s' (ID=%d) has %d analysis features",
+                proteinMatch.getUniqueName(), proteinMatch.getFeatureId(), analysisFeatures.size()),
+                1, analysisFeatures.size());
+            analysisFeature = analysisFeatures.iterator().next();
+            return analysisFeature;
+        }
+        public SimilarityTester organism(String organismName) {
+            assertEquals(organismName, query.getFeatureProp("feature_property", "organism"));
+            return this;
+        }
+        public SimilarityTester product(String product) {
+            assertEquals(product, query.getFeatureProp("genedb_misc", "product"));
+            return this;
+        }
+        public SimilarityTester gene(String gene) {
+            assertEquals(gene, query.getFeatureProp("sequence", "gene"));
+            return this;
+        }
+        public SimilarityTester id(Double id) {
+            assertEquals(id, analysisFeature().getIdentity());
+            return this;
+        }
+        public SimilarityTester score(Double score) {
+            assertEquals(score, analysisFeature().getRawScore());
+            return this;
+        }
+        public SimilarityTester eValue(Double eValue) {
+         assertEquals(eValue, analysisFeature().getSignificance());
+         return this;
+        }
+        public SimilarityTester ungappedId(Double ungappedId) {
+            String actualUngappedId = proteinMatch.getFeatureProp("genedb_misc", "ungapped id");
+            if (actualUngappedId == null) {
+                if (ungappedId != null) {
+                    fail(String.format("Protein match '%s' (ID=%d) has no ungapped id",
+                        proteinMatch.getUniqueName(), proteinMatch.getFeatureId()));
+                }
+                return this; // Expected it to be null
+            }
+            assertEquals(ungappedId.doubleValue(), Double.parseDouble(actualUngappedId));
+            return this;
+        }
+        public SimilarityTester overlap(Integer overlap) {
+            String actualOverlap = proteinMatch.getFeatureProp("genedb_misc", "overlap");
+            if (actualOverlap == null) {
+                if (overlap != null) {
+                    fail(String.format("Protein match '%s' (ID=%d) has no overlap property",
+                        proteinMatch.getUniqueName(), proteinMatch.getFeatureId()));
+                }
+                return this; // Expected it to be null
+            }
+            assertEquals(overlap.intValue(), Integer.parseInt(actualOverlap));
+            return this;
+        }
+        public SimilarityTester analysisProgram(String analysisProgram) {
+            assertEquals(analysisProgram, analysisFeature().getAnalysis().getProgram());
+            return this;
+        }
+
+        public int getAnalysisId() {
+            return analysisFeature.getAnalysis().getAnalysisId();
         }
     }
 

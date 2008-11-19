@@ -17,6 +17,8 @@ import java.util.Arrays;
 
 /**
  * Test various corner cases using totally synthetic data.
+ * (Some of the individual qualifiers are lifted from real
+ * data sets, but the genome as a whole is fictitious.)
  *
  * @author rh11
  *
@@ -46,9 +48,9 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void featureNames() {
-        tester.uniqueNames(AbstractGene.class, "s1", "s2", "s3")
+        tester.uniqueNames(AbstractGene.class, "s1", "s2", "s3", "s4")
               .uniqueNames(Pseudogene.class, "s1")
-              .uniqueNames(Gene.class, "s2", "s3");
+              .uniqueNames(Gene.class, "s2", "s3", "s4");
     }
 
     @Test
@@ -150,6 +152,19 @@ public class EmblLoaderSyntheticTest {
     @Test
     public void s3similarities() {
         PolypeptideTester s3 = tester.geneTester("s3").transcript("s3:mRNA").polypeptide("s3:pep");
-        s3.similarity("UniProt", "Q26723");
+
+        // /similarity="blastp; SWALL:Q26723 (EMBL:M20871);
+        // Trypanosoma brucei brucei; variant-specific antigen;
+        // ESAG3; ; id=70%; ; E()=2e-42; score=438; ; ;"
+
+        s3.similarity("UniProt", "Q26723")
+            .analysisProgram("blastp")
+            .organism("Trypanosoma brucei brucei");
+//            .product("variant-specific antigen")
+//            .gene("ESAG3")
+//            .id(70.0)
+//            .eValue(2E-42)
+//            .score(438.0);
+
     }
 }

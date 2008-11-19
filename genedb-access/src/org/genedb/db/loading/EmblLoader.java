@@ -28,6 +28,7 @@ import org.gmod.schema.feature.ThreePrimeUTR;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.UTR;
+import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
@@ -466,6 +467,12 @@ class EmblLoader {
     }
 
     /**
+     * We want to create a single Analysis object/row for each distinct analysis program
+     * referenced in /similarity qualifiers in this file. These are stored in this map.
+     */
+    private Map<String,Analysis> similarityAnalysisByProgram = new HashMap<String,Analysis>();
+
+    /**
      * Abstract superclass for gene loaders.
      * <p>
      * It is the responsibility of each implementing class to set at least
@@ -814,6 +821,7 @@ class EmblLoader {
             }
         }
 
+        private Map<String,Integer> numberOfSimilaritiesByPrimaryDbXRef = new HashMap<String,Integer>();
         private void processSimilarityQualifier(String similarityString) throws DataError {
             Matcher matcher = similarityPattern.matcher(similarityString);
             if (!matcher.matches()) {
@@ -821,12 +829,33 @@ class EmblLoader {
             }
 
             Similarity similarity = new Similarity();
-            similarity.setAnalysisProgram(matcher.group(1));
+            String program = matcher.group(1);
+            if (!similarityAnalysisByProgram.containsKey(program)) {
+                Analysis analysis = new Analysis();
+                analysis.setProgram(program);
+                analysis.setProgramVersion("unknown");
+                session.persist(analysis);
+                similarityAnalysisByProgram.put(program, analysis);
+            }
+            similarity.setAnalysis(similarityAnalysisByProgram.get(program));
             DbXRef primaryDbXRef = objectManager.getDbXRef(matcher.group(2), matcher.group(3));
             if (primaryDbXRef == null) {
                 throw new DataError(String.format("Could not find database '%s' for primary dbxref of /similarity", matcher.group(2)));
             }
             similarity.setPrimaryDbXRef(primaryDbXRef);
+
+            {
+                // Set the unique identifier to something unique
+
+                String primaryDbXRefString = primaryDbXRef.toString();
+                if (!numberOfSimilaritiesByPrimaryDbXRef.containsKey(primaryDbXRefString)) {
+                    numberOfSimilaritiesByPrimaryDbXRef.put(primaryDbXRefString, 1);
+                } else {
+                    numberOfSimilaritiesByPrimaryDbXRef.put(primaryDbXRefString, 1 + numberOfSimilaritiesByPrimaryDbXRef.get(primaryDbXRefString));
+                }
+                int numberOfSimilarities = numberOfSimilaritiesByPrimaryDbXRef.get(primaryDbXRefString);
+                similarity.setUniqueIdentifier(String.format("%s_%s_%d", transcriptUniqueName, primaryDbXRefString, numberOfSimilarities));
+            }
 
             if (matcher.group(4) != null) {
                 String dbName = matcher.group(4);

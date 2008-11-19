@@ -30,6 +30,18 @@ FT                   /similarity="fasta; SWALL:EAA26969 (EMBL:AABX01000759,
 FT                   EAA26969); Neurospora crassa; hypothetical protein; ;
 FT                   length 335 aa; id=38.462%; ungapped id=47.273%; E()=6.4e-
 FT                   17; ; 303 aa overlap; query 3-306 aa; subject 13-321 aa"
+FT   CDS             300..320
+FT                   /systematic_id="s4"
+FT                   /similarity="fasta; SWALL:DYHA_CHLRE (SWALL:Q39610);
+FT                   Chlamydomonas reinhardtii; dynein alpha chain, flagellar
+FT                   outer arm; oda11 or oda-11; length 4499 aa; id=37.56%;
+FT                   ungapped id=41.53%; E()=0; ; 3724 aa overlap; query 1136-
+FT                   4660 aa; subject 927-4493 aa"
+FT                   /similarity="fasta; SWALL:DYHA_CHLRE (EMBL:L26049,
+FT                   AAA57316); Chlamydomonas reinhardtii; dynein alpha chain,
+FT                   flagellar outer arm; ; length 4499 aa; id=37.567%;
+FT                   ungapped id=41.538%; E()=0; ; 3524 aa overlap; query 1136-
+FT                   4660 aa; subject 927-4493 aa"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,
