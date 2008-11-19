@@ -19,40 +19,42 @@ import java.util.Collection;
  */
 public interface SimilarityI {
 
-    public abstract String getAnalysisProgram();
+    public String getAnalysisProgram();
 
-    public abstract String getAnalysisProgramVersion();
+    public String getAnalysisProgramVersion();
 
-    public abstract Analysis getAnalysis();
+    public Analysis getAnalysis();
 
-    public abstract String getOrganismName();
+    public String getOrganismName();
 
-    public abstract String getGeneName();
+    public String getGeneName();
 
-    public abstract String getProduct();
+    public String getProduct();
 
-    public abstract DbXRef getPrimaryDbXRef();
+    public DbXRef getPrimaryDbXRef();
 
-    public abstract Collection<DbXRef> getSecondaryDbXRefs();
+    public Collection<DbXRef> getSecondaryDbXRefs();
 
-    public abstract int getLength();
+    public int getLength();
 
-    public abstract Double getRawScore();
+    public Double getRawScore();
 
-    public abstract Double getEValue();
+    public Double getEValue();
 
-    public abstract int getOverlap();
+    public int getOverlap();
 
-    public abstract int getQueryStart();
+    public int getQueryStart();
 
-    public abstract int getQueryEnd();
+    public int getQueryEnd();
 
-    public abstract int getTargetStart();
+    public int getTargetStart();
 
-    public abstract int getTargetEnd();
+    public int getTargetEnd();
 
-    public abstract Double getId();
+    public Double getId();
 
-    public abstract Double getUngappedId();
+    public Double getUngappedId();
+
+    public String getUniqueIdentifier();
 
 }
