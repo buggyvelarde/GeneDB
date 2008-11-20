@@ -72,8 +72,10 @@ class SyntaxError extends ParsingException {
         super(message);
     }
     SyntaxError(String inputFile, int lineNumber, String message) {
-        this(message);
-        setLocation(inputFile, lineNumber);
+        super(inputFile, lineNumber, message);
+    }
+    SyntaxError(File inputFile, int lineNumber, String message) {
+        super(inputFile.toString(), lineNumber, message);
     }
 }
 
