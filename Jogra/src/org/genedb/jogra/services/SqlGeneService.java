@@ -66,31 +66,10 @@ public class SqlGeneService implements GeneService {
 
     //@Override
     public List<String> findGeneNamesByPartialName(String search) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
-    //@Override
-    public Collection<BasicGene> findGenesExtendingIntoRange(
-            String organismCommonName, String chromosomeUniqueName, int strand,
-            long locMin, long locMax) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        String sql = "select uniquename from Feature where uniquename like '%?%' order by uniquename";
 
-    //@Override
-    public Collection<BasicGene> findGenesOnStrand(String organismCommonName,
-            String chromosomeUniqueName, int strand) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    //@Override
-    public Collection<BasicGene> findGenesOverlappingRange(
-            String organismCommonName, String chromosomeUniqueName, int strand,
-            long locMin, long locMax) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.jdbcTemplate.queryForList(sql, args);
     }
 
 }
