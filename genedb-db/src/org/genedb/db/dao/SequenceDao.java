@@ -796,9 +796,22 @@ public class SequenceDao extends BaseDao {
 
     /**
      * Delete all the features that are located on the specified source feature.
+     * Also deletes features that are located on features located on the specified
+     * source feature, e.g. ProteinMatch features located on a Polypeptide.
+     *
      * @param sourceFeature
      */
     public void deleteFeaturesLocatedOn(Feature sourceFeature) {
+        getSession().createQuery(
+            "delete Feature f where f in (" +
+            "  select fl2.feature" +
+            "  from FeatureLoc fl1" +
+            "     , FeatureLoc fl2" +
+            "  where fl1.feature = fl2.sourceFeature" +
+            "  and fl1.sourceFeature = :sourceFeature)"
+        ).setParameter("sourceFeature", sourceFeature)
+        .executeUpdate();
+
         getSession().createQuery(
             "delete Feature f where f in (select fl.feature from FeatureLoc fl where fl.sourceFeature = :sourceFeature)"
         ).setParameter("sourceFeature", sourceFeature)
