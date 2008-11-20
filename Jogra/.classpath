@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/spring-bundle-2.5.6/jakarta-commons/commons-pool.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/db/postgresql-8.3-603.jdbc4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
