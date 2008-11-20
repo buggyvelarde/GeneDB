@@ -902,6 +902,28 @@ public abstract class Feature implements java.io.Serializable {
         return ret;
     }
 
+    /**
+     * Get the value of the feature property with the specified type.
+     * If there is no such property, return <code>null</code>. If there is
+     * more than one such property, throw a RuntimeException.
+     *
+     * @param cvName    the name of the controlled vocabulary to which the property type belongs
+     * @param termName  the property type (within the specified vocabulary)
+     * @return the value of the feature property with the specified type,
+     *          or <code>null</code> if there is no such property.
+     */
+    public String getFeatureProp(String cvName, String termName) {
+        List<FeatureProp> props = getFeaturePropsFilteredByCvNameAndTermName(cvName, termName);
+        if (props.isEmpty()) {
+            return null;
+        }
+        if (props.size() > 1) {
+            throw new RuntimeException(String.format("Feature '%s' has more than one '%s:%s' property",
+                getUniqueName(), cvName, termName));
+        }
+        return props.get(0).getValue();
+    }
+
 
     public FeatureCvTerm addCvTerm(String cvName, String cvTermName) {
         return addCvTerm(cvName, cvTermName, true);
@@ -1136,7 +1158,7 @@ public abstract class Feature implements java.io.Serializable {
             session.persist(analysis);
         }
 
-        String matchUniqueName = String.format("MATCH_%s_%s", getUniqueName(), similarity.getPrimaryDbXRef());
+        String matchUniqueName = String.format("MATCH_%s", similarity.getUniqueIdentifier());
         ProteinMatch match = new ProteinMatch(getOrganism(), matchUniqueName);
         session.persist(match);
 
@@ -1149,7 +1171,7 @@ public abstract class Feature implements java.io.Serializable {
         match.addFeatureProp(String.format("%.02g", similarity.getUngappedId()), "genedb_misc", "ungapped id", 0);
         match.addFeatureProp(similarity.getOverlap() + " aa overlap", "genedb_misc", "overlap", 0);
 
-        String sourceUniqueName = String.format("%s_%s_%s", organism.getCommonName(), getUniqueName(), similarity.getPrimaryDbXRef());
+        String sourceUniqueName = String.format("%s_%s", organism.getCommonName(), similarity.getUniqueIdentifier());
         Region source = new Region(getOrganism(), sourceUniqueName, true, false, new Timestamp(System.currentTimeMillis()));
         source.setSeqLen(similarity.getLength());
         source.setDbXRef(similarity.getPrimaryDbXRef());
