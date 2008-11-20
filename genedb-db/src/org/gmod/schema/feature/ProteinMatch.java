@@ -6,7 +6,6 @@ import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 
 import javax.persistence.Entity;
 
