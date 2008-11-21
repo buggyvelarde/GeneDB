@@ -97,7 +97,7 @@
             <format:addToBasket uniqueName="${dto.uniqueName}" />
          </div>
         <div style="clear: both; margin-top: 1ex;">
-             <a href="<c:url value="/" />FeatureSequence?name=${dto.uniqueName}&seqs=true">View/analyze/ download sequence</a>
+             <a href="<c:url value="/" />FeatureSequence?name=${dto.uniqueName}&seqs=true"><img src="<c:url value="/" />includes/images/viewSequenceButton.gif"></a>
          </div>
         <div style="clear: both; margin-top: 1ex;">
             <a href="ArtemisLaunch?organism=${organism}&chromosome=${dto.topLevelFeatureUniqueName}&start=${dto.min}&end=${dto.max}"><img src="<c:url value="/" />includes/images/launchArtemis.gif"></a>
