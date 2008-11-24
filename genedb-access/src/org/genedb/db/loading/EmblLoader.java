@@ -1052,7 +1052,7 @@ class EmblLoader {
          */
         protected void processTranscriptQualifiers() throws DataError {
 
-            checkForTemporarySystematicIdEqualToSystematicId();
+            checkForTemporaryOrPreviousSystematicIdEqualToSystematicId();
 
             addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             addTranscriptSynonymsFromQualifier("previous_systematic_id", "systematic_id", false);
@@ -1113,7 +1113,7 @@ class EmblLoader {
          * error is difficult to understand and track down.
          * @throws DataError if so
          */
-        private void checkForTemporarySystematicIdEqualToSystematicId() throws DataError {
+        private void checkForTemporaryOrPreviousSystematicIdEqualToSystematicId() throws DataError {
             String systematicId = feature.getQualifierValue("systematic_id");
             if (systematicId == null) {
                 return;
@@ -1121,6 +1121,11 @@ class EmblLoader {
             for (String temporarySystematicId: feature.getQualifierValues("temporary_systematic_id")) {
                 if (systematicId.equals(temporarySystematicId)) {
                     throw new DataError("Feature has /temporary_systematic_id with the same value as /systematic_id");
+                }
+            }
+            for (String temporarySystematicId: feature.getQualifierValues("previous_systematic_id")) {
+                if (systematicId.equals(temporarySystematicId)) {
+                    throw new DataError("Feature has /previous_systematic_id with the same value as /systematic_id");
                 }
             }
         }
