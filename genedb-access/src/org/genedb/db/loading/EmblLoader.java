@@ -428,6 +428,7 @@ class EmblLoader {
         }
     }
 
+    private Set<String> repeatRegionUniqueNames = new HashSet<String>();
     private void loadRepeatRegion(FeatureTable.Feature repeatRegionFeature) throws DataError {
         String repeatRegionName = repeatRegionFeature.getQualifierValue("FEAT_NAME");
         EmblLocation repeatRegionLocation = repeatRegionFeature.location;
@@ -444,11 +445,19 @@ class EmblLoader {
             throw new DataError(String.format("Unknown repeat type '%s'", repeatType));
         }
 
+        String repeatRegionUniqueName = String.format("%s:repeat:%d-%d", topLevelFeature.getUniqueName(), fmin, fmax);
+        if (repeatRegionUniqueNames.contains(repeatRegionUniqueName)) {
+            logger.warn(String.format("The repeat region '%s' already exists." +
+                    "Ignoring second (or subsequent) occurence at line %d",
+                repeatRegionUniqueName, repeatRegionFeature.lineNumber));
+            return;
+        }
+        repeatRegionUniqueNames.add(repeatRegionUniqueName);
+
         logger.debug(String.format("Creating repeat region '%s' of type '%s' at %d-%d",
             repeatRegionName, repeatRegionClass.getSimpleName(), fmin, fmax));
         RepeatRegion repeatRegion = RepeatRegion.make(repeatRegionClass,
-            organism, String.format("%s:repeat:%d-%d", topLevelFeature.getUniqueName(), fmin, fmax),
-            repeatRegionName);
+            organism, repeatRegionUniqueName, repeatRegionName);
 
         int rank = 0;
         for(String note : repeatRegionFeature.getQualifierValues("note")) {
