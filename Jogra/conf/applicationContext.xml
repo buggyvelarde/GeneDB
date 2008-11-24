@@ -4,20 +4,28 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:util="http://www.springframework.org/schema/util"
     xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
     xsi:schemaLocation="
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
     default-init-method="postConstruction">
 
 <!--     <bean id="loginForm" class="org.genedb.jogra.drawing.JograLogin">
         <property name="name" value="jogra.jpg" />
     </bean> -->
 
+
+    <context:annotation-config/>
+
+
   <bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
   </bean>
 
-    <bean name="geneService" class="org.genedb.jogra.services.SqlGeneService" />
+  <bean name="geneService" class="org.genedb.jogra.services.SqlGeneService">
+  	<property name="dataSource" ref="dataSource" />
+  </bean>
 
   <bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor">
     <property name="geneService" ref="geneService" />
@@ -34,9 +42,12 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://pathdbsrv1b:10103/productrat" />
-        <property name="username" value="pathdb" />
-        <property name="password" value="Pyrate_1" />
+<!--        <property name="url" value="jdbc:postgresql://pathdbsrv1b:10103/productrat" />-->
+<!--        <property name="username" value="pathdb" />-->
+<!--        <property name="password" value="Pyrate_1" />-->
+	        <property name="url" value="jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot" />
+	        <property name="username" value="genedb_ro" />
+	        <property name="password" value="genedb_ro" />
     </bean>
 
   <bean name="geneList" class="org.genedb.jogra.plugins.GeneList" />

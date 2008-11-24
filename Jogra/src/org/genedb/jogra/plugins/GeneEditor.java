@@ -258,7 +258,11 @@ public class GeneEditor implements JograPlugin {
         final String title = "Gene: " + search;
         //Feature f = sequenceDao.getFeatureByUniqueName(search, "gene");
         //Gene gene = new Gene(f);
-        List<String> geneNames = geneService.findGeneNamesByPartialName(search);
+        List<String> geneNames = geneService.findTranscriptNamesByPartialName(search);
+        System.err.println("Size="+geneNames.size());
+        for (String string : geneNames) {
+			System.err.println(string);
+		}
         if (geneNames.size()==0) {
         	//return displayGenes(search, title);
         }

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GeneService {
     Gene findGeneByUniqueName(String name);
-    List<String> findGeneNamesByPartialName(String search);
+    List<String> findTranscriptNamesByPartialName(String search);
 }
