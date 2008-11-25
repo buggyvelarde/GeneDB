@@ -840,13 +840,16 @@ class EmblLoader {
             Similarity similarity = new Similarity();
             String program = matcher.group(1);
             if (!similarityAnalysisByProgram.containsKey(program)) {
+                logger.trace(String.format("Creating Analysis object for program '%s'", program));
                 Analysis analysis = new Analysis();
                 analysis.setProgram(program);
                 analysis.setProgramVersion("unknown");
-                session.persist(analysis);
                 similarityAnalysisByProgram.put(program, analysis);
             }
-            similarity.setAnalysis(similarityAnalysisByProgram.get(program));
+            Analysis analysis = similarityAnalysisByProgram.get(program);
+            session.saveOrUpdate(analysis);
+
+            similarity.setAnalysis(analysis);
             DbXRef primaryDbXRef = objectManager.getDbXRef(matcher.group(2), matcher.group(3));
             if (primaryDbXRef == null) {
                 throw new DataError(String.format("Could not find database '%s' for primary dbxref of /similarity", matcher.group(2)));

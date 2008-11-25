@@ -185,7 +185,7 @@ public abstract class Feature implements java.io.Serializable {
     protected Set<FeatureRelationship> featureRelationshipsForSubjectId;
 
 
-    @OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "feature")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
     private Set<FeatureDbXRef> featureDbXRefs;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "feature")
@@ -800,6 +800,8 @@ public abstract class Feature implements java.io.Serializable {
         if (type == null) {
             throw new RuntimeException(String.format("Failed to find term '%s' in cv '%s'", termName, cvName));
         }
+        logger.trace(String.format("Creating feature relationship (type '%s') from '%s' to '%s'",
+            type, subject.getUniqueName(), this.getUniqueName()));
         FeatureRelationship relationship =  new FeatureRelationship(subject, this, type, 0);
         if (this.featureRelationshipsForObjectId == null) {
             this.featureRelationshipsForObjectId = new HashSet<FeatureRelationship>();
@@ -855,6 +857,11 @@ public abstract class Feature implements java.io.Serializable {
         child.featureLocs.add(loc);
 
         /*
+         * The following is not currently done, and enabling it would cause loading problems
+         * because the redundant locations are also added explicitly in various places.
+         *
+         * TODO decide whether or not we want these redundant locations automatically added here
+         *
         // If we ourselves have featurelocs (e.g. we are a contig and have a supercontig),
         // give the child redundant locations to these.
         if (locgroup == 0) {
@@ -1171,21 +1178,23 @@ public abstract class Feature implements java.io.Serializable {
         match.addFeatureProp(String.format("%.02g", similarity.getUngappedId()), "genedb_misc", "ungapped id", 0);
         match.addFeatureProp(similarity.getOverlap() + " aa overlap", "genedb_misc", "overlap", 0);
 
-        String sourceUniqueName = String.format("%s_%s", organism.getCommonName(), similarity.getUniqueIdentifier());
-        Region source = new Region(getOrganism(), sourceUniqueName, true, false, new Timestamp(System.currentTimeMillis()));
-        source.setSeqLen(similarity.getLength());
-        source.setDbXRef(similarity.getPrimaryDbXRef());
+        String targetUniqueName = String.format("%s_%s", organism.getCommonName(), similarity.getUniqueIdentifier());
+        Region target = new Region(getOrganism(), targetUniqueName, true, false, new Timestamp(System.currentTimeMillis()));
+        target.setSeqLen(similarity.getLength());
+        target.setDbXRef(similarity.getPrimaryDbXRef());
         for (DbXRef dbXRef: similarity.getSecondaryDbXRefs()) {
-            source.addDbXRef(dbXRef);
+            target.addDbXRef(dbXRef);
         }
-        session.persist(source);
+        session.persist(target);
 
-        source.addFeatureProp(similarity.getOrganismName(), "feature_property", "organism", 0);
-        source.addFeatureProp(similarity.getGeneName(), "sequence", "gene", 0);
-        source.addFeatureProp(similarity.getProduct(), "genedb_misc", "product", 0);
+        target.addFeatureProp(similarity.getOrganismName(), "feature_property", "organism", 0);
+        target.addFeatureProp(similarity.getGeneName(), "sequence", "gene", 0);
+        target.addFeatureProp(similarity.getProduct(), "genedb_misc", "product", 0);
 
-        source.addLocatedChild(match, 1 + similarity.getTargetStart(), similarity.getTargetEnd(), 0 /*strand*/, null /*phase*/, 0 /*locgroup */, 0 /*rank*/);
-        this.addLocatedChild  (match, 1 + similarity.getQueryStart(), similarity.getQueryEnd(), 0 /*strand*/, null /*phase*/, 0 /*locgroup */, 1 /*rank*/);
+        this.addLocatedChild  (match, similarity.getQueryStart() - 1,  similarity.getQueryEnd(),
+            0 /*strand*/, null /*phase*/, 0 /*locgroup */, 0 /*rank*/);
+        target.addLocatedChild(match, similarity.getTargetStart() - 1, similarity.getTargetEnd(),
+            0 /*strand*/, null /*phase*/, 0 /*locgroup */, 1 /*rank*/);
     }
 
     /**

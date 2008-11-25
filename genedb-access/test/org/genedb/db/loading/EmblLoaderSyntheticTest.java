@@ -159,12 +159,34 @@ public class EmblLoaderSyntheticTest {
 
         s3.similarity("UniProt", "Q26723")
             .analysisProgram("blastp")
-            .organism("Trypanosoma brucei brucei");
-//            .product("variant-specific antigen")
-//            .gene("ESAG3")
-//            .id(70.0)
-//            .eValue(2E-42)
-//            .score(438.0);
+            .organism("Trypanosoma brucei brucei")
+            .product("variant-specific antigen")
+            .gene("ESAG3")
+            .id(70.0)
+            .eValue(2E-42)
+            .score(438.0);
+    }
 
+    @Test
+    public void s4Similarities() {
+        PolypeptideTester s4 = tester.geneTester("s4").transcript("s4:mRNA").polypeptide("s4:pep");
+
+        // /similarity="fasta; SWALL:O21243 (EMBL:AF007261,
+        // SWALL:COXZ_RECAM); Reclinomonas americana; ; ; length 182
+        // aa; id=44.805%; ungapped id=46.939%; E()=2.5e-25; ; 151 aa
+        // overlap; query 1-152 aa; subject 32-180 aa"
+
+        s4.similarity("UniProt", "O21243")
+        .analysisProgram("fasta")
+        .organism("Reclinomonas americana")
+        .product(null)
+        .gene(null)
+        .id(44.805)
+        .eValue(2.5E-25)
+        .score(null)
+        .overlap(151)
+        .loc(0, 0, 0, 0, 152)
+        .loc(0, 1, 0, 31, 180)
+        .secondaryDbXRefs("EMBL:AF007261", "UniProt:COXZ_RECAM");
     }
 }

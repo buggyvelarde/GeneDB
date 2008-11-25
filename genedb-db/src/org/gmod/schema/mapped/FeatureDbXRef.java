@@ -6,6 +6,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,8 +27,7 @@ public class FeatureDbXRef implements Serializable {
     @Column(name="feature_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
     private int featureDbXRefId;
 
-    @ManyToOne(cascade={},fetch=FetchType.LAZY)
-
+    @ManyToOne(cascade={CascadeType.PERSIST}, fetch=FetchType.EAGER)
     @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
     private DbXRef dbXRef;
 

@@ -41,51 +41,56 @@ public class ProteinMatch extends Match {
     }
 
     /**
-     * Get the query feature of this similarity.
+     * Get the subject feature of this similarity, which is a Region belonging to the dummy
+     * organism, and has various bits of similarity metadata as FeatureProps
+     * (with types <code>feature_property:organism</code>, <code>genedb_misc:product</code>
+     * and <code>sequence:gene</code>). The primary reference is also stored as the primary
+     * DbXRef of the subject feature, and any secondary references are related to it via
+     * FeatureDbXRef.
      *
      * @return
      */
-    public Region getQuery() {
+    public Region getSubject() {
+        FeatureLoc featureLoc = this.getFeatureLoc(0, 1);
+        if (featureLoc == null) {
+            logger.error(String.format("Could not find subject featureloc for ProteinMatch '%s' (ID=%d)",
+                getUniqueName(), getFeatureId()));
+            return null;
+        }
+        Feature subjectFeature = featureLoc.getSourceFeature();
+        if (subjectFeature == null) {
+            logger.error(String.format("Could not find subject feature for ProteinMatch '%s' (ID=%d)",
+                getUniqueName(), getFeatureId()));
+            return null;
+        }
+        if (! (subjectFeature instanceof Region) ) {
+            logger.error(String.format("Subject feature '%s' (ID=%d) for ProteinMatch '%s' (ID=%d) is %s, not Region",
+                subjectFeature.getUniqueName(), subjectFeature.getFeatureId(), getUniqueName(), getFeatureId(), subjectFeature.getClass()));
+            return null;
+        }
+        return (Region) subjectFeature;
+    }
+
+    /**
+     * Get the query feature of this similarity, which is the polypeptide it's associated with.
+     *
+     * @return
+     */
+    public Polypeptide getPolypeptide() {
         FeatureLoc featureLoc = this.getFeatureLoc(0, 0);
         if (featureLoc == null) {
             logger.error(String.format("Could not find query featureloc for ProteinMatch '%s' (ID=%d)",
                 getUniqueName(), getFeatureId()));
             return null;
         }
-        Feature queryFeature = featureLoc.getSourceFeature();
-        if (queryFeature == null) {
+        Feature targetFeature = featureLoc.getSourceFeature();
+        if (targetFeature == null) {
             logger.error(String.format("Could not find query feature for ProteinMatch '%s' (ID=%d)",
                 getUniqueName(), getFeatureId()));
             return null;
         }
-        if (! (queryFeature instanceof Region) ) {
-            logger.error(String.format("Query feature '%s' (ID=%d) for ProteinMatch '%s' (ID=%d) is %s, not Region",
-                queryFeature.getUniqueName(), queryFeature.getFeatureId(), getUniqueName(), getFeatureId(), queryFeature.getClass()));
-            return null;
-        }
-        return (Region) queryFeature;
-    }
-
-    /**
-     * Get the target feature of this similarity.
-     *
-     * @return
-     */
-    public Polypeptide getTarget() {
-        FeatureLoc featureLoc = this.getFeatureLoc(0, 1);
-        if (featureLoc == null) {
-            logger.error(String.format("Could not find target featureloc for ProteinMatch '%s' (ID=%d)",
-                getUniqueName(), getFeatureId()));
-            return null;
-        }
-        Feature targetFeature = featureLoc.getSourceFeature();
-        if (targetFeature == null) {
-            logger.error(String.format("Could not find target feature for ProteinMatch '%s' (ID=%d)",
-                getUniqueName(), getFeatureId()));
-            return null;
-        }
         if (! (targetFeature instanceof Polypeptide)) {
-            logger.error(String.format("Target feature '%s' (ID=%d) for ProteinMatch '%s' (ID=%d) is %s, not Polypeptide",
+            logger.error(String.format("Query feature '%s' (ID=%d) for ProteinMatch '%s' (ID=%d) is %s, not Polypeptide",
                 targetFeature.getUniqueName(), targetFeature.getFeatureId(), getUniqueName(), getFeatureId(), targetFeature.getClass()));
             return null;
         }

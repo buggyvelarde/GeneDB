@@ -400,7 +400,7 @@ public class Polypeptide extends Region {
     public Collection<ProteinMatch> getProteinMatches() {
         List<ProteinMatch> proteinMatches = new ArrayList<ProteinMatch>();
         for (FeatureLoc featureLoc: this.getFeatureLocsForSrcFeatureId()) {
-            if (featureLoc.getRank() != 1) {
+            if (featureLoc.getRank() != 0) {
                 continue;
             }
             Feature feature = featureLoc.getFeature();

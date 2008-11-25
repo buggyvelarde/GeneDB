@@ -1,6 +1,11 @@
 package org.genedb.db.loading;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
@@ -15,6 +20,7 @@ import org.gmod.schema.mapped.AnalysisFeature;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureDbXRef;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.Synonym;
@@ -25,10 +31,13 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class FeatureTester {
@@ -313,7 +322,7 @@ public class FeatureTester {
 
         public SimilarityTester similarity(String db, String accession) {
             for (ProteinMatch proteinMatch: polypeptide.getProteinMatches()) {
-                DbXRef dbXRef = proteinMatch.getQuery().getDbXRef();
+                DbXRef dbXRef = proteinMatch.getSubject().getDbXRef();
                 if (dbXRef.getDb().getName().equals(db) && dbXRef.getAccession().equals(accession)) {
                     return new SimilarityTester(proteinMatch);
                 }
@@ -327,11 +336,11 @@ public class FeatureTester {
 
     class SimilarityTester extends AbstractTester<SimilarityTester> {
         private ProteinMatch proteinMatch;
-        private Region query;
+        private Region subject;
         private SimilarityTester(ProteinMatch proteinMatch) {
             super(SimilarityTester.class, proteinMatch);
             this.proteinMatch = proteinMatch;
-            this.query = proteinMatch.getQuery();
+            this.subject = proteinMatch.getSubject();
         }
         private AnalysisFeature analysisFeature;
         private AnalysisFeature analysisFeature() {
@@ -348,15 +357,15 @@ public class FeatureTester {
             return analysisFeature;
         }
         public SimilarityTester organism(String organismName) {
-            assertEquals(organismName, query.getFeatureProp("feature_property", "organism"));
+            assertEquals(organismName, subject.getFeatureProp("feature_property", "organism"));
             return this;
         }
         public SimilarityTester product(String product) {
-            assertEquals(product, query.getFeatureProp("genedb_misc", "product"));
+            assertEquals(product, subject.getFeatureProp("genedb_misc", "product"));
             return this;
         }
         public SimilarityTester gene(String gene) {
-            assertEquals(gene, query.getFeatureProp("sequence", "gene"));
+            assertEquals(gene, subject.getFeatureProp("sequence", "gene"));
             return this;
         }
         public SimilarityTester id(Double id) {
@@ -392,11 +401,27 @@ public class FeatureTester {
                 }
                 return this; // Expected it to be null
             }
-            assertEquals(overlap.intValue(), Integer.parseInt(actualOverlap));
+            Matcher matcher = Pattern.compile("(\\d+) aa overlap").matcher(actualOverlap);
+            if (! matcher.matches()) {
+                fail(String.format("Overlap property has value '%s', which I can't parse", actualOverlap));
+            }
+            assertEquals(overlap.intValue(), Integer.parseInt(matcher.group(1)));
             return this;
         }
         public SimilarityTester analysisProgram(String analysisProgram) {
             assertEquals(analysisProgram, analysisFeature().getAnalysis().getProgram());
+            return this;
+        }
+        public SimilarityTester secondaryDbXRefs(String... dbxRefStrings) {
+            Set<String> actualDbXRefStrings = new HashSet<String>();
+            for (FeatureDbXRef featureDbXRef: subject.getFeatureDbXRefs()) {
+                actualDbXRefStrings.add(featureDbXRef.getDbXRef().toString());
+            }
+
+            Set<String> expectedDbXRefStrings = new HashSet<String>();
+            Collections.addAll(expectedDbXRefStrings, dbxRefStrings);
+            assertEquals(expectedDbXRefStrings, actualDbXRefStrings);
+
             return this;
         }
 

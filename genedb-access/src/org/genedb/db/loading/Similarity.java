@@ -28,8 +28,8 @@ public class Similarity implements SimilarityI {
     private Double rawScore;
     private Double eValue;
     private int overlap;
-    private int queryStart = -2, queryEnd = -1;
-    private int targetStart = -2, targetEnd = -1;
+    private int queryStart = 0, queryEnd = -1;
+    private int targetStart = 0, targetEnd = -1;
     private Double identity, ungappedId;
     private String uniqueIdentifier;
 
