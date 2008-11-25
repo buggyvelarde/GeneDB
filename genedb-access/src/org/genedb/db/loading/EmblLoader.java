@@ -809,20 +809,20 @@ class EmblLoader {
 
          */
         private final Pattern similarityPattern = Pattern.compile(
-            "(\\w+);" +                                                 // 1.     Algorithm, e.g. fasta, blastp
-            "\\s*(\\w+):([\\w.]+)" +                                    // 2,3.   Primary dbxref, e.g. SWALL:Q26723
-            "(?:\\s+\\((\\w+):([\\w.]+(?:,\\s*[\\w.]+)*)\\))?;" +       // 4,5.   Optional secondary dbxrefs, e.g. "EMBL:M20871", "EMBL:BC002634, AAH02634"
-            "\\s*([^;]+)?;" +                                           // 6.     Organism name
-            "\\s*([^;]+)?;" +                                           // 7.     Product name
-            "\\s*([^;]+)?;" +                                           // 8.     Gene name
-            "\\s*(?:length\\s+(\\d+)\\s+aa)?;" +                        // 9.     Optional match length
-            "\\s*id=(\\d{1,3}(?:\\.\\d{1,3})?)%;" +                     // 10.    Degree of identity (percentage)
-            "\\s*(?:ungapped\\s+id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +    // 11.    Optional ungapped identity (percentage)
-            "\\s*E\\(\\)=(\\d+(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +        // 12.    E-value
-            "\\s*(?:score=(\\d+))?;" +                                  // 13.    Optional score
-            "\\s*(?:(\\d+)\\s+aa\\s+overlap)?;" +                       // 14.    Optional overlap length (integer)
-            "\\s*(?:query\\s+(\\d+)-\\s*(\\d+) aa)?;" +                 // 15,16. Optional query location
-            "\\s*(?:subject\\s+(\\d+)-\\s*?(\\d+) aa)?");               // 17,18. Optional subject location
+            "(\\w+);" +                                                         // 1.     Algorithm, e.g. fasta, blastp
+            "\\s*(\\w+):([\\w.]+)" +                                            // 2,3.   Primary dbxref, e.g. SWALL:Q26723
+            "(?:\\s+\\((\\w+):([\\w.]+(?:,\\s*(?:\\w+:)?[\\w.]+)*)\\))?;" +     // 4,5.   Optional secondary dbxrefs, e.g. "EMBL:M20871", "EMBL:BC002634, AAH02634"
+            "\\s*([^;]+)?;" +                                                   // 6.     Organism name
+            "\\s*([^;]+)?;" +                                                   // 7.     Product name
+            "\\s*([^;]+)?;" +                                                   // 8.     Gene name
+            "\\s*(?:length\\s+(\\d+)\\s+aa)?;" +                                // 9.     Optional match length
+            "\\s*id=(\\d{1,3}(?:\\.\\d{1,3})?)%;" +                             // 10.    Degree of identity (percentage)
+            "\\s*(?:ungapped\\s+id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +            // 11.    Optional ungapped identity (percentage)
+            "\\s*E\\(\\)=(\\d+(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +                // 12.    E-value
+            "\\s*(?:score=(\\d+))?;" +                                          // 13.    Optional score
+            "\\s*(?:(\\d+)\\s+aa\\s+overlap)?;" +                               // 14.    Optional overlap length (integer)
+            "\\s*(?:query\\s+(\\d+)-\\s*(\\d+) aa)?;" +                         // 15,16. Optional query location
+            "\\s*(?:subject\\s+(\\d+)-\\s*?(\\d+) aa)?");                       // 17,18. Optional subject location
 
         protected void processSimilarityQualifiers() throws DataError {
             for (String similarityString: feature.getQualifierValues("similarity")) {
@@ -869,6 +869,11 @@ class EmblLoader {
             if (matcher.group(4) != null) {
                 String dbName = matcher.group(4);
                 for (String accession: matcher.group(5).split(",\\s*")) {
+                    int colonIndex = accession.indexOf(':');
+                    if (colonIndex >= 0) {
+                        dbName = accession.substring(0, colonIndex);
+                        accession = accession.substring(colonIndex + 1);
+                    }
                     DbXRef secondaryDbXRef = objectManager.getDbXRef(dbName, accession);
                     if (secondaryDbXRef == null) {
                         throw new DataError(String.format("Could not find database '%s' for secondary dbxref of /similarity", matcher.group(4)));
