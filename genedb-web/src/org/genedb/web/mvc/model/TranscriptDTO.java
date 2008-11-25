@@ -7,7 +7,6 @@ import org.genedb.db.domain.objects.SimpleRegionGroup;
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.ImageMapSummary;
 import org.genedb.web.gui.ProteinMapDiagram;
-import org.genedb.web.gui.RenderedContextMap;
 import org.genedb.web.gui.RenderedDiagramFactory;
 import org.genedb.web.gui.RenderedProteinMap;
 
@@ -33,7 +32,6 @@ import org.gmod.schema.utils.PeptideProperties;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
