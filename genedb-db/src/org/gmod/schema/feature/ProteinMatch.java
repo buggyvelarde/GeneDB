@@ -9,6 +9,20 @@ import org.apache.log4j.Logger;
 
 import javax.persistence.Entity;
 
+/**
+ * ProteinMatch features are currently used in two rather different ways.
+ * <ul>
+ * <li> They are used to represent /similarity data. In this case, the ProteinMatch
+ *      has two FeatureLocs representing the source (rank 0) and target (rank 1)
+ *      of the match.
+ * </ul> They are used to represent orthologue clusters. In this case, the ProteinMatch
+ *      belongs to the "dummy" organism and has no FeatureLocs. It is the object of a
+ *      number of <code>orthologous_to</code> FeatureRelationships from Polypeptide
+ *      features.
+ *
+ * @author rh11
+ *
+ */
 @Entity
 @FeatureType(cv="sequence", term="protein_match")
 public class ProteinMatch extends Match {
@@ -26,6 +40,11 @@ public class ProteinMatch extends Match {
         super(organism, uniqueName);
     }
 
+    /**
+     * Get the query feature of this similarity.
+     *
+     * @return
+     */
     public Region getQuery() {
         FeatureLoc featureLoc = this.getFeatureLoc(0, 0);
         if (featureLoc == null) {
@@ -47,6 +66,11 @@ public class ProteinMatch extends Match {
         return (Region) queryFeature;
     }
 
+    /**
+     * Get the target feature of this similarity.
+     *
+     * @return
+     */
     public Polypeptide getTarget() {
         FeatureLoc featureLoc = this.getFeatureLoc(0, 1);
         if (featureLoc == null) {
@@ -66,5 +90,22 @@ public class ProteinMatch extends Match {
             return null;
         }
         return (Polypeptide) targetFeature;
+    }
+
+    /**
+     * Add an orthologue link from the specified polypeptide to this cluster.
+     * @param source the source polypeptide
+     */
+    public void addOrthologue(Polypeptide source) {
+        if (! getFeatureLocs().isEmpty()) {
+            throw new IllegalStateException("This ProteinMatch feature has FeatureLocs. " +
+                    "Are you sure it represents an orthologue cluster?");
+        }
+        if (! getOrganism().getCommonName().equals("dummy")) {
+            throw new IllegalStateException("This ProteinMatch feature does not belong to the 'dummy' organism." +
+                    "Are you sure it represents an orthologue cluster?");
+        }
+
+        this.addFeatureRelationship(source, "sequence", "orthologous_to");
     }
 }
