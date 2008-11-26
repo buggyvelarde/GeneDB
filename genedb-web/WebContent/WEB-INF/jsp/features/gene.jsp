@@ -44,6 +44,24 @@ onLoad="initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFe
 
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/jquery/jquery-genePage-combined.js"/>"></script>
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
+<script language="javascript">
+//<![CDATA[
+function addToBasket(var id){
+    var url = "include.html";
+    var callback = {
+        success: function(o) {
+            document.getElementById('basketbutton').src = o.responseText;
+            document.getElementById('basketbutton').onclick = null;
+        },
+        failure: function(o) {
+            stderr.write("AJAX request for add button failed");
+        }
+    }
+
+    var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callback, postData);
+}
+//]]>
+</script>
 </format:headerRound>
 <!-- Context Map -->
 <div id="contextMapOuterDiv">
