@@ -286,11 +286,9 @@ public class TranscriptDTO implements Serializable {
                                     diagramCache.fileForProteinMap(renderedProteinMap),
                                     renderedProteinMap.getRenderedFeaturesAsHTML("proteinMapMap"));
                         } catch (IOException exp) {
-                            ims = new ImageMapSummary();
+                            ims = null;
                             logger.error("Failed to create an imageMapSummary", exp);
                         }
-            } else {
-                ims = new ImageMapSummary();
             }
 
 
