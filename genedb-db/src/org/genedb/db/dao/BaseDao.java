@@ -136,7 +136,6 @@ public class BaseDao {
             return null;
         }
         if (list.size() == 0) {
-            // logger.warn("Got called with zero-length list");
             return null;
         }
         if (list.size() > 1) {
