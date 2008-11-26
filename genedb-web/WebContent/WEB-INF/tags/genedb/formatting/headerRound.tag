@@ -93,7 +93,7 @@
         </span>
         <div id="advancedSearch">
           <c:if test="${!empty organism}">
-            <form name="advSearchForm" action="<c:url value="/"/>Query?organism=${organism}" method="get">
+            <form name="advSearchForm" action="<c:url value="/"/>Query?organism=${organism}" method="post">
           </c:if>
           <c:if test="${empty organism}">
             <form name="advSearchForm" action="<c:url value="/"/>Query" method="get">
