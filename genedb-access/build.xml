@@ -159,11 +159,12 @@
         <pathelement location="${lib-dir}/spring-bundle-2.5.6/hsqldb/hsqldb.jar"/>
     </path>
 
-    <target name="all-tests" depends="file-test,location-test,loader-test"/>
+    <target name="all-tests" depends="file-test,location-test,embl-test,ortho-test"/>
     <target name="file-test" depends="genedb-access.jar,compile-tests">
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true">
             <classpath refid="test-classpath"/>
             <formatter type="brief" usefile="false" />
+            <test name="org.genedb.db.loading.FastaFileTest"/>
             <test name="org.genedb.db.loading.EmblFileTest"/>
         </junit>
     </target>
@@ -194,12 +195,12 @@
             <fileset dir="${imported.basedir.access}/../genedb-db/test-data/hsqldb" includes="skeleton.*"/>
         </copy>
     </target>
-    <target name="loader-test">
-        <antcall target="run-specific-loader-test"><param name="subtest" value="Berghei"/></antcall>
-        <antcall target="run-specific-loader-test"><param name="subtest" value="Mansoni"/></antcall>
-        <antcall target="run-specific-loader-test"><param name="subtest" value="Synthetic"/></antcall>
+    <target name="embl-test">
+        <antcall target="run-specific-embl-test"><param name="subtest" value="Berghei"/></antcall>
+        <antcall target="run-specific-embl-test"><param name="subtest" value="Mansoni"/></antcall>
+        <antcall target="run-specific-embl-test"><param name="subtest" value="Synthetic"/></antcall>
     </target>
-    <target name="run-specific-loader-test" depends="genedb-access.jar,compile-tests">
+    <target name="run-specific-embl-test" depends="genedb-access.jar,compile-tests">
         <antcall target="copy-skeleton-database"/>
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="256M">
             <classpath refid="test-classpath"/>
@@ -207,7 +208,14 @@
             <test name="org.genedb.db.loading.EmblLoader${subtest}Test"/>
         </junit>
     </target>
-
+    <target name="ortho-test" depends="genedb-access.jar,compile-tests">
+        <antcall target="copy-skeleton-database"/>
+        <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="512M">
+            <classpath refid="test-classpath"/>
+            <formatter type="brief" usefile="false" />
+            <test name="org.genedb.db.loading.OrthologueLoaderTest"/>
+        </junit>
+    </target>
 
     <!--
     <target name="prompt-for-password" depends="genedb-util.anttasks,check-properties" unless="source.password">

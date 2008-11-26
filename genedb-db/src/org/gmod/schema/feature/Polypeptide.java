@@ -396,8 +396,16 @@ public class Polypeptide extends Region {
         return ret;
     }
 
+    /**
+     * Get a collection of the ProteinMatch features that represent similarities
+     * between this polypeptide and another (as defined by a /similarity qualifier
+     * in a PSU EMBL file).
+     *
+     * @return a collection of the ProteinMatch features that represent similarities
+     * between this polypeptide and another.
+     */
     @Transient
-    public Collection<ProteinMatch> getProteinMatches() {
+    public Collection<ProteinMatch> getSimilarityMatches() {
         List<ProteinMatch> proteinMatches = new ArrayList<ProteinMatch>();
         for (FeatureLoc featureLoc: this.getFeatureLocsForSrcFeatureId()) {
             if (featureLoc.getRank() != 0) {
@@ -411,4 +419,23 @@ public class Polypeptide extends Region {
         return proteinMatches;
     }
 
+    /**
+     * Get a collection of the ProteinMatch features that represent orthologue clusters
+     * to which this polypeptide belongs.
+     * @return a collection of the ProteinMatch features that represent orthologue clusters
+     * to which this polypeptide belongs
+     */
+    @Transient
+    public Collection<ProteinMatch> getOrthologueClusters() {
+        List<ProteinMatch> clusters = new ArrayList<ProteinMatch>();
+        for (FeatureRelationship featureRelationship:
+            getFeatureRelationshipsForSubjectIdFilteredByCvNameAndTermName("sequence", "orthologous_to"))
+        {
+            Feature object = featureRelationship.getObjectFeature();
+            if (object instanceof ProteinMatch) {
+                clusters.add((ProteinMatch) object);
+            }
+        }
+        return clusters;
+    }
 }

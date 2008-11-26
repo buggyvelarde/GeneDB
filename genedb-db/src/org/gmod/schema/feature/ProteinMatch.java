@@ -1,11 +1,17 @@
 package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
+import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 
@@ -41,6 +47,41 @@ public class ProteinMatch extends Match {
     }
 
     /**
+     * Check that this ProteinMatch feature represents a similarity.
+     * @throws IllegalStateException if this ProteinMatch feature does not represent a similarity.
+     */
+    private void thisIsASimilarity() {
+        if (getFeatureLoc(0, 0) == null) {
+            throw new IllegalStateException("This ProteinMatch feature does not have a rank=0 FeatureLoc. " +
+                        "Are you sure it represents a similarity?");
+        }
+        if (getFeatureLoc(0, 1) == null) {
+            throw new IllegalStateException("This ProteinMatch feature does not have a rank=1 FeatureLoc. " +
+                        "Are you sure it represents a similarity?");
+        }
+        if (getOrganism().getCommonName().equals("dummy")) {
+            throw new IllegalStateException("This ProteinMatch feature belongs to the 'dummy' organism." +
+                    "Are you sure it represents a similarity?");
+        }
+    }
+
+    /**
+     * Check that this ProteinMatch feature represents an orthologue cluster.
+     * @throws IllegalStateException if this ProteinMatch feature does not represent an orthologue cluster.
+     */
+    private void thisIsACluster() {
+        if (! getFeatureLocs().isEmpty()) {
+            throw new IllegalStateException("This ProteinMatch feature has FeatureLocs. " +
+                    "Are you sure it represents an orthologue cluster?");
+        }
+        if (! getOrganism().getCommonName().equals("dummy")) {
+            throw new IllegalStateException("This ProteinMatch feature does not belong to the 'dummy' organism." +
+                    "Are you sure it represents an orthologue cluster?");
+        }
+    }
+
+
+    /**
      * Get the subject feature of this similarity, which is a Region belonging to the dummy
      * organism, and has various bits of similarity metadata as FeatureProps
      * (with types <code>feature_property:organism</code>, <code>genedb_misc:product</code>
@@ -51,6 +92,7 @@ public class ProteinMatch extends Match {
      * @return
      */
     public Region getSubject() {
+        thisIsASimilarity();
         FeatureLoc featureLoc = this.getFeatureLoc(0, 1);
         if (featureLoc == null) {
             logger.error(String.format("Could not find subject featureloc for ProteinMatch '%s' (ID=%d)",
@@ -77,6 +119,7 @@ public class ProteinMatch extends Match {
      * @return
      */
     public Polypeptide getPolypeptide() {
+        thisIsASimilarity();
         FeatureLoc featureLoc = this.getFeatureLoc(0, 0);
         if (featureLoc == null) {
             logger.error(String.format("Could not find query featureloc for ProteinMatch '%s' (ID=%d)",
@@ -102,15 +145,31 @@ public class ProteinMatch extends Match {
      * @param source the source polypeptide
      */
     public void addOrthologue(Polypeptide source) {
-        if (! getFeatureLocs().isEmpty()) {
-            throw new IllegalStateException("This ProteinMatch feature has FeatureLocs. " +
-                    "Are you sure it represents an orthologue cluster?");
-        }
-        if (! getOrganism().getCommonName().equals("dummy")) {
-            throw new IllegalStateException("This ProteinMatch feature does not belong to the 'dummy' organism." +
-                    "Are you sure it represents an orthologue cluster?");
-        }
-
+        thisIsACluster();
         this.addFeatureRelationship(source, "sequence", "orthologous_to");
+    }
+
+    /**
+     * Get all the polypeptides that belong to this cluster.
+     * @return a collection of all the polypeptides that belong to this cluster
+     */
+    public Collection<Polypeptide> getPolypeptidesInCluster() {
+        thisIsACluster();
+        Set<Polypeptide> polypeptides = new HashSet<Polypeptide>();
+        for (FeatureRelationship featureRelationship: getFeatureRelationshipsForObjectId()) {
+            CvTerm relationshipType = featureRelationship.getType();
+            if (relationshipType.getCv().getName().equals("sequence")
+                    && relationshipType.getName().equals("orthologous_to")) {
+                Feature subject = featureRelationship.getSubjectFeature();
+                if (! (subject instanceof Polypeptide)) {
+                    throw new IllegalStateException(
+                        String.format("The cluster '%s' (ID=%d) contains something other than a Polypeptide" +
+                                "(%s, ID=%d, %s)", getUniqueName(), getFeatureId(), subject.getUniqueName(),
+                                subject.getFeatureId(), subject.getClass()));
+                }
+                polypeptides.add((Polypeptide) subject);
+            }
+        }
+        return polypeptides;
     }
 }

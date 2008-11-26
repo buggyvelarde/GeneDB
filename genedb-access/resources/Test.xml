@@ -8,12 +8,19 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
     <tx:annotation-driven mode="aspectj"/>
+    <context:component-scan base-package="org.gmod.schema"/>
+    <context:component-scan base-package="org.genedb.db.loading"/>
+    <context:spring-configured/>
 
     <bean id="emblLoaderTestHelper" class="org.genedb.db.loading.EmblLoaderTestHelper">
         <property name="loader" ref="emblLoader"/>
         <property name="organismDao" ref="organismDao"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+
+    <!--
+    <bean id="orthologueTester" class="org.genedb.db.loading.OrthologueTester"/>
+    -->
 
     <!--  Override database-related beans with test versions that refer to an HSQLDB skeleton database.
           This skeleton database is created if necessary and copied from genedb-db to genedb-access by the

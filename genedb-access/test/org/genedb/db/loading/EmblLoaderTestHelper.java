@@ -53,7 +53,7 @@ public class EmblLoaderTestHelper {
         PropertyConfigurator.configure(url);
     }
 
-    EmblLoaderTestHelper() {
+    private EmblLoaderTestHelper() {
         // empty
     }
 
@@ -64,6 +64,9 @@ public class EmblLoaderTestHelper {
      * <p>
      * This method should usually be called from a <code>@BeforeClass</code> method of
      * the test class.
+     * <p>
+     * The <code>cleanUp</code> method <strong>must</strong> be called when you have finished
+     * with the object.
      *
      * @param organismCommonName the common name of the organism
      * @param filename the filename
@@ -87,6 +90,9 @@ public class EmblLoaderTestHelper {
      * <p>
      * This method should usually be called from a <code>@BeforeClass</code> method of
      * the test class.
+     * <p>
+     * The <code>cleanUp</code> method <strong>must</strong> be called when you have finished
+     * with the object.
      *
      * @param organismCommonName the common name of the organism. If there is already an organism
      *                          with the given common name, that organism is used.

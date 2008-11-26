@@ -9,6 +9,7 @@ import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.ProteinMatch;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Analysis;
+import org.gmod.schema.mapped.AnalysisFeature;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
@@ -162,6 +163,10 @@ class OrthologueFile {
         String getTargetFeature() {
             return targetFeature;
         }
+
+        Double getIdentity() {
+            return identity;
+        }
     }
     private File file;
     private List<Line> lines = new ArrayList<Line>();
@@ -190,11 +195,11 @@ class OrthologueFile {
     }
 }
 
-//@Transactional(rollbackFor=DataError.class) // Will also rollback for runtime exceptions, by default
+@Transactional(rollbackFor=DataError.class) // Will also rollback for runtime exceptions, by default
 class OrthologuesLoader {
     private static final Logger logger = Logger.getLogger(OrthologuesLoader.class);
 
-    private static final int BATCH_SIZE = 20;
+    private static final int BATCH_SIZE = 50;
 
     private SequenceDao sequenceDao;
     private OrganismDao organismDao;
@@ -228,11 +233,8 @@ class OrthologuesLoader {
     }
 
     public void load(OrthologueFile orthologueFile) throws DataError {
-        /*
-         * Note that this method is not @Transactional. We do all our
-         * work by calling transactional methods. This technique relies
-         * on bytecode instrumentation: it won't work with proxies.
-         */
+
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
         if (analysis != null) {
             persistAnalysis();
@@ -240,77 +242,74 @@ class OrthologuesLoader {
 
         Map<String,Collection<Polypeptide>> clustersByName = new HashMap<String,Collection<Polypeptide>>();
 
-        /* If we don't split the load into a number of smaller transactions,
-         * it becomes impossibly slow after a while.
-         */
         int numberOfLines = orthologueFile.numberOfLines();
-        for (int i=1; i < numberOfLines; i += BATCH_SIZE) {
-            int endIndex = i + BATCH_SIZE;
-            if (endIndex > numberOfLines) {
-                endIndex = numberOfLines;
+        for (OrthologueFile.Line line: orthologueFile.lines()) {
+            logger.trace(String.format("[%d/%d] %s:%s -> %s:%s",
+                line.lineNumber, numberOfLines,
+                line.getSourceOrganism(), line.getSourceFeature(),
+                line.getTargetOrganism(), line.getTargetFeature()));
+
+            processLine(orthologueFile.file(), line, clustersByName);
+
+            if (line.lineNumber % BATCH_SIZE == 0) {
+                /* If we don't clear the session regularly,
+                 * it becomes impossibly slow after a while.
+                 */
+                logger.trace("Flushing and clearing session");
+                session.flush();
+                session.clear();
             }
-            processLines(orthologueFile, clustersByName,
-                orthologueFile.lines().subList(i, endIndex));
         }
 
         loadClusters(clustersByName);
     }
 
-    @Transactional
     private void persistAnalysis() {
         SessionFactoryUtils.getSession(sessionFactory, false).persist(analysis);
     }
 
-    @Transactional
-    private void processLines(OrthologueFile orthologueFile,
-            Map<String, Collection<Polypeptide>> clustersByName,
-            Collection<OrthologueFile.Line> lines) throws DataError
+    private void processLine(File file, OrthologueFile.Line line,
+            Map<String, Collection<Polypeptide>> clustersByName) throws DataError
     {
-        for (OrthologueFile.Line line: lines) {
-            logger.trace(String.format("[%d/%d] %s:%s -> %s:%s",
-                line.lineNumber, orthologueFile.numberOfLines(),
-                line.getSourceOrganism(), line.getSourceFeature(),
-                line.getTargetOrganism(), line.getTargetFeature()));
+        Polypeptide source = getPolypeptide(line.getSourceOrganism(), line.getSourceFeature(),
+            file, line.lineNumber);
+        if (source == null) {
+            // A return value of null indicates a non-fatal error
+            return;
+        }
 
-            Polypeptide source = getPolypeptide(line.getSourceOrganism(), line.getSourceFeature(),
-                orthologueFile.file(), line.lineNumber);
-            if (source == null) {
-                // A return value of null indicates a non-fatal error
-                continue;
+        String targetOrganismName = line.getTargetOrganism();
+        if (targetOrganismName.equalsIgnoreCase("cluster")) {
+            String cluster = line.getTargetFeature();
+            if (!clustersByName.containsKey(cluster)) {
+                clustersByName.put(cluster, new ArrayList<Polypeptide>());
             }
-
-            String targetOrganismName = line.getTargetOrganism();
-            if (targetOrganismName.equalsIgnoreCase("cluster")) {
-                String cluster = line.getTargetFeature();
-                if (!clustersByName.containsKey(cluster)) {
-                    clustersByName.put(cluster, new ArrayList<Polypeptide>());
-                }
-                clustersByName.get(cluster).add(source);
-            } else {
-                // Unclustered
-                Polypeptide target = getPolypeptide(line.getTargetOrganism(), line.getTargetFeature(),
-                    orthologueFile.file(), line.lineNumber);
-                addOrthologue(source, target);
-            }
+            clustersByName.get(cluster).add(source);
+        } else {
+            // Unclustered
+            Polypeptide target = getPolypeptide(line.getTargetOrganism(), line.getTargetFeature(),
+                file, line.lineNumber);
+            addOrthologue(source, target, line.getIdentity());
         }
     }
 
-    @Transactional
     private void loadClusters(Map<String, Collection<Polypeptide>> clustersByName) {
         for (Map.Entry<String, Collection<Polypeptide>> entry: clustersByName.entrySet()) {
             String clusterName = entry.getKey();
             Collection<Polypeptide> transcripts = entry.getValue();
 
-            loadCluster(clusterName, transcripts);
+            loadCluster(clusterName, transcripts, null);
         }
     }
 
-    @Transactional
     private Polypeptide getPolypeptide(String organism, String uniqueName, File file, int lineNumber) throws DataError {
         Transcript transcript;
 
         if (geneNames) {
             AbstractGene gene = sequenceDao.getFeatureByUniqueName(uniqueName, AbstractGene.class);
+            if (gene == null) {
+                throw new DataError(String.format("Could not find gene '%s'", uniqueName));
+            }
             Collection<Transcript> transcripts = gene.getTranscripts();
             if (transcripts.isEmpty()) {
                 logger.error(String.format("The gene '%s' does not have any transcripts", uniqueName));
@@ -350,15 +349,14 @@ class OrthologuesLoader {
         return polypeptide;
     }
 
-    @Transactional
-    private void addOrthologue(Polypeptide sourcePolypeptide, Polypeptide targetPolypeptide) {
+    private void addOrthologue(Polypeptide sourcePolypeptide, Polypeptide targetPolypeptide, Double identity) {
         if (this.analysis != null) {
             // Since this is an algorithmically-derived orthologue, we add it as a cluster
             String clusterName = String.format("cluster %s -> %s",
                 sourcePolypeptide.getUniqueName(), targetPolypeptide.getUniqueName());
             List<Polypeptide> polypeptides = new ArrayList<Polypeptide>(2);
             Collections.addAll(polypeptides, sourcePolypeptide, targetPolypeptide);
-            loadCluster(clusterName, polypeptides);
+            loadCluster(clusterName, polypeptides, identity);
         } else {
             // Manually-curated orthologue. Add a simple orthologous_to relationship in both directions.
             sourcePolypeptide.addOrthologue(targetPolypeptide);
@@ -366,12 +364,13 @@ class OrthologuesLoader {
         }
     }
 
-    @Transactional
-    private void loadCluster(String clusterName, Collection<Polypeptide> polypeptides) {
+    private void loadCluster(String clusterName, Collection<Polypeptide> polypeptides, Double identity) {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
         logger.trace(String.format("Loading orthologue cluster '%s'", clusterName));
         ProteinMatch clusterFeature = new ProteinMatch(dummyOrganism, clusterName, true, false);
+        AnalysisFeature analysisFeature = clusterFeature.createAnalysisFeature(analysis);
+        analysisFeature.setIdentity(identity);
 
         for (Polypeptide polypeptide: polypeptides) {
             clusterFeature.addOrthologue(polypeptide);

@@ -566,23 +566,26 @@ public abstract class Feature implements java.io.Serializable {
         return pubs;
     }
 
-    public Collection<AnalysisFeature> getAnalysisFeatures() {
-        return Collections.unmodifiableCollection(this.analysisFeatures);
-    }
+    @Transient
+    private Object featureSynonymsLock = new Object();
 
     public Collection<FeatureSynonym> getFeatureSynonyms() {
-        if (featureSynonyms == null) {
-            featureSynonyms = new HashSet<FeatureSynonym>();
+        synchronized (featureSynonymsLock) {
+            if (featureSynonyms == null) {
+                featureSynonyms = new HashSet<FeatureSynonym>();
+            }
+            return Collections.unmodifiableCollection(featureSynonyms);
         }
-        return Collections.unmodifiableCollection(featureSynonyms);
     }
 
     public void addFeatureSynonym(FeatureSynonym featureSynonym) {
-        if (featureSynonyms == null) {
-            featureSynonyms = new HashSet<FeatureSynonym>();
+        synchronized(featureSynonymsLock) {
+            if (featureSynonyms == null) {
+                featureSynonyms = new HashSet<FeatureSynonym>();
+            }
+            this.featureSynonyms.add(featureSynonym);
+            featureSynonym.setFeature(this);
         }
-        this.featureSynonyms.add(featureSynonym);
-        featureSynonym.setFeature(this);
     }
 
     /**
@@ -1204,5 +1207,50 @@ public abstract class Feature implements java.io.Serializable {
      */
     public void delete() {
         cvDao.delete(this);
+    }
+
+    @Transient
+    private Object analysisFeaturesLock = new Object();
+
+    public Collection<AnalysisFeature> getAnalysisFeatures() {
+        synchronized(analysisFeaturesLock) {
+            if (analysisFeatures == null) {
+                analysisFeatures = new HashSet<AnalysisFeature>();
+            }
+            return Collections.unmodifiableCollection(this.analysisFeatures);
+        }
+    }
+
+
+    /**
+     * Get the AnalysisFeature object associated with this feature, assuming there is at most one.
+     * @return the associated AnalysisFeature object, or <code>null</code> if there isn't one.
+     * @throws RuntimeException if there is more than one AnalysisFeature associated with this feature
+     */
+    @Transient
+    public AnalysisFeature getAnalysisFeature() {
+        synchronized(analysisFeaturesLock) {
+            Collection<AnalysisFeature> analysisFeatures = getAnalysisFeatures();
+            if (analysisFeatures == null || analysisFeatures.isEmpty()) {
+                return null;
+            }
+            if (analysisFeatures.size() > 1) {
+                throw new RuntimeException(String.format("Feature '%s' (ID=%d) has more than one AnalysisFeature",
+                    getUniqueName(), getFeatureId()));
+            }
+            return analysisFeatures.iterator().next();
+        }
+    }
+
+    public AnalysisFeature createAnalysisFeature(Analysis analysis) {
+        logger.trace(String.format("Adding AnalysisFeature to '%s' (ID=%d)", getUniqueName(), getFeatureId()));
+        synchronized(analysisFeaturesLock) {
+            AnalysisFeature analysisFeature = new AnalysisFeature(analysis, this);
+            if (analysisFeatures == null) {
+                analysisFeatures = new HashSet<AnalysisFeature>();
+            }
+            analysisFeatures.add(analysisFeature);
+            return analysisFeature;
+        }
     }
 }

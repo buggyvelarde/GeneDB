@@ -321,7 +321,7 @@ public class FeatureTester {
         }
 
         public SimilarityTester similarity(String db, String accession) {
-            for (ProteinMatch proteinMatch: polypeptide.getProteinMatches()) {
+            for (ProteinMatch proteinMatch: polypeptide.getSimilarityMatches()) {
                 DbXRef dbXRef = proteinMatch.getSubject().getDbXRef();
                 if (dbXRef.getDb().getName().equals(db) && dbXRef.getAccession().equals(accession)) {
                     return new SimilarityTester(proteinMatch);
