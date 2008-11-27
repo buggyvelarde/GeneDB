@@ -70,7 +70,7 @@
     </bean>
 
     <bean id="emblLoader" class="org.genedb.db.loading.EmblLoader"
-        init-method="afterPropertiesSet">
+        scope="prototype" init-method="afterPropertiesSet">
         <property name="cvDao" ref="cvDao"/>
         <property name="generalDao" ref="generalDao"/>
         <property name="organismDao" ref="organismDao"/>
