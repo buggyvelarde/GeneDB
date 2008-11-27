@@ -197,9 +197,9 @@
         </copy>
     </target>
     <target name="embl-test" depends="genedb-access.jar,compile-tests">
-        <antcall target="specific-embl-test"><param name="subtest" value="Berghei"/></antcall>
-        <antcall target="specific-embl-test"><param name="subtest" value="Mansoni"/></antcall>
-        <antcall target="specific-embl-test"><param name="subtest" value="Synthetic"/></antcall>
+        <antcall target="run-specific-embl-test"><param name="subtest" value="Berghei"/></antcall>
+        <antcall target="run-specific-embl-test"><param name="subtest" value="Mansoni"/></antcall>
+        <antcall target="run-specific-embl-test"><param name="subtest" value="Synthetic"/></antcall>
     </target>
     <!-- If you antcall a target that has dependencies, all the dependencies are executed
          EVEN IF they have already been executed. Therefore we have an internal target
