@@ -96,7 +96,7 @@
             <form name="advSearchForm" action="<c:url value="/"/>Query?organism=${organism}" method="post">
           </c:if>
           <c:if test="${empty organism}">
-            <form name="advSearchForm" action="<c:url value="/"/>Query" method="get">
+            <form name="advSearchForm" action="<c:url value="/"/>Query" method="post">
           </c:if>
             <table id="advSearchTable" cellpadding="2">
               <tr>
@@ -117,7 +117,7 @@
                   for
                 </td>
                 <td width="80%" style="text-align:left;">
-                  <input id="query" name="term" type="text" align="middle">
+                  <input id="query" name="search" type="text" align="middle">
                   <input id="submit" type="submit" value="Go" title="Search" align="middle" />
                 </td>
               </tr>
