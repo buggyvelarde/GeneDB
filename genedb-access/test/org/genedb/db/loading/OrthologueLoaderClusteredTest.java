@@ -36,7 +36,7 @@ public class OrthologueLoaderClusteredTest {
     private static OrthologueTester tester;
 
     private static final String program = "OrthoMCL";
-    private static final String programVersion = "???";
+    private static final String programVersion = "1.4";
     private static final String algorithm = "(default parameters)";
 
     @BeforeClass
