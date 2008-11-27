@@ -328,6 +328,11 @@ class OrthologuesLoader {
             if (transcript == null) {
                 Polypeptide polypeptide = sequenceDao.getFeatureByUniqueName(uniqueName, Polypeptide.class);
                 if (polypeptide != null) {
+                    if (!polypeptide.getOrganism().getCommonName().equals(organism)) {
+                        throw new DataError(file, lineNumber,
+                            String.format("The feature '%s' does not belong to organism '%s'",
+                                polypeptide.getUniqueName(), organism));
+                    }
                     return polypeptide;
                 }
                 throw new DataError(file, lineNumber, String.format("Could not find transcript feature '%s'", uniqueName));
