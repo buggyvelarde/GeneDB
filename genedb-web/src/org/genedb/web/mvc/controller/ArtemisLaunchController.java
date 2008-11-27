@@ -4,36 +4,54 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
-public class ArtemisLaunchController extends AbstractController {
+@Controller
+@RequestMapping("/ArtemisLaunch")
+public class ArtemisLaunchController {
 
-    @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) {
+    private static final int DEFAULT_OFFSET = 13000;
 
-        String organism = request.getParameter("organism");
-        String chromosome = request.getParameter("chromosome");
-        String s = request.getParameter("start");
-        String e = request.getParameter("end");
+    private int offset = DEFAULT_OFFSET;
 
-        int start = Integer.parseInt(s) - 13000;
-        int end = Integer.parseInt(e) + 13000;
+    @RequestMapping(method=RequestMethod.GET)
+    protected ModelAndView launchMainArtemis(HttpServletRequest request,
+            @RequestParam("organism") String organism,
+            @RequestParam("chromosome") String chromosome,
+            @RequestParam("start") int start,
+            @RequestParam("end") int end) {
 
-        if (start < 0)
-            start = 0;
+        int realStart = start - offset;
+        int realEnd = end + offset;
 
-        String argument = organism + ":" + chromosome + ":" + start + ".." + end;
+        if (realStart < 0) {
+            realStart = 0;
+        }
+
+        String argument = organism + ":" + chromosome + ":" + realStart + ".." + realEnd;
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("argument", argument);
-        model.put("offset", s);
-        // FreeMarkerView fmv = new FreeMarkerView();
-        // fmv.setContentType("application/x-java-jnlp-file");
-        // fmv.setUrl("artemis");
+        model.put("offset", start);
+
         return new ModelAndView("artemis", model);
+    }
+
+
+    @RequestMapping(method=RequestMethod.GET)
+    protected ModelAndView launchArtemisGeneBuilder(
+            @RequestParam("systematicId") String systematicId) {
+
+        // TODO Check systematic id works
+
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("systematicId", systematicId);
+
+        return new ModelAndView("artemisGeneBuilder", model);
     }
 
 }
