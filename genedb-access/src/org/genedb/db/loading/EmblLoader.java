@@ -100,6 +100,7 @@ class EmblLoader {
     private OverwriteExisting overwriteExisting = OverwriteExisting.NO;
 
     private boolean sloppyControlledCuration = false;
+    private boolean reportUnusedQualifiers = false;
 
     /**
      * Set the organism into which to load data.
@@ -173,6 +174,15 @@ class EmblLoader {
         this.continueOnError = continueOnError;
     }
 
+    /**
+     * Whether we should log unused qualifiers once the file has been loaded.
+     *
+     * @param reportUnusedQualifiers
+     */
+    public void setReportUnusedQualifiers(boolean reportUnusedQualifiers) {
+        this.reportUnusedQualifiers = reportUnusedQualifiers;
+    }
+
     private Session session;
 
     /**
@@ -195,9 +205,16 @@ class EmblLoader {
             return;
         }
 
+        logger.trace("XXXX about to doLoad");
         doLoad(emblFile, topLevelFeature);
-    }
+        logger.trace("XXXX finished doLoad");
 
+        if (reportUnusedQualifiers) {
+            reportUnusedQualifiers(emblFile.getFeatureTable());
+        } else {
+            logger.debug("Not reporting on unused qualifiers");
+        }
+    }
 
     @Transactional(rollbackFor=DataError.class) // Will also rollback for runtime exceptions, by default
     private void doLoad(EmblFile emblFile, TopLevelFeature topLevelFeature) throws DataError {
@@ -425,6 +442,33 @@ class EmblLoader {
         }
         else {
             logger.warn(String.format("Ignoring '%s' feature on line %d", featureType, feature.lineNumber));
+        }
+    }
+
+    private void reportUnusedQualifiers(FeatureTable featureTable) {
+        Map<String,Set<String>> unusedQualifiersByFeatureType = new HashMap<String, Set<String>>();
+
+        // Collect unused qualifiers
+        for (FeatureTable.Feature feature: featureTable.getFeatures()) {
+            for (String unusedQualifier: feature.getUnusedQualifiers()) {
+                if (!unusedQualifiersByFeatureType.containsKey(feature.type)) {
+                    unusedQualifiersByFeatureType.put(feature.type, new HashSet<String>());
+                }
+                unusedQualifiersByFeatureType.get(feature.type).add(unusedQualifier);
+            }
+        }
+
+        // Report unused qualifiers
+        if (unusedQualifiersByFeatureType.isEmpty()) {
+            logger.info("No unused qualifiers to report");
+            return;
+        }
+        for (Map.Entry<String,Set<String>> entry: unusedQualifiersByFeatureType.entrySet()) {
+            StringBuilder message = new StringBuilder(String.format("Unused qualifiers for %s features:%n", entry.getKey()));
+            for (String qualifierName: entry.getValue()) {
+                message.append(String.format("\t/%s%n", qualifierName));
+            }
+            logger.warn(message);
         }
     }
 
@@ -1060,7 +1104,7 @@ class EmblLoader {
          */
         protected void processTranscriptQualifiers() throws DataError {
 
-            checkForTemporaryOrPreviousSystematicIdEqualToSystematicId();
+            checkForPreviousSystematicIdEqualToSystematicId();
 
             addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             addTranscriptSynonymsFromQualifier("previous_systematic_id", "systematic_id", false);
@@ -1121,15 +1165,10 @@ class EmblLoader {
          * error is difficult to understand and track down.
          * @throws DataError if so
          */
-        private void checkForTemporaryOrPreviousSystematicIdEqualToSystematicId() throws DataError {
+        private void checkForPreviousSystematicIdEqualToSystematicId() throws DataError {
             String systematicId = feature.getQualifierValue("systematic_id");
             if (systematicId == null) {
                 return;
-            }
-            for (String temporarySystematicId: feature.getQualifierValues("temporary_systematic_id")) {
-                if (systematicId.equals(temporarySystematicId)) {
-                    throw new DataError("Feature has /temporary_systematic_id with the same value as /systematic_id");
-                }
             }
             for (String temporarySystematicId: feature.getQualifierValues("previous_systematic_id")) {
                 if (systematicId.equals(temporarySystematicId)) {

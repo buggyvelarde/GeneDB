@@ -128,6 +128,7 @@ public class EmblLoaderTestHelper {
                 organismSpecies, organismStrain);
         }
 
+        loader.setReportUnusedQualifiers(true);
         loader.setOrganismCommonName(organismCommonName);
         loadFile(filename);
     }

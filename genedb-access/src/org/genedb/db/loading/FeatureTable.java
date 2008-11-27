@@ -6,7 +6,9 @@ package org.genedb.db.loading;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,12 +42,20 @@ class FeatureTable extends EmblFile.Section {
             List<String> ret = new ArrayList<String>();
             for (Qualifier qualifier: qualifiers) {
                 if (qualifier.name.equals(key)) {
+                    qualifier.used = true;
                     ret.add(qualifier.value);
                 }
             }
             return ret;
         }
 
+        /**
+         * Does the feature have the specified qualifier?
+         *
+         * @param key the name of the qualifier
+         * @return <code>true</code> if the feature has the specified qualifier,
+         *         or <code>false</code> if not
+         */
         public boolean hasQualifier(String key) {
             return !getQualifierValues(key).isEmpty();
         }
@@ -78,6 +88,16 @@ class FeatureTable extends EmblFile.Section {
                 return uniqueValue;
             }
             return values.get(0);
+        }
+
+        public Iterable<String> getUnusedQualifiers() {
+            Set<String> unusedQualifiers = new HashSet<String>();
+            for (Qualifier qualifier: qualifiers) {
+                if (!qualifier.used) {
+                    unusedQualifiers.add(qualifier.name);
+                }
+            }
+            return unusedQualifiers;
         }
 
         @Override
@@ -240,6 +260,7 @@ class FeatureTable extends EmblFile.Section {
     private class Qualifier {
         String name, value;
         boolean valueIsQuoted;
+        private boolean used = false;
         public Qualifier(String name, String value, boolean valueIsQuoted) {
             this.name = name;
             this.value = value;

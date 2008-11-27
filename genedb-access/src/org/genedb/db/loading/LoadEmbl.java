@@ -53,6 +53,9 @@ public class LoadEmbl extends FileProcessor {
      *                  <code>db_xref</code>s will still be extracted if possible. This is required
      *                  for projects such as Staphylococcus aureus, whose controlled_curation qualifiers
      *                  use a non-standard format.
+     *    <li> if <code>load.reportUnusedQualifiers</code> is set to <code>true</code> (or
+     *                  any value other than <code>false</code>) then a list of unused qualifiers,
+     *                  grouped by feature type, is printed after each file has been loaded.
      * </ul>
      *
      * @param args ignored
@@ -71,11 +74,12 @@ public class LoadEmbl extends FileProcessor {
         String topLevelFeatureType = getRequiredProperty("load.topLevel");
         boolean sloppyControlledCuration = hasProperty("load.sloppyControlledCuration");
         boolean quickAndDirty = hasProperty("load.quickAndDirty");
+        boolean reportUnusedQualifiers = hasProperty("load.reportUnusedQualifiers");
 
         logger.info(String.format("Options: organismCommonName=%s, inputDirectory=%s, fileNamePattern=%s," +
-                   "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%s",
+                   "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%s, reportUnusedQualifiers=%s",
                    organismCommonName, inputDirectory, fileNamePattern, overwriteExisting,
-                   topLevelFeatureType, sloppyControlledCuration));
+                   topLevelFeatureType, sloppyControlledCuration, reportUnusedQualifiers));
 
         if (quickAndDirty) {
             ((AppenderSkeleton) Logger.getRootLogger().getAppender("stdout")).setThreshold(Level.WARN);
@@ -85,6 +89,7 @@ public class LoadEmbl extends FileProcessor {
         if (quickAndDirty) {
             loadEmbl.quickAndDirty();
         }
+        loadEmbl.setReportUnusedQualifiers(reportUnusedQualifiers);
 
         loadEmbl.processFileOrDirectory(inputDirectory, fileNamePattern);
     }
@@ -139,5 +144,9 @@ public class LoadEmbl extends FileProcessor {
         alwaysSkip();
         loader.setContinueOnError(true);
         continueOnError = true;
+    }
+
+    private void setReportUnusedQualifiers(boolean reportUnusedQualifiers) {
+        loader.setReportUnusedQualifiers(reportUnusedQualifiers);
     }
 }
