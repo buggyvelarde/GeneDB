@@ -175,7 +175,9 @@ class EmblLoader {
     }
 
     /**
-     * Whether we should log unused qualifiers once the file has been loaded.
+     * Whether we should log a list of unused qualifiers once the file has been loaded.
+     * If set to true, this list is logged as a series of WARN messages, one for each
+     * type of feature encountered in the file that has unused qualifiers.
      *
      * @param reportUnusedQualifiers
      */
