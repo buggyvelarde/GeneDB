@@ -653,6 +653,22 @@ public abstract class Feature implements java.io.Serializable {
         return ret;
     }
 
+    @Transient
+    public <T extends Feature> Collection<T> getRelatedFeatures(Class<T> featureClass,
+        String relationshipTypeCvName, String relationshipTypeCvTerm) {
+
+        Collection<T> relatedFeatures = new HashSet<T>();
+
+        for(FeatureRelationship featureRelationship: getFeatureRelationshipsForSubjectIdFilteredByCvNameAndTermName(relationshipTypeCvName, relationshipTypeCvTerm)) {
+            Feature object = featureRelationship.getObjectFeature();
+            if (featureClass.isInstance(object)) {
+                relatedFeatures.add(featureClass.cast(object));
+            }
+        }
+
+        return relatedFeatures;
+    }
+
     public Collection<Phylonode> getPhylonodes() {
         return this.phylonodes;
     }
@@ -796,8 +812,9 @@ public abstract class Feature implements java.io.Serializable {
      * @param subject the subject of the relationship
      * @param cvName the CV to which the relationship type belongs
      * @param termName the CV term denoting the relationship type
+     * @return the newly-created FeatureRelationship object
      */
-    protected void addFeatureRelationship(Feature subject, String cvName,
+    protected FeatureRelationship addFeatureRelationship(Feature subject, String cvName,
             String termName) {
         CvTerm type = cvDao.getCvTermByNameAndCvName(termName, cvName);
         if (type == null) {
@@ -815,6 +832,7 @@ public abstract class Feature implements java.io.Serializable {
             subject.featureRelationshipsForSubjectId = new HashSet<FeatureRelationship>();
         }
         subject.featureRelationshipsForSubjectId.add(relationship);
+        return relationship;
     }
 
     public FeatureLoc addLocatedChild(Feature child, StrandedLocation location) {
@@ -1242,7 +1260,17 @@ public abstract class Feature implements java.io.Serializable {
         }
     }
 
+    /**
+     * Create an AnalysisFeature that associates this feature with the specified
+     * analysis.
+     * @param analysis the analysis. May not be null.
+     * @return the newly-created AnalysisFeatuer
+     * @throws NullPointerException if the suppled analysis is null
+     */
     public AnalysisFeature createAnalysisFeature(Analysis analysis) {
+        if (analysis == null) {
+            throw new NullPointerException("Analysis is null in createAnalysisFeature");
+        }
         logger.trace(String.format("Adding AnalysisFeature to '%s' (ID=%d)", getUniqueName(), getFeatureId()));
         synchronized(analysisFeaturesLock) {
             AnalysisFeature analysisFeature = new AnalysisFeature(analysis, this);

@@ -1,1173 +1,322 @@
 ID   BX571856; SV 1; circular; genomic DNA; STD; PRO; 2902619 BP.
 FH   Key             Location/Qualifiers
 FH
-FT   CDS             18310..20277
-FT                   /COL_orthologue="SACOL0014"
-FT                   /MSSA476_orthologue="SAS0014"
-FT                   /MW2_orthologue="MW0014"
-FT                   /Mu50_orthologue="SAV0014"
-FT                   /N315_orthologue="SA0013"
-FT                   /NCTC8325_orthologue="SAOUHSC_00015"
-FT                   /RF122_orthologue="SAB0014"
-FT                   /USA300_orthologue="SAUSA300_0014"
-FT                   /class="4.1.6"
-FT                   /colour=3
-FT                   /note="Similar to Bacillus subtilis hypothetical protein
-FT                   YybT SW:YYBT_BACSU (P37484) (659 aa) fasta scores: E():
-FT                   1.4e-114, 50.779% id in 642 aa, and to Bacillus halodurans
-FT                   hypothetical protein BH4031 TR:Q9K5Q7 (EMBL:AP001520) (654
-FT                   aa) fasta scores: E(): 1.6e-110, 45.912% id in 636 aa"
-FT                   /product="putative membrane protein"
-FT                   /systematic_id="SAR0014"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00014.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             20274..20720
-FT                   /COL_orthologue="SACOL0015"
-FT                   /MSSA476_orthologue="SAS0015"
-FT                   /MW2_orthologue="MW0015"
-FT                   /Mu50_orthologue="SAV0015"
-FT                   /N315_orthologue="SA0014"
-FT                   /NCTC8325_orthologue="SAOUHSC_00017"
-FT                   /RF122_orthologue="SAB0015"
-FT                   /USA300_orthologue="SAUSA300_0015"
-FT                   /class="4.2.2"
-FT                   /colour=2
-FT                   /gene="rplI"
-FT                   /note="Similar to Bacillus subtilis 50S ribosomal protein
-FT                   L9 RplI SW:RL9_BACSU (P37437) (149 aa) fasta scores: E():
-FT                   6.7e-28, 61.486% id in 148 aa, and to Bacillus
-FT                   stearothermophilus 50S ribosomal protein L9 RplI
-FT                   SW:RL9_BACST (P02417) (149 aa) fasta scores: E(): 7.7e-28,
-FT                   59.459% id in 148 aa"
-FT                   /product="50S ribosomal protein L9"
-FT                   /systematic_id="SAR0015"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00015.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             173669..174778
-FT                   /COL_orthologue="SACOL0141"
-FT                   /MSSA476_orthologue="SAS0129"
-FT                   /MW2_orthologue="MW0129"
-FT                   /Mu50_orthologue="SAV0154"
-FT                   /N315_orthologue="SA0149"
-FT                   /NCTC8325_orthologue="SAOUHSC_00119"
-FT                   /RF122_orthologue="SAB0095"
-FT                   /USA300_orthologue="SAUSA300_0157"
-FT                   /class="4.1.4"
-FT                   /colour=3
-FT                   /gene="capF"
-FT                   /note="Highly similar to Staphylococcus aureus capsular
-FT                   polysaccharide synthesis enzyme Cap5F TR:P95700
-FT                   (EMBL:U81973) (371 aa) fasta scores: E(): 3.6e-143,
-FT                   99.187% id in 369 aa, and to Staphylococcus aureus
-FT                   capsular polysaccharide synthesis enzyme Cap8F TR:P72372
-FT                   (EMBL:U73374) (371 aa) fasta scores: E(): 4.6e-141,
-FT                   97.832% id in 369 aa"
-FT                   /product="capsular polysaccharide synthesis enzyme"
-FT                   /systematic_id="SAR0156"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00155.out"
-FT                   /controlled_curation="organism=SAU; evidence=ISS;
-FT                   db_xref=PMID:9245821;"
-FT                   /curation="Nucleotide sequence analysis identified a gene
-FT                   cluster encoding 16 contiguous ORFs involved in CP8
-FT                   capsule biosynthesis.  Homology searches predicted that
-FT                   cap8F encodes a sugar epimerase or dehydratase.
-FT                   (PMID:9245821)"
-FT   CDS             275703..276656
-FT                   /COL_orthologue="SACOL0222"
-FT                   /EC_number="1.1.1.27"
-FT                   /MSSA476_orthologue="SAS0217"
-FT                   /MW2_orthologue="MW0217"
-FT                   /Mu50_orthologue="SAV0241"
-FT                   /N315_orthologue="SA0232"
-FT                   /NCTC8325_orthologue="SAOUHSC_00206"
-FT                   /RF122_orthologue="SAB0180"
-FT                   /USA300_orthologue="SAUSA300_0235"
-FT                   /class="3.5.2"
-FT                   /cluster="MRSA252_1e-50:0068 2"
-FT                   /cluster="MRSA252_1e-40:0085 2"
-FT                   /cluster="MRSA252_1e-30:0100 2"
-FT                   /colour=1
-FT                   /gene="ldh1"
-FT                   /note="Similar to Bacillus subtilis L-lactate
-FT                   dehydrogenase Ldh SW:LDH_BACSU (P13714) (320 aa) fasta
-FT                   scores: E(): 1.5e-73, 64.630% id in 311 aa, and to
-FT                   Bacillus stearothermophilus L-lactate dehydrogenase Ldh
-FT                   TR:Q9S0N0 (EMBL:AB033627) (317 aa) fasta scores: E():
-FT                   1.4e-77, 67.101% id in 307 aa. Similar to SAR2680, 59.223%
-FT                   identity (59.609% ungapped) in 309 aa overlap"
-FT                   /product="L-lactate dehydrogenase 1"
-FT                   /systematic_id="SAR0234"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00233.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             314483..314875
-FT                   /COL_orthologue="SACOL0259"
-FT                   /MSSA476_orthologue="SAS0249"
-FT                   /MW2_orthologue="MW0249"
-FT                   /Mu50_orthologue="SAV0273"
-FT                   /N315_orthologue="SA0262"
-FT                   /NCTC8325_orthologue="SAOUHSC_00244"
-FT                   /RF122_orthologue="SAB0212"
-FT                   /USA300_orthologue="SAUSA300_0266"
-FT                   /class="0.0.0"
-FT                   /colour=8
-FT                   /note="No significant database matches"
-FT                   /product="hypothetical protein"
-FT                   /systematic_id="SAR0270"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00269.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(438584..439540)
-FT                   /COL_orthologue="SACOL0455"
-FT                   /MSSA476_orthologue="SAS0361"
-FT                   /MW2_orthologue="MW0361"
-FT                   /Mu50_orthologue="SAV0385"
-FT                   /N315_orthologue="SA0370"
-FT                   /NCTC8325_orthologue="SAOUHSC_00369"
-FT                   /RF122_orthologue="SAB0335c"
-FT                   /USA300_orthologue="SAUSA300_0383"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /note="No significant database matches"
-FT                   /product="putative DNA-binding protein"
-FT                   /systematic_id="SAR0403"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00399.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             549290..549829
-FT                   /COL_orthologue="SACOL0554"
-FT                   /EC_number="2.4.2.8"
-FT                   /MSSA476_orthologue="SAS0467"
-FT                   /MW2_orthologue="MW0465"
-FT                   /Mu50_orthologue="SAV0510"
-FT                   /N315_orthologue="SA0468"
-FT                   /NCTC8325_orthologue="SAOUHSC_00485"
-FT                   /RF122_orthologue="SAB0459"
-FT                   /USA300_orthologue="SAUSA300_0488"
-FT                   /class="3.3.17"
-FT                   /colour=7
-FT                   /gene="hpt"
-FT                   /note="Similar to Vibrio harveyi hypoxanthine
-FT                   phosphoribosyltransferase Hpt SW:HPRT_VIBHA (P18134) (176
-FT                   aa) fasta scores: E(): 4e-28, 50.000% id in 170 aa, and to
-FT                   Bacillus subtilis hypoxanthine-guanine
-FT                   phosphoribosyltransferase HprT SW:HPRT_BACSU (P37472) (180
-FT                   aa) fasta scores: E(): 1.6e-37, 60.452% id in 177 aa"
-FT                   /product="putative hypoxanthine phosphoribosyltransferase"
-FT                   /systematic_id="SAR0511"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00505.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             644909..645895
-FT                   /COL_orthologue="SACOL0634"
-FT                   /EC_number="2.3.1.8"
-FT                   /MSSA476_orthologue="SAS0547"
-FT                   /MW2_orthologue="MW0543"
-FT                   /Mu50_orthologue="SAV0588"
-FT                   /N315_orthologue="SA0545"
-FT                   /NCTC8325_orthologue="SAOUHSC_00574"
-FT                   /RF122_orthologue="SAB0538"
-FT                   /USA300_orthologue="SAUSA300_0570"
-FT                   /class="3.4.3"
-FT                   /colour=6
-FT                   /gene="pta"
-FT                   /note="Similar to Corynebacterium glutamicum phosphate
-FT                   acetyltransferase Pta SW:PTA_CORGL (P77844) (329 aa) fasta
-FT                   scores: E(): 5e-51, 48.328% id in 329 aa, and to Bacillus
-FT                   subtilis phosphate acetyltransferase Pta SW:PTA_BACSU
-FT                   (P39646) (322 aa) fasta scores: E(): 1.1e-75, 65.644% id
-FT                   in 326 aa"
-FT                   /product="putative phosphate acetyltransferase"
-FT                   /systematic_id="SAR0594"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00586.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(675762..675965)
-FT                   /COL_orthologue="SACOL0677"
-FT                   /MSSA476_orthologue="SAS0587"
-FT                   /MW2_orthologue="MW0583"
-FT                   /Mu50_orthologue="SAV0619"
-FT                   /N315_orthologue="SA0576"
-FT                   /USA300_orthologue="SAUSA300_0608"
-FT                   /class="0.0.0"
-FT                   /colour=8
-FT                   /note="No significant database matches"
-FT                   /product="hypothetical protein"
-FT                   /systematic_id="SAR0628"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00618.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             737706..738101
-FT                   /COL_orthologue="SACOL1824"
-FT                   /NCTC8325_orthologue="SAOUHSC_01894"
-FT                   /RF122_orthologue="SAB1632"
-FT                   /USA300_orthologue="SAUSA300_1719"
+FT   CDS             78699..80720
+FT                   /EC_number="3.6.3.12"
+FT                   /Mu50_orthologue="SAV0073"
+FT                   /N315_orthologue="SA0070"
 FT                   /class="1.5.2"
-FT                   /colour=7
-FT                   /gene="arsC"
-FT                   /note="Highly similar to Staphylococcus aureus arsenate
-FT                   reductase ArsC SW:ARSC_STAAU (P30330) (131 aa) fasta
-FT                   scores: E(): 2e-52, 100.000% id in 131 aa, and to
-FT                   Staphylococcus xylosus arsenate reductase ArsC
-FT                   SW:ARSC_STAXY (Q01257) (131 aa) fasta scores: E():
-FT                   1.7e-49, 94.656% id in 131 aa"
-FT                   /product="arsenate reductase"
-FT                   /systematic_id="SAR0692"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00680.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(769790..770665)
-FT                   /COL_orthologue="SACOL0743"
-FT                   /EC_number="2.7.1.66"
-FT                   /MSSA476_orthologue="SAS0648"
-FT                   /MW2_orthologue="MW0645"
-FT                   /Mu50_orthologue="SAV0683"
-FT                   /N315_orthologue="SA0638"
-FT                   /NCTC8325_orthologue="SAOUHSC_00691"
-FT                   /RF122_orthologue="SAB0632c"
-FT                   /USA300_orthologue="SAUSA300_0669"
-FT                   /class="1.4.2"
-FT                   /colour=0
-FT                   /gene="bacA"
-FT                   /note="Similar to Staphylococcus aureus bacitracin
-FT                   resistance protein, putative undecaprenol kinase BacA
-FT                   TR:Q9KIN5 (EMBL:AF228662) (291 aa) fasta scores: E():
-FT                   3.5e-108, 97.938% id in 291 aa, and to Escherichia coli
-FT                   bacitracin resistance protein BacA SW:BACA_ECOLI (P31054)
-FT                   (273 aa) fasta scores: E(): 3.6e-34, 45.714% id in 280 aa"
-FT                   /product="putative undecaprenol kinase"
-FT                   /systematic_id="SAR0736"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00718.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             805133..807073
-FT                   /COL_orthologue="SACOL0778"
-FT                   /MSSA476_orthologue="SAS0684"
-FT                   /MW2_orthologue="MW0681"
-FT                   /Mu50_orthologue="SAV0719"
-FT                   /N315_orthologue="SA0674"
-FT                   /NCTC8325_orthologue="SAOUHSC_00728"
-FT                   /RF122_orthologue="SAB0668"
-FT                   /USA300_orthologue="SAUSA300_0703"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /note="Similar to Bacillus subtilis hypothetical protein
-FT                   YfnI TR:O06487 (EMBL:D86418) (653 aa) fasta scores: E():
-FT                   1.2e-132, 57.075% id in 636 aa, and to Lactococcus lactis
-FT                   hypothetical protein YibC TR:Q9CHC7 (EMBL:AE006314) (722
-FT                   aa) fasta scores: E(): 3.3e-63, 37.705% id in 671 aa"
-FT                   /product="putative sulfatase"
-FT                   /systematic_id="SAR0772"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00754.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             905645..906025
-FT                   /COL_orthologue="SACOL0877"
-FT                   /MSSA476_orthologue="SAS0773"
-FT                   /MW2_orthologue="MW0786"
-FT                   /Mu50_orthologue="SAV0833"
-FT                   /N315_orthologue="SA0760"
-FT                   /NCTC8325_orthologue="SAOUHSC_00836"
-FT                   /RF122_orthologue="SAB0764"
-FT                   /USA300_orthologue="SAUSA300_0791"
-FT                   /class="3.4.3"
-FT                   /colour=6
-FT                   /gene="gcvH"
-FT                   /note="Similar to Escherichia coli glycine cleavage system
-FT                   H protein GcvH SW:GCSH_ECOLI (P23884) (128 aa) fasta
-FT                   scores: E(): 3e-21, 52.846% id in 123 aa, and to Bacillus
-FT                   halodurans probable glycine cleavage system H protein GcvH
-FT                   SW:GCSH_BACHD (Q9K786) (128 aa) fasta scores: E():
-FT                   1.5e-32, 74.194% id in 124 aa"
-FT                   /product="glycine cleavage system H protein"
-FT                   /systematic_id="SAR0864"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00845.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             921165..922232
-FT                   /COL_orthologue="SACOL0922"
-FT                   /MSSA476_orthologue="SAS0791"
-FT                   /MW2_orthologue="MW0803"
-FT                   /Mu50_orthologue="SAV0920"
-FT                   /N315_orthologue="SA0781"
-FT                   /NCTC8325_orthologue="SAOUHSC_00855"
-FT                   /RF122_orthologue="SAB0787"
-FT                   /USA300_orthologue="SAUSA300_0825"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /note="Similar to Williopsis mrakii 2-nitropropane
-FT                   dioxygenase SW:2NPD_WILMR (Q12723) (374 aa) fasta scores:
-FT                   E(): 2e-13, 30.240% id in 334 aa, and to Bacillus
-FT                   halodurans hypothetical protein BH1205 TR:Q9KDK7
-FT                   (EMBL:AP001511) (365 aa) fasta scores: E(): 1.7e-46,
-FT                   44.857% id in 350 aa"
-FT                   /product="putative dioxygenase"
-FT                   /systematic_id="SAR0883"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00861.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(927158..927424)
-FT                   /COL_orthologue="SACOL0929"
-FT                   /MSSA476_orthologue="SAS0797"
-FT                   /MW2_orthologue="MW0809"
-FT                   /Mu50_orthologue="SAV0927"
-FT                   /N315_orthologue="SA0788"
-FT                   /NCTC8325_orthologue="SAOUHSC_00863"
-FT                   /RF122_orthologue="SAB0793c"
-FT                   /USA300_orthologue="SAUSA300_0831"
-FT                   /class="0.0.2"
-FT                   /colour=10
-FT                   /note="Poor database matches. Similar to Bacillus
-FT                   halodurans hypothetical protein BH3432 TR:Q9K7D2
-FT                   (EMBL:AP001518) (88 aa) fasta scores: E(): 4.3e-15,
-FT                   50.602% id in 83 aa"
-FT                   /product="conserved hypothetical protein"
-FT                   /systematic_id="SAR0889"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00867.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(1077349..1077954)
-FT                   /COL_orthologue="SACOL1068"
-FT                   /EC_number="1.9.3.-"
-FT                   /MSSA476_orthologue="SAS0994"
-FT                   /MW2_orthologue="MW0942"
-FT                   /Mu50_orthologue="SAV1059"
-FT                   /N315_orthologue="SA0911"
-FT                   /NCTC8325_orthologue="SAOUHSC_01000"
-FT                   /RF122_orthologue="SAB0925c"
-FT                   /USA300_orthologue="SAUSA300_0961"
-FT                   /class="3.5.2"
-FT                   /colour=1
-FT                   /gene="qoxC"
-FT                   /note="Similar to Bacillus subtilis quinol oxidase
-FT                   polypeptide III QoxC SW:QOX3_BACSU (P34958) (204 aa) fasta
-FT                   scores: E(): 1.3e-38, 54.211% id in 190 aa, and to
-FT                   Bacillus halodurans cytochrome aa3 quinol oxidase subunit
-FT                   III BH2066 TR:Q9KB65 (EMBL:AP001514) (204 aa) fasta
-FT                   scores: E(): 3e-39, 56.316% id in 190 aa"
-FT                   /product="putative quinol oxidase polypeptide III"
-FT                   /systematic_id="SAR1032"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01008.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(1081604..1081921)
-FT                   /COL_orthologue="SACOL1071"
-FT                   /MSSA476_orthologue="SAS0997"
-FT                   /MW2_orthologue="MW0945"
-FT                   /Mu50_orthologue="SAV1062"
-FT                   /N315_orthologue="SA0914"
-FT                   /NCTC8325_orthologue="SAOUHSC_01005"
-FT                   /RF122_orthologue="SAB0928c"
-FT                   /USA300_orthologue="SAUSA300_0964"
-FT                   /class="4.1.7"
+FT                   /cluster="MRSA252_1e-50:0053 2"
+FT                   /cluster="MRSA252_1e-40:0067 2"
+FT                   /cluster="MRSA252_1e-30:0080 2"
 FT                   /colour=3
-FT                   /note="No significant database matches"
-FT                   /product="putative exported protein"
-FT                   /systematic_id="SAR1035"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01011.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             1118386..1118925
-FT                   /COL_orthologue="SACOL1107"
-FT                   /MSSA476_orthologue="SAS1033"
-FT                   /MW2_orthologue="MW0981"
-FT                   /Mu50_orthologue="SAV1098"
-FT                   /N315_orthologue="SA0949"
-FT                   /NCTC8325_orthologue="SAOUHSC_01045"
-FT                   /RF122_orthologue="SAB0964"
-FT                   /USA300_orthologue="SAUSA300_0998"
-FT                   /class="6.1.1"
-FT                   /colour=9
-FT                   /note="Similar to Thermotoga maritima conserved
-FT                   hypothetical protein TM0656 TR:Q9WZC4 (EMBL:AE001739) (176
-FT                   aa) fasta scores: E(): 3.8e-20, 40.805% id in 174 aa, and
-FT                   to Pseudomonas aeruginosa probable transcriptional
-FT                   regulator PA5301 TR:Q9HTQ3 (EMBL:AE004943) (182 aa) fasta
-FT                   scores: E(): 3e-07, 28.177% id in 181 aa"
-FT                   /product="putative DNA-binding protein"
-FT                   /systematic_id="SAR1072"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01046.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(1186377..1187102)
-FT                   /COL_orthologue="SACOL1180"
-FT                   /MSSA476_orthologue="SAS1101"
-FT                   /MW2_orthologue="MW1049"
-FT                   /Mu50_orthologue="SAV1168"
-FT                   /N315_orthologue="SA1011"
-FT                   /NCTC8325_orthologue="SAOUHSC_01127"
-FT                   /RF122_orthologue="SAB1032c"
-FT                   /USA300_orthologue="SAUSA300_1061"
-FT                   /class="5.1.5"
-FT                   /cluster="MRSA252_1e-50:0034 3"
-FT                   /cluster="MRSA252_1e-40:0048 3"
-FT                   /cluster="MRSA252_1e-30:0060 3"
-FT                   /colour=0
-FT                   /note="Similar to Staphylococcus aureus exotoxin 3 Set3
-FT                   TR:Q9ZFS6 (EMBL:AF094826) (234 aa) fasta scores: E():
-FT                   3.3e-06, 26.891% id in 238 aa, and to Staphylococcus
-FT                   aureus exotoxin 1 Set1 TR:Q9RN32 (EMBL:AF188837) (231 aa)
-FT                   fasta scores: E(): 6e-06, 25.820% id in 244 aa. Similar to
-FT                   SAR1140, 69.583% identity (69.583% ungapped) in 240 aa
-FT                   overlap, and to SAR1139, 58.824% identity (58.824%
-FT                   ungapped) in 238 aa overlap"
-FT                   /product="exotoxin"
-FT                   /systematic_id="SAR1141"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01117.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             1234060..1235259
-FT                   /COL_orthologue="SACOL1223"
-FT                   /MSSA476_orthologue="SAS1145"
-FT                   /MW2_orthologue="MW1094"
-FT                   /Mu50_orthologue="SAV1211"
-FT                   /N315_orthologue="SA1054"
-FT                   /NCTC8325_orthologue="SAOUHSC_01178"
-FT                   /RF122_orthologue="SAB1075"
-FT                   /USA300_orthologue="SAUSA300_1104"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /note="Similar to Bacillus halodurans flavoprotein BH2510
-FT                   TR:Q9K9Y4 (EMBL:AP001515) (404 aa) fasta scores: E():
-FT                   6.3e-76, 53.083% id in 373 aa, and to Bacillus subtilis
-FT                   hypothetical protein YloI TR:O35033 (EMBL:Z99112) (406 aa)
-FT                   fasta scores: E(): 1.4e-75, 54.315% id in 394 aa"
-FT                   /product="putative flavoprotein"
-FT                   /systematic_id="SAR1187"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01161.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             1370725..1370976
-FT                   /COL_orthologue="SACOL1338"
-FT                   /MSSA476_orthologue="SAS1247"
-FT                   /MW2_orthologue="MW1196"
-FT                   /N315_orthologue="SA1153"
-FT                   /NCTC8325_orthologue="SAOUHSC_01295"
-FT                   /USA300_orthologue="SAUSA300_1206"
-FT                   /class="0.0.0"
-FT                   /colour=8
-FT                   /note="No significant database matches"
-FT                   /product="hypothetical protein"
-FT                   /systematic_id="SAR1311"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01281.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(1501043..1501237)
-FT                   /COL_orthologue="SACOL1467"
-FT                   /MSSA476_orthologue="SAS1374"
-FT                   /Mu50_orthologue="SAV1431"
-FT                   /N315_orthologue="SA1264"
-FT                   /NCTC8325_orthologue="SAOUHSC_01439"
-FT                   /RF122_orthologue="SAB1286c"
+FT                   /gene="kdpB(SCCmec)"
+FT                   /note="Similar to Clostridium acetobutylicum
+FT                   potassium-transporting ATPase B chain KdpB SW:ATKB_CLOAB
+FT                   (O32328) (685 aa) fasta scores: E(): 1.3e-144, 60.773% id
+FT                   in 673 aa. Previously sequenced as Staphylococcus aureus
+FT                   potassium-transporting ATPase B chain KdpB SW:ATKB_STAAU
+FT                   (Q9XBA9) (673 aa) fasta scores: E(): 0, 100.000% id in 673
+FT                   aa. Similar to SAR2164, 71.556% identity (71.768%
+FT                   ungapped) in 675 aa overlap"
+FT                   /product="potassium-transporting ATPase B chain"
+FT                   /systematic_id="SAR0071"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00070.out"
+FT                   /controlled_curation="organism=ECO; evidence=ISS;
+FT                   db_xref=PMID:2522440;"
+FT                   /curation="LDS-gel electrophoresis of Kdp subunits
+FT                   labelled with radioactive ATP identified KdpB as the
+FT                   catalytic subunit of Kdp (PMID:2522440)"
+FT   CDS             194752..195111
+FT                   /COL_orthologue="SACOL0161"
+FT                   /MSSA476_orthologue="SAS0151"
+FT                   /MW2_orthologue="MW0150"
+FT                   /Mu50_orthologue="SAV0176"
+FT                   /N315_orthologue="SA0170"
+FT                   /NCTC8325_orthologue="SAOUHSC_00141"
+FT                   /USA300_orthologue="SAUSA300_0178"
 FT                   /class="0.0.2"
 FT                   /colour=10
-FT                   /note="Similar to the C-terminal region of Escherichia
-FT                   coli dnaK suppressor protein DksA SW:DKSA_ECOLI (P18274)
-FT                   (151 aa) fasta scores: E(): 1.3, 28.333% id in 60 aa, and
-FT                   to the full length Bacillus subtilis hypothetical protein
-FT                   YpeQ SW:YPEQ_BACSU (P54165) (60 aa) fasta scores: E():
-FT                   5.8e-07, 46.939% id in 49 aa"
+FT                   /note="Similar to Bacillus subtilis hypothetical protein
+FT                   YrhF SW:YRHF_BACSU (O05398) (122 aa) fasta scores: E():
+FT                   2.4e-11, 36.937% id in 111 aa. C-terminal region is
+FT                   similar to Bacillus halodurans hypothetical protein BH2529
+FT                   TR:Q9K9W6 (EMBL:AP001515) (82 aa) fasta scores: E():
+FT                   2.1e-06, 44.000% id in 75 aa"
 FT                   /product="conserved hypothetical protein"
-FT                   /systematic_id="SAR1444"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01413.out"
+FT                   /systematic_id="SAR0177"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00176.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             complement(1572570..1573019)
-FT                   /COL_orthologue="SACOL1509"
-FT                   /MSSA476_orthologue="SAS1410"
-FT                   /MW2_orthologue="MW1358"
-FT                   /Mu50_orthologue="SAV1469"
-FT                   /N315_orthologue="SA1301"
-FT                   /NCTC8325_orthologue="SAOUHSC_01485"
-FT                   /RF122_orthologue="SAB1331c"
-FT                   /USA300_orthologue="SAUSA300_1358"
-FT                   /class="3.7.0"
-FT                   /colour=7
-FT                   /gene="ndk"
-FT                   /note="Similar to Saccharomyces cerevisiae nucleoside
-FT                   diphosphate kinase Ndk1 SW:NDK_YEAST (P36010) (153 aa)
-FT                   fasta scores: E(): 2.4e-30, 52.027% id in 148 aa.
-FT                   Previously sequenced as Staphylococcus aureus nucleoside
-FT                   diphosphate kinase Ndk SW:NDK_STAAU (P50588) (149 aa)
-FT                   fasta scores: E(): 3.8e-57, 99.329% id in 149 aa"
-FT                   /product="putative nucleoside diphosphate kinase"
-FT                   /systematic_id="SAR1478"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01448.out"
+FT   CDS             complement(399521..401362)
+FT                   /COL_orthologue="SACOL0429"
+FT                   /MSSA476_orthologue="SAS0333"
+FT                   /MW2_orthologue="MW0333"
+FT                   /Mu50_orthologue="SAV0357"
+FT                   /N315_orthologue="SA0345"
+FT                   /NCTC8325_orthologue="SAOUHSC_00339"
+FT                   /RF122_orthologue="SAB0307c"
+FT                   /USA300_orthologue="SAUSA300_0358"
+FT                   /class="0.0.2"
+FT                   /colour=10
+FT                   /note="Similar to Bacillus halodurans hypothetical protein
+FT                   BH1629 TR:Q9KCE2 (EMBL:AP001512) (618 aa) fasta scores:
+FT                   E(): 1.6e-109, 46.962% id in 609 aa, and to Bacillus
+FT                   subtilis putative hypothetical protein YitJ TR:O06745
+FT                   (EMBL:Y09476) (612 aa) fasta scores: E(): 1.4e-107,
+FT                   45.902% id in 610 aa"
+FT                   /product="conserved hypothetical protein"
+FT                   /systematic_id="SAR0354"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00349.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             complement(1588267..1588812)
-FT                   /COL_orthologue="SACOL1526"
-FT                   /MSSA476_orthologue="SAS1425"
-FT                   /MW2_orthologue="MW1373"
-FT                   /Mu50_orthologue="SAV1485"
-FT                   /N315_orthologue="SA1316"
-FT                   /NCTC8325_orthologue="SAOUHSC_01505"
-FT                   /RF122_orthologue="SAB1347c"
-FT                   /USA300_orthologue="SAUSA300_1374"
+FT   CDS             727954..728670
+FT                   /COL_orthologue="SACOL0727"
+FT                   /MSSA476_orthologue="SAS0634"
+FT                   /MW2_orthologue="MW0631"
+FT                   /NCTC8325_orthologue="SAOUHSC_00675"
+FT                   /RF122_orthologue="SAB0618"
+FT                   /USA300_orthologue="SAUSA300_0655"
+FT                   /class="0.0.2"
+FT                   /colour=10
+FT                   /note="Similar to Bacillus halodurans BH3259 TR:Q9K7V0
+FT                   (EMBL:AP001518) (239 aa) fasta scores: E(): 3.6e-63,
+FT                   74.262% id in 237 aa, and to Bacillus subtilis
+FT                   hypothetical protein YeeI SW:YEEI_BACSU (O31509) (240 aa)
+FT                   fasta scores: E(): 9.9e-61, 72.689% id in 238 aa"
+FT                   /product="conserved hypothetical protein"
+FT                   /systematic_id="SAR0680"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00668.out"
+FT                   /controlled_curation="organism=; evidence=; db_xref=;"
+FT                   /curation=" (PMID:)"
+FT   CDS             complement(836424..837185)
+FT                   /COL_orthologue="SACOL0808"
+FT                   /MSSA476_orthologue="SAS0710"
+FT                   /MW2_orthologue="MW0707"
+FT                   /Mu50_orthologue="SAV0745"
+FT                   /N315_orthologue="SA0700"
+FT                   /NCTC8325_orthologue="SAOUHSC_00759"
+FT                   /RF122_orthologue="SAB0697c"
+FT                   /USA300_orthologue="SAUSA300_0729"
 FT                   /class="4.1.6"
+FT                   /cluster="MRSA252_1e-40:0113 2"
+FT                   /cluster="MRSA252_1e-30:0129 2"
 FT                   /colour=3
-FT                   /note="Similar to Bacillus subtilis hypothetical protein
-FT                   YpaA SW:YPAA_BACSU (P50726) (190 aa) fasta scores: E():
-FT                   1.6e-24, 46.111% id in 180 aa, and to Thermotoga maritima
-FT                   conserved hypothetical protein TM1455 TR:Q9X1G6
-FT                   (EMBL:AE001797) (183 aa) fasta scores: E(): 3.3e-12,
-FT                   34.078% id in 179 aa"
+FT                   /note="Similar to Bacillus halodurans hypothetical protein
+FT                   BH0081 TR:Q9KGI0 (EMBL:AP001507) (251 aa) fasta scores:
+FT                   E(): 1.9e-30, 36.800% id in 250 aa, and to Campylobacter
+FT                   jejuni putative integral membrane protein CJ1166C
+FT                   TR:Q9PNC9 (EMBL:AL139077) (258 aa) fasta scores: E():
+FT                   1.5e-08, 22.619% id in 252 aa"
 FT                   /product="putative membrane protein"
-FT                   /systematic_id="SAR1493"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01463.out"
+FT                   /systematic_id="SAR0799"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.00781.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             complement(1609296..1609691)
-FT                   /COL_orthologue="SACOL0374"
-FT                   /MSSA476_orthologue="SAS0939"
-FT                   /MW2_orthologue="MW1394"
-FT                   /NCTC8325_orthologue="SAOUHSC_01530"
-FT                   /class="5.1.2"
-FT                   /colour=12
-FT                   /note="Identical to Staphylococcus aureus temperate phage
-FT                   phiSLT hypothetical protein Orf131b TR:Q9B0D6
-FT                   (EMBL:AB045978) (131 aa) fasta scores: E(): 3.3e-47,
-FT                   100.000% id in 131 aa. Similar to Staphylococcus aureus
-FT                   prophage phiPV83 phi PVL Orf 12 homologue TR:Q9MBP5
-FT                   (EMBL:AB044554) (126 aa) fasta scores: E(): 0.56, 24.762%
-FT                   id in 105 aa"
-FT                   /product="hypothetical phage protein"
-FT                   /systematic_id="SAR1512"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01482.out"
+FT   CDS             1240269..1241204
+FT                   /COL_orthologue="SACOL1228"
+FT                   /EC_number="2.1.2.9"
+FT                   /MSSA476_orthologue="SAS1150"
+FT                   /MW2_orthologue="MW1099"
+FT                   /Mu50_orthologue="SAV1216"
+FT                   /N315_orthologue="SA1059"
+FT                   /NCTC8325_orthologue="SAOUHSC_01183"
+FT                   /RF122_orthologue="SAB1080"
+FT                   /USA300_orthologue="SAUSA300_1109"
+FT                   /class="2.2.01"
+FT                   /colour=2
+FT                   /note="Similar to Escherichia coli methionyl-tRNA
+FT                   formyltransferase Fmt SW:FMT_ECOLI (P23882) (314 aa) fasta
+FT                   scores: E(): 9.7e-41, 39.228% id in 311 aa, and to
+FT                   Bacillus halodurans methionyl-tRNA formyltransferase
+FT                   BH2508 TR:Q9K9Y6 (EMBL:AP001515) (317 aa) fasta scores:
+FT                   E(): 7.4e-66, 59.355% id in 310 aa"
+FT                   /product="methionyl-tRNA formyltransferase"
+FT                   /systematic_id="SAR1192"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01166.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             complement(1707478..1709277)
-FT                   /COL_orthologue="SACOL1619"
-FT                   /EC_number="2.7.7.-"
-FT                   /MSSA476_orthologue="SAS1500"
-FT                   /MW2_orthologue="MW1514"
-FT                   /Mu50_orthologue="SAV1562"
-FT                   /N315_orthologue="SA1391"
-FT                   /NCTC8325_orthologue="SAOUHSC_01663"
-FT                   /RF122_orthologue="SAB1434c"
-FT                   /USA300_orthologue="SAUSA300_1522"
+FT   CDS             1295705..1300021
+FT                   /COL_orthologue="SACOL1283"
+FT                   /EC_number="2.7.7.7"
+FT                   /MSSA476_orthologue="SAS1198"
+FT                   /MW2_orthologue="MW1147"
+FT                   /Mu50_orthologue="SAV1264"
+FT                   /N315_orthologue="SA1107"
+FT                   /NCTC8325_orthologue="SAOUHSC_01241"
+FT                   /RF122_orthologue="SAB1126"
+FT                   /USA300_orthologue="SAUSA300_1157"
 FT                   /class="2.2.03"
 FT                   /colour=2
-FT                   /gene="dnaG"
-FT                   /note="Similar to Bacillus subtilis DNA primase DnaG
-FT                   SW:PRIM_BACSU (P05096) (603 aa) fasta scores: E():
-FT                   7.4e-70, 36.529% id in 605 aa. Previously sequenced as
-FT                   Staphylococcus aureus DNA primase DnaG SW:PRIM_STAAU
-FT                   (O05338) (572 aa) fasta scores: E(): 4.3e-208, 97.898% id
-FT                   in 571 aa"
-FT                   /product="DNA primase"
-FT                   /systematic_id="SAR1639"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01606.out"
+FT                   /gene="polC"
+FT                   /note="Previously sequenced as Staphylococcus aureus DNA
+FT                   polymerase III PolC-type PolC SW:DPO3_STAAU (Q53665) (1436
+FT                   aa) fasta scores: E(): 0, 99.791% id in 1436 aa. Similar
+FT                   to Bacillus subtilis DNA polymerase III PolC-type PolC
+FT                   SW:DPO3_BACSU (P13267) (1437 aa) fasta scores: E(): 0,
+FT                   60.583% id in 1441 aa"
+FT                   /product="DNA polymerase III PolC-type"
+FT                   /systematic_id="SAR1240"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01214.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             complement(1709338..1710156)
-FT                   /COL_orthologue="SACOL1620"
-FT                   /MSSA476_orthologue="SAS1501"
-FT                   /MW2_orthologue="MW1515"
-FT                   /Mu50_orthologue="SAV1563"
-FT                   /N315_orthologue="SA1392"
-FT                   /NCTC8325_orthologue="SAOUHSC_01664"
-FT                   /RF122_orthologue="SAB1435c"
-FT                   /USA300_orthologue="SAUSA300_1523"
-FT                   /class="0.0.2"
-FT                   /colour=10
-FT                   /gene="yqfL"
-FT                   /note="Similar to Bacillus subtilis hypothetical protein
-FT                   YqfL SW:YQFL_BACSU (P54470) (270 aa) fasta scores: E():
-FT                   1.3e-52, 58.015% id in 262 aa, and to Bacillus halodurans
-FT                   hypothetical protein BH1373 TR:Q9KD46 (EMBL:AP001511) (270
-FT                   aa) fasta scores: E(): 1.7e-52, 59.144% id in 257 aa"
-FT                   /product="conserved hypothetical protein"
-FT                   /systematic_id="SAR1640"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01607.out"
-FT                   /controlled_curation="organism=BSU; evidence=ISS;
-FT                   db_xref=PMID:15720552;"
-FT                   /curation="Deletion of yqfL reduced transcription of gapB
-FT                   and pckA under both glycolytic and gluconeogenic
-FT                   conditions.  YqfL is suggested to positively regulate gapB
-FT                   and pckA expression via an interaction with CcpN.
-FT                   (PMID:15720552)"
-FT   CDS             complement(1715103..1715570)
-FT                   /COL_orthologue="SACOL1627"
-FT                   /MSSA476_orthologue="SAS1508"
-FT                   /MW2_orthologue="MW1522"
-FT                   /Mu50_orthologue="SAV1570"
-FT                   /N315_orthologue="SA1399"
-FT                   /NCTC8325_orthologue="SAOUHSC_01672"
-FT                   /RF122_orthologue="SAB1442c"
-FT                   /USA300_orthologue="SAUSA300_1530"
-FT                   /class="0.0.2"
-FT                   /colour=10
-FT                   /note="Similar to Bacillus subtilis hypothetical protein
-FT                   YqfG SW:YQFG_BACSU (P46347) (157 aa) fasta scores: E():
-FT                   6e-29, 56.579% id in 152 aa, and to Bacillus halodurans
-FT                   hypothetical protein BH1363 TR:Q9KD56 (EMBL:AP001511) (159
-FT                   aa) fasta scores: E(): 4.5e-25, 55.128% id in 156 aa"
-FT                   /product="conserved hypothetical protein"
-FT                   /systematic_id="SAR1647"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01614.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(1722046..1722984)
-FT                   /COL_orthologue="SACOL1635"
-FT                   /MSSA476_orthologue="SAS1516"
-FT                   /MW2_orthologue="MW1530"
-FT                   /Mu50_orthologue="SAV1578"
-FT                   /N315_orthologue="SA1407"
-FT                   /NCTC8325_orthologue="SAOUHSC_01681"
-FT                   /RF122_orthologue="SAB1450c"
-FT                   /USA300_orthologue="SAUSA300_1538"
+FT   CDS             complement(1562122..1563324)
+FT                   /COL_orthologue="SACOL1497"
+FT                   /MSSA476_orthologue="SAS1400"
+FT                   /MW2_orthologue="MW1347"
+FT                   /Mu50_orthologue="SAV1457"
+FT                   /N315_orthologue="SA1290"
+FT                   /NCTC8325_orthologue="SAOUHSC_01474"
+FT                   /RF122_orthologue="SAB1321c"
+FT                   /USA300_orthologue="SAUSA300_1348"
 FT                   /class="7.0.0"
 FT                   /colour=13
-FT                   /note="Similar to Escherichia coli ribosomal protein L11
-FT                   methyltransferase PrmA SW:PRMA_ECOLI (P28637) (293 aa)
-FT                   fasta scores: E(): 1.8e-19, 29.299% id in 314 aa.
-FT                   Previously sequenced as Staphylococcus aureus probable
-FT                   methyltransferase PrmA SW:PRMA_STAAU (P45557) (312 aa)
-FT                   fasta scores: E(): 2.6e-116, 98.077% id in 312 aa"
-FT                   /product="putative methyltransferase"
-FT                   /systematic_id="SAR1655"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01622.out"
+FT                   /gene="papS"
+FT                   /note="Similar to Bacillus subtilis poly (A) polymerase
+FT                   PapS SW:PAPS_BACSU (P42977) (397 aa) fasta scores: E():
+FT                   1.2e-46, 39.801% id in 402 aa, and to Streptococcus
+FT                   pyogenes putative poly (A) polymerase SPY0866 TR:Q9A0A5
+FT                   (EMBL:AE006536) (397 aa) fasta scores: E(): 2e-45, 38.557%
+FT                   id in 402 aa"
+FT                   /product="poly A polymerase family protein"
+FT                   /systematic_id="SAR1468"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01438.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             1731700..1731951
-FT                   /COL_orthologue="SACOL1642"
-FT                   /MSSA476_orthologue="SAS1523"
-FT                   /MW2_orthologue="MW1537"
-FT                   /Mu50_orthologue="SAV1586"
-FT                   /N315_orthologue="SA1414"
-FT                   /NCTC8325_orthologue="SAOUHSC_01689"
-FT                   /RF122_orthologue="SAB1458"
-FT                   /USA300_orthologue="SAUSA300_1545"
-FT                   /class="4.2.2"
-FT                   /colour=2
-FT                   /gene="rpsT"
-FT                   /note="Similar to Bacillus subtilis 30S ribosomal protein
-FT                   S20 (BS20) RpsT SW:RS20_BACSU (P21477) (87 aa) fasta
-FT                   scores: E(): 5.5e-08, 48.052% id in 77 aa, and to Bacillus
-FT                   halodurans 30S ribosomal protein S20 BH1339 TR:Q9KD79
-FT                   (EMBL:AP001511) (91 aa) fasta scores: E(): 4.2e-08,
-FT                   53.846% id in 78 aa"
-FT                   /product="putative 30S ribosomal protein S20"
-FT                   /systematic_id="SAR1663"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01629.out"
+FT   CDS             complement(1612713..1613951)
+FT                   /COL_orthologue="SACOL0368"
+FT                   /MSSA476_orthologue="SAS0933"
+FT                   /MW2_orthologue="MW1400"
+FT                   /NCTC8325_orthologue="SAOUHSC_01537"
+FT                   /USA300_orthologue="SAUSA300_1403"
+FT                   /class="5.1.2"
+FT                   /colour=12
+FT                   /note="Similar to Staphylococcus aureus temperate phage
+FT                   phiSLT portal protein TR:Q9B0E2 (EMBL:AB045978) (412 aa)
+FT                   fasta scores: E(): 9.3e-154, 99.515% id in 412 aa. Similar
+FT                   to bacteriophage phi-105 hypothetical protein Orf25
+FT                   TR:Q9ZXF8 (EMBL:AB016282) (416 aa) fasta scores: E():
+FT                   6.3e-19, 26.247% id in 381 aa"
+FT                   /product="portal protein"
+FT                   /systematic_id="SAR1518"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01488.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             complement(1739025..1739831)
-FT                   /COL_orthologue="SACOL1652"
-FT                   /EC_number="1.1.1.25"
-FT                   /MSSA476_orthologue="SAS1533"
-FT                   /MW2_orthologue="MW1547"
-FT                   /Mu50_orthologue="SAV1596"
-FT                   /N315_orthologue="SA1424"
-FT                   /NCTC8325_orthologue="SAOUHSC_01699"
-FT                   /RF122_orthologue="SAB1468c"
-FT                   /USA300_orthologue="SAUSA300_1555"
-FT                   /class="3.1.0"
-FT                   /colour=7
-FT                   /gene="aroE"
-FT                   /note="Similar to Escherichia coli shikimate
-FT                   5-dehydrogenase AroE SW:AROE_ECOLI (P15770) (272 aa) fasta
-FT                   scores: E(): 5.7e-21, 34.409% id in 279 aa, and to
-FT                   Bacillus subtilis shikimate 5-dehydrogenase AroD
-FT                   SW:AROE_BACSU (P54374) (280 aa) fasta scores: E():
-FT                   1.5e-31, 37.956% id in 274 aa"
-FT                   /product="shikimate 5-dehydrogenase"
-FT                   /systematic_id="SAR1673"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01639.out"
+FT   CDS             complement(2154013..2154255)
+FT                   /COL_orthologue="SACOL0351"
+FT                   /MSSA476_orthologue="SAS0913"
+FT                   /MW2_orthologue="MW1420"
+FT                   /Mu50_orthologue="SAV0874"
+FT                   /N315_orthologue="SA1786"
+FT                   /NCTC8325_orthologue="SAOUHSC_02060"
+FT                   /RF122_orthologue="SAB1735c"
+FT                   /USA300_orthologue="SAUSA300_1953"
+FT                   /class="5.1.2"
+FT                   /cluster="MRSA252_1e-30:0195 2"
+FT                   /colour=12
+FT                   /note="Similar to bacteriophage phi PVL hypothetical
+FT                   protein Orf 51 TR:O80089 (EMBL:AB009866) (80 aa) fasta
+FT                   scores: E(): 1.2e-29, 92.5% id in 80 aa. Similar to the
+FT                   N-terminus of bacteriophage phi ETA hypothetical protein
+FT                   Orf29 TR:Q9G016 (EMBL:AP001553) (139 aa) fasta scores:
+FT                   E(): 2e-21, 90.47% id in 63 aa. Possible N-terminal region
+FT                   of a pseudogene. Similar to SAR1536, 82.500% identity
+FT                   (82.500% ungapped) in 80 aa overlap"
+FT                   /product="hypothetical phage protein"
+FT                   /systematic_id="SAR2076"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02032.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             complement(join(1774761..1775606,1775606..1775635))
-FT                   /COL_orthologue="SACOL1687"
-FT                   /MSSA476_orthologue="SAS1568"
-FT                   /MW2_orthologue="MW1582"
-FT                   /Mu50_orthologue="SAV1632"
-FT                   /N315_orthologue="SA1458"
-FT                   /NCTC8325_orthologue="SAOUHSC_01739"
-FT                   /RF122_orthologue="SAB1501c"
-FT                   /USA300_orthologue="SAUSA300_1588"
-FT                   /class="7.0.0"
-FT                   /colour=11
-FT                   /note="Identical to Staphylococcus aureus
-FT                   N-acetylmuramoyl-L-alanine amidase LytH or SAV1632 or
-FT                   SA1458 or MW1582 SWALL:O32421 (EMBL:D76414) (291 aa) fasta
-FT                   scores: E(): 7.4e-110, 100% id in 291 aa. Similar to
-FT                   Staphylococcus epidermidis N-acetylmuramoyl-L-alanine
-FT                   amidase SE1313 SWALL:Q8CP02 (EMBL:AE016748) (291 aa) fasta
-FT                   scores: E(): 2.7e-83, 71.82% id in 291 aa. CDS contains a
-FT                   frameshift after codon 9. Frame shift occurs at a poly A
-FT                   tetramer"
-FT                   /product="putative N-acetylmuramoyl-L-alanine amidase
-FT                   (pseudogene)"
-FT                   /pseudo
-FT                   /systematic_id="SAR1712"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01675.out"
+FT   CDS             complement(2157255..2158175)
+FT                   /MSSA476_orthologue="SAS1906"
+FT                   /MW2_orthologue="MW1923"
+FT                   /Mu50_orthologue="SAV1985"
+FT                   /N315_orthologue="SA1794"
+FT                   /USA300_orthologue="SAUSA300_1960"
+FT                   /class="5.1.2"
+FT                   /colour=12
+FT                   /note="Similar to bacteriophage phi PVL hypothetical
+FT                   protein Orf 43 TR:O80082 (EMBL:AB009866) (306 aa) fasta
+FT                   scores: E(): 7.5e-105, 99.67% id in 306 aa, and to
+FT                   Legionella pneumophila hypothetical protein TR:Q9AKZ0
+FT                   (EMBL:AJ277755) (294 aa) fasta scores: E(): 0.36, 23.85%
+FT                   id in 306 aa"
+FT                   /product="hypothetical phage protein"
+FT                   /systematic_id="SAR2085"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02039.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             complement(1792403..1793245)
-FT                   /COL_orthologue="SACOL1704"
-FT                   /MSSA476_orthologue="SAS1585"
-FT                   /MW2_orthologue="MW1599"
-FT                   /Mu50_orthologue="SAV1649"
-FT                   /N315_orthologue="SA1475"
-FT                   /NCTC8325_orthologue="SAOUHSC_01759"
-FT                   /RF122_orthologue="SAB1518c"
-FT                   /USA300_orthologue="SAUSA300_1605"
-FT                   /class="4.1.7"
-FT                   /colour=3
-FT                   /note="Similar to the N-terminal region of Escherichia
-FT                   coli rod shape-determining protein MreC SW:MREC_ECOLI
-FT                   (P16926) (367 aa) fasta scores: E(): 4e-06, 25.000% id in
-FT                   260 aa, and to the full length Lactococcus lactis cell
-FT                   shape determining protein MreC TR:Q9CDI9 (EMBL:AE006452)
-FT                   (291 aa) fasta scores: E(): 1.4e-21, 34.386% id in 285 aa.
-FT                   Contains coiled-coiled domain, residues 79 to 94"
-FT                   /product="putative rod shape-determining protein"
-FT                   /systematic_id="SAR1729"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01692.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             1891379..1892011
-FT                   /COL_orthologue="SACOL1784"
-FT                   /EC_number="2.3.1.-"
-FT                   /MSSA476_orthologue="SAS1660"
-FT                   /MW2_orthologue="MW1677"
-FT                   /Mu50_orthologue="SAV1734"
-FT                   /N315_orthologue="SA1555"
-FT                   /NCTC8325_orthologue="SAOUHSC_01847"
-FT                   /RF122_orthologue="SAB1594"
-FT                   /USA300_orthologue="SAUSA300_1680"
-FT                   /class="3.4.2"
-FT                   /colour=6
-FT                   /gene="acuA"
-FT                   /note="Similar to Bacillus subtilis acetoin utilization
-FT                   protein AcuA SW:ACUA_BACSU (P39065) (210 aa) fasta scores:
-FT                   E(): 1.4e-43, 51.9% id in 210 aa, and to Bacillus
-FT                   halodurans acetoin dehydrogenase BH3235 TR:Q9K7X3
-FT                   (EMBL:AP001518) (210 aa) fasta scores: E(): 1.2e-44,
-FT                   52.85% id in 210 aa"
-FT                   /product="acetoin utilization protein"
-FT                   /systematic_id="SAR1812"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01775.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(1903628..1904266)
-FT                   /COL_orthologue="SACOL1792"
-FT                   /MSSA476_orthologue="SAS1668"
-FT                   /MW2_orthologue="MW1685"
-FT                   /Mu50_orthologue="SAV1742"
-FT                   /N315_orthologue="SA1563"
-FT                   /NCTC8325_orthologue="SAOUHSC_01858"
-FT                   /RF122_orthologue="SAB1602c"
-FT                   /USA300_orthologue="SAUSA300_1688"
-FT                   /class="0.0.2"
-FT                   /colour=10
-FT                   /note="C-terminus is similar to the N-terminal region of
-FT                   Bacillus subtilis phenylalanyl-tRNA synthetase beta chain
-FT                   hypothetical protein PheT SW:SYFB_BACSU (P17922) (804 aa)
-FT                   fasta scores: E(): 4.8e-12, 41.985% id in 131 aa, and to
-FT                   full length Bacillus subtilis YtpR TR:O34943
-FT                   (EMBL:AF008220) (201 aa) fasta scores: E(): 1.3e-33,
-FT                   57.346% id in 211 aa. CDS contain additional amino acids,
-FT                   residues 51 to 64, compared to orthologues; the effect on
-FT                   the function of protein is not known"
-FT                   /product="conserved hypothetical protein"
-FT                   /systematic_id="SAR1820"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01783.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             1949432..1949902
-FT                   /COL_orthologue="SACOL1827"
-FT                   /MSSA476_orthologue="SAS1700"
-FT                   /MW2_orthologue="MW1717"
-FT                   /Mu50_orthologue="SAV1777"
-FT                   /N315_orthologue="SA1595"
-FT                   /NCTC8325_orthologue="SAOUHSC_01897"
-FT                   /RF122_orthologue="SAB1635"
-FT                   /USA300_orthologue="SAUSA300_1722"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /note="Poor database matches. Similar to Clostridium
-FT                   botulinum phage 1C hypothetical protein Orf22 TR:Q38195
-FT                   (EMBL:X72793) (179 aa) fasta scores: E(): 0.00077, 27.389%
-FT                   id in 157 aa, and to Escherichia coli probable RNA
-FT                   polymerase sigma factor FecI SW:FECI_ECOLI (P23484) (173
-FT                   aa) fasta scores: E(): 0.097, 25.610% id in 164 aa"
-FT                   /product="putative DNA-binding protein"
-FT                   /systematic_id="SAR1859"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01822.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(2021366..2021989)
-FT                   /COL_orthologue="SACOL1905"
-FT                   /MSSA476_orthologue="SAS1769"
-FT                   /MW2_orthologue="MW1789"
-FT                   /Mu50_orthologue="SAV1848"
-FT                   /N315_orthologue="SA1666"
-FT                   /NCTC8325_orthologue="SAOUHSC_01980"
-FT                   /RF122_orthologue="SAB1781c"
-FT                   /USA300_orthologue="SAUSA300_1798"
-FT                   /class="6.1.1"
-FT                   /cluster="MRSA252_1e-30:0064 3"
-FT                   /colour=9
-FT                   /gene="yhcR"
-FT                   /note="Two-component regulatory system family, response
-FT                   regulator protein. Similar to Bacillus halodurans
-FT                   two-component response regulator BH2213 TR:Q9KAS4
-FT                   (EMBL:AP001514) (217 aa) fasta scores: E(): 1.6e-28,
-FT                   47.08% id in 206 aa, and to Bacillus subtilis hypothetical
-FT                   protein YhcZ TR:O07528 (EMBL:Y14079) (214 aa) fasta
-FT                   scores: E(): 6.6e-27, 44.49% id in 209 aa"
-FT                   /product="putative response regulator"
-FT                   /systematic_id="SAR1939"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01898.out"
-FT                   /controlled_curation="organism=SAU; evidence=EXP;
-FT                   db_xref=PMID:16267314;"
-FT                   /curation="Downregulation of yhcSR expression by induced
-FT                   yhcS antisense RNA inhibited growth in a dose-dependent
-FT                   manner, suggesting that the ychSR two-component system is
-FT                   required for viability.  (PMID:16267314)"
-FT   CDS             2051097..2052074
-FT                   /COL_orthologue="SACOL1927"
-FT                   /MSSA476_orthologue="SAS1791"
-FT                   /MW2_orthologue="MW1809"
-FT                   /Mu50_orthologue="SAV1869"
-FT                   /N315_orthologue="SA1686"
-FT                   /NCTC8325_orthologue="SAOUHSC_02006"
-FT                   /RF122_orthologue="SAB1802"
-FT                   /USA300_orthologue="SAUSA300_1850"
+FT   CDS             2179143..2179886
+FT                   /COL_orthologue="SACOL2018"
+FT                   /MSSA476_orthologue="SAS1937"
+FT                   /MW2_orthologue="MW1955"
+FT                   /Mu50_orthologue="SAV2031"
+FT                   /N315_orthologue="SA1838"
+FT                   /NCTC8325_orthologue="SAOUHSC_02256"
+FT                   /RF122_orthologue="SAB1915"
+FT                   /USA300_orthologue="SAUSA300_1984"
 FT                   /class="4.1.6"
 FT                   /colour=3
 FT                   /note="Similar to Bacillus subtilis hypothetical protein
-FT                   YfhP TR:O31583 (EMBL:Z99108) (327 aa) fasta scores: E():
-FT                   1.1e-52, 42.76% id in 325 aa, and to Bacillus halodurans
-FT                   hypothetical protein BH0929 TR:Q9KEC4 (EMBL:AP001510) (327
-FT                   aa) fasta scores: E(): 1.5e-50, 43.29% id in 328 aa"
+FT                   YdiL TR:O05525 (EMBL:D88802) (244 aa) fasta scores: E():
+FT                   2.4e-18, 33.33% id in 240 aa, and to Bacillus halodurans
+FT                   hypothetical protein BH0560 TR:Q9KFC4 (EMBL:AP001508) (237
+FT                   aa) fasta scores: E(): 1.8e-16, 32.74% id in 226 aa"
 FT                   /product="putative membrane protein"
-FT                   /systematic_id="SAR1959"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01918.out"
+FT                   /systematic_id="SAR2118"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02070.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
-FT   CDS             complement(2111177..2112019)
-FT                   /COL_orthologue="SACOL1989"
-FT                   /MSSA476_orthologue="SAS1850"
-FT                   /MW2_orthologue="MW1867"
-FT                   /Mu50_orthologue="SAV1926"
-FT                   /N315_orthologue="SA1740"
-FT                   /NCTC8325_orthologue="SAOUHSC_02147"
-FT                   /RF122_orthologue="SAB1862c"
-FT                   /USA300_orthologue="SAUSA300_1906"
-FT                   /class="4.1.7"
+FT   CDS             complement(2231315..2233342)
+FT                   /COL_orthologue="SACOL2067"
+FT                   /EC_number="3.6.3.12"
+FT                   /MSSA476_orthologue="SAS1981"
+FT                   /MW2_orthologue="MW2000"
+FT                   /Mu50_orthologue="SAV2076"
+FT                   /N315_orthologue="SA1880"
+FT                   /NCTC8325_orthologue="SAOUHSC_02311"
+FT                   /RF122_orthologue="SAB1961c"
+FT                   /USA300_orthologue="SAUSA300_2033"
+FT                   /class="1.5.2"
+FT                   /cluster="MRSA252_1e-50:0053 2"
+FT                   /cluster="MRSA252_1e-40:0067 2"
+FT                   /cluster="MRSA252_1e-30:0080 2"
 FT                   /colour=3
-FT                   /note="Poor database matches. Similar to the N-terminal
-FT                   regions of Staphylococcus sciuri penicillin-binding
-FT                   protein 2' MecA TR:O54286 (EMBL:Y13096) (668 aa) fasta
-FT                   scores: E(): 3.8, 22.93% id in 279 aa, and to
-FT                   Staphylococcus epidermidis penicillin binding protein 2'
-FT                   MecA TR:Q54113 (EMBL:X52592) (668 aa) fasta scores: E():
-FT                   4.4, 23.29% id in 279 aa"
-FT                   /product="putative exported protein"
-FT                   /systematic_id="SAR2018"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.01975.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(2223526..2224005)
-FT                   /COL_orthologue="SACOL2055"
-FT                   /MSSA476_orthologue="SAS1970"
-FT                   /MW2_orthologue="MW1989"
-FT                   /Mu50_orthologue="SAV2065"
-FT                   /N315_orthologue="SA1870"
-FT                   /NCTC8325_orthologue="SAOUHSC_02299"
-FT                   /RF122_orthologue="SAB1950c"
-FT                   /USA300_orthologue="SAUSA300_2023"
+FT                   /gene="kdpB"
+FT                   /note="Similar to Escherichia coli potassium-transporting
+FT                   ATPase B chain KdpB SW:ATKB_ECOLI (P03960) (682 aa) fasta
+FT                   scores: E(): 2.4e-122, 55.72% id in 673 aa, and to
+FT                   Staphylococcus aureus potassium-transporting ATPase B
+FT                   chain KdpB SW:ATKB_STAAU (Q9XBA9) (673 aa) fasta scores:
+FT                   E(): 2.3e-169, 71.55% id in 675 aa"
+FT                   /product="putative potassium-transporting ATPase B chain"
+FT                   /systematic_id="SAR2164"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02116.out"
+FT                   /controlled_curation="organism=ECO; evidence=ISS;
+FT                   db_xref=PMID:2522440;"
+FT                   /curation="LDS-gel electrophoresis of Kdp subunits
+FT                   labelled with radioactive ATP identified KdpB as the
+FT                   catalytic subunit of Kdp (PMID:2522440)"
+FT   CDS             2467344..2468036
+FT                   /COL_orthologue="SACOL2304"
+FT                   /MSSA476_orthologue="SAS2204"
+FT                   /MW2_orthologue="MW2232"
+FT                   /Mu50_orthologue="SAV2312"
+FT                   /N315_orthologue="SA2105"
+FT                   /NCTC8325_orthologue="SAOUHSC_02585"
+FT                   /RF122_orthologue="SAB2189"
+FT                   /USA300_orthologue="SAUSA300_2261"
 FT                   /class="6.1.1"
 FT                   /colour=9
-FT                   /gene="rsbW"
-FT                   /note="Similar to Bacillus subtilis anti-sigma B factor
-FT                   RsbW SW:RSBW_BACSU (P17904) (160 aa) fasta scores: E():
-FT                   7.1e-30, 56.05% id in 157 aa, and to Bacillus
-FT                   licheniformis putative sigma-B regulator TR:O50231
-FT                   (EMBL:AF034567) (160 aa) fasta scores: E(): 1.1e-28,
-FT                   52.22% id in 157 aa"
-FT                   /product="anti-sigma B factor"
-FT                   /systematic_id="SAR2153"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02105.out"
-FT                   /controlled_curation="organism=SAU; evidence=EXP;
-FT                   db_xref=PMID:10217777;"
-FT                   /curation="Cross-linking experiments showed that RsbW is
-FT                   able to bind sigma B and transcription run-off assays
-FT                   showed that RsbW prevents sigma B-mediated transcription.
-FT                   (PMID:10217777)"
-FT   CDS             complement(2227993..2228484)
-FT                   /COL_orthologue="SACOL2062"
-FT                   /MSSA476_orthologue="SAS1977"
-FT                   /MW2_orthologue="MW1996"
-FT                   /Mu50_orthologue="SAV2072"
-FT                   /N315_orthologue="SA1876"
-FT                   /NCTC8325_orthologue="SAOUHSC_02307"
-FT                   /RF122_orthologue="SAB1957c"
-FT                   /USA300_orthologue="SAUSA300_2029"
-FT                   /class="4.1.6"
-FT                   /colour=3
-FT                   /note="Similar to Bacillus subtilis hypothetical protein
-FT                   YdbS TR:P96615 (EMBL:AB001488) (159 aa) fasta scores: E():
-FT                   1.2e-08, 30.98% id in 142 aa, and to Bacillus halodurans
-FT                   hypothetical protein BH1720 TR:Q9KC54 (EMBL:AP001512) (159
-FT                   aa) fasta scores: E(): 3.6e-05, 25% id in 148 aa"
-FT                   /product="putative membrane protein"
-FT                   /systematic_id="SAR2160"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02112.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(2272674..2273750)
-FT                   /COL_orthologue="SACOL2110"
-FT                   /MSSA476_orthologue="SAS2021"
-FT                   /MW2_orthologue="MW2042"
-FT                   /Mu50_orthologue="SAV2118"
-FT                   /N315_orthologue="SA1920"
-FT                   /NCTC8325_orthologue="SAOUHSC_02359"
-FT                   /RF122_orthologue="SAB2002c"
-FT                   /USA300_orthologue="SAUSA300_2072"
-FT                   /class="2.2.10"
-FT                   /cluster="MRSA252_1e-50:0109 2"
-FT                   /cluster="MRSA252_1e-40:0132 2"
-FT                   /cluster="MRSA252_1e-30:0154 2"
-FT                   /colour=2
-FT                   /gene="prfA"
-FT                   /note="Similar to Mycoplasma capricolum peptide chain
-FT                   release factor 1 PrfA SW:RF1_MYCCA (P71496) (370 aa) fasta
-FT                   scores: E(): 1.8e-60, 53% id in 349 aa, and to Bacillus
-FT                   subtilis peptide chain release factor 1 PrfA SW:RF1_BACSU
-FT                   (P45872) (356 aa) fasta scores: E(): 8.1e-78, 66% id in
-FT                   353 aa"
-FT                   /product="peptide chain release factor 1"
-FT                   /systematic_id="SAR2206"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02158.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             2422708..2423148
-FT                   /COL_orthologue="SACOL2256"
-FT                   /MSSA476_orthologue="SAS2155"
-FT                   /MW2_orthologue="MW2183"
-FT                   /Mu50_orthologue="SAV2265"
-FT                   /N315_orthologue="SA2060"
-FT                   /NCTC8325_orthologue="SAOUHSC_02530"
-FT                   /RF122_orthologue="SAB2137"
-FT                   /USA300_orthologue="SAUSA300_2216"
-FT                   /class="6.1.1"
-FT                   /colour=9
-FT                   /note="Similar to Escherichia coli homoprotocatechuate
-FT                   degradative operon repressor HpcR SW:HPCR_ECOLI (Q07095)
-FT                   (148 aa) fasta scores: E(): 0.0022, 21.42% id in 112 aa,
-FT                   and to Staphylococcus sciuri Orf141 protein TR:O54273
-FT                   (EMBL:Y13094) (141 aa) fasta scores: E(): 0.00089, 23.94%
-FT                   id in 142 aa"
-FT                   /product="MarR family regulatory protein"
-FT                   /systematic_id="SAR2349"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02301.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             2441894..2442304
-FT                   /COL_orthologue="SACOL2281"
-FT                   /EC_number="3.5.1.5"
-FT                   /MSSA476_orthologue="SAS2179"
-FT                   /MW2_orthologue="MW2207"
-FT                   /Mu50_orthologue="SAV2289"
-FT                   /N315_orthologue="SA2083"
-FT                   /NCTC8325_orthologue="SAOUHSC_02559"
-FT                   /RF122_orthologue="SAB2161"
-FT                   /USA300_orthologue="SAUSA300_2239"
-FT                   /class="3.4.5"
-FT                   /colour=6
-FT                   /gene="ureB"
-FT                   /note="Similar to Staphylococcus xylosus urease beta
-FT                   subunit UreB SW:URE2_STAXY (P42874) (137 aa) fasta scores:
-FT                   E(): 1.2e-33, 66.41% id in 134 aa, and to Synechocystis sp
-FT                   urease beta subunit SLL0420 SW:URE2_SYNY3 (P74386) (105
-FT                   aa) fasta scores: E(): 4.3e-24, 64.7% id in 102 aa"
-FT                   /product="urease beta subunit"
-FT                   /systematic_id="SAR2373"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02325.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             2456894..2457847
-FT                   /COL_orthologue="SACOL2296"
-FT                   /MSSA476_orthologue="SAS2196"
-FT                   /MW2_orthologue="MW2224"
-FT                   /N315_orthologue="SA2098"
-FT                   /NCTC8325_orthologue="SAOUHSC_02577"
-FT                   /RF122_orthologue="SAB2178"
-FT                   /USA300_orthologue="SAUSA300_2254"
-FT                   /class="7.0.0"
-FT                   /cluster="MRSA252_1e-50:0112 2"
-FT                   /cluster="MRSA252_1e-40:0044 3"
-FT                   /cluster="MRSA252_1e-30:0027 4"
-FT                   /colour=13
-FT                   /note="Similar to Pyrococcus abyssi glycerate
-FT                   dehydrogenase PAB2374 TR:Q9UYR1 (EMBL:AJ248287) (335 aa)
-FT                   fasta scores: E(): 1.7e-52, 46.7% id in 319 aa, and to
-FT                   Thermococcus litoralis glyoxylate reductase TR:Q9C4M5
-FT                   (EMBL:AB033995) (331 aa) fasta scores: E(): 9.7e-50,
-FT                   45.45% id in 319 aa"
-FT                   /product="putative D-isomer specific 2-hydroxyacid
-FT                   dehydrogenase"
-FT                   /systematic_id="SAR2389"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02341.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(2522500..2524035)
-FT                   /COL_orthologue="SACOL2362"
-FT                   /EC_number="1.1.99.16"
-FT                   /MSSA476_orthologue="SAS2256"
-FT                   /MW2_orthologue="MW2286"
-FT                   /Mu50_orthologue="SAV2365"
-FT                   /N315_orthologue="SA2155"
-FT                   /NCTC8325_orthologue="SAOUHSC_02647"
-FT                   /RF122_orthologue="SAB2244c"
-FT                   /USA300_orthologue="SAUSA300_2312"
-FT                   /class="3.5.8"
-FT                   /cluster="MRSA252_1e-50:0152 2"
-FT                   /cluster="MRSA252_1e-40:0185 2"
-FT                   /cluster="MRSA252_1e-30:0218 2"
-FT                   /colour=1
-FT                   /gene="mqo1"
-FT                   /note="Similar to Corynebacterium glutamicum
-FT                   malate:quinone oxidoreductase Mqo SW:MQO_CORGL (O69282)
-FT                   (499 aa) fasta scores: E(): 5.6e-97, 51.02% id in 488 aa,
-FT                   and to Bacillus halodurans hypothetical protein BH3960
-FT                   TR:Q9Z9Q7 (EMBL:AB013369) (500 aa) fasta scores: E():
-FT                   3.1e-127, 63.87% id in 490 aa. CDS contains extra amino
-FT                   acids at the N-terminus in comparison to some orthologues.
-FT                   Possible alternative translational start site. Similar to
-FT                   SAR2685, 51.313% identity (51.943% ungapped) in 495 aa
-FT                   overlap"
-FT                   /product="putative malate:quinone oxidoreductase 1"
-FT                   /systematic_id="SAR2454"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02407.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             2609035..2610534
-FT                   /COL_orthologue="SACOL2445"
-FT                   /MSSA476_orthologue="SAS2333"
-FT                   /MW2_orthologue="MW2365"
-FT                   /Mu50_orthologue="SAV2441"
-FT                   /N315_orthologue="SA2230"
-FT                   /NCTC8325_orthologue="SAOUHSC_02736"
-FT                   /RF122_orthologue="SAB2323"
-FT                   /USA300_orthologue="SAUSA300_2386"
-FT                   /class="4.1.7"
-FT                   /colour=3
-FT                   /note="Highly similar to Staphylococcus aureus FmtA-like
-FT                   protein Flp TR:Q9KJ74 (EMBL:AF210139) (498 aa) fasta
-FT                   scores: E(): 1.3e-171, 94.76% id in 497 aa. Similar to
-FT                   Bacillus halodurans hypothetical protein BH0715 TR:Q9KEY4
-FT                   (EMBL:AP001509) (478 aa) fasta scores: E(): 2.2e-21,
-FT                   26.84% id in 462 aa"
-FT                   /product="putative exported protein"
-FT                   /systematic_id="SAR2531"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02483.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             2687033..2687326
-FT                   /COL_orthologue="SACOL2532"
-FT                   /MSSA476_orthologue="SAS2406"
-FT                   /MW2_orthologue="MW2441"
-FT                   /Mu50_orthologue="SAV2521"
-FT                   /N315_orthologue="SA2309"
-FT                   /NCTC8325_orthologue="SAOUHSC_02827"
-FT                   /RF122_orthologue="SAB2395"
-FT                   /USA300_orthologue="SAUSA300_2460"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /note="Similar to Escherichia coli hypothetical protein
-FT                   YjdJ SW:YJDJ_ECOLI (P39274) (90 aa) fasta scores: E():
-FT                   3.7e-11, 45.45% id in 88 aa, and to Lactococcus lactis
-FT                   YjdJ-like protein TR:O69438 (EMBL:Y13384) (105 aa) fasta
-FT                   scores: E(): 4.3e-06, 39.32% id in 89 aa"
-FT                   /product="acetyltransferase (GNAT) family protein"
-FT                   /systematic_id="SAR2601"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02552.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(2765369..2766328)
-FT                   /COL_orthologue="SACOL2618"
-FT                   /EC_number="1.1.1.27"
-FT                   /MSSA476_orthologue="SAS2487"
-FT                   /MW2_orthologue="MW2521"
-FT                   /Mu50_orthologue="SAV2602"
-FT                   /N315_orthologue="SA2395"
-FT                   /NCTC8325_orthologue="SAOUHSC_02922"
-FT                   /RF122_orthologue="SAB2475c"
-FT                   /USA300_orthologue="SAUSA300_2537"
-FT                   /class="3.5.2"
-FT                   /cluster="MRSA252_1e-50:0068 2"
-FT                   /cluster="MRSA252_1e-40:0085 2"
-FT                   /cluster="MRSA252_1e-30:0100 2"
-FT                   /colour=1
-FT                   /gene="ldh2"
-FT                   /note="Similar to Bacillus caldotenax L-lactate
-FT                   dehydrogenase Ldh SW:LDH_BACCA (P10655) (317 aa) fasta
-FT                   scores: E(): 2.7e-60, 54.75% id in 305 aa, and to Bacillus
-FT                   caldolyticus L-lactate dehydrogenase TR:Q59244
-FT                   (EMBL:M19394) (317 aa) fasta scores: E(): 2.3e-60, 54.87%
-FT                   id in 308 aa. Similar to SAR0234, 59.223% identity
-FT                   (59.609% ungapped) in 309 aa overlap"
-FT                   /product="L-lactate dehydrogenase 2"
-FT                   /systematic_id="SAR2680"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02628.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             complement(2778913..2780403)
-FT                   /COL_orthologue="SACOL2628"
-FT                   /EC_number="1.2.1.8"
-FT                   /MSSA476_orthologue="SAS2498"
-FT                   /MW2_orthologue="MW2532"
-FT                   /Mu50_orthologue="SAV2613"
-FT                   /N315_orthologue="SA2406"
-FT                   /NCTC8325_orthologue="SAOUHSC_02933"
-FT                   /RF122_orthologue="SAB2487c"
-FT                   /USA300_orthologue="SAUSA300_2546"
-FT                   /class="1.6.2"
-FT                   /cluster="MRSA252_1e-50:0012 4"
-FT                   /cluster="MRSA252_1e-40:0005 5"
-FT                   /cluster="MRSA252_1e-30:0014 5"
-FT                   /colour=0
-FT                   /gene="cudA"
-FT                   /gene="gbsA"
-FT                   /note="Similar to Staphylococcus xylosus glycine betaine
-FT                   aldehyde dehydrogenase CudA TR:Q9X2M1 (EMBL:AF009415) (497
-FT                   aa) fasta scores: E(): 3.2e-161, 82.05% id in 496 aa, and
-FT                   to Bacillus subtilis betaine aldehyde dehydrogenase GbsA
-FT                   SW:DHAB_BACSU (P71016) (490 aa) fasta scores: E():
-FT                   2.2e-129, 66.87% id in 489 aa"
-FT                   /product="putative betaine aldehyde dehydrogenase"
-FT                   /systematic_id="SAR2691"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02639.out"
-FT                   /controlled_curation="organism=; evidence=; db_xref=;"
-FT                   /curation=" (PMID:)"
-FT   CDS             2823398..2825257
-FT                   /COL_orthologue="SACOL2666"
-FT                   /MSSA476_orthologue="SAS2530"
-FT                   /MW2_orthologue="MW2565"
-FT                   /Mu50_orthologue="SAV2644"
-FT                   /N315_orthologue="SA2437"
-FT                   /NCTC8325_orthologue="SAOUHSC_02979"
-FT                   /RF122_orthologue="SAB2519"
-FT                   /USA300_orthologue="SAUSA300_2579"
-FT                   /class="4.1.6"
-FT                   /colour=3
-FT                   /note="No significant database matches to the full length
-FT                   CDS. C-terminal region is similar to Lactococcus lactis
-FT                   N-acetylmuramidase AcmB TR:Q9CED5 (EMBL:AE006420) (475 aa)
-FT                   fasta scores: E(): 7.4e-29, 33.4% id in 482 aa, and to
-FT                   Streptococcus pyogenes immunogenic secreted protein
-FT                   precursor Isp TR:Q54707 (EMBL:U31811) (534 aa) fasta
-FT                   scores: E(): 1.2e-13, 26.7% id in 543 aa"
-FT                   /product="putative exported protein"
-FT                   /systematic_id="SAR2723"
-FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02672.out"
+FT                   /note="Similar to the N-terminal regions of Bacillus
+FT                   halodurans BH1889 TR:Q9KBN6 (EMBL:AP001513) (325 aa) fasta
+FT                   scores: E(): 5.9e-11, 23.47% id in 230 aa, and to Bacillus
+FT                   subtilis transcription regulator YobV TR:O34920
+FT                   (EMBL:AF027868) (313 aa) fasta scores: E(): 0.0019, 22.76%
+FT                   id in 224 aa"
+FT                   /product="DeoR family regulatory protein"
+FT                   /systematic_id="SAR2396"
+FT                   /fasta_file="%uniprot:fasta/MRSA252.tab.seq.02349.out"
 FT                   /controlled_curation="organism=; evidence=; db_xref=;"
 FT                   /curation=" (PMID:)"
 SQ   Sequence 2902619 BP; 969147 A; 476492 C; 475775 G; 981205 T; 0 other;

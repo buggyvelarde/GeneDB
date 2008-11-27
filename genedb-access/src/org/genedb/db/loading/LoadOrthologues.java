@@ -38,13 +38,16 @@ import java.util.Map;
  * <ol>
  *   <li> Source organism,
  *   <li> source feature,
- *   <li> target organism,
- *   <li> target feature,
+ *   <li> target organism or <code>cluster</code>,
+ *   <li> target feature or cluster name,
  *   <li> the percentage identity (optional)
  * </ol>
- * The source and target feature fields should contain the uniqueName of a transcript.
- * For orthologue clusters, the target organism field should contain the word "cluster"
- * and the
+ * The source feature field should contain the uniqueName of a transcript
+ * or polypeptide.
+ * For a simple orthologue, the third and fourth fields contain the name of the
+ * target organism and target feature (transcript or polypeptide);
+ * for orthologue clusters, the third field contains the word "cluster"
+ * and the fourth field the name of the cluster.
  * <p>
  * Details of the analysis should be specified as properties:
  * <dl>
@@ -323,6 +326,10 @@ class OrthologuesLoader {
         } else {
             transcript = sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
             if (transcript == null) {
+                Polypeptide polypeptide = sequenceDao.getFeatureByUniqueName(uniqueName, Polypeptide.class);
+                if (polypeptide != null) {
+                    return polypeptide;
+                }
                 throw new DataError(file, lineNumber, String.format("Could not find transcript feature '%s'", uniqueName));
             }
         }
@@ -359,8 +366,9 @@ class OrthologuesLoader {
             loadCluster(clusterName, polypeptides, identity);
         } else {
             // Manually-curated orthologue. Add a simple orthologous_to relationship in both directions.
-            sourcePolypeptide.addOrthologue(targetPolypeptide);
-            targetPolypeptide.addOrthologue(sourcePolypeptide);
+            Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+            session.persist(sourcePolypeptide.addOrthologue(targetPolypeptide));
+            session.persist(targetPolypeptide.addOrthologue(sourcePolypeptide));
         }
     }
 

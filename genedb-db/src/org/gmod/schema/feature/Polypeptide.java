@@ -287,9 +287,10 @@ public class Polypeptide extends Region {
     /**
      * Add an orthologue link from the specified polypeptide to this one.
      * @param source the source polypeptide
+     * @return the newly-created FeatureRelationship object
      */
-    public void addOrthologue(Polypeptide source) {
-        this.addFeatureRelationship(source, "sequence", "orthologous_to");
+    public FeatureRelationship addOrthologue(Polypeptide source) {
+        return this.addFeatureRelationship(source, "sequence", "orthologous_to");
     }
 
 
@@ -427,15 +428,15 @@ public class Polypeptide extends Region {
      */
     @Transient
     public Collection<ProteinMatch> getOrthologueClusters() {
-        List<ProteinMatch> clusters = new ArrayList<ProteinMatch>();
-        for (FeatureRelationship featureRelationship:
-            getFeatureRelationshipsForSubjectIdFilteredByCvNameAndTermName("sequence", "orthologous_to"))
-        {
-            Feature object = featureRelationship.getObjectFeature();
-            if (object instanceof ProteinMatch) {
-                clusters.add((ProteinMatch) object);
-            }
-        }
-        return clusters;
+        return getRelatedFeatures(ProteinMatch.class, "sequence", "orthologous_to");
+    }
+
+    /**
+     * Get a collection of all the polypeptides to which this polypeptide
+     * @return
+     */
+    @Transient
+    public Collection<Polypeptide> getDirectOrthologues() {
+        return getRelatedFeatures(Polypeptide.class, "sequence", "orthologous_to");
     }
 }

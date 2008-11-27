@@ -85,7 +85,8 @@
         <property name="transactionManager" ref="jdbcTransactionManager"/>
     </bean>
 
-    <bean id="orthologuesLoader" class="org.genedb.db.loading.OrthologuesLoader" init-method="afterPropertiesSet">
+    <bean id="orthologuesLoader" class="org.genedb.db.loading.OrthologuesLoader"
+        scope="prototype" init-method="afterPropertiesSet">
         <property name="sequenceDao" ref="sequenceDao"/>
         <property name="organismDao" ref="organismDao"/>
         <property name="sessionFactory" ref="sessionFactory"/>

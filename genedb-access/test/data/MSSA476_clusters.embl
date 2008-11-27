@@ -1,546 +1,142 @@
 ID   BX571857; SV 1; circular; genomic DNA; STD; PRO; 2799802 BP.
 FH   Key             Location/Qualifiers
 FH
-FT   CDS             18322..20289
-FT                   /EMRSA15_orthologue="SAEMRSA1500140"
-FT                   /MRSA252_orthologue="SAR0014"
-FT                   /cds_id="query13"
-FT                   /cds_id="query13"
-FT                   /class="4.1.6"
-FT                   /colour=3
-FT                   /systematic_id="SAS0014"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0014"
-FT                   /product="putative membrane protein"
-FT   CDS             20286..20732
-FT                   /EMRSA15_orthologue="SAEMRSA1500150"
-FT                   /MRSA252_orthologue="SAR0015"
-FT                   /cds_id="query14"
-FT                   /cds_id="query14"
-FT                   /class="4.2.2"
-FT                   /colour=2
-FT                   /gene="rplI"
-FT                   /systematic_id="SAS0015"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0015"
-FT                   /product="50S ribosomal protein L9"
-FT   CDS             95579..96052
-FT                   /EMRSA15_orthologue="SAEMRSA1500750"
-FT                   /MRSA252_orthologue="SAR0112"
-FT                   /cds_id="query77"
-FT                   /cds_id="query77"
-FT                   /class="4.1.6"
-FT                   /colour=3
-FT                   /systematic_id="SAS0083"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0112"
-FT                   /product="putative membrane protein"
-FT   CDS             149329..150438
-FT                   /EMRSA15_orthologue="SAEMRSA1501200"
-FT                   /MRSA252_orthologue="SAR0156"
-FT                   /cds_id="query124"
-FT                   /cds_id="query124"
-FT                   /class="4.1.4"
-FT                   /colour=3
-FT                   /gene="capF"
-FT                   /systematic_id="SAS0129"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0156"
-FT                   /product="capsular polysaccharide synthesis enzyme"
-FT   CDS             complement(189365..189922)
-FT                   /EMRSA15_orthologue="SAEMRSA1501520"
-FT                   /MRSA252_orthologue="SAR0188"
-FT                   /cds_id="query157"
-FT                   /cds_id="query157"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS0162"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0188"
-FT                   /product="putative isochorismatase"
-FT   CDS             258018..258971
-FT                   /EC_number="1.1.1.27"
-FT                   /EMRSA15_orthologue="SAEMRSA1502000"
-FT                   /MRSA252_orthologue="SAR0234"
-FT                   /cds_id="query212"
-FT                   /cds_id="query212"
-FT                   /class="3.5.2"
-FT                   /colour=1
-FT                   /gene="ldh1"
-FT                   /systematic_id="SAS0217"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0234"
-FT                   /product="L-lactate dehydrogenase 1"
-FT   CDS             complement(400727..402250)
-FT                   /EC_number="1.6.4.-"
-FT                   /EMRSA15_orthologue="SAEMRSA1503330"
-FT                   /MRSA252_orthologue="SAR0398"
-FT                   /cds_id="query355"
-FT                   /cds_id="query355"
-FT                   /class="1.4.2"
-FT                   /colour=0
-FT                   /gene="ahpF"
-FT                   /systematic_id="SAS0357"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0398"
-FT                   /product="alkyl hydroperoxide reductase subunit F"
-FT   CDS             521242..521505
-FT                   /EMRSA15_orthologue="SAEMRSA1504320"
-FT                   /MRSA252_orthologue="SAR0507"
-FT                   /cds_id="query465"
-FT                   /cds_id="query465"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS0463"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0507"
-FT                   /product="S4 domain containing protein"
-FT   CDS             563503..564072
-FT                   /EMRSA15_orthologue="SAEMRSA1504600"
-FT                   /MRSA252_orthologue="SAR0537"
-FT                   /cds_id="query493"
-FT                   /cds_id="query493"
-FT                   /class="6.1.1"
-FT                   /colour=9
-FT                   /gene="sigH"
-FT                   /systematic_id="SAS0491"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0537"
-FT                   /product="putative DNA-binding protein"
-FT   CDS             576204..576515
-FT                   /EMRSA15_orthologue="SAEMRSA1504710"
-FT                   /MRSA252_orthologue="SAR0549"
-FT                   /cds_id="query504"
-FT                   /cds_id="query504"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS0502"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0549"
-FT                   /product="putative ribosomal protein"
-FT   CDS             593409..593975
-FT                   /EMRSA15_orthologue="SAEMRSA1504870"
-FT                   /MRSA252_orthologue="SAR0565"
-FT                   /cds_id="query520"
-FT                   /cds_id="query520"
+FT   CDS             170644..171003
+FT                   /EMRSA15_orthologue="SAEMRSA1501410"
+FT                   /MRSA252_orthologue="SAR0177"
+FT                   /cds_id="query146"
+FT                   /cds_id="query146"
 FT                   /class="0.0.2"
 FT                   /colour=10
-FT                   /systematic_id="SAS0518"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0565"
+FT                   /systematic_id="SAS0151"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0177"
 FT                   /product="conserved hypothetical protein"
-FT   CDS             627480..628466
-FT                   /EC_number="2.3.1.8"
-FT                   /EMRSA15_orthologue="SAEMRSA1505160"
-FT                   /MRSA252_orthologue="SAR0594"
-FT                   /cds_id="query549"
-FT                   /cds_id="query549"
-FT                   /class="3.4.3"
-FT                   /colour=6
-FT                   /gene="pta"
-FT                   /systematic_id="SAS0547"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0594"
-FT                   /product="putative phosphate acetyltransferase"
-FT   CDS             complement(664273..664476)
-FT                   /EMRSA15_orthologue="SAEMRSA1505470"
-FT                   /MRSA252_orthologue="SAR0628"
-FT                   /cds_id="query589"
-FT                   /cds_id="query589"
-FT                   /class="0.0.0"
-FT                   /colour=8
-FT                   /systematic_id="SAS0587"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0628"
-FT                   /product="hypothetical protein"
-FT   CDS             670612..671049
-FT                   /EMRSA15_orthologue="SAEMRSA1505550"
-FT                   /MRSA252_orthologue="SAR0636"
-FT                   /cds_id="query597"
-FT                   /cds_id="query597"
-FT                   /class="4.1.6"
-FT                   /colour=3
-FT                   /systematic_id="SAS0595"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0636"
-FT                   /product="putative membrane protein"
-FT   CDS             692043..693047
-FT                   /EMRSA15_orthologue="SAEMRSA1505740"
-FT                   /MRSA252_orthologue="SAR0658"
-FT                   /cds_id="query616"
-FT                   /cds_id="query616"
-FT                   /class="1.5.5"
-FT                   /colour=3
-FT                   /gene="fhuB"
-FT                   /systematic_id="SAS0613"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0658"
-FT                   /product="ferrichrome transport permease"
-FT   CDS             complement(724957..725832)
-FT                   /EC_number="2.7.1.66"
-FT                   /EMRSA15_orthologue="SAEMRSA1506090"
-FT                   /MRSA252_orthologue="SAR0736"
-FT                   /cds_id="query651"
-FT                   /cds_id="query651"
-FT                   /class="1.4.2"
-FT                   /colour=0
-FT                   /gene="bacA"
-FT                   /systematic_id="SAS0648"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0736"
-FT                   /product="putative undecaprenol kinase"
-FT   CDS             760301..762241
-FT                   /EMRSA15_orthologue="SAEMRSA1506450"
-FT                   /MRSA252_orthologue="SAR0772"
-FT                   /cds_id="query687"
-FT                   /cds_id="query687"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS0684"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0772"
-FT                   /product="putative sulfatase"
-FT   CDS             858108..858488
-FT                   /EMRSA15_orthologue="SAEMRSA1507350"
-FT                   /MRSA252_orthologue="SAR0864"
-FT                   /cds_id="query775"
-FT                   /cds_id="query775"
-FT                   /class="3.4.3"
-FT                   /colour=6
-FT                   /gene="gcvH"
-FT                   /systematic_id="SAS0773"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0864"
-FT                   /product="glycine cleavage system H protein"
-FT   CDS             873310..874377
-FT                   /EMRSA15_orthologue="SAEMRSA1507510"
-FT                   /MRSA252_orthologue="SAR0883"
-FT                   /cds_id="query793"
-FT                   /cds_id="query793"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS0791"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0883"
-FT                   /product="putative dioxygenase"
-FT   CDS             937090..937605
-FT                   /EMRSA15_orthologue="SAEMRSA1508090"
-FT                   /MRSA252_orthologue="SAR0943"
-FT                   /cds_id="query852"
-FT                   /cds_id="query852"
+FT   CDS             complement(381788..383629)
+FT                   /EMRSA15_orthologue="SAEMRSA1503120"
+FT                   /MRSA252_orthologue="SAR0354"
+FT                   /cds_id="query331"
+FT                   /cds_id="query331"
 FT                   /class="0.0.2"
 FT                   /colour=10
-FT                   /systematic_id="SAS0850"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0943"
+FT                   /systematic_id="SAS0333"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0354"
 FT                   /product="conserved hypothetical protein"
-FT   CDS             1007899..1008294
-FT                   /EMRSA15_orthologue="SAEMRSA1513670"
-FT                   /MRSA252_orthologue="SAR1512"
-FT                   /cds_id="query942"
-FT                   /cds_id="query942"
+FT   CDS             714886..715602
+FT                   /EMRSA15_orthologue="SAEMRSA1505950"
+FT                   /MRSA252_orthologue="SAR0680"
+FT                   /cds_id="query637"
+FT                   /cds_id="query637"
+FT                   /class="0.0.2"
+FT                   /colour=10
+FT                   /systematic_id="SAS0634"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0680"
+FT                   /product="conserved hypothetical protein"
+FT   CDS             complement(792183..792944)
+FT                   /EMRSA15_orthologue="SAEMRSA1506710"
+FT                   /MRSA252_orthologue="SAR0799"
+FT                   /cds_id="query713"
+FT                   /cds_id="query713"
+FT                   /class="4.1.6"
+FT                   /colour=3
+FT                   /systematic_id="SAS0710"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR0799"
+FT                   /product="putative membrane protein"
+FT   CDS             992167..992409
+FT                   /EMRSA15_orthologue="SAEMRSA1519010"
+FT                   /MRSA252_orthologue="SAR2076"
+FT                   /cds_id="query915"
+FT                   /cds_id="query915"
 FT                   /class="5.1.2"
 FT                   /colour=12
-FT                   /systematic_id="SAS0939"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1512"
+FT                   /systematic_id="SAS0913"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2076"
 FT                   /product="hypothetical phage protein"
-FT   CDS             complement(1069808..1070125)
-FT                   /EMRSA15_orthologue="SAEMRSA1508930"
-FT                   /MRSA252_orthologue="SAR1035"
-FT                   /cds_id="query999"
-FT                   /cds_id="query999"
-FT                   /class="4.1.7"
-FT                   /colour=3
-FT                   /systematic_id="SAS0997"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1035"
-FT                   /product="putative exported protein"
-FT   CDS             complement(1173095..1173820)
-FT                   /EMRSA15_orthologue="SAEMRSA1509990"
-FT                   /MRSA252_orthologue="SAR1141"
-FT                   /cds_id="query1104"
-FT                   /cds_id="query1104"
-FT                   /class="5.1.5"
-FT                   /colour=0
-FT                   /systematic_id="SAS1101"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1141"
-FT                   /product="exotoxin"
-FT   CDS             1220564..1221763
-FT                   /EMRSA15_orthologue="SAEMRSA1510440"
-FT                   /MRSA252_orthologue="SAR1187"
-FT                   /cds_id="query1149"
-FT                   /cds_id="query1149"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS1145"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1187"
-FT                   /product="putative flavoprotein"
-FT   CDS             1262214..1263332
-FT                   /EMRSA15_orthologue="SAEMRSA1510800"
-FT                   /MRSA252_orthologue="SAR1223"
-FT                   /cds_id="query1185"
-FT                   /cds_id="query1185"
-FT                   /class="2.1.0"
-FT                   /colour=5
-FT                   /gene="lytN"
-FT                   /systematic_id="SAS1181"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1223"
-FT                   /product="putative cell wall hydrolase"
-FT   CDS             1368495..1368731
-FT                   /EMRSA15_orthologue="SAEMRSA1511870"
-FT                   /MRSA252_orthologue="SAR1350"
-FT                   /cds_id="query1285"
-FT                   /cds_id="query1285"
-FT                   /class="4.1.6"
-FT                   /colour=3
-FT                   /systematic_id="SAS1280"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1350"
-FT                   /product="putative membrane protein"
-FT   CDS             complement(1577338..1578471)
-FT                   /EMRSA15_orthologue="SAEMRSA1514330"
-FT                   /MRSA252_orthologue="SAR1590"
-FT                   /cds_id="query1455"
-FT                   /cds_id="query1455"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS1451"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1590"
-FT                   /product="putative peptidase"
-FT   CDS             complement(1622013..1623830)
-FT                   /EC_number="2.7.7.-"
-FT                   /EMRSA15_orthologue="SAEMRSA1514820"
-FT                   /MRSA252_orthologue="SAR1639"
-FT                   /cds_id="query1504"
-FT                   /cds_id="query1504"
-FT                   /class="2.2.03"
-FT                   /colour=2
-FT                   /gene="dnaG"
-FT                   /systematic_id="SAS1500"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1639"
-FT                   /product="DNA primase"
-FT   CDS             complement(1629656..1630123)
-FT                   /EMRSA15_orthologue="SAEMRSA1514900"
-FT                   /MRSA252_orthologue="SAR1647"
-FT                   /cds_id="query1512"
-FT                   /cds_id="query1512"
-FT                   /class="0.0.2"
-FT                   /colour=10
-FT                   /systematic_id="SAS1508"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1647"
-FT                   /product="conserved hypothetical protein"
-FT   CDS             1646313..1646564
-FT                   /EMRSA15_orthologue="SAEMRSA1515050"
-FT                   /MRSA252_orthologue="SAR1663"
-FT                   /cds_id="query1527"
-FT                   /cds_id="query1527"
-FT                   /class="4.2.2"
-FT                   /colour=2
-FT                   /gene="rpsT"
-FT                   /systematic_id="SAS1523"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1663"
-FT                   /product="putative 30S ribosomal protein S20"
-FT   CDS             complement(1689429..1690304)
-FT                   /EMRSA15_orthologue="SAEMRSA1515490"
-FT                   /MRSA252_orthologue="SAR1712"
-FT                   /cds_id="query1572"
-FT                   /cds_id="query1572"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS1568"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1712"
-FT                   /product="putative N-acetylmuramoyl-L-alanine amidase"
-FT   CDS             complement(1707139..1707981)
-FT                   /EMRSA15_orthologue="SAEMRSA1515660"
-FT                   /MRSA252_orthologue="SAR1729"
-FT                   /cds_id="query1589"
-FT                   /cds_id="query1589"
-FT                   /class="4.1.7"
-FT                   /colour=3
-FT                   /systematic_id="SAS1585"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1729"
-FT                   /product="putative rod shape-determining protein"
-FT   CDS             1799578..1800210
-FT                   /EC_number="2.3.1.-"
-FT                   /EMRSA15_orthologue="SAEMRSA1516420"
-FT                   /MRSA252_orthologue="SAR1812"
-FT                   /cds_id="query1666"
-FT                   /cds_id="query1666"
-FT                   /class="3.4.2"
-FT                   /colour=6
-FT                   /gene="acuA"
-FT                   /systematic_id="SAS1660"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1812"
-FT                   /product="acetoin utilization protein"
-FT   CDS             complement(1919012..1920208)
-FT                   /EMRSA15_orthologue="SAEMRSA1517490"
-FT                   /MRSA252_orthologue="SAR1935"
-FT                   /cds_id="query1773"
-FT                   /cds_id="query1773"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS1765"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1935"
-FT                   /product="putative DNA repair exonuclease"
-FT   CDS             complement(1923626..1924249)
-FT                   /EMRSA15_orthologue="SAEMRSA1517530"
-FT                   /MRSA252_orthologue="SAR1939"
-FT                   /cds_id="query1777"
-FT                   /cds_id="query1777"
-FT                   /class="6.1.1"
-FT                   /colour=9
-FT                   /systematic_id="SAS1769"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1939"
-FT                   /product="putative response regulator"
-FT   CDS             complement(1983292..1984749)
-FT                   /EC_number="6.3.5.-"
-FT                   /EMRSA15_orthologue="SAEMRSA1518070"
-FT                   /MRSA252_orthologue="SAR1992"
-FT                   /cds_id="query1831"
-FT                   /cds_id="query1831"
+FT   CDS             1003639..1004877
+FT                   /EMRSA15_orthologue="SAEMRSA1513730"
+FT                   /MRSA252_orthologue="SAR1518"
+FT                   /cds_id="query936"
+FT                   /cds_id="query936"
+FT                   /class="5.1.2"
+FT                   /colour=12
+FT                   /systematic_id="SAS0933"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1518"
+FT                   /product="portal protein"
+FT   CDS             1226773..1227708
+FT                   /EC_number="2.1.2.9"
+FT                   /EMRSA15_orthologue="SAEMRSA1510490"
+FT                   /MRSA252_orthologue="SAR1192"
+FT                   /cds_id="query1154"
+FT                   /cds_id="query1154"
 FT                   /class="2.2.01"
 FT                   /colour=2
-FT                   /gene="gatA"
-FT                   /systematic_id="SAS1823"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1992"
-FT                   /product="glutamyl-tRNA amidotransferase subunit A"
-FT   CDS             complement(2074138..2075049)
-FT                   /EMRSA15_orthologue="SAEMRSA1519310"
-FT                   /cds_id="query1937"
-FT                   /cds_id="query1937"
-FT                   /class="1.5.5"
-FT                   /colour=3
-FT                   /systematic_id="SAS1928"
-FT                   /note="Similar to Bacillus subtilis ferrichrome-binding
-FT                   protein precursor fhud or bsu33320 SWALL:FHUD_BACSU
-FT                   (SWALL:P37580) (315 aa) fasta scores: E(): 5.7e-29, 38.66%
-FT                   id in 300 aa, and to Clostridium acetobutylicum
-FT                   ferrichrome-binding periplasmic proteinl, fhud cac0790
-FT                   SWALL:Q97KX6 (EMBL:AE007594) (307 aa) fasta scores: E():
-FT                   4.4e-31, 37.71% id in 297 aa"
-FT                   /product="putative ferrichrome-binding protein precursor"
-FT   CDS             complement(2165748..2166269)
-FT                   /EC_number="3.6.3.14"
-FT                   /EMRSA15_orthologue="SAEMRSA1520150"
-FT                   /MRSA252_orthologue="SAR2195"
-FT                   /cds_id="query2021"
-FT                   /cds_id="query2021"
-FT                   /class="3.4.0"
-FT                   /colour=1
-FT                   /gene="atpF"
-FT                   /systematic_id="SAS2010"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2195"
-FT                   /product="putative ATP synthase subunit b"
-FT   CDS             complement(2235396..2236460)
-FT                   /EMRSA15_orthologue="SAEMRSA1520710"
-FT                   /MRSA252_orthologue="SAR2256"
-FT                   /cds_id="query2078"
-FT                   /cds_id="query2078"
-FT                   /class="0.0.2"
-FT                   /colour=10
-FT                   /systematic_id="SAS2067"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2256"
-FT                   /product="conserved hypothetical protein"
-FT   CDS             2348473..2349426
-FT                   /EMRSA15_orthologue="SAEMRSA1522020"
-FT                   /MRSA252_orthologue="SAR2389"
-FT                   /cds_id="query2210"
-FT                   /cds_id="query2210"
+FT                   /systematic_id="SAS1150"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1192"
+FT                   /product="methionyl-tRNA formyltransferase"
+FT   CDS             1282498..1286814
+FT                   /EC_number="2.7.7.7"
+FT                   /EMRSA15_orthologue="SAEMRSA1510970"
+FT                   /MRSA252_orthologue="SAR1240"
+FT                   /cds_id="query1202"
+FT                   /cds_id="query1202"
+FT                   /class="2.2.03"
+FT                   /colour=2
+FT                   /gene="polC"
+FT                   /systematic_id="SAS1198"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1240"
+FT                   /product="DNA polymerase III PolC-type"
+FT   CDS             complement(1524223..1525425)
+FT                   /EMRSA15_orthologue="SAEMRSA1513180"
+FT                   /MRSA252_orthologue="SAR1468"
+FT                   /cds_id="query1403"
+FT                   /cds_id="query1403"
 FT                   /class="7.0.0"
 FT                   /colour=13
-FT                   /systematic_id="SAS2196"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2389"
-FT                   /product="putative D-isomer specific 2-hydroxyacid
-FT                   dehydrogenase"
-FT   CDS             2389757..2389879
-FT                   /EMRSA15_orthologue="SAEMRSA1522400"
-FT                   /MRSA252_orthologue="SAR2428a"
-FT                   /cds_id="query2249"
-FT                   /cds_id="query2249"
-FT                   /class="0.0.0"
-FT                   /colour=8
-FT                   /systematic_id="SAS2234a"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2428a"
-FT                   /note="Doubtful CDS"
-FT                   /product="hypothetical protein"
-FT   CDS             complement(2405957..2406622)
-FT                   /EMRSA15_orthologue="SAEMRSA1522570"
-FT                   /MRSA252_orthologue="SAR2445"
-FT                   /cds_id="query2266"
-FT                   /cds_id="query2266"
-FT                   /class="1.5.0"
-FT                   /colour=3
-FT                   /systematic_id="SAS2250"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2445"
-FT                   /product="ABC transporter ATP-binding protein"
-FT   CDS             complement(2410977..2412512)
-FT                   /EC_number="1.1.99.16"
-FT                   /EMRSA15_orthologue="SAEMRSA1522660"
-FT                   /MRSA252_orthologue="SAR2454"
-FT                   /cds_id="query2272"
-FT                   /cds_id="query2272"
-FT                   /class="3.5.8"
-FT                   /colour=1
-FT                   /gene="mqo1"
-FT                   /systematic_id="SAS2256"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2454"
-FT                   /product="putative malate:quinone oxidoreductase 1"
-FT   CDS             complement(2455813..2455995)
-FT                   /EMRSA15_orthologue="SAEMRSA1523030"
-FT                   /MRSA252_orthologue="SAR2494"
-FT                   /cds_id="query2311"
-FT                   /cds_id="query2311"
+FT                   /gene="papS"
+FT                   /systematic_id="SAS1400"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR1468"
+FT                   /product="poly A polymerase family protein"
+FT   CDS             complement(2057331..2058251)
+FT                   /EMRSA15_orthologue="SAEMRSA1519080"
+FT                   /MRSA252_orthologue="SAR2085"
+FT                   /cds_id="query1916"
+FT                   /cds_id="query1916"
+FT                   /class="5.1.2"
+FT                   /colour=12
+FT                   /systematic_id="SAS1906"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2085"
+FT                   /product="hypothetical phage protein"
+FT   CDS             2082326..2083069
+FT                   /EMRSA15_orthologue="SAEMRSA1519390"
+FT                   /MRSA252_orthologue="SAR2118"
+FT                   /cds_id="query1946"
+FT                   /cds_id="query1946"
 FT                   /class="4.1.6"
 FT                   /colour=3
-FT                   /systematic_id="SAS2295"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2494"
+FT                   /systematic_id="SAS1937"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2118"
 FT                   /product="putative membrane protein"
-FT   CDS             complement(2506293..2506892)
-FT                   /EMRSA15_orthologue="SAEMRSA1523490"
-FT                   /MRSA252_orthologue="SAR2539"
-FT                   /cds_id="query2357"
-FT                   /cds_id="query2357"
-FT                   /class="0.0.2"
-FT                   /colour=10
-FT                   /systematic_id="SAS2341"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2539"
-FT                   /product="conserved hypothetical protein"
-FT   CDS             complement(2560014..2563061)
-FT                   /EMRSA15_orthologue="SAEMRSA1523990"
-FT                   /MRSA252_orthologue="SAR2580"
-FT                   /cds_id="query2405"
-FT                   /cds_id="query2405"
-FT                   /class="4.1.8"
+FT   CDS             complement(2134021..2136048)
+FT                   /EC_number="3.6.3.12"
+FT                   /EMRSA15_orthologue="SAEMRSA1519860"
+FT                   /MRSA252_orthologue="SAR2164"
+FT                   /cds_id="query1991"
+FT                   /cds_id="query1991"
+FT                   /class="1.5.2"
 FT                   /colour=3
-FT                   /gene="fnbA"
-FT                   /systematic_id="SAS2388"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2580"
-FT                   /product="fibronectin-binding protein FnbA"
-FT   CDS             2583150..2583443
-FT                   /EMRSA15_orthologue="SAEMRSA1524190"
-FT                   /MRSA252_orthologue="SAR2601"
-FT                   /cds_id="query2425"
-FT                   /cds_id="query2425"
-FT                   /class="7.0.0"
-FT                   /colour=13
-FT                   /systematic_id="SAS2406"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2601"
-FT                   /product="acetyltransferase (GNAT) family protein"
-FT   CDS             2656607..2658289
-FT                   /EMRSA15_orthologue="SAEMRSA1524970"
-FT                   /MRSA252_orthologue="SAR2674"
-FT                   /cds_id="query2499"
-FT                   /cds_id="query2499"
-FT                   /class="0.0.2"
-FT                   /colour=10
-FT                   /systematic_id="SAS2480"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2674"
-FT                   /product="conserved hypothetical protein"
-FT   CDS             complement(2676700..2678190)
-FT                   /EC_number="1.2.1.8"
-FT                   /EMRSA15_orthologue="SAEMRSA1525170"
-FT                   /MRSA252_orthologue="SAR2691"
-FT                   /cds_id="query2517"
-FT                   /cds_id="query2517"
-FT                   /class="1.6.2"
-FT                   /colour=0
-FT                   /gene="cudA"
-FT                   /gene="gbsA"
-FT                   /systematic_id="SAS2498"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2691"
-FT                   /product="putative betaine aldehyde dehydrogenase"
-FT   CDS             complement(2759610..2760242)
-FT                   /EC_number="3.5.4.19"
-FT                   /EC_number="3.6.1.31"
-FT                   /EMRSA15_orthologue="SAEMRSA1525780"
-FT                   /MRSA252_orthologue="SAR2754"
-FT                   /cds_id="query2577"
-FT                   /cds_id="query2577"
-FT                   /class="3.1.10"
-FT                   /colour=7
-FT                   /gene="hisIE"
-FT                   /systematic_id="SAS2557"
-FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2754"
-FT                   /product="putative histidine biosynthesis bifunctional
-FT                   protein"
+FT                   /gene="kdpB"
+FT                   /systematic_id="SAS1981"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2164"
+FT                   /product="putative potassium-transporting ATPase B chain"
+FT   CDS             2358906..2359598
+FT                   /EMRSA15_orthologue="SAEMRSA1522100"
+FT                   /MRSA252_orthologue="SAR2396"
+FT                   /cds_id="query2218"
+FT                   /cds_id="query2218"
+FT                   /class="6.1.1"
+FT                   /colour=9
+FT                   /systematic_id="SAS2204"
+FT                   /note="Ortholog of S. aureus MRSA252 (BX571856) SAR2396"
+FT                   /product="DeoR family regulatory protein"
 SQ   Sequence 2799802 BP; 938498 A; 456986 C; 462759 G; 941559 T; 0 other;
      cgattaaaga tagaaataca cgatgcgagc aatcaaattt cataacatca ccatgagttt        60
      ggtccgaagc atgagtgttt acaatgtttg aataccttat acagttctta tacatacttt       120

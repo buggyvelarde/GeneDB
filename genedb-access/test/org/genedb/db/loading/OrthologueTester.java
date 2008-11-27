@@ -36,8 +36,19 @@ public class OrthologueTester {
     @Resource(name="sequenceDao")
     private SequenceDao sequenceDao;
 
+    public void orthologueGroup(String clusterName, String... polypeptideUniqueNames) {
+        orthologueGroup(clusterName, null, null, null, null, polypeptideUniqueNames);
+    }
 
     public void orthologueGroup(String program, String programVersion,
+            String algorithm, Double identity,
+            String... polypeptideUniqueNames) {
+        orthologueGroup(null, program, programVersion, algorithm, identity,
+            polypeptideUniqueNames);
+    }
+
+    public void orthologueGroup(String clusterName,
+            String program, String programVersion,
             String algorithm, Double identity,
             String... polypeptideUniqueNames) {
 
@@ -68,6 +79,9 @@ public class OrthologueTester {
         }
 
         ProteinMatch cluster = clusters.iterator().next();
+        if (clusterName != null) {
+            assertEquals(clusterName, cluster.getUniqueName());
+        }
         AnalysisFeature analysisFeature = cluster.getAnalysisFeature();
         if (analysisFeature == null) {
             fail(String.format("Cluster '%s' (ID=%d) has no AnalysisFeature", cluster.getUniqueName(), cluster.getFeatureId()));
@@ -81,6 +95,24 @@ public class OrthologueTester {
         assertEquals(identity, analysisFeature.getIdentity());
 
         assertEquals(polypeptides, cluster.getPolypeptidesInCluster());
+    }
+
+    public void orthologue(String polypeptide1uniqueName, String polypeptide2uniqueName) {
+        directionalOrthologue(polypeptide1uniqueName, polypeptide2uniqueName);
+        directionalOrthologue(polypeptide2uniqueName, polypeptide1uniqueName);
+    }
+
+    private void directionalOrthologue(String sourcePolypeptideUniqueName,
+            String targetPolypeptideUniqueName) {
+        Polypeptide source = sequenceDao.getFeatureByUniqueName(sourcePolypeptideUniqueName,
+            Polypeptide.class);
+        for (Polypeptide orthologue: source.getDirectOrthologues()) {
+            if (orthologue.getUniqueName().equals(targetPolypeptideUniqueName)) {
+                return;
+            }
+        }
+        fail(String.format("'%s' (ID=%d) is not orthologous to '%s'",
+            source.getUniqueName(), source.getFeatureId(), targetPolypeptideUniqueName));
     }
 
     /**

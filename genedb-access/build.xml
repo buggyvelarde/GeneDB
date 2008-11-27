@@ -159,7 +159,8 @@
         <pathelement location="${lib-dir}/spring-bundle-2.5.6/hsqldb/hsqldb.jar"/>
     </path>
 
-    <target name="all-tests" depends="file-test,location-test,embl-test,ortho-test"/>
+    <target name="all-tests" depends="genedb-access.jar,compile-tests,
+        file-test,location-test,embl-test,ortho-test"/>
     <target name="file-test" depends="genedb-access.jar,compile-tests">
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true">
             <classpath refid="test-classpath"/>
@@ -195,12 +196,17 @@
             <fileset dir="${imported.basedir.access}/../genedb-db/test-data/hsqldb" includes="skeleton.*"/>
         </copy>
     </target>
-    <target name="embl-test">
-        <antcall target="run-specific-embl-test"><param name="subtest" value="Berghei"/></antcall>
-        <antcall target="run-specific-embl-test"><param name="subtest" value="Mansoni"/></antcall>
-        <antcall target="run-specific-embl-test"><param name="subtest" value="Synthetic"/></antcall>
+    <target name="embl-test" depends="genedb-access.jar,compile-tests">
+        <antcall target="specific-embl-test"><param name="subtest" value="Berghei"/></antcall>
+        <antcall target="specific-embl-test"><param name="subtest" value="Mansoni"/></antcall>
+        <antcall target="specific-embl-test"><param name="subtest" value="Synthetic"/></antcall>
     </target>
-    <target name="run-specific-embl-test" depends="genedb-access.jar,compile-tests">
+    <!-- If you antcall a target that has dependencies, all the dependencies are executed
+         EVEN IF they have already been executed. Therefore we have an internal target
+         run-specific-embl-test, with no dependencies, that we antcall; and an external
+         target specific-embl-test that does have dependencies. -->
+    <target name="specific-embl-test" depends="genedb-access.jar,compile-tests,run-specific-embl-test"/>
+    <target name="run-specific-embl-test">
         <antcall target="copy-skeleton-database"/>
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="256M">
             <classpath refid="test-classpath"/>
@@ -209,11 +215,17 @@
         </junit>
     </target>
     <target name="ortho-test" depends="genedb-access.jar,compile-tests">
+        <antcall target="run-specific-ortho-test"><param name="subtest" value="ImplicitCluster"/></antcall>
+        <antcall target="run-specific-ortho-test"><param name="subtest" value="Unclustered"/></antcall>
+        <antcall target="run-specific-ortho-test"><param name="subtest" value="Clustered"/></antcall>
+    </target>
+    <target name="specific-ortho-test" depends="genedb-access.jar,compile-tests,run-specific-ortho-test"/>
+    <target name="run-specific-ortho-test">
         <antcall target="copy-skeleton-database"/>
         <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="512M">
             <classpath refid="test-classpath"/>
             <formatter type="brief" usefile="false" />
-            <test name="org.genedb.db.loading.OrthologueLoaderTest"/>
+            <test name="org.genedb.db.loading.OrthologueLoader${subtest}Test"/>
         </junit>
     </target>
 

@@ -68,6 +68,18 @@ public class SequenceDao extends BaseDao {
         return null;
     }
 
+    /**
+     * Get the feature with the specified unique name and type.
+     * If there is no such feature, logs a message at level <code>INFO</code>
+     * and returns <code>null</code>.
+     *
+     * @param <T>
+     * @param uniqueName the unique name of the feature
+     * @param featureClass the type of feature, e.g. <code>Polypeptide.class</code>
+     * @return the feature, or <code>null</code> if there isn't such a feature
+     * @throws RuntimeException if there is more than one feature with the
+     *          specified unique name and type
+     */
     public <T extends Feature> T getFeatureByUniqueName(String uniqueName, Class<T> featureClass) {
         @SuppressWarnings("unchecked")
         List<T> features = getSession().createQuery(
@@ -80,8 +92,8 @@ public class SequenceDao extends BaseDao {
                 featureClass.getSimpleName(), uniqueName));
             return null;
         }
-        else if (features.size() > 1) {
-            logger.warn(String.format("Found more than one feature of type '%s' with uniqueName '%s'",
+        if (features.size() > 1) {
+            throw new RuntimeException(String.format("Found more than one feature of type '%s' with uniqueName '%s'",
                 featureClass.getSimpleName(), uniqueName));
         }
 
