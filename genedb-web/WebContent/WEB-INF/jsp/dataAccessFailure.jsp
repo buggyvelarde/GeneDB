@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
 
 <format:header name="Data Access Failure">
-	<st:init/>
+    <st:init/>
 </format:header>
 
 
