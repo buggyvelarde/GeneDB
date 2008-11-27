@@ -205,9 +205,7 @@ class EmblLoader {
             return;
         }
 
-        logger.trace("XXXX about to doLoad");
         doLoad(emblFile, topLevelFeature);
-        logger.trace("XXXX finished doLoad");
 
         if (reportUnusedQualifiers) {
             reportUnusedQualifiers(emblFile.getFeatureTable());
