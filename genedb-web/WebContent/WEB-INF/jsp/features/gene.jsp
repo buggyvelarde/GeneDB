@@ -46,11 +46,11 @@ onLoad="initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFe
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
 <script language="javascript">
 //<![CDATA[
-function addToBasket(var id){
-    var url = "include.html";
+function addToBasket(var geneid){
+    var url = "/ci-web/NamedFeature?name=$geneid&addToBasket=true&geneDetails=true";
     var callback = {
         success: function(o) {
-            document.getElementById('basketbutton').src = o.responseText;
+            document.getElementById('basketbutton').src = "/ci-web/includes/images/alreadyInBasket.gif";
             document.getElementById('basketbutton').onclick = null;
         },
         failure: function(o) {
