@@ -20,6 +20,7 @@ import org.gmod.schema.mapped.AnalysisFeature;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureDbXRef;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
@@ -199,7 +200,23 @@ public class FeatureTester {
                 }
             }
             assertEquals(expectedValues, foundValues);
-            return ourClass.cast(this);}
+            return ourClass.cast(this);
+        }
+        public T cvterms(String cvName, String... terms) {
+            Set<String> expectedTerms = new HashSet<String>();
+            Set<String> foundTerms = new HashSet<String>();
+            Collections.addAll(expectedTerms, terms);
+
+            for (FeatureCvTerm featureCvTerm: feature.getFeatureCvTerms()) {
+                CvTerm cvTerm = featureCvTerm.getCvTerm();
+                if (cvTerm.getCv().getName().equals(cvName)) {
+                    foundTerms.add(cvTerm.getName());
+                }
+            }
+
+            assertEquals(expectedTerms, foundTerms);
+            return ourClass.cast(this);
+        }
     }
 
     class GeneTester extends AbstractTester<GeneTester> {

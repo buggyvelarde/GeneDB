@@ -152,6 +152,13 @@ public class EmblLoaderSyntheticTest {
     }
 
     @Test
+    public void s2products() {
+        PolypeptideTester s2_2 = tester.geneTester("s2").transcript("s2_2:mRNA").polypeptide("s2_2:pep");
+
+        s2_2.cvterms("genedb_products", "product 1", "product 2", "product 3");
+    }
+
+    @Test
     public void s3similarities() {
         PolypeptideTester s3 = tester.geneTester("s3").transcript("s3:mRNA").polypeptide("s3:pep");
 

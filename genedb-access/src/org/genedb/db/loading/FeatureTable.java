@@ -324,6 +324,12 @@ class FeatureTable extends EmblFile.Section {
         }
     }
 
+    /*
+     * Add the current feature to the list of features.
+     * Called at the end of each feature:
+     * we call it from addData when another feature is encountered,
+     * and the EmblFile parser calls it at the end of the feature table.
+     */
     @Override
     public void finished() {
         if (currentFeature != null) {

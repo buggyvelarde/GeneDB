@@ -3,6 +3,7 @@ package org.genedb.db.loading;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.OrganismDao;
+import org.genedb.util.IterableArray;
 
 import org.gmod.schema.cfg.FeatureTypeUtils;
 import org.gmod.schema.feature.AbstractExon;
@@ -731,71 +732,90 @@ class EmblLoader {
          * @throws DataError
          */
         protected int processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName, boolean isUnique) throws DataError {
-            return processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null, isUnique);
+            return processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, qualifierParsers.get(qualifierName), isUnique);
         }
 
         protected int processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName) throws DataError {
-            return processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, null, false);
+            return processPropertyQualifier(qualifierName, propertyCvName, propertyTermName, qualifierParsers.get(qualifierName), false);
         }
 
         private int processPropertyQualifier(String qualifierName, String propertyCvName, String propertyTermName,
-                TermNormaliser normaliser, boolean isUnique) throws DataError {
+                TermParser parser, boolean isUnique) throws DataError {
             Set<String> values = new HashSet<String>();
             int rank = 0;
             for(String qualifierValue: feature.getQualifierValues(qualifierName)) {
-                String normalisedValue = qualifierValue;
-                if (normaliser != null) {
-                    normalisedValue = normaliser.normalise(qualifierValue);
-                }
-                if (values.contains(normalisedValue)) {
-                    logger.warn(String.format("Qualifier /%s=\"%s\" appears more than once on feature at line %d. Ignoring subsequent occurrences.",
-                        qualifierName, normalisedValue, this.feature.lineNumber));
-                } else {
-                    if (isUnique && !values.isEmpty()) {
-                        throw new DataError(String.format("More than one /%s qualifier found", qualifierName));
+                if (parser != null) {
+                    for (String normalisedValue: parser.parse(qualifierValue)) {
+                        rank = processNormalisedProperty(qualifierName, propertyCvName, propertyTermName,
+                            isUnique, values, rank, normalisedValue);
                     }
-
-                    logger.debug(String.format("Adding %s:%s '%s' for transcript",
-                                    propertyCvName, propertyTermName, normalisedValue));
-                    values.add(normalisedValue);
-                    focalFeature.addFeatureProp(normalisedValue, propertyCvName, propertyTermName, rank++);
+                } else {
+                    rank = processNormalisedProperty(qualifierName, propertyCvName, propertyTermName,
+                        isUnique, values, rank, qualifierValue);
                 }
+            }
+            return rank;
+        }
+
+        private int processNormalisedProperty(String qualifierName, String propertyCvName,
+                String propertyTermName, boolean isUnique, Set<String> values, int rank,
+                String normalisedValue) throws DataError {
+            if (values.contains(normalisedValue)) {
+                logger.warn(String.format("Qualifier /%s=\"%s\" appears more than once on feature at line %d. Ignoring subsequent occurrences.",
+                    qualifierName, normalisedValue, this.feature.lineNumber));
+            } else {
+                if (isUnique && !values.isEmpty()) {
+                    throw new DataError(String.format("More than one /%s qualifier found", qualifierName));
+                }
+
+                logger.debug(String.format("Adding %s:%s '%s' for transcript",
+                                propertyCvName, propertyTermName, normalisedValue));
+                values.add(normalisedValue);
+                focalFeature.addFeatureProp(normalisedValue, propertyCvName, propertyTermName, rank++);
             }
             return rank;
         }
 
         protected void processCvTermQualifier(String qualifierName, String cvName, boolean createTerms)
                 throws DataError {
-            processCvTermQualifier(qualifierName, cvName, createTerms, null);
+            processCvTermQualifier(qualifierName, cvName, createTerms, qualifierParsers.get(qualifierName));
         }
 
-        private void processCvTermQualifier(String qualifierName, String cvName,
-                boolean createTerms, TermNormaliser termNormaliser)
+        protected void processCvTermQualifier(String qualifierName, String cvName,
+                boolean createTerms, TermParser termParser)
                 throws DataError {
 
             Set<String> terms = new HashSet<String>();
             for (String term: feature.getQualifierValues(qualifierName)) {
-                String normalisedTerm = term;
-                if (termNormaliser != null) {
-                    normalisedTerm = termNormaliser.normalise(term);
-                }
-
-                if (terms.contains(normalisedTerm)) {
-                    logger.warn(
-                        String.format("The qualifier /%s=\"%s\" appears more than once. Ignoring subsequent copies.",
-                            qualifierName, term));
-                    continue;
+                if (termParser != null) {
+                    for (String normalisedTerm: termParser.parse(term)) {
+                        processNormalisedCvTermQualifier(qualifierName, cvName, createTerms, terms, term,
+                            normalisedTerm);
+                    }
                 } else {
-                    terms.add(normalisedTerm);
+                    processNormalisedCvTermQualifier(qualifierName, cvName, createTerms, terms, term, term);
                 }
-
-                FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cvName, normalisedTerm, createTerms);
-                if (featureCvTerm == null) {
-                    throw new DataError(
-                        String.format("Failed to find term '%s' in CV '%s'", normalisedTerm, cvName));
-                }
-                session.persist(featureCvTerm);
             }
+        }
+
+        private void processNormalisedCvTermQualifier(String qualifierName, String cvName,
+                boolean createTerms, Set<String> terms, String term, String normalisedTerm)
+                throws DataError {
+            if (terms.contains(normalisedTerm)) {
+                logger.warn(
+                    String.format("The qualifier /%s=\"%s\" appears more than once. Ignoring subsequent copies.",
+                        qualifierName, term));
+                return;
+            } else {
+                terms.add(normalisedTerm);
+            }
+
+            FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cvName, normalisedTerm, createTerms);
+            if (featureCvTerm == null) {
+                throw new DataError(
+                    String.format("Failed to find term '%s' in CV '%s'", normalisedTerm, cvName));
+            }
+            session.persist(featureCvTerm);
         }
 
         private void loadExons() throws DataError {
@@ -1160,8 +1180,7 @@ class EmblLoader {
 
             int commentRank = processPropertyQualifier("note",     "feature_property", "comment");
             for (String name: qualifierProperties) {
-                TermNormaliser normaliser = qualifierNormalisers.get(name);
-                processPropertyQualifier(name, "genedb_misc", name, normaliser, uniqueQualifiers.contains(name));
+                processPropertyQualifier(name, "genedb_misc", name, uniqueQualifiers.contains(name));
             }
 
             addColourToExons();
@@ -1192,9 +1211,13 @@ class EmblLoader {
                 return;
             }
 
-            TermNormaliser colourNormaliser = qualifierNormalisers.get("colour");
             String normalisedColour = colour;
-            if (colourNormaliser != null) {
+            TermParser colourParser = qualifierParsers.get("colour");
+            if (colourParser != null) {
+                if (!(colourParser instanceof TermNormaliser)) {
+                    throw new RuntimeException("The /colour parser is not a TermNormaliser?!");
+                }
+                TermNormaliser colourNormaliser = (TermNormaliser) colourParser;
                 normalisedColour = colourNormaliser.normalise(colour);
             }
 
@@ -1227,12 +1250,32 @@ class EmblLoader {
 
 
     /**
-     * Convert the qualifier value into a canonical form before treating it as
-     * a term name. What this means will depend on the specific normalizer used.
+     * Parse a property value. What this means will depend on the specific normalizer used.
      */
-    private static interface TermNormaliser {
-        public String normalise(String term) throws DataError;
+    private static interface TermParser {
+        public Iterable<String> parse(String term) throws DataError;
     }
+
+    /**
+     * Normalise a property value. What this means will depend on the specific normalizer used.
+     * A TermNormaliser is a special sort of TermParser for the common case where the result
+     * is a single string.
+     */
+    private static abstract class TermNormaliser implements TermParser {
+        public abstract String normalise(String term) throws DataError;
+        public final Iterable<String> parse(String term) throws DataError {
+            return Collections.singleton(normalise(term));
+        }
+    }
+
+    /**
+     * A term parser for products, which splits on semicolon.
+     */
+    private static final TermParser productParser = new TermParser() {
+        public Iterable<String> parse(String term) throws DataError {
+            return IterableArray.fromArray(term.split(";\\s+"));
+        }
+    };
 
     /**
      * A term normaliser for Riley classification numbers, which for example
@@ -1240,6 +1283,7 @@ class EmblLoader {
      */
     private static final TermNormaliser normaliseRileyNumber = new TermNormaliser() {
         private final Pattern RILEY_PATTERN = Pattern.compile("(\\d{1,2})\\.(\\d{1,2})\\.(\\d{1,2})");
+        @Override
         public String normalise(String term) throws DataError {
             Matcher matcher = RILEY_PATTERN.matcher(term);
             if (!matcher.matches()) {
@@ -1256,6 +1300,7 @@ class EmblLoader {
      * A term normaliser (and format validator) for integers.
      */
     private static final TermNormaliser normaliseInteger = new TermNormaliser() {
+        @Override
         public String normalise(String term) throws DataError {
             try {
                 return String.valueOf(Integer.parseInt(term));
@@ -1270,7 +1315,7 @@ class EmblLoader {
      * properties in the <code>genedb_misc</code> CV.
      */
     private static final List<String> qualifierProperties = new ArrayList<String>();
-    private static final Map<String,TermNormaliser> qualifierNormalisers = new HashMap<String,TermNormaliser>();
+    private static final Map<String,TermParser> qualifierParsers = new HashMap<String,TermParser>();
     private static final Set<String> uniqueQualifiers = new HashSet<String>();
     static {
         Collections.addAll(qualifierProperties,
@@ -1282,10 +1327,11 @@ class EmblLoader {
 
         Collections.addAll(uniqueQualifiers, "colour", "status");
 
-        qualifierNormalisers.put("colour", normaliseInteger);
+        qualifierParsers.put("colour", normaliseInteger);
+        qualifierParsers.put("product", productParser);
 
         // Some files (e.g. Streptococcus_pneumoniae_D39.embl) have things other than integers in /status.
-        // qualifierNormalisers.put("status", normaliseInteger);
+        // qualifierParsers.put("status", normaliseInteger);
     }
 
     class CDSLoader extends GeneLoader {

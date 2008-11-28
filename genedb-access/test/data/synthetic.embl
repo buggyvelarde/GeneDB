@@ -26,6 +26,8 @@ FT                   /systematic_id="s2_2"
 FT                   /shared_id="s2"
 FT                   /colour="9"
 FT                   /colour="9"
+FT                   /product="product 1; product 2"
+FT                   /product="product 3"
 FT   CDS             220..250
 FT                   /systematic_id="s3"
 FT                   /similarity="blastp; SWALL:Q26723 (EMBL:M20871);
