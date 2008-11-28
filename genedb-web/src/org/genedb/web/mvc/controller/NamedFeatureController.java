@@ -20,6 +20,7 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.querying.history.HistoryType;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
@@ -115,8 +116,18 @@ public class NamedFeatureController extends PostOrGetFormController {
             }
         }
 
-        HashMap<String, TranscriptDTO> model = Maps.newHashMap();
+        HashMap<String, Object> model = Maps.newHashMap();
         model.put("dto", dto);
+
+
+        HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
+        HistoryItem basket = hm.getHistoryItemByName(hm.getCartName());
+        if (basket != null && basket.containsEntry(feature.getUniqueName())) {
+            model.put("inBasket", Boolean.TRUE);
+        } else {
+            model.put("inBasket", Boolean.FALSE);
+        }
+
         return new ModelAndView(viewName, model);
     }
 
