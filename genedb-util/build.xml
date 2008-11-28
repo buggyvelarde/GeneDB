@@ -8,6 +8,13 @@
         </filelist>
     </path>
 
+    <path id="test-jars">
+        <filelist dir="${imported.basedir.util}/../genedb-libs/lib">
+            <file name="spring-bundle-2.5.6/junit/junit-4.4.jar" />
+        </filelist>
+        <pathelement location="${imported.basedir.util}/ant-build/jars/genedb-util.jar"/>
+    </path>
+
     <target name="clean-build-util" >
         <delete dir="${imported.basedir.util}/ant-build" quiet="true"/>
     </target>
@@ -15,8 +22,29 @@
     <target name="setup-util" >
         <mkdir dir="${imported.basedir.util}/ant-build" />
         <mkdir dir="${imported.basedir.util}/ant-build/classes" />
+        <mkdir dir="${imported.basedir.util}/ant-build/test-classes" />
         <mkdir dir="${imported.basedir.util}/ant-build/anttasks-classes" />
         <mkdir dir="${imported.basedir.util}/ant-build/jars" />
+    </target>
+
+    <target name="compile-tests" depends="fulljar">
+        <javac srcdir="${imported.basedir.util}/test" destdir="${imported.basedir.util}/ant-build/test-classes" debug="on">
+            <classpath refid="test-jars"/>
+        </javac>
+    </target>
+
+    <target name="run-tests" depends="compile-tests">
+        <junit printsummary="withOutAndErr" haltonfailure="yes" fork="true" showoutput="true">
+            <classpath>
+                <path refid="test-jars"/>
+                <pathelement location="${imported.basedir.util}/ant-build/test-classes"/>
+            </classpath>
+            <batchtest>
+              <fileset dir="${imported.basedir.util}/ant-build/test-classes">
+                <include name="**/*Test.*" />
+              </fileset>
+            </batchtest>
+        </junit>
     </target>
 
     <target name="fulljar" depends="clean-build-util,setup-util" description="Create full JAR file">
