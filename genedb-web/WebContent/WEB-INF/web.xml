@@ -217,5 +217,9 @@
         <servlet-name>contextMapWindow</servlet-name>
         <url-pattern>/ContextMapWindow</url-pattern>
      </servlet-mapping>
+          <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/Basket</url-pattern>
+     </servlet-mapping>
 
 </web-app>
