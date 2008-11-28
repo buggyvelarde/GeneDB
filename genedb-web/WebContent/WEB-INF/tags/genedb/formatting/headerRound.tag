@@ -20,10 +20,13 @@
     <!--  YUI dependencies -->
     <script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
     <script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/container/container_core.js"/>"></script>
-  <script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/animation/animation-min.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/animation/animation-min.js"/>"></script>
+    <script src="http://yui.yahooapis.com/2.6.0/build/yahoo/yahoo-min.js"></script>
+    <script src="http://yui.yahooapis.com/2.6.0/build/event/event-min.js"></script>
+    <script src="http://yui.yahooapis.com/2.6.0/build/connection/connection-min.js"></script>
     <!-- YUI menu -->
     <script type="text/javascript" src="<c:url value="/includes/YUI-2.5.2/menu/menu.js"/>"></script>
-  <script type="text/javascript" src="<c:url value="/includes/scripts/phylogeny.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/includes/scripts/phylogeny.js"/>"></script>
     <script type="text/javascript">
       var navigationMenuBar;
         YAHOO.util.Event.onContentReady("navigation", function () {
