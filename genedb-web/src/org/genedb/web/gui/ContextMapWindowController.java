@@ -69,15 +69,19 @@ public class ContextMapWindowController {
 
         BufferedImage image = new BufferedImage(width + 4, HEIGHT + 4,
             BufferedImage.TYPE_BYTE_INDEXED, colorModel);
+
         Graphics2D graf = (Graphics2D) image.getGraphics();
+        try {
+            graf.setColor(FRAME_COLOR);
+            graf.drawRect(1, 1, width+1, HEIGHT+1);
 
-        graf.setColor(FRAME_COLOR);
-        graf.drawRect(1, 1, width+1, HEIGHT+1);
+            graf.setColor(Color.WHITE);
+            graf.drawRect(0, 0, width+3, HEIGHT+3);
 
-        graf.setColor(Color.WHITE);
-        graf.drawRect(0, 0, width+3, HEIGHT+3);
-
-        ImageIO.write(image, FORMAT, out);
-        graf.dispose();
+            ImageIO.write(image, FORMAT, out);
+        }
+        finally {
+            graf.dispose();
+        }
     }
 }
