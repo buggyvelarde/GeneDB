@@ -7,6 +7,17 @@ import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 
+/**
+ * A supercontig is a sequence assembled from multiple contigs,
+ * which may or may not be explicitly stored in the database.
+ * In cases where contigs <em>are</em> represented, suitable Contig and Gap
+ * features are located on the supercontig. Features that belong to the
+ * supercontig - genes and the like - have a primary featureloc (locgroup=0)
+ * on the supercontig and, where applicable, have a secondary featureloc
+ * (locgroup=1) on the contig.
+ *
+ * @author rh11
+ */
 @Entity
 @FeatureType(cv = "sequence", term = "supercontig")
 public class Supercontig extends TopLevelFeature {

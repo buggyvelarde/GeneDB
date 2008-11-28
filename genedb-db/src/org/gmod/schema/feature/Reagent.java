@@ -8,10 +8,9 @@ import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 
-@SuppressWarnings("serial")
 @Entity
 @FeatureType(cv="sequence", term="reagent")
-public class Reagent extends Region {
+public abstract class Reagent extends Region {
 
     Reagent() {
         super();

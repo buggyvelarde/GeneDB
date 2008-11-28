@@ -8,7 +8,13 @@ import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 
-@SuppressWarnings("serial")
+/**
+ * Used to represent microsatellite markers in Schistosoma mansoni.
+ * (Could be used for any PCR product for which no more appropriate term
+ * exists, of course.)
+ *
+ * @author rh11
+ */
 @Entity
 @FeatureType(cv="sequence", term="PCR_product")
 public class PCRProduct extends Reagent {

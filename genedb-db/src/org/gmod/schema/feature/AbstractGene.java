@@ -1,12 +1,9 @@
 package org.gmod.schema.feature;
 
-import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
-import org.gmod.schema.mapped.FeatureSynonym;
 import org.gmod.schema.mapped.Organism;
-import org.gmod.schema.mapped.Synonym;
 
 import org.apache.log4j.Logger;
 
@@ -37,6 +34,10 @@ public abstract class AbstractGene extends Region {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
 
+    /**
+     * Get a collection of this gene's transcripts.
+     * @return a collection of this gene's transcripts
+     */
     @Transient
     public Collection<Transcript> getTranscripts() {
         Collection<Transcript> ret = new ArrayList<Transcript>();
@@ -54,6 +55,10 @@ public abstract class AbstractGene extends Region {
     @Transient
     public abstract String getProductsAsTabSeparatedString();
 
+    /**
+     * Is this a pseudogene?
+     * @return <code>true</code> if this is a pseudogene, or <code>false</code> if not
+     */
     @Transient
     public boolean isPseudo() {
         return (this instanceof Pseudogene);
@@ -103,98 +108,52 @@ public abstract class AbstractGene extends Region {
      */
     public <T extends Transcript> T makeTranscript(Class<T> transcriptClass, String transcriptUniqueName,
                 int fmin, int fmax) {
-            logger.trace(String.format("Creating transcript '%s' for gene '%s' at locations %d..%d (gene locations %d..%d)",
-                transcriptUniqueName, getUniqueName(), fmin, fmax, getFmin(), getFmax()));
+        logger.trace(String.format("Creating transcript '%s' for gene '%s' at locations %d..%d (gene locations %d..%d)",
+            transcriptUniqueName, getUniqueName(), fmin, fmax, getFmin(), getFmax()));
 
-            if (fmax < fmin) {
-                throw new IllegalArgumentException(String.format("fmax (%d) < fmin (%d)", fmax, fmin));
+        if (fmax < fmin) {
+            throw new IllegalArgumentException(String.format("fmax (%d) < fmin (%d)", fmax, fmin));
+        }
+
+        int relativeFmin = fmin - this.getFmin();
+        if (relativeFmin < 0) {
+            logger.trace(String.format("Start of transcript (%d) is before start of gene (%d). Resetting gene start",
+                fmin, this.getFmin()));
+            this.lowerFminTo(fmin);
+        }
+
+        int relativeFmax = fmax - this.getFmin();
+        if (fmax > this.getFmax()) {
+            logger.trace(String.format("End of transcript (%d) is after end of gene (%d). Resetting gene end",
+                fmax, this.getFmax()));
+            this.raiseFmaxTo(fmax);
+        }
+
+        T transcript = Transcript.construct(transcriptClass, getOrganism(), transcriptUniqueName, null);
+        for (FeatureLoc featureLoc: getFeatureLocs()) {
+            featureLoc.getSourceFeature().addLocatedChild(transcript, featureLoc.getFmin() + relativeFmin,
+                featureLoc.getFmin() + relativeFmax,
+                featureLoc.getStrand(), null /*phase*/, featureLoc.getLocGroup(), featureLoc.getRank());
+        }
+        this.addFeatureRelationship(transcript, "relationship", "part_of");
+
+        if (ProductiveTranscript.class.isAssignableFrom(transcriptClass)) {
+            String polypeptideUniqueName;
+            if (transcriptUniqueName.endsWith(":mRNA")) {
+                polypeptideUniqueName = String.format("%s:pep", transcriptUniqueName.substring(0, transcriptUniqueName.length() - 5));
+            } else {
+                polypeptideUniqueName = String.format("%s:pep", transcriptUniqueName);
             }
-
-            int relativeFmin = fmin - this.getFmin();
-            if (relativeFmin < 0) {
-                logger.trace(String.format("Start of transcript (%d) is before start of gene (%d). Resetting gene start",
-                    fmin, this.getFmin()));
-                this.lowerFminTo(fmin);
-            }
-
-            int relativeFmax = fmax - this.getFmin();
-            if (fmax > this.getFmax()) {
-                logger.trace(String.format("End of transcript (%d) is after end of gene (%d). Resetting gene end",
-                    fmax, this.getFmax()));
-                this.raiseFmaxTo(fmax);
-            }
-
-            T transcript = Transcript.construct(transcriptClass, getOrganism(), transcriptUniqueName, null);
-            for (FeatureLoc featureLoc: getFeatureLocs()) {
-                featureLoc.getSourceFeature().addLocatedChild(transcript, featureLoc.getFmin() + relativeFmin,
-                    featureLoc.getFmin() + relativeFmax,
+            logger.trace(String.format("Creating polypeptide '%s' for transcript '%s'",
+                polypeptideUniqueName, getUniqueName()));
+            Polypeptide polypeptide = new Polypeptide(getOrganism(), polypeptideUniqueName);
+            for (FeatureLoc featureLoc: transcript.getFeatureLocs()) {
+                featureLoc.getSourceFeature().addLocatedChild(polypeptide, featureLoc.getFmin(), featureLoc.getFmax(),
                     featureLoc.getStrand(), null /*phase*/, featureLoc.getLocGroup(), featureLoc.getRank());
             }
-            this.addFeatureRelationship(transcript, "relationship", "part_of");
-
-            if (ProductiveTranscript.class.isAssignableFrom(transcriptClass)) {
-                String polypeptideUniqueName;
-                if (transcriptUniqueName.endsWith(":mRNA")) {
-                    polypeptideUniqueName = String.format("%s:pep", transcriptUniqueName.substring(0, transcriptUniqueName.length() - 5));
-                } else {
-                    polypeptideUniqueName = String.format("%s:pep", transcriptUniqueName);
-                }
-                logger.trace(String.format("Creating polypeptide '%s' for transcript '%s'",
-                    polypeptideUniqueName, getUniqueName()));
-                Polypeptide polypeptide = new Polypeptide(getOrganism(), polypeptideUniqueName);
-                for (FeatureLoc featureLoc: transcript.getFeatureLocs()) {
-                    featureLoc.getSourceFeature().addLocatedChild(polypeptide, featureLoc.getFmin(), featureLoc.getFmax(),
-                        featureLoc.getStrand(), null /*phase*/, featureLoc.getLocGroup(), featureLoc.getRank());
-                }
-                ((ProductiveTranscript)transcript).setProtein(polypeptide);
-            }
-
-            return transcript;
-    }
-
-    /**
-     * If this AbstractGene has a current synonym of the specified type,
-     * the name and synonymSGML of that synonym are set to <code>synonymString</code>
-     * and we return <code>true</code>.
-     * If not, we do nothing and return <code>false</code>.
-     * @param synonymType the type of synonym to look for
-     * @param synonymString the string to which the synonym should be changed
-     * @return whether or not a synonym was found
-     */
-    protected boolean setSynonymIfPresent(String synonymType, String synonymString) {
-        logger.trace(String.format("Setting synonym (type %s) of gene '%s' to '%s' if present",
-            synonymType, getUniqueName(), synonymString));
-        for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
-            if (!featureSynonym.isCurrent()) {
-                continue;
-            }
-
-            Synonym thisSynonym = featureSynonym.getSynonym();
-            CvTerm thisSynonymType = thisSynonym.getType();
-            if (thisSynonymType.getCv().getName().equals("genedb_synonym_type") && synonymType.equals(thisSynonymType.getName())) {
-                logger.trace(String.format("Synonym of type %s already present on gene; resetting existing synonym", synonymType));
-                thisSynonym.setName(synonymString);
-                thisSynonym.setSynonymSGML(synonymString);
-                return true;
-            }
+            ((ProductiveTranscript)transcript).setProtein(polypeptide);
         }
-        logger.trace("Synonym of required type is not already present");
-        return false;
-    }
 
-    public void setSystematicId(String systematicId) {
-        logger.trace(String.format("Setting systematic_id of gene '%s' to '%s'", getUniqueName(), systematicId));
-
-        if (!setSynonymIfPresent("systematic_id", systematicId)) {
-            addSynonym("systematic_id", systematicId);
-        }
-    }
-
-    @Transient
-    public void setTemporarySystematicId(String temporarySystematicId) {
-        logger.trace(String.format("Setting temporary_systematic_id of gene '%s' to '%s'", getUniqueName(), temporarySystematicId));
-        if (!setSynonymIfPresent("temporary_systematic_id", temporarySystematicId)) {
-            addSynonym("temporary_systematic_id", temporarySystematicId);
-        }
+        return transcript;
     }
 }
