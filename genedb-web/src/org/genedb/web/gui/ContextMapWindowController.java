@@ -1,5 +1,7 @@
 package org.genedb.web.gui;
 
+import org.genedb.util.ColorUtils;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,42 +28,17 @@ public class ContextMapWindowController {
 
     private static final Color FRAME_COLOR = new Color(0, 0, 200, 255);
 
-    private final IndexColorModel colorModel = colorModelFor(Color.WHITE, FRAME_COLOR);
-
     /*
      * IE6 doesn't deal well with PNG alpha, so we generate a GIF89a
      * image. In order for ImageIO to produce the correct result (with
      * transparent pixels) we need to use an explicit indexed colour
      * model.
      */
-
-    private static IndexColorModel colorModelFor(Color... colors) {
-        int len = 1 + colors.length;
-        int bits = 1, twoToBits = 2;
-        while (twoToBits < len) {
-            bits++;
-            twoToBits *= 2;
-        }
-
-        byte[] reds   = new byte[len];
-        byte[] greens = new byte[len];
-        byte[] blues  = new byte[len];
-        byte[] alphas = new byte[len];
-
-        reds[0] = greens[0] = blues[0] = alphas[0] = 0; // transparent "colour"
-        for (int i=1; i < len; i++) {
-            reds[i]   = (byte) colors[i-1].getRed();
-            greens[i] = (byte) colors[i-1].getGreen();
-            blues[i]  = (byte) colors[i-1].getBlue();
-            alphas[i] = (byte) colors[i-1].getAlpha();
-        }
-
-        return new IndexColorModel(bits, 1 + colors.length, reds, greens, blues, alphas);
-    }
+    private final IndexColorModel colorModel = ColorUtils.colorModelFor(Color.WHITE, FRAME_COLOR);
 
 
     @RequestMapping(method=RequestMethod.GET)
-    public void doGet(HttpServletRequest req, HttpServletResponse resp,
+    public void writeImage(HttpServletRequest req, HttpServletResponse resp,
             OutputStream out,
             @RequestParam("width") int width) throws IOException {
 
