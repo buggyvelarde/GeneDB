@@ -602,6 +602,11 @@ public class TranscriptDTO implements Serializable {
         return domainInformation;
     }
 
+    /**
+     * Get a summary of the protein map for this transcript
+     *
+     * @return the details for the protein map, or null if it shouldn't be shown
+     */
     public ImageMapSummary getIms() {
         return ims;
     }
