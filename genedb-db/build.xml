@@ -161,7 +161,7 @@
     </target>
 
     <target name="run-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
-      <junit printsummary="no" haltonfailure="yes" fork="true">
+      <junit printsummary="yes" haltonfailure="yes" fork="true">
         <jvmarg value="-Xmx256m"/>
         <jvmarg value="-classic"/>
           <classpath>
