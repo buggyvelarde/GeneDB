@@ -20,6 +20,7 @@ import org.gmod.schema.feature.Pseudogene;
 import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.RRNA;
 import org.gmod.schema.feature.RepeatRegion;
+import org.gmod.schema.feature.RepeatUnit;
 import org.gmod.schema.feature.SnRNA;
 import org.gmod.schema.feature.SnoRNA;
 import org.gmod.schema.feature.Supercontig;
@@ -415,6 +416,9 @@ class EmblLoader {
         if (featureType.equals("repeat_region")) {
             loadRepeatRegion(feature);
         }
+        else if (featureType.equals("repeat_unit")) {
+            loadRepeatUnit(feature);
+        }
         else if (featureType.equals("CDS")) {
             loadCDS((FeatureTable.CDSFeature) feature);
         }
@@ -498,8 +502,8 @@ class EmblLoader {
         }
         repeatRegionUniqueNames.add(repeatRegionUniqueName);
 
-        logger.debug(String.format("Creating repeat region '%s' of type '%s' at %d-%d",
-            repeatRegionName, repeatRegionClass.getSimpleName(), fmin, fmax));
+        logger.debug(String.format("Creating repeat region '%s' (%s) of type '%s' at %d-%d",
+            repeatRegionUniqueName, repeatRegionName, repeatRegionClass.getSimpleName(), fmin, fmax));
         RepeatRegion repeatRegion = RepeatRegion.make(repeatRegionClass,
             organism, repeatRegionUniqueName, repeatRegionName);
 
@@ -508,10 +512,53 @@ class EmblLoader {
             repeatRegion.addFeatureProp(note, "feature_property", "comment", rank++);
         }
 
+        // Add a comment for the /rpt_family, if present
+        String rptFamily = repeatRegionFeature.getQualifierValue("rpt_family");
+        if (rptFamily != null) {
+            repeatRegion.addFeatureProp(String.format("/rpt_family=%s", rptFamily),
+                "feature_property", "comment", rank++);
+        }
+
         session.persist(repeatRegion);
-        locate(repeatRegion, fmin, fmax, (short)0, 0);
+        locate(repeatRegion, fmin, fmax, (short)0, null);
     }
 
+    private Set<String> repeatUnitUniqueNames = new HashSet<String>();
+    private void loadRepeatUnit(FeatureTable.Feature repeatUnitFeature) throws DataError {
+        EmblLocation repeatUnitLocation = repeatUnitFeature.location;
+        int fmin = repeatUnitLocation.getFmin();
+        int fmax = repeatUnitLocation.getFmax();
+        String repeatUnitUniqueName = String.format("%s:repeat_unit:%d-%d", topLevelFeature.getUniqueName(), fmin, fmax);
+
+        if (repeatUnitUniqueNames.contains(repeatUnitUniqueName)) {
+            logger.warn(String.format("The repeat region '%s' already exists." +
+                    "Ignoring second (or subsequent) occurence at line %d",
+                repeatUnitUniqueName, repeatUnitFeature.lineNumber));
+            return;
+        }
+        repeatUnitUniqueNames.add(repeatUnitUniqueName);
+
+        logger.debug(String.format("Creating repeat unit '%s' at %d-%d",
+            repeatUnitUniqueName, fmin, fmax));
+        RepeatUnit repeatUnit = RepeatUnit.make(RepeatUnit.class,
+            organism, repeatUnitUniqueName, null);
+
+        String colour = repeatUnitFeature.getQualifierValue("colour");
+        if (colour != null) {
+            repeatUnit.addFeatureProp(colour, "genedb_misc", "colour", 0);
+        }
+        int rank = 0;
+        String label = repeatUnitFeature.getQualifierValue("label");
+        if (label != null) {
+            repeatUnit.addFeatureProp(String.format("/label=%s", label), "feature_property", "comment", rank++);
+        }
+        for (String note: repeatUnitFeature.getQualifierValues("note")) {
+            repeatUnit.addFeatureProp(note, "feature_property", "comment", rank++);
+        }
+
+        session.persist(repeatUnit);
+        locate(repeatUnit, fmin, fmax, (short)0, null);
+}
 
     // Can't define static fields in inner classes, grr.
     private static final Set<String> goQualifiers = new HashSet<String>();

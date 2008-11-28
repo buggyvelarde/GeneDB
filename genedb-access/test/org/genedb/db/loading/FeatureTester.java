@@ -104,6 +104,10 @@ public class FeatureTester {
         return new TLFTester(tlfClass, uniqueName);
     }
 
+    public GenericTester featureTester(String uniqueName) {
+        return new GenericTester(uniqueName);
+    }
+
     /*
      * The purpose of this rather complicated type trickery is to ensure
      * that the return type of these methods is the type of the subclass,
@@ -154,7 +158,8 @@ public class FeatureTester {
         }
         public T phaseIsNull() {
             for (FeatureLoc featureLoc: feature.getFeatureLocs()) {
-                assertNull(featureLoc.getPhase());
+                assertNull(String.format("Phase of featureloc ID=%d is not null", featureLoc.getFeatureLocId()),
+                    featureLoc.getPhase());
             }
             return ourClass.cast(this);
         }
@@ -178,8 +183,23 @@ public class FeatureTester {
                 }
             }
             assertTrue (String.format("Property '%s:%s' not found on feature '%s'", cv, term, feature.getUniqueName()), found);
-            return null; // Not reached
+            return ourClass.cast(this);
         }
+        public T properties(String cv, String term, String... values) {
+            Set<String> expectedValues = new HashSet<String>();
+            Set<String> foundValues = new HashSet<String>();
+            Collections.addAll(expectedValues, values);
+
+            for (FeatureProp featureProp: feature.getFeatureProps()) {
+                CvTerm propType = featureProp.getType();
+                String propValue = featureProp.getValue();
+
+                if (propType.getCv().getName().equals(cv) && propType.getName().equals(term)) {
+                    foundValues.add(propValue);
+                }
+            }
+            assertEquals(expectedValues, foundValues);
+            return ourClass.cast(this);}
     }
 
     class GeneTester extends AbstractTester<GeneTester> {
@@ -478,5 +498,13 @@ public class FeatureTester {
             assertEquals(residues, tlf.getResidues());
             return this;
         }
-}
+    }
+
+    class GenericTester extends AbstractTester<GenericTester> {
+        private GenericTester(String uniqueName) {
+            super(GenericTester.class, (Feature) session.createCriteria(Feature.class)
+                .add(Restrictions.eq("uniqueName", uniqueName))
+                .uniqueResult());
+        }
+    }
 }

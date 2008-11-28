@@ -1,6 +1,17 @@
 ID   super1; SV 1; linear; genomic DNA; STD; PRO; 1200 BP.
 XX
 FH   Key             Location/Qualifiers
+FT   repeat_region   complement(1..93)
+FT                   /rpt_family="telomere"
+FT                   /rpt_unit=TTAGGG
+FT   repeat_unit     complement(4..9)
+FT                   /colour="5"
+FT                   /label=Trpt
+FT                   /note="telomeric repeat hexamer TTAGGG"
+FT   repeat_unit     complement(10..15)
+FT                   /colour="5"
+FT                   /label=Trpt
+FT                   /note="telomeric repeat hexamer TTAGGG"
 FT   CDS             complement(4..87)
 FT                   /systematic_id="s1"
 FT                   /pseudo

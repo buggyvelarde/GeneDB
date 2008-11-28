@@ -7,6 +7,8 @@ import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Pseudogene;
+import org.gmod.schema.feature.RepeatRegion;
+import org.gmod.schema.feature.RepeatUnit;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -66,7 +68,7 @@ public class EmblLoaderSyntheticTest {
 
         tester.tlfTester(Contig.class, "con4t")
             .residues(repeat('t', 100));
-}
+    }
 
     @Test
     public void s1GeneLocs() {
@@ -177,16 +179,43 @@ public class EmblLoaderSyntheticTest {
         // overlap; query 1-152 aa; subject 32-180 aa"
 
         s4.similarity("UniProt", "O21243")
-        .analysisProgram("fasta")
-        .organism("Reclinomonas americana")
-        .product(null)
-        .gene(null)
-        .id(44.805)
-        .eValue(2.5E-25)
-        .score(null)
-        .overlap(151)
-        .loc(0, 0, 0, 0, 152)
-        .loc(0, 1, 0, 31, 180)
-        .secondaryDbXRefs("EMBL:AF007261", "UniProt:COXZ_RECAM");
+            .analysisProgram("fasta")
+            .organism("Reclinomonas americana")
+            .product(null)
+            .gene(null)
+            .id(44.805)
+            .eValue(2.5E-25)
+            .score(null)
+            .overlap(151)
+            .loc(0, 0, 0, 0, 152)
+            .loc(0, 1, 0, 31, 180)
+            .secondaryDbXRefs("EMBL:AF007261", "UniProt:COXZ_RECAM");
+    }
+
+    @Test
+    public void repeats() {
+        tester.uniqueNames(RepeatRegion.class,
+            "super1:repeat:0-93", "super1:repeat_unit:3-9", "super1:repeat_unit:9-15");
+        tester.uniqueNames(RepeatUnit.class, "super1:repeat_unit:3-9", "super1:repeat_unit:9-15");
+
+        tester.featureTester("super1:repeat:0-93")
+            .name(null)
+            .loc(0, 0, 93)
+            .phaseIsNull()
+            .property("feature_property", "comment", "/rpt_family=telomere");
+
+        tester.featureTester("super1:repeat_unit:3-9")
+            .name(null)
+            .loc(0, 3, 9)
+            .phaseIsNull()
+            .property("genedb_misc", "colour", "5")
+            .properties("feature_property", "comment", "/label=Trpt", "telomeric repeat hexamer TTAGGG");
+
+        tester.featureTester("super1:repeat_unit:9-15")
+            .name(null)
+            .loc(0, 9, 15)
+            .phaseIsNull()
+            .property("genedb_misc", "colour", "5")
+            .properties("feature_property", "comment", "/label=Trpt", "telomeric repeat hexamer TTAGGG");
     }
 }
