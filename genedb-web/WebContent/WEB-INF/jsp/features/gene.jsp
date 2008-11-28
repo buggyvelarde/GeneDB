@@ -46,7 +46,7 @@ onLoad="initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFe
 <script language="javascript" type="text/javascript" src="<c:url value="/includes/scripts/genedb/contextMap.js"/>"></script>
 <script language="javascript">
 //<![CDATA[
-function addToBasket(var geneid){
+function addToBasket(geneid){
     var url = "/ci-web/NamedFeature?name=$geneid&addToBasket=true&geneDetails=true";
     var callback = {
         success: function(o) {
