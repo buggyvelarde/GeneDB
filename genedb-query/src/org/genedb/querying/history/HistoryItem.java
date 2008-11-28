@@ -109,4 +109,8 @@ public class HistoryItem {
             ids.add(id);
         }
     }
+
+    public boolean containsEntry(String uniqueName) {
+        return ids.contains(uniqueName);
+    }
 }

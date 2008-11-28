@@ -46,6 +46,15 @@ public class HttpSessionHistoryManager implements HistoryManager {
         return ret;
     }
 
+    public HistoryItem getHistoryItemByName(String name) {
+        for (HistoryItem historyItem : getHistoryItems()) {
+            if (historyItem.getName().equals(name)) {
+                return historyItem;
+            }
+        }
+        return null;
+    }
+
     /* (non-Javadoc)
      * @see org.genedb.web.mvc.controller.HistoryManager#addHistoryItem(java.lang.String, java.util.List)
      */
