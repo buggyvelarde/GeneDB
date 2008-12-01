@@ -110,10 +110,10 @@ public class NamedFeatureController extends PostOrGetFormController {
             logger.trace("dto cache hit for '"+feature.getUniqueName());
             HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
             hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
-            if (nlb.isAddToBasket()) {
-                hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
-                // Add message here
-            }
+//            if (nlb.isAddToBasket()) {
+//                hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
+//                // Add message here
+//            }
         }
 
         HashMap<String, Object> model = Maps.newHashMap();
@@ -123,8 +123,10 @@ public class NamedFeatureController extends PostOrGetFormController {
         HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
         HistoryItem basket = hm.getHistoryItemByName(hm.getCartName());
         if (basket != null && basket.containsEntry(feature.getUniqueName())) {
+            logger.error(String.format("Setting inBasket to true for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.TRUE);
         } else {
+            logger.error(String.format("Setting inBasket to false for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.FALSE);
         }
 
