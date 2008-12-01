@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
@@ -38,7 +37,7 @@ public class ContextMapWindowController {
 
 
     @RequestMapping(method=RequestMethod.GET)
-    public void writeImage(HttpServletRequest req, HttpServletResponse resp,
+    public void writeImage(HttpServletResponse resp,
             OutputStream out,
             @RequestParam("width") int width) throws IOException {
 

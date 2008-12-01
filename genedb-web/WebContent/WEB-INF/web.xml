@@ -83,12 +83,6 @@
         <load-on-startup>3</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>contextMapWindow</servlet-name>
-        <servlet-class>org.genedb.web.gui.ContextMapWindowServlet</servlet-class>
-        <load-on-startup>4</load-on-startup>
-    </servlet>
-
     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Homepage</url-pattern>
@@ -214,10 +208,10 @@
         <url-pattern>/Image</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
-        <servlet-name>contextMapWindow</servlet-name>
+        <servlet-name>genedb</servlet-name>
         <url-pattern>/ContextMapWindow</url-pattern>
      </servlet-mapping>
-          <servlet-mapping>
+     <servlet-mapping>
         <servlet-name>genedb</servlet-name>
         <url-pattern>/Basket</url-pattern>
      </servlet-mapping>
