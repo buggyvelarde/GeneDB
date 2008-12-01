@@ -47,7 +47,8 @@ onLoad="initContextMap('${base}', '${dto.organismCommonName}', '${dto.topLevelFe
 <script language="javascript">
 //<![CDATA[
 function addToBasket(geneid){
-    var url = "/ci-web/NamedFeature?name=$geneid&addToBasket=true&geneDetails=true";
+    var url = "/ci-web/Basket";
+    var postData = "name=$geneid";
     var callback = {
         success: function(o) {
             document.getElementById('basketbutton').src = "/ci-web/includes/images/alreadyInBasket.gif";
