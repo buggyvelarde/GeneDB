@@ -252,6 +252,10 @@
         <property name="historyManagerFactory" ref="historyManagerFactory" />
     </bean>
 
+
+    <bean id="ContextMapWindowController"
+        class="org.genedb.web.gui.ContextMapWindowController" />
+
     <bean id="FeatureSequenceController"
         class="org.genedb.web.mvc.controller.FeatureSequenceController">
         <property name="commandClass" value="org.genedb.web.mvc.controller.FeatureSequenceController$FeatureSequenceBean"/>
