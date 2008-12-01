@@ -51,6 +51,11 @@ public class BasketController {
     private SequenceDao sequenceDao;
 
 
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
+
+
     private HistoryManagerFactory hmFactory;
     private ModelBuilder modelBuilder;
 

@@ -250,6 +250,7 @@
         class="org.genedb.web.mvc.controller.BasketController">
         <property name="modelBuilder" ref="modelBuilder"/>
         <property name="historyManagerFactory" ref="historyManagerFactory" />
+        <property name="sequenceDao" ref="sequenceDao" />
     </bean>
 
 
