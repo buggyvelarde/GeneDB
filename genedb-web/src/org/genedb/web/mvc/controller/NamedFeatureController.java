@@ -121,7 +121,8 @@ public class NamedFeatureController extends PostOrGetFormController {
 
 
         HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
-        HistoryItem basket = hm.getHistoryItemByName(hm.getCartName());
+        HistoryItem basket = hm.getHistoryItemByType(HistoryType.BASKET);
+        logger.error(String.format("Basket is '%s'", basket));
         if (basket != null && basket.containsEntry(feature.getUniqueName())) {
             logger.error(String.format("Setting inBasket to true for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.TRUE);

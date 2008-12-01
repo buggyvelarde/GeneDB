@@ -8,6 +8,8 @@ public interface HistoryManager {
 
     public HistoryItem getHistoryItemByName(String name);
 
+    public HistoryItem getHistoryItemByType(HistoryType historyType);
+
     public abstract  HistoryItem addHistoryItem(String name, HistoryType type, List<String> ids);
 
     public abstract HistoryItem addHistoryItem(String name,HistoryType type, String id);
