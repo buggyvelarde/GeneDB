@@ -73,6 +73,7 @@ public class BasketController {
     @RequestMapping(method=RequestMethod.POST)
     protected void addFeatureToBasket(
             HttpSession session,
+            HttpServletResponse response,
             @RequestParam("name") String name) throws Exception {
 
         logger.error("Trying to find NamedFeature of '"+name+"'");
@@ -95,7 +96,7 @@ public class BasketController {
             HistoryManager hm = hmFactory.getHistoryManager(session);
             hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
                 // Add messag
-
+            response.setStatus(HttpServletResponse.SC_OK);
         return;
     }
 
