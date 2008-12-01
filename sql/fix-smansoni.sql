@@ -24,6 +24,8 @@ and transcript.type_id in (
     , 340 /*tRNA*/
     , 361 /*snRNA*/
 )
+and gene.organism_id = 13
+and transcript.organism_id = 13
 and transcriptloc.rank = geneloc.rank
 group by geneloc.featureloc_id, geneloc.fmax
 having geneloc.fmax <> max(transcriptloc.fmax)
@@ -72,11 +74,15 @@ insert into featureloc (
         , 340 /*tRNA*/
         , 361 /*snRNA*/
     )
+    /*
     and not exists (
         select 8
         from featureloc
         where featureloc.feature_id = polypeptide.feature_id
     )
+    */
+    and transcript.organism_id = 13
+    and polypeptide.organism_id = 13
 );
 
 update feature
