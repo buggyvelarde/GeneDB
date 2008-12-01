@@ -63,6 +63,13 @@
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
+    <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
+        <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
+        <!-- <property name="baseDiagramDirectory" value="${baseDiagramDirectory}" />
+        <property name="baseUri" value="${baseUri}" />
+        <property name="contextMapRenderDirectory" value="${contextMap.render.directory}" />
+        <property name="proteinMapRenderDirectory" value="${proteinMap.render.directory}" /> -->
+    </bean>
 
     <bean id="goProcessBrowse"
         class="org.genedb.web.mvc.controller.BrowseBean">
@@ -237,6 +244,13 @@
 
     <bean id="ArtemisLaunchController"
         class="org.genedb.web.mvc.controller.ArtemisLaunchController" />
+
+
+    <bean id="BasketController"
+        class="org.genedb.web.mvc.controller.BasketController">
+        <property name="modelBuilder" ref="modelBuilder"/>
+        <property name="historyManagerFactory" ref="historyManagerFactory" />
+    </bean>
 
     <bean id="FeatureSequenceController"
         class="org.genedb.web.mvc.controller.FeatureSequenceController">
