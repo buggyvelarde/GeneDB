@@ -108,25 +108,19 @@
 
 <c:if test="${dto.proteinCoding}">
 
-    <%-- Notes Section --%>
-    <c:if test="${fn:length(dto.notes) > 0}">
+    <%-- Merged Notes & Comments Section --%>
+    <c:if test="${(fn:length(dto.notes) + fn:length(dto.comments)) > 0}">
         <format:genePageSection id="comment">
             <div class="heading">Comments</div>
             <c:forEach items="${dto.notes}" var="note">
                 <div class="comment">${note}</div>
             </c:forEach>
-        </format:genePageSection>
-    </c:if>
-
-    <%-- Comment Section --%>
-    <c:if test="${fn:length(dto.comments) > 0}">
-        <format:genePageSection id="curation">
-            <div class="heading">Curation</div>
             <c:forEach items="${dto.comments}" var="comment">
                 <div class="comment">${comment}</div>
             </c:forEach>
         </format:genePageSection>
     </c:if>
+
 
     <%-- Controlled Curation Section --%>
     <c:if test="${fn:length(dto.controlledCurations) > 0}">
