@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Looks up a feature by unique name
@@ -65,8 +66,8 @@ public class BasketController {
 
 
     @RequestMapping(method=RequestMethod.POST)
-    protected void addFeatureToBasket(HttpServletRequest request, HttpServletResponse response,
-            Object command, BindException be,
+    protected void addFeatureToBasket(
+            HttpSession session,
             @RequestParam("name") String name) throws Exception {
 
         logger.error("Trying to find NamedFeature of '"+name+"'");
@@ -82,12 +83,12 @@ public class BasketController {
             // If feature isn't transcript redirect - include model
             // is it part of a gene
             logger.warn(String.format("Failed to find transcript for an id of '%s'", name));
-            be.reject("no.results");
+            //be.reject("no.results");
             return;
         }
             logger.trace("dto cache hit for '"+feature.getUniqueName());
-            HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
-                hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
+            HistoryManager hm = hmFactory.getHistoryManager(session);
+            hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
                 // Add messag
 
         return;
