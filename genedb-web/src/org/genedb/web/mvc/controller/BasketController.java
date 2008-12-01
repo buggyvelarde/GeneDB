@@ -53,6 +53,11 @@ public class BasketController {
     private ModelBuilder modelBuilder;
 
 
+    public void setModelBuilder(ModelBuilder modelBuilder) {
+        this.modelBuilder = modelBuilder;
+    }
+
+
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
         this.hmFactory = hmFactory;
     }
