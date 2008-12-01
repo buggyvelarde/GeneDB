@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Adrian Tivey (art)
  */
 @Controller
+@RequestMapping("/Basket")
 public class BasketController {
      private static final Logger logger = Logger.getLogger(BasketController.class);
 

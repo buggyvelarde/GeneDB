@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
+@RequestMapping("/ContextMapWindow")
 public class ContextMapWindowController {
 
     private static final int HEIGHT = 11;
