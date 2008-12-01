@@ -356,6 +356,7 @@ class LoadGeneDbCv {
         <term name="1.4.2" description="Detoxification"/>
         <term name="1.4.3" description="Drug/analog sensitivity"/>
         <term name="1.4.4" description="Radiation sensitivity"/>
+        <term name="1.4.5" description="DNA-binding"/>
         <term name="1.5.0" description="Transport/binding proteins"/>
         <term name="1.5.1" description="Amino acids and amines"/>
         <term name="1.5.2" description="Cations"/>
@@ -474,7 +475,7 @@ class LoadGeneDbCv {
         <term name="3.8.0" description="related to secondary metabolism"/>
         <term name="3.8.1" description="polylketide synthases (PKSs)"/>
         <term name="3.8.2" description="non-ribosomal peptide synthases (NRPSs)"/>
-        <term name="4.0.0" description="Cell envelop"/>
+        <term name="4.0.0" description="Cell envelope"/>
         <term name="4.1.0" description="Periplasmic/exported/lipoproteins"/>
         <term name="4.1.1" description="Inner membrane"/>
         <term name="4.1.2" description="Murein sacculus, peptidoglycan"/>
@@ -490,7 +491,7 @@ class LoadGeneDbCv {
         <term name="4.2.2" description="Ribosomal proteins - synthesis, modification"/>
         <term name="4.2.3" description="Ribosomes - maturation and modification"/>
         <term name="5.0.0" description="Extrachromosomal"/>
-        <term name="5.1.0" description="Laterally acquirred elements"/>
+        <term name="5.1.0" description="Laterally acquired elements"/>
         <term name="5.1.1" description="Colicin-related functions"/>
         <term name="5.1.2" description="Phage-related functions and prophages"/>
         <term name="5.1.3" description="Plasmid-related functions"/>
@@ -520,6 +521,7 @@ class LoadGeneDbCv {
         <term name="6.3.14" description="PadR"/>
         <term name="6.4.0" description="Protein kinases"/>
         <term name="6.4.1" description="Serine/threonine"/>
+        <term name="6.4.2" description="Tyrosine"/>
         <term name="6.5.0" description="Others"/>
         <term name="6.6.0" description="LPS regulated regulatory functions"/>
         <term name="7.0.0" description="Not classified (included putative assignments)"/>
