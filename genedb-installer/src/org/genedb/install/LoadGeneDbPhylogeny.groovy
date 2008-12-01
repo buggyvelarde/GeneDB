@@ -49,15 +49,15 @@ class LoadGeneDbPhylogeny {
             'chado',
             'org.postgresql.Driver')
 
-         orgDataSet = db.dataSet("organism")
+        orgDataSet = db.dataSet("organism")
 
         orgPropDataSet = db.dataSet("organismprop")
 
         dbDataSet = db.dataSet("db")
 
-         nodeDataSet = db.dataSet("phylonode")
+        nodeDataSet = db.dataSet("phylonode")
 
-         nodePropDataSet = db.dataSet("phylonodeprop")
+        nodePropDataSet = db.dataSet("phylonodeprop")
 
         nodeOrgDataSet = db.dataSet("phylonode_organism")
 
@@ -179,7 +179,7 @@ class LoadGeneDbPhylogeny {
                 }
 
                 checkAttributeExists(node, "translationTable")
-                checkAttributeExists(node,"curatorEmail")
+                checkAttributeExists(node, "curatorEmail")
 
                 if (!props.containsKey("nickname") && !props.containsKey("newOrg")) {
                     println "No nickname for '"+node.'@name'+"'"
