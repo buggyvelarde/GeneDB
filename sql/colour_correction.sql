@@ -1,4 +1,11 @@
-create table transcripts_with_mixed_colours as
+/*
+ If a transcript has mixed colours (some exons have one colour and some have another)
+ then reset the colours of all exons to the colour of the corresponding polypeptide.
+ */
+
+begin;
+
+create temporary table transcripts_with_mixed_colours as
 select distinct transcript.feature_id
 from feature transcript
 join feature_relationship transcript_exon1 on transcript_exon1.object_id = transcript.feature_id
@@ -17,7 +24,7 @@ and   exon1.feature_id < exon2.feature_id
 and   exon1_colour.value <> exon2_colour.value
 ;
 
-create table exon_colour_corrections as
+create temporary table exon_colour_corrections as
 select exon.feature_id as exon_feature_id
      , exon_colour.value as exon_current_colour
      , polypeptide_colour.value as polypeptide_colour
@@ -48,3 +55,5 @@ where exists (
         where exon_feature_id = featureprop.feature_id)
 and   type_id = 26768 /*colour*/
 ;
+
+commit;
