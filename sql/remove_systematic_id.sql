@@ -1,3 +1,37 @@
+/* Take a copy of all systematic_id and temporary_systematic_id synonyms,
+   Just In Case.
+ */
+
+create table _systematic_id_synonyms as
+select feature.feature_id
+     , feature.uniquename
+     , synonym_type.cvterm_id as synonym_type_cvterm_id
+     , synonym_type.name as synonym_type_name
+     , synonym.name as synonym_name
+     , synonym.synonym_sgml
+from feature
+join feature_synonym using (feature_id)
+join synonym using (synonym_id)
+join cvterm synonym_type on synonym_type.cvterm_id = synonym.type_id
+where synonym_type.cvterm_id in (
+    select cvterm_id
+    from cvterm
+    join cv using (cv_id)
+    where cv.name = 'genedb_synonym_type'
+    and cvterm.name in ('systematic_id', 'temporary_systematic_id')
+)
+;
+
+comment on table _systematic_id_synonyms is
+'These synonyms have been removed from the database, since they duplicate
+the information in the uniquename. They are kept here temporarily in case
+it turns out that any important information has been thereby lost.
+
+Once a suitable period of time has elapsed, this table may be removed.
+
+-- rh11, 2008-12-01'
+;
+
 begin;
 
 /* We want to change all temporary_systematic_id synonyms to
