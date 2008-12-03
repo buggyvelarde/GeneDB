@@ -13,7 +13,7 @@ public class DbXRefLinkTag extends SimpleTagSupport {
 
     private String dbXRef;
 
-    public void setDbXref(String dbXRef) {
+    public void setDbXRef(String dbXRef) {
         this.dbXRef = dbXRef;
     }
 
