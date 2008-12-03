@@ -1,12 +1,17 @@
 package org.genedb.web.tags.db;
 
-import java.io.IOException;
+import org.genedb.web.mvc.controller.DbXRefListener;
 
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import java.io.IOException;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-
 
 
 public class DbXRefLinkTag extends SimpleTagSupport {
@@ -17,6 +22,7 @@ public class DbXRefLinkTag extends SimpleTagSupport {
         this.dbXRef = dbXRef;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void doTag() throws JspException, IOException {
         // TODO currently a no-op
@@ -24,7 +30,17 @@ public class DbXRefLinkTag extends SimpleTagSupport {
         // different class for internal, external URL
 
         String url = null;
+        String[] parts = dbXRef.split(":");
+        if (parts.length > 1) {
+            // db name should be in parts[0]
+            WebApplicationContext wac =
+                WebApplicationContextUtils.getWebApplicationContext((ServletContext) getJspContext());
 
+            Map<String, String> dbUrlMap = (Map<String, String>) wac.getBean(DbXRefListener.DB_URL_MAP);
+            if (dbUrlMap.containsKey(parts[0])) {
+                url = dbUrlMap.get(parts[0]) + parts[1];
+            }
+        }
 
         JspWriter out = getJspContext().getOut();
         if (url != null) {
