@@ -116,6 +116,15 @@ public class GeneralDao extends BaseDao {
         return new Synonym(synonymType, synonymString, synonymString);
     }
 
+
+    public List<Db> getAllDbs() {
+        @SuppressWarnings("unchecked")
+        List<Db> dbs = getSession().createQuery(
+                "from Db")
+                .list();
+        return dbs;
+    }
+
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
     }
