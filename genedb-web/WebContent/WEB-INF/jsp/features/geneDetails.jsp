@@ -109,7 +109,7 @@
 <c:if test="${dto.proteinCoding}">
 
     <%-- Merged Notes & Comments Section --%>
-    <c:if test="${(fn:length(dto.notes) + fn:length(dto.comments)) > 0}">
+    <c:if test="${(fn:length(dto.notes) + fn:length(dto.comments) + fn:length(dto.publications)) > 0}">
         <format:genePageSection id="comment">
             <div class="heading">Comments</div>
             <c:forEach items="${dto.notes}" var="note">
@@ -118,6 +118,12 @@
             <c:forEach items="${dto.comments}" var="comment">
                 <div class="comment">${comment}</div>
             </c:forEach>
+            <c:if test="${fn:length(dto.publications) > 0}">
+                <p>Key information on this gene is available from
+                <c:forEach items="${dto.publications}" var="publication">
+                    <div class="comment"><db:dbXRefLink dbXRef="${publication}" /></div>
+                </c:forEach>
+            </c:if>
         </format:genePageSection>
     </c:if>
 

@@ -25,6 +25,7 @@ import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureDbXRef;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.FeaturePub;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.FeatureSynonym;
 import org.gmod.schema.mapped.Synonym;
@@ -82,6 +83,7 @@ public class TranscriptDTO implements Serializable {
     private boolean proteinCoding;
     private String organismCommonName;
     private String organismHtmlShortName;
+    private List<String> publications;
 
 
     public String getOrganismCommonName() {
@@ -269,6 +271,8 @@ public class TranscriptDTO implements Serializable {
 
             populateFromFeatureRelationships(polypeptide);
 
+            populateFromFeaturePubs(polypeptide);
+
             domainInformation = prepareDomainInformation(polypeptide);
             //model.put("domainInformation", domainInformation);
 
@@ -370,6 +374,20 @@ public class TranscriptDTO implements Serializable {
     }
 
 
+    private void populateFromFeaturePubs(Polypeptide polypeptide) {
+        List<String> ret = new ArrayList<String>();
+        for(FeaturePub fp : polypeptide.getFeaturePubs()) {
+            String name = fp.getPub().getUniqueName();
+            if (name.startsWith("PMID")) {
+                ret.add(name);
+            } else {
+                logger.warn(String.format("Got a pub that isn't a PMID ('%s') for '%s'", name, polypeptide.getUniqueName()));
+            }
+        }
+        if (ret.size() > 0) {
+            publications = ret;
+        }
+    }
 
     private List<FeatureCvTermDTO> populateFromFeatureCvTerms(Polypeptide polypeptide, String cvNamePrefix) {
         Assert.notNull(polypeptide);
@@ -496,6 +514,11 @@ public class TranscriptDTO implements Serializable {
         return listOrEmptyList(products);
     }
 
+
+
+    public List<String> getPublications() {
+        return listOrEmptyList(publications);
+    }
 
 
     private <T> List<T> listOrEmptyList(List<T> list) {
