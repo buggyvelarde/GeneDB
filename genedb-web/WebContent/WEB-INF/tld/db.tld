@@ -117,9 +117,14 @@
  </tag>
 
  <tag>
-   <name>highlight</name>
-   <tag-class>org.genedb.web.tags.db.DbXRefHighlightTag</tag-class>
-   <body-content>scriptless</body-content>
+   <name>dbXRefLink</name>
+   <tag-class>org.genedb.web.tags.db.DbXRefLinkTag</tag-class>
+   <body-content>empty</body-content>
+   <attribute>
+       <name>dbXRef</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>true</required>
+    </attribute>
  </tag>
 
  <tag>
