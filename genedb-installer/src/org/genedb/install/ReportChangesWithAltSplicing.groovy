@@ -6,8 +6,7 @@ import java.util.regex.Matcher
 /**
 *
 */
-class ReportChanges {
-
+class ReportChangesWithAltSplicing {
     def geneId = 792;
     def mRnaId = 321;
     def organismId = 27
@@ -29,40 +28,40 @@ class ReportChanges {
 
         def count = 0
 
-        latest.eachRow("select * from feature where type_id=${geneId} and is_obsolete=false and organism_id=${organismId}") {
+        latest.eachRow("select * from feature where type_id=${mRnaId} and is_obsolete=false and organism_id=${organismId}") {
             MiniReportGene mrg = new MiniReportGene();
             mrg.featureId = it.feature_id;
             mrg.uniqueName = it.uniquename;
 
-//            System.err.println it.uniquename
+            //System.err.println it.uniquename
             // Doesn't cope with alternate splicing
 
 
             def chromsome =
                 latest.firstRow("select f.uniquename from feature f, featureloc fl where fl.srcfeature_id=f.feature_id and fl.feature_id=${it.feature_id}").uniquename
             mrg.chromosome = chromsome
-            def row =
-                latest.firstRow("select subject_id from feature_relationship where object_id=${it.feature_id}")
+            //def row =
+            //    latest.firstRow("select subject_id from feature_relationship where object_id=${it.feature_id}")
 
-            if (row == null) {
+            //if (row == null) {
                 //if (!mrg.uniqueName.contains("RNA")) {
                     //System.err.println("${count++} Problem retrieving mRNA for '${mrg.uniqueName}' '${mrg.featureId}'")
                 //}
-                return
-            }
-            def mRnaRow = latest.firstRow("select uniquename, type_id from feature where feature_id=${row.subject_id}");
+            //    return
+            //}
+            //def mRnaRow = latest.firstRow("select uniquename, type_id from feature where feature_id=${row.subject_id}");
 
-            int mrnaId = row.subject_id
-            if (mRnaRow.type_id != 321) {
-                //System.err.println("Problem retrieving '${mRnaRow.uniquename}' isn't an mrna")
-                return
-            }
+            //int mrnaId = row.subject_id
+            //if (mRnaRow.type_id != 321) {
+            //    //System.err.println("Problem retrieving '${mRnaRow.uniquename}' isn't an mrna")
+            //    return
+            //}
 
 
             def protein = -1;
             List<Integer> exonIds = new ArrayList()
 
-            latest.eachRow("select subject_id from feature_relationship where object_id=${mrnaId}") {
+            latest.eachRow("select subject_id from feature_relationship where object_id=${mrg.featureId}") {
                 def row2 = latest.firstRow("select feature_id, uniquename, type_id from feature where feature_id=${it.subject_id}");
                 switch (row2.type_id) {
                 case proteinId:
@@ -168,8 +167,8 @@ class ReportChanges {
     }
 
 
-    static void main(args) {
-        ReportChanges rp = new ReportChanges()
+    public static void main(args) {
+        ReportChangesWithAltSplicing rp = new ReportChangesWithAltSplicing()
 
         def latest = Sql.newInstance(
                 'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10101/malaria_workshop',
@@ -181,11 +180,12 @@ class ReportChanges {
         System.err.println("Loaded latest");
 
         def oldest = Sql.newInstance(
-                'jdbc:postgresql://pcs4e.internal.sanger.ac.uk:10102/postgres',
+                'jdbc:postgresql://pathdbsrv1b.internal.sanger.ac.uk:10103/malaria_workshop',
                 'pathdb',
                 'Pyrate_1',
                 'org.postgresql.Driver')
         Map<String,MiniReportGene> oldestGenes = new HashMap<String,MiniReportGene>();
+        println("Opened connection - about to load");
         rp.process(oldest, oldestGenes, false);
         System.err.println("Loaded oldest");
 
