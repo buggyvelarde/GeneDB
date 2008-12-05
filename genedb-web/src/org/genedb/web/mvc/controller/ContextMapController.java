@@ -52,7 +52,7 @@ public class ContextMapController extends PostOrGetFormController {
 
         String text = bmf.getContextMapMap().get(command.getChromosome());
         if (text != null) {
-            logger.error("Cache hit for context map '"+command.getChromosome()+"' of '"+text+"'");
+            logger.trace("Cache hit for context map '"+command.getChromosome()+"' of '"+text+"'");
             cacheHit++;
         } else {
             logger.error(String.format("The context maps for '%s' aren't cached and need to be generated", command.getChromosome()));
