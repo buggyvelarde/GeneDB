@@ -44,7 +44,7 @@ public class DbXRefLinkTag extends SimpleTagSupport {
 
         JspWriter out = getJspContext().getOut();
         if (url != null) {
-            out.write(String.format("<a href=\"%s>\">", url));
+            out.write(String.format("<a href=\"%s\">", url));
         }
         out.write(dbXRef);
         if (url != null) {
