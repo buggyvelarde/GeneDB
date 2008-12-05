@@ -2,13 +2,9 @@ package org.genedb.web.tags.db;
 
 import org.genedb.web.mvc.controller.DbXRefListener;
 
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -26,16 +22,18 @@ public class DbXRefLinkTag extends SimpleTagSupport {
     @SuppressWarnings("unchecked")
     @Override
     public void doTag() throws JspException, IOException {
-        // Should lookup URL
         // different class for internal, external URL
 
         String url = null;
         String[] parts = dbXRef.split(":");
         if (parts.length > 1) {
             // db name should be in parts[0], the accession in parts[1]
+
             if (parts[0].equalsIgnoreCase("PUBMED")) {
                 parts[0] = "PMID";
+                dbXRef = parts[0] + ":" + parts[1]; // So PMID gets displayed as well as linked
             }
+
             Map<String, String> dbUrlMap = (Map<String, String>) getJspContext().getAttribute(DbXRefListener.DB_URL_MAP, PageContext.APPLICATION_SCOPE);
             if (dbUrlMap.containsKey(parts[0])) {
                 url = dbUrlMap.get(parts[0]) + parts[1];
