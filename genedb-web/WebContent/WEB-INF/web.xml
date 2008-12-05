@@ -62,6 +62,10 @@
         <listener-class>org.genedb.web.mvc.controller.TaxonManagerListener</listener-class>
     </listener>
 
+    <listener>
+        <listener-class>org.genedb.web.mvc.controller.DbXRefListener</listener-class>
+    </listener>
+
 	<filter>
 		<filter-name>UriSessionIdFilter</filter-name>
   		<filter-class>org.genedb.web.filters.UriSessionIdFilter</filter-class>
