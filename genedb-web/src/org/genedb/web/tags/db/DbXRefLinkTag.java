@@ -33,7 +33,9 @@ public class DbXRefLinkTag extends SimpleTagSupport {
         String[] parts = dbXRef.split(":");
         if (parts.length > 1) {
             // db name should be in parts[0], the accession in parts[1]
-
+            if (parts[0].equalsIgnoreCase("PUBMED")) {
+                parts[0] = "PMID";
+            }
             Map<String, String> dbUrlMap = (Map<String, String>) getJspContext().getAttribute(DbXRefListener.DB_URL_MAP, PageContext.APPLICATION_SCOPE);
             if (dbUrlMap.containsKey(parts[0])) {
                 url = dbUrlMap.get(parts[0]) + parts[1];
