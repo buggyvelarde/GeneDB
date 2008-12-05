@@ -26,7 +26,6 @@ public class DbXRefLinkTag extends SimpleTagSupport {
     @SuppressWarnings("unchecked")
     @Override
     public void doTag() throws JspException, IOException {
-        // TODO currently a no-op
         // Should lookup URL
         // different class for internal, external URL
 
