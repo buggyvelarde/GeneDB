@@ -43,7 +43,7 @@ public class FeatureCvTermPub implements Serializable {
     }
 
     /** full constructor */
-    public FeatureCvTermPub(Pub pub, FeatureCvTerm featureCvTerm) {
+    public FeatureCvTermPub(FeatureCvTerm featureCvTerm, Pub pub) {
        this.pub = pub;
        this.featureCvTerm = featureCvTerm;
     }
