@@ -133,22 +133,46 @@ public class CvDao extends BaseDao {
     }
 
     private TwoKeyMap<String,String,Integer> cvTermIdsByCvAndName = new SynchronizedTwoKeyMap<String,String,Integer>();
+
+    /**
+     * Get the CvTerm with the specified CV and name. If there is no such term,
+     * log a warning and return <code>null</code>. This is the same as
+     * <code>getCvTermByNameAndCvName(cvTermName, cvName, true)</code>.
+     *
+     * @param cvTermName the term
+     * @param cvName the name of the CV
+     * @return the CvTerm with the specified CV and name, or <code>null</code> if there is no such term.
+     */
     public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName) {
         return getCvTermByNameAndCvName(cvTermName, cvName, true);
     }
+    /**
+     * Get the CvTerm with the specified CV and name. If there is no such term,
+     * return <code>null</code>. If the parameter <code>complainIfNotFound</code>
+     * is true, then also log a warning in this case.
+     *
+     * @param cvTermName the term
+     * @param cvName the name of the CV
+     * @param complainIfNotFound whether to log a warning if the term is not found. Only
+     *          pass <code>false</code> here if you're genuinely agnostic about whether the
+     *          term exists
+     * @return the CvTerm with the specified CV and name, or <code>null</code> if there is no such term.
+     */
     public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName, boolean complainIfNotFound) {
         Session session = getSession();
 
-        if (cvTermIdsByCvAndName.containsKey(cvName, cvTermName)) {
-            CvTerm cvTerm = (CvTerm) session.get(CvTerm.class, cvTermIdsByCvAndName.get(cvName, cvTermName));
-            if (cvTerm != null) {
-                /*
-                 * It is possible for the ID to be in the cache but the CvTerm not to exist
-                 * in the database, even if only a single thread is accessing the database
-                 * at a time: the CvTerm might have been added in a session that was later
-                 * rolled back.
-                 */
-                return cvTerm;
+        synchronized (cvTermIdsByCvAndName) {
+            if (cvTermIdsByCvAndName.containsKey(cvName, cvTermName)) {
+                CvTerm cvTerm = (CvTerm) session.get(CvTerm.class, cvTermIdsByCvAndName.get(cvName, cvTermName));
+                if (cvTerm != null) {
+                    /*
+                     * It is possible for the ID to be in the cache but the CvTerm not to exist
+                     * in the database, even if only a single thread is accessing the database
+                     * at a time: the CvTerm might have been added in a session that was later
+                     * rolled back.
+                     */
+                    return cvTerm;
+                }
             }
         }
 
