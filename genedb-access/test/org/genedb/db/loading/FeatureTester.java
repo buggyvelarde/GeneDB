@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,7 +51,9 @@ public class FeatureTester {
     }
 
     private <T> void assertSetEquals(Collection<T> set, T... elements) {
-        assertEquals(String.format("Set %s is not of size %d", set, elements.length), elements.length, set.size());
+        if (elements.length != set.size()) {
+            fail(String.format("The set %s is not equal to %s", set, Arrays.toString(elements)));
+        }
         for (T element: elements) {
             assertTrue(String.format("Set %s does not contain element '%s'", set, element), set.contains(element));
         }
@@ -199,7 +202,10 @@ public class FeatureTester {
                     foundValues.add(propValue);
                 }
             }
-            assertEquals(expectedValues, foundValues);
+            assertEquals(
+                String.format("Feature '%s' does not have the expected %s:%s properties;",
+                    feature.getUniqueName(), cv, term),
+                expectedValues, foundValues);
             return ourClass.cast(this);
         }
         public T cvterms(String cvName, String... terms) {
@@ -358,15 +364,17 @@ public class FeatureTester {
         }
 
         public SimilarityTester similarity(String db, String accession) {
+            Set<String> primaryDbXRefsOfFoundMatches = new HashSet<String>();
             for (ProteinMatch proteinMatch: polypeptide.getSimilarityMatches()) {
                 DbXRef dbXRef = proteinMatch.getSubject().getDbXRef();
                 if (dbXRef.getDb().getName().equals(db) && dbXRef.getAccession().equals(accession)) {
                     return new SimilarityTester(proteinMatch);
                 }
+                primaryDbXRefsOfFoundMatches.add(dbXRef.toString());
             }
 
-            fail(String.format("Could not find similarity '%s:%s' on polypeptide '%s'",
-                db, accession, polypeptide.getUniqueName()));
+            fail(String.format("Could not find similarity '%s:%s' on polypeptide '%s': found %s",
+                db, accession, polypeptide.getUniqueName(), primaryDbXRefsOfFoundMatches));
             return null; // Not reached
         }
     }
