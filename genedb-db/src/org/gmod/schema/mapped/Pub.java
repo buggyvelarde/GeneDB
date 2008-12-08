@@ -3,6 +3,8 @@ package org.gmod.schema.mapped;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import org.apache.log4j.Logger;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,10 +20,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="pub")
 public class Pub implements Serializable {
+    private static final Logger logger = Logger.getLogger(Pub.class);
 
     // Fields
     @SequenceGenerator(name="generator", sequenceName="pub_pub_id_seq")
@@ -32,7 +36,7 @@ public class Pub implements Serializable {
      @ManyToOne(cascade={}, fetch=FetchType.LAZY)
 
      @JoinColumn(name="type_id", unique=false, nullable=false, insertable=true, updatable=true)
-     private CvTerm cvTerm;
+     private CvTerm type;
 
      @Column(name="title", unique=false, nullable=true, insertable=true, updatable=true)
      private String title;
@@ -92,9 +96,9 @@ public class Pub implements Serializable {
      }
 
     /** minimal constructor */
-    public Pub(String uniqueName, CvTerm cvTerm) {
+    public Pub(String uniqueName, CvTerm type) {
         this.uniqueName = uniqueName;
-        this.cvTerm = cvTerm;
+        this.type = type;
     }
 
     // Property accessors
@@ -103,12 +107,12 @@ public class Pub implements Serializable {
         return this.pubId;
     }
 
-    public CvTerm getCvTerm() {
-        return this.cvTerm;
+    public CvTerm getType() {
+        return this.type;
     }
 
-    void setCvTerm(CvTerm cvTerm) {
-        this.cvTerm = cvTerm;
+    void setType(CvTerm cvTerm) {
+        this.type = cvTerm;
     }
 
     public String getTitle() {
@@ -215,18 +219,60 @@ public class Pub implements Serializable {
         return Collections.unmodifiableCollection(this.pubRelationshipsForObjectId);
     }
 
+    @Transient
+    private Object pubDbXRefsLock = new Object();
+
     public Collection<PubDbXRef> getPubDbXRefs() {
-        return this.pubDbXRefs;
+        synchronized(pubDbXRefsLock) {
+            if (pubDbXRefs == null) {
+                pubDbXRefs = new HashSet<PubDbXRef>();
+            }
+            return this.pubDbXRefs;
+        }
+    }
+
+    public PubDbXRef addDbXRef(DbXRef dbXRef, boolean current) {
+        synchronized(pubDbXRefsLock) {
+            if (pubDbXRefs == null) {
+                pubDbXRefs = new HashSet<PubDbXRef>();
+            }
+            for (PubDbXRef pubDbXRef: pubDbXRefs) {
+                DbXRef existingDbXRef = pubDbXRef.getDbXRef();
+                if (existingDbXRef.equals(dbXRef)) {
+                    if (pubDbXRef.isCurrent() && !current) {
+                        throw new RuntimeException(String.format(
+                            "The pub '%s' (ID=%d) already has a current DbXRef '%s'; trying to add a non-current one",
+                            getUniqueName(), getPubId(), existingDbXRef));
+                    }
+                    if (!pubDbXRef.isCurrent() && current) {
+                        throw new RuntimeException(String.format(
+                            "The pub '%s' (ID=%d) already has a non-current DbXRef '%s'; trying to add a current one",
+                            getUniqueName(), getPubId(), existingDbXRef));
+                    }
+                    logger.debug(String.format("The pub '%s' (ID=%d) already has DbXRef '%s'",
+                        getUniqueName(), getPubId(), dbXRef));
+                    return pubDbXRef;
+                }
+            }
+                PubDbXRef pubDbXRef = new PubDbXRef(this, dbXRef, current);
+                pubDbXRefs.add(pubDbXRef);
+            return pubDbXRef;
+        }
     }
 
     public Collection<DbXRef> getCurrentDbXRefs() {
-        Collection<DbXRef> dbXRefs = new HashSet<DbXRef>();
-        for (PubDbXRef pubDbXRef: this.pubDbXRefs) {
-            if (pubDbXRef.isCurrent()) {
-                dbXRefs.add(pubDbXRef.getDbXRef());
+        synchronized(pubDbXRefsLock) {
+            if (pubDbXRefs == null) {
+                pubDbXRefs = new HashSet<PubDbXRef>();
             }
+            Collection<DbXRef> dbXRefs = new HashSet<DbXRef>();
+            for (PubDbXRef pubDbXRef: this.pubDbXRefs) {
+                if (pubDbXRef.isCurrent()) {
+                    dbXRefs.add(pubDbXRef.getDbXRef());
+                }
+            }
+            return Collections.unmodifiableCollection(dbXRefs);
         }
-        return Collections.unmodifiableCollection(dbXRefs);
     }
 
     public Collection<PubProp> getPubProps() {
