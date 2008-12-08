@@ -2,9 +2,9 @@ package org.gmod.schema.mapped;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,11 +25,11 @@ public class FeatureCvTermDbXRef implements Serializable {
     @Column(name="feature_cvterm_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private int featureCvTermDbXRefId;
 
-     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
+     @ManyToOne(cascade={CascadeType.PERSIST}, fetch=FetchType.EAGER)
          @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
      private DbXRef dbXRef;
 
-     @ManyToOne(cascade={}, fetch=FetchType.LAZY)
+     @ManyToOne(cascade={CascadeType.PERSIST}, fetch=FetchType.EAGER)
          @JoinColumn(name="feature_cvterm_id", unique=false, nullable=false, insertable=true, updatable=true)
      private FeatureCvTerm featureCvTerm;
 
@@ -41,9 +41,9 @@ public class FeatureCvTermDbXRef implements Serializable {
     }
 
     /** full constructor */
-    public FeatureCvTermDbXRef(DbXRef dbXRef, FeatureCvTerm featureCvTerm) {
-       this.dbXRef = dbXRef;
+    public FeatureCvTermDbXRef(FeatureCvTerm featureCvTerm, DbXRef dbXRef) {
        this.featureCvTerm = featureCvTerm;
+       this.dbXRef = dbXRef;
     }
 
 
