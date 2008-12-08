@@ -3,6 +3,7 @@ package org.genedb.db.loading;
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.OrganismDao;
+import org.genedb.db.dao.PubDao;
 import org.genedb.util.IterableArray;
 
 import org.gmod.schema.cfg.FeatureTypeUtils;
@@ -13,6 +14,7 @@ import org.gmod.schema.feature.DirectRepeatRegion;
 import org.gmod.schema.feature.FivePrimeUTR;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.InvertedRepeatRegion;
 import org.gmod.schema.feature.MRNA;
 import org.gmod.schema.feature.NcRNA;
 import org.gmod.schema.feature.Polypeptide;
@@ -31,11 +33,12 @@ import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.UTR;
 import org.gmod.schema.mapped.Analysis;
-import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureCvTerm;
+import org.gmod.schema.mapped.HasPubsAndDbXRefs;
 import org.gmod.schema.mapped.Organism;
+import org.gmod.schema.mapped.Pub;
 import org.gmod.schema.mapped.Synonym;
 import org.gmod.schema.utils.ObjectManager;
 
@@ -87,6 +90,7 @@ class EmblLoader {
     private CvDao cvDao;
     private GeneralDao generalDao;
     private OrganismDao organismDao;
+    private PubDao pubDao;
     private ObjectManager objectManager;     // See #afterPropertiesSet()
     private SessionFactory sessionFactory;
     private FeatureUtils featureUtils;
@@ -290,6 +294,10 @@ class EmblLoader {
                 logger.trace(String.format("Deleting existing feature '%s' (ID=%d)",
                     existingTopLevelFeature.getUniqueName(), existingTopLevelFeature.getFeatureId()));
 
+                if (! (existingTopLevelFeature instanceof TopLevelFeature)) {
+                    logger.warn(String.format("Existing feature is %s, not a top-level feature",
+                        existingTopLevelFeature.getClass()));
+                }
                 existingTopLevelFeature.delete();
                 break;
             case NO:
@@ -488,10 +496,15 @@ class EmblLoader {
         final Class<? extends RepeatRegion> repeatRegionClass;
         if (repeatType == null) {
             repeatRegionClass = RepeatRegion.class;
-        } else if (repeatType.equals("direct")) {
-            repeatRegionClass = DirectRepeatRegion.class;
         } else {
-            throw new DataError(String.format("Unknown repeat type '%s'", repeatType));
+            repeatType = repeatType.toLowerCase();
+            if (repeatType.equals("direct")) {
+                repeatRegionClass = DirectRepeatRegion.class;
+            } else if (repeatType.equals("inverted")) {
+                repeatRegionClass = InvertedRepeatRegion.class;
+            } else {
+                throw new DataError(String.format("Unknown repeat type '%s'", repeatType));
+            }
         }
 
         String repeatRegionUniqueName = String.format("%s:repeat:%d-%d", topLevelFeature.getUniqueName(), fmin, fmax);
@@ -509,6 +522,10 @@ class EmblLoader {
             organism, repeatRegionUniqueName, repeatRegionName);
 
         int rank = 0;
+        String label = repeatRegionFeature.getQualifierValue("label");
+        if (label != null) {
+            repeatRegion.addFeatureProp(String.format("/label=%s", label), "feature_property", "comment", rank++);
+        }
         for(String note : repeatRegionFeature.getQualifierValues("note")) {
             repeatRegion.addFeatureProp(note, "feature_property", "comment", rank++);
         }
@@ -523,6 +540,8 @@ class EmblLoader {
         session.persist(repeatRegion);
         locate(repeatRegion, fmin, fmax, (short)0, null);
     }
+
+    // TODO loadRepeatUnit is very similar to loadRepeatRegion: unify?
 
     private Set<String> repeatUnitUniqueNames = new HashSet<String>();
     private void loadRepeatUnit(FeatureTable.Feature repeatUnitFeature) throws DataError {
@@ -929,7 +948,7 @@ class EmblLoader {
             "\\s*(?:length\\s+(\\d+)\\s+aa)?;" +                                // 9.     Optional match length
             "\\s*id=(\\d{1,3}(?:\\.\\d{1,3})?)%;" +                             // 10.    Degree of identity (percentage)
             "\\s*(?:ungapped\\s+id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +            // 11.    Optional ungapped identity (percentage)
-            "\\s*E\\(\\)=(\\d+(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +                // 12.    E-value
+            "\\s*E\\(\\)=(\\d*(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +                // 12.    E-value
             "\\s*(?:score=(\\d+))?;" +                                          // 13.    Optional score
             "\\s*(?:(\\d+)\\s+aa\\s+overlap)?;" +                               // 14.    Optional overlap length (integer)
             "\\s*(?:query\\s+(\\d+)-\\s*(\\d+) aa)?;" +                         // 15,16. Optional query location
@@ -1023,10 +1042,14 @@ class EmblLoader {
                 }
             }
 
+            String eValueString = matcher.group(12);
+            if (eValueString.startsWith("e") || eValueString.startsWith("E")) {
+                eValueString = "1" + eValueString;
+            }
             try {
-                similarity.setEValue(Double.parseDouble(matcher.group(12).replaceAll("\\s+", "")));
+                similarity.setEValue(Double.parseDouble(eValueString.replaceAll("\\s+", "")));
             } catch (NumberFormatException e) {
-                throw new DataError("Failed to parse E() field of /similarity: " + matcher.group(12));
+                throw new DataError("Failed to parse E() field of /similarity: " + eValueString);
             }
 
             if (matcher.group(13) != null) {
@@ -1127,7 +1150,7 @@ class EmblLoader {
                 throw new DataError("/controlled_curation has no 'term' field");
             }
             String term = valuesByKey.get("term");
-            String cv   = valuesByKey.containsKey("cv") ? valuesByKey.get("cv") : "genedb_misc";
+            String cv   = valuesByKey.containsKey("cv") ? valuesByKey.get("cv") : "CC_genedb_controlledcuration";
 
             FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cv, term);
 
@@ -1137,30 +1160,59 @@ class EmblLoader {
             featureCvTerm.addPropIfNotNull("genedb_misc", "qualifier",   valuesByKey.get("qualifier"));
 
             if (valuesByKey.containsKey("db_xref")) {
-                addDbXRefs(valuesByKey.get("db_xref"));
+                addDbXRefs(featureCvTerm, valuesByKey.get("db_xref"));
             }
         }
 
         private Pattern dbxrefPattern = Pattern.compile("([^:]+):(.*)");
         /**
-         * Add DbXRefs.
+         * Add DbXRefs to the focal feature.
          * @param dbxrefs a pipe-separated list of <code>db:accession</code>
-         * @throws DataError
+         * @throws DataError if the string cannot be parsed or the database does not exist
          */
         protected void addDbXRefs(String dbxrefs) throws DataError {
             for (String dbxref: dbxrefs.split("\\|")) {
-                Matcher matcher = dbxrefPattern.matcher(dbxref);
-                if (!matcher.matches()) {
-                    throw new DataError(String.format("db_xref '%s' is not of the form database:accession", dbxref));
-                }
-                String dbName = matcher.group(1);
-                String accession = matcher.group(2);
-                Db db = generalDao.getDbByName(dbName);
-                if (db == null) {
-                    throw new DataError(String.format("Unrecognised database '%s' in dbxref", dbName));
-                }
-                DbXRef dbXRef = new DbXRef(db, accession);
-                focalFeature.addDbXRef(dbXRef);
+                addDbXRef(focalFeature, dbxref);
+            }
+        }
+
+        /**
+         * Add a DbXRef to the specified object.
+         * @param target the object to which the reference should be added
+         * @param dbxref a string of the form <code>db:accession</code>
+         * @throws DataError if the string cannot be parsed or the database does not exist
+         */
+        private void addDbXRef(HasPubsAndDbXRefs target, String dbxref) throws DataError {
+            Matcher matcher = dbxrefPattern.matcher(dbxref);
+            if (!matcher.matches()) {
+                throw new DataError(String.format("db_xref '%s' is not of the form database:accession", dbxref));
+            }
+            String dbName = matcher.group(1);
+            String accession = matcher.group(2);
+            addDbXRef(target, dbName, accession);
+        }
+
+        private void addDbXRef(HasPubsAndDbXRefs target, String dbName, String accession) {
+            DbXRef dbXRef = objectManager.getDbXRef(dbName, accession);
+            if (dbName.equals("PMID")) {
+                // PMID is a special case; these are stored as FeaturePubs
+                Pub pub = objectManager.getPub(String.format("PMID:%s", accession), "unfetched");
+                session.persist(pub.addDbXRef(dbXRef, true));
+                target.addPub(pub);
+            }
+            else {
+                target.addDbXRef(dbXRef);
+            }
+        }
+
+        /**
+         * Add DbXRefs to the specified FeatureCvTerm.
+         * @param dbxrefs a pipe-separated list of <code>db:accession</code>
+         * @throws DataError
+         */
+        protected void addDbXRefs(FeatureCvTerm featureCvTerm, String dbxrefs) throws DataError {
+            for (String dbxref: dbxrefs.split("\\|")) {
+                addDbXRef(featureCvTerm, dbxref);
             }
         }
 
@@ -1175,8 +1227,6 @@ class EmblLoader {
 
             addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
             addTranscriptSynonymsFromQualifier("previous_systematic_id", "systematic_id", false);
-            addTranscriptSynonymsFromQualifier("systematic_id", "systematic_id", true);
-            addTranscriptSynonymsFromQualifier("temporary_systematic_id", "temporary_systematic_id", true);
 
             int commentRank = processPropertyQualifier("note",     "feature_property", "comment");
             for (String name: qualifierProperties) {
@@ -1187,6 +1237,11 @@ class EmblLoader {
 
             processCvTermQualifier("class", "RILEY", false, normaliseRileyNumber);
             processCvTermQualifier("product", "genedb_products", true);
+
+            String label = feature.getQualifierValue("label");
+            if (label != null) {
+                focalFeature.addFeatureProp(String.format("/label=%s", label), "feature_property", "comment", commentRank++);
+            }
 
             if (taxonomicDivision.equals("PRO")) {
                 // Bacteria don't have splicing, so a CDS feature is a gene and
@@ -1200,12 +1255,16 @@ class EmblLoader {
                 focalFeature.addFeatureProp("partial", "feature_property", "comment", commentRank++);
             }
 
+            for (String dbxrefs: feature.getQualifierValues("db_xref")) {
+                addDbXRefs(dbxrefs);
+            }
+
             processGO();
             processSimilarityQualifiers();
             processCuration();
         }
 
-        private void addColourToExons() throws DataError {
+        protected void addColourToExons() throws DataError {
             String colour = feature.getQualifierValue("colour");
             if (colour == null) {
                 return;
@@ -1416,11 +1475,20 @@ class EmblLoader {
 
         @Override
         protected void processTranscriptQualifiers() throws DataError {
-            processPropertyQualifier("note",  "feature_property", "comment");
+            int commentRank = processPropertyQualifier("note",  "feature_property", "comment");
             if (TRNA.class.isAssignableFrom(transcriptClass)) {
                 processPropertyQualifier("anticodon", "feature_property", "anticodon", true);
             }
+            processPropertyQualifier("colour", "genedb_misc", "colour", true);
             processCvTermQualifier("product", "genedb_products", true);
+            addColourToExons();
+
+            String label = feature.getQualifierValue("label");
+            if (label != null) {
+                logger.trace(String.format("Adding /label=\"%s\" as comment on '%s'",
+                    label, focalFeature.getUniqueName()));
+                focalFeature.addFeatureProp(String.format("/label=%s", label), "feature_property", "comment", commentRank++);
+            }
 
             if (taxonomicDivision.equals("PRO")) {
                 // Bacteria don't have splicing, so a CDS feature is a gene and
@@ -1523,6 +1591,10 @@ class EmblLoader {
         this.cvDao = cvDao;
     }
 
+    public void setPubDao(PubDao pubDao) {
+        this.pubDao = pubDao;
+    }
+
     public void setFeatureUtils(FeatureUtils featureUtils) {
         this.featureUtils = featureUtils;
     }
@@ -1540,5 +1612,6 @@ class EmblLoader {
          */
         objectManager.setGeneralDao(generalDao);
         objectManager.setCvDao(cvDao);
+        objectManager.setPubDao(pubDao);
     }
 }
