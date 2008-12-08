@@ -25,8 +25,12 @@ import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
 
 import org.apache.log4j.Logger;
+import org.hibernate.jdbc.Work;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -813,21 +817,117 @@ public class SequenceDao extends BaseDao {
      *
      * @param sourceFeature
      */
-    public void deleteFeaturesLocatedOn(Feature sourceFeature) {
-        getSession().createQuery(
-            "delete Feature f where f in (" +
-            "  select fl2.feature" +
-            "  from FeatureLoc fl1" +
-            "     , FeatureLoc fl2" +
-            "  where fl1.feature = fl2.sourceFeature" +
-            "  and fl1.sourceFeature = :sourceFeature)"
-        ).setParameter("sourceFeature", sourceFeature)
-        .executeUpdate();
+    public void deleteFeaturesLocatedOn(final Feature sourceFeature) {
+        logger.trace(String.format("Deleting features located on '%s' (ID=%d)",
+            sourceFeature.getUniqueName(), sourceFeature.getFeatureId()));
 
-        getSession().createQuery(
-            "delete Feature f where f in (select fl.feature from FeatureLoc fl where fl.sourceFeature = :sourceFeature)"
+        // Similarity protein matches involve two features, a ProteinMatch
+        // and a Region, that are not directly located on the top-level
+        // feature. We need to deal with these separately.
+
+        /*
+         * An apparent bug in the HQL processing of Hibernate 3.3.1 GA
+         * causes the corresponding HQL delete statements to be translated
+         * to invalid SQL. For reference, the HQL might read as follows:
+         *
+         * delete Feature f where f in (
+         *   select region
+         *   from FeatureLoc matchOnPolypeptide
+         *   left join matchOnPolypeptide.sourceFeature as polypeptide
+         *           with polypeptide.class = Polypeptide
+         *   left join matchOnPolypeptide.feature as match
+         *    ,   FeatureLoc matchOnRegion
+         *        left join matchOnRegion.sourceFeature as region
+         *    ,   FeatureLoc polypeptideOnToplevel
+         *   where matchOnPolypeptide.locGroup = 0
+         *   and matchOnPolypeptide.rank = 0
+         *   and matchOnRegion.feature = matchOnPolypeptide.feature
+         *   and matchOnRegion.locGroup = 0
+         *   and matchOnRegion.rank = 1
+         *   and polypeptideOnToplevel.feature = polypeptide
+         *   and polypeptideOnToplevel.sourceFeature.uniqueName = 'super1'
+         * );
+         *
+         * delete Feature f where f in (
+         *   select match
+         *   from FeatureLoc matchOnPolypeptide
+         *   left join matchOnPolypeptide.sourceFeature as polypeptide
+         *           with polypeptide.class = Polypeptide
+         *   left join matchOnPolypeptide.feature as match
+         *    ,   FeatureLoc polypeptideOnToplevel
+         *   where matchOnPolypeptide.locGroup = 0
+         *   and matchOnPolypeptide.rank = 0
+         *   and polypeptideOnToplevel.feature = polypeptide
+         *   and polypeptideOnToplevel.sourceFeature.uniqueName = 'super1'
+         * );
+         */
+
+        // Use a one-element array as an easy way to get a final holder
+        // for an integer. (It needs to be final so we can close over it.)
+        // numberOfRowsDeleted[0] is the number of Region and ProteinMatch
+        // features deleted;
+        final int[] numberOfRowsDeleted = new int[1];
+
+        getSession().doWork(
+            new Work() {
+                public void execute(Connection connection) throws SQLException {
+                    // Avoid PostgreSQL-specific SQL features here
+                    // (such as join ... using) because we want it to
+                    // work with the HSQL test database too.
+                    PreparedStatement st = connection.prepareStatement(
+                        " delete from feature" +
+                        " using featureloc match_on_polypeptide" +
+                        " join feature polypeptide" +
+                        "         on match_on_polypeptide.srcfeature_id = polypeptide.feature_id" +
+                        " join featureloc match_on_region" +
+                        "         on match_on_region.feature_id = match_on_polypeptide.feature_id" +
+                        " join featureloc polypeptide_on_toplevel" +
+                        "         on match_on_polypeptide.srcfeature_id = polypeptide_on_toplevel.feature_id" +
+                        " where polypeptide.type_id in (" +
+                        "         select cvterm.cvterm_id" +
+                        "         from cvterm join cv on cv.cv_id = cvterm.cv_id" +
+                        "         where cv.name = 'sequence'" +
+                        "         and cvterm.name = 'polypeptide'" +
+                        " )" +
+                        " and match_on_polypeptide.locgroup = 0" +
+                        " and match_on_polypeptide.rank = 0" +
+                        " and match_on_region.locgroup = 0" +
+                        " and match_on_region.rank = 1" +
+                        " and polypeptide_on_toplevel.srcfeature_id = ?" +
+                        " and feature.feature_id in (" +
+                        "     match_on_region.srcfeature_id" +
+                        "   , match_on_region.feature_id" +
+                        " );"
+                    );
+                    try {
+                        st.setInt(1, sourceFeature.getFeatureId());
+                        numberOfRowsDeleted[0] = st.executeUpdate();
+                    } finally {
+                        try {
+                            st.close();
+                        } catch (SQLException e) {
+                            // We don't want any exception from close() to propagate
+                            // at the expense of one thrown in the outer try-block,
+                            // so just log the error.
+                            logger.error("Exception from close()", e);
+                        }
+                    }
+                }
+
+            }
+            );
+
+        logger.debug(String.format("Deleted %d similarity features from '%s'",
+            numberOfRowsDeleted[0], sourceFeature.getUniqueName()));
+
+        int numberOfFirstLevelFeaturesDeleted = getSession().createQuery(
+            "delete Feature f where f in (" +
+            "  select fl.feature from FeatureLoc fl where fl.sourceFeature = :sourceFeature" +
+            ")"
         ).setParameter("sourceFeature", sourceFeature)
         .executeUpdate();
+        logger.debug(String.format("Deleted %d first-level features from '%s'",
+            numberOfFirstLevelFeaturesDeleted, sourceFeature.getUniqueName()));
     }
 
 
