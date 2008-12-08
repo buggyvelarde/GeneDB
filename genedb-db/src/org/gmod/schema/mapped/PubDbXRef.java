@@ -4,6 +4,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,11 +26,11 @@ public class PubDbXRef implements Serializable {
     @Column(name = "pub_dbxref_id", unique = false, nullable = false, insertable = true, updatable = true)
     private int pubDbXRefId;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinColumn(name = "dbxref_id", unique = false, nullable = false, insertable = true, updatable = true)
     private DbXRef dbXRef;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinColumn(name = "pub_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Pub pub;
 
