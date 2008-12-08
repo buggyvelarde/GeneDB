@@ -156,4 +156,15 @@ public class Similarity implements SimilarityI {
     public void setUniqueIdentifier(String uniqueIdentifier) {
         this.uniqueIdentifier = uniqueIdentifier;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s (analysisProgram=%s, version=%s; analysis=%s; " +
+                        "organism=%s; gene=%s; product=%s; dbxref=%s (%s); length=%d; raw score=%s; e=%s; " +
+                        "overlap=%d; query=%d-%d; target=%d-%d; identity=%s; ungapped id=%s)",
+            uniqueIdentifier,
+            analysisProgram, analysisProgramVersion, analysis, organismName, geneName, product,
+            primaryDbXRef, secondaryDbXRefs, length, rawScore, eValue, overlap, queryStart, queryEnd,
+            targetStart, targetEnd, identity, ungappedId);
+    }
 }
