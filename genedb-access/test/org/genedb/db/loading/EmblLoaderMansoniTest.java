@@ -48,7 +48,10 @@ public class EmblLoaderMansoniTest {
 
         geneTester.transcript("Smp_097230:mRNA")
             .synonyms("synonym", "29646.t000001", "29646.m000185")
-            .synonyms("temporary_systematic_id", "Smp_097230")
+
+            // Check that temporary_systematic_id and systematic_id synonyms
+            // are NOT being added
+            .synonyms("temporary_systematic_id").synonyms("systematic_id")
             .hasPolypeptide("Smp_097230:pep")
             .singleExon(1, 18450, 18693);
     }
