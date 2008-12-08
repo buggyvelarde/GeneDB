@@ -74,6 +74,7 @@
         <property name="cvDao" ref="cvDao"/>
         <property name="generalDao" ref="generalDao"/>
         <property name="organismDao" ref="organismDao"/>
+        <property name="pubDao" ref="pubDao"/>
         <property name="objectManager" ref="objectManager"/>
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="featureUtils" ref="featureUtils"/>
