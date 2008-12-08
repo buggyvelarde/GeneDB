@@ -87,7 +87,7 @@ import javax.persistence.Transient;
 @FilterDef(name="excludeObsoleteFeatures")
 @Filter(name="excludeObsoleteFeatures", condition="not is_obsolete")
 @Indexed
-public abstract class Feature implements java.io.Serializable {
+public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs {
 
     @Autowired
     protected transient CvDao cvDao;
@@ -406,11 +406,16 @@ public abstract class Feature implements java.io.Serializable {
         this.timeLastModified = timeLastModified;
     }
 
+    @Transient
+    private Object featureLocsForSrcFeatureIdLock = new Object();
+
     public Collection<FeatureLoc> getFeatureLocsForSrcFeatureId() {
-        if (featureLocsForSrcFeatureId == null) {
-            featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
+        synchronized (featureLocsForSrcFeatureIdLock) {
+            if (featureLocsForSrcFeatureId == null) {
+                featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
+            }
+            return featureLocsForSrcFeatureId;
         }
-        return featureLocsForSrcFeatureId;
     }
 
     /**
@@ -491,31 +496,42 @@ public abstract class Feature implements java.io.Serializable {
         return featureDbXRef;
     }
 
+    @Transient
+    private Object featureLocsLock = new Object();
+
     public List<FeatureLoc> getFeatureLocs() {
-        return (featureLocs = CollectionUtils.safeGetter(featureLocs));
+        synchronized (featureLocsLock) {
+            return (featureLocs = CollectionUtils.safeGetter(featureLocs));
+        }
     }
 
     public FeatureLoc getFeatureLoc(int locGroup, int rank) {
-        for (FeatureLoc featureLoc: getFeatureLocs()) {
-            if (featureLoc.getLocGroup() == locGroup && featureLoc.getRank() == rank) {
-                return featureLoc;
+        synchronized (featureLocsLock) {
+            for (FeatureLoc featureLoc: getFeatureLocs()) {
+                if (featureLoc.getLocGroup() == locGroup && featureLoc.getRank() == rank) {
+                    return featureLoc;
+                }
             }
         }
         return null;
     }
 
     public void addFeatureLoc(FeatureLoc featureLoc) {
-        featureLoc.setFeature(this);
-        getFeatureLocs().add(featureLoc);
+        synchronized (featureLocsLock) {
+            featureLoc.setFeature(this);
+            getFeatureLocs().add(featureLoc);
+        }
     }
 
     protected void removeFeatureLoc(FeatureLoc featureLoc) {
-        Iterator<FeatureLoc> it = featureLocs.iterator();
-        while (it.hasNext()) {
-            if (it.next().getFeatureLocId() == featureLoc.getFeatureLocId()) {
-                logger.trace(String.format("Removing FeatureLoc (ID %d) from feature '%s'",
-                    featureLoc.getFeatureLocId(), getUniqueName()));
-                it.remove();
+        synchronized (featureLocsLock) {
+            Iterator<FeatureLoc> it = featureLocs.iterator();
+            while (it.hasNext()) {
+                if (it.next().getFeatureLocId() == featureLoc.getFeatureLocId()) {
+                    logger.trace(String.format("Removing FeatureLoc (ID %d) from feature '%s'",
+                        featureLoc.getFeatureLocId(), getUniqueName()));
+                    it.remove();
+                }
             }
         }
         featureLoc.setSourceFeature(null);
@@ -544,26 +560,53 @@ public abstract class Feature implements java.io.Serializable {
         getFeatureProps().add(featureProp);
     }
 
+    @Transient
+    private Object featurePubsLock = new Object();
+
     public Collection<FeaturePub> getFeaturePubs() {
-        return Collections.unmodifiableCollection(this.featurePubs);
+        synchronized(featurePubsLock) {
+            if (featurePubs == null) {
+                featurePubs = new HashSet<FeaturePub>();
+            }
+            return Collections.unmodifiableCollection(this.featurePubs);
+        }
     }
 
     public void addFeaturePub(FeaturePub featurePub) {
-        this.featurePubs.add(featurePub);
-        featurePub.setFeature(this);
+        synchronized(featurePubsLock) {
+            if (featurePubs == null) {
+                featurePubs = new HashSet<FeaturePub>();
+            }
+            this.featurePubs.add(featurePub);
+            featurePub.setFeature(this);
+        }
     }
 
-    public void addPub(Pub pub) {
-        this.featurePubs.add(new FeaturePub(this, pub));
+    public FeaturePub addPub(Pub pub) {
+        synchronized(featurePubsLock) {
+            if (featurePubs == null) {
+                featurePubs = new HashSet<FeaturePub>();
+            }
+            FeaturePub featurePub = new FeaturePub(this, pub);
+            this.featurePubs.add(featurePub);
+            return featurePub;
+        }
     }
 
     @Transient
     public Collection<Pub> getPubs() {
-        Collection<Pub> pubs = new HashSet<Pub>();
-        for(FeaturePub featurePub: this.featurePubs) {
-            pubs.add(featurePub.getPub());
+        synchronized(featurePubsLock) {
+            if (featurePubs == null) {
+                featurePubs = new HashSet<FeaturePub>();
+            }
+
+            Collection<Pub> pubs = new HashSet<Pub>();
+            for(FeaturePub featurePub: this.featurePubs) {
+                pubs.add(featurePub.getPub());
+            }
+
+            return pubs;
         }
-        return pubs;
     }
 
     @Transient
@@ -599,39 +642,24 @@ public abstract class Feature implements java.io.Serializable {
         return (getName() != null) ? getName() : getUniqueName();
     }
 
-    /**
-     * Get the current systematic ID or temporary systematic ID, if there is one.
-     * If not, returns the unique name.
-     *
-     * @return the systematic ID, temporary systematic ID, or unique name
-     */
-    @Transient
-    public String getSystematicId() {
-        for (FeatureSynonym featureSynonym : getFeatureSynonyms()) {
-            Synonym synonym = featureSynonym.getSynonym();
-            if (("systematic_id".equals(synonym.getType().getName())
-            || "temporary_systematic_id".equals(synonym.getType().getName()))
-            && featureSynonym.isCurrent()) {
-                return synonym.getSynonymSGML();
-            }
-        }
-        return getUniqueName();
-    }
-
     @Transient
     public Collection<String> getPreviousSystematicIds() {
         Set<String> ret = new HashSet<String>();
         for (FeatureSynonym featureSynonym: getFeatureSynonyms()) {
             Synonym synonym = featureSynonym.getSynonym();
-            if (("systematic_id".equals(synonym.getType().getName())
-            || "temporary_systematic_id".equals(synonym.getType().getName()))
+            if (("previous_systematic_id".equals(synonym.getType().getName()))
             && !featureSynonym.isCurrent()) {
                 ret.add(synonym.getSynonymSGML());
-        }
+            }
         }
         return ret;
     }
 
+    /**
+     * Get all synonyms, of any type.
+     *
+     * @return a collection of synonym objects
+     */
     @Transient
     public Collection<Synonym> getSynonyms() {
         Collection<Synonym> ret = new HashSet<Synonym>();
@@ -838,15 +866,19 @@ public abstract class Feature implements java.io.Serializable {
     public FeatureLoc addLocatedChild(Feature child, StrandedLocation location) {
         FeatureLoc loc = new FeatureLoc(this, child, location);
 
-        if (this.featureLocsForSrcFeatureId == null) {
-            this.featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
+        synchronized (featureLocsForSrcFeatureIdLock) {
+            if (this.featureLocsForSrcFeatureId == null) {
+                this.featureLocsForSrcFeatureId = new HashSet<FeatureLoc>();
+            }
+            this.featureLocsForSrcFeatureId.add(loc);
         }
-        this.featureLocsForSrcFeatureId.add(loc);
 
-        if (child.featureLocs == null) {
-            child.featureLocs = new ArrayList<FeatureLoc>();
+        synchronized (child.featureLocsLock) {
+            if (child.featureLocs == null) {
+                child.featureLocs = new ArrayList<FeatureLoc>();
+            }
+            child.featureLocs.add(loc);
         }
-        child.featureLocs.add(loc);
 
         return loc;
     }
@@ -1176,6 +1208,9 @@ public abstract class Feature implements java.io.Serializable {
 
     @Transactional
     public void addSimilarity(SimilarityI similarity) {
+        logger.trace(String.format("Adding similarity '%s' to feature '%s' (ID=%d)",
+            similarity, getUniqueName(), getFeatureId()));
+
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
         Analysis analysis = similarity.getAnalysis();
@@ -1280,5 +1315,48 @@ public abstract class Feature implements java.io.Serializable {
             analysisFeatures.add(analysisFeature);
             return analysisFeature;
         }
+    }
+
+
+    /* The hashCode() and equals() methods were generated by Eclipse
+     * using the fields uniqueName, type, and organism, which constitute
+     * a unique key in the database table.
+     */
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((organism == null) ? 0 : organism.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((uniqueName == null) ? 0 : uniqueName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Feature other = (Feature) obj;
+        if (organism == null) {
+            if (other.organism != null)
+                return false;
+        } else if (!organism.equals(other.organism))
+            return false;
+        if (type == null) {
+            if (other.type != null)
+                return false;
+        } else if (!type.equals(other.type))
+            return false;
+        if (uniqueName == null) {
+            if (other.uniqueName != null)
+                return false;
+        } else if (!uniqueName.equals(other.uniqueName))
+            return false;
+        return true;
     }
 }

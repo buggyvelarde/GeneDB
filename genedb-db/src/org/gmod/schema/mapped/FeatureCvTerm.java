@@ -45,7 +45,7 @@ import javax.persistence.Transient;
  * the feature with <code>FetchType.EAGER</code>
  */
 @Filter(name="excludeObsoleteFeatures", condition="not feature2_.is_obsolete")
-public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
+public class FeatureCvTerm implements Serializable, Rankable, PropertyI, HasPubsAndDbXRefs {
 
     // Fields
 
@@ -187,6 +187,9 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
         }
     }
 
+    @Transient
+    private Object featureCvTermPubsLock = new Object();
+
     /**
      * Get the <code>FeatureCvTermPub</code> objects that describe publications related to this FeatureCvTerm.
      * It is usually easier to use the method {@link #getPubs()} instead.
@@ -194,12 +197,22 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
      * @return an unmodifiable collection of <code>FeatureCvTermPub</code> objects
      */
     public Collection<FeatureCvTermPub> getFeatureCvTermPubs() {
-        return Collections.unmodifiableCollection(this.featureCvTermPubs);
+        synchronized(featureCvTermPubsLock) {
+            return Collections.unmodifiableCollection(this.featureCvTermPubs);
+        }
     }
 
     public void addFeatureCvTermPub(FeatureCvTermPub featureCvTermPub) {
-        this.featureCvTermPubs.add(featureCvTermPub);
-        featureCvTermPub.setFeatureCvTerm(this);
+        synchronized(featureCvTermPubsLock) {
+            featureCvTermPub.setFeatureCvTerm(this);
+            this.featureCvTermPubs.add(featureCvTermPub);
+        }
+    }
+
+    public FeatureCvTermPub addPub(Pub pub) {
+        FeatureCvTermPub featureCvTermPub = new FeatureCvTermPub(this, pub);
+        addFeatureCvTermPub(featureCvTermPub);
+        return featureCvTermPub;
     }
 
     /**
@@ -216,6 +229,9 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
         return Collections.unmodifiableCollection(pubs);
     }
 
+    @Transient
+    private Object featureCvTermDbXRefsLock = new Object();
+
     /**
      * Get the <code>FeatureCvTermDbXRef</code> objects that describe the database cross-references
      * for this FeatureCvTerm.
@@ -223,12 +239,22 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI {
      * @return an unmodifiable collection of <code>FeatureCvTermDbXRef</code> objects
      */
     public Collection<FeatureCvTermDbXRef> getFeatureCvTermDbXRefs() {
-        return Collections.unmodifiableCollection(this.featureCvTermDbXRefs);
+        synchronized(featureCvTermDbXRefsLock) {
+            return Collections.unmodifiableCollection(this.featureCvTermDbXRefs);
+        }
     }
 
     public void addFeatureCvTermDbXRef(FeatureCvTermDbXRef featureCvTermDbXRef) {
-        this.featureCvTermDbXRefs.add(featureCvTermDbXRef);
-        featureCvTermDbXRef.setFeatureCvTerm(this);
+        synchronized(featureCvTermDbXRefsLock) {
+            this.featureCvTermDbXRefs.add(featureCvTermDbXRef);
+            featureCvTermDbXRef.setFeatureCvTerm(this);
+        }
+    }
+
+    public FeatureCvTermDbXRef addDbXRef(DbXRef dbXRef) {
+        FeatureCvTermDbXRef featureCvTermDbXRef = new FeatureCvTermDbXRef(this, dbXRef);
+        addFeatureCvTermDbXRef(featureCvTermDbXRef);
+        return featureCvTermDbXRef;
     }
 
     public int getRank() {
