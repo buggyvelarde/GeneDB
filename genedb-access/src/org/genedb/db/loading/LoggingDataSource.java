@@ -21,8 +21,16 @@ public class LoggingDataSource extends BasicDataSource {
     private static final Logger logger = Logger.getLogger(LoggingDataSource.class);
 
     private boolean logStackTrace = false;
+    private boolean neverLogStackTrace = false;
     public void setLogStackTrace(boolean logStackTrace) {
-        this.logStackTrace = logStackTrace;
+        this.logStackTrace = logStackTrace && !neverLogStackTrace;
+    }
+
+    public void setNeverLogStackTrace(boolean neverLogStackTrace) {
+        this.neverLogStackTrace = neverLogStackTrace;
+        if (neverLogStackTrace) {
+            logStackTrace = false;
+        }
     }
 
     @Override
@@ -34,7 +42,8 @@ public class LoggingDataSource extends BasicDataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        boolean logStackTrace = this.logStackTrace || getNumActive() > 0;
+        boolean logStackTrace = !this.neverLogStackTrace
+                                && (this.logStackTrace || getNumActive() > 0);
 
         logger.trace(String.format("getConnection [active=%d, idle=%d]", getNumActive(), getNumIdle()),
             logStackTrace ? new Throwable("Stack trace") : null);
