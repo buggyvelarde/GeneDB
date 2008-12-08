@@ -208,7 +208,7 @@
     <target name="specific-embl-test" depends="genedb-access.jar,compile-tests,run-specific-embl-test"/>
     <target name="run-specific-embl-test">
         <antcall target="copy-skeleton-database"/>
-        <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="256M">
+        <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="256M">
             <classpath refid="test-classpath"/>
             <formatter type="brief" usefile="false" />
             <test name="org.genedb.db.loading.EmblLoader${subtest}Test"/>
@@ -417,4 +417,16 @@
     </target>
 
     <target name="reload-opi-references" depends="clear-opi-references,load-opi-references"/>
+
+    <!-- Note: does not force a recompile; use "ant genedb-access.jar adhoc-query" for that -->
+    <target name="adhoc-query" depends="adhoc-query-verbose, adhoc-query-nonverbose"/>
+    <target name="adhoc-query-verbose" if="verbose">
+        <java fork="true" classname="org.genedb.db.adhoc.Query" classpathref="exec-classpath">
+            <arg value="--verbose"/>
+        </java>
+    </target>
+    <target name="adhoc-query-nonverbose" unless="verbose">
+        <java fork="true" classname="org.genedb.db.adhoc.Query" classpathref="exec-classpath"/>
+    </target>
+
 </project>
