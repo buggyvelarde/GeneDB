@@ -2,9 +2,9 @@ package org.gmod.schema.mapped;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +30,7 @@ public class FeaturePub implements Serializable {
     @JoinColumn(name = "feature_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature feature;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "pub_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Pub pub;
 
