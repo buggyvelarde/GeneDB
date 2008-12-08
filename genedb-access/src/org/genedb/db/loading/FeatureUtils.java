@@ -231,7 +231,7 @@ public class FeatureUtils implements InitializingBean {
 
         // With/From
         for (DbXRef withFromDbXRef: withFromDbXRefs) {
-            sequenceDao.persist(new FeatureCvTermDbXRef(withFromDbXRef, fct));
+            sequenceDao.persist(new FeatureCvTermDbXRef(fct, withFromDbXRef));
         }
     }
 
