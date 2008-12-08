@@ -2,16 +2,21 @@ package org.gmod.schema.utils;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
+import org.genedb.db.dao.PubDao;
 import org.genedb.util.TwoKeyMap;
 
+import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Db;
 import org.gmod.schema.mapped.DbXRef;
+import org.gmod.schema.mapped.Pub;
 import org.gmod.schema.mapped.Synonym;
 
 import org.apache.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Maintains a cache of objects that have been created but
@@ -24,25 +29,30 @@ import java.util.Iterator;
  * the protected Loader field <code>objectManager</code>. At the time of
  * writing, it's only used by {@link org.genedb.db.loading.auxiliary.InterProLoader}.
  *
+ * This class is not currently concurrency-safe.
+ *
  * @author rh11
  */
 public class ObjectManager extends EmptyInterceptor {
     private static final Logger logger = Logger.getLogger(ObjectManager.class);
     private GeneralDao generalDao;
+    private PubDao pubDao;
     private CvDao cvDao;
 
     private TwoKeyMap<String,String,DbXRef> dbxrefsByAccByDb
         = new TwoKeyMap<String,String,DbXRef>();
     private TwoKeyMap<String,String,Synonym> synonymsByTypeAndName
         = new TwoKeyMap<String,String,Synonym>();
+    private Map<String,Pub> pubsByUniqueName
+        = new HashMap<String, Pub>();
 
     @Override
     @SuppressWarnings("unchecked")
     public void postFlush(@SuppressWarnings("unused") Iterator entities) {
-        logger.debug("Flushing dbxrefs");
+        logger.debug("Flushing dbxrefs, synonyms and pubs");
         dbxrefsByAccByDb.clear();
-        logger.debug("Flushing synonyms");
         synonymsByTypeAndName.clear();
+        pubsByUniqueName.clear();
     }
 
     /**
@@ -114,7 +124,7 @@ public class ObjectManager extends EmptyInterceptor {
      * @param cvTermName the term name
      * @return the ID of the corresponding CvTerm object
      */
-    public Integer getIdOfExistingCvTerm(String cvName, String cvTermName) {
+    public int getIdOfExistingCvTerm(String cvName, String cvTermName) {
         logger.trace(String.format("Looking for cvterm '%s:%s'", cvName, cvTermName));
         if (cvTermIdsByCvAndName.containsKey(cvName, cvTermName)) {
             logger.trace("Found cvterm locally");
@@ -174,10 +184,40 @@ public class ObjectManager extends EmptyInterceptor {
         return dbXRef;
     }
 
+    /**
+     * Find or create a publication object.
+     *
+     * @param uniqueName the unique name of the publication
+     * @param type the type of publication. This should be a term in the <code>genedb_literature</code> CV
+     * @return the Pub object that was found or created
+     */
+    public Pub getPub(String uniqueName, String type) {
+        logger.trace(String.format("Looking for Pub with uniqueName '%s'", uniqueName));
+        if (pubsByUniqueName.containsKey(uniqueName)) {
+            return pubsByUniqueName.get(uniqueName);
+        }
+
+        CvTerm typeCvTerm = cvDao.getCvTermByNameAndCvName(type, "genedb_literature");
+        if (typeCvTerm == null) {
+            throw new IllegalArgumentException(String.format(
+                "The term '%s' does not exist in the CV 'genedb_literature'", type));
+        }
+        Pub pub = pubDao.getPubByUniqueName(uniqueName);
+        if (pub == null) {
+            pub = new Pub(uniqueName, typeCvTerm);
+            pubDao.persist(pub);
+        }
+        pubsByUniqueName.put(uniqueName, pub);
+        return pub;
+    }
+
     public void setGeneralDao(GeneralDao generalDao) {
         this.generalDao = generalDao;
     }
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
+    }
+    public void setPubDao(PubDao pubDao) {
+        this.pubDao = pubDao;
     }
 }
