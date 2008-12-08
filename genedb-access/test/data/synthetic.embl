@@ -38,7 +38,7 @@ FT                   AAH02634); Homo sapiens; hypothetical protein; ; length
 FT                   322 aa; id=40.063%; ungapped id=46.691%; E()=1.2e-32; ;
 FT                   301 aa overlap; query 23-324 aa; subject 12-298 aa"
 FT                   /similarity="blastp; GB:BAD74067.1; ; ; ; ; id=54.4%; ;
-FT                   E()=2.6e-17; ; ; ;"
+FT                   E()=e-17; ; ; ;"
 FT                   /similarity="fasta; SWALL:EAA26969 (EMBL:AABX01000759,
 FT                   EAA26969); Neurospora crassa; hypothetical protein; ;
 FT                   length 335 aa; id=38.462%; ungapped id=47.273%; E()=6.4e-
@@ -59,12 +59,33 @@ FT                   /similarity="fasta; SWALL:O21243 (EMBL:AF007261,
 FT                   SWALL:COXZ_RECAM); Reclinomonas americana; ; ; length 182
 FT                   aa; id=44.805%; ungapped id=46.939%; E()=2.5e-25; ; 151 aa
 FT                   overlap; query 1-152 aa; subject 32-180 aa"
+FT   CDS             complement(join(330..340,350..360))
+FT                   /note="annotation contributed by Iain Chalmers"
+FT                   /note="group2 SmVAL"
+FT                   /db_xref="EMBL:AY953433"
+FT                   /literature="PMID:23456"
+FT                   /literature="34567"
+FT                   /synonym="Sm-VAL 6"
+FT                   /primary_name="SmVAL6"
+FT                   /controlled_curation="term=expression in 7 week
+FT                   adult;evidence=NAS;db_xref=PMID:12345;attribution=contributed
+FT                   by Iain Chalmers;date=20070619"
+FT                   /product="venom allergen-like (VAL) 6 protein"
+FT                   /other_transcript="Smp_124050.1"
+FT                   /other_transcript="Smp_124050.2"
+FT                   /other_transcript="Smp_124050.3"
+FT                   /shared_id="Smp_124050"
+FT                   /temporary_systematic_id="Smp_124050.4"
+FT                   /colour=2
+FT   tRNA            join(370..380,390..400)
+FT                   /label="tRNA label"
+FT                   /colour="12"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,
 CO   gap(10),con7g.1:1..200,gap(50),con8t.1:1..90)
 XX
-SQ   Sequence 1200 BP; 0 A; 0 C; 0 G; 0 T; 1200 other;
+SQ   Sequence 1200 BP; 300 A; 300 C; 300 G; 190 T; 110 other;
      aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa        60
      aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa nnnnnnnnnn cccccccccc       120
      cccccccccc cccccccccc cccccccccc cccccccccc cccccccccc cccccccccc       180
@@ -85,3 +106,4 @@ SQ   Sequence 1200 BP; 0 A; 0 C; 0 G; 0 T; 1200 other;
      gggggggggg gggggggggg gggggggggg gggggggggg nnnnnnnnnn nnnnnnnnnn      1080
      nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn tttttttttt tttttttttt tttttttttt      1140
      tttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttttttttt      1200
+//

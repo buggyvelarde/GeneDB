@@ -1,5 +1,6 @@
 package org.genedb.db.loading;
 
+import org.genedb.db.loading.FeatureTester.GeneTester;
 import org.genedb.db.loading.FeatureTester.PolypeptideTester;
 import org.genedb.db.loading.FeatureTester.TranscriptTester;
 
@@ -50,9 +51,9 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void featureNames() {
-        tester.uniqueNames(AbstractGene.class, "s1", "s2", "s3", "s4")
+        tester.uniqueNames(AbstractGene.class, "s1", "s2", "s3", "s4", "Smp_124050", "super1_tRNA1")
               .uniqueNames(Pseudogene.class, "s1")
-              .uniqueNames(Gene.class, "s2", "s3", "s4");
+              .uniqueNames(Gene.class, "s2", "s3", "s4",  "Smp_124050", "super1_tRNA1");
     }
 
     @Test
@@ -174,6 +175,18 @@ public class EmblLoaderSyntheticTest {
             .id(70.0)
             .eValue(2E-42)
             .score(438.0);
+
+        // /similarity="blastp; GB:BAD74067.1; ; ; ; ; id=54.4%; ;
+        // E()=e-17; ; ; ;"
+
+        s3.similarity("GB", "BAD74067.1")
+            .analysisProgram("blastp")
+            .organism(null)
+            .product(null)
+            .gene(null)
+            .id(54.4)
+            .eValue(1E-17)
+            .score(null);
     }
 
     @Test
@@ -224,5 +237,19 @@ public class EmblLoaderSyntheticTest {
             .phaseIsNull()
             .property("genedb_misc", "colour", "5")
             .properties("feature_property", "comment", "/label=Trpt", "telomeric repeat hexamer TTAGGG");
+    }
+
+    @Test
+    public void tRNA() {
+        GeneTester tRNA1 = tester.geneTester("super1_tRNA1");
+        tRNA1.loc(1, 369, 400)
+            .phaseIsNull()
+            .name(null)
+            .properties("genedb_misc", "colour")
+            .properties("feature_property", "comment");
+
+        tRNA1.transcript("super1_tRNA1:tRNA")
+            .properties("feature_property", "comment", "/label=tRNA label")
+            .properties("genedb_misc", "colour", "12");
     }
 }
