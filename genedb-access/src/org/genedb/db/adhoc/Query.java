@@ -1,7 +1,5 @@
 package org.genedb.db.adhoc;
 
-import org.genedb.db.loading.EmblLoaderTestHelper;
-
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,7 +20,7 @@ import javax.annotation.Resource;
 public class Query {
 
     private static void initLog4J(boolean verbose) {
-        URL url = EmblLoaderTestHelper.class.getResource(
+        URL url = Query.class.getResource(
             verbose ? "/log4j.query-verbose.properties" : "/log4j.query.properties");
         if (url == null) {
             throw new RuntimeException("Could not find classpath resource /log4j.test.properties");
