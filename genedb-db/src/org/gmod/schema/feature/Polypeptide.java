@@ -415,6 +415,9 @@ public class Polypeptide extends Region {
             Feature feature = featureLoc.getFeature();
             if (feature instanceof ProteinMatch) {
                 proteinMatches.add((ProteinMatch) feature);
+            } else {
+                logger.debug(String.format("getSimilarityMatches: %s is '%s', not ProteinMatch",
+                    feature, feature.getClass()));
             }
         }
         return proteinMatches;
