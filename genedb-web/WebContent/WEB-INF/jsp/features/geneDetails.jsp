@@ -120,8 +120,9 @@
             </c:forEach>
             <c:if test="${fn:length(dto.publications) > 0}">
                 <p>Key information on this gene is available from
-                <c:forEach items="${dto.publications}" var="publication">
-                    <div class="comment"><db:dbXRefLink dbXRef="${publication}" /></div>
+                <c:forEach items="${dto.publications}" var="publication" varStatus="vs">
+                    <c:if test="${!vs.first}">, </c:if>
+                    <db:dbXRefLink dbXRef="${publication}" />
                 </c:forEach>
             </c:if>
         </format:genePageSection>
