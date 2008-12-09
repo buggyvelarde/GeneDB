@@ -213,6 +213,17 @@ public class EmblLoaderSyntheticTest {
     }
 
     @Test
+    public void Smp_124050_similarities() {
+        PolypeptideTester Smp_124050_4 = tester.geneTester("Smp_124050")
+            .transcript("Smp_124050.4:mRNA").polypeptide("Smp_124050.4:pep");
+
+        Smp_124050_4.similarity("UniProt", "A6WB28.1")
+            .analysisProgram("blastall", "v2.2.6")
+            .analysisAlgorithm("ComparativeBlastX_uni");
+    }
+
+
+    @Test
     public void repeats() {
         tester.uniqueNames(RepeatRegion.class,
             "super1:repeat:0-93", "super1:repeat_unit:3-9", "super1:repeat_unit:9-15");

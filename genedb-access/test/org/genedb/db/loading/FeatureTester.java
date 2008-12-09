@@ -16,6 +16,7 @@ import org.gmod.schema.feature.Region;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.TranscriptRegion;
+import org.gmod.schema.mapped.Analysis;
 import org.gmod.schema.mapped.AnalysisFeature;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.DbXRef;
@@ -455,6 +456,16 @@ public class FeatureTester {
         }
         public SimilarityTester analysisProgram(String analysisProgram) {
             assertEquals(analysisProgram, analysisFeature().getAnalysis().getProgram());
+            return this;
+        }
+        public SimilarityTester analysisProgram(String analysisProgram, String analysisProgramVersion) {
+            Analysis analysis = analysisFeature().getAnalysis();
+            assertEquals(analysisProgram, analysis.getProgram());
+            assertEquals(analysisProgramVersion, analysis.getProgramVersion());
+            return this;
+        }
+        public SimilarityTester analysisAlgorithm(String analysisAlgorithm) {
+            assertEquals(analysisAlgorithm, analysisFeature().getAnalysis().getAlgorithm());
             return this;
         }
         public SimilarityTester secondaryDbXRefs(String... dbxRefStrings) {

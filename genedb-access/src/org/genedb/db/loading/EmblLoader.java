@@ -937,16 +937,24 @@ class EmblLoader {
             FT                   length 335 aa; id=38.462%; ungapped id=47.273%; E()=6.4e-
             FT                   17; ; 303 aa overlap; query 3-306 aa; subject 13-321 aa"
 
+       And here is an example from Eimeria tenella where the algorithm, program and version are
+       all specified in the first field.
+
+            FT                   /similarity="ComparativeBlastX_uni blastall v2.2.6;
+            FT                   SWALL:A6WB28.1;  ;  ;  ; ; ; ; E()=19.0063; ; 58 aa overlap;
+            FT                   query 24-81 aa; subject 875-1042 aa"
+
+
          */
         private final Pattern similarityPattern = Pattern.compile(
-            "(\\w+);" +                                                         // 1.     Algorithm, e.g. fasta, blastp
+            "(\\w+|\\w+ +\\w+ +v[\\d.]+);" +                                // 1.     Algorithm, e.g. fasta, blastp
             "\\s*(\\w+):([\\w.]+)" +                                            // 2,3.   Primary dbxref, e.g. SWALL:Q26723
             "(?:\\s+\\((\\w+):([\\w.]+(?:,\\s*(?:\\w+:)?[\\w.]+)*)\\))?;" +     // 4,5.   Optional secondary dbxrefs, e.g. "EMBL:M20871", "EMBL:BC002634, AAH02634"
             "\\s*([^;]+)?;" +                                                   // 6.     Organism name
             "\\s*([^;]+)?;" +                                                   // 7.     Product name
             "\\s*([^;]+)?;" +                                                   // 8.     Gene name
             "\\s*(?:length\\s+(\\d+)\\s+aa)?;" +                                // 9.     Optional match length
-            "\\s*id=(\\d{1,3}(?:\\.\\d{1,3})?)%;" +                             // 10.    Degree of identity (percentage)
+            "\\s*(?:id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +                        // 10.    Optional degree of identity (percentage)
             "\\s*(?:ungapped\\s+id=(\\d{1,3}(?:\\.\\d{1,3})?)%)?;" +            // 11.    Optional ungapped identity (percentage)
             "\\s*E\\(\\)=(\\d*(?:\\.\\d+)?(?:e[+-]? ?\\d+)?);" +                // 12.    E-value
             "\\s*(?:score=(\\d+))?;" +                                          // 13.    Optional score
@@ -972,8 +980,19 @@ class EmblLoader {
             if (!similarityAnalysisByProgram.containsKey(program)) {
                 logger.trace(String.format("Creating Analysis object for program '%s'", program));
                 Analysis analysis = new Analysis();
-                analysis.setProgram(program);
-                analysis.setProgramVersion("unknown");
+                if (program.indexOf(' ') > 0) {
+                    // Program string contains spaces, so it's of the form "algorithm program version"
+                    String[] splitProgram = program.split(" +");
+                    if (splitProgram.length != 3) {
+                        throw new DataError("Unexpected problem parsing similarity program: " + program);
+                    }
+                    analysis.setAlgorithm(splitProgram[0]);
+                    analysis.setProgram  (splitProgram[1]);
+                    analysis.setProgramVersion(splitProgram[2]);
+                } else {
+                    analysis.setProgram(program);
+                    analysis.setProgramVersion("unknown");
+                }
                 similarityAnalysisByProgram.put(program, analysis);
             }
             Analysis analysis = similarityAnalysisByProgram.get(program);
@@ -1028,10 +1047,12 @@ class EmblLoader {
                 }
             }
 
-            try {
-                similarity.setId(Double.parseDouble(matcher.group(10)));
-            } catch (NumberFormatException e) {
-                throw new DataError("Failed to parse id field of /similarity: " + matcher.group(10));
+            if (matcher.group(10) != null) {
+                try {
+                    similarity.setId(Double.parseDouble(matcher.group(10)));
+                } catch (NumberFormatException e) {
+                    throw new DataError("Failed to parse id field of /similarity: " + matcher.group(10));
+                }
             }
 
             if (matcher.group(11) != null) {

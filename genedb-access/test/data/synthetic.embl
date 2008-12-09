@@ -77,6 +77,9 @@ FT                   /other_transcript="Smp_124050.3"
 FT                   /shared_id="Smp_124050"
 FT                   /temporary_systematic_id="Smp_124050.4"
 FT                   /colour=2
+FT                   /similarity="ComparativeBlastX_uni blastall v2.2.6;
+FT                   SWALL:A6WB28.1;  ;  ;  ; ; ; ; E()=19.0063; ; 58 aa overlap;
+FT                   query 24-81 aa; subject 875-1042 aa"
 FT   tRNA            join(370..380,390..400)
 FT                   /label="tRNA label"
 FT                   /colour="12"
