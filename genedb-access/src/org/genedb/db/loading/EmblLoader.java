@@ -319,18 +319,34 @@ class EmblLoader {
 
     private String taxonomicDivision;
     private TopLevelFeature topLevelFeature;
-    private Map<String,AbstractGene> genesByUniqueName;
-    private Map<String,Transcript> transcriptsByUniqueName;
-    private NavigableMap<Integer,Contig> contigsByStart;
+    private Map<String,AbstractGene> genesByUniqueName = new HashMap<String,AbstractGene>();
+    private Map<String,Transcript> transcriptsByUniqueName = new HashMap<String,Transcript>();
+    private NavigableMap<Integer,Contig> contigsByStart = new TreeMap<Integer,Contig>();
+    private Set<String> repeatRegionUniqueNames = new HashSet<String>();
+    private Set<String> repeatUnitUniqueNames = new HashSet<String>();
 
+    /**
+     * We want to create a single Analysis object/row for each distinct analysis program
+     * referenced in /similarity qualifiers in this file. These are stored in this map.
+     */
+    private Map<String,Analysis> similarityAnalysisByProgram = new HashMap<String,Analysis>();
+
+    /**
+     * Reset all our local state: necessary if the user retries after an error.
+     *
+     * @param topLevelFeature
+     */
     private void init(TopLevelFeature topLevelFeature) {
         if (topLevelFeature == null) {
             throw new IllegalArgumentException("topLevelFeature cannot be null");
         }
         this.topLevelFeature = topLevelFeature;
-        this.genesByUniqueName = new HashMap<String,AbstractGene>();
-        this.transcriptsByUniqueName = new HashMap<String,Transcript>();
-        this.contigsByStart = new TreeMap<Integer,Contig>();
+        this.genesByUniqueName.clear();
+        this.transcriptsByUniqueName.clear();
+        this.contigsByStart.clear();
+        this.similarityAnalysisByProgram.clear();
+        this.repeatRegionUniqueNames.clear();
+        this.repeatUnitUniqueNames.clear();
     }
 
     private void loadContigsAndGaps(EmblLocation.Join locations) throws DataError {
@@ -485,7 +501,6 @@ class EmblLoader {
         }
     }
 
-    private Set<String> repeatRegionUniqueNames = new HashSet<String>();
     private void loadRepeatRegion(FeatureTable.Feature repeatRegionFeature) throws DataError {
         String repeatRegionName = repeatRegionFeature.getQualifierValue("FEAT_NAME");
         EmblLocation repeatRegionLocation = repeatRegionFeature.location;
@@ -543,7 +558,6 @@ class EmblLoader {
 
     // TODO loadRepeatUnit is very similar to loadRepeatRegion: unify?
 
-    private Set<String> repeatUnitUniqueNames = new HashSet<String>();
     private void loadRepeatUnit(FeatureTable.Feature repeatUnitFeature) throws DataError {
         EmblLocation repeatUnitLocation = repeatUnitFeature.location;
         int fmin = repeatUnitLocation.getFmin();
@@ -585,12 +599,6 @@ class EmblLoader {
     static {
         Collections.addAll(goQualifiers, "aspect", "GOid", "term", "qualifier", "evidence", "db_xref", "with", "date");
     }
-
-    /**
-     * We want to create a single Analysis object/row for each distinct analysis program
-     * referenced in /similarity qualifiers in this file. These are stored in this map.
-     */
-    private Map<String,Analysis> similarityAnalysisByProgram = new HashMap<String,Analysis>();
 
     /**
      * Abstract superclass for gene loaders.
