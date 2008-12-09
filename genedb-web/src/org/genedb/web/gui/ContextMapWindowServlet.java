@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
  * which part is visible in the large context view.
  *
  * Precisely, the generated image consists of a transparent rectangle bordered
- * by a single-pixel blue frame, surrounded by a single-pixed white frame. The
+ * by a single-pixel blue frame, surrounded by a single-pixel white frame.
  * <p>
- * It takes a single parameter <code>width</code>, the integer width in pixels
- * of the transparent rectangle.
+ * The servlet takes a single parameter <code>width</code>, the integer width
+ * in pixels of the transparent rectangle.
  *
  * @author rh11
  *
