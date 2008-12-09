@@ -34,6 +34,11 @@
             <rtexprvalue>true</rtexprvalue>
             <required>true</required>
         </attribute>
+        <attribute>
+            <name>includeSpaces</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
     </tag>
 
 </taglib>

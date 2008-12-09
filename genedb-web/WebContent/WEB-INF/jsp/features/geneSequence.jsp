@@ -16,7 +16,7 @@
     <c:if test="${!empty unspliced}">
     <format:genePageSection id="unsplicedSequence">
         <div class="heading">Unspliced</div>
-        <misc:format-sequence sequence="${unspliced}"/>
+        <misc:format-sequence sequence="${unspliced}" includeSpaces="false" />
     </format:genePageSection>
     </c:if>
 
