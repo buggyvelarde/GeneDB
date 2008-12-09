@@ -230,7 +230,7 @@
     </target>
 
     <!--
-    <target name="prompt-for-password" depends="genedb-util.anttasks,check-properties" unless="source.password">
+    <target name="prompt-for-password" depends="genedb-util.anttasks,check-properties" unless="dbpassword">
         <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.access}/../genedb-util/ant-build/jars/genedb-anttasks.jar" />
         <password name="dbpassword" prompt="Password for ${dbuser}@jdbc:postgresql://${dbhost}:${dbport}/${dbname}" />
     </target>
@@ -247,7 +247,7 @@
         </java>
     </target>
 
-    <target name="delete-organism" depends="genedb-access.jar,prompt-for-password">
+    <target name="delete-organism" depends="genedb-access.jar">
        <sql driver="org.postgresql.Driver"
            url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
            userid="${dbuser}" password="${dbpassword}">
