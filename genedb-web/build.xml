@@ -86,6 +86,7 @@
     </classpath>
   </taskdef>
 
+	<!--
   <taskdef classname="org.apache.jasper.JspC" name="jasper2">
     <classpath id="jspc.classpath">
       <pathelement location="${java.home}/../lib/tools.jar"/>
@@ -97,6 +98,7 @@
       </fileset>
     </classpath>
   </taskdef>
+-->
 
   <target name="get-latest-jars" description="Copy over JAR files from other projects">
     <copy flatten="true" todir="${finaldest.webapps}/WEB-INF/lib">
@@ -201,7 +203,7 @@
     <copy file="${imported.basedir.web}/property-file.${deploy}" tofile="${imported.basedir.web}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
   </target>
 
-
+<!--
   <target name="jsp_test">
     <property name="webapp.staging" location="ant-build/webapp"/>
     <property name="catalina.home" location="/software/pathogen/projects/genedb/snapshot/external/apache-tomcat-6.0.16"/>
@@ -220,12 +222,12 @@
     <antcall target="jspc" />
   </target>
 
-  <target name="jspc">
+  <target name="jspc"> -->
     <!-- Convert the JSP files into Java code -->
-    <jasper2 validateXml="false" uriroot="${webapp.staging}" webXmlFragment="${webapp.staging}/generated_web.xml" outputDir="${jsp-src.dir}"/>
+    <!--<jasper2 validateXml="false" uriroot="${webapp.staging}" webXmlFragment="${webapp.staging}/generated_web.xml" outputDir="${jsp-src.dir}"/>-->
 
     <!-- Compile the JSP-generated java files -->
-    <javac destdir="${webapp.staging}/WEB-INF/classes" optimize="off" debug="on" failonerror="true" fork="yes" memoryInitialSize="128M"
+<!--    <javac destdir="${webapp.staging}/WEB-INF/classes" optimize="off" debug="on" failonerror="true" fork="yes" memoryInitialSize="128M"
        memoryMaximumSize="184M" srcdir="${jsp-src.dir}">
 
       <classpath>
@@ -249,11 +251,11 @@
   </target>
 
 
-  <target name="create_web.xml">
+  <target name="create_web.xml"> -->
 
     <!--
    This creates a web.xml from a template and the generated fragments
-  -->
+  --><!--
     <loadfile property="generated" srcFile="${webinf.staging}/generated_web.xml"/>
     <filter token="generated_web.xml" value="${generated}"/>
     <loadfile property="webServlets" srcFile="${webinf.staging}/webServlets_web.xml"/>
@@ -262,7 +264,7 @@
     <filter token="webMappings_web.xml" value="${webMappings}"/>
     <copy file="${webinf.staging}/template_web.xml" toFile="${webinf.staging}/web.xml" filtering="true" overwrite="true" />
   </target>
-
+-->
 
 	  <target name="populate-caches" depends="check-deploy,compile" description="Populate the Berkeley DB with TranscriptDTO and images">
 	    <java fork="true" classpathref="application-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
