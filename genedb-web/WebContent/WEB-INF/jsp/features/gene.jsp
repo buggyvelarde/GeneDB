@@ -81,7 +81,7 @@ function addToBasket(geneid){
 <%-- IE6 fails if this is nested within the contextMapOuterDiv. --%>
 <div id="contextMapInfoPanel">
     <div class="closeButton"><a href="#"></a></div>
-    <div id="loadDetails"><a href="#">Load details »</a></div>
+    <div id="loadDetails"><a href="#">Load details &raquo;</a></div>
     <div class="value" id="selectedGeneName"></div>
     <div class="value" id="selectedGeneProducts"></div>
 </div>
