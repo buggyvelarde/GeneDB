@@ -32,11 +32,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.spring.web.servlet.view.JsonView;
 
+import org.apache.commons.lang.NotImplementedException;
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.Term;
@@ -55,13 +59,16 @@ import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
 import org.genedb.web.mvc.controller.HistoryManagerFactory;
-import org.genedb.web.mvc.controller.PostOrGetFormController;
 import org.genedb.web.mvc.controller.ResultHit;
 import org.genedb.web.utils.DownloadUtils;
 
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.mapped.Feature;
+
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -72,7 +79,11 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class DownloadFeaturesController extends PostOrGetFormController {
+@Controller
+@RequestMapping("/DownloadFeatures")
+public class DownloadFeaturesController {
+
+    private Logger logger = Logger.getLogger(this.getClass());
 
     private SequenceDao sequenceDao;
     private LuceneIndexFactory luceneIndexFactory;
@@ -80,8 +91,8 @@ public class DownloadFeaturesController extends PostOrGetFormController {
     private String downloadView;
     private JsonView jsonView;
 
-    @Override
-    protected ModelAndView onSubmit(HttpServletRequest request,
+    @RequestMapping(method=RequestMethod.POST)
+    public ModelAndView onSubmit(HttpServletRequest request,
             HttpServletResponse response, Object command,
             BindException be) throws Exception {
 
@@ -232,6 +243,11 @@ public class DownloadFeaturesController extends PostOrGetFormController {
         }
 
         return outFile;
+    }
+
+    // TODO
+    private ServletRequest getServletContext() {
+        throw new NotImplementedException("Missing code");
     }
 
     private void createExcel(Hits hits,String file,String[] columns, OutputStream out) throws IOException {
