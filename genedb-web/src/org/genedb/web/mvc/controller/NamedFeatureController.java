@@ -29,11 +29,14 @@ import org.genedb.web.mvc.model.TranscriptDTO;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -50,11 +53,13 @@ import com.google.common.collect.Maps;
  * @author Adrian Tivey (art)
  */
 @Controller
+@RequestMapping("/NamedFeature")
 @ManagedResource(objectName="bean:name=namedFeatureController", description="NamedFeature Controller")
-public class NamedFeatureController extends PostOrGetFormController {
+public class NamedFeatureController extends TaxonNodeBindingFormController {
      private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
 
     private SequenceDao sequenceDao;
+    private String formView;
     private String geneView;
     private String geneDetailsView;
     private int cacheHit = 0;
@@ -72,9 +77,8 @@ public class NamedFeatureController extends PostOrGetFormController {
         this.hmFactory = hmFactory;
     }
 
-    @Override
-    //@RequestMapping(method=Request)
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
+    @RequestMapping(method=RequestMethod.GET)
+    public ModelAndView lookUpFeature(HttpServletRequest request, HttpServletResponse response,
             Object command, BindException be) throws Exception {
 
         NameLookupBean nlb = (NameLookupBean) command;
@@ -124,14 +128,19 @@ public class NamedFeatureController extends PostOrGetFormController {
         HistoryItem basket = hm.getHistoryItemByType(HistoryType.BASKET);
         logger.error(String.format("Basket is '%s'", basket));
         if (basket != null && basket.containsEntry(feature.getUniqueName())) {
-            logger.error(String.format("Setting inBasket to true for '%s'", feature.getUniqueName()));
+            logger.trace(String.format("Setting inBasket to true for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.TRUE);
         } else {
-            logger.error(String.format("Setting inBasket to false for '%s'", feature.getUniqueName()));
+            logger.trace(String.format("Setting inBasket to false for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.FALSE);
         }
 
         return new ModelAndView(viewName, model);
+    }
+
+    private ModelAndView showForm(HttpServletRequest request,
+            HttpServletResponse response, BindException be) {
+        throw new NotImplementedException("Missing code");
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
