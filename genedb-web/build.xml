@@ -15,6 +15,7 @@
   <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
   <property name="in-lib-dir" value="${imported.basedir.web}/WebContent/WEB-INF/lib"/>
 
+	   <property name="spring.version" value="3.0.0.M1"/>
   <!-- Paths -->
   <path id="libs">
     <path location="${in-lib-dir}/artemis.jar" />
@@ -65,9 +66,20 @@
     <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/persistence.jar" />
     <path location="${lib-dir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
     <path location="${lib-dir}/spring-bundle-2.5.6/poi/poi-3.0.1.jar"/>
-    <path location="${lib-dir}/spring-core-2.5.6/spring.jar" />
-    <path location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar" />
-    <path location="${lib-dir}/spring-core-2.5.6/spring-webmvc.jar" />
+
+    <path location="${lib-dir}/spring-bundle-${spring.version}/com.springsource.org.objectweb.asm-2.2.3.jar" />
+  	<path location="${lib-dir}/spring-bundle-${spring.version}/com.springsource.org.objectweb.asm.commons-2.2.3.jar" />
+
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.aspects-${spring.version}.jar" />
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.beans-${spring.version}.jar" />
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.core-${spring.version}.jar" />
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.context-${spring.version}.jar" />
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.expression-${spring.version}.jar" />
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.jdbc-${spring.version}.jar" />
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.orm-${spring.version}.jar" />
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.transaction-${spring.version}.jar" />
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.web-${spring.version}.jar" />
+    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.web.servlet-${spring.version}.jar" />
     <path location="${lib-dir}/misc/jsr107cache-1.0.jar" />
     <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
     <path location="${lib-dir}/xml/jdom.jar"/>
@@ -203,7 +215,7 @@
     <copy file="${imported.basedir.web}/property-file.${deploy}" tofile="${imported.basedir.web}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
   </target>
 
-<!--
+
   <target name="jsp_test">
     <property name="webapp.staging" location="ant-build/webapp"/>
     <property name="catalina.home" location="/software/pathogen/projects/genedb/snapshot/external/apache-tomcat-6.0.16"/>
@@ -222,12 +234,12 @@
     <antcall target="jspc" />
   </target>
 
-  <target name="jspc"> -->
+  <target name="jspc">
     <!-- Convert the JSP files into Java code -->
-    <!--<jasper2 validateXml="false" uriroot="${webapp.staging}" webXmlFragment="${webapp.staging}/generated_web.xml" outputDir="${jsp-src.dir}"/>-->
+    <jasper2 validateXml="false" uriroot="${webapp.staging}" webXmlFragment="${webapp.staging}/generated_web.xml" outputDir="${jsp-src.dir}"/>
 
     <!-- Compile the JSP-generated java files -->
-<!--    <javac destdir="${webapp.staging}/WEB-INF/classes" optimize="off" debug="on" failonerror="true" fork="yes" memoryInitialSize="128M"
+    <javac destdir="${webapp.staging}/WEB-INF/classes" optimize="off" debug="on" failonerror="true" fork="yes" memoryInitialSize="128M"
        memoryMaximumSize="184M" srcdir="${jsp-src.dir}">
 
       <classpath>
@@ -251,11 +263,11 @@
   </target>
 
 
-  <target name="create_web.xml"> -->
+  <target name="create_web.xml">
 
     <!--
    This creates a web.xml from a template and the generated fragments
-  --><!--
+  -->
     <loadfile property="generated" srcFile="${webinf.staging}/generated_web.xml"/>
     <filter token="generated_web.xml" value="${generated}"/>
     <loadfile property="webServlets" srcFile="${webinf.staging}/webServlets_web.xml"/>
@@ -264,7 +276,7 @@
     <filter token="webMappings_web.xml" value="${webMappings}"/>
     <copy file="${webinf.staging}/template_web.xml" toFile="${webinf.staging}/web.xml" filtering="true" overwrite="true" />
   </target>
--->
+
 
 	  <target name="populate-caches" depends="check-deploy,compile" description="Populate the Berkeley DB with TranscriptDTO and images">
 	    <java fork="true" classpathref="application-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
