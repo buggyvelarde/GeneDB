@@ -20,17 +20,24 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.util.Pair;
 
+import org.gmod.schema.feature.AbstractExon;
+import org.gmod.schema.feature.Exon;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,17 +52,17 @@ import com.google.common.collect.Maps;
  * @author Adrian Tivey (art)
  */
 @Controller
-public class FeatureSequenceController extends PostOrGetFormController {
+@RequestMapping("/FeatureSequence")
+public class FeatureSequenceController {
      private static final Logger logger = Logger.getLogger(FeatureSequenceController.class);
 
     private SequenceDao sequenceDao;
     private String geneSequenceView;
 
-    @Override
+    @RequestMapping(method=RequestMethod.POST)
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-            Object command, BindException be) throws Exception {
+            FeatureSequenceBean fsb, BindException be) throws Exception {
 
-        FeatureSequenceBean fsb = (FeatureSequenceBean) command;
 
         Feature feature = sequenceDao.getFeatureByUniqueName(fsb.getName(), Feature.class);
         if (feature == null) {
@@ -67,9 +74,17 @@ public class FeatureSequenceController extends PostOrGetFormController {
         String viewName = geneSequenceView;
 
         Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
-        Map<String, String> model = Maps.newHashMap();
+        Map<String, Object> model = Maps.newHashMap();
 
         model.put("unspliced", transcript.getGene().getResidues());
+
+        List<Pair<Integer, Integer>> coords;
+        for (AbstractExon exon : transcript.getExons()) {
+            exon.getFeatureLocs();
+        }
+
+        model.put("coords", transcript.getExons());
+
         model.put("spliced", transcript.getResidues());
 
         if (transcript instanceof ProductiveTranscript) {
@@ -80,6 +95,13 @@ public class FeatureSequenceController extends PostOrGetFormController {
         }
 
         return new ModelAndView(viewName, model);
+    }
+
+
+    // TODO
+    private ModelAndView showForm(HttpServletRequest request,
+            HttpServletResponse response, BindException be) {
+        throw new NotImplementedException("Missing code");
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {

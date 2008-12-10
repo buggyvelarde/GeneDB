@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.spring.web.servlet.view.JsonView;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
@@ -42,7 +43,10 @@ import org.genedb.querying.history.HistoryType;
 import org.genedb.querying.tmpquery.BrowseCategory;
 
 import org.gmod.schema.utils.GeneNameOrganism;
+
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -51,27 +55,28 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Chinmay Patel (cp2)
  * @author Adrian Tivey (art)
  */
-public class BrowseTermController extends PostOrGetFormController {
+@Controller
+@RequestMapping("/BrowseTerm")
+public class BrowseTermController {
 
     private static final Logger logger = Logger.getLogger(BrowseTermController.class);
     private SequenceDao sequenceDao;
     private String geneView;
     private JsonView jsonView;
+    private String successView;
     private HistoryManagerFactory historyManagerFactory;
     private LuceneIndexFactory luceneIndexFactory;
 
-    @Override
+    // TODO
     protected Map<?,?> referenceData(@SuppressWarnings("unused") HttpServletRequest request) throws Exception {
         Map<String,Object> reference = new HashMap<String,Object>();
         reference.put("categories", BrowseCategory.values());
         return reference;
     }
 
-    @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-            Object command, BindException be) throws Exception {
+    public ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
+            BrowseTermBean btb, BindException be) throws Exception {
 
-        BrowseTermBean btb = (BrowseTermBean) command;
         Map<String, Object> model = new HashMap<String, Object>();
 
         if(!btb.isJson()) {
@@ -79,7 +84,7 @@ public class BrowseTermController extends PostOrGetFormController {
             model.put("term",btb.getTerm());
             model.put("organism", btb.getOrganism());
             model.put("controller", "BrowseTerm");
-            return new ModelAndView(getSuccessView(),model);
+            return new ModelAndView(successView,model);
         }
 
         String orgNames = TaxonUtils.getOrgNamesInHqlFormat(btb.getOrganism());
@@ -172,7 +177,15 @@ public class BrowseTermController extends PostOrGetFormController {
     public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
         this.luceneIndexFactory = luceneIndexFactory;
     }
+
+    //  TODO
+    private ModelAndView showForm(HttpServletRequest request,
+            HttpServletResponse response, BindException be) {
+        throw new NotImplementedException("Missing code");
+    }
+
 }
+
 
 class BrowseTermBean {
 

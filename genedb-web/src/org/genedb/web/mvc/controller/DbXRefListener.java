@@ -21,11 +21,9 @@ package org.genedb.web.mvc.controller;
 
 
 import org.genedb.db.dao.GeneralDao;
-import org.genedb.db.taxon.TaxonNodeManager;
 
 import org.gmod.schema.mapped.Db;
 
-import org.hibernate.cache.GeneralDataRegion;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;

@@ -138,6 +138,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         return new ModelAndView(viewName, model);
     }
 
+    // TODO
     private ModelAndView showForm(HttpServletRequest request,
             HttpServletResponse response, BindException be) {
         throw new NotImplementedException("Missing code");

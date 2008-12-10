@@ -13,7 +13,11 @@ import org.genedb.web.utils.DownloadUtils;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
+
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 public class FeatureDownloadController extends TaxonNodeBindingFormController{
@@ -45,16 +49,15 @@ public class FeatureDownloadController extends TaxonNodeBindingFormController{
         }
     }
 
-    @Override
-    protected Map<String,SequenceType[]> referenceData(@SuppressWarnings("unused") HttpServletRequest request)
-    {
+    //TODO
+    protected Map<String,SequenceType[]> referenceData(@SuppressWarnings("unused") HttpServletRequest request) {
         Map<String,SequenceType[]> reference = new HashMap<String,SequenceType[]>();
         reference.put("downloadTypes", SequenceType.values());
         return reference;
     }
 
-    @Override
-    protected ModelAndView onSubmit(@SuppressWarnings("unused") HttpServletRequest request,
+    @RequestMapping(method=RequestMethod.POST)
+    public ModelAndView onSubmit(@SuppressWarnings("unused") HttpServletRequest request,
             HttpServletResponse response,
             Object command, BindException be) throws Exception {
 
@@ -106,6 +109,13 @@ public class FeatureDownloadController extends TaxonNodeBindingFormController{
 
         }
         return new ModelAndView(sequenceView, model);
+    }
+
+
+    // TODO
+    private ModelAndView showForm(HttpServletRequest request,
+            HttpServletResponse response, BindException be) {
+        throw new NotImplementedException("Missing code");
     }
 
     public SequenceDao getSequenceDao() {

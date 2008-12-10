@@ -83,6 +83,21 @@
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-bundle-2.5.6/javassist/javassist-3.4.GA.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-core-3.0.0.M1/org.springframework.context-3.0.0.M1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-core-3.0.0.M1/org.springframework.core-3.0.0.M1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-core-3.0.0.M1/org.springframework.transaction-3.0.0.M1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-core-3.0.0.M1/org.springframework.web-3.0.0.M1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/genedb-libs/lib/spring-core-3.0.0.M1/org.springframework.web.servlet-3.0.0.M1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path"/>
         <property name="context-root" value="genedb-web"/>
     </wb-module>
