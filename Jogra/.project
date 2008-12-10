@@ -3,6 +3,7 @@
 	<name>Jogra</name>
 	<comment></comment>
 	<projects>
+		<project>genedb-db</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
