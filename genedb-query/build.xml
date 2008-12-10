@@ -3,8 +3,9 @@
 <project name="genedb-query" default="fulljar-query" basedir=".">
 
 	<dirname property="imported.basedir.query" file="${ant.file.genedb-query}"/>
-    <property name="lib-dir" value="${imported.basedir.query}/../genedb-libs/lib/"/>
+    <!--<property name="lib-dir" value="${imported.basedir.query}/../genedb-libs/lib/"/> -->
 
+	<import file="${imported.basedir.query}/../genedb-libs/build.xml" />
 	<import file="${imported.basedir.query}/../genedb-util/build.xml" />
 
 	<target name="clean-build-query" >
@@ -19,7 +20,8 @@
 	</target>
 
 	<path id="compile-lib-query">
-		<path location="${imported.basedir.query}/../genedb-libs/lib/spring-core-2.5.6/spring.jar" />
+		<path refid="core-spring-libs" />
+	    <path refid="db-spring-libs" />
         <path location="${lib-dir}/antlr-runtime-3.0.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/antlr/antlr-2.7.6.jar"/>
         <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>

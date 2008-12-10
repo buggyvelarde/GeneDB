@@ -52,6 +52,7 @@
         <javac srcdir="${imported.basedir.util}/src" destdir="${imported.basedir.util}/ant-build/classes" debug="on">
             <classpath>
                 <pathelement location="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar"/>
+                <pathelement location="${imported.basedir.util}/../genedb-libs/lib/spring-core-2.5.6/spring.jar"/>
             </classpath>
         </javac>
 
