@@ -5,6 +5,13 @@ import java.awt.image.IndexColorModel;
 
 public class ColorUtils {
 
+    /**
+     * Create a minimal indexed colour model that includes the
+     * specified colours.
+     *
+     * @param colors the colours to include
+     * @return the computed IndexColorModel
+     */
     public static IndexColorModel colorModelFor(Color... colors) {
         int len = 1 + colors.length;
         int bits = 1, twoToBits = 2;
