@@ -15,7 +15,7 @@
     <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
     <context:spring-configured/>
     <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
-    <tx:annotation-driven />
+    <tx:annotation-driven mode="aspectj"/>
 
     <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
@@ -30,13 +30,7 @@
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
 
-    <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
-        <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
-        <!-- <property name="baseDiagramDirectory" value="${baseDiagramDirectory}" />
-        <property name="baseUri" value="${baseUri}" />
-        <property name="contextMapRenderDirectory" value="${contextMap.render.directory}" />
-        <property name="proteinMapRenderDirectory" value="${proteinMap.render.directory}" /> -->
-    </bean>
+
 
 
     <bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
@@ -127,9 +121,7 @@
         </property> -->
     </bean>
 
-    <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
-        <property name="rootDirectory" value="${cacheDirectory}"/>
-        <property name="readOnly" value="true" />
-    </bean>
+
+
 
 </beans>

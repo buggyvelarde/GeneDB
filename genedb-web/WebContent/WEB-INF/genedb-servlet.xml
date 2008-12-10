@@ -63,6 +63,12 @@
 
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
+
+    <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+        <property name="rootDirectory" value="${cacheDirectory}"/>
+        <property name="readOnly" value="true" />
+    </bean>
+
     <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
         <!-- <property name="baseDiagramDirectory" value="${baseDiagramDirectory}" />
@@ -205,17 +211,17 @@
       class="org.genedb.web.mvc.controller.download.DownloadFeaturesController">
         <property name="historyManagerFactory"
           ref="historyManagerFactory" />
-        <property name="sessionForm" value="true"/>
-        <property name="commandName" value="download"/>
-        <property name="commandClass"
-          value="org.genedb.web.mvc.controller.download.DownloadBean" />
+        <!-- <property name="sessionForm" value="true"/> -->
+        <!-- <property name="commandName" value="download"/> -->
+        <!-- <property name="commandClass"
+          value="org.genedb.web.mvc.controller.download.DownloadBean" /> -->
         <property name="sequenceDao" ref="sequenceDao"/>
         <property name="luceneIndexFactory" ref="luceneIndexFactory"/>
-        <property name="formView" value="download/download" />
+        <!-- <property name="formView" value="download/download" /> -->
         <property name="downloadView" value="download/download" />
         <property name="jsonView" ref="jsonView"/>
-        <property name="bindOnNewForm" value="true" />
-        <property name="validator" ref="downloadFeaturesValidator"/>
+        <!-- <property name="bindOnNewForm" value="true" /> -->
+        <!-- <property name="validator" ref="downloadFeaturesValidator"/> -->
     </bean>
 
   <bean id="downloadFeaturesValidator" class="org.genedb.web.mvc.validators.DownloadFeaturesValidator" />
@@ -259,26 +265,10 @@
 
     <bean id="FeatureSequenceController"
         class="org.genedb.web.mvc.controller.FeatureSequenceController">
-        <property name="commandClass" value="org.genedb.web.mvc.controller.FeatureSequenceController$FeatureSequenceBean"/>
+        <!-- <property name="commandClass" value="org.genedb.web.mvc.controller.FeatureSequenceController$FeatureSequenceBean"/> -->
         <property name="modelBuilder" ref="modelBuilder"/>
         <property name="sequenceDao" ref="sequenceDao"/>
         <property name="geneSequenceView" value="features/geneSequence"/>
-    </bean>
-
-
-    <bean id="ProductSearchController"
-        class="org.genedb.web.mvc.controller.ProductSearchController">
-        <property name="sessionForm" value="true" />
-        <property name="commandClass"
-            value="org.genedb.web.mvc.controller.ProductLookupBean" />
-        <property name="commandName" value="productSearch" />
-        <property name="listResultsView" value="features/product" />
-        <property name="formView" value="search/product" />
-        <property name="bindOnNewForm" value="true" />
-        <property name="taxonNodeArrayPropertyEditor"
-            ref="taxonNodeArrayPropertyEditor" />
-        <property name="historyManagerFactory"
-            ref="historyManagerFactory" />
     </bean>
 
     <bean name="historyManagerFactory"
@@ -294,20 +284,21 @@
 
     <bean id="NamedFeatureController"
         class="org.genedb.web.mvc.controller.NamedFeatureController">
-        <property name="sessionForm" value="true" />
-        <property name="commandName" value="nameLookup" />
-        <property name="commandClass"
-            value="org.genedb.web.mvc.controller.NamedFeatureController$NameLookupBean" />
+        <!-- <property name="sessionForm" value="true" /> -->
+        <!-- <property name="commandName" value="nameLookup" /> -->
+        <!-- <property name="commandClass"
+            value="org.genedb.web.mvc.controller.NamedFeatureController$NameLookupBean" /> -->
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="modelBuilder" ref="modelBuilder"/>
         <property name="formView" value="search/nameLookup" />
         <property name="geneView" value="features/gene" />
         <property name="geneDetailsView" value="features/geneDetails" />
-        <property name="bindOnNewForm" value="true" />
-        <property name="validator" ref="namedFeatureValidator" />
-        <property name="cacheSeconds" value="86400" />
+        <!-- <property name="bindOnNewForm" value="true" /> -->
+        <!-- <property name="validator" ref="namedFeatureValidator" /> -->
+        <!-- <property name="cacheSeconds" value="86400" /> -->
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
+        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
     </bean>
     <bean id="namedFeatureValidator"
         class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
@@ -315,33 +306,14 @@
 
     <bean id="ContextMapController"
         class="org.genedb.web.mvc.controller.ContextMapController">
-        <property name="commandName" value="contextMap" />
+        <!-- <property name="commandName" value="contextMap" />
         <property name="commandClass"
-            value="org.genedb.web.mvc.controller.ContextMapController$Command" />
+            value="org.genedb.web.mvc.controller.ContextMapController$Command" /> -->
         <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="view" ref="jsonView" />
-        <property name="validator" ref="contextMapFormValidator" />
-        <property name="cacheSeconds" value="86400" />
+        <!-- <property name="cacheSeconds" value="86400" /> -->
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     </bean>
-
-    <bean id="NameSearchController"
-        class="org.genedb.web.mvc.controller.NameSearchController">
-        <property name="sessionForm" value="true" />
-        <property name="commandName" value="nameLookup" />
-        <property name="commandClass"
-            value="org.genedb.web.mvc.controller.NameSearchController$NameLookupBean" />
-        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
-        <property name="listResultsView" value="list/features" />
-        <property name="formView" value="search/nameLookup" />
-        <property name="geneView" value="redirect:NamedFeature" />
-        <property name="bindOnNewForm" value="true" />
-        <property name="taxonNodeArrayPropertyEditor"
-            ref="taxonNodeArrayPropertyEditor" />
-        <property name="validator" ref="nameSearchValidator" />
-    </bean>
-    <bean id="nameSearchValidator"
-        class="org.genedb.web.mvc.validators.NameSearchFormValidator" />
 
 <!--  	<bean id="AdvancedSearchController"
         class="org.genedb.web.mvc.controller.AdvancedSearchController">
@@ -360,17 +332,17 @@
 
     <bean id="FeatureDownloadController"
         class="org.genedb.web.mvc.controller.download.FeatureDownloadController">
-        <property name="sessionForm" value="true" />
+        <!-- <property name="sessionForm" value="true" />
         <property name="commandName" value="featureDownload" />
         <property name="commandClass"
-            value="org.genedb.web.mvc.controller.download.FeatureDownloadController$FeatureDownloadBean" />
+            value="org.genedb.web.mvc.controller.download.FeatureDownloadController$FeatureDownloadBean" /> -->
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="sequenceView" value="download/featureDownload" />
-        <property name="formView" value="search/featureDownload" />
-        <property name="bindOnNewForm" value="true" />
+        <!-- <property name="formView" value="search/featureDownload" /> -->
+        <!-- <property name="bindOnNewForm" value="true" /> -->
         <property name="taxonNodeArrayPropertyEditor"
             ref="taxonNodeArrayPropertyEditor" />
-        <property name="cacheSeconds" value="86400" />
+        <!-- <property name="cacheSeconds" value="86400" /> -->
     </bean>
 
     <bean id="OrthologsController"
@@ -400,18 +372,18 @@
 
     <bean id="BrowseTermController"
         class="org.genedb.web.mvc.controller.BrowseTermController">
-        <property name="sessionForm" value="true" />
+        <!-- <property name="sessionForm" value="true" />
         <property name="commandName" value="browseTerm" />
         <property name="commandClass"
-            value="org.genedb.web.mvc.controller.BrowseTermBean" />
+            value="org.genedb.web.mvc.controller.BrowseTermBean" /> -->
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="successView" value="list/terms" />
-        <property name="formView" value="search/browseTerm" />
+        <!-- <property name="formView" value="search/browseTerm" /> -->
         <property name="geneView" value="redirect:NamedFeature" />
         <property name="jsonView" ref="jsonView" />
         <property name="historyManagerFactory" ref="historyManagerFactory" />
-        <property name="bindOnNewForm" value="true" />
+        <!-- <property name="bindOnNewForm" value="true" /> -->
     </bean>
 
     <bean id="ComplexQueryController"
@@ -430,9 +402,6 @@
         class="net.sf.json.spring.web.servlet.view.JsonView">
         <property name="jsonConfig" ref="jsonConfig" />
     </bean>
-
-    <bean id="contextMapFormValidator"
-        class="org.genedb.web.mvc.validators.ContextMapFormValidator" />
 
   <bean id="AdminController"
         class="org.genedb.web.mvc.controller.AdminController">
@@ -485,4 +454,6 @@
     <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
          <property name="diagramCache" ref="diagramCache" />
      </bean>
+
+
 </beans>
