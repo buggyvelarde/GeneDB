@@ -18,67 +18,45 @@
         <pathelement location="${imported.basedir.util}/ant-build/jars/genedb-util.jar"/>
     </path>
 
-    <target name="clean-build-util" >
-        <delete dir="${imported.basedir.util}/ant-build" quiet="true"/>
-    </target>
-
-    <target name="setup-util" >
-        <mkdir dir="${imported.basedir.util}/ant-build" />
-        <mkdir dir="${imported.basedir.util}/ant-build/classes" />
-        <mkdir dir="${imported.basedir.util}/ant-build/test-classes" />
-        <mkdir dir="${imported.basedir.util}/ant-build/anttasks-classes" />
-        <mkdir dir="${imported.basedir.util}/ant-build/jars" />
-    </target>
-
-    <target name="compile-tests" depends="fulljar">
-        <javac srcdir="${imported.basedir.util}/test" destdir="${imported.basedir.util}/ant-build/test-classes" debug="on">
-            <classpath refid="test-jars"/>
-        </javac>
-    </target>
-
-    <target name="run-tests" depends="compile-tests">
-        <junit printsummary="withOutAndErr" haltonfailure="yes" fork="true" showoutput="true">
-            <classpath>
-                <path refid="test-jars"/>
-                <pathelement location="${imported.basedir.util}/ant-build/test-classes"/>
-            </classpath>
-            <batchtest>
-              <fileset dir="${imported.basedir.util}/ant-build/test-classes">
-                <include name="**/*Test.*" />
-              </fileset>
-            </batchtest>
-        </junit>
-    </target>
-
-	<target name="get-extra-jars">
-		   <copy file="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.util}/lib" />
-	</target>
-
-  <target name="fulljar" depends="clean-build-util,setup-util, get-extra-jars" description="Create full JAR file">
-<!--
-        <jar jarfile="${imported.basedir.util}/ant-build/jars/genedb-util.jar">
-            <fileset dir="${imported.basedir.util}/ant-build/classes" />
-            <manifest>
-                <attribute name="Implementation-Title" value="GeneDB Util"/>
-                <attribute name="Implementation-Version" value="0.1"/>
-            </manifest>
-        </jar> -->
-    <compile-target path="" />
-    <jar-target path="" />
+  <target name="clean-build-util" >
+    <delete dir="${imported.basedir.util}/ant-build" quiet="true"/>
   </target>
 
-    <target name="anttasks" depends="clean-build-util,setup-util" description="Create anttasks.jar">
-        <javac srcdir="${imported.basedir.util}/anttasks" destdir="${imported.basedir.util}/ant-build/anttasks-classes" debug="on">
-            <classpath refid="anttasks-jars"/>
-        </javac>
+  <target name="setup-util" >
+    <mkdir dir="${imported.basedir.util}/ant-build" />
+    <mkdir dir="${imported.basedir.util}/ant-build/classes" />
+    <mkdir dir="${imported.basedir.util}/ant-build/test-classes" />
+    <mkdir dir="${imported.basedir.util}/ant-build/anttasks-classes" />
+    <mkdir dir="${imported.basedir.util}/ant-build/jars" />
+  </target>
 
-        <jar jarfile="${imported.basedir.util}/ant-build/jars/genedb-anttasks.jar">
-            <fileset dir="${imported.basedir.util}/ant-build/anttasks-classes" />
-            <manifest>
-                <attribute name="Implementation-Title" value="GeneDB Ant tasks"/>
-                <attribute name="Implementation-Version" value="0.1"/>
-            </manifest>
-        </jar>
-    </target>
+  <target name="compile-tests" depends="fulljar">
+    <javac srcdir="${imported.basedir.util}/test" destdir="${imported.basedir.util}/ant-build/test-classes" debug="on">
+      <classpath refid="test-jars"/>
+    </javac>
+  </target>
+
+  <target name="run-tests" depends="compile-tests">
+    <junit printsummary="withOutAndErr" haltonfailure="yes" fork="true" showoutput="true">
+      <classpath>
+        <path refid="test-jars"/>
+        <pathelement location="${imported.basedir.util}/ant-build/test-classes"/>
+      </classpath>
+      <batchtest>
+        <fileset dir="${imported.basedir.util}/ant-build/test-classes">
+          <include name="**/*Test.*" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="get-extra-jars">
+    <copy file="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.util}/lib" />
+  </target>
+
+  <target name="fulljar" depends="clean-build-util,setup-util, get-extra-jars, prepare-src" description="Create full JAR file">
+    <compile-target topdir="${imported.basedir.util}" />
+    <jar-target />
+  </target>
 
 </project>
