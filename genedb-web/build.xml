@@ -1,11 +1,19 @@
 <?xml version="1.0"?>
 
-<project name="genedb-web" default="get-latest-jars" basedir=".">
+<project name="genedb-web" default="get-latest-jars" basedir="."
+	xmlns:ivy="antlib:org.apache.ivy.ant" >
+
+	<dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
+	<import file="${imported.basedir.web}/../genedb-libs/build.xml" />
+
+	<!-- Ivy setup -->
+	<property name="ivy.default.ivy.user.dir" value="${imported.basedir.web}/../genedb-libs/ivy/cache" />
+	<property name="ivy.local.default.root" value="${imported.basedir.web}/../genedb-libs/ivy/cache/local" />
 
   <!-- Paths/Properties you may have to change -->
   <property file="property-file.${deploy}" />
 
-  <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
+
   <import file="${imported.basedir.web}/../genedb-query/build.xml"/>
   <import file="${imported.basedir.web}/../genedb-domain/build.xml"/>
   <import file="${imported.basedir.web}/../genedb-util/build.xml"/>
@@ -15,7 +23,6 @@
   <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
   <property name="in-lib-dir" value="${imported.basedir.web}/WebContent/WEB-INF/lib"/>
 
-	   <property name="spring.version" value="3.0.0.M1"/>
   <!-- Paths -->
   <path id="libs">
     <path location="${in-lib-dir}/artemis.jar" />
@@ -40,49 +47,18 @@
     <path location="${lib-dir}/misc/google-collect-snapshot-20080820.jar" />
     <path location="${lib-dir}/misc/jakarta-oro-2.0.8.jar"/>
     <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
-    <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-api-1.5.0.jar" />
-    <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-log4j12-1.5.0.jar" />
-    <path location="${lib-dir}/spring-bundle-2.5.6/antlr/antlr-2.7.6.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/cglib/cglib-nodep-2.1_3.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/dom4j/dom4j-1.6.1.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/dom4j/jaxen-1.1-beta-7.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/freemarker/freemarker.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-beanutils.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-collections.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-fileupload.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-io.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-lang.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-logging.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-pool.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-taglibs/standard.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/javassist/javassist-3.4.GA.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jstl.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jta.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/persistence.jar" />
-    <path location="${lib-dir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
-    <path location="${lib-dir}/spring-bundle-2.5.6/poi/poi-3.0.1.jar"/>
-
-    <path location="${lib-dir}/spring-bundle-${spring.version}/com.springsource.org.objectweb.asm-2.2.3.jar" />
-  	<path location="${lib-dir}/spring-bundle-${spring.version}/com.springsource.org.objectweb.asm.commons-2.2.3.jar" />
-
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.aspects-${spring.version}.jar" />
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.beans-${spring.version}.jar" />
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.core-${spring.version}.jar" />
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.context-${spring.version}.jar" />
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.expression-${spring.version}.jar" />
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.jdbc-${spring.version}.jar" />
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.orm-${spring.version}.jar" />
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.transaction-${spring.version}.jar" />
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.web-${spring.version}.jar" />
-    <path location="${lib-dir}/spring-core-${spring.version}/org.springframework.web.servlet-${spring.version}.jar" />
     <path location="${lib-dir}/misc/jsr107cache-1.0.jar" />
     <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
     <path location="${lib-dir}/xml/jdom.jar"/>
+
+    <path refid="core-spring-libs" />
+    <path refid="db-spring-libs" />
+    <path refid="web-spring-libs" />
+
+      <fileset dir="${ivy.default.ivy.user.dir}" id="id">
+        <include name="**/*.jar"/>
+        <exclude name="**/*-src.jar"/>
+      </fileset>
   </path>
 
   <path id="compile-libs">
@@ -112,6 +88,17 @@
   </taskdef>
 -->
 
+	<!--
+	<target name="clean-cache" depends="install-ivy" description="-> clean the ivy cache">
+	    	<ivy:cleancache/>
+	</target>
+    -->
+
+	<target name="ivy.init">
+	   <ivy:settings file="${basedir}/ivysettings.xml" />
+		   <ivy:retrieve />
+	</target>
+
   <target name="get-latest-jars" description="Copy over JAR files from other projects">
     <copy flatten="true" todir="${finaldest.webapps}/WEB-INF/lib">
       <path refid="libs" />
@@ -127,6 +114,10 @@
   </target>
 
   <target name="fast-deploy" depends="check-deploy, compile, final-deploy, get-latest-jars"/>
+
+	<target name="get-external-jars" >
+		<ivy:retrieve />
+	</target>
 
   <!-- =================================
           target: compile

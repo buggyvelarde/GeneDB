@@ -10,12 +10,14 @@
   <target name="fulljar-query" depends="prepare-src">
     <compile-target topdir="${imported.basedir.util}" />
 
+  	<!--
     <iajc
       verbose="true"
       inpath="${imported.basedir.query}/ant-build/classes"
       aspectpathref="aspect.path"
       classpathRef ="compile-lib-query"
       destdir="${imported.basedir.query}/ant-build/classes" />
+      -->
 
     <jar-target />
   </target>
