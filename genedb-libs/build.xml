@@ -23,6 +23,7 @@
     </classpath>
   </taskdef>
 
+
   <!-- Classpaths -->
   <path id="basic-classpath">
     <fileset dir="lib">
@@ -86,8 +87,16 @@
     </sequential>
   </macrodef>
 
+  <macrodef name="init" description="Create initial build structure">
+    <attribute name="topdir"/>
+    <sequential>
+      <mkdir dir="@{topdir}/${build.dir}" />
+      <mkdir dir="@{topdir}/${dist.dir}" />
+      <mkdir dir="@{topdir}/${classes.dir}" />
+      <mkdir dir="@{topdir}/${src.dir}" />
+    </sequential>
+  </macrodef>
 
-  <!-- -->
   <macrodef name="iajc-target" description="Compile-time aspectj weaving">
     <sequential>
       <iajc

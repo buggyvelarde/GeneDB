@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 
-<project name="genedb-db" default="make-db-jar" basedir=".">
+<project name="genedb-db" default="fulljar-db" basedir=".">
     <description>This project will build the GeneDB (or any generic Chado) interface</description>
 
     <!-- If this file is imported into another build.xml, resolve filenames
          relative to here rather than the importing project. -->
     <dirname property="imported.basedir.db" file="${ant.file.genedb-db}"/>
 
+    <import file="${imported.basedir.db}/../genedb-libs/build.xml" />
     <import file="${imported.basedir.db}/../genedb-util/build.xml"/>
-
 
     <!-- Paths/Properties you may have to change -->
 
@@ -20,27 +20,6 @@
     <property name="genedb-db.libdir" value="${imported.basedir.db}/../genedb-libs/lib"/>
 
     <!-- Classpaths -->
-
-    <path id="db-compile-lib">
-        <pathelement location="${genedb-db.libdir}/hibernate-extras/hibernate-tools.jar" />
-        <pathelement location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-        <pathelement location="${genedb-db.libdir}/spring-core-2.5.6/spring.jar" />
-        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
-        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
-        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar" />
-        <pathelement location="${genedb-db.libdir}/hibernate-extras/hibernate-search-3.0.1GA.jar" />
-        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/j2ee/persistence.jar"/>
-        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
-        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
-        <pathelement location="${genedb-db.libdir}/spring-core-2.5.6/spring-aspects.jar" />
-        <pathelement location="${genedb-db.libdir}/cglib-2.1_3.jar"/>
-        <pathelement location="${genedb-db.libdir}/biojava/biojava-1.6.jar" />
-        <pathelement location="${genedb-db.libdir}/db/dbunit-2.2.2.jar" />
-        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/junit/junit-4.4.jar" />
-        <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/hsqldb/hsqldb.jar" />
-        <pathelement location="${imported.basedir.db}/../genedb-util/ant-build/jars/genedb-util.jar"/>
-    </path>
-
     <path id="tools-instrument-lib">
         <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
         <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/jakarta-commons/commons-logging.jar"/>
@@ -50,11 +29,6 @@
         <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
     </path>
 
-	<!-- the path to the Spring-defined aspects -->
-    <path id="aspect.path">
-        <pathelement location="${genedb-db.libdir}/spring-core-2.5.6/spring-aspects.jar" />
-    </path>
-
     <!-- Define extra tasks -->
 
     <!-- This task is used to instrument the Feature class to enable lazy property fetching -->
@@ -62,23 +36,12 @@
         classname="org.hibernate.tool.instrument.javassist.InstrumentTask"
         classpathref="tools-instrument-lib"/>
 
-	<!-- need to tell ant where the aspectj tooling jar is -->
-    <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-        <classpath>
-            <pathelement location="${genedb-db.libdir}/aspectj-1.6.2/aspectjtools.jar"/>
-        </classpath>
-    </taskdef>
-
     <!-- Targets -->
 
     <!-- General building, cleaning, JARing type targets -->
 
-    <target name="clean-build-db" description="Clean all build artifacts" >
-        <delete dir="${imported.basedir.db}/ant-build" includeemptydirs="true" defaultexcludes="no" verbose="false"/>
-    </target>
-
 	<!-- An internal init target -->
-    <target name="setup-db" depends="genedb-util.fulljar">
+    <target name="setup-db" depends="fulljar-util">
         <mkdir dir="${imported.basedir.db}/ant-build" />
         <mkdir dir="${imported.basedir.db}/ant-build/test" />
         <mkdir dir="${imported.basedir.db}/ant-build/classes" />
@@ -88,13 +51,10 @@
     </target>
 
 
-    <target name="make-db-jar" depends="setup-db"
+    <target name="fulljar-db" depends="setup-db"
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
-        <javac srcdir="${imported.basedir.db}/src"
-            classpathref="db-compile-lib"
-            destdir="${imported.basedir.db}/ant-build/classes"
-            encoding="utf-8" debug="on" />
+        <compile-target topdir="${imported.basedir.db}" />
 
         <antcall target="build-time-weave">
             <param name="directory" value="${imported.basedir.db}/ant-build/classes"/>
@@ -113,7 +73,7 @@
     <target name="make-springless-jar" depends="setup-db">
 
         <javac srcdir="${imported.basedir.db}/src"
-            classpathref="db-compile-lib"
+            classpathref="basic-classpath"
             destdir="${imported.basedir.db}/ant-build/springless-classes"
             encoding="utf-8" debug="on" />
 
@@ -205,14 +165,15 @@
 
         <antcall target="hibernate-instrumentation"/>
 
-        <iajc verbose="false"
+        <iajc verbose="true"
             inpath="${directory}"
             aspectpathref="aspect.path"
-            classpathRef ="db-compile-lib"
+            classpathRef ="basic-classpath"
             destdir="${directory}"
         />
     </target>
 
+    <!-- Test database set-up below here -->
     <path id="build-test-database-classpath">
         <pathelement location="${imported.basedir.db}/ant-build/jars/genedb-db-test.jar"/>
         <pathelement location="${genedb-db.libdir}/db/postgresql-8.3-603.jdbc4.jar"/>
@@ -220,11 +181,11 @@
         <pathelement location="${genedb-db.libdir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
     </path>
 
-    <target name="prompt-for-password" depends="genedb-util.anttasks" unless="source.password">
+    <target name="prompt-for-password" depends="fulljar-util" unless="source.password">
         <fail message="The attribute source.url must be supplied" unless="source.url"/>
         <fail message="The attribute source.username must be supplied" unless="source.username"/>
 
-        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.db}/../genedb-util/ant-build/jars/genedb-anttasks.jar" />
+        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.db}/../genedb-util/ant-build/dist/genedb-util.jar" />
         <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
     </target>
 
@@ -246,7 +207,7 @@
     <target name="does-skeleton-database-exist">
         <available property="db.skeleton.exists" file="${imported.basedir.db}/test-data/hsqldb/skeleton.data"/>
     </target>
-    <target name="make-skeleton-database" depends="prompt-for-password,genedb-util.anttasks,make-test-jar">
+    <target name="make-skeleton-database" depends="prompt-for-password,fulljar-util,make-test-jar">
         <java fork="true" dir="${imported.basedir.db}" maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
             <jvmarg line="-server" />
@@ -263,7 +224,7 @@
     <target name="does-pfalciparum-database-exist">
         <available property="db.pfalciparum.exists" file="${imported.basedir.db}/test-data/hsqldb/pfalciparum.data"/>
     </target>
-    <target name="make-pfalciparum-database" depends="prompt-for-password,genedb-util.anttasks,make-test-jar">
+    <target name="make-pfalciparum-database" depends="prompt-for-password,fulljar-util,make-test-jar">
         <java fork="true" maxmemory="512m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
             <jvmarg line="-server" />
@@ -284,5 +245,11 @@
     </target>
 
     <target name="rebuild-test-databases" depends="prompt-for-password, delete-databases, make-schema-database, make-skeleton-database, make-pfalciparum-database"/>
+
+
+    <target name="db-get-extra-jars" depends="fulljar-util">
+      <init topdir="${imported.basedir.db}" />
+      <copy file="${imported.basedir.db}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.db}/lib" />
+    </target>
 
 </project>

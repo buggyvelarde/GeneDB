@@ -38,11 +38,12 @@
     </junit>
   </target>
 
-  <target name="get-extra-jars">
+  <target name="util-get-extra-jars">
+    <init topdir="${imported.basedir.util}" />
     <copy file="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.util}/lib" />
   </target>
 
-  <target name="fulljar-util" depends="clean-build-util, init, get-extra-jars, prepare-src" description="Create full JAR file">
+  <target name="fulljar-util" depends="clean-build-util, util-get-extra-jars, prepare-src" description="Create full JAR file">
     <compile-target topdir="${imported.basedir.util}" />
     <jar-target />
   </target>
