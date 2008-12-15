@@ -367,6 +367,7 @@ class LoadGeneDbCv {
         <term name="1.6.1" description="Adaptations, atypical conditions"/>
         <term name="1.6.2" description="Osmotic adaptation"/>
         <term name="1.6.3" description="Fe storage"/>
+        <term name="1.6.4  description="Nodulation related"/>
         <term name="1.7.1" description="Cell division"/>
         <term name="1.8.1" description="Sporulation, differentiation and germination"/>
         <term name="2.0.0" description="Macromolecule metabolism"/>
@@ -429,6 +430,7 @@ class LoadGeneDbCv {
         <term name="3.2.15" description="Thioredoxin, glutaredoxin, glutathione"/>
         <term name="3.2.16" description="biotin carboxyl carrier protein (BCCP)"/>
         <term name="3.2.17" description="Ferredoxin"/>
+        <term name="3.2.18" description="Isoprenoid"/>
         <term name="3.3.0" description="Central intermediary metabolism"/>
         <term name="3.3.1" description="2'-Deoxyribonucleotide metabolism"/>
         <term name="3.3.2" description="Amino sugars"/>
@@ -451,6 +453,7 @@ class LoadGeneDbCv {
         <term name="3.3.19" description="Sulfur metabolism"/>
         <term name="3.3.20" description="amino acids"/>
         <term name="3.3.21" description="other"/>
+        <term name="3.3.22" description="Nitrogen metabolism (urease)"/>
         <term name="3.4.0" description="Degradation of small molecules"/>
         <term name="3.4.1" description="Amines"/>
         <term name="3.4.2" description="Amino acids"/>
@@ -473,7 +476,7 @@ class LoadGeneDbCv {
         <term name="3.7.1" description="Purine ribonucleotide biosynthesis"/>
         <term name="3.7.2" description="Pyrimidine ribonucleotide biosynthesis"/>
         <term name="3.8.0" description="related to secondary metabolism"/>
-        <term name="3.8.1" description="polylketide synthases (PKSs)"/>
+        <term name="3.8.1" description="polyketide synthases (PKSs)"/>
         <term name="3.8.2" description="non-ribosomal peptide synthases (NRPSs)"/>
         <term name="4.0.0" description="Cell envelope"/>
         <term name="4.1.0" description="Periplasmic/exported/lipoproteins"/>
@@ -523,6 +526,7 @@ class LoadGeneDbCv {
         <term name="6.4.1" description="Serine/threonine"/>
         <term name="6.4.2" description="Tyrosine"/>
         <term name="6.5.0" description="Others"/>
+        <term name="6.5.1" description="GGDEF/EAL domain regulatory protein"/>
         <term name="6.6.0" description="LPS regulated regulatory functions"/>
         <term name="7.0.0" description="Not classified (included putative assignments)"/>
         <term name="7.1.1" description="DNA sites, no gene product"/>

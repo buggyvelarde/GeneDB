@@ -257,3 +257,43 @@ where accession = '5.1.0' and description = 'Laterally acquirred elements';
 
 delete from cvterm where name = '3.4.6' and definition = 'ATP-proton motive force';
 delete from dbxref where accession = '3.4.6' and description = 'ATP-proton motive force';
+
+
+/* Round three: roll in corrections and additions from Matt Holden (5 December 2008) */
+
+begin;
+
+update dbxref
+set description = 'polyketide synthases (PKSs)'
+where accession = '3.8.1' and description = 'polylketide synthases (PKSs)';
+
+create temporary table riley_terms (
+    cv_id     integer,
+    db_id     integer,
+    cvterm_id integer default nextval('cvterm_cvterm_id_seq'::regclass),
+    dbxref_id integer default nextval('dbxref_dbxref_id_seq'::regclass),
+    name character varying(255) not null,
+    description text not null
+);
+
+insert into riley_terms (name, description) values
+    ('1.6.4',  'Nodulation related'),
+    ('3.2.18', 'Isoprenoid'),
+    ('3.3.22', 'Nitrogen metabolism (urease)'),
+    ('6.5.1',  'GGDEF/EAL domain regulatory protein')
+;
+
+update riley_terms
+    set cv_id = cv.cv_id
+      , db_id = db.db_id
+from cv, db
+where cv.name = 'RILEY'
+and db.name = 'RILEY'
+;
+
+insert into dbxref (dbxref_id, db_id, accession, description)
+    (select dbxref_id, db_id, name, description from riley_terms);
+insert into cvterm (cvterm_id, cv_id, dbxref_id, name, definition)
+    (select cvterm_id, cv_id, dbxref_id, name, description from riley_terms);
+
+commit;
