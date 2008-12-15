@@ -1,6 +1,9 @@
-<project name="genedb-util" default="fulljar" basedir=".">
+<project name="genedb-util" default="fulljar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
+    <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
+
+	<import file="${imported.basedir.util}/../genedb-libs/build.xml" />
 
     <path id="anttasks-jars">
         <filelist dir="${imported.basedir.util}/../genedb-libs/lib">
@@ -47,23 +50,22 @@
         </junit>
     </target>
 
-    <target name="fulljar" depends="clean-build-util,setup-util" description="Create full JAR file">
+	<target name="get-extra-jars">
+		   <copy file="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.util}/lib" />
+	</target>
 
-        <javac srcdir="${imported.basedir.util}/src" destdir="${imported.basedir.util}/ant-build/classes" debug="on">
-            <classpath>
-                <pathelement location="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar"/>
-                <pathelement location="${imported.basedir.util}/../genedb-libs/lib/spring-core-2.5.6/spring.jar"/>
-            </classpath>
-        </javac>
-
+  <target name="fulljar" depends="clean-build-util,setup-util, get-extra-jars" description="Create full JAR file">
+<!--
         <jar jarfile="${imported.basedir.util}/ant-build/jars/genedb-util.jar">
             <fileset dir="${imported.basedir.util}/ant-build/classes" />
             <manifest>
                 <attribute name="Implementation-Title" value="GeneDB Util"/>
                 <attribute name="Implementation-Version" value="0.1"/>
             </manifest>
-        </jar>
-    </target>
+        </jar> -->
+    <compile-target path="" />
+    <jar-target path="" />
+  </target>
 
     <target name="anttasks" depends="clean-build-util,setup-util" description="Create anttasks.jar">
         <javac srcdir="${imported.basedir.util}/anttasks" destdir="${imported.basedir.util}/ant-build/anttasks-classes" debug="on">

@@ -1,82 +1,88 @@
 <?xml version="1.0"?>
 
-<project name="genedb-libs" basedir=".">
-	<description>This build file simply describe a set of 
-	classpaths and targets "exported" from this project, and common 
-	properties</description>
-	
-	
-	<!-- Paths/Properties -->
-	<property name="spring-version" value="2.5.4" />
-	<property name="build.dir" value="./ant-build" />
-	<property name="dist.dir" value="${build.dir}/dist" />
-	<property name="classes.dir" value="${build.dir}/classes" />
-	<property name="src.dir" value="${build.dir}/src" />
-	
-	<dirname property="imported.basedir" file="${ant.file.genedb-libs}" />
-    <property name="libDir" value="${imported.basedir}/lib" />
-	<property name="spring-bundle" value="${libDir}/spring-bundle-${spring-version}" />
+<project name="genedb-libs" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+  <description>This build file simply describe a set of classpaths and targets "exported"
+    from this project, and common properties</description>
 
-	
-	<!-- Classpaths -->
-	<path id="core-libs">
-		<path location="${libDir}/spring-${spring-version}.jar" />
-		<path location="${spring-bundle}/log4j/log4j-1.2.15.jar" />
-	</path>
+  <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
 
-	<path id="misc-gui-libs">
-		<fileset dir="${libDir}/gui">
-			<include name="**/*.jar"/>
-		</fileset>
-	</path>
-	
-	<path id="jakarta-commons-lang">
-		<path location="${spring-bundle}/jakarta-commons/commons-lang.jar" />
-	</path>
-	
-	
-	<!-- General targets -->
-	<target name="init" description="Create initial build structure">
-		<mkdir dir="${build.dir}" />
-		<mkdir dir="${dist.dir}" />
-		<mkdir dir="${classes.dir}" />
-	</target>
-	
-	<macrodef name="clean-target" description="Remove all build artifacts">
-		<attribute name="path" />
-		<sequential>
-			<delete dir="@{path}" includeEmptyDirs="true" />
-		</sequential>
-	</macrodef>
-		
-	<!--
+  <!-- Paths/Properties -->
+  <property name="build.dir" value="./ant-build" />
+  <property name="dist.dir" value="${build.dir}/dist" />
+  <property name="classes.dir" value="${build.dir}/classes" />
+  <property name="src.dir" value="${build.dir}/src" />
+
+  <dirname property="imported.basedir" file="${ant.file.genedb-libs}" />
+    <property name="lib-dir" value="${imported.basedir.libs}/lib" />
+  <property name="spring-bundle" value="${libDir}/spring-bundle-${spring-version}" />
+
+
+  <!-- Classpaths -->
+  <path id="basic-classpath">
+    <fileset dir="lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+
+  <!-- General targets -->
+  <target name="populate-lib-dir">
+    <ivy:settings file="${ant.file.genedb-libs}/../ivysettings.xml" />
+    <ivy:retrieve />
+  </target>
+
+
+
+  <target name="init" description="Create initial build structure">
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${dist.dir}" />
+    <mkdir dir="${classes.dir}" />
+    <mkdir dir="${src.dir}" />
+  </target>
+
+  <macrodef name="clean-target" description="Remove all build artifacts">
+    <attribute name="path" />
+    <sequential>
+      <delete dir="@{path}" includeEmptyDirs="true" />
+    </sequential>
+  </macrodef>
+
+  <!--
     <target name="jar" depends="compile" description="Create an unsigned JAR">
-    	<delete file="${jar-file}" />
-      	<jar jarfile="${jar-file}"
-			basedir="${classes.dir}"
-			manifest="etc/manifest.txt">
-      		<fileset dir="conf" />
-		</jar>
+      <delete file="${jar-file}" />
+        <jar jarfile="${jar-file}"
+      basedir="${classes.dir}"
+      manifest="etc/manifest.txt">
+          <fileset dir="conf" />
+    </jar>
     </target>
-	-->
-	
-	<macrodef name="compile-task" description="Compile a module">
-		<attribute name="path" />
-		<attribute name="classpath-ref" />
-		<sequential>
-	    	<echo message="genedb-libs.compile: srcDir is '@{path}/${srcDir}', output is '@{path}/${classes.dir}', classpathref is '@{classpath-ref}'" />
-			<javac verbose="true" listfiles="true" srcdir="@{path}/${srcDir}" includes="**/*.java" debug="true"
-		        destdir="@{path}/${classes.dir}" classpathref="@{classpath-ref}" />
-			<echo>Compile finished</echo> 
-		</sequential>
-	</macrodef>
-	
-	<!--
-    <target name="compile" depends="init" description="Compile project">
-    	<echo message="genedb-libs.compile: srcDir is '${srcDir}', output is '${classes.dir}'" />
-      <javac srcdir="${srcDir}" includes="**/*.java" debug="true"
-        destdir="${classes.dir}" classpathref="compilepath">
+  -->
+
+  <macrodef name="compile-target" description="Compile a module">
+    <attribute name="topdir" />
+    <sequential>
+        <echo message="genedb-libs.compile: src.dir is '@{topdir}/${src.dir}', output is '@{topdir}/${classes.dir}', classpathref is '@{basic-classpath}'" />
+      <javac verbose="true" listfiles="true" srcdir="@{topdir}/${src.dir}" includes="**/*.java" debug="true"
+            destdir="@{topdir}/${classes.dir}" classpathref="basic-classpath" />
+      <echo>Compile finished</echo>
+    </sequential>
+  </macrodef>
+
+
+	<target name="prepare-src">
+		<copy todir="${src.dir}">
+			<fileset dir="src" />
+		</copy>
+	</target>
+
+<!--
+    <target name="compile" depends="init, prepare-src" description="Compile project">
+      <echo message="genedb-libs.compile: src.dir is '${src.dir}', output is '${classes.dir}'" />
+      <javac srcdir="${src.dir}" includes="**/*.java" debug="true"
+        destdir="${classes.dir}" classpathref="basic-classpath">
       </javac>
     </target>
-	-->
+-->
+
+
 </project>

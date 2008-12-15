@@ -1,0 +1,30 @@
+<ivysettings>
+  <settings defaultResolver="chain"/>
+  <resolvers>
+    <chain name="chain">"
+    <ibiblio name="public" m2compatible="true"/>
+    <url name="com.springsource.repository.bundles.release">
+      <ivy pattern="http://repository.springsource.com/ivy/bundles/release/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+      <artifact pattern="http://repository.springsource.com/ivy/bundles/release/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+    </url>
+    <url name="com.springsource.repository.bundles.external">
+         <ivy pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+      <artifact pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+    </url>
+    <url name="com.springsource.repository.bundles.release">
+      <ivy pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+      <artifact pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+    </url>
+    <!--
+    <filesystem name="org.genedb.repository.bundles.external">
+         <ivy pattern="${imported.basedir.web}/../genedb-libs/ivy/repository/bundles/external/[organisation]/[module]/[revision]/ivy.xml" />
+         <artifact pattern="${imported.basedir.web}/../genedb-libs/ivy/repository/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+    </filesystem>
+    -->
+    </chain>
+  </resolvers>
+  <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
+  <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
+  <include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/>
+  <include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
+</ivysettings>
