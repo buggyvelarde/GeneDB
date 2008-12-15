@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <project name="genedb-libs" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-  <description>This build file simply describe a set of classpaths and targets "exported"
+  <description>This build file describes a set of classpaths and targets "exported"
     from this project, and common properties</description>
 
   <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
@@ -14,10 +14,9 @@
 
   <dirname property="imported.basedir" file="${ant.file.genedb-libs}" />
   <property name="lib-dir" value="${imported.basedir.libs}/lib" />
-  <property name="spring-bundle" value="${libDir}/spring-bundle-${spring-version}" />
 
 
-  <!-- Extra task definitions  -->
+  <!-- Extra task definitions -->
   <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
     <classpath>
       <pathelement location="${lib-dir}/aspectj-1.6.2/aspectjtools.jar"/>
@@ -47,6 +46,14 @@
   </target>
 
 
+  <target name="prepare-src" depends="init">
+    <copy todir="${src.dir}">
+      <fileset dir="src" />
+    </copy>
+  </target>
+
+
+  <!-- Macro definitions -->
   <macrodef name="clean-target" description="Remove all build artifacts">
     <!-- <attribute name="path" /> -->
     <sequential>
@@ -80,11 +87,16 @@
   </macrodef>
 
 
-  <target name="prepare-src">
-    <copy todir="${src.dir}">
-      <fileset dir="src" />
-    </copy>
-  </target>
-
+  <!-- -->
+  <macrodef name="iajc-target" description="Compile-time aspectj weaving">
+    <sequential>
+      <iajc
+        verbose="true"
+        inpath="${imported.basedir.query}/ant-build/classes"
+        aspectpathref="aspect.path"
+        classpathRef ="compile-lib-query"
+        destdir="${imported.basedir.query}/ant-build/classes" />
+    </sequential>
+  </macrodef>
 
 </project>
