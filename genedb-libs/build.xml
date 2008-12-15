@@ -13,9 +13,16 @@
   <property name="src.dir" value="${build.dir}/src" />
 
   <dirname property="imported.basedir" file="${ant.file.genedb-libs}" />
-    <property name="lib-dir" value="${imported.basedir.libs}/lib" />
+  <property name="lib-dir" value="${imported.basedir.libs}/lib" />
   <property name="spring-bundle" value="${libDir}/spring-bundle-${spring-version}" />
 
+
+  <!-- Extra task definitions  -->
+  <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+    <classpath>
+      <pathelement location="${lib-dir}/aspectj-1.6.2/aspectjtools.jar"/>
+    </classpath>
+  </taskdef>
 
   <!-- Classpaths -->
   <path id="basic-classpath">
@@ -32,7 +39,6 @@
   </target>
 
 
-
   <target name="init" description="Create initial build structure">
     <mkdir dir="${build.dir}" />
     <mkdir dir="${dist.dir}" />
@@ -40,49 +46,45 @@
     <mkdir dir="${src.dir}" />
   </target>
 
+
   <macrodef name="clean-target" description="Remove all build artifacts">
-    <attribute name="path" />
+    <!-- <attribute name="path" /> -->
     <sequential>
-      <delete dir="@{path}" includeEmptyDirs="true" />
+      <delete dir="${build.dir}" includeEmptyDirs="true" />
     </sequential>
   </macrodef>
 
-  <!--
-    <target name="jar" depends="compile" description="Create an unsigned JAR">
-      <delete file="${jar-file}" />
-        <jar jarfile="${jar-file}"
-      basedir="${classes.dir}"
-      manifest="etc/manifest.txt">
-          <fileset dir="conf" />
-    </jar>
-    </target>
-  -->
 
   <macrodef name="compile-target" description="Compile a module">
     <attribute name="topdir" />
     <sequential>
-        <echo message="genedb-libs.compile: src.dir is '@{topdir}/${src.dir}', output is '@{topdir}/${classes.dir}', classpathref is '@{basic-classpath}'" />
-      <javac verbose="true" listfiles="true" srcdir="@{topdir}/${src.dir}" includes="**/*.java" debug="true"
-            destdir="@{topdir}/${classes.dir}" classpathref="basic-classpath" />
+      <echo message="genedb-libs.compile: src.dir is '@{topdir}/${src.dir}', output is '@{topdir}/${classes.dir}', classpathref is '${basic-classpath}'" />
+      <javac srcdir="@{topdir}/${src.dir}" includes="**/*.java" debug="true"
+             destdir="@{topdir}/${classes.dir}" classpathref="basic-classpath" />
       <echo>Compile finished</echo>
     </sequential>
   </macrodef>
 
 
-	<target name="prepare-src">
-		<copy todir="${src.dir}">
-			<fileset dir="src" />
-		</copy>
-	</target>
+  <macrodef name="jar-target" description="Make a distribution JAR">
+    <!-- <attribute name="topdir" /> -->
+    <sequential>
+      <delete file="${dist.dir}/${jar-file}.jar" />
+      <!-- <echo message="genedb-libs.compile: src.dir is '@{topdir}/${src.dir}', output is '@{topdir}/${classes.dir}', classpathref is '@{basic-classpath}'" /> -->
+      <jar jarfile="${dist.dir}/${jar-file}.jar"
+           basedir="${classes.dir}"
+           manifest="etc/manifest.txt">
+        <!-- <fileset dir="conf" /> -->
+      </jar>
+    </sequential>
+  </macrodef>
 
-<!--
-    <target name="compile" depends="init, prepare-src" description="Compile project">
-      <echo message="genedb-libs.compile: src.dir is '${src.dir}', output is '${classes.dir}'" />
-      <javac srcdir="${src.dir}" includes="**/*.java" debug="true"
-        destdir="${classes.dir}" classpathref="basic-classpath">
-      </javac>
-    </target>
--->
+
+  <target name="prepare-src">
+    <copy todir="${src.dir}">
+      <fileset dir="src" />
+    </copy>
+  </target>
 
 
 </project>

@@ -1,0 +1,6 @@
+<ivy-module version="2.0">
+    <info organisation="org.genedb" module="genedb-query"/>
+    <dependencies>
+      <dependency org="org.springframework" name="org.springframework.core" rev="3.0.0.M1" />
+    </dependencies>
+</ivy-module>

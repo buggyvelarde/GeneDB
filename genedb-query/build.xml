@@ -1,83 +1,27 @@
 <?xml version="1.0"?>
 
-<project name="genedb-query" default="fulljar-query" basedir=".">
+<project name="genedb-query" default="fulljar-query" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
-	<dirname property="imported.basedir.query" file="${ant.file.genedb-query}"/>
-    <!--<property name="lib-dir" value="${imported.basedir.query}/../genedb-libs/lib/"/> -->
+  <dirname property="imported.basedir.query" file="${ant.file.genedb-query}"/>
 
-	<import file="${imported.basedir.query}/../genedb-libs/build.xml" />
-	<import file="${imported.basedir.query}/../genedb-util/build.xml" />
+  <import file="${imported.basedir.query}/../genedb-libs/build.xml" />
+  <import file="${imported.basedir.query}/../genedb-util/build.xml" />
 
-	<target name="clean-build-query" >
-		<delete dir="${imported.basedir.query}/ant-build"/>
-	</target>
+  <target name="fulljar-query" depends="prepare-src">
+    <compile-target topdir="${imported.basedir.util}" />
 
-	<target name="setup-query" >
-		<mkdir dir="${imported.basedir.query}/ant-build" />
-		<mkdir dir="${imported.basedir.query}/ant-build/src" />
-		<mkdir dir="${imported.basedir.query}/ant-build/classes" />
-		<mkdir dir="${imported.basedir.query}/ant-build/jars" />
-	</target>
+    <iajc
+      verbose="true"
+      inpath="${imported.basedir.query}/ant-build/classes"
+      aspectpathref="aspect.path"
+      classpathRef ="compile-lib-query"
+      destdir="${imported.basedir.query}/ant-build/classes" />
 
-	<path id="compile-lib-query">
-		<path refid="core-spring-libs" />
-	    <path refid="db-spring-libs" />
-        <path location="${lib-dir}/antlr-runtime-3.0.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.6/antlr/antlr-2.7.6.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.6/cglib/cglib-nodep-2.1_3.jar"/>
-        <path location="${lib-dir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar"/>
-        <path location="${lib-dir}/lucene/lucene-core-2.3.2.jar"/>
-        <path location="${lib-dir}/lucene/lucene-queries-2.3.2.jar"/>
-		<path location="${lib-dir}/spring-bundle-2.5.6/aspectj/aspectjrt.jar" />
-	</path>
+    <jar-target />
+  </target>
 
-	<target name="fulljar-query"
-		depends="clean-build-query,setup-query,genedb-util.fulljar, query-compile, query-jar"
-		description="Create full JAR file with all Spring classes"
-	/>
-
-    <path id="aspect.path">
-        <pathelement location="${lib-dir}/spring-aspects.jar" />
-    </path>
-	<target name="query-compile">
-		<copy todir="${imported.basedir.query}/ant-build/src">
-			<fileset dir="${imported.basedir.query}/src">
-                <exclude name="org/genedb/querying/parsing/*.java" />
-			    <include name="org/genedb/quer*/**/*.java"/>
-				<include name="org/genedb/quer*/*.java"/>
-			</fileset>
-		</copy>
-
-		<javac srcdir="${imported.basedir.query}/ant-build/src" classpathref="compile-lib-query" destdir="${imported.basedir.query}/ant-build/classes" debug="on" />
-
-        <iajc
-            verbose="true"
-            inpath="${imported.basedir.query}/ant-build/classes"
-            aspectpathref="aspect.path"
-            classpathRef ="compile-lib-query"
-            destdir="${imported.basedir.query}/ant-build/classes" />
-
-	</target>
-
-
-	<target name="query-jar" depends="query-compile">
-		<jar jarfile="${imported.basedir.query}/ant-build/jars/genedb-query.jar">
-			<fileset dir="${imported.basedir.query}/ant-build/classes" />
-			<manifest>
-				<attribute name="Implementation-Title" value="GeneDB Query"/>
-				<attribute name="Implementation-Version" value="0.1"/>
-			</manifest>
-		</jar>
-	</target>
-
-
-    <!-- need to tell ant where the aspectj tooling jar is -->
-      <taskdef
-          resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-        <classpath>
-          <pathelement location="${lib-dir}/aspectjtools.jar"/>
-        </classpath>
-      </taskdef>
+  <path id="aspect.path">
+    <pathelement location="${lib-dir}/spring-aspects.jar" />
+  </path>
 
 </project>

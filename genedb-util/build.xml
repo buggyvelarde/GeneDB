@@ -1,22 +1,18 @@
 <project name="genedb-util" default="fulljar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
-    <dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
-    <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
+  <dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
+  <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
+  <property name="jar-file" value="genedb-util"/>
 
-	<import file="${imported.basedir.util}/../genedb-libs/build.xml" />
 
-    <path id="anttasks-jars">
-        <filelist dir="${imported.basedir.util}/../genedb-libs/lib">
-            <file name="spring-bundle-2.5.6/ant/ant.jar" />
-        </filelist>
-    </path>
+  <import file="${imported.basedir.util}/../genedb-libs/build.xml" />
 
-    <path id="test-jars">
-        <filelist dir="${imported.basedir.util}/../genedb-libs/lib">
-            <file name="spring-bundle-2.5.6/junit/junit-4.4.jar" />
-        </filelist>
-        <pathelement location="${imported.basedir.util}/ant-build/jars/genedb-util.jar"/>
-    </path>
+  <path id="test-jars">
+    <filelist dir="${imported.basedir.util}/../genedb-libs/lib">
+      <file name="spring-bundle-2.5.6/junit/junit-4.4.jar" />
+    </filelist>
+    <pathelement location="${imported.basedir.util}/ant-build/jars/genedb-util.jar"/>
+  </path>
 
   <target name="clean-build-util" >
     <delete dir="${imported.basedir.util}/ant-build" quiet="true"/>
