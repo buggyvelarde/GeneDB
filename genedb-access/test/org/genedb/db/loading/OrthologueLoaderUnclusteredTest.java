@@ -2,7 +2,9 @@ package org.genedb.db.loading;
 
 import org.gmod.schema.feature.Chromosome;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
 
 /**
  * Test the loading of orthologue data in unclustered mode.
@@ -30,7 +33,7 @@ import java.io.Reader;
  */
 public class OrthologueLoaderUnclusteredTest {
 
-    private static final Logger logger = Logger.getLogger(OrthologueLoaderUnclusteredTest.class);
+    private static final Logger logger = TestLogger.getLogger(OrthologueLoaderUnclusteredTest.class);
 
     private static ApplicationContext applicationContext;
     private static OrthologueTester tester;

@@ -60,7 +60,7 @@ public class EmblFileTest {
                 assertEquals("CDS at complement(join(31435..31550,31594..31709,31743..31811," +
                         "31849..31930,31973..32027)): " +
                         "/method=\"new or changed gene model\"; " +
-                        "/note=\"predicted by EVM2\"; " +
+                        "/note=\"predicted by \"\"EVM2\"\"\"; " +
                         "/product=\"conserved hypothetical protein\"; " +
                         "/psu_db_xref=\"SMA1:Sm00.scaff00658.0040;\"; " +
                         "/psu_db_xref=\"GeneDB_Smansoni:Sm00874; Blastn score=852 evalue=0.0, Blastx score=299 evalue=1e-82\"; " +

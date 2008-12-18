@@ -10,6 +10,9 @@ import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Pseudogene;
 import org.gmod.schema.feature.RepeatRegion;
 import org.gmod.schema.feature.RepeatUnit;
+import org.gmod.schema.mapped.CvTerm;
+
+import static org.junit.Assert.assertEquals;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -17,6 +20,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Test various corner cases using totally synthetic data.
@@ -262,5 +266,16 @@ public class EmblLoaderSyntheticTest {
         tRNA1.transcript("super1_tRNA1:tRNA")
             .properties("feature_property", "comment", "/label=tRNA label")
             .properties("genedb_misc", "colour", "12");
+    }
+
+    //@Test
+    public void productCaseSenstivity() {
+        Collection<CvTerm> s3_products = tester.geneTester("s3")
+            .transcript("s3:mRNA").polypeptide("s3:pep")
+            .getTerms("genedb_products");
+        Collection<CvTerm> s4_products = tester.geneTester("s4")
+            .transcript("s4:mRNA").polypeptide("s4:pep")
+            .getTerms("genedb_products");
+        assertEquals(s3_products, s4_products);
     }
 }

@@ -5,10 +5,8 @@ import org.genedb.db.dao.OrganismDao;
 import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.jdbc.Work;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
@@ -18,9 +16,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * A utility class to help in writing tests for the EMBL loader.
@@ -36,22 +31,13 @@ import java.sql.SQLException;
  *
  */
 public class EmblLoaderTestHelper {
-    private static final Logger logger = Logger.getLogger(EmblLoaderTestHelper.class);
+    private static final Logger logger = TestLogger.getLogger(EmblLoaderTestHelper.class);
 
     private EmblLoader loader;
     private SessionFactory sessionFactory;
     private OrganismDao organismDao;
 
     private Session session;
-
-    static {
-        URL url = EmblLoaderTestHelper.class.getResource("/log4j.test.properties");
-        if (url == null) {
-            throw new RuntimeException("Could not find classpath resource /log4j.test.properties");
-        }
-        System.out.printf("Configuring Log4J from '%s'\n", url);
-        PropertyConfigurator.configure(url);
-    }
 
     private EmblLoaderTestHelper() {
         // empty
@@ -112,7 +98,7 @@ public class EmblLoaderTestHelper {
                 throws IOException, ParsingException {
 
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml", "Test.xml"});
-        EmblLoaderTestHelper helper = (EmblLoaderTestHelper) applicationContext.getBean("emblLoaderTestHelper", EmblLoaderTestHelper.class);
+        EmblLoaderTestHelper helper = applicationContext.getBean("emblLoaderTestHelper", EmblLoaderTestHelper.class);
 
         helper.doLoad(organismCommonName, organismGenus,
                 organismSpecies, organismStrain, filename);
@@ -148,12 +134,7 @@ public class EmblLoaderTestHelper {
          * will never be lost even if the database is not shut down. That
          * does not appear to be true.)
          */
-        session.doWork(new Work() {
-            public void execute(Connection connection) throws SQLException {
-                logger.debug("Shutting down database");
-                connection.createStatement().execute("shutdown");
-            }
-        });
+        session.createSQLQuery("shutdown").executeUpdate();
         SessionFactoryUtils.releaseSession(session, sessionFactory);
         session = null;
     }

@@ -29,7 +29,7 @@ import java.io.Reader;
  */
 public class OrthologueLoaderImplicitClusterTest {
 
-    private static final Logger logger = Logger.getLogger(OrthologueLoaderImplicitClusterTest.class);
+    private static final Logger logger = TestLogger.getLogger(OrthologueLoaderImplicitClusterTest.class);
 
     private static ApplicationContext applicationContext;
     private static OrthologueTester tester;

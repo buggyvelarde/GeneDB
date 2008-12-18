@@ -3,7 +3,6 @@ package org.genedb.db.loading;
 import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.Supercontig;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Test;
@@ -15,19 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 
 @Transactional(rollbackFor=Throwable.class)
 public class FastaLoaderTest {
 
-    static {
-        URL url = FastaLoaderTest.class.getResource("/log4j.test.properties");
-        if (url == null) {
-            throw new RuntimeException("Could not find classpath resource /log4j.test.properties");
-        }
-        System.out.printf("Configuring Log4J from '%s'\n", url);
-        PropertyConfigurator.configure(url);
-    }
+    static { TestLogger.configure(); }
 
     private ApplicationContext applicationContext;
     private FastaLoader loader;

@@ -14,12 +14,9 @@ import org.gmod.schema.mapped.AnalysisFeature;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.jdbc.Work;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -131,12 +128,8 @@ public class OrthologueTester {
          * does not appear to be true.)
          */
         Session session = SessionFactoryUtils.getSession(sessionFactory, true);
-        session.doWork(new Work() {
-            public void execute(Connection connection) throws SQLException {
-                logger.debug("Shutting down database");
-                connection.createStatement().execute("shutdown");
-            }
-        });
+        logger.debug("Shutting down database");
+        session.createSQLQuery("shutdown").executeUpdate();
         SessionFactoryUtils.releaseSession(session, sessionFactory);
         session = null;
     }

@@ -211,19 +211,29 @@ public class FeatureTester {
         }
         public T cvterms(String cvName, String... terms) {
             Set<String> expectedTerms = new HashSet<String>();
-            Set<String> foundTerms = new HashSet<String>();
             Collections.addAll(expectedTerms, terms);
 
+            assertEquals(expectedTerms, getTermNames(cvName));
+            return ourClass.cast(this);
+        }
+        private Set<String> getTermNames(String cvName) {
+            Set<String> termNames = new HashSet<String>();
+            for (CvTerm cvTerm: getTerms(cvName)) {
+                termNames.add(cvTerm.getName());
+            }
+            return termNames;
+        }
+        public Set<CvTerm> getTerms(String cvName) {
+            Set<CvTerm> foundTerms = new HashSet<CvTerm>();
             for (FeatureCvTerm featureCvTerm: feature.getFeatureCvTerms()) {
                 CvTerm cvTerm = featureCvTerm.getCvTerm();
                 if (cvTerm.getCv().getName().equals(cvName)) {
-                    foundTerms.add(cvTerm.getName());
+                    foundTerms.add(cvTerm);
                 }
             }
-
-            assertEquals(expectedTerms, foundTerms);
-            return ourClass.cast(this);
+            return foundTerms;
         }
+
     }
 
     class GeneTester extends AbstractTester<GeneTester> {

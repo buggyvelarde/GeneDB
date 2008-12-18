@@ -30,7 +30,7 @@ import java.io.Reader;
  */
 public class OrthologueLoaderClusteredTest {
 
-    private static final Logger logger = Logger.getLogger(OrthologueLoaderClusteredTest.class);
+    private static final Logger logger = TestLogger.getLogger(OrthologueLoaderClusteredTest.class);
 
     private static ApplicationContext applicationContext;
     private static OrthologueTester tester;
