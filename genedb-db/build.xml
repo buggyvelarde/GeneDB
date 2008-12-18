@@ -199,7 +199,7 @@
     </target>
     <target name="make-pfalciparum-database" depends="prompt-for-password,fulljar-util,make-test-jar">
         <java fork="true" dir="${imported.basedir.db}"
-                maxmemory="512m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
+                maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
             <jvmarg line="-server" />
             <arg value="${source.url}"/>
