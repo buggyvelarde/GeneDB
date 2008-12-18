@@ -55,7 +55,6 @@ public class DisplayPhylogeny extends AbstractHomepageTag {
             sb.append(menu.render(j - 1));
         }
         top.deleteCharAt(top.length() - 1);
-        // System.out.println(sb.toString());
         sb.append("<input type=\"hidden\" id=\"itemsLength\" value=\"" + Menu.counter + "\"/>");
         sb.append("<input type=\"hidden\" id=\"topItems\" value=\"" + top.toString() + "\"/>");
         Menu.counter = 0;

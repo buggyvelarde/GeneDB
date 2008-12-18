@@ -1,5 +1,12 @@
 package org.genedb.web.tags.db;
 
+import org.gmod.schema.mapped.AnalysisFeature;
+import org.gmod.schema.mapped.Feature;
+import org.gmod.schema.mapped.FeatureLoc;
+import org.gmod.schema.mapped.FeatureProp;
+
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,12 +16,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.gmod.schema.mapped.AnalysisFeature;
-import org.gmod.schema.mapped.Feature;
-import org.gmod.schema.mapped.FeatureLoc;
-import org.gmod.schema.mapped.FeatureProp;
-
 public class DisplaySimilarity extends SimpleTagSupport {
+    private final Logger logger = Logger.getLogger(DisplaySimilarity.class);
 
     Feature polypeptide;
     Feature transcript;
@@ -23,7 +26,7 @@ public class DisplaySimilarity extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
         /*
          * define the variables to hold the values
-         * 
+         *
          */
         List<Feature> similarityFeatures = new ArrayList<Feature>();
 
@@ -96,7 +99,7 @@ public class DisplaySimilarity extends SimpleTagSupport {
 
                 Feature subjectFeature = null;
                 for (FeatureLoc floc : matchFeature.getFeatureLocs()) {
-                    System.out.println("subjecFeature can be : "
+                    logger.debug("subjecFeature can be : "
                             + floc.getSourceFeature().getType().getName());
                     if (floc.getSourceFeature().getType().getName().equals(
                         "similarity_region")) {

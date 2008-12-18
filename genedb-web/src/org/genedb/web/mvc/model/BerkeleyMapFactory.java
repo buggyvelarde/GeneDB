@@ -60,6 +60,10 @@ public class BerkeleyMapFactory {
     // This field must only be accessed while holding a lock on this object
     private boolean databaseIsOpen = false;
 
+    {
+        logger.debug("Instantiating BerkeleyMapFactory");
+    }
+
     private synchronized void openDb() {
         if (databaseIsOpen) {
             return;
@@ -71,7 +75,6 @@ public class BerkeleyMapFactory {
                 closeDb();
             }
         });
-
 
         logger.debug("Opening environment in: " + rootDirectory);
         logger.debug("Read-only status: " + readOnly);

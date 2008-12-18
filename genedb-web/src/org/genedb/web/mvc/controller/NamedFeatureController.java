@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,24 +66,20 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     private int cacheMiss = 0;
 
     private BerkeleyMapFactory bmf;
-    //private BlockingCache dtoCache;
-
     private ModelBuilder modelBuilder;
-
     private HistoryManagerFactory hmFactory;
 
 
+    @Override
     public void setHistoryManagerFactory(HistoryManagerFactory hmFactory) {
         this.hmFactory = hmFactory;
     }
 
     @RequestMapping(method=RequestMethod.GET)
     public ModelAndView lookUpFeature(HttpServletRequest request, HttpServletResponse response,
-            Object command, BindException be) throws Exception {
+            NameLookupBean nlb, BindingResult be) throws Exception {
 
-        NameLookupBean nlb = (NameLookupBean) command;
-
-        logger.error("Trying to find NamedFeature of '"+nlb.getName()+"'");
+        logger.debug("Trying to find NamedFeature of '"+nlb.getName()+"'");
 
         Feature feature = sequenceDao.getFeatureByUniqueName(nlb.getName(), Feature.class);
         if (feature == null) {
@@ -126,7 +122,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
         HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
         HistoryItem basket = hm.getHistoryItemByType(HistoryType.BASKET);
-        logger.error(String.format("Basket is '%s'", basket));
+        logger.debug(String.format("Basket is '%s'", basket));
         if (basket != null && basket.containsEntry(feature.getUniqueName())) {
             logger.trace(String.format("Setting inBasket to true for '%s'", feature.getUniqueName()));
             model.put("inBasket", Boolean.TRUE);
@@ -140,7 +136,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
     // TODO
     private ModelAndView showForm(HttpServletRequest request,
-            HttpServletResponse response, BindException be) {
+            HttpServletResponse response, BindingResult be) {
         throw new NotImplementedException("Missing code");
     }
 
@@ -155,10 +151,6 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     public void setGeneDetailsView(String geneDetailsView) {
         this.geneDetailsView = geneDetailsView;
     }
-//
-//    public void setDtoCache(BlockingCache dtoCache) {
-//        this.dtoCache = dtoCache;
-//    }
 
     public void setModelBuilder(ModelBuilder modelBuilder) {
         this.modelBuilder = modelBuilder;
@@ -221,6 +213,14 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
     public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
         this.bmf = bmf;
+    }
+
+    public String getFormView() {
+        return formView;
+    }
+
+    public void setFormView(String formView) {
+        this.formView = formView;
     }
 
 }

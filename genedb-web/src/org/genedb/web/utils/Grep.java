@@ -50,7 +50,6 @@ public class Grep {
             else
                 pm.reset(cs);
             if (pm.find())
-                // System.out.print(f + ":" + lines + ":" + cs);
                 out.add(cs.toString());
             if (lm.end() == cb.limit())
                 break;

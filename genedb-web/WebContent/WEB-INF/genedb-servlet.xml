@@ -18,10 +18,6 @@
     <context:spring-configured/>
     <context:mbean-export/>
 
-    <!-- <tx:annotation-driven mode="aspectj" /> -->
-
-
-
   <!--
     - Message source for this context, loaded from localized "messages_xx" files.
     - Could also reside in the root application context, as it is generic,
@@ -71,10 +67,6 @@
 
     <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
-        <!-- <property name="baseDiagramDirectory" value="${baseDiagramDirectory}" />
-        <property name="baseUri" value="${baseUri}" />
-        <property name="contextMapRenderDirectory" value="${contextMap.render.directory}" />
-        <property name="proteinMapRenderDirectory" value="${proteinMap.render.directory}" /> -->
     </bean>
 
     <bean id="goProcessBrowse"
@@ -284,10 +276,6 @@
 
     <bean id="NamedFeatureController"
         class="org.genedb.web.mvc.controller.NamedFeatureController">
-        <!-- <property name="sessionForm" value="true" /> -->
-        <!-- <property name="commandName" value="nameLookup" /> -->
-        <!-- <property name="commandClass"
-            value="org.genedb.web.mvc.controller.NamedFeatureController$NameLookupBean" /> -->
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="modelBuilder" ref="modelBuilder"/>
         <property name="formView" value="search/nameLookup" />

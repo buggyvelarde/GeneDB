@@ -1,20 +1,21 @@
 <?xml version="1.0"?>
 
 <project name="genedb-web" default="get-latest-jars" basedir="."
-	xmlns:ivy="antlib:org.apache.ivy.ant" >
+  xmlns:ivy="antlib:org.apache.ivy.ant" >
 
-	<dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
-	<import file="${imported.basedir.web}/../genedb-libs/build.xml" />
+  <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
+  <import file="${imported.basedir.web}/../genedb-libs/build.xml" />
 
-	<!-- Ivy setup -->
-	<property name="ivy.default.ivy.user.dir" value="${imported.basedir.web}/../genedb-libs/ivy/cache" />
-	<property name="ivy.local.default.root" value="${imported.basedir.web}/../genedb-libs/ivy/cache/local" />
+  <!-- Ivy setup -->
+  <property name="ivy.default.ivy.user.dir" value="${imported.basedir.web}/../genedb-libs/ivy/cache" />
+  <property name="ivy.local.default.root" value="${imported.basedir.web}/../genedb-libs/ivy/cache/local" />
 
   <!-- Paths/Properties you may have to change -->
   <property file="property-file.${deploy}" />
 
 
   <import file="${imported.basedir.web}/../genedb-query/build.xml"/>
+  <import file="${imported.basedir.web}/../genedb-db/build.xml"/>
   <import file="${imported.basedir.web}/../genedb-domain/build.xml"/>
   <import file="${imported.basedir.web}/../genedb-util/build.xml"/>
 
@@ -33,7 +34,7 @@
     <path location="${imported.basedir.web}/../genedb-util/ant-build/jars/genedb-util.jar" />
 
     <path location="${lib-dir}/biojava/biojava-1.4.jar"/>
-    <path location="${lib-dir}/db/je-3.3.69.jar" />
+    <path location="${lib-dir}/db/je-3.3.75.jar" />
     <path location="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" />
     <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
     <path location="${lib-dir}/json/json_simple.jar"/>
@@ -74,30 +75,10 @@
     </classpath>
   </taskdef>
 
-	<!--
-  <taskdef classname="org.apache.jasper.JspC" name="jasper2">
-    <classpath id="jspc.classpath">
-      <pathelement location="${java.home}/../lib/tools.jar"/>
-      <fileset dir="${catalina.home}/lib">
-        <include name="*.jar"/>
-      </fileset>
-      <fileset dir="${catalina.home}/bin">
-        <include name="*.jar"/>
-      </fileset>
-    </classpath>
-  </taskdef>
--->
-
-	<!--
-	<target name="clean-cache" depends="install-ivy" description="-> clean the ivy cache">
-	    	<ivy:cleancache/>
-	</target>
-    -->
-
-	<target name="ivy.init">
-	   <ivy:settings file="${basedir}/ivysettings.xml" />
-		   <ivy:retrieve />
-	</target>
+  <target name="ivy.init">
+     <ivy:settings file="${basedir}/ivysettings.xml" />
+       <ivy:retrieve />
+  </target>
 
   <target name="get-latest-jars" description="Copy over JAR files from other projects">
     <copy flatten="true" todir="${finaldest.webapps}/WEB-INF/lib">
@@ -105,7 +86,7 @@
     </copy>
   </target>
 
-  <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.make-db-jar,genedb-util.fulljar" />
+  <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.fulljar-db,genedb-util.fulljar-util" />
 
   <target name="make-all-and-deploy" depends="check-deploy, compile, final-deploy, get-latest-jars"/>
 
@@ -115,31 +96,20 @@
 
   <target name="fast-deploy" depends="check-deploy, compile, final-deploy, get-latest-jars"/>
 
-	<target name="get-external-jars" >
-		<ivy:retrieve />
-	</target>
-
   <!-- =================================
           target: compile
          ================================= -->
   <target name="compile" depends="clean-web, make-other-projects"
         description="--> Compile classes">
 
-    <mkdir dir="ant-build/classes"/>
-    <javac srcdir="src" classpathref="compile-libs" destdir="ant-build/classes" encoding="utf-8" debug="on">
+    <mkdir dir="${imported.basedir.web}/ant-build/classes"/>
+    <javac srcdir="src" classpathref="compile-libs" destdir="${imported.basedir.web}/ant-build/classes" encoding="utf-8" debug="on">
       <compilerarg line="-Xlint:unchecked" />
     </javac>
 
-    <copyfile dest="ant-build/classes2/org/genedb/web/mvc/model/PopulateCaches.class" src="ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
-
-    <iajc verbose="true"
-            destdir="ant-build/classes"
-            inpath="ant-build/classes2"
-            aspectpathref="aspect.path"
-            classpathRef ="db-compile-lib"
-            />
-
-
+    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/mvc/model/PopulateCaches.class" src="${imported.basedir.web}/ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
+    <iajc-target project="web" from-directory="${imported.basedir.web}/ant-build/woven-classes"
+                               to-directory="${imported.basedir.web}/ant-build/classes"/>
   </target>
 
   <target name="deploy" depends="pre-deploy, application-deploy, post-deploy"/>
@@ -269,16 +239,16 @@
   </target>
 
 
-	  <target name="populate-caches" depends="check-deploy,compile" description="Populate the Berkeley DB with TranscriptDTO and images">
-	    <java fork="true" classpathref="application-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
-	      <jvmarg value="-Xmx512m"/>
-	      <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-	      <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
-	      <!-- <arg line="-o Pfalciparum -debugCount 20 -globalFileRoot /tmp"/> -->
-	      <!-- <arg line="-globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/> -->
-	      <!-- <arg line="-o Pberghei_3x"/> -->
-	      <!-- <arg line="-ncm" /> -->
-	    </java>
-	  </target>
+    <target name="populate-caches" depends="check-deploy,compile" description="Populate the Berkeley DB with TranscriptDTO and images">
+      <java fork="true" classpathref="application-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
+        <!-- <arg line="-o Pfalciparum -debugCount 20 -globalFileRoot /tmp"/> -->
+        <!-- <arg line="-globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/> -->
+        <!-- <arg line="-o Pberghei_3x"/> -->
+        <!-- <arg line="-ncm" /> -->
+      </java>
+    </target>
 
 </project>

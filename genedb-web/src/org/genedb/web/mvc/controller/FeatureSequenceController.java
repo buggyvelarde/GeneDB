@@ -23,7 +23,6 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.util.Pair;
 
 import org.gmod.schema.feature.AbstractExon;
-import org.gmod.schema.feature.Exon;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
@@ -32,9 +31,8 @@ import org.gmod.schema.mapped.Feature;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -54,15 +52,14 @@ import com.google.common.collect.Maps;
 @Controller
 @RequestMapping("/FeatureSequence")
 public class FeatureSequenceController {
-     private static final Logger logger = Logger.getLogger(FeatureSequenceController.class);
+    private static final Logger logger = Logger.getLogger(FeatureSequenceController.class);
 
     private SequenceDao sequenceDao;
     private String geneSequenceView;
 
-    @RequestMapping(method=RequestMethod.POST)
+    @RequestMapping
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-            FeatureSequenceBean fsb, BindException be) throws Exception {
-
+            FeatureSequenceBean fsb, BindingResult be) throws Exception {
 
         Feature feature = sequenceDao.getFeatureByUniqueName(fsb.getName(), Feature.class);
         if (feature == null) {
@@ -100,7 +97,7 @@ public class FeatureSequenceController {
 
     // TODO
     private ModelAndView showForm(HttpServletRequest request,
-            HttpServletResponse response, BindException be) {
+            HttpServletResponse response, BindingResult be) {
         throw new NotImplementedException("Missing code");
     }
 

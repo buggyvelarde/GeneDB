@@ -184,6 +184,14 @@ public class BrowseTermController {
         throw new NotImplementedException("Missing code");
     }
 
+    public String getSuccessView() {
+        return successView;
+    }
+
+    public void setSuccessView(String successView) {
+        this.successView = successView;
+    }
+
 }
 
 

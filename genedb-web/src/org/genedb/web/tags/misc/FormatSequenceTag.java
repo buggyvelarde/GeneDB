@@ -12,6 +12,11 @@ public class FormatSequenceTag extends SimpleTagSupport {
         this.sequence = sequence.toUpperCase();
     }
 
+    private boolean includeSpaces = true;
+    public void setIncludeSpaces(boolean includeSpaces) {
+        this.includeSpaces = includeSpaces;
+    }
+
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
@@ -29,7 +34,9 @@ public class FormatSequenceTag extends SimpleTagSupport {
                 }
                 String block = sequence.substring(j, endOfBlock);
                 out.print(block);
-                out.print("&nbsp;");
+                if (includeSpaces) {
+                    out.print("&nbsp;");
+                }
             }
             out.print("</div>");
         }

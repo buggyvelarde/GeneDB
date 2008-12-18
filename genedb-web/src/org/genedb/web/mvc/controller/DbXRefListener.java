@@ -51,12 +51,10 @@ public class DbXRefListener implements ServletContextListener {
         GeneralDao generalDao = (GeneralDao) wac.getBean("generalDao");
         List<Db> dbs = generalDao.getAllDbs();
 
-        System.err.println("Number of db's "+dbs.size());
         Map<String, String> dbUrlMap = Maps.newHashMap();
         for (Db db : dbs) {
             if (StringUtils.hasText(db.getUrlPrefix())) {
                 dbUrlMap.put(db.getName(), db.getUrlPrefix());
-                System.err.println("Db name is "+db.getName());
             }
         }
 

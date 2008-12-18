@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-@RequestMapping("/Context")
+@RequestMapping("/ContextMap")
 public class ContextMapController {
     /*
      * More than 30,000 pixels per tile, and almost all browsers

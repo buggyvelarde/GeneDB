@@ -3,8 +3,6 @@ package org.genedb.web.mvc.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,8 +17,8 @@ public class ArtemisLaunchController {
 
     private int offset = DEFAULT_OFFSET;
 
-    @RequestMapping(method=RequestMethod.GET)
-    protected ModelAndView launchMainArtemis(HttpServletRequest request,
+    @RequestMapping(method=RequestMethod.GET, params={"organism", "chromosome", "start", "end"})
+    public ModelAndView launchMainArtemis(
             @RequestParam("organism") String organism,
             @RequestParam("chromosome") String chromosome,
             @RequestParam("start") int start,
@@ -42,8 +40,8 @@ public class ArtemisLaunchController {
     }
 
 
-    @RequestMapping(method=RequestMethod.GET)
-    protected ModelAndView launchArtemisGeneBuilder(
+    @RequestMapping(method=RequestMethod.GET, params={"systematicId"})
+    public ModelAndView launchArtemisGeneBuilder(
             @RequestParam("systematicId") String systematicId) {
 
         // TODO Check systematic id works

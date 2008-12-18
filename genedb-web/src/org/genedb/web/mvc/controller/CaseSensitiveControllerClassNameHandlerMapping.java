@@ -1,6 +1,5 @@
 package org.genedb.web.mvc.controller;
 
-import org.apache.log4j.Logger;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
@@ -44,8 +43,6 @@ import org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMap
  */
 public class CaseSensitiveControllerClassNameHandlerMapping extends
         ControllerClassNameHandlerMapping {
-    private static final Logger logger = Logger
-            .getLogger(CaseSensitiveControllerClassNameHandlerMapping.class);
 
     /**
      * Common suffix at the end of {@link Controller} implementation classes.
