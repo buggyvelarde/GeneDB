@@ -30,6 +30,7 @@ FT                   /product="product 1; product 2"
 FT                   /product="product 3"
 FT   CDS             220..250
 FT                   /systematic_id="s3"
+FT                   /product="caSE sEnstIve"
 FT                   /similarity="blastp; SWALL:Q26723 (EMBL:M20871);
 FT                   Trypanosoma brucei brucei; variant-specific antigen;
 FT                   ESAG3; ; id=70%; ; E()=2e-42; score=438; ; ;"
@@ -45,6 +46,7 @@ FT                   length 335 aa; id=38.462%; ungapped id=47.273%; E()=6.4e-
 FT                   17; ; 303 aa overlap; query 3-306 aa; subject 13-321 aa"
 FT   CDS             300..320
 FT                   /systematic_id="s4"
+FT                   /product="Case Senstive"
 FT                   /similarity="fasta; SWALL:DYHA_CHLRE (SWALL:Q39610);
 FT                   Chlamydomonas reinhardtii; dynein alpha chain, flagellar
 FT                   outer arm; oda11 or oda-11; length 4499 aa; id=37.56%;

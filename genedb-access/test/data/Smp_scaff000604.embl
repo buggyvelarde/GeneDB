@@ -168,7 +168,7 @@ FT                   /temporary_systematic_id="Smp_097250"
 FT   CDS             complement(join(31435..31550,31594..31709,31743..31811,
 FT                   31849..31930,31973..32027))
 FT                   /method="new or changed gene model"
-FT                   /note="predicted by EVM2"
+FT                   /note="predicted by ""EVM2"""
 FT                   /product="conserved hypothetical protein"
 FT                   /psu_db_xref="SMA1:Sm00.scaff00658.0040;"
 FT                   /psu_db_xref="GeneDB_Smansoni:Sm00874; Blastn score=852
