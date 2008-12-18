@@ -27,7 +27,7 @@
     <init project="access"/>
   </target>
 
-  <target name="compile-access" depends="init-access">
+  <target name="compile-access" depends="init-access, genedb-db.fulljar-db">
       <compile-target project="access" />
       <iajc-target project="access" />
       <copy todir="${imported.basedir.access}/ant-build/classes" overwrite="true">
