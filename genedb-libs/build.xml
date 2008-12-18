@@ -32,6 +32,7 @@
   <!-- General targets -->
   <target name="populate-lib-dir">
     <ivy:settings file="${ant.file.genedb-libs}/../ivysettings.xml" />
+    <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
     <ivy:retrieve />
   </target>
 
