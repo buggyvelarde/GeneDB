@@ -273,9 +273,11 @@ class FeatureTable extends EmblFile.Section {
 
         @Override
         public String toString() {
+            String value = this.value;
             String format;
             if (valueIsQuoted) {
                 format = "/%s=\"%s\"";
+                value = value.replaceAll("\"", "\"\"");
             } else if (value == null) {
                 format = "/%s";
             } else {
