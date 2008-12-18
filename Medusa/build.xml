@@ -1,0 +1,6 @@
+<project name="Medusa" basedir=".">
+
+    <dirname property="imported.basedir.Medusa" file="${ant.file.Medusa}"/>
+    <import file="${imported.basedir.Medusa}/../genedb-libs/build.xml"/>
+
+  </project>

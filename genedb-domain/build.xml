@@ -6,9 +6,10 @@
 
   <property name="lib-dir" value="${imported.basedir.domain}/../genedb-libs/lib/"/>
 
-  <import file="${imported.basedir.domain}/../genedb-db/build.xml" />
+  <import file="${imported.basedir.domain}/../genedb-libs/build.xml"  />
+  <import file="${imported.basedir.domain}/../genedb-db/build.xml"    />
   <import file="${imported.basedir.domain}/../genedb-query/build.xml" />
-  <import file="${imported.basedir.domain}/../genedb-util/build.xml" />
+  <import file="${imported.basedir.domain}/../genedb-util/build.xml"  />
 
   <target name="clean-build-domain" >
     <delete dir="${imported.basedir.domain}/ant-build" quiet="true"/>
@@ -43,7 +44,7 @@
     <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
   </path>
 
-  <target name="fulljar-domain" depends="genedb-db.make-db-jar,genedb-query.fulljar-query,genedb-util.fulljar,clean-build-domain,setup-domain"
+  <target name="fulljar-domain" depends="genedb-db.fulljar-db,genedb-query.fulljar-query,genedb-util.fulljar-util,clean-build-domain,setup-domain"
       description="Create full JAR file with all Spring classes">
 
     <copy todir="${imported.basedir.domain}/ant-build/src">

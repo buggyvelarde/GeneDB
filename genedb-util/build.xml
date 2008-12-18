@@ -2,10 +2,14 @@
 
   <dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
   <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
-  <property name="jar-file" value="genedb-util"/>
-
 
   <import file="${imported.basedir.util}/../genedb-libs/build.xml" />
+
+  <path id="util-classpath">
+    <fileset dir="${imported.basedir.util}/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
 
   <path id="test-jars">
     <filelist dir="${imported.basedir.util}/../genedb-libs/lib">
@@ -39,13 +43,13 @@
   </target>
 
   <target name="util-get-extra-jars">
-    <init topdir="${imported.basedir.util}" />
+    <init project="util" />
     <copy file="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.util}/lib" />
   </target>
 
-  <target name="fulljar-util" depends="clean-build-util, util-get-extra-jars, prepare-src" description="Create full JAR file">
-    <compile-target topdir="${imported.basedir.util}" />
-    <jar-target />
+  <target name="fulljar-util" depends="clean-build-util, util-get-extra-jars" description="Create full JAR file">
+    <compile-target project="util" />
+    <jar-target project="util" />
   </target>
 
 </project>

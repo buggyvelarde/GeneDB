@@ -7,28 +7,25 @@
   <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
 
   <!-- Paths/Properties -->
-  <property name="build.dir" value="./ant-build" />
+  <property name="build.dir" value="ant-build" />
   <property name="dist.dir" value="${build.dir}/dist" />
   <property name="classes.dir" value="${build.dir}/classes" />
-  <property name="src.dir" value="${build.dir}/src" />
 
-  <dirname property="imported.basedir" file="${ant.file.genedb-libs}" />
   <property name="lib-dir" value="${imported.basedir.libs}/lib" />
 
 
   <!-- Extra task definitions -->
   <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
     <classpath>
-      <pathelement location="${lib-dir}/aspectj-1.6.2/aspectjtools.jar"/>
+      <pathelement location="${lib-dir}/com.springsource.org.aspectj.tools-1.6.2.RELEASE.jar"/>
     </classpath>
   </taskdef>
 
 
   <!-- Classpaths -->
-  <path id="basic-classpath">
-    <fileset dir="lib">
-      <include name="*.jar"/>
-    </fileset>
+  <path id="aspect.path">
+    <pathelement location="lib/com.springsource.org.aspectj.runtime-1.5.4.jar"/>
+    <pathelement location="lib/org.springframework.aspects-3.0.0.M1.jar"/>
   </path>
 
 
@@ -38,73 +35,61 @@
     <ivy:retrieve />
   </target>
 
-
-  <target name="init" description="Create initial build structure">
-    <mkdir dir="${build.dir}" />
-    <mkdir dir="${dist.dir}" />
-    <mkdir dir="${classes.dir}" />
-    <mkdir dir="${src.dir}" />
-  </target>
-
-
-  <target name="prepare-src" depends="init">
-    <copy todir="${src.dir}">
-      <fileset dir="src" />
-    </copy>
-  </target>
-
-
   <!-- Macro definitions -->
-  <macrodef name="clean-target" description="Remove all build artifacts">
-    <!-- <attribute name="path" /> -->
-    <sequential>
-      <delete dir="${build.dir}" includeEmptyDirs="true" />
-    </sequential>
-  </macrodef>
-
-
-  <macrodef name="compile-target" description="Compile a module">
-    <attribute name="topdir" />
-    <sequential>
-      <echo message="genedb-libs.compile: src.dir is '@{topdir}/${src.dir}', output is '@{topdir}/${classes.dir}', classpathref is '${basic-classpath}'" />
-      <javac srcdir="@{topdir}/${src.dir}" includes="**/*.java" debug="true"
-             destdir="@{topdir}/${classes.dir}" classpathref="basic-classpath" />
-      <echo>Compile finished</echo>
-    </sequential>
-  </macrodef>
-
-
-  <macrodef name="jar-target" description="Make a distribution JAR">
-    <!-- <attribute name="topdir" /> -->
-    <sequential>
-      <delete file="${dist.dir}/${jar-file}.jar" />
-      <!-- <echo message="genedb-libs.compile: src.dir is '@{topdir}/${src.dir}', output is '@{topdir}/${classes.dir}', classpathref is '@{basic-classpath}'" /> -->
-      <jar jarfile="${dist.dir}/${jar-file}.jar"
-           basedir="${classes.dir}"
-           manifest="etc/manifest.txt">
-        <!-- <fileset dir="conf" /> -->
-      </jar>
-    </sequential>
-  </macrodef>
 
   <macrodef name="init" description="Create initial build structure">
-    <attribute name="topdir"/>
+    <attribute name="project" />
+    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
     <sequential>
       <mkdir dir="@{topdir}/${build.dir}" />
       <mkdir dir="@{topdir}/${dist.dir}" />
       <mkdir dir="@{topdir}/${classes.dir}" />
-      <mkdir dir="@{topdir}/${src.dir}" />
+    </sequential>
+  </macrodef>
+
+  <macrodef name="clean-target" description="Remove all build artifacts">
+    <attribute name="topdir" />
+    <sequential>
+      <delete dir="@{topdir}/${build.dir}" includeEmptyDirs="true" />
+    </sequential>
+  </macrodef>
+
+  <macrodef name="compile-target" description="Compile a module">
+    <attribute name="project" />
+    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
+    <attribute name="classpathref" default="@{project}-classpath"/>
+    <sequential>
+      <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{classpathref}'" />
+      <javac srcdir="@{topdir}/src" includes="**/*.java" debug="true"
+             destdir="@{topdir}/${classes.dir}" classpathref="@{classpathref}" />
+      <echo>Compile finished</echo>
     </sequential>
   </macrodef>
 
   <macrodef name="iajc-target" description="Compile-time aspectj weaving">
+      <attribute name="project" />
+      <attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
+      <attribute name="from-directory" default="@{directory}"/>
+      <attribute name="to-directory" default="@{directory}"/>
+      <attribute name="classpathref" default="@{project}-classpath"/>
     <sequential>
       <iajc
-        verbose="true"
-        inpath="${imported.basedir.query}/ant-build/classes"
+        verbose="true" nowarn="true"
+        inpath="@{from-directory}"
         aspectpathref="aspect.path"
-        classpathRef ="compile-lib-query"
-        destdir="${imported.basedir.query}/ant-build/classes" />
+        classpathRef ="@{classpathref}"
+        destdir="@{to-directory}" />
+    </sequential>
+  </macrodef>
+
+  <macrodef name="jar-target" description="Make a distribution JAR">
+      <attribute name="project" />
+      <attribute name="topdir" default="${imported.basedir.@{project}}"/>
+      <attribute name="jar" default="genedb-@{project}.jar" />
+    <sequential>
+      <delete file="@{topdir}/${dist.dir}/@{jar}" />
+      <jar jarfile="@{topdir}/${dist.dir}/@{jar}"
+           basedir="@{topdir}/${classes.dir}"/>
     </sequential>
   </macrodef>
 

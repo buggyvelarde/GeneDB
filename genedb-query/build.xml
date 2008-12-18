@@ -7,16 +7,16 @@
   <import file="${imported.basedir.query}/../genedb-libs/build.xml" />
   <import file="${imported.basedir.query}/../genedb-util/build.xml" />
 
-  <target name="fulljar-query" depends="prepare-src">
-    <compile-target topdir="${imported.basedir.util}" />
-
-  <!-- <iajc-target /> -->
-
-    <jar-target />
-  </target>
-
-  <path id="aspect.path">
-    <pathelement location="${lib-dir}/spring-aspects.jar" />
+  <path id="query-classpath">
+    <fileset dir="${imported.basedir.query}/lib">
+      <include name="*.jar"/>
+    </fileset>
   </path>
+
+  <target name="fulljar-query">
+    <compile-target topdir="${imported.basedir.util}" project="query" />
+    <iajc-target topdir="${imported.basedir.util}" project="query" />
+    <jar-target topdir="${imported.basedir.util}" project="query" />
+  </target>
 
 </project>

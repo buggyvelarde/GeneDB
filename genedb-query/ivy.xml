@@ -2,5 +2,6 @@
     <info organisation="org.genedb" module="genedb-query"/>
     <dependencies>
       <dependency org="org.springframework" name="org.springframework.core" rev="3.0.0.M1" />
+      <dependency org="org.hibernate" name="com.springsource.org.hibernate.search" rev="3.0.1.GA" />
     </dependencies>
 </ivy-module>

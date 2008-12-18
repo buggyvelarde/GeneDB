@@ -2,6 +2,7 @@
 
 <project name="hibernate-index" default="index.jar" basedir=".">
 
+    <import file="../genedb-libs/build.xml" />
     <import file="../genedb-db/build.xml" />
     <import file="../genedb-util/build.xml" />
     <property file="hibernate-properties.${config}"/>
@@ -79,7 +80,7 @@
         <pathelement location="index.jar" />
     </path>
 
-    <target name="IndexChado" depends="genedb-util.anttasks,index.jar">
+    <target name="IndexChado" depends="genedb-util.fulljar-util,index.jar">
         <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="../genedb-util/ant-build/jars/genedb-anttasks.jar" />
         <password name="database.password" prompt="Password for ${database.user}@${database.url}" />
         <propertyset id="indexProperties">

@@ -1,98 +1,53 @@
 <?xml version="1.0"?>
 
-<project name="genedb-access" default="genedb-access.jar" basedir=".">
+<project name="genedb-access" default="fulljar-access" basedir=".">
 
         <!-- If this file is imported into another build.xml, resolve filenames
              relative to here rather than the importing project. -->
   <dirname property="imported.basedir.access" file="${ant.file.genedb-access}"/>
 
+  <import file="${imported.basedir.access}/../genedb-libs/build.xml"/>
   <import file="${imported.basedir.access}/../genedb-db/build.xml"/>
   <import file="${imported.basedir.access}/../genedb-util/build.xml"/>
 
-    <!-- need to tell ant where the aspectj tooling jar is -->
-    <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-        <classpath>
-            <pathelement location="${genedb-db.libdir}/aspectj-1.6.2/aspectjtools.jar"/>
-        </classpath>
-    </taskdef>
-
   <property file="property-file.${load}" />
+  <property name="lib-dir" value="${imported.basedir.libs}/lib/"/>
 
-  <property name="lib-dir" value="${imported.basedir.access}/../genedb-libs/lib/"/>
-
-  <path id="genedb-access.libs">
-      <path location="${lib-dir}/biojava/biojava-1.6.jar"/>
-      <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
-      <path location="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar"/>
-      <path location="${lib-dir}/spring-core-2.5.6/spring.jar"/>
-      <path location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/antlr/antlr-2.7.6.jar"/>
-      <!-- path location="${lib-dir}/spring-bundle-2.5.6/asm/asm-2.2.3.jar"/ -->
-      <path location="${lib-dir}/spring-bundle-2.5.6/aspectj/aspectjweaver.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
-      <path location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/cglib/cglib-nodep-2.1_3.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-annotations.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate3.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/jta.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/j2ee/persistence.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-collections.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-logging.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-pool.jar"/>
-      <path location="${lib-dir}/spring-bundle-2.5.6/log4j/log4j-1.2.15.jar" />
-      <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-api-1.5.0.jar" />
-      <path location="${lib-dir}/spring-bundle-2.5.6/slf4j/slf4j-log4j12-1.5.0.jar" />
-      <path location="${lib-dir}/spring-bundle-2.5.6/javassist/javassist-3.4.GA.jar"/>
-      <path location="${imported.basedir.access}/lib/genedb-db.jar"/>
-      <path location="${imported.basedir.access}/lib/genedb-util.jar"/>
+  <path id="access-classpath">
+      <fileset dir="${imported.basedir.access}/lib">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
+      <pathelement location="${imported.basedir.util}/ant-build/dist/genedb-util.jar"/>
+      <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db.jar"/>
   </path>
 
-  <target name="genedb-access.get-latest-jars" depends="genedb-db.make-db-jar, genedb-util.fulljar"
-    description="Copy over JAR files from other projects">
-    <copy file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-db.jar" todir="${imported.basedir.access}/lib" />
-    <copy file="${imported.basedir.access}/../genedb-util/ant-build/jars/genedb-util.jar" todir="${imported.basedir.access}/lib" />
+
+  <target name="init-access">
+    <init project="access"/>
   </target>
 
-    <!-- the path to the Spring-defined aspects -->
-    <path id="genedb-access.aspect.path">
-        <pathelement location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar" />
-    </path>
-
-  <target name="compile-access" depends="genedb-access.get-latest-jars">
-      <mkdir dir="${imported.basedir.access}/ant-build/classes"/>
-      <javac srcdir="${imported.basedir.access}/src" destdir="${imported.basedir.access}/ant-build/classes" debug="true" classpathref="genedb-access.libs"/>
-      <copy todir="${imported.basedir.access}/ant-build/classes">
-          <fileset dir="${imported.basedir.access}/src">
-              <exclude name="**/*.java"/>
-          </fileset>
+  <target name="compile-access" depends="init-access">
+      <compile-target project="access" />
+      <iajc-target project="access" />
+      <copy todir="${imported.basedir.access}/ant-build/classes" overwrite="true">
+        <fileset dir="${imported.basedir.access}/resources" />
+        <fileset dir="${imported.basedir.access}/conf" />
       </copy>
-
-      <iajc verbose="false"
-          inpath="${imported.basedir.access}/ant-build/classes"
-          aspectpathref="genedb-access.aspect.path"
-          classpathRef ="genedb-access.libs"
-          destdir="${imported.basedir.access}/ant-build/classes"
-      />
   </target>
 
-    <path id="genedb-access.test-libs">
-        <path refid="genedb-access.libs"/>
-        <pathelement location="${lib-dir}/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
-        <pathelement location="${imported.basedir.access}/ant-build/classes"/>
-    </path>
+  <path id="genedb-access.test-libs">
+    <path refid="access-classpath"/>
+    <pathelement location="${lib-dir}/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
+    <pathelement location="${imported.basedir.access}/ant-build/classes"/>
+  </path>
 
-  <target name="compile-tests" depends="genedb-access.get-latest-jars">
+  <target name="compile-tests" depends="init-access">
       <mkdir dir="${imported.basedir.access}/ant-build/test-classes"/>
       <javac srcdir="${imported.basedir.access}/test" destdir="${imported.basedir.access}/ant-build/test-classes" debug="true"
           classpathref="genedb-access.test-libs"/>
 
-      <iajc verbose="false"
-          inpath="${imported.basedir.access}/ant-build/test-classes"
-          aspectpathref="genedb-access.aspect.path"
-          classpathRef ="genedb-access.test-libs"
-          destdir="${imported.basedir.access}/ant-build/test-classes"
-      />
+      <iajc-target project="access" directory="${imported.basedir.access}/ant-build/test-classes"/>
 
       <copy todir="${imported.basedir.access}/ant-build/test-classes" overwrite="true">
           <fileset dir="${imported.basedir.access}/test">
@@ -115,53 +70,23 @@
           overwrite="true" />
   </target>
 
-  <target name="genedb-access.jar" depends="replace,compile-access" description="Create JAR file">
-    <delete file="${imported.basedir.access}/genedb-access.jar"/>
-    <mkdir dir="${imported.basedir.access}/ant-build/jar"/>
-
-    <delete dir="${imported.basedir.access}/ant-build/jar"/>
-    <mkdir dir="${imported.basedir.access}/ant-build/jar"/>
-    <copy todir="${imported.basedir.access}/ant-build/jar" overwrite="true">
-      <fileset dir="${imported.basedir.access}/ant-build/classes" />
-      <fileset dir="${imported.basedir.access}/resources" />
-      <fileset dir="${imported.basedir.access}/conf" />
-    </copy>
-
-    <jar jarfile="${imported.basedir.access}/genedb-access.jar">
-      <fileset dir="${imported.basedir.access}/ant-build/jar" />
-      <manifest>
-        <attribute name="Implementation-Title" value="GeneDB Loading"/>
-        <attribute name="Implementation-Version" value="0.1"/>
-        <attribute name="Main-class" value="org.genedb.db.loading.NewRunner" />
-      </manifest>
-    </jar>
+  <target name="fulljar-access" depends="replace,compile-access" description="Create JAR file">
+    <jar-target project="access"/>
   </target>
 
     <path id="exec-classpath">
-        <fileset dir="resources/"/>
-        <pathelement location="conf"/>
-        <path refid="genedb-access.libs"/>
-        <fileset file="${imported.basedir.access}/../genedb-db/ant-build/jars/genedb-db.jar" />
-        <fileset file="${imported.basedir.access}/../genedb-domain/genedb-domain.jar"  />
-        <fileset file="${lib-dir}/misc/antlr-runtime-3.0.jar" />
-        <fileset file="${lib-dir}/lucene/lucene-core-2.3.2.jar" />
-        <fileset file="${lib-dir}/spring-bundle-2.5.6/dom4j/dom4j-1.6.1.jar" />
-        <fileset file="${lib-dir}/spring-bundle-2.5.6/dom4j/jaxen-1.1-beta-7.jar" />
-        <fileset file="${lib-dir}/spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar" />
-        <fileset file="${lib-dir}/spring-bundle-2.5.6/jakarta-commons/commons-lang.jar" />
-        <fileset file="genedb-access.jar" />
+        <path refid="access-classpath" />
     </path>
 
     <path id="test-classpath">
         <pathelement location="${imported.basedir.access}/ant-build/test-classes"/>
+        <pathelement location="${imported.basedir.access}/ant-build/dist/genedb-access.jar"/>
         <path refid="exec-classpath"/>
-        <pathelement location="${lib-dir}/spring-bundle-2.5.6/junit/junit-4.4.jar"/>
-        <pathelement location="${lib-dir}/spring-bundle-2.5.6/hsqldb/hsqldb.jar"/>
     </path>
 
-    <target name="all-tests" depends="genedb-access.jar,compile-tests,
+    <target name="all-tests" depends="fulljar-access,compile-tests,
         file-test,location-test,embl-test,ortho-test"/>
-    <target name="file-test" depends="genedb-access.jar,compile-tests">
+    <target name="file-test" depends="fulljar-access,compile-tests">
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true">
             <classpath refid="test-classpath"/>
             <formatter type="brief" usefile="false" />
@@ -169,7 +94,7 @@
             <test name="org.genedb.db.loading.EmblFileTest"/>
         </junit>
     </target>
-    <target name="location-test" depends="genedb-access.jar,compile-tests">
+    <target name="location-test" depends="fulljar-access,compile-tests">
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true">
             <classpath refid="test-classpath"/>
             <formatter type="brief" usefile="false" />
@@ -196,7 +121,7 @@
             <fileset dir="${imported.basedir.access}/../genedb-db/test-data/hsqldb" includes="skeleton.*"/>
         </copy>
     </target>
-    <target name="embl-test" depends="genedb-access.jar,compile-tests">
+    <target name="embl-test" depends="fulljar-access,compile-tests">
         <antcall target="run-specific-embl-test"><param name="subtest" value="Berghei"/></antcall>
         <antcall target="run-specific-embl-test"><param name="subtest" value="Mansoni"/></antcall>
         <antcall target="run-specific-embl-test"><param name="subtest" value="Synthetic"/></antcall>
@@ -205,7 +130,7 @@
          EVEN IF they have already been executed. Therefore we have an internal target
          run-specific-embl-test, with no dependencies, that we antcall; and an external
          target specific-embl-test that does have dependencies. -->
-    <target name="specific-embl-test" depends="genedb-access.jar,compile-tests,run-specific-embl-test"/>
+    <target name="specific-embl-test" depends="fulljar-access,compile-tests,run-specific-embl-test"/>
     <target name="run-specific-embl-test">
         <antcall target="copy-skeleton-database"/>
         <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="256M">
@@ -214,12 +139,12 @@
             <test name="org.genedb.db.loading.EmblLoader${subtest}Test"/>
         </junit>
     </target>
-    <target name="ortho-test" depends="genedb-access.jar,compile-tests">
+    <target name="ortho-test" depends="fulljar-access,compile-tests">
         <antcall target="run-specific-ortho-test"><param name="subtest" value="ImplicitCluster"/></antcall>
         <antcall target="run-specific-ortho-test"><param name="subtest" value="Unclustered"/></antcall>
         <antcall target="run-specific-ortho-test"><param name="subtest" value="Clustered"/></antcall>
     </target>
-    <target name="specific-ortho-test" depends="genedb-access.jar,compile-tests,run-specific-ortho-test"/>
+    <target name="specific-ortho-test" depends="fulljar-access,compile-tests,run-specific-ortho-test"/>
     <target name="run-specific-ortho-test">
         <antcall target="copy-skeleton-database"/>
         <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="512M">
@@ -231,12 +156,12 @@
 
     <!--
     <target name="prompt-for-password" depends="genedb-util.anttasks,check-properties" unless="dbpassword">
-        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.access}/../genedb-util/ant-build/jars/genedb-anttasks.jar" />
+        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.access}/../genedb-util/ant-build/dist/genedb-anttasks.jar" />
         <password name="dbpassword" prompt="Password for ${dbuser}@jdbc:postgresql://${dbhost}:${dbport}/${dbname}" />
     </target>
     -->
 
-    <target name="load-embl" depends="genedb-access.jar">
+    <target name="load-embl" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadEmbl">
             <sysproperty key="load.organismCommonName" value="${organism}"/>
             <sysproperty key="load.inputDirectory" value="${file}"/>
@@ -247,7 +172,7 @@
         </java>
     </target>
 
-    <target name="delete-organism" depends="genedb-access.jar">
+    <target name="delete-organism" depends="fulljar-access">
        <sql driver="org.postgresql.Driver"
            url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
            userid="${dbuser}" password="${dbpassword}">
@@ -273,7 +198,7 @@
 
     <target name="reload-embl" depends="delete-organism,load-embl"/>
 
-    <target name="load-orthologues" depends="genedb-access.jar">
+    <target name="load-orthologues" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadOrthologues">
             <sysproperty key="load.organismCommonName" value="${organism}"/>
             <sysproperty key="load.inputDirectory" value="${file}"/>
@@ -284,7 +209,7 @@
         </java>
     </target>
 
-    <target name="load-vulgar" depends="genedb-access.jar">
+    <target name="load-vulgar" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadVulgar">
             <sysproperty key="load.organismCommonName" value="${organism}"/>
             <sysproperty key="load.inputDirectory" value="${file}"/>
@@ -296,14 +221,14 @@
     </target>
 
 
-    <target name="load-interpro" depends="genedb-access.jar">
+    <target name="load-interpro" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="iploader --key-type=polypeptide ${file}"/>
            <jvmarg line="-server -Xmx256m"/>
         </java>
         <antcall target="delete-redundant-go"/>
     </target>
-    <target name="clear-interpro" depends="genedb-access.jar">
+    <target name="clear-interpro" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearInterPro">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -312,13 +237,13 @@
     <target name="reload-interpro" depends="clear-interpro,load-interpro"/>
 
 
-    <target name="load-tmhmm" depends="genedb-access.jar">
+    <target name="load-tmhmm" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="tmhmmloader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="clear-tmhmm" depends="genedb-access.jar">
+    <target name="clear-tmhmm" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearTMHMM">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -327,13 +252,13 @@
     <target name="reload-tmhmm" depends="clear-tmhmm,load-tmhmm" />
 
 
-    <target name="load-dgpi" depends="genedb-access.jar">
+    <target name="load-dgpi" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="dgpiloader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="clear-dgpi" depends="genedb-access.jar">
+    <target name="clear-dgpi" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearDGPI">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -342,13 +267,13 @@
     <target name="reload-dgpi" depends="clear-dgpi,load-dgpi" />
 
 
-    <target name="load-signalp" depends="genedb-access.jar">
+    <target name="load-signalp" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="signalploader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="clear-signalp" depends="genedb-access.jar">
+    <target name="clear-signalp" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearSignalP">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -357,13 +282,13 @@
     <target name="reload-signalp" depends="clear-signalp,load-signalp"/>
 
 
-    <target name="load-plasmoap" depends="genedb-access.jar">
+    <target name="load-plasmoap" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="plasmoaploader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="clear-plasmoap" depends="genedb-access.jar">
+    <target name="clear-plasmoap" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearPlasmoAP">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -372,25 +297,25 @@
     <target name="reload-plasmoap" depends="clear-plasmoap,load-plasmoap"/>
 
 
-    <target name="delete-redundant-go" depends="genedb-access.jar">
+    <target name="delete-redundant-go" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.DeleteRedundantGOTerms"/>
     </target>
 
 
-    <target name="fix-residues-verbose" depends="genedb-access.jar" if="verbose">
+    <target name="fix-residues-verbose" depends="fulljar-access" if="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
             <arg line="${organism}"/>
         </java>
     </target>
-    <target name="fix-residues-nonverbose" depends="genedb-access.jar" unless="verbose">
+    <target name="fix-residues-nonverbose" depends="fulljar-access" unless="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg line="${organism}"/>
         </java>
     </target>
     <target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
 
-    <target name="fix-residues-mansoni" depends="genedb-access.jar">
+    <target name="fix-residues-mansoni" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
             <arg value="--mark-fragments"/>
@@ -399,26 +324,26 @@
         </java>
     </target>
 
-    <target name="fix-residues-falciparum" depends="genedb-access.jar">
+    <target name="fix-residues-falciparum" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="-v" />
             <arg value="Pfalciparum" />
         </java>
     </target>
 
-    <target name="load-opi-references" depends="genedb-access.jar">
+    <target name="load-opi-references" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="opi-referencesloader"/>
         </java>
     </target>
 
-    <target name="clear-opi-references" depends="genedb-access.jar">
+    <target name="clear-opi-references" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearOPIReferences"/>
     </target>
 
     <target name="reload-opi-references" depends="clear-opi-references,load-opi-references"/>
 
-    <!-- Note: does not force a recompile; use "ant genedb-access.jar adhoc-query" for that -->
+    <!-- Note: does not force a recompile; use "ant fulljar-access adhoc-query" for that -->
     <target name="adhoc-query" depends="adhoc-query-verbose, adhoc-query-nonverbose"/>
     <target name="adhoc-query-verbose" if="verbose">
         <java fork="true" classname="org.genedb.db.adhoc.Query" classpathref="exec-classpath">
