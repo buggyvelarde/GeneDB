@@ -37,21 +37,30 @@ public class SqlProductService implements ProductService {
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Product> getProductList(boolean restrictToGeneLinked) {
 
-        String sql = "select distinct cvt.name, cvt.cvterm_id from CvTerm cvt, Cv cv, feature_cvterm fct"
-            + " where cvt.cvterm_id=fct.cvterm_id and cvt.cv_id=cv.cv_id and cv.name='genedb_products' order by cvt.name";
+        String sql =
+            "select distinct" +
+            "    lower(cvterm.name) as lc_name" +
+            "  , cvterm.name" +
+            "  , cvterm.cvterm_id" +
+            " from feature_cvterm" +
+            " join cvterm using (cvterm_id)" +
+            " join cv using (cv_id)" +
+            " where cv.name='genedb_products'" +
+            " order by lower(cvterm.name), cvterm.name";
 
-            RowMapper mapper = new RowMapper() {
-                public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    Product product = new Product(rs.getString("name"), rs.getInt("cvterm_id"));
-                    return product;
-                }
-            };
+        RowMapper mapper = new RowMapper() {
+            public Product mapRow(ResultSet rs, @SuppressWarnings("unused") int rowNum) throws SQLException {
+                Product product = new Product(rs.getString("name"), rs.getInt("cvterm_id"));
+                return product;
+            }
+        };
 
-            return this.jdbcTemplate.query(sql, mapper);
+        @SuppressWarnings("unchecked")
+        List<Product> products = jdbcTemplate.query(sql, mapper);
+        return products;
     }
 
     @Override
