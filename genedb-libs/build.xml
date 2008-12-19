@@ -36,7 +36,33 @@
     <ivy:retrieve conf="default"/>
   </target>
 
+  <target name="populate-lib-dirs">
+      <antcall target="populate-lib-dir"/>
+      <populate directory="genedb-access"/>
+      <populate directory="genedb-db"/>
+      <populate directory="genedb-domain"/>
+      <populate directory="genedb-query"/>
+      <populate directory="genedb-util"/>
+      <populate directory="genedb-web"/>
+      <populate directory="HibernateSearch"/>
+      <populate directory="Jogra"/>
+      <populate directory="Medusa"/>
+  </target>
+
+  <target name="ivy-retrieve"><ivy:retrieve/></target>
+
+
   <!-- Macro definitions -->
+
+  <macrodef name="populate">
+    <attribute name="directory"/>
+    <sequential>
+      <antcall target="ivy-retrieve">
+        <param name="ivy.lib.dir"  value="../@{directory}/lib"/>
+        <param name="ivy.dep.file" value="../@{directory}/ivy.xml"/>
+      </antcall>
+    </sequential>
+  </macrodef>
 
   <macrodef name="init" description="Create initial build structure">
     <attribute name="project" />
