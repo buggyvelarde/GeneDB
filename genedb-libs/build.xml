@@ -49,6 +49,16 @@
       <populate directory="Medusa"/>
   </target>
 
+  <!-- The following target may look stupid, but it's actually extremely cunning. :-)
+
+       Normally when an ant property is set, it can't be changed thereafter:
+       subsequent attempts to set the value are silently ignored. However,
+       antcall parameters are an exception. They behave mostly like properties,
+       except that their values exist only for the duration of the antcall.
+       So, by wrapping <ivy:retrieve/> in a target, it's possible to make
+       multiple calls to it with different configuration values. (This is
+       precisely what the "populate" macro does, of course.)
+    -->
   <target name="ivy-retrieve"><ivy:retrieve/></target>
 
 
