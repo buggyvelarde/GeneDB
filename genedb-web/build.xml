@@ -4,85 +4,51 @@
   xmlns:ivy="antlib:org.apache.ivy.ant" >
 
   <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
+
   <import file="${imported.basedir.web}/../genedb-libs/build.xml" />
-
-  <!-- Ivy setup -->
-  <property name="ivy.default.ivy.user.dir" value="${imported.basedir.web}/../genedb-libs/ivy/cache" />
-  <property name="ivy.local.default.root" value="${imported.basedir.web}/../genedb-libs/ivy/cache/local" />
-
-  <!-- Paths/Properties you may have to change -->
-  <property file="property-file.${deploy}" />
-
-
   <import file="${imported.basedir.web}/../genedb-query/build.xml"/>
   <import file="${imported.basedir.web}/../genedb-db/build.xml"/>
   <import file="${imported.basedir.web}/../genedb-domain/build.xml"/>
   <import file="${imported.basedir.web}/../genedb-util/build.xml"/>
 
+  <!-- Paths/Properties you may have to change -->
+  <property file="property-file.${deploy}" />
+
   <property name="version" value="0.2"/>
   <property name="jar-build" value="ant-build/jar-build"/>
-  <property name="lib-dir" value="${imported.basedir.web}/../genedb-libs/lib/"/>
+  <property name="lib-dir" value="${imported.basedir.libs}/lib/"/>
   <property name="in-lib-dir" value="${imported.basedir.web}/WebContent/WEB-INF/lib"/>
 
   <!-- Paths -->
-  <path id="libs">
-    <path location="${in-lib-dir}/artemis.jar" />
+  <path id="web-deploy-classpath">
+      <pathelement location="${in-lib-dir}/artemis.jar" />
+      <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db.jar" />
+      <pathelement location="${imported.basedir.domain}/ant-build/dist/genedb-domain.jar"/>
+      <pathelement location="${imported.basedir.query}/ant-build/dist/genedb-query.jar" />
+      <pathelement location="${imported.basedir.util}/ant-build/dist/genedb-util.jar" />
 
-    <path location="${imported.basedir.web}/../genedb-db/ant-build/jars/genedb-db.jar" />
-    <path location="${imported.basedir.web}/../genedb-domain/ant-build/jars/genedb-domain.jar"/>
-    <path location="${imported.basedir.web}/../genedb-query/ant-build/jars/genedb-query.jar" />
-    <path location="${imported.basedir.web}/../genedb-util/ant-build/jars/genedb-util.jar" />
-
-    <path location="${lib-dir}/biojava/biojava-1.4.jar"/>
-    <path location="${lib-dir}/db/je-3.3.75.jar" />
-    <path location="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" />
-    <path location="${lib-dir}/hibernate-extras/hibernate-search-3.0.1GA.jar"/>
-    <path location="${lib-dir}/json/json_simple.jar"/>
-    <path location="${lib-dir}/json/json-lib-2.2.1-jdk15.jar" />
-    <path location="${lib-dir}/json/json-lib-ext-spring-1.0.1.jar" />
-    <path location="${lib-dir}/json/ezmorph-1.0.4.jar" />
-    <path location="${lib-dir}/lucene/lucene-core-2.3.2.jar"/>
-    <path location="${lib-dir}/misc/antlr-runtime-3.0.jar"/>
-    <path location="${lib-dir}/misc/displaytag-1.1.jar"/>
-    <path location="${lib-dir}/misc/dwr-2.0rc1.jar"/>
-    <path location="${lib-dir}/misc/google-collect-snapshot-20080820.jar" />
-    <path location="${lib-dir}/misc/jakarta-oro-2.0.8.jar"/>
-    <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
-    <path location="${lib-dir}/misc/jsr107cache-1.0.jar" />
-    <path location="${lib-dir}/misc/jewelcli-0.53.jar" />
-    <path location="${lib-dir}/xml/jdom.jar"/>
-
-    <path refid="core-spring-libs" />
-    <path refid="db-spring-libs" />
-    <path refid="web-spring-libs" />
-
-      <fileset dir="${ivy.default.ivy.user.dir}" id="id">
-        <include name="**/*.jar"/>
-        <exclude name="**/*-src.jar"/>
+      <fileset dir="${imported.basedir.web}/lib">
+        <include name="*.jar"/>
       </fileset>
+
+      <pathelement location="${lib-dir}/misc/displaytag-1.1.jar"/>
+      <pathelement location="${lib-dir}/misc/ezmorph-1.0.4.jar"/>
+      <pathelement location="${lib-dir}/db/je-3.3.75.jar"/>
+      <pathelement location="${lib-dir}/misc/jewelcli-0.53.jar"/>
+      <pathelement location="${lib-dir}/json/json-lib-2.2.1-jdk15.jar"/>
+      <pathelement location="${lib-dir}/json/json-lib-ext-spring-1.0.1.jar"/>
   </path>
 
-  <path id="compile-libs">
-    <path refid="libs"/>
-    <path location="${imported.basedir.web}/lib/jsp-api.jar" />
-    <path location="${imported.basedir.web}/lib/servlet-api.jar" />
+  <path id="web-classpath">
+    <path refid="web-deploy-classpath"/>
+    <fileset dir="${imported.basedir.libs}/lib/web">
+      <include name="*.jar"/>
+    </fileset>
   </path>
-
-
-  <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-    <classpath>
-      <pathelement location="${genedb-db.libdir}/aspectj-1.6.2/aspectjtools.jar"/>
-    </classpath>
-  </taskdef>
-
-  <target name="ivy.init">
-     <ivy:settings file="${basedir}/ivysettings.xml" />
-       <ivy:retrieve />
-  </target>
 
   <target name="get-latest-jars" description="Copy over JAR files from other projects">
     <copy flatten="true" todir="${finaldest.webapps}/WEB-INF/lib">
-      <path refid="libs" />
+      <path refid="web-classpath" />
     </copy>
   </target>
 
@@ -98,15 +64,12 @@
 
   <!-- =================================
           target: compile
-         ================================= -->
+       ================================= -->
   <target name="compile" depends="clean-web, make-other-projects"
         description="--> Compile classes">
 
-    <mkdir dir="${imported.basedir.web}/ant-build/classes"/>
-    <javac srcdir="src" classpathref="compile-libs" destdir="${imported.basedir.web}/ant-build/classes" encoding="utf-8" debug="on">
-      <compilerarg line="-Xlint:unchecked" />
-    </javac>
-
+    <init project="web"/>
+    <compile-target project="web"/>
     <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/mvc/model/PopulateCaches.class" src="${imported.basedir.web}/ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
     <iajc-target project="web" from-directory="${imported.basedir.web}/ant-build/woven-classes"
                                to-directory="${imported.basedir.web}/ant-build/classes"/>
@@ -154,20 +117,6 @@
     <exec executable="/nfs/pathdata/jira/bin/startup.sh"  failifexecutionfails="true" failonerror="true" />
     <sleep seconds="30" />
   </target>
-
-  <path id="application-classpath">
-    <path refid="libs" />
-    <path path="property-file.${deploy}" />
-    <path path="ant-build/classes" />
-    <path path="WebContent/WEB-INF" />
-    <path path="WebContent/WEB-INF/classes" />
-    <path path="${lib-dir}/spring-bundle-2.5.4/j2ee/servlet-api.jar"/>
-    <path location="WebContent/WEB-INF/lib/backport-util-concurrent.jar"/>
-    <path path="${lib-dir}/misc/jsr107cache-1.0.jar" />
-    <path path="${lib-dir}/db/je-3.3.69.jar" />
-    <!--<path path="${lib-dir}/spring-bundle-2.5.6/aspectj/aspectjweaver.jar" /> -->
-
-  </path>
 
   <target name="check-deploy">
     <fail message="The 'deploy' property must be set" unless="deploy"/>
@@ -225,10 +174,9 @@
 
 
   <target name="create_web.xml">
-
     <!--
-   This creates a web.xml from a template and the generated fragments
-  -->
+       This creates a web.xml from a template and the generated fragments
+      -->
     <loadfile property="generated" srcFile="${webinf.staging}/generated_web.xml"/>
     <filter token="generated_web.xml" value="${generated}"/>
     <loadfile property="webServlets" srcFile="${webinf.staging}/webServlets_web.xml"/>
@@ -240,7 +188,7 @@
 
 
     <target name="populate-caches" depends="check-deploy,compile" description="Populate the Berkeley DB with TranscriptDTO and images">
-      <java fork="true" classpathref="application-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
+      <java fork="true" classpathref="web-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
         <jvmarg value="-Xmx512m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
         <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
