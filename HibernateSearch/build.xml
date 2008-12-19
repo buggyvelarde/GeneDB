@@ -1,87 +1,38 @@
 <?xml version="1.0"?>
 
-<project name="hibernate-index" default="index.jar" basedir=".">
+<project name="HibernateSearch" default="index.jar" basedir=".">
+
+    <dirname property="imported.basedir.HibernateSearch" file="${ant.file.HibernateSearch}"/>
 
     <import file="../genedb-libs/build.xml" />
     <import file="../genedb-db/build.xml" />
     <import file="../genedb-util/build.xml" />
+
     <property file="hibernate-properties.${config}"/>
 
-    <path id="jars">
-        <filelist dir="../genedb-db/ant-build/jars/">
-            <file name="genedb-db-springless.jar" />
-        </filelist>
-        <filelist dir="../genedb-util/ant-build/jars/">
-            <file name="genedb-util.jar" />
-        </filelist>
-        <filelist dir="../genedb-libs/lib">
-            <file name="spring-bundle-2.5.6/ant/ant.jar" />
-            <file name="lucene/lucene-core-2.3.2.jar" />
-            <file name="spring-core-2.5.6/spring.jar" />
-            <file name="hibernate-extras/hibernate-search-3.0.1GA.jar" />
-            <file name="spring-bundle-2.5.6/hibernate/hibernate3.jar" />
-            <file name="spring-bundle-2.5.6/hibernate/hibernate-annotations.jar" />
-            <file name="spring-bundle-2.5.6/hibernate/hibernate-commons-annotations.jar" />
-            <file name="hibernate-extras/hibernate-tools.jar" />
-            <file name="spring-bundle-2.5.6/j2ee/jta.jar" />
-            <file name="spring-bundle-2.5.6/aspectj/aspectjrt.jar"/>
-            <file name="spring-bundle-2.5.6/antlr/antlr-2.7.6.jar" />
-
-            <file name="misc/javassist-3.4.GA.jar" />
-            <file name="misc/jewelcli-0.53.jar" />
-
-            <file name="spring-bundle-2.5.6/jakarta-commons/commons-collections.jar" />
-            <file name="spring-bundle-2.5.6/jakarta-commons/commons-dbcp.jar" />
-            <file name="spring-bundle-2.5.6/jakarta-commons/commons-logging.jar" />
-            <file name="spring-bundle-2.5.6/jakarta-commons/commons-pool.jar" />
-            <file name="spring-bundle-2.5.6/dom4j/dom4j-1.6.1.jar" />
-            <file name="spring-bundle-2.5.6/j2ee/persistence.jar" />
-            <file name="db/postgresql-8.3-603.jdbc4.jar" />
-            <file name="spring-bundle-2.5.6/log4j/log4j-1.2.15.jar" />
-            <file name="biojava/biojava-1.6.jar"/>
-        </filelist>
+    <path id="HibernateSearch-classpath">
+      <fileset dir="${imported.basedir.HibernateSearch}/lib">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
+      <pathelement location="${imported.basedir.libs}/lib/biojava/biojava-1.6.jar"/>
+      <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db.jar"/>
+      <pathelement location="${imported.basedir.util}/ant-build/dist/genedb-util.jar"/>
     </path>
-
-    <target name="destdir">
-        <mkdir dir="ant-build"/>
-        <mkdir dir="ant-build/jar"/>
-        <mkdir dir="ant-build/classes"/>
-        <mkdir dir="ant-build/tasks"/>
-    </target>
-
-    <target name="index.jar" depends="compile">
-        <delete file="index.jar" />
-
-        <copy todir="ant-build/jar">
-            <fileset dir="ant-build/classes" />
-        </copy>
-
-        <jar jarfile="index.jar">
-            <fileset dir="ant-build/jar" />
-            <manifest>
-                <attribute name="Implementation-Title" value="Hibernate Search Indexing" />
-                <attribute name="Implementation-Version" value="0.1" />
-                <attribute name="Main-class" value="org.genedb.hibernate.search.IndexChado" />
-            </manifest>
-        </jar>
-    </target>
-
-    <target name="compile" depends="destdir,genedb-db.make-springless-jar">
-        <javac srcdir="src" destdir="ant-build/classes" debug="true">
-            <classpath refid="jars" />
-        </javac>
-        <copy todir="ant-build/classes" file="log4j.properties" />
-        <copy todir="ant-build/classes" file="hibernate.cfg.xml" />
-        <copy file="hibernate-properties.${config}" tofile="ant-build/classes/hibernate.properties" overwrite="true"/>
-    </target>
 
     <path id="exec-classpath">
-        <path refid="jars" />
-        <pathelement location="index.jar" />
+      <path refid="HibernateSearch-classpath"/>
+      <pathelement location="${imported.basedir.HibernateSearch}/ant-build/dist/genedb-HibernateSearch.jar"/>
     </path>
 
-    <target name="IndexChado" depends="genedb-util.fulljar-util,index.jar">
-        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="../genedb-util/ant-build/jars/genedb-anttasks.jar" />
+    <target name="fulljar-HibernateSearch" depends="genedb-util.fulljar-util, genedb-db.fulljar-db">
+        <init project="HibernateSearch"/>
+        <compile-target project="HibernateSearch" />
+        <jar-target project="HibernateSearch" />
+    </target>
+
+    <target name="IndexChado" depends="fulljar-HibernateSearch">
+        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.util}/ant-build/dist/genedb-util.jar" />
         <password name="database.password" prompt="Password for ${database.user}@${database.url}" />
         <propertyset id="indexProperties">
             <propertyref name="database.url" />
