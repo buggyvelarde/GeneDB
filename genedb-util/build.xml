@@ -5,6 +5,9 @@
 
   <import file="${imported.basedir.util}/../genedb-libs/build.xml" />
 
+  <property name="genedb-util.jar"
+      value="${imported.basedir.util}/${dist.dir}/genedb-util.jar"/>
+
   <path id="util-classpath">
     <fileset dir="${imported.basedir.util}/lib">
       <include name="*.jar"/>

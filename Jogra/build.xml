@@ -5,6 +5,9 @@
     <import file="../genedb-libs/build.xml"/>
     <import file="../genedb-db/build.xml"/>
 
+    <property name="Jogra.jar" value="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar"/>
+    <property name="version" value="0.5"/>
+
     <path id="Jogra-classpath">
       <fileset dir="${imported.basedir.Jogra}/lib">
         <include name="*.jar"/>
@@ -13,7 +16,7 @@
         <include name="*.jar"/>
       </fileset>
       <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
-      <pathelement location="${imported.basedir.db}/${dist.dir}/genedb-db.jar"/>
+      <pathelement location="${genedb-db.jar}"/>
     </path>
 
     <target name="init">
@@ -33,7 +36,15 @@
 
     <!-- create .jar -->
     <target name="fulljar-Jogra" depends="jogra-compile" description="Create an unsigned JAR">
-        <jar-target project="Jogra"/>
+        <pathconvert property="classpath-for-manifest" pathsep=" " refid="Jogra-classpath"/>
+        <jar-target project="Jogra">
+          <manifest>
+            <attribute name="Implementation-Title" value="Jogra"/>
+            <attribute name="Implementation-Version" value="${version}"/>
+            <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra"/>
+            <attribute name="Class-Path" value="${classpath-for-manifest}"/>
+          </manifest>
+        </jar-target>
     </target>
 
     <target name="signed-jar-Jogra" depends="fulljar-Jogra" description="Create a signed JAR">
@@ -43,11 +54,6 @@
     </target>
 
     <target name="run-Jogra" depends="fulljar-Jogra">
-        <java fork="true" classname="org.genedb.jogra.drawing.Jogra">
-            <classpath>
-                <path refid="Jogra-classpath"/>
-                <pathelement location="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar"/>
-            </classpath>
-        </java>
+        <java fork="true" jar="${Jogra.jar}"/>
     </target>
   </project>

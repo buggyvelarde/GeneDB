@@ -16,8 +16,8 @@
       </fileset>
       <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
       <pathelement location="${imported.basedir.libs}/lib/biojava/biojava-1.6.jar"/>
-      <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db.jar"/>
-      <pathelement location="${imported.basedir.util}/ant-build/dist/genedb-util.jar"/>
+      <pathelement location="${genedb-db.jar}"/>
+      <pathelement location="${genedb-util.jar}"/>
     </path>
 
     <path id="exec-classpath">

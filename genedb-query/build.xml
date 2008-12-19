@@ -7,6 +7,9 @@
   <import file="${imported.basedir.query}/../genedb-libs/build.xml" />
   <import file="${imported.basedir.query}/../genedb-util/build.xml" />
 
+  <property name="genedb-query.jar"
+      value="${imported.basedir.query}/${dist.dir}/genedb-query.jar"/>
+
   <path id="query-classpath">
     <fileset dir="${imported.basedir.query}/lib">
       <include name="*.jar"/>

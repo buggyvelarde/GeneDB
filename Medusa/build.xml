@@ -9,7 +9,7 @@
         <include name="*.jar"/>
       </fileset>
       <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
-      <pathelement location="${imported.basedir.db}/${dist.dir}/genedb-db.jar"/>
+      <pathelement location="${genedb-db.jar}"/>
     </path>
 
     <target name="fulljar-Medusa" depends="genedb-db.fulljar-db">

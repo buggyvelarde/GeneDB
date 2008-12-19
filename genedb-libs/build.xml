@@ -111,13 +111,16 @@
   </macrodef>
 
   <macrodef name="jar-target" description="Make a distribution JAR">
-      <attribute name="project" />
-      <attribute name="topdir" default="${imported.basedir.@{project}}"/>
-      <attribute name="jar" default="genedb-@{project}.jar" />
+    <attribute name="project" />
+    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
+    <attribute name="jar" default="genedb-@{project}.jar" />
+    <element name="extra-elements" optional="true" implicit="true"/>
     <sequential>
       <delete file="@{topdir}/${dist.dir}/@{jar}" />
       <jar jarfile="@{topdir}/${dist.dir}/@{jar}"
-           basedir="@{topdir}/${classes.dir}"/>
+           basedir="@{topdir}/${classes.dir}">
+        <extra-elements/>
+      </jar>
     </sequential>
   </macrodef>
 
