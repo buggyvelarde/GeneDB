@@ -16,6 +16,7 @@
 
   <target name="fetch-groovy-jars">
     <ivy:settings file="../genedb-libs/ivysettings.xml" />
+    <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
     <property name="ivy.lib.dir" value="lib/groovy"/>
     <ivy:retrieve conf="groovy"/>
   </target>
