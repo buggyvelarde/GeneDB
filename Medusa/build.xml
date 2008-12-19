@@ -1,6 +1,21 @@
-<project name="Medusa" basedir=".">
+<project name="Medusa" default="fulljar-Medusa" basedir=".">
 
     <dirname property="imported.basedir.Medusa" file="${ant.file.Medusa}"/>
     <import file="${imported.basedir.Medusa}/../genedb-libs/build.xml"/>
+    <import file="${imported.basedir.Medusa}/../genedb-db/build.xml"/>
+
+    <path id="Medusa-classpath">
+      <fileset dir="${imported.basedir.Medusa}/lib">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
+      <pathelement location="${imported.basedir.db}/${dist.dir}/genedb-db.jar"/>
+    </path>
+
+    <target name="fulljar-Medusa" depends="genedb-db.fulljar-db">
+      <init project="Medusa"/>
+      <compile-target project="Medusa"/>
+      <jar-target project="Medusa"/>
+    </target>
 
   </project>
