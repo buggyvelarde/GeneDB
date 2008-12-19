@@ -185,7 +185,13 @@
 
 
     <target name="populate-caches" depends="check-deploy,compile" description="Populate the Berkeley DB with TranscriptDTO and images">
-      <java fork="true" classpathref="web-classpath" classname="org.genedb.web.mvc.model.PopulateCaches">
+      <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
         <jvmarg value="-Xmx512m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
         <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
