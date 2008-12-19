@@ -14,9 +14,10 @@
   </path>
 
   <target name="fulljar-query">
-    <compile-target topdir="${imported.basedir.util}" project="query" />
-    <iajc-target topdir="${imported.basedir.util}" project="query" />
-    <jar-target topdir="${imported.basedir.util}" project="query" />
+    <init project="query"/>
+    <compile-target project="query" />
+    <iajc-target project="query" />
+    <jar-target project="query" />
   </target>
 
 </project>
