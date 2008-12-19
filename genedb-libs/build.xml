@@ -33,7 +33,7 @@
   <target name="populate-lib-dir">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
     <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
-    <ivy:retrieve />
+    <ivy:retrieve conf="default"/>
   </target>
 
   <!-- Macro definitions -->
