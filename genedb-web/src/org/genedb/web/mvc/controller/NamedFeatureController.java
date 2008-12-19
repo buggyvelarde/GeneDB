@@ -54,7 +54,7 @@ import com.google.common.collect.Maps;
  */
 @Controller
 @RequestMapping("/NamedFeature")
-@ManagedResource(objectName="bean:name=namedFeatureController", description="NamedFeature Controller")
+//@ManagedResource(objectName="bean:name=namedFeatureController", description="NamedFeature Controller")
 public class NamedFeatureController extends TaxonNodeBindingFormController {
      private static final Logger logger = Logger.getLogger(NamedFeatureController.class);
 
