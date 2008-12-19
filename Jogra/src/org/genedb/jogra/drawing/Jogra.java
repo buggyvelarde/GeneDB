@@ -1,22 +1,28 @@
 package org.genedb.jogra.drawing;
 
 
+import org.genedb.jogra.domain.GeneDBMessage;
+import org.genedb.jogra.services.MessageService;
+
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.jnlp.ServiceManager;
 import javax.jnlp.SingleInstanceListener;
@@ -34,24 +40,11 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
-import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
-import org.genedb.jogra.controller.ImageUtils;
-import org.genedb.jogra.domain.GeneDBMessage;
-import org.genedb.jogra.services.Message;
-import org.genedb.jogra.services.MessageService;
-import org.jdesktop.swingx.JXLoginPane;
-import org.jdesktop.swingx.JXLoginPane.Status;
-import org.jdesktop.swingx.auth.LoginService;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 public class Jogra implements SingleInstanceListener, PropertyChangeListener, EventSubscriber<GeneDBMessage> {
 
-	private static int TIMER_DELAY = 10*1000;
+    private static int TIMER_DELAY = 10*1000;
 
-	private static final Logger logger = Logger.getLogger(Jogra.class);
+    private static final Logger logger = Logger.getLogger(Jogra.class);
 
     private Map<String, JograPlugin> pluginMap;
 
@@ -81,7 +74,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     // updateTitle();
     // }
 
-    public Jogra() throws IOException {
+    public Jogra() {
 
         // ctx = new ClassPathXmlApplicationContext(
         // new String[] {"classpath:applicationContext.xml"});
@@ -94,7 +87,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         });
 
         try {
-        	UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             //UIManager.setLookAndFeel("org.jdesktop.swingx.plaf.nimbus.NimbusLookAndFeel");
         } catch (final Exception exp) {
             exp.printStackTrace();
@@ -139,16 +132,16 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 //        }
 
         try {
-        	sis =
-        		(SingleInstanceService)ServiceManager.lookup("javax.jnlp.SingleInstanceService");
-        	sis.addSingleInstanceListener(this);
+            sis =
+                (SingleInstanceService) ServiceManager.lookup("javax.jnlp.SingleInstanceService");
+            sis.addSingleInstanceListener(this);
         }
         catch (UnavailableServiceException e) {
-        	sis=null; // Not running under JNLP
+            sis=null; // Not running under JNLP
         }
     }
 
-    public void makeMain() throws IOException {
+    public void makeMain() {
 
         mainFrame.setResizable(false);
         // slide.setDirty(false);
@@ -193,7 +186,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
                 BorderFactory.createEtchedBorder());
 
         for (final JograPlugin plugin : pluginMap.values()) {
-        	logger.warn("Trying to get main window plugin for '"+plugin.getClass()+"'");
+            logger.warn("Trying to get main window plugin for '"+plugin.getClass()+"'");
             if (plugin.getMainWindowPlugin() != null) {
                 final JComponent panel = plugin.getMainWindowPlugin();
                 panel.setBorder(border);
@@ -218,7 +211,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
                 // TODO Auto-generated method stub
                 final JFrame frame = event.getJFrame();
                 if (frame==null) {
-                	return; // Assume plugin will report why
+                    return; // Assume plugin will report why
                 }
                 if (!frame.isVisible()) {
                     frame.setVisible(true);
@@ -243,7 +236,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         this.jograBusiness = jograBusiness;
     }
 
-    public void showMain() throws IOException {
+    public void showMain() {
         mainFrame.pack();
         mainFrame.setVisible(true);
     }
@@ -258,12 +251,12 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         finalShutdown();
     }
 
-	private void finalShutdown() {
-		if (sis != null) {
-        	sis.removeSingleInstanceListener(this);
+    private void finalShutdown() {
+        if (sis != null) {
+            sis.removeSingleInstanceListener(this);
         }
         System.exit(0);
-	}
+    }
 
     /*
      * (non-Javadoc)
@@ -301,7 +294,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
           //      new String[] { "classpath:applicationContext.xml", "classpath:domain-client-applicationContext.xml" });
         final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] { "classpath:/applicationContext.xml" });
-        final Jogra application = (Jogra) ctx.getBean("application", Jogra.class);
+        final Jogra application = ctx.getBean("application", Jogra.class);
         ctx.registerShutdownHook();
 
         return application;
@@ -322,7 +315,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         application.makeMain();
         application.showMain();
         if (args.length > 0) {
-        	application.newActivation(args);
+            application.newActivation(args);
         }
 
         // ps.showSplash();
@@ -340,35 +333,33 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         // });
     }
 
-	public void setPluginList(List<JograPlugin> pluginList) {
-		this.pluginMap = new LinkedHashMap<String, JograPlugin>(pluginList.size());
-		for (JograPlugin plugin : pluginList) {
-			logger.error("Registering plugin '"+plugin+"' under name '"+plugin.getName()+"' in map");
-			pluginMap.put(plugin.getName(), plugin);
-		}
-	}
+    public void setPluginList(List<JograPlugin> pluginList) {
+        this.pluginMap = new LinkedHashMap<String, JograPlugin>(pluginList.size());
+        for (JograPlugin plugin : pluginList) {
+            logger.error("Registering plugin '"+plugin+"' under name '"+plugin.getName()+"' in map");
+            pluginMap.put(plugin.getName(), plugin);
+        }
+    }
 
-	public void setMessageService(MessageService messageService) {
-		this.messageService = messageService;
-	}
+    public void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
-	public void newActivation(String[] args) {
-		if (args.length==0) {
-			mainFrame.toFront();
-			return;
-		}
-		String target = args[0];
-		if (!pluginMap.containsKey(target)) {
-			logger.error("Unable to find a plugin to handle command '"+target+"'");
-			return;
-		}
-		JograPlugin jp = pluginMap.get(target);
-		List<String> newArgs = new ArrayList<String>();
-		for (int i = 1; i < args.length; i++) {
-			newArgs.add(args[i]);
-		}
-		jp.process(newArgs);
-
-
-	}
+    public void newActivation(String[] args) {
+        if (args.length==0) {
+            mainFrame.toFront();
+            return;
+        }
+        String target = args[0];
+        if (!pluginMap.containsKey(target)) {
+            logger.error("Unable to find a plugin to handle command '"+target+"'");
+            return;
+        }
+        JograPlugin jp = pluginMap.get(target);
+        List<String> newArgs = new ArrayList<String>();
+        for (int i = 1; i < args.length; i++) {
+            newArgs.add(args[i]);
+        }
+        jp.process(newArgs);
+    }
 }
