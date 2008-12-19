@@ -12,10 +12,8 @@
   </path>
 
   <path id="test-jars">
-    <filelist dir="${imported.basedir.util}/../genedb-libs/lib">
-      <file name="spring-bundle-2.5.6/junit/junit-4.4.jar" />
-    </filelist>
-    <pathelement location="${imported.basedir.util}/ant-build/jars/genedb-util.jar"/>
+    <path refid="util-classpath"/>
+    <pathelement location="${imported.basedir.util}/ant-build/dist/genedb-util.jar"/>
   </path>
 
   <target name="clean-build-util" >
@@ -23,12 +21,13 @@
   </target>
 
   <target name="compile-tests" depends="fulljar-util">
+    <mkdir dir="${imported.basedir.util}/ant-build/test-classes"/>
     <javac srcdir="${imported.basedir.util}/test" destdir="${imported.basedir.util}/ant-build/test-classes" debug="on">
       <classpath refid="test-jars"/>
     </javac>
   </target>
 
-  <target name="run-tests" depends="compile-tests">
+  <target name="run-tests" depends="fulljar-util, compile-tests">
     <junit printsummary="withOutAndErr" haltonfailure="yes" fork="true" showoutput="true">
       <classpath>
         <path refid="test-jars"/>
