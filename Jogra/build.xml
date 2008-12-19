@@ -3,54 +3,51 @@
     <dirname property="imported.basedir.Jogra" file="${ant.file.Jogra}"/>
 
     <import file="../genedb-libs/build.xml"/>
+    <import file="../genedb-db/build.xml"/>
 
-    <path id="compilepath">
-        <path refid="core-libs" />
-        <path refid="misc-gui-libs" />
-        <path refid="jakarta-commons-lang" />
+    <path id="Jogra-classpath">
+      <fileset dir="${imported.basedir.Jogra}/lib">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${imported.basedir.libs}/lib/gui">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
+      <pathelement location="${imported.basedir.db}/${dist.dir}/genedb-db.jar"/>
     </path>
 
-    <property name="project_name" value="Jogra" />
-    <property name="srcDir" value="src" />
-    <property name="jar-file" value="${dist.dir}/${project_name}.jar" />
-
     <target name="init">
-        <init path="${imported.basedir.Jogra}/ant-build" />
+        <init project="Jogra" />
     </target>
 
     <target name="clean">
-        <clean-target path="${imported.basedir.Jogra}/ant-build" />
+        <clean-target project="Jogra" />
     </target>
 
-    <target name="jogra-compile" depends="clean, init">
-        <compile-task classpath-ref="compilepath" path="${imported.basedir.Jogra}" />
+    <target name="jogra-compile" depends="clean, init, genedb-db.fulljar-db">
+        <compile-target project="Jogra" />
+        <copy todir="${imported.basedir.Jogra}/${classes.dir}">
+            <fileset dir="${imported.basedir.Jogra}/conf"/>
+        </copy>
     </target>
 
     <!-- create .jar -->
     <target name="fulljar-Jogra" depends="jogra-compile" description="Create an unsigned JAR">
-        <delete file="${imported.basedir.Jogra}/${jar-file}" />
-          <jar jarfile="${imported.basedir.Jogra}/${jar-file}"
-            basedir="${imported.basedir.Jogra}/${classes.dir}">
-            <fileset dir="${imported.basedir.Jogra}/conf" />
-            <manifest id="">
-                <attribute name="Version" value="0.1"/>
-            </manifest>
-        </jar>
+        <jar-target project="Jogra"/>
     </target>
 
     <target name="signed-jar-Jogra" depends="fulljar-Jogra" description="Create a signed JAR">
-
-        <jar destfile="${imported.basedir.Jogra}/Jogra-tmp.jar" duplicate="preserve">
-            <zipgroupfileset dir="${build.dir}" includes="${jar}"/>
-            <zipgroupfileset dir="${imported.basedir.Jogra}/lib"
-                includes="EventBus-1.1.jar, log4j-1.2.9.jar, commons-logging.jar,myswing.jar,swingx-0.9.2.jar,swing-worker.jar,forms-1.1.0.jar,beansbinding-1.2.1.jar,commons-lang-2.3.jar"/>
-            <zipgroupfileset dir="${imported.basedir.Jogra}/../genedb-libs/lib/" includes="spring-2.5.4.jar" />
-            <zipgroupfileset dir="${imported.basedir.Jogra}/../genedb-domain/" includes="genedb-domain.jar" />
-            <zipgroupfileset dir="${imported.basedir.Jogra}/../genedb-db/ant-build/jars" includes="chado-interface.jar" />
-        </jar>
-
-        <signjar jar="Jogra-tmp.jar" signedjar="${dist-dir}/Jogra-signed.jar" alias="Jogra" storepass="Jogra-pw"/>
-        <delete file="Jogra-tmp.jar" />
+        <signjar jar="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar"
+            signedjar="${imported.basedir.Jogra}/${dist-dir}/Jogra-signed.jar"
+            alias="Jogra" storepass="Jogra-pw"/>
     </target>
 
+    <target name="run-Jogra" depends="fulljar-Jogra">
+        <java fork="true" classname="org.genedb.jogra.drawing.Jogra">
+            <classpath>
+                <path refid="Jogra-classpath"/>
+                <pathelement location="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar"/>
+            </classpath>
+        </java>
+    </target>
   </project>
