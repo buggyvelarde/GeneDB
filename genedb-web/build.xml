@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="genedb-web" default="get-latest-jars" basedir="."
+<project name="genedb-web" default="compile" basedir="."
   xmlns:ivy="antlib:org.apache.ivy.ant" >
 
   <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
@@ -46,21 +46,13 @@
     </fileset>
   </path>
 
-  <target name="get-latest-jars" description="Copy over JAR files from other projects">
-    <copy flatten="true" todir="${finaldest.webapps}/WEB-INF/lib">
-      <path refid="web-classpath" />
-    </copy>
-  </target>
-
   <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.fulljar-db,genedb-util.fulljar-util" />
 
-  <target name="make-all-and-deploy" depends="check-deploy, compile, final-deploy, get-latest-jars"/>
+  <target name="make-all-and-deploy" depends="check-deploy, compile, final-deploy"/>
 
   <target name="clean-web">
     <delete dir="${imported.basedir.web}/ant-build" quiet="true"/>
   </target>
-
-  <target name="fast-deploy" depends="check-deploy, compile, final-deploy, get-latest-jars"/>
 
   <!-- =================================
           target: compile
@@ -70,7 +62,8 @@
 
     <init project="web"/>
     <compile-target project="web"/>
-    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/mvc/model/PopulateCaches.class" src="${imported.basedir.web}/ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
+    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/mvc/model/PopulateCaches.class"
+              src="${imported.basedir.web}/ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
     <iajc-target project="web" from-directory="${imported.basedir.web}/ant-build/woven-classes"
                                to-directory="${imported.basedir.web}/ant-build/classes"/>
   </target>
@@ -92,6 +85,10 @@
       <fileset dir="ant-build/classes" casesensitive="false" followSymLinks="false" />
     </copy>
     <copy file="property-file.${deploy}" tofile="${finaldest.webapps}.tmp/WEB-INF/classes/project.properties" overwrite="true" />
+    <echo message="Copying libraries"/>
+    <copy flatten="true" todir="${finaldest.webapps}.tmp/WEB-INF/lib">
+      <path refid="web-deploy-classpath" />
+    </copy>
   </target>
 
   <target name="application-deploy" />
@@ -136,7 +133,7 @@
       <fileset dir="WebContent" id="id" />
     </copy>
     <copy flatten="true" todir="${webapp.staging}/WEB-INF/lib">
-      <path refid="libs" />
+      <path refid="web-deploy-classpath" />
     </copy>
     <copy todir="${webapp.staging}/WEB-INF/classes">
       <fileset dir="ant-build/classes" id="id" />
