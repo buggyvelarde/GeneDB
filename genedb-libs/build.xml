@@ -31,7 +31,7 @@
 
   <!-- General targets -->
   <target name="populate-lib-dir">
-    <ivy:settings file="${ant.file.genedb-libs}/../ivysettings.xml" />
+    <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
     <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
     <ivy:retrieve />
   </target>
@@ -49,7 +49,8 @@
   </macrodef>
 
   <macrodef name="clean-target" description="Remove all build artifacts">
-    <attribute name="topdir" />
+    <attribute name="project" />
+    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
     <sequential>
       <delete dir="@{topdir}/${build.dir}" includeEmptyDirs="true" />
     </sequential>
