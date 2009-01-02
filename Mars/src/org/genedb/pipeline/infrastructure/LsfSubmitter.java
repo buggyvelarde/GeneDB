@@ -7,6 +7,7 @@ import java.util.concurrent.FutureTask;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobInterruptedException;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.StepExecution;
@@ -15,7 +16,7 @@ import org.springframework.batch.core.step.tasklet.SimpleSystemProcessExitCodeMa
 import org.springframework.batch.core.step.tasklet.SystemCommandException;
 import org.springframework.batch.core.step.tasklet.SystemProcessExitCodeMapper;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.ExitStatus;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.core.AttributeAccessor;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
@@ -325,7 +326,7 @@ public class LsfSubmitter extends StepExecutionListenerSupport  implements Taskl
 	private boolean interruptOnCancel;
     
 	@Override
-	public ExitStatus execute(StepContribution contribution,
+	public RepeatStatus execute(StepContribution contribution,
 			AttributeAccessor attributes) throws Exception {
 		
 		FutureTask<Integer> systemCommandTask = new FutureTask<Integer>(new Callable<Integer>() {
@@ -346,7 +347,7 @@ public class LsfSubmitter extends StepExecutionListenerSupport  implements Taskl
 			while (true) {
 				Thread.sleep(checkInterval);
 				if (systemCommandTask.isDone()) {
-					return new ExitStatus(false, ""+systemCommandTask.get());
+					return RepeatStatus.FINISHED;
 				} else {
 					if (stopWatch.getTime() > timeout) {
 						systemCommandTask.cancel(interruptOnCancel);
