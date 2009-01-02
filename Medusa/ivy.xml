@@ -9,5 +9,6 @@
       <dependency org="org.junit" name="com.springsource.org.junit" rev="4.5.0" />
       <dependency org="org.apache.log4j" name="com.springsource.org.apache.log4j" rev="1.2.15" />
       <dependency org="org.apache.lucene" name="com.springsource.org.apache.lucene" rev="2.3.2" />
+      <dependency org="org.springframework.integration" name="org.springframework.integration" rev="1.0.1.RELEASE" />
     </dependencies>
 </ivy-module>
