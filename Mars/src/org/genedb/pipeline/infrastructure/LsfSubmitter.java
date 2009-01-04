@@ -7,7 +7,6 @@ import java.util.concurrent.FutureTask;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobInterruptedException;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.StepExecution;
@@ -24,7 +23,7 @@ import org.springframework.util.Assert;
 
 
 
-public class LsfSubmitter extends StepExecutionListenerSupport  implements Tasklet {
+public class LsfSubmitter extends StepExecutionListenerSupport implements Tasklet {
 	
     private static final Logger logger = Logger.getLogger(LsfSubmitter.class);
 
