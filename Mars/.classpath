@@ -5,8 +5,16 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.0.M1.jar"/>
-	<classpathentry kind="lib" path="lib2/org.springframework.batch.core-2.0.0.M3.jar"/>
-	<classpathentry kind="lib" path="lib2/org.springframework.batch.infrastructure-2.0.0.M3.jar" sourcepath="lib2/org.springframework.batch.infrastructure-2.0.0.M3-sources.jar"/>
+	<classpathentry kind="lib" path="lib2/org.springframework.batch.core-2.0.0.M3.jar" sourcepath="lib2/org.springframework.batch.core-2.0.0.M3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Mars/lib2/org.springframework.batch.core-2.0.0.M3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib2/org.springframework.batch.infrastructure-2.0.0.M3.jar" sourcepath="lib2/org.springframework.batch.infrastructure-2.0.0.M3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Mars/lib2/org.springframework.batch.infrastructure-2.0.0.M3.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.0.M1.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.apache.log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib2/com.springsource.org.apache.commons.lang-2.1.0.jar"/>
