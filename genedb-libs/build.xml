@@ -112,7 +112,7 @@
       <attribute name="classpathref" default="@{project}-classpath"/>
     <sequential>
       <iajc
-        verbose="true" nowarn="true"
+        verbose="false" nowarn="true"
         inpath="@{from-directory}"
         aspectpathref="aspect.path"
         classpathRef ="@{classpathref}"
