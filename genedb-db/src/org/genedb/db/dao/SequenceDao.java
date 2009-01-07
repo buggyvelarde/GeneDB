@@ -862,30 +862,33 @@ public class SequenceDao extends BaseDao {
          */
 
         int numberOfRowsDeleted = getSession().createSQLQuery(
-            " delete from feature" +
-            " using featureloc match_on_polypeptide" +
-            " join feature polypeptide" +
+            " delete from feature where feature_id in (" +
+            "   select feature.feature_id" +
+            "   from feature" +
+            "      , featureloc match_on_polypeptide" +
+            "   join feature polypeptide" +
             "         on match_on_polypeptide.srcfeature_id = polypeptide.feature_id" +
-            " join featureloc match_on_region" +
+            "   join featureloc match_on_region" +
             "         on match_on_region.feature_id = match_on_polypeptide.feature_id" +
-            " join featureloc polypeptide_on_toplevel" +
+            "   join featureloc polypeptide_on_toplevel" +
             "         on match_on_polypeptide.srcfeature_id = polypeptide_on_toplevel.feature_id" +
-            " where polypeptide.type_id in (" +
+            "   where polypeptide.type_id in (" +
             "         select cvterm.cvterm_id" +
             "         from cvterm join cv on cv.cv_id = cvterm.cv_id" +
             "         where cv.name = 'sequence'" +
             "         and cvterm.name = 'polypeptide'" +
-            " )" +
-            " and match_on_polypeptide.locgroup = 0" +
-            " and match_on_polypeptide.rank = 0" +
-            " and match_on_region.locgroup = 0" +
-            " and match_on_region.rank = 1" +
-            " and polypeptide_on_toplevel.srcfeature_id = ?" +
-            " and feature.feature_id in (" +
+            "   )" +
+            "   and match_on_polypeptide.locgroup = 0" +
+            "   and match_on_polypeptide.rank = 0" +
+            "   and match_on_region.locgroup = 0" +
+            "   and match_on_region.rank = 1" +
+            "   and polypeptide_on_toplevel.srcfeature_id = ?" +
+            "   and feature.feature_id in (" +
             "     match_on_region.srcfeature_id" +
             "   , match_on_region.feature_id" +
+            "   )" +
             " );")
-            .setInteger(1, sourceFeature.getFeatureId())
+            .setInteger(0, sourceFeature.getFeatureId())
             .executeUpdate();
 
         logger.debug(String.format("Deleted %d similarity features from '%s'",
