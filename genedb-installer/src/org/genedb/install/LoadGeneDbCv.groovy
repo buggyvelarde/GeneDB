@@ -286,6 +286,11 @@ class LoadGeneDbCv {
             <term name="private" description="Free text note field for comments not to be made publicly visible" />
             <term name="EC_number" description="Free text note field for EC_number" />
             <term name="colour" description="Numeric key for storing a display colour" />
+
+            <term name="archived_metadata"
+                    description="Metadata about a feature that comes from some external source, typically a data file, and is archived in its source form">
+                <term name="EMBL_qualifier" description="An unparsed EMBL qualifier, for archival purposes"/>
+            </term>
         </term>
 
         <term name="phylo_organism_prop" description="Parent term for CvTerms that act as keys for organism or phylonode props">
