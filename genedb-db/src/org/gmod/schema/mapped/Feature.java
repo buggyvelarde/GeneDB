@@ -1259,6 +1259,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
      * dependent features too.
      */
     public void delete() {
+        logger.trace(String.format("Deleting feature '%s'", getUniqueName()));
         cvDao.delete(this);
     }
 

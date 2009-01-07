@@ -2,6 +2,8 @@ package org.gmod.schema.feature;
 
 import org.gmod.schema.mapped.Organism;
 
+import org.apache.log4j.Logger;
+
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 
@@ -19,6 +21,8 @@ import javax.persistence.Entity;
  */
 @Entity
 public abstract class TopLevelFeature extends Region {
+
+    private static final Logger logger = Logger.getLogger(TopLevelFeature.class);
 
     TopLevelFeature() {
         // empty
@@ -85,6 +89,10 @@ public abstract class TopLevelFeature extends Region {
      * @param deleteLocatedFeatures
      */
     public void delete(boolean deleteLocatedFeatures) {
+        logger.trace(String.format("Deleting top-level feature '%s' (%s)",
+            getUniqueName(),
+            deleteLocatedFeatures ? "and sublocated features" : "but not sublocated features"));
+
         if (deleteLocatedFeatures) {
             sequenceDao.deleteFeaturesLocatedOn(this);
         }
