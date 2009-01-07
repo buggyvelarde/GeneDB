@@ -132,14 +132,14 @@ public class CvDao extends BaseDao {
         return cvTerms;
     }
 
-    private TwoKeyMap<String,String,Integer> cvTermIdsByCvAndName = new SynchronizedTwoKeyMap<String,String,Integer>();
+    private TwoKeyMap<String,String,Integer> cvTermIdsByCvAndLcName = new SynchronizedTwoKeyMap<String,String,Integer>();
 
     /**
      * Get the CvTerm with the specified CV and name. If there is no such term,
      * log a warning and return <code>null</code>. This is the same as
      * <code>getCvTermByNameAndCvName(cvTermName, cvName, true)</code>.
      *
-     * @param cvTermName the term
+     * @param cvTermName the term, treated case-insensitively
      * @param cvName the name of the CV
      * @return the CvTerm with the specified CV and name, or <code>null</code> if there is no such term.
      */
@@ -152,7 +152,7 @@ public class CvDao extends BaseDao {
      * is true, then also log a warning in this case.
      *
      * @param cvTermName the term
-     * @param cvName the name of the CV
+     * @param cvName the name of the CV, treated case-insensitively
      * @param complainIfNotFound whether to log a warning if the term is not found. Only
      *          pass <code>false</code> here if you're genuinely agnostic about whether the
      *          term exists
@@ -161,9 +161,11 @@ public class CvDao extends BaseDao {
     public CvTerm getCvTermByNameAndCvName(String cvTermName, String cvName, boolean complainIfNotFound) {
         Session session = getSession();
 
-        synchronized (cvTermIdsByCvAndName) {
-            if (cvTermIdsByCvAndName.containsKey(cvName, cvTermName)) {
-                CvTerm cvTerm = (CvTerm) session.get(CvTerm.class, cvTermIdsByCvAndName.get(cvName, cvTermName));
+        String lcTermName = cvTermName.toLowerCase();
+
+        synchronized (cvTermIdsByCvAndLcName) {
+            if (cvTermIdsByCvAndLcName.containsKey(cvName, lcTermName)) {
+                CvTerm cvTerm = (CvTerm) session.get(CvTerm.class, cvTermIdsByCvAndLcName.get(cvName, lcTermName));
                 if (cvTerm != null) {
                     /*
                      * It is possible for the ID to be in the cache but the CvTerm not to exist
@@ -178,8 +180,8 @@ public class CvDao extends BaseDao {
 
         @SuppressWarnings("unchecked")
         List<CvTerm> cvTermList = session.createQuery(
-            "from CvTerm cvTerm where cvTerm.name = :cvTermName and cvTerm.cv.name = :cvName")
-            .setString("cvTermName", cvTermName).setString("cvName", cvName).list();
+            "from CvTerm cvTerm where lower(cvTerm.name) = :lcTermName and cvTerm.cv.name = :cvName")
+            .setString("lcTermName", lcTermName).setString("cvName", cvName).list();
         if (cvTermList == null || cvTermList.size() == 0) {
             if (complainIfNotFound) {
                 logger.warn("No cvterms found for '" + cvTermName + "' in '" + cvName + "'");
@@ -193,7 +195,7 @@ public class CvDao extends BaseDao {
         }
 
         CvTerm cvTerm = cvTermList.get(0);
-        cvTermIdsByCvAndName.put(cvName, cvTermName, cvTerm.getCvTermId());
+        cvTermIdsByCvAndLcName.put(cvName, lcTermName, cvTerm.getCvTermId());
         return cvTerm;
     }
 
@@ -273,7 +275,8 @@ public class CvDao extends BaseDao {
      * Take a cv and cvterm and look it up, or create it if it doesn't exist
      *
      * @param cv name of the cv, which must already exist
-     * @param cvTerm the cvTerm to find/create
+     * @param cvTerm the cvTerm to find/create; case-insensitive, but the supplied
+     *                  case will be used if the term is created
      * @return the created or looked-up CvTerm
      */
     public CvTerm findOrCreateCvTermByNameAndCvName(String cvTermName, String cvName) {
