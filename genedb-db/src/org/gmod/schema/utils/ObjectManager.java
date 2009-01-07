@@ -132,7 +132,12 @@ public class ObjectManager extends EmptyInterceptor {
         }
 
         logger.trace("CV term not found locally. Falling back to CvDao");
-        int cvTermId = cvDao.getCvTermByNameAndCvName(cvTermName, cvName).getCvTermId();
+        CvTerm cvTerm = cvDao.getCvTermByNameAndCvName(cvTermName, cvName);
+        if (cvTerm == null) {
+            throw new IllegalArgumentException(String.format("CV term '%s:%s' not found in database",
+                cvName, cvTermName));
+        }
+        int cvTermId = cvTerm.getCvTermId();
         cvTermIdsByCvAndName.put(cvName, cvTermName, cvTermId);
         return cvTermId;
     }
