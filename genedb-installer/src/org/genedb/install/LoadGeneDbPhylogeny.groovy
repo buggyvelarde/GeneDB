@@ -1082,6 +1082,32 @@ class LoadGeneDbPhylogeny {
                 </organism>
             </node>
         </node>
+        <node name="Parasite vectors">
+            <organism name="Gmorsitans">
+                <property name="taxonId" value="7394" />
+                <property name="fullName" value="Glossina morsitans" />
+                <property name="nickname" value="Gmorsitans" />
+                <property name="translationTable" value="1"/>
+                <property name="mitochondrialTranslationTable" value="9"/>
+                <property name="htmlFullName" value="&lt;i&gt;Glossina morsitans&lt;/i&gt;"/>
+                <property name="htmlShortName" value="&lt;i&gt;G. morsitans&lt;/i&gt;"/>
+                <property name="shortName" value="G. morsitans" />
+                <property name="curatorEmail" value="mb4"/>
+                <property name="curatorName" value="Matt Berriman" />
+            </organism>
+            <organism name="Llongipalpis">
+                <property name="taxonId" value="7200" />
+                <property name="fullName" value="Lutzomyia longipalpis" />
+                <property name="nickname" value="Llongipalpis" />
+                <property name="translationTable" value="1"/>
+                <property name="mitochondrialTranslationTable" value="9"/>
+                <property name="htmlFullName" value="&lt;i&gt;Lutzomyia longipalpis&lt;/i&gt;"/>
+                <property name="htmlShortName" value="&lt;i&gt;L. longipalpis&lt;/i&gt;"/>
+                <property name="shortName" value="L. longipalpis" />
+                <property name="curatorEmail" value="mb4"/>
+                <property name="curatorName" value="Matt Berriman" />
+            </organism>
+        </node>
     </node>
 </org-hierarchy>
 ''';
