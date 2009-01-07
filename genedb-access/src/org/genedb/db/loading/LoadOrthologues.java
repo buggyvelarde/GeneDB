@@ -96,7 +96,7 @@ public class LoadOrthologues extends FileProcessor {
     private LoadOrthologues() {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
 
-        this.loader = (OrthologuesLoader) applicationContext.getBean("orthologuesLoader", OrthologuesLoader.class);
+        this.loader = applicationContext.getBean("orthologuesLoader", OrthologuesLoader.class);
     }
 
     private void setAnalysisProperties(String analysisProgram, String analysisProgramVersion, String analysisAlgorithm) {

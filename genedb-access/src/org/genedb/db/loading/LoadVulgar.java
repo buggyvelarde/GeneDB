@@ -38,7 +38,7 @@ public class LoadVulgar extends FileProcessor {
     private LoadVulgar(String organismCommonName) {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
 
-        this.loader = (VulgarLoader) applicationContext.getBean("vulgarLoader", VulgarLoader.class);
+        this.loader = applicationContext.getBean("vulgarLoader", VulgarLoader.class);
         loader.setOrganismCommonName(organismCommonName);
     }
 

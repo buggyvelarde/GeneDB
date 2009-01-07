@@ -85,7 +85,7 @@ public class LoadFasta extends FileProcessor {
 
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
 
-        this.loader = (FastaLoader) applicationContext.getBean("fastaLoader", FastaLoader.class);
+        this.loader = applicationContext.getBean("fastaLoader", FastaLoader.class);
         loader.setOrganismCommonName(organismCommonName);
         loader.setOverwriteExisting(overwriteExisting);
 

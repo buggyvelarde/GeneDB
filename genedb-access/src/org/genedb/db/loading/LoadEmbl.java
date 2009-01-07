@@ -110,7 +110,7 @@ public class LoadEmbl extends FileProcessor {
 
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
 
-        this.loader = (EmblLoader) applicationContext.getBean("emblLoader", EmblLoader.class);
+        this.loader = applicationContext.getBean("emblLoader", EmblLoader.class);
         loader.setOrganismCommonName(organismCommonName);
         loader.setOverwriteExisting(overwriteExisting);
         loader.setSloppyControlledCuration(sloppyControlledCuration);
