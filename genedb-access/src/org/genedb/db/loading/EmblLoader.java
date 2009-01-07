@@ -314,6 +314,7 @@ class EmblLoader {
         } else if (overwriteExisting == OverwriteExisting.MERGE) {
             throw new TopLevelFeatureException(String.format("Cannot MERGE because feature '%s' does not exist", uniqueName));
         }
+        session.flush();
         return null;
     }
 
@@ -324,6 +325,7 @@ class EmblLoader {
     private NavigableMap<Integer,Contig> contigsByStart = new TreeMap<Integer,Contig>();
     private Set<String> repeatRegionUniqueNames = new HashSet<String>();
     private Set<String> repeatUnitUniqueNames = new HashSet<String>();
+    private Map<String,Integer> syntheticNcRNAIndexByType = new HashMap<String,Integer>();
 
     /**
      * We want to create a single Analysis object/row for each distinct analysis program
@@ -332,7 +334,8 @@ class EmblLoader {
     private Map<String,Analysis> similarityAnalysisByProgram = new HashMap<String,Analysis>();
 
     /**
-     * Reset all our local state: necessary if the user retries after an error.
+     * Reset all our local state: necessary if the user retries after an error,
+     * or if the same EmblLoader object is used more than once (to load more than one file).
      *
      * @param topLevelFeature
      */
@@ -347,6 +350,7 @@ class EmblLoader {
         this.similarityAnalysisByProgram.clear();
         this.repeatRegionUniqueNames.clear();
         this.repeatUnitUniqueNames.clear();
+        this.syntheticNcRNAIndexByType.clear();
     }
 
     private void loadContigsAndGaps(EmblLocation.Join locations) throws DataError {
@@ -828,13 +832,14 @@ class EmblLoader {
         private void processNormalisedCvTermQualifier(String qualifierName, String cvName,
                 boolean createTerms, Set<String> terms, String term, String normalisedTerm)
                 throws DataError {
-            if (terms.contains(normalisedTerm)) {
+            String lcNormalisedTerm = normalisedTerm.toLowerCase();
+            if (terms.contains(lcNormalisedTerm)) {
                 logger.warn(
                     String.format("The qualifier /%s=\"%s\" appears more than once. Ignoring subsequent copies.",
                         qualifierName, term));
                 return;
             } else {
-                terms.add(normalisedTerm);
+                terms.add(lcNormalisedTerm);
             }
 
             FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cvName, normalisedTerm, createTerms);
@@ -1255,7 +1260,7 @@ class EmblLoader {
             checkForPreviousSystematicIdEqualToSystematicId();
 
             addTranscriptSynonymsFromQualifier("synonym", "synonym", true);
-            addTranscriptSynonymsFromQualifier("previous_systematic_id", "systematic_id", false);
+            addTranscriptSynonymsFromQualifier("previous_systematic_id", "previous_systematic_id", false);
 
             int commentRank = processPropertyQualifier("note",     "feature_property", "comment");
             for (String name: qualifierProperties) {
@@ -1474,7 +1479,6 @@ class EmblLoader {
 
 
     /* Loader for non-coding RNA features */
-    private Map<String,Integer> syntheticNcRNAIndexByType = new HashMap<String,Integer>();
     private class NcRNALoader extends GeneLoader {
         private Class<? extends NcRNA> transcriptClass;
         private String type;
