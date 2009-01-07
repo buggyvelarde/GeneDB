@@ -13,11 +13,15 @@
   <property file="property-file.${load}" />
   <property name="lib-dir" value="${imported.basedir.libs}/lib/"/>
 
+    <property name="genedb-access.jar"
+      value="${imported.basedir.access}/${dist.dir}/genedb-access.jar"/>
+
   <path id="access-classpath">
       <fileset dir="${imported.basedir.access}/lib">
         <include name="*.jar"/>
       </fileset>
       <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
+      <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
       <pathelement location="${genedb-util.jar}"/>
       <pathelement location="${genedb-db.jar}"/>
   </path>
@@ -76,11 +80,12 @@
 
     <path id="exec-classpath">
         <path refid="access-classpath" />
+        <pathelement location="${genedb-access.jar}"/>
     </path>
 
     <path id="test-classpath">
         <pathelement location="${imported.basedir.access}/ant-build/test-classes"/>
-        <pathelement location="${imported.basedir.access}/ant-build/dist/genedb-access.jar"/>
+        <pathelement location="${genedb-access.jar}"/>
         <path refid="exec-classpath"/>
     </path>
 
