@@ -141,7 +141,7 @@ public abstract class FileProcessor {
             logger.error("Data integrity violation", e);
 
             /*
-             * The cause of the Spring exception is a Hibernate exception,
+             * The cause of a Spring exception is a Hibernate exception,
              * and the cause of *that* is the underlying JDBC exception.
              *
              * On the other hand, we might be using JDBC directly (e.g. VulgarLoader),
