@@ -1,5 +1,7 @@
 package org.genedb.db.loading;
 
+import static org.junit.Assert.assertEquals;
+
 import org.genedb.db.loading.FeatureTester.GeneTester;
 import org.genedb.db.loading.FeatureTester.PolypeptideTester;
 import org.genedb.db.loading.FeatureTester.TranscriptTester;
@@ -12,8 +14,7 @@ import org.gmod.schema.feature.RepeatRegion;
 import org.gmod.schema.feature.RepeatUnit;
 import org.gmod.schema.mapped.CvTerm;
 
-import static org.junit.Assert.assertEquals;
-
+import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,6 +32,8 @@ import java.util.Collection;
  *
  */
 public class EmblLoaderSyntheticTest {
+    private static final Logger logger = Logger.getLogger(EmblLoaderSyntheticTest.class);
+
     private static EmblLoaderTestHelper helper;
     private static FeatureTester tester;
 
@@ -268,7 +271,7 @@ public class EmblLoaderSyntheticTest {
             .properties("genedb_misc", "colour", "12");
     }
 
-    //@Test
+    @Test
     public void productCaseSenstivity() {
         Collection<CvTerm> s3_products = tester.geneTester("s3")
             .transcript("s3:mRNA").polypeptide("s3:pep")
@@ -277,5 +280,11 @@ public class EmblLoaderSyntheticTest {
             .transcript("s4:mRNA").polypeptide("s4:pep")
             .getTerms("genedb_products");
         assertEquals(s3_products, s4_products);
+    }
+
+    @Test
+    public void reload() throws IOException, ParsingException {
+        logger.info("Reloading");
+        helper.reload();
     }
 }

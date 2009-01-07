@@ -1,6 +1,7 @@
 package org.genedb.db.loading;
 
 import org.genedb.db.dao.OrganismDao;
+import org.genedb.db.loading.EmblLoader.OverwriteExisting;
 
 import org.gmod.schema.mapped.Organism;
 
@@ -38,6 +39,7 @@ public class EmblLoaderTestHelper {
     private OrganismDao organismDao;
 
     private Session session;
+    private String filename;
 
     private EmblLoaderTestHelper() {
         // empty
@@ -116,6 +118,21 @@ public class EmblLoaderTestHelper {
 
         loader.setReportUnusedQualifiers(true);
         loader.setOrganismCommonName(organismCommonName);
+        loadFile(filename);
+        this.filename = filename;
+    }
+
+    /**
+     * Reload the same file as before, with the <tt>overwriteExisting</tt> flag set.
+     *
+     * @throws ParsingException
+     * @throws IOException
+     */
+    public void reload() throws IOException, ParsingException {
+        if (this.filename == null) {
+            throw new IllegalStateException("Filename not set");
+        }
+        loader.setOverwriteExisting(OverwriteExisting.YES);
         loadFile(filename);
     }
 
