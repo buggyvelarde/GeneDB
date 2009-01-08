@@ -11,6 +11,7 @@ import org.gmod.schema.mapped.FeatureDbXRef;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,6 +59,7 @@ public class InterProLoader extends Loader {
         }
     }
 
+    @Transactional
     private void loadInterProFile(InterProFile interProFile, Session session) {
         Transaction transaction = session.getTransaction();
 
