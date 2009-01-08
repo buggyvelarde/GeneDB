@@ -19,7 +19,7 @@
         <property name="location" value="classpath:project.properties" />
     </bean>
 
-    <bean id="cvDao" class="org.genedb.db.dao.CvDao" init-method="afterPropertiesSet">
+    <bean id="cvDao" class="org.genedb.db.dao.CvDao">
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="generalDao" ref="generalDao" />
     </bean>
