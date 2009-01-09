@@ -114,6 +114,6 @@ public class EmblFileTest {
                 assertEquals(0, numberOfNotes);
             }
         }
-        assertEquals(15, numberOfFeatures);
+        assertEquals(15, totalNumberOfNotes);
     }
 }
