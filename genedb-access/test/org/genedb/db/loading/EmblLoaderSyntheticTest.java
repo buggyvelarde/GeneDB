@@ -102,6 +102,14 @@ public class EmblLoaderSyntheticTest {
     }
 
     @Test
+    public void s1EC_number() {
+        tester.geneTester("s1")
+            .transcript("s1:pseudogenic_transcript")
+            .polypeptide("s1:pseudogenic_transcript:pep")
+            .property("genedb_misc", "EC_number", "1.3.99.1");
+    }
+
+    @Test
     public void s2Names() {
         tester.geneTester("s1").name(null);
         tester.geneTester("s2").name("s2_name");
@@ -229,6 +237,22 @@ public class EmblLoaderSyntheticTest {
             .analysisAlgorithm("ComparativeBlastX_uni");
     }
 
+    @Test
+    public void Smp_124050_controlled_curation() {
+        PolypeptideTester Smp_124050_4 = tester.geneTester("Smp_124050")
+        .transcript("Smp_124050.4:mRNA").polypeptide("Smp_124050.4:pep");
+
+        Smp_124050_4.cvterms("CC_genedb_controlledcuration",
+            "expression in 7 week adult");
+    }
+
+    @Test
+    public void Smp_124050_literature() {
+        PolypeptideTester Smp_124050_4 = tester.geneTester("Smp_124050")
+            .transcript("Smp_124050.4:mRNA").polypeptide("Smp_124050.4:pep");
+
+        Smp_124050_4.pubs("PMID:23456");
+    }
 
     @Test
     public void repeats() {
@@ -240,7 +264,8 @@ public class EmblLoaderSyntheticTest {
             .name(null)
             .loc(0, 0, 93)
             .phaseIsNull()
-            .property("feature_property", "comment", "/rpt_family=telomere");
+            .property("feature_property", "comment", "/rpt_family=telomere")
+            .property("genedb_misc", "EMBL_qualifier", "/rpt_unit=TTAGGG");
 
         tester.featureTester("super1:repeat_unit:3-9")
             .name(null)
@@ -268,7 +293,8 @@ public class EmblLoaderSyntheticTest {
 
         tRNA1.transcript("super1_tRNA1:tRNA")
             .properties("feature_property", "comment", "/label=tRNA label")
-            .properties("genedb_misc", "colour", "12");
+            .properties("genedb_misc", "colour", "12")
+            .property("genedb_misc", "EMBL_qualifier", "/invented_qualifier=\"value\"");
     }
 
     @Test
@@ -282,7 +308,7 @@ public class EmblLoaderSyntheticTest {
         assertEquals(s3_products, s4_products);
     }
 
-    @Test
+    //@Test
     public void reload() throws IOException, ParsingException {
         logger.info("Reloading");
         helper.reload();

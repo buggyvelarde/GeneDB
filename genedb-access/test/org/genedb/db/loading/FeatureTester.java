@@ -25,6 +25,7 @@ import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureDbXRef;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.Pub;
 import org.gmod.schema.mapped.Synonym;
 
 import org.apache.log4j.Logger;
@@ -233,7 +234,21 @@ public class FeatureTester {
             }
             return foundTerms;
         }
+        public T pubs(String... pubUniqueNames) {
+            Set<String> expectedPubUniqueNames = new HashSet<String>();
+            Collections.addAll(expectedPubUniqueNames, pubUniqueNames);
 
+            assertEquals(expectedPubUniqueNames, getPubUniqueNames());
+
+            return ourClass.cast(this);
+        }
+        private Set<String> getPubUniqueNames() {
+            Set<String> pubUniqueNames = new HashSet<String>();
+            for (Pub pub: feature.getPubs()) {
+                pubUniqueNames.add(pub.getUniqueName());
+            }
+            return pubUniqueNames;
+        }
     }
 
     class GeneTester extends AbstractTester<GeneTester> {
@@ -445,7 +460,7 @@ public class FeatureTester {
                 }
                 return this; // Expected it to be null
             }
-            assertEquals(ungappedId.doubleValue(), Double.parseDouble(actualUngappedId));
+            assertEquals(ungappedId.doubleValue(), Double.parseDouble(actualUngappedId), 0.0001);
             return this;
         }
         public SimilarityTester overlap(Integer overlap) {
