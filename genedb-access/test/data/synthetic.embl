@@ -68,6 +68,7 @@ FT                   /note="group2 SmVAL"
 FT                   /db_xref="EMBL:AY953433"
 FT                   /literature="PMID:23456"
 FT                   /literature="34567"
+FT                   /private="a private note"
 FT                   /synonym="Sm-VAL 6"
 FT                   /primary_name="SmVAL6"
 FT                   /controlled_curation="term=expression in 7 week
