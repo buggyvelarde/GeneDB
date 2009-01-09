@@ -14,7 +14,6 @@ import org.gmod.schema.feature.RepeatRegion;
 import org.gmod.schema.feature.RepeatUnit;
 import org.gmod.schema.mapped.CvTerm;
 
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,10 +31,10 @@ import java.util.Collection;
  *
  */
 public class EmblLoaderSyntheticTest {
-    private static final Logger logger = Logger.getLogger(EmblLoaderSyntheticTest.class);
+    //private static final Logger logger = Logger.getLogger(EmblLoaderSyntheticTest.class);
 
-    private static EmblLoaderTestHelper helper;
-    private static FeatureTester tester;
+    protected static EmblLoaderTestHelper helper;
+    protected static FeatureTester tester;
 
     private String repeat(char c, int n) {
         char[] array = new char[n];
@@ -251,7 +250,15 @@ public class EmblLoaderSyntheticTest {
         PolypeptideTester Smp_124050_4 = tester.geneTester("Smp_124050")
             .transcript("Smp_124050.4:mRNA").polypeptide("Smp_124050.4:pep");
 
-        Smp_124050_4.pubs("PMID:23456");
+        Smp_124050_4.pubs("PMID:23456", "PMID:34567");
+    }
+
+    @Test
+    public void Smp_124050_private() {
+        PolypeptideTester Smp_124050_4 = tester.geneTester("Smp_124050")
+            .transcript("Smp_124050.4:mRNA").polypeptide("Smp_124050.4:pep");
+
+        Smp_124050_4.property("genedb_misc", "private", "a private note");
     }
 
     @Test
@@ -298,7 +305,7 @@ public class EmblLoaderSyntheticTest {
     }
 
     @Test
-    public void productCaseSenstivity() {
+    public void productCaseSensitivity() {
         Collection<CvTerm> s3_products = tester.geneTester("s3")
             .transcript("s3:mRNA").polypeptide("s3:pep")
             .getTerms("genedb_products");
@@ -306,11 +313,5 @@ public class EmblLoaderSyntheticTest {
             .transcript("s4:mRNA").polypeptide("s4:pep")
             .getTerms("genedb_products");
         assertEquals(s3_products, s4_products);
-    }
-
-    //@Test
-    public void reload() throws IOException, ParsingException {
-        logger.info("Reloading");
-        helper.reload();
     }
 }
