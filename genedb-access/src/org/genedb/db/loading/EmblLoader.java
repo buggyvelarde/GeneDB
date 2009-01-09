@@ -1465,7 +1465,7 @@ class EmblLoader {
             "blast_file", "blastn_file", "blastp+go_file", "blastp_file",
             "blastx_file", "fasta_file", "fastx_file", "tblastn_file",
             "tblastx_file", "clustalx_file", "sigcleave_file", "pepstats_file",
-            "EC_number");
+            "EC_number", "private");
 
         Collections.addAll(uniqueQualifiers, "colour", "status");
 
