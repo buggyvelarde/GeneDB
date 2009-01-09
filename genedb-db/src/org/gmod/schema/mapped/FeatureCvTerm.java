@@ -7,6 +7,7 @@ import org.genedb.db.dao.CvDao;
 import org.gmod.schema.utils.Rankable;
 import org.gmod.schema.utils.propinterface.PropertyI;
 
+import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,8 @@ import javax.persistence.Transient;
 @Filter(name="excludeObsoleteFeatures", condition="not feature2_.is_obsolete")
 public class FeatureCvTerm implements Serializable, Rankable, PropertyI, HasPubsAndDbXRefs {
 
+    private static final Logger logger = Logger.getLogger(FeatureCvTerm.class);
+
     // Fields
 
     @Autowired
@@ -82,17 +85,17 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI, HasPubs
     private int rank;
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
-    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @OrderBy("rank")
-    private List<FeatureCvTermProp> featureCvTermProps = new ArrayList<FeatureCvTermProp>(0);
+    private List<FeatureCvTermProp> featureCvTermProps = new ArrayList<FeatureCvTermProp>();
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
-    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    private Collection<FeatureCvTermPub> featureCvTermPubs = new HashSet<FeatureCvTermPub>(0);
+    @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    private Collection<FeatureCvTermPub> featureCvTermPubs = new HashSet<FeatureCvTermPub>();
 
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "featureCvTerm")
-    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>(0);
+    @Cascade({org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    private Collection<FeatureCvTermDbXRef> featureCvTermDbXRefs = new HashSet<FeatureCvTermDbXRef>();
 
     // Constructors
 
@@ -203,6 +206,9 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI, HasPubs
     }
 
     public void addFeatureCvTermPub(FeatureCvTermPub featureCvTermPub) {
+        logger.trace(String.format("Adding FeatureCvTermPub (%s) to FeatureCvTerm",
+            featureCvTermPub, this));
+
         synchronized(featureCvTermPubsLock) {
             featureCvTermPub.setFeatureCvTerm(this);
             this.featureCvTermPubs.add(featureCvTermPub);
@@ -259,6 +265,12 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI, HasPubs
 
     public int getRank() {
         return rank;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("FeatureCvTerm(ID=%d, feature=%s, cvTerm=%s, rank=%d, not=%b)",
+            getFeatureCvTermId(), getFeature(), getCvTerm(), getRank(), isNot());
     }
 
 }
