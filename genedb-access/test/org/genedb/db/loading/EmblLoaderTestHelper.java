@@ -132,6 +132,7 @@ public class EmblLoaderTestHelper {
         if (this.filename == null) {
             throw new IllegalStateException("Filename not set");
         }
+        logger.info("Reloading file: " + filename);
         loader.setOverwriteExisting(OverwriteExisting.YES);
         loadFile(filename);
     }
