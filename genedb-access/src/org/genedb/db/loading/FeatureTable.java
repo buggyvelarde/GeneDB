@@ -35,15 +35,17 @@ class FeatureTable extends EmblFile.Section {
          * Get the values of the named qualifier. If the qualifier does not appear at all,
          * an empty list is returned. If it appears multiple times, the values are in order
          * of appearance.
-         * @param key the name of the qualifier
+         * @param keys the name(s) of the qualifier(s)
          * @return a list of values
          */
-        public List<String> getQualifierValues(String key) {
+        public List<String> getQualifierValues(String... keys) {
             List<String> ret = new ArrayList<String>();
             for (Qualifier qualifier: qualifiers) {
-                if (qualifier.name.equals(key)) {
-                    qualifier.used = true;
-                    ret.add(qualifier.value);
+                for (String key: keys) {
+                    if (qualifier.name.equals(key)) {
+                        qualifier.used = true;
+                        ret.add(qualifier.value);
+                    }
                 }
             }
             return ret;
@@ -91,6 +93,16 @@ class FeatureTable extends EmblFile.Section {
         }
 
         public Iterable<String> getUnusedQualifiers() {
+            Set<String> unusedQualifiers = new HashSet<String>();
+            for (Qualifier qualifier: qualifiers) {
+                if (!qualifier.used) {
+                    unusedQualifiers.add(qualifier.toString());
+                }
+            }
+            return unusedQualifiers;
+        }
+
+        public Iterable<String> getUnusedQualifierNames() {
             Set<String> unusedQualifiers = new HashSet<String>();
             for (Qualifier qualifier: qualifiers) {
                 if (!qualifier.used) {

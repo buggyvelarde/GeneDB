@@ -74,12 +74,11 @@ public class LoadEmbl extends FileProcessor {
         String topLevelFeatureType = getRequiredProperty("load.topLevel");
         boolean sloppyControlledCuration = hasProperty("load.sloppyControlledCuration");
         boolean quickAndDirty = hasProperty("load.quickAndDirty");
-        boolean reportUnusedQualifiers = hasProperty("load.reportUnusedQualifiers");
 
         logger.info(String.format("Options: organismCommonName=%s, inputDirectory=%s, fileNamePattern=%s," +
-                   "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%s, reportUnusedQualifiers=%s",
+                   "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%s",
                    organismCommonName, inputDirectory, fileNamePattern, overwriteExisting,
-                   topLevelFeatureType, sloppyControlledCuration, reportUnusedQualifiers));
+                   topLevelFeatureType, sloppyControlledCuration));
 
         if (quickAndDirty) {
             ((AppenderSkeleton) Logger.getRootLogger().getAppender("stdout")).setThreshold(Level.WARN);
@@ -89,7 +88,6 @@ public class LoadEmbl extends FileProcessor {
         if (quickAndDirty) {
             loadEmbl.quickAndDirty();
         }
-        loadEmbl.setReportUnusedQualifiers(reportUnusedQualifiers);
 
         loadEmbl.processFileOrDirectory(inputDirectory, fileNamePattern);
     }
@@ -144,9 +142,5 @@ public class LoadEmbl extends FileProcessor {
         alwaysSkip();
         loader.setContinueOnError(true);
         continueOnError = true;
-    }
-
-    private void setReportUnusedQualifiers(boolean reportUnusedQualifiers) {
-        loader.setReportUnusedQualifiers(reportUnusedQualifiers);
     }
 }

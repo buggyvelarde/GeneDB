@@ -106,7 +106,7 @@ class EmblLoader {
     private OverwriteExisting overwriteExisting = OverwriteExisting.NO;
 
     private boolean sloppyControlledCuration = false;
-    private boolean reportUnusedQualifiers = false;
+    private boolean reportUnusedQualifiers = true;
 
     /**
      * Set the organism into which to load data.
@@ -183,7 +183,8 @@ class EmblLoader {
     /**
      * Whether we should log a list of unused qualifiers once the file has been loaded.
      * If set to true, this list is logged as a series of WARN messages, one for each
-     * type of feature encountered in the file that has unused qualifiers.
+     * type of feature encountered in the file that has unused qualifiers. The default
+     * value is <code>true</code>.
      *
      * @param reportUnusedQualifiers
      */
@@ -442,29 +443,30 @@ class EmblLoader {
             throw new DataError("Location has fmax before fmin");
         }
 
+        Feature focalFeature = null;
         if (featureType.equals("repeat_region")) {
-            loadRepeatRegion(feature);
+            focalFeature = loadRepeatRegion(feature);
         }
         else if (featureType.equals("repeat_unit")) {
-            loadRepeatUnit(feature);
+            focalFeature = loadRepeatUnit(feature);
         }
         else if (featureType.equals("CDS")) {
-            loadCDS((FeatureTable.CDSFeature) feature);
+            focalFeature = loadCDS((FeatureTable.CDSFeature) feature);
         }
         else if (featureType.equals("tRNA")) {
-            loadTRNA(feature);
+            focalFeature = loadTRNA(feature);
         }
         else if (featureType.equals("rRNA")) {
-            loadRRNA(feature);
+            focalFeature = loadRRNA(feature);
         }
         else if (featureType.equals("snRNA")) {
-            loadSnRNA(feature);
+            focalFeature = loadSnRNA(feature);
         }
         else if (featureType.equals("snoRNA")) {
-            loadSnoRNA(feature);
+            focalFeature = loadSnoRNA(feature);
         }
         else if (featureType.equals("misc_RNA")) {
-            loadNcRNA(feature);
+            focalFeature = loadNcRNA(feature);
         }
         else if (featureType.equals("3'UTR") || featureType.equals("5'UTR")) {
             utrs.add(feature);
@@ -476,6 +478,19 @@ class EmblLoader {
         else {
             logger.warn(String.format("Ignoring '%s' feature on line %d", featureType, feature.lineNumber));
         }
+
+        if (focalFeature != null) {
+            archiveUnusedQualifiers(feature, focalFeature);
+        }
+    }
+
+    private void archiveUnusedQualifiers(FeatureTable.Feature feature, Feature focalFeature) {
+        int rank = 0;
+        for (String unusedQualifier: feature.getUnusedQualifiers()) {
+            logger.trace(String.format("Archiving qualifier on '%s': %s",
+                focalFeature.getUniqueName(), unusedQualifier));
+            focalFeature.addFeatureProp(unusedQualifier, "genedb_misc", "EMBL_qualifier", rank++);
+        }
     }
 
     private void reportUnusedQualifiers(FeatureTable featureTable) {
@@ -483,7 +498,7 @@ class EmblLoader {
 
         // Collect unused qualifiers
         for (FeatureTable.Feature feature: featureTable.getFeatures()) {
-            for (String unusedQualifier: feature.getUnusedQualifiers()) {
+            for (String unusedQualifier: feature.getUnusedQualifierNames()) {
                 if (!unusedQualifiersByFeatureType.containsKey(feature.type)) {
                     unusedQualifiersByFeatureType.put(feature.type, new HashSet<String>());
                 }
@@ -505,7 +520,7 @@ class EmblLoader {
         }
     }
 
-    private void loadRepeatRegion(FeatureTable.Feature repeatRegionFeature) throws DataError {
+    private Feature loadRepeatRegion(FeatureTable.Feature repeatRegionFeature) throws DataError {
         String repeatRegionName = repeatRegionFeature.getQualifierValue("FEAT_NAME");
         EmblLocation repeatRegionLocation = repeatRegionFeature.location;
         int fmin = repeatRegionLocation.getFmin();
@@ -531,7 +546,7 @@ class EmblLoader {
             logger.warn(String.format("The repeat region '%s' already exists." +
                     "Ignoring second (or subsequent) occurence at line %d",
                 repeatRegionUniqueName, repeatRegionFeature.lineNumber));
-            return;
+            return null;
         }
         repeatRegionUniqueNames.add(repeatRegionUniqueName);
 
@@ -558,11 +573,13 @@ class EmblLoader {
 
         session.persist(repeatRegion);
         locate(repeatRegion, fmin, fmax, (short)0, null);
+
+        return repeatRegion;
     }
 
     // TODO loadRepeatUnit is very similar to loadRepeatRegion: unify?
 
-    private void loadRepeatUnit(FeatureTable.Feature repeatUnitFeature) throws DataError {
+    private Feature loadRepeatUnit(FeatureTable.Feature repeatUnitFeature) throws DataError {
         EmblLocation repeatUnitLocation = repeatUnitFeature.location;
         int fmin = repeatUnitLocation.getFmin();
         int fmax = repeatUnitLocation.getFmax();
@@ -572,7 +589,7 @@ class EmblLoader {
             logger.warn(String.format("The repeat region '%s' already exists." +
                     "Ignoring second (or subsequent) occurence at line %d",
                 repeatUnitUniqueName, repeatUnitFeature.lineNumber));
-            return;
+            return null;
         }
         repeatUnitUniqueNames.add(repeatUnitUniqueName);
 
@@ -596,7 +613,9 @@ class EmblLoader {
 
         session.persist(repeatUnit);
         locate(repeatUnit, fmin, fmax, (short)0, null);
-}
+
+        return repeatUnit;
+    }
 
     // Can't define static fields in inner classes, grr.
     private static final Set<String> goQualifiers = new HashSet<String>();
@@ -654,7 +673,7 @@ class EmblLoader {
         /**
          * The main entry point to a gene loader.
          */
-        public void load() throws DataError {
+        public Feature load() throws DataError {
             if (geneUniqueName == null) {
                 throw new RuntimeException("Cannot load a gene with no uniqueName");
             }
@@ -662,6 +681,8 @@ class EmblLoader {
                 throw new RuntimeException("Cannot load a transcript with no uniqueName");
             }
             loadTranscript(loadOrFetchGene());
+
+            return focalFeature;
         }
 
         private AbstractGene loadOrFetchGene() {
@@ -1186,6 +1207,8 @@ class EmblLoader {
             String term = valuesByKey.get("term");
             String cv   = valuesByKey.containsKey("cv") ? valuesByKey.get("cv") : "CC_genedb_controlledcuration";
 
+            logger.trace(String.format("/controlled_curation: adding term '%s:%s' to %s",
+                cv, term, focalFeature));
             FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cv, term);
 
             featureCvTerm.addPropIfNotNull("feature_property", "date",   valuesByKey.get("date"));
@@ -1196,6 +1219,8 @@ class EmblLoader {
             if (valuesByKey.containsKey("db_xref")) {
                 addDbXRefs(featureCvTerm, valuesByKey.get("db_xref"));
             }
+
+            session.persist(featureCvTerm);
         }
 
         private Pattern dbxrefPattern = Pattern.compile("([^:]+):(.*)");
@@ -1230,12 +1255,34 @@ class EmblLoader {
             DbXRef dbXRef = objectManager.getDbXRef(dbName, accession);
             if (dbName.equals("PMID")) {
                 // PMID is a special case; these are stored as FeaturePubs
-                Pub pub = objectManager.getPub(String.format("PMID:%s", accession), "unfetched");
-                session.persist(pub.addDbXRef(dbXRef, true));
-                target.addPub(pub);
+                addPub(target, accession, dbXRef);
             }
             else {
                 target.addDbXRef(dbXRef);
+            }
+        }
+
+        private void addPub(HasPubsAndDbXRefs target, String accession, DbXRef dbXRef) {
+            logger.trace(String.format("Adding publication id '%s' to %s",
+                accession, target.toString()));
+            Pub pub = objectManager.getPub(String.format("PMID:%s", accession), "unfetched");
+            pub.addDbXRef(dbXRef, true);
+            target.addPub(pub);
+        }
+
+        private void addPub(String accession) {
+            DbXRef dbXRef = objectManager.getDbXRef("PMID", accession);
+            addPub(focalFeature, accession, dbXRef);
+        }
+
+        private Pattern literaturePattern = Pattern.compile("(?:PMID:)?\\s*(\\d+)");
+        protected void processLiterature() throws DataError {
+            for (String pmid: feature.getQualifierValues("literature", "citation")) {
+                Matcher matcher = literaturePattern.matcher(pmid);
+                if (!matcher.matches()) {
+                    throw new DataError("Failed to parse literature/citation qualifier: " + pmid);
+                }
+                addPub(matcher.group(1));
             }
         }
 
@@ -1296,6 +1343,7 @@ class EmblLoader {
             processGO();
             processSimilarityQualifiers();
             processCuration();
+            processLiterature();
         }
 
         protected void addColourToExons() throws DataError {
@@ -1343,14 +1391,15 @@ class EmblLoader {
 
 
     /**
-     * Parse a property value. What this means will depend on the specific normalizer used.
+     * Parse a property value. What this means will depend on the specific parser used.
+     * The parser may return multiple values, e.g. for semicolon-separated product terms.
      */
     private static interface TermParser {
         public Iterable<String> parse(String term) throws DataError;
     }
 
     /**
-     * Normalise a property value. What this means will depend on the specific normalizer used.
+     * Normalise a property value. What this means will depend on the specific normaliser used.
      * A TermNormaliser is a special sort of TermParser for the common case where the result
      * is a single string.
      */
@@ -1473,8 +1522,8 @@ class EmblLoader {
         }
     }
 
-    private void loadCDS(FeatureTable.CDSFeature cdsFeature) throws DataError {
-        new CDSLoader(cdsFeature).load();
+    private Feature loadCDS(FeatureTable.CDSFeature cdsFeature) throws DataError {
+        return new CDSLoader(cdsFeature).load();
     }
 
 
@@ -1539,25 +1588,25 @@ class EmblLoader {
             return transcriptClass;
         }
     }
-    private void loadNcRNA(FeatureTable.Feature feature) throws DataError {
-        new NcRNALoader(NcRNA.class, "ncRNA", feature).load();
+    private Feature loadNcRNA(FeatureTable.Feature feature) throws DataError {
+        return new NcRNALoader(NcRNA.class, "ncRNA", feature).load();
     }
-    private void loadRRNA(FeatureTable.Feature feature) throws DataError {
-        new NcRNALoader(RRNA.class, "rRNA", feature).load();
+    private Feature loadRRNA(FeatureTable.Feature feature) throws DataError {
+        return new NcRNALoader(RRNA.class, "rRNA", feature).load();
     }
-    private void loadTRNA(FeatureTable.Feature feature) throws DataError {
-        new NcRNALoader(TRNA.class, "tRNA", feature).load();
+    private Feature loadTRNA(FeatureTable.Feature feature) throws DataError {
+        return new NcRNALoader(TRNA.class, "tRNA", feature).load();
     }
-    private void loadSnRNA(FeatureTable.Feature feature) throws DataError {
-        new NcRNALoader(SnRNA.class, "snRNA", feature).load();
+    private Feature loadSnRNA(FeatureTable.Feature feature) throws DataError {
+        return new NcRNALoader(SnRNA.class, "snRNA", feature).load();
     }
-    private void loadSnoRNA(FeatureTable.Feature feature) throws DataError {
-        new NcRNALoader(SnoRNA.class, "snoRNA", feature).load();
+    private Feature loadSnoRNA(FeatureTable.Feature feature) throws DataError {
+        return new NcRNALoader(SnoRNA.class, "snoRNA", feature).load();
     }
 
 
     /* UTR */
-    private void loadUTR(FeatureTable.Feature utrFeature) throws DataError {
+    private List<UTR> loadUTR(FeatureTable.Feature utrFeature) throws DataError {
         String utrType = utrFeature.type;
         EmblLocation utrLocation = utrFeature.location;
         String uniqueName = utrFeature.getUniqueName();
@@ -1580,6 +1629,7 @@ class EmblLoader {
 
         int part = 1;
         List<EmblLocation> utrParts = utrLocation.getParts();
+        List<UTR> utrs = new ArrayList<UTR>();
         for (EmblLocation utrPartLocation: utrParts) {
             String utrUniqueName = String.format("%s:%dutr", uniqueName, utrClass == ThreePrimeUTR.class ? 3 : 5);
             if (utrParts.size() > 1) {
@@ -1590,9 +1640,12 @@ class EmblLoader {
                 utrType, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax()));
 
             UTR utr = transcript.createUTR(utrClass, utrUniqueName, utrPartLocation.getFmin(), utrPartLocation.getFmax());
+            utrs.add(utr);
             session.persist(utr);
             ++ part;
         }
+
+        return utrs;
     }
 
     /* Setters and Spring stuff */
