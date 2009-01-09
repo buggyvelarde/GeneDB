@@ -37,7 +37,13 @@ public abstract class Clear {
 
         Class.forName("org.postgresql.Driver");
         logger.debug(String.format("Connecting to database '%s' as user '%s'", url, username));
+
         this.conn = DriverManager.getConnection(url, username, password);
+        this.organismCommonName = organismCommonName;
+    }
+
+    protected Clear(Connection conn, String organismCommonName) {
+        this.conn = conn;
         this.organismCommonName = organismCommonName;
     }
 
