@@ -73,6 +73,7 @@
         <antcall target="run-specific-embl-test"><param name="subtest" value="Berghei"/></antcall>
         <antcall target="run-specific-embl-test"><param name="subtest" value="Mansoni"/></antcall>
         <antcall target="run-specific-embl-test"><param name="subtest" value="Synthetic"/></antcall>
+        <antcall target="run-specific-embl-test"><param name="subtest" value="Reload"/></antcall>
     </target>
     <!-- If you antcall a target that has dependencies, all the dependencies are executed
          EVEN IF they have already been executed. Therefore we have an internal target
@@ -81,7 +82,7 @@
     <target name="specific-embl-test" depends="fulljar-access,compile-tests,run-specific-embl-test"/>
     <target name="run-specific-embl-test">
         <antcall target="copy-skeleton-database"/>
-        <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="256M">
+        <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="512M">
             <classpath refid="test-classpath"/>
             <formatter type="brief" usefile="false" />
             <test name="org.genedb.db.loading.EmblLoader${subtest}Test"/>
