@@ -41,6 +41,10 @@ Saureus_clusters.ortho:
     A random subset of the orthologue clusters predicted by OrthoMCL for Staphylococcus
     aureus, specified by polypeptide name.
 
+Pfalciparum_domains_subset.interpro
+    The first 30 lines of the InterProScan raw output for Plasmodium falciparum 3D7,
+    as generated on 2009-01-07.
+
 skeleton.{backup,data,properties,script}:
     A copy of the skeleton database from genedb-db/test-data. This database is populated
     by the tests
