@@ -1,6 +1,10 @@
-delete from feature_cvterm general
-using cv
-   , cvterm evidence_type join cv evidence_type_cv using (cv_id)
+delete from feature_cvterm
+where feature_cvterm_id in (
+select general.feature_cvterm_id
+from feature_cvterm general
+   , cv
+   , cvterm evidence_type join cv evidence_type_cv
+        on evidence_type.cv_id = evidence_type_cv.cv_id
    , feature_cvtermprop general_evidence
    , feature_cvterm specific
 left join feature_cvtermprop specific_evidence
@@ -32,3 +36,4 @@ and general_evidence.value in (
       'inferred from electronic annotation'
     , 'Inferred from Electronic Annotation'
 )
+);
