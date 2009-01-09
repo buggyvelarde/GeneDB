@@ -45,6 +45,8 @@ public class ObjectManager extends EmptyInterceptor {
         = new TwoKeyMap<String,String,Synonym>();
     private Map<String,Pub> pubsByUniqueName
         = new HashMap<String, Pub>();
+    private Map<String,Db> dbsByUppercaseName
+        = new HashMap<String,Db>();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -53,6 +55,7 @@ public class ObjectManager extends EmptyInterceptor {
         dbxrefsByAccByDb.clear();
         synonymsByTypeAndName.clear();
         pubsByUniqueName.clear();
+        dbsByUppercaseName.clear();
     }
 
     /**
@@ -112,6 +115,18 @@ public class ObjectManager extends EmptyInterceptor {
         if (dbxref.getDescription() == null)
             dbxref.setDescription(description);
         return dbxref;
+    }
+
+    public Db getExistingDbByName(String dbName) {
+        String uppercaseDbName = dbName.toUpperCase();
+        synchronized (dbsByUppercaseName) {
+            if (dbsByUppercaseName.containsKey(uppercaseDbName)) {
+                return dbsByUppercaseName.get(uppercaseDbName);
+            }
+        }
+        Db db = generalDao.getDbByName(uppercaseDbName);
+        dbsByUppercaseName.put(uppercaseDbName, db);
+        return db;
     }
 
     private TwoKeyMap<String,String,Integer> cvTermIdsByCvAndName
@@ -176,7 +191,7 @@ public class ObjectManager extends EmptyInterceptor {
      *          or <code>null</code> if the database does not exist.
      */
     private DbXRef findOrCreateDbXRefFromDbAndAccession(String dbName, String accession) {
-        Db db = generalDao.getDbByName(dbName);
+        Db db = getExistingDbByName(dbName);
         if (db == null) {
             return null;
         }
