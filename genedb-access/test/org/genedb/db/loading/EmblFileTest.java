@@ -1,7 +1,6 @@
 package org.genedb.db.loading;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.genedb.db.loading.FeatureTable.Feature;
 
@@ -25,7 +24,7 @@ public class EmblFileTest {
     }
 
     @Test
-    public void basics() {
+    public void metqdata() {
         assertEquals("Smp_scaff000604", emblFile.getAccession());
         assertEquals(1, emblFile.getSequenceVersion());
         assertEquals("linear", emblFile.getTopology());
@@ -37,7 +36,7 @@ public class EmblFileTest {
     }
 
     @Test
-    public void pseudo() throws ParsingException {
+    public void twoPseudogenes() throws ParsingException {
         FeatureTable featureTable = emblFile.getFeatureTable();
         Iterable<FeatureTable.Feature> features = featureTable.getFeatures();
 
@@ -50,9 +49,6 @@ public class EmblFileTest {
             String temporarySystematicId = feature.getQualifierValue("temporary_systematic_id");
             if ("Smp_097250".equals(temporarySystematicId)) {
                 foundFeatures++;
-                System.out.println(feature);
-                System.out.println(feature.getQualifierValues("pseudo"));
-                System.out.println(feature.getQualifierValues("pseudo").isEmpty());
                 assertTrue(feature.hasQualifier("pseudo"));
             }
             else if ("Smp_175570".equals(temporarySystematicId)) {
@@ -75,5 +71,49 @@ public class EmblFileTest {
             }
         }
         assertEquals(2, foundFeatures);
+    }
+
+    @Test
+    public void ignoreQualifierGlobally() throws DataError {
+        FeatureTable featureTable = emblFile.getFeatureTable();
+        featureTable.ignoreQualifier("synonym");
+        Iterable<FeatureTable.Feature> features = featureTable.getFeatures();
+
+        int numberOfFeatures = 0;
+        for (FeatureTable.Feature feature: features) {
+            ++numberOfFeatures;
+            assertNull(String.format("%s feature at line %d reports a /synonym from getQualifierValue",
+                feature.type, feature.lineNumber),
+                feature.getQualifierValue("synonym"));
+            assertTrue(String.format("%s feature at line %d reports a /synonym from getQualifierValues",
+                feature.type, feature.lineNumber),
+                feature.getQualifierValues("synonym").isEmpty());
+            if (feature.type.equals("CDS")) {
+                assertTrue(String.format("CDS feature at line %d has no /synonym", feature.lineNumber),
+                    feature.getUnusedQualifierNames().contains("synonym"));
+            }
+        }
+        assertEquals(28, numberOfFeatures);
+    }
+
+    // ignore qualifier by type: check ignored for type && !ignored for !type
+    @Test
+    public void ignoreQualifierByFeature() {
+        FeatureTable featureTable = emblFile.getFeatureTable();
+        featureTable.ignoreQualifier("note", "CDS");
+        Iterable<FeatureTable.Feature> features = featureTable.getFeatures();
+
+        int numberOfFeatures = 0;
+        int totalNumberOfNotes = 0;
+        for (FeatureTable.Feature feature: features) {
+            ++numberOfFeatures;
+            int numberOfNotes = feature.getQualifierValues("note").size();
+            totalNumberOfNotes += numberOfNotes;
+
+            if (feature.type.equals("CDS")) {
+                assertEquals(0, numberOfNotes);
+            }
+        }
+        assertEquals(15, numberOfFeatures);
     }
 }

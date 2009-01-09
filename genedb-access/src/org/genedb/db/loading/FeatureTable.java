@@ -6,8 +6,11 @@ package org.genedb.db.loading;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +45,8 @@ class FeatureTable extends EmblFile.Section {
             List<String> ret = new ArrayList<String>();
             for (Qualifier qualifier: qualifiers) {
                 for (String key: keys) {
-                    if (qualifier.name.equals(key)) {
+                    if (qualifier.name.equals(key)
+                            && !isQualifierIgnored(type, key)) {
                         qualifier.used = true;
                         ret.add(qualifier.value);
                     }
@@ -102,7 +106,7 @@ class FeatureTable extends EmblFile.Section {
             return unusedQualifiers;
         }
 
-        public Iterable<String> getUnusedQualifierNames() {
+        public Collection<String> getUnusedQualifierNames() {
             Set<String> unusedQualifiers = new HashSet<String>();
             for (Qualifier qualifier: qualifiers) {
                 if (!qualifier.used) {
@@ -359,6 +363,10 @@ class FeatureTable extends EmblFile.Section {
         }
     }
 
+    private static final String symbolPattern = "[\\w'*-]*[A-Za-z][\\w'*-]*";
+    static final Pattern qualifierPattern = Pattern.compile("/(" + symbolPattern + ")(?:=(.*))?");
+    static final Pattern quotedStringPattern = Pattern.compile("\"((?:[^\"]|\"\")*)\"");
+
     private String currentQualifier = null;
     private StringBuilder currentString = null;
     private void parseQualifierLine(String data) throws ParsingException {
@@ -428,7 +436,62 @@ class FeatureTable extends EmblFile.Section {
         return even;
     }
 
-    private static final String symbolPattern = "[\\w'*-]*[A-Za-z][\\w'*-]*";
-    static final Pattern qualifierPattern = Pattern.compile("/(" + symbolPattern + ")(?:=(.*))?");
-    static final Pattern quotedStringPattern = Pattern.compile("\"((?:[^\"]|\"\")*)\"");
+    private Set<String> ignoredQualifiers = new HashSet<String>();
+    private Map<String,Set<String>> ignoredQualifiersByFeatureType
+        = new HashMap<String,Set<String>>();
+
+    private boolean isQualifierIgnored(String featureType, String qualifier) {
+        if (ignoredQualifiers.contains(qualifier)) {
+            return true;
+        }
+        synchronized(ignoredQualifiersByFeatureType) {
+            if (ignoredQualifiersByFeatureType.containsKey(featureType)
+                    && ignoredQualifiersByFeatureType.get(featureType).contains(qualifier)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Ignore the named qualifier, i.e. do not return any values
+     * for the qualifier from
+     * {@link Feature#getQualifierValue(String)}
+     * or {@link Feature#getQualifierValues(String...)}. Ignored
+     * qualifiers are still returned by {@link Feature#getUnusedQualifiers()}
+     * and {@link Feature#getUnusedQualifierNames()}.
+     *
+     * @param qualifier the name of the qualifier to ignore
+     */
+    public void ignoreQualifier(String qualifier) {
+        ignoredQualifiers.add(qualifier);
+    }
+
+    /**
+     * Ignore the named qualifier, i.e. do not return any values
+     * for the qualifier from
+     * {@link Feature#getQualifierValue(String)}
+     * or {@link Feature#getQualifierValues(String...)}. Ignored
+     * qualifiers are still returned by {@link Feature#getUnusedQualifiers()}
+     * and {@link Feature#getUnusedQualifierNames()}.
+     *
+     * @param qualifier the name of the qualifier to ignore
+     */
+    public void ignoreQualifier(String qualifier, String featureType) {
+        synchronized(ignoredQualifiersByFeatureType) {
+            if (!ignoredQualifiersByFeatureType.containsKey(featureType)) {
+                ignoredQualifiersByFeatureType.put(featureType, new HashSet<String>());
+            }
+            ignoredQualifiersByFeatureType.get(featureType).add(qualifier);
+        }
+    }
+
+    /**
+     * Reset the list of ignored qualifiers, so that no qualifier
+     * is ignored.
+     */
+    public void resetIgnoredQualifiers() {
+        ignoredQualifiers.clear();
+        ignoredQualifiersByFeatureType.clear();
+    }
 }
