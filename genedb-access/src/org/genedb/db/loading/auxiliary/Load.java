@@ -53,9 +53,9 @@ public class Load {
         String loaderBeanName = args[0];
 
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"Aux.xml"});
+                new String[] {"Load.xml"});
 
-        Loader loader = (Loader) ctx.getBean(loaderBeanName, Loader.class);
+        Loader loader = ctx.getBean(loaderBeanName, Loader.class);
         Load load = new Load(loader);
 
         Set<String> validOptions = loader.getOptionNames();

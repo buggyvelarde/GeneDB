@@ -1,12 +1,8 @@
 package org.genedb.db.loading.auxiliary;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
+import org.genedb.db.dao.CvDao;
+import org.genedb.db.dao.GeneralDao;
+import org.genedb.db.dao.PubDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.loading.FeatureUtils;
 
@@ -16,20 +12,28 @@ import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.utils.ObjectManager;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import org.springframework.orm.hibernate3.SessionHolder;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 public abstract class Loader {
 
     private static final Logger logger = Logger.getLogger(Loader.class);
 
+    protected GeneralDao generalDao;
     protected SequenceDao sequenceDao;
+    protected CvDao cvDao;
+    protected PubDao pubDao;
     protected FeatureUtils featureUtils;
-    protected HibernateTransactionManager hibernateTransactionManager;
+    protected SessionFactory sessionFactory;
     protected ObjectManager objectManager;
 
     /**
@@ -60,15 +64,10 @@ public abstract class Loader {
         throw new IllegalStateException("processOption() must be overridden if options are specified");
     }
 
+    @Transactional(rollbackFor=IOException.class)
     void load(InputStream inputStream) throws IOException {
-        SessionFactory sessionFactory = hibernateTransactionManager.getSessionFactory();
-        Session session = SessionFactoryUtils.getSession(sessionFactory, objectManager, null);
-        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
         doLoad(inputStream, session);
-
-        TransactionSynchronizationManager.unbindResource(sessionFactory);
-        SessionFactoryUtils.releaseSession(session, sessionFactory);
     }
 
     /**
@@ -79,22 +78,49 @@ public abstract class Loader {
      * @param session the Hibernate session
      * @throws IOException
      */
-    protected abstract void doLoad(InputStream inputStream, Session session) throws IOException;
+    protected abstract void doLoad(InputStream inputStream, Session session)
+        throws IOException;
 
     public void setFeatureUtils(FeatureUtils featureUtils) {
         this.featureUtils = featureUtils;
-    }
-
-    public void setHibernateTransactionManager(HibernateTransactionManager hibernateTransactionManager) {
-        this.hibernateTransactionManager = hibernateTransactionManager;
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
 
+    public void setGeneralDao(GeneralDao generalDao) {
+        this.generalDao = generalDao;
+    }
+
+    public void setCvDao(CvDao cvDao) {
+        this.cvDao = cvDao;
+    }
+
+    public void setPubDao(PubDao pubDao) {
+        this.pubDao = pubDao;
+    }
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
     public void setObjectManager(ObjectManager objectManager) {
         this.objectManager = objectManager;
+    }
+
+    public void afterPropertiesSet() {
+        /*
+         * We cannot set the DAOs of the objectManager
+         * directly in Load.xml, because that creates a circular
+         * reference that (understandably) causes Spring to
+         * throw a tantrum. Thus we inject them into
+         * here, and pass them to the ObjectManager after Spring
+         * configuration.
+         */
+        objectManager.setGeneralDao(generalDao);
+        objectManager.setCvDao(cvDao);
+        objectManager.setPubDao(pubDao);
     }
 
     protected Polypeptide getPolypeptideForGene(String geneUniqueName) {

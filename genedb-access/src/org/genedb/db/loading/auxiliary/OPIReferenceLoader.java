@@ -149,8 +149,4 @@ public class OPIReferenceLoader extends Loader {
         }
         return ret;
     }
-
-    public void afterPropertiesSet() {
-        assert objectManager != null;
-    }
 }

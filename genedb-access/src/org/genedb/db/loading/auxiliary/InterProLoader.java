@@ -9,8 +9,9 @@ import org.gmod.schema.mapped.DbXRef;
 import org.gmod.schema.mapped.FeatureDbXRef;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -61,23 +62,18 @@ public class InterProLoader extends Loader {
 
     @Transactional
     private void loadInterProFile(InterProFile interProFile, Session session) {
-        Transaction transaction = session.getTransaction();
-
         Collection<String> keys = interProFile.keys();
         int n=1;
         for (String key: keys) {
-            transaction.begin();
             logger.info(String.format("Processing key '%s' [%d/%d]", key, n++, keys.size()));
             loadKey(interProFile, key);
-            transaction.commit();
             /*
              * If the session isn't cleared out every so often, it
              * starts to get pretty slow after a while if we're loading
-             * a large file. It's important that this come immediately
-             * after a flush. (Commit will trigger a flush unless you've
-             * set FlushMode.MANUAL, which we assume you haven't.)
+             * a large file.
              */
-            if (n % 50 == 1) {
+            if (n % 5 == 1) {
+                session.flush();
                 logger.info("Clearing session");
                 session.clear();
             }
@@ -164,6 +160,14 @@ public class InterProLoader extends Loader {
                 }
             }
         }
+    }
+
+    @Transactional
+    @SuppressWarnings("deprecation") // When we're using Hibernate 3.3 or later, change
+                                     // this to use Session#doWork(Work).
+    void clear(String organismCommonName) throws HibernateException, SQLException {
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+        new ClearInterPro(session.connection(), organismCommonName).clear();
     }
 }
 

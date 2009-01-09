@@ -73,8 +73,8 @@
         scope="prototype" init-method="afterPropertiesSet">
         <property name="cvDao" ref="cvDao"/>
         <property name="generalDao" ref="generalDao"/>
-        <property name="organismDao" ref="organismDao"/>
         <property name="pubDao" ref="pubDao"/>
+        <property name="organismDao" ref="organismDao"/>
         <property name="objectManager" ref="objectManager"/>
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="featureUtils" ref="featureUtils"/>
@@ -92,6 +92,36 @@
         <property name="organismDao" ref="organismDao"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+
+    <!--  auxiliary loaders -->
+    <bean id="auxiliaryLoader" abstract="true" init-method="afterPropertiesSet">
+        <property name="featureUtils" ref="featureUtils" />
+        <property name="cvDao" ref="cvDao"/>
+        <property name="generalDao" ref="generalDao"/>
+        <property name="pubDao" ref="pubDao"/>
+        <property name="sequenceDao" ref="sequenceDao" />
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="objectManager" ref="objectManager" />
+    </bean>
+
+    <bean id="iploader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.InterProLoader"/>
+
+    <bean id="tmhmmloader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.TMHMMLoader"/>
+
+    <bean id="signalploader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.SignalPLoader"/>
+
+    <bean id="dgpiloader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.DGPILoader"/>
+
+    <bean id="plasmoaploader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.PlasmoAPLoader"/>
+
+    <bean id="opi-referencesloader" parent="auxiliaryLoader"
+        class="org.genedb.db.loading.auxiliary.OPIReferenceLoader"/>
+
 
     <!-- DataSource Property -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">

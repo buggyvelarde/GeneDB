@@ -1,5 +1,14 @@
 package org.genedb.db.loading.auxiliary;
 
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.SignalPeptide;
+import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.FeatureProp;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,16 +18,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
-import org.genedb.db.dao.CvDao;
-
-import org.gmod.schema.feature.Polypeptide;
-import org.gmod.schema.feature.SignalPeptide;
-import org.gmod.schema.mapped.CvTerm;
-import org.gmod.schema.mapped.FeatureProp;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 public class SignalPLoader extends Loader {
     private static final Logger logger = Logger.getLogger(SignalPLoader.class);
@@ -43,11 +42,6 @@ public class SignalPLoader extends Loader {
                 session.clear();
             }
         }
-    }
-
-    private CvDao cvDao;
-    public void setCvDao(CvDao cvDao) {
-        this.cvDao = cvDao;
     }
 
     private CvTerm predictionTerm, peptideProbabilityTerm, anchorProbabilityTerm;

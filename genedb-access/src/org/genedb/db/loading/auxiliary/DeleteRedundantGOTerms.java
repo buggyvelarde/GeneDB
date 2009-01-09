@@ -39,9 +39,9 @@ public class DeleteRedundantGOTerms {
 
     public static void main(String[] args) throws SQLException, IOException {
         ApplicationContext ctx = new ClassPathXmlApplicationContext(
-            new String[] {"Aux.xml"});
+            new String[] {"Load.xml"});
 
-        DataSource dataSource = (DataSource) ctx.getBean("dataSource", DataSource.class);
+        DataSource dataSource = ctx.getBean("dataSource", DataSource.class);
         deleteRedundantGOTerms(dataSource);
     }
 
@@ -70,7 +70,7 @@ public class DeleteRedundantGOTerms {
     private void checkCvTermPath() throws SQLException {
         PreparedStatement st = conn.prepareStatement(
             " select cv.name, count(cvtermpath.*)"
-            +" from cv left join cvtermpath using (cv_id)"
+            +" from cv left join cvtermpath on cv.cv_id = cvtermpath.cv_id"
             +" where cv.name in ("
             +"       'biological_process'"
             +"     , 'molecular_function'"
@@ -144,7 +144,7 @@ public class DeleteRedundantGOTerms {
     private static final int BUF_SIZE = 32768;
 
     private String getDeleteRedundantGOTermsSQL() throws IOException {
-        InputStream inputStream = getClass().getResourceAsStream("delete_redundant_GO_terms.sql");
+        InputStream inputStream = getClass().getResourceAsStream("/delete_redundant_GO_terms.sql");
 
         if (inputStream == null)
             throw new RuntimeException("Could not find 'delete_redundant_GO_terms.sql' on classpath");
