@@ -96,6 +96,16 @@ insert into db (name, description, urlprefix) values (
         'The GenBank database',
         'http://www.ncbi.nlm.nih.gov/sites/gquery?term=');
 
+insert into db (name, description, urlprefix) values (
+        'TPC',
+        'The TriTryp pathway comparison database',
+        'http://www.genedb.org/genedb/pathway_comparison_TriTryp/');
+
+insert into db (name, description, urlprefix) values (
+        'TrypanoCyc',
+        'The TrypanoCyc database',
+        'http://www.genedb.org/tmp/TRYPANO/NEW-IMAGE?type=GENE-IN-CHROM-BROWSER&object=');
+
 --
 -- Add url prefix to existing dbs
 --
