@@ -20,7 +20,7 @@
   </path>
 
   <target name="clean-build-util" >
-    <delete dir="${imported.basedir.util}/ant-build" quiet="true"/>
+    <clean-target project="util"/>
   </target>
 
   <target name="compile-tests" depends="fulljar-util">
@@ -46,6 +46,7 @@
 
   <target name="util-get-extra-jars">
     <init project="util" />
+    <populate directory="genedb-util" />
     <copy file="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.util}/lib" />
   </target>
 
