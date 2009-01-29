@@ -3,6 +3,7 @@ package org.gmod.schema.mapped;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 
@@ -20,6 +21,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="feature_dbxref")
 public class FeatureDbXRef implements Serializable {
+    private static final Logger logger = Logger.getLogger(FeatureDbXRef.class);
 
     // Fields
     @SequenceGenerator(name="generator", sequenceName="feature_dbxref_feature_dbxref_id_seq")
@@ -27,7 +29,7 @@ public class FeatureDbXRef implements Serializable {
     @Column(name="feature_dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
     private int featureDbXRefId;
 
-    @ManyToOne(cascade={CascadeType.PERSIST}, fetch=FetchType.EAGER)
+    @ManyToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     @JoinColumn(name="dbxref_id", unique=false, nullable=false, insertable=true, updatable=true)
     private DbXRef dbXRef;
 
@@ -42,14 +44,19 @@ public class FeatureDbXRef implements Serializable {
 
     /** default constructor */
     FeatureDbXRef() {
-        // Deliberately empty default constructor
+        logger.trace("Constructing FeatureDbXRef: " + this);
     }
 
     /** full constructor */
     public FeatureDbXRef(DbXRef dbXRef, Feature feature, boolean current) {
-       this.dbXRef = dbXRef;
-       this.feature = feature;
-       this.current = current;
+        if (dbXRef == null) {
+            throw new NullPointerException("dbxref is null in FeatureDbXRef constructor");
+        }
+        this.dbXRef = dbXRef;
+        this.feature = feature;
+        this.current = current;
+        logger.trace(String.format("Constructing FeatureDbXRef(%s, %s, %s): %s",
+           dbXRef, feature, current, this));
     }
 
     // Property accessors
