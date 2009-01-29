@@ -112,8 +112,9 @@ public class ObjectManager extends EmptyInterceptor {
      */
     public DbXRef getDbXRef(String dbName, String accession, String description) {
         DbXRef dbxref = getDbXRef(dbName, accession);
-        if (dbxref.getDescription() == null)
+        if (dbxref != null && dbxref.getDescription() == null) {
             dbxref.setDescription(description);
+        }
         return dbxref;
     }
 
@@ -234,10 +235,15 @@ public class ObjectManager extends EmptyInterceptor {
     public void setGeneralDao(GeneralDao generalDao) {
         this.generalDao = generalDao;
     }
+    public void setPubDao(PubDao pubDao) {
+        this.pubDao = pubDao;
+    }
     public void setCvDao(CvDao cvDao) {
         this.cvDao = cvDao;
     }
-    public void setPubDao(PubDao pubDao) {
+    public void setDaos(GeneralDao generalDao, PubDao pubDao, CvDao cvDao) {
+        this.generalDao = generalDao;
         this.pubDao = pubDao;
+        this.cvDao = cvDao;
     }
 }
