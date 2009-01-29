@@ -77,6 +77,11 @@ insert into db (name, description, urlprefix) values (
         'http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query=');
 
 insert into db (name, description, urlprefix) values (
+        'PANTHER',
+        'The PANTHER database',
+        'http://www.pantherdb.org/panther/family.do?clsAccession=');
+
+insert into db (name, description, urlprefix) values (
         'FlyBase',
         'The FlyBase database',
         'http://flybase.bio.indiana.edu/.bin/fbidq.html?');
@@ -97,7 +102,7 @@ insert into db (name, description, urlprefix) values (
         'http://www.ncbi.nlm.nih.gov/sites/gquery?term=');
 
 insert into db (name, description, urlprefix) values (
-        'TPC',
+        'CTP',
         'The TriTryp pathway comparison database',
         'http://www.genedb.org/genedb/pathway_comparison_TriTryp/');
 
