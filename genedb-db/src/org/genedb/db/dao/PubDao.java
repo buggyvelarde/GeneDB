@@ -5,8 +5,6 @@ import org.gmod.schema.mapped.Pub;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Transactional(readOnly = true)
 public class PubDao extends BaseDao {
 
@@ -22,10 +20,9 @@ public class PubDao extends BaseDao {
     }
 
     public Pub getPubByDbXRef(DbXRef dbXRef) {
-        @SuppressWarnings("unchecked")
-        List<Pub> list = getSession().createQuery(
+        return (Pub) getSession().createQuery(
             "select pub from PubDbXRef where dbXRef = :dbXRef")
-            .setParameter("dbXRef", dbXRef).list();
-        return firstFromList(list, "dbXRef", dbXRef);
+            .setParameter("dbXRef", dbXRef)
+            .uniqueResult();
     }
 }
