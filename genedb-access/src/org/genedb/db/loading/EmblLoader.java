@@ -902,6 +902,7 @@ class EmblLoader {
                     if (!goQualifiers.contains(key)) {
                         throw new DataError(String.format("Failed to parse /GO=\"%s\"; don't know what to do with %s=%s", go, key, value));
                     }
+                    // "aspect", "GOid", "term", "qualifier", "evidence", "db_xref", "with", "date"
                     if (key.equals("GOid")) {
                         goInstance.setId(value);
                     } else if (key.equals("date")) {
@@ -916,6 +917,16 @@ class EmblLoader {
                         goInstance.addQualifier(value);
                     } else if (key.equals("with")) {
                         goInstance.setWithFrom(value);
+                        /*
+                    } else if (key.equals("aspect")) {
+                        goInstance.setSubtype(value);
+                    } else if (key.equals("attribution")) {
+                        goInstance.setAttribution(value);
+                    } else if (key.equals("residue")) {
+                        goInstance.setResidue(value);
+                    } else if (key.equals("db_xref")) {
+                        goInstance.setRef(value);
+			*/
                     }
                 }
                 featureUtils.createGoEntries(focalFeature, goInstance, "From EMBL file", (DbXRef) null);
@@ -1251,8 +1262,12 @@ class EmblLoader {
             addDbXRef(target, dbName, accession);
         }
 
-        private void addDbXRef(HasPubsAndDbXRefs target, String dbName, String accession) {
+        private void addDbXRef(HasPubsAndDbXRefs target, String dbName, String accession) throws DataError {
             DbXRef dbXRef = objectManager.getDbXRef(dbName, accession);
+            if (dbXRef == null) {
+                throw new DataError(String.format("Database '%1$s' does not exist (for dbxref '%1$s:%2$s')",
+                    dbName, accession));
+            }
             if (dbName.equals("PMID")) {
                 // PMID is a special case; these are stored as FeaturePubs
                 addPub(target, accession, dbXRef);
