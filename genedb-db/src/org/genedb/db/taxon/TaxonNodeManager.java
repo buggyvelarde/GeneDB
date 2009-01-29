@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class TaxonNodeManager implements InitializingBean{
+public class TaxonNodeManager implements InitializingBean {
 
     private PhylogenyDao phylogenyDao;
     private SessionFactory sessionFactory;
