@@ -151,8 +151,8 @@ public class CvDao extends BaseDao {
      * return <code>null</code>. If the parameter <code>complainIfNotFound</code>
      * is true, then also log a warning in this case.
      *
-     * @param cvTermName the term
-     * @param cvName the name of the CV, treated case-insensitively
+     * @param cvTermName the term, treated case-insensitively
+     * @param cvName the name of the CV
      * @param complainIfNotFound whether to log a warning if the term is not found. Only
      *          pass <code>false</code> here if you're genuinely agnostic about whether the
      *          term exists
@@ -233,6 +233,23 @@ public class CvDao extends BaseDao {
 
         CvTerm cvTerm = cvTermList.get(0);
         cvTermIdsByAccessionAndCv.put(cvName, accession, cvTerm.getCvTermId());
+        return cvTerm;
+    }
+    
+    /**
+     * Get the CvTerm with the specified CV and name, assuming that it exists.
+     *
+     * @param termName the term
+     * @param cvName the name of the CV, treated case-insensitively
+     * @return the CvTerm with the specified CV and name
+     * @throws RuntimeException if there is no such term
+     */
+    public CvTerm getExistingCvTermByNameAndCvName(String termName, String cvName) {
+        CvTerm cvTerm = getCvTermByNameAndCvName(termName, cvName, false);
+        if (cvTerm == null) {
+            throw new RuntimeException(String.format("CV term '%s:%s' does not exist",
+                cvName, termName));
+        }
         return cvTerm;
     }
 
