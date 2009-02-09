@@ -20,9 +20,6 @@
       <fileset dir="${imported.basedir.db}/lib">
         <include name="*.jar"/>
       </fileset>
-      <fileset dir="${imported.basedir.db}/lib2">
-        <include name="*.jar"/>
-      </fileset>
     </path>
 
     <path id="build-test-database-classpath">
