@@ -19,7 +19,7 @@
     <pathelement location="${imported.basedir.util}/ant-build/dist/genedb-util.jar"/>
   </path>
 
-  <target name="clean-build-util" >
+  <target name="util-clean-build" >
     <clean-target project="util"/>
   </target>
 
@@ -44,15 +44,30 @@
     </junit>
   </target>
 
-  <target name="util-get-extra-jars">
-    <init project="util" />
+  <target name="util-populate-lib" depends="check.util-lib-uptodate" unless="util.lib-uptodate">
     <populate directory="genedb-util" />
     <copy file="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.util}/lib" />
   </target>
 
-  <target name="fulljar-util" depends="clean-build-util, util-get-extra-jars" description="Create full JAR file">
-    <compile-target project="util" />
+
+  <target name="check.util-lib-uptodate" depends="init-util" if="util.ivy-timestamp-exists">
+    <uptodate property="util.lib-uptodate" srcfile="${imported.basedir.util}/ivy.xml" targetfile="${imported.basedir.util}/lib/ivy.timestamp.txt" />
+  </target>
+
+
+  <target name="init-util" description="Create full JAR file">
+    <init-target project="util" />
+  </target>
+
+  <target name="fulljar-util" depends="compile-util" description="Create full JAR file" unless="util.jar-uptodate">
     <jar-target project="util" />
+  </target>
+
+  <target name="compile-util" depends="util-populate-lib" description="Compile">
+    <compile-target project="util" />
+    <uptodate property="util.jar-uptodate" targetfile="${imported.basedir.util}/ant-build/dist/genedb-util.jar">
+      <srcfiles dir="${imported.basedir.util}/ant-build/classes" />
+    </uptodate>
   </target>
 
 </project>

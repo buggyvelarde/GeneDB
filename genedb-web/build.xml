@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="genedb-web" default="compile" basedir="."
+<project name="genedb-web" default="iajc-web" basedir="."
   xmlns:ivy="antlib:org.apache.ivy.ant" >
 
   <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
@@ -22,10 +22,6 @@
   <!-- Paths -->
   <path id="web-deploy-classpath">
       <pathelement location="${in-lib-dir}/artemis.jar" />
-      <pathelement location="${genedb-db.jar}" />
-      <pathelement location="${genedb-domain.jar}"/>
-      <pathelement location="${genedb-query.jar}" />
-      <pathelement location="${genedb-util.jar}" />
 
       <fileset dir="${imported.basedir.web}/lib">
         <include name="*.jar"/>
@@ -48,7 +44,7 @@
 
   <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.fulljar-db,genedb-util.fulljar-util" />
 
-  <target name="make-all-and-deploy" depends="check-deploy, compile, final-deploy"/>
+  <target name="make-all-and-deploy" depends="check-deploy, compile-web, final-deploy"/>
 
   <target name="clean-web">
     <delete dir="${imported.basedir.web}/ant-build" quiet="true"/>
@@ -57,20 +53,30 @@
   <!-- =================================
           target: compile
        ================================= -->
-  <target name="compile" depends="clean-web, make-other-projects"
-        description="--> Compile classes">
-
-    <init project="web"/>
+  <target name="compile-web" depends="web-populate-lib, web-populate-util, web-populate-query, web-populate-db, web-populate-domain"
+        description="--> Compile classes" >
     <compile-target project="web"/>
+  	<!--
     <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/mvc/model/PopulateCaches.class"
               src="${imported.basedir.web}/ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
+    <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/utils/MartinHack.class"
+              src="${imported.basedir.web}/ant-build/classes/org/genedb/web/utils/MartinHack.class" />
     <iajc-target project="web" from-directory="${imported.basedir.web}/ant-build/woven-classes"
                                to-directory="${imported.basedir.web}/ant-build/classes"/>
+                               -->
+    <uptodate property="web.iajc-uptodate" targetfile="${imported.basedir.web}/ant-build/iajc_run">
+      <srcfiles dir="${imported.basedir.web}/ant-build/classes" />
+    </uptodate>
   </target>
+
+
+	   <target name="iajc-web" depends="compile-web" unless="web.iajc-uptodate">
+	        <iajc-target project="web" />
+	    </target>
 
   <target name="deploy" depends="pre-deploy, application-deploy, post-deploy"/>
 
-  <target name="pre-deploy" depends="check-deploy">
+  <target name="pre-deploy" depends="check-deploy, compile-web">
     <filter token="webAppRootKey" value="${webAppRootKey}" />
     <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
     <mkdir dir="${finaldest.webapps}.tmp"/>
@@ -107,11 +113,11 @@
 
 
   <target name="restart-ci-web">
-    <exec executable="/nfs/pathdata/jira/bin/shutdown.sh" failifexecutionfails="true" failonerror="true" />
+    <exec executable="/nfs/pathdb/bin/genedb-web-control jira shutdown" failifexecutionfails="true" failonerror="true" />
     <sleep seconds="5" />
     <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
     <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
-    <exec executable="/nfs/pathdata/jira/bin/startup.sh"  failifexecutionfails="true" failonerror="true" />
+    <exec executable="/nfs/pathdb/bin/genedb-web-control jira startup"  failifexecutionfails="true" failonerror="true" />
     <sleep seconds="30" />
   </target>
 
@@ -184,7 +190,7 @@
   </target>
 
 
-    <target name="populate-caches" depends="check-deploy,compile" description="Populate the Berkeley DB with TranscriptDTO and images">
+    <target name="populate-caches" depends="check-deploy,compile-web" description="Populate the Berkeley DB with TranscriptDTO and images">
       <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
         <classpath>
           <path refid="web-classpath"/>
@@ -196,6 +202,57 @@
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
         <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
         <!-- <arg line="-o Pfalciparum -debugCount 20 -globalFileRoot /tmp"/> -->
+        <!-- <arg line="-globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/> -->
+        <!-- <arg line="-o Pberghei_3x"/> -->
+        <!-- <arg line="-ncm" /> -->
+      </java>
+    </target>
+
+
+	  <target name="init-web" description="Create full JAR file">
+	    <init-target project="web" />
+	  </target>
+
+  <target name="web-populate-lib" depends="check.web-lib-uptodate" unless="web.lib-uptodate">
+    <populate directory="genedb-web" />
+    <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.web}/lib2" />
+  </target>
+
+
+	  <target name="web-populate-util" depends="fulljar-util">
+	    <copy file="${imported.basedir.web}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.web}/lib" />
+	  </target>
+
+
+	  <target name="web-populate-query" depends="fulljar-query">
+	    <copy file="${imported.basedir.web}/../genedb-query/ant-build/dist/genedb-query.jar" todir="${imported.basedir.web}/lib" />
+	  </target>
+
+
+	  <target name="web-populate-db" depends="fulljar-db">
+	    <copy file="${imported.basedir.web}/../genedb-db/ant-build/dist/genedb-db.jar" todir="${imported.basedir.web}/lib" />
+	  </target>
+
+    <target name="web-populate-domain" depends="fulljar-db">
+      <copy file="${imported.basedir.web}/../genedb-domain/ant-build/dist/genedb-domain.jar" todir="${imported.basedir.web}/lib" />
+    </target>
+
+  <target name="check.web-lib-uptodate" depends="init-web" if="web.ivy-timestamp-exists">
+    <uptodate property="web.lib-uptodate" srcfile="ivy.xml" targetfile="lib/ivy.timestamp.txt" />
+  </target>
+
+    <target name="martinHack" depends="check-deploy,compile-web">
+      <java fork="true" classname="org.genedb.web.utils.MartinHack">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
+        <arg line="/nfs/team81/art/workspace/workspace-Jul9/genedb-web/martin/merops.file"/>
         <!-- <arg line="-globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/> -->
         <!-- <arg line="-o Pberghei_3x"/> -->
         <!-- <arg line="-ncm" /> -->

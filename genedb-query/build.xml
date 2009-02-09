@@ -16,11 +16,49 @@
     </fileset>
   </path>
 
-  <target name="fulljar-query">
-    <init project="query"/>
-    <compile-target project="query" />
-    <iajc-target project="query" />
+	  <target name="init-query" description="Create full JAR file">
+	    <init-target project="query" />
+	  </target>
+
+  <target name="fulljar-query" depends="compile-query, iajc-query,query-check-jar" unless="query.jar-uptodate">
     <jar-target project="query" />
   </target>
+
+	<target name="query-check-jar">
+	        <uptodate property="query.jar-uptodate" targetfile="${imported.basedir.query}/ant-build/dist/genedb-query.jar">
+	              <srcfiles dir="${imported.basedir.query}/ant-build/classes" />
+     </uptodate>
+	</target>
+
+   <target name="iajc-query" depends="compile-query" unless="query.iajc-uptodate">
+        <iajc-target project="query" />
+    </target>
+
+   <target name="compile-query" depends="query-populate-lib">
+        <compile-target project="query" />
+        <uptodate property="query.iajc-uptodate" targetfile="${imported.basedir.query}/ant-build/iajc_run">
+          <srcfiles dir="${imported.basedir.query}/ant-build/classes" />
+        </uptodate>
+    </target>
+
+  <target name="query-populate-lib" depends="check.query-lib-uptodate" unless="query.lib-uptodate">
+    <populate directory="genedb-query" />
+    <!-- <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.domain}/lib" /> -->
+  </target>
+
+  <target name="check.query-lib-uptodate" depends="init-query" if="query.ivy-timestamp-exists">
+    <uptodate property="query.lib-uptodate" srcfile="ivy.xml" targetfile="lib/ivy.timestamp.txt" />
+  </target>
+
+<!--
+  <target name="query-populate-lib2" depends="fulljar-util, fulljar-query, fulljar-db">
+    <copy file="${imported.basedir.domain}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.db}/lib2" />
+    <copy file="${imported.basedir.domain}/../genedb-query/ant-build/dist/genedb-query.jar" todir="${imported.basedir.db}/lib2" />
+    <copy file="${imported.basedir.domain}/../genedb-db/ant-build/dist/genedb-db.jar" todir="${imported.basedir.db}/lib2" />
+    <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.db}/lib2" />
+  </target>
+-->
+
+
 
 </project>

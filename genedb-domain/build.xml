@@ -15,24 +15,56 @@
       value="${imported.basedir.domain}/${dist.dir}/genedb-domain.jar"/>
 
   <path id="domain-classpath">
-    <path location="${genedb-db.jar}"/>
-    <path location="${imported.basedir.query}/ant-build/dist/genedb-query.jar" />
-    <path location="${imported.basedir.util}/ant-build/dist/genedb-util.jar"/>
-
     <fileset dir="${imported.basedir.domain}/lib">
       <include name="*.jar"/>
     </fileset>
-
-    <path location="${lib-dir}/spring-core-2.5.6/spring.jar" />
-    <path location="${lib-dir}/spring-core-2.5.6/spring-aspects.jar" />
-    <path location="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" />
   </path>
 
-  <target name="fulljar-domain" depends="genedb-db.fulljar-db,genedb-query.fulljar-query,genedb-util.fulljar-util"
+<!--
+<target name="fulljar-domain" depends="genedb-db.fulljar-db,genedb-query.fulljar-query,genedb-util.fulljar-util"
           description="Create full JAR file with all Spring classes">
-    <init project="domain"/>
+    <init-target project="domain"/>
     <compile-target project="domain"/>
     <jar-target project="domain"/>
+  </target>
+-->
+
+  <target name="check.domain-lib-uptodate" depends="init-domain">
+    <uptodate property="domain.lib-uptodate" srcfile="${imported.basedir.domain}/ivy.xml" targetfile="${imported.basedir.domain}/lib/ivy.timestamp.txt" />
+  </target>
+
+  <target name="init-domain" description="Create full JAR file">
+    <init-target project="domain" />
+  </target>
+
+  <target name="domain-populate-lib" depends="check.domain-lib-uptodate" unless="domain.lib-uptodate">
+    <populate directory="genedb-domain" />
+    <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.domain}/lib" />
+  </target>
+
+  <target name="compile-domain" depends="domain-populate-lib, domain-populate-util, domain-populate-query, domain-populate-db" description="Compile">
+    <compile-target project="domain" />
+    <uptodate property="domain.jar-uptodate" targetfile="${imported.basedir.domain}/ant-build/dist/genedb-domain.jar">
+      <srcfiles dir="${imported.basedir.domain}/ant-build/classes" />
+    </uptodate>
+  </target>
+
+  <target name="fulljar-domain" depends="compile-domain" description="Create full JAR file" unless="domain.jar-uptodate">
+    <jar-target project="domain" />
+  </target>
+
+  <target name="domain-populate-util" depends="fulljar-util">
+    <copy file="${imported.basedir.domain}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.domain}/lib" />
+  </target>
+
+
+  <target name="domain-populate-query" depends="fulljar-query">
+    <copy file="${imported.basedir.domain}/../genedb-query/ant-build/dist/genedb-query.jar" todir="${imported.basedir.domain}/lib" />
+  </target>
+
+
+  <target name="domain-populate-db" depends="fulljar-db">
+    <copy file="${imported.basedir.domain}/../genedb-db/ant-build/dist/genedb-db.jar" todir="${imported.basedir.domain}/lib" />
   </target>
 
 </project>

@@ -17,11 +17,12 @@
 
     <!-- Classpaths -->
     <path id="db-classpath">
-        <fileset dir="${imported.basedir.db}/lib">
-          <include name="*.jar"/>
-        </fileset>
-        <pathelement location="${imported.basedir.libs}/lib/biojava/biojava-1.6.jar"/>
-        <pathelement location="${imported.basedir.util}/ant-build/dist/genedb-util.jar"/>
+      <fileset dir="${imported.basedir.db}/lib">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${imported.basedir.db}/lib2">
+        <include name="*.jar"/>
+      </fileset>
     </path>
 
     <path id="build-test-database-classpath">
@@ -37,15 +38,24 @@
 
 	<!-- An internal init target -->
     <target name="setup-db" depends="fulljar-util">
-        <init project="db"/>
+        <init-target project="db"/>
         <mkdir dir="${imported.basedir.db}/ant-build/test" />
         <mkdir dir="${imported.basedir.db}/ant-build/test-classes" />
         <mkdir dir="${imported.basedir.db}/ant-build/springless-classes" />
     </target>
 
 
-    <target name="fulljar-db" depends="setup-db"
+    <target name="compile-db" depends="db-populate-lib, db-populate-util" description="Compile">
+        <compile-target project="db" />
+        <uptodate property="db.jar-uptodate" targetfile="${imported.basedir.db}/ant-build/dist/genedb-db.jar">
+            <srcfiles dir="${imported.basedir.db}/ant-build/classes" />
+        </uptodate>
+    </target>
+
+    <target name="fulljar-db" depends="compile-db"
+        unless="db.jar-uptodate"
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
+
 
         <compile-target project="db" />
 
@@ -218,9 +228,28 @@
 
     <target name="rebuild-test-databases" depends="prompt-for-password, delete-databases, make-schema-database, make-skeleton-database, make-pfalciparum-database"/>
 
-    <target name="db-get-extra-jars" depends="fulljar-util">
-      <init topdir="${imported.basedir.db}" />
-      <copy file="${imported.basedir.db}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.db}/lib" />
+    <target name="db-populate-lib" depends="check.db-lib-uptodate" unless="db.lib-uptodate">
+      <populate directory="genedb-db" />
+      <copy file="${imported.basedir.libs}/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.db}/lib" />
+      <touch file="lib/ivy.timestamp.txt" />
     </target>
+
+
+    <target name="db-populate-util" depends="fulljar-util">
+        <copy file="${imported.basedir.db}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.db}/lib" />
+    </target>
+
+  <target name="check.db-lib-uptodate" depends="init-db" if="db.ivy-timestamp-exists">
+    <uptodate property="db.lib-uptodate" srcfile="ivy.xml" targetfile="lib/ivy.timestamp.txt" />
+  </target>
+
+
+  <target name="init-db" description="Create full JAR file">
+    <init-target project="db" />
+  </target>
+
+  <target name="clean-db">
+    <clean-target project="db" />
+  </target>
 
 </project>
