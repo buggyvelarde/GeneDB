@@ -33,7 +33,7 @@
 
   <target name="populate-lib-dir">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
-    <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
+    <!-- <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/> -->
     <ivy:retrieve conf="default"/>
   </target>
 
@@ -46,8 +46,6 @@
       <populate directory="genedb-util" />
       <populate directory="genedb-web"/>
       <populate directory="HibernateSearch"/>
-      <populate directory="Jogra"/>
-      <populate directory="Medusa"/>
   </target>
 
   <!-- The following target may look stupid, but it's actually extremely cunning. :-)
