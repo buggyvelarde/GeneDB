@@ -5,7 +5,7 @@ import org.springframework.validation.Errors;
 
 /**
  * Param which contains a String
- * 
+ *
  * @author art
  */
 public class StringParamFromList extends AbstractParam {
@@ -13,11 +13,11 @@ public class StringParamFromList extends AbstractParam {
     private String value;
     private boolean set = false;
     private ListConstraint constraint;
-    
+
     public void setListConstraint(ListConstraint constraint) {
         this.constraint = constraint;
     }
-    
+
     public void setValue(String value) {
         this.value = value;
         this.set = true;
@@ -29,7 +29,7 @@ public class StringParamFromList extends AbstractParam {
     }
 
     public boolean supports(Class clazz) {
-        return Boolean.class.isAssignableFrom(clazz);
+        return Boolean.class.isAssignableFrom(clazz); // TODO Boolean, is that right? -rh11
     }
 
     public void validate(Object value, Errors errors) {

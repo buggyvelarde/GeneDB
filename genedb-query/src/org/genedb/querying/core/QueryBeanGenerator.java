@@ -36,23 +36,22 @@ import java.util.Map;
 
 public class QueryBeanGenerator implements BeanFactoryPostProcessor,
         ApplicationContextAware {
-    
+
     private ApplicationContext applicationContext;
 
 
     public void postProcessBeanFactory(ConfigurableListableBeanFactory factory)
             throws BeansException {
-        
+
         List<String> templateNames = new ArrayList<String>();
-        
-        @SuppressWarnings("unchecked")
+
         Map<String, QueryTemplate> map = factory.getBeansOfType(QueryTemplate.class);
 
         for (Map.Entry<String, QueryTemplate> entry : map.entrySet()) {
             String beanName = entry.getKey();
             templateNames.add(beanName);
             QueryTemplate template = entry.getValue();
-            
+
             BeanGenerator bg = new BeanGenerator();
             bg.setSuperclass(template.getBaseClass());
             List<String> paramNames = new ArrayList<String>();
@@ -63,16 +62,16 @@ public class QueryBeanGenerator implements BeanFactoryPostProcessor,
             }
             Query bean = (Query) bg.create();
             Class<?> newClass = bean.getClass();
-            
+
             BeanDefinitionBuilder bdb = BeanDefinitionBuilder.rootBeanDefinition(newClass);
             bdb.setScope(BeanDefinition.SCOPE_PROTOTYPE);
             bdb.addPropertyValue("paramNames", paramNames.toArray(new String[]{}));
             template.processNewPrototype(bdb);
-            
+
             // Store back as prototype bean
             BeanDefinition bd = bdb.getBeanDefinition();
             ((GenericApplicationContext)applicationContext).registerBeanDefinition(beanName, bd);
-            
+
         }
         for (String name : templateNames) {
             factory.destroyScopedBean(name);

@@ -4,7 +4,7 @@ import org.springframework.validation.Errors;
 
 /**
  * Param which contains an Integer
- * 
+ *
  * @author art
  */
 public class FloatParam extends AbstractParam {
@@ -12,11 +12,11 @@ public class FloatParam extends AbstractParam {
     private Float value;
     private boolean set = false;
     private String validation;
-    
+
     public void setValidation(String validation) {
         this.validation = validation;
     }
-    
+
     public void setValue(Float value) {
         this.value = value;
         this.set = true;
@@ -27,12 +27,13 @@ public class FloatParam extends AbstractParam {
         return value;
     }
 
+    @SuppressWarnings("unused")
     public boolean supports(Class clazz) {
         return Float.class.isAssignableFrom(clazz);
     }
 
     public void validate(Object value, Errors errors) {
-        
+
     }
 
     public boolean isSet() {

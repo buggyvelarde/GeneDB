@@ -4,7 +4,7 @@ import org.springframework.validation.Errors;
 
 /**
  * Param which contains an Integer
- * 
+ *
  * @author art
  */
 public class IntParam extends AbstractParam {
@@ -12,7 +12,7 @@ public class IntParam extends AbstractParam {
     private Integer value;
     private boolean set = false;
     private String validation;
-    
+
     public void setValidation(String validation) {
         this.validation = validation;
     }
@@ -27,18 +27,17 @@ public class IntParam extends AbstractParam {
         return this.value;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean supports(Class clazz) {
         return Integer.class.isAssignableFrom(clazz);
     }
 
     public void validate(Object value, Errors errors) {
-        
+
     }
 
     public boolean isSet() {
         return this.set;
     }
-    
-    
 
 }

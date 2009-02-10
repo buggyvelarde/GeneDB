@@ -1,8 +1,6 @@
 package org.genedb.querying.core;
 
 
-import org.genedb.querying.tmpquery.ProteinLengthQuery;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -71,11 +69,13 @@ public class BooleanQuery implements Query {
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return BooleanQuery.class.isAssignableFrom(clazz);
             }

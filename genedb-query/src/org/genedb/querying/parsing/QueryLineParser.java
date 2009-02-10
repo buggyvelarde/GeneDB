@@ -5,7 +5,6 @@ import org.genedb.querying.core.BooleanQueryMode;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.history.HistoryItem;
 import org.genedb.querying.history.HistoryManager;
-import org.genedb.querying.parsing.ExprParser.prog_return;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -100,7 +99,7 @@ public class QueryLineParser implements ApplicationContextAware {
     private Query findQuery(CommonTree t) {
         String queryName = ((CommonTree) t.getChild(0)).getText();
 
-        Query query = (Query) applicationContext.getBean(queryName, Query.class);
+        Query query = applicationContext.getBean(queryName, Query.class);
 
         BeanWrapperImpl bw = new BeanWrapperImpl(query);
         if (t.getChildCount() > 1) {
