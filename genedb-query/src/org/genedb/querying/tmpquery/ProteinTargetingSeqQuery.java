@@ -6,16 +6,11 @@ import org.genedb.querying.core.QueryParam;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 @QueryClass(
@@ -45,11 +40,12 @@ public class ProteinTargetingSeqQuery extends LuceneQuery {
     private boolean apicoplast;
 
 
-	@Override
-	protected String getluceneIndexName() {
-		return "org.gmod.schema.mapped.Feature";
-	}
+    @Override
+    protected String getluceneIndexName() {
+        return "org.gmod.schema.mapped.Feature";
+    }
 
+    @Override
     protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
 
         BooleanQuery bq = new BooleanQuery();
@@ -102,19 +98,21 @@ public class ProteinTargetingSeqQuery extends LuceneQuery {
     }
 
     @Override
-	protected String[] getParamNames() {
-		return new String[] {"present"};
-	}
+    protected String[] getParamNames() {
+        return new String[] {"present"};
+    }
 
-
+    @Override
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return ProteinTargetingSeqQuery.class.isAssignableFrom(clazz);
             }

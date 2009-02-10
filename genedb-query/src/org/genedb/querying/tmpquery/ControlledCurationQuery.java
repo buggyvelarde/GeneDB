@@ -8,9 +8,6 @@ import org.apache.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @QueryClass(
         title="Transcripts by their type",
         shortDesc="Get a list of transcripts by type",
@@ -76,11 +73,13 @@ public class ControlledCurationQuery extends HqlQuery {
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return ControlledCurationQuery.class.isAssignableFrom(clazz);
             }

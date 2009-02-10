@@ -5,12 +5,8 @@ import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.WildcardQuery;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -30,11 +26,12 @@ public class EcQuery extends LuceneQuery {
     private String search = "";
 
 
-	@Override
-	protected String getluceneIndexName() {
-		return "org.gmod.schema.mapped.Feature";
-	}
+    @Override
+    protected String getluceneIndexName() {
+        return "org.gmod.schema.mapped.Feature";
+    }
 
+    @Override
     protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
 
         Query q = new TermQuery(new Term("ecNumber",search.toLowerCase()));
@@ -50,24 +47,26 @@ public class EcQuery extends LuceneQuery {
         this.search = search;
     }
 
-	public String getSearch() {
-		return search;
-	}
+    public String getSearch() {
+        return search;
+    }
 
     @Override
-	protected String[] getParamNames() {
-		return new String[] {"search"};
-	}
+    protected String[] getParamNames() {
+        return new String[] {"search"};
+    }
 
-
+    @Override
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return EcQuery.class.isAssignableFrom(clazz);
             }

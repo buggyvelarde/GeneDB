@@ -13,8 +13,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 @QueryClass(
@@ -31,14 +29,15 @@ public class SimpleNameQuery extends LuceneQuery {
     private String search = "";
 
 
-	@Override
-	protected String getluceneIndexName() {
-		return "org.gmod.schema.mapped.Feature";
-	}
+    @Override
+    protected String getluceneIndexName() {
+        return "org.gmod.schema.mapped.Feature";
+    }
 
+    @Override
     protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
 
-    	BooleanQuery bq = new BooleanQuery();
+        BooleanQuery bq = new BooleanQuery();
         if(StringUtils.containsWhitespace(search)) {
             for(String term : search.split(" ")) {
                 bq.add(new TermQuery(new Term("product",term.toLowerCase()
@@ -63,24 +62,26 @@ public class SimpleNameQuery extends LuceneQuery {
         this.search = search;
     }
 
-	public String getSearch() {
-		return search;
-	}
+    public String getSearch() {
+        return search;
+    }
 
     @Override
-	protected String[] getParamNames() {
-		return new String[] {"search", "product", "allNames", "pseudogenes"};
-	}
+    protected String[] getParamNames() {
+        return new String[] {"search", "product", "allNames", "pseudogenes"};
+    }
 
-
+    @Override
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return SimpleNameQuery.class.isAssignableFrom(clazz);
             }

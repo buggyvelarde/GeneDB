@@ -28,7 +28,7 @@ public class GeneTypeQuery extends HqlQuery {
         return "select f.uniqueName from Feature f where f.type.name=:type order by f.organism";
     }
 
-
+    @Override
     public Map<String, Object> prepareModelData() {
         Map<String, String> typeMap = new HashMap<String, String>();
         typeMap.put("mRNA", "protein-coding");
@@ -65,11 +65,13 @@ public class GeneTypeQuery extends HqlQuery {
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return GeneTypeQuery.class.isAssignableFrom(clazz);
             }

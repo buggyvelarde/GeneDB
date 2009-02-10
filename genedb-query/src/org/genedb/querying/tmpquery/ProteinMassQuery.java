@@ -64,11 +64,13 @@ public class ProteinMassQuery extends HqlQuery {
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return ProteinMassQuery.class.isAssignableFrom(clazz);
             }

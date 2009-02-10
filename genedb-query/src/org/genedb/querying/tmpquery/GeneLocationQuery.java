@@ -4,12 +4,8 @@ import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
-import org.apache.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @QueryClass(
         title="Transcripts by their type",
@@ -18,7 +14,7 @@ import java.util.Map;
     )
 public class GeneLocationQuery extends HqlQuery {
 
-    private static final Logger logger = Logger.getLogger(GeneLocationQuery.class);
+    //private static final Logger logger = Logger.getLogger(GeneLocationQuery.class);
 
     @QueryParam(
             order=1,
@@ -104,11 +100,13 @@ public class GeneLocationQuery extends HqlQuery {
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return GeneLocationQuery.class.isAssignableFrom(clazz);
             }

@@ -31,16 +31,17 @@ public class ProteinNumTMQuery extends LuceneQuery {
     private int max = 5;
 
 
-	@Override
-	protected String getluceneIndexName() {
-		return "org.gmod.schema.mapped.Feature";
-	}
+    @Override
+    protected String getluceneIndexName() {
+        return "org.gmod.schema.mapped.Feature";
+    }
 
+    @Override
     protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
 
         Term lowerTerm = new Term("numberTMDomains", Integer.toString(min));
         Term upperTerm = new Term("numberTMDomains", Integer.toString(max));
-    	RangeQuery rq = new RangeQuery(lowerTerm, upperTerm, true);
+        RangeQuery rq = new RangeQuery(lowerTerm, upperTerm, true);
 
         queries.add(rq);
         //queries.add(geneOrPseudogeneQuery);
@@ -54,7 +55,7 @@ public class ProteinNumTMQuery extends LuceneQuery {
 
 
 
-	public int getMin() {
+    public int getMin() {
         return min;
     }
 
@@ -71,18 +72,21 @@ public class ProteinNumTMQuery extends LuceneQuery {
     }
 
     @Override
-	protected String[] getParamNames() {
-		return new String[] {"min", "max"};
-	}
+    protected String[] getParamNames() {
+        return new String[] {"min", "max"};
+    }
 
+    @Override
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return ProteinNumTMQuery.class.isAssignableFrom(clazz);
             }

@@ -8,8 +8,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @QueryClass(
         title="Transcripts by their type",
@@ -87,15 +85,17 @@ public class DateQuery extends HqlQuery {
         query.setDate("date", date);
     }
 
-
+    @Override
     public Validator getValidator() {
         return new Validator() {
             @Override
+            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean supports(Class clazz) {
                 return DateQuery.class.isAssignableFrom(clazz);
             }
