@@ -1,24 +1,24 @@
 /**
- * 
+ *
  */
 package org.genedb.query.params;
 
 import org.genedb.query.Param;
-import org.genedb.query.QueryI;
 import org.genedb.query.QueryConstants;
+import org.genedb.query.QueryI;
 
 /**
  * Basic abstract implementation of Param, designed to be subclassed
- * 
+ *
  * @author art
  */
 public abstract class AbstractParam implements Param {
-    
+
     private String help;
     private String description;
     private String name;
     private QueryI query;
-    
+
     public QueryI getQuery() {
         return query;
     }
@@ -28,7 +28,7 @@ public abstract class AbstractParam implements Param {
     }
 
     public abstract Object getValue();
-    
+
     public String getDescription() {
         return description;
     }
@@ -47,19 +47,14 @@ public abstract class AbstractParam implements Param {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Override
     public String toString() {
-        StringBuffer ret = new StringBuffer("{");
-        ret.append(name);
-        ret.append("=");
-        if (getValue()==null) {
-            ret.append(QueryConstants.PARAM_NOT_SET);
-        } else {
-            ret.append(getValue());
+        Object value = getValue();
+        if (value == null) {
+            value = QueryConstants.PARAM_NOT_SET;
         }
-        ret.append("}");
-        return ret.toString();
+        return String.format("{%s=%s}", name, value);
     }
 
 }
