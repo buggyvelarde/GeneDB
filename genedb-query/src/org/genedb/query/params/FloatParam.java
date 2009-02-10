@@ -27,7 +27,7 @@ public class FloatParam extends AbstractParam {
         return value;
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unchecked")
     public boolean supports(Class clazz) {
         return Float.class.isAssignableFrom(clazz);
     }

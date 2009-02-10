@@ -28,7 +28,7 @@ public class BooleanParam extends AbstractParam {
         return value;
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unchecked")
     public boolean supports(Class clazz) {
         return Boolean.class.isAssignableFrom(clazz);
     }
