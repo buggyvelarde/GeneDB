@@ -217,7 +217,7 @@
 
 	  <target name="init-web" description="Create full JAR file">
 	    <init-target project="web" />
-            <mkdir dir="${imported.basedir.web}/lib2"
+            <mkdir dir="${imported.basedir.web}/lib2" />
 	  </target>
 
   <target name="web-populate-lib" depends="check.web-lib-uptodate" unless="web.lib-uptodate">
