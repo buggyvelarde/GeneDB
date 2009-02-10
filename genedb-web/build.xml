@@ -113,11 +113,11 @@
 
 
   <target name="restart-ci-web">
-    <exec executable="/nfs/pathdb/bin/genedb-web-control jira shutdown" failifexecutionfails="true" failonerror="true" />
+    <exec executable="/nfs/pathdb/bin/genedb-web-control ci-web shutdown" failifexecutionfails="true" failonerror="true" />
     <sleep seconds="5" />
     <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
     <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
-    <exec executable="/nfs/pathdb/bin/genedb-web-control jira startup"  failifexecutionfails="true" failonerror="true" />
+    <exec executable="/nfs/pathdb/bin/genedb-web-control ci-web startup"  failifexecutionfails="true" failonerror="true" />
     <sleep seconds="30" />
   </target>
 
