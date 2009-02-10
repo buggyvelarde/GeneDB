@@ -225,7 +225,7 @@
     <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.5.0.jar" todir="${imported.basedir.web}/lib2" />
     <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.4.0.jar" todir="${imported.basedir.web}/lib2" />
     <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.0.0.jar" todir="${imported.basedir.web}/lib2" />
-    <move file="${imported.basedir.web}/lib/com.springsource.org.apache.taglibs.standard-1.1.2.jar" todir="${imported.basedir.web}/lib2" />
+    <!-- <move file="${imported.basedir.web}/lib/com.springsource.org.apache.taglibs.standard-1.1.2.jar" todir="${imported.basedir.web}/lib2" /> -->
     <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.web}/lib" />
   </target>
 
