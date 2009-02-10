@@ -735,14 +735,14 @@ class LoadGeneDbPhylogeny {
                 <property name="curatorName" value="" />
             </organism>
             <organism name="Ecarotovora">
-                <property name="taxonId" value="554" />
-                <property name="fullName" value="Erwinia carotovora" />
+                <property name="taxonId" value="218491" />
+                <property name="fullName" value="Pectobacterium atrosepticum SCRI1043" />
                 <property name="nickname" value="ecarot" />
                 <property name="translationTable" value="11"/>
                 <property name="curatorEmail" value="ms5"/>
-                <property name="htmlFullName" value=""/>
-                <property name="htmlShortName" value=""/>
-                <property name="shortName" value="" />
+                <property name="htmlFullName" value="<i>Pectobacterium atrosepticum</i> SCRI1043"/>
+                <property name="htmlShortName" value="<i>P. atrosepticum</i>"/>
+                <property name="shortName" value="P. atrosepticum" />
                 <property name="curatorName" value="" />
             </organism>
             <organism name="Ecoli_042">
