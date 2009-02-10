@@ -217,11 +217,15 @@
 
 	  <target name="init-web" description="Create full JAR file">
 	    <init-target project="web" />
+            <mkdir dir="${imported.basedir.web}/lib2"
 	  </target>
 
   <target name="web-populate-lib" depends="check.web-lib-uptodate" unless="web.lib-uptodate">
     <populate directory="genedb-web" />
-    <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.web}/lib2" />
+    <copy file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.5.0.jar" todir="${imported.basedir.web}/lib2" />
+    <copy file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.4.0.jar" todir="${imported.basedir.web}/lib2" />
+    <copy file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.0.0.jar" todir="${imported.basedir.web}/lib2" />
+    <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.web}/lib" />
   </target>
 
 
