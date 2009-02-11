@@ -33,7 +33,7 @@
 
   <target name="populate-lib-dir">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
-    <!-- <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/> -->
+    <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
     <ivy:retrieve conf="default"/>
   </target>
 
@@ -46,6 +46,8 @@
       <populate directory="genedb-util" />
       <populate directory="genedb-web"/>
       <populate directory="HibernateSearch"/>
+      <populate directory="Jogra"/>
+      <populate directory="Medusa"/>
   </target>
 
   <!-- The following target may look stupid, but it's actually extremely cunning. :-)
@@ -102,7 +104,6 @@
       <fail message="The 'config' property must be set" unless="config"/>
       <available file="${imported.basedir.@{project}}/property-file.${config}" property="@{project}-config-file-exists"/>
       <fail message="The file ${imported.basedir.@{project}}/property-file.${config} does not exist" unless="@{project}-config-file-exists"/>
-      <!-- <copy file="${imported.basedir.HibernateSearch}/property-file.${config}" tofile="${imported.basedir.HibernateSearch}/WebContent/WEB-INF/classes/project.properties" overwrite="true" /> -->
     </sequential>
   </macrodef>
 
@@ -113,7 +114,7 @@
     <sequential>
       <!-- <echo message="genedb-libs.compile-target: src.dir is '@{topdir}/src', output is '@{topdir}/${classes.dir}', classpathref is '@{classpathref}'" /> -->
       <javac srcdir="@{topdir}/src" includes="**/*.java" debug="true"
-             destdir="@{topdir}/${classes.dir}" classpathref="@{classpathref}" verbose="true"/>
+             destdir="@{topdir}/${classes.dir}" classpathref="@{classpathref}" />
       <!-- <echo>Compile finished</echo> -->
     </sequential>
   </macrodef>
@@ -131,7 +132,7 @@
         aspectpathref="aspect.path"
         classpathRef ="@{classpathref}"
         destdir="@{to-directory}" />
-      <touch file="${imported.basedir.@{project}}/${classes.dir}/../iajc_run" />
+      <touch file="${imported.basedir.@{project}}/${build.dir}/iajc_run" />
     </sequential>
   </macrodef>
 
