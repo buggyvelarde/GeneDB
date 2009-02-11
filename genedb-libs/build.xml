@@ -49,6 +49,26 @@
       <populate directory="Jogra"/>
       <populate directory="Medusa"/>
   </target>
+  
+  <target name="clean-all">
+      <echo message="Deleting ${lib-dir}/*.jar"/>
+      <echo message="Deleting ${lib-dir}/license-*.txt"/>
+      <delete>
+          <fileset dir="${lib-dir}">
+              <include name="*.jar"/>
+              <include name="license-*.txt"/>
+          </fileset>
+      </delete>
+      <clean-target project="access" topdir="${imported.basedir.libs}/../genedb-access"/>
+      <clean-target project="db" topdir="${imported.basedir.libs}/../genedb-db"/>
+      <clean-target project="domain" topdir="${imported.basedir.libs}/../genedb-domain"/>
+      <clean-target project="query" topdir="${imported.basedir.libs}/../genedb-query"/>
+      <clean-target project="util" topdir="${imported.basedir.libs}/../genedb-util"/>
+      <clean-target project="web" topdir="${imported.basedir.libs}/../genedb-web"/>
+      <clean-target project="HibernateSearch" topdir="${imported.basedir.libs}/../HibernateSearch"/>
+      <clean-target project="Jogra" topdir="${imported.basedir.libs}/../Jogra"/>
+      <clean-target project="Medusa" topdir="${imported.basedir.libs}/../Medusa"/>
+  </target>
 
   <!-- The following target may look stupid, but it's actually extremely cunning. :-)
 
