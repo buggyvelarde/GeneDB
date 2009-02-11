@@ -132,7 +132,6 @@
         aspectpathref="aspect.path"
         classpathRef ="@{classpathref}"
         destdir="@{to-directory}" />
-      <touch file="${imported.basedir.@{project}}/${build.dir}/iajc_run" />
     </sequential>
   </macrodef>
 

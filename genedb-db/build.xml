@@ -20,6 +20,7 @@
       <fileset dir="${imported.basedir.db}/lib">
         <include name="*.jar"/>
       </fileset>
+      <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
     </path>
 
     <path id="build-test-database-classpath">
@@ -154,6 +155,7 @@
     <!-- Called from an Eclipse ant task, as well as from fulljar-db -->
     <target name="build-time-weave">
         <antcall target="hibernate-instrumentation"/>
+        <init-target project="db"/>
         <iajc-target project="db" directory="${directory}"/>
     </target>
 
@@ -163,7 +165,7 @@
         <fail message="The attribute source.url must be supplied" unless="source.url"/>
         <fail message="The attribute source.username must be supplied" unless="source.username"/>
 
-        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.db}/../genedb-util/ant-build/dist/genedb-util.jar" />
+        <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${genedb-util.jar}" />
         <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
     </target>
 

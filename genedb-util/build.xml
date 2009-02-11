@@ -12,6 +12,7 @@
     <fileset dir="${imported.basedir.util}/lib">
       <include name="*.jar"/>
     </fileset>
+    <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
   </path>
 
   <path id="test-jars">
@@ -46,7 +47,6 @@
 
   <target name="util-populate-lib" depends="check.util-lib-uptodate" unless="util.lib-uptodate">
     <populate directory="genedb-util" />
-    <copy file="${imported.basedir.util}/../genedb-libs/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.util}/lib" />
   </target>
 
 
