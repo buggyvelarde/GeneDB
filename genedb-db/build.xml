@@ -70,18 +70,18 @@
 
     </target>
 
-    <target name="make-springless-jar" depends="setup-db">
+    <target name="make-springless-jar" depends="setup-db, db-populate-lib, db-populate-util">
         <javac srcdir="${imported.basedir.db}/src"
             classpathref="db-classpath"
-            destdir="${imported.basedir.db}/ant-build/springless-classes"
+            destdir="${imported.basedir.db}/${build.dir}/springless-classes"
             encoding="utf-8" debug="on" />
 
         <antcall target="hibernate-instrumentation">
-            <param name="directory" value="${imported.basedir.db}/ant-build/springless-classes"/>
+            <param name="directory" value="${imported.basedir.db}/${build.dir}/springless-classes"/>
         </antcall>
 
-        <jar jarfile="${imported.basedir.db}/ant-build/dist/genedb-db-springless.jar">
-            <fileset dir="${imported.basedir.db}/ant-build/springless-classes" />
+        <jar jarfile="${imported.basedir.db}/${dist.dir}/genedb-db-springless.jar">
+            <fileset dir="${imported.basedir.db}/${build.dir}/springless-classes" />
             <manifest>
                 <attribute name="Implementation-Title" value="Chado Interface (Springless)"/>
                 <attribute name="Implementation-Version" value="${version}"/>
