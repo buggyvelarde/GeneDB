@@ -215,10 +215,10 @@
     </target>
 
 
-	  <target name="init-web" description="Create full JAR file">
-	    <init-target project="web" />
+  <target name="init-web" description="Create full JAR file">
+    <init-target project="web" />
             <mkdir dir="${imported.basedir.web}/lib2" />
-	  </target>
+  </target>
 
   <target name="web-populate-lib" depends="check.web-lib-uptodate" unless="web.lib-uptodate">
     <populate directory="genedb-web" />
@@ -230,27 +230,27 @@
   </target>
 
 
-	  <target name="web-populate-util" depends="fulljar-util">
-	    <copy file="${imported.basedir.web}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.web}/lib" />
-	  </target>
+    <target name="web-populate-util" depends="fulljar-util">
+      <copy file="${imported.basedir.web}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.web}/lib" />
+    </target>
 
 
-	  <target name="web-populate-query" depends="fulljar-query">
-	    <copy file="${imported.basedir.web}/../genedb-query/ant-build/dist/genedb-query.jar" todir="${imported.basedir.web}/lib" />
-	  </target>
+    <target name="web-populate-query" depends="fulljar-query">
+      <copy file="${imported.basedir.web}/../genedb-query/ant-build/dist/genedb-query.jar" todir="${imported.basedir.web}/lib" />
+    </target>
 
 
-	  <target name="web-populate-db" depends="fulljar-db">
-	    <copy file="${imported.basedir.web}/../genedb-db/ant-build/dist/genedb-db.jar" todir="${imported.basedir.web}/lib" />
-	  </target>
+    <target name="web-populate-db" depends="fulljar-db">
+      <copy file="${imported.basedir.web}/../genedb-db/ant-build/dist/genedb-db.jar" todir="${imported.basedir.web}/lib" />
+    </target>
 
-    <target name="web-populate-domain" depends="fulljar-db">
+    <target name="web-populate-domain" depends="fulljar-domain">
       <copy file="${imported.basedir.web}/../genedb-domain/ant-build/dist/genedb-domain.jar" todir="${imported.basedir.web}/lib" />
     </target>
 
-  <target name="check.web-lib-uptodate" depends="init-web" if="web.ivy-timestamp-exists">
-    <uptodate property="web.lib-uptodate" srcfile="ivy.xml" targetfile="lib/ivy.timestamp.txt" />
-  </target>
+    <target name="check.web-lib-uptodate" depends="init-web" if="web.ivy-timestamp-exists">
+      <uptodate property="web.lib-uptodate" srcfile="ivy.xml" targetfile="lib/ivy.timestamp.txt" />
+    </target>
 
     <target name="martinHack" depends="check-deploy,compile-web">
       <java fork="true" classname="org.genedb.web.utils.MartinHack">
