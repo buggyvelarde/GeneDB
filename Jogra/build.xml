@@ -20,7 +20,7 @@
     </path>
 
     <target name="init">
-        <init project="Jogra" />
+        <init-target project="Jogra" />
     </target>
 
     <target name="clean">

@@ -13,7 +13,7 @@
     </path>
 
     <target name="fulljar-Medusa" depends="genedb-db.fulljar-db">
-      <init project="Medusa"/>
+      <init-target project="Medusa"/>
       <compile-target project="Medusa"/>
       <jar-target project="Medusa"/>
     </target>

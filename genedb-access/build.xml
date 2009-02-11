@@ -30,7 +30,7 @@
 
 
   <target name="init-access">
-    <init project="access"/>
+    <init-target project="access"/>
   </target>
 
   <target name="compile-access" depends="init-access, genedb-db.fulljar-db">
