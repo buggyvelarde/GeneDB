@@ -48,13 +48,19 @@ public abstract class HqlQuery implements Query {
     protected List<String> runQuery() {
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
 
-        org.hibernate.Query query = session.createQuery(getHql());
+        String hql = restrictQueryByOrganism(getHql(), "and f.organism_id in (:organismList)");
+        org.hibernate.Query query = session.createQuery(hql);
         populateQueryWithParams(query);
 
+        // Substitute in list of organism ids here - need a macro in the query
         @SuppressWarnings("unchecked") List<String> ret = query.list();
         return ret;
     }
 
+    private String restrictQueryByOrganism(String hql, String organismClause) {
+        // Check if there is an organism restriction
+        return hql.replace("@ORGANISM@", organismClause);
+    }
 
     protected abstract void populateQueryWithParams(org.hibernate.Query query);
 
@@ -93,18 +99,19 @@ public abstract class HqlQuery implements Query {
 
     protected abstract String getHql();
 
+    protected abstract String getOrganismHql();
+
     protected abstract String[] getParamNames();
 
     public List<HtmlFormDetails> getFormDetails() {
         List<HtmlFormDetails> ret = new ArrayList<HtmlFormDetails>();
 
-        /*
         for (String name : getParamNames()) {
             HtmlFormDetails htd = new HtmlFormDetails();
             //htd.setName(name);
             //htd.setDefaultValue
         }
-         */
+
 
 
         return ret;
