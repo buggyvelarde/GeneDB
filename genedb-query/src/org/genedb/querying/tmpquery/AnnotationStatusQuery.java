@@ -63,5 +63,11 @@ public class AnnotationStatusQuery extends HqlQuery {
         };
     }
 
+    @Override
+    protected String getOrganismHql() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 
 }

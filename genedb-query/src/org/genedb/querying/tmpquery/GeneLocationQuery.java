@@ -113,4 +113,11 @@ public class GeneLocationQuery extends HqlQuery {
         };
     }
 
+
+    @Override
+    protected String getOrganismHql() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

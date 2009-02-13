@@ -5,6 +5,7 @@ import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -63,7 +64,7 @@ public class ControlledCurationQuery extends HqlQuery {
     }
 
     @Override
-    protected void populateQueryWithParams(org.hibernate.Query query) {
+    protected void populateQueryWithParams(Query query) {
         logger.error(String.format("cvName='%s' cvTermName='%s'", cv.getLookupName(), cvTermName));
         query.setString("cvName", cv.getLookupName());
         query.setString("cvTermName", cvTermName);
@@ -84,6 +85,12 @@ public class ControlledCurationQuery extends HqlQuery {
                 return ControlledCurationQuery.class.isAssignableFrom(clazz);
             }
         };
+    }
+
+
+    @Override
+    protected String getOrganismHql() {
+        return "and f.organism_id in (:organismList)";
     }
 
 }
