@@ -42,6 +42,12 @@ public class GeneLocationQuery extends HqlQuery {
     }
 
 
+    @Override
+    protected String getOrganismHql() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 //    public Map<String, Object> prepareModelData() {
 //        Map<String, String> typeMap = new HashMap<String, String>();
 //        typeMap.put("mRNA", "protein-coding");
@@ -114,10 +120,5 @@ public class GeneLocationQuery extends HqlQuery {
     }
 
 
-    @Override
-    protected String getOrganismHql() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
 }

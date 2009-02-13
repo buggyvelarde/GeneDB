@@ -27,6 +27,13 @@ public class GeneTypeQuery extends HqlQuery {
     protected String getHql() {
         return "select f.uniqueName from Feature f where f.type.name=:type order by f.organism";
     }
+    
+
+    @Override
+    protected String getOrganismHql() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     @Override
     public Map<String, Object> prepareModelData() {
@@ -79,10 +86,5 @@ public class GeneTypeQuery extends HqlQuery {
     }
 
 
-    @Override
-    protected String getOrganismHql() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
 }
