@@ -78,4 +78,11 @@ public class GeneTypeQuery extends HqlQuery {
         };
     }
 
+
+    @Override
+    protected String getOrganismHql() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
