@@ -4,6 +4,24 @@
 create unique index cvterm_idx_genedb1 on cvterm (lower(name), cv_id, is_obsolete);
 
 -- ----------------------
+-- --- Functions
+-- ----------------------
+/* Note: we must have run createlang plpgsql first */
+create or replace function reverse(varchar) returns varchar as $$
+declare
+       _temp varchar;
+       _count int;
+begin
+       _temp := '';
+       for _count in reverse length($1)..1 loop
+               _temp := _temp || substring($1 from _count for 1);
+       end loop;
+       return _temp;
+end;
+$$ language plpgsql immutable;
+
+
+-- ----------------------
 -- --- Organisms
 -- ----------------------
 --
