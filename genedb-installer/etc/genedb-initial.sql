@@ -20,6 +20,21 @@ begin
 end;
 $$ language plpgsql immutable;
 
+/**
+ *    format_location(chromosome_uniquename, fmin, fmax, strand)
+ */
+create or replace function format_location(text,integer,integer,smallint)
+returns text
+as $$
+  select case when $4 >= 0
+      then $1 || ':'  || ($2 + 1) || '..' || $3
+      else $1 || ':(' || ($2 + 1) || '..' || $3 || ')'
+  end
+$$
+language sql
+immutable strict
+;
+
 
 -- ----------------------
 -- --- Organisms
