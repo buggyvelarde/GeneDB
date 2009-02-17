@@ -17,7 +17,7 @@ import java.util.List;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class EcQuery extends LuceneQuery {
+public class EcQuery extends OrganismLuceneQuery {
 
     @QueryParam(
             order=1,

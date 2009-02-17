@@ -37,7 +37,6 @@ import org.springframework.validation.Validator;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -58,6 +57,7 @@ public abstract class LuceneQuery implements Query {
     private LuceneIndex luceneIndex;
 
     protected String name;
+
 
     @PostConstruct
     protected void afterPropertiesSet() {
@@ -190,14 +190,6 @@ public abstract class LuceneQuery implements Query {
     protected abstract void getQueryTerms(List<org.apache.lucene.search.Query> queries);
 
 
-    protected BooleanQuery makeQueryForOrganisms(Collection<String> orgNames) {
-        BooleanQuery organismQuery = new BooleanQuery();
-
-        for (String organism : orgNames) {
-            organismQuery.add(new TermQuery(new Term("organism.commonName",organism)), Occur.SHOULD);
-        }
-        return organismQuery;
-    }
 
     public int getOrder() {
         return order;

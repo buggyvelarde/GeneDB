@@ -1,6 +1,5 @@
 package org.genedb.querying.tmpquery;
 
-import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
@@ -20,7 +19,7 @@ import java.util.List;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class SimpleNameQuery extends LuceneQuery {
+public class SimpleNameQuery extends OrganismLuceneQuery {
 
     @QueryParam(
             order=1,

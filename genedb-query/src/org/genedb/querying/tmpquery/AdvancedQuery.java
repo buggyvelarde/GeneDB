@@ -23,7 +23,7 @@ import java.util.Map;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class AdvancedQuery extends LuceneQuery {
+public class AdvancedQuery extends OrganismLuceneQuery {
 
     @QueryParam(
             order=1,

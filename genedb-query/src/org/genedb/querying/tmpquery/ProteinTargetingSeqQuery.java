@@ -18,7 +18,7 @@ import java.util.List;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class ProteinTargetingSeqQuery extends LuceneQuery {
+public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
 
 
     @QueryParam(

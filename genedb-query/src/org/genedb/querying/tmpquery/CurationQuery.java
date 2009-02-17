@@ -20,7 +20,7 @@ import java.util.List;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class CurationQuery extends LuceneQuery {
+public class CurationQuery extends OrganismLuceneQuery {
 
     @QueryParam(
             order=1,

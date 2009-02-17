@@ -20,7 +20,7 @@ import java.util.List;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class GoQuery extends LuceneQuery {
+public class GoQuery extends OrganismLuceneQuery {
 
     @QueryParam(
             order=1,
