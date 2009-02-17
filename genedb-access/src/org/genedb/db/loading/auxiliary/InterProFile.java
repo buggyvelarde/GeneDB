@@ -18,7 +18,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class DateFormatConverter {
+/**
+ * Convert dates from the format "24-Sep-1976" into ISO format
+ * (1976-09-24 or 19760924). For example:
+ * <pre>
+ *     new ISOFormatDate("24-Sep-1976").withDashes(); // Returns "1976-09-24"
+ * </pre>
+ * @author rh11
+ */
+class ISOFormatDate {
     private static final Map<String, String> months = new HashMap<String, String>(12) {{
         put("Jan", "01"); put("May", "05"); put("Sep", "09");
         put("Feb", "02"); put("Jun", "06"); put("Oct", "10");
@@ -33,8 +41,9 @@ class DateFormatConverter {
      * Create a converter for the specified date.
      *
      * @param date The date in format dd-Mon-yyyy, e.g. 24-Sep-1976
+     * @throws IllegalArgumentException if the date cannot be parsed
      */
-    public DateFormatConverter(String date) {
+    public ISOFormatDate(String date) {
         Matcher matcher = datePattern.matcher(date);
         if (!matcher.matches())
             throw new IllegalArgumentException(String.format(
@@ -80,10 +89,11 @@ class DateFormatConverter {
 class InterProRow {
     private static final Logger logger = Logger.getLogger(InterProFile.class);
 
+    int lineNumber;
     String key, nativeProg, db, nativeAcc, nativeDesc, score;
     InterProAcc acc = InterProAcc.NULL;
     int fmin, fmax;
-    private DateFormatConverter date;
+    private ISOFormatDate date;
     Set<GoInstance> goTerms = new HashSet<GoInstance>();
 
     // The columns we're interested in:
@@ -139,7 +149,8 @@ class InterProRow {
      *  In the actual file, fields are separated by tab characters.
      */
     InterProRow(int lineNumber, String[] rowFields) {
-        this.key       = rowFields[COL_KEY];
+        this.lineNumber = lineNumber;
+        this.key        = rowFields[COL_KEY];
         this.nativeProg = rowFields[COL_NATIVE_PROG];
         this.db         = dbByProg.get(nativeProg);
         this.nativeAcc  = rowFields[COL_NATIVE_ACC];
@@ -147,7 +158,7 @@ class InterProRow {
         this.fmin       = Integer.parseInt(rowFields[COL_FMIN]) - 1; // -1 because we're converting to interbase
         this.fmax       = Integer.parseInt(rowFields[COL_FMAX]);
         this.score      = rowFields[COL_SCORE];
-        this.date       = new DateFormatConverter(rowFields[COL_DATE]);
+        this.date       = new ISOFormatDate(rowFields[COL_DATE]);
 
         if (rowFields.length > COL_ACC && !rowFields[COL_ACC].equals("NULL")) {
             this.acc = new InterProAcc(rowFields[COL_ACC], rowFields[COL_DESC]);
@@ -207,6 +218,12 @@ class InterProRow {
     }
 }
 
+/**
+ * Represents an InterPro accession identifier with description,
+ * as found in the last two columns of an InterProScan raw output file.
+ * 
+ * @author rh11
+ */
 class InterProAcc {
     private String id, description;
     public static final InterProAcc NULL = new InterProAcc(null, null);

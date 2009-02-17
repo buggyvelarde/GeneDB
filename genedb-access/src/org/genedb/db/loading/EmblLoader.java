@@ -917,7 +917,6 @@ class EmblLoader {
                         goInstance.addQualifier(value);
                     } else if (key.equals("with")) {
                         goInstance.setWithFrom(value);
-                        /*
                     } else if (key.equals("aspect")) {
                         goInstance.setSubtype(value);
                     } else if (key.equals("attribution")) {
@@ -926,7 +925,6 @@ class EmblLoader {
                         goInstance.setResidue(value);
                     } else if (key.equals("db_xref")) {
                         goInstance.setRef(value);
-			*/
                     }
                 }
                 featureUtils.createGoEntries(focalFeature, goInstance, "From EMBL file", (DbXRef) null);
@@ -1196,42 +1194,39 @@ class EmblLoader {
         }};
 
         private void processControlledCurationStrict() throws DataError {
-            String controlledCuration = feature.getQualifierValue("controlled_curation");
-            if (controlledCuration == null) {
-                return;
-            }
+            for (String controlledCuration: feature.getQualifierValues("controlled_curation")) {
+                Matcher matcher = subqualifierPattern.matcher(controlledCuration);
+                Map<String, String> valuesByKey = new HashMap<String, String>();
+                while (matcher.find()) {
+                    String key = matcher.group(1).toLowerCase();
+                    String value = matcher.group(2);
 
-            Matcher matcher = subqualifierPattern.matcher(controlledCuration);
-            Map<String, String> valuesByKey = new HashMap<String, String>();
-            while (matcher.find()) {
-                String key = matcher.group(1).toLowerCase();
-                String value = matcher.group(2);
-
-                if (subqualifiers.contains(key)) {
-                    valuesByKey.put(key, value);
+                    if (subqualifiers.contains(key)) {
+                        valuesByKey.put(key, value);
+                    }
                 }
+
+                if (!valuesByKey.containsKey("term")) {
+                    throw new DataError("/controlled_curation has no 'term' field");
+                }
+                String term = valuesByKey.get("term");
+                String cv   = valuesByKey.containsKey("cv") ? valuesByKey.get("cv") : "CC_genedb_controlledcuration";
+
+                logger.trace(String.format("/controlled_curation: adding term '%s:%s' to %s",
+                    cv, term, focalFeature));
+                FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cv, term);
+
+                featureCvTerm.addPropIfNotNull("feature_property", "date",   valuesByKey.get("date"));
+                featureCvTerm.addPropIfNotNull("genedb_misc", "attribution", valuesByKey.get("attribution"));
+                featureCvTerm.addPropIfNotNull("genedb_misc", "evidence",    valuesByKey.get("evidence"));
+                featureCvTerm.addPropIfNotNull("genedb_misc", "qualifier",   valuesByKey.get("qualifier"));
+
+                if (valuesByKey.containsKey("db_xref")) {
+                    addDbXRefs(featureCvTerm, valuesByKey.get("db_xref"));
+                }
+
+                session.persist(featureCvTerm);
             }
-
-            if (!valuesByKey.containsKey("term")) {
-                throw new DataError("/controlled_curation has no 'term' field");
-            }
-            String term = valuesByKey.get("term");
-            String cv   = valuesByKey.containsKey("cv") ? valuesByKey.get("cv") : "CC_genedb_controlledcuration";
-
-            logger.trace(String.format("/controlled_curation: adding term '%s:%s' to %s",
-                cv, term, focalFeature));
-            FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cv, term);
-
-            featureCvTerm.addPropIfNotNull("feature_property", "date",   valuesByKey.get("date"));
-            featureCvTerm.addPropIfNotNull("genedb_misc", "attribution", valuesByKey.get("attribution"));
-            featureCvTerm.addPropIfNotNull("genedb_misc", "evidence",    valuesByKey.get("evidence"));
-            featureCvTerm.addPropIfNotNull("genedb_misc", "qualifier",   valuesByKey.get("qualifier"));
-
-            if (valuesByKey.containsKey("db_xref")) {
-                addDbXRefs(featureCvTerm, valuesByKey.get("db_xref"));
-            }
-
-            session.persist(featureCvTerm);
         }
 
         private Pattern dbxrefPattern = Pattern.compile("([^:]+):(.*)");

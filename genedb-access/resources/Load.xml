@@ -57,6 +57,7 @@
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="pubDao" ref="pubDao" />
         <property name="generalDao" ref="generalDao" />
+        <property name="objectManager" ref="objectManager" />
     </bean>
 
     <bean id="objectManager" class="org.gmod.schema.utils.ObjectManager">

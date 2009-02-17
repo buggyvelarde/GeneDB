@@ -46,6 +46,10 @@ public class Load {
         System.exit(1);
     }
 
+    /**
+     * Entry-point for command-line usage of auxiliary loaders.
+     * @see Load
+     */
     public static void main(String[] args) throws IOException {
 
         if (args.length < 1)

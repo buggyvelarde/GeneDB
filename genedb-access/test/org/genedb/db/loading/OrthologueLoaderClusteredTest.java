@@ -49,13 +49,13 @@ public class OrthologueLoaderClusteredTest {
 
         loadOrthologues("test/data/Saureus_clusters.ortho", false);
 
-        tester = (OrthologueTester) applicationContext.getBean("orthologueTester", OrthologueTester.class);
+        tester = applicationContext.getBean("orthologueTester", OrthologueTester.class);
     }
 
     private static void loadOrthologues(String filename, boolean geneNames)
         throws IOException, ParsingException {
 
-        OrthologuesLoader loader = (OrthologuesLoader) applicationContext.getBean("orthologuesLoader", OrthologuesLoader.class);
+        OrthologuesLoader loader = applicationContext.getBean("orthologuesLoader", OrthologuesLoader.class);
 
         loader.setAnalysisProperties(program, programVersion, algorithm);
         File file = new File(filename);
@@ -84,7 +84,7 @@ public class OrthologueLoaderClusteredTest {
     private static void loadEmblFile(String filename, String organismCommonName) throws IOException, ParsingException {
         logger.trace(String.format("Loading '%s' into organism '%s'", filename, organismCommonName));
 
-        EmblLoader emblLoader = (EmblLoader) applicationContext.getBean("emblLoader", EmblLoader.class);
+        EmblLoader emblLoader = applicationContext.getBean("emblLoader", EmblLoader.class);
         emblLoader.setOrganismCommonName(organismCommonName);
         emblLoader.setSloppyControlledCuration(true);
         emblLoader.setTopLevelFeatureClass(Chromosome.class);

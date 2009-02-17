@@ -51,7 +51,7 @@ public class OrthologueLoaderImplicitClusterTest {
         loadOrthologues("test/data/Saureus_subset_transcriptnames.ortho",
             program, programVersion, algorithm, false);
 
-        tester = (OrthologueTester) applicationContext.getBean("orthologueTester", OrthologueTester.class);
+        tester = applicationContext.getBean("orthologueTester", OrthologueTester.class);
     }
 
     private static void loadOrthologues(String filename,
@@ -59,7 +59,7 @@ public class OrthologueLoaderImplicitClusterTest {
             boolean geneNames)
         throws IOException, ParsingException {
 
-        OrthologuesLoader loader = (OrthologuesLoader) applicationContext.getBean("orthologuesLoader", OrthologuesLoader.class);
+        OrthologuesLoader loader = applicationContext.getBean("orthologuesLoader", OrthologuesLoader.class);
 
         File file = new File(filename);
         Reader reader = new FileReader(file);
@@ -88,7 +88,7 @@ public class OrthologueLoaderImplicitClusterTest {
     private static void loadEmblFile(String filename, String organismCommonName) throws IOException, ParsingException {
         logger.trace(String.format("Loading '%s' into organism '%s'", filename, organismCommonName));
 
-        EmblLoader emblLoader = (EmblLoader) applicationContext.getBean("emblLoader", EmblLoader.class);
+        EmblLoader emblLoader = applicationContext.getBean("emblLoader", EmblLoader.class);
         emblLoader.setOrganismCommonName(organismCommonName);
         emblLoader.setSloppyControlledCuration(true);
         emblLoader.setTopLevelFeatureClass(Chromosome.class);

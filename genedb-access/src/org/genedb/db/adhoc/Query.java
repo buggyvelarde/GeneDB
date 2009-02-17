@@ -53,7 +53,7 @@ public class Query {
         }
 
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("Adhoc.xml");
-        Query q = (Query) applicationContext.getBean("adhoc-query", Query.class);
+        Query q = applicationContext.getBean("adhoc-query", Query.class);
         q.rollback = !commit;
 
         try {

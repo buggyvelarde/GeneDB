@@ -1,22 +1,3 @@
-/*
- * Copyright (c) 2002 Genome Research Limited.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published
- * by  the Free Software Foundation; either version 2 of the License or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with this program; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307 USA
- */
-
 package org.genedb.db.loading;
 
 import org.apache.log4j.Logger;
@@ -26,15 +7,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class represents a specific GO entry
+ * This class represents a specific GO entry.
  *
  * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
  */
@@ -45,12 +27,11 @@ public class GoInstance {
     private String ref;
     private String withFrom;
     private GoEvidenceCode evidence = GoEvidenceCode.NR;
-    private String subtype;
+    private GoAspect subtype;
     private String name;
     private String date;
     private String attribution;
-    private boolean fromEMBL = false;
-    private String geneName;
+    private String residue;
 
     protected static final Logger logger = Logger.getLogger(GoInstance.class);
 
@@ -73,33 +54,62 @@ public class GoInstance {
     }
 
     /**
-     * Set the value of date.
+     * Set the date.
      *
-     * @param v Value to assign to date.
+     * @param date The date, in ISO format without dashes: for example, "<code>19760924</code>".
      */
-    public void setDate(String v) {
-        if (v == null || v.length() != 8)
-            throw new IllegalArgumentException("Date is null or not 8 characters (" + v + ")");
-
-        this.date = v;
+    public void setDate(String date) {
+        if (date == null) {
+            throw new NullPointerException("Date is null");
+        }
+        if (!date.matches("\\d{8}")) {
+            throw new IllegalArgumentException("Date format is invalid (" + date + "); should be eight digits");
+        }
+        
+        this.date = date;
     }
 
     /**
-     * Get the value of subtype.
+     * Get the subtype.
      *
-     * @return value of subtype.
+     * @return the GO subtype.
      */
-    public String getSubtype() {
+    public GoAspect getSubtype() {
         return subtype;
     }
 
+    private enum GoAspect {PROCESS, FUNCTION, COMPONENT};
+    private static final Map<String, GoAspect> aspectsByUcString = new HashMap<String, GoAspect>();
+    static {
+        aspectsByUcString.put("P", GoAspect.PROCESS);
+        aspectsByUcString.put("F", GoAspect.FUNCTION);
+        aspectsByUcString.put("C", GoAspect.COMPONENT);
+
+        aspectsByUcString.put("PROCESS", GoAspect.PROCESS);
+        aspectsByUcString.put("FUNCTION", GoAspect.FUNCTION);
+        aspectsByUcString.put("COMPONENT", GoAspect.COMPONENT);
+
+        aspectsByUcString.put("BIOLOGICAL PROCESS", GoAspect.PROCESS);
+        aspectsByUcString.put("MOLECULAR FUNCTION", GoAspect.FUNCTION);
+        aspectsByUcString.put("CELLULAR COMPONENT", GoAspect.COMPONENT);
+}
     /**
-     * Set the value of subtype.
+     * Set the subtype.
      *
-     * @param subtype Value to assign to subtype.
+     * @param subtype The GO subtype.
+     *                May be specified as:<ul>
+     *                <li> A single character: 'P', 'C' or 'F';
+     *                <li> A single word: "process", "component" or "function";
+     *                <li> The full phrase: "biological process", "cellular component", or "molecular function".
+     *                </ul>
+     *                Capitalisation is ignored: the string is handled case-insensitively.
      */
     public void setSubtype(String subtype) {
-        this.subtype = subtype;
+        String ucSubtype = subtype.toUpperCase();
+        if (!aspectsByUcString.containsKey(ucSubtype)) {
+            throw new IllegalArgumentException(String.format("Unrecognised GO subtype '%s'", subtype)); 
+        }
+        this.subtype = aspectsByUcString.get(ucSubtype);
     }
 
     public void setName(String name) {
@@ -253,53 +263,6 @@ public class GoInstance {
         this.evidence = evidence;
     }
 
-    /**
-     * Get the value of aspect.
-     *
-     * @return Value of aspect.
-     */
-    public String getAspect() {
-        return getSubtype().substring(0, 1).toUpperCase();
-    }
-
-    /**
-     * Get the value of fromAssoc.
-     *
-     * @return Value of fromAssoc.
-     */
-    public boolean isFromEMBL() {
-        return fromEMBL;
-    }
-
-    /**
-     * Set the value of fromEMBL.
-     *
-     * @param v Value to assign to fromEMBL.
-     */
-    public void setFromEMBL(boolean v) {
-        this.fromEMBL = v;
-    }
-
-    public void validate() {
-        for (Iterator<String> it = qualifiers.iterator(); it.hasNext();) {
-            String qualifier = it.next();
-            if (!isQualifierValid(qualifier)) {
-                logger.warn("Ignoring invalid GO qualifier '" + qualifier + "' in " + id);
-                it.remove();
-            }
-        }
-    }
-
-    /**
-     * @return
-     */
-    public boolean isWith() {
-        if (GoEvidenceCode.IC.equals(getEvidence())) {
-            return false;
-        }
-        return true;
-    }
-
     public String getAttribution() {
         return attribution;
     }
@@ -312,11 +275,11 @@ public class GoInstance {
         return this.withFrom;
     }
 
-    public String getGeneName() {
-        return geneName;
+    public String getResidue() {
+        return residue;
     }
 
-    public void setGeneName(String geneName) {
-        this.geneName = geneName;
+    public void setResidue(String residue) {
+        this.residue = residue;
     }
 }

@@ -22,25 +22,42 @@ package org.genedb.db.loading;
 
 
 /**
- * This class represents a specific GO entry
+ * This class represents a GO evidence code:
  *
- * @author <a href="mailto:art@sanger.ac.uk">Adrian Tivey</a>
+ * @author art
+ * @author rh11
  */
 public enum GoEvidenceCode {
 
-    IC  ("Inferred by Curator"),
+    // Experimental evidence codes
+    EXP ("Inferred from Experiment"),
     IDA ("Inferred from Direct Assay"),
-    IEA ("Inferred from Electronic Annotation"),
-    IEP ("Inferred from Expression Pattern"),
-    IGI ("Inferred from Genetic Interaction"),
-    IMP ("Inferred from Mutant Phenotype"),
     IPI ("Inferred from Physical Interaction"),
+    IMP ("Inferred from Mutant Phenotype"),
+    IGI ("Inferred from Genetic Interaction"),
+    IEP ("Inferred from Expression Pattern"),
+
+    // Computational analysis evidence codes
     ISS ("Inferred from Sequence or Structural Similarity"),
-    NAS ("Non-traceable Author Statement"),
-    ND  ("No biological Data available"),
+    ISO ("Inferred from Sequence Orthology"),
+    ISA ("Inferred from Sequence Alignment"),
+    ISM ("Inferred from Sequence Model"),
+    IGC ("Inferred from Genomic Context"),
+    RCA ("inferred from Reviewed Computational Analysis"),
+
+    // Author statement evidence codes
     TAS ("Traceable Author Statement"),
-    NR  ("Not Recorded"),
-    RCA ("inferred from Reviewed Computational Analysis");
+    NAS ("Non-traceable Author Statement"),
+
+    // Curator statement evidence codes
+    IC  ("Inferred by Curator"),
+    ND  ("No biological Data available"),
+
+    // Automatically assigned evidence codes
+    IEA ("Inferred from Electronic Annotation"),
+
+    // Obsolete evidence codes
+    NR  ("Not Recorded");
 
     private String description;
     private GoEvidenceCode(String description) {

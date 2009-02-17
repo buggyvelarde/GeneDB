@@ -541,7 +541,6 @@ public class FeatureTester {
     class TLFTester extends AbstractTester<TLFTester> {
         private TopLevelFeature tlf;
 
-        @SuppressWarnings("unchecked")
         private TLFTester(Class<? extends TopLevelFeature> tlfClass, String uniqueName) {
             super(TLFTester.class, (Feature) session.createCriteria(tlfClass)
                         .add(Restrictions.eq("uniqueName", uniqueName))

@@ -23,7 +23,7 @@
         <include name="*.jar"/>
       </fileset>
       <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
-      <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
+      <pathelement location="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar"/>
       <pathelement location="${genedb-util.jar}"/>
       <pathelement location="${genedb-db.jar}"/>
   </path>

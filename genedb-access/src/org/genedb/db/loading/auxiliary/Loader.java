@@ -53,6 +53,15 @@ public abstract class Loader {
         return true;
     }
 
+    /**
+     * Pass the specified option to the loader, if it is a valid option.
+     * This is used by {@link Load} to pass command-line options to the loader.
+     * 
+     * @param optionName the option name
+     * @param optionValue the option value
+     * @return <code>true</code> if the option was valid and successfully processed,
+     *          <code>false</code> if invalid.
+     */
     protected boolean processOptionIfValid(String optionName, String optionValue) {
         if (getOptionNames().contains(optionName))
             return processOption(optionName, optionValue);
@@ -107,6 +116,10 @@ public abstract class Loader {
 
     public void setObjectManager(ObjectManager objectManager) {
         this.objectManager = objectManager;
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 
     public void afterPropertiesSet() {

@@ -57,9 +57,11 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void featureNames() {
-        tester.uniqueNames(AbstractGene.class, "s1", "s2", "s3", "s4", "Smp_124050", "super1_tRNA1")
+        tester.uniqueNames(AbstractGene.class, "s1", "s2", "s3", "s4", "Smp_124050",
+                  "super1_tRNA1", "Tc00.1047053511907.50")
               .uniqueNames(Pseudogene.class, "s1")
-              .uniqueNames(Gene.class, "s2", "s3", "s4",  "Smp_124050", "super1_tRNA1");
+              .uniqueNames(Gene.class, "s2", "s3", "s4",  "Smp_124050", "super1_tRNA1",
+                  "Tc00.1047053511907.50");
     }
 
     @Test
@@ -224,6 +226,13 @@ public class EmblLoaderSyntheticTest {
             .loc(0, 0, 0, 0, 152)
             .loc(0, 1, 0, 31, 180)
             .secondaryDbXRefs("EMBL:AF007261", "UniProt:COXZ_RECAM");
+    }
+    
+    @Test
+    public void s4_GO() {
+        PolypeptideTester s4 = tester.geneTester("s4").transcript("s4:mRNA").polypeptide("s4:pep");
+
+        
     }
 
     @Test

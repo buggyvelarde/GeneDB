@@ -22,7 +22,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
+/**
+ * A loader for InterProScan results. The input file is assumed to be in InterPro raw format.
+ * This loader has one option, <code>key-type</code>, whose possible values are:
+ * <dl>
+ *  <dt><code>gene</code></dt><dd>The keys in the input file are gene names. This is the default.</dd>
+ *  <dt><code>gene</code></dt><dd>The keys in the input file are polypeptide names
+ *      (possibly with colons converted to doubled dots).</dd>
+ * </dl>
+ * 
+ * @author rh11
+ */
 public class InterProLoader extends Loader {
     private static final Logger logger = Logger.getLogger(InterProLoader.class);
 
@@ -84,7 +94,7 @@ public class InterProLoader extends Loader {
         Set<String> goTermIds = new HashSet<String>();
         Polypeptide polypeptide = getPolypeptideForKey(key);
         if (polypeptide == null)
-            return;
+            throw new RuntimeException(String.format("Failed to find %s '%s'", keyType, key));
         for (InterProAcc acc: interProFile.accsForKey(key)) {
             logger.debug(String.format("Processing '%s'", acc.getId()));
             loadGroup(interProFile, key, acc, polypeptide, goTermIds);
@@ -117,17 +127,16 @@ public class InterProLoader extends Loader {
             // Insert polypeptide_domain
             DbXRef dbxref = objectManager.getDbXRef(row.db, row.nativeAcc, row.nativeDesc);
             if (dbxref == null) {
-                logger.error(String.format("Could not find dbxref '%s'/'%s'", row.db, row.nativeAcc));
-                continue;
+                throw new RuntimeException(String.format("Could not find database '%s' on line %d", row.db, row.lineNumber));
             }
 
             String domainUniqueName;
             if (n == 0) {
-                domainUniqueName = String.format("%s:%s",
-                    polypeptide.getUniqueName(), row.nativeAcc);
+                domainUniqueName = String.format("%s:InterPro:%s",
+                    polypeptide.getUniqueName(), acc);
             } else {
-                domainUniqueName = String.format("%s:%s:%d",
-                    polypeptide.getUniqueName(), row.nativeAcc, n);
+                domainUniqueName = String.format("%s:InterPro:%s:%d",
+                    polypeptide.getUniqueName(), acc, n);
             }
 
             PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(

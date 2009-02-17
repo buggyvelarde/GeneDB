@@ -32,10 +32,10 @@ public class FastaLoaderTest {
     public FastaLoaderTest() throws IOException {
         this.applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml", "Test.xml"});
 
-        this.loader = (FastaLoader) applicationContext.getBean("fastaLoader", FastaLoader.class);
+        this.loader = applicationContext.getBean("fastaLoader", FastaLoader.class);
         loader.setOrganismCommonName(organismCommonName);
 
-        this.sessionFactory = (SessionFactory) applicationContext.getBean("sessionFactory", SessionFactory.class);
+        this.sessionFactory = applicationContext.getBean("sessionFactory", SessionFactory.class);
         this.session = SessionFactoryUtils.doGetSession(sessionFactory, true);
 
         FastaFile fastaFile = new FastaFile(new FileReader(new File(filename)));

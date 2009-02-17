@@ -29,6 +29,11 @@ FT                   /colour="9"
 FT                   /colour="9"
 FT                   /product="product 1; product 2"
 FT                   /product="product 3"
+FT                   /controlled_curation="term=crystal structure solved;
+FT                   db_xref=PDB:1SVV; date=20080708"
+FT                   /controlled_curation="term=expression in 7 week
+FT                   adult;evidence=NAS;db_xref=PMID:12345;attribution=contributed
+FT                   by Iain Chalmers;date=20070619"
 FT   CDS             220..250
 FT                   /systematic_id="s3"
 FT                   /product="caSE sEnstIve"
@@ -62,6 +67,16 @@ FT                   /similarity="fasta; SWALL:O21243 (EMBL:AF007261,
 FT                   SWALL:COXZ_RECAM); Reclinomonas americana; ; ; length 182
 FT                   aa; id=44.805%; ungapped id=46.939%; E()=2.5e-25; ; 151 aa
 FT                   overlap; query 1-152 aa; subject 32-180 aa"
+FT                   /GO="aspect=process; GOid=GO:0008152; term=metabolism;
+FT                   evidence=IEA; db_xref=TIGR_Tca1:autoGO;
+FT                   with=Pfam:PF02230|TIGR:TriTryp_COG; date=20041214"
+FT                   /GO="aspect=component; GOid=GO:0005575; term=cellular
+FT                   component unknown; evidence=IEA; db_xref=TIGR_Tca1:autoGO;
+FT                   with=TIGR:TriTryp_COG; date=20041214"
+FT                   /GO="aspect=function; GOid=GO:0016788; term=hydrolase
+FT                   activity, acting on ester bonds; evidence=IEA;
+FT                   db_xref=TIGR_Tca1:autoGO;
+FT                   with=Pfam:PF02230|TIGR:TriTryp_COG; date=20041214"
 FT   CDS             complement(join(330..340,350..360))
 FT                   /note="annotation contributed by Iain Chalmers"
 FT                   /note="group2 SmVAL"
@@ -88,6 +103,23 @@ FT   tRNA            join(370..380,390..400)
 FT                   /label="tRNA label"
 FT                   /colour="12"
 FT                   /invented_qualifier="value"
+FT   CDS             500..600
+FT                   /GO="aspect=process; GOid=GO:0008152; term=metabolism;
+FT                   evidence=IEA; db_xref=TIGR_Tca1:autoGO;
+FT                   with=Pfam:PF02230|TIGR:TriTryp_COG; date=20041214"
+FT                   /GO="aspect=component; GOid=GO:0005575; term=cellular
+FT                   component unknown; evidence=IEA; db_xref=TIGR_Tca1:autoGO;
+FT                   with=TIGR:TriTryp_COG; date=20041214"
+FT                   /GO="aspect=function; GOid=GO:0016788; term=hydrolase
+FT                   activity, acting on ester bonds; evidence=IEA;
+FT                   db_xref=TIGR_Tca1:autoGO;
+FT                   with=Pfam:PF02230|TIGR:TriTryp_COG; date=20041214"
+FT                   /previous_systematic_id="8824.t00005"
+FT                   /product="lysophospholipase, putative"
+FT                   /psu_db_xref="TCA:Tc00.1047053511907.50;"
+FT                   /psu_db_xref="InterPro:IPR003140;"
+FT                   /xdb_xref="CTP:map00580"
+FT                   /temporary_systematic_id="Tc00.1047053511907.50"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,
