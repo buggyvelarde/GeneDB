@@ -108,6 +108,7 @@ class InterProRow {
         put("BlastProDom", "ProDom");
         put("HMMTigr", "TIGR_TIGRFAMS");
         put("HMMPIR", "PIRSF");
+        put("HMMPanther", "PANTHER");
 
         // These three have not been seen in the P. falciparum output, at least.
         // Are they still possible?
