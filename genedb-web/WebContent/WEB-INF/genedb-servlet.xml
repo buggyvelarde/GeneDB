@@ -28,6 +28,7 @@
         <property name="basenames">
             <list>
                 <value>exceptions</value>
+                <value>ValidatorMessages</value>
             </list>
         </property>
     </bean>
