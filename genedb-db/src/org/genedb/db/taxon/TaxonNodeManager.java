@@ -32,6 +32,7 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -173,5 +174,13 @@ public class TaxonNodeManager implements InitializingBean {
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+
+	public List<String> getNamesListForTaxons(TaxonNode[] taxons) {
+		Set<String> dupes = new HashSet<String>();
+		for (TaxonNode taxonNode : taxons) {
+			dupes.addAll(taxonNode.getAllChildrenNames());
+		}
+		return new ArrayList<String>(dupes);
+	}
 
 }
