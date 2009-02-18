@@ -1,8 +1,14 @@
 package org.genedb.querying.tmpquery;
 
-import org.genedb.querying.core.HqlQuery;
+import org.genedb.querying.core.HqlQuery;    
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
+import org.hibernate.validator.ClassValidator;
+import org.hibernate.validator.InvalidValue;
+import org.hibernate.validator.Max;
+import org.hibernate.validator.Min;
+import org.hibernate.validator.NotEmpty;
+import org.hibernate.validator.Pattern;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -18,12 +24,16 @@ public class ProteinLengthQuery extends HqlQuery {
             order=1,
             title="Minimum length of protein in bases"
     )
+
+    @Min(value=50, message="{min.minimum}")
     private int min = 50;
 
     @QueryParam(
             order=2,
             title="Maximum length of protein in bases"
     )
+   
+    @Max(value=500, message="{max.maximum}")
     private int max = 500;
 
     @Override
@@ -64,8 +74,22 @@ public class ProteinLengthQuery extends HqlQuery {
     public Validator getValidator() {
         return new Validator() {
             @Override
-            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
+                ClassValidator<ProteinLengthQuery> lengthQueryValidator = new ClassValidator<ProteinLengthQuery>(ProteinLengthQuery.class);     
+                ProteinLengthQuery query = (ProteinLengthQuery)target;
+                 InvalidValue[] invalids = lengthQueryValidator.getInvalidValues(query);
+                for (InvalidValue invalidValue: invalids){
+                	errors.rejectValue(invalidValue.getPropertyPath(), null, invalidValue.getMessage());
+                }
+                
+                //validate dependent properties
+                if (!errors.hasErrors()){
+                	int min = query.getMin();
+                	int max = query.getMax();
+                	if(min > max){
+                		errors.reject("min.greater.than.max");
+                	}
+                }
                 return;
             }
 
@@ -76,6 +100,5 @@ public class ProteinLengthQuery extends HqlQuery {
             }
         };
     }
-
 
 }
