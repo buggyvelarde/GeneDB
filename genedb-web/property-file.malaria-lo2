@@ -1,0 +1,17 @@
+finaldest.webapps=/Users/sangerinstitute/Downloads/apache-tomcat-6.0.18/webapps/genedb
+webAppRootKey=genedb.new.root
+
+dbhost=localhost
+dbport=10101
+dbname=malaria_workshop
+dbuser=pathdb
+dbpassword=Pyrate_1
+lucene.indexDirectory=/Users/sangerinstitute/Documents/workspace/pathdata/genedb/snapshot/lucene
+cacheDirectory=/Users/sangerinstitute/Documents/workspace/pathdata/genedb/snapshot/cache
+baseDiagramDirectory=/tmp
+contextMap.render.directory=/cmap
+proteinMap.render.directory=/pmap
+baseUri=/gi
+emboss.directory=/software/pathogen/external/applications/EMBOSS/
+psu.emboss.directory=/software/pathogen/external/applications/PSU_EMBOSS/
+
