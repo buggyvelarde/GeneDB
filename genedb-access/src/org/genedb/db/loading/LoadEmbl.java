@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Command-line entry point for loading EMBL files.
@@ -56,6 +58,10 @@ public class LoadEmbl extends FileProcessor {
      *    <li> if <code>load.reportUnusedQualifiers</code> is set to <code>true</code> (or
      *                  any value other than <code>false</code>) then a list of unused qualifiers,
      *                  grouped by feature type, is printed after each file has been loaded.
+     *    <li> <code>load.ignoreQualifiers</code> may be set to a comma-separated list of qualifiers
+     *                  to ignore. The qualifier name may be prefixed with a feature type, for example
+     *                  <code>-Dload.ignoreQualifiers=CDS:similarity</code> would cause all /similarity
+     *                  qualifiers on CDS features to be ignored.
      * </ul>
      *
      * @param args ignored
@@ -74,17 +80,18 @@ public class LoadEmbl extends FileProcessor {
         String topLevelFeatureType = getRequiredProperty("load.topLevel");
         boolean sloppyControlledCuration = hasProperty("load.sloppyControlledCuration");
         boolean quickAndDirty = hasProperty("load.quickAndDirty");
+        String ignoreQualifiers = getPropertyWithDefault("load.ignoreQualifiers", null);
 
         logger.info(String.format("Options: organismCommonName=%s, inputDirectory=%s, fileNamePattern=%s," +
-                   "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%s",
+                   "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%s, ignoreQualifiers=%s",
                    organismCommonName, inputDirectory, fileNamePattern, overwriteExisting,
-                   topLevelFeatureType, sloppyControlledCuration));
+                   topLevelFeatureType, sloppyControlledCuration, ignoreQualifiers));
 
         if (quickAndDirty) {
             ((AppenderSkeleton) Logger.getRootLogger().getAppender("stdout")).setThreshold(Level.WARN);
         }
         LoadEmbl loadEmbl = new LoadEmbl(organismCommonName, overwriteExisting,
-            topLevelFeatureType, sloppyControlledCuration);
+            topLevelFeatureType, sloppyControlledCuration, ignoreQualifiers);
         if (quickAndDirty) {
             loadEmbl.quickAndDirty();
         }
@@ -93,8 +100,9 @@ public class LoadEmbl extends FileProcessor {
     }
 
     private EmblLoader loader;
+    private static final Pattern ignoreQualifiersPattern = Pattern.compile("\\G(?:(\\w+):)?(\\w+)(?:,|\\Z)");
     private LoadEmbl(String organismCommonName, String overwriteExistingString, String topLevelFeatureType,
-            boolean sloppyControlledCuration) {
+            boolean sloppyControlledCuration, String ignoreQualifiers) {
         EmblLoader.OverwriteExisting overwriteExisting;
         if (overwriteExistingString.equals("yes")) {
             overwriteExisting = EmblLoader.OverwriteExisting.YES;
@@ -126,6 +134,25 @@ public class LoadEmbl extends FileProcessor {
         } else {
             throw new RuntimeException(
                 String.format("Unrecognised value for load.topLevel: '%s'", topLevelFeatureType));
+        }
+
+        if (ignoreQualifiers != null) {
+            Matcher ignoreQualifiersMatcher = ignoreQualifiersPattern.matcher(ignoreQualifiers);
+            int end = 0;
+            while (ignoreQualifiersMatcher.find()) {
+                end = ignoreQualifiersMatcher.end();
+
+                String feature = ignoreQualifiersMatcher.group(1);
+                String qualifier = ignoreQualifiersMatcher.group(2);
+                if (feature == null) {
+                    loader.ignoreQualifier(qualifier);
+                } else {
+                    loader.ignoreQualifier(qualifier, feature);
+                }
+            }
+            if (end < ignoreQualifiersMatcher.regionEnd()) {
+                throw new RuntimeException("Failed to parse load.ignoreQualifiers: " + ignoreQualifiers);
+            }
         }
     }
 

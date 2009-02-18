@@ -50,6 +50,7 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,6 +108,9 @@ class EmblLoader {
 
     private boolean sloppyControlledCuration = false;
     private boolean reportUnusedQualifiers = true;
+
+    private Collection<String> ignoredQualifiers = new HashSet<String>();
+    private Map<String,Collection<String>> ignoredQualifiersByFeatureType = new HashMap<String,Collection<String>>();
 
     /**
      * Set the organism into which to load data.
@@ -192,6 +196,42 @@ class EmblLoader {
         this.reportUnusedQualifiers = reportUnusedQualifiers;
     }
 
+    /**
+     * Ignore the named qualifier.
+     *
+     * @param qualifier the name of the qualifier to ignore
+     */
+    public void ignoreQualifier(String qualifier) {
+        ignoredQualifiers.add(qualifier);
+    }
+
+    /**
+     * Ignore the named qualifier when it appears on a feature of the specified type.
+     *
+     * @param qualifier the name of the qualifier to ignore
+     * @param featureType the type of feature on which to ignore the named qualifier
+     */
+    public void ignoreQualifier(String qualifier, String featureType) {
+        synchronized(ignoredQualifiersByFeatureType) {
+            if (!ignoredQualifiersByFeatureType.containsKey(featureType)) {
+                ignoredQualifiersByFeatureType.put(featureType, new HashSet<String>());
+            }
+            ignoredQualifiersByFeatureType.get(featureType).add(qualifier);
+        }
+    }
+
+    private void propagateIgnoredQualifiers(FeatureTable featureTable) {
+        for (String qualifier: ignoredQualifiers) {
+            featureTable.ignoreQualifier(qualifier);
+        }
+        for (Map.Entry<String,Collection<String>> entry: ignoredQualifiersByFeatureType.entrySet()) {
+            String featureType = entry.getKey();
+            for (String qualifier: entry.getValue()) {
+                featureTable.ignoreQualifier(qualifier, featureType);
+            }
+        }
+    }
+
     private Session session;
 
     /**
@@ -206,6 +246,8 @@ class EmblLoader {
      * @throws DataError if a data problem is discovered
      */
     public void load(EmblFile emblFile) throws DataError {
+        propagateIgnoredQualifiers(emblFile.getFeatureTable());
+
         TopLevelFeature topLevelFeature;
         try {
             topLevelFeature = getTopLevelFeature(emblFile.getAccession());

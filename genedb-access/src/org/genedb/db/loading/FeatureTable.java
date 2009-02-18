@@ -464,20 +464,23 @@ class FeatureTable extends EmblFile.Section {
      * @param qualifier the name of the qualifier to ignore
      */
     public void ignoreQualifier(String qualifier) {
+        logger.info(String.format("Ignoring qualifier /%s on all feature types", qualifier));
         ignoredQualifiers.add(qualifier);
     }
 
     /**
-     * Ignore the named qualifier, i.e. do not return any values
-     * for the qualifier from
+     * Ignore the named qualifier when it appears on a feature of the specified type,
+     * i.e. do not return any values for the qualifier from
      * {@link Feature#getQualifierValue(String)}
      * or {@link Feature#getQualifierValues(String...)}. Ignored
      * qualifiers are still returned by {@link Feature#getUnusedQualifiers()}
      * and {@link Feature#getUnusedQualifierNames()}.
      *
      * @param qualifier the name of the qualifier to ignore
+     * @param featureType the type of feature on which to ignore the named qualifier
      */
     public void ignoreQualifier(String qualifier, String featureType) {
+        logger.info(String.format("Ignoring qualifier /%s on '%s' features", qualifier, featureType));
         synchronized(ignoredQualifiersByFeatureType) {
             if (!ignoredQualifiersByFeatureType.containsKey(featureType)) {
                 ignoredQualifiersByFeatureType.put(featureType, new HashSet<String>());
