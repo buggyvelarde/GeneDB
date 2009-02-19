@@ -1,10 +1,10 @@
 finaldest.webapps=/nfs/pathscratch1/scratch/art/tomcat/webapps/ROOT
 webAppRootKey=genedb.new.root
-dbhost=pathdbsrv1a
-dbport=10101
-dbname=malaria_workshop
-dbuser=pathdb
-dbpassword=Pyrate_1
+dbhost=pgsrv1
+dbport=5432
+dbname=pathogens
+dbuser=genedb
+dbpassword=genedb
 lucene.indexDirectory=/nfs/pathdata/genedb/indexes/snapshot-good
 baseDiagramDirectory=/tmp
 contextMap.render.directory=/cmap
