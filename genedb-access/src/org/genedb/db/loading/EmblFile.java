@@ -27,6 +27,7 @@ public class EmblFile {
     private static final Logger logger = Logger.getLogger(EmblFile.class);
 
     private boolean continueOnError = false;
+    private String filePath;
 
     private void dataError(DataError dataError) throws DataError {
         if (continueOnError) {
@@ -62,6 +63,7 @@ public class EmblFile {
     }
 
     public EmblFile(String inputFile, BufferedReader reader, boolean continueOnError) throws IOException, ParsingException {
+        this.filePath = inputFile;
         this.continueOnError = continueOnError;
 
         String line;
@@ -377,5 +379,9 @@ public class EmblFile {
             return null;
         }
         return contigSection.contigLocations;
+    }
+
+    public String getFilePath() {
+        return this.filePath;
     }
 }

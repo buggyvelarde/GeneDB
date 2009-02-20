@@ -4,6 +4,7 @@ import org.genedb.db.dao.CvDao;
 import org.genedb.db.dao.GeneralDao;
 import org.genedb.db.dao.OrganismDao;
 import org.genedb.db.dao.PubDao;
+import org.genedb.util.Counters;
 import org.genedb.util.IterableArray;
 
 import org.gmod.schema.cfg.FeatureTypeUtils;
@@ -22,6 +23,7 @@ import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Pseudogene;
 import org.gmod.schema.feature.PseudogenicTranscript;
 import org.gmod.schema.feature.RRNA;
+import org.gmod.schema.feature.Region;
 import org.gmod.schema.feature.RepeatRegion;
 import org.gmod.schema.feature.RepeatUnit;
 import org.gmod.schema.feature.SnRNA;
@@ -49,6 +51,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -394,6 +397,7 @@ class EmblLoader {
         this.repeatRegionUniqueNames.clear();
         this.repeatUnitUniqueNames.clear();
         this.syntheticNcRNAIndexByType.clear();
+        this.archivedFeatureIndexes.clear();
     }
 
     private void loadContigsAndGaps(EmblLocation.Join locations) throws DataError {
@@ -518,12 +522,36 @@ class EmblLoader {
             // TODO
         }
         else {
-            logger.warn(String.format("Ignoring '%s' feature on line %d", featureType, feature.lineNumber));
+            archiveFeature(feature);
         }
 
         if (focalFeature != null) {
             archiveUnusedQualifiers(feature, focalFeature);
         }
+    }
+
+    private Counters archivedFeatureIndexes = new Counters();
+    private void archiveFeature(FeatureTable.Feature feature) {
+        String featureUniqueName = String.format("%s:archived:%s:%d",
+            topLevelFeature.getUniqueName(), feature.type,
+            archivedFeatureIndexes.nextval(feature.type));
+        logger.warn(String.format("Archiving '%s' feature on line %d as '%s'",
+            feature.type, feature.lineNumber, featureUniqueName));
+
+        Feature focalFeature = new Region(
+            organism, featureUniqueName,
+            /*analysis:*/false, /*obsolete:*/true,
+            new Timestamp(System.currentTimeMillis()));
+
+        locate(focalFeature, feature.location);
+
+        focalFeature.addFeatureProp(
+            String.format("Archived from '%s' line %d, location %s",
+                feature.getFilePath(), feature.lineNumber, feature.location),
+            "feature_property", "comment", 0);
+
+        session.persist(focalFeature);
+        archiveUnusedQualifiers(feature, focalFeature);
     }
 
     private void archiveUnusedQualifiers(FeatureTable.Feature feature, Feature focalFeature) {

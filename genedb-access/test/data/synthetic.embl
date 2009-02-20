@@ -120,6 +120,8 @@ FT                   /psu_db_xref="TCA:Tc00.1047053511907.50;"
 FT                   /psu_db_xref="InterPro:IPR003140;"
 FT                   /xdb_xref="CTP:map00580"
 FT                   /temporary_systematic_id="Tc00.1047053511907.50"
+FT   nonstandard     join(600..610,620..630)
+FT                   /madeupqualifier="value"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,

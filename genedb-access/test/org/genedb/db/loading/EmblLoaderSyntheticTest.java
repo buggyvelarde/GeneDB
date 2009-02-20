@@ -227,12 +227,12 @@ public class EmblLoaderSyntheticTest {
             .loc(0, 1, 0, 31, 180)
             .secondaryDbXRefs("EMBL:AF007261", "UniProt:COXZ_RECAM");
     }
-    
+
     @Test
     public void s4_GO() {
         PolypeptideTester s4 = tester.geneTester("s4").transcript("s4:mRNA").polypeptide("s4:pep");
 
-        
+
     }
 
     @Test
@@ -322,5 +322,15 @@ public class EmblLoaderSyntheticTest {
             .transcript("s4:mRNA").polypeptide("s4:pep")
             .getTerms("genedb_products");
         assertEquals(s3_products, s4_products);
+    }
+
+    @Test
+    public void archivedFeature() {
+        FeatureTester.GenericTester t = tester.featureTester("super1:archived:nonstandard:1");
+        t.loc(+1, 599, 630);
+        t.assertObsolete();
+        t.propertyMatches("feature_property", "comment",
+            "Archived from 'test/data/synthetic.embl' line \\d+, location join\\(600\\.\\.610,620\\.\\.630\\)");
+        t.property("genedb_misc", "EMBL_qualifier", "/madeupqualifier=\"value\"");
     }
 }
