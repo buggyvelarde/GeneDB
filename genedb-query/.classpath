@@ -6,7 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-util"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/misc/antlr-runtime-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.antlr-sources-2.7.6.jar"/>
@@ -109,7 +108,6 @@
 	<classpathentry kind="lib" path="lib/org.springframework.orm-sources-3.0.0.M1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.web-3.0.0.M1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.web-sources-3.0.0.M1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.validator-3.0.0.GA.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
