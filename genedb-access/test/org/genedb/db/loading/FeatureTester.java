@@ -136,6 +136,7 @@ public class FeatureTester {
          */
         protected AbstractTester(Class<T> ourClass, Feature feature) {
             assert ourClass.isInstance(this);
+            assertNotNull("Did not find feature", feature);
             this.ourClass = ourClass;
             this.feature = feature;
         }
@@ -173,8 +174,9 @@ public class FeatureTester {
             assertEquals(name, feature.getName());
             return ourClass.cast(this);
         }
-        public T property(String cv, String term, String value) {
+        private String getPropertyValue(String cv, String term) {
             boolean found = false;
+            String value = null;
             for (FeatureProp featureProp: feature.getFeatureProps()) {
                 CvTerm propType = featureProp.getType();
                 String propValue = featureProp.getValue();
@@ -184,11 +186,15 @@ public class FeatureTester {
                     if (found) {
                         fail(String.format("Property '%s' found more than once on feature '%s'", propType, feature.getUniqueName()));
                     }
-                    assertEquals(value, featureProp.getValue());
+                    value = propValue;
                     found = true;
                 }
             }
             assertTrue (String.format("Property '%s:%s' not found on feature '%s'", cv, term, feature.getUniqueName()), found);
+            return value;
+        }
+        public T property(String cv, String term, String value) {
+            assertEquals(value, getPropertyValue(cv, term));
             return ourClass.cast(this);
         }
         public T properties(String cv, String term, String... values) {
@@ -208,6 +214,14 @@ public class FeatureTester {
                 String.format("Feature '%s' does not have the expected %s:%s properties;",
                     feature.getUniqueName(), cv, term),
                 expectedValues, foundValues);
+            return ourClass.cast(this);
+        }
+        public T propertyMatches(String cv, String term, String regex) {
+            Pattern pattern = Pattern.compile(regex);
+            String value = getPropertyValue(cv, term);
+            Matcher matcher = pattern.matcher(value);
+            assertTrue(String.format("Property '%s:%s' has value '%s', which does not match /%s/", cv, term, value, regex),
+                matcher.matches());
             return ourClass.cast(this);
         }
         public T cvterms(String cvName, String... terms) {
@@ -248,6 +262,10 @@ public class FeatureTester {
                 pubUniqueNames.add(pub.getUniqueName());
             }
             return pubUniqueNames;
+        }
+        public T assertObsolete() {
+            assertTrue(String.format("Expected feature '%s' to be obsolete", feature.getUniqueName()), feature.isObsolete());
+            return ourClass.cast(this);
         }
     }
 
