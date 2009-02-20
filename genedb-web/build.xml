@@ -42,12 +42,13 @@
     </fileset>
   </path>
 
-	
   <path id="web-tests-classpath">
     <path refid="web-classpath"/>
-  	<pathelement location="${imported.basedir.web}/test"/>
-  	<pathelement location="${imported.basedir.web}/ant-build/classes"/>
-  </path>	
+    <pathelement location="${imported.basedir.web}/${classes.dir}"/>
+    <pathelement location="${imported.basedir.web}/${test-classes.dir}"/>
+    <pathelement location="${imported.basedir.domain}/${test-classes.dir}"/>
+    <pathelement location="${imported.basedir.web}/test"/>
+  </path>
 
   <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.fulljar-db,genedb-util.fulljar-util" />
 
@@ -75,13 +76,13 @@
       <srcfiles dir="${imported.basedir.web}/ant-build/classes" />
     </uptodate>
   </target>
-	
-	<target name="tests" depends="compile-web">
-	    <tests-target project="web"/>
-	</target>
 
-	<target name="test-all-modules" depends="genedb-query.tests, tests"/>
-	
+  <target name="tests" depends="compile-web, genedb-domain.compile-tests">
+    <tests-target project="web"/>
+  </target>
+
+  <target name="test-all-modules" depends="genedb-query.tests, tests"/>
+
    <target name="iajc-web" depends="compile-web" unless="web.iajc-uptodate">
      <iajc-target project="web" />
    </target>
@@ -243,14 +244,14 @@
   </target>
 
 
-	  <target name="web-populate-lib2">
-	    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.5.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
-	    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.4.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
-	    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.0.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
-	    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.1.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
-	    <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.web}/lib" />
-	    <copy file="${lib-dir}/biojava/biojava-1.6.jar" todir="${imported.basedir.web}/lib" />
-	  </target>
+    <target name="web-populate-lib2">
+      <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.5.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
+      <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.4.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
+      <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.0.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
+      <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.1.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
+      <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.web}/lib" />
+      <copy file="${lib-dir}/biojava/biojava-1.6.jar" todir="${imported.basedir.web}/lib" />
+    </target>
 
     <target name="web-populate-util" depends="fulljar-util">
       <copy file="${imported.basedir.web}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.web}/lib" />
