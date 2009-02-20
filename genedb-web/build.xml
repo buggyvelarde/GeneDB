@@ -222,9 +222,9 @@
 
   <target name="web-populate-lib" depends="check.web-lib-uptodate" unless="web.lib-uptodate">
     <populate directory="genedb-web" />
-    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.5.0.jar" todir="${imported.basedir.web}/lib2" />
-    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.4.0.jar" todir="${imported.basedir.web}/lib2" />
-    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.0.0.jar" todir="${imported.basedir.web}/lib2" />
+    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.5.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
+    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.4.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
+    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.0.0.jar" todir="${imported.basedir.web}/lib2" failonerror="false" />
     <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.web}/lib" />
     <copy file="${lib-dir}/biojava/biojava-1.6.jar" todir="${imported.basedir.web}/lib" />
   </target>
