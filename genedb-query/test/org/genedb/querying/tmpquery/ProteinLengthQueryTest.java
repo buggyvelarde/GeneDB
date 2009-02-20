@@ -18,7 +18,7 @@ public class ProteinLengthQueryTest {
 		query.setMin(50);
 		query.setMax(500);
 		Errors errors = new BindException(query, "query"); 
-		query.getValidator().validate(query, errors);
+		query.validate(query, errors);
 		
 		Assert.assertFalse(errors.hasErrors());
 	}
@@ -28,7 +28,7 @@ public class ProteinLengthQueryTest {
 		ProteinLengthQuery query = new ProteinLengthQuery();
 		query.setMax(501);
 		Errors errors = new BindException(query, "query"); 
-		query.getValidator().validate(query, errors);
+		query.validate(query, errors);
 		
 		Assert.assertTrue(errors.hasErrors());
 		Assert.assertTrue(errors.hasFieldErrors());
@@ -44,7 +44,7 @@ public class ProteinLengthQueryTest {
 		ProteinLengthQuery query = new ProteinLengthQuery();
 		query.setMin(49);
 		Errors errors = new BindException(query, "query"); 
-		query.getValidator().validate(query, errors);
+		query.validate(query, errors);
 		
 		Assert.assertTrue(errors.hasErrors());
 		Assert.assertTrue(errors.hasFieldErrors());
@@ -60,7 +60,7 @@ public class ProteinLengthQueryTest {
 		query.setMin(500);
 		query.setMax(400);
 		Errors errors = new BindException(query, "query"); 
-		query.getValidator().validate(query, errors);
+		query.validate(query, errors);
 		
 		Assert.assertTrue(errors.hasErrors());
 		Assert.assertFalse(errors.hasFieldErrors());
