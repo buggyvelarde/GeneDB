@@ -86,10 +86,6 @@
      <iajc-target project="web" />
    </target>
 
-	   <target name="iajc-web" depends="compile-web" unless="web.iajc-uptodate">
-	        <iajc-target project="web" />
-	    </target>
-
   <target name="deploy" depends="pre-deploy, application-deploy, post-deploy"/>
 
   <target name="pre-deploy" depends="check-deploy, compile-web, test-all-modules">
