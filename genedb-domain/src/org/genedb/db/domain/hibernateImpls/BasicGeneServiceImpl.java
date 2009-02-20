@@ -1,13 +1,5 @@
 package org.genedb.db.domain.hibernateImpls;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
 import org.genedb.db.domain.objects.BasicGene;
 import org.genedb.db.domain.objects.Chromosome;
 import org.genedb.db.domain.objects.Exon;
@@ -24,10 +16,18 @@ import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.FeatureSynonym;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class BasicGeneServiceImpl implements BasicGeneService {
     protected SessionFactory sessionFactory;
@@ -39,8 +39,8 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             "select gene from Feature gene"
             +" left join fetch gene.featureLocs"
             +" left join fetch gene.featureSynonyms feature_synonym"
-            +" inner join fetch feature_synonym.synonym synonym"
-            +" inner join fetch synonym.type"
+            +" left join fetch feature_synonym.synonym synonym"
+            +" left join fetch synonym.type"
             +" inner join fetch gene.featureRelationshipsForObjectId gene_transcript"
             +" inner join fetch gene_transcript.subjectFeature transcript"
             +" inner join fetch transcript.featureRelationshipsForObjectId transcript_exon"

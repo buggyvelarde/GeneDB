@@ -18,6 +18,14 @@
     <fileset dir="${imported.basedir.domain}/lib">
       <include name="*.jar"/>
     </fileset>
+    <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
+  </path>
+  
+  <path id="domain-tests-classpath">
+    <path refid="domain-classpath"/>
+    <pathelement location="${imported.basedir.domain}/${classes.dir}"/>
+    <pathelement location="${imported.basedir.domain}/${test-classes.dir}"/>
+    <pathelement location="${imported.basedir.domain}/test"/>
   </path>
 
 <!--
@@ -45,7 +53,7 @@
   <target name="compile-domain" depends="domain-populate-lib, domain-populate-util, domain-populate-query, domain-populate-db" description="Compile">
     <compile-target project="domain" />
     <uptodate property="domain.jar-uptodate" targetfile="${imported.basedir.domain}/ant-build/dist/genedb-domain.jar">
-      <srcfiles dir="${imported.basedir.domain}/ant-build/classes" />
+      <srcfiles dir="${imported.basedir.domain}/${classes.dir}" />
     </uptodate>
   </target>
 
@@ -54,17 +62,21 @@
   </target>
 
   <target name="domain-populate-util" depends="fulljar-util">
-    <copy file="${imported.basedir.domain}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.domain}/lib" />
+    <copy file="${genedb-util.jar}" todir="${imported.basedir.domain}/lib" />
   </target>
 
 
   <target name="domain-populate-query" depends="fulljar-query">
-    <copy file="${imported.basedir.domain}/../genedb-query/ant-build/dist/genedb-query.jar" todir="${imported.basedir.domain}/lib" />
+    <copy file="${genedb-query.jar}" todir="${imported.basedir.domain}/lib" />
   </target>
 
 
   <target name="domain-populate-db" depends="fulljar-db">
-    <copy file="${imported.basedir.domain}/../genedb-db/ant-build/dist/genedb-db.jar" todir="${imported.basedir.domain}/lib" />
+    <copy file="${genedb-db.jar}" todir="${imported.basedir.domain}/lib" />
   </target>
 
+  <target name="tests" depends="compile-domain">
+    <tests-target project="domain"/>
+  </target>
+        
 </project>
