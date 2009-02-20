@@ -35,20 +35,16 @@ public class MockProteinLengthQuery implements Query {
 	}
 
 	@Override
-	public Validator getValidator() {
-		return new Validator() {
-            @Override
-            public void validate(Object target, Errors errors) {                
-                return;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean supports(Class clazz) {
-                return MockProteinLengthQuery.class.isAssignableFrom(clazz);
-            }
-        };
+	public void validate(Object target, Errors errors) {                
+		return;
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean supports(Class clazz) {
+		return MockProteinLengthQuery.class.isAssignableFrom(clazz);
+	}
+
 
 	@Override
 	public Map<String, Object> prepareModelData() {
