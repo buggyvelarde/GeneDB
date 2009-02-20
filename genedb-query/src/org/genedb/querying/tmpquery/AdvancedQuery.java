@@ -104,9 +104,6 @@ public class AdvancedQuery extends OrganismLuceneQuery {
     }
 
 
-    @Override
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -118,7 +115,5 @@ public class AdvancedQuery extends OrganismLuceneQuery {
             public boolean supports(Class clazz) {
                 return AdvancedQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
 
 }

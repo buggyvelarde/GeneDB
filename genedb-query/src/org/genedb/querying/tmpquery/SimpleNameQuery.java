@@ -70,9 +70,6 @@ public class SimpleNameQuery extends OrganismLuceneQuery {
         return new String[] {"search", "product", "allNames", "pseudogenes"};
     }
 
-    @Override
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -84,7 +81,4 @@ public class SimpleNameQuery extends OrganismLuceneQuery {
             public boolean supports(Class clazz) {
                 return SimpleNameQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
-
 }

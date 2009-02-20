@@ -91,9 +91,6 @@ public class DateQuery extends HqlQuery {
         query.setDate("date", date);
     }
 
-    @Override
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -105,7 +102,5 @@ public class DateQuery extends HqlQuery {
             public boolean supports(Class clazz) {
                 return DateQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
 
 }

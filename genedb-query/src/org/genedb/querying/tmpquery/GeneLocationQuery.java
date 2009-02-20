@@ -103,8 +103,6 @@ public class GeneLocationQuery extends HqlQuery {
     }
 
 
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -116,8 +114,6 @@ public class GeneLocationQuery extends HqlQuery {
             public boolean supports(Class clazz) {
                 return GeneLocationQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
 
 
 

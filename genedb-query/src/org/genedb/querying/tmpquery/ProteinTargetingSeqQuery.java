@@ -102,9 +102,7 @@ public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
         return new String[] {"present"};
     }
 
-    @Override
-    public Validator getValidator() {
-        return new Validator() {
+
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -116,7 +114,6 @@ public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
             public boolean supports(Class clazz) {
                 return ProteinTargetingSeqQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
+
 
 }

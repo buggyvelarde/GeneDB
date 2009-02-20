@@ -71,9 +71,6 @@ public class PfamQuery extends OrganismLuceneQuery {
         return new String[] {"search", "product", "allNames", "pseudogenes"};
     }
 
-    @Override
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -85,7 +82,5 @@ public class PfamQuery extends OrganismLuceneQuery {
             public boolean supports(Class clazz) {
                 return PfamQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
 
 }

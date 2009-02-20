@@ -56,9 +56,6 @@ public class EcQuery extends OrganismLuceneQuery {
         return new String[] {"search"};
     }
 
-    @Override
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -70,7 +67,6 @@ public class EcQuery extends OrganismLuceneQuery {
             public boolean supports(Class clazz) {
                 return EcQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
+
 
 }

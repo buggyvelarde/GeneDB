@@ -84,9 +84,6 @@ public class GenesByURI implements Query {
         return "Fetch IDs by URL";
     }
 
-
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             public void validate(Object target, Errors errors) {
                 return;
@@ -96,7 +93,5 @@ public class GenesByURI implements Query {
             public boolean supports(Class clazz) {
                 return GenesByURI.class.isAssignableFrom(clazz);
             }
-        };
-    }
 
 }

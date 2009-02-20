@@ -15,25 +15,27 @@ import java.util.Map;
         shortDesc="Get a list of transcripts by type",
         longDesc=""
     )
-public class GeneTypeQuery extends HqlQuery {
+public class GeneTypeQuery extends OrganismHqlQuery {
 
     @QueryParam(
-            order=1,
+            order=2,
             title="Type of transcript"
     )
     private String type = "mRNA";
 
     @Override
     protected String getHql() {
-        return "select f.uniqueName from Feature f where f.type.name=:type order by f.organism";
+        return "select f.uniqueName from Feature f where f.type.name=:type @ORGANISM@ order by f.organism";
     }
     
-
     @Override
-    protected String getOrganismHql() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	protected String getOrganismHql() {
+    	if (taxons==null || taxons.length==0) {
+    		return null;
+    	}
+    	//return "";
+		return "and f.organism.abbreviation in (:organismList)";
+	}
 
     @Override
     public Map<String, Object> prepareModelData() {
@@ -60,8 +62,11 @@ public class GeneTypeQuery extends HqlQuery {
 
     @Override
     protected String[] getParamNames() {
-        return new String[] {"type"};
+    	String[] superParamNames = super.getParamNames();
+    	String[] thisQuery = new String[] {"type"};
+    	return arrayAppend(superParamNames, thisQuery);
     }
+
 
     @Override
     protected void populateQueryWithParams(org.hibernate.Query query) {
@@ -69,22 +74,16 @@ public class GeneTypeQuery extends HqlQuery {
     }
 
 
-    public Validator getValidator() {
-        return new Validator() {
-            @Override
-            @SuppressWarnings("unused")
-            public void validate(Object target, Errors errors) {
-                return;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean supports(Class clazz) {
-                return GeneTypeQuery.class.isAssignableFrom(clazz);
-            }
-        };
+    @Override
+    public void validate(Object target, Errors errors) {
+    	return;
     }
-
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean supports(Class clazz) {
+    	return GeneTypeQuery.class.isAssignableFrom(clazz);
+    }
 
 
 }

@@ -203,6 +203,5 @@ public abstract class LuceneQuery implements Query {
         return "";
     }
 
-    public abstract Validator getValidator();
 
 }

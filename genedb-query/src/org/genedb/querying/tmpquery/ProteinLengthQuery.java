@@ -8,7 +8,6 @@ import org.hibernate.validator.InvalidValue;
 import org.hibernate.validator.Max;
 import org.hibernate.validator.Min;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 @QueryClass(
         title="Coding and pseudogenes by protein length",
@@ -70,13 +69,6 @@ public class ProteinLengthQuery extends OrganismHqlQuery {
     	return arrayAppend(superParamNames, thisQuery);
     }
 
-    private String[] arrayAppend(String[] superParamNames, String[] thisQuery) {
-		String[] ret = new String[superParamNames.length+thisQuery.length];
-		System.arraycopy(superParamNames, 0, ret, 0, superParamNames.length);
-		System.arraycopy(thisQuery, 0, ret, superParamNames.length, thisQuery.length);
-		return ret;
-	}
-
 	@Override
     protected void populateQueryWithParams(org.hibernate.Query query) {
     	super.populateQueryWithParams(query);
@@ -85,33 +77,29 @@ public class ProteinLengthQuery extends OrganismHqlQuery {
     }
 
 
-    public Validator getValidator() {
-        return new Validator() {
-            @Override
-            public void validate(Object target, Errors errors) {
-            	ClassValidator<ProteinLengthQuery> lengthQueryValidator = new ClassValidator<ProteinLengthQuery>(ProteinLengthQuery.class);     
-            	ProteinLengthQuery query = (ProteinLengthQuery)target;
-            	InvalidValue[] invalids = lengthQueryValidator.getInvalidValues(query);
-            	for (InvalidValue invalidValue: invalids){
-            		errors.rejectValue(invalidValue.getPropertyPath(), null, invalidValue.getMessage());
-            	}
+	@Override
+	public void validate(Object target, Errors errors) {
+		ClassValidator<ProteinLengthQuery> lengthQueryValidator = new ClassValidator<ProteinLengthQuery>(ProteinLengthQuery.class);     
+		ProteinLengthQuery query = (ProteinLengthQuery)target;
+		InvalidValue[] invalids = lengthQueryValidator.getInvalidValues(query);
+		for (InvalidValue invalidValue: invalids){
+			errors.rejectValue(invalidValue.getPropertyPath(), null, invalidValue.getMessage());
+		}
                 
-                //validate dependent properties
-            	if (!errors.hasErrors()) {
-            		int min = query.getMin();
-            		int max = query.getMax();
-            		if (min > max) {
-            			errors.reject("min.greater.than.max");
-            		}
-                }
-            }
+		//validate dependent properties
+		if (!errors.hasErrors()) {
+			int min = query.getMin();
+			int max = query.getMax();
+			if (min > max) {
+				errors.reject("min.greater.than.max");
+			}
+		}
+	}
 
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean supports(Class clazz) {
-                return ProteinLengthQuery.class.isAssignableFrom(clazz);
-            }
-        };
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean supports(Class clazz) {
+		return ProteinLengthQuery.class.isAssignableFrom(clazz);
+	}
 
 }

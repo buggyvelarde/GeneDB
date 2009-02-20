@@ -6,7 +6,7 @@ import org.springframework.validation.Validator;
 import java.util.List;
 import java.util.Map;
 
-public interface Query extends Ordered {
+public interface Query extends Ordered, Validator {
 
     String getQueryDescription();
 
@@ -15,7 +15,5 @@ public interface Query extends Ordered {
     String getParseableDescription();
 
     public Map<String, Object> prepareModelData();
-
-    Validator getValidator();
 
 }

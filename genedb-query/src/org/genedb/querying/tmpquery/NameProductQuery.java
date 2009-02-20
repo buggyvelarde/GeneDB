@@ -75,9 +75,6 @@ public class NameProductQuery extends OrganismLuceneQuery {
         return new String[] {"search"};
     }
 
-    @Override
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -89,7 +86,6 @@ public class NameProductQuery extends OrganismLuceneQuery {
             public boolean supports(Class clazz) {
                 return NameProductQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
+
 
 }

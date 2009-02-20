@@ -71,9 +71,6 @@ public class GoQuery extends OrganismLuceneQuery {
         return new String[] {"search"};
     }
 
-    @Override
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -85,7 +82,5 @@ public class GoQuery extends OrganismLuceneQuery {
             public boolean supports(Class clazz) {
                 return GoQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
 
 }

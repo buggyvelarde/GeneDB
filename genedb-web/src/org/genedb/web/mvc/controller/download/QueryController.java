@@ -103,8 +103,7 @@ public class QueryController {
         	return "search/"+queryName;
         }
         
-        Validator validator = query.getValidator();
-        validator.validate(query, errors);
+        query.validate(query, errors);
         
         //Get results
         List<String> results = new ArrayList<String>(0);

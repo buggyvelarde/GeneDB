@@ -68,8 +68,6 @@ public class ProteinMassQuery extends HqlQuery {
     }
 
 
-    public Validator getValidator() {
-        return new Validator() {
             @Override
             @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
@@ -81,8 +79,7 @@ public class ProteinMassQuery extends HqlQuery {
             public boolean supports(Class clazz) {
                 return ProteinMassQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
+
 
 
 

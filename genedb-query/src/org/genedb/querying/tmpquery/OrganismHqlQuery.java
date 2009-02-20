@@ -69,6 +69,12 @@ public abstract class OrganismHqlQuery extends HqlQuery {
     	}
     }
 
+    protected String[] arrayAppend(String[] superParamNames, String[] thisQuery) {
+		String[] ret = new String[superParamNames.length+thisQuery.length];
+		System.arraycopy(superParamNames, 0, ret, 0, superParamNames.length);
+		System.arraycopy(thisQuery, 0, ret, superParamNames.length, thisQuery.length);
+		return ret;
+	}
 
 //    public Validator getValidator() {
 //        return new Validator() {
