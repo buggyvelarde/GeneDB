@@ -148,8 +148,8 @@ public class QueryControllerTest {
 	private ServletRequest createProteinLengthQueryServletRequest(String queryName){
 		MockHttpServletRequest servletRequest = new MockHttpServletRequest();
 		servletRequest.addParameter("q", queryName);
-		servletRequest.addParameter("min", "50");
-		servletRequest.addParameter("min", "500");
+		//servletRequest.addParameter("min", "50");
+		servletRequest.addParameter("max", "500");
 		return servletRequest;
 	}
 }

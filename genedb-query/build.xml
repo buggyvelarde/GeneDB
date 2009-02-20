@@ -18,6 +18,13 @@
       <include name="*.jar"/>
     </fileset>
   </path>
+	
+  <path id="query-tests-classpath">
+    <path refid="query-classpath"/>
+  	<pathelement location="${imported.basedir.query}/test"/>
+  	<pathelement location="${imported.basedir.query}/ant-build/classes"/>
+  </path>	
+	
 
   <target name="init-query" description="Create full JAR file">
     <init-target project="query" />
@@ -43,6 +50,10 @@
       <srcfiles dir="${imported.basedir.query}/${classes.dir}" />
     </uptodate>
   </target>
+	
+   <target name="tests" depends="compile-query">
+     <tests-target project="query"/>
+   </target>
 
   <target name="query-populate-db" depends="fulljar-db">
     <copy file="${imported.basedir.domain}/../genedb-db/ant-build/dist/genedb-db.jar" todir="${imported.basedir.query}/lib" />

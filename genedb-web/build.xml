@@ -42,6 +42,13 @@
     </fileset>
   </path>
 
+	
+  <path id="web-tests-classpath">
+    <path refid="web-classpath"/>
+  	<pathelement location="${imported.basedir.web}/test"/>
+  	<pathelement location="${imported.basedir.web}/ant-build/classes"/>
+  </path>	
+
   <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.fulljar-db,genedb-util.fulljar-util" />
 
   <target name="make-all-and-deploy" depends="check-deploy, compile-web, final-deploy"/>
@@ -68,15 +75,20 @@
       <srcfiles dir="${imported.basedir.web}/ant-build/classes" />
     </uptodate>
   </target>
+	
+	<target name="tests" depends="compile-web">
+	    <tests-target project="web"/>
+	</target>
 
-
-	   <target name="iajc-web" depends="compile-web" unless="web.iajc-uptodate">
-	        <iajc-target project="web" />
-	    </target>
+	<target name="test-all-modules" depends="genedb-query.tests, tests"/>
+	
+   <target name="iajc-web" depends="compile-web" unless="web.iajc-uptodate">
+     <iajc-target project="web" />
+   </target>
 
   <target name="deploy" depends="pre-deploy, application-deploy, post-deploy"/>
 
-  <target name="pre-deploy" depends="check-deploy, compile-web">
+  <target name="pre-deploy" depends="check-deploy, compile-web, test-all-modules">
     <filter token="webAppRootKey" value="${webAppRootKey}" />
     <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
     <mkdir dir="${finaldest.webapps}.tmp"/>

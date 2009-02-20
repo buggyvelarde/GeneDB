@@ -33,7 +33,7 @@
 
   <target name="populate-lib-dir">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
-    <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
+    <!--<setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>-->
     <ivy:retrieve conf="default"/>
   </target>
 
@@ -139,6 +139,40 @@
     </sequential>
   </macrodef>
 
+
+
+	  <macrodef name="tests-target" description="Test a module">
+	    <attribute name="project" />
+	    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
+	    <attribute name="classpathref" default="@{project}-tests-classpath"/>
+	    <sequential>	    	
+	    	<javac srcdir="@{topdir}/test" includes="**/*.java" debug="true"
+	    	             destdir="@{topdir}/test" classpathref="@{classpathref}" />
+	    	
+	        <junit printsummary="on"
+	            fork="false"
+	            haltonfailure="false"
+	            failureproperty="tests.failed"
+	            showoutput="true">
+	            <classpath refid="@{classpathref}"/>
+	            <formatter type="brief" usefile="false"/>  
+	            <batchtest>
+	                <fileset dir="@{topdir}/${classes.dir}">
+	                    <include name="**/*Test.*"/>
+	                </fileset>
+	            </batchtest>	            
+	        </junit>	        
+	        <fail if="tests.failed">
+	            tests.failed=${tests.failed}
+	            ***********************************************************
+	            ***********************************************************
+	            ****  One or more tests failed!  Check the output ...  ****
+	            ***********************************************************
+	            ***********************************************************
+	        </fail>
+	    </sequential>
+	  </macrodef>
+	
   <macrodef name="iajc-target" description="Compile-time aspectj weaving">
       <attribute name="project" />
       <attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
@@ -163,7 +197,8 @@
     <sequential>
       <delete file="@{topdir}/${dist.dir}/@{jar}" />
       <jar jarfile="@{topdir}/${dist.dir}/@{jar}"
-           basedir="@{topdir}/${classes.dir}">
+           basedir="@{topdir}/${classes.dir}"
+      	   excludes="**/*Test.class">
         <extra-elements/>
       </jar>
     </sequential>
