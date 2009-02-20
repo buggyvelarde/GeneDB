@@ -7,8 +7,6 @@ import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
 import org.hibernate.validator.Max;
 import org.hibernate.validator.Min;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.Pattern;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
