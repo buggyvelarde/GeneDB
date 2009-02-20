@@ -24,8 +24,10 @@ import java.util.regex.Pattern;
 class FeatureTable extends EmblFile.Section {
     private static final Logger logger = Logger.getLogger(FeatureTable.class);
 
-    FeatureTable(@SuppressWarnings("unused") EmblFile emblFile) {
-        // Empty
+    private String filePath;
+
+    FeatureTable(EmblFile emblFile) {
+        this.filePath = emblFile.getFilePath();
     }
 
     class Feature {
@@ -33,6 +35,10 @@ class FeatureTable extends EmblFile.Section {
         int lineNumber;
         EmblLocation location;
         List<Qualifier> qualifiers = new ArrayList<Qualifier>();
+
+        public String getFilePath() {
+            return filePath;
+        }
 
         /**
          * Get the values of the named qualifier. If the qualifier does not appear at all,
