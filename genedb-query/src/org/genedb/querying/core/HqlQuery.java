@@ -24,6 +24,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,50 +49,22 @@ public abstract class HqlQuery implements Query {
     protected List<String> runQuery() {
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
 
-        String hql = restrictQueryByOrganism(getHql(), "and f.organism_id in (:organismList)");
+        String hql = restrictQueryByOrganism(getHql(), getOrganismHql());
         org.hibernate.Query query = session.createQuery(hql);
         populateQueryWithParams(query);
 
-        // Substitute in list of organism ids here - need a macro in the query
         @SuppressWarnings("unchecked") List<String> ret = query.list();
         return ret;
     }
 
     private String restrictQueryByOrganism(String hql, String organismClause) {
-        // Check if there is an organism restriction
+    	if (!StringUtils.hasLength(organismClause)) {
+    		return hql.replace("@ORGANISM@", "");
+    	}
         return hql.replace("@ORGANISM@", organismClause);
     }
 
     protected abstract void populateQueryWithParams(org.hibernate.Query query);
-
-//  private void setQueryVarBasedOnType(org.hibernate.Query query, CachedParamDetails cpd) {
-//
-//      Type type = cpd.getType();
-//
-//      try {
-//
-//          if (type.equals(Integer.TYPE)) {
-//              query.setInteger(cpd.getName(), cpd.getField().getInt(this));
-//          }
-//
-//      } catch (IllegalArgumentException exp) {
-//          throw new RuntimeException("Internal typing/access exception", exp);
-//      } catch (IllegalAccessException exp) {
-//          throw new RuntimeException("Internal typing/access exception", exp);
-//      }
-//  }
-
-//  private void prepareCachedParamDetailsList() {
-//      for (Field field : this.getClass().getFields()) {
-//          Annotation annotation = field.getAnnotation(QueryParam.class);
-//          if (annotation != null) {
-//              CachedParamDetails cpd = new CachedParamDetails(field, annotation);
-//              cachedParamDetailsList.add(cpd);
-//              cachedParamDetailsMap.put(cpd.getName(), cpd);
-//          }
-//      }
-//      Collections.sort(cachedParamDetailsList);
-//  }
 
     public List<String> getResults() throws QueryException {
         return runQuery();
@@ -111,8 +84,6 @@ public abstract class HqlQuery implements Query {
             //htd.setName(name);
             //htd.setDefaultValue
         }
-
-
 
         return ret;
     }
