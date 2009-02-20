@@ -35,7 +35,7 @@ public class DisplayPhylogeny extends AbstractHomepageTag {
     }
 
     @Override
-    protected void display(TaxonNode node, JspWriter out, @SuppressWarnings("unused") int indent) throws IOException {
+    protected void display(TaxonNode node, JspWriter out) throws IOException {
         Menu.left = this.left;
         Menu.top = this.top;
         List<TaxonNode> nodes = node.getChildren();

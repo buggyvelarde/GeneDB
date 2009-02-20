@@ -11,7 +11,7 @@ import javax.servlet.jsp.JspWriter;
 public class HomepageSelectTag extends AbstractHomepageTag {
     
     @Override
-    protected void display(TaxonNode root, JspWriter out, @SuppressWarnings("unused") int indent) throws IOException {
+    protected void display(TaxonNode root, JspWriter out) throws IOException {
         List<TaxonNode> nodes = new ArrayList<TaxonNode>();
         getAllChildren(root, nodes);
         

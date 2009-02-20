@@ -10,6 +10,10 @@ import javax.servlet.jsp.JspWriter;
 public class HomepageTreeTag extends AbstractHomepageTag {
     
     @Override
+    protected void display(TaxonNode node, JspWriter out) throws IOException {
+    	display(node, out, 1);
+    }
+    
     protected void display(TaxonNode node, JspWriter out, int indent) throws IOException {
         out.write("<ul>");
         out.write("<li>");
