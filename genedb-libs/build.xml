@@ -10,6 +10,7 @@
   <property name="build.dir" value="ant-build" />
   <property name="dist.dir" value="${build.dir}/dist" />
   <property name="classes.dir" value="${build.dir}/classes" />
+  <property name="test-classes.dir" value="${build.dir}/test-classes" />
 
   <property name="lib-dir" value="${imported.basedir.libs}/lib" />
   <property name="lib.dir" value="lib" />
@@ -33,7 +34,9 @@
 
   <target name="populate-lib-dir">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
+    <!-- 
     <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
+     -->
     <ivy:retrieve conf="default"/>
   </target>
 
@@ -103,6 +106,7 @@
       <mkdir dir="@{topdir}/${build.dir}" />
       <mkdir dir="@{topdir}/${dist.dir}" />
       <mkdir dir="@{topdir}/${classes.dir}" />
+      <mkdir dir="@{topdir}/${test-classes.dir}" />
       <mkdir dir="@{topdir}/${lib.dir}" />
       <available property="@{project}.ivy-timestamp-exists" file="${lib.dir}/ivy.timestamp.txt" />
     </sequential>
@@ -139,40 +143,39 @@
     </sequential>
   </macrodef>
 
-
-
-      <macrodef name="tests-target" description="Test a module">
-        <attribute name="project" />
-        <attribute name="topdir" default="${imported.basedir.@{project}}"/>
-        <attribute name="classpathref" default="@{project}-tests-classpath"/>
-        <sequential>            
-            <javac srcdir="@{topdir}/test" includes="**/*.java" debug="true"
-                         destdir="@{topdir}/test" classpathref="@{classpathref}" />
-            
-            <junit printsummary="on"
-                fork="false"
-                haltonfailure="false"
-                failureproperty="tests.failed"
-                showoutput="true">
-                <classpath refid="@{classpathref}"/>
-                <formatter type="brief" usefile="false"/>  
-                <batchtest>
-                    <fileset dir="@{topdir}/${classes.dir}">
-                        <include name="**/*Test.*"/>
-                    </fileset>
-                </batchtest>                
-            </junit>            
-            <fail if="tests.failed">
-                tests.failed=${tests.failed}
-                ***********************************************************
-                ***********************************************************
-                ****  One or more tests failed!  Check the output ...  ****
-                ***********************************************************
-                ***********************************************************
-            </fail>
-        </sequential>
-      </macrodef>
+  <macrodef name="tests-target" description="Test a module">
+    <attribute name="project" />
+    <attribute name="topdir" default="${imported.basedir.@{project}}"/>
+    <attribute name="classpathref" default="@{project}-tests-classpath"/>
+    <sequential>
+      <javac srcdir="@{topdir}/test" includes="**/*.java" debug="true"
+                 destdir="@{topdir}/${test-classes.dir}"
+                 classpathref="@{classpathref}" />
     
+      <junit printsummary="on"
+        fork="false"
+        haltonfailure="false"
+        failureproperty="tests.failed"
+        showoutput="true">
+        <classpath refid="@{classpathref}"/>
+        <formatter type="brief" usefile="false"/>
+        <batchtest>
+            <fileset dir="@{topdir}/${test-classes.dir}">
+                <include name="**/*Test.*"/>
+            </fileset>
+        </batchtest>
+      </junit>
+      <fail if="tests.failed">
+            tests.failed=${tests.failed}
+            ***********************************************************
+            ***********************************************************
+            ****  One or more tests failed!  Check the output ...  ****
+            ***********************************************************
+            ***********************************************************
+      </fail>
+    </sequential>
+  </macrodef>
+
   <macrodef name="iajc-target" description="Compile-time aspectj weaving">
       <attribute name="project" />
       <attribute name="directory" default="${imported.basedir.@{project}}/${classes.dir}"/>
