@@ -15,6 +15,13 @@
                         <font color="red"><form:errors path="*" /></font>
                     </td>
                 </tr>
+                                <tr>
+                <td>
+                     <b>Organism:</b>
+            	     <br><db:simpleselect />
+            	     <br><font color="red"><form:errors path="taxons" /></font>
+                  <td>
+                </tr>
                 <tr>
                   <td>Min mass:</td>
                   <td>

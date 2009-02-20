@@ -16,6 +16,13 @@
                     </td>
                 </tr>
                 <tr>
+                <td>
+                     <b>Organism:</b>
+            	     <br><db:simpleselect />
+            	     <br><font color="red"><form:errors path="taxons" /></font>
+                  <td>
+                </tr>
+                <tr>
                   <td>Parent feature:</td>
                   <td>
                     <form:input id="topLevelFeatureName" path="topLevelFeatureName"/>
@@ -47,4 +54,4 @@
 </div>
 
 <br><query:results />
-<format:footer />
+<format:footer />cvs up 

@@ -15,6 +15,13 @@
                         <font color="red"><form:errors path="*" /></font>
                     </td>
                 </tr>
+                                <tr>
+                <td>
+                     <b>Organism:</b>
+            	     <br><db:simpleselect />
+            	     <br><font color="red"><form:errors path="taxons" /></font>
+                  <td>
+                </tr>
                 <tr><td colspan="2">Protein Targeting Sequence present:</td></tr>
                 <tr><td>Signal Peptide</td>
                     <td><form:checkbox id="sigP" path="sigP"/></td>
@@ -37,4 +44,6 @@
 		</form:form>
 	</format:genePageSection>
 </div>
+
+<br><query:results />
 <format:footer />

@@ -16,8 +16,14 @@
                     </td>
                 </tr>
                 <tr>
-                  <td>Gene Type:</td>
+                <td>
+                     <b>Organism:</b>
+            	     <br><db:simpleselect />
+            	     <br><font color="red"><form:errors path="taxons" /></font>
                   <td>
+                </tr>
+                <tr>
+                  <td><b>Gene Type:</b>
                     <form:select path="type">
                         <c:forEach items="${typeMap}" var="mapEntry">
                         <form:option value="${mapEntry.key}">${mapEntry.value}</form:option>
