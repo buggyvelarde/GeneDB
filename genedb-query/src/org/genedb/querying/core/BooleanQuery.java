@@ -66,10 +66,7 @@ public class BooleanQuery implements Query {
     }
 
 
-    public Validator getValidator() {
-        return new Validator() {
             @Override
-            @SuppressWarnings("unused")
             public void validate(Object target, Errors errors) {
                 return;
             }
@@ -79,6 +76,5 @@ public class BooleanQuery implements Query {
             public boolean supports(Class clazz) {
                 return BooleanQuery.class.isAssignableFrom(clazz);
             }
-        };
-    }
+
 }
