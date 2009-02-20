@@ -29,10 +29,10 @@ public abstract class AbstractHomepageTag extends SimpleTagSupport {
         }
         
         JspWriter out = getJspContext().getOut();
-        display(topNode, out, 0);
+        display(topNode, out);
     }
     
-    abstract protected void display(TaxonNode node, JspWriter out, int indent) throws IOException;
+    abstract protected void display(TaxonNode node, JspWriter out) throws IOException;
 
     public void setTop(String top) {
         this.top = top;

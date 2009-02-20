@@ -10,6 +10,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
+import org.genedb.db.taxon.TaxonNodeManager;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
@@ -36,6 +39,9 @@ public class QueryController {
 
     @Autowired
     private QueryFactory queryFactory;
+    
+    @Autowired
+    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
 
     @RequestMapping(method = RequestMethod.GET)
@@ -49,7 +55,7 @@ public class QueryController {
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-
+    	// TODO Do we want form submission via GET?
         return processForm(queryName, request, session, model);
     }
 
@@ -72,7 +78,7 @@ public class QueryController {
         }
 
         model.addAttribute("query", query);
-        logger.error(String.format("The number of parameters is '%d'", request.getParameterMap().keySet().size()));
+        logger.debug(String.format("The number of parameters is '%d'", request.getParameterMap().keySet().size()));
         if (request.getParameterMap().keySet().size() == 1) {
             // That'll be q so the user has only chosen the query so far, not any values
             Map<String, Object> modelData = query.prepareModelData();
@@ -85,40 +91,42 @@ public class QueryController {
 
         // Attempt to fill in form
         ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
-        // register custom editors, if desired
         binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
-        binder.bind(request);
-        // optionally evaluate binding errors
-        Errors errors = binder.getBindingResult();
+        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
         
-        if(!errors.hasErrors()){            
-            Validator validator = query.getValidator();
-            validator.validate(query, errors);
-        }else{
+        binder.bind(request);
+
+        Errors errors = binder.getBindingResult();        
+        if (errors.hasErrors()) {  
         	model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
+        	logger.error("Returning due to binding error");
         	return "search/"+queryName;
         }
         
+        Validator validator = query.getValidator();
+        validator.validate(query, errors);
+        
         //Get results
         List<String> results = new ArrayList<String>(0);
-        if (!errors.hasErrors()) {
-        	logger.debug("Validator found no errors");
-            results = query.getResults();
-        }else{
+        if (errors.hasErrors()) {
         	logger.debug("Validator found errors");
         	model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
+            return "search/"+queryName;
         }
-
+        
+        logger.error("Validator found no errors");
+        results = query.getResults();
+        model.addAttribute("runQuery", Boolean.TRUE);
+        
         switch (results.size()) {
         case 0:
             logger.error("No results found for query");
-            session.setAttribute(WebConstants.FLASH_MSG, "No results found - please try again");
             return "search/"+queryName;
         case 1:
             return "redirect:/NamedFeature?name="+results.get(0);
-            // TODO Send feature name
         default:
             model.addAttribute("results", results);
+            logger.error("Found results for query");
         	return "search/"+queryName;
         }
     }
