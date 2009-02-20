@@ -31,6 +31,8 @@ public class ProteinLengthQueryTest {
 		query.getValidator().validate(query, errors);
 		
 		Assert.assertTrue(errors.hasErrors());
+		Assert.assertTrue(errors.hasFieldErrors());
+		Assert.assertFalse(errors.hasGlobalErrors());
 		Assert.assertEquals(errors.getFieldError("max").getField(), "max");
 		Assert.assertEquals(errors.getFieldError("max").getDefaultMessage(), 
 		"Max must be less than or equal to 500. Bla bla bla");
@@ -45,6 +47,8 @@ public class ProteinLengthQueryTest {
 		query.getValidator().validate(query, errors);
 		
 		Assert.assertTrue(errors.hasErrors());
+		Assert.assertTrue(errors.hasFieldErrors());
+		Assert.assertFalse(errors.hasGlobalErrors());
 		Assert.assertEquals(errors.getFieldError("min").getField(), "min");
 		Assert.assertEquals(errors.getFieldError("min").getDefaultMessage(), 
 				"Min must be greater than or equal to 50. Bla bla bla");
@@ -59,6 +63,8 @@ public class ProteinLengthQueryTest {
 		query.getValidator().validate(query, errors);
 		
 		Assert.assertTrue(errors.hasErrors());
+		Assert.assertFalse(errors.hasFieldErrors());
+		Assert.assertTrue(errors.hasGlobalErrors());
 		Assert.assertEquals(errors.getGlobalError().getCode(), "min.greater.than.max");		
 	}
 }
