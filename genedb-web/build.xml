@@ -88,7 +88,7 @@
 
   <target name="deploy" depends="pre-deploy, application-deploy, post-deploy"/>
 
-  <target name="pre-deploy" depends="check-deploy, compile-web, test-all-modules">
+  <target name="pre-deploy" depends="check-deploy, compile-web">
     <filter token="webAppRootKey" value="${webAppRootKey}" />
     <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
     <mkdir dir="${finaldest.webapps}.tmp"/>
