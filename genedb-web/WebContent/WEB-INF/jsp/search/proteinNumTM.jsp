@@ -16,6 +16,12 @@
                     </td>
                 </tr>
                 <tr>
+                  <td>Organism:</td>
+                  <td>
+                    <db:simpleselect />
+                  </td>
+                </tr>
+                <tr>
                   <td>Min number of domains:</td>
                   <td>
                     <form:input id="minNumTM" path="min"/>
@@ -39,4 +45,6 @@
 		</form:form>
 	</format:genePageSection>
 </div>
+
+<br><query:results />
 <format:footer />

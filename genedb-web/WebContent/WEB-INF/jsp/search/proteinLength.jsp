@@ -10,11 +10,17 @@
 <div id="geneDetails">
 	<format:genePageSection id="nameSearch" className="whiteBox">
 		<form:form commandName="query" action="Query" method="post">
+		<font color="red"><form:errors path="*" /></font>
         <input type="hidden" name="q" value="proteinLength" />
             <table>
             	<tr>
             		<td width=180>
             			<br><big><b>Protein Length Search</b></big>
+            		</td>
+            		<td width=180>
+            			<b>Organism:</b>
+            			<br><db:simpleselect />
+            			<br><font color="red"><form:errors path="taxons" /></font>
             		</td>
             		<td width=180>
             			<b>Minimum Length:</b>
@@ -41,23 +47,6 @@
 	</format:genePageSection>
 </div>
 
-<c:if test="${ not empty results}">
-	<br>
-	<c:url value="BrowseTerm" var="url">
-		<c:param name="category" value="${category}"/>
-	</c:url>
-	<div id="geneDetails">
-		<format:genePageSection className="whiteBox">
-			<display:table name="results"  id="row" pagesize="30" requestURI="/Query" class="simple" cellspacing="0" cellpadding="4">
-		   		<display:column title="Systematic ids">
-		   			<c:url value="${url}" var="final">
-						<c:param name="term" value="${row}"/>
-			   		</c:url>
-					<a href="<c:url value="/NamedFeature"/>?name=${row}"><c:out value="${row}"/></a>
-			   	</display:column>
-			</display:table>
-		</format:genePageSection>
-	</div>
-</c:if>
-<br>
+<br><query:results />
+
 <format:footer />

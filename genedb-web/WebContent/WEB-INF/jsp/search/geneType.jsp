@@ -37,4 +37,7 @@
 		</form:form>
 	</format:genePageSection>
 </div>
+
+
+<br><query:results />
 <format:footer />
