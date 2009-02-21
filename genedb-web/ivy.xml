@@ -35,5 +35,7 @@
             (rh11, 2008-12-17)
         -->
       <dependency org="org.objectweb.asm" name="com.springsource.org.objectweb.asm.commons" rev="3.1.0" conf="default->*" />
+
+      <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="groovy->*" />
     </dependencies>
 </ivy-module>
