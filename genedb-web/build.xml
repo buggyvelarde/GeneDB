@@ -78,7 +78,7 @@
   </target>
 
   <!-- Comment out bogus target for now, looks like a work in progress -->
-  <target name="tests" depends="compile-web"><!--, genedb-domain.compile-tests"> -->
+  <target name="tests" depends="compile-web, genedb-domain.compile-tests">
     <tests-target project="web"/>
   </target>
 
