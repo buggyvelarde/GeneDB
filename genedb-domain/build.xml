@@ -74,6 +74,12 @@
   <target name="domain-populate-db" depends="fulljar-db">
     <copy file="${genedb-db.jar}" todir="${imported.basedir.domain}/lib" />
   </target>
+  
+  <target name="compile-tests">
+      <javac srcdir="${imported.basedir.domain}/test" includes="**/*.java"
+                 destdir="${imported.basedir.domain}/${test-classes.dir}"
+                 classpathref="domain-classpath" />
+  </target>
 
   <target name="tests" depends="compile-domain">
     <tests-target project="domain"/>
