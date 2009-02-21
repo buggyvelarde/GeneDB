@@ -83,7 +83,7 @@
        multiple calls to it with different configuration values. (This is
        precisely what the "populate" macro does, of course.)
     -->
-  <target name="ivy-retrieve"><ivy:retrieve/></target>
+  <target name="ivy-retrieve"><ivy:retrieve conf="default"/></target>
 
 
   <!-- Macro definitions -->
