@@ -56,7 +56,7 @@
    </target>
 
   <target name="query-populate-db" depends="fulljar-db">
-    <copy file="${imported.basedir.domain}/../genedb-db/ant-build/dist/genedb-db.jar" todir="${imported.basedir.query}/lib" />
+    <copy file="${genedb-db.jar}" todir="${imported.basedir.query}/lib" />
   </target>
 	
   <target name="query-populate-lib" depends="check.query-lib-uptodate" unless="query.lib-uptodate">

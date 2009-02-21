@@ -239,21 +239,21 @@
   </target>
 
     <target name="web-populate-util" depends="fulljar-util">
-      <copy file="${imported.basedir.web}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.web}/lib" />
+      <copy file="${genedb-util.jar}" todir="${imported.basedir.web}/lib" />
     </target>
 
 
     <target name="web-populate-query" depends="fulljar-query">
-      <copy file="${imported.basedir.web}/../genedb-query/ant-build/dist/genedb-query.jar" todir="${imported.basedir.web}/lib" />
+      <copy file="${genedb-query.jar}" todir="${imported.basedir.web}/lib" />
     </target>
 
 
     <target name="web-populate-db" depends="fulljar-db">
-      <copy file="${imported.basedir.web}/../genedb-db/ant-build/dist/genedb-db.jar" todir="${imported.basedir.web}/lib" />
+      <copy file="${genedb-db.jar}" todir="${imported.basedir.web}/lib" />
     </target>
 
     <target name="web-populate-domain" depends="fulljar-domain">
-      <copy file="${imported.basedir.web}/../genedb-domain/ant-build/dist/genedb-domain.jar" todir="${imported.basedir.web}/lib" />
+      <copy file="${genedb-domain.jar}" todir="${imported.basedir.web}/lib" />
     </target>
 
     <target name="check.web-lib-uptodate" depends="init-web" if="web.ivy-timestamp-exists">
