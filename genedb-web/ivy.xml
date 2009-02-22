@@ -16,7 +16,6 @@
       <dependency org="org.junit" name="com.springsource.org.junit" rev="4.5.0" conf="default->*" />
       <dependency org="com.google.collect" name="com.springsource.com.google.common.collect" rev="0.8.0.20080820" conf="default->*" />
       <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="default->*"/>
-      <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="groovy->*" />
 
       <!--  ASM Commons is used by org.springframework.core.type.classreading.SimpleMetadataReader,
             but is not pulled in as a dependency. I assume this is an oversight that will be
@@ -24,6 +23,10 @@
             (rh11, 2008-12-17)
         -->
       <dependency org="org.objectweb.asm" name="com.springsource.org.objectweb.asm.commons" rev="3.1.0" conf="default->*" />
+
+
+      <!--  Used by test.deployment-build.xml  -->
+      <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="groovy->*" />
 
 
       <!--  We don't need these jars because they're already included in Tomcat, and
