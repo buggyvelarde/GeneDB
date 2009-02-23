@@ -27,15 +27,6 @@ public class GeneTypeQuery extends OrganismHqlQuery {
     protected String getHql() {
         return "select f.uniqueName, f.organism.abbreviation from Feature f where f.type.name=:type @ORGANISM@ order by f.organism";
     }
-    
-    @Override
-	protected String getOrganismHql() {
-    	if (taxons==null || taxons.length==0) {
-    		return null;
-    	}
-    	//return "";
-		return "and f.organism.abbreviation in (:organismList)";
-	}
 
     @Override
     public Map<String, Object> prepareModelData() {
