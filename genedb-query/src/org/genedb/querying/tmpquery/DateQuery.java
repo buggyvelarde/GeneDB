@@ -14,7 +14,7 @@ import java.util.Date;
         shortDesc="Get a list of transcripts by type",
         longDesc=""
     )
-public class DateQuery extends HqlQuery {
+public class DateQuery extends OrganismHqlQuery {
 
     @QueryParam(
             order=1,

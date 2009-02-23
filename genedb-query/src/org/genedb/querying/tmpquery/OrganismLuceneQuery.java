@@ -25,7 +25,17 @@ public abstract class OrganismLuceneQuery extends LuceneQuery {
     protected TaxonNode[] taxons;
 
     
-    protected void makeQueryForOrganisms(TaxonNode[] taxons, List<org.apache.lucene.search.Query> queries) {
+    public TaxonNode[] getTaxons() {
+		return taxons;
+	}
+
+
+	public void setTaxons(TaxonNode[] taxons) {
+		this.taxons = taxons;
+	}
+
+
+	protected void makeQueryForOrganisms(TaxonNode[] taxons, List<org.apache.lucene.search.Query> queries) {
 
         List<String> taxonNames = taxonNodeManager.getNamesListForTaxons(taxons);        
         

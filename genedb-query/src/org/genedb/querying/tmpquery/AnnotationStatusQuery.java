@@ -12,7 +12,7 @@ import org.springframework.validation.Validator;
         shortDesc="Genes by annotation status",
         longDesc=""
     )
-public class AnnotationStatusQuery extends HqlQuery {
+public class AnnotationStatusQuery extends OrganismHqlQuery {
 
     @QueryParam(
             order=1,

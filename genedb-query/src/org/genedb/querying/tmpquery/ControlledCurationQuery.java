@@ -14,7 +14,7 @@ import org.springframework.validation.Validator;
         shortDesc="Get a list of transcripts by type",
         longDesc=""
     )
-public class ControlledCurationQuery extends HqlQuery {
+public class ControlledCurationQuery extends OrganismHqlQuery {
 
     private static final Logger logger = Logger.getLogger(ControlledCurationQuery.class);
 

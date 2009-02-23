@@ -38,7 +38,7 @@ public class GeneLocationQuery extends HqlQuery {
 
     @Override
     protected String getHql() {
-        return "select f.uniqueName from Feature f, FeatureLoc fl where fl.sourceFeature.uniqueName=:topLevelFeatureName and fl.fmin >= :min and fl.fmax <= :max order by f.organism";
+        return "select f.uniqueName from Feature f, FeatureLoc fl where fl.sourceFeature.uniqueName=:topLevelFeatureName and fl.fmin >= :min and fl.fmax <= :max @ORGANISM@ order by f.organism";
     }
 
 
