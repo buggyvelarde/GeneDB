@@ -142,7 +142,12 @@ insert into db (name, description, urlprefix) values (
 insert into db (name, description, urlprefix) values (
         'TrypanoCyc',
         'The TrypanoCyc database',
-        'http://www.genedb.org/tmp/TRYPANO/NEW-IMAGE?type=GENE-IN-CHROM-BROWSER&object=');
+        'http://www.genedb.org/trypanocyc/TRYPANO/NEW-IMAGE?type=GENE-IN-CHROM-BROWSER&object=');
+
+insert into db (name, description, urlprefix) values (
+        'GI',
+        'NCBI GI number',
+        'http://www.ncbi.nlm.nih.gov/entrez/sutils/girevhist.cgi?val=');
 
 --
 -- Add url prefix to existing dbs
