@@ -58,9 +58,9 @@ public abstract class HqlQuery implements Query {
     }
 
     private String restrictQueryByOrganism(String hql, String organismClause) {
-    	if (!StringUtils.hasLength(organismClause)) {
-    		return hql.replace("@ORGANISM@", "");
-    	}
+        if (!StringUtils.hasLength(organismClause)) {
+            return hql.replace("@ORGANISM@", "");
+        }
         return hql.replace("@ORGANISM@", organismClause);
     }
 
@@ -93,11 +93,11 @@ public abstract class HqlQuery implements Query {
     }
 
     public int getOrder() {
-    	return order;
+        return order;
     }
 
     public void setOrder(int order) {
-    	this.order = order;
+        this.order = order;
     }
 
     public String getQueryDescription() {
