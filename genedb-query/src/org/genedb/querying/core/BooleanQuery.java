@@ -2,7 +2,6 @@ package org.genedb.querying.core;
 
 
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,16 +64,15 @@ public class BooleanQuery implements Query {
         return "Boolean Query";
     }
 
+    @Override
+    @SuppressWarnings("unused")
+    public void validate(Object target, Errors errors) {
+        return;
+    }
 
-            @Override
-            public void validate(Object target, Errors errors) {
-                return;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean supports(Class clazz) {
-                return BooleanQuery.class.isAssignableFrom(clazz);
-            }
-
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean supports(Class clazz) {
+        return BooleanQuery.class.isAssignableFrom(clazz);
+    }
 }
