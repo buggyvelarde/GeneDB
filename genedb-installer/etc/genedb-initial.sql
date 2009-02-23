@@ -186,7 +186,7 @@ update db set urlprefix='http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retri
 update db set urlprefix='http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/search.cgi?search_field='
     where name='Superfamily';
 
-update db set urlprefix='http://cmr.tigr.org/cgi-bin/CMR/HmmReport.cgi?hmm_acc='
+update db set urlprefix='http://cmr.jcvi.org/cgi-bin/CMR/HmmReport.cgi?hmm_acc='
     where name='TIGR_TIGRFAMS';
 
 update db set urlprefix='http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_='
