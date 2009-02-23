@@ -12,7 +12,7 @@ import org.springframework.validation.Validator;
         shortDesc="Get a list of transcripts by type",
         longDesc=""
     )
-public class GeneLocationQuery extends HqlQuery {
+public class GeneLocationQuery extends OrganismHqlQuery {
 
     //private static final Logger logger = Logger.getLogger(GeneLocationQuery.class);
 
@@ -97,6 +97,7 @@ public class GeneLocationQuery extends HqlQuery {
 
     @Override
     protected void populateQueryWithParams(org.hibernate.Query query) {
+    	super.populateQueryWithParams(query);
         query.setString("topLevelFeatureName", topLevelFeatureName);
         query.setInteger("min", min);
         query.setInteger("max", max);

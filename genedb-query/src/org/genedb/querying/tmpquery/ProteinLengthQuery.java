@@ -40,7 +40,6 @@ public class ProteinLengthQuery extends OrganismHqlQuery {
     	if (taxons==null || taxons.length==0) {
     		return null;
     	}
-    	//return "";
 		return "and f.organism.abbreviation in (:organismList)";
 	}
 

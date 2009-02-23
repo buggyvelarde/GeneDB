@@ -12,7 +12,7 @@ import org.springframework.validation.Validator;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class ProteinMassQuery extends HqlQuery {
+public class ProteinMassQuery extends OrganismHqlQuery {
 
     @QueryParam(
             order=1,
@@ -63,6 +63,7 @@ public class ProteinMassQuery extends HqlQuery {
 
     @Override
     protected void populateQueryWithParams(org.hibernate.Query query) {
+    	super.populateQueryWithParams(query);
         query.setInteger("min", min);
         query.setInteger("max", max);
     }
