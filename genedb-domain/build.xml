@@ -83,7 +83,7 @@
   </target>
 -->
 
-  <target name="tests" depends="compile-domain">
+  <target name="genedb-domain-tests" depends="compile-domain">
     <tests-target project="domain"/>
   </target>
         

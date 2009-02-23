@@ -77,7 +77,7 @@
     </uptodate>
   </target>
 
-  <target name="tests" depends="compile-web, genedb-domain.compile-tests">
+  <target name="tests" depends="compile-web, genedb-domain-tests">
     <tests-target project="web"/>
   </target>
 
