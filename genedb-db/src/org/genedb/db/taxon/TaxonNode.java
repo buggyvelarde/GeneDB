@@ -116,7 +116,7 @@ public class TaxonNode {
     }
 
     public List<TaxonNode> getChildren() {
-        return Collections.unmodifiableList(this.children);
+        return new ArrayList<TaxonNode>(this.children);
     }
 
     public Phylonode getPhylonode() {
