@@ -70,6 +70,7 @@ public class GeneTypeQuery extends OrganismHqlQuery {
 
     @Override
     protected void populateQueryWithParams(org.hibernate.Query query) {
+    	super.populateQueryWithParams(query);
         query.setString("type", type);
     }
 
