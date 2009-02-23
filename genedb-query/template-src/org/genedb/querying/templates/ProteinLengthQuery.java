@@ -4,29 +4,7 @@ import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
-import org.hibernate.CacheMode;
-import org.hibernate.FlushMode;
-import org.hibernate.HibernateException;
-import org.hibernate.LockMode;
-import org.hibernate.Query;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
-import org.hibernate.transform.ResultTransformer;
-import org.hibernate.type.Type;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 @QueryClass(
         title="Coding and pseudogenes by protein length",
@@ -82,18 +60,22 @@ public class ProteinLengthQuery extends HqlQuery {
     }
 
 
-    public Validator getValidator() {
-        return new Validator() {
-            @Override
-            public void validate(Object target, Errors errors) {
-                return;
-            }
+    @Override
+    @SuppressWarnings("unused")
+    public void validate(Object target, Errors errors) {
+        return;
+    }
 
-            @Override
-            public boolean supports(Class clazz) {
-                return ProteinLengthQuery.class.isAssignableFrom(clazz);
-            }
-        };
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean supports(Class clazz) {
+        return ProteinLengthQuery.class.isAssignableFrom(clazz);
+    }
+
+    @Override
+    protected String getOrganismHql() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
