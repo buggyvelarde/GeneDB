@@ -131,12 +131,6 @@ public class QueryControllerTest {
 		//Check for incorrect view
 		Assert.assertNotSame("Wrong view returned.", "redirect:/QueryList", view);
 		
-		//Check for error message presence
-		Assert.assertNotNull(
-				"Error returned when processing form is: " + 
-				session.getAttribute(WebConstants.FLASH_MSG), 
-				session.getAttribute(WebConstants.FLASH_MSG));
-		
 		//Check for correct view
 		Assert.assertEquals("Wrong view returned.", "search/"+queryName, view);
 	}

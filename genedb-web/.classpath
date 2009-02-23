@@ -491,7 +491,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="/genedb-db/bin"/>
-	<classpathentry kind="lib" path="lib/com.springsource.javax.servlet-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.validator-3.0.0.GA.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>

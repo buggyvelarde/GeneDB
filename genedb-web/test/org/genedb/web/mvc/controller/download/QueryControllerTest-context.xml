@@ -19,13 +19,6 @@
  	
  	<bean name="proteinLengthQuery" class="org.genedb.querying.tmpquery.MockProteinLengthQuery"/>
  	
- 	<bean id="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor">
-        <property name="taxonNodeManager" ref="taxonNodeManager" />
-    </bean>
-
-    <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
-        <property name="phylogenyDao" ref="phylogenyDao" />
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
+ 	<bean name="taxonNodeArrayPropertyEditor" class="org.genedb.db.taxon.TaxonNodeArrayPropertyEditor"/>
  	
 </beans>
