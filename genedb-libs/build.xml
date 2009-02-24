@@ -118,6 +118,7 @@
     <sequential>
       <delete dir="@{topdir}/${build.dir}" includeEmptyDirs="true" />
       <delete dir="@{topdir}/${lib.dir}" includeEmptyDirs="true" />
+      <delete dir="@{topdir}/${test-classes.dir}"/>
     </sequential>
   </macrodef>
 
@@ -151,7 +152,7 @@
       <javac srcdir="@{topdir}/test" includes="**/*.java" debug="true"
                  destdir="@{topdir}/${test-classes.dir}"
                  classpathref="@{classpathref}" />
-    
+   
       <junit printsummary="on"
         fork="false"
         haltonfailure="false"

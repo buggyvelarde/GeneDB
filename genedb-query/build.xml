@@ -23,6 +23,7 @@
     <path refid="query-classpath"/>
   	<pathelement location="${imported.basedir.query}/test"/>
   	<pathelement location="${imported.basedir.query}/ant-build/classes"/>
+    <pathelement location="${imported.basedir.query}/ant-build/test-classes"/>
   </path>	
 	
 
@@ -51,7 +52,7 @@
     </uptodate>
   </target>
 	
-   <target name="tests" depends="compile-query">
+   <target name="genedb-query-tests" depends="compile-query">
      <tests-target project="query"/>
    </target>
 

@@ -48,6 +48,7 @@
     <pathelement location="${imported.basedir.web}/${test-classes.dir}"/>
     <pathelement location="${imported.basedir.domain}/${test-classes.dir}"/>
     <pathelement location="${imported.basedir.web}/test"/>
+    <pathelement location="${imported.basedir.web}/../genedb-domain/test"/>
   </path>
 
   <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.fulljar-db,genedb-util.fulljar-util" />
@@ -77,11 +78,12 @@
     </uptodate>
   </target>
 
-  <target name="tests" depends="compile-web, genedb-domain.compile-tests">
+  <target name="genedb-web-tests" depends="compile-web"><!-- , genedb-domain.compile-tests-->
     <tests-target project="web"/>
   </target>
 
-  <target name="test-all-modules" depends="genedb-query.tests, tests"/>
+  <target name="test-all-modules" 
+  	depends="genedb-domain.genedb-domain-tests, genedb-query.genedb-query-tests, genedb-web-tests"/>
 
    <target name="iajc-web" depends="compile-web" unless="web.iajc-uptodate">
      <iajc-target project="web" />

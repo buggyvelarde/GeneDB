@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class BasicGeneServiceImplTest {
+public class BasicGeneServiceImplT_est {
     private BasicGeneService basicGeneService;
     @Required @Autowired
     public void setBasicGeneService(BasicGeneService basicGeneService) {
