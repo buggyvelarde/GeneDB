@@ -9,43 +9,43 @@
 	<format:genePageSection id="nameSearch" className="whiteBox">
 		<form:form commandName="query" action="Query" method="post">
         <input type="hidden" name="q" value="proteinMass" />
-            <table>
-                <tr>
-                    <td colspan="3">
-                        <font color="red"><form:errors path="*" /></font>
-                    </td>
-                </tr>
-                                <tr>
-                <td>
-                     <b>Organism:</b>
-            	     <br><db:simpleselect />
+            <table border=0>
+            	<tr>
+            		<td>
+            			<br><big><b>Protein Mass Search:</b></big>
+            		</td>
+            		
+            		<td>
+            			<b>Organism:</b>
+            			<br><db:simpleselect />
             	     <br><font color="red"><form:errors path="taxons" /></font>
-                  <td>
-                </tr>
-                <tr>
-                  <td>Min mass:</td>
-                  <td>
-                    <form:input id="minMass" path="min"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Max mass:</td>
-                  <td>
-                    <form:input id="maxMass" path="max"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td colspan="2">
-                    <input type="submit" value="Submit" />
-                  </td>
-                  <td>&nbsp;</td>
-                </tr>
+            		</td>
+            		<td>
+            			<b>Min mass:</b>
+            			<br><form:input id="minMass" path="min"/>
+            			<br><font color="red"><form:errors path="min" /></font>
+            		</td>
+            		<td>
+            			<b>Max mass:</b>
+            			<br><form:input id="maxMass" path="max"/>
+            			<br><font color="red"><form:errors path="max" /></font>
+            		</td>
+            		<td>            			
+            			<br><input type="submit" value="Submit" />           
+            		</td>
+            	</tr>
+            	<tr>
+            		<td></td>
+            		<td colspan=5><font color="red"><form:errors  /></td>
+            		<td></td>
+            	</tr>
             </table>
-
 		</form:form>
 	</format:genePageSection>
 </div>
+
+
+			
 
 <br><query:results />
 <format:footer />

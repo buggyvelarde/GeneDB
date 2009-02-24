@@ -14,7 +14,7 @@
             <table>
             	<tr>
             		<td width=180>
-            			<br><big><b>Protein Length Search</b></big>
+            			<br><big><b>Protein Length Search:&nbsp;</b></big>
             		</td>
             		<td width=180>
             			<b>Organism:</b>

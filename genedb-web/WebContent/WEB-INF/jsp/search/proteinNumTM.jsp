@@ -11,35 +11,31 @@
         <input type="hidden" name="q" value="proteinNumTM" />
             <table>
                 <tr>
-                    <td colspan="3">
-                        <font color="red"><form:errors path="*" /></font>
-                    </td>
-                </tr>
-                <tr>
-                  <td>Organism:</td>
+            	  <td>
+            		<br><big><b>Protein Number TM Search:</b></big>
+            	  </td>
+                  <td><b>Organism:</b>
+                    <br><db:simpleselect />
+                  </td>
                   <td>
-                    <db:simpleselect />
+                  	<b>Min number of domains:</b>
+                  	<br><form:input id="minNumTM" path="min"/>
+            		<br><font color="red"><form:errors path="min" /></font>
                   </td>
-                </tr>
-                <tr>
-                  <td>Min number of domains:</td>
                   <td>
-                    <form:input id="minNumTM" path="min"/>
+                  	<b>Max number of domains:</b>
+                    <br><form:input id="maxNumTM" path="max"/>
+            		<br><font color="red"><form:errors path="max" /></font>
                   </td>
-                </tr>
-                <tr>
-                  <td>Max number of domains:</td>
                   <td>
-                    <form:input id="maxNumTM" path="max"/>
+                    <br><input type="submit" value="Submit" />
                   </td>
                 </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td colspan="2">
-                    <input type="submit" value="Submit" />
-                  </td>
-                  <td>&nbsp;</td>
-                </tr>
+            	<tr>
+            		<td></td>
+            		<td colspan=5><font color="red"><form:errors  /></td>
+            		<td></td>
+            	</tr>
             </table>
 
 		</form:form>

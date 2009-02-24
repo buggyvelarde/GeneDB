@@ -5,53 +5,48 @@
 	<st:init />
 	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
+<br>
 <div id="geneDetails">
 	<format:genePageSection id="nameSearch" className="whiteBox">
 		<form:form commandName="query" action="Query" method="post">
         <input type="hidden" name="q" value="geneLocation" />
-            <table>
-                <tr>
-                    <td colspan="3">
-                        <font color="red"><form:errors path="*" /></font>
-                    </td>
-                </tr>
-                <tr>
-                <td>
-                     <b>Organism:</b>
-            	     <br><db:simpleselect />
-            	     <br><font color="red"><form:errors path="taxons" /></font>
-                  <td>
-                </tr>
-                <tr>
-                  <td>Parent feature:</td>
-                  <td>
-                    <form:input id="topLevelFeatureName" path="topLevelFeatureName"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Min location:</td>
-                  <td>
-                    <form:input id="minLocation" path="min"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Max location:</td>
-                  <td>
-                    <form:input id="maxLocation" path="max"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td colspan="2">
-                    <input type="submit" value="Submit" />
-                  </td>
-                  <td>&nbsp;</td>
-                </tr>
+            <table border=0>
+            	<tr>
+            		<td>
+            			<br><big><b>Gene Location Search:</b></big>
+            		</td>
+            		<td>
+            			<b>Parent feature:&nbsp;</b>
+            			<br><form:input id="topLevelFeatureName" path="topLevelFeatureName"/>
+            			<br><font color="red"><form:errors path="topLevelFeatureName" /></font>
+            		</td>
+            		<td>
+            			<b>Minimum Length:</b>
+            			<br><form:input id="minLocation" path="min"/>
+            			<br><font color="red"><form:errors path="min" /></font>
+            		</td>
+            		<td>
+            			<b>Maximum Length:</b>
+            			<br><form:input id="maxLocation" path="max"/>
+            			<br><font color="red"><form:errors path="max" /></font>
+            		</td>
+            		<td>            			
+            			<br><input type="submit" value="Submit" />           
+            		</td>
+            	</tr>
+            	<tr>
+            		<td></td>
+            		<td colspan=5><font color="red"><form:errors  /></td>
+            		<td></td>
+            	</tr>
             </table>
-
 		</form:form>
 	</format:genePageSection>
 </div>
+
+
+
+
 
 <br><query:results />
 <format:footer />cvs up 
