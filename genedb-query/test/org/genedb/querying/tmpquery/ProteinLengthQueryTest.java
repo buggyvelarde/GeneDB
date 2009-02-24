@@ -23,26 +23,26 @@ public class ProteinLengthQueryTest {
 		Assert.assertFalse(errors.hasErrors());
 	}
 	
-	@Test
-	public void testMaxLengthValidation(){
-		ProteinLengthQuery query = new ProteinLengthQuery();
-		query.setMax(501);
-		Errors errors = new BindException(query, "query"); 
-		query.validate(query, errors);
-		
-		Assert.assertTrue(errors.hasErrors());
-		Assert.assertTrue(errors.hasFieldErrors());
-		Assert.assertFalse(errors.hasGlobalErrors());
-		Assert.assertEquals(errors.getFieldError("max").getField(), "max");
-		Assert.assertEquals(errors.getFieldError("max").getDefaultMessage(), 
-		"Max must be less than or equal to 500. Bla bla bla");
-	}
+//	@Test
+//	public void testMaxLengthValidation(){
+//		ProteinLengthQuery query = new ProteinLengthQuery();
+//		query.setMax(501);
+//		Errors errors = new BindException(query, "query"); 
+//		query.validate(query, errors);
+//		
+//		Assert.assertTrue(errors.hasErrors());
+//		Assert.assertTrue(errors.hasFieldErrors());
+//		Assert.assertFalse(errors.hasGlobalErrors());
+//		Assert.assertEquals(errors.getFieldError("max").getField(), "max");
+//		Assert.assertEquals(errors.getFieldError("max").getDefaultMessage(), 
+//		"Max must be less than or equal to 500. Bla bla bla");
+//	}
 	
 
 	@Test
 	public void testMinLengthValidation(){
 		ProteinLengthQuery query = new ProteinLengthQuery();
-		query.setMin(49);
+		query.setMin(0);
 		Errors errors = new BindException(query, "query"); 
 		query.validate(query, errors);
 		
@@ -51,7 +51,7 @@ public class ProteinLengthQueryTest {
 		Assert.assertFalse(errors.hasGlobalErrors());
 		Assert.assertEquals(errors.getFieldError("min").getField(), "min");
 		Assert.assertEquals(errors.getFieldError("min").getDefaultMessage(), 
-				"Min must be greater than or equal to 50. Bla bla bla");
+				"Min must be greater than or equal to 1. Bla bla bla");
 	}
 	
 	@Test

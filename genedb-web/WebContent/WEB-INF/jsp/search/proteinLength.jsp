@@ -10,7 +10,6 @@
 <div id="geneDetails">
 	<format:genePageSection id="nameSearch" className="whiteBox">
 		<form:form commandName="query" action="Query" method="post">
-		<font color="red"><form:errors path="*" /></font>
         <input type="hidden" name="q" value="proteinLength" />
             <table>
             	<tr>
@@ -38,7 +37,7 @@
             	</tr>
             	<tr>
             		<td></td>
-            		<td colspan=2><font color="red"><form:errors  /></td>
+            		<td colspan=3><font color="red"><form:errors  /></td>
             		<td></td>
             	</tr>
             </table>

@@ -5,7 +5,6 @@ import org.genedb.querying.core.QueryParam;
 
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
-import org.hibernate.validator.Max;
 import org.hibernate.validator.Min;
 import org.springframework.validation.Errors;
 
@@ -20,14 +19,13 @@ public class ProteinLengthQuery extends OrganismHqlQuery {
             order=2,
             title="Minimum length of protein in bases"
     )
-    @Min(value=50, message="{min.minimum}")
-    private int min = 50;
+    @Min(value=1, message="{min.minimum}")
+    private int min = 1;
 
     @QueryParam(
             order=3,
             title="Maximum length of protein in bases"
     )
-    @Max(value=500, message="{max.maximum}")
     private int max = 500;
 
     @Override
