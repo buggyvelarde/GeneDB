@@ -27,7 +27,7 @@ public class ProteinNumTMQuery extends OrganismLuceneQuery {
             order=2,
             title="Minimum length of protein in bases"
     )
-    private int max = 5;
+    private int max = 10;
 
 
     @Override

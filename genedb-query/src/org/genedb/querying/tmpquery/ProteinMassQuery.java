@@ -18,13 +18,13 @@ public class ProteinMassQuery extends OrganismHqlQuery {
             order=1,
             title="Minimum mass of protein"
     )
-    private int min = 0;
+    private int min = 10000;
 
     @QueryParam(
             order=2,
             title="Maximum mass of protein"
     )
-    private int max = 1000;
+    private int max = 50000;
 
     @Override
     protected String getHql() {
