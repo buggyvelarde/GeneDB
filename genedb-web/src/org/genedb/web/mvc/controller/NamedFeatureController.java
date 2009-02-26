@@ -37,6 +37,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -54,6 +55,7 @@ import com.google.common.collect.Maps;
  */
 @Controller
 @RequestMapping("/NamedFeature")
+@SessionAttributes("results")
 //@ManagedResource(objectName="bean:name=namedFeatureController", description="NamedFeature Controller")
 public class NamedFeatureController extends TaxonNodeBindingFormController {
      private static final Logger logger = Logger.getLogger(NamedFeatureController.class);

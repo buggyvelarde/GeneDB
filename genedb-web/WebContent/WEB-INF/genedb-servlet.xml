@@ -267,8 +267,11 @@
     <bean name="historyManagerFactory"
         class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
 
-    <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
+	<bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
 
+    <bean name="ResultsNavigatorController" class="org.genedb.web.mvc.controller.download.ResultsNavigatorController" />
+    
+    
     <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" />
 
     <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">

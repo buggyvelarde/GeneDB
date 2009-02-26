@@ -5,6 +5,7 @@
 <c:set var="chromosome" value="${primaryLoc.sourceFeature}" />
 <c:set var="organism" value="${gene.organism.commonName}" />
 
+
 <div id="firstRow" class="row">
     <%-- General Information --%>
     <format:genePageSection id="generalInformation">

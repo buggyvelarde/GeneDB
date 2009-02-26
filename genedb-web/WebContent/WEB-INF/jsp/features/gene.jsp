@@ -64,6 +64,9 @@ function addToBasket(geneid){
 //]]>
 </script>
 </format:headerRound>
+
+&nbsp;<query:navigatePages />
+
 <!-- Context Map -->
 <div id="contextMapOuterDiv">
     <div id="contextMapTopPanel">
@@ -93,4 +96,5 @@ function addToBasket(geneid){
 <div id="geneDetails">
     <jsp:include page="geneDetails.jsp"/>
 </div>
+
 <format:footer />
