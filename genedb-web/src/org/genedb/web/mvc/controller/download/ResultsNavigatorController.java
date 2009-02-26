@@ -1,5 +1,6 @@
 package org.genedb.web.mvc.controller.download;
 
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
@@ -23,8 +24,7 @@ public class ResultsNavigatorController {
     public String navigate(
             @RequestParam(value="index") String indexStr,
             @RequestParam(value="lastIndex") String lastIndexStr,
-            @RequestParam(value="goto") String goWhere,
-            @RequestParam(value="resultsUri") String resultsUri,
+            @RequestParam(value="goto") String goTo,
             @RequestParam(value="q") String query,
             ServletRequest request,
             HttpSession session) throws QueryException {
@@ -32,31 +32,78 @@ public class ResultsNavigatorController {
     	
     	List results = (List)session.getAttribute("results");
     	
-    	if ("first".equals(goWhere)){
+    	if ("first".equals(goTo)){
     		Object[] item = (Object[])results.get(0);
-    		return "redirect:/NamedFeature?name="+item[0]+"&index=0" + "&lastIndex=" + lastIndexStr + "&q=" + query + "&resultsUri=" + resultsUri;
+    		return "redirect:/NamedFeature?name="+item[0] + assembleRequestParameters(request, goTo);
     		
-    	}else if ("previous".equals(goWhere)){
+    	}else if ("previous".equals(goTo)){
     		int index = Integer.parseInt(indexStr);
     		Object[] item = (Object[])results.get(index-1);
-    		return "redirect:/NamedFeature?name="+item[0]+"&index="+(index-1) + "&lastIndex=" + lastIndexStr + "&q=" + query + "&resultsUri=" + resultsUri;
+    		return "redirect:/NamedFeature?name="+item[0] + assembleRequestParameters(request, goTo);
     		
-    	}else if("next".equals(goWhere)){
+    		
+    	}else if("next".equals(goTo)){
     		int index = Integer.parseInt(indexStr);
     		Object[] item = (Object[])results.get(index+1);
-    		return "redirect:/NamedFeature?name="+item[0]+"&index="+(index+1) + "&lastIndex=" + lastIndexStr + "&q=" + query + "&resultsUri=" + resultsUri;
+    		return "redirect:/NamedFeature?name="+item[0] + assembleRequestParameters(request, goTo);
     		
-    	}else if("last".equals(goWhere)){
+    	}else if("last".equals(goTo)){
     		int lastIndex = Integer.parseInt(lastIndexStr);
     		Object[] item = (Object[])results.get(lastIndex);
-    		return "redirect:/NamedFeature?name="+item[0]+"&index="+lastIndex+ "&lastIndex=" + lastIndexStr + "&q=" + query + "&resultsUri=" + resultsUri;
+    		return "redirect:/NamedFeature?name="+item[0] + assembleRequestParameters(request, goTo);
     		
-    	}else if("results".equals(goWhere)){    		
-    		return "redirect:/" + resultsUri + "?q=" + query;
+    	}else if("results".equals(goTo)){    		
+    		return "redirect:/Query?" + assembleRequestParameters(request, goTo);
     		
     	}else{
     		return null;
     	}
+    }
+    
+    private String assembleRequestParameters(ServletRequest request, String goTo ){
+    	StringBuffer paramConcats = new StringBuffer();
+    	for(Enumeration en = request.getParameterNames(); en.hasMoreElements();){
+    		String paramName = (String)en.nextElement();
+    		String value = request.getParameter(paramName);
+    		
+    		if("goto".equals(paramName)){
+    			continue;
+    			
+    		}else if("name".equals(paramName)){
+    			continue;
+    			
+    		}else if ("first".equals(goTo) && "index".equals(paramName)){
+    			paramConcats.append("&index=0");
+    			
+    		}else if("previous".equals(goTo) && "index".equals(paramName)){
+    			paramConcats.append("&index");
+    			paramConcats.append("=");
+    			paramConcats.append(Integer.parseInt(value)-1);
+    			
+    		}else if("next".equals(goTo) && "index".equals(paramName)){
+    			paramConcats.append("&index");
+    			paramConcats.append("=");
+    			paramConcats.append(Integer.parseInt(value)+1);
+    			
+    		}else if("last".equals(goTo) && "index".equals(paramName)){
+    			paramConcats.append("&index");
+    			paramConcats.append("=");
+    			paramConcats.append(
+    					Integer.parseInt(request.getParameter("lastIndex")));
+    			
+    		}else if("results".equals(goTo) && 
+    				("index".equals(paramName) || "lastIndex".equals(paramName))){
+    			continue;
+    			
+    		}else{
+    			paramConcats.append("&");
+    			paramConcats.append(paramName);
+    			paramConcats.append("=");
+    			paramConcats.append(value);
+    		}
+    	}
+    	String values = paramConcats.toString();
+    	return values;
     }
 
 }

@@ -9,7 +9,7 @@
 &nbsp;Gene ${param.index+1} of ${param.lastIndex+1} Search Results.&nbsp;
 <c:choose>
 	<c:when test="${param.index != '0'}">
-		<a href="ResultsNavigator?index=0&goto=first${requestParams}">First</a>
+		<a href="ResultsNavigator?goto=first${requestParams}">First</a>
 	</c:when>
 	<c:otherwise>
 		First
@@ -18,18 +18,18 @@
 &nbsp;|&nbsp;
 
 <c:if test="${param.index != '0'}">
-	<a href="ResultsNavigator?index=${param.index}&goto=previous&lastIndex=${param.lastIndex}&q=${param.q}&resultsUri=${param.resultsUri}">Previous</a>
+	<a href="ResultsNavigator?goto=previous${requestParams }">Previous</a>
 	 &nbsp;|&nbsp;
 </c:if>
 
 <c:if test="${param.index != param.lastIndex}">
-	<a href="ResultsNavigator?index=${param.index}&goto=next&lastIndex=${param.lastIndex}&q=${param.q}&resultsUri=${param.resultsUri}">Next</a>
+	<a href="ResultsNavigator?goto=next${requestParams }">Next</a>
 	 &nbsp;|&nbsp;
 </c:if>
 
 <c:choose>
 	<c:when test="${param.index != param.lastIndex}">
-		<a href="ResultsNavigator?index=0&goto=last&lastIndex=${param.lastIndex}&q=${param.q}&resultsUri=${param.resultsUri}">Last</a>
+		<a href="ResultsNavigator?goto=last${requestParams }">Last</a>
 	</c:when>
 	<c:otherwise>
 		Last
@@ -37,5 +37,5 @@
 </c:choose>
 &nbsp;|&nbsp;
 
-<a href="ResultsNavigator?index=${param.index}&goto=results&lastIndex=${param.lastIndex}&q=${param.q}&resultsUri=${param.resultsUri}">Back to Search Results</a>
+<a href="ResultsNavigator?goto=results${requestParams }">Back to Search Results</a>
 
