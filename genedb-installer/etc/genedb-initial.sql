@@ -69,20 +69,20 @@ delete from db where name = 'UNIPROT';
 --
 
 insert into db (name, description) values (
-		'PRODUCT',
-		'Db where we store db entries corresponding to products');
+        'PRODUCT',
+        'Db where we store db entries corresponding to products');
 
 insert into db (name, description) values (
-		'RILEY',
-		'Db where we store db entries corresponding to RILEY terms');
+        'RILEY',
+        'Db where we store db entries corresponding to RILEY terms');
 
 insert into db (name, description) values (
-		'CCGEN',
-		'Db where we store db entries corresponding to controlled curation CV terms');
+        'CCGEN',
+        'Db where we store db entries corresponding to controlled curation CV terms');
 
 insert into db (name, description) values (
-		'genedb_misc',
-		'Local values for where we need a dbxref eg for new cvterms');
+        'genedb_misc',
+        'Local values for where we need a dbxref eg for new cvterms');
 
 insert into db (name, description, urlprefix) values (
         'SMART',
@@ -149,44 +149,49 @@ insert into db (name, description, urlprefix) values (
         'NCBI GI number',
         'http://www.ncbi.nlm.nih.gov/entrez/sutils/girevhist.cgi?val=');
 
---
+insert into db (name, description, urlprefix) values (
+    'VSGDB',
+    'A database for trypanosome variant surface glycoproteins',
+    'http://leishman.cent.gla.ac.uk/cgi-bin/vsg.pl?id=');
+
+    --
 -- Add url prefix to existing dbs
 --
 update db set urlprefix='http://merops.sanger.ac.uk/cgi-bin/merops.cgi?id='
-	where name='MEROPS';
+    where name='MEROPS';
 
 update db set urlprefix='http://www.ebi.ac.uk/interpro/IEntry?ac='
-	where name='InterPro';
+    where name='InterPro';
 
 update db set urlprefix='http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus='
-	where name='SGD';
+    where name='SGD';
 
 update db set urlprefix='http://smart.embl-heidelberg.de/smart/do_annotation.pl?&BLAST=DUMMY&DOMAIN='
-	where name='SMART';
+    where name='SMART';
 
 update db set urlprefix='http://www.ebi.uniprot.org/entry/'
-	where name='UniProt';
+    where name='UniProt';
 
 update db set urlprefix='http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id='
-	where name='PlasmoDB';
+    where name='PlasmoDB';
 
 update db set urlprefix='http://www.brenda.uni-koeln.de/php/result_flat.php3?ecno='
-	where name='BRENDA';
+    where name='BRENDA';
 
 update db set urlprefix='http://www.ebi.ac.uk/cgi-bin/expasyfetch?'
-	where name='EMBL';
+    where name='EMBL';
 
 update db set urlprefix='http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId='
-	where name='PDB';
+    where name='PDB';
 
 update db set urlprefix='http://pfam.sanger.ac.uk/family?type=Family&entry='
-	where name='Pfam';
+    where name='Pfam';
 
 update db set urlprefix='http://ca.expasy.org/cgi-bin/prosite-search-ac?'
-	where name='Prosite';
+    where name='Prosite';
 
 update db set urlprefix='http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids='
-	where name='PMID';
+    where name='PMID';
 
 update db set urlprefix='http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/search.cgi?search_field='
     where name='Superfamily';
@@ -210,58 +215,58 @@ update db set urlprefix='http://www.expasy.org/cgi-bin/sprot-search-de?'
 -- Add local cv's
 --
 insert into cv (name, definition) values (
-		'genedb_misc',
-		'Miscellaneous GeneDB-specific terms'
+        'genedb_misc',
+        'Miscellaneous GeneDB-specific terms'
 );
 
 insert into cv (name, definition) values (
-		'genedb_literature',
-		'GeneDB-specific terms for literature'
+        'genedb_literature',
+        'GeneDB-specific terms for literature'
 );
 
 insert into cv (name, definition) values (
-		'RILEY',
-		'CV for storing Monica RILEY classifications'
+        'RILEY',
+        'CV for storing Monica RILEY classifications'
 );
 
 insert into cv (name, definition) values (
-		'CC_genedb_controlledcuration',
-		'GeneDB-specific cv for controlled curation terms'
-);
-
-
-insert into cv (name, definition) values (
-		'CC_protein_family',
-		'GeneDB-specific cv for controlled curation terms - protein family'
+        'CC_genedb_controlledcuration',
+        'GeneDB-specific cv for controlled curation terms'
 );
 
 
 insert into cv (name, definition) values (
-		'CC_name_derivation',
-		'GeneDB-specific cv for controlled curation terms - name derivation'
+        'CC_protein_family',
+        'GeneDB-specific cv for controlled curation terms - protein family'
 );
 
 
 insert into cv (name, definition) values (
-		'CC_species_dist',
-		'GeneDB-specific cv for controlled curation terms - species_dist'
+        'CC_name_derivation',
+        'GeneDB-specific cv for controlled curation terms - name derivation'
 );
 
 
 insert into cv (name, definition) values (
-		'CC_pt_mod',
-		'GeneDB-specific cv for controlled curation terms - post translation modification'
+        'CC_species_dist',
+        'GeneDB-specific cv for controlled curation terms - species_dist'
+);
+
+
+insert into cv (name, definition) values (
+        'CC_pt_mod',
+        'GeneDB-specific cv for controlled curation terms - post translation modification'
 );
 
 -- Do we need a CV for products, or just a db?
 insert into cv (name, definition) values (
-		'genedb_products',
-		'GeneDB-specific cv for products'
+        'genedb_products',
+        'GeneDB-specific cv for products'
 );
 
 insert into cv (name, definition) values (
-		'genedb_synonym_type',
-		'GeneDB-specific cv for more specific naming'
+        'genedb_synonym_type',
+        'GeneDB-specific cv for more specific naming'
 );
 
 
@@ -272,27 +277,27 @@ insert into cv (name, definition) values (
 -- ----------------------
 
 --insert into dbxref(db_id, accession, description) values (
---		(select db_id from db where name='null'),
---		'genedb_synonym_type:DisplayPage',
---		'dbxref for cvterm DisplayPage'
+--        (select db_id from db where name='null'),
+--        'genedb_synonym_type:DisplayPage',
+--        'dbxref for cvterm DisplayPage'
 --);
 --insert into cvterm(cv_id, name, definition, dbxref_id, is_obsolete, is_relationshiptype) values (
---		(select cv_id from cv where name='genedb_misc_...'),
---		'DisplayPage',
---		'cvterm for attribute value page in taxonomy xml, which decides whether ot not a group should have individual page',
---		(select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
---		0, 0
+--        (select cv_id from cv where name='genedb_misc_...'),
+--        'DisplayPage',
+--        'cvterm for attribute value page in taxonomy xml, which decides whether ot not a group should have individual page',
+--        (select dbxref_id from dbxref where accession='genedb_synonym_type:temporary_systematic_id'),
+--        0, 0
 --);
 
 
 -- Load phylogeny relationships
 insert into dbxref(db_id, accession) values (
-		(select db_id from db where name='null'),
-		'genedb_misc:organism_hierarchy'
+        (select db_id from db where name='null'),
+        'genedb_misc:organism_hierarchy'
 );
 insert into phylotree (dbxref_id, name, type_id, comment) values (
-		(select dbxref_id from dbxref where accession='genedb_misc:organism_hirarchy'),
-		'org_hierarchy',
-		(select cvterm_id from cvterm where name='taxonomy'),
-		'GeneDB organism hierarchy'
+        (select dbxref_id from dbxref where accession='genedb_misc:organism_hirarchy'),
+        'org_hierarchy',
+        (select cvterm_id from cvterm where name='taxonomy'),
+        'GeneDB organism hierarchy'
 );
