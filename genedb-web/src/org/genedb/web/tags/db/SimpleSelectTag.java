@@ -1,5 +1,6 @@
 package org.genedb.web.tags.db;
 
+import org.apache.commons.lang.StringUtils;
 import org.genedb.db.taxon.TaxonNode;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 
 public class SimpleSelectTag extends AbstractHomepageTag {
     
@@ -17,16 +19,34 @@ public class SimpleSelectTag extends AbstractHomepageTag {
     protected void display(TaxonNode root, JspWriter out) throws IOException {
         
         out.write("<select name=\"taxons\">");
-        displayImmediateChildren(root, out, 0);
+        
+        //Find the previously selected taxons if any in Request
+        PageContext pageContext = (PageContext)getJspContext();
+        String previouslySelectedTaxons = pageContext.getRequest().getParameter("taxons");
+        
+        displayImmediateChildren(root, out, 0, previouslySelectedTaxons);
 
         out.write("</select>");
     }
     
     
-    private void displayImmediateChildren(TaxonNode node, JspWriter out, int indent) throws IOException {
+    /**
+     * 
+     * @param node
+     * @param out
+     * @param indent
+     * @param previouslySelectedTaxons Should be pre-populated in a postback
+     * @throws IOException
+     */
+    private void displayImmediateChildren(TaxonNode node, JspWriter out, int indent, String previouslySelectedTaxons) throws IOException {
         out.write("<option value=\"");
         out.write(node.getLabel());
-        out.write("\">");
+        out.write("\"");
+        
+        if(!StringUtils.isEmpty(previouslySelectedTaxons) && previouslySelectedTaxons.equals(node.getLabel())){
+            out.write(" selected ");;
+        }        
+        out.write(">");
         if (indent > 7) {
         	indent=8;
         }
@@ -41,7 +61,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
 			}
         });
         for (TaxonNode child : node.getChildren()) {
-            displayImmediateChildren(child, out, indent+1);
+            displayImmediateChildren(child, out, indent+1, previouslySelectedTaxons);
         }
     }
 
