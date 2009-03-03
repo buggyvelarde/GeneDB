@@ -15,7 +15,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 public class FeatureCvTermDTO implements Serializable {
-    private String typeName;
+    
+	private static final long serialVersionUID = -2231825983085114418L;
+	private String typeName;
     private String typeAccession;
     private List<String> pubs;
     private String withFrom;

@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 public class ImageMapSummary implements Serializable {
 
-    private int width;
+   
+	private static final long serialVersionUID = 663680933938480853L;
+	private int width;
     private int height;
     private String path;
     private String imageMap;
