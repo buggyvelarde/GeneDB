@@ -19,10 +19,8 @@ BEGIN {
     #unshift(@INC, "/nfs/WWW/SANGER_docs/bin-offline");
     #unshift(@INC, "/nfs/WWW/SANGER_docs/perl/bioperl-live");
 
-    if( defined $ENV{"WEB_ROLE"}  ){
-        if( $ENV{"WEB_ROLE"} eq "GeneDB" ){
-            unshift(@INC, "../../genedb-cgi-offline");
-            unshift(@INC, "../../genedb-cgi-offline/bioperl-live");
+            unshift(@INC, "../cgi-support");
+            unshift(@INC, "../cgi-support/bioperl-live");
             require "GeneDB_Web.pm";
             $sw        = GeneDB_Web->new({
                 'title'  => "Fasta Sequence Lookup",
@@ -30,22 +28,6 @@ BEGIN {
             });
             $blank_gif   = "/images/reallyBlank.gif";
             $form_number = 1;
-        }
-        else {
-            print STDERR "WEB_ROLE is set but not that of 'GeneDB'\n";
-        }
-    }
-    else {
-        print STDERR "WEB_ROLE NOT DEFINED\n";
-
-        require "SangerWeb.pm";
-        $sw        = SangerWeb->new({
-            'title'  => "Fasta Sequence Lookup",
-            'banner' => "Fasta Sequence Lookup",
-        });
-        $blank_gif   = "/images/blank.gif";
-        $form_number = 0;
-    }
 }
 
 use strict;

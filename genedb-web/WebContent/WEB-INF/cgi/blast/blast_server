@@ -15,28 +15,13 @@ BEGIN {
     #unshift(@INC, "/nfs/WWW/SANGER_docs/perl");
     #unshift(@INC, "/nfs/WWW/SANGER_docs/bin-offline");
 
-    if( defined $ENV{"WEB_ROLE"}  ){
-        if( $ENV{"WEB_ROLE"} eq "GeneDB" ){
             unshift(@INC, "./MODULES");
-            unshift(@INC, "../../genedb-cgi-offline");        # ok in taint mode, webserver determines where this script runs
+            unshift(@INC, "../cgi-support");        # ok in taint mode, webserver determines where this script runs
             require "GeneDB_Web.pm";
             $web = GeneDB_Web->new();
             $blank_gif = "/images/reallyBlank.gif";
         $cgi_dir = "genedb2";
-        }
-        else {
-            print STDERR "WEB_ROLE is set but not that of 'GeneDB'\n";
-        }
-    }
-    else {
-        print STDERR "WEB_ROLE NOT DEFINED\n";
 
-        require "SangerWeb.pm";
-        $web       = SangerWeb->new();
-        $blank_gif = "/gfx/blank.gif";
-    $cgi_dir = "cgi-bin";
-    }
-}
 
 use CGI;
 use Sys::Hostname;

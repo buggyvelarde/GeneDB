@@ -12,11 +12,9 @@ use CGI qw/:cgi/;
 my ($sw, $blank_gif);
 
 BEGIN {
-    if( defined $ENV{"WEB_ROLE"}  ){
-        if( $ENV{"WEB_ROLE"} eq "GeneDB" ){
-            unshift(@INC, "../../genedb-cgi-offline");
-            unshift(@INC, "../../genedb-cgi-offline/bioperl-live");
-            unshift(@INC, "../../genedb-cgi-offline/Sanger");
+            unshift(@INC, "../cgi-support");
+            unshift(@INC, "../cgi-support/bioperl-live");
+            unshift(@INC, "../cgi-support/Sanger");
 
             require "GeneDB_Web.pm";
             $sw  = GeneDB_Web->new({'title'  => "Blast Server Results",
@@ -24,28 +22,11 @@ BEGIN {
                                      'jsfile' => "/js/zmenu.js"
                                      });
             $blank_gif = "/images/reallyBlank.gif";
-        }
-        else {
-            print STDERR "WEB_ROLE is set but not that of 'GeneDB'\n";
-        }
-    }
-    else {
-        print STDERR "WEB_ROLE NOT DEFINED\n";
-
-        require "SangerWeb.pm";
-        $sw  = SangerWeb->new({'title'  => "Blast Server Results",
-                               'banner' => "Blast Server Results",
-                               'jsfile' => "/js/zmenu.js"
-                               });
-
-        $blank_gif = "/gfx/blank.gif";
-    }
 }
 
 use Website::Blast::Parser::Generic;
 use Website::Blast::Util;
 use Sanger::Graphics::JSTools;
-#use SangerWeb;
 
 $| = 1;
 $ENV{'PATH'} = "";
