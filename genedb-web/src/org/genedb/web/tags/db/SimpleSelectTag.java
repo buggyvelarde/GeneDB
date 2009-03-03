@@ -63,10 +63,12 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         Collections.sort(children, new Comparator<TaxonNode>() {
 			@Override
 			public int compare(TaxonNode arg0, TaxonNode arg1) {
-				return arg0.getLabel().compareTo(arg1.getLabel());
+				String label0 = arg0.getLabel();
+				String label1 = arg1.getLabel();
+				return label0.compareToIgnoreCase(label1);
 			}
         });
-        for (TaxonNode child : node.getChildren()) {
+        for (TaxonNode child : children) {
             displayImmediateChildren(child, out, indent+1, previouslySelectedTaxons);
         }
     }
