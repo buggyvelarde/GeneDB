@@ -35,7 +35,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
      * @param node
      * @param out
      * @param indent
-     * @param previouslySelectedTaxons Should be pre-populated in a postback
+     * @param previouslySelectedTaxons Should be pre-populated in a postback or redirect
      * @throws IOException
      */
     private void displayImmediateChildren(TaxonNode node, JspWriter out, int indent, String previouslySelectedTaxons) throws IOException {
