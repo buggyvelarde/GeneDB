@@ -108,7 +108,7 @@
 	<classpathentry kind="lib" path="lib/org.springframework.orm-sources-3.0.0.M1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.web-3.0.0.M1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.web-sources-3.0.0.M1.jar"/>
-	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.validator-3.0.0.GA.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.validator-3.0.0.GA.jar" sourcepath="lib/com.springsource.org.hibernate.validator-sources-3.0.0.GA.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
 	<classpathentry kind="output" path="bin"/>
