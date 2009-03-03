@@ -14,6 +14,7 @@ import org.gmod.schema.mapped.PhylonodeOrganism;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,6 +162,12 @@ public class TaxonNode {
             ret.add(child);
             ret.addAll(child.getAllChildren());
         }
+        Collections.sort(ret, new Comparator<TaxonNode>() {
+            @Override
+            public int compare(TaxonNode tn1, TaxonNode tn2) {
+                return tn1.getLabel().compareToIgnoreCase(tn2.getLabel());
+            }
+        });
         return ret;
     }
 
