@@ -218,6 +218,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
 
     /** default constructor */
     public Feature() {
+        // Deliberately empty
     }
 
     /** minimal constructor */

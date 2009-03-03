@@ -26,7 +26,6 @@ import javax.persistence.Table;
 public class FeatureProp implements Serializable, PropertyI, Rankable {
 
     // Fields
-    @SuppressWarnings("unused")
     @GenericGenerator(name="generator", strategy="seqhilo", parameters = {  @Parameter(name="max_lo", value="100"), @Parameter(name="sequence", value="featureprop_featureprop_id_seq") } )
     @Id
     @GeneratedValue(generator="generator")

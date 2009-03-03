@@ -50,7 +50,7 @@ public class ObjectManager extends EmptyInterceptor {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void postFlush(@SuppressWarnings("unused") Iterator entities) {
+    public void postFlush(Iterator entities) {
         logger.debug("Flushing dbxrefs, synonyms and pubs");
         dbxrefsByAccByDb.clear();
         synonymsByTypeAndName.clear();

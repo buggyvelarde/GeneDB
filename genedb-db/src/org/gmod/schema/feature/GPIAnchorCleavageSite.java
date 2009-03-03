@@ -15,7 +15,12 @@ import javax.persistence.Transient;
 @Entity
 @FeatureType(cv="genedb_feature_type", term="GPI_anchor_cleavage_site")
 public class GPIAnchorCleavageSite extends PolypeptideRegion {
-    GPIAnchorCleavageSite() {}
+
+    GPIAnchorCleavageSite() {
+        // Deliberately empty
+    }
+    
+    
     public GPIAnchorCleavageSite(Organism organism, CvTerm cvTerm, String uniqueName) {
         super(organism, cvTerm, uniqueName, true /*analysis*/, false /*obsolete*/);
     }

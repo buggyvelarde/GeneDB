@@ -288,7 +288,6 @@ public class SequenceDao extends BaseDao {
         return data;
     }
 
-    @SuppressWarnings("unchecked")
     public FeatureDbXRef getFeatureDbXRefByFeatureAndDbXRef(Feature feature, DbXRef dbXRef) {
         List<FeatureDbXRef> results = performQuery(FeatureDbXRef.class,
                 "from FeatureDbXRef fdxr where fdxr.feature=:feature and fdxr.dbXRef=:dbXRef",
@@ -305,7 +304,6 @@ public class SequenceDao extends BaseDao {
      * @param limit the number of maximum results to return
      * @return a (possibly empty) List<Feature> of Feature
      */
-    @SuppressWarnings("unchecked")
     public List<Feature> getFeaturesByAnyNameAndOrganism(String nl, String orgNames,
             String featureType) {
 
@@ -540,7 +538,6 @@ public class SequenceDao extends BaseDao {
      */
     public List<Feature> getFeaturesByLocation(int min, int max, String type, String organism,
             Feature parent) {
-        @SuppressWarnings("unchecked") // findByNamedParam(query) returns a bare List
         List<Feature> features = performQuery(Feature.class,
                 "select f from Feature f , FeatureLoc fl " + "where fl.fmin>=:min "
                         + "and fl.fmax<=:max and fl.feature=f.featureId "

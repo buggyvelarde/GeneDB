@@ -29,7 +29,7 @@ public class TaxonNodeArrayPropertyEditor extends PropertyEditorSupport {
     
     private TaxonNodeManager taxonNodeManager;
 
-    @Override
+	@Override
     public String getAsText() {
         TaxonNode[] nodes = (TaxonNode[]) getValue();
         if (nodes == null) {
@@ -50,7 +50,8 @@ public class TaxonNodeArrayPropertyEditor extends PropertyEditorSupport {
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
         if (! StringUtils.hasText(text)) {
-            throw new IllegalArgumentException("Text must not be empty or null");
+            return; // TODO Should this set Root
+            //throw new IllegalArgumentException("Text must not be empty or null");
         }
         String[] parts = text.split(":");
 //        System.err.println("Split into '"+parts.length+"' parts");
