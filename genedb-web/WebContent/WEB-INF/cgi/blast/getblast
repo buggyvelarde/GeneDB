@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -wT
+#!/software/bin/perl -wT
 #########
 # Author: rmp
 # Maintainer: rmp
@@ -17,7 +17,7 @@ BEGIN {
             unshift(@INC, "../../genedb-cgi-offline");
             unshift(@INC, "../../genedb-cgi-offline/bioperl-live");
             unshift(@INC, "../../genedb-cgi-offline/Sanger");
-            
+
             require "GeneDB_Web.pm";
             $sw  = GeneDB_Web->new({'title'  => "Blast Server Results",
                                      'banner' => "Blast Server Results",
@@ -88,7 +88,7 @@ sub main {
 #
 sub retrieval_form {
   my ($cgi, $util, $id) = @_;
-  
+
   print qq(
 <br /><form method="GET" action="$ENV{'SCRIPT_NAME'}">
   <table border="0" align="center" cellpadding="2" cellspacing="0" width="500">
@@ -107,9 +107,9 @@ sub retrieval_form {
       <td><img src="$blank_gif" width="10" alt="" /></td>
       <td>
         <p class="red1">
-	  Type your ticket identifier into the box and press
-	  <b>retrieve</b>.<br /> The majority of BLASTs are completed within
-	  two minutes.
+      Type your ticket identifier into the box and press
+      <b>retrieve</b>.<br /> The majority of BLASTs are completed within
+      two minutes.
         </p>
       </td>
       <td><img src="$blank_gif" width="10" alt="" /></td>
@@ -118,11 +118,11 @@ sub retrieval_form {
 
   my $format = $cgi->param('format') || "default";
   my @formats = (
-		 {'default' => "Marked up"},
-		 {'graphic' => "Marked up with graphics"},
-		 {'plain'   => "Plain Text"},
-		 {'ssaha'   => "SSAHA Summary"},
-		);
+         {'default' => "Marked up"},
+         {'graphic' => "Marked up with graphics"},
+         {'plain'   => "Plain Text"},
+         {'ssaha'   => "SSAHA Summary"},
+        );
 
 #  print qq(  <tr class="violet2">
 #    <td><img src="$blank_gif" width="10" alt="" /></td>
@@ -142,8 +142,8 @@ sub retrieval_form {
     <tr class="violet2">
       <td><img src="$blank_gif" width="10" alt="" /></td>
       <td>
-	<p class="red1">
-	  At peak times your BLAST searches could take longer than normal.
+    <p class="red1">
+      At peak times your BLAST searches could take longer than normal.
           Please be patient.
         </p>
       </td>
@@ -154,10 +154,10 @@ sub retrieval_form {
     <tr class="violet2">
       <td><img src="$blank_gif" width="10" alt="" /></td>
       <td>
-	<p class="red1">
-	  Please note that immediately after running your BLAST searches may be
+    <p class="red1">
+      Please note that immediately after running your BLAST searches may be
           listed as having failed. This is due to a minor systems problem. Waiting
-          for a short while then retrieving the results should correct this problem.          
+          for a short while then retrieving the results should correct this problem.
         </p>
       </td>
       <td><img src="$blank_gif" width="10" alt="" /></td>
@@ -167,11 +167,11 @@ sub retrieval_form {
     <tr class="violet2">
       <td><img src="$blank_gif" width="10" alt="" /></td>
       <td>
-	<p class="red1">
-	  BLAST results are kept on our servers for three days
-	  following query submission. Results may be retrieved any
-	  number of times during this period. After this time queries
-	  must be resubmitted if further examination is required.
+    <p class="red1">
+      BLAST results are kept on our servers for three days
+      following query submission. Results may be retrieved any
+      number of times during this period. After this time queries
+      must be resubmitted if further examination is required.
         </p>
       </td>
       <td><img src="$blank_gif" width="10" alt="" /></td>
@@ -219,61 +219,61 @@ sub step1 {
     #
     for my $subid (@omnitickets) {
       my $subticket = Website::Blast::Ticket->new({
-						   'id' => $subid,
-						  });
+                           'id' => $subid,
+                          });
       my $generic   = Website::Blast::Parser::Generic->new({
-							    'util'   => $util,
-							    'ticket' => $subticket,
-							    'skip_bioperl' => 1, # Don't build bp objs!
-							   });
+                                'util'   => $util,
+                                'ticket' => $subticket,
+                                'skip_bioperl' => 1, # Don't build bp objs!
+                               });
       if(!defined $generic) {
-	my $status = $subticket->status() || $STATUS_UNKNOWN;
+    my $status = $subticket->status() || $STATUS_UNKNOWN;
 
-	if($status == $STATUS_COMPLETED) {
-	  print qq(Job $subid failed.<br />\n);
+    if($status == $STATUS_COMPLETED) {
+      print qq(Job $subid failed.<br />\n);
 
-	} elsif($status == $STATUS_RUNNING) {
-	  print qq(Job $subid is running.<br />\n);
+    } elsif($status == $STATUS_RUNNING) {
+      print qq(Job $subid is running.<br />\n);
 
-	} elsif($status == $STATUS_FAILED) {
-	  print qq(Job $subid failed.<br />\n);
+    } elsif($status == $STATUS_FAILED) {
+      print qq(Job $subid failed.<br />\n);
 
-	} else {
-	  print qq(Job $subid is pending execution.<br />\n);
-	}
-	next;
+    } else {
+      print qq(Job $subid is pending execution.<br />\n);
+    }
+    next;
       }
 
       print qq(<!-- id:$subid -->\n);
 
       if($subticket->pfam()) {
-	&step2($cgi, $util, $subid, "Website::Blast::Parser::Pfam");
+    &step2($cgi, $util, $subid, "Website::Blast::Parser::Pfam");
       } else {
-	&step2($cgi, $util, $subid, "Website::Blast::Parser::Omniblast", {'skip_bioperl'=>1});
+    &step2($cgi, $util, $subid, "Website::Blast::Parser::Omniblast", {'skip_bioperl'=>1});
       }
     }
- 
+
   } else {
     my $generic  = Website::Blast::Parser::Generic->new({
-							 'util' => $util,
-							 'id'   => $id,
-							 'skip_bioperl' => 1, #skip bp objs!
-							});
+                             'util' => $util,
+                             'id'   => $id,
+                             'skip_bioperl' => 1, #skip bp objs!
+                            });
 
     if(!defined $generic) {
       my $status = $ticket->status() || $STATUS_UNKNOWN;
-      
+
       if($status == $STATUS_COMPLETED) {
-	print qq(Job $id failed.<br />\n);
-	
+    print qq(Job $id failed.<br />\n);
+
       } elsif($status == $STATUS_RUNNING) {
-	print qq(Job $id is running.<br />\n);
-	
+    print qq(Job $id is running.<br />\n);
+
       } elsif($status == $STATUS_FAILED) {
-	print qq(Job $id failed.<br />\n);
-	
+    print qq(Job $id failed.<br />\n);
+
       } else {
-	print qq(Job $id is pending execution.<br />\n);
+    print qq(Job $id is pending execution.<br />\n);
       }
       return;
     }
@@ -282,51 +282,51 @@ sub step1 {
     my $name     = "Generic";
     my $format   = $cgi->param('format') || "default";
     my $opts     = {
-		    'graphic' => ($format eq "graphic")?"on":"off",
-		   };
-    
+            'graphic' => ($format eq "graphic")?"on":"off",
+           };
+
     if($format eq "ssaha") {
       $name = "SSAHA";
 
     } elsif($format eq "plain") {
       $name = "Plain";
-  
+
   } else {
       if($database =~ /humpub\/chr/i ||
-	 $database =~ /humpub\/finished/ ||
-	 $database =~ /humpub\/public_unfinished/ ||
-	 $database =~ /humpub\/all/ ||
-	 $database =~ /humpub\/public_human/) {
-	$name = "Homo_sapiens";
-	
+     $database =~ /humpub\/finished/ ||
+     $database =~ /humpub\/public_unfinished/ ||
+     $database =~ /humpub\/all/ ||
+     $database =~ /humpub\/public_human/) {
+    $name = "Homo_sapiens";
+
       } elsif($database =~ /humpub\/mouse/) {
-	$name = "Mus_musculus";
-	
+    $name = "Mus_musculus";
+
       } elsif($database eq "wormpub/allcmid") {
-	$name = "C_elegans";
-	
+    $name = "C_elegans";
+
       } elsif($database =~ /yeastpub\/NM/i) {
-	$name = "N_meningitidis";
-	
+    $name = "N_meningitidis";
+
       } elsif(substr($database, 0, 11) eq "yeastpub/ML") {
-	$name = "M_leprae";
-	
+    $name = "M_leprae";
+
       } elsif(substr($database, 0, 11) eq "yeastpub/CJ") {
-	$name = "C_jejuni";
-	
+    $name = "C_jejuni";
+
       } elsif(substr($database, 0, 6) eq "merops") {
-	$name = "MEROPS";
+    $name = "MEROPS";
 
       } elsif( $database =~ m!GeneDB_[A-Z][a-z]*_(\w*_)?(Proteins|Contigs|Genes)$! ){
-	$name = "GeneDB_Link";
+    $name = "GeneDB_Link";
 
 
       } elsif( $database =~ m!EMBL! ){
-	$name = "EMBL_Link";
+    $name = "EMBL_Link";
 
 
       } elsif( $database =~ m!SWALL! ){
-	$name = "SPTR_Link";
+    $name = "SPTR_Link";
 
 
       }
@@ -350,12 +350,12 @@ sub step2 {
   }
 
   my $parser = $parsername->new({
-				 'util'         => $util,
-				 'id'           => $id,
-				 'cgi'          => $cgi,
-				 'graphic'      => $opts->{'graphic'},
-				 'skip_bioperl' => $opts->{'skip_bioperl'},
-				});
+                 'util'         => $util,
+                 'id'           => $id,
+                 'cgi'          => $cgi,
+                 'graphic'      => $opts->{'graphic'},
+                 'skip_bioperl' => $opts->{'skip_bioperl'},
+                });
   $parser->parse();
 }
 

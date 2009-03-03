@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -wT
+#!/software/bin/perl -wT
 #########
 # Author:        rmp
 # Maintainer:    rmp
@@ -82,7 +82,7 @@ sub main {
   if($view eq "no") {
     $openhit   = qq(<a name="Match"></a><span style="background-color: #e2e2ff;color: #a00000;">);
     $closehit  = qq(</span>);
-  }	  
+  }
 
   undef($seqval) if(defined $seqval && $seqval eq "all");
 
@@ -148,165 +148,165 @@ sub main {
       } else {
         $hitst       = $hitstart-$seqval;
         $hited       = $hitend+$seqval;
-	my $expected = $hited - $hitst +1;
-	$hitst       = 1 if($hitst < 1);
+    my $expected = $hited - $hitst +1;
+    $hitst       = 1 if($hitst < 1);
         $bytecount   = $hitst-1;
 
-        $cmd = qq($PUBSEQFETCHDB  -f -s $hitst -e $hited $cachefn '$acc' 2>/dev/null);        
+        $cmd = qq($PUBSEQFETCHDB  -f -s $hitst -e $hited $cachefn '$acc' 2>/dev/null);
 
-	#########
-	# first pass to calculate length
-	#
-	open(FETCHDB, qq($PUBSEQFETCHDB -q -s $hitst -e $hited $cachefn '$acc' 2>/dev/null |)) || die "oops";
-	while(defined(my $line = <FETCHDB>)) {
-	  chomp $line;
-	  next if(substr($line, 0, 1) eq ">");
-	  $reallength += length($line);
-	}
-	close(FETCHDB);
+    #########
+    # first pass to calculate length
+    #
+    open(FETCHDB, qq($PUBSEQFETCHDB -q -s $hitst -e $hited $cachefn '$acc' 2>/dev/null |)) || die "oops";
+    while(defined(my $line = <FETCHDB>)) {
+      chomp $line;
+      next if(substr($line, 0, 1) eq ">");
+      $reallength += length($line);
+    }
+    close(FETCHDB);
 
-	if($expected != $reallength && $format ne "dl") {
-	  print qq(<br /><b>WARNING: Requested HSP extension is out of range. Boundaries have been clipped.</b><br />\n);
-	}
-	if($reallength == 0) {
-	  print qq(<br /><b>WARNING: Could not find sequence $dbpath $acc.<br /><br />\n);
-	}
+    if($expected != $reallength && $format ne "dl") {
+      print qq(<br /><b>WARNING: Requested HSP extension is out of range. Boundaries have been clipped.</b><br />\n);
+    }
+    if($reallength == 0) {
+      print qq(<br /><b>WARNING: Could not find sequence $dbpath $acc.<br /><br />\n);
+    }
 
       }
 
       open(FETCHDB, qq($cmd |)) || die "oops";
       while(defined(my $line = <FETCHDB>)) {
-	chomp $line;
-	
-	if (substr($line, 0, 1) eq ">" && $format ne "dl") {
-	  my ($name)       = $line =~ /^>\s*(\S+)/;
-	  $name          ||= "unknown";
-	  my $starttxt     = $hitstart?";start=$hitstart":"";
-	  my $endtxt       = $hitend?";end=$hitend":"";
-	  my $formattoggle = "no";
-	  my $seqvaltxt    = "";
-	  my $formattxt    = "Plain";
-	  $formattoggle    = "yes"             if($format eq "no");
-	  $formattxt       = "Formatted"       if($format eq "no");
-	  $seqvaltxt       = ";seqval=$seqval" if(defined $seqval);
-	  
-	  print qq(<br />);
-	  print qq([<a href="$ENV{'SCRIPT_NAME'}?db=$database;acc=$acc;format=$formattoggle;view=$view$idtxt$starttxt$endtxt$seqvaltxt#Match">$formattxt Fasta Sequence</a>] );
-	  print qq([<a href="$ENV{'SCRIPT_NAME'}?db=$database;acc=$acc;format=dl$idtxt$starttxt$endtxt$seqvaltxt">Download this sequence</a>] );
-	  
-	  if((defined $hitstart || defined $hitend) && $view eq "no") {
-	    print qq([<A href="#Match">Jump to HSP</A>] );
-	    
-	    my %formval = (
-			   50   => '50',
-			   100  => '100',
-			   200  => '200',
-			   300  => '300',
-			   500  => '500',
-			   1000 => '1K',
-			   2000 => '2K',
-			  );
-	    print qq(<form method="GET" action="$ENV{'SCRIPT_NAME'}">Show <select name="seqval" onChange="document.forms[$form_number].submit();"> );
-	    my $selected = "";
-	    $selected    = "selected" if (!defined $seqval);
-	    print qq(  <option value="all" $selected>full sequence</option>\n);
+    chomp $line;
 
-	    for my $key (sort {$a <=> $b} keys %formval) {
-	      my $selected = "";
-	      $selected    = "selected" if (defined $seqval && $seqval eq $key);
-	      print qq(  <option value="$key" $selected>HSP &plusmn; $formval{$key}</option>\n);
-	    }
-	    
-	    print qq(</select>);
-	    
-	    print qq(<input type="hidden" name="db" value="$database">
+    if (substr($line, 0, 1) eq ">" && $format ne "dl") {
+      my ($name)       = $line =~ /^>\s*(\S+)/;
+      $name          ||= "unknown";
+      my $starttxt     = $hitstart?";start=$hitstart":"";
+      my $endtxt       = $hitend?";end=$hitend":"";
+      my $formattoggle = "no";
+      my $seqvaltxt    = "";
+      my $formattxt    = "Plain";
+      $formattoggle    = "yes"             if($format eq "no");
+      $formattxt       = "Formatted"       if($format eq "no");
+      $seqvaltxt       = ";seqval=$seqval" if(defined $seqval);
+
+      print qq(<br />);
+      print qq([<a href="$ENV{'SCRIPT_NAME'}?db=$database;acc=$acc;format=$formattoggle;view=$view$idtxt$starttxt$endtxt$seqvaltxt#Match">$formattxt Fasta Sequence</a>] );
+      print qq([<a href="$ENV{'SCRIPT_NAME'}?db=$database;acc=$acc;format=dl$idtxt$starttxt$endtxt$seqvaltxt">Download this sequence</a>] );
+
+      if((defined $hitstart || defined $hitend) && $view eq "no") {
+        print qq([<A href="#Match">Jump to HSP</A>] );
+
+        my %formval = (
+               50   => '50',
+               100  => '100',
+               200  => '200',
+               300  => '300',
+               500  => '500',
+               1000 => '1K',
+               2000 => '2K',
+              );
+        print qq(<form method="GET" action="$ENV{'SCRIPT_NAME'}">Show <select name="seqval" onChange="document.forms[$form_number].submit();"> );
+        my $selected = "";
+        $selected    = "selected" if (!defined $seqval);
+        print qq(  <option value="all" $selected>full sequence</option>\n);
+
+        for my $key (sort {$a <=> $b} keys %formval) {
+          my $selected = "";
+          $selected    = "selected" if (defined $seqval && $seqval eq $key);
+          print qq(  <option value="$key" $selected>HSP &plusmn; $formval{$key}</option>\n);
+        }
+
+        print qq(</select>);
+
+        print qq(<input type="hidden" name="db" value="$database">
   <input type="hidden" name="acc"    value="$acc">
   <input type="hidden" name="start"  value="$hitstart">
   <input type="hidden" name="end"    value="$hitend">
   <input type="hidden" name="format" value="$format">
   <input type="submit" value="go">
 </form>\n);
-	  }
+      }
 
-	  if(defined $seqval) {
-	    my $start = $hitst;
-	    my $end   = $hitst+$reallength-1;
+      if(defined $seqval) {
+        my $start = $hitst;
+        my $end   = $hitst+$reallength-1;
 
-	    if($view eq "no") {
-	      print qq(<pre><b>&gt;$name subsequence $start-$end</b>\n);
+        if($view eq "no") {
+          print qq(<pre><b>&gt;$name subsequence $start-$end</b>\n);
 
-	    } else {
-	      print qq(<pre><b>$line; subsequence $start-$end</b>\n);
-	    }
+        } else {
+          print qq(<pre><b>$line; subsequence $start-$end</b>\n);
+        }
 
-	  } else {
-	    print qq(<pre><b>$line</b>\n);
-	  }
+      } else {
+        print qq(<pre><b>$line</b>\n);
+      }
 
-	} elsif(substr($line, 0, 1) eq ">" && $format eq "dl") {
-	  my ($name)   = $line =~ /^>\s*(\S+)/;
-	  $name      ||= "unknown";
+    } elsif(substr($line, 0, 1) eq ">" && $format eq "dl") {
+      my ($name)   = $line =~ /^>\s*(\S+)/;
+      $name      ||= "unknown";
 
-	  if(defined $seqval) {
-	    my $start = $hitst;
-	    my $end   = $start+$reallength-1;
-	    print qq(>$name subsequence $start-$end\n);
+      if(defined $seqval) {
+        my $start = $hitst;
+        my $end   = $start+$reallength-1;
+        print qq(>$name subsequence $start-$end\n);
 
-	  } else {
-	    print $line, "\n";
-	  }
-	  
-	} else {
-	  my $linelength   = length($line);
-	  my $linestart    = $bytecount+1;
-	  my $lineend      = $bytecount+$linelength;
-	  $bytecount      += $linelength;
-	  my $tmpline      = $line;
-	  my $tmpfastaline = $fastaline;
-	  my $justopened   = undef;
-	  my $justclosed   = undef;
+      } else {
+        print $line, "\n";
+      }
 
-	  if(defined $hitstart && $hitstart >= $linestart && $hitstart <= $lineend) {
-	    my $pos = $hitstart - $linestart;
-	    substr($tmpline, $pos, 0) = $openhit if($pos >= 0);
-	    $justopened = 1;
-	  }
-	  
-	  if(defined $hitend && $hitend >= $linestart && $hitend <= $lineend) {
-	    my $pos = $hitend - $lineend;
-	    if($pos < 0) {
-	      substr($tmpline, $pos, 0) = $closehit;
-	    } else {
-	      $tmpline .= $closehit;
-	    }
-	    $justclosed = 1;
-	  }
-	  
-	  if($format eq "yes") {
-	    my $startnum = sprintf("<b>%-9d</b>", $linestart);
-	    $startnum   .= $openhit if($hitstart && $hitend && $linestart >= $hitstart && $linestart <= $hitend && !$justopened);
-	    
-	    my $endnum   = sprintf("<b>%9d</b>", $lineend);
-	    $endnum      = $closehit . $endnum if($hitstart && $hitend && $lineend >= $hitstart && $lineend <= $hitend && !$justclosed);
-	    
-	    my $newline  = sprintf("%s%-${fastaline}s%s\n", $startnum, $line, $endnum);
-	    $newline     =~ s/$line/$tmpline/;
-	    print $newline;
-	    
-	  } else {
-	    my $newline = $line;
-	    if($format ne "dl") {
-	      $newline    =~ s/$line/$tmpline/;
-	    }
-	    print $newline, "\n";
-	  }
-	  
-	}
-       	$counter++;
+    } else {
+      my $linelength   = length($line);
+      my $linestart    = $bytecount+1;
+      my $lineend      = $bytecount+$linelength;
+      $bytecount      += $linelength;
+      my $tmpline      = $line;
+      my $tmpfastaline = $fastaline;
+      my $justopened   = undef;
+      my $justclosed   = undef;
+
+      if(defined $hitstart && $hitstart >= $linestart && $hitstart <= $lineend) {
+        my $pos = $hitstart - $linestart;
+        substr($tmpline, $pos, 0) = $openhit if($pos >= 0);
+        $justopened = 1;
+      }
+
+      if(defined $hitend && $hitend >= $linestart && $hitend <= $lineend) {
+        my $pos = $hitend - $lineend;
+        if($pos < 0) {
+          substr($tmpline, $pos, 0) = $closehit;
+        } else {
+          $tmpline .= $closehit;
+        }
+        $justclosed = 1;
+      }
+
+      if($format eq "yes") {
+        my $startnum = sprintf("<b>%-9d</b>", $linestart);
+        $startnum   .= $openhit if($hitstart && $hitend && $linestart >= $hitstart && $linestart <= $hitend && !$justopened);
+
+        my $endnum   = sprintf("<b>%9d</b>", $lineend);
+        $endnum      = $closehit . $endnum if($hitstart && $hitend && $lineend >= $hitstart && $lineend <= $hitend && !$justclosed);
+
+        my $newline  = sprintf("%s%-${fastaline}s%s\n", $startnum, $line, $endnum);
+        $newline     =~ s/$line/$tmpline/;
+        print $newline;
+
+      } else {
+        my $newline = $line;
+        if($format ne "dl") {
+          $newline    =~ s/$line/$tmpline/;
+        }
+        print $newline, "\n";
+      }
+
+    }
+           $counter++;
       }
       close(FETCHDB);
     };
-    
+
     if($@) {
       print qq(Warning: Failed to retrieve data for $acc in $database using fetchdb.<br />\n);
       print qq(Please try the FTP site: <a href="ftp://ftp.sanger.ac.uk/pub/">ftp.sanger.ac.uk</a><br />\n);
