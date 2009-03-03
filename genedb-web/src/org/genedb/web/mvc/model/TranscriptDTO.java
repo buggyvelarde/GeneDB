@@ -50,9 +50,12 @@ import com.google.common.collect.Maps;
 public class TranscriptDTO implements Serializable {
 
     private transient Logger logger = Logger.getLogger(TranscriptDTO.class);
+    
+    private static final long serialVersionUID = 3878466785198622703L;
 
     private String uniqueName;
     private String properName;
+    private Map<String, List<String>> synonymsByTypes;
     private List<String> synonyms;
     private List<String> obsoleteNames;
     private List<String> products;
@@ -251,7 +254,6 @@ public class TranscriptDTO implements Serializable {
         if (gene.getTranscripts().size()>1) {
             anAlternateTranscript = true;
         }
-
         populateNames(transcript, gene);
         populateParentDetails(gene);
         populateMisc(transcript);
@@ -462,27 +464,60 @@ public class TranscriptDTO implements Serializable {
         if (transcript.getName() != null && !transcript.getName().equals(uniqueName)) {
             this.properName = transcript.getName();
         }
-
         Collection<FeatureSynonym> featureSynonyms = gene.getFeatureSynonyms();
-
-        obsoleteNames = findFromSynonymsByType(featureSynonyms, "obsolete_name");
-        synonyms = findFromSynonymsByType(featureSynonyms, "synonym");
-    }
-
+        //Get the map of lists of synonyms
+        synonymsByTypes = findFromSynonymsByType(featureSynonyms);
+    }    
 
 
-    private List<String> findFromSynonymsByType(Collection<FeatureSynonym> synonyms, String typeName) {
-        List<String> filtered = new ArrayList<String>();
+    /**
+     * Create lists of synonyms, where each list grouped by the synonym type  
+     * @param synonyms
+     * @return
+     */
+    private Map<String, List<String>> findFromSynonymsByType(Collection<FeatureSynonym> synonyms) {
+    	HashMap<String, List<String>> synonymsByType = new HashMap<String, List<String>>();
         for (FeatureSynonym featSynonym : synonyms) {
             Synonym synonym = featSynonym.getSynonym();
-            if (typeName.equals(synonym.getType().getName())) {
-                filtered.add(synonym.getName());
+            String typeName = formatSynonymTypeName(synonym.getType().getName());
+            List<String> filtered = synonymsByType.get(typeName);
+            if (filtered == null){
+            	filtered = new ArrayList<String>();
+            	synonymsByType.put(typeName, filtered);
             }
+            filtered.add(synonym.getName());
         }
-        if (filtered.size() > 0) {
-            return filtered;
+        
+        if(synonymsByType.size()>0){
+        	return synonymsByType;
         }
         return null;
+    }
+    
+    /**
+     * Re-format the synonym type name 
+     * @param rawName
+     * @return
+     */
+    private String formatSynonymTypeName(String rawName){
+    	
+    	char formattedName[] = rawName.toCharArray();
+    	for(int i=0; i<formattedName.length; ++i){
+    		
+    		//Replace underscores with spaces
+    		if (formattedName[i]=='_'){
+    			formattedName[i] = ' ';
+    		
+    		//Replace first char lowercase to a uppercase char
+    		}else if(i==0 && Character.isLowerCase(formattedName[i])){
+    			formattedName[i] = Character.toUpperCase(formattedName[i]);
+    			
+    		//Replace any occurrence of a lowercase char preceeded a space with a upper case char
+    		}else if(i>0 && formattedName[i-1]==' ' && Character.isLowerCase(formattedName[i])){
+    			formattedName[i] = Character.toUpperCase(formattedName[i]); 
+    		}
+    	}
+    	return String.valueOf(formattedName).trim();
     }
 
 
@@ -641,6 +676,14 @@ public class TranscriptDTO implements Serializable {
     public int getTopLevelFeatureLength() {
         return topLevelFeatureLength;
     }
+
+	public Map<String, List<String>> getSynonymsByTypes() {
+		return synonymsByTypes;
+	}
+
+	public void setSynonymsByTypes(Map<String, List<String>> synonymsByTypes) {
+		this.synonymsByTypes = synonymsByTypes;
+	}
 
 
 }

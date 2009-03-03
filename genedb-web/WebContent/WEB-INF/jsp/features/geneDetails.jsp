@@ -41,24 +41,18 @@
             <td class="label">Feature Type</td>
             <td class="value">${dto.typeDescription}</td>
         </tr>
+
 <%-- ------------------------------------------------------- --%>
-        <c:if test="${!empty dto.synonyms}">
-            <tr>
-                <td class="label">Synonyms</td>
-                <td class="value">
-                    <format:list-string list="${dto.synonyms}"/>
-                </td>
-            </tr>
-        </c:if>
-<%-- ------------------------------------------------------- --%>
-        <c:if test="${!empty dto.obsoleteNames}">
-            <tr>
-                <td class="label">Obsolete names</td>
-                <td class="value">
-                    <format:list-string list="${dto.obsoleteNames}"/>
-                </td>
-            </tr>
-        </c:if>
+		<c:if test="${!empty dto.synonymsByTypes}">
+			<c:forEach var="type" items="${dto.synonymsByTypes}">
+				<tr>
+					<td class="label">${type.key}</td>
+					<td class="value">
+                    	<format:list-string list="${type.value}"/>
+					</td>
+				</tr>
+			</c:forEach>
+		</c:if>
 <%-- ------------------------------------------------------- --%>
         <c:if test="${!empty dto.products}">
             <tr>
