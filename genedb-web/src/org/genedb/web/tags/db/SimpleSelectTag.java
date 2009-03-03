@@ -18,7 +18,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
     @Override
     protected void display(TaxonNode root, JspWriter out) throws IOException {
         
-        out.write("<select name=\"taxons\">");
+        out.write("\n<select name=\"taxons\">");
         
         //Find the previously selected taxons if any in Request
         PageContext pageContext = (PageContext)getJspContext();
@@ -26,7 +26,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         
         displayImmediateChildren(root, out, 0, previouslySelectedTaxons);
 
-        out.write("</select>");
+        out.write("\n</select>");
     }
     
     
@@ -39,7 +39,13 @@ public class SimpleSelectTag extends AbstractHomepageTag {
      * @throws IOException
      */
     private void displayImmediateChildren(TaxonNode node, JspWriter out, int indent, String previouslySelectedTaxons) throws IOException {
-        out.write("<option value=\"");
+        out.write("\n<option ");
+        out.write(" class=\"");
+        out.write("Level");
+        out.write(String.valueOf(indent));
+        out.write("DropDown");
+        out.write("\"");
+        out.write(" value=\"");
         out.write(node.getLabel());
         out.write("\"");
         
