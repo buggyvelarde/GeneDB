@@ -104,6 +104,8 @@ FT                   /label="tRNA label"
 FT                   /colour="12"
 FT                   /invented_qualifier="value"
 FT   CDS             500..600
+FT                   /literature="11111"
+FT                   /literature="11111"
 FT                   /GO="aspect=process; GOid=GO:0008152; term=metabolism;
 FT                   evidence=IEA; db_xref=TIGR_Tca1:autoGO;
 FT                   with=Pfam:PF02230|TIGR:TriTryp_COG; date=20041214"

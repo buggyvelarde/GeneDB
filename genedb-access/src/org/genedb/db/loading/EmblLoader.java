@@ -1350,9 +1350,17 @@ class EmblLoader {
             target.addPub(pub);
         }
 
+        private Set<String> seenPubAccessions = new HashSet<String>();
         private void addPub(String accession) {
+            if (seenPubAccessions.contains(accession)) {
+                logger.info(String.format(
+                    "Ignoring duplicate publication with accession '%s' on %s feature at line %d",
+                    accession, feature.type, feature.lineNumber));
+                return;
+            }
             DbXRef dbXRef = objectManager.getDbXRef("PMID", accession);
             addPub(focalFeature, accession, dbXRef);
+            seenPubAccessions.add(accession);
         }
 
         private Pattern literaturePattern = Pattern.compile("(?:PMID:)?\\s*(\\d+)");
