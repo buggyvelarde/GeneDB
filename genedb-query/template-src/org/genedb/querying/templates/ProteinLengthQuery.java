@@ -3,6 +3,7 @@ package org.genedb.querying.templates;
 import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
+import org.genedb.querying.tmpquery.OrganismHqlQuery;
 
 import org.springframework.validation.Errors;
 
@@ -11,7 +12,7 @@ import org.springframework.validation.Errors;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public class ProteinLengthQuery extends HqlQuery {
+public class ProteinLengthQuery extends OrganismHqlQuery {
 
     @QueryParam(
             order=1,
@@ -61,7 +62,6 @@ public class ProteinLengthQuery extends HqlQuery {
 
 
     @Override
-    @SuppressWarnings("unused")
     public void validate(Object target, Errors errors) {
         return;
     }
