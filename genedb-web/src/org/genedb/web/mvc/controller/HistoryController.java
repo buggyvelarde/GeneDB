@@ -69,6 +69,7 @@ public class HistoryController extends MultiActionController implements Initiali
     }
 
     public void afterPropertiesSet() throws Exception {
+        // Deliberately empty
     }
 
     /**
@@ -78,7 +79,7 @@ public class HistoryController extends MultiActionController implements Initiali
      * @param response current HTTP response
      * @return a ModelAndView to render the response
      */
-    public ModelAndView View(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
+    public ModelAndView View(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             return new ModelAndView("history/noSession");
@@ -250,7 +251,7 @@ public class HistoryController extends MultiActionController implements Initiali
     }
 
     @SuppressWarnings("unchecked")
-    public ModelAndView Test(@SuppressWarnings("unused") HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView Test(HttpServletRequest request, HttpServletResponse response) {
         JSONArray array = new JSONArray();
         JSONObject obj = new JSONObject();
         obj.put("index", 1);
@@ -376,7 +377,6 @@ public class HistoryController extends MultiActionController implements Initiali
      * @param response current HTTP response
      * @return a ModelAndView to render the response
      */
-    @SuppressWarnings("unchecked")
     /*
      * public ModelAndView BooleanQuery(HttpServletRequest request,
      * HttpServletResponse response) { List<String> answers = new ArrayList<String>();
@@ -469,7 +469,7 @@ public class HistoryController extends MultiActionController implements Initiali
     // this.pubHome = pubHome;
     // }
 
-    public ModelAndView ParseCommand(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
+    public ModelAndView ParseCommand(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             // No session

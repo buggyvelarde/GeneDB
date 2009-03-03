@@ -34,7 +34,7 @@ public class BooleanParam extends AbstractParam {
     }
 
     public void validate(Object value, Errors errors) {
-
+        // Deliberately empty
     }
 
     public boolean isSet() {

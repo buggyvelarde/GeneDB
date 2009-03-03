@@ -20,5 +20,5 @@
 package org.genedb.web.mvc.controller;
 
 public class NewsItem {
-
+    // Deliberately empty
 }

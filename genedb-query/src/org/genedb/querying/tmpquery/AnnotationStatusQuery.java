@@ -1,11 +1,7 @@
 package org.genedb.querying.tmpquery;
 
-import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
-
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 @QueryClass(
         title="Coding and pseudogenes by their annotation status",
@@ -24,7 +20,7 @@ public class AnnotationStatusQuery extends OrganismHqlQuery {
     protected String getHql() {
         return "select f.uniqueName from Feature f where f.annotation = :automatic order by f.organism";
     }
-    
+
     @Override
     protected String getOrganismHql() {
         // TODO Auto-generated method stub
@@ -50,22 +46,6 @@ public class AnnotationStatusQuery extends OrganismHqlQuery {
     protected void populateQueryWithParams(org.hibernate.Query query) {
         query.setBoolean("automatic", automatic);
     }
-
-
-
-            @Override
-            @SuppressWarnings("unused")
-            public void validate(Object target, Errors errors) {
-                return;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean supports(Class clazz) {
-                return AnnotationStatusQuery.class.isAssignableFrom(clazz);
-            }
-
-
 
 
 }

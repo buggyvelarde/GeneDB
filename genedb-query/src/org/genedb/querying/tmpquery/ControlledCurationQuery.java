@@ -1,13 +1,10 @@
 package org.genedb.querying.tmpquery;
 
-import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 @QueryClass(
         title="Transcripts by their type",
@@ -72,19 +69,6 @@ public class ControlledCurationQuery extends OrganismHqlQuery {
         query.setString("cvName", cv.getLookupName());
         query.setString("cvTermName", cvTermName);
     }
-
-
-            @Override
-            @SuppressWarnings("unused")
-            public void validate(Object target, Errors errors) {
-                return;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean supports(Class clazz) {
-                return ControlledCurationQuery.class.isAssignableFrom(clazz);
-            }
 
 
 }

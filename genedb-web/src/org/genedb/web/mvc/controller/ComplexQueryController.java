@@ -26,7 +26,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ComplexQueryController extends MultiActionController implements InitializingBean {
 
-    public void afterPropertiesSet() throws Exception {}
+    public void afterPropertiesSet() throws Exception {
+        // Deliberately empty
+    }
 
     // handlers
 
@@ -37,7 +39,7 @@ public class ComplexQueryController extends MultiActionController implements Ini
      * @param response current HTTP response
      * @return a ModelAndView to render the response
      */
-    public ModelAndView BooleanQuery(HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
+    public ModelAndView BooleanQuery(HttpServletRequest request, HttpServletResponse response) {
         List<String> answers = new ArrayList<String>();
         if (!webUtils.extractTaxonNodesFromRequest(request, answers, true, false)) {
             return new ModelAndView("chooseTaxon");

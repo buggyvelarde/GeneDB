@@ -19,7 +19,6 @@
 
 package org.genedb.querying.core;
 
-
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
@@ -30,10 +29,12 @@ import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.hibernate.validator.ClassValidator;
+import org.hibernate.validator.InvalidValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.Validator;
+import org.springframework.validation.Errors;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 @Configurable
-public abstract class LuceneQuery implements Query {
+public abstract class LuceneQuery<T> implements Query<T> {
 
     private static final Logger logger = Logger.getLogger(LuceneQuery.class);
 
@@ -83,51 +84,11 @@ public abstract class LuceneQuery implements Query {
         return QueryUtils.makeParseableDescription(name, getParamNames(), this);
     }
 
-//    protected List<String> runQuery() {
-//        Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
-//
-//        org.hibernate.Query query = session.createQuery(getHql());
-//        populateQueryWithParams(query);
-//
-//        @SuppressWarnings("unchecked") List<String> ret = query.list();
-//        return ret;
-//    }
-
-
-//    private void setQueryVarBasedOnType(org.hibernate.Query query, CachedParamDetails cpd) {
-//
-//        Type type = cpd.getType();
-//
-//        try {
-//
-//            if (type.equals(Integer.TYPE)) {
-//                query.setInteger(cpd.getName(), cpd.getField().getInt(this));
-//            }
-//
-//        } catch (IllegalArgumentException exp) {
-//            throw new RuntimeException("Internal typing/access exception", exp);
-//        } catch (IllegalAccessException exp) {
-//            throw new RuntimeException("Internal typing/access exception", exp);
-//        }
-//    }
-
-//    private void prepareCachedParamDetailsList() {
-//        for (Field field : this.getClass().getFields()) {
-//            Annotation annotation = field.getAnnotation(QueryParam.class);
-//            if (annotation != null) {
-//                CachedParamDetails cpd = new CachedParamDetails(field, annotation);
-//                cachedParamDetailsList.add(cpd);
-//                cachedParamDetailsMap.put(cpd.getName(), cpd);
-//            }
-//        }
-//        Collections.sort(cachedParamDetailsList);
-//    }
-
-    public List<String> getResults() throws QueryException {
-        List<String> names;
+    public List<T> getResults() throws QueryException {
+        List<T> names;
         try {
             Hits hits = lookupInLucene();
-            names = new ArrayList<String>();
+            names = new ArrayList<T>();
 
             @SuppressWarnings("unchecked")
             Iterator<Hit> it = hits.iterator();
@@ -135,7 +96,9 @@ public abstract class LuceneQuery implements Query {
                 Hit hit = it.next();
                 Document document = hit.getDocument();
                 logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
-                names.add(document.get("uniqueName"));
+                T t = convertDocumentToReturnType(document);
+                //@SuppressWarnings("unchecked") T t = (T) document.get("uniqueName");
+                names.add(t);
             }
             return names;
         } catch (CorruptIndexException exp) {
@@ -144,6 +107,9 @@ public abstract class LuceneQuery implements Query {
             throw new QueryException(exp);
         }
     }
+
+    protected abstract T convertDocumentToReturnType(Document document);
+
 
     protected abstract String[] getParamNames();
 
@@ -203,5 +169,24 @@ public abstract class LuceneQuery implements Query {
         return "";
     }
 
+    @Override
+    public void validate(Object target, Errors errors) {
+        //@SuppressWarnings("unchecked") T query = (T) target;
+        ClassValidator queryValidator = new ClassValidator(this.getClass());
+        InvalidValue[] invalids = queryValidator.getInvalidValues(target);
+        for (InvalidValue invalidValue: invalids){
+            errors.rejectValue(invalidValue.getPropertyPath(), null, invalidValue.getMessage());
+        }
+
+        extraValidation(errors);
+    }
+
+    protected abstract void extraValidation(Errors errors);
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean supports(Class clazz) {
+        return this.getClass().isAssignableFrom(clazz);
+    }
 
 }

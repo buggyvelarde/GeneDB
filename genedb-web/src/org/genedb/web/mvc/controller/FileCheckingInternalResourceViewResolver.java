@@ -26,7 +26,6 @@ public class FileCheckingInternalResourceViewResolver extends
     try {
         File viewRootDir = viewRoot.getFile();
         String[] fileNames = viewRootDir.list(new FilenameFilter() {
-            @SuppressWarnings("unused")
         public boolean accept(File file, String arg1) {
             if (file.getName().endsWith(suffix)) {
             return true;

@@ -25,7 +25,6 @@ public class GoFeatureController extends SimpleFormController{
     private SequenceDao sequenceDao;
 
     @Override
-    @SuppressWarnings("unused")
     protected boolean isFormSubmission(HttpServletRequest request) {
         return true;
     }

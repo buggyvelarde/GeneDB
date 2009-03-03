@@ -341,10 +341,6 @@ public class MockBasicGeneService implements BasicGeneService {
         return null;
     }
 
-    /**
-     * Not implemented. If you need to use it, implement it! (YAGNI in action :-P)
-     */
-    @SuppressWarnings("unused")
     public List<String> findGeneNamesByPartialName(String search) {
         throw new RuntimeException("Did not expect ContextMapDiagram to call findGeneNamesByPartialName");
     }

@@ -179,11 +179,13 @@ public class RenderedProteinMap extends RenderedDiagram {
         leftEdgesByTrack.get(track).add(x);
     }
 
+    @Override
     public String getKey() {
         return getKeyForTile(1, getStart(), getEnd() - getStart());
     }
 
 
+    @Override
     public String getKeyForTile(int index, int start, int width) {
         return String.format("%s:%s:%s:%d:%09d-%09ds%.0f.%s",
                 getDiagram().getOrganism(),
@@ -297,8 +299,7 @@ public class RenderedProteinMap extends RenderedDiagram {
     }
 
     @Override
-    protected void drawFeature(int track, LocatedFeature subfeature,
-            @SuppressWarnings("unused") AllocatedCompoundFeature superfeature) {
+    protected void drawFeature(int track, LocatedFeature subfeature, AllocatedCompoundFeature superfeature) {
 
         graf.setColor(subfeature.getColor() == null ? Color.red : subfeature.getColor());
 

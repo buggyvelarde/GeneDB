@@ -9,8 +9,6 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import java.util.List;
 
@@ -70,15 +68,4 @@ public class SimpleNameQuery extends OrganismLuceneQuery {
         return new String[] {"search", "product", "allNames", "pseudogenes"};
     }
 
-            @Override
-            @SuppressWarnings("unused")
-            public void validate(Object target, Errors errors) {
-                return;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean supports(Class clazz) {
-                return SimpleNameQuery.class.isAssignableFrom(clazz);
-            }
 }

@@ -19,12 +19,17 @@
 
 package org.genedb.querying.core;
 
+import org.genedb.querying.tmpquery.ProteinLengthQuery;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.validator.ClassValidator;
+import org.hibernate.validator.InvalidValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 @Configurable
-public abstract class HqlQuery implements Query {
+public abstract class HqlQuery<T> implements Query<T> {
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -46,14 +51,14 @@ public abstract class HqlQuery implements Query {
         return QueryUtils.makeParseableDescription(name, getParamNames(), this);
     }
 
-    protected List<String> runQuery() {
+    protected List<T> runQuery() {
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
 
         String hql = restrictQueryByOrganism(getHql(), getOrganismHql());
         org.hibernate.Query query = session.createQuery(hql);
         populateQueryWithParams(query);
 
-        @SuppressWarnings("unchecked") List<String> ret = query.list();
+        @SuppressWarnings("unchecked") List<T> ret = query.list();
         return ret;
     }
 
@@ -66,7 +71,7 @@ public abstract class HqlQuery implements Query {
 
     protected abstract void populateQueryWithParams(org.hibernate.Query query);
 
-    public List<String> getResults() throws QueryException {
+    public List<T> getResults() throws QueryException {
         return runQuery();
     }
 
@@ -103,4 +108,27 @@ public abstract class HqlQuery implements Query {
     public String getQueryDescription() {
         return "";
     }
+
+
+    @Override
+    public void validate(Object target, Errors errors) {
+        //@SuppressWarnings("unchecked") T query = (T) target;
+        ClassValidator queryValidator = new ClassValidator(this.getClass());
+        InvalidValue[] invalids = queryValidator.getInvalidValues(target);
+        for (InvalidValue invalidValue: invalids){
+            errors.rejectValue(invalidValue.getPropertyPath(), null, invalidValue.getMessage());
+        }
+
+        extraValidation(errors);
+    }
+
+    protected abstract void extraValidation(Errors errors);
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean supports(Class clazz) {
+        return this.getClass().isAssignableFrom(clazz);
+    }
+
+
 }

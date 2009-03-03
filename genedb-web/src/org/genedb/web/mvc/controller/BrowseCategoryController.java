@@ -97,7 +97,7 @@ public class BrowseCategoryController {
         //-------------------------------------------------------------------------------
     }
 
-    protected Map<String,BrowseCategory[]> referenceData(@SuppressWarnings("unused") HttpServletRequest request) throws Exception {
+    protected Map<String,BrowseCategory[]> referenceData(HttpServletRequest request) throws Exception {
         Map<String,BrowseCategory[]> reference = new HashMap<String,BrowseCategory[]>();
         reference.put("categories", BrowseCategory.values());
         return reference;

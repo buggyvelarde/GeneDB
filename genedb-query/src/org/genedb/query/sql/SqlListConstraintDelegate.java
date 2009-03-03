@@ -17,9 +17,9 @@ import javax.sql.DataSource;
 
 
 /**
- * Class, designed to be used as a delegate by a Param, which maintains 
+ * Class, designed to be used as a delegate by a Param, which maintains
  * a RDBMS generated list of acceptable values for the Param.
- * 
+ *
  * @author art
  */
 public class SqlListConstraintDelegate implements ListConstraint, SimpleJdbcTemplateAware {
@@ -28,7 +28,7 @@ public class SqlListConstraintDelegate implements ListConstraint, SimpleJdbcTemp
     private String allSql;
     private String partialSql;
     private SimpleJdbcTemplate sjt;
-    
+
     public void setSimpleJdbcTemplate(SimpleJdbcTemplate sjt) {
         this.sjt = sjt;
     }
@@ -64,7 +64,6 @@ public class SqlListConstraintDelegate implements ListConstraint, SimpleJdbcTemp
         );
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> getAllAcceptableValues() {
         JdbcTemplate jt = (JdbcTemplate) sjt.getJdbcOperations();
         return (List<String>) jt.queryForList(allSql, new Object[]{}, String.class);

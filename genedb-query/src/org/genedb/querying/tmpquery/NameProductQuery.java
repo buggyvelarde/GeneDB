@@ -1,6 +1,5 @@
 package org.genedb.querying.tmpquery;
 
-import org.genedb.querying.core.LuceneQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
 
@@ -10,8 +9,6 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import java.util.List;
 
@@ -74,18 +71,6 @@ public class NameProductQuery extends OrganismLuceneQuery {
     protected String[] getParamNames() {
         return new String[] {"search"};
     }
-
-            @Override
-            @SuppressWarnings("unused")
-            public void validate(Object target, Errors errors) {
-                return;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean supports(Class clazz) {
-                return NameProductQuery.class.isAssignableFrom(clazz);
-            }
 
 
 }

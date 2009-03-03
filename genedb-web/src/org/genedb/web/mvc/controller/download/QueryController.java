@@ -15,6 +15,7 @@ import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
+import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.web.mvc.controller.WebConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -39,7 +40,7 @@ public class QueryController {
 
     @Autowired
     private QueryFactory queryFactory;
-    
+
     @Autowired
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
@@ -55,7 +56,7 @@ public class QueryController {
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-    	// TODO Do we want form submission via GET?
+        // TODO Do we want form submission via GET?
         return processForm(queryName, request, session, model);
     }
 
@@ -71,7 +72,7 @@ public class QueryController {
             return "redirect:/QueryList";
         }
 
-        Query query = queryFactory.retrieveQuery(queryName);
+        Query<GeneSummary> query = queryFactory.retrieveQuery(queryName);
         if (query == null) {
             session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
             return "redirect:/QueryList";
@@ -93,30 +94,30 @@ public class QueryController {
         ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
         binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
-        
+
         binder.bind(request);
 
-        Errors errors = binder.getBindingResult();        
-        if (errors.hasErrors()) {  
-        	model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
-        	logger.error("Returning due to binding error");
-        	return "search/"+queryName;
-        }
-        
-        query.validate(query, errors);
-        
-        //Get results
-        List<String> results = new ArrayList<String>(0);
+        Errors errors = binder.getBindingResult();
         if (errors.hasErrors()) {
-        	logger.debug("Validator found errors");
-        	model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
+            model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
+            logger.error("Returning due to binding error");
             return "search/"+queryName;
         }
-        
+
+        query.validate(query, errors);
+
+        //Get results
+        List<GeneSummary> results = new ArrayList<GeneSummary>(0);
+        if (errors.hasErrors()) {
+            logger.debug("Validator found errors");
+            model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
+            return "search/"+queryName;
+        }
+
         logger.error("Validator found no errors");
         results = query.getResults();
         model.addAttribute("runQuery", Boolean.TRUE);
-        
+
         switch (results.size()) {
         case 0:
             logger.error("No results found for query");
@@ -126,7 +127,7 @@ public class QueryController {
         default:
             model.addAttribute("results", results);
             logger.error("Found results for query");
-        	return "search/"+queryName;
+            return "search/"+queryName;
         }
     }
 

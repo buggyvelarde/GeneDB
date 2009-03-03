@@ -6,7 +6,7 @@ import org.springframework.validation.Validator;
 
 public class NamedFeatureFormValidator implements Validator{
 
-    @SuppressWarnings({"unchecked", "unused"})
+    @SuppressWarnings({"unchecked"})
     public boolean supports(Class clazz) {
         return true;
     }

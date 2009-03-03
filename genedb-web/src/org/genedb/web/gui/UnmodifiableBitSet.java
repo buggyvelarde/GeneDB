@@ -8,7 +8,6 @@ import java.util.BitSet;
  * @author rh11
  *
  */
-@SuppressWarnings("unused")
 public class UnmodifiableBitSet extends BitSet {
 
     public UnmodifiableBitSet() {

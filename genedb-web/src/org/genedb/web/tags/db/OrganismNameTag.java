@@ -28,7 +28,6 @@ public class OrganismNameTag extends SimpleTagSupport {
         this.name = name;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void doTag() throws JspException, IOException {
         

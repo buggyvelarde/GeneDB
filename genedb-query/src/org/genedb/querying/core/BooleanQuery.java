@@ -65,7 +65,6 @@ public class BooleanQuery implements Query {
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void validate(Object target, Errors errors) {
         return;
     }

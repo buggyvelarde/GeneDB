@@ -46,7 +46,7 @@ public class OrthologsController extends AbstractController {
 
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
 
         String clusterName = ServletRequestUtils.getStringParameter(request, "cluster",
             NO_VALUE_SUPPLIED);

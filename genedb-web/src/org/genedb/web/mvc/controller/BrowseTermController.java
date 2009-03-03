@@ -68,7 +68,7 @@ public class BrowseTermController {
     private LuceneIndexFactory luceneIndexFactory;
 
     // TODO
-    protected Map<?,?> referenceData(@SuppressWarnings("unused") HttpServletRequest request) throws Exception {
+    protected Map<?,?> referenceData(HttpServletRequest request) throws Exception {
         Map<String,Object> reference = new HashMap<String,Object>();
         reference.put("categories", BrowseCategory.values());
         return reference;

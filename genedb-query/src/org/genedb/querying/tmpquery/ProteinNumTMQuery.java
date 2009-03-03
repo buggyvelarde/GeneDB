@@ -5,8 +5,6 @@ import org.genedb.querying.core.QueryParam;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.RangeQuery;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import java.util.List;
 
@@ -72,18 +70,5 @@ public class ProteinNumTMQuery extends OrganismLuceneQuery {
     protected String[] getParamNames() {
         return new String[] {"min", "max"};
     }
-
- 
-            @Override
-            @SuppressWarnings("unused")
-            public void validate(Object target, Errors errors) {
-                return;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean supports(Class clazz) {
-                return ProteinNumTMQuery.class.isAssignableFrom(clazz);
-            }
 
 }

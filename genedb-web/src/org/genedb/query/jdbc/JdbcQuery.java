@@ -49,7 +49,7 @@ public abstract class JdbcQuery extends NamedParameterJdbcDaoSupport implements 
         List<String> results = getNamedParameterJdbcTemplate().query(sql,
                 new BeanPropertySqlParameterSource(this),
                 new RowMapper() {
-                    public Object mapRow(ResultSet rs, @SuppressWarnings("unused") int rowNum) throws SQLException {
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                         return rs.getString(0);
                     }
         });

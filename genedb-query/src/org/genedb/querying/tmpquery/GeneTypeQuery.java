@@ -1,11 +1,7 @@
 package org.genedb.querying.tmpquery;
 
-import org.genedb.querying.core.HqlQuery;
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
-
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,29 +49,16 @@ public class GeneTypeQuery extends OrganismHqlQuery {
 
     @Override
     protected String[] getParamNames() {
-    	String[] superParamNames = super.getParamNames();
-    	String[] thisQuery = new String[] {"type"};
-    	return arrayAppend(superParamNames, thisQuery);
+        String[] superParamNames = super.getParamNames();
+        String[] thisQuery = new String[] {"type"};
+        return arrayAppend(superParamNames, thisQuery);
     }
 
 
     @Override
     protected void populateQueryWithParams(org.hibernate.Query query) {
-    	super.populateQueryWithParams(query);
+        super.populateQueryWithParams(query);
         query.setString("type", type);
     }
-
-
-    @Override
-    public void validate(Object target, Errors errors) {
-    	return;
-    }
-    
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean supports(Class clazz) {
-    	return GeneTypeQuery.class.isAssignableFrom(clazz);
-    }
-
 
 }

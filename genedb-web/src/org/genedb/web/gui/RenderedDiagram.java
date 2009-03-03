@@ -617,7 +617,7 @@ public abstract class RenderedDiagram {
      *
      * @param allocatedCompoundFeature the allocated compound feature to draw
      */
-    protected void drawCompoundFeature(@SuppressWarnings("unused") AllocatedCompoundFeature allocatedCompoundFeature) {
+    protected void drawCompoundFeature(AllocatedCompoundFeature allocatedCompoundFeature) {
         // empty
     }
 

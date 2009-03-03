@@ -6,11 +6,11 @@ import org.springframework.validation.Validator;
 import java.util.List;
 import java.util.Map;
 
-public interface Query extends Ordered, Validator {
+public interface Query<T> extends Ordered, Validator {
 
     String getQueryDescription();
 
-    List<String> getResults() throws QueryException;
+    List<T> getResults() throws QueryException;
 
     String getParseableDescription();
 

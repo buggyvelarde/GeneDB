@@ -300,7 +300,7 @@ public class CircularGenomeFormController extends SimpleFormController implement
     }
 
     @Override
-    protected Map<String,Collection<String>> referenceData(@SuppressWarnings("unused") HttpServletRequest req) throws Exception {
+    protected Map<String,Collection<String>> referenceData(HttpServletRequest req) throws Exception {
         Map<String, Collection<String>> ret = new HashMap<String, Collection<String>>();
         Map<String, String> orgMappings = new LinkedHashMap<String, String>(orgs.size());
         orgMappings.put("User uploaded file", "user-file");

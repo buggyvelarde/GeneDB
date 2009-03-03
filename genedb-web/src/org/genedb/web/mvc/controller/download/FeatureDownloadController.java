@@ -50,14 +50,14 @@ public class FeatureDownloadController extends TaxonNodeBindingFormController{
     }
 
     //TODO
-    protected Map<String,SequenceType[]> referenceData(@SuppressWarnings("unused") HttpServletRequest request) {
+    protected Map<String,SequenceType[]> referenceData(HttpServletRequest request) {
         Map<String,SequenceType[]> reference = new HashMap<String,SequenceType[]>();
         reference.put("downloadTypes", SequenceType.values());
         return reference;
     }
 
     @RequestMapping(method=RequestMethod.POST)
-    public ModelAndView onSubmit(@SuppressWarnings("unused") HttpServletRequest request,
+    public ModelAndView onSubmit(HttpServletRequest request,
             HttpServletResponse response,
             Object command, BindException be) throws Exception {
 

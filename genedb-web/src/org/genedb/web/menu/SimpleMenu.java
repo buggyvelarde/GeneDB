@@ -78,7 +78,7 @@ public class SimpleMenu extends Menu
      * @exception NoSuchElementException
     */
     @Override
-    public  boolean add(@SuppressWarnings("unused") Menu menu) throws NoSuchElementException, UnsupportedOperationException
+    public  boolean add(Menu menu) throws NoSuchElementException, UnsupportedOperationException
     {
         // list.add(menu);
         throw new UnsupportedOperationException("This method Cannot be invoked for simple menu item");
@@ -90,7 +90,7 @@ public class SimpleMenu extends Menu
      * @exception NoSuchElementException
     */
     @Override
-    public void remove(@SuppressWarnings("unused") Menu menu) throws NoSuchElementException, UnsupportedOperationException
+    public void remove(Menu menu) throws NoSuchElementException, UnsupportedOperationException
     {
         throw new UnsupportedOperationException("This method Cannot be invoked for simple menu item");
     }
