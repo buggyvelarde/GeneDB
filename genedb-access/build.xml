@@ -233,13 +233,6 @@
         </java>
     </target>
 
-    <target name="fix-residues-falciparum" depends="fulljar-access">
-        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
-            <arg value="-v" />
-            <arg value="Pfalciparum" />
-        </java>
-    </target>
-
     <target name="load-opi-references" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="opi-referencesloader"/>
