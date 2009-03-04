@@ -27,10 +27,10 @@ import java.util.Set;
  * This loader has one option, <code>key-type</code>, whose possible values are:
  * <dl>
  *  <dt><code>gene</code></dt><dd>The keys in the input file are gene names. This is the default.</dd>
- *  <dt><code>gene</code></dt><dd>The keys in the input file are polypeptide names
+ *  <dt><code>polypeptide</code></dt><dd>The keys in the input file are polypeptide names
  *      (possibly with colons converted to doubled dots).</dd>
  * </dl>
- * 
+ *
  * @author rh11
  */
 public class InterProLoader extends Loader {
