@@ -41,7 +41,10 @@ public class BasicGene extends CompoundLocatedFeature {
     /**
      * Create a new, empty, BasicGene.
      */
-    public BasicGene() { }
+    public BasicGene() {
+        // Deliberately empty
+    }
+
     /**
      * Copy an existing BasicGene.
      *

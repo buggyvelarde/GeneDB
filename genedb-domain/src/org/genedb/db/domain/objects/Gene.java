@@ -9,8 +9,11 @@ import java.util.List;
  * @author art, rh11
  */
 public class Gene extends BasicGene {
-    
-    public Gene () {}
+
+    public Gene () {
+        // Deliberately empty
+    }
+
     public Gene (BasicGene basis) {
         super(basis);
     }
