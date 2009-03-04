@@ -104,12 +104,15 @@ public class PopulateCaches {
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         basicGeneService = new BasicGeneServiceImpl(luceneIndex);
 
-        String geneUniqueName = config.getGeneUniqueName();
-        if (geneUniqueName == null) {
-            populateCacheForTopLevelFeatures();
-        } else {
-            populateCacheForGene(geneUniqueName);
+        if (config.isGeneUniqueName()) {
+            String geneUniqueName = config.getGeneUniqueName();
+            if (geneUniqueName != null) {
+                populateCacheForGene(geneUniqueName);
+                return;
+            }
+            throw new RuntimeException("Found a --gene argument, but didn't understand it");
         }
+        populateCacheForTopLevelFeatures();
     }
 
     /**
@@ -303,6 +306,8 @@ public class PopulateCaches {
 
         @Option(longName="gene")
         String getGeneUniqueName();
+
+        boolean isGeneUniqueName();
     }
 
 
