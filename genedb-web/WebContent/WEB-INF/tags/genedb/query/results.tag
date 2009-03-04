@@ -22,20 +22,22 @@
         <format:genePageSection className="whiteBox">
             <display:table name="sessionScope.results"  id="row" pagesize="30" requestURI="/Query" class="simple" cellspacing="0" cellpadding="4">
                    <display:column title="Systematic ids">
-                    <a href="<c:url value="/NamedFeature"/>?name=${row[0]}&index=${row_rowNum-1}&lastIndex=${fn:length(results)-1}&${requestParams}"><c:out value="${row[0]}"/></a>
+                    <a href="<c:url value="/NamedFeature"/>?name=${row.systematicId}&index=${row_rowNum-1}&lastIndex=${fn:length(results)-1}&${requestParams}"><c:out value="${row.systematicId}"/></a>
                    </display:column>
                 <display:column title="Organism">
-                    <i>${row[1]}</i>
+                    <i>${row.taxonDisplayName}</i>
                    </display:column>
                    <display:column title="Product">
-                    <i>${row[2]}</i>
+                    ${row.product}
                 </display:column>
+                <%--
                 <display:column title="Contig">
-                    <i>${row[3]}</i>
+                    <i>${row.topLevelFeatureName}</i>
                 </display:column>
                 <display:column title="left">
-                    <i>${row[4]}</i>
+                    <i>${row.left}</i>
                 </display:column>
+                --%>
             </display:table>
         </format:genePageSection>
     </div>
