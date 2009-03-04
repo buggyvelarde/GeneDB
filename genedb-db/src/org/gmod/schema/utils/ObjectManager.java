@@ -90,7 +90,7 @@ public class ObjectManager extends EmptyInterceptor {
         }
         logger.debug(String.format("Getting DbXRef '%s'/'%s'", dbName, accession));
 
-        if (dbxrefsByAccByDb.containsKey(dbName,accession)) {
+        if (dbxrefsByAccByDb.containsKey(dbName, accession)) {
             return dbxrefsByAccByDb.get(dbName, accession);
         }
 
