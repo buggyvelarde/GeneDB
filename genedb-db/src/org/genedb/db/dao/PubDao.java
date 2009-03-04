@@ -21,7 +21,7 @@ public class PubDao extends BaseDao {
 
     public Pub getPubByDbXRef(DbXRef dbXRef) {
         return (Pub) getSession().createQuery(
-            "select pub from PubDbXRef where dbXRef = :dbXRef")
+            "select pub from PubDbXRef pd where pd.dbXRef = :dbXRef")
             .setParameter("dbXRef", dbXRef)
             .uniqueResult();
     }
