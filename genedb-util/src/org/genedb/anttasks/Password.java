@@ -56,9 +56,8 @@ public class Password extends Task {
         Console console = System.console();
         if (console == null) {
             return readPasswordFromDialog(prompt);
-        } else {
-            return readPasswordFromConsole(console, prompt);
         }
+        return readPasswordFromConsole(console, prompt);
     }
 
     private String readPasswordFromConsole(Console console, String prompt) {
@@ -113,7 +112,6 @@ public class Password extends Task {
         });
 
         textField.addActionListener(new ActionListener() {
-            @SuppressWarnings("unused")
             public void actionPerformed(ActionEvent actionEvent) {
                 dialog.dispose();
             }
@@ -127,7 +125,6 @@ public class Password extends Task {
 
         Button cancelButton = new Button("Cancel");
         cancelButton.addActionListener(new ActionListener() {
-            @SuppressWarnings("unused")
             public void actionPerformed(ActionEvent actionEvent) {
                 dialogCancelled = true;
                 dialog.dispose();
@@ -136,7 +133,6 @@ public class Password extends Task {
 
         Button okButton = new Button("OK");
         okButton.addActionListener(new ActionListener() {
-            @SuppressWarnings("unused")
             public void actionPerformed(ActionEvent actionEvent) {
                 dialog.dispose();
             }
