@@ -46,7 +46,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 @Configurable
-public abstract class LuceneQuery<T> implements Query<T> {
+public abstract class LuceneQuery implements Query {
 
     private static final Logger logger = Logger.getLogger(LuceneQuery.class);
 
@@ -84,11 +84,11 @@ public abstract class LuceneQuery<T> implements Query<T> {
         return QueryUtils.makeParseableDescription(name, getParamNames(), this);
     }
 
-    public List<T> getResults() throws QueryException {
-        List<T> names;
+    public List getResults() throws QueryException {
+        List names;
         try {
             Hits hits = lookupInLucene();
-            names = new ArrayList<T>();
+            names = new ArrayList();
 
             @SuppressWarnings("unchecked")
             Iterator<Hit> it = hits.iterator();
@@ -96,10 +96,10 @@ public abstract class LuceneQuery<T> implements Query<T> {
                 Hit hit = it.next();
                 Document document = hit.getDocument();
                 logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
-                T t = convertDocumentToReturnType(document);
-                //@SuppressWarnings("unchecked") T t = (T) document.get("uniqueName");
-                names.add(t);
+                Object o = convertDocumentToReturnType(document);
+                names.add(o);
             }
+            Collections.sort(names);
             return names;
         } catch (CorruptIndexException exp) {
             throw new QueryException(exp);
@@ -108,7 +108,7 @@ public abstract class LuceneQuery<T> implements Query<T> {
         }
     }
 
-    protected abstract T convertDocumentToReturnType(Document document);
+    protected abstract Object convertDocumentToReturnType(Document document);
 
 
     protected abstract String[] getParamNames();

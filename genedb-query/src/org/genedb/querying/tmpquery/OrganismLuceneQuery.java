@@ -15,7 +15,7 @@ import org.springframework.validation.Errors;
 import java.util.List;
 
 
-public abstract class OrganismLuceneQuery extends LuceneQuery<GeneSummary> {
+public abstract class OrganismLuceneQuery extends LuceneQuery {
 
     private TaxonNodeManager taxonNodeManager;
 
@@ -55,7 +55,7 @@ public abstract class OrganismLuceneQuery extends LuceneQuery<GeneSummary> {
     @Override
     protected GeneSummary convertDocumentToReturnType(Document document) {
         GeneSummary ret = new GeneSummary(
-                document.get("uniquename"), // systematic
+                document.get("uniqueName"), // systematic
                 document.get("organism.commonName"), // taxon-name,
                 document.get("product"), // product
                 document.get("chr"), // toplevename

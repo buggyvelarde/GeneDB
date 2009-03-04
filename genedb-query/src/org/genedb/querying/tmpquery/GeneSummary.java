@@ -1,8 +1,6 @@
 package org.genedb.querying.tmpquery;
 
-import org.springframework.util.StringUtils;
-
-public class GeneSummary {
+public class GeneSummary implements Comparable<GeneSummary> {
     private String systematicId;
 
     private String taxonDisplayName;
@@ -73,6 +71,27 @@ public class GeneSummary {
 
     public void setLeft(int left) {
         this.left = left;
+    }
+
+    @Override
+    public int compareTo(GeneSummary other) {
+        int compare = this.taxonDisplayName.compareTo(other.getTaxonDisplayName());
+        if (compare != 0) {
+            return compare;
+        }
+
+        compare = this.topLevelFeatureName.compareTo(other.getTopLevelFeatureName());
+        if (compare != 0) {
+            return compare;
+        }
+
+        if (this.left < other.getLeft()) {
+            return -1;
+        }
+        if (this.left > other.getLeft()) {
+            return 1;
+        }
+        return this.systematicId.compareTo(other.getSystematicId());
     }
 
 }

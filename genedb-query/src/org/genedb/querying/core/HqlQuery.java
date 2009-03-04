@@ -19,8 +19,6 @@
 
 package org.genedb.querying.core;
 
-import org.genedb.querying.tmpquery.ProteinLengthQuery;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.validator.ClassValidator;
@@ -37,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @Configurable
-public abstract class HqlQuery<T> implements Query<T> {
+public abstract class HqlQuery implements Query {
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -51,14 +49,14 @@ public abstract class HqlQuery<T> implements Query<T> {
         return QueryUtils.makeParseableDescription(name, getParamNames(), this);
     }
 
-    protected List<T> runQuery() {
+    protected List runQuery() {
         Session session = SessionFactoryUtils.doGetSession(sessionFactory, false);
 
         String hql = restrictQueryByOrganism(getHql(), getOrganismHql());
         org.hibernate.Query query = session.createQuery(hql);
         populateQueryWithParams(query);
 
-        @SuppressWarnings("unchecked") List<T> ret = query.list();
+        List ret = query.list();
         return ret;
     }
 
@@ -71,7 +69,7 @@ public abstract class HqlQuery<T> implements Query<T> {
 
     protected abstract void populateQueryWithParams(org.hibernate.Query query);
 
-    public List<T> getResults() throws QueryException {
+    public List getResults() throws QueryException {
         return runQuery();
     }
 
