@@ -117,6 +117,7 @@ public class TaxonNodeManager implements InitializingBean {
     	if (node == null){
     		throw new RuntimeException("No taxon with \"Root\" has label exists");
     	}else{
+    		System.out.println("Filtering the taxons....");
     		initPhylonodeWithOrganismFeatures(node);
     	}
     }

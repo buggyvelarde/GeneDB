@@ -77,7 +77,7 @@
         <td id="logo" valign="top" align="left" rowspan="2"><a href="<c:url value="/Homepage"/>"><img border="0" width="171" height="51" src="<c:url value="/includes/images/genedb-logo.gif"/>" alt="GeneDB"></img></a></td>
         <td id="name">${name}</td>
         <td id="search">
-            <form name="searchForm" action="<c:url value="/"/>Query" method="GET">
+            <form name="searchForm" action="<c:url value="/"/>Query" method="post">
                 <c:if test="${!empty organism}">
                   <input type="hidden" name="organism" value="${organism}">
                 </c:if>

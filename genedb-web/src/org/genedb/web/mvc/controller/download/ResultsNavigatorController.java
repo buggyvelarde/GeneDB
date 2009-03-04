@@ -7,6 +7,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.genedb.querying.core.QueryException;
+import org.genedb.querying.tmpquery.GeneSummary;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,24 +34,20 @@ public class ResultsNavigatorController {
     	List results = (List)session.getAttribute("results");
     	
     	if ("first".equals(goTo)){
-    		Object[] item = (Object[])results.get(0);
-    		return "redirect:/NamedFeature?name="+item[0] + assembleRequestParameters(request, goTo);
+    		return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(0)) + assembleRequestParameters(request, goTo);
     		
     	}else if ("previous".equals(goTo)){
     		int index = Integer.parseInt(indexStr);
-    		Object[] item = (Object[])results.get(index-1);
-    		return "redirect:/NamedFeature?name="+item[0] + assembleRequestParameters(request, goTo);
+    		return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index-1)) + assembleRequestParameters(request, goTo);
     		
     		
     	}else if("next".equals(goTo)){
     		int index = Integer.parseInt(indexStr);
-    		Object[] item = (Object[])results.get(index+1);
-    		return "redirect:/NamedFeature?name="+item[0] + assembleRequestParameters(request, goTo);
+    		return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index+1))  + assembleRequestParameters(request, goTo);
     		
     	}else if("last".equals(goTo)){
     		int lastIndex = Integer.parseInt(lastIndexStr);
-    		Object[] item = (Object[])results.get(lastIndex);
-    		return "redirect:/NamedFeature?name="+item[0] + assembleRequestParameters(request, goTo);
+    		return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(lastIndex))  + assembleRequestParameters(request, goTo);
     		
     	}else if("results".equals(goTo)){    		
     		return "redirect:/Query?" + assembleRequestParameters(request, goTo);
@@ -58,6 +55,14 @@ public class ResultsNavigatorController {
     	}else{
     		return null;
     	}
+    }
+    
+    private Object findNameFromResultItem(Object resultItem){
+    	if(resultItem instanceof GeneSummary){
+    		return ((GeneSummary)resultItem).getSystematicId();
+    	}
+    	Object[] item = (Object[])resultItem;
+    	return item[0];
     }
     
     private String assembleRequestParameters(ServletRequest request, String goTo ){

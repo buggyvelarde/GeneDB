@@ -152,6 +152,10 @@ public class QueryController {
             logger.error("No results found for query");
             return "search/"+queryName;
         case 1:
+        	Object firstItem = results.get(0);
+        	if (firstItem instanceof GeneSummary){
+        		return "redirect:/NamedFeature?name="+((GeneSummary)firstItem).getSystematicId();
+        	}
             return "redirect:/NamedFeature?name="+results.get(0);
         default:
             model.addAttribute("results", results);
