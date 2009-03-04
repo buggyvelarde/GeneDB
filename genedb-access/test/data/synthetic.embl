@@ -89,6 +89,9 @@ FT                   /primary_name="SmVAL6"
 FT                   /controlled_curation="term=expression in 7 week
 FT                   adult;evidence=NAS;db_xref=PMID:12345;attribution=contributed
 FT                   by Iain Chalmers;date=20070619"
+FT                   /controlled_curation="term=expression in 7 week
+FT                   adult;evidence=NAS;db_xref=PMID:12345;attribution=contributed
+FT                   by Iain Chalmers;date=20070619"
 FT                   /product="venom allergen-like (VAL) 6 protein"
 FT                   /other_transcript="Smp_124050.1"
 FT                   /other_transcript="Smp_124050.2"

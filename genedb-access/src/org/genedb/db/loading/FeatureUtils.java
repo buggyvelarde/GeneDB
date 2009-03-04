@@ -18,7 +18,11 @@ import org.gmod.schema.utils.ObjectManager;
 import org.gmod.schema.utils.Rankable;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.BitSet;
 import java.util.Collections;
@@ -26,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@Transactional
 public class FeatureUtils implements InitializingBean {
     private static final Logger logger = Logger.getLogger(FeatureUtils.class);
 
@@ -34,6 +39,7 @@ public class FeatureUtils implements InitializingBean {
     private SequenceDao sequenceDao;
     private GeneralDao generalDao;
     private ObjectManager objectManager;
+    private SessionFactory sessionFactory;
 
     private static final Pattern PUBMED_PATTERN = Pattern.compile("PMID:|PUBMED:", Pattern.CASE_INSENSITIVE);
 
@@ -41,8 +47,10 @@ public class FeatureUtils implements InitializingBean {
                    GO_KEY_RESIDUE, GENEDB_AUTOCOMMENT;
     private CvTerm PUB_TYPE_UNFETCHED;
     private Db PUBMED_DB;
-    private Pub NULL_PUB;
+    private int NULL_PUB_ID;
+
     public void afterPropertiesSet() {
+        logger.trace("Initialising FeatureUtils");
         objectManager.setDaos(generalDao, pubDao, cvDao);
         PUBMED_DB = objectManager.getExistingDbByName("PUBMED");
 
@@ -53,10 +61,11 @@ public class FeatureUtils implements InitializingBean {
         GENEDB_AUTOCOMMENT = cvDao.getExistingCvTermByNameAndCvName("autocomment", "genedb_misc");
         PUB_TYPE_UNFETCHED = cvDao.getExistingCvTermByNameAndCvName("unfetched", "genedb_literature");
 
-        NULL_PUB = pubDao.getPubByUniqueName("null");
+        Pub NULL_PUB = pubDao.getPubByUniqueName("null");
         if (NULL_PUB == null) {
             throw new RuntimeException("Could not find Pub with uniqueName 'null'");
         }
+        NULL_PUB_ID = NULL_PUB.getPubId();
     }
 
     /**
@@ -68,9 +77,11 @@ public class FeatureUtils implements InitializingBean {
      */
     private Pub findOrCreatePubFromPMID(String ref) {
         String accession = ref.substring(1 + ref.indexOf(':')); // Text after first colon, or whole string if no colon
-        DbXRef dbXRef = objectManager.getDbXRef("PUBMED", accession);//generalDao.getDbXRefByDbAndAcc(PUBMED_DB, accession);
+        logger.trace(String.format("Looking for Pub object with accession number '%s'", accession));
+        DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(PUBMED_DB, accession); //objectManager.getDbXRef("PUBMED", accession);
         Pub pub;
         if (dbXRef == null) {
+            logger.trace(String.format("Could not find DbXRef for PUBMED:%s; creating new DbXRef and Pub", accession));
             dbXRef = new DbXRef(PUBMED_DB, accession);
             generalDao.persist(dbXRef);
             pub = new Pub("PMID:" + accession, PUB_TYPE_UNFETCHED);
@@ -79,6 +90,7 @@ public class FeatureUtils implements InitializingBean {
             generalDao.persist(pubDbXRef);
         } else {
             pub = pubDao.getPubByDbXRef(dbXRef);
+            logger.trace(String.format("Found dbxref '%s'; corresponding Pub is '%s'", dbXRef, pub));
         }
         return pub;
     }
@@ -127,6 +139,8 @@ public class FeatureUtils implements InitializingBean {
 
     public void createGoEntries(Feature polypeptide, GoInstance go, String comment,
             List<DbXRef> withFromDbXRefs) throws DataError {
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+
         CvTerm cvTerm = getGoTerm(go.getId());
         if (cvTerm == null) {
             throw new DataError("Unable to find a CvTerm for the GO id of '" + go.getId() + "'.");
@@ -134,7 +148,7 @@ public class FeatureUtils implements InitializingBean {
 
         // Reference
         String ref = go.getRef();
-        Pub refPub = NULL_PUB;
+        Pub refPub = (Pub) session.load(Pub.class, NULL_PUB_ID);
         if (ref != null && looksLikePub(ref)) {
             // The reference is a pubmed id - usual case
             refPub = findOrCreatePubFromPMID(ref);
@@ -149,6 +163,8 @@ public class FeatureUtils implements InitializingBean {
         if (fcts.size() != 0) {
             rank = getNextRank(fcts);
         }
+        logger.trace(String.format("Creating new FeatureCvTerm for GO entry (%s, %s, %s, %b, %d)",
+            cvTerm, polypeptide, refPub, not, rank));
         FeatureCvTerm fct = new FeatureCvTerm(cvTerm, polypeptide, refPub, not, rank);
         sequenceDao.persist(fct);
 
@@ -213,5 +229,13 @@ public class FeatureUtils implements InitializingBean {
 
     public void setGeneralDao(GeneralDao generalDao) {
         this.generalDao = generalDao;
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 }

@@ -52,12 +52,14 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
-    <bean id="featureUtils" class="org.genedb.db.loading.FeatureUtils">
+    <bean id="featureUtils" class="org.genedb.db.loading.FeatureUtils"
+            init-method="afterPropertiesSet">
         <property name="cvDao" ref="cvDao" />
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="pubDao" ref="pubDao" />
         <property name="generalDao" ref="generalDao" />
         <property name="objectManager" ref="objectManager" />
+        <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
     <bean id="objectManager" class="org.gmod.schema.utils.ObjectManager">

@@ -1264,6 +1264,7 @@ class EmblLoader {
         }};
 
         private void processControlledCurationStrict() throws DataError {
+            Set<String> seenQualifiedTerms = new HashSet<String>();
             for (String controlledCuration: feature.getQualifierValues("controlled_curation")) {
                 Matcher matcher = subqualifierPattern.matcher(controlledCuration);
                 Map<String, String> valuesByKey = new HashMap<String, String>();
@@ -1281,6 +1282,16 @@ class EmblLoader {
                 }
                 String term = valuesByKey.get("term");
                 String cv   = valuesByKey.containsKey("cv") ? valuesByKey.get("cv") : "CC_genedb_controlledcuration";
+
+                String qualifiedTerm = String.format("%s:%s", cv, term);
+                if (seenQualifiedTerms.contains(qualifiedTerm)) {
+                    logger.warn(String.format(
+                        "There is more than one /controlled_curation qualifier with term '%s' in %s feature on line %d." +
+                        "Ignoring subsequent occurences.",
+                        qualifiedTerm, feature.type, feature.lineNumber));
+                    continue;
+                }
+                seenQualifiedTerms.add(qualifiedTerm);
 
                 logger.trace(String.format("/controlled_curation: adding term '%s:%s' to %s",
                     cv, term, focalFeature));
