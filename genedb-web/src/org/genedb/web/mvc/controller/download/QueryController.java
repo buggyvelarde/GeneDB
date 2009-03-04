@@ -16,6 +16,7 @@ import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.GeneSummary;
+import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
 import org.genedb.web.mvc.controller.WebConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -38,6 +39,8 @@ public class QueryController {
 
     private static final Logger logger = Logger.getLogger(QueryController.class);
 
+    private static final String IDS_TO_GENE_SUMMARY_QUERY = "idsToGeneSummary";
+
     @Autowired
     private QueryFactory queryFactory;
 
@@ -57,7 +60,22 @@ public class QueryController {
             HttpSession session,
             Model model) throws QueryException {
         // TODO Do we want form submission via GET?
-        return processForm(queryName, request, session, model);
+        //return processForm(queryName, request, session, model);
+
+        if (!StringUtils.hasText(queryName)) {
+            session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
+            return "redirect:/QueryList";
+        }
+
+        Query query = queryFactory.retrieveQuery(queryName);
+        if (query == null) {
+            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
+            return "redirect:/QueryList";
+        }
+        model.addAttribute("query", query);
+
+        populateModelData(model, query);
+        return "search/"+queryName;
     }
 
     @RequestMapping(method = RequestMethod.POST , params= "q")
@@ -72,22 +90,15 @@ public class QueryController {
             return "redirect:/QueryList";
         }
 
-        Query<GeneSummary> query = queryFactory.retrieveQuery(queryName);
+        Query query = queryFactory.retrieveQuery(queryName);
         if (query == null) {
             session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
             return "redirect:/QueryList";
         }
 
         model.addAttribute("query", query);
-        logger.debug(String.format("The number of parameters is '%d'", request.getParameterMap().keySet().size()));
-        if (request.getParameterMap().keySet().size() == 1) {
-            // That'll be q so the user has only chosen the query so far, not any values
-            Map<String, Object> modelData = query.prepareModelData();
-            for (Map.Entry<String, Object> entry : modelData.entrySet()) {
-                model.addAttribute(entry.getKey(), entry.getValue());
-            }
-            return "search/"+queryName;
-        }
+        logger.debug("The number of parameters is '" + request.getParameterMap().keySet().size() + "'");
+        populateModelData(model, query);
 
 
         // Attempt to fill in form
@@ -106,8 +117,6 @@ public class QueryController {
 
         query.validate(query, errors);
 
-        //Get results
-        List<GeneSummary> results = new ArrayList<GeneSummary>(0);
         if (errors.hasErrors()) {
             logger.debug("Validator found errors");
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
@@ -115,7 +124,27 @@ public class QueryController {
         }
 
         logger.error("Validator found no errors");
-        results = query.getResults();
+        List results = query.getResults();
+        if (results.size() > 0) {
+            Object firstItem =  results.get(0);
+            if (firstItem instanceof GeneSummary) {
+                results = query.getResults();
+            } else {
+                logger.error(results.size()+ " results for HQL query");
+                List<String> ids = (List<String>) results;
+                List<String> ids2 = new ArrayList<String>();
+                for (String id : ids) {
+                    ids2.add(id.replace(":pep", ""));
+                }
+                IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
+                if (idsToGeneSummary == null) {
+                    throw new RuntimeException("Internal error - unable to find ids to gene summary query");
+                }
+                idsToGeneSummary.setIds(ids2);
+                results = idsToGeneSummary.getResults();
+            }
+        }
+
         model.addAttribute("runQuery", Boolean.TRUE);
 
         switch (results.size()) {
@@ -128,6 +157,13 @@ public class QueryController {
             model.addAttribute("results", results);
             logger.error("Found results for query");
             return "search/"+queryName;
+        }
+    }
+
+    private void populateModelData(Model model, Query query) {
+        Map<String, Object> modelData = query.prepareModelData();
+        for (Map.Entry<String, Object> entry : modelData.entrySet()) {
+            model.addAttribute(entry.getKey(), entry.getValue());
         }
     }
 

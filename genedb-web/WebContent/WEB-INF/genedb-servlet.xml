@@ -55,6 +55,7 @@
     <bean name="ecQuery" class="org.genedb.querying.tmpquery.EcQuery" />
     <bean name="pfamQuery" class="org.genedb.querying.tmpquery.PfamQuery" />
     <bean name="curationQuery" class="org.genedb.querying.tmpquery.CurationQuery" />
+    <bean name="idsToGeneSummaryQuery" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" />
 
     <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 
@@ -64,6 +65,12 @@
     <bean name="berkeleyReadOnlyMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
         <property name="rootDirectory" value="${cacheDirectory}"/>
         <property name="readOnly" value="true" />
+    </bean>
+
+
+    <bean name="berkeleyReadWriteTempMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
+        <property name="rootDirectory" value="/tmp"/>
+        <property name="readOnly" value="false" />
     </bean>
 
     <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
@@ -267,11 +274,11 @@
     <bean name="historyManagerFactory"
         class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
 
-	<bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
+    <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
 
     <bean name="ResultsNavigatorController" class="org.genedb.web.mvc.controller.download.ResultsNavigatorController" />
-    
-    
+
+
     <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" />
 
     <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">
