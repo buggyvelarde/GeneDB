@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class GeneServiceImpl extends BasicGeneServiceImpl implements GeneService {
-    @SuppressWarnings("unchecked")
     @Transactional
     @Override
     protected Gene geneFromFeature(Feature feat) {
@@ -71,7 +70,7 @@ public class GeneServiceImpl extends BasicGeneServiceImpl implements GeneService
             paralogues.add(otherFeat.getUniqueName());
         }
     }
-    
+
     @Override
     public Gene findGeneByUniqueName(String name) {
         return geneFromFeature(findGeneFeatureByUniqueName(name));
