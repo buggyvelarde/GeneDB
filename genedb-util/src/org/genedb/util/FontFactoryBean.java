@@ -8,7 +8,7 @@ import java.awt.FontFormatException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FontFactoryBean implements FactoryBean {
+public class FontFactoryBean implements FactoryBean<Font> {
 
     private int size;
     private int style;
@@ -54,15 +54,14 @@ public class FontFactoryBean implements FactoryBean {
 
 
     @Override
-    public Object getObject() throws Exception {
+    public Font getObject() throws Exception {
         makeFont();
         return font;
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Class getObjectType() {
+    public Class<Font> getObjectType() {
         return Font.class;
     }
 
