@@ -107,22 +107,21 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
             cacheMiss++;
             logger.error("dto cache miss for '"+feature.getUniqueName());
             throw new RuntimeException(String.format("Unable to find '%s' in cache", feature.getUniqueName()));
-        } else {
-            cacheHit++;
-            logger.trace("dto cache hit for '"+feature.getUniqueName());
-            HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
-            hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
-//            if (nlb.isAddToBasket()) {
-//                hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
+        }
+
+        cacheHit++;
+        logger.trace("dto cache hit for '"+feature.getUniqueName());
+        HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
+        hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
+//                if (nlb.isAddToBasket()) {
+//                    hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
 //                // Add message here
 //            }
-        }
 
         HashMap<String, Object> model = Maps.newHashMap();
         model.put("dto", dto);
+        model.put("taxonNodeName", dto.getOrganismCommonName());
 
-
-        HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
         HistoryItem basket = hm.getHistoryItemByType(HistoryType.BASKET);
         logger.debug(String.format("Basket is '%s'", basket));
         if (basket != null && basket.containsEntry(feature.getUniqueName())) {
