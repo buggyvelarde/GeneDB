@@ -74,7 +74,7 @@ public class FeatureCvTerm implements Serializable, Rankable, PropertyI, HasPubs
     @JoinColumn(name = "feature_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Feature feature;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "pub_id", unique = false, nullable = false, insertable = true, updatable = true)
     private Pub pub;
 
