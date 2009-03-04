@@ -31,6 +31,7 @@ public class TaxonNode {
     private List<TaxonNode> children = new ArrayList<TaxonNode>();
     private boolean webLinkable = false;
     private boolean organism = false;
+    private boolean hasOrganismFeature = false;
     private Map<String, Map<String, Object>> appDetails = new HashMap<String, Map<String, Object>>();
     private Map<TaxonNameType, String> names = new HashMap<TaxonNameType, String>(7);
 
@@ -176,4 +177,12 @@ public class TaxonNode {
         return String.format("taxon id='%s' fullName='%s' label='%s' organism='%s' ",
             getTaxonId(), getName(TaxonNameType.FULL), getLabel(), organism);
     }
+
+	public boolean hasOrganismFeature() {
+		return hasOrganismFeature;
+	}
+
+	public void setHasOrganismFeature(boolean hasOrganismFeature) {
+		this.hasOrganismFeature = hasOrganismFeature;
+	}
 }

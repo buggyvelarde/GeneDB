@@ -22,7 +22,9 @@ package org.genedb.db.taxon;
 
 import org.genedb.db.dao.PhylogenyDao;
 
+import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Phylonode;
+import org.gmod.schema.mapped.PhylonodeOrganism;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -33,6 +35,7 @@ import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -94,12 +97,49 @@ public class TaxonNodeManager implements InitializingBean {
             nodes = tempNodes;
         }
         //System.err.println("Session is '"+session+"'");
+        
+        //Initialise phylonodes with organism features
+        initPhylonodeWithOrganismFeatures();
+        
         }
         finally {
               TransactionSynchronizationManager.unbindResource(sessionFactory);
               SessionFactoryUtils.closeSession(session);
             }
 
+    }
+    
+    /**
+     * Initialise taxons with organism features with boolean flag 
+     */
+    private void initPhylonodeWithOrganismFeatures(){
+    	TaxonNode node = getTaxonNodeForLabel("Root");
+    	if (node == null){
+    		throw new RuntimeException("No taxon with \"Root\" has label exists");
+    	}else{
+    		initPhylonodeWithOrganismFeatures(node);
+    	}
+    }
+    
+    /**
+     * Initialise taxons with organism features with boolean flag 
+     * @param node
+     * @return
+     */
+    private boolean initPhylonodeWithOrganismFeatures(TaxonNode node){
+    	List<TaxonNode> childNodes = node.getChildren();
+    	if(childNodes.size() > 0){
+    		for(TaxonNode childNode :  childNodes){
+    			if(initPhylonodeWithOrganismFeatures(childNode)){
+    				node.setHasOrganismFeature(true);
+    			}
+    		}
+    	}else{
+    		if(phylogenyDao.isPhylonodeWithOrganismFeature(node.getPhylonode())){
+    			node.setHasOrganismFeature(true);
+    		}    		
+    	}
+    	return node.hasOrganismFeature();
     }
 
     boolean validateTaxons(List<String> taxons, List<String> problems) {

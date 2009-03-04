@@ -1,7 +1,9 @@
 package org.genedb.db.dao;
 
 import org.gmod.schema.mapped.CvTerm;
+import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Phylonode;
+import org.gmod.schema.mapped.PhylonodeOrganism;
 import org.gmod.schema.mapped.Phylotree;
 
 import org.hibernate.Query;
@@ -71,5 +73,22 @@ public class PhylogenyDao extends BaseDao {
             .setParameter("parent", parent)
             .list();
         return nodes;
+    }
+    
+    public boolean isPhylonodeWithOrganismFeature(Organism orga){
+    	return getSession().createQuery(
+    			"select o.organismId from Organism o where o = :orga and exists elements(o.features)")
+    			.setEntity("orga", orga).list().size()>0;
+    }
+    
+    public boolean isPhylonodeWithOrganismFeature(Phylonode phylonode){
+    	return getSession().createQuery(
+    			"select p.phylonodeId " +
+    			"from Phylonode p " +
+    			"inner join p.phylonodeOrganisms po " +
+    			"where p = :phylonode " +
+    			"and exists elements(po.organism.features)")
+    			.setEntity("phylonode", phylonode)
+    			.list().size()>0;
     }
 }
