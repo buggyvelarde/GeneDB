@@ -129,15 +129,15 @@
         </java>
     </target>
 
-
-    <target name="load-interpro" depends="fulljar-access" unless="load.interpro.gene-ids">
+    <target name="load-interpro" depends="load-interpro-polypeptide-ids, load-interpro-gene-ids"/>
+    <target name="load-interpro-polypeptide-ids" depends="fulljar-access" unless="load.interpro.gene-ids">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="iploader --key-type=polypeptide ${file}"/>
            <jvmarg line="-server -Xmx256m"/>
         </java>
         <antcall target="delete-redundant-go"/>
     </target>
-    <target name="load-interpro" depends="fulljar-access" if="load.interpro.gene-ids">
+    <target name="load-interpro-gene-ids" depends="fulljar-access" if="load.interpro.gene-ids">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="iploader --key-type=gene ${file}"/>
            <jvmarg line="-server -Xmx256m"/>
