@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             +" inner join fetch transcript.featureRelationshipsForObjectId transcript_exon"
             +" inner join fetch transcript_exon.subjectFeature exon"
             +" where gene.uniqueName=:name and gene.type.name='gene'")
-            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         @SuppressWarnings("unchecked")
         List<Feature> features = query.setString("name", name).list();
 
