@@ -127,21 +127,8 @@ public class QueryController {
         List results = query.getResults();
         if (results.size() > 0) {
             Object firstItem =  results.get(0);
-            if (firstItem instanceof GeneSummary) {
-                results = query.getResults();
-            } else {
-                logger.error(results.size()+ " results for HQL query");
-                List<String> ids = (List<String>) results;
-                List<String> ids2 = new ArrayList<String>();
-                for (String id : ids) {
-                    ids2.add(id.replace(":pep", ""));
-                }
-                IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
-                if (idsToGeneSummary == null) {
-                    throw new RuntimeException("Internal error - unable to find ids to gene summary query");
-                }
-                idsToGeneSummary.setIds(ids2);
-                results = idsToGeneSummary.getResults();
+            if (! (firstItem instanceof GeneSummary)) {
+                results = convertIdsToGeneSummaries(results);
             }
         }
 
@@ -159,6 +146,22 @@ public class QueryController {
             logger.error("Found results for query");
             return "search/"+queryName;
         }
+    }
+
+    private List convertIdsToGeneSummaries(List results) throws QueryException {
+        logger.error(results.size()+ " results for HQL query");
+        List<String> ids = (List<String>) results;
+        List<String> ids2 = new ArrayList<String>();
+        for (String id : ids) {
+            ids2.add(id.replace(":pep", ""));
+        }
+        IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
+        if (idsToGeneSummary == null) {
+            throw new RuntimeException("Internal error - unable to find ids to gene summary query");
+        }
+        idsToGeneSummary.setIds(ids2);
+        results = idsToGeneSummary.getResults();
+        return results;
     }
 
     private void populateModelData(Model model, Query query) {
