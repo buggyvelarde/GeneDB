@@ -150,6 +150,7 @@ public class QueryController {
         switch (results.size()) {
         case 0:
             logger.error("No results found for query");
+            model.addAttribute("results", results);
             return "search/"+queryName;
         case 1:
             return "redirect:/NamedFeature?name="+((GeneSummary)results.get(0)).getSystematicId();
