@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
+<%@ taglib prefix="format" tagdir="/WEB-INF/tags/genedb/formatting" %>
 
 <c:forEach var="parameter" items="${paramValues}">
     <c:forEach var="value" items="${parameter.value}">
