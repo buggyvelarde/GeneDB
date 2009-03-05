@@ -2,6 +2,7 @@ package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
+import org.springframework.validation.Errors;
 
 @QueryClass(
         title="Coding and pseudogenes by protein mass",
@@ -56,6 +57,17 @@ public class ProteinMassQuery extends OrganismHqlQuery {
         super.populateQueryWithParams(query);
         query.setInteger("min", min);
         query.setInteger("max", max);
+    }
+
+    @Override
+    protected void extraValidation(Errors errors) {
+
+        //validate dependent properties
+        if (!errors.hasErrors()) {
+            if (getMin() > getMax()) {
+                errors.reject("min.greater.than.max");
+            }
+        }
     }
 
 }

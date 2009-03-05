@@ -2,6 +2,7 @@ package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
+import org.springframework.validation.Errors;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.RangeQuery;
@@ -71,4 +72,14 @@ public class ProteinNumTMQuery extends OrganismLuceneQuery {
         return new String[] {"min", "max"};
     }
 
+    @Override
+    protected void extraValidation(Errors errors) {
+
+        //validate dependent properties
+        if (!errors.hasErrors()) {
+            if (getMin() > getMax()) {
+                errors.reject("min.greater.than.max");
+            }
+        }
+    }
 }
