@@ -2,6 +2,8 @@ package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
+import org.hibernate.validator.NotEmpty;
+import org.springframework.validation.Errors;
 
 @QueryClass(
         title="Transcripts by their type",
@@ -16,6 +18,7 @@ public class GeneLocationQuery extends OrganismHqlQuery {
             order=1,
             title="Name of feature"
     )
+    @NotEmpty(message="{topLevelFeatureName.empty}")
     private String topLevelFeatureName;
 
 
@@ -34,7 +37,7 @@ public class GeneLocationQuery extends OrganismHqlQuery {
 
     @Override
     protected String getHql() {
-        return "select f.uniqueName, f.organism.abbreviation from Feature f, FeatureLoc fl where fl.sourceFeature.uniqueName=:topLevelFeatureName and fl.fmin >= :min and fl.fmax <= :max @ORGANISM@ order by f.organism, f.uniqueName";
+        return "select f.uniqueName from Feature f inner join f.featureLocs fl where fl.sourceFeature.uniqueName=:topLevelFeatureName and fl.fmin >= :min and fl.fmax <= :max @ORGANISM@ order by f.organism, f.uniqueName";
     }
 
 
@@ -91,6 +94,18 @@ public class GeneLocationQuery extends OrganismHqlQuery {
         query.setString("topLevelFeatureName", topLevelFeatureName);
         query.setInteger("min", min);
         query.setInteger("max", max);
+    }
+
+
+    @Override
+    protected void extraValidation(Errors errors) {
+
+        //validate dependent properties
+        if (!errors.hasErrors()) {
+            if (getMin() > getMax()) {
+                errors.reject("start.greater.than.end");
+            }
+        }
     }
 
 }
