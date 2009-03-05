@@ -37,25 +37,25 @@
         <property name="location" value="classpath:project.properties" />
     </bean>
 
-    <bean name="proteinLengthQuery" class="org.genedb.querying.tmpquery.ProteinLengthQuery" />
-    <bean name="proteinMassQuery" class="org.genedb.querying.tmpquery.ProteinMassQuery" />
-    <bean name="geneTypeQuery" class="org.genedb.querying.tmpquery.GeneTypeQuery" />
-    <bean name="advancedQuery" class="org.genedb.querying.tmpquery.AdvancedQuery" />
-    <bean name="nameProductQuery" class="org.genedb.querying.tmpquery.NameProductQuery" />
-    <bean name="allNameProductQuery" class="org.genedb.querying.tmpquery.AllNameProductQuery" />
-    <bean name="controlledCurationQuery" class="org.genedb.querying.tmpquery.ControlledCurationQuery" />
-    <bean name="dateQuery" class="org.genedb.querying.tmpquery.DateQuery" />
-    <bean name="geneLocationQuery" class="org.genedb.querying.tmpquery.GeneLocationQuery" />
-    <bean name="annotationStatusQuery" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" />
-    <bean name="proteinTargetingSeqQuery" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" />
-    <bean name="proteinNumTMQuery" class="org.genedb.querying.tmpquery.ProteinNumTMQuery" />
-    <bean name="productQuery" class="org.genedb.querying.tmpquery.ProductQuery" />
-    <bean name="simpleNameQuery" class="org.genedb.querying.tmpquery.SimpleNameQuery" />
-    <bean name="goQuery" class="org.genedb.querying.tmpquery.GoQuery" />
-    <bean name="ecQuery" class="org.genedb.querying.tmpquery.EcQuery" />
-    <bean name="pfamQuery" class="org.genedb.querying.tmpquery.PfamQuery" />
-    <bean name="curationQuery" class="org.genedb.querying.tmpquery.CurationQuery" />
-    <bean name="idsToGeneSummaryQuery" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" />
+    <bean name="proteinLengthQuery" class="org.genedb.querying.tmpquery.ProteinLengthQuery" scope="prototype" />
+    <bean name="proteinMassQuery" class="org.genedb.querying.tmpquery.ProteinMassQuery" scope="prototype"  />
+    <bean name="geneTypeQuery" class="org.genedb.querying.tmpquery.GeneTypeQuery" scope="prototype" />
+    <bean name="advancedQuery" class="org.genedb.querying.tmpquery.AdvancedQuery"  scope="prototype" />
+    <bean name="nameProductQuery" class="org.genedb.querying.tmpquery.NameProductQuery" scope="prototype" />
+    <bean name="allNameProductQuery" class="org.genedb.querying.tmpquery.AllNameProductQuery" scope="prototype" />
+    <bean name="controlledCurationQuery" class="org.genedb.querying.tmpquery.ControlledCurationQuery" scope="prototype" />
+    <bean name="dateQuery" class="org.genedb.querying.tmpquery.DateQuery" scope="prototype" />
+    <bean name="geneLocationQuery" class="org.genedb.querying.tmpquery.GeneLocationQuery" scope="prototype" />
+    <bean name="annotationStatusQuery" class="org.genedb.querying.tmpquery.AnnotationStatusQuery" scope="prototype" />
+    <bean name="proteinTargetingSeqQuery" class="org.genedb.querying.tmpquery.ProteinTargetingSeqQuery" scope="prototype" />
+    <bean name="proteinNumTMQuery" class="org.genedb.querying.tmpquery.ProteinNumTMQuery" scope="prototype" />
+    <bean name="productQuery" class="org.genedb.querying.tmpquery.ProductQuery" scope="prototype" />
+    <bean name="simpleNameQuery" class="org.genedb.querying.tmpquery.SimpleNameQuery" scope="prototype" />
+    <bean name="goQuery" class="org.genedb.querying.tmpquery.GoQuery" scope="prototype" />
+    <bean name="ecQuery" class="org.genedb.querying.tmpquery.EcQuery" scope="prototype" />
+    <bean name="pfamQuery" class="org.genedb.querying.tmpquery.PfamQuery" scope="prototype" />
+    <bean name="curationQuery" class="org.genedb.querying.tmpquery.CurationQuery" scope="prototype" />
+    <bean name="idsToGeneSummaryQuery" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
 
     <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 
