@@ -1050,27 +1050,12 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     /*
      * Avoid the overhead of transaction-creation and synchronisation
      * where possible. This requires (build-time or load-time) AspectJ
-     * weaving, because we're calling a transactional private method
-     * from within this object.
+     * weaving, because we're calling a transactional method from
+     * within this object.
      */
-    private static volatile Pub nullPub = null;
-    private static Object nullPubLock = new Object();
-    @Transactional(readOnly = true)
-    private void populateNullPub() {
-        synchronized(nullPubLock) {
-            if (nullPub == null) {
-                Session session = SessionFactoryUtils.getSession(sessionFactory, false);
-                nullPub = (Pub) session.get(Pub.class, 1);
-            }
-        }
-    }
     protected Pub nullPub() {
-        /* Double-checked locking is safe for volatile fields since JVM 1.5 */
-        if (nullPub == null) {
-            populateNullPub();
-        }
-
-        return nullPub;
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+        return (Pub) session.load(Pub.class, 1);
     }
 
     protected FeatureSynonym addSynonym(String synonymType, String synonymString) {
