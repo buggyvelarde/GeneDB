@@ -24,7 +24,7 @@ public class ProteinMassQuery extends OrganismHqlQuery {
 
     @Override
     protected String getHql() {
-        return "select f.uniqueName, f.organism.abbreviation from Feature f where f.type.name='polypeptide' and f.seqLen >= :min and f.seqLen <= :max @ORGANISM@ order by f.organism, f.uniqueName";
+        return "select f.uniqueName from Feature f where f.type.name='polypeptide' and f.seqLen >= :min and f.seqLen <= :max @ORGANISM@ order by f.organism, f.uniqueName";
     }
 
 

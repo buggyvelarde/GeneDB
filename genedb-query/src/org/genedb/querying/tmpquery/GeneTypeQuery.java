@@ -21,7 +21,7 @@ public class GeneTypeQuery extends OrganismHqlQuery {
 
     @Override
     protected String getHql() {
-        return "select new GeneSummary(f.uniqueName, f.organism.abbreviation) from Feature f where f.type.name=:type @ORGANISM@ order by f.organism, f.uniqueName";
+        return "select f.uniqueName from Feature f where f.type.name=:type @ORGANISM@ order by f.organism, f.uniqueName";
     }
 
     @Override
