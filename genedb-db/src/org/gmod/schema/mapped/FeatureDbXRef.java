@@ -87,4 +87,38 @@ public class FeatureDbXRef implements Serializable {
     public void setCurrent(boolean current) {
         this.current = current;
     }
+
+
+    // hashCode and equals were defined by Eclipse using the fields feature and dbXRef
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((dbXRef == null) ? 0 : dbXRef.hashCode());
+        result = prime * result + ((feature == null) ? 0 : feature.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FeatureDbXRef other = (FeatureDbXRef) obj;
+        if (dbXRef == null) {
+            if (other.dbXRef != null)
+                return false;
+        } else if (!dbXRef.equals(other.dbXRef))
+            return false;
+        if (feature == null) {
+            if (other.feature != null)
+                return false;
+        } else if (!feature.equals(other.feature))
+            return false;
+        return true;
+    }
 }
