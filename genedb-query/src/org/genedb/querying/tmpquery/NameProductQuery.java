@@ -2,6 +2,7 @@ package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.QueryClass;
 import org.genedb.querying.core.QueryParam;
+import org.hibernate.validator.NotEmpty;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
@@ -23,6 +24,7 @@ public class NameProductQuery extends OrganismLuceneQuery {
             order=1,
             title="Minimum length of protein in bases"
     )
+    @NotEmpty(message="{name.or.product.query.empty}")
     private String search = "";
 
     @Override

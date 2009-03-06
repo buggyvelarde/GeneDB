@@ -10,15 +10,12 @@
 		<form:form commandName="query" action="Query" method="post">
         <input type="hidden" name="q" value="nameProduct" />
             <table>
-                <tr>
-                    <td colspan="3">
-                        <font color="red"><form:errors path="*" /></font>
-                    </td>
-                </tr>
+                
                 <tr>
                   <td>Name/Product:</td>
                   <td>
                     <form:input id="nameProduct" path="search"/>
+                    <font color="red">&nbsp;<form:errors path="search" /></font>
                   </td>
                 </tr>
                 <tr>
