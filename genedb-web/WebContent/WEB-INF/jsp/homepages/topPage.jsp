@@ -13,18 +13,11 @@
 <p></p>
 <format:genePageSection className="greyBox">
     <div id="frontPage">
-      <p>This site is to provide access to the latest annotation on the
-      <i>P. falciparum</i> project. Periodic snapshots of the data are
-      also made available at
-      <a href="http://plasmodb.org">PlasmoDB</a></p><br>
-
-      <p>It also provides a preview of the new GeneDB website. This site
-      is currently under development, and not running on fault resistant
-      hardware, so may not be constantly available.</p><br>
-
-      <p>To locate a gene, enter its ID or product, using wildcards, in
-      the text box in the top right, or use the browsable categories in
-      the menu just below it.</p><br>
+    <p>This resource provides access to genome-scale datasets for a range of pathogenic
+    organisms and is a beta version of the new GeneDB website. Please be aware that
+    this site is stable but under active development. Hence only a subset of genomes
+    and tools are accessible. Data can be retrieved using the navigation tools at
+    the top right hand side of the page.</p><br>
 
 <table width="100%">
 <tr>
@@ -61,10 +54,10 @@
 <td colspan="2">
         <h3><b>Example Genes</b></h3>
         <ul>
-        <li><a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
-        <li><a href="<c:url value="/NamedFeature?name=PF07_0048"/>">???</a></li>
-        <li><a href="<c:url value="/NamedFeature?name=PFB0888w"/>">BG27 ???</a> - an alternately spliced gene</li>
-        <li><a href="<c:url value="/NamedFeature?name=Smp_000030"/>">Smp_000030</a></li>
+        <li><i>Plasmodium falciparum</i> <a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
+        <li><i>Leishmania major</i> <a href="<c:url value="/NamedFeature?name=PF07_0048"/>">LmjF07.1060<a></a></li>
+        <li><a href="<c:url value="/NamedFeature?name=PFB0888w"/>">BG27 ???</a></li>
+        <li><i>Schistosoma mansoni</i> <a href="<c:url value="/NamedFeature?name=Smp_000030"/>">Smp_000030</a></li>
       </ul>
       </td>
 </table>
