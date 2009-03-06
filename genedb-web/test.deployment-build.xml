@@ -2,7 +2,7 @@
 
 <project name="test-deployment" default="test-deployment" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
-	<property name="host" value="http://developer.genedb.org"/>
+    <property name="host" value="http://developer.genedb.org"/>
     <property name="prefix" value=""/> <!-- Include trailing slash -->
 
     <dirname property="imported.basedir.web" file="${ant.file.genedb-web}"/>
@@ -40,5 +40,9 @@
       ]]>
     </groovy>
   </target>
+
+    <target name="wait">
+        <sleep minutes="3" />
+    </target>
 
 </project>
