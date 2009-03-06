@@ -22,9 +22,7 @@ package org.genedb.db.taxon;
 
 import org.genedb.db.dao.PhylogenyDao;
 
-import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.Phylonode;
-import org.gmod.schema.mapped.PhylonodeOrganism;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -35,7 +33,6 @@ import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -47,6 +44,8 @@ public class TaxonNodeManager implements InitializingBean {
 
     private PhylogenyDao phylogenyDao;
     private SessionFactory sessionFactory;
+    
+    private boolean isFindPhylonodeWithOrganismFeatures=true;
 
     private Map<String, TaxonNode> labelTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> taxonTaxonNodeMap = new HashMap<String, TaxonNode>();
@@ -99,7 +98,9 @@ public class TaxonNodeManager implements InitializingBean {
         //System.err.println("Session is '"+session+"'");
         
         //Initialise phylonodes with organism features
-        initPhylonodeWithOrganismFeatures();
+        if (isFindPhylonodeWithOrganismFeatures){
+        	findPhylonodeWithOrganismFeatures();
+        }
         
         }
         finally {
@@ -112,7 +113,7 @@ public class TaxonNodeManager implements InitializingBean {
     /**
      * Initialise taxons with organism features with boolean flag 
      */
-    private void initPhylonodeWithOrganismFeatures(){
+    private void findPhylonodeWithOrganismFeatures(){
     	TaxonNode node = getTaxonNodeForLabel("Root");
     	if (node == null){
     		throw new RuntimeException("No taxon with \"Root\" has label exists");
@@ -222,6 +223,15 @@ public class TaxonNodeManager implements InitializingBean {
 			dupes.addAll(taxonNode.getAllChildrenNames());
 		}
 		return new ArrayList<String>(dupes);
+	}
+
+	public boolean isFindPhylonodeWithOrganismFeatures() {
+		return isFindPhylonodeWithOrganismFeatures;
+	}
+
+	public void setFindPhylonodeWithOrganismFeatures(
+			boolean isFindPhylonodeWithOrganismFeatures) {
+		this.isFindPhylonodeWithOrganismFeatures = isFindPhylonodeWithOrganismFeatures;
 	}
 
 }

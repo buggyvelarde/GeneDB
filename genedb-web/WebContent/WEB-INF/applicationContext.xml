@@ -40,6 +40,9 @@
     <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
         <property name="sessionFactory" ref="sessionFactory" />
+        <property name="findPhylonodeWithOrganismFeatures">
+        	<value>true</value>
+        </property>
     </bean>
 
     <bean id="taxonUtils" class="org.genedb.web.mvc.controller.TaxonUtils">
