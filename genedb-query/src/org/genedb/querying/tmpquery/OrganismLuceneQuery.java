@@ -10,6 +10,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public abstract class OrganismLuceneQuery extends LuceneQuery {
 
+    @Autowired
     private TaxonNodeManager taxonNodeManager;
 
     @QueryParam(
