@@ -41,4 +41,15 @@
         </attribute>
     </tag>
 
+
+    <tag>
+        <name>formatSystematicName</name>
+        <tag-class>org.genedb.web.tags.misc.SystematicNameFormatTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>name</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+    </tag>
 </taglib>

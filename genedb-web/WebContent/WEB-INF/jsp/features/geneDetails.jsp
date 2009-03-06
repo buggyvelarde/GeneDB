@@ -28,10 +28,10 @@
             <td class="value">
                 <c:choose>
                 <c:when test="${dto.anAlternateTranscript}">
-                    ${dto.uniqueName} (one splice form of ${dto.geneName})
+                    <misc:formatSystematicName name="${dto.uniqueName}"/> (one splice form of <misc:formatSystematicName name="${dto.geneName}"/>)
                 </c:when>
                 <c:otherwise>
-                  ${dto.uniqueName}
+                  <misc:formatSystematicName name="${dto.uniqueName}"/>
                 </c:otherwise>
                 </c:choose>
             </td>
