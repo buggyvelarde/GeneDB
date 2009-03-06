@@ -1374,7 +1374,7 @@ class EmblLoader {
             seenPubAccessions.add(accession);
         }
 
-        private Pattern literaturePattern = Pattern.compile("(?:PMID:)?\\s*(\\d+)");
+        private Pattern literaturePattern = Pattern.compile("(?:PMID:)?\\s*(\\d+)(?:;.*)?");
         protected void processLiterature() throws DataError {
             for (String pmid: feature.getQualifierValues("literature", "citation")) {
                 Matcher matcher = literaturePattern.matcher(pmid);

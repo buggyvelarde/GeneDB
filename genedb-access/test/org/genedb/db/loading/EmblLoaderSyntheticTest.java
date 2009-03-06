@@ -57,10 +57,10 @@ public class EmblLoaderSyntheticTest {
 
     @Test
     public void featureNames() {
-        tester.uniqueNames(AbstractGene.class, "s1", "s2", "s3", "s4", "Smp_124050",
+        tester.uniqueNames(AbstractGene.class, "s1", "s2", "s3", "s4", "s5", "Smp_124050",
                   "super1_tRNA1", "Tc00.1047053511907.50")
               .uniqueNames(Pseudogene.class, "s1")
-              .uniqueNames(Gene.class, "s2", "s3", "s4",  "Smp_124050", "super1_tRNA1",
+              .uniqueNames(Gene.class, "s2", "s3", "s4", "s5", "Smp_124050", "super1_tRNA1",
                   "Tc00.1047053511907.50");
     }
 

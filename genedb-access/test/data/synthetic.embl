@@ -109,6 +109,7 @@ FT                   /invented_qualifier="value"
 FT   CDS             500..600
 FT                   /literature="11111"
 FT                   /literature="11111"
+FT                   /class="4.1.6"
 FT                   /GO="aspect=process; GOid=GO:0008152; term=metabolism;
 FT                   evidence=IEA; db_xref=TIGR_Tca1:autoGO;
 FT                   with=Pfam:PF02230|TIGR:TriTryp_COG; date=20041214"
@@ -125,8 +126,15 @@ FT                   /psu_db_xref="TCA:Tc00.1047053511907.50;"
 FT                   /psu_db_xref="InterPro:IPR003140;"
 FT                   /xdb_xref="CTP:map00580"
 FT                   /temporary_systematic_id="Tc00.1047053511907.50"
+FT                   /literature="PMID:2551783; Affolter M, et al. Gene 1989 Aug 1;80(1):177-83"
 FT   nonstandard     join(600..610,620..630)
 FT                   /madeupqualifier="value"
+FT   CDS             join(610..620,630..640)
+FT                   /systematic_id="s5"
+FT                   /GO="aspect=component; GOid=GO:0016021; term=integral to
+FT                   outer membrane (sensu Gram-negative Bacteria);
+FT                   evidence=TAS; db_xref=PMID:2720787; date=20040707"
+FT                   /literature="PMID:2720787"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,
