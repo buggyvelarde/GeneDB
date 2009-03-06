@@ -41,6 +41,8 @@ public class QueryController {
 
     private static final String IDS_TO_GENE_SUMMARY_QUERY = "idsToGeneSummary";
 
+    private static final int BATCH_SIZE = 1000;
+
     @Autowired
     private QueryFactory queryFactory;
 
@@ -148,20 +150,54 @@ public class QueryController {
         }
     }
 
+
     private List convertIdsToGeneSummaries(List results) throws QueryException {
         logger.error(results.size()+ " results for HQL query");
-        List<String> ids = (List<String>) results;
-        List<String> ids2 = new ArrayList<String>();
-        for (String id : ids) {
-            ids2.add(id.replace(":pep", ""));
+        List<String> ids = new ArrayList<String>(results.size());
+        List<GeneSummary> ret = new ArrayList<GeneSummary>();
+
+
+        for (String id : (List<String>) results) {
+            if (id.endsWith(":pep")) {
+                id = id.replace(":pep", "");
+            }
+            if (id.endsWith(":mRNA")) {
+                id = id.replace(":mRNA", "");
+            }
+            ids.add(id);
         }
         IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
         if (idsToGeneSummary == null) {
             throw new RuntimeException("Internal error - unable to find ids to gene summary query");
         }
-        idsToGeneSummary.setIds(ids2);
-        results = idsToGeneSummary.getResults();
-        return results;
+        idsToGeneSummary.setIds(ids);
+        ret.addAll((List<GeneSummary>)idsToGeneSummary.getResults());
+
+//        int top = 0;
+//        int max = 3;
+//
+//        while (top < ids.size()) {
+//            List<String> ids2 = new ArrayList<String>();
+//            max = ((ids.size() - top) >= BATCH_SIZE) ? BATCH_SIZE : ids.size() - top;
+//            for (int i=0; i < max ; i++) {
+//                String id = ids.get(i+top);
+//                if (id.endsWith(":pep")) {
+//                    id.replace(":pep", "");
+//                }
+//                if (id.endsWith(":mRNA")) {
+//                    id.replace(":mRNA", "");
+//                }
+//                ids2.add(id);
+//                IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
+//                if (idsToGeneSummary == null) {
+//                    throw new RuntimeException("Internal error - unable to find ids to gene summary query");
+//                }
+//                idsToGeneSummary.setIds(ids2);
+//                ret.addAll((List<GeneSummary>)idsToGeneSummary.getResults());
+//            }
+//            top += max;
+//        }
+        return ret;
     }
 
     private void populateModelData(Model model, Query query) {
