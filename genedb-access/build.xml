@@ -81,6 +81,17 @@
         </java>
     </target>
 
+    <target name="load-fasta" depends="fulljar-access">
+        <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadFasta">
+            <sysproperty key="load.organismCommonName" value="${organism}"/>
+            <sysproperty key="load.inputDirectory" value="${file}"/>
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <jvmarg line="-Xmx350M"/>
+        </java>
+    </target>
+
     <target name="delete-organism" depends="fulljar-access">
        <sql driver="org.postgresql.Driver"
            url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
