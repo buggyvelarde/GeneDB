@@ -82,7 +82,7 @@
                   <input type="hidden" name="organism" value="${organism}">
                 </c:if>
                 <input type="hidden" name="q" value="allNameProduct"/>
-                <input type="hidden" name="pseudogene" value="true"/>
+                <input type="hidden" name="pseudogenes" value="true"/>
                 <input type="hidden" name="product" value="true"/>
                 <input type="hidden" name="allNames" value="true"/>
                 <input id="query" name="search" type="text" align="middle"/>
