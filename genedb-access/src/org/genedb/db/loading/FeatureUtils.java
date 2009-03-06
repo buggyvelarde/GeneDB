@@ -81,11 +81,17 @@ public class FeatureUtils implements InitializingBean {
         DbXRef dbXRef = generalDao.getDbXRefByDbAndAcc(PUBMED_DB, accession); //objectManager.getDbXRef("PUBMED", accession);
         Pub pub;
         if (dbXRef == null) {
-            logger.trace(String.format("Could not find DbXRef for PUBMED:%s; creating new DbXRef and Pub", accession));
+            logger.trace(String.format("Could not find DbXRef for PUBMED:%s; creating new DbXRef", accession));
             dbXRef = new DbXRef(PUBMED_DB, accession);
             generalDao.persist(dbXRef);
-            pub = new Pub("PMID:" + accession, PUB_TYPE_UNFETCHED);
-            generalDao.persist(pub);
+            pub = pubDao.getPubByUniqueName("PMID:" + accession);
+            if (pub == null) {
+                logger.trace("Pub not found in database");
+                pub = new Pub("PMID:" + accession, PUB_TYPE_UNFETCHED);
+                pubDao.persist(pub);
+            } else {
+                logger.trace("Pub already in database (even though the DbXRef was not)");
+            }
             PubDbXRef pubDbXRef = new PubDbXRef(pub, dbXRef, true);
             generalDao.persist(pubDbXRef);
         } else {
