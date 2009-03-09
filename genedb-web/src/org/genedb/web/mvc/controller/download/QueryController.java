@@ -75,6 +75,13 @@ public class QueryController {
             return "redirect:/QueryList";
         }
         model.addAttribute("query", query);
+        
+
+        
+        if (!"true".equals(request.getParameter("newSearch")) 
+        		&& session.getAttribute("results")!= null){
+        	model.addAttribute("runQuery", Boolean.TRUE);
+        }
 
         populateModelData(model, query);
         return "search/"+queryName;

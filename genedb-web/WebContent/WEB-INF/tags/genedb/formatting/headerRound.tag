@@ -140,31 +140,31 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem"> <%-- Genes By Type --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneType&taxons=${taxonName}"/>" title="ProteinLength Search">By Gene Type</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneType&taxons=${taxonName}&newSearch=true"/>" title="ProteinLength Search">By Gene Type</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Genes By Location --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation&taxons=${taxonName}"/>" title="Protein Location Search">By Location</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation&taxons=${taxonName}&newSearch=true"/>" title="Protein Location Search">By Location</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Genes By Prediction Method --%>
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=genePredictionMethod&taxons=${taxonName}"/>" title="Prediction Method Search">By Prediction Method</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=genePredictionMethod&taxons=${taxonName}&newSearch=true"/>" title="Prediction Method Search">By Prediction Method</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Length --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonName}"/>" title="Protein Length Search">By Protein Length</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonName}&newSearch=true"/>" title="Protein Length Search">By Protein Length</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Molecular Mass --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinMass&taxons=${taxonName}" title="Protein mass Search">By Molecular Mass</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinMass&taxons=${taxonName}&newSearch=true" title="Protein mass Search">By Molecular Mass</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Num Transmembrane Domains --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinNumTM&taxons=${taxonName}" title="Protein num TM Search">By No. TM domains</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinNumTM&taxons=${taxonName}&newSearch=true" title="Protein num TM Search">By No. TM domains</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Motif Search --%>
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>MotifSearch&taxons=${taxonName}" title="Motif Search">Motif Search</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>MotifSearch&taxons=${taxonName}&newSearch=true" title="Motif Search">Motif Search</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Targeting Sequence --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinTargetingSeq&taxons=${taxonName}" title="Protein Targeting Search">By Targeting Seqs.</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinTargetingSeq&taxons=${taxonName}&newSearch=true" title="Protein Targeting Search">By Targeting Seqs.</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Annotation Status --%>
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>Query?q=annotationStatus&taxons=${taxonName}" title="Annotation Status Search">By Annotation Status</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>Query?q=annotationStatus&taxons=${taxonName}&newSearch=true" title="Annotation Status Search">By Annotation Status</a>
                                     </li>
                                 </ul>
                             </div>
