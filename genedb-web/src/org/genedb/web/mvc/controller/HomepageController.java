@@ -114,6 +114,7 @@ public class HomepageController {
         } else {
             mav.addObject("pageName", "GeneDB");
         }
+        mav.addObject("taxonNodeName", organism);
 
         return mav;
     }
