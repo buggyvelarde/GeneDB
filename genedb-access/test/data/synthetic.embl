@@ -68,7 +68,7 @@ FT                   SWALL:COXZ_RECAM); Reclinomonas americana; ; ; length 182
 FT                   aa; id=44.805%; ungapped id=46.939%; E()=2.5e-25; ; 151 aa
 FT                   overlap; query 1-152 aa; subject 32-180 aa"
 FT                   /GO="aspect=process; GOid=GO:0008152; term=metabolism;
-FT                   evidence=IEA; db_xref=TIGR_Tca1:autoGO;
+FT                   evidence=IEA; db_xref=PMID:1243659;
 FT                   with=Pfam:PF02230|TIGR:TriTryp_COG; date=20041214"
 FT                   /GO="aspect=component; GOid=GO:0005575; term=cellular
 FT                   component unknown; evidence=IEA; db_xref=TIGR_Tca1:autoGO;
@@ -135,6 +135,21 @@ FT                   /GO="aspect=component; GOid=GO:0016021; term=integral to
 FT                   outer membrane (sensu Gram-negative Bacteria);
 FT                   evidence=TAS; db_xref=PMID:2720787; date=20040707"
 FT                   /literature="PMID:2720787"
+FT                   /GO="aspect=component; GOid=GO:0005575;
+FT                   term=cellular_component; evidence=TAS;
+FT                   db_xref=PMID:11447124; date=20031204"
+FT                   /GO="aspect=function; GOid=GO:0003723; term=RNA binding;
+FT                   evidence=TAS; db_xref=PMID:11447124; date=20020604"
+FT                   /GO="aspect=function; GOid=GO:0008408;
+FT                   term=3'-5'-exodeoxyribonuclease activity; evidence=TAS;
+FT                   db_xref=PMID:11447124; date=20031204"
+FT                   /GO="aspect=process; GOid=GO:0016072; term=rRNA
+FT                   processing; evidence=TAS; db_xref=PMID:11447124;
+FT                   date=20020604"
+FT                   /db_xref="SWALL:Q95Z09"
+FT                   /db_xref="SWALL:Q95Z09"
+FT                   /GO="aspect=component; term=nucleus; GOid=GO:0005634; evidence=IC;
+FT                   db_xref=GOC:unpublished; from=GO:0006367; date=20060502"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,

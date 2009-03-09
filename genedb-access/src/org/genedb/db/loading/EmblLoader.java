@@ -690,7 +690,8 @@ class EmblLoader {
     // Can't define static fields in inner classes, grr.
     private static final Set<String> goQualifiers = new HashSet<String>();
     static {
-        Collections.addAll(goQualifiers, "aspect", "GOid", "term", "qualifier", "evidence", "db_xref", "with", "date");
+        Collections.addAll(goQualifiers, "aspect", "GOid", "term", "qualifier",
+            "evidence", "db_xref", "with", "from", "date");
     }
 
     /**
@@ -985,7 +986,7 @@ class EmblLoader {
                         }
                     } else if (key.equals("qualifier")) {
                         goInstance.addQualifier(value);
-                    } else if (key.equals("with")) {
+                    } else if (key.equals("with") || key.equals("from")) {
                         goInstance.setWithFrom(value);
                     } else if (key.equals("aspect")) {
                         goInstance.setSubtype(value);
