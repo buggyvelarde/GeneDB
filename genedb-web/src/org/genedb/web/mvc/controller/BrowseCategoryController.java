@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * Returns cvterms based on a particular cv
@@ -54,6 +55,7 @@ public class BrowseCategoryController {
     private String successView;
 
     private static final Logger logger = Logger.getLogger(BrowseCategoryController.class);
+    private static final String RESULTS_ATTR = "results";
 
     private CvDao cvDao;
 
@@ -70,8 +72,12 @@ public class BrowseCategoryController {
     public ModelAndView setUpForm(
             @RequestParam(value="category") BrowseCategory category,
             @RequestParam(value="organism", required=false) String[] orgs,
+            HttpSession session,
             Model model) {
         logger.warn("called method 2");
+        
+        //Clear session of any search result
+        session.removeAttribute(RESULTS_ATTR);
 
         //-------------------------------------------------------------------------------
         //Collection<String> orgNames = TaxonUtils.getOrgNames(bcb.getOrganism());

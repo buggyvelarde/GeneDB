@@ -42,6 +42,8 @@ public class QueryController {
     private static final String IDS_TO_GENE_SUMMARY_QUERY = "idsToGeneSummary";
 
     private static final int BATCH_SIZE = 1000;
+    
+    private static final String RESULTS_ATTR = "results";
 
     @Autowired
     private QueryFactory queryFactory;
@@ -61,9 +63,12 @@ public class QueryController {
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-        // TODO Do we want form submission via GET?
-        //return processForm(queryName, request, session, model);
-
+    	
+    	//From Browse Pages
+    	if ("controlledCuration".equals(queryName)){
+        	return processForm(queryName, request, session, model);
+        }
+        
         if (!StringUtils.hasText(queryName)) {
             session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
             return "redirect:/QueryList";
@@ -81,6 +86,9 @@ public class QueryController {
         if (!"true".equals(request.getParameter("newSearch")) 
         		&& session.getAttribute("results")!= null){
         	model.addAttribute("runQuery", Boolean.TRUE);
+        	
+        }else if ("true".equals(request.getParameter("newSearch"))){
+        	session.removeAttribute(RESULTS_ATTR);
         }
 
         populateModelData(model, query);
@@ -146,12 +154,12 @@ public class QueryController {
         switch (results.size()) {
         case 0:
             logger.error("No results found for query");
-            model.addAttribute("results", results);
+            model.addAttribute(RESULTS_ATTR, results);
             return "search/"+queryName;
         case 1:
             return "redirect:/NamedFeature?name="+((GeneSummary)results.get(0)).getSystematicId();
         default:
-            model.addAttribute("results", results);
+            model.addAttribute(RESULTS_ATTR, results);
             logger.error("Found results for query");
             return "search/"+queryName;
         }
