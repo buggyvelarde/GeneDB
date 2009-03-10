@@ -17,6 +17,7 @@ import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
+import org.genedb.querying.tmpquery.TaxonQuery;
 import org.genedb.web.mvc.controller.WebConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -41,9 +42,9 @@ public class QueryController {
 
     private static final String IDS_TO_GENE_SUMMARY_QUERY = "idsToGeneSummary";
 
-    private static final int BATCH_SIZE = 1000;
-    
     private static final String RESULTS_ATTR = "results";
+
+    private static final int BATCH_SIZE = 1000;
 
     @Autowired
     private QueryFactory queryFactory;
@@ -63,12 +64,13 @@ public class QueryController {
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-    	
-    	//From Browse Pages
-    	if ("controlledCuration".equals(queryName)){
-        	return processForm(queryName, request, session, model);
+
+
+        //From Browse Pages
+        if ("controlledCuration".equals(queryName)){
+             return processForm(queryName, request, session, model);
         }
-        
+
         if (!StringUtils.hasText(queryName)) {
             session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
             return "redirect:/QueryList";
@@ -80,15 +82,14 @@ public class QueryController {
             return "redirect:/QueryList";
         }
         model.addAttribute("query", query);
-        
 
-        
-        if (!"true".equals(request.getParameter("newSearch")) 
-        		&& session.getAttribute("results")!= null){
-        	model.addAttribute("runQuery", Boolean.TRUE);
-        	
+
+        if (!"true".equals(request.getParameter("newSearch"))
+                && session.getAttribute("results")!= null){
+            model.addAttribute("runQuery", Boolean.TRUE);
+
         }else if ("true".equals(request.getParameter("newSearch"))){
-        	session.removeAttribute(RESULTS_ATTR);
+            session.removeAttribute(RESULTS_ATTR);
         }
 
         populateModelData(model, query);
@@ -148,18 +149,24 @@ public class QueryController {
                 results = convertIdsToGeneSummaries(results);
             }
         }
-
         model.addAttribute("runQuery", Boolean.TRUE);
+
+        String taxonName = null;
+        if (query instanceof TaxonQuery) {
+            taxonName = ((TaxonQuery) query).getTaxons()[0].getLabel(); // FIXME
+        }
 
         switch (results.size()) {
         case 0:
             logger.error("No results found for query");
             model.addAttribute(RESULTS_ATTR, results);
+            model.addAttribute("taxonNodeName", taxonName);
             return "search/"+queryName;
         case 1:
             return "redirect:/NamedFeature?name="+((GeneSummary)results.get(0)).getSystematicId();
         default:
             model.addAttribute(RESULTS_ATTR, results);
+            model.addAttribute("taxonNodeName", taxonName);
             logger.error("Found results for query");
             return "search/"+queryName;
         }

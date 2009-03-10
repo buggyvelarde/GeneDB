@@ -16,7 +16,7 @@ import java.util.Set;
         shortDesc="Get a list of transcripts ",
         longDesc=""
     )
-public abstract class OrganismHqlQuery extends HqlQuery {
+public abstract class OrganismHqlQuery extends HqlQuery implements TaxonQuery {
 
     @QueryParam(
             order=1,

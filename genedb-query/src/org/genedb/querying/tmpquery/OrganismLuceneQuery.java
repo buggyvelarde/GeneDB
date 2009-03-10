@@ -16,7 +16,16 @@ import org.springframework.validation.Errors;
 import java.util.List;
 
 
-public abstract class OrganismLuceneQuery extends LuceneQuery {
+public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQuery {
+
+    protected static final TermQuery isCurrentQuery = new TermQuery(new Term("obsolete", "false"));
+    protected static final TermQuery geneQuery = new TermQuery(new Term("type.name","gene"));
+    protected static final TermQuery pseudogeneQuery = new TermQuery(new Term("type.name","pseudogene"));
+    protected static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
+    static {
+        geneOrPseudogeneQuery.add(geneQuery, Occur.SHOULD);
+        geneOrPseudogeneQuery.add(pseudogeneQuery, Occur.SHOULD);
+    }
 
     @Autowired
     private TaxonNodeManager taxonNodeManager;
@@ -28,11 +37,17 @@ public abstract class OrganismLuceneQuery extends LuceneQuery {
     protected TaxonNode[] taxons;
 
 
+    /* (non-Javadoc)
+     * @see org.genedb.querying.tmpquery.TaxonQuery#getTaxons()
+     */
     public TaxonNode[] getTaxons() {
         return taxons;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.genedb.querying.tmpquery.TaxonQuery#setTaxons(org.genedb.db.taxon.TaxonNode[])
+     */
     public void setTaxons(TaxonNode[] taxons) {
         this.taxons = taxons;
     }
