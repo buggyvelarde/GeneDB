@@ -24,7 +24,7 @@
            <property name="chado" value="pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot?genedb_ro" />
            <property name="jdbc.drivers" value="org.postgresql.Driver" />
            <property name="apple.laf.useScreenMenuBar" value="true" />
-           <property name="offset" value="${offset}" />
+           <property name="offset" value="${offset?c}" />
            <property name="read_only" value="" />
          </resources>
          <application-desc main-class="uk.ac.sanger.artemis.components.ArtemisMain">
