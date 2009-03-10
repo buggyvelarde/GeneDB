@@ -154,7 +154,7 @@ public class QueryController {
         String taxonName = null;
         if (query instanceof TaxonQuery) {
             TaxonNode[] nodes = ((TaxonQuery) query).getTaxons();
-            if (nodes.length > 0) {
+            if (nodes != null && nodes.length > 0) {
                 taxonName = nodes[0].getLabel();
             } // FIXME
         }
