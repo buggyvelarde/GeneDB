@@ -13,7 +13,15 @@ import javax.servlet.jsp.PageContext;
 
 public class SimpleSelectTag extends AbstractHomepageTag {
     
-	private String[] indentSpaces = {"", ".", "..", "...", "....", ".....", "......", ".......", "......._"};
+	private String[] indentSpaces = {"&nbsp;", 
+			"&nbsp;&nbsp;", 
+			"&nbsp;&nbsp;&nbsp;&nbsp;", 
+			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 
+			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 
+			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 
+			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 
+			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"};
 	
     @Override
     protected void display(TaxonNode root, JspWriter out) throws IOException {
