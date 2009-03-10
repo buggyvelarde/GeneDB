@@ -30,7 +30,7 @@ public class GeneSummary implements Comparable<GeneSummary> {
 
     public void setSystematicId(String systematicId) {
         String munged = removeSuffix(systematicId, ":pep");
-        munged = removeSuffix(munged, ":mrna");
+        munged = removeSuffix(munged, ":mRNA");
         this.systematicId = munged;
     }
 
