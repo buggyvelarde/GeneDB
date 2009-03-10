@@ -55,6 +55,12 @@ public class LoadEmbl extends FileProcessor {
      *                  <code>db_xref</code>s will still be extracted if possible. This is required
      *                  for projects such as Staphylococcus aureus, whose controlled_curation qualifiers
      *                  use a non-standard format.
+     *    <li> if <code>load.goTermErrorsAreNotFatal</code> is set to <code>true</code> (or
+     *                  any value other than <code>false</code>, in fact) then errors loading /GO
+     *                  qualifiers will be reported, but loading will continue. This does <strong>not</strong>
+     *                  affect the parsing of /GO qualifiers: parsing errors will still be fatal, as
+     *                  usual. It affects situations where there is no GO term with the specified
+     *                  accession number in the database, for example.
      *    <li> if <code>load.reportUnusedQualifiers</code> is set to <code>true</code> (or
      *                  any value other than <code>false</code>) then a list of unused qualifiers,
      *                  grouped by feature type, is printed after each file has been loaded.
@@ -79,19 +85,22 @@ public class LoadEmbl extends FileProcessor {
         String overwriteExisting = getPropertyWithDefault("load.overwriteExisting", "no").toLowerCase();
         String topLevelFeatureType = getRequiredProperty("load.topLevel");
         boolean sloppyControlledCuration = hasProperty("load.sloppyControlledCuration");
+        boolean goTermErrorsAreNotFatal = hasProperty("load.goTermErrorsAreNotFatal");
         boolean quickAndDirty = hasProperty("load.quickAndDirty");
         String ignoreQualifiers = getPropertyWithDefault("load.ignoreQualifiers", null);
 
         logger.info(String.format("Options: organismCommonName=%s, inputDirectory=%s, fileNamePattern=%s," +
-                   "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%s, ignoreQualifiers=%s",
+                   "overwriteExisting=%s, topLevel=%s, sloppyControlledCuration=%b, goTermErrorsAreNotFatal=%b," +
+                   "ignoreQualifiers=%s",
                    organismCommonName, inputDirectory, fileNamePattern, overwriteExisting,
-                   topLevelFeatureType, sloppyControlledCuration, ignoreQualifiers));
+                   topLevelFeatureType, sloppyControlledCuration, goTermErrorsAreNotFatal, ignoreQualifiers));
 
         if (quickAndDirty) {
             ((AppenderSkeleton) Logger.getRootLogger().getAppender("stdout")).setThreshold(Level.WARN);
         }
         LoadEmbl loadEmbl = new LoadEmbl(organismCommonName, overwriteExisting,
-            topLevelFeatureType, sloppyControlledCuration, ignoreQualifiers);
+            topLevelFeatureType, sloppyControlledCuration, goTermErrorsAreNotFatal,
+            ignoreQualifiers);
         if (quickAndDirty) {
             loadEmbl.quickAndDirty();
         }
@@ -102,7 +111,7 @@ public class LoadEmbl extends FileProcessor {
     private EmblLoader loader;
     private static final Pattern ignoreQualifiersPattern = Pattern.compile("\\G(?:(\\w+):)?(\\w+)(?:,|\\Z)");
     private LoadEmbl(String organismCommonName, String overwriteExistingString, String topLevelFeatureType,
-            boolean sloppyControlledCuration, String ignoreQualifiers) {
+            boolean sloppyControlledCuration, boolean goTermErrorsAreNotFatal, String ignoreQualifiers) {
         EmblLoader.OverwriteExisting overwriteExisting;
         if (overwriteExistingString.equals("yes")) {
             overwriteExisting = EmblLoader.OverwriteExisting.YES;
@@ -120,6 +129,7 @@ public class LoadEmbl extends FileProcessor {
         loader.setOrganismCommonName(organismCommonName);
         loader.setOverwriteExisting(overwriteExisting);
         loader.setSloppyControlledCuration(sloppyControlledCuration);
+        loader.setGoTermErrorsAreNotFatal(goTermErrorsAreNotFatal);
 
         if (topLevelFeatureType.equals("chromosome")) {
             loader.setTopLevelFeatureClass(Chromosome.class);

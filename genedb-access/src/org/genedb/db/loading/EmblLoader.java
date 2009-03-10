@@ -111,6 +111,7 @@ class EmblLoader {
 
     private boolean sloppyControlledCuration = false;
     private boolean reportUnusedQualifiers = true;
+    private boolean goTermErrorsAreNotFatal = false;
 
     private Collection<String> ignoredQualifiers = new HashSet<String>();
     private Map<String,Collection<String>> ignoredQualifiersByFeatureType = new HashMap<String,Collection<String>>();
@@ -168,6 +169,17 @@ class EmblLoader {
      */
     public void setSloppyControlledCuration(boolean sloppyControlledCuration) {
         this.sloppyControlledCuration = sloppyControlledCuration;
+    }
+
+    /**
+     * Whether GO term errors - in particular the case where the database does not contain
+     * a term with the specified accession number - should be logged and ignored rather than
+     * fatal.
+     *
+     * @param goTermErrorsAreNotFatal
+     */
+    public void setGoTermErrorsAreNotFatal(boolean goTermErrorsAreNotFatal) {
+        this.goTermErrorsAreNotFatal = goTermErrorsAreNotFatal;
     }
 
     /**
@@ -998,7 +1010,15 @@ class EmblLoader {
                         goInstance.setRef(value);
                     }
                 }
-                featureUtils.createGoEntries(focalFeature, goInstance, "From EMBL file", (DbXRef) null);
+                if (goTermErrorsAreNotFatal) {
+                    try {
+                        featureUtils.createGoEntries(focalFeature, goInstance, "From EMBL file", (DbXRef) null);
+                    } catch (DataError e) {
+                        logger.error("Error loading GO term: " + e.getMessage());
+                    }
+                } else {
+                    featureUtils.createGoEntries(focalFeature, goInstance, "From EMBL file", (DbXRef) null);
+                }
             }
         }
 
