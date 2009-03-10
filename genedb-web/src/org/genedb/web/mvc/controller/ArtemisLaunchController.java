@@ -34,7 +34,7 @@ public class ArtemisLaunchController {
         String argument = organism + ":" + chromosome + ":" + realStart + ".." + realEnd;
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("argument", argument);
-        model.put("offset", start);
+        model.put("offset", start - offset);
 
         return new ModelAndView("artemis", model);
     }
