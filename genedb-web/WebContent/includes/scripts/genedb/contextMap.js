@@ -269,6 +269,7 @@ function reloadDetails(name) {
             return;
         else
             name = originalTranscriptName; // Going back to initial view
+        $("#navigatePages").show();
     }
 
     $("#contextMapInfoPanel:visible").slideUp(200);
@@ -281,6 +282,8 @@ function reloadDetails(name) {
         loadedTranscriptName = name;
         document.title = "Transcript "+name+" - GeneDB";
         $("#geneDetails").stop().fadeTo("fast", 1);
+        if (name != originalTranscriptName)
+        	$("#navigatePages").hide();
         $("#geneDetailsLoading").hide();
         loading = false;
         selectTranscriptByName(name);
