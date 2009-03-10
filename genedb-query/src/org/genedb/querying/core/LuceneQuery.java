@@ -68,15 +68,6 @@ public abstract class LuceneQuery implements Query {
 
     protected abstract String getluceneIndexName();
 
-    protected static final TermQuery isCurrentQuery = new TermQuery(new Term("obsolete", "false"));
-    protected static final TermQuery geneQuery = new TermQuery(new Term("type.name","gene"));
-    protected static final TermQuery pseudogeneQuery = new TermQuery(new Term("type.name","pseudogene"));
-    protected static final BooleanQuery geneOrPseudogeneQuery = new BooleanQuery();
-    static {
-        geneOrPseudogeneQuery.add(geneQuery, Occur.SHOULD);
-        geneOrPseudogeneQuery.add(pseudogeneQuery, Occur.SHOULD);
-    }
-
     //private List<CachedParamDetails> cachedParamDetailsList = new ArrayList<CachedParamDetails>();
     //private Map<String, CachedParamDetails> cachedParamDetailsMap = new HashMap<String, CachedParamDetails>();
 
