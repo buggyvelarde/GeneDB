@@ -110,21 +110,8 @@ public class InsertPhylonode {
 
         conn.setAutoCommit(false);
         root.insertNewNodes(conn);
-        root.recomputeIndexes(conn, 1);
-        makeIndexesPositive();
+        root.recomputeIndexes(conn);
         conn.commit();
-    }
-
-    private void makeIndexesPositive() throws SQLException {
-        PreparedStatement st = conn.prepareStatement(
-            "update phylonode set left_idx = -left_idx, right_idx = -right_idx "+
-            "where phylotree_id = 1 and (left_idx < 0 or right_idx < 0)"
-        );
-        try {
-            st.executeUpdate();
-        } finally {
-            try { st.close(); } catch (SQLException e) { }
-        }
     }
 }
 
@@ -159,7 +146,12 @@ class Phylonode {
         parent.children.add(this);
     }
 
-    int recomputeIndexes(Connection conn, int previousIndex) throws SQLException {
+    public void recomputeIndexes(Connection conn) throws SQLException {
+        recomputeIndexes(conn, 1);
+        afterUpdatingIndexes(conn);
+    }
+
+    private int recomputeIndexes(Connection conn, int previousIndex) throws SQLException {
         int oldLeftIndex    = this.leftIndex;
         int oldRightIndex = this.rightIndex;
 
@@ -181,6 +173,13 @@ class Phylonode {
         System.out.printf("Updating phylonode '%s' [ID=%d] with left_idx=%d and right_idx=%d\n",
             label, phylonodeId, leftIndex, rightIndex);
 
+        /* If we set the left_idx and right_idx directly to the desired values, we can get
+         * uniqueness violation - the combination (phylotree_id, left_idx, right_idx) must
+         * be unique. We avoid this problem by setting them to the negation of the desired
+         * values; then, when all updates have been done, the method afterUpdatingIndexes
+         * is called to make all the values positive. This all happens within a transaction,
+         * so should not be visible to other database transactions.
+         */
         PreparedStatement st = conn.prepareStatement(
             "update phylonode set left_idx = -?, right_idx = -? where phylonode_id = ?"
         );
@@ -193,6 +192,18 @@ class Phylonode {
             if (numRows != 1) {
                 throw new RuntimeException("Expected one row to be affected, not " + numRows);
             }
+        } finally {
+            try { st.close(); } catch (SQLException e) { }
+        }
+    }
+
+    private void afterUpdatingIndexes(Connection conn) throws SQLException {
+        PreparedStatement st = conn.prepareStatement(
+            "update phylonode set left_idx = -left_idx, right_idx = -right_idx "+
+            "where phylotree_id = 1 and (left_idx < 0 or right_idx < 0)"
+        );
+        try {
+            st.executeUpdate();
         } finally {
             try { st.close(); } catch (SQLException e) { }
         }
