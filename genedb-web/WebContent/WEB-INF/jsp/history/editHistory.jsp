@@ -10,10 +10,10 @@
     <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/connection/connection-min.js"/>"></script>
 
     <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/json/json-min.js"/>"></script>
-    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/element/element-beta-min.js"/>"></script>
-    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datasource/datasource-beta-min.js"/>"></script>
-    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/editor/editor-beta-min.js"/>"></script>
-    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datatable/datatable-beta-min.js"/>"></script>
+    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/element/element-min.js"/>"></script>
+    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datasource/datasource-min.js"/>"></script>
+    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/editor/editor-min.js"/>"></script>
+    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datatable/datatable-min.js"/>"></script>
     <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/button/button-min.js"/>"></script>
     <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/logger/logger-min.js"/>"></script>
     <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/yuitest/yuitest-min.js"/>"></script>

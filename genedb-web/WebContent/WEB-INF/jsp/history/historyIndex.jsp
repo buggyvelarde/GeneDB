@@ -7,9 +7,9 @@
     <link rel="stylesheet" type="text/css" href="<c:url value="/includes/yui/build/button/assets/skins/sam/button.css"/>" />
     <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/yahoo-dom-event/yahoo-dom-event.js"/>"></script>
     <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/json/json-min.js"/>"></script>
-    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/element/element-beta-min.js"/>"></script>
-    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datasource/datasource-beta-min.js"/>"></script>
-    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datatable/datatable-beta-min.js"/>"></script>
+    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/element/element-min.js"/>"></script>
+    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datasource/datasource-min.js"/>"></script>
+    <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/datatable/datatable-min.js"/>"></script>
     <script language="javascript" type="text/javascript" src="<c:url value="/includes/yui/build/button/button-min.js"/>"></script>
     <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
     <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/resultsPage.css"/>" />
