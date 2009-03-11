@@ -12,7 +12,13 @@ import java.util.Map;
 
 /**
  * Insert a leaf phylonode (corresponding to an organism that already exists in the organism table)
- * into phylotree 1.
+ * into phylotree 1. This code has very few external dependencies: it needs only the PostgreSQL
+ * JDBC driver to run.
+ * <p>
+ * Usage is of the form
+ * <pre>java InsertPhylonode &lt;jdbc URL&gt; &lt;database username&gt; [&lt;parent phylonode label&gt; &lt;organism common name&gt;]</pre>
+ * if the optional arguments are omitted, it just prints a textual representation of the phylotree to standard output. Otherwise it
+ * inserts the new node, then prints the resulting tree.
  *
  * @author rh11
  *
