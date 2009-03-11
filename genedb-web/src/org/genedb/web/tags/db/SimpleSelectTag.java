@@ -12,16 +12,6 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
 public class SimpleSelectTag extends AbstractHomepageTag {
-    
-	private String[] indentSpaces = {"&nbsp;", 
-			"&nbsp;&nbsp;", 
-			"&nbsp;&nbsp;&nbsp;&nbsp;", 
-			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 
-			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
-			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 
-			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 
-			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 
-			"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"};
 	
     @Override
     protected void display(TaxonNode root, JspWriter out) throws IOException {
@@ -31,8 +21,8 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         //Find the previously selected taxons if any in Request
         PageContext pageContext = (PageContext)getJspContext();
         String previouslySelectedTaxons = pageContext.getRequest().getParameter("taxons");
-        
-        displayImmediateChildren(root, out, 0, previouslySelectedTaxons);
+        String indentSpaces = "&nbsp;&nbsp;";
+        displayImmediateChildren(root, out, 0, indentSpaces, previouslySelectedTaxons);
 
         out.write("\n</select>");
     }
@@ -46,7 +36,8 @@ public class SimpleSelectTag extends AbstractHomepageTag {
      * @param previouslySelectedTaxons Should be pre-populated in a postback or redirect
      * @throws IOException
      */
-    private void displayImmediateChildren(TaxonNode node, JspWriter out, int indent, String previouslySelectedTaxons) throws IOException {
+    private void displayImmediateChildren(TaxonNode node, JspWriter out, int indent, String indentSpaces, String previouslySelectedTaxons) throws IOException {
+    	
         out.write("\n<option ");
         out.write(" class=\"");
         out.write("Level");
@@ -64,10 +55,22 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         if (indent > 7) {
         	indent=8;
         }
-        out.write(indentSpaces[indent]);
-        out.write(node.getLabel());
-        out.write("</option>");
+        out.write(indentSpaces);
+
         List<TaxonNode> children = node.getChildren();
+        
+        //Remove underscores
+        String displayLabel = node.getLabel().replace("_", " ");
+        
+        //Reformat leaf nodes to add a dot and space between first char and the rest of chars
+        if(children!= null && children.size()==0){
+        	StringBuffer sb = new StringBuffer(displayLabel);
+        	sb.insert(1, ". ");
+        	out.write(sb.toString());
+        }else{
+        	out.write(displayLabel);
+        }
+        out.write("</option>");
         Collections.sort(children, new Comparator<TaxonNode>() {
 			@Override
 			public int compare(TaxonNode arg0, TaxonNode arg1) {
@@ -78,7 +81,8 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         });
         for (TaxonNode child : children) {
             if(child.hasOrganismFeature()){
-            	displayImmediateChildren(child, out, indent+1, previouslySelectedTaxons);
+            	displayImmediateChildren(
+            			child, out, indent+1, indentSpaces + "&nbsp;&nbsp;&nbsp;", previouslySelectedTaxons);
             }
         }
     }
