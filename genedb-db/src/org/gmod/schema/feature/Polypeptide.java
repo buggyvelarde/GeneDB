@@ -325,7 +325,7 @@ public class Polypeptide extends Region {
 
     @Transient
     @Field(index=Index.UN_TOKENIZED, store=Store.NO)
-    public int numberTMDomains() {
+    public int getNumberTMDomains() {
         return this.getRegions(TransmembraneRegion.class).size();
     }
 
