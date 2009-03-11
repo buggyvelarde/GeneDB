@@ -3,6 +3,8 @@ package org.genedb.hibernate.search;
 import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Gap;
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.Region;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.UTR;
 import org.gmod.schema.mapped.Feature;
@@ -21,8 +23,14 @@ import org.hibernate.search.Search;
 import org.hibernate.search.event.FullTextIndexEventListener;
 import org.postgresql.ds.PGSimpleDataSource;
 
+import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
+import uk.co.flamingpenguin.jewel.cli.Cli;
+import uk.co.flamingpenguin.jewel.cli.CliFactory;
+import uk.co.flamingpenguin.jewel.cli.Option;
+
 import java.io.Console;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
+
 
 /**
  * Create Lucene indices.
@@ -50,12 +59,18 @@ import javax.sql.DataSource;
  * @author rh11
  */
 public class IndexChado {
-    private static final Logger logger = Logger.getLogger(IndexChado.class);
+    private static Logger logger = Logger.getLogger(IndexChado.class);
 
     private static void die(String message) {
         System.err.println(message);
         System.err.println();
         System.exit(1);
+    }
+
+    private boolean ignoreProblems;
+
+    public void setIgnoreProblems(boolean ignoreProblems) {
+        this.ignoreProblems = ignoreProblems;
     }
 
     /**
@@ -74,14 +89,16 @@ public class IndexChado {
         INDEXED_CLASSES.add(Transcript.class);
         INDEXED_CLASSES.add(UTR.class);
         INDEXED_CLASSES.add(Gap.class);
+        INDEXED_CLASSES.add(Polypeptide.class);
         // Add feature types here, if a new type of feature should be indexed.
         // Don't forget to update the class doc comment!
-    };
+    }
 
     private String databaseUrl;
     private String databaseUsername;
     private String databasePassword;
     private String indexBaseDirectory;
+    private String organism;
 
     /**
      * Create a new instance configured with database connection information taken from
@@ -92,33 +109,39 @@ public class IndexChado {
      */
     public static IndexChado configuredWithSystemProperties() {
         String databaseUrl = System.getProperty("database.url");
-        if (databaseUrl == null)
+        if (databaseUrl == null) {
             die("The property database.url must be supplied, "
                     + "e.g. -Ddatabase.url=jdbc:postgres://localhost:10101/malaria_workshop");
+        }
         String databaseUsername = System.getProperty("database.user");
-        if (databaseUsername == null)
+        if (databaseUsername == null) {
             die("The property database.user must be supplied, " + "e.g. -Ddatabase.user=pathdb");
+        }
 
         String databasePassword = System.getProperty("database.password");
-        if (databasePassword == null)
+        if (databasePassword == null) {
             databasePassword = promptForPassword(databaseUrl, databaseUsername);
+        }
 
         String indexBaseDirectory = System.getProperty("index.base");
-        if (indexBaseDirectory == null)
+        if (indexBaseDirectory == null) {
             die("The property index.base must be supplied, "
                     + "e.g. -Dindex.base=/software/pathogen/genedb/indexes");
+        }
 
         return new IndexChado(databaseUrl, databaseUsername, databasePassword, indexBaseDirectory);
     }
 
     private static String promptForPassword(String databaseUrl, String databaseUsername) {
         Console console = System.console();
-        if (console == null)
+        if (console == null) {
             die("No password has been supplied, and no console found");
+        }
 
         char[] password = null;
-        while (password == null)
+        while (password == null) {
             password = console.readPassword("Password for %s@%s: ", databaseUsername, databaseUrl);
+        }
         return new String(password);
     }
 
@@ -142,12 +165,14 @@ public class IndexChado {
     private DataSource getDataSource() {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         Matcher urlMatcher = POSTGRES_URL_PATTERN.matcher(databaseUrl);
-        if (!urlMatcher.matches())
+        if (!urlMatcher.matches()) {
             throw new RuntimeException(String.format("Malformed PostgreSQL URL '%s'", databaseUrl));
+        }
 
         dataSource.setServerName(urlMatcher.group(1));
-        if (urlMatcher.group(2) != null)
+        if (urlMatcher.group(2) != null) {
             dataSource.setPortNumber(Integer.parseInt(urlMatcher.group(2)));
+        }
         dataSource.setDatabaseName(urlMatcher.group(3));
 
         dataSource.setUser(databaseUsername);
@@ -166,8 +191,9 @@ public class IndexChado {
      * @return
      */
     private SessionFactory getSessionFactory(int batchSize) {
-        if (sessionFactoryByBatchSize.containsKey(batchSize))
+        if (sessionFactoryByBatchSize.containsKey(batchSize)) {
             return sessionFactoryByBatchSize.get(batchSize);
+        }
 
         ChadoAnnotationConfiguration cfg = new ChadoAnnotationConfiguration();
         cfg.setDataSource(getDataSource());
@@ -222,8 +248,9 @@ public class IndexChado {
         transaction.commit();
         session.close();
 
-        if (failed.size() > 0)
+        if (failed.size() > 0) {
             reindexFailedFeatures(failed);
+        }
     }
 
     /**
@@ -244,8 +271,13 @@ public class IndexChado {
         Set<Integer> failedToLoad = new HashSet<Integer>();
         Criteria criteria = session.createCriteria(featureClass);
         criteria.add(Restrictions.eq("obsolete", false)); // Do not index obsolete features
-        if (numBatches > 0)
+        if (organism != null) {
+            criteria.createCriteria("organism")
+            .add( Restrictions.eq("commonName", organism));
+        }
+        if (numBatches > 0) {
             criteria.setMaxResults(numBatches * BATCH_SIZE);
+        }
 
         ScrollableResults results = criteria.scroll(ScrollMode.FORWARD_ONLY);
 
@@ -263,7 +295,7 @@ public class IndexChado {
                     feature.getClass()));
                 session.index(feature);
             } catch (Exception e) {
-                logger.warn("Batch failed", e);
+                logger.error("Batch failed", e);
                 failed = true;
             }
 
@@ -271,8 +303,9 @@ public class IndexChado {
                 logger.info(String.format("Indexed %d of %s", i, featureClass));
                 session.clear();
                 thisBatchCount = 0;
-                if (failed)
+                if (failed) {
                     failedToLoad.addAll(thisBatch);
+                }
                 thisBatch = new HashSet<Integer>();
             }
         }
@@ -286,6 +319,7 @@ public class IndexChado {
      * from a batch indexing run.
      *
      * @param failed a set of features to reindex
+     * @throws Exception
      */
     private void reindexFailedFeatures(Set<Integer> failed) {
         logger.info("Attempting to reindex failed features");
@@ -298,9 +332,13 @@ public class IndexChado {
             try {
                 session.index(feature);
                 logger.debug("Feature successfully indexed");
-            } catch (Exception e) {
-                logger.error(String.format("Failed to index feature '%s' on the second attempt",
-                    feature.getUniqueName()), e);
+            } catch (Exception exp) {
+                String msg = String.format("Failed to index feature '%s' on the second attempt", feature.getUniqueName());
+                if (ignoreProblems) {
+                    logger.info(msg, exp);
+                } else {
+                    throw new RuntimeException(msg, exp);
+                }
             }
             session.clear();
         }
@@ -308,27 +346,54 @@ public class IndexChado {
         session.close();
     }
 
+    interface IndexGeneDBArgs {
+        @Option(shortName="n", description="Number of batches - only useful for quick-and-dirty testing")
+        int getNumBatches();
+        void setNumBatches(int numBatches);
+        boolean isNumBatches();
 
-    /**
-     * If a command-line argument is passed, it should specify a number of batches.
-     * For each feature type, just that many batches are indexed. This is useful for
-     * rapid testing: for example if you have changed the structure of the index and
-     * want to see whether the resulting indices look plausible. It is not useful for
-     * anything else, as far as I know.
-     *
-     * @param args
-     */
+        @Option(shortName="o", description="Only index this organism")
+        String getOrganism();
+        void setOrganism(String organism);
+        boolean isOrganism();
+
+
+        @Option(shortName="i", description="Ignore problems and continue")
+        boolean getIgnoreProblems();
+        void setIgnoreProblems(boolean ignoreProblems);
+        boolean isIgnoreProblems();
+    }
+
+
     public static void main(String[] args) {
-        // The numBatches argument is only useful for quick-and-dirty testing
-        int numBatches = -1;
-        if (args.length == 1)
-            numBatches = Integer.parseInt(args[0]);
-        else if (args.length != 0)
-            throw new IllegalArgumentException("Unexpected command-line arguments");
+
+        Cli<IndexGeneDBArgs> cli = CliFactory.createCli(IndexGeneDBArgs.class);
+        IndexGeneDBArgs iga = null;
+        try {
+          iga = cli.parseArguments(args);
+        }
+        catch(ArgumentValidationException exp) {
+            System.err.println("Unable to run:");
+            System.err.println(cli.getHelpMessage());
+            exp.printStackTrace();
+            return;
+        }
+
 
         IndexChado indexer = IndexChado.configuredWithSystemProperties();
+        if (iga.isOrganism()) {
+            indexer.setOrganism(iga.getOrganism());
+        }
+        indexer.setIgnoreProblems(iga.getIgnoreProblems());
+
+        int numBatches = iga.isNumBatches() ? iga.getNumBatches(): -1;
+
         for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
             indexer.indexFeatures(featureClass, numBatches);
         }
+    }
+
+    private void setOrganism(String organism) {
+        this.organism = organism;
     }
 }
