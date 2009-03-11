@@ -17,6 +17,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+/**
+ * Issue an ad hoc HQL query against the database.
+ *
+ * @author rh11
+ *
+ */
 public class Query {
 
     private static void initLog4J(boolean verbose) {
