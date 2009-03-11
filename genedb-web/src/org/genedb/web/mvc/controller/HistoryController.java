@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.collect.Maps;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.spring.web.servlet.view.JsonView;
@@ -44,7 +46,7 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
  * <code>MultiActionController</code> that handles all non-form URL's.
- * 
+ *
  * @author Adrian Tivey
  */
 @Controller
@@ -63,7 +65,7 @@ public class HistoryController extends MultiActionController implements Initiali
     private static final String GENEDB_HISTORY = "_GeneDB_History_List";
     String compile = "Organism:([\\w\\W]+?);;Category:([\\w\\W]+?);;Term:([\\w\\W]*)";
     Pattern pattern = Pattern.compile(compile);
-    
+
     public void setViewChecker(FileCheckingInternalResourceViewResolver viewChecker) {
         this.viewChecker = viewChecker;
     }
@@ -74,7 +76,7 @@ public class HistoryController extends MultiActionController implements Initiali
 
     /**
      * Simple redirection to a JSP that does an AJAX-y request to viewData
-     * 
+     *
      * @param request current HTTP request
      * @param response current HTTP response
      * @return a ModelAndView to render the response
@@ -84,11 +86,14 @@ public class HistoryController extends MultiActionController implements Initiali
         if (session == null) {
             return new ModelAndView("history/noSession");
         }
-        
-        return new ModelAndView(historyView);
+        //return new ModelAndView(historyView);
+        Map<String, Object> model = Maps.newHashMap();
+        HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
+        model.put("items", historyManager.getHistoryItems());
+        return new ModelAndView("history/index", model);
     }
-    
-    
+
+
     public ModelAndView viewData(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
@@ -96,7 +101,7 @@ public class HistoryController extends MultiActionController implements Initiali
             response.setStatus(SESSION_FAILED_ERROR_CODE);
             return null;
         }
-        
+
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
 
         Map<String,Object> model = new HashMap<String,Object>();
@@ -105,8 +110,8 @@ public class HistoryController extends MultiActionController implements Initiali
 
         return new ModelAndView(jsonView, model);
     }
-    
-    
+
+
     public ModelAndView Download(HttpServletRequest request,HttpServletResponse response) {
         String history = null;
         try {
@@ -115,13 +120,13 @@ public class HistoryController extends MultiActionController implements Initiali
             // No history item chosen - redirect to view history
             // TODO Flash message
         }
-        
+
         HttpSession session = request.getSession(false);
         // TODO Session may be null
 
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
         String formalHistoryName = historyManager.getFormalName(history);
-        
+
         if (formalHistoryName == null) {
             // No history item chosen - redirect to view history
             // TODO Flash message
@@ -131,12 +136,12 @@ public class HistoryController extends MultiActionController implements Initiali
         model.put("history", formalHistoryName);
         return new ModelAndView(downloadView,model);
     }
-    
-    
+
+
     public ModelAndView EditHistory(HttpServletRequest request,HttpServletResponse response) {
         String history = ServletRequestUtils.getStringParameter(request, "history","0");
         String remove = ServletRequestUtils.getStringParameter(request, "remove","false");
-        
+
         if(history == "0") {
             //be.reject("no.download.history");
             return new ModelAndView(editView);
@@ -148,57 +153,57 @@ public class HistoryController extends MultiActionController implements Initiali
             historyManager.removeItem(Integer.parseInt(history)-1, historyManager.getVersion());
             return new ModelAndView("redirect:/History/View");
         }
-        
+
         Map<String,Object> model = new HashMap<String,Object>();
         model.put("history", history);
         int item = Integer.parseInt(history);
         HistoryItem historyItem = historyManager.getHistoryItems().get(item-1);
         String internalName = historyItem.getInternalName();
-        
+
 
         Matcher matcher = pattern.matcher(internalName);
-        
+
         String organism = null;
         String category = null;
         String term = null;
-        
+
         while(matcher.find()) {
             organism = matcher.group(1);
             category = matcher.group(2);
             term = matcher.group(3);
         }
-        
+
         model.put("historyName", historyItem.getName());
         model.put("organism", organism);
         model.put("category", category);
         model.put("term", term);
-        
+
         return new ModelAndView(editView,model);
     }
-    
-    
 
-    
-    
+
+
+
+
     public ModelAndView EditName(HttpServletRequest request,HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
         String history = ServletRequestUtils.getStringParameter(request, "history","0");
         String newName = ServletRequestUtils.getStringParameter(request, "value","");
-        
+
         int count = Integer.parseInt(history) - 1;
-        
+
         List<HistoryItem> historyItems = historyManager.getHistoryItems();
         HistoryItem changedItem = historyItems.get(count);
         boolean exists = false;
-        
+
         for (HistoryItem historyItem : historyItems) {
-            if(historyItem.getName().equals(newName) && 
+            if(historyItem.getName().equals(newName) &&
                     historyItem.getHistoryType().equals(changedItem.getHistoryType())) {
                 exists = true;
             }
         }
-        
+
         if(!exists) {
             changedItem.setName(newName);
         } else {
@@ -210,7 +215,7 @@ public class HistoryController extends MultiActionController implements Initiali
         }
         return null;
     }
-    
+
     public ModelAndView AddItem(HttpServletRequest request,HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session == null) {
@@ -226,18 +231,18 @@ public class HistoryController extends MultiActionController implements Initiali
             return new ModelAndView("redirect:" + "/History/View?sessionTest=true");
         }
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-        
+
         String history = ServletRequestUtils.getStringParameter(request, "history","0");
         String id = ServletRequestUtils.getStringParameter(request, "ids","");
         String type = ServletRequestUtils.getStringParameter(request, "type","");
-        
+
         ArrayList<String> ids = new ArrayList<String>();
         String list[] = id.split(",");
         for (String s : list) {
             ids.add(s);
         }
         HistoryItem item = historyManager.getHistoryItems().get(Integer.parseInt(history)-1);
-        
+
         if(type.equals("MODIFY")) {
             item.setIds(ids);
             item.setHistoryType(HistoryType.MANUAL);
@@ -282,7 +287,7 @@ public class HistoryController extends MultiActionController implements Initiali
     // // String name = ServletRequestUtils.getStringParameter(request, "name",
     // NO_VALUE_SUPPLIED);
     // // if (name.equals(NO_VALUE_SUPPLIED)) {
-    //          
+    //
     // // }
     // // Feature feat = featureDao.findByUniqueName(name);
     // Map model = new HashMap(3);
@@ -330,7 +335,7 @@ public class HistoryController extends MultiActionController implements Initiali
     // }
     // return new ModelAndView(viewName, model);
     // }
-    //  
+    //
     //
     // public ModelAndView CvTermByCvName(HttpServletRequest request,
     // HttpServletResponse response) {
@@ -346,7 +351,7 @@ public class HistoryController extends MultiActionController implements Initiali
     // List cvTerms = cvTermDao.findByNameInCv(cvTermName, cv);
     // String viewName = "db/listCvTerms";
     // Map model = new HashMap();
-    //      
+    //
     // if (cvTerms.size()==1) {
     // viewName = "db/cvTerm";
     // model.put("cvTerm", cvTerms.get(0));
@@ -362,7 +367,7 @@ public class HistoryController extends MultiActionController implements Initiali
     // HttpServletResponse response) {
     // int id = ServletRequestUtils.getIntParameter(request, "id", -1);
     // if (id == -1) {
-    //          
+    //
     // }
     // Pub pub = pubHome.findById(id);
     // Map model = new HashMap(3);
@@ -372,7 +377,7 @@ public class HistoryController extends MultiActionController implements Initiali
 
     /**
      * Custom handler for examples
-     * 
+     *
      * @param request current HTTP request
      * @param response current HTTP response
      * @return a ModelAndView to render the response
@@ -382,11 +387,11 @@ public class HistoryController extends MultiActionController implements Initiali
      * HttpServletResponse response) { List<String> answers = new ArrayList<String>();
      * if (!WebUtils.extractTaxonNodesFromRequest(request, answers, true,
      * false)) { return new ModelAndView("chooseTaxonContextView"); }
-     * 
+     *
      * QueryForm qf = parseQueryForm(0, request); NumberedQueryI q =
      * qf.getNumberedQueryI(); if (q == null) { q = new QueryPlaceHolder();
      * qf.setNumberedQuery(q); }
-     * 
+     *
      * boolean submitPressed = false; if
      * ("Run".equals(request.getParameter("runquery"))) { if (q.isComplete()) {
      * return new ModelAndView("resultListView"); } // query not complete - fall
@@ -398,7 +403,7 @@ public class HistoryController extends MultiActionController implements Initiali
      * replaceNode(q, q1, op); QueryTreeWalker qtw = new
      * QueryTreeWalker((NumberedQueryI)q, 0); qtw.go(); break; } } // Now let's
      * see if an expansion was requested }
-     * 
+     *
      * Map model = new HashMap(); model.put(WebConstants.QUERY_FORM, qf);
      * model.put(WebConstants.TAX_ID, answers.get(0)); return new
      * ModelAndView("queryWorking", WebConstants.MODEL_MAP, model ); }
@@ -412,15 +417,15 @@ public class HistoryController extends MultiActionController implements Initiali
      * private boolean recurseTree(BasicQueryI q, int q1, BooleanOp op) { //
      * Looking for parent... if (!(q instanceof BooleanQuery)) { return false; }
      * BooleanQuery bool = (BooleanQuery) q;
-     * 
+     *
      * if (bool.getFirstQuery().getIndex()==q1) { BasicQueryI node =
      * bool.getFirstQuery(); BooleanQuery newNode = new BooleanQuery(op, node,
      * new QueryPlaceHolder()); bool.setFirstQuery(newNode); return true; }
-     * 
+     *
      * if (bool.getSecondQuery().getIndex()==q1) { BasicQueryI node =
      * bool.getSecondQuery(); BooleanQuery newNode = new BooleanQuery(op, node,
      * new QueryPlaceHolder()); bool.setSecondQuery(newNode); return true; }
-     * 
+     *
      * if (recurseTree(bool.getFirstQuery(), q1, op)) { return true; } return
      * recurseTree(bool.getSecondQuery(), q1, op);
      *  }
@@ -453,7 +458,7 @@ public class HistoryController extends MultiActionController implements Initiali
      * request.getParameter("question."+index); QueryPlaceHolder qph = new
      * QueryPlaceHolder(); if (!"none".equals(value)) { qph.setName(value); }
      * qph.setIndex(index);
-     * 
+     *
      * return qph;
      *  }
      */
