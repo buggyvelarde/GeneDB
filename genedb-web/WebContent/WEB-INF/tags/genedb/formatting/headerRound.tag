@@ -77,29 +77,22 @@
         <td id="logo" valign="top" align="left" rowspan="2"><a href="<c:url value="/Homepage"/>"><img border="0" width="171" height="51" src="<c:url value="/includes/images/genedb-logo.gif"/>" alt="GeneDB"></img></a></td>
         <td id="name">${name}</td>
         <td id="search">
-            <form name="searchForm" action="<c:url value="/"/>Query" method="post">
-                <c:if test="${!empty organism}">
-                  <input type="hidden" name="organism" value="${organism}">
-                </c:if>
-                <input type="hidden" name="q" value="allNameProduct"/>
-                <input type="hidden" name="pseudogenes" value="true"/>
-                <input type="hidden" name="product" value="true"/>
-                <input type="hidden" name="allNames" value="true"/>
-                <input id="query" name="search" type="text" align="middle"/>
-                <input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
-            </form>
+        <form name="searchForm" action="<c:url value="/"/>Query" method="post">
+          <input type="hidden" name="taxons" value="${taxonNodeName}">
+          <input type="hidden" name="q" value="allNameProduct"/>
+          <input type="hidden" name="pseudogenes" value="true"/>
+          <input type="hidden" name="product" value="true"/>
+          <input type="hidden" name="allNames" value="true"/>
+          <input id="query" name="search" type="text" align="middle"/>
+          <input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
+        </form>
         <span align="top" style="font-size:0.65em;">
           <a style="color:white;vertical-align:top;" href="#" onclick="loadAdvancedSearch(); return false;">
-            Advanced Search
+            Advanced Search&nbsp;&nbsp;&nbsp;
           </a>
         </span>
         <div id="advancedSearch">
-          <c:if test="${!empty organism}">
-            <form name="advSearchForm" action="<c:url value="/"/>Query?organism=${organism}" method="post">
-          </c:if>
-          <c:if test="${empty organism}">
-            <form name="advSearchForm" action="<c:url value="/"/>Query" method="post">
-          </c:if>
+            <form name="advSearchForm" action="<c:url value="/Query"/>Query" method="post">
             <table id="advSearchTable" cellpadding="2">
               <tr>
                 <td width="20%" style="text-align:left;">Search </td>
@@ -113,6 +106,10 @@
                     <option value="pfam">Pfam ID or keyword</option>
                   </select>
                 </td>
+              </tr>
+              <tr>
+              <td width="20%" style="text-align:left;">in </td>
+              <td width="80%"><db:simpleselect /></td>
               </tr>
               <tr>
                 <td width="20%" style="text-align:left;">
@@ -140,31 +137,31 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem"> <%-- Genes By Type --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneType&taxons=${taxonName}&newSearch=true"/>" title="ProteinLength Search">By Gene Type</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneType&taxons=${taxonNodeName}&newSearch=true"/>" title="ProteinLength Search">By Gene Type</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Genes By Location --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation&taxons=${taxonName}&newSearch=true"/>" title="Protein Location Search">By Location</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=geneLocation&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Location Search">By Location</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Genes By Prediction Method --%>
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=genePredictionMethod&taxons=${taxonName}&newSearch=true"/>" title="Prediction Method Search">By Prediction Method</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=genePredictionMethod&taxons=${taxonNodeName}&newSearch=true"/>" title="Prediction Method Search">By Prediction Method</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Length --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonName}&newSearch=true"/>" title="Protein Length Search">By Protein Length</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By Protein Length</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Molecular Mass --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinMass&taxons=${taxonName}&newSearch=true" title="Protein mass Search">By Molecular Mass</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinMass&taxons=${taxonNodeName}&newSearch=true" title="Protein mass Search">By Molecular Mass</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Num Transmembrane Domains --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinNumTM&taxons=${taxonName}&newSearch=true" title="Protein num TM Search">By No. TM domains</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinNumTM&taxons=${taxonNodeName}&newSearch=true" title="Protein num TM Search">By No. TM domains</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Motif Search --%>
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>MotifSearch&taxons=${taxonName}&newSearch=true" title="Motif Search">Motif Search</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>MotifSearch&taxons=${taxonNodeName}&newSearch=true" title="Motif Search">Motif Search</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Targeting Sequence --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinTargetingSeq&taxons=${taxonName}&newSearch=true" title="Protein Targeting Search">By Targeting Seqs.</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinTargetingSeq&taxons=${taxonNodeName}&newSearch=true" title="Protein Targeting Search">By Targeting Seqs.</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Annotation Status --%>
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>Query?q=annotationStatus&taxons=${taxonName}&newSearch=true" title="Annotation Status Search">By Annotation Status</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>Query?q=annotationStatus&taxons=${taxonNodeName}&newSearch=true" title="Annotation Status Search">By Annotation Status</a>
                                     </li>
                                 </ul>
                             </div>
@@ -176,19 +173,19 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=genedb_products&taxons=${taxonName}" title="Browse Products">Products</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=genedb_products&taxons=${taxonNodeName}" title="Browse Products">Products</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=ControlledCuration&taxons=${taxonName}" title="Browse Curation">Controlled Curation</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=ControlledCuration&taxons=${taxonNodeName}" title="Browse Curation">Controlled Curation</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=biological_process&taxons=${taxonName}" title="Browse GO Biological Process">Biological Process</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=biological_process&taxons=${taxonNodeName}" title="Browse GO Biological Process">Biological Process</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=cellular_component&taxons=${taxonName}" title="Browse GO Cellular Component">Cellular Component</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=cellular_component&taxons=${taxonNodeName}" title="Browse GO Cellular Component">Cellular Component</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=molecular_function&taxons=${taxonName}" title="Browse GO Molecular Function">Molecular Function</a>
+s                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=molecular_function&taxons=${taxonNodeName}" title="Browse GO Molecular Function">Molecular Function</a>
                                     </li>
                                 </ul>
                             </div>
