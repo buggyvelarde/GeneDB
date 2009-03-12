@@ -9,37 +9,35 @@
 	<format:genePageSection id="nameSearch" className="whiteBox">
 		<form:form commandName="query" action="Query" method="post">
         <input type="hidden" name="q" value="simpleName" />
-            <table>
-                <tr>
-                    <td colspan="3">
-                        <font color="red"><form:errors path="*" /></font>
-                    </td>
-                </tr>
-                
-                <tr>
-                	<td><b>Organism:</b></td>
-                	<td>
-            			<db:simpleselect /><font color="red"><form:errors path="taxons" /></font>
+            <table>            
+            	<tr>
+            		<td width=180>
+            			<br><big><b>Organism Search:&nbsp;</b></big>
             		</td>
-                </tr>
-                
-                <tr>
-                  <td><b>Name:</b></td>
-                  <td>
-                    <form:input id="simpleName" path="search"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td colspan="2">
-                    <input type="submit" value="Submit" />
-                  </td>
-                  <td>&nbsp;</td>
-                </tr>
+            		<td width=180>
+            			<b>Organism:</b>
+            			<br><db:simpleselect />
+            			<br><font color="red"><form:errors path="taxons" /></font>
+            		</td>
+            		<td width=180>
+            			<b>Name:</b>
+            			<br><form:input id="simpleName" path="search"/>
+            			<br><font color="red"><form:errors path="search" /></font>
+            		</td>
+            		<td>            			
+            			<br><input type="submit" value="Submit" />           
+            		</td>
+            	</tr>
+            	<tr>
+            		<td></td>
+            		<td colspan=3><font color="red"><form:errors  /></td>
+            		<td></td>
+            	</tr>
             </table>
 
 		</form:form>
 	</format:genePageSection>
+	
 </div>
 
 <br><query:results />
