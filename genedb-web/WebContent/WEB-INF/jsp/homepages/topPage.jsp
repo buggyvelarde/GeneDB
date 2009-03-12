@@ -58,7 +58,7 @@
         <h3><b>Example Genes</b></h3>
         <ul>
         <li><i>Plasmodium falciparum</i> <a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
-        <li><i>Leishmania major</i> <a href="<c:url value="/NamedFeature?name=LmjF07.1060"/>">LmjF07.1060<a></a></li>
+        <li><i>Leishmania major</i> <a href="<c:url value="/NamedFeature?name=LmjF07.1060"/>">LmjF07.1060</a></li>
         <li><i>Trypanasoma brucei</i> <a href="<c:url value="/NamedFeature?name=Tb927.1.710"/>">Tb927.1.710</a></li>
         <li><i>Schistosoma mansoni</i> <a href="<c:url value="/NamedFeature?name=Smp_000030"/>">Smp_000030</a></li>
       </ul>
