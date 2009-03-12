@@ -303,7 +303,9 @@ class OrthologuesLoader {
             // Unclustered
             Polypeptide target = getPolypeptide(line.getTargetOrganism(), line.getTargetFeature(),
                 file, line.lineNumber);
-            addOrthologue(source, target, line.getIdentity());
+	    if (target != null) {
+                addOrthologue(source, target, line.getIdentity());
+	    }
         }
     }
 
