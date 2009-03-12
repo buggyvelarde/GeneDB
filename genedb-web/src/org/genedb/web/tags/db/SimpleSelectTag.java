@@ -62,6 +62,11 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         //Remove underscores
         String displayLabel = node.getLabel().replace("_", " ");
         
+        //Replace <i>Root</i> label with <i>All Organisms</>
+        if(displayLabel!= null && displayLabel.toLowerCase().equals("root")){
+        	displayLabel = "All Organisms";
+        }
+        
         //Reformat leaf nodes to add a dot and space between first char and the rest of chars
         if(children!= null && children.size()==0){
         	StringBuffer sb = new StringBuffer(displayLabel);
