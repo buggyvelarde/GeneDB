@@ -12,24 +12,29 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
 public class SimpleSelectTag extends AbstractHomepageTag {
-	
+
     @Override
     protected void display(TaxonNode root, JspWriter out) throws IOException {
-        
+
         out.write("\n<select name=\"taxons\">");
-        
+
         //Find the previously selected taxons if any in Request
         PageContext pageContext = (PageContext)getJspContext();
-        String previouslySelectedTaxons = pageContext.getRequest().getParameter("taxons");
+        String previouslySelectedTaxonsA = pageContext.getRequest().getParameter("taxons");
+        String previouslySelectedTaxonsB = pageContext.getRequest().getParameter("taxonNodeName");
+        String previouslySelectedTaxons = previouslySelectedTaxonsA;
+        if (!org.springframework.util.StringUtils.hasText(previouslySelectedTaxons)) {
+            previouslySelectedTaxons = previouslySelectedTaxonsB;
+        }
         String indentSpaces = "&nbsp;&nbsp;";
         displayImmediateChildren(root, out, 0, indentSpaces, previouslySelectedTaxons);
 
         out.write("\n</select>");
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param node
      * @param out
      * @param indent
@@ -37,7 +42,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
      * @throws IOException
      */
     private void displayImmediateChildren(TaxonNode node, JspWriter out, int indent, String indentSpaces, String previouslySelectedTaxons) throws IOException {
-    	
+
         out.write("\n<option ");
         out.write(" class=\"");
         out.write("Level");
@@ -47,47 +52,47 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         out.write(" value=\"");
         out.write(node.getLabel());
         out.write("\"");
-        
+
         if(!StringUtils.isEmpty(previouslySelectedTaxons) && previouslySelectedTaxons.equals(node.getLabel())){
             out.write(" selected ");;
-        }        
+        }
         out.write(">");
         if (indent > 7) {
-        	indent=8;
+            indent=8;
         }
         out.write(indentSpaces);
 
         List<TaxonNode> children = node.getChildren();
-        
+
         //Remove underscores
         String displayLabel = node.getLabel().replace("_", " ");
-        
+
         //Replace <i>Root</i> label with <i>All Organisms</>
         if(displayLabel!= null && displayLabel.toLowerCase().equals("root")){
-        	displayLabel = "All Organisms";
+            displayLabel = "All Organisms";
         }
-        
+
         //Reformat leaf nodes to add a dot and space between first char and the rest of chars
         if(children!= null && children.size()==0){
-        	StringBuffer sb = new StringBuffer(displayLabel);
-        	sb.insert(1, ". ");
-        	out.write(sb.toString());
+            StringBuffer sb = new StringBuffer(displayLabel);
+            sb.insert(1, ". ");
+            out.write(sb.toString());
         }else{
-        	out.write(displayLabel);
+            out.write(displayLabel);
         }
         out.write("</option>");
         Collections.sort(children, new Comparator<TaxonNode>() {
-			@Override
-			public int compare(TaxonNode arg0, TaxonNode arg1) {
-				String label0 = arg0.getLabel();
-				String label1 = arg1.getLabel();
-				return label0.compareToIgnoreCase(label1);
-			}
+            @Override
+            public int compare(TaxonNode arg0, TaxonNode arg1) {
+                String label0 = arg0.getLabel();
+                String label1 = arg1.getLabel();
+                return label0.compareToIgnoreCase(label1);
+            }
         });
         for (TaxonNode child : children) {
             if(child.hasOrganismFeature()){
-            	displayImmediateChildren(
-            			child, out, indent+1, indentSpaces + "&nbsp;&nbsp;&nbsp;", previouslySelectedTaxons);
+                displayImmediateChildren(
+                        child, out, indent+1, indentSpaces + "&nbsp;&nbsp;&nbsp;", previouslySelectedTaxons);
             }
         }
     }
