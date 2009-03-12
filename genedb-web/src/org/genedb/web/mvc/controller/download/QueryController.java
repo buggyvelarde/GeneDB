@@ -46,6 +46,8 @@ public class QueryController {
 
     private static final int BATCH_SIZE = 1000;
 
+    private static final int MAX_RESULTS_SIZE = 500;
+
     @Autowired
     private QueryFactory queryFactory;
 
@@ -144,6 +146,15 @@ public class QueryController {
         logger.error("Validator found no errors");
         List results = query.getResults();
         if (results.size() > 0) {
+
+            if (results.size() > MAX_RESULTS_SIZE) {
+                List results2 = new ArrayList(MAX_RESULTS_SIZE);
+                for (int i=0; i < MAX_RESULTS_SIZE; i++) {
+                    results2.add(results.get(i));
+                }
+                results = results2;
+            }
+
             Object firstItem =  results.get(0);
             if (! (firstItem instanceof GeneSummary)) {
                 results = convertIdsToGeneSummaries(results);
