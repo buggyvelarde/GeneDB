@@ -28,33 +28,33 @@ public class ResultsNavigatorController {
             @RequestParam(value="goto") String goTo,
             @RequestParam(value="q") String query,
             ServletRequest request,
-            HttpSession session) throws QueryException {
-    		
+            HttpSession session) throws QueryException {    		
     	
-    	List results = (List)session.getAttribute("results");
-    	
-    	if ("first".equals(goTo)){
-    		return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(0)) + assembleRequestParameters(request, goTo);
-    		
-    	}else if ("previous".equals(goTo)){
-    		int index = Integer.parseInt(indexStr);
-    		return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index-1)) + assembleRequestParameters(request, goTo);
-    		
-    		
-    	}else if("next".equals(goTo)){
-    		int index = Integer.parseInt(indexStr);
-    		return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index+1))  + assembleRequestParameters(request, goTo);
-    		
-    	}else if("last".equals(goTo)){
-    		int lastIndex = Integer.parseInt(lastIndexStr);
-    		return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(lastIndex))  + assembleRequestParameters(request, goTo);
-    		
-    	}else if("results".equals(goTo)){    		
-    		return "redirect:/Query?" + assembleRequestParameters(request, goTo);
-    		
-    	}else{
-    		return null;
+    	List results = (List)session.getAttribute("results");    	
+    	if (results!= null){
+
+    		if ("first".equals(goTo)){
+    			return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(0)) + assembleRequestParameters(request, goTo);
+
+    		}else if ("previous".equals(goTo)){
+    			int index = Integer.parseInt(indexStr);
+    			return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index-1)) + assembleRequestParameters(request, goTo);
+
+
+    		}else if("next".equals(goTo)){
+    			int index = Integer.parseInt(indexStr);
+    			return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index+1))  + assembleRequestParameters(request, goTo);
+
+    		}else if("last".equals(goTo)){
+    			int lastIndex = Integer.parseInt(lastIndexStr);
+    			return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(lastIndex))  + assembleRequestParameters(request, goTo);
+
+    		}else if("results".equals(goTo)){    		
+    			return "redirect:/Query?" + assembleRequestParameters(request, goTo);
+
+    		}
     	}
+    	return "redirect:/Query";
     }
     
     private Object findNameFromResultItem(Object resultItem){

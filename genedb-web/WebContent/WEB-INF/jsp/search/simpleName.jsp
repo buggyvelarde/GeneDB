@@ -15,8 +15,16 @@
                         <font color="red"><form:errors path="*" /></font>
                     </td>
                 </tr>
+                
                 <tr>
-                  <td>Name:</td>
+                	<td><b>Organism:</b></td>
+                	<td>
+            			<db:simpleselect /><font color="red"><form:errors path="taxons" /></font>
+            		</td>
+                </tr>
+                
+                <tr>
+                  <td><b>Name:</b></td>
                   <td>
                     <form:input id="simpleName" path="search"/>
                   </td>
@@ -33,4 +41,6 @@
 		</form:form>
 	</format:genePageSection>
 </div>
+
+<br><query:results />
 <format:footer />

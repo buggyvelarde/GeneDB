@@ -56,17 +56,14 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     protected void makeQueryForOrganisms(TaxonNode[] taxons, List<org.apache.lucene.search.Query> queries) {
 
         List<String> taxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
-
         if (taxonNames.size() == 0) {
             return;
         }
-
         BooleanQuery organismQuery = new BooleanQuery();
-
         for (String organism : taxonNames) {
             organismQuery.add(new TermQuery(new Term("organism.commonName",organism)), Occur.SHOULD);
         }
-
+        queries.add(organismQuery);        
     }
 
     @Override

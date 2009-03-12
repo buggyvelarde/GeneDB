@@ -22,7 +22,7 @@
             	     <br><font color="red"><form:errors path="taxons" /></font>
                   <td>
                 </tr>
-                <tr><td colspan="2">Protein Targeting Sequence present:</td></tr>
+                <tr><td colspan="2">Search Protein Targeting Sequence (retrieve records in which ONLY SELECTED TERMS are present):</td></tr>
                 <tr><td>Signal Peptide</td>
                     <td><form:checkbox id="sigP" path="sigP"/></td>
                 </tr>
