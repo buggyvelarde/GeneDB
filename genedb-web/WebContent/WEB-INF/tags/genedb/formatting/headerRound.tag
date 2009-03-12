@@ -112,7 +112,6 @@
               <td width="80%"><db:simpleselect /></td>
               </tr>
               <tr>
-
                 <td width="20%" style="text-align:left;">
                   for
                 </td>
@@ -147,13 +146,13 @@
                                         <a class="yuimenuitemlabel-disabled" href="<c:url value="/Query?q=genePredictionMethod&taxons=${taxonNodeName}&newSearch=true"/>" title="Prediction Method Search">By Prediction Method</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Length --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonName}&newSearch=true"/>" title="Protein Length Search">By Protein Length</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By Protein Length</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Molecular Mass --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinMass&taxons=${taxonName}&newSearch=true" title="Protein mass Search">By Molecular Mass</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinMass&taxons=${taxonNodeName}&newSearch=true" title="Protein mass Search">By Molecular Mass</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Num Transmembrane Domains --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinNumTM&taxons=${taxonName}&newSearch=true" title="Protein num TM Search">By No. TM domains</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinNumTM&taxons=${taxonNodeName}&newSearch=true" title="Protein num TM Search">By No. TM domains</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Motif Search --%>
                                         <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>MotifSearch&taxons=${taxonNodeName}&newSearch=true" title="Motif Search">Motif Search</a>
@@ -162,7 +161,7 @@
                                         <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinTargetingSeq&taxons=${taxonNodeName}&newSearch=true" title="Protein Targeting Search">By Targeting Seqs.</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Annotation Status --%>
-                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>Query?q=annotationStatus&taxons=${taxonName}&newSearch=true" title="Annotation Status Search">By Annotation Status</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>Query?q=annotationStatus&taxons=${taxonNodeName}&newSearch=true" title="Annotation Status Search">By Annotation Status</a>
                                     </li>
                                 </ul>
                             </div>
@@ -174,19 +173,19 @@
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=genedb_products&taxons=${taxonName}" title="Browse Products">Products</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=genedb_products&taxons=${taxonNodeName}" title="Browse Products">Products</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=ControlledCuration&taxons=${taxonName}" title="Browse Curation">Controlled Curation</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=ControlledCuration&taxons=${taxonNodeName}" title="Browse Curation">Controlled Curation</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=biological_process&taxons=${taxonName}" title="Browse GO Biological Process">Biological Process</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=biological_process&taxons=${taxonNodeName}" title="Browse GO Biological Process">Biological Process</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=cellular_component&taxons=${taxonName}" title="Browse GO Cellular Component">Cellular Component</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=cellular_component&taxons=${taxonNodeName}" title="Browse GO Cellular Component">Cellular Component</a>
                                     </li>
                                     <li class="yuimenuitem">
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=molecular_function&taxons=${taxonName}" title="Browse GO Molecular Function">Molecular Function</a>
+s                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=molecular_function&taxons=${taxonNodeName}" title="Browse GO Molecular Function">Molecular Function</a>
                                     </li>
                                 </ul>
                             </div>
