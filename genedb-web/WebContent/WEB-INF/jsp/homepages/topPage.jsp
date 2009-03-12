@@ -33,10 +33,10 @@
     </td>
 <td width="50%"><h2><b>Bacteria</b></h2>
     <ul>
-      <li>Staphylococcus aureus MRSA252</li>
-      <li>Staphylococcus aureus MSSA476</li>
-      <li>Staphylococcus aureus EMRSA15</li>
-      <li>Staphylococcus aureus TW20</li>
+      <li><i>Staphylococcus aureus</i> MRSA252</li>
+      <li><i>Staphylococcus aureus</i> MSSA476</li>
+      <li><i>Staphylococcus aureus</i> EMRSA15</li>
+      <li><i>Staphylococcus aureus</i> TW20</li>
     </ul>
     </td>
 </tr>
@@ -60,7 +60,7 @@
         <li><i>Plasmodium falciparum</i> <a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
         <li><i>Leishmania major</i> <a href="<c:url value="/NamedFeature?name=LmjF07.1060"/>">LmjF07.1060</a></li>
         <li><i>Trypanasoma brucei</i> <a href="<c:url value="/NamedFeature?name=Tb927.1.710"/>">Tb927.1.710</a></li>
-        <li><i>Schistosoma mansoni</i> <a href="<c:url value="/NamedFeature?name=Smp_000030"/>">Smp_000030</a></li>
+        <!-- <li><i>Schistosoma mansoni</i> <a href="<c:url value="/NamedFeature?name=Smp_000030"/>">Smp_000030</a></li> -->
       </ul>
       </td>
 </table>
