@@ -5,7 +5,6 @@ import org.gmod.schema.feature.Polypeptide;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,17 +23,13 @@ public class TMHMMLoader extends Loader {
 
     @Override
     public void doLoad(InputStream inputStream, Session session) throws IOException {
-        Transaction transaction = session.getTransaction();
-
         TMHMMFile file = new TMHMMFile(inputStream);
         int n=1;
         for (String key: file.keys()) {
             logger.info(String.format("[%d/%d] Loading helices for key '%s'", n++, file.keys().size(), key));
             Polypeptide polypeptide = getPolypeptideByMangledName(key);
 
-            transaction.begin();
             loadMembraneStructure(polypeptide, file.regionsForKey(key));
-            transaction.commit();
             /*
              * If the session isn't cleared out every so often, it
              * starts to get pretty slow after a while if we're loading

@@ -7,7 +7,6 @@ import org.gmod.schema.mapped.FeatureProp;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,16 +25,13 @@ public class SignalPLoader extends Loader {
     public void doLoad(InputStream inputStream, Session session) throws IOException {
         loadTerms();
 
-        Transaction transaction = session.getTransaction();
         SignalPFile file = new SignalPFile(inputStream);
 
         int n=1;
         for (SignalPHit hit: file.hits()) {
             logger.info(String.format("[%d/%d] Processing prediction for '%s'", n++, file.hits().size(), hit.getKey()));
 
-            transaction.begin();
             loadHit(hit);
-            transaction.commit();
 
             if (n % 50 == 1) {
                 logger.info("Clearing session");
