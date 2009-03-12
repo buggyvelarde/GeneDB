@@ -332,7 +332,7 @@ public class Polypeptide extends Region {
 
     @Transient
     @Field(index=Index.UN_TOKENIZED, store=Store.NO)
-    public double mass() {
+    public double getMass() {
         if (mass == -1) {
             SymbolTokenization proteinTokenization;
             try {
@@ -349,7 +349,7 @@ public class Polypeptide extends Region {
 
     @Transient
     @Field(index=Index.TOKENIZED, store=Store.NO)
-    public String ecNums() {
+    public String getEcNums() {
         List<String> ecNums = new ArrayList<String>();
         for (FeatureProp fp : getFeatureProps()) {
             CvTerm type = fp.getType();
@@ -363,7 +363,7 @@ public class Polypeptide extends Region {
 
     @Transient
     @Field(index=Index.TOKENIZED, store=Store.NO)
-    public String allCuration() {
+    public String getAllCuration() {
         List<String> curation = new ArrayList<String>();
         for (FeatureProp fp : getFeatureProps()) {
             CvTerm type = fp.getType();
@@ -381,7 +381,7 @@ public class Polypeptide extends Region {
 
     @Transient
     @Field(index=Index.TOKENIZED, store=Store.NO)
-    public String go() {
+    public String getGo() {
         List<String> go = new ArrayList<String>();
         go.addAll(populateFromFeatureCvTerms("biological_process"));
         go.addAll(populateFromFeatureCvTerms("molecular_function"));
