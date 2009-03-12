@@ -47,7 +47,7 @@ public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
 
         BooleanQuery bq = new BooleanQuery();
         if (sigP) {
-            bq.add(new TermQuery(new Term("signalPeptide", "true")), Occur.MUST);
+            bq.add(new TermQuery(new Term("signalP", "true")), Occur.MUST);
         }
         if (gpi) {
             bq.add(new TermQuery(new Term("gpiAnchored", "true")), Occur.MUST);
