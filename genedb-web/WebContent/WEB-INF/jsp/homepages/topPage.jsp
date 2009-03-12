@@ -32,8 +32,11 @@
     </ul>
     </td>
 <td width="50%"><h2><b>Bacteria</b></h2>
-      <ul>
-      <li>Matt to provide list or text</li>
+    <ul>
+      <li>Staphylococcus aureus MRSA252</li>
+      <li>Staphylococcus aureus MSSA476</li>
+      <li>Staphylococcus aureus EMRSA15</li>
+      <li>Staphylococcus aureus TW20</li>
     </ul>
     </td>
 </tr>
@@ -45,10 +48,10 @@
       <li><i>Leishmania major</i></li>
     </ul>
     </td>
-<td width="50%"><h2><b>Helminths</b></h2>
-      <ul>
+<td width="50%"><h2><!-- <b>Helminths</b>--></h2>
+      <!--  <ul>
       <li><i>Schistosoma mansoni</i></li>
-    </ul></td>
+    </ul>--></td>
 </tr>
 <tr>
 <td colspan="2">
@@ -56,7 +59,7 @@
         <ul>
         <li><i>Plasmodium falciparum</i> <a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
         <li><i>Leishmania major</i> <a href="<c:url value="/NamedFeature?name=LmjF07.1060"/>">LmjF07.1060<a></a></li>
-        <li><i>Trypanasoma brucei</i><a href="<c:url value="/NamedFeature?name=Tb927.1.710"/>">Tb927.1.710</a></li>
+        <li><i>Trypanasoma brucei</i> <a href="<c:url value="/NamedFeature?name=Tb927.1.710"/>">Tb927.1.710</a></li>
         <li><i>Schistosoma mansoni</i> <a href="<c:url value="/NamedFeature?name=Smp_000030"/>">Smp_000030</a></li>
       </ul>
       </td>
