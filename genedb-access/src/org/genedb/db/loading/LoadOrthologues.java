@@ -74,6 +74,7 @@ public class LoadOrthologues extends FileProcessor {
         String analysisAlgorithm = getPropertyWithDefault("load.analysis.algorithm", null);
 
         boolean geneNames = hasProperty("load.orthologues.geneNames");
+        boolean notFoundNotFatal = hasProperty("load.orthologues.notFoundNotFatal");
 
         if (analysisProgram == null) {
             if (analysisProgramVersion != null) {
@@ -89,6 +90,7 @@ public class LoadOrthologues extends FileProcessor {
         LoadOrthologues loadOrthologues = new LoadOrthologues();
         loadOrthologues.setAnalysisProperties(analysisProgram, analysisProgramVersion, analysisAlgorithm);
         loadOrthologues.setGeneNames(geneNames);
+        loadOrthologues.setNotFoundNotFatal(notFoundNotFatal);
         loadOrthologues.processFileOrDirectory(inputDirectory, fileNamePattern);
     }
 
@@ -105,6 +107,10 @@ public class LoadOrthologues extends FileProcessor {
 
     private void setGeneNames(boolean geneNames) {
         loader.setGeneNames(geneNames);
+    }
+
+    private void setNotFoundNotFatal(boolean notFoundNotFatal) {
+        loader.setNotFoundNotFatal(notFoundNotFatal);
     }
 
     @Override
@@ -211,6 +217,7 @@ class OrthologuesLoader {
     private Organism dummyOrganism;
     private Analysis analysis = null;
     private boolean geneNames = false;
+    private boolean notFoundNotFatal = false;
 
     public void setAnalysisProperties(String analysisProgram, String analysisProgramVersion, String analysisAlgorithm) {
         if (analysisProgram == null) {
@@ -233,6 +240,10 @@ class OrthologuesLoader {
      */
     void setGeneNames(boolean geneNames) {
         this.geneNames = geneNames;
+    }
+
+    void setNotFoundNotFatal(boolean notFoundNotFatal) {
+        this.notFoundNotFatal = notFoundNotFatal;
     }
 
     public void load(OrthologueFile orthologueFile) throws DataError {
@@ -311,7 +322,12 @@ class OrthologuesLoader {
         if (geneNames) {
             AbstractGene gene = sequenceDao.getFeatureByUniqueName(uniqueName, AbstractGene.class);
             if (gene == null) {
-                throw new DataError(String.format("Could not find gene '%s'", uniqueName));
+                String errorMessage = String.format("Could not find gene '%s'", uniqueName);
+                if (notFoundNotFatal) {
+                    logger.error(errorMessage);
+                    return null;
+                }
+                throw new DataError(errorMessage);
             }
             Collection<Transcript> transcripts = gene.getTranscripts();
             if (transcripts.isEmpty()) {
@@ -329,13 +345,19 @@ class OrthologuesLoader {
                 Polypeptide polypeptide = sequenceDao.getFeatureByUniqueName(uniqueName, Polypeptide.class);
                 if (polypeptide != null) {
                     if (!polypeptide.getOrganism().getCommonName().equals(organism)) {
-                        throw new DataError(file, lineNumber,
-                            String.format("The feature '%s' does not belong to organism '%s'",
-                                polypeptide.getUniqueName(), organism));
+                        String errorMessage = String.format("The feature '%s' does not belong to organism '%s'",
+                            polypeptide.getUniqueName(), organism);
+                        throw new DataError(file, lineNumber, errorMessage);
                     }
                     return polypeptide;
                 }
-                throw new DataError(file, lineNumber, String.format("Could not find transcript feature '%s'", uniqueName));
+
+                String errorMessage = String.format("Could not find transcript feature '%s'", uniqueName);
+                if (notFoundNotFatal) {
+                    logger.error(errorMessage);
+                    return null;
+                }
+                throw new DataError(file, lineNumber, errorMessage);
             }
         }
 
