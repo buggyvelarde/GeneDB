@@ -22,7 +22,7 @@
                     ${evidence}
             </c:forEach>&nbsp;
             <c:forEach items="${fctDTO.pubs}" var="pub">
-                (${pub.uniqueName})
+                (${pub})
             </c:forEach>
         </td>
         <td class="value accession">
