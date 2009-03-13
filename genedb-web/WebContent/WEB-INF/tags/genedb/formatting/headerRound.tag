@@ -185,7 +185,7 @@
                                         <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=cellular_component&taxons=${taxonNodeName}" title="Browse GO Cellular Component">Cellular Component</a>
                                     </li>
                                     <li class="yuimenuitem">
-s                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=molecular_function&taxons=${taxonNodeName}" title="Browse GO Molecular Function">Molecular Function</a>
+                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>BrowseCategory?category=molecular_function&taxons=${taxonNodeName}" title="Browse GO Molecular Function">Molecular Function</a>
                                     </li>
                                 </ul>
                             </div>
