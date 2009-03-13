@@ -23,7 +23,7 @@
     
 
 <c:if test="${fn:length(results)==500}">
-		<br><br><div style="margin-left: auto;color:red;">Please note that we're only able to find up to 500 results on this preview site.</div> 
+		<br><br><div style="margin-left: auto;color:red;">Please note that we're only able to find up to 500 results on this Preview site.</div> 
 </c:if>
 
         <format:genePageSection  className="whiteBox">
