@@ -88,13 +88,14 @@
     </format:genePageSection>
 
     <format:genePageSection id="analysisTools" className="whiteBox">
+        <div class="heading">Tools</div>
         <!-- <div style="clear: both; margin-top: 1ex;">
             <format:addToBasket uniqueName="${dto.uniqueName}" />
          </div> -->
-        <div style="clear: both; margin-top: 1ex;">
+        <div style="clear: both; margin-top: 3ex; margin-left: 1ex;">
              <a href="<c:url value="/" />FeatureSequence?name=${dto.uniqueName}&seqs=true"><img src="<c:url value="/" />includes/images/viewSequenceButton.gif"></a>
          </div>
-        <div style="clear: both; margin-top: 1ex;">
+        <div style="clear: both; margin-top: 3ex; margin-left: 1ex;">
             <a href="ArtemisLaunch?organism=${organism}&chromosome=${dto.topLevelFeatureUniqueName}&start=${dto.min}&end=${dto.max}"><img src="<c:url value="/" />includes/images/launchArtemis.gif"></a>
             <!--<img src="<c:url value="/" />includes/images/launchGBrowse.gif">-->
          </div>
@@ -106,6 +107,7 @@
     <%-- Merged Notes & Comments Section --%>
     <c:if test="${(fn:length(dto.notes) + fn:length(dto.comments) + fn:length(dto.publications)) > 0}">
         <format:genePageSection id="comment">
+          <misc:hyperlinkDbs>
             <div class="heading">Comments</div>
             <c:forEach items="${dto.notes}" var="note">
                 <div class="comment">${note}</div>
@@ -120,6 +122,7 @@
                     <db:dbXRefLink dbXRef="${publication}" />
                 </c:forEach>
             </c:if>
+          </misc:hyperlinkDbs>
         </format:genePageSection>
     </c:if>
 
