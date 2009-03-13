@@ -34,14 +34,14 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
     }
 
     public String hyperLinkText(String text) throws IOException {
-        Pattern xref = Pattern.compile("\\((\\w+:\\w+)\\)");
+        Pattern xref = Pattern.compile("\\(\\w+:\\w+\\)");
 
         Matcher matcher = xref.matcher(text);
 
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
 
-            String dbxref = text.substring(matcher.start()+1, matcher.end()-1);
+            String dbxref = matcher.group();
             System.err.println(dbxref);
             String[] parts = dbxref.split(":");
             if (parts.length > 1) {
@@ -53,23 +53,25 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
 
                 Map<String, String> dbUrlMap = (Map<String, String>) getJspContext().getAttribute(DbXRefListener.DB_URL_MAP, PageContext.APPLICATION_SCOPE);
                 //Map<String, String> dbUrlMap = new HashMap<String, String>();
-                //dbUrlMap.put("PMID", "wibble");
+                //dbUrlMap.put("(PMID", "wibble");
                 if (dbUrlMap.containsKey(parts[0])) {
                     String url = dbUrlMap.get(parts[0]) + parts[1];
                     String replace =  "<a href=\""+url+"\">"+dbxref+"</a>";
                     matcher.appendReplacement(sb, replace);
-                    matcher.appendTail(sb);
+                    //matcher.appendTail(sb);
+                    //} else {
+                    //matcher.appendReplacement(sb, dbxref);
                 }
-
             }
         }
+        matcher.appendTail(sb);
         return sb.toString();
 
     }
 
 
     public static void main(String[] args) throws IOException {
-        String a = "This is a comment (PMID:1234)";
+        String a = "This is a comment (PMID:1234) and more (PMID:3456)";
         HyperlinkDbsInText t = new HyperlinkDbsInText();
         System.err.println(t.hyperLinkText(a));
 
