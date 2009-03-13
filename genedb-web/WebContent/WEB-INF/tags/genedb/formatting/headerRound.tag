@@ -191,9 +191,9 @@ s                                        <a class="yuimenuitemlabel" href="<c:ur
                             </div>
                         </div>
                     </li>
-          <li class="yuimenubaritem">
+          <!--  <li class="yuimenubaritem">
             <a class="yuimenuitemlabel" href="<c:url value="/History/View"/>">History</a>
-          </li>
+          </li> -->
                 </ul>
             </div>
       </div></td>
