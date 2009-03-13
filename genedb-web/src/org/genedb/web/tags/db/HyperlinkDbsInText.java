@@ -54,8 +54,9 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
                     String url = dbUrlMap.get(parts[0]) + parts[1];
                     String replace =  "<a href=\""+url+"\">"+dbxref+"</a>";
                     matcher.appendReplacement(sb, replace);
+                    matcher.appendTail(sb);
                 }
-                matcher.appendTail(sb);
+
             }
         }
         return sb.toString();
