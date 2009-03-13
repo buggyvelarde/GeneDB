@@ -58,6 +58,10 @@ public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
 
 
         queries.add(bq);
+
+
+        makeQueryForOrganisms(taxons, queries);
+        
         //if (pseudogenes) {
         //    queries.add(geneOrPseudogeneQuery);
         //} else {
