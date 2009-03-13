@@ -65,7 +65,7 @@
   <target name="compile-web" depends="web-populate-lib, web-populate-util, web-populate-query, web-populate-db, web-populate-domain"
         description="--> Compile classes" >
     <compile-target project="web"/>
-  	<!--
+      <!--
     <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/mvc/model/PopulateCaches.class"
               src="${imported.basedir.web}/ant-build/classes/org/genedb/web/mvc/model/PopulateCaches.class" />
     <copyfile dest="${imported.basedir.web}/ant-build/woven-classes/org/genedb/web/utils/MartinHack.class"
@@ -82,8 +82,8 @@
     <tests-target project="web"/>
   </target>
 
-  <target name="test-all-modules" 
-  	depends="genedb-domain.genedb-domain-tests, genedb-query.genedb-query-tests, genedb-web-tests"/>
+  <target name="test-all-modules"
+      depends="genedb-domain.genedb-domain-tests, genedb-query.genedb-query-tests, genedb-web-tests"/>
 
    <target name="iajc-web" depends="compile-web" unless="web.iajc-uptodate">
      <iajc-target project="web" />
@@ -211,7 +211,7 @@
   </target>
 
 
-    <target name="populate-caches" depends="check-deploy,compile-web" description="Populate the Berkeley DB with TranscriptDTO and images">
+    <target name="populate-caches" depends="check-deploy,iajc-web" description="Populate the Berkeley DB with TranscriptDTO and images">
       <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
         <classpath>
           <path refid="web-classpath"/>
@@ -224,7 +224,7 @@
         <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
         <!-- <arg line="-o Pfalciparum -debugCount 20 -globalFileRoot /tmp"/> -->
         <!-- <arg line="-globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/> -->
-        <!-- <arg line="-o Pberghei_3x"/> -->
+        <!-- <arg line="-o Pfalciparum"/> -->
         <!-- <arg line="-ncm" /> -->
       </java>
     </target>
@@ -272,11 +272,7 @@
         </classpath>
         <jvmarg value="-Xmx512m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-        <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
         <arg line="/nfs/team81/art/workspace/workspace-Jul9/genedb-web/martin/merops.file"/>
-        <!-- <arg line="-globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/> -->
-        <!-- <arg line="-o Pberghei_3x"/> -->
-        <!-- <arg line="-ncm" /> -->
       </java>
     </target>
 
@@ -294,5 +290,19 @@
         <arg value="/nfs/pathdb/genedb/${indexSet}/cache" />
       </java>
     </target>
-	
+
+    <target name="runMergeIndices" depends="check-deploy,compile-web">
+      <java fork="true" classname="org.genedb.web.model.MergeBerkeleyIndices">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="/tmp/source /tmp/destination"/>
+      </java>
+    </target>
+
 </project>
