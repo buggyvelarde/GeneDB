@@ -28,9 +28,11 @@ public class GeneTypeQuery extends OrganismHqlQuery {
     public Map<String, Object> prepareModelData() {
         Map<String, String> typeMap = new HashMap<String, String>();
         typeMap.put("mRNA", "protein-coding");
-        typeMap.put("pseudogene", "pseudogenic transcript");
+        typeMap.put("pseudogene", "pseudogene");
         typeMap.put("tRNA", "tRNA");
         typeMap.put("snoRNA", "snoRNA");
+        typeMap.put("snRNA", "snRNA");
+        typeMap.put("transcript", "miscRNA");
 
         Map<String, Object> ret = new HashMap<String, Object>();
         ret.put("typeMap", typeMap);
