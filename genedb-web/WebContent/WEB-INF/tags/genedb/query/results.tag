@@ -19,8 +19,8 @@
         <c:param name="category" value="${category}"/>
     </c:url>
 
-    <div>
-        <format:genePageSection className="whiteBox">
+    <div id="geneResults">
+        <format:genePageSection  className="whiteBox">
             <display:table name="sessionScope.results"  id="row" pagesize="30" requestURI="/Query" class="simple" cellspacing="0" cellpadding="4">
                    <display:column title="Systematic ids">
                     <a href="<c:url value="/NamedFeature"/>?name=${row.systematicId}&index=${row_rowNum-1}&lastIndex=${fn:length(results)-1}&${requestParams}"><c:out value="${row.systematicId}"/></a>
