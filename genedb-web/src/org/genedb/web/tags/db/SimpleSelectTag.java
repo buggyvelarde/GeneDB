@@ -71,6 +71,12 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         if(displayLabel!= null && displayLabel.toLowerCase().equals("root")){
             displayLabel = "All Organisms";
         }
+        if (displayLabel != null && displayLabel.toLowerCase().equals("t. bruceibrucei427")) {
+            displayLabel = "T.brucei brucei 427";
+        }
+        if (displayLabel != null && displayLabel.toLowerCase().equals("t. bruceibrucei927")) {
+            displayLabel = "T.brucei brucei 927";
+        }
 
         //Reformat leaf nodes to add a dot and space between first char and the rest of chars
         if(children!= null && children.size()==0){
