@@ -189,7 +189,7 @@
 
     <tag>
         <name>hyperlinkDbs</name>
-        <tag-class>org.genedb.web.tags.misc.HyperlinkDbsInText</tag-class>
+        <tag-class>org.genedb.web.tags.db.HyperlinkDbsInText</tag-class>
         <body-content>scriptless</body-content>
     </tag>
 
