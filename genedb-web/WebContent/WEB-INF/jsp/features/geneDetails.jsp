@@ -43,16 +43,16 @@
         </tr>
 
 <%-- ------------------------------------------------------- --%>
-		<c:if test="${!empty dto.synonymsByTypes}">
-			<c:forEach var="type" items="${dto.synonymsByTypes}">
-				<tr>
-					<td class="label">${type.key}</td>
-					<td class="value">
-                    	<format:list-string list="${type.value}"/>
-					</td>
-				</tr>
-			</c:forEach>
-		</c:if>
+        <c:if test="${!empty dto.synonymsByTypes}">
+            <c:forEach var="type" items="${dto.synonymsByTypes}">
+                <tr>
+                    <td class="label">${type.key}</td>
+                    <td class="value">
+                        <format:list-string list="${type.value}"/>
+                    </td>
+                </tr>
+            </c:forEach>
+        </c:if>
 <%-- ------------------------------------------------------- --%>
         <c:if test="${!empty dto.products}">
             <tr>
@@ -88,9 +88,9 @@
     </format:genePageSection>
 
     <format:genePageSection id="analysisTools" className="whiteBox">
-        <div style="clear: both; margin-top: 1ex;">
+        <!-- <div style="clear: both; margin-top: 1ex;">
             <format:addToBasket uniqueName="${dto.uniqueName}" />
-         </div>
+         </div> -->
         <div style="clear: both; margin-top: 1ex;">
              <a href="<c:url value="/" />FeatureSequence?name=${dto.uniqueName}&seqs=true"><img src="<c:url value="/" />includes/images/viewSequenceButton.gif"></a>
          </div>
