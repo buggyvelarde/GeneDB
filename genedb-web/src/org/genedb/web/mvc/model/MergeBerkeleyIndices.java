@@ -15,6 +15,7 @@ public class MergeBerkeleyIndices {
 
         destination.getDtoMap().putAll(source.getDtoMap());
         destination.getContextMapMap().putAll(source.getContextMapMap());
+        destination.getImageMap().putAll(source.getImageMap());
 
         destination.closeDb();
         source.closeDb();
