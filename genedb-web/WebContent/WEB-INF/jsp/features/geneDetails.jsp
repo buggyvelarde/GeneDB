@@ -107,7 +107,7 @@
     <%-- Merged Notes & Comments Section --%>
     <c:if test="${(fn:length(dto.notes) + fn:length(dto.comments) + fn:length(dto.publications)) > 0}">
         <format:genePageSection id="comment">
-          <misc:hyperlinkDbs>
+          <db:hyperlinkDbs>
             <div class="heading">Comments</div>
             <c:forEach items="${dto.notes}" var="note">
                 <div class="comment">${note}</div>
@@ -122,7 +122,7 @@
                     <db:dbXRefLink dbXRef="${publication}" />
                 </c:forEach>
             </c:if>
-          </misc:hyperlinkDbs>
+          </db:hyperlinkDbs>
         </format:genePageSection>
     </c:if>
 

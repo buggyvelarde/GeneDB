@@ -52,11 +52,5 @@
             <required>true</required>
         </attribute>
     </tag>
-    
-    <tag>
-        <name>hyperlinkDbs</name>
-        <tag-class>org.genedb.web.tags.misc.HyperlinkDbsInText</tag-class>
-        <body-content>scriptless</body-content>
-    </tag>
-    
+
 </taglib>
