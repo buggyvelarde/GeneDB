@@ -41,8 +41,8 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
 
-            String dbxref = matcher.group();
-            System.err.println(dbxref);
+            String dbxref = matcher.group().substring(1, matcher.group().length()-1);
+            //System.err.println(dbxref);
             String[] parts = dbxref.split(":");
             if (parts.length > 1) {
                 // db name should be in parts[0], the accession in parts[1]
@@ -51,12 +51,12 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
                     dbxref = parts[0] + ":" + parts[1]; // So PMID gets displayed as well as linked
                 }
 
-                Map<String, String> dbUrlMap = (Map<String, String>) getJspContext().getAttribute(DbXRefListener.DB_URL_MAP, PageContext.APPLICATION_SCOPE);
-                //Map<String, String> dbUrlMap = new HashMap<String, String>();
-                //dbUrlMap.put("(PMID", "wibble");
+                //Map<String, String> dbUrlMap = (Map<String, String>) getJspContext().getAttribute(DbXRefListener.DB_URL_MAP, PageContext.APPLICATION_SCOPE);
+                Map<String, String> dbUrlMap = new HashMap<String, String>();
+                dbUrlMap.put("PMID", "wibble");
                 if (dbUrlMap.containsKey(parts[0])) {
                     String url = dbUrlMap.get(parts[0]) + parts[1];
-                    String replace =  "<a href=\""+url+"\">"+dbxref+"</a>";
+                    String replace =  "(<a href=\""+url+"\">"+dbxref+"</a>)";
                     matcher.appendReplacement(sb, replace);
                     //matcher.appendTail(sb);
                     //} else {
@@ -71,7 +71,7 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
 
 
     public static void main(String[] args) throws IOException {
-        String a = "This is a comment (PMID:1234) and more (PMID:3456)";
+        String a = "This is a comment (PMID:1234) and more (PMID:3456) but this isn't (FRED:56875)";
         HyperlinkDbsInText t = new HyperlinkDbsInText();
         System.err.println(t.hyperLinkText(a));
 
