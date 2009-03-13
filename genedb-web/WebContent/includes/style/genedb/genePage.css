@@ -184,10 +184,7 @@ div#geneDetails {
     min-width: 37em;
 }
 
-div#geneResults {
-    position: relative;
-    display: block;
-    padding-top: 8px;
+div#geneResultsPanel {
     margin-left: auto;
     margin-right: auto;
     width: 95%;
