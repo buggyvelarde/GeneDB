@@ -4,6 +4,7 @@ import org.genedb.web.mvc.controller.DbXRefListener;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +41,8 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
 
-            String dbxref = text.substring(matcher.start(), matcher.end());
+            String dbxref = text.substring(matcher.start()+1, matcher.end()-1);
+            System.err.println(dbxref);
             String[] parts = dbxref.split(":");
             if (parts.length > 1) {
                 // db name should be in parts[0], the accession in parts[1]
@@ -50,6 +52,8 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
                 }
 
                 Map<String, String> dbUrlMap = (Map<String, String>) getJspContext().getAttribute(DbXRefListener.DB_URL_MAP, PageContext.APPLICATION_SCOPE);
+                //Map<String, String> dbUrlMap = new HashMap<String, String>();
+                //dbUrlMap.put("PMID", "wibble");
                 if (dbUrlMap.containsKey(parts[0])) {
                     String url = dbUrlMap.get(parts[0]) + parts[1];
                     String replace =  "<a href=\""+url+"\">"+dbxref+"</a>";
