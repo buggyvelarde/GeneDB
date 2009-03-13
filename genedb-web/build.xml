@@ -292,7 +292,7 @@
     </target>
 
     <target name="runMergeIndices" depends="check-deploy,compile-web">
-      <java fork="true" classname="org.genedb.web.model.MergeBerkeleyIndices">
+      <java fork="true" classname="org.genedb.web.mvc.model.MergeBerkeleyIndices">
         <classpath>
           <path refid="web-classpath"/>
           <pathelement location="${imported.basedir.web}/ant-build/classes"/>
