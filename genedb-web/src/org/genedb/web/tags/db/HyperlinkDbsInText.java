@@ -17,7 +17,6 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class HyperlinkDbsInText extends SimpleTagSupport {
 
-    @SuppressWarnings("unchecked")
     @Override
     public void doTag() throws JspException, IOException {
         // different class for internal, external URL
@@ -30,14 +29,18 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
         body.invoke(stringWriter);
         String text = stringWriter.getBuffer().toString();
 
+        out.write(hyperLinkText(text));
+    }
+
+    public String hyperLinkText(String text) throws IOException {
         Pattern xref = Pattern.compile("\\((\\w+:\\w+)\\)");
 
         Matcher matcher = xref.matcher(text);
 
-        for (int i = 1; i < matcher.groupCount(); i++ ) {
-            String dbxref = matcher.group(i);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
 
-            String url = null;
+            String dbxref = text.substring(matcher.start(), matcher.end());
             String[] parts = dbxref.split(":");
             if (parts.length > 1) {
                 // db name should be in parts[0], the accession in parts[1]
@@ -48,17 +51,25 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
 
                 Map<String, String> dbUrlMap = (Map<String, String>) getJspContext().getAttribute(DbXRefListener.DB_URL_MAP, PageContext.APPLICATION_SCOPE);
                 if (dbUrlMap.containsKey(parts[0])) {
-                    url = dbUrlMap.get(parts[0]) + parts[1];
-
-                    text = text.substring(0, matcher.start(i)) + "<a href=\""+url+"\">"+dbxref+"</a>"+text.substring(matcher.end(i));
+                    String url = dbUrlMap.get(parts[0]) + parts[1];
+                    String replace =  "<a href=\""+url+"\">"+dbxref+"</a>";
+                    matcher.appendReplacement(sb, replace);
                 }
-
-
+                matcher.appendTail(sb);
             }
-
         }
+        return sb.toString();
 
-        out.write(text);
     }
+
+
+    public static void main(String[] args) throws IOException {
+        String a = "This is a comment (PMID:1234)";
+        HyperlinkDbsInText t = new HyperlinkDbsInText();
+        System.err.println(t.hyperLinkText(a));
+
+
+    }
+
 }
 
