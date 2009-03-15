@@ -112,6 +112,8 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         cacheHit++;
         logger.trace("dto cache hit for '"+feature.getUniqueName());
         HistoryManager hm = hmFactory.getHistoryManager(request.getSession());
+        HistoryItem autoBasket = hm.getHistoryItemByType(HistoryType.AUTO_BASKET);
+        logger.debug(String.format("Basket is '%s'", autoBasket));
         hm.addHistoryItem(HistoryType.AUTO_BASKET, feature.getUniqueName());
 //                if (nlb.isAddToBasket()) {
 //                    hm.addHistoryItem(HistoryType.BASKET, feature.getUniqueName());
