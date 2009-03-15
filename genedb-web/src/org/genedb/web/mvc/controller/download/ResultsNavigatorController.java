@@ -1,18 +1,19 @@
 package org.genedb.web.mvc.controller.download;
 
-import java.util.Enumeration;
-import java.util.List;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.GeneSummary;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 @Controller
@@ -31,7 +32,7 @@ public class ResultsNavigatorController {
             HttpSession session) throws QueryException {
 
         List results = (List)session.getAttribute("results");
-        if (results!= null){
+        if (results != null){
 
             if ("first".equals(goTo)){
                 return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(0)) + assembleRequestParameters(request, goTo);
@@ -67,9 +68,10 @@ public class ResultsNavigatorController {
 
     private String assembleRequestParameters(ServletRequest request, String goTo ) {
         StringBuffer paramConcats = new StringBuffer();
-        for (Enumeration en = request.getParameterNames() ; en.hasMoreElements() ; ) {
-            String paramName = (String)en.nextElement();
-            String value = request.getParameter(paramName);
+        @SuppressWarnings("unchecked") Map<String, String> map = request.getParameterMap();
+        for (Map.Entry<String,String> entry : map.entrySet()) {
+            String paramName = entry.getKey();
+            String value = entry.getValue();
 
             if ("goto".equals(paramName)) {
                 continue;
