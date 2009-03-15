@@ -28,87 +28,87 @@ public class ResultsNavigatorController {
             @RequestParam(value="goto") String goTo,
             @RequestParam(value="q") String query,
             ServletRequest request,
-            HttpSession session) throws QueryException {    		
-    	
-    	List results = (List)session.getAttribute("results");    	
-    	if (results!= null){
+            HttpSession session) throws QueryException {
 
-    		if ("first".equals(goTo)){
-    			return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(0)) + assembleRequestParameters(request, goTo);
+        List results = (List)session.getAttribute("results");
+        if (results!= null){
 
-    		}else if ("previous".equals(goTo)){
-    			int index = Integer.parseInt(indexStr);
-    			return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index-1)) + assembleRequestParameters(request, goTo);
+            if ("first".equals(goTo)){
+                return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(0)) + assembleRequestParameters(request, goTo);
+
+            }else if ("previous".equals(goTo)){
+                int index = Integer.parseInt(indexStr);
+                return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index-1)) + assembleRequestParameters(request, goTo);
 
 
-    		}else if("next".equals(goTo)){
-    			int index = Integer.parseInt(indexStr);
-    			return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index+1))  + assembleRequestParameters(request, goTo);
+            }else if("next".equals(goTo)){
+                int index = Integer.parseInt(indexStr);
+                return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index+1))  + assembleRequestParameters(request, goTo);
 
-    		}else if("last".equals(goTo)){
-    			int lastIndex = Integer.parseInt(lastIndexStr);
-    			return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(lastIndex))  + assembleRequestParameters(request, goTo);
+            }else if("last".equals(goTo)){
+                int lastIndex = Integer.parseInt(lastIndexStr);
+                return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(lastIndex))  + assembleRequestParameters(request, goTo);
 
-    		}else if("results".equals(goTo)){    		
-    			return "redirect:/Query?" + assembleRequestParameters(request, goTo);
+            }else if("results".equals(goTo)){
+                return "redirect:/Query?" + assembleRequestParameters(request, goTo);
 
-    		}
-    	}
-    	return "redirect:/Query";
+            }
+        }
+        return "redirect:/Query";
     }
-    
+
     private Object findNameFromResultItem(Object resultItem){
-    	if(resultItem instanceof GeneSummary){
-    		return ((GeneSummary)resultItem).getSystematicId();
-    	}
-    	Object[] item = (Object[])resultItem;
-    	return item[0];
+        if(resultItem instanceof GeneSummary){
+            return ((GeneSummary)resultItem).getSystematicId();
+        }
+        Object[] item = (Object[])resultItem;
+        return item[0];
     }
-    
+
     private String assembleRequestParameters(ServletRequest request, String goTo ){
-    	StringBuffer paramConcats = new StringBuffer();
-    	for(Enumeration en = request.getParameterNames(); en.hasMoreElements();){
-    		String paramName = (String)en.nextElement();
-    		String value = request.getParameter(paramName);
-    		
-    		if("goto".equals(paramName)){
-    			continue;
-    			
-    		}else if("name".equals(paramName)){
-    			continue;
-    			
-    		}else if ("first".equals(goTo) && "index".equals(paramName)){
-    			paramConcats.append("&index=0");
-    			
-    		}else if("previous".equals(goTo) && "index".equals(paramName)){
-    			paramConcats.append("&index");
-    			paramConcats.append("=");
-    			paramConcats.append(Integer.parseInt(value)-1);
-    			
-    		}else if("next".equals(goTo) && "index".equals(paramName)){
-    			paramConcats.append("&index");
-    			paramConcats.append("=");
-    			paramConcats.append(Integer.parseInt(value)+1);
-    			
-    		}else if("last".equals(goTo) && "index".equals(paramName)){
-    			paramConcats.append("&index");
-    			paramConcats.append("=");
-    			paramConcats.append(
-    					Integer.parseInt(request.getParameter("lastIndex")));
-    			
-    		}else if("results".equals(goTo) && 
-    				("index".equals(paramName) || "lastIndex".equals(paramName))){
-    			continue;
-    			
-    		}else{
-    			paramConcats.append("&");
-    			paramConcats.append(paramName);
-    			paramConcats.append("=");
-    			paramConcats.append(value);
-    		}
-    	}
-    	String values = paramConcats.toString();
-    	return values;
+        StringBuffer paramConcats = new StringBuffer();
+        for(Enumeration en = request.getParameterNames(); en.hasMoreElements();){
+            String paramName = (String)en.nextElement();
+            String value = request.getParameter(paramName);
+
+            if("goto".equals(paramName)){
+                continue;
+
+            }else if("name".equals(paramName)){
+                continue;
+
+            }else if ("first".equals(goTo) && "index".equals(paramName)){
+                paramConcats.append("&index=0");
+
+            }else if("previous".equals(goTo) && "index".equals(paramName)){
+                paramConcats.append("&index");
+                paramConcats.append("=");
+                paramConcats.append(Integer.parseInt(value)-1);
+
+            }else if("next".equals(goTo) && "index".equals(paramName)){
+                paramConcats.append("&index");
+                paramConcats.append("=");
+                paramConcats.append(Integer.parseInt(value)+1);
+
+            }else if("last".equals(goTo) && "index".equals(paramName)){
+                paramConcats.append("&index");
+                paramConcats.append("=");
+                paramConcats.append(
+                        Integer.parseInt(request.getParameter("lastIndex")));
+
+            }else if("results".equals(goTo) &&
+                    ("index".equals(paramName) || "lastIndex".equals(paramName))){
+                continue;
+
+            }else{
+                paramConcats.append("&");
+                paramConcats.append(paramName);
+                paramConcats.append("=");
+                paramConcats.append(value);
+            }
+        }
+        String values = paramConcats.toString();
+        return values;
     }
 
 }
