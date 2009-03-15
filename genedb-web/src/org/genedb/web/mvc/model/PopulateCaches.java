@@ -176,14 +176,14 @@ public class PopulateCaches {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
         Query q;
 
-        if (config.isOrganism()) {
+        if (config.isOrganisms()) {
             q = session.createQuery(
                 "select fp.feature" +
                 " from FeatureProp fp" +
                 " where fp.cvTerm.name = 'top_level_seq'" +
                 " and fp.cvTerm.cv.name = 'genedb_misc'" +
-                " and fp.feature.organism.commonName = :orgName")
-            .setString("orgName", config.getOrganism());
+                " and fp.feature.organism.commonName in (:orgNames)")
+            .setString("orgNames", config.getOrganisms().replaceAll(":", ", "));
         } else {
             q = session.createQuery(
                 "select fp.feature" +
@@ -287,9 +287,9 @@ public class PopulateCaches {
 
     interface PopulateCachesArgs {
         @Option(shortName="o", description="Only populate cache for this organism")
-        String getOrganism();
+        String getOrganisms();
 
-        boolean isOrganism();
+        boolean isOrganisms();
 
         @Option
         String getGlobalFileRoot();
