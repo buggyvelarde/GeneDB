@@ -65,42 +65,42 @@ public class ResultsNavigatorController {
         return item[0];
     }
 
-    private String assembleRequestParameters(ServletRequest request, String goTo ){
+    private String assembleRequestParameters(ServletRequest request, String goTo ) {
         StringBuffer paramConcats = new StringBuffer();
-        for(Enumeration en = request.getParameterNames(); en.hasMoreElements();){
+        for (Enumeration en = request.getParameterNames() ; en.hasMoreElements() ; ) {
             String paramName = (String)en.nextElement();
             String value = request.getParameter(paramName);
 
-            if("goto".equals(paramName)){
+            if ("goto".equals(paramName)) {
                 continue;
 
-            }else if("name".equals(paramName)){
+            } else if ("name".equals(paramName)) {
                 continue;
 
-            }else if ("first".equals(goTo) && "index".equals(paramName)){
+            } else if ("first".equals(goTo) && "index".equals(paramName)) {
                 paramConcats.append("&index=0");
 
-            }else if("previous".equals(goTo) && "index".equals(paramName)){
+            } else if("previous".equals(goTo) && "index".equals(paramName)) {
                 paramConcats.append("&index");
                 paramConcats.append("=");
                 paramConcats.append(Integer.parseInt(value)-1);
 
-            }else if("next".equals(goTo) && "index".equals(paramName)){
+            } else if ("next".equals(goTo) && "index".equals(paramName)) {
                 paramConcats.append("&index");
                 paramConcats.append("=");
                 paramConcats.append(Integer.parseInt(value)+1);
 
-            }else if("last".equals(goTo) && "index".equals(paramName)){
+            } else if ("last".equals(goTo) && "index".equals(paramName)) {
                 paramConcats.append("&index");
                 paramConcats.append("=");
                 paramConcats.append(
                         Integer.parseInt(request.getParameter("lastIndex")));
 
-            }else if("results".equals(goTo) &&
-                    ("index".equals(paramName) || "lastIndex".equals(paramName))){
+            } else if ("results".equals(goTo) &&
+                    ("index".equals(paramName) || "lastIndex".equals(paramName))) {
                 continue;
 
-            }else{
+            } else {
                 paramConcats.append("&");
                 paramConcats.append(paramName);
                 paramConcats.append("=");
