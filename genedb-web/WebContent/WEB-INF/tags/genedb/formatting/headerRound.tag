@@ -36,11 +36,10 @@
 
         YAHOO.util.Event.onContentReady("start",function() {
       init();
-            adjustCoordinates();
-            var advancedSearchOpen = false;
+            adjustCoordinates()
         });
 
-
+        var advancedSearchOpen = false;
 
         function toggleAdvancedSearch() {
             if (advancedSearchOpen) {
