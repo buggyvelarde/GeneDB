@@ -88,11 +88,11 @@
         </form>
         <span align="top" style="font-size:0.65em;">
           <a style="color:white;vertical-align:top;" href="#" onclick="loadAdvancedSearch(); return false;">
-            Advanced Search&nbsp;&nbsp;&nbsp;
-          </a>
+            Advanced Search
+          </a>&nbsp;&nbsp;&nbsp;
         </span>
         <div id="advancedSearch">
-            <form name="advSearchForm" action="<c:url value="/Query"/>Query" method="post">
+            <form name="advSearchForm" action="<c:url value="/Query"/>" method="post">
             <table id="advSearchTable" cellpadding="2">
               <tr>
                 <td width="20%" style="text-align:left;">Search </td>
