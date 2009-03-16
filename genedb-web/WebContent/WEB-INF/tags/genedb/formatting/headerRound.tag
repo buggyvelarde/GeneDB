@@ -37,7 +37,18 @@
         YAHOO.util.Event.onContentReady("start",function() {
       init();
             adjustCoordinates();
+            var advancedSearchOpen = false;
         });
+
+
+
+        function toggleAdvancedSearch() {
+            if (advancedSearchOpen) {
+                closeAdvancedSearch();
+                return;
+            }
+            loadAdvancedSearch();
+        }
 
         function loadAdvancedSearch() {
             var dom = YAHOO.util.Dom;
@@ -49,6 +60,7 @@
             anim.animate();
             dom.setStyle(div, "overflow", "visible");
             dom.setStyle(div, "border", "1px solid grey");
+            advancedSearchOpen = true;
         }
 
         function closeAdvancedSearch() {
@@ -61,6 +73,7 @@
         };
        var anim = new YAHOO.util.Anim('advancedSearch', attributes, 0.3);
        anim.animate();
+       advancedSearchOpen = false;
         }
 </script>
 
@@ -87,7 +100,7 @@
           <input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
         </form>
         <span align="top" style="font-size:0.65em;">
-          <a style="color:white;vertical-align:top;" href="#" onclick="loadAdvancedSearch(); return false;">
+          <a style="color:white;vertical-align:top;" href="#" onclick="toggleAdvancedSearch(); return false;">
             Advanced Search
           </a>&nbsp;&nbsp;&nbsp;
         </span>
