@@ -17,7 +17,7 @@
            <c:url value="${url}" var="final">
           <c:param name="term" value="${row.name}"/>
            </c:url>
-        <a href="<c:url value="/Query?q=controlledCuration&cvTermName=${row.name}&cv=${category}"/>"><c:out value="${row.name}"/></a>
+        <a href="<c:url value="/Query"><c:param name="q" value="controlledCuration" /><c:param name="cvTermName" value="${row.name}" /><c:param name="cv" value="${category}"/></c:url>"><c:out value="${row.name}"/></a>
          </display:column>
          <display:column property="count" title="Count"/>
     </display:table>
