@@ -51,9 +51,9 @@ public class HyperlinkDbsInText extends SimpleTagSupport {
                     dbxref = parts[0] + ":" + parts[1]; // So PMID gets displayed as well as linked
                 }
 
-                //Map<String, String> dbUrlMap = (Map<String, String>) getJspContext().getAttribute(DbXRefListener.DB_URL_MAP, PageContext.APPLICATION_SCOPE);
-                Map<String, String> dbUrlMap = new HashMap<String, String>();
-                dbUrlMap.put("PMID", "wibble");
+                Map<String, String> dbUrlMap = (Map<String, String>) getJspContext().getAttribute(DbXRefListener.DB_URL_MAP, PageContext.APPLICATION_SCOPE);
+                //Map<String, String> dbUrlMap = new HashMap<String, String>();
+                //dbUrlMap.put("PMID", "wibble");
                 if (dbUrlMap.containsKey(parts[0])) {
                     String url = dbUrlMap.get(parts[0]) + parts[1];
                     String replace =  "(<a href=\""+url+"\">"+dbxref+"</a>)";
