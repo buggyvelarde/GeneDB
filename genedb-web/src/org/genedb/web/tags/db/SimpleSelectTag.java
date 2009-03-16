@@ -73,10 +73,10 @@ public class SimpleSelectTag extends AbstractHomepageTag {
         }
         // FIXME Use database for these values
         if (displayLabel != null && displayLabel.toLowerCase().equals("tbruceibrucei427")) {
-            displayLabel = "T.brucei brucei 427";
+            displayLabel = "Tbrucei brucei 427";
         }
         if (displayLabel != null && displayLabel.toLowerCase().equals("tbruceibrucei927")) {
-            displayLabel = "T.brucei brucei 927";
+            displayLabel = "Tbrucei brucei 927";
         }
 
         //Reformat leaf nodes to add a dot and space between first char and the rest of chars
