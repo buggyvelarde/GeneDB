@@ -43,7 +43,7 @@ public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
     }
 
     @Override
-    protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
+    protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
 
         BooleanQuery bq = new BooleanQuery();
         if (sigP) {
@@ -59,9 +59,6 @@ public class ProteinTargetingSeqQuery extends OrganismLuceneQuery {
 
         queries.add(bq);
 
-
-        makeQueryForOrganisms(taxons, queries);
-        
         //if (pseudogenes) {
         //    queries.add(geneOrPseudogeneQuery);
         //} else {

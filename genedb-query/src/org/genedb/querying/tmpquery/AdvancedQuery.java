@@ -41,7 +41,7 @@ public class AdvancedQuery extends OrganismLuceneQuery {
 
 
     @Override
-    protected void getQueryTerms(List<Query> queries) {
+    protected void getQueryTermsWithoutOrganisms(List<Query> queries) {
 
         BooleanQuery advQuery = new BooleanQuery();
         if (search.contains("*")) {

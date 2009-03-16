@@ -29,7 +29,7 @@ public class EcQuery extends OrganismLuceneQuery {
     }
 
     @Override
-    protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
+    protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
 
         Query q = new TermQuery(new Term("ecNumber",search.toLowerCase()));
 

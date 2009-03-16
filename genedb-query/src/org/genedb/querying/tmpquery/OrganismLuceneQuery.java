@@ -8,6 +8,7 @@ import org.genedb.querying.core.QueryParam;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,18 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     }
 
 
-    protected void makeQueryForOrganisms(TaxonNode[] taxons, List<org.apache.lucene.search.Query> queries) {
+
+    @Override
+    protected void getQueryTerms(List<Query> queries) {
+        getQueryTermsWithoutOrganisms(queries);
+        makeQueryForOrganisms(taxons, queries);
+    }
+
+
+    abstract protected void getQueryTermsWithoutOrganisms(List<Query> queries);
+
+
+    private void makeQueryForOrganisms(TaxonNode[] taxons, List<org.apache.lucene.search.Query> queries) {
 
         List<String> taxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
         if (taxonNames.size() == 0) {
@@ -63,7 +75,7 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
         for (String organism : taxonNames) {
             organismQuery.add(new TermQuery(new Term("organism.commonName",organism)), Occur.SHOULD);
         }
-        queries.add(organismQuery);        
+        queries.add(organismQuery);
     }
 
     @Override

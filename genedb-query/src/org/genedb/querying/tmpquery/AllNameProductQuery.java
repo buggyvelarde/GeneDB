@@ -58,7 +58,7 @@ public class AllNameProductQuery extends OrganismLuceneQuery {
     }
 
     @Override
-    protected void getQueryTerms(List<org.apache.lucene.search.Query> queries) {
+    protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
 
         BooleanQuery bq = new BooleanQuery();
         if(StringUtils.containsWhitespace(search)) {
