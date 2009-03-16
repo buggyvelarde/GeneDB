@@ -2,23 +2,29 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <format:headerRound title="Name/Product Search">
-	<st:init />
-	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
+    <st:init />
+    <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 <div id="geneDetails">
-	<format:genePageSection id="nameSearch" className="whiteBox">
+    <format:genePageSection id="nameSearch" className="whiteBox">
 
         <st:flashMessage />
 
-		<form:form commandName="query" action="Query" method="get">
-        <input type="hidden" name="q" value="nameProduct" />
+        <form:form commandName="query" action="Query" method="get">
+        <input type="hidden" name="q" value="allNameProduct" />
             <table>
-                
+                <tr>
+                  <td>Organism:</td>
+                  <td>
+                    <db:simpleselect />
+                    <font color="red"><form:errors path="taxons" /></font>
+                  </td>
+                </tr>
                 <tr>
                   <td>Name/Product:</td>
                   <td>
                     <form:input id="nameProductInput" path="search"/>
-            		<font color="red">&nbsp;<form:errors path="search" /></font>
+                    <font color="red">&nbsp;<form:errors path="search" /></font>
                   </td>
                 </tr>
                 <tr>
@@ -48,8 +54,8 @@
                 </tr>
             </table>
 
-		</form:form>
-	</format:genePageSection>
+        </form:form>
+    </format:genePageSection>
 </div>
 
 <br><query:results />
@@ -57,10 +63,10 @@
 <format:footer />
 
 <script>
-	onload = function(){
-		input = document.getElementById('nameProductInput');
-		if (input== null || (input!= null && input.value== '')){
-			input.focus();
-		}
-	}
+    onload = function(){
+        input = document.getElementById('nameProductInput');
+        if (input== null || (input!= null && input.value== '')){
+            input.focus();
+        }
+    }
 </script>
