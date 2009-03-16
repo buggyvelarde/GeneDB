@@ -46,7 +46,7 @@
         <tr><th><b>Organism</b></th><th><b>Example parent features (chromosomes and/or contigs)</b></th></tr>
         <tr><td><i>T. brucei</i></td><td>Tb927_01_v4,  Tb927_02_v4</td></tr>
         <tr><td><i>L. major</i></td><td>Lmjchr1, Lmjchr2</td></tr>
-        <tr><td><i>P. falciparum</i><td>Pf3D7_01, Pf3D7_02</td></tr>
+        <tr><td><i>P. falciparum</i></td><td>Pf3D7_01, Pf3D7_02</td></tr>
         </table>
 
 
