@@ -72,10 +72,10 @@ public class SimpleSelectTag extends AbstractHomepageTag {
             displayLabel = "All Organisms";
         }
         // FIXME Use database for these values
-        if (displayLabel != null && displayLabel.toLowerCase().equals("t. bruceibrucei427")) {
+        if (displayLabel != null && displayLabel.toLowerCase().equals("tbruceibrucei427")) {
             displayLabel = "T.brucei brucei 427";
         }
-        if (displayLabel != null && displayLabel.toLowerCase().equals("t. bruceibrucei927")) {
+        if (displayLabel != null && displayLabel.toLowerCase().equals("tbruceibrucei927")) {
             displayLabel = "T.brucei brucei 927";
         }
 
