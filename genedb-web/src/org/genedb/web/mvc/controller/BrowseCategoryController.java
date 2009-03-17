@@ -115,7 +115,7 @@ public class BrowseCategoryController {
         ModelAndView mav = new ModelAndView(successView);
         mav.addObject("results", results);
         mav.addObject("category", bean.getCategory());
-        mav.addObject("taxons",bean.getTaxons());
+        mav.addObject("taxons", orgName);
         return mav;
         //-------------------------------------------------------------------------------
     }
