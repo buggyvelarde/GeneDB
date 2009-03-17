@@ -33,6 +33,7 @@ import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -44,7 +45,7 @@ public class TaxonNodeManager implements InitializingBean {
 
     private PhylogenyDao phylogenyDao;
     private SessionFactory sessionFactory;
-    
+
     private boolean isFindPhylonodeWithOrganismFeatures=true;
 
     private Map<String, TaxonNode> labelTaxonNodeMap = new HashMap<String, TaxonNode>();
@@ -96,12 +97,12 @@ public class TaxonNodeManager implements InitializingBean {
             nodes = tempNodes;
         }
         //System.err.println("Session is '"+session+"'");
-        
+
         //Initialise phylonodes with organism features
         if (isFindPhylonodeWithOrganismFeatures){
-        	findPhylonodeWithOrganismFeatures();
+            findPhylonodeWithOrganismFeatures();
         }
-        
+
         }
         finally {
               TransactionSynchronizationManager.unbindResource(sessionFactory);
@@ -109,39 +110,39 @@ public class TaxonNodeManager implements InitializingBean {
             }
 
     }
-    
+
     /**
-     * Initialise taxons with organism features with boolean flag 
+     * Initialise taxons with organism features with boolean flag
      */
     private void findPhylonodeWithOrganismFeatures(){
-    	TaxonNode node = getTaxonNodeForLabel("Root");
-    	if (node == null){
-    		throw new RuntimeException("No taxon with \"Root\" has label exists");
-    	}else{
-    		System.out.println("Filtering the taxons....");
-    		initPhylonodeWithOrganismFeatures(node);
-    	}
+        TaxonNode node = getTaxonNodeForLabel("Root");
+        if (node == null){
+            throw new RuntimeException("No taxon with \"Root\" has label exists");
+        }else{
+            System.out.println("Filtering the taxons....");
+            initPhylonodeWithOrganismFeatures(node);
+        }
     }
-    
+
     /**
-     * Initialise taxons with organism features with boolean flag 
+     * Initialise taxons with organism features with boolean flag
      * @param node
      * @return
      */
     private boolean initPhylonodeWithOrganismFeatures(TaxonNode node){
-    	List<TaxonNode> childNodes = node.getChildren();
-    	if(childNodes.size() > 0){
-    		for(TaxonNode childNode :  childNodes){
-    			if(initPhylonodeWithOrganismFeatures(childNode)){
-    				node.setHasOrganismFeature(true);
-    			}
-    		}
-    	}else{
-    		if(phylogenyDao.isPhylonodeWithOrganismFeature(node.getPhylonode())){
-    			node.setHasOrganismFeature(true);
-    		}    		
-    	}
-    	return node.hasOrganismFeature();
+        List<TaxonNode> childNodes = node.getChildren();
+        if(childNodes.size() > 0){
+            for(TaxonNode childNode :  childNodes){
+                if(initPhylonodeWithOrganismFeatures(childNode)){
+                    node.setHasOrganismFeature(true);
+                }
+            }
+        }else{
+            if(phylogenyDao.isPhylonodeWithOrganismFeature(node.getPhylonode())){
+                node.setHasOrganismFeature(true);
+            }
+        }
+        return node.hasOrganismFeature();
     }
 
     boolean validateTaxons(List<String> taxons, List<String> problems) {
@@ -217,21 +218,24 @@ public class TaxonNodeManager implements InitializingBean {
         this.sessionFactory = sessionFactory;
     }
 
-	public List<String> getNamesListForTaxons(TaxonNode[] taxons) {
-		Set<String> dupes = new HashSet<String>();
-		for (TaxonNode taxonNode : taxons) {
-			dupes.addAll(taxonNode.getAllChildrenNames());
-		}
-		return new ArrayList<String>(dupes);
-	}
+    public List<String> getNamesListForTaxons(TaxonNode[] taxons) {
+        if (taxons == null || taxons.length == 0) {
+            return Collections.emptyList();
+        }
+        Set<String> dupes = new HashSet<String>();
+        for (TaxonNode taxonNode : taxons) {
+            dupes.addAll(taxonNode.getAllChildrenNames());
+        }
+        return new ArrayList<String>(dupes);
+    }
 
-	public boolean isFindPhylonodeWithOrganismFeatures() {
-		return isFindPhylonodeWithOrganismFeatures;
-	}
+    public boolean isFindPhylonodeWithOrganismFeatures() {
+        return isFindPhylonodeWithOrganismFeatures;
+    }
 
-	public void setFindPhylonodeWithOrganismFeatures(
-			boolean isFindPhylonodeWithOrganismFeatures) {
-		this.isFindPhylonodeWithOrganismFeatures = isFindPhylonodeWithOrganismFeatures;
-	}
+    public void setFindPhylonodeWithOrganismFeatures(
+            boolean isFindPhylonodeWithOrganismFeatures) {
+        this.isFindPhylonodeWithOrganismFeatures = isFindPhylonodeWithOrganismFeatures;
+    }
 
 }
