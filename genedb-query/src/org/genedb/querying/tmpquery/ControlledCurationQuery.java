@@ -61,6 +61,7 @@ public class ControlledCurationQuery extends OrganismHqlQuery {
 
     @Override
     protected void populateQueryWithParams(Query query) {
+        super.populateQueryWithParams(query);
         logger.error(String.format("cvName='%s' cvTermName='%s'", cv.getLookupName(), cvTermName));
         query.setString("cvName", cv.getLookupName());
         query.setString("cvTermName", cvTermName);
