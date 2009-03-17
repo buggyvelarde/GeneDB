@@ -9,8 +9,6 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.sleepycat.collections.StoredMap;
-
 import org.apache.log4j.Logger;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
@@ -21,8 +19,6 @@ import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
 import org.genedb.querying.tmpquery.TaxonQuery;
 import org.genedb.web.mvc.controller.WebConstants;
-import org.genedb.web.mvc.model.ResultsCacheFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -34,10 +30,12 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 
 @Controller
 @RequestMapping("/Query")
+@SessionAttributes("results")
 public class QueryController {
 
     private static final Logger logger = Logger.getLogger(QueryController.class);
@@ -46,14 +44,15 @@ public class QueryController {
 
     private static final String RESULTS_ATTR = "results";
 
+    private static final int BATCH_SIZE = 1000;
+
+    private static final int MAX_RESULTS_SIZE = 500;
+
     @Autowired
     private QueryFactory queryFactory;
 
     @Autowired
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
-
-    @Autowired
-    private ResultsCacheFactory resultsCacheFactory;
 
 
     @RequestMapping(method = RequestMethod.GET)
@@ -68,12 +67,10 @@ public class QueryController {
             HttpSession session,
             Model model) throws QueryException {
 
-        logger.error("This is the setupform method");
 
         //From Browse Pages
         if ("controlledCuration".equals(queryName)){
-            logger.error("The controlledCuration hack has been triggered");
-            return processForm(queryName, request, session, model);
+             return processForm(queryName, request, session, model);
         }
 
         if (!StringUtils.hasText(queryName)) {
@@ -89,13 +86,13 @@ public class QueryController {
         model.addAttribute("query", query);
 
 
-//        if (!"true".equals(request.getParameter("newSearch"))
-//                && session.getAttribute("results")!= null){
-//            model.addAttribute("runQuery", Boolean.TRUE);
-//
-//        } else if ("true".equals(request.getParameter("newSearch"))) {
-//            session.removeAttribute(RESULTS_ATTR);
-//        }
+        if (!"true".equals(request.getParameter("newSearch"))
+                && session.getAttribute("results")!= null){
+            model.addAttribute("runQuery", Boolean.TRUE);
+
+        }else if ("true".equals(request.getParameter("newSearch"))){
+            session.removeAttribute(RESULTS_ATTR);
+        }
 
         populateModelData(model, query);
         return "search/"+queryName;
@@ -148,13 +145,20 @@ public class QueryController {
 
         logger.error("Validator found no errors");
         List results = query.getResults();
-        String resultsKey = null;
         if (results.size() > 0) {
-            resultsKey = cacheResults(results);
-            //Object firstItem =  results.get(0);
-            //if (! (firstItem instanceof GeneSummary)) {
-            //    results = convertIdsToGeneSummaries(results);
-            //}
+
+            if (results.size() > MAX_RESULTS_SIZE) {
+                List results2 = new ArrayList(MAX_RESULTS_SIZE);
+                for (int i=0; i < MAX_RESULTS_SIZE; i++) {
+                    results2.add(results.get(i));
+                }
+                results = results2;
+            }
+
+            Object firstItem =  results.get(0);
+            if (! (firstItem instanceof GeneSummary)) {
+                results = convertIdsToGeneSummaries(results);
+            }
         }
         model.addAttribute("runQuery", Boolean.TRUE);
 
@@ -169,25 +173,19 @@ public class QueryController {
         switch (results.size()) {
         case 0:
             logger.error("No results found for query");
+            model.addAttribute(RESULTS_ATTR, results);
             model.addAttribute("taxonNodeName", taxonName);
             return "search/"+queryName;
         case 1:
             return "redirect:/NamedFeature?name="+((GeneSummary)results.get(0)).getSystematicId();
         default:
-            model.addAttribute(RESULTS_ATTR, resultsKey);
+            model.addAttribute(RESULTS_ATTR, results);
             model.addAttribute("taxonNodeName", taxonName);
             logger.error("Found results for query");
             return "search/"+queryName;
         }
     }
 
-
-    private String cacheResults(List results) {
-        String key = Integer.toString(System.identityHashCode(results)); // CHECKME
-        StoredMap<String, List> map = resultsCacheFactory.getResultsCacheMap();
-        map.put(key, results);
-        return key;
-    }
 
     private List convertIdsToGeneSummaries(List results) throws QueryException {
         logger.error(results.size()+ " results for HQL query");
