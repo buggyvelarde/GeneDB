@@ -21,13 +21,17 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.CvDao;
 import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
 import org.genedb.querying.tmpquery.BrowseCategory;
 
 import org.gmod.schema.utils.CountedName;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,6 +64,15 @@ public class BrowseCategoryController {
     private static final String RESULTS_ATTR = "results";
 
     private CvDao cvDao;
+
+    @Autowired
+    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
+    }
+
 
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm(Model model) {
