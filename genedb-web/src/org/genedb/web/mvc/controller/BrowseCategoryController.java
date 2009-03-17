@@ -99,12 +99,16 @@ public class BrowseCategoryController {
         /* This is to include all the cvs starting with CC. In future when the other cvs have more terms in,
          * this can be removed and the other cvs starting with CC can be added to BrowseCategory
          */
-        String orgName = bean.getTaxons()[0].getLabel();
+        TaxonNode[] taxons = bean.getTaxons();
+        String orgName = "Root";
         List<String> orgNames = new ArrayList<String>();
-        orgNames.add(orgName);
+        if (taxons != null && taxons.length > 0) {
+            orgName = taxons[0].getLabel();
+            orgNames.add(orgName);
+        }
         List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(bean.getCategory().getLookupName(), orgNames);
 
-        if (results .isEmpty()) {
+        if (results.isEmpty()) {
             logger.info("result is null");
             //be.reject("no.results");
             // FIXME return showForm(request, response, be);

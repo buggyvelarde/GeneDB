@@ -235,7 +235,7 @@ public class CvDao extends BaseDao {
         cvTermIdsByAccessionAndCv.put(cvName, accession, cvTerm.getCvTermId());
         return cvTerm;
     }
-    
+
     /**
      * Get the CvTerm with the specified CV and name, assuming that it exists.
      *
@@ -408,12 +408,18 @@ public class CvDao extends BaseDao {
             orgNames.append("'" + orgName.replaceAll("'", "''") + "'");
         }
 
+        String orgQuery = "";
+        if (orgs.size() > 0) {
+            orgQuery = " fct.feature.organism.commonName in (" + orgNames + ") and";
+        }
+
         @SuppressWarnings("unchecked")
         List<CountedName> countedNames = getSession().createQuery(
             "select new org.gmod.schema.utils.CountedName(cvt.name, count(fct.feature.uniqueName))"
                     + " from FeatureCvTerm fct" + " join fct.cvTerm cvt"
-                    + " where fct.feature.organism.commonName in (" + orgNames + ")"
-                    + " and cvt.cv.name like :cvNamePattern" + " group by cvt.name"
+                    + " where"
+                    + orgQuery
+                    + " cvt.cv.name like :cvNamePattern" + " group by cvt.name"
                     + " order by cvt.name")
                 .setString("cvNamePattern", cvNamePattern)
                 .list();
