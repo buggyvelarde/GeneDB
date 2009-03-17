@@ -68,6 +68,7 @@ public class QueryController {
             HttpSession session,
             Model model) throws QueryException {
 
+        logger.error("This is the setupform method");
 
         //From Browse Pages
         if ("controlledCuration".equals(queryName)){
