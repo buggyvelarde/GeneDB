@@ -72,7 +72,7 @@ public class BrowseCategoryController {
 
     @RequestMapping(method = RequestMethod.GET, params = "category")
     public ModelAndView setUpForm(
-            @RequestParam BrowseCategoryController.BrowseCategoryBean bean,
+            BrowseCategoryController.BrowseCategoryBean bean,
             HttpSession session,
             Model model) {
         logger.warn("Called method 2");
