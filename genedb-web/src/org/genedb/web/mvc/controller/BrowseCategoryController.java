@@ -20,6 +20,7 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.CvDao;
+import org.genedb.db.taxon.TaxonNode;
 import org.genedb.querying.tmpquery.BrowseCategory;
 
 import org.gmod.schema.utils.CountedName;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -70,22 +72,24 @@ public class BrowseCategoryController {
 
     @RequestMapping(method = RequestMethod.GET, params = "category")
     public ModelAndView setUpForm(
-            @RequestParam(value="category") BrowseCategory category,
-            @RequestParam(value="organism", required=false) String[] orgs,
+            @RequestParam(value="") BrowseCategoryController.BrowseCategoryBean bean,
             HttpSession session,
             Model model) {
-        logger.warn("called method 2");
-        
+        logger.warn("Called method 2");
+
         //Clear session of any search result
         session.removeAttribute(RESULTS_ATTR);
 
         //-------------------------------------------------------------------------------
         //Collection<String> orgNames = TaxonUtils.getOrgNames(bcb.getOrganism());
-        Collection<String> orgNames = Arrays.asList(new String[] {"Pfalciparum"});
+        //Collection<String> orgNames = Arrays.asList(new String[] {"Pfalciparum"});
         /* This is to include all the cvs starting with CC. In future when the other cvs have more terms in,
          * this can be removed and the other cvs starting with CC can be added to BrowseCategory
          */
-        List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(category.getLookupName(), orgNames);
+        String orgName = bean.getTaxons()[0].getLabel();
+        List<String> orgNames = new ArrayList<String>();
+        orgNames.add(orgName);
+        List<CountedName> results = cvDao.getCountedNamesByCvNamePatternAndOrganism(bean.getCategory().getLookupName(), orgNames);
 
         if (results .isEmpty()) {
             logger.info("result is null");
@@ -97,8 +101,8 @@ public class BrowseCategoryController {
         // Go to list results page
         ModelAndView mav = new ModelAndView(successView);
         mav.addObject("results", results);
-        mav.addObject("category", category);
-        //mav.addObject("organism",bcb.getOrganism());
+        mav.addObject("category", bean.getCategory());
+        mav.addObject("taxons",bean.getTaxons());
         return mav;
         //-------------------------------------------------------------------------------
     }
@@ -146,13 +150,13 @@ public class BrowseCategoryController {
     public static class BrowseCategoryBean {
 
         private BrowseCategory category;
-        private String organism;
+        private TaxonNode[] taxons;
 
-        public String getOrganism() {
-            return organism;
+        public TaxonNode[] getTaxons() {
+            return taxons;
         }
-        public void setOrganism(String organism) {
-            this.organism = organism;
+        public void setTaxons(TaxonNode[] taxons) {
+            this.taxons = taxons;
         }
         public BrowseCategory getCategory() {
             return this.category;
