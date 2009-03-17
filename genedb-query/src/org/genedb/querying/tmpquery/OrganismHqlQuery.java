@@ -30,6 +30,9 @@ public abstract class OrganismHqlQuery extends HqlQuery implements TaxonQuery {
         if (taxons==null || taxons.length==0) {
             return null;
         }
+        if (taxons.length == 1 && taxons[0].getLabel().equals("Root")) {
+            return null;
+        }
         return "and f.organism.abbreviation in (:organismList)";
     }
 
