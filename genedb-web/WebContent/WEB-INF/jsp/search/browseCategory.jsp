@@ -16,15 +16,7 @@
           <tr>
             <td>Organisms:</td>
               <td>
-                <select name="organism">
-                  <option value="Plasmodium">Plasmodium</option>
-                  <option value="Pfalciparum">P. falciparum</option>
-                  <option value="Pberghei_3x">P. berghei</option>
-                  <option value="Pchabaudi">P. chabaudi</option>
-                  <option value="Pknowlesi">P. knowlesi</option>
-                  <option value="Pvivax">P. vivax</option>
-                  <option value="Pyoelii">P. yoelii</option>
-                </select>
+                <br><db:simpleselect />
               </td>
           </tr>
           <tr>
