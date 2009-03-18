@@ -3,7 +3,7 @@ webAppRootKey=genedb.staging.root
 
 dbhost=pathdbsrv1-dmz
 dbport=5432
-dbname=snapshot
+dbname=staging
 dbuser=genedb_ro
 dbpassword=genedb_ro
 
