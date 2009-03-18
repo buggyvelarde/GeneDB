@@ -65,7 +65,7 @@
 <script>
     onload = function(){
         input = document.getElementById('nameProductInput');
-        if (input== null || (input!= null && input.value== '')){
+        if (input!= null && input.value== ''){
             input.focus();
         }
     }
