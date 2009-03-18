@@ -2,12 +2,12 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <format:headerRound title="Number of TM domains Search">
-	<st:init />
-	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
+    <st:init />
+    <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 <div id="geneDetails">
-	<format:genePageSection id="nameSearch" className="whiteBox">
-		<form:form commandName="query" action="Query" method="post">
+    <format:genePageSection id="nameSearch" className="whiteBox">
+        <form:form commandName="query" action="Query" method="post">
         <input type="hidden" name="q" value="proteinTargetingSeq" />
             <table>
                 <tr>
@@ -18,11 +18,11 @@
                                 <tr>
                 <td>
                      <b>Organism:</b>
-            	     <br><db:simpleselect />
-            	     <br><font color="red"><form:errors path="taxons" /></font>
+                     <br><db:simpleselect />
+                     <br><font color="red"><form:errors path="taxons" /></font>
                   <td>
                 </tr>
-                <tr><td colspan="2">Search Protein Targeting Sequence (retrieve records in which ONLY SELECTED TERMS are present):</td></tr>
+                <tr><td colspan="2">Search proteins for the following targeting sequences (select the type(s) that must be present):</td></tr>
                 <tr><td>Signal Peptide</td>
                     <td><form:checkbox id="sigP" path="sigP"/></td>
                 </tr>
@@ -41,8 +41,8 @@
                 </tr>
             </table>
 
-		</form:form>
-	</format:genePageSection>
+        </form:form>
+    </format:genePageSection>
 </div>
 
 <br><query:results />
