@@ -24,8 +24,8 @@ public class ResultsNavigatorController {
 
     @RequestMapping(method = RequestMethod.GET )
     public String navigate(
-            @RequestParam(value="index") String indexStr,
-            @RequestParam(value="lastIndex") String lastIndexStr,
+            @RequestParam(value="index") int index,
+            @RequestParam(value="lastIndex") int lastIndex,
             @RequestParam(value="goto") String goTo,
             @RequestParam(value="q") String query,
             ServletRequest request,
@@ -37,20 +37,17 @@ public class ResultsNavigatorController {
             if ("first".equals(goTo)){
                 return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(0)) + assembleRequestParameters(request, goTo);
 
-            }else if ("previous".equals(goTo)){
-                int index = Integer.parseInt(indexStr);
+            } else if ("previous".equals(goTo)){
                 return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index-1)) + assembleRequestParameters(request, goTo);
 
 
-            }else if("next".equals(goTo)){
-                int index = Integer.parseInt(indexStr);
+            } else if ("next".equals(goTo)){
                 return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index+1))  + assembleRequestParameters(request, goTo);
 
-            }else if("last".equals(goTo)){
-                int lastIndex = Integer.parseInt(lastIndexStr);
+            } else if ("last".equals(goTo)){
                 return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(lastIndex))  + assembleRequestParameters(request, goTo);
 
-            }else if("results".equals(goTo)){
+            } else if ("results".equals(goTo)){
                 return "redirect:/Query?" + assembleRequestParameters(request, goTo);
 
             }
