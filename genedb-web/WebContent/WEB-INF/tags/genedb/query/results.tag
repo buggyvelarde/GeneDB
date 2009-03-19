@@ -13,7 +13,6 @@
 </c:forEach>
 
 
-<c:if test="${runQuery}">
     <br>
     <c:url value="BrowseTerm" var="url">
         <c:param name="category" value="${category}"/>
@@ -22,12 +21,8 @@
     <div id="geneResultsPanel">
     
 
-<c:if test="${fn:length(results)==500}">
-		<br><br><div style="margin-left: auto;color:red;">Please note that we're only able to find up to 500 results on this Preview site.</div> 
-</c:if>
-
         <format:genePageSection  className="whiteBox">
-            <display:table name="sessionScope.results"  id="row" pagesize="30" requestURI="/Query" class="simple" cellspacing="0" cellpadding="4">
+            <display:table name="results"  id="row" pagesize="30" requestURI="/Query" class="simple" cellspacing="0" cellpadding="4">
                    <display:column title="Systematic ids">
                     <a href="<c:url value="/NamedFeature"/>?name=${row.systematicId}&index=${row_rowNum-1}&lastIndex=${fn:length(results)-1}&${requestParams}"><c:out value="${row.systematicId}"/></a>
                    </display:column>
@@ -48,4 +43,3 @@
             </display:table>
         </format:genePageSection>
     </div>
-</c:if>
