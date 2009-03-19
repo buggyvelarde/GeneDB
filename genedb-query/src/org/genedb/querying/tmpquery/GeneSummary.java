@@ -1,6 +1,8 @@
 package org.genedb.querying.tmpquery;
 
-public class GeneSummary implements Comparable<GeneSummary> {
+import java.io.Serializable;
+
+public class GeneSummary implements Comparable<GeneSummary>, Serializable {
     private String systematicId;
 
     private String taxonDisplayName;
