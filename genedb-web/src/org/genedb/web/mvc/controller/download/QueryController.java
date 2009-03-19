@@ -70,12 +70,6 @@ public class QueryController {
 
         logger.error("This is the setupform method");
 
-        //From Browse Pages
-        if ("controlledCuration".equals(queryName)){
-            logger.error("The controlledCuration hack has been triggered");
-            return processForm(queryName, request, session, model);
-        }
-
         if (!StringUtils.hasText(queryName)) {
             session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
             return "redirect:/QueryList";
@@ -87,15 +81,6 @@ public class QueryController {
             return "redirect:/QueryList";
         }
         model.addAttribute("query", query);
-
-
-//        if (!"true".equals(request.getParameter("newSearch"))
-//                && session.getAttribute("results")!= null){
-//            model.addAttribute("runQuery", Boolean.TRUE);
-//
-//        } else if ("true".equals(request.getParameter("newSearch"))) {
-//            session.removeAttribute(RESULTS_ATTR);
-//        }
 
         populateModelData(model, query);
         return "search/"+queryName;
@@ -172,6 +157,13 @@ public class QueryController {
             model.addAttribute("taxonNodeName", taxonName);
             return "search/"+queryName;
         case 1:
+        	GeneSummary gs = null;
+            Object firstItem =  results.get(0);
+            if (firstItem instanceof GeneSummary) {
+            	gs = (GeneSummary) firstItem;
+            } else {
+            	gs = convertIdToGeneSummary(firstItem);
+            }
             return "redirect:/NamedFeature?name="+((GeneSummary)results.get(0)).getSystematicId();
         default:
             model.addAttribute(RESULTS_ATTR, resultsKey);
@@ -189,53 +181,26 @@ public class QueryController {
         return key;
     }
 
-    private List convertIdsToGeneSummaries(List results) throws QueryException {
-        logger.error(results.size()+ " results for HQL query");
-        List<String> ids = new ArrayList<String>(results.size());
-        List<GeneSummary> ret = new ArrayList<GeneSummary>();
+    private GeneSummary convertIdToGeneSummary(Object o) throws QueryException {
+        GeneSummary gs;
 
-
-        for (String id : (List<String>) results) {
-            if (id.endsWith(":pep")) {
-                id = id.replace(":pep", "");
-            }
-            if (id.endsWith(":mRNA")) {
-                id = id.replace(":mRNA", "");
-            }
-            ids.add(id);
+        String id = (String) o;
+        if (id.endsWith(":pep")) {
+        	id = id.replace(":pep", "");
+        }
+        if (id.endsWith(":mRNA")) {
+        	id = id.replace(":mRNA", "");
         }
         IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
         if (idsToGeneSummary == null) {
             throw new RuntimeException("Internal error - unable to find ids to gene summary query");
         }
+        List<String> ids = new ArrayList<String>();
+        ids.add(id);
         idsToGeneSummary.setIds(ids);
-        ret.addAll((List<GeneSummary>)idsToGeneSummary.getResults());
+        List<GeneSummary> answers = (List<GeneSummary>)idsToGeneSummary.getResults();
 
-//        int top = 0;
-//        int max = 3;
-//
-//        while (top < ids.size()) {
-//            List<String> ids2 = new ArrayList<String>();
-//            max = ((ids.size() - top) >= BATCH_SIZE) ? BATCH_SIZE : ids.size() - top;
-//            for (int i=0; i < max ; i++) {
-//                String id = ids.get(i+top);
-//                if (id.endsWith(":pep")) {
-//                    id.replace(":pep", "");
-//                }
-//                if (id.endsWith(":mRNA")) {
-//                    id.replace(":mRNA", "");
-//                }
-//                ids2.add(id);
-//                IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
-//                if (idsToGeneSummary == null) {
-//                    throw new RuntimeException("Internal error - unable to find ids to gene summary query");
-//                }
-//                idsToGeneSummary.setIds(ids2);
-//                ret.addAll((List<GeneSummary>)idsToGeneSummary.getResults());
-//            }
-//            top += max;
-//        }
-        return ret;
+        return answers.get(0);
     }
 
     private void populateModelData(Model model, Query query) {
