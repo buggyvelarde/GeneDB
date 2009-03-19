@@ -64,7 +64,10 @@ public class ResultsController {
             return "redirect:/QueryList";
         }
 
+        String pName = new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE);
+        logger.error("pName is '"+pName+"'");
         String startString2 = request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)));
+        logger.error("The start string is '"+startString2+"'");
         int start = 0;
         if (startString2 != null) {
         	start = (Integer.parseInt(startString2) - 1) * DEFAULT_LENGTH;
