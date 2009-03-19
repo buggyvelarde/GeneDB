@@ -6,23 +6,11 @@
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/genedb/formatting" %>
 
-<c:forEach var="parameter" items="${paramValues}">
-    <c:forEach var="value" items="${parameter.value}">
-        <c:set var="requestParams" value="${requestParams}&${parameter.key}=${value}"/>
-    </c:forEach>
-</c:forEach>
-
-
-    <br>
-    <c:url value="BrowseTerm" var="url">
-        <c:param name="category" value="${category}"/>
-    </c:url>
-
     <div id="geneResultsPanel">
     
 
         <format:genePageSection  className="whiteBox">
-            <display:table name="results"  id="row" pagesize="30" requestURI="/Results" class="simple" cellspacing="0" cellpadding="4" partialList="true" size="${resultsSize}">
+            <display:table name="results"  id="row" pagesize="30" requestURI="/Results" class="simple" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${resultsSize}">
                    <display:column title="Systematic ids">
                     <a href="<c:url value="/NamedFeature"/>?name=${row.systematicId}&index=${row_rowNum-1}&lastIndex=${fn:length(results)-1}&${requestParams}"><c:out value="${row.systematicId}"/></a>
                    </display:column>
