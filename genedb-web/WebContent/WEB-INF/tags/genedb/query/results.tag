@@ -22,7 +22,7 @@
     
 
         <format:genePageSection  className="whiteBox">
-            <display:table name="results"  id="row" pagesize="30" requestURI="/Results" class="simple" cellspacing="0" cellpadding="4" partialList="true" size="${resultSize}">
+            <display:table name="results"  id="row" pagesize="30" requestURI="/Results" class="simple" cellspacing="0" cellpadding="4" partialList="true" size="${resultsSize}">
                    <display:column title="Systematic ids">
                     <a href="<c:url value="/NamedFeature"/>?name=${row.systematicId}&index=${row_rowNum-1}&lastIndex=${fn:length(results)-1}&${requestParams}"><c:out value="${row.systematicId}"/></a>
                    </display:column>
