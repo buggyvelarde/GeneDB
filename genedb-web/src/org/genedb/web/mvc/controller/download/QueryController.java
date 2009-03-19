@@ -1,7 +1,6 @@
 package org.genedb.web.mvc.controller.download;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +8,7 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.collect.Lists;
 import com.sleepycat.collections.StoredMap;
 
 import org.apache.log4j.Logger;
@@ -18,7 +18,6 @@ import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.GeneSummary;
-import org.genedb.querying.tmpquery.IdsToGeneSummaryQuery;
 import org.genedb.querying.tmpquery.TaxonQuery;
 import org.genedb.web.mvc.controller.WebConstants;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
@@ -42,12 +41,7 @@ public class QueryController {
 
     private static final Logger logger = Logger.getLogger(QueryController.class);
 
-    private static final String IDS_TO_GENE_SUMMARY_QUERY = "idsToGeneSummary";
-
     private static final String RESULTS_ATTR = "results";
-
-    @Autowired
-    private QueryFactory queryFactory;
 
     @Autowired
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
@@ -55,6 +49,8 @@ public class QueryController {
     @Autowired
     private ResultsCacheFactory resultsCacheFactory;
 
+    @Autowired
+    private QueryFactory queryFactory;
 
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm() {
@@ -133,22 +129,22 @@ public class QueryController {
 
         logger.error("Validator found no errors");
         List results = query.getResults();
-        String resultsKey = null;
-        if (results.size() > 0) {
-            resultsKey = cacheResults(results);
-            //Object firstItem =  results.get(0);
-            //if (! (firstItem instanceof GeneSummary)) {
-            //    results = convertIdsToGeneSummaries(results);
-            //}
-        }
-        model.addAttribute("runQuery", Boolean.TRUE);
-
+        
         String taxonName = null;
         if (query instanceof TaxonQuery) {
             TaxonNode[] nodes = ((TaxonQuery) query).getTaxons();
             if (nodes != null && nodes.length > 0) {
                 taxonName = nodes[0].getLabel();
             } // FIXME
+        }
+        
+        String resultsKey = null;
+        if (results.size() > 0) {
+//            Object firstItem =  results.get(0);
+//            if (! (firstItem instanceof GeneSummary)) {
+//                results = convertIdsToGeneSummaries(results);
+//            }
+
         }
 
         switch (results.size()) {
@@ -157,51 +153,42 @@ public class QueryController {
             model.addAttribute("taxonNodeName", taxonName);
             return "search/"+queryName;
         case 1:
-        	GeneSummary gs = null;
-            Object firstItem =  results.get(0);
-            if (firstItem instanceof GeneSummary) {
-            	gs = (GeneSummary) firstItem;
-            } else {
-            	gs = convertIdToGeneSummary(firstItem);
-            }
-            return "redirect:/NamedFeature?name="+((GeneSummary)results.get(0)).getSystematicId();
+        	List<GeneSummary> gs = possiblyConvertList(results);
+            resultsKey = cacheResults(gs);
+            return "redirect:/NamedFeature?name=" + gs.get(0).getSystematicId();
         default:
+        	List<GeneSummary> gs2 = possiblyConvertList(results);
+            resultsKey = cacheResults(gs2);
             model.addAttribute(RESULTS_ATTR, resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
-            logger.error("Found results for query");
-            return "search/"+queryName;
+            logger.error("Found results for query - redirecting to ResultsCache controller");
+            return "forward:/ResultsCache";
         }
     }
 
 
-    private String cacheResults(List results) {
-        String key = Integer.toString(System.identityHashCode(results)); // CHECKME
+    private List<GeneSummary> possiblyConvertList(List results) {
+    	List<GeneSummary> gs;
+        Object firstItem =  results.get(0);
+        if (firstItem instanceof GeneSummary) {
+        	gs = results;
+        } else {
+        	gs = Lists.newArrayListWithExpectedSize(results.size());
+        	for (Object o  : results) {
+				gs.add(new GeneSummary((String) o));
+			}
+        }
+        return gs;
+    }
+
+
+    private String cacheResults(List<GeneSummary> gs) {
+        String key = Integer.toString(System.identityHashCode(gs)); // CHECKME
         StoredMap<String, List> map = resultsCacheFactory.getResultsCacheMap();
-        map.put(key, results);
+        map.put(key, gs);
         return key;
     }
 
-    private GeneSummary convertIdToGeneSummary(Object o) throws QueryException {
-        GeneSummary gs;
-
-        String id = (String) o;
-        if (id.endsWith(":pep")) {
-        	id = id.replace(":pep", "");
-        }
-        if (id.endsWith(":mRNA")) {
-        	id = id.replace(":mRNA", "");
-        }
-        IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
-        if (idsToGeneSummary == null) {
-            throw new RuntimeException("Internal error - unable to find ids to gene summary query");
-        }
-        List<String> ids = new ArrayList<String>();
-        ids.add(id);
-        idsToGeneSummary.setIds(ids);
-        List<GeneSummary> answers = (List<GeneSummary>)idsToGeneSummary.getResults();
-
-        return answers.get(0);
-    }
 
     private void populateModelData(Model model, Query query) {
         Map<String, Object> modelData = query.prepareModelData();
