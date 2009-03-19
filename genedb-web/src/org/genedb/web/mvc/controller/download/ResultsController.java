@@ -1,5 +1,7 @@
 package org.genedb.web.mvc.controller.download;
 
+import org.displaytag.tags.TableTagParameters;
+import org.displaytag.util.ParamEncoder;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.GeneSummary;
@@ -62,10 +64,12 @@ public class ResultsController {
             return "redirect:/QueryList";
         }
 
-        int start = (startString == null) ? 0 : startString.intValue();
-        int length = (lengthString == null) ? DEFAULT_LENGTH : lengthString.intValue() ;
+        int start = (Integer.parseInt(request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)))) - 1) * DEFAULT_LENGTH;
         
-        int end = start + length;
+        //int start = (startString == null) ? 0 : startString.intValue();
+        //int length = (lengthString == null) ? DEFAULT_LENGTH : lengthString.intValue() ;
+        
+        int end = start + DEFAULT_LENGTH;
 //        Query query = queryFactory.retrieveQuery(queryName);index
 //        if (query == null) {
 //            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
@@ -89,6 +93,7 @@ public class ResultsController {
         }
         	
         model.addAttribute("results", results);
+        model.addAttribute("resultsSize", results.size());
         return "list/results";
     }
 
