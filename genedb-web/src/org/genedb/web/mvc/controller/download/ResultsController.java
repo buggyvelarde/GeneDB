@@ -91,33 +91,52 @@ public class ResultsController {
         	end = results.size() - 1;
         }
         
-        if (possiblyExpandResults(results, start, end)) {
-        	resultsCacheFactory.getResultsCacheMap().put(key, results);
+        List<GeneSummary> subset;
+        if (start == 0 && end == results.size() -1) {
+        	subset = results;
+        } else {
+        	subset = results.subList(start, end);
+        }
+        
+        List<GeneSummary> possiblyExpanded = possiblyExpandResults(subset);
+
+        if (possiblyExpanded != null) {
+        	// Need to update cache
+            if (start == 0 && end == results.size() -1) {
+             	resultsCacheFactory.getResultsCacheMap().put(key, possiblyExpanded);
+            } else {
+            	subset = results.subList(start, end);
+            	int index = start;
+            	for (GeneSummary geneSummary : possiblyExpanded) {
+					results.add(index, geneSummary);
+					index++;
+				}
+            	resultsCacheFactory.getResultsCacheMap().put(key, results);
+            }
+
         }
         	
-        model.addAttribute("results", results);
+        model.addAttribute("results", possiblyExpanded);
         model.addAttribute("resultsSize", results.size());
         return "list/results";
     }
 
-	private boolean possiblyExpandResults(List<GeneSummary> results, int start, int end) throws QueryException {
+	private List<GeneSummary> possiblyExpandResults(List<GeneSummary> results) throws QueryException {
 		boolean needToExpand = false;
-		List<String> ids = Lists.newArrayListWithExpectedSize(end-start);
-		for (int i = start; i < end; i++) {
-			GeneSummary gs = results.get(i);
-			if ( ! gs.isConfigured()) {
+		List<String> ids = Lists.newArrayListWithExpectedSize(results.size());
+		for (GeneSummary geneSummary : results) {
+			if ( ! geneSummary.isConfigured()) {
 				needToExpand = true;
 			}
-			ids.add(gs.getSystematicId());
+			ids.add(geneSummary.getSystematicId());
 		}
-		if (needToExpand) {
-			List<GeneSummary> expanded = convertIdsToGeneSummaries(ids);
-			for (int i = 0; i < expanded.size(); i++) {
-				int index = i + start;
-				results.add(index, expanded.get(i));
-			}
+		
+		if (! needToExpand) {
+			return null;
 		}
-		return needToExpand;
+		
+		List<GeneSummary> expanded = convertIdsToGeneSummaries(ids);
+		return expanded;
 	}
 		
 	private List<GeneSummary> convertIdsToGeneSummaries(List<String> ids) throws QueryException {
