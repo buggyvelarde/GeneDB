@@ -1,6 +1,7 @@
 package org.genedb.db.loading;
 
 
+import org.gmod.schema.feature.BACEnd;
 import org.gmod.schema.feature.Chromosome;
 import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.EST;
@@ -47,7 +48,8 @@ public class LoadEmbl extends FileProcessor {
      *                  or <b>merge</b> (add the features from the file to the existing
      *                  top-level feature, if there is one).
      *    <li> <code>load.topLevel</code> should be <code>chromosome</code>, <code>supercontig</code>
-     *                  or <code>contig</code>, and determines the type of the top-level feature
+     *                  <code>contig</code>, <code>plasmid</code>, <code>EST</code> or <code>BAC_end</code>,
+     *                  and determines the type of the top-level feature
      *                  created for each EMBL file. The default is <code>supercontig</code>.
      *    <li> if <code>load.sloppyControlledCuration</code> is set to <code>true</code> (or
      *                  any value other than <code>false</code>, in fact) then /controlled_curation
@@ -141,6 +143,8 @@ public class LoadEmbl extends FileProcessor {
             loader.setTopLevelFeatureClass(Plasmid.class);
         } else if (topLevelFeatureType.equals("EST")) {
             loader.setTopLevelFeatureClass(EST.class);
+        } else if (topLevelFeatureType.equals("BAC_end")) {
+            loader.setTopLevelFeatureClass(BACEnd.class);
         } else {
             throw new RuntimeException(
                 String.format("Unrecognised value for load.topLevel: '%s'", topLevelFeatureType));

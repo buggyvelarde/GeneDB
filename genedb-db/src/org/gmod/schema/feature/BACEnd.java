@@ -10,7 +10,8 @@ import javax.persistence.Entity;
 /**
  * A sequenced end of a BAC (bacterial artificial chromosome) clone, used
  * as a genetic marker. Typically BACEnds wll be located onto supercontigs or
- * chromosomes.
+ * chromosomes. In some organisms (e.g. Trypanosoma brucei brucei 927) there are
+ * top-level BAC end features.
  *
  * @author rh11
  */
