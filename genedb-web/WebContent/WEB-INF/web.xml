@@ -223,5 +223,8 @@
         <servlet-name>genedb</servlet-name>
         <url-pattern>/ResultsNavigator</url-pattern>
      </servlet-mapping>
-
+     <servlet-mapping>
+        <servlet-name>genedb</servlet-name>
+        <url-pattern>/Results</url-pattern>
+     </servlet-mapping>
 </web-app>
