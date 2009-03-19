@@ -11,6 +11,6 @@
 </c:url>
 
 
-<br><query:results />
+<%--<br><query:results />--%>
 
 <format:footer />

@@ -42,5 +42,5 @@
 	</format:genePageSection>
 </div>
 
-<br><query:results />
+<%--<br><query:results />--%>
 <format:footer />
