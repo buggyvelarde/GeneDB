@@ -17,7 +17,7 @@
                     </td>
                 </tr>
                 <tr>
-                <td><br><big><b>Gene Type Search Search:&nbsp;</b></big></td>
+                <td><br><big><b>Gene Type Search:&nbsp;</b></big></td>
                 <td>
                      <b>Organism:</b>
                      <br><db:simpleselect />
