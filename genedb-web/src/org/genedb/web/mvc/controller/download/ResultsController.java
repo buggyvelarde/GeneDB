@@ -90,12 +90,15 @@ public class ResultsController {
         
         List<GeneSummary> results = resultsCacheFactory.getResultsCacheMap().get(key);
         
-        if (end > results.size()) {
+        boolean truncated = false;
+        
+        if (end >= results.size()) {
         	end = results.size() - 1;
+        	truncated = true;
         }
         
         List<GeneSummary> subset;
-        if (start == 0 && end == results.size() -1) {
+        if (truncated) {
         	subset = results;
         } else {
         	subset = results.subList(start, end);
@@ -105,12 +108,12 @@ public class ResultsController {
 
         if (possiblyExpanded != null) {
         	// Need to update cache
-            if (start == 0 && end == results.size() -1) {
+            if (truncated) {
              	resultsCacheFactory.getResultsCacheMap().put(key, possiblyExpanded);
             } else {
-            	subset = results.subList(start, end);
             	int index = start;
             	for (GeneSummary geneSummary : possiblyExpanded) {
+            		results.remove(index);
 					results.add(index, geneSummary);
 					index++;
 				}
