@@ -46,8 +46,8 @@ public class ResultsController {
     @RequestMapping(method = {RequestMethod.GET} , params= "key")
     public String setUpForm(
             @RequestParam(value="key") String key,
-            @RequestParam(value="s") int start,
-            @RequestParam(value="l") int length,
+            @RequestParam(value="s", required=false) int start,
+            @RequestParam(value="l", required=false) int length,
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
