@@ -149,7 +149,10 @@ public class FastaLoader {
         for (FastaRecord record: records) {
             String id = record.getId();
             String sequence = record.getSequence();
-            concatenatedSequences.append(sequence);
+
+            if (topLevelFeature != null) {
+                concatenatedSequences.append(sequence);
+            }
 
             int end = start + sequence.length();
             TopLevelFeature entry = TopLevelFeature.make(entryClass, id, organism);
@@ -163,6 +166,8 @@ public class FastaLoader {
             start = end;
         }
 
-        topLevelFeature.setResidues(concatenatedSequences.toString());
+        if (topLevelFeature != null) {
+            topLevelFeature.setResidues(concatenatedSequences.toString());
+        }
     }
 }
