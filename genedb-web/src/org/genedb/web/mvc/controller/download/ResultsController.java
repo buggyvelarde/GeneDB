@@ -86,7 +86,9 @@ public class ResultsController {
 		List<String> ids = Lists.newArrayListWithExpectedSize(end-start);
 		for (int i = start; i < end; i++) {
 			GeneSummary gs = results.get(i);
-			needToExpand = needToExpand && gs.isConfigured();
+			if ( ! gs.isConfigured()) {
+				needToExpand = true;
+			}
 			ids.add(gs.getSystematicId());
 		}
 		if (needToExpand) {
