@@ -73,6 +73,12 @@
         <property name="readOnly" value="false" />
     </bean>
 
+
+    <bean name="resultsCacheFactory" class="org.genedb.web.mvc.model.ResultsCacheFactory">
+        <property name="rootDirectory" value="/tmp"/>
+        <property name="readOnly" value="false" />
+    </bean>
+
     <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     </bean>
