@@ -65,7 +65,7 @@ public class PopulateLuceneIndices {
         System.exit(1);
     }
 
-    private boolean failFast;
+    private boolean failFast = false;
 
     public void setFailFast(boolean failFast) {
         this.failFast = failFast;
