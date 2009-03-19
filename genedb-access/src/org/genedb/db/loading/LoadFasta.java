@@ -44,10 +44,16 @@ public class LoadFasta extends FileProcessor {
      *   <li> <code>load.overwriteExisting</code> can be set to <b>yes</b>
      *                  (delete the existing copy of the top-level feature before loading),
      *                  or <b>no</b> (skip top-level features that already exist).
-     *    <li> <code>load.topLevel</code> should be <code>chromosome</code>, <code>supercontig</code>
-     *                  <code>contig</code>, <code>plasmid</code>, <code>EST</code> or <code>BAC_end</code>,
+     *    <li> <code>load.topLevel</code> may be <code>chromosome</code>, <code>supercontig</code>
+     *                  <code>contig</code>, <code>plasmid</code>, or <code>none</code>,
      *                  and determines the type of the top-level feature
      *                  created for each FASTA file. The default is <code>supercontig</code>.
+     *                  The special value "none" indicates that no top-level feature should be
+     *                  created for the file as a whole; rather each entry represents a top-level
+     *                  feature in its own right. This is useful for loading FASTA files containing
+     *                  EST or BAC end sequences.
+     *    <li> <code>load.entryType</code> may be <code>contig</code>, <code>EST</code>, or <code>BAC_end</code>,
+     *                  and determines the type of feature that is created for each entry in the file.
      * </ul>
      *
      * @param args ignored
@@ -64,20 +70,22 @@ public class LoadFasta extends FileProcessor {
         String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.fasta");
         String overwriteExisting = getPropertyWithDefault("load.overwriteExisting", "no").toLowerCase();
         String topLevelFeatureType = getPropertyWithDefault("load.topLevel", "supercontig");
+        String entryType = getPropertyWithDefault("load.entryType", "contig");
 
         logger.info(String.format("Options: organismCommonName=%s, inputDirectory=%s, fileNamePattern=%s," +
-                   "overwriteExisting=%s, topLevel=%s",
+                   "overwriteExisting=%s, topLevel=%s, entry=%s",
                    organismCommonName, inputDirectory, fileNamePattern, overwriteExisting,
-                   topLevelFeatureType));
+                   topLevelFeatureType, entryType));
 
         LoadFasta loadFasta = new LoadFasta(organismCommonName, overwriteExisting,
-            topLevelFeatureType);
+            topLevelFeatureType, entryType);
 
         loadFasta.processFileOrDirectory(inputDirectory, fileNamePattern);
     }
 
     private FastaLoader loader;
-    private LoadFasta(String organismCommonName, String overwriteExistingString, String topLevelFeatureType) {
+    private LoadFasta(String organismCommonName, String overwriteExistingString,
+            String topLevelFeatureType, String entryType) {
         FastaLoader.OverwriteExisting overwriteExisting;
         if (overwriteExistingString.equals("yes")) {
             overwriteExisting = FastaLoader.OverwriteExisting.YES;
@@ -93,7 +101,9 @@ public class LoadFasta extends FileProcessor {
         loader.setOrganismCommonName(organismCommonName);
         loader.setOverwriteExisting(overwriteExisting);
 
-        if (topLevelFeatureType.equals("chromosome")) {
+        if (topLevelFeatureType.equals("none")) {
+            loader.setTopLevelFeatureClass(null);
+        } else if (topLevelFeatureType.equals("chromosome")) {
             loader.setTopLevelFeatureClass(Chromosome.class);
         } else if (topLevelFeatureType.equals("supercontig")) {
             loader.setTopLevelFeatureClass(Supercontig.class);
@@ -101,15 +111,22 @@ public class LoadFasta extends FileProcessor {
             loader.setTopLevelFeatureClass(Contig.class);
         } else if (topLevelFeatureType.equals("plasmid")) {
             loader.setTopLevelFeatureClass(Plasmid.class);
-        } else if (topLevelFeatureType.equals("EST")) {
-            loader.setTopLevelFeatureClass(EST.class);
-        } else if (topLevelFeatureType.equals("BAC_end")) {
-            loader.setTopLevelFeatureClass(BACEnd.class);
         } else {
             throw new RuntimeException(
                 String.format("Unrecognised value for load.topLevel: '%s'", topLevelFeatureType));
         }
-    }
+
+        if (entryType.equals("contig")) {
+            loader.setEntryClass(Contig.class);
+        } else if (entryType.equals("EST")) {
+            loader.setEntryClass(EST.class);
+        } else if (entryType.equals("BAC_end")) {
+            loader.setEntryClass(BACEnd.class);
+        } else {
+            throw new RuntimeException(
+                String.format("Unrecognised value for load.entryType: '%s'", topLevelFeatureType));
+        }
+}
 
     @Override
     protected void processFile(File inputFile, Reader reader) throws IOException, ParsingException {

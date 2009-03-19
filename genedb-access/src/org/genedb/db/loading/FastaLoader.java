@@ -56,6 +56,7 @@ public class FastaLoader {
     // Configurable parameters
     private Organism organism;
     private Class<? extends TopLevelFeature> topLevelFeatureClass = Supercontig.class;
+    private Class<? extends TopLevelFeature> entryClass = Contig.class;
 
     public enum OverwriteExisting {YES, NO}
     private OverwriteExisting overwriteExisting = OverwriteExisting.NO;
@@ -73,13 +74,23 @@ public class FastaLoader {
     }
 
     /**
-     * Set the class of top-level feature that this EMBL file represents.
+     * Set the class of top-level feature that this FASTA file represents.
      * The default, if this method is not called, is <code>Supercontig</code>.
      *
      * @param topLevelFeatureClass
      */
     public void setTopLevelFeatureClass(Class<? extends TopLevelFeature> topLevelFeatureClass) {
         this.topLevelFeatureClass = topLevelFeatureClass;
+    }
+
+    /**
+     * Set the class of feature that each entry in this FASTA file represents.
+     * The default, if this method is not called, is <code>Contig</code>.
+     *
+     * @param entryClass
+     */
+    public void setEntryClass(Class<? extends TopLevelFeature> entryClass) {
+        this.entryClass = entryClass;
     }
 
     /**
@@ -127,10 +138,12 @@ public class FastaLoader {
                 return;
             }
         }
-        TopLevelFeature topLevelFeature = TopLevelFeature.make(topLevelFeatureClass, fileId, organism);
-
-        topLevelFeature.markAsTopLevelFeature();
-        session.persist(topLevelFeature);
+        TopLevelFeature topLevelFeature = null;
+        if (topLevelFeatureClass != null) {
+            topLevelFeature = TopLevelFeature.make(topLevelFeatureClass, fileId, organism);
+            topLevelFeature.markAsTopLevelFeature();
+            session.persist(topLevelFeature);
+        }
 
         int start = 0;
         for (FastaRecord record: records) {
@@ -139,10 +152,14 @@ public class FastaLoader {
             concatenatedSequences.append(sequence);
 
             int end = start + sequence.length();
-            Contig contig = Contig.make(id, organism);
-            contig.setResidues(sequence);
-            topLevelFeature.addLocatedChild(contig, start, end);
-            session.persist(contig);
+            TopLevelFeature entry = TopLevelFeature.make(entryClass, id, organism);
+            entry.setResidues(sequence);
+            if (topLevelFeature == null) {
+                entry.markAsTopLevelFeature();
+            } else {
+                topLevelFeature.addLocatedChild(entry, start, end);
+            }
+            session.persist(entry);
             start = end;
         }
 
