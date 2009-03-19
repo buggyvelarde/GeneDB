@@ -1,7 +1,10 @@
 package org.genedb.db.loading;
 
+import org.gmod.schema.feature.BACEnd;
 import org.gmod.schema.feature.Chromosome;
+import org.gmod.schema.feature.Contig;
 import org.gmod.schema.feature.EST;
+import org.gmod.schema.feature.Plasmid;
 import org.gmod.schema.feature.Supercontig;
 
 import org.apache.log4j.Logger;
@@ -42,7 +45,8 @@ public class LoadFasta extends FileProcessor {
      *                  (delete the existing copy of the top-level feature before loading),
      *                  or <b>no</b> (skip top-level features that already exist).
      *    <li> <code>load.topLevel</code> should be <code>chromosome</code>, <code>supercontig</code>
-     *                  or <code>contig</code>, and determines the type of the top-level feature
+     *                  <code>contig</code>, <code>plasmid</code>, <code>EST</code> or <code>BAC_end</code>,
+     *                  and determines the type of the top-level feature
      *                  created for each FASTA file. The default is <code>supercontig</code>.
      * </ul>
      *
@@ -93,8 +97,14 @@ public class LoadFasta extends FileProcessor {
             loader.setTopLevelFeatureClass(Chromosome.class);
         } else if (topLevelFeatureType.equals("supercontig")) {
             loader.setTopLevelFeatureClass(Supercontig.class);
+        } else if (topLevelFeatureType.equals("contig")) {
+            loader.setTopLevelFeatureClass(Contig.class);
+        } else if (topLevelFeatureType.equals("plasmid")) {
+            loader.setTopLevelFeatureClass(Plasmid.class);
         } else if (topLevelFeatureType.equals("EST")) {
             loader.setTopLevelFeatureClass(EST.class);
+        } else if (topLevelFeatureType.equals("BAC_end")) {
+            loader.setTopLevelFeatureClass(BACEnd.class);
         } else {
             throw new RuntimeException(
                 String.format("Unrecognised value for load.topLevel: '%s'", topLevelFeatureType));
