@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp
         spec="1.0+"
-        codebase="http://www.sanger.ac.uk/Software/Artemis/v10/database">
+        codebase="http://www.sanger.ac.uk/Software/Artemis/v11/database">
          <information>
            <title>Artemis :: Gene Builder</title>
            <vendor>Sanger Institute</vendor>
