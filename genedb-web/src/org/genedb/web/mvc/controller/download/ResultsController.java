@@ -64,8 +64,11 @@ public class ResultsController {
             return "redirect:/QueryList";
         }
 
-        int start = (Integer.parseInt(request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)))) - 1) * DEFAULT_LENGTH;
-        
+        String startString2 = request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)));
+        int start = 0;
+        if (startString2 != null) {
+        	start = (Integer.parseInt(startString2) - 1) * DEFAULT_LENGTH;
+        }
         //int start = (startString == null) ? 0 : startString.intValue();
         //int length = (lengthString == null) ? DEFAULT_LENGTH : lengthString.intValue() ;
         
