@@ -97,8 +97,17 @@ public class PopulateLuceneIndices {
     private String databasePassword;
     private String indexBaseDirectory;
     private String organism;
+    private int numBatches = -1;
 
-    /**
+    public int getNumBatches() {
+		return numBatches;
+	}
+
+	public void setNumBatches(int numBatches) {
+		this.numBatches = numBatches;
+	}
+
+	/**
      * Create a new instance configured with database connection information taken from
      * system properties. If no database password is supplied, the user is prompted for
      * one on the console.
@@ -239,16 +248,22 @@ public class PopulateLuceneIndices {
      * @param featureClass
      * @param numBatches
      */
-    public void indexFeatures(Class<? extends Feature> featureClass, int numBatches) {
+    public void indexFeatures(Class<? extends Feature> featureClass) {
         FullTextSession session = newSession(BATCH_SIZE);
         Transaction transaction = session.beginTransaction();
-        Set<Integer> failed = batchIndexFeatures(featureClass, numBatches, session);
+        Set<Integer> failed = batchIndexFeatures(featureClass, session);
         transaction.commit();
         session.close();
 
         if (failed.size() > 0) {
             reindexFailedFeatures(failed);
         }
+    }
+    
+    public void indexFeatures() {
+    	for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
+    		indexFeatures(featureClass);
+    	}
     }
 
     /**
@@ -264,7 +279,7 @@ public class PopulateLuceneIndices {
      * @return a set of featureIds of the features that failed to be indexed
      */
     private Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
-            int numBatches, FullTextSession session) {
+            FullTextSession session) {
 
         Set<Integer> failedToLoad = new HashSet<Integer>();
         Criteria criteria = session.createCriteria(featureClass);
@@ -384,11 +399,11 @@ public class PopulateLuceneIndices {
         }
         indexer.setFailFast(iga.getFailFast());
 
-        int numBatches = iga.isNumBatches() ? iga.getNumBatches(): -1;
-
-        for (Class<? extends Feature> featureClass: INDEXED_CLASSES) {
-            indexer.indexFeatures(featureClass, numBatches);
+        if  (iga.isNumBatches()) {
+        	indexer.setNumBatches(iga.getNumBatches());
         }
+
+        indexer.indexFeatures();
     }
 
     private void setOrganism(String organism) {
