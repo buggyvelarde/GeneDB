@@ -159,7 +159,7 @@ public class QueryController {
         default:
         	List<GeneSummary> gs2 = possiblyConvertList(results);
             resultsKey = cacheResults(gs2);
-            model.addAttribute(RESULTS_ATTR, resultsKey);
+            model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.error("Found results for query - redirecting to Results controller");
             return "redirect:/Results";
