@@ -161,8 +161,8 @@ public class QueryController {
             resultsKey = cacheResults(gs2);
             model.addAttribute(RESULTS_ATTR, resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
-            logger.error("Found results for query - redirecting to ResultsCache controller");
-            return "forward:/ResultsCache";
+            logger.error("Found results for query - redirecting to Results controller");
+            return "forward:/Results";
         }
     }
 
