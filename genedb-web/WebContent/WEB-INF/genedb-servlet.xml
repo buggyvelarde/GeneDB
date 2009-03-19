@@ -75,7 +75,7 @@
 
 
     <bean name="resultsCacheFactory" class="org.genedb.web.mvc.model.ResultsCacheFactory">
-        <property name="rootDirectory" value="/tmp"/>
+        <property name="rootDirectory" value="/tmp/results"/>
         <property name="readOnly" value="false" />
     </bean>
 
