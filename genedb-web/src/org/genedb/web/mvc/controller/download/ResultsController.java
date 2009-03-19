@@ -9,6 +9,7 @@ import org.genedb.web.mvc.model.ResultsCacheFactory;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.spel.generated.SpringExpressionsParser.firstSelection_return;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -32,6 +33,8 @@ public class ResultsController {
     
     private static final String IDS_TO_GENE_SUMMARY_QUERY = "idsToGeneSummary";
     
+    public static final int DEFAULT_LENGTH = 30;
+    
     @Autowired
     private ResultsCacheFactory resultsCacheFactory;
     
@@ -46,8 +49,8 @@ public class ResultsController {
     @RequestMapping(method = {RequestMethod.GET} , params= "key")
     public String setUpForm(
             @RequestParam(value="key") String key,
-            @RequestParam(value="s", required=false) Integer start,
-            @RequestParam(value="l", required=false) Integer length,
+            @RequestParam(value="s", required=false) Integer startString,
+            @RequestParam(value="l", required=false) Integer lengthString,
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
@@ -59,6 +62,10 @@ public class ResultsController {
             return "redirect:/QueryList";
         }
 
+        int start = (startString == null) ? 0 : startString.intValue();
+        int length = (lengthString == null) ? DEFAULT_LENGTH : lengthString.intValue() ;
+        
+        int end = start + length;
 //        Query query = queryFactory.retrieveQuery(queryName);index
 //        if (query == null) {
 //            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
@@ -73,7 +80,11 @@ public class ResultsController {
         
         List<GeneSummary> results = resultsCacheFactory.getResultsCacheMap().get(key);
         
-        if (possiblyExpandResults(results, 0, results.size()-1)) { // FIXME
+        if (end > results.size()) {
+        	end = results.size() - 1;
+        }
+        
+        if (possiblyExpandResults(results, start, end)) {
         	resultsCacheFactory.getResultsCacheMap().put(key, results);
         }
         	
@@ -93,9 +104,9 @@ public class ResultsController {
 		}
 		if (needToExpand) {
 			List<GeneSummary> expanded = convertIdsToGeneSummaries(ids);
-			for (int i = start; i < end; i++) {
-				int index = i - start;
-				results.add(i, expanded.get(index));
+			for (int i = 0; i < expanded.size(); i++) {
+				int index = i + start;
+				results.add(index, expanded.get(i));
 			}
 		}
 		return needToExpand;
