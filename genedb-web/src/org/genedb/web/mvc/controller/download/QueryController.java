@@ -162,7 +162,7 @@ public class QueryController {
             model.addAttribute(RESULTS_ATTR, resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.error("Found results for query - redirecting to Results controller");
-            return "forward:/Results";
+            return "redirect:/Results";
         }
     }
 

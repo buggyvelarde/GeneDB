@@ -43,7 +43,7 @@ public class ResultsController {
         return "redirect:/QueryList";
     }
 
-    @RequestMapping(method = RequestMethod.GET , params= "key")
+    @RequestMapping(method = {RequestMethod.GET} , params= "key")
     public String setUpForm(
             @RequestParam(value="key") String key,
             @RequestParam(value="s") int start,
