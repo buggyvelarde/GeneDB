@@ -19,6 +19,7 @@ import org.gmod.schema.feature.InvertedRepeatRegion;
 import org.gmod.schema.feature.MRNA;
 import org.gmod.schema.feature.NcRNA;
 import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.PolypeptideMotif;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Pseudogene;
 import org.gmod.schema.feature.PseudogenicTranscript;
@@ -410,6 +411,8 @@ class EmblLoader {
         this.repeatUnitUniqueNames.clear();
         this.syntheticNcRNAIndexByType.clear();
         this.archivedFeatureIndexes.clear();
+
+        this.motifIndex = 1;
     }
 
     private void loadContigsAndGaps(EmblLocation.Join locations) throws DataError {
@@ -512,22 +515,28 @@ class EmblLoader {
             focalFeature = loadCDS((FeatureTable.CDSFeature) feature);
         }
         else if (featureType.equals("tRNA")) {
-            focalFeature = loadTRNA(feature);
+            focalFeature = loadNcRNA(TRNA.class, feature);
         }
         else if (featureType.equals("rRNA")) {
-            focalFeature = loadRRNA(feature);
+            focalFeature = loadNcRNA(RRNA.class, feature);
         }
         else if (featureType.equals("snRNA")) {
-            focalFeature = loadSnRNA(feature);
+            focalFeature = loadNcRNA(SnRNA.class, feature);
         }
         else if (featureType.equals("snoRNA")) {
-            focalFeature = loadSnoRNA(feature);
+            focalFeature = loadNcRNA(SnoRNA.class, feature);
         }
         else if (featureType.equals("misc_RNA")) {
-            focalFeature = loadNcRNA(feature);
+            focalFeature = loadNcRNA(NcRNA.class, feature);
         }
         else if (featureType.equals("3'UTR") || featureType.equals("5'UTR")) {
             utrs.add(feature);
+        }
+        else if (featureType.equals("gap")) {
+            focalFeature = loadGap(feature);
+        }
+        else if (featureType.equals("CDS_motif")) {
+            focalFeature = loadMotif(feature);
         }
         else if (featureType.equals("LTR")) {
             throw new DataError("Tell Robin he needs to write code for loading LTR features!");
@@ -600,6 +609,31 @@ class EmblLoader {
             }
             logger.warn(message);
         }
+    }
+
+    private Gap loadGap(FeatureTable.Feature gapFeature) {
+        EmblLocation.Gap gapLocation = (EmblLocation.Gap) gapFeature.location;
+
+        logger.debug(String.format("Creating gap at %d-%d", gapLocation.getFmin(), gapLocation.getFmax()));
+        Gap gap = topLevelFeature.addGap(gapLocation.getFmin(), gapLocation.getFmax());
+        session.persist(gap);
+
+        return gap;
+    }
+
+    private int motifIndex = 1;
+    private PolypeptideMotif loadMotif(FeatureTable.Feature motifFeature) {
+        String motifUniqueName = String.format("%s:motif:%d", topLevelFeature.getUniqueName(), motifIndex++);
+        PolypeptideMotif motif = new PolypeptideMotif(organism, motifUniqueName);
+
+        locate(motif, motifFeature.location);
+
+        int rank = 0;
+        for (String note: motifFeature.getQualifierValues("note")) {
+            motif.addFeatureProp(note, "feature_property", "comment", rank++);
+        }
+
+        return motif;
     }
 
     private Feature loadRepeatRegion(FeatureTable.Feature repeatRegionFeature) throws DataError {
@@ -1708,22 +1742,10 @@ class EmblLoader {
             return transcriptClass;
         }
     }
-    private Feature loadNcRNA(FeatureTable.Feature feature) throws DataError {
-        return new NcRNALoader(NcRNA.class, "ncRNA", feature).load();
-    }
-    private Feature loadRRNA(FeatureTable.Feature feature) throws DataError {
-        return new NcRNALoader(RRNA.class, "rRNA", feature).load();
-    }
-    private Feature loadTRNA(FeatureTable.Feature feature) throws DataError {
-        return new NcRNALoader(TRNA.class, "tRNA", feature).load();
-    }
-    private Feature loadSnRNA(FeatureTable.Feature feature) throws DataError {
-        return new NcRNALoader(SnRNA.class, "snRNA", feature).load();
-    }
-    private Feature loadSnoRNA(FeatureTable.Feature feature) throws DataError {
-        return new NcRNALoader(SnoRNA.class, "snoRNA", feature).load();
-    }
 
+    private Feature loadNcRNA(Class<? extends NcRNA> rnaClass, FeatureTable.Feature feature) throws DataError {
+        return new NcRNALoader(rnaClass, "ncRNA", feature).load();
+    }
 
     /* UTR */
     private List<UTR> loadUTR(FeatureTable.Feature utrFeature) throws DataError {
