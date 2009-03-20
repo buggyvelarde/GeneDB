@@ -1,15 +1,11 @@
 package org.genedb.web.mvc.model;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONSerializer;
 
 import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
 import org.genedb.db.domain.services.BasicGeneService;
 import org.genedb.querying.core.LuceneIndex;
 import org.genedb.querying.core.LuceneIndexFactory;
-import org.genedb.web.gui.ContextMapDiagram;
 import org.genedb.web.gui.DiagramCache;
-import org.genedb.web.gui.RenderedContextMap;
 import org.genedb.web.gui.RenderedDiagramFactory;
 import org.genedb.web.mvc.controller.ModelBuilder;
 
@@ -32,11 +28,8 @@ import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.je.DatabaseException;
@@ -59,10 +52,6 @@ public class PopulateCaches {
     private LuceneIndexFactory luceneIndexFactory;
     private BasicGeneService basicGeneService;
     private RenderedDiagramFactory renderedDiagramFactory;
-
-    private static final int TILE_WIDTH = 5000;
-    private static final int THUMBNAIL_WIDTH = 600;
-    private static final int MIN_CONTEXT_LENGTH_BASES = 5000;
 
     private PopulateCachesArgs config;
 
@@ -132,8 +121,9 @@ public class PopulateCaches {
                 break;
             }
 
-            if (!config.isNoContextMap() && feature.getSeqLen() > MIN_CONTEXT_LENGTH_BASES) {
-                populateContextMapCache(feature, basicGeneService);
+            if (!config.isNoContextMap() && feature.getSeqLen() > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
+                CacheDBHelper.populateContextMapCache(
+                		feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
             }
 
             @SuppressWarnings("unchecked")
@@ -156,13 +146,8 @@ public class PopulateCaches {
     }
 
     private void populateCacheForGene(String geneUniqueName) {
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
-
-        AbstractGene gene = (AbstractGene) session.createQuery(
-            "select g from AbstractGene g" +
-            " where g.uniqueName = :geneUniqueName")
-        .setParameter("geneUniqueName", geneUniqueName)
-        .uniqueResult();
+    	//Get the Gene
+        AbstractGene gene = CacheDBHelper.findGene(geneUniqueName, sessionFactory);
 
         if (gene == null) {
             logger.error("Could not find gene with uniqueName '"
@@ -195,62 +180,6 @@ public class PopulateCaches {
         @SuppressWarnings("unchecked")
         Iterator<Feature> iterator = q.iterate();
         return iterator;
-    }
-
-
-    private void populateContextMapCache(Feature feature, BasicGeneService basicGeneService) {
-
-        ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forChromosome(basicGeneService,
-            feature.getOrganism().getCommonName(), feature.getUniqueName(), feature.getSeqLen());
-
-        RenderedContextMap renderedContextMap = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram);
-        RenderedContextMap renderedChromosomeThumbnail = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
-
-        List<RenderedContextMap.Tile> tiles = renderedContextMap.renderTiles(TILE_WIDTH);
-
-        try {
-            String metadata = contextMapMetadata(renderedChromosomeThumbnail, renderedContextMap, tiles);
-            contextMapMap.put(feature.getUniqueName(), metadata);
-            logger.info("Stored contextMap for '"+feature.getUniqueName()+"' as '"+metadata+"'");
-        } catch (IOException exp) {
-            logger.error(exp);
-        }
-    }
-
-    private String contextMapMetadata(RenderedContextMap chromosomeThumbnail, RenderedContextMap contextMap,
-            List<RenderedContextMap.Tile> tiles) throws IOException {
-        String chromosomeThumbnailKey = diagramCache.fileForContextMap(chromosomeThumbnail);
-
-        ContextMapDiagram diagram = contextMap.getDiagram();
-
-        Map<String,Object> model = new HashMap<String,Object>();
-
-        model.put("organism", diagram.getOrganism());
-        model.put("chromosome", diagram.getChromosome());
-        model.put("numberOfPositiveTracks", diagram.numberOfPositiveTracks());
-        model.put("geneTrackHeight", contextMap.getTrackHeight());
-        model.put("scaleTrackHeight", contextMap.getScaleTrackHeight());
-        model.put("exonRectHeight", contextMap.getExonRectHeight());
-        model.put("tileHeight", contextMap.getHeight());
-        model.put("basesPerPixel", contextMap.getBasesPerPixel());
-
-        model.put("products", contextMap.getProducts());
-        model.put("features", contextMap.getRenderedFeatures());
-
-        model.put("start", diagram.getStart());
-        model.put("end", diagram.getEnd());
-
-        model.put("tilePrefix", "/Image?key=");
-        model.put("tiles", tiles);
-
-        Map<String,Object> chromosomeThumbnailModel = new HashMap<String,Object>();
-        chromosomeThumbnailModel.put("src", chromosomeThumbnailKey);
-        chromosomeThumbnailModel.put("width", chromosomeThumbnail.getWidth());
-        model.put("chromosomeThumbnail", chromosomeThumbnailModel);
-
-        JSON json =  JSONSerializer.toJSON(model);
-        String text = json.toString(0);
-        return text;
     }
 
     private void populateDtoCache(AbstractGene gene) {

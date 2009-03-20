@@ -29,7 +29,7 @@
         <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
     </bean>
 
-    <bean id="populateCaches" class="org.genedb.web.mvc.model.CacheSynchroniser">
+    <bean id="cacheSynchroniser" class="org.genedb.web.mvc.model.CacheSynchroniser">
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="diagramCache" ref="diagramCache" />
         <property name="modelBuilder" ref="modelBuilder" />
