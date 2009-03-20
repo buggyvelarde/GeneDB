@@ -8,12 +8,15 @@ import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 @Entity
 @FeatureType(cv="sequence", term="polypeptide_domain")
 public class PolypeptideDomain extends PolypeptideRegion {
+
     private static final Logger logger = Logger.getLogger(PolypeptideDomain.class);
 
     PolypeptideDomain() {
@@ -25,6 +28,14 @@ public class PolypeptideDomain extends PolypeptideRegion {
     public PolypeptideDomain(Organism organism, CvTerm type, String uniqueName, boolean analysis,
             boolean obsolete) {
         super(organism, type, uniqueName, analysis, obsolete);
+    }
+
+    public PolypeptideDomain(Organism organism, String uniqueName, boolean analysis,
+            boolean obsolete, Timestamp dateAccessioned) {
+        super(organism, uniqueName, analysis, obsolete, dateAccessioned);
+    }
+    public PolypeptideDomain(Organism organism, String uniqueName) {
+        super(organism, uniqueName);
     }
 
     @Transient

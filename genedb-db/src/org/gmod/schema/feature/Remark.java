@@ -2,8 +2,11 @@ package org.gmod.schema.feature;
 
 import org.gmod.schema.cfg.FeatureType;
 import org.gmod.schema.mapped.FeatureProp;
+import org.gmod.schema.mapped.Organism;
 
 import org.apache.log4j.Logger;
+
+import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -23,6 +26,11 @@ public class Remark extends Region {
         // empty
     }
 
+    public Remark(Organism organism, String uniqueName, String comment) {
+        super(organism, uniqueName, /*analysis:*/false, /*obsolete:*/false, new Timestamp(System.currentTimeMillis()));
+        addFeatureProp(comment, "comment", "feature_property", 0);
+    }
+
     /**
      * Get the comment attached to this Remark feature.
      * @return the comment, or null if no comment was found
@@ -30,7 +38,8 @@ public class Remark extends Region {
     @Transient
     public String getComment() {
         for(FeatureProp featureProp: this.getFeatureProps()) {
-            if (featureProp.getType().getName().equals("comment")) {
+            if (featureProp.getType().getCv().getName().equals("feature_property")
+                    && featureProp.getType().getName().equals("comment")) {
                 return featureProp.getValue();
             }
         }
