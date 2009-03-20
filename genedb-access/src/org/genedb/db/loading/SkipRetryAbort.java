@@ -99,7 +99,6 @@ class SkipRetryAbort {
         ResponseButton(String label, final Response response) {
             super(label);
             addActionListener(new ActionListener() {
-                @SuppressWarnings("unused")
                 public void actionPerformed(ActionEvent actionEvent) {
                     dialogResponse = response;
                     dialog.dispose();
@@ -120,7 +119,7 @@ class SkipRetryAbort {
 
 class AlwaysSkip extends SkipRetryAbort {
     @Override
-    public Response getResponse(@SuppressWarnings("unused") Throwable e) {
+    public Response getResponse(Throwable e) {
         return Response.SKIP;
     }
 }
