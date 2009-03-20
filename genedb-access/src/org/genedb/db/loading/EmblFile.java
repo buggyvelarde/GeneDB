@@ -85,7 +85,7 @@ public class EmblFile {
         logger.info(String.format("Loaded '%s' from '%s'", getAccession(), inputFile));
     }
 
-    private static final Pattern linePattern = Pattern.compile("(ID|AC|PR|DT|DE|KW|OS|OC|OG|RN|RC|RP|RX|RG|RA|RT|RL|DR|CC|AH|AS|FH|FT|XX|SQ|CO|  |//)(?:   (.*))?");
+    private static final Pattern linePattern = Pattern.compile("(ID|AC|PR|DT|DE|KW|OS|OC|OG|RN|RC|RP|RX|RG|RA|RT|RL|DR|CC|AH|AS|FH|FT|XX|SQ|CO|  |//)(?:   (.*))?|(##.*)");
 
     private int lineNumber = 0;
     private String  currentSectionIdentifier = null;
@@ -99,6 +99,15 @@ public class EmblFile {
             syntaxError(new SyntaxError(inputFile, lineNumber, line));
             return;
         }
+
+        // The EMBL format doesn't really allow arbitrary comments to be interspersed with the data.
+        // But for sample files (synthetic.embl in particular) it's useful to be able to include remarks
+        // in the feature table. Thus we have invented a compatible extension: any line beginning with
+        // two hash marks is ignored, wherever it appears.
+        if (matcher.group(3) != null) {
+            return;
+        }
+
         String identifier = matcher.group(1);
         String data = matcher.group(2);
 
@@ -211,7 +220,7 @@ public class EmblFile {
         int version, sequenceLength;
         boolean alreadySeen = false;
         @Override
-        public void addData(@SuppressWarnings("unused") int lineNumber, String data) throws ParsingException {
+        public void addData(int lineNumber, String data) throws ParsingException {
             if (data == null) {
                 // Ignore empty ID lines. They're technically illegal, but some of our files have them.
                 return;
@@ -245,7 +254,7 @@ public class EmblFile {
             // empty
         }
         @Override
-        public void addData(@SuppressWarnings("unused") int lineNumber, @SuppressWarnings("unused") String data)
+        public void addData(int lineNumber, String data)
                 throws ParsingException {
             if (seenSequenceHeader) {
                 dataError(new DataError("Found more than one SQ line"));
@@ -267,7 +276,7 @@ public class EmblFile {
         }
         private StringBuilder allData = new StringBuilder();
         @Override
-        public void addData(@SuppressWarnings("unused") int lineNumber, String data) throws ParsingException {
+        public void addData(int lineNumber, String data) throws ParsingException {
             allData.append(data);
         }
         @Override
@@ -298,7 +307,7 @@ public class EmblFile {
         }
         StringBuilder sequence = new StringBuilder();
         @Override
-        public void addData(@SuppressWarnings("unused") int lineNumber, String data) throws ParsingException {
+        public void addData(int lineNumber, String data) throws ParsingException {
             Matcher matcher = sequencePattern.matcher(data);
             if (!matcher.matches()) {
                 syntaxError(new SyntaxError("Failed to parse sequence data: " + data));
@@ -328,7 +337,6 @@ public class EmblFile {
     private class SilentlyIgnoredSection extends Section {
         SilentlyIgnoredSection() {}
         @Override
-        @SuppressWarnings("unused")
         public void addData(int lineNumber, String data) {}
     }
 
