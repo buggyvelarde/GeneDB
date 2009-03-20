@@ -1,8 +1,8 @@
 package org.genedb.web.mvc.model;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -123,12 +123,10 @@ public class CacheSynchroniser {
 	 */
 	private void addNewTopLevelFeatures(List<String> uniqueNames){	
 		//Get the top level features to add
-		Iterator<Feature> iterator = findTopLevelFeatures(uniqueNames);
-		
-        while(iterator.hasNext()){
-            Feature feature = iterator.next();
-            populateTopLevelFeatures(feature);        	
-        }
+		List<Feature> features = findTopLevelFeatures(uniqueNames);
+		for(Feature feature: features){
+			populateTopLevelFeatures(feature);
+		}
 	}
 	
 	/**
@@ -137,14 +135,12 @@ public class CacheSynchroniser {
 	 */
 	private void updateTopLevelFeatures(List<String> uniqueNames){
 		//Get the top level features to add
-		Iterator<Feature> iterator = findTopLevelFeatures(uniqueNames);
-		
-        while(iterator.hasNext()){
-            Feature feature = iterator.next();
-            contextMapMap.remove(feature.getUniqueName());
-            populateTopLevelFeatures(feature);  
-        }
-		
+		List<Feature> features = findTopLevelFeatures(uniqueNames);
+		for(Feature feature: features){
+			contextMapMap.remove(feature.getUniqueName());
+			populateTopLevelFeatures(feature);  
+		}	
+
 	}
 	
 	/**
@@ -152,14 +148,13 @@ public class CacheSynchroniser {
 	 * @param uniqueNames
 	 */
 	private void removeTopLevelFeatures(List<String> uniqueNames){
+
 		//Get the top level features to add
-		Iterator<Feature> iterator = findTopLevelFeatures(uniqueNames);
-		
-        while(iterator.hasNext()){
-            Feature feature = iterator.next();
-            contextMapMap.remove(feature.getUniqueName());
-        }
-		
+		List<Feature> features = findTopLevelFeatures(uniqueNames);
+		for(Feature feature: features){
+			contextMapMap.remove(feature.getUniqueName());
+		}
+
 	}
 	
 	/**
@@ -167,10 +162,14 @@ public class CacheSynchroniser {
 	 * @param feature
 	 */
 	private void populateTopLevelFeatures(Feature feature){
-        if (!isNoContextMap() && feature.getSeqLen() > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
-            CacheDBHelper.populateContextMapCache(
+		try{
+			if (!isNoContextMap() && feature.getSeqLen() > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
+				CacheDBHelper.populateContextMapCache(
             		feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
-        }
+			}
+		}catch(Exception e){
+			logger.error("populateTopLevelFeatures: " + e.getMessage());
+		}
 	}
 
 	
@@ -179,19 +178,22 @@ public class CacheSynchroniser {
 	 * @param uniqueNames
 	 * @return
 	 */
-	private Iterator<Feature> findTopLevelFeatures(List<String> uniqueNames){	
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
-		Query q = session.createQuery(
-                "select fp.feature" +
-                " from FeatureProp fp" +
-                " where fp.cvTerm.name = 'top_level_seq'" +
-                " and fp.cvTerm.cv.name = 'genedb_misc'" +
-                " and fp.feature.uniquename in (:uniqueNames)")
-            .setString("uniqueNames", concatNames(uniqueNames));
-		
-		@SuppressWarnings("unchecked")
-        Iterator<Feature> iterator = q.iterate();
-        return iterator;		
+	private List<Feature> findTopLevelFeatures(List<String> uniqueNames){
+		List<Feature> features = new ArrayList<Feature>(0);
+		try{
+			Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
+			Query q = session.createQuery(
+					"select fp.feature" +
+					" from FeatureProp fp" +
+					" where fp.cvTerm.name = 'top_level_seq'" +
+					" and fp.cvTerm.cv.name = 'genedb_misc'" +
+			" and fp.feature.uniquename in (:uniqueNames)")
+			.setString("uniqueNames", concatNames(uniqueNames));			
+			features = q.list();			
+		}catch(Exception e){
+			logger.error("findTopLevelFeatures: " + e.getMessage());
+		}
+        return features;		
 	}
 	
 	/**
@@ -244,8 +246,10 @@ public class CacheSynchroniser {
 	
 	
 	private List<Transcript> findTranscripts(List<String> uniqueNames){
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
-		Query q = session.createQuery(
+		List<Transcript> transcripts = new ArrayList<Transcript>(0);
+		try{
+			Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
+			Query q = session.createQuery(
                 "select fp.feature" +
                 " from FeatureProp fp" +
                 " where fp.cvTerm.name = 'top_level_seq'" +
@@ -253,9 +257,11 @@ public class CacheSynchroniser {
                 " and fp.feature.uniquename in (:uniqueNames)")
             .setString("uniqueNames", concatNames(uniqueNames));
 		
-		@SuppressWarnings("unchecked")
-        List<Transcript> list = q.list();
-        return list;		
+			transcripts = q.list();
+		}catch(Exception e){
+			logger.error("findTranscripts: " + e.getMessage());
+		}
+        return transcripts;		
 	}
 	
 	private void initMaps(){
@@ -263,6 +269,11 @@ public class CacheSynchroniser {
         contextMapMap = bmf.getContextMapMap();
 	}
 	
+	/**
+	 * 
+	 * @param geneUniqueName
+	 * @return
+	 */
 	private Collection<Transcript> findTranscripts(String geneUniqueName){
 
 		AbstractGene gene = CacheDBHelper.findGene(geneUniqueName, sessionFactory);
