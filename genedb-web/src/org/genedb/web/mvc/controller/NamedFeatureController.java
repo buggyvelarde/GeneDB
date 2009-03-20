@@ -140,7 +140,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
     // TODO
     private ModelAndView showForm(HttpServletRequest request,
             HttpServletResponse response, BindingResult be) {
-        throw new NotImplementedException("Missing code");
+        return new ModelAndView("/Query?q=allNameProduct");
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
