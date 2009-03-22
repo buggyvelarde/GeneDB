@@ -515,19 +515,19 @@ class EmblLoader {
             focalFeature = loadCDS((FeatureTable.CDSFeature) feature);
         }
         else if (featureType.equals("tRNA")) {
-            focalFeature = loadNcRNA(TRNA.class, feature);
+            focalFeature = loadNcRNA(TRNA.class, featureType, feature);
         }
         else if (featureType.equals("rRNA")) {
-            focalFeature = loadNcRNA(RRNA.class, feature);
+            focalFeature = loadNcRNA(RRNA.class, featureType, feature);
         }
         else if (featureType.equals("snRNA")) {
-            focalFeature = loadNcRNA(SnRNA.class, feature);
+            focalFeature = loadNcRNA(SnRNA.class, featureType, feature);
         }
         else if (featureType.equals("snoRNA")) {
-            focalFeature = loadNcRNA(SnoRNA.class, feature);
+            focalFeature = loadNcRNA(SnoRNA.class, featureType, feature);
         }
         else if (featureType.equals("misc_RNA")) {
-            focalFeature = loadNcRNA(NcRNA.class, feature);
+            focalFeature = loadNcRNA(NcRNA.class, featureType, feature);
         }
         else if (featureType.equals("3'UTR") || featureType.equals("5'UTR")) {
             utrs.add(feature);
@@ -1743,8 +1743,9 @@ class EmblLoader {
         }
     }
 
-    private Feature loadNcRNA(Class<? extends NcRNA> rnaClass, FeatureTable.Feature feature) throws DataError {
-        return new NcRNALoader(rnaClass, "ncRNA", feature).load();
+    private Feature loadNcRNA(Class<? extends NcRNA> rnaClass, String rnaType,
+            FeatureTable.Feature feature) throws DataError {
+        return new NcRNALoader(rnaClass, rnaType, feature).load();
     }
 
     /* UTR */
