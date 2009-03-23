@@ -66,7 +66,7 @@ function addToBasket(geneid){
 </format:headerRound>
 
 <div id="navigatePages">
-	<query:navigatePages />
+    <query:navigatePages />
 </div>
 <!-- Context Map -->
 <div id="contextMapOuterDiv">
