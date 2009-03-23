@@ -32,14 +32,14 @@ import javax.servlet.http.HttpSession;
 public class ResultsController {
 
     private static final Logger logger = Logger.getLogger(ResultsController.class);
-    
+
     private static final String IDS_TO_GENE_SUMMARY_QUERY = "idsToGeneSummary";
-    
+
     public static final int DEFAULT_LENGTH = 30;
-    
+
     @Autowired
     private ResultsCacheFactory resultsCacheFactory;
-    
+
     @Autowired
     private QueryFactory queryFactory;
 
@@ -70,11 +70,11 @@ public class ResultsController {
         logger.error("The start string is '"+startString2+"'");
         int start = 0;
         if (startString2 != null) {
-        	start = (Integer.parseInt(startString2) - 1) * DEFAULT_LENGTH;
+            start = (Integer.parseInt(startString2) - 1) * DEFAULT_LENGTH;
         }
         //int start = (startString == null) ? 0 : startString.intValue();
         //int length = (lengthString == null) ? DEFAULT_LENGTH : lengthString.intValue() ;
-        
+
         int end = start + DEFAULT_LENGTH;
 //        Query query = queryFactory.retrieveQuery(queryName);index
 //        if (query == null) {
@@ -87,71 +87,71 @@ public class ResultsController {
             session.setAttribute(WebConstants.FLASH_MSG, "Unable to retrieve results for this key");
             return "redirect:/QueryList";
         }
-        
+
         List<GeneSummary> results = resultsCacheFactory.getResultsCacheMap().get(key);
-        
+
         boolean truncated = false;
-        
+
         if (end >= results.size()) {
-        	end = results.size() - 1;
-        	truncated = true;
+            end = results.size() - 1;
+            truncated = true;
         }
-        
+
         List<GeneSummary> subset;
         if (truncated) {
-        	subset = results;
+            subset = results;
         } else {
-        	subset = results.subList(start, end);
+            subset = results.subList(start, end);
         }
-        
+
         List<GeneSummary> possiblyExpanded = possiblyExpandResults(subset);
 
         if (possiblyExpanded != null) {
-        	// Need to update cache
+            // Need to update cache
             if (truncated) {
-             	resultsCacheFactory.getResultsCacheMap().put(key, possiblyExpanded);
+                 resultsCacheFactory.getResultsCacheMap().put(key, possiblyExpanded);
             } else {
-            	int index = start;
-            	for (GeneSummary geneSummary : possiblyExpanded) {
-            		results.remove(index);
-					results.add(index, geneSummary);
-					index++;
-				}
-            	resultsCacheFactory.getResultsCacheMap().put(key, results);
+//                int index = start;
+//                for (GeneSummary geneSummary : possiblyExpanded) {
+//                    results.remove(index);
+//                    results.add(index, geneSummary);
+//                    index++;
+//                }
+//                resultsCacheFactory.getResultsCacheMap().put(key, results);
             }
 
         }
-        	
+
         model.addAttribute("results", possiblyExpanded);
         model.addAttribute("resultsSize", results.size());
         return "list/results";
     }
 
-	private List<GeneSummary> possiblyExpandResults(List<GeneSummary> results) throws QueryException {
-		boolean needToExpand = false;
-		List<String> ids = Lists.newArrayListWithExpectedSize(results.size());
-		for (GeneSummary geneSummary : results) {
-			if ( ! geneSummary.isConfigured()) {
-				needToExpand = true;
-			}
-			ids.add(geneSummary.getSystematicId());
-		}
-		
-		if (! needToExpand) {
-			return null;
-		}
-		
-		List<GeneSummary> expanded = convertIdsToGeneSummaries(ids);
-		return expanded;
-	}
-		
-	private List<GeneSummary> convertIdsToGeneSummaries(List<String> ids) throws QueryException {
-		IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
-		if (idsToGeneSummary == null) {
-			throw new RuntimeException("Internal error - unable to find ids to gene summary query");
-		}
-		idsToGeneSummary.setIds(ids);
-		return (List<GeneSummary>)idsToGeneSummary.getResults();
-	}
+    private List<GeneSummary> possiblyExpandResults(List<GeneSummary> results) throws QueryException {
+        boolean needToExpand = false;
+        List<String> ids = Lists.newArrayListWithExpectedSize(results.size());
+        for (GeneSummary geneSummary : results) {
+            if ( ! geneSummary.isConfigured()) {
+                needToExpand = true;
+            }
+            ids.add(geneSummary.getSystematicId());
+        }
+
+        if (! needToExpand) {
+            return null;
+        }
+
+        List<GeneSummary> expanded = convertIdsToGeneSummaries(ids);
+        return expanded;
+    }
+
+    private List<GeneSummary> convertIdsToGeneSummaries(List<String> ids) throws QueryException {
+        IdsToGeneSummaryQuery idsToGeneSummary = (IdsToGeneSummaryQuery) queryFactory.retrieveQuery(IDS_TO_GENE_SUMMARY_QUERY);
+        if (idsToGeneSummary == null) {
+            throw new RuntimeException("Internal error - unable to find ids to gene summary query");
+        }
+        idsToGeneSummary.setIds(ids);
+        return (List<GeneSummary>)idsToGeneSummary.getResults();
+    }
 
 }
