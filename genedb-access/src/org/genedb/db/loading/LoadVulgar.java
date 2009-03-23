@@ -26,21 +26,26 @@ public class LoadVulgar extends FileProcessor {
         String organismCommonName = getRequiredProperty("load.organismCommonName");
         String inputDirectory = getRequiredProperty("load.inputDirectory");
         String fileNamePattern = getPropertyWithDefault("load.fileNamePattern", ".*\\.vulgar(?:\\.gz)?");
+        String matchType = getPropertyWithDefault("load.matchType", null);
 
         logger.info(String.format("Options: organismCommonName=%s, inputDirectory=%s, fileNamePattern=%s",
                    organismCommonName, inputDirectory, fileNamePattern));
 
-        LoadVulgar loadVulgar = new LoadVulgar(organismCommonName);
+        LoadVulgar loadVulgar = new LoadVulgar(organismCommonName, matchType);
 
         loadVulgar.processFileOrDirectory(inputDirectory, fileNamePattern);
     }
 
     private VulgarLoader loader;
-    private LoadVulgar(String organismCommonName) {
+    private LoadVulgar(String organismCommonName, String matchType) {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
 
         this.loader = applicationContext.getBean("vulgarLoader", VulgarLoader.class);
         loader.setOrganismCommonName(organismCommonName);
+
+        if (matchType != null) {
+            loader.setMatchType(matchType);
+        }
     }
 
     @Override

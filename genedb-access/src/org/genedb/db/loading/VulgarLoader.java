@@ -55,6 +55,19 @@ public class VulgarLoader {
         return organismId;
     }
 
+    private String matchType = "EST_match";
+
+    private static Set<String> permittedMatchTypes = new HashSet<String>();
+    static {
+        permittedMatchTypes.add("nucleotide_match");
+        permittedMatchTypes.add("cDNA_match");
+        permittedMatchTypes.add("EST_match");
+    }
+
+    public void setMatchType(String matchType) {
+        this.matchType = matchType;
+    }
+
     private TransactionStatus transactionStatus;
     private TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
     public synchronized void load(VulgarFile file) throws ParsingException, IOException {
@@ -69,7 +82,7 @@ public class VulgarLoader {
 
         try {
             int i = 0;
-            // The iteration in the for(:) loop might cause a VulgarFileException
+            // The iteration implicit in the for(:) loop might cause a VulgarFileException
             for (VulgarMapping mapping: file) {
                 loadMapping(mapping);
                 if (++i % 100 == 0) {
@@ -102,11 +115,11 @@ public class VulgarLoader {
     }
 
 
-    private int estMatchTypeId;
+    private int matchTypeId;
     private int matchPartTypeId;
     private int partOfTypeId;
     private void init() {
-        estMatchTypeId  = getCvTermId("sequence", "EST_match");
+        matchTypeId     = getCvTermId("sequence", matchType);
         matchPartTypeId = getCvTermId("sequence", "match_part");
         partOfTypeId    = getCvTermId("relationship", "part_of");
     }
@@ -124,7 +137,7 @@ public class VulgarLoader {
 
     private void loadMapping(VulgarMapping mapping) throws VulgarFileException, DataError {
 
-        String matchUniqueName = insertESTMatch(mapping);
+        String matchUniqueName = insertMatch(mapping);
         int matchId = currentFeatureId();
         insertFeatureLoc(matchId, mapping.getQuery(),  mapping.getQMin(), mapping.getQMax(), mapping.getQStrand(), 0);
         insertFeatureLoc(matchId, mapping.getTarget(), mapping.getTMin(), mapping.getTMax(), mapping.getTStrand(), 1);
@@ -155,12 +168,14 @@ public class VulgarLoader {
     }
 
     private Set<String> matchUniqueNames = new HashSet<String>();
-    private String insertESTMatch(VulgarMapping mapping) {
+    private String insertMatch(VulgarMapping mapping) {
         String matchUniqueName;
         if (mapping.getTStrand() >= 0) {
-            matchUniqueName = String.format("%s:estMatch%d-%d", mapping.getTarget(), mapping.getTMin(), mapping.getTMax());
+            matchUniqueName = String.format("match:%s@%s:%d-%d",
+                mapping.getQuery(), mapping.getTarget(), mapping.getTMin(), mapping.getTMax());
         } else {
-            matchUniqueName = String.format("%s:estMatch(%d-%d)", mapping.getTarget(), mapping.getTMin(), mapping.getTMax());
+            matchUniqueName = String.format("match:%s@%s:(%d-%d)",
+                mapping.getQuery(), mapping.getTarget(), mapping.getTMin(), mapping.getTMax());
         }
 
         // It's possible to have more than one match at the same location,
@@ -178,7 +193,7 @@ public class VulgarLoader {
             ") values ("+
             " ?, ?, ?, true"+
             ")",
-            organismId, matchUniqueName, estMatchTypeId);
+            organismId, matchUniqueName, matchTypeId);
         logger.trace(String.format("Inserted ESTMatch feature '%s'", matchUniqueName));
         return matchUniqueName;
     }
