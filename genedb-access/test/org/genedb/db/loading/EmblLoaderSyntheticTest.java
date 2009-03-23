@@ -3,6 +3,7 @@ package org.genedb.db.loading;
 import static org.junit.Assert.assertEquals;
 
 import org.genedb.db.loading.FeatureTester.GeneTester;
+import org.genedb.db.loading.FeatureTester.GenericTester;
 import org.genedb.db.loading.FeatureTester.PolypeptideTester;
 import org.genedb.db.loading.FeatureTester.TranscriptTester;
 
@@ -330,7 +331,24 @@ public class EmblLoaderSyntheticTest {
         t.loc(+1, 599, 630);
         t.assertObsolete();
         t.propertyMatches("feature_property", "comment",
-            "Archived from 'test/data/synthetic.embl' line \\d+, location join\\(600\\.\\.610,620\\.\\.630\\)");
+            "Archived from nonstandard feature with location join(600..610,620..630); " +
+            "file 'test/data/synthetic.embl', line 134");
         t.property("genedb_misc", "EMBL_qualifier", "/madeupqualifier=\"value\"");
+    }
+
+    private void gap(int fmin, int fmax, String... notes) {
+        GenericTester g = tester.featureTester(String.format("super1:gap:%d-%d", fmin, fmax)).loc(0, fmin, fmax);
+        g.properties("feature_property", "comment", notes);
+    }
+
+    @Test
+    public void gapsBetweenContigs() {
+        gap(100, 110); gap(210, 220); gap(320, 330); gap(430, 440);
+        gap(640, 650); gap(850, 860); gap(1060, 1110);
+    }
+
+    @Test
+    public void gapFeature() {
+        gap(1180, 1190, "This is a gap that has a note", "And this is a cow with an itchy throat");
     }
 }

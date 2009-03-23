@@ -158,6 +158,10 @@ FT                   /db_xref="UniProtKB:Q95Z09"
 ##
 FT                   /GO="aspect=component; term=nucleus; GOid=GO:0005634; evidence=IC;
 FT                   db_xref=GOC:unpublished; from=GO:0006367; date=20060502"
+##
+FT   gap             1181..1190
+FT                   /note="This is a gap that has a note"
+FT                   /note="And this is a cow with an itchy throat"
 XX
 CO   join(con1a.1:1..100,gap(10),con2c.1:1..100,gap(10),con3g.1:1..100,
 CO   gap(10),con4t.1:1..100,gap(10),con5a.1:1..200,gap(10),con6c.1:1..200,
