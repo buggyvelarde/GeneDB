@@ -183,7 +183,11 @@ class VulgarMapping {
     private static final Logger logger = Logger.getLogger(VulgarMapping.class);
     private static final Pattern vulgarPattern = Pattern.compile(
         "vulgar: (\\S+) (\\d+) (\\d+) ([+-]) (\\S+) (\\d+) (\\d+) " +
-        "([+-]) (\\d+) ((?:[MCGN53ISF] \\d+ \\d+ ?)+)(?:\\tPROM=\\d+)?");
+        "([+-]) (\\d+) ((?:[MCGN53ISF] \\d+ \\d+ ?)*)(?:\\tPROM=\\d+)?");
+
+    // Note: we deliberately support the (presumably technically invalid)
+    // case where no match parts are specified, so that we can use the same
+    // code to load matches where the subdivision into parts is unknown.
 
     VulgarMapping(String line) throws ParsingException {
         if (!line.startsWith("vulgar: ")) {
