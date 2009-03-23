@@ -2,112 +2,56 @@ package org.genedb.web.mvc.controller.download;
 
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.GeneSummary;
+import org.genedb.web.mvc.model.ResultsCacheFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpSession;
 
 
 @Controller
 @RequestMapping("/ResultsNavigator")
-@SessionAttributes("results")
 public class ResultsNavigatorController {
 
+    @Autowired
+    private ResultsCacheFactory resultsCacheFactory;
 
     @RequestMapping(method = RequestMethod.GET )
-    public String navigate(
+    public ModelAndView navigate(
             @RequestParam(value="index") int index,
-            @RequestParam(value="lastIndex") int lastIndex,
-            @RequestParam(value="goto") String goTo,
-            @RequestParam(value="q") String query,
-            ServletRequest request,
-            HttpSession session) throws QueryException {
+            @RequestParam(value="key") String key) {
 
-        List results = (List)session.getAttribute("results");
-        if (results != null){
+        ModelAndView ret = new ModelAndView();
 
-            if ("first".equals(goTo)){
-                return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(0)) + assembleRequestParameters(request, goTo);
+        List<GeneSummary> results = resultsCacheFactory.getResultsCacheMap().get(key);
 
-            } else if ("previous".equals(goTo)){
-                return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index-1)) + assembleRequestParameters(request, goTo);
-
-
-            } else if ("next".equals(goTo)){
-                return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(index+1))  + assembleRequestParameters(request, goTo);
-
-            } else if ("last".equals(goTo)){
-                return "redirect:/NamedFeature?name="+findNameFromResultItem(results.get(lastIndex))  + assembleRequestParameters(request, goTo);
-
-            } else if ("results".equals(goTo)){
-                return "redirect:/Query?" + assembleRequestParameters(request, goTo);
-
-            }
+        if (index == -256) {
+            ret.addObject("key", key);
+            ret.setViewName("/Results");
+            return ret;
         }
-        return "redirect:/Query";
-    }
 
-    private Object findNameFromResultItem(Object resultItem){
-        if(resultItem instanceof GeneSummary){
-            return ((GeneSummary)resultItem).getSystematicId();
+        int checkedIndex = index;
+
+        if (index < 0) {
+            checkedIndex = 0;
         }
-        Object[] item = (Object[])resultItem;
-        return item[0];
-    }
 
-    private String assembleRequestParameters(ServletRequest request, String goTo ) {
-        StringBuffer paramConcats = new StringBuffer();
-        @SuppressWarnings("unchecked") Map<String, String> map = request.getParameterMap();
-        for (Map.Entry<String,String> entry : map.entrySet()) {
-            String paramName = entry.getKey();
-            String value = entry.getValue();
-
-            if ("goto".equals(paramName)) {
-                continue;
-
-            } else if ("name".equals(paramName)) {
-                continue;
-
-            } else if ("first".equals(goTo) && "index".equals(paramName)) {
-                paramConcats.append("&index=0");
-
-            } else if("previous".equals(goTo) && "index".equals(paramName)) {
-                paramConcats.append("&index");
-                paramConcats.append("=");
-                paramConcats.append(Integer.parseInt(value)-1);
-
-            } else if ("next".equals(goTo) && "index".equals(paramName)) {
-                paramConcats.append("&index");
-                paramConcats.append("=");
-                paramConcats.append(Integer.parseInt(value)+1);
-
-            } else if ("last".equals(goTo) && "index".equals(paramName)) {
-                paramConcats.append("&index");
-                paramConcats.append("=");
-                paramConcats.append(
-                        Integer.parseInt(request.getParameter("lastIndex")));
-
-            } else if ("results".equals(goTo) &&
-                    ("index".equals(paramName) || "lastIndex".equals(paramName))) {
-                continue;
-
-            } else {
-                paramConcats.append("&");
-                paramConcats.append(paramName);
-                paramConcats.append("=");
-                paramConcats.append(value);
-            }
+        if (index >= results.size()) {
+            checkedIndex = results.size() - 1;
         }
-        String values = paramConcats.toString();
-        return values;
+
+        ret.addObject("index", checkedIndex);
+        ret.addObject("key", key);
+        ret.addObject("resultsLength", results.size());
+        String uniqueName = results.get(index).getSystematicId();
+        ret.setViewName("redirect:/NamedFeature?name="+uniqueName);
+        return ret;
     }
 
 }
