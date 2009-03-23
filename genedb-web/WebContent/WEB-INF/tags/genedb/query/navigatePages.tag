@@ -1,43 +1,38 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:if test="${not empty param.index and not empty param.lastIndex}">
-	<c:forEach var="parameter" items="${paramValues}">
-		<c:forEach var="value" items="${parameter.value}">
-			<c:set var="requestParams" value="${requestParams}&${parameter.key}=${value}"/>
-		</c:forEach> 	
-	</c:forEach>
+<c:if test="${not empty key and not empty index and not empty resultsLength}">
 
-	&nbsp;Gene ${param.index+1} of ${param.lastIndex+1} Search Results.&nbsp;
-	<c:choose>
-		<c:when test="${param.index != '0'}">
-			<a href="ResultsNavigator?goto=first${requestParams}">First</a>
-		</c:when>
-		<c:otherwise>
-			First
-		</c:otherwise>
-	</c:choose>
-	&nbsp;|&nbsp;
+    &nbsp;Gene ${index+1} of ${resultsLength+1} Search Results.&nbsp;
+    <c:choose>
+        <c:when test="${param.index != '0'}">
+            <a href="ResultsNavigator?index=0&key=${key}">First</a>
+        </c:when>
+        <c:otherwise>
+            First
+        </c:otherwise>
+    </c:choose>
+    &nbsp;|&nbsp;
 
-	<c:if test="${param.index != '0'}">
-		<a href="ResultsNavigator?goto=previous${requestParams }">Previous</a>
-	 	&nbsp;|&nbsp;
-	</c:if>
+    <c:if test="${index != '0'}">
+        <a href="ResultsNavigator?index=${index - 1}&key=${key}">Previous</a>
+         &nbsp;|&nbsp;
+    </c:if>
 
-	<c:if test="${param.index != param.lastIndex}">
-		<a href="ResultsNavigator?goto=next${requestParams }">Next</a>
-	 	&nbsp;|&nbsp;
-	</c:if>
+    <c:if test="${index != resultsLength}">
+        <a href="ResultsNavigator?index=${index + 1}&key=${key}">Next</a>
+         &nbsp;|&nbsp;
+    </c:if>
 
-	<c:choose>
-		<c:when test="${param.index != param.lastIndex}">
-			<a href="ResultsNavigator?goto=last${requestParams }">Last</a>
-		</c:when>
-		<c:otherwise>
-			Last
-		</c:otherwise>
-	</c:choose>
-	&nbsp;|&nbsp;
+    <c:choose>
+        <c:when test="${index != resultsLength}">
+            <a href="ResultsNavigator?index=${resultsLength-1}&key=${key}">Last</a>
+        </c:when>
+        <c:otherwise>
+            Last
+        </c:otherwise>
+    </c:choose>
+    &nbsp;|&nbsp;
 
-	<a href="ResultsNavigator?goto=results${requestParams }">Back to Search Results</a>
-	<br>
+    <a href="ResultsNavigator?index=-256&key=${key}">Back to Search Results</a>
+    <br>
 </c:if>
 
