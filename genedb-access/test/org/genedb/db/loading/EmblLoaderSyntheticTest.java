@@ -331,8 +331,8 @@ public class EmblLoaderSyntheticTest {
         t.loc(+1, 599, 630);
         t.assertObsolete();
         t.propertyMatches("feature_property", "comment",
-            "Archived from nonstandard feature with location join(600..610,620..630); " +
-            "file 'test/data/synthetic.embl', line 134");
+            "Archived from nonstandard feature with location join\\(600\\.\\.610,620\\.\\.630\\); " +
+            "file 'test/data/synthetic.embl', line \\d+");
         t.property("genedb_misc", "EMBL_qualifier", "/madeupqualifier=\"value\"");
     }
 
