@@ -1,22 +1,20 @@
 package org.genedb.web.mvc.model;
 
 import org.genedb.db.audit.ChangeSet;
+import org.genedb.db.dao.SequenceDao;
 
 import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.feature.UTR;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.StaleReaderException;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.LockObtainFailedException;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
@@ -52,6 +50,8 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+import com.google.common.collect.Sets;
+
 
 /**
 * Create Lucene indices.
@@ -84,11 +84,14 @@ public class PopulateLuceneIndices implements IndexUpdater{
        this.failFast = failFast;
    }
 
+
+   private SequenceDao sequenceDao;
+
    /**
     * The number of features to be processed in a single batch. If it's set too
     * high, we run out of heap space.
     */
-   private static final int BATCH_SIZE = 10;
+   private static final Integer BATCH_SIZE = Integer.valueOf(10);
 
    /**
     * Which types of feature to index.
@@ -210,7 +213,7 @@ public class PopulateLuceneIndices implements IndexUpdater{
     * @param batchSize
     * @return
     */
-   private SessionFactory getSessionFactory(int batchSize) {
+   private SessionFactory getSessionFactory(Integer batchSize) {
        if (sessionFactoryByBatchSize.containsKey(batchSize)) {
            return sessionFactoryByBatchSize.get(batchSize);
        }
@@ -246,7 +249,7 @@ public class PopulateLuceneIndices implements IndexUpdater{
     * @param batchSize
     * @return
     */
-   private FullTextSession newSession(int batchSize) {
+   private FullTextSession newSession(Integer batchSize) {
        SessionFactory sessionFactory = getSessionFactory(batchSize);
        FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
        session.setFlushMode(FlushMode.MANUAL);
@@ -285,35 +288,43 @@ public class PopulateLuceneIndices implements IndexUpdater{
 
        try {
            // Let's process deletes first
-
            deleteFromIndex(changeSet.deletedTranscripts());
 
            // Now adds and updates
            List<String> ids = changeSet.changedTranscripts();
            ids.addAll(changeSet.newTranscripts());
 
-           List<Integer> featureIds = expandList(ids);
+           Set<Integer> featureIds = expandList(ids);
            batchIndex(featureIds);
        }
        catch (IOException exp) {
            logger.error("Failed to update Lucene indices", exp);
            return false;
        }
-
        return true;
    }
 
-   private void batchIndex(List<Integer> ids) {
+   private void batchIndex(Set<Integer> ids) {
        reindexFailedFeatures(ids);
    }
 
-private List<Integer> expandList(List<String> ids) {
-    // TODO Auto-generated method stub
-    return null;
-}
+   private Set<Integer> expandList(List<String> ids) {
+       // TODO Go through the list, converting String id to featureid as Integer,
+       // and grabbing genes and proteins
+       Set<Integer> ret = Sets.newHashSet();
+       for (String id : ids) {
+           Transcript transcript = sequenceDao.getFeatureByUniqueName(id, Transcript.class);
+           ret.add(transcript.getFeatureId());
+           if (transcript instanceof ProductiveTranscript) {
+               ret.add(((ProductiveTranscript)transcript).getProtein().getFeatureId());
+           }
+           ret.add(transcript.getGene().getFeatureId());
+       }
+       return ret;
+   }
 
-public void applyChanges() {
-
+   public void applyChanges() {
+       // TODO Move indices into place
    }
 
    private void deleteFromIndex(List<String> ids) throws IOException {
@@ -328,9 +339,8 @@ public void applyChanges() {
 
        reader.deleteDocuments(new Term("uniquename", ""));
 
-
        rp.closeReader(reader);
-       //session.close();
+       session.close();
    }
 
    /**
@@ -401,7 +411,7 @@ public void applyChanges() {
     * @param failed a set of features to reindex
     * @throws Exception
     */
-   private void reindexFailedFeatures(Collection<Integer> failed) {
+   private void reindexFailedFeatures(Set<Integer> failed) {
        logger.info("Attempting to reindex failed features");
        FullTextSession session = newSession(1);
        Transaction transaction = session.beginTransaction();
