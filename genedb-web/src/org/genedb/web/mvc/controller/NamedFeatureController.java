@@ -29,11 +29,10 @@ import org.genedb.web.mvc.model.TranscriptDTO;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -121,8 +120,22 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 //            }
 
         HashMap<String, Object> model = Maps.newHashMap();
-        model.put("dto", dto);
+
         model.put("taxonNodeName", dto.getOrganismCommonName());
+        model.put("dto", dto);
+
+
+        if (nlb.getKey() != null &&
+                StringUtils.hasText(nlb.getKey()) &&
+                (nlb.getResultsLength() > 0) &&
+                (nlb.getIndex() > 0) &&
+                nlb.getIndex() < nlb.getResultsLength()) {
+
+            model.put("key", nlb.getKey());
+            model.put("index", nlb.getIndex());
+            model.put("resultsLength", nlb.getResultsLength());
+        }
+
 
         HistoryItem basket = hm.getHistoryItemByType(HistoryType.BASKET);
         logger.debug(String.format("Basket is '%s'", basket));
@@ -176,6 +189,33 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         private String name;
         private boolean detailsOnly = false;
         private boolean addToBasket = false;
+        private String key;
+        private int index;
+        private int resultsLength;
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public int getResultsLength() {
+            return resultsLength;
+        }
+
+        public void setResultsLength(int resultsLength) {
+            this.resultsLength = resultsLength;
+        }
 
         public boolean isAddToBasket() {
             return addToBasket;
