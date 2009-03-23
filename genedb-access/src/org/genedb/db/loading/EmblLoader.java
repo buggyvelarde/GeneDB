@@ -568,8 +568,8 @@ class EmblLoader {
         locate(focalFeature, feature.location);
 
         focalFeature.addFeatureProp(
-            String.format("Archived from '%s' line %d, location %s",
-                feature.getFilePath(), feature.lineNumber, feature.location),
+            String.format("Archived from %s feature with location %s; file '%s', line %d",
+                feature.type, feature.location, feature.getFilePath(), feature.lineNumber),
             "feature_property", "comment", 0);
 
         session.persist(focalFeature);
@@ -619,6 +619,11 @@ class EmblLoader {
         Gap gap = topLevelFeature.addGap(gapLocation.getFmin(), gapLocation.getFmax());
         session.persist(gap);
 
+        int rank=0;
+        for (String note: gapFeature.getQualifierValues("note")) {
+            gap.addFeatureProp(note, "feature_property", "comment", rank++);
+        }
+
         return gap;
     }
 
@@ -626,7 +631,7 @@ class EmblLoader {
     private PolypeptideMotif loadMotif(FeatureTable.Feature motifFeature) {
         String motifUniqueName = String.format("%s:motif:%d", topLevelFeature.getUniqueName(), motifIndex++);
         PolypeptideMotif motif = new PolypeptideMotif(organism, motifUniqueName);
-
+        session.persist(motif);
         locate(motif, motifFeature.location);
 
         int rank = 0;
