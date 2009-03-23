@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 
 @Entity
 @FeatureType(cv = "sequence", term = "EST_match")
-public class ESTMatch extends Match {
+public class ESTMatch extends NucleotideMatch {
 
     ESTMatch() {
         super();
