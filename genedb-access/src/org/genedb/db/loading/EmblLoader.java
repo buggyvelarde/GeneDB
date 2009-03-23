@@ -433,6 +433,7 @@ class EmblLoader {
                 pos += contigLength;
             } else if (location instanceof EmblLocation.Gap) {
                 EmblLocation.Gap gapLocation = (EmblLocation.Gap) location;
+
                 int gapLength = gapLocation.getLength();
 
                 logger.debug(String.format("Creating gap at %d-%d", pos, pos + gapLength));
@@ -612,7 +613,7 @@ class EmblLoader {
     }
 
     private Gap loadGap(FeatureTable.Feature gapFeature) {
-        EmblLocation.Gap gapLocation = (EmblLocation.Gap) gapFeature.location;
+        EmblLocation gapLocation = gapFeature.location;
 
         logger.debug(String.format("Creating gap at %d-%d", gapLocation.getFmin(), gapLocation.getFmax()));
         Gap gap = topLevelFeature.addGap(gapLocation.getFmin(), gapLocation.getFmax());
