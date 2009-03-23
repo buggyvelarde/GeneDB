@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -183,7 +184,7 @@ class VulgarMapping {
     private static final Logger logger = Logger.getLogger(VulgarMapping.class);
     private static final Pattern vulgarPattern = Pattern.compile(
         "vulgar: (\\S+) (\\d+) (\\d+) ([+-]) (\\S+) (\\d+) (\\d+) " +
-        "([+-]) (\\d+)((?: [MCGN53ISF] \\d+ \\d+)*)(?:\\tPROM=\\d+)?");
+        "([+-]) (\\d+)((?: [MCGN53ISF] \\d+ \\d+)+)?(?:\\tPROM=\\d+)?\\s*");
 
     // Note: we deliberately support the (presumably technically invalid)
     // case where no match parts are specified, so that we can use the same
@@ -213,12 +214,22 @@ class VulgarMapping {
     }
 
     private List<Match> parseMatches(String string) throws ParsingException {
-        if (string.startsWith(" ")) {
-            string = string.substring(1);
+        if (string == null) {
+            return Collections.emptyList();
         }
+
+        if (!string.startsWith(" ")) {
+            throw new RuntimeException("The string doesn't start with a space." +
+                    "That should be impossible.");
+        }
+
         List<Match> matches = new ArrayList<Match>();
-        String[] fields = string.split(" ");
-        assert fields.length % 3 == 0;
+        String[] fields = string.substring(1).split(" ");
+
+        if (fields.length % 3 != 0) {
+            throw new RuntimeException("The number of fields is not a multiple of three." +
+                    "That should be impossible at this point.");
+        }
 
         if (logger.isTraceEnabled()) {
             StringBuilder fieldsStr = new StringBuilder();
