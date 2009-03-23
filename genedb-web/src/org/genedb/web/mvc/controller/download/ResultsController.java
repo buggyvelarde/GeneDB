@@ -124,6 +124,7 @@ public class ResultsController {
 
         model.addAttribute("results", possiblyExpanded);
         model.addAttribute("resultsSize", results.size());
+        model.addAttribute("key", key);
         return "list/results";
     }
 

@@ -29,6 +29,9 @@ public class ResultsNavigatorController {
         ModelAndView ret = new ModelAndView();
 
         List<GeneSummary> results = resultsCacheFactory.getResultsCacheMap().get(key);
+        if (results == null && results.size() == 0) {
+            return new ModelAndView("/Homepage");
+        }
 
         if (index == -256) {
             ret.addObject("key", key);
