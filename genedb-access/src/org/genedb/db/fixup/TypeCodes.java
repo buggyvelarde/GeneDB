@@ -2,6 +2,8 @@ package org.genedb.db.fixup;
 
 import org.genedb.util.TwoKeyMap;
 
+import org.apache.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +20,8 @@ import java.util.Map;
  *
  */
 public class TypeCodes {
+    private static final Logger logger = Logger.getLogger(TypeCodes.class);
+
     private TwoKeyMap<String,String,Integer> idByCvNameAndTermName = new TwoKeyMap<String,String,Integer>();
     private Map<Integer,String> cvNameById = new HashMap<Integer,String>();
     private Map<Integer,String> termNameById = new HashMap<Integer,String>();
@@ -39,6 +43,7 @@ public class TypeCodes {
         );
         try {
             ResultSet rs = st.executeQuery();
+            logger.trace("Loading CV terms from database");
             while (rs.next()) {
                 int cvTermId = rs.getInt("cvterm_id");
                 String cvName = rs.getString("cv_name");
@@ -48,6 +53,7 @@ public class TypeCodes {
                 cvNameById.put(cvTermId, cvName);
                 termNameById.put(cvTermId, cvTermName);
             }
+            logger.trace("CV terms loaded");
         }
         finally {
             try {
