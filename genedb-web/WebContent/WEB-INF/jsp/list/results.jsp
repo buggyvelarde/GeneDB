@@ -8,6 +8,8 @@
 
 <c:set var="queryName" value="proteinLength"></c:set>
 
+<c:import url="/WEB-INF/jsp/queries/${queryName}.jspf"></c:import>
+
 <jsp:include page="/WEB-INF/jsp/queries/${queryName}.jspf" />
 
 <br><query:results />
