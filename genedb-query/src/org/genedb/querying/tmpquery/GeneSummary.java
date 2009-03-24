@@ -21,7 +21,7 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
     public GeneSummary(String systematicId) {
         setSystematicId(systematicId);
     }
-    
+
     public GeneSummary(String systematicId, String taxonDisplayName,
             String product, String topLevelFeatureName, int left) {
         setSystematicId(systematicId);
@@ -79,9 +79,9 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
     public void setLeft(int left) {
         this.left = left;
     }
-    
+
     public boolean isConfigured() {
-    	return taxonDisplayName != null;
+        return taxonDisplayName != null;
     }
 
     @Override
