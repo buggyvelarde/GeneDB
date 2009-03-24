@@ -76,7 +76,7 @@ public class BasketController {
             HttpServletResponse response,
             @RequestParam("name") String name) throws Exception {
 
-        logger.error("Trying to find NamedFeature of '"+name+"'");
+        logger.debug("Trying to find NamedFeature of '"+name+"'");
 
         Feature feature = sequenceDao.getFeatureByUniqueName(name, Feature.class);
         if (feature == null) {

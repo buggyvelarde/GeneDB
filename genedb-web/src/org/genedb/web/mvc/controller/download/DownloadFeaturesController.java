@@ -172,13 +172,13 @@ public class DownloadFeaturesController {
     }
 
     private Hits lookupInLucene(List<String> ids) throws IOException {
-        logger.error(String.format("#~# luceneIndexFactory is '%s'", luceneIndexFactory));
+        logger.debug(String.format("#~# luceneIndexFactory is '%s'", luceneIndexFactory));
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         BooleanQuery bQuery = new BooleanQuery();
         for (String id : ids) {
             bQuery.add(new TermQuery(new Term("uniqueName",id)), Occur.SHOULD);
         }
-        logger.error(String.format("#~# luceneIndex is '%s'", luceneIndex));
+        logger.debug(String.format("#~# luceneIndex is '%s'", luceneIndex));
         Hits hits = luceneIndex.search(bQuery);
         return hits;
     }

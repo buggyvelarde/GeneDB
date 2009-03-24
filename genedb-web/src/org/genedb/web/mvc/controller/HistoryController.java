@@ -142,13 +142,13 @@ public class HistoryController extends MultiActionController implements Initiali
         String history = ServletRequestUtils.getStringParameter(request, "history","0");
         String remove = ServletRequestUtils.getStringParameter(request, "remove","false");
 
-        if(history == "0") {
+        if (history == "0") {
             //be.reject("no.download.history");
             return new ModelAndView(editView);
         }
         HttpSession session = request.getSession(false);
         HistoryManager historyManager = historyManagerFactory.getHistoryManager(session);
-        if(remove.equals("true")) {
+        if (remove.equals("true")) {
             logger.info("history is " + remove);
             historyManager.removeItem(Integer.parseInt(history)-1, historyManager.getVersion());
             return new ModelAndView("redirect:/History/View");

@@ -64,7 +64,7 @@ public class QueryController {
             HttpSession session,
             Model model) throws QueryException {
 
-        logger.error("This is the setupform method");
+        logger.debug("This is the setupform method");
 
         if (!StringUtils.hasText(queryName)) {
             session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
@@ -115,7 +115,7 @@ public class QueryController {
         Errors errors = binder.getBindingResult();
         if (errors.hasErrors()) {
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
-            logger.error("Returning due to binding error");
+            logger.debug("Returning due to binding error");
             return "search/"+queryName;
         }
 
@@ -127,7 +127,7 @@ public class QueryController {
             return "search/"+queryName;
         }
 
-        logger.error("Validator found no errors");
+        logger.debug("Validator found no errors");
         List results = query.getResults();
 
         String taxonName = null;
@@ -149,7 +149,7 @@ public class QueryController {
 
         switch (results.size()) {
         case 0:
-            logger.error("No results found for query");
+            logger.debug("No results found for query");
             model.addAttribute("taxonNodeName", taxonName);
             return "search/"+queryName;
         case 1:
@@ -161,7 +161,7 @@ public class QueryController {
             resultsKey = cacheResults(gs2, query, queryName);
             model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
-            logger.error("Found results for query - redirecting to Results controller");
+            logger.debug("Found results for query - redirecting to Results controller");
             return "redirect:/Results";
         }
     }

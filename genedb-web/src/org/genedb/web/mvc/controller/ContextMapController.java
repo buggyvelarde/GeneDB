@@ -57,7 +57,7 @@ public class ContextMapController {
             logger.trace("Cache hit for context map '"+chromosome+"' of '"+text+"'");
             cacheHit++;
         } else {
-            logger.error(String.format("The context maps for '%s' aren't cached and need to be generated", chromosome));
+            logger.debug(String.format("The context maps for '%s' aren't cached and need to be generated", chromosome));
             //text = contextMapCache.getKeys().toString();
             cacheMiss++;
         }

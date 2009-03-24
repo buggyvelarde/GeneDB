@@ -11,7 +11,6 @@ import org.genedb.web.mvc.model.ResultsCacheFactory;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.generated.SpringExpressionsParser.firstSelection_return;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -51,13 +50,10 @@ public class ResultsController {
     @RequestMapping(method = {RequestMethod.GET} , params= "key")
     public String setUpForm(
             @RequestParam(value="key") String key,
-            @RequestParam(value="s", required=false) Integer startString,
-            @RequestParam(value="l", required=false) Integer lengthString,
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
         // TODO Do we want form submission via GET?
-        //return processForm(queryName, request, session, model);
 
         if (!StringUtils.hasText(key)) {
             session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
@@ -65,23 +61,15 @@ public class ResultsController {
         }
 
         String pName = new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE);
-        logger.error("pName is '"+pName+"'");
-        String startString2 = request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)));
-        logger.error("The start string is '"+startString2+"'");
+        logger.debug("pName is '"+pName+"'");
+        String startString = request.getParameter((new ParamEncoder("row").encodeParameterName(TableTagParameters.PARAMETER_PAGE)));
+        logger.debug("The start string is '"+startString+"'");
         int start = 0;
-        if (startString2 != null) {
-            start = (Integer.parseInt(startString2) - 1) * DEFAULT_LENGTH;
+        if (startString != null) {
+            start = (Integer.parseInt(startString) - 1) * DEFAULT_LENGTH;
         }
-        //int start = (startString == null) ? 0 : startString.intValue();
-        //int length = (lengthString == null) ? DEFAULT_LENGTH : lengthString.intValue() ;
 
         int end = start + DEFAULT_LENGTH;
-//        Query query = queryFactory.retrieveQuery(queryName);index
-//        if (query == null) {
-//            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
-//            return "redirect:/QueryList";
-//        }
-//        model.addAttribute("query", query);
 
         if (!resultsCacheFactory.getResultsCacheMap().containsKey(key)) {
             session.setAttribute(WebConstants.FLASH_MSG, "Unable to retrieve results for this key");
