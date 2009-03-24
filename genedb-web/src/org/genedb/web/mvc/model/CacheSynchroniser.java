@@ -8,7 +8,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.genedb.db.audit.ChangeSet;
 import org.genedb.db.audit.ChangeTracker;
+import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
 import org.genedb.db.domain.services.BasicGeneService;
+import org.genedb.querying.core.LuceneIndex;
+import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.RenderedDiagramFactory;
 import org.genedb.web.mvc.controller.ModelBuilder;
@@ -32,19 +35,22 @@ import com.sleepycat.collections.StoredMap;
  */
 public class CacheSynchroniser {
 	private static final Logger logger = Logger.getLogger(CacheSynchroniser.class);
-
-    private BerkeleyMapFactory bmf;
-    private BasicGeneService basicGeneService;
+    
+    
     private RenderedDiagramFactory renderedDiagramFactory;
     private DiagramCache diagramCache;
-    private StoredMap<String, TranscriptDTO> dtoMap;
-    private StoredMap<String, String> contextMapMap;
     private ModelBuilder modelBuilder;
+    private LuceneIndexFactory luceneIndexFactory;
 
     private SessionFactory sessionFactory;
     
     private ChangeTracker changeTracker;    
     private boolean isNoContextMap;
+    
+    protected BerkeleyMapFactory bmf;
+    protected StoredMap<String, TranscriptDTO> dtoMap;
+    protected StoredMap<String, String> contextMapMap;
+    protected BasicGeneService basicGeneService;
     
 	/**
 	 * @param args
@@ -61,6 +67,7 @@ public class CacheSynchroniser {
 			cacheSynchroniser.processRequest();
 		
 		}catch(Exception e){
+			e.printStackTrace();
             System.err.println("Unable to run:");
             System.exit(64);			
 		}
@@ -70,9 +77,9 @@ public class CacheSynchroniser {
 	 * Find the audits for the 
 	 */
 	@Transactional
-	private void processRequest()throws SQLException{
-		//Initialise maps
-		initMaps();
+	void processRequest()throws SQLException{
+		//Initialise
+		init();
 		
 		//Get the records to update
 		ChangeSet changeSet = changeTracker.changes();
@@ -168,6 +175,7 @@ public class CacheSynchroniser {
             		feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
 			}
 		}catch(Exception e){
+		    e.printStackTrace();
 			logger.error("populateTopLevelFeatures: " + e.getMessage());
 		}
 	}
@@ -178,7 +186,7 @@ public class CacheSynchroniser {
 	 * @param uniqueNames
 	 * @return
 	 */
-	private List<Feature> findTopLevelFeatures(List<String> uniqueNames){
+	protected List<Feature> findTopLevelFeatures(List<String> uniqueNames){
 		List<Feature> features = new ArrayList<Feature>(0);
 		try{
 			Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
@@ -191,6 +199,7 @@ public class CacheSynchroniser {
 			.setString("uniqueNames", concatNames(uniqueNames));			
 			features = q.list();			
 		}catch(Exception e){
+		    e.printStackTrace();
 			logger.error("findTopLevelFeatures: " + e.getMessage());
 		}
         return features;		
@@ -245,7 +254,7 @@ public class CacheSynchroniser {
 	}
 	
 	
-	private List<Transcript> findTranscripts(List<String> uniqueNames){
+	protected List<Transcript> findTranscripts(List<String> uniqueNames){
 		List<Transcript> transcripts = new ArrayList<Transcript>(0);
 		try{
 			Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
@@ -259,14 +268,18 @@ public class CacheSynchroniser {
 		
 			transcripts = q.list();
 		}catch(Exception e){
+		    e.printStackTrace();
 			logger.error("findTranscripts: " + e.getMessage());
 		}
         return transcripts;		
 	}
 	
-	private void initMaps(){
+	protected void init(){
         dtoMap = bmf.getDtoMap(); // TODO More nicely
         contextMapMap = bmf.getContextMapMap();
+
+        LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
+        basicGeneService = new BasicGeneServiceImpl(luceneIndex);
 	}
 	
 	/**
@@ -296,9 +309,9 @@ public class CacheSynchroniser {
 		return bmf;
 	}
 
-	public void setBmf(BerkeleyMapFactory bmf) {
-		this.bmf = bmf;
-	}
+    public void setBerkeleyMapFactory(BerkeleyMapFactory bmf) {
+        this.bmf = bmf;
+    }
 
 	public BasicGeneService getBasicGeneService() {
 		return basicGeneService;
@@ -340,5 +353,13 @@ public class CacheSynchroniser {
 	public void setChangeTracker(ChangeTracker changeTracker) {
 		this.changeTracker = changeTracker;
 	}
+
+    public DiagramCache getDiagramCache() {
+        return diagramCache;
+    }
+
+    public void setDiagramCache(DiagramCache diagramCache) {
+        this.diagramCache = diagramCache;
+    }
 
 }

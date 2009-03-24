@@ -10,34 +10,23 @@
          http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-
-    <!-- <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
-    <context:spring-configured/>
-    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/> -->
-    <tx:annotation-driven mode="aspectj" />
-
-
-    <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
-
-    <bean id="propertyConfigurer2" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:project.properties" />
-    </bean>
-
     <!-- ========================= MAPPING DEFINITIONS ========================= -->
 
     <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
         <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
     </bean>
 
-    <bean id="cacheSynchroniser" class="org.genedb.web.mvc.model.CacheSynchroniser">
-        <property name="sessionFactory" ref="sessionFactory" />
+    <bean id="cacheSynchroniser" class="org.genedb.web.mvc.model.CacheSynchTestDelegate">
         <property name="diagramCache" ref="diagramCache" />
         <property name="modelBuilder" ref="modelBuilder" />
         <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
-        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
+        <!-- property name="luceneIndexFactory" ref="luceneIndexFactory" /-->
         <property name="renderedDiagramFactory" ref="renderedDiagramFactory" />
-        <property name="noContextMap"><value>true</value></property>
+        <property name="changeTracker" ref="changeTracker" />
+        <property name="noContextMap"><value>false</value></property>
     </bean>
+    
+    <bean id="changeTracker" class="org.genedb.db.audit.MockChangeTrackerImpl"/>
 
     <bean id="renderedDiagramFactory" class="org.genedb.web.gui.RenderedDiagramFactory">
         <property name="labelFont">
@@ -57,5 +46,4 @@
     <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
         <property name="diagramCache" ref="diagramCache" />
     </bean>
-
 </beans>
