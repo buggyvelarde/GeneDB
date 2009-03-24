@@ -404,7 +404,7 @@ public class FixResidues {
             +"      on transcript_gene.subject_id = transcript.feature_id"
             +" where transcript_gene.object_id = ?"
             +" and exon.type_id in (?, ?)"
-            +" and transcript.type_id in (?, ?, ?, ?, ?)"
+            +" and transcript.type_id in (?, ?, ?, ?, ?, ?, ?, ?)"
             +" and exonloc.locgroup = 0"
             +" and exonloc.rank = 0"
         );
@@ -415,11 +415,14 @@ public class FixResidues {
             st.setInt(3, typeCodes.typeId("sequence", "exon"));
             st.setInt(4, typeCodes.typeId("sequence", "pseudogenic_exon"));
 
-            st.setInt(5, typeCodes.typeId("sequence", "mRNA"));
-            st.setInt(6, typeCodes.typeId("sequence", "rRNA"));
-            st.setInt(7, typeCodes.typeId("sequence", "tRNA"));
-            st.setInt(8, typeCodes.typeId("sequence", "snRNA"));
-            st.setInt(9, typeCodes.typeId("sequence", "pseudogenic_transcript"));
+            st.setInt(5, typeCodes.typeId("sequence",  "mRNA"));
+            st.setInt(6, typeCodes.typeId("sequence",  "rRNA"));
+            st.setInt(7, typeCodes.typeId("sequence",  "tRNA"));
+            st.setInt(8, typeCodes.typeId("sequence",  "snRNA"));
+            st.setInt(9, typeCodes.typeId("sequence",  "pseudogenic_transcript"));
+            st.setInt(10, typeCodes.typeId("sequence", "snoRNA"));
+            st.setInt(11, typeCodes.typeId("sequence", "ncRNA"));
+            st.setInt(12, typeCodes.typeId("sequence", "transcript"));
             ResultSet rs = st.executeQuery();
 
             while (rs.next()) {
