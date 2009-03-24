@@ -11,6 +11,7 @@ import org.gmod.schema.mapped.OrganismProp;
 import org.gmod.schema.mapped.Phylonode;
 import org.gmod.schema.mapped.PhylonodeOrganism;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,11 +24,11 @@ import java.util.Map;
  * @author art
  *
  */
-public class TaxonNode {
+public class TaxonNode implements Serializable {
 
     private String taxonId;
-    private TaxonNode parent;
-    private Phylonode phylonode;
+    transient private TaxonNode parent;
+    transient private Phylonode phylonode;
     private List<TaxonNode> children = new ArrayList<TaxonNode>();
     private boolean webLinkable = false;
     private boolean organism = false;
@@ -178,11 +179,11 @@ public class TaxonNode {
             getTaxonId(), getName(TaxonNameType.FULL), getLabel(), organism);
     }
 
-	public boolean hasOrganismFeature() {
-		return hasOrganismFeature;
-	}
+    public boolean hasOrganismFeature() {
+        return hasOrganismFeature;
+    }
 
-	public void setHasOrganismFeature(boolean hasOrganismFeature) {
-		this.hasOrganismFeature = hasOrganismFeature;
-	}
+    public void setHasOrganismFeature(boolean hasOrganismFeature) {
+        this.hasOrganismFeature = hasOrganismFeature;
+    }
 }
