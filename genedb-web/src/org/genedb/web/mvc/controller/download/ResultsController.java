@@ -115,6 +115,7 @@ public class ResultsController {
         model.addAttribute("results", possiblyExpanded);
         model.addAttribute("resultsSize", results.size());
         model.addAttribute("key", key);
+        model.addAttribute("query", resultEntry.query);
         return "search/"+resultEntry.queryName;
     }
 
