@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 
-<c:set property="queryName" value="proteinLength" />
+<c:set property="queryName" value="proteinLength"></c:set>
 
 <jsp:include page="/WEB-INF/jsp/queries/${queryName}.jspf" />
 
