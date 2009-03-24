@@ -2,10 +2,13 @@
 <%@ taglib prefix="db" uri="db" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <format:headerRound title="Number of TM domains Search">
-	<st:init />
-	<link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
+    <st:init />
+    <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 
+<c:set property="queryName" value="proteinLength" />
+
+<jsp:include page="/WEB-INF/jsp/queries/${queryName}.jspf" />
 
 <br><query:results />
 <format:footer />
