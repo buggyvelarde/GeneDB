@@ -504,7 +504,6 @@ PFF0305c..pep	81FCDD0189937E81	155	ProfileScan	PS50127	UBIQUITIN_CONJUGAT_2	4	12
 PFF0265c..pep	483FBBD63B61657D	160	HMMSmart	SM00054	no description	96	124	1.3	T	07-Jan-2009	IPR002048	Calcium-binding EF-hand	Molecular Function: calcium ion binding (GO:0005509)
 PFF0035c..pep	C9D2405BF1F2C686	349	HMMPfam	PF02009	Rifin_STEVOR	20	349	1.1e-141	T	07-Jan-2009	IPR002858	Variant surface antigen Rifin/Stevor, Plasmodium falciparum	
 PFF0595c..pep	26221A5519868F85	1864	FPrintScan	PR00019	LEURICHRPT	33	46	0.18	T	07-Jan-2009	IPR001611	Leucine-rich repeat	Molecular Function: protein binding (GO:0005515)
-PFD0965W..pep	8D93DAB7E04EBB5A	5034	ProfileScan	PS50290	PI3_4_KINASE_3	4862	5033	28.175	T	07-Jan-2009	IPR000403	Phosphatidylinositol 3- and 4-kinase, catalytic	Molecular Function: phosphotransferase activity, alcohol group as acceptor (GO:0016773)
 PFD0600c..pep	19365B31E2C1E4ED	336	FPrintScan	PR01034	RIBOSOMALS12	183	198	7.4e-41	T	07-Jan-2009	IPR005679	Ribosomal protein S12, bacterial-type	Molecular Function: structural constituent of ribosome (GO:0003735), Biological Process: translation (GO:0006412), Cellular Component: small ribosomal subunit (GO:0015935)
 PFD0535w..pep	A7258BD626F5413F	1298	Seg	seg	seg	1045	1065	NA	?	07-Jan-2009	NULL	NULL
 PFD0545w..pep	266EC4B81A836FC3	1570	Seg	seg	seg	1287	1340	NA	?	07-Jan-2009	NULL	NULL
@@ -513,9 +512,6 @@ PFD0840w..pep	7ED3785F1273E3E8	6769	Seg	seg	seg	1828	1855	NA	?	07-Jan-2009	NULL	
 PFD0840w..pep	7ED3785F1273E3E8	6769	Seg	seg	seg	5843	5858	NA	?	07-Jan-2009	NULL	NULL
 PFD0840w..pep	7ED3785F1273E3E8	6769	Seg	seg	seg	5872	5880	NA	?	07-Jan-2009	NULL	NULL
 PFD0940w..pep	487503A2A308CE4A	2472	Seg	seg	seg	2010	2020	NA	?	07-Jan-2009	NULL	NULL
-PFD0965W..pep	8D93DAB7E04EBB5A	5034	Seg	seg	seg	1292	1315	NA	?	07-Jan-2009	NULL	NULL
-PFD0965W..pep	8D93DAB7E04EBB5A	5034	Seg	seg	seg	2538	2562	NA	?	07-Jan-2009	NULL	NULL
-PFD0965W..pep	8D93DAB7E04EBB5A	5034	Seg	seg	seg	3057	3070	NA	?	07-Jan-2009	NULL	NULL
 PFD1020c..pep	EAD323FB2C3BBA97	261	Seg	seg	seg	94	119	NA	?	07-Jan-2009	NULL	NULL
 PFD1045c..pep	4F9F041BC21E44D8	4261	Seg	seg	seg	2767	2787	NA	?	07-Jan-2009	NULL	NULL
 PFE0015c..pep	FE62DF463E502624	314	Seg	seg	seg	190	202	NA	?	07-Jan-2009	NULL	NULL
@@ -528,7 +524,6 @@ PFE0115c..pep	F17BEF9E99BDF046	287	Coil	coil	coiled-coil	141	162	NA	?	07-Jan-200
 PFD0615c..pep	7A349F6FEEF9F7CB	2209	HMMPfam	PF03011	PFEMP	1479	1628	1.3e-68	T	07-Jan-2009	IPR004258	Plasmodium falciparum erythrocyte membrane protein (PFEMP)	
 PFD0825c..pep	7B07C4CEA0071BC5	514	HMMPfam	PF00806	PUF	266	300	0.01	T	07-Jan-2009	IPR001313	Pumilio RNA-binding region	Molecular Function: RNA binding (GO:0003723)
 PFE0085c..pep	4873C11FDB8C5A91	793	HMMSmart	SM00028	no description	549	582	2.4e+02	T	07-Jan-2009	IPR013026	Tetratricopeptide region	
-PFD0965W..pep	8D93DAB7E04EBB5A	5034	PatternScan	PS00916	PI3_4_KINASE_2	4872	4892	NA	T	07-Jan-2009	IPR000403	Phosphatidylinositol 3- and 4-kinase, catalytic	Molecular Function: phosphotransferase activity, alcohol group as acceptor (GO:0016773)
 PFD0810w..pep	5CFB73411C5A7AA2	192	Gene3D	G3DSA:3.40.50.300	no description	3	192	1.3e-53	T	07-Jan-2009	NULL	NULL	
 PFD0665c..pep	308F84522278C0BC	392	HMMTigr	TIGR01242	26Sp45: 26S proteasome subunit P45 family	17	384	5.1e-160	T	07-Jan-2009	IPR005937	26S proteasome subunit P45	Cellular Component: nucleus (GO:0005634), Cellular Component: cytoplasm (GO:0005737), Molecular Function: hydrolase activity (GO:0016787), Biological Process: protein catabolic process (GO:0030163)
 PFE0170c..pep	6F60FD311B31E6A2	850	BlastProDom	PD000001	CDK2_MESAU_P48963;	23	155	4e-06	T	07-Jan-2009	NULL	NULL	
