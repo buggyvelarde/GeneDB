@@ -1,6 +1,5 @@
 package org.genedb.web.mvc.controller.download;
 
-import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.web.mvc.model.ResultsCacheFactory;
 
@@ -28,7 +27,7 @@ public class ResultsNavigatorController {
 
         ModelAndView ret = new ModelAndView();
 
-        List<GeneSummary> results = resultsCacheFactory.getResultsCacheMap().get(key);
+        List<GeneSummary> results = resultsCacheFactory.getResultsCacheMap().get(key).results;
         if (results == null && results.size() == 0) {
             return new ModelAndView("/Homepage");
         }

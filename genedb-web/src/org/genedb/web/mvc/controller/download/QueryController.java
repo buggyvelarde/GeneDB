@@ -129,7 +129,7 @@ public class QueryController {
 
         logger.error("Validator found no errors");
         List results = query.getResults();
-        
+
         String taxonName = null;
         if (query instanceof TaxonQuery) {
             TaxonNode[] nodes = ((TaxonQuery) query).getTaxons();
@@ -137,7 +137,7 @@ public class QueryController {
                 taxonName = nodes[0].getLabel();
             } // FIXME
         }
-        
+
         String resultsKey = null;
         if (results.size() > 0) {
 //            Object firstItem =  results.get(0);
@@ -153,12 +153,12 @@ public class QueryController {
             model.addAttribute("taxonNodeName", taxonName);
             return "search/"+queryName;
         case 1:
-        	List<GeneSummary> gs = possiblyConvertList(results);
-            resultsKey = cacheResults(gs);
+            List<GeneSummary> gs = possiblyConvertList(results);
+            resultsKey = cacheResults(gs, query, queryName);
             return "redirect:/NamedFeature?name=" + gs.get(0).getSystematicId();
         default:
-        	List<GeneSummary> gs2 = possiblyConvertList(results);
-            resultsKey = cacheResults(gs2);
+            List<GeneSummary> gs2 = possiblyConvertList(results);
+            resultsKey = cacheResults(gs2, query, queryName);
             model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.error("Found results for query - redirecting to Results controller");
@@ -168,24 +168,29 @@ public class QueryController {
 
 
     private List<GeneSummary> possiblyConvertList(List results) {
-    	List<GeneSummary> gs;
+        List<GeneSummary> gs;
         Object firstItem =  results.get(0);
         if (firstItem instanceof GeneSummary) {
-        	gs = results;
+            gs = results;
         } else {
-        	gs = Lists.newArrayListWithExpectedSize(results.size());
-        	for (Object o  : results) {
-				gs.add(new GeneSummary((String) o));
-			}
+            gs = Lists.newArrayListWithExpectedSize(results.size());
+            for (Object o  : results) {
+                gs.add(new GeneSummary((String) o));
+            }
         }
         return gs;
     }
 
 
-    private String cacheResults(List<GeneSummary> gs) {
+    private String cacheResults(List<GeneSummary> gs, Query q, String queryName) {
         String key = Integer.toString(System.identityHashCode(gs)); // CHECKME
-        StoredMap<String, List> map = resultsCacheFactory.getResultsCacheMap();
-        map.put(key, gs);
+        StoredMap<String, ResultEntry> map = resultsCacheFactory.getResultsCacheMap();
+        ResultEntry re = new ResultEntry();
+        re.numOfResults = gs.size();
+        re.query = q;
+        re.results = gs;
+        re.queryName = queryName;
+        map.put(key, re);
         return key;
     }
 

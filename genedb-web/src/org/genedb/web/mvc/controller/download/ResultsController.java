@@ -88,7 +88,8 @@ public class ResultsController {
             return "redirect:/QueryList";
         }
 
-        List<GeneSummary> results = resultsCacheFactory.getResultsCacheMap().get(key);
+        ResultEntry resultEntry = resultsCacheFactory.getResultsCacheMap().get(key);
+        List<GeneSummary> results = resultEntry.results;
 
         boolean truncated = false;
 
@@ -109,7 +110,8 @@ public class ResultsController {
         if (possiblyExpanded != null) {
             // Need to update cache
             if (truncated) {
-                 resultsCacheFactory.getResultsCacheMap().put(key, possiblyExpanded);
+                resultEntry.results = possiblyExpanded;
+                 resultsCacheFactory.getResultsCacheMap().put(key, resultEntry);
             } else {
 //                int index = start;
 //                for (GeneSummary geneSummary : possiblyExpanded) {
@@ -125,7 +127,7 @@ public class ResultsController {
         model.addAttribute("results", possiblyExpanded);
         model.addAttribute("resultsSize", results.size());
         model.addAttribute("key", key);
-        return "list/results";
+        return "search/"+resultEntry.queryName;
     }
 
     private List<GeneSummary> possiblyExpandResults(List<GeneSummary> results) throws QueryException {

@@ -1,5 +1,7 @@
 package org.genedb.web.mvc.model;
 
+import org.genedb.web.mvc.controller.download.ResultEntry;
+
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -24,9 +26,9 @@ public class ResultsCacheFactory {
     private StoredClassCatalog javaCatalog;
     private Database resultsCacheDb;
 
-    private StoredMap<String, List> resultsCacheMap;
+    private StoredMap<String, ResultEntry> resultsCacheMap;
 
-    public StoredMap<String, List> getResultsCacheMap() {
+    public StoredMap<String, ResultEntry> getResultsCacheMap() {
         openDb();
         return resultsCacheMap;
     }
@@ -94,11 +96,11 @@ public class ResultsCacheFactory {
 
         EntryBinding<String> stringBinding =
             new SerialBinding<String>(javaCatalog, String.class);
-        EntryBinding<List> listBinding =
-            new SerialBinding<List>(javaCatalog, List.class);
+        EntryBinding<ResultEntry> resultEntryBinding =
+            new SerialBinding<ResultEntry>(javaCatalog, ResultEntry.class);
 
         resultsCacheMap =
-            new StoredMap<String, List>(resultsCacheDb, stringBinding, listBinding, true);
+            new StoredMap<String, ResultEntry>(resultsCacheDb, stringBinding, resultEntryBinding, true);
 
     }
 
