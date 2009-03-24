@@ -131,14 +131,14 @@ public class TaxonNodeManager implements InitializingBean {
      */
     private boolean initPhylonodeWithOrganismFeatures(TaxonNode node){
         List<TaxonNode> childNodes = node.getChildren();
-        if(childNodes.size() > 0){
-            for(TaxonNode childNode :  childNodes){
-                if(initPhylonodeWithOrganismFeatures(childNode)){
+        if (childNodes.size() > 0) {
+            for (TaxonNode childNode :  childNodes) {
+                if (initPhylonodeWithOrganismFeatures(childNode)) {
                     node.setHasOrganismFeature(true);
                 }
             }
-        }else{
-            if(phylogenyDao.isPhylonodeWithOrganismFeature(node.getPhylonode())){
+        } else {
+            if (phylogenyDao.isPhylonodeWithOrganismFeature(node.getPhylonode())) {
                 node.setHasOrganismFeature(true);
             }
         }
