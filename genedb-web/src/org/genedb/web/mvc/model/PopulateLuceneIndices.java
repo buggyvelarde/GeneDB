@@ -11,7 +11,6 @@ import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.ThreePrimeUTR;
 import org.gmod.schema.feature.Transcript;
-import org.gmod.schema.feature.TranscriptRegion;
 import org.gmod.schema.feature.UTR;
 import org.gmod.schema.mapped.Feature;
 
@@ -53,6 +52,7 @@ import java.util.SortedSet;
 
 import javax.sql.DataSource;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 
@@ -202,6 +202,20 @@ public class PopulateLuceneIndices implements IndexUpdater{
         return session;
     }
 
+
+    public void indexFeatures(List<Integer> featureIds) {
+        FullTextSession session = newSession(BATCH_SIZE);
+        Transaction transaction = session.beginTransaction();
+        Set<Integer> failed = batchIndexFeatures(featureIds, session);
+        transaction.commit();
+        session.close();
+
+        if (failed.size() > 0) {
+            reindexFailedFeatures(failed);
+        }
+    }
+
+
     /**
      * Index features of the specified class. First of all indexes the features
      * in batches, and then retries the failures one-by-one.
@@ -238,18 +252,24 @@ public class PopulateLuceneIndices implements IndexUpdater{
             List<Integer> ids = changeSet.changedTranscripts();
             ids.addAll(changeSet.newTranscripts());
 
+            FullTextSession session = newSession(BATCH_SIZE);
+            Transaction transaction = session.beginTransaction();
+
             Set<Integer> featureIds = expandList(ids);
-            batchIndex(featureIds);
+
+            Set<Integer> failed = batchIndexFeatures(featureIds, session);
+            transaction.commit();
+            session.close();
+
+            if (failed.size() > 0) {
+                reindexFailedFeatures(failed);
+            }
         }
         catch (IOException exp) {
             logger.error("Failed to update Lucene indices", exp);
             return false;
         }
         return true;
-    }
-
-    private void batchIndex(Set<Integer> ids) {
-        reindexFailedFeatures(ids);
     }
 
     /**
@@ -263,7 +283,7 @@ public class PopulateLuceneIndices implements IndexUpdater{
         // Go through the list grabbing genes, proteins and UTRs
         Set<Integer> ret = Sets.newHashSet();
         for (Integer id : ids) {
-            Transcript transcript = (Transcript) sequenceDao.getFeatureById(id);
+            Transcript transcript = (Transcript) sequenceDao.getFeatureById(id.intValue());
             ret.add(id);
             if (transcript instanceof ProductiveTranscript) {
                 ret.add(((ProductiveTranscript)transcript).getProtein().getFeatureId());
@@ -318,6 +338,57 @@ public class PopulateLuceneIndices implements IndexUpdater{
         session.close();
     }
 
+
+    /**
+     * Attempt to index features in batches. Returns identifiers of the features
+     * that failed to be indexed. (An exception processing a feature will cause
+     * the whole batch to fail, so it's worth trying to reindex failed features
+     * one-by-one.)
+     *
+     * @param featureClass the class of features to index
+     * @param numBatches the number of batches to process. If zero or negative,
+     *                process all
+     * @param session
+     * @return a set of featureIds of the features that failed to be indexed
+     */
+    private Set<Integer> batchIndexFeatures(Collection<Integer> featureIds,
+            FullTextSession session) {
+
+        Set<Integer> failedToLoad = new HashSet<Integer>();
+
+        int thisBatchCount = 0;
+        Set<Integer> thisBatch = new HashSet<Integer>();
+
+        int i = 0;
+        for (Integer featureId : featureIds) {
+            Feature feature = sequenceDao.getFeatureById(i);
+            thisBatch.add(featureId);
+
+            boolean failed = false;
+            try {
+                logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
+                        feature.getClass()));
+                session.index(feature);
+            } catch (Exception e) {
+                logger.error("Batch failed", e);
+                failed = true;
+            }
+
+            if (failed || ++thisBatchCount == BATCH_SIZE) {
+                logger.info(String.format("Indexed %d of %d", i, featureIds.size()));
+                session.clear();
+                thisBatchCount = 0;
+                if (failed) {
+                    failedToLoad.addAll(thisBatch);
+                }
+                thisBatch = new HashSet<Integer>();
+            }
+            i++;
+        }
+        return failedToLoad;
+    }
+
+
     /**
      * Attempt to index features in batches. Returns identifiers of the features
      * that failed to be indexed. (An exception processing a feature will cause
@@ -347,35 +418,15 @@ public class PopulateLuceneIndices implements IndexUpdater{
         ScrollableResults results = criteria.scroll(ScrollMode.FORWARD_ONLY);
 
         logger.info(String.format("Indexing %s", featureClass));
-        int thisBatchCount = 0;
-        Set<Integer> thisBatch = new HashSet<Integer>();
+        List<Integer> featureIds = Lists.newArrayList();
 
         for (int i = 1; results.next(); i++) {
             Feature feature = (Feature) results.get(0);
-            thisBatch.add(feature.getFeatureId());
-
-            boolean failed = false;
-            try {
-                logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
-                        feature.getClass()));
-                session.index(feature);
-            } catch (Exception e) {
-                logger.error("Batch failed", e);
-                failed = true;
-            }
-
-            if (failed || ++thisBatchCount == BATCH_SIZE) {
-                logger.info(String.format("Indexed %d of %s", i, featureClass));
-                session.clear();
-                thisBatchCount = 0;
-                if (failed) {
-                    failedToLoad.addAll(thisBatch);
-                }
-                thisBatch = new HashSet<Integer>();
-            }
+            featureIds.add(feature.getFeatureId());
         }
+
         results.close();
-        return failedToLoad;
+        return batchIndexFeatures(featureIds, session);
     }
 
     /**
