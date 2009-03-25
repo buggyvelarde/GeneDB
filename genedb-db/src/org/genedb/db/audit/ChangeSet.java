@@ -5,6 +5,10 @@ import java.util.List;
 
 public interface ChangeSet {
 
+    public List<Integer> newGaps();
+    public List<Integer> changedGaps();
+    public List<Integer> deletedGaps();
+
     public List<Integer> newTranscripts();
     public List<Integer> changedTranscripts();
     public List<Integer> deletedTranscripts();
