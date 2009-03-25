@@ -5,13 +5,13 @@ import java.util.List;
 
 public interface ChangeSet {
 
-    public List<String> newTranscripts();
-    public List<String> changedTranscripts();
-    public List<String> deletedTranscripts();
+    public List<Integer> newTranscripts();
+    public List<Integer> changedTranscripts();
+    public List<Integer> deletedTranscripts();
 
-    public List<String> newTopLevelFeatures();
-    public List<String> changedTopLevelFeatures();
-    public List<String> deletedTopLevelFeatures();
+    public List<Integer> newTopLevelFeatures();
+    public List<Integer> changedTopLevelFeatures();
+    public List<Integer> deletedTopLevelFeatures();
 
     public void commit() throws SQLException;
 }
