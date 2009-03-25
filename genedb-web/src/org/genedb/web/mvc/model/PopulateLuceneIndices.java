@@ -5,10 +5,13 @@ import org.genedb.db.dao.SequenceDao;
 
 import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.feature.FivePrimeUTR;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.ThreePrimeUTR;
 import org.gmod.schema.feature.Transcript;
+import org.gmod.schema.feature.TranscriptRegion;
 import org.gmod.schema.feature.UTR;
 import org.gmod.schema.mapped.Feature;
 
@@ -35,6 +38,7 @@ import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.Option;
+import uk.co.flamingpenguin.jewel.cli.Unparsed;
 
 import java.io.Console;
 import java.io.IOException;
@@ -45,8 +49,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.SortedSet;
 
 import javax.sql.DataSource;
 
@@ -72,17 +75,15 @@ import com.google.common.collect.Sets;
 public class PopulateLuceneIndices implements IndexUpdater{
    private static Logger logger = Logger.getLogger(PopulateLuceneIndices.class);
 
-   private static void die(String message) {
-       System.err.println(message);
-       System.err.println();
-       System.exit(1);
-   }
 
    private boolean failFast = false;
 
    public void setFailFast(boolean failFast) {
        this.failFast = failFast;
    }
+
+
+   private DataSource dataSource;
 
 
    private SequenceDao sequenceDao;
@@ -108,54 +109,19 @@ public class PopulateLuceneIndices implements IndexUpdater{
        // Don't forget to update the class doc comment!
    }
 
-   private String databaseUrl;
-   private String databaseUsername;
-   private String databasePassword;
    private String indexBaseDirectory;
    private String organism;
    private int numBatches = -1;
 
    public int getNumBatches() {
                return numBatches;
-       }
-
-       public void setNumBatches(int numBatches) {
-               this.numBatches = numBatches;
-       }
-
-       /**
-    * Create a new instance configured with database connection information taken from
-    * system properties. If no database password is supplied, the user is prompted for
-    * one on the console.
-    *
-    * @param batchSize
-    */
-   public static PopulateLuceneIndices configuredWithSystemProperties() {
-       String databaseUrl = System.getProperty("database.url");
-       if (databaseUrl == null) {
-           die("The property database.url must be supplied, "
-                   + "e.g. -Ddatabase.url=jdbc:postgres://localhost:10101/malaria_workshop");
-       }
-       String databaseUsername = System.getProperty("database.user");
-       if (databaseUsername == null) {
-           die("The property database.user must be supplied, " + "e.g. -Ddatabase.user=pathdb");
-       }
-
-       String databasePassword = System.getProperty("database.password");
-       if (databasePassword == null) {
-           databasePassword = promptForPassword(databaseUrl, databaseUsername);
-       }
-
-       String indexBaseDirectory = System.getProperty("index.base");
-       if (indexBaseDirectory == null) {
-           die("The property index.base must be supplied, "
-                   + "e.g. -Dindex.base=/software/pathogen/genedb/indexes");
-       }
-
-       return new PopulateLuceneIndices(databaseUrl, databaseUsername, databasePassword, indexBaseDirectory);
    }
 
-   private static String promptForPassword(String databaseUrl, String databaseUsername) {
+   public void setNumBatches(int numBatches) {
+       this.numBatches = numBatches;
+   }
+
+   public static String promptForPassword(String databaseUrl, String databaseUsername) {
        Console console = System.console();
        if (console == null) {
            die("No password has been supplied, and no console found");
@@ -168,6 +134,10 @@ public class PopulateLuceneIndices implements IndexUpdater{
        return new String(password);
    }
 
+   public PopulateLuceneIndices() {
+       // Default constructor
+   }
+
    /**
     * Create a new instance configured with the specified database connection details.
     *
@@ -176,32 +146,28 @@ public class PopulateLuceneIndices implements IndexUpdater{
     * @param databasePassword
     * @param indexBaseDirectory
     */
-   private PopulateLuceneIndices(String databaseUrl, String databaseUsername, String databasePassword,
+   private PopulateLuceneIndices(String host, int port, String userName, String dbName, String password,
            String indexBaseDirectory) {
-       this.databaseUrl = databaseUrl;
-       this.databaseUsername = databaseUsername;
-       this.databasePassword = databasePassword;
        this.indexBaseDirectory = indexBaseDirectory;
+       makeDataSource(host, port, userName, dbName, password);
    }
 
-   private static final Pattern POSTGRES_URL_PATTERN = Pattern.compile("jdbc:postgresql://([^:/]*)(?::(\\d+))?/([^/]+)");
-   private DataSource getDataSource() {
-       PGSimpleDataSource dataSource = new PGSimpleDataSource();
-       Matcher urlMatcher = POSTGRES_URL_PATTERN.matcher(databaseUrl);
-       if (!urlMatcher.matches()) {
-           throw new RuntimeException(String.format("Malformed PostgreSQL URL '%s'", databaseUrl));
+
+   private void makeDataSource(String host, int port, String userName, String dbName, String password) {
+
+       if (dataSource != null) {
+           logger.warn("A new datasource is being created, although one is already defined");
        }
 
-       dataSource.setServerName(urlMatcher.group(1));
-       if (urlMatcher.group(2) != null) {
-           dataSource.setPortNumber(Integer.parseInt(urlMatcher.group(2)));
-       }
-       dataSource.setDatabaseName(urlMatcher.group(3));
+       PGSimpleDataSource sds = new PGSimpleDataSource();
 
-       dataSource.setUser(databaseUsername);
-       dataSource.setPassword(databasePassword);
+       sds.setServerName(host);
+       sds.setPortNumber(port);
+       sds.setDatabaseName(dbName);
+       sds.setUser(userName);
+       sds.setPassword(password);
 
-       return dataSource;
+       this.dataSource = sds;
    }
 
    private Map<Integer,SessionFactory> sessionFactoryByBatchSize = new HashMap<Integer,SessionFactory>();
@@ -224,9 +190,9 @@ public class PopulateLuceneIndices implements IndexUpdater{
 
        cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
        cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-       cfg.setProperty("hibernate.connection.username", databaseUsername);
-       cfg.setProperty("hibernate.connection.password", databasePassword);
-       cfg.setProperty("hibernate.connection.url", databaseUrl);
+       //cfg.setProperty("hibernate.connection.username", databaseUsername);
+       //cfg.setProperty("hibernate.connection.password", databasePassword);
+       //cfg.setProperty("hibernate.connection.url", databaseUrl);
 
        cfg.setProperty("hibernate.search.default.directory_provider",
            "org.hibernate.search.store.FSDirectoryProvider");
@@ -291,7 +257,7 @@ public class PopulateLuceneIndices implements IndexUpdater{
            deleteFromIndex(changeSet.deletedTranscripts());
 
            // Now adds and updates
-           List<String> ids = changeSet.changedTranscripts();
+           List<Integer> ids = changeSet.changedTranscripts();
            ids.addAll(changeSet.newTranscripts());
 
            Set<Integer> featureIds = expandList(ids);
@@ -308,26 +274,37 @@ public class PopulateLuceneIndices implements IndexUpdater{
        reindexFailedFeatures(ids);
    }
 
-   private Set<Integer> expandList(List<String> ids) {
+   private Set<Integer> expandList(List<Integer> ids) {
        // TODO Go through the list, converting String id to featureid as Integer,
        // and grabbing genes and proteins
        Set<Integer> ret = Sets.newHashSet();
-       for (String id : ids) {
-           Transcript transcript = sequenceDao.getFeatureByUniqueName(id, Transcript.class);
-           ret.add(transcript.getFeatureId());
+       for (Integer id : ids) {
+           Transcript transcript = (Transcript) sequenceDao.getFeatureById(id);
+           ret.add(id);
            if (transcript instanceof ProductiveTranscript) {
                ret.add(((ProductiveTranscript)transcript).getProtein().getFeatureId());
            }
            ret.add(transcript.getGene().getFeatureId());
+           addUTRs(ret, transcript, FivePrimeUTR.class);
+           addUTRs(ret, transcript, ThreePrimeUTR.class);
        }
        return ret;
    }
+
+private <T extends TranscriptRegion> void addUTRs(Set<Integer> ret, Transcript transcript, Class<T> clazz) {
+    SortedSet<T> utrs = transcript.getComponents(clazz);
+       if (utrs != null && utrs.size() > 0) {
+           for (T utr : utrs) {
+               ret.add(utr.getFeatureId());
+           }
+       }
+}
 
    public void applyChanges() {
        // TODO Move indices into place
    }
 
-   private void deleteFromIndex(List<String> ids) throws IOException {
+   private void deleteFromIndex(List<Integer> ids) throws IOException {
        FullTextSession session = newSession(BATCH_SIZE);
        SearchFactory searchFactory = session.getSearchFactory();
        ReaderProvider rp = searchFactory.getReaderProvider();
@@ -436,24 +413,23 @@ public class PopulateLuceneIndices implements IndexUpdater{
        session.close();
    }
 
-   interface PopulateLuceneIndicesArgs {
-       @Option(shortName="n", description="Number of batches - only useful for quick-and-dirty testing")
-       int getNumBatches();
-       void setNumBatches(int numBatches);
-       boolean isNumBatches();
 
-       @Option(shortName="o", description="Only index this organism")
-       String getOrganism();
-       void setOrganism(String organism);
-       boolean isOrganism();
-
-
-       @Option(shortName="f", longName="failFast", description="Fail on second try if there's a problem")
-       boolean getFailFast();
-       void setFailFast(boolean failFast);
-       boolean isFailFast();
+   public DataSource getDataSource() {
+       if (dataSource == null) {
+           throw new NullPointerException("Datasource hasn't been injected, or created from connection properties");
+       }
+       return dataSource;
    }
 
+public void setDataSource(DataSource dataSource) {
+    this.dataSource = dataSource;
+}
+
+private static void die(String message) {
+       System.err.println(message);
+       System.err.println();
+       System.exit(1);
+   }
 
    public static void main(String[] args) {
 
@@ -469,11 +445,24 @@ public class PopulateLuceneIndices implements IndexUpdater{
            return;
        }
 
+       if (! iga.isUserName()) {
+           iga.setUserName(System.getenv("USER"));
+       }
 
-       PopulateLuceneIndices indexer = PopulateLuceneIndices.configuredWithSystemProperties();
+       String password;
+       if ( ! iga.isPassword()) {
+           password = promptForPassword(iga.getDbName(), iga.getUserName());
+       } else {
+           password = iga.getPassword();
+       }
+
+       PopulateLuceneIndices indexer = new PopulateLuceneIndices(iga.getHost(), iga.getPort(),
+               iga.getUserName(), iga.getDbName(), password, iga.getIndexDirectory());
+
        if (iga.isOrganism()) {
            indexer.setOrganism(iga.getOrganism());
        }
+
        indexer.setFailFast(iga.getFailFast());
 
        if  (iga.isNumBatches()) {
@@ -486,4 +475,58 @@ public class PopulateLuceneIndices implements IndexUpdater{
    private void setOrganism(String organism) {
        this.organism = organism;
    }
+
+
+   interface PopulateLuceneIndicesArgs {
+
+       /* Testing */
+
+       @Option(shortName="n", description="Number of batches - only useful for quick-and-dirty testing")
+       int getNumBatches();
+       void setNumBatches(int numBatches);
+       boolean isNumBatches();
+
+       @Option(shortName="f", longName="failFast", description="Fail on second try if there's a problem")
+       boolean getFailFast();
+       void setFailFast(boolean failFast);
+       boolean isFailFast();
+
+       /* What exactly to index */
+
+       @Option(shortName="o", description="Only index this organism")
+       String getOrganism();
+       void setOrganism(String organism);
+       boolean isOrganism();
+
+
+       /* Db connection info */
+
+       @Option(shortName="h", longName="host", description="Host for db server", defaultValue="localhost")
+       void setHost(String host);
+       String getHost();
+
+       @Option(shortName="p", longName="port", description="Port number of db server", defaultValue="5432")
+       void setPort(int port);
+       int getPort();
+
+       @Option(shortName="U", longName="userName", description="User to log in as")
+       void setUserName(String userName);
+       String getUserName();
+       boolean isUserName();
+
+       @Option(shortName="P", longName="password", description="")
+       void setPassword(String password);
+       String getPassword();
+       boolean isPassword();
+
+       @Unparsed
+       String getDbName();
+
+       /* Index location */
+
+       @Option(shortName="i", longName="index", description="Directory where the indices are stored")
+       String getIndexDirectory();
+
+   }
+
 }
