@@ -6,21 +6,21 @@ import java.util.List;
 
 public class MockChangeSetImpl implements ChangeSet {
 
-    List<String> changedTopLevelNames = new ArrayList<String>();
-    List<String> deletedTopLevelNames = new ArrayList<String>();
-    List<String> newTopLevelNames = new ArrayList<String>();
-    List<String> changedTranscriptNames = new ArrayList<String>();
-    List<String> deletedTranscriptNames = new ArrayList<String>();
-    List<String> newTranscriptNames = new ArrayList<String>();
+    List<Integer> changedTopLevelIds = new ArrayList<Integer>();
+    List<Integer> deletedTopLevelIds = new ArrayList<Integer>();
+    List<Integer> newTopLevelIds = new ArrayList<Integer>();
+    List<Integer> changedTranscriptIds = new ArrayList<Integer>();
+    List<Integer> deletedTranscriptIds = new ArrayList<Integer>();
+    List<Integer> newTranscriptIds = new ArrayList<Integer>();
     
     @Override
-    public List<String> changedTopLevelFeatures() {
-        return changedTopLevelNames;
+    public List<Integer> changedTopLevelFeatures() {
+        return changedTopLevelIds;
     }
 
     @Override
-    public List<String> changedTranscripts() {
-        return changedTranscriptNames;
+    public List<Integer> changedTranscripts() {
+        return changedTranscriptIds;
     }
 
     @Override
@@ -28,71 +28,71 @@ public class MockChangeSetImpl implements ChangeSet {
     }
 
     @Override
-    public List<String> deletedTopLevelFeatures() {
-        return deletedTopLevelNames;
+    public List<Integer> deletedTopLevelFeatures() {
+        return deletedTopLevelIds;
     }
 
     @Override
-    public List<String> deletedTranscripts() {
-        return deletedTranscriptNames;
+    public List<Integer> deletedTranscripts() {
+        return deletedTranscriptIds;
     }
 
     @Override
-    public List<String> newTopLevelFeatures() {
-        return newTopLevelNames;
+    public List<Integer> newTopLevelFeatures() {
+        return newTopLevelIds;
     }
 
     @Override
-    public List<String> newTranscripts() {
-        return newTranscriptNames;
+    public List<Integer> newTranscripts() {
+        return newTranscriptIds;
     }
 
-    public List<String> getChangedTopLevelNames() {
-        return changedTopLevelNames;
+    public List<Integer> getChangedTopLevelIds() {
+        return changedTopLevelIds;
     }
 
-    public void setChangedTopLevelNames(List<String> changedTopLevelNames) {
-        this.changedTopLevelNames = changedTopLevelNames;
+    public void setChangedTopLevelIds(List<Integer> changedTopLevelIds) {
+        this.changedTopLevelIds = changedTopLevelIds;
     }
 
-    public List<String> getDeletedTopLevelNames() {
-        return deletedTopLevelNames;
+    public List<Integer> getDeletedTopLevelIds() {
+        return deletedTopLevelIds;
     }
 
-    public void setDeletedTopLevelNames(List<String> deletedTopLevelNames) {
-        this.deletedTopLevelNames = deletedTopLevelNames;
+    public void setDeletedTopLevelIds(List<Integer> deletedTopLevelIds) {
+        this.deletedTopLevelIds = deletedTopLevelIds;
     }
 
-    public List<String> getNewTopLevelNames() {
-        return newTopLevelNames;
+    public List<Integer> getNewTopLevelIds() {
+        return newTopLevelIds;
     }
 
-    public void setNewTopLevelNames(List<String> newTopLevelNames) {
-        this.newTopLevelNames = newTopLevelNames;
+    public void setNewTopLevelIds(List<Integer> newTopLevelIds) {
+        this.newTopLevelIds = newTopLevelIds;
     }
 
-    public List<String> getChangedTranscriptNames() {
-        return changedTranscriptNames;
+    public List<Integer> getChangedTranscriptIds() {
+        return changedTranscriptIds;
     }
 
-    public void setChangedTranscriptNames(List<String> changedTranscriptNames) {
-        this.changedTranscriptNames = changedTranscriptNames;
+    public void setChangedTranscriptIds(List<Integer> changedTranscriptIds) {
+        this.changedTranscriptIds = changedTranscriptIds;
     }
 
-    public List<String> getDeletedTranscriptNames() {
-        return deletedTranscriptNames;
+    public List<Integer> getDeletedTranscriptIds() {
+        return deletedTranscriptIds;
     }
 
-    public void setDeletedTranscriptNames(List<String> deletedTranscriptNames) {
-        this.deletedTranscriptNames = deletedTranscriptNames;
+    public void setDeletedTranscriptIds(List<Integer> deletedTranscriptIds) {
+        this.deletedTranscriptIds = deletedTranscriptIds;
     }
 
-    public List<String> getNewTranscriptNames() {
-        return newTranscriptNames;
+    public List<Integer> getNewTranscriptIds() {
+        return newTranscriptIds;
     }
 
-    public void setNewTranscriptNames(List<String> newTranscriptNames) {
-        this.newTranscriptNames = newTranscriptNames;
+    public void setNewTranscriptIds(List<Integer> newTranscriptIds) {
+        this.newTranscriptIds = newTranscriptIds;
     }
     
     

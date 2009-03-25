@@ -17,11 +17,15 @@ public class CacheSynchroniserTest{
     @Autowired
     private CacheSynchroniser cacheSynchroniser;
     
-    private static String testingUniqueName;
+    /**
+     * For the purpose of testing, let the featureId Integer type be used by conversion to generate the uniqueName String type
+     */
+    private static Integer featureId;
     
     @BeforeClass
     public static void setup()throws Exception{        
-          testingUniqueName = "TestGene" + String.valueOf(System.currentTimeMillis()).substring(5);  
+          Long id = new Long(System.currentTimeMillis());
+          featureId = id.intValue();
     }
     
     @Test
@@ -29,19 +33,19 @@ public class CacheSynchroniserTest{
         
         //Generate the unique name to be used for the Gene in test
         MockChangeSetImpl changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes();     
-        changeSet.getNewTopLevelNames().add(testingUniqueName);        
+        changeSet.getNewTopLevelIds().add(featureId);        
 
         //Start synching
         cacheSynchroniser.processRequest();
         
         //Find context map, using the generated gene unique name
-        String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(testingUniqueName);
+        String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(String.valueOf(featureId));
         
         //Assert that context is added
         Assert.assertNotNull(context);
         
         //Assert that Gene unique name is found in context
-        Assert.assertTrue(context.indexOf(testingUniqueName) != -1);
+        Assert.assertTrue(context.indexOf(String.valueOf(featureId)) != -1);
     }
     
     
@@ -49,25 +53,25 @@ public class CacheSynchroniserTest{
     public void testTopLevelFeatureRemoving()throws Exception{ 
         
         //Find context map, using the generated gene unique name
-        String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(testingUniqueName); 
+        String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(String.valueOf(featureId)); 
         
-        //Assert that context is added
+        //Assert that context exists
         Assert.assertNotNull(context);
         
         //Assert that Gene unique name is found in context
-        Assert.assertTrue(context.indexOf(testingUniqueName) != -1);  
+        Assert.assertTrue(context.indexOf(String.valueOf(featureId)) != -1);  
         
         //Generate the unique name to be used for the Gene in test
         MockChangeSetImpl changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes();     
-        changeSet.getDeletedTopLevelNames().add(testingUniqueName);        
+        changeSet.getDeletedTopLevelIds().add(featureId);        
 
         //Start synching
         cacheSynchroniser.processRequest();
         
         //Now, check again
-        context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(testingUniqueName); 
+        context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(String.valueOf(featureId)); 
         
-        //Assert that context is added
+        //Assert that context is removed
         Assert.assertNull(context);
         
     }
@@ -78,18 +82,46 @@ public class CacheSynchroniserTest{
         
         //Generate the unique name to be used for the Gene in test
         MockChangeSetImpl changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes();     
-        changeSet.getNewTranscriptNames().add(testingUniqueName);        
+        changeSet.getNewTranscriptIds().add(featureId);        
 
         //Start synching
         cacheSynchroniser.processRequest();
         
-        //Find context map, using the generated gene unique n  ame
-        TranscriptDTO dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(testingUniqueName);
+        //Find Transcript DTO, using the generated gene unique n  ame
+        TranscriptDTO dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(String.valueOf(featureId));
         
         //Assert that context is added
         Assert.assertNotNull(dto);
         
         //Assert that Gene unique name is found in context
-        Assert.assertTrue(dto.getUniqueName().equals(testingUniqueName));
+        Assert.assertTrue(dto.getUniqueName().equals(String.valueOf(featureId)));
+    }
+    
+    
+    @Test
+    public void testTranscriptRemoving()throws Exception{ 
+        
+        //Find Transcript DTO, using the generated gene unique name
+        TranscriptDTO dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(String.valueOf(featureId)); 
+        
+        //Assert that DTO exists  
+        Assert.assertNotNull(dto);
+        
+        //Assert that Gene unique name is found in DTO
+        Assert.assertTrue(dto.getUniqueName().equals(String.valueOf(featureId)));
+        
+        //Generate the unique name to be used for the Gene in test
+        MockChangeSetImpl changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes();     
+        changeSet.getDeletedTranscriptIds().add(featureId);        
+
+        //Start synching
+        cacheSynchroniser.processRequest();
+        
+        //Now, check again
+        dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(String.valueOf(featureId)); 
+        
+        //Assert that DTO is removed
+        Assert.assertNull(dto);
+        
     }
 }

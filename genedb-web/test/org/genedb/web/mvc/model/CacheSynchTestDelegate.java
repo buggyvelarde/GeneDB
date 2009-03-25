@@ -22,10 +22,10 @@ import com.sleepycat.collections.StoredMap;
 public class CacheSynchTestDelegate extends CacheSynchroniser {
     
     @Override
-    protected List<Feature> findTopLevelFeatures(List<String> uniqueNames){
+    protected List<Feature> findTopLevelFeatures(List<Integer> featureIds){
         List<Feature> features = new ArrayList<Feature>();
-        for(String uniqueName : uniqueNames){
-            Feature feature = createTopLevelFeature(uniqueName);
+        for(Integer featureId : featureIds){
+            Feature feature = createTopLevelFeature(featureId);
             feature.setSeqLen(6000);
             features.add(feature);
         }
@@ -33,14 +33,15 @@ public class CacheSynchTestDelegate extends CacheSynchroniser {
     }
     
     @Override
-    protected List<Transcript> findTranscripts(List<String> uniqueNames){
+    protected List<Transcript> findTranscripts(List<Integer> featureIds){
         List<Transcript> transcripts = new ArrayList<Transcript>();
-        for(String uniqueName : uniqueNames){
+        for(Integer featureId : featureIds){
+            String uniqueName = String.valueOf(featureId);
             Transcript transcript = new TestTranscript(
                     createOrganism(), uniqueName, true, false, null);
             transcript.setSeqLen(6000);
             
-            AbstractGene gene = createAbstractGene(uniqueName);
+            AbstractGene gene = createAbstractGene(featureId);
             transcript.addFeatureRelationshipsForSubjectId(
                     new FeatureRelationship(null, gene, null, 0));
             transcript.setGene(gene);
@@ -50,10 +51,11 @@ public class CacheSynchTestDelegate extends CacheSynchroniser {
         return transcripts;
     }
     
-    private AbstractGene createAbstractGene(String uniqueName){
+    private AbstractGene createAbstractGene(Integer featureId){
+        String uniqueName = String.valueOf(featureId);
         Gene gene = new Gene(createOrganism(), uniqueName, true, false, null);
         FeatureLoc featureLoc = new FeatureLoc(
-                createTopLevelFeature(uniqueName), null, 4, true, 7, true, null, null, 0, 0); 
+                createTopLevelFeature(featureId), null, 4, true, 7, true, null, null, 0, 0); 
         ((Feature)gene).addFeatureLoc(featureLoc);
        return gene;
     }
@@ -71,7 +73,8 @@ public class CacheSynchTestDelegate extends CacheSynchroniser {
         return organism;
     }
     
-    private Chromosome createTopLevelFeature(String uniqueName){
+    private Chromosome createTopLevelFeature(Integer featureId){
+        String uniqueName = String.valueOf(featureId);
         Chromosome chr = new TestChromosome(createOrganism(), uniqueName, true, false, null);
         ((Feature)chr).addCvTerm(createCvTerm());
         ((Feature)chr).addFeatureCvTerm(createFeatureCvTerm(chr));

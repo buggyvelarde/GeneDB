@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.audit.ChangeSet;
@@ -85,37 +86,37 @@ public class CacheSynchroniser {
 		ChangeSet changeSet = changeTracker.changes();
 		
 		//Add new top level features
-		List<String>topLevelFeatures = changeSet.newTopLevelFeatures();
+		List<Integer>topLevelFeatures = changeSet.newTopLevelFeatures();
 		if(topLevelFeatures.size()>0){
 			addNewTopLevelFeatures(topLevelFeatures);
 		}
 		
 		//Update existing top level features
-		List<String>changedLevelFeatures =changeSet.changedTopLevelFeatures(); 
+		List<Integer>changedLevelFeatures =changeSet.changedTopLevelFeatures(); 
 		if(changedLevelFeatures.size()>0){
 			updateTopLevelFeatures(changedLevelFeatures);
 		}
 		
 		//Remove deleted top level features
-		List<String>deletedTopLevelFeatures =changeSet.deletedTopLevelFeatures();
+		List<Integer>deletedTopLevelFeatures =changeSet.deletedTopLevelFeatures();
 		if(deletedTopLevelFeatures.size()>0){
 			removeTopLevelFeatures(deletedTopLevelFeatures);
 		}
 		
 		//Add new transcripts
-		List<String>newTranscripts = changeSet.newTranscripts();
+		List<Integer>newTranscripts = changeSet.newTranscripts();
 		if(newTranscripts.size()>0){
 			addNewTranscripts(newTranscripts);
 		}
 		
 		//Update existing transcript
-		List<String>changedTranscripts = changeSet.changedTranscripts();
+		List<Integer>changedTranscripts = changeSet.changedTranscripts();
 		if(changedTranscripts.size()>0){
 			updateTranscripts(changeSet.changedTranscripts());
 		}
 		
 		//Remove deleted transcript
-		List<String>deletedTranscripts = changeSet.deletedTranscripts();
+		List<Integer>deletedTranscripts = changeSet.deletedTranscripts();
 		if(deletedTranscripts.size()>0){
 			removeTranscripts(changeSet.deletedTranscripts());
 		}
@@ -128,7 +129,7 @@ public class CacheSynchroniser {
 	 * Populate the context map cache for the top level features
 	 * @param uniqueNames
 	 */
-	private void addNewTopLevelFeatures(List<String> uniqueNames){	
+	private void addNewTopLevelFeatures(List<Integer> uniqueNames){	
 		//Get the top level features to add
 		List<Feature> features = findTopLevelFeatures(uniqueNames);
 		for(Feature feature: features){
@@ -140,7 +141,7 @@ public class CacheSynchroniser {
 	 * RE-populate the context map cache for the top level features
 	 * @param uniqueNames
 	 */
-	private void updateTopLevelFeatures(List<String> uniqueNames){
+	private void updateTopLevelFeatures(List<Integer> uniqueNames){
 		//Get the top level features to add
 		List<Feature> features = findTopLevelFeatures(uniqueNames);
 		for(Feature feature: features){
@@ -154,7 +155,7 @@ public class CacheSynchroniser {
 	 * Remove the context map from the cache
 	 * @param uniqueNames
 	 */
-	private void removeTopLevelFeatures(List<String> uniqueNames){
+	private void removeTopLevelFeatures(List<Integer> uniqueNames){
 
 		//Get the top level features to add
 		List<Feature> features = findTopLevelFeatures(uniqueNames);
@@ -186,17 +187,15 @@ public class CacheSynchroniser {
 	 * @param uniqueNames
 	 * @return
 	 */
-	protected List<Feature> findTopLevelFeatures(List<String> uniqueNames){
+	protected List<Feature> findTopLevelFeatures(List<Integer> featureIds){
 		List<Feature> features = new ArrayList<Feature>(0);
 		try{
 			Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
 			Query q = session.createQuery(
-					"select fp.feature" +
-					" from FeatureProp fp" +
-					" where fp.cvTerm.name = 'top_level_seq'" +
-					" and fp.cvTerm.cv.name = 'genedb_misc'" +
-			" and fp.feature.uniquename in (:uniqueNames)")
-			.setString("uniqueNames", concatNames(uniqueNames));			
+					"select f " +
+					" from Feature f" +
+					" where f.featureId in (:featureIds)")
+			.setString("featureIds", concatNames(featureIds));			
 			features = q.list();			
 		}catch(Exception e){
 		    e.printStackTrace();
@@ -210,20 +209,26 @@ public class CacheSynchroniser {
 	 * @param names
 	 * @return
 	 */
-	private String concatNames(List<String> names){
-		String nameConcat = "";
-		for(String name: names){
-			nameConcat = nameConcat + ", " +  name;
+	private String concatNames(List<Integer> ids){
+		StringBuffer idConcat = new StringBuffer();
+		@SuppressWarnings("unchecked")
+		ListIterator iter = ids.listIterator();
+		while(iter.hasNext()){
+		    Integer id = (Integer)iter.next();
+		    idConcat.append(String.valueOf(id));
+		    if(iter.hasNext()){
+		        idConcat.append(", ");
+		    }
 		}
-		return nameConcat;
+		return idConcat.toString();
 	}
 	
 	/**
 	 * Add new transcript
-	 * @param uniqueNames
+	 * @param Integer
 	 */
-	private void addNewTranscripts(List<String> uniqueNames){
-		List<Transcript> transcripts = findTranscripts(uniqueNames);
+	private void addNewTranscripts(List<Integer> featureId){
+		List<Transcript> transcripts = findTranscripts(featureId);
 		for(Transcript transcript: transcripts){
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
             dtoMap.put(transcript.getUniqueName(), dto);
@@ -232,10 +237,10 @@ public class CacheSynchroniser {
 	
 	/**
 	 * Update transcript
-	 * @param uniqueNames
+	 * @param featureId
 	 */
-	private void updateTranscripts(List<String> uniqueNames){
-		List<Transcript> transcripts = findTranscripts(uniqueNames);
+	private void updateTranscripts(List<Integer> featureId){
+		List<Transcript> transcripts = findTranscripts(featureId);
 		for(Transcript transcript: transcripts){
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
             dtoMap.replace(transcript.getUniqueName(), dto);
@@ -244,29 +249,27 @@ public class CacheSynchroniser {
 	
 	/**
 	 * Remove transcript
-	 * @param uniqueNames
+	 * @param featureId
 	 */
-	private void removeTranscripts(List<String> uniqueNames){
-		List<Transcript> transcripts = findTranscripts(uniqueNames);
+	private void removeTranscripts(List<Integer> featureId){
+		List<Transcript> transcripts = findTranscripts(featureId);
 		for(Transcript transcript: transcripts){
             dtoMap.remove(transcript.getUniqueName());
 		}
 	}
 	
 	
-	protected List<Transcript> findTranscripts(List<String> uniqueNames){
+	protected List<Transcript> findTranscripts(List<Integer> featureId){
 		List<Transcript> transcripts = new ArrayList<Transcript>(0);
 		try{
 			Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
 			Query q = session.createQuery(
-                "select fp.feature" +
-                " from FeatureProp fp" +
-                " where fp.cvTerm.name = 'top_level_seq'" +
-                " and fp.cvTerm.cv.name = 'genedb_misc'" +
-                " and fp.feature.uniquename in (:uniqueNames)")
-            .setString("uniqueNames", concatNames(uniqueNames));
+			        "select f " +
+                    " from Feature f" +
+                    " where f.featureId in (:featureIds)")
+            .setString("featureIds", concatNames(featureId));
 		
-			transcripts = q.list();
+			transcripts = (List<Transcript>)q.list();
 		}catch(Exception e){
 		    e.printStackTrace();
 			logger.error("findTranscripts: " + e.getMessage());
@@ -280,21 +283,6 @@ public class CacheSynchroniser {
 
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         basicGeneService = new BasicGeneServiceImpl(luceneIndex);
-	}
-	
-	/**
-	 * 
-	 * @param geneUniqueName
-	 * @return
-	 */
-	private Collection<Transcript> findTranscripts(String geneUniqueName){
-
-		AbstractGene gene = CacheDBHelper.findGene(geneUniqueName, sessionFactory);
-        if (gene == null) {
-            logger.error("Could not find gene with uniqueName '"
-                + geneUniqueName + "'");
-        } 
-		return gene.getTranscripts();
 	}
 
 	public boolean isNoContextMap() {
