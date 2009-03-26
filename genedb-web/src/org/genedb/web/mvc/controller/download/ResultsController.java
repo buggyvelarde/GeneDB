@@ -2,6 +2,8 @@ package org.genedb.web.mvc.controller.download;
 
 import org.displaytag.tags.TableTagParameters;
 import org.displaytag.util.ParamEncoder;
+
+import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.GeneSummary;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
@@ -116,6 +119,7 @@ public class ResultsController {
         model.addAttribute("resultsSize", results.size());
         model.addAttribute("key", key);
         model.addAttribute("query", resultEntry.query);
+        populateModelData(model, resultEntry.query);
         return "search/"+resultEntry.queryName;
     }
 
@@ -144,6 +148,13 @@ public class ResultsController {
         }
         idsToGeneSummary.setIds(ids);
         return (List<GeneSummary>)idsToGeneSummary.getResults();
+    }
+
+    private void populateModelData(Model model, Query query) {
+        Map<String, Object> modelData = query.prepareModelData();
+        for (Map.Entry<String, Object> entry : modelData.entrySet()) {
+            model.addAttribute(entry.getKey(), entry.getValue());
+        }
     }
 
 }
