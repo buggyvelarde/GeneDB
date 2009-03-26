@@ -2,7 +2,6 @@ package org.genedb.web.mvc.model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -16,7 +15,6 @@ import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.RenderedDiagramFactory;
 import org.genedb.web.mvc.controller.ModelBuilder;
-import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.hibernate.Query;
@@ -348,6 +346,14 @@ public class CacheSynchroniser {
 
     public void setDiagramCache(DiagramCache diagramCache) {
         this.diagramCache = diagramCache;
+    }
+
+    public LuceneIndexFactory getLuceneIndexFactory() {
+        return luceneIndexFactory;
+    }
+
+    public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
+        this.luceneIndexFactory = luceneIndexFactory;
     }
 
 }
