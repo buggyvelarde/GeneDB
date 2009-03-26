@@ -3,7 +3,7 @@ package org.genedb.web.mvc.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.genedb.db.domain.services.MockBasicGeneService;
+import org.genedb.db.domain.test.MockBasicGeneService;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Chromosome;
 import org.gmod.schema.feature.Gene;
@@ -65,7 +65,7 @@ public class CacheSynchTestDelegate extends CacheSynchroniser {
     protected void init(){
         dtoMap = bmf.getDtoMap(); // TODO More nicely
         contextMapMap = bmf.getContextMapMap();
-        basicGeneService = new MockBasicGeneService();
+        basicGeneService = new MockBasicGeneService("cat", "chr1", 1);
     }
     
     private Organism createOrganism(){
