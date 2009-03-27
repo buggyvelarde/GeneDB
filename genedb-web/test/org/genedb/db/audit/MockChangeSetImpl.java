@@ -1,100 +1,57 @@
 package org.genedb.db.audit;
 
+import org.gmod.schema.mapped.Feature;
+
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 public class MockChangeSetImpl implements ChangeSet {
 
-    List<Integer> changedTopLevelIds = new ArrayList<Integer>();
-    List<Integer> deletedTopLevelIds = new ArrayList<Integer>();
-    List<Integer> newTopLevelIds = new ArrayList<Integer>();
-    List<Integer> changedTranscriptIds = new ArrayList<Integer>();
-    List<Integer> deletedTranscriptIds = new ArrayList<Integer>();
-    List<Integer> newTranscriptIds = new ArrayList<Integer>();
-    
+    Map<Class<? extends Feature>, List<Integer>> changedMap = Maps.newHashMap();
+    Map<Class<? extends Feature>, List<Integer>> deletedMap = Maps.newHashMap();
+    Map<Class<? extends Feature>, List<Integer>> newMap = Maps.newHashMap();
+
+    private Collection<Integer> getFeatureIds(Map<Class<? extends Feature>, List<Integer>> map, Class<? extends Feature> featureClass) {
+        if (map.containsKey(featureClass)) {
+            return map.get(featureClass);
+        }
+        return Collections.emptySet();
+    }
+
+//    private void setFeatureIds(Map<Class<? extends Feature>, List<Integer>> map, List<Integer> ids) {
+//
+//
+//        if (map.containsKey(featureClass)) {
+//            return map.get(featureClass);
+//        }
+//    }
+
     @Override
-    public List<Integer> changedTopLevelFeatures() {
-        return changedTopLevelIds;
+    public Collection<Integer> changedFeatureIds(Class<? extends Feature> featureClass) {
+        return getFeatureIds(changedMap, featureClass);
+    }
+
+
+    @Override
+    public Collection<Integer> deletedFeatureIds(Class<? extends Feature> featureClass) {
+        return getFeatureIds(deletedMap, featureClass);
     }
 
     @Override
-    public List<Integer> changedTranscripts() {
-        return changedTranscriptIds;
+    public Collection<Integer> newFeatureIds(Class<? extends Feature> featureClass) {
+        return getFeatureIds(newMap, featureClass);
     }
 
     @Override
     public void commit() throws SQLException {
+        // Do nothing
     }
 
-    @Override
-    public List<Integer> deletedTopLevelFeatures() {
-        return deletedTopLevelIds;
-    }
-
-    @Override
-    public List<Integer> deletedTranscripts() {
-        return deletedTranscriptIds;
-    }
-
-    @Override
-    public List<Integer> newTopLevelFeatures() {
-        return newTopLevelIds;
-    }
-
-    @Override
-    public List<Integer> newTranscripts() {
-        return newTranscriptIds;
-    }
-
-    public List<Integer> getChangedTopLevelIds() {
-        return changedTopLevelIds;
-    }
-
-    public void setChangedTopLevelIds(List<Integer> changedTopLevelIds) {
-        this.changedTopLevelIds = changedTopLevelIds;
-    }
-
-    public List<Integer> getDeletedTopLevelIds() {
-        return deletedTopLevelIds;
-    }
-
-    public void setDeletedTopLevelIds(List<Integer> deletedTopLevelIds) {
-        this.deletedTopLevelIds = deletedTopLevelIds;
-    }
-
-    public List<Integer> getNewTopLevelIds() {
-        return newTopLevelIds;
-    }
-
-    public void setNewTopLevelIds(List<Integer> newTopLevelIds) {
-        this.newTopLevelIds = newTopLevelIds;
-    }
-
-    public List<Integer> getChangedTranscriptIds() {
-        return changedTranscriptIds;
-    }
-
-    public void setChangedTranscriptIds(List<Integer> changedTranscriptIds) {
-        this.changedTranscriptIds = changedTranscriptIds;
-    }
-
-    public List<Integer> getDeletedTranscriptIds() {
-        return deletedTranscriptIds;
-    }
-
-    public void setDeletedTranscriptIds(List<Integer> deletedTranscriptIds) {
-        this.deletedTranscriptIds = deletedTranscriptIds;
-    }
-
-    public List<Integer> getNewTranscriptIds() {
-        return newTranscriptIds;
-    }
-
-    public void setNewTranscriptIds(List<Integer> newTranscriptIds) {
-        this.newTranscriptIds = newTranscriptIds;
-    }
-    
-    
+    // TODO Add setters
 
 }
