@@ -7,6 +7,7 @@ import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.FivePrimeUTR;
 import org.gmod.schema.feature.Gap;
+import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.ThreePrimeUTR;
@@ -246,25 +247,29 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         try {
             // Let's process deletes first
+            Set<Integer> deletedIds = Sets.newHashSet();
+            deletedIds.addAll(changeSet.deletedFeatureIds(Gene.class));
+            deletedIds.addAll(changeSet.deletedFeatureIds(Transcript.class));
+            deletedIds.addAll(changeSet.deletedFeatureIds(Polypeptide.class));
+            deletedIds.addAll(changeSet.deletedFeatureIds(Gap.class));
+            deleteFromIndex(deletedIds);
 
-            deleteFromIndex(changeSet.deletedFeatureIds(Transcript.class));
-            // Need to expand to include proteins, but not necesarily genes
-
-            deleteFromIndex(changeSet.deletedFeatureIds(Gap.class));
 
             // Now adds and updates
-            Collection<Integer> ids = changeSet.changedFeatureIds(Transcript.class);
-            ids.addAll(changeSet.newFeatureIds(Transcript.class));
+            Set<Integer> alteredIds = Sets.newHashSet();
+            alteredIds.addAll(changeSet.newFeatureIds(Gene.class));
+            alteredIds.addAll(changeSet.changedFeatureIds(Gene.class));
+            alteredIds.addAll(changeSet.newFeatureIds(Transcript.class));
+            alteredIds.addAll(changeSet.changedFeatureIds(Transcript.class));
+            alteredIds.addAll(changeSet.newFeatureIds(Polypeptide.class));
+            alteredIds.addAll(changeSet.changedFeatureIds(Polypeptide.class));
+            alteredIds.addAll(changeSet.newFeatureIds(Gap.class));
+            alteredIds.addAll(changeSet.changedFeatureIds(Gap.class));
 
             FullTextSession session = newSession(BATCH_SIZE);
             Transaction transaction = session.beginTransaction();
 
-            Set<Integer> featureIds = expandList(ids);
-
-            featureIds.addAll(changeSet.newFeatureIds(Gap.class));
-            featureIds.addAll(changeSet.changedFeatureIds(Gap.class));
-
-            Set<Integer> failed = batchIndexFeatures(featureIds, session);
+            Set<Integer> failed = batchIndexFeatures(alteredIds, session);
             transaction.commit();
             session.close();
 
@@ -277,46 +282,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
             return false;
         }
         return true;
-    }
-
-    /**
-     * For a given list of Transcript feature ids, go through and
-     * add associated genes, proteins and UTRs
-     *
-     * @param ids the inital list of Transcript feature ids
-     * @return a list of feature ids for the transcripts and their associated features
-     */
-    private Set<Integer> expandList(Collection<Integer> ids) {
-        // Go through the list grabbing genes, proteins and UTRs
-        Set<Integer> ret = Sets.newHashSet();
-        for (Integer id : ids) {
-            Transcript transcript = (Transcript) sequenceDao.getFeatureById(id.intValue());
-            ret.add(id);
-            if (transcript instanceof ProductiveTranscript) {
-                ret.add(((ProductiveTranscript)transcript).getProtein().getFeatureId());
-            }
-            ret.add(transcript.getGene().getFeatureId());
-            addUTRs(ret, transcript, FivePrimeUTR.class);
-            addUTRs(ret, transcript, ThreePrimeUTR.class);
-        }
-        return ret;
-    }
-
-    /**
-     * Utility function to add the feature ids of any UTR features
-     *
-     * @param <T>
-     * @param ret The list of ids to add any new found to
-     * @param transcript the transcript in question
-     * @param clazz The specific type of UTR
-     */
-    private <T extends UTR> void addUTRs(Set<Integer> ret, Transcript transcript, Class<T> clazz) {
-        SortedSet<T> utrs = transcript.getComponents(clazz);
-        if (utrs != null && utrs.size() > 0) {
-            for (T utr : utrs) {
-                ret.add(utr.getFeatureId());
-            }
-        }
     }
 
     public void applyChanges() {
