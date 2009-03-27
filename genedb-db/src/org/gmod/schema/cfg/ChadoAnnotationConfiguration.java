@@ -1,5 +1,7 @@
 package org.gmod.schema.cfg;
 
+import org.gmod.schema.mapped.Feature;
+
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -16,7 +18,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
@@ -58,6 +64,49 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
      */
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
+    }
+
+    private Map<Class<? extends Feature>, Set<Integer>> typeIdsByClass
+        = new HashMap<Class<? extends Feature>, Set<Integer>>();
+
+    private void recordTypeId(int typeId, Class<?> mappedClass) {
+        if (!Feature.class.isAssignableFrom(mappedClass)) {
+            throw new RuntimeException(String.format(
+                "Class '%s' has a @FeatureType annotation, but is not a subclass of Feature",
+                mappedClass));
+        }
+
+        Class<? extends Feature> featureClass = mappedClass.asSubclass(Feature.class);
+
+        boolean finished = false;
+        do {
+            if (!typeIdsByClass.containsKey(featureClass)) {
+                typeIdsByClass.put(featureClass, new HashSet<Integer>());
+            }
+            typeIdsByClass.get(featureClass).add(typeId);
+
+            Class<?> superclass = featureClass.getSuperclass();
+            if (Feature.class.isAssignableFrom(superclass)) {
+                featureClass = mappedClass.asSubclass(Feature.class);
+            } else {
+                finished = true;
+            }
+        } while (!finished);
+    }
+
+    /**
+     * Get the type IDs that represent this class or a subclass.
+     *
+     * @param featureClass the class of Feature
+     * @return a collection of CvTerm IDs
+     */
+    public Collection<Integer> getTypeIdsByClass(Class<? extends Feature> featureClass) {
+        if (!typeIdsByClass.containsKey(featureClass)) {
+            throw new RuntimeException(String.format(
+                "Neither the Feature class '%s', nor any of its subclasses, has a @FeatureType annotation",
+                featureClass));
+        }
+        return typeIdsByClass.get(featureClass);
     }
 
     /**
@@ -117,6 +166,7 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
                 logger.debug(String.format("Setting discriminator column of '%s' to %d (for %s)",
                     className, cvTermId, description(featureType)));
                 persistentClass.setDiscriminatorValue(String.valueOf(cvTermId));
+                recordTypeId(cvTermId, mappedClass);
             }
         }
 
