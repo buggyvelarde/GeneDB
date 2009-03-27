@@ -298,7 +298,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
         IndexReader reader = rp.openReader(directoryProviders[0]);
 
-        reader.deleteDocuments(new Term("uniquename", ""));
+        for (Integer id : ids) {
+            reader.deleteDocuments(new Term("featureId", Integer.toString(id)));
+        }
+
 
         rp.closeReader(reader);
         session.close();
@@ -474,6 +477,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
         return new String(password);
     }
+
 
     public static void main(String[] args) {
 
