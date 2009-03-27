@@ -5,14 +5,10 @@ import org.genedb.db.dao.SequenceDao;
 
 import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.feature.AbstractGene;
-import org.gmod.schema.feature.FivePrimeUTR;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Polypeptide;
-import org.gmod.schema.feature.ProductiveTranscript;
-import org.gmod.schema.feature.ThreePrimeUTR;
 import org.gmod.schema.feature.Transcript;
-import org.gmod.schema.feature.UTR;
 import org.gmod.schema.mapped.Feature;
 
 import org.apache.log4j.Logger;
@@ -49,7 +45,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.sql.DataSource;
 
@@ -63,7 +58,7 @@ import com.google.common.collect.Sets;
  * The way it works is as follows:
  * A list of feature_ids is generated that must be deleted and/or updated. This can be done by:
  *    (i)  Indexing by type. Each indexed feature type is treated in turn; currently
- *         the classes <code>AbstractGene</code>, <code>Transcript</code>, <code>UTR</code> and
+ *         the classes <code>AbstractGene</code>, <code>Transcript</code> and
  *         <code>Gap</code> are indexed (in that order). For each type, all features of that type
  *         are listed
  *    (ii) The first option can be limited by a given organism
@@ -86,7 +81,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * The number of features to be processed in a single batch. If it's set too
      * high, we run out of heap space.
      */
-    private static final Integer BATCH_SIZE = Integer.valueOf(10);
+    private static final int BATCH_SIZE = 10;
 
     /**
      * Which types of feature to index.
@@ -96,9 +91,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
     static {
         INDEXED_CLASSES.add(AbstractGene.class);
         INDEXED_CLASSES.add(Transcript.class);
-        INDEXED_CLASSES.add(UTR.class);
-        INDEXED_CLASSES.add(Gap.class);
         INDEXED_CLASSES.add(Polypeptide.class);
+        INDEXED_CLASSES.add(Gap.class);
         // Add feature types here, if a new type of feature should be indexed.
         // Don't forget to update the class doc comment!
     }
@@ -376,7 +370,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
             FullTextSession session) {
 
-        Set<Integer> failedToLoad = new HashSet<Integer>();
         Criteria criteria = session.createCriteria(featureClass);
         criteria.add(Restrictions.eq("obsolete", Boolean.FALSE)); // Do not index obsolete features
         if (organism != null) {
@@ -424,9 +417,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
                 String msg = String.format("Failed to index feature '%s' on the second attempt", feature.getUniqueName());
                 if (failFast) {
                     throw new RuntimeException(msg, exp);
-                } else {
-                    logger.info(msg, exp);
                 }
+                logger.info(msg, exp);
             }
             session.clear();
         }
@@ -467,16 +459,13 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     /* Static methods */
 
-    private static void die(String message) {
-        System.err.println(message);
-        System.err.println();
-        System.exit(1);
-    }
 
     public static String promptForPassword(String databaseUrl, String databaseUsername) {
         Console console = System.console();
         if (console == null) {
-            die("No password has been supplied, and no console found");
+            System.err.println("No password has been supplied, and no console found\n");
+            System.exit(1);
+            return ""; // Dummy to prevent null warning
         }
 
         char[] password = null;
