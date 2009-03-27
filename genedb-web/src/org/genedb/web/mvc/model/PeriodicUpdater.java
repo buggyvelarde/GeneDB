@@ -40,7 +40,7 @@ public class PeriodicUpdater {
             for (IndexUpdater indexUpdater : indexUpdaters) {
                 indexUpdater.applyChanges();
             }
-            changeSet.commit();
+            // changeSet.commit();
         }
         return allOK;
     }
