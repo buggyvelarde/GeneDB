@@ -3,8 +3,8 @@ package org.genedb.web.mvc.model;
 import org.genedb.db.audit.ChangeSet;
 
 /**
- * Marks a program that can accept a changeset, as part of a two-phase
- * commit system
+ * Marks a program that can accept a changeset, as part of
+ * a two-phase commit system
  */
 public interface IndexUpdater {
 
