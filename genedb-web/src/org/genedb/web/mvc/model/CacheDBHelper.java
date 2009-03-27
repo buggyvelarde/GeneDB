@@ -62,7 +62,7 @@ public class CacheDBHelper {
     public static void populateContextMapCache(
     		Feature feature, BasicGeneService basicGeneService, 
     		RenderedDiagramFactory renderedDiagramFactory, 
-    		DiagramCache diagramCache, StoredMap<String, String> contextMapMap) {
+    		DiagramCache diagramCache, StoredMap<Integer, String> contextMapMap) {
 
         ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forChromosome(basicGeneService,
             feature.getOrganism().getCommonName(), feature.getUniqueName(), feature.getSeqLen());
@@ -74,7 +74,7 @@ public class CacheDBHelper {
 
         try {
             String metadata = contextMapMetadata(renderedChromosomeThumbnail, renderedContextMap, tiles, diagramCache);
-            contextMapMap.put(feature.getUniqueName(), metadata);
+            contextMapMap.put(new Integer(feature.getFeatureId()), metadata);
             logger.info("Stored contextMap for '"+feature.getUniqueName()+"' as '"+metadata+"'");
         } catch (IOException exp) {
             logger.error(exp);

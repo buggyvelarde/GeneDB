@@ -36,8 +36,11 @@
         <property name="berkeleyMapFactory" ref="berkeleyReadWriteMapFactory" />
         <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="renderedDiagramFactory" ref="renderedDiagramFactory" />
+        <property name="changeTracker" ref="changeTracker" />
         <property name="noContextMap"><value>true</value></property>
     </bean>
+    
+    <bean id="changeTracker" class="org.genedb.db.audit.MockChangeTrackerImpl"/>
 
     <bean id="renderedDiagramFactory" class="org.genedb.web.gui.RenderedDiagramFactory">
         <property name="labelFont">

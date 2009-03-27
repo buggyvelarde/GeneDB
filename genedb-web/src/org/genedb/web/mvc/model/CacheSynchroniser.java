@@ -2,8 +2,11 @@ package org.genedb.web.mvc.model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.genedb.db.audit.ChangeSet;
@@ -15,6 +18,10 @@ import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.RenderedDiagramFactory;
 import org.genedb.web.mvc.controller.ModelBuilder;
+import org.gmod.schema.feature.Gap;
+import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.hibernate.Query;
@@ -29,7 +36,7 @@ import com.sleepycat.collections.StoredMap;
 
 /**
  * To synchronise the Berkeley DB cache with Latest RDBMS updates
- * @author sangerinstitute
+ * @author L.Oke
  *
  */
 public class CacheSynchroniser {
@@ -47,8 +54,8 @@ public class CacheSynchroniser {
     private boolean isNoContextMap;
     
     protected BerkeleyMapFactory bmf;
-    protected StoredMap<String, TranscriptDTO> dtoMap;
-    protected StoredMap<String, String> contextMapMap;
+    protected StoredMap<Integer, TranscriptDTO> dtoMap;
+    protected StoredMap<Integer, String> contextMapMap;
     protected BasicGeneService basicGeneService;
     
 	/**
@@ -63,7 +70,7 @@ public class CacheSynchroniser {
 			CacheSynchroniser cacheSynchroniser = ctx.getBean("cacheSynchroniser", CacheSynchroniser.class);
 
 			//Start synching
-			cacheSynchroniser.processRequest();
+			cacheSynchroniser.updateAllCaches();
 		
 		}catch(Exception e){
 			e.printStackTrace();
@@ -72,129 +79,270 @@ public class CacheSynchroniser {
 		}
 	}
 	
+	
 	/**
-	 * Find the audits for the 
+	 * Update the Context Map and Transcript DTO caches
+	 * @return Boolean 
+	 *         Is updates to caches successful
+	 * @throws Exception
 	 */
 	@Transactional
-	void processRequest()throws SQLException{
-		//Initialise
-		init();
+	boolean updateAllCaches()throws Exception{
+	    
+        //Initialise
+        init();
+        
+        //Get the records to update
+        ChangeSet changeSet = changeTracker.changes(CacheSynchroniser.class.getName() );
+	    
+        //Update the Contect Map Cache
+	    boolean isContextUpdated = updateContextMapCache(changeSet);
+	    
+	    //Update the Transcript DTO
+	    boolean isTransciptDTOUpdated = updateTranscriptDTOCache(changeSet);
+	        
+	    //Is all successful
+	    boolean isAllSuccessful = isContextUpdated && isTransciptDTOUpdated;
+	            
+        //Commit to update the cursor
+	    if(isAllSuccessful){	
+	        changeSet.commit();
+	    }
+	    
+	    return isAllSuccessful;
+	}	
 		
-		//Get the records to update
-		ChangeSet changeSet = changeTracker.changes();
-		
-		//Add new top level features
-		List<Integer>topLevelFeatures = changeSet.newTopLevelFeatures();
-		if(topLevelFeatures.size()>0){
-			addNewTopLevelFeatures(topLevelFeatures);
-		}
-		
-		//Update existing top level features
-		List<Integer>changedLevelFeatures =changeSet.changedTopLevelFeatures(); 
-		if(changedLevelFeatures.size()>0){
-			updateTopLevelFeatures(changedLevelFeatures);
-		}
-		
-		//Remove deleted top level features
-		List<Integer>deletedTopLevelFeatures =changeSet.deletedTopLevelFeatures();
-		if(deletedTopLevelFeatures.size()>0){
-			removeTopLevelFeatures(deletedTopLevelFeatures);
-		}
-		
-		//Add new transcripts
-		List<Integer>newTranscripts = changeSet.newTranscripts();
-		if(newTranscripts.size()>0){
-			addNewTranscripts(newTranscripts);
-		}
-		
-		//Update existing transcript
-		List<Integer>changedTranscripts = changeSet.changedTranscripts();
-		if(changedTranscripts.size()>0){
-			updateTranscripts(changeSet.changedTranscripts());
-		}
-		
-		//Remove deleted transcript
-		List<Integer>deletedTranscripts = changeSet.deletedTranscripts();
-		if(deletedTranscripts.size()>0){
-			removeTranscripts(changeSet.deletedTranscripts());
-		}
-		
-		//Commit to update the cursor
-		changeSet.commit();
+	
+	/**
+	 * Update context Map Cache for features such as TopLevelFeatures, Transcripts, and Gaps
+	 * @param ChangeSet changeSet
+	 *        The ChangeSet to be updated in the cache
+	 * @return boolean 
+	 *         Is update to context map cache successful
+	 */
+	private boolean updateContextMapCache(ChangeSet changeSet){
+        //A set of processed features to avoid duplication of effort
+        Set<Integer> processedFeatures = new HashSet<Integer>();
+        
+        //Add new top level features        
+        boolean isAllAdded = addNewTopLevelFeatures(changeSet, processedFeatures);
+        
+        //Update changed top level features
+        boolean isAllChanged = changeTopLevelFeatures(changeSet, processedFeatures);
+        
+        //Remove deleted top level features
+        boolean isAllDeleted = removeTopLevelFeatures(changeSet, processedFeatures);
+        
+        //Is all successful
+        return isAllAdded && isAllChanged && isAllDeleted;
 	}
+    
+    
+    /**
+     * Update the Transcript DTO for features such as the Genes, Transcripts and Polypeptides
+     * @param ChangeSet changeSet
+     *        The ChangeSet to be updated in the cache
+     * @return boolean 
+     *      Is update to DTO cache successful
+     */
+    private boolean updateTranscriptDTOCache(ChangeSet changeSet){
+        //A set of processed features to avoid duplication of effort
+        Set<Integer> processedTranscripts = new HashSet<Integer>();
+     
+        //Add new transcripts
+        boolean isAllAdded = addNewTranscriptDTO(changeSet, processedTranscripts);
+     
+        //Update changed transcripts
+        boolean isAllChanged = changeTranscriptDTO(changeSet, processedTranscripts);
+     
+        //Add new transcripts
+        boolean isAllDeleted = removeTranscriptDTO(changeSet, processedTranscripts);
+        
+        //Is all successful
+        return isAllAdded && isAllChanged && isAllDeleted;
+    }
+	
+	/**
+	 * Add the top level features. 
+	 * Features to be added are determined by ToplevelFeatures, transcripts, and gaps just added.
+	 * @param changeSet
+     *        The ChangeSet to be updated in the cache
+	 * @param processedFeatures
+     *        The processed changes to avoid duplication of effort
+     * @return boolean Is update successful
+	 */
+	private boolean addNewTopLevelFeatures(ChangeSet changeSet, Set<Integer> processedFeatures){        
+        //Add new top level features
+	    Collection<Integer>topLevelFeatures = changeSet.newFeatureIds(TopLevelFeature.class);
+	    boolean isAllTopLevelAdded = updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, false);
+
+	    //Add new toplevelfeatures as a result of new transcripts
+	    Collection<Integer>transcripts = changeSet.newFeatureIds(Transcript.class);
+	    boolean isAllTranscriptAdded = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, false);
+
+
+	    //Add new toplevelfeatures as a result of the new gaps
+	    Collection<Integer>gaps = changeSet.newFeatureIds(Gap.class);
+	    boolean isAllGapsAdded = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, false);
+	    
+	    //Is all toplevel features added
+	    return isAllTopLevelAdded && isAllTranscriptAdded && isAllGapsAdded;
+	}
+    
+    /**
+     * Update the top level features. 
+     * Features to be changed are determined by ToplevelFeatures, transcripts, and gaps just added.
+     * @param changeSet
+     *        The ChangeSet to be updated in the cache
+     * @param processedFeatures
+     *        The processed changes to avoid duplication of effort
+     * @return boolean Is update successful
+     */
+    private boolean changeTopLevelFeatures(ChangeSet changeSet, Set<Integer> processedFeatures){        
+        //Update top level features
+        Collection<Integer>topLevelFeatures = changeSet.changedFeatureIds(TopLevelFeature.class);
+        boolean isAllTopLevelUpdated = updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, true);
+
+        //Update toplevelfeatures as a result of new transcripts
+        Collection<Integer>transcripts = changeSet.changedFeatureIds(Transcript.class);
+        boolean isAllTranscriptUpdated = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, true);
+
+
+        //Update toplevelfeatures as a result of the new gaps
+        Collection<Integer>gaps = changeSet.changedFeatureIds(Gap.class);
+        boolean isAllGapsUpdated = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, true);
+        
+        //Is all toplevel features added
+        return isAllTopLevelUpdated && isAllTranscriptUpdated && isAllGapsUpdated;
+    }
+    
+
+    /**
+     * Remove the context map from the cache    
+     * @param changeSet
+     * @param processedFeatures
+     * @return
+     */
+    private boolean removeTopLevelFeatures(ChangeSet changeSet, Set<Integer> processedFeatures){
+        boolean isAllRemoved = false;
+        try{
+            //Remove top level features
+            Collection<Integer>topLevelFeatures = changeSet.deletedFeatureIds(TopLevelFeature.class);
+
+            //Get the top level features to add
+            List<Feature> features = findTopLevelFeatures(topLevelFeatures, TopLevelFeature.class);
+            for(Feature feature: features){
+                contextMapMap.remove(feature.getUniqueName());
+            }
+            isAllRemoved =true;
+        }catch(Exception e){
+            e.printStackTrace();
+            logger.error("Error:" + e.getMessage());
+        }
+        return isAllRemoved;
+    }
+
 	
 	/**
 	 * Populate the context map cache for the top level features
-	 * @param uniqueNames
+	 * @param featureIds
+	 * @param Class
+	 *         the class from which the toplevelfeature is to be drawn
+     * @param processedFeatures
+     *        The processed changes to avoid duplication of effort
+     * @param Boolean isChanged
+     *        isUpdate is false for new features and true for changed features
 	 */
-	private void addNewTopLevelFeatures(List<Integer> uniqueNames){	
+	private boolean updateTopLevelFeatures(Collection<Integer> featureIds, Class clazz, Set<Integer> processedFeatures, boolean isChanged){	
 		//Get the top level features to add
-		List<Feature> features = findTopLevelFeatures(uniqueNames);
-		for(Feature feature: features){
-			populateTopLevelFeatures(feature);
-		}
-	}
-	
-	/**
-	 * RE-populate the context map cache for the top level features
-	 * @param uniqueNames
-	 */
-	private void updateTopLevelFeatures(List<Integer> uniqueNames){
-		//Get the top level features to add
-		List<Feature> features = findTopLevelFeatures(uniqueNames);
-		for(Feature feature: features){
-			contextMapMap.remove(feature.getUniqueName());
-			populateTopLevelFeatures(feature);  
-		}	
-
-	}
-	
-	/**
-	 * Remove the context map from the cache
-	 * @param uniqueNames
-	 */
-	private void removeTopLevelFeatures(List<Integer> uniqueNames){
-
-		//Get the top level features to add
-		List<Feature> features = findTopLevelFeatures(uniqueNames);
-		for(Feature feature: features){
-			contextMapMap.remove(feature.getUniqueName());
-		}
-
+	    if(featureIds.size()>0){
+	        List<Feature> features = findTopLevelFeatures(featureIds, clazz);
+	        boolean success = true;
+	        for(Feature feature: features){
+	            if(!processedFeatures.contains(new Integer(feature.getFeatureId()))){
+                    //If updating the cache with a changed feature
+                    if(isChanged){
+                        contextMapMap.remove(feature.getUniqueName());
+                        logger.info("Updating feature id: "+ feature.getFeatureId() + " (" +feature.getUniqueName()+ ")");
+                    }
+                    
+                    //(Re)add the toplevelfeature to cache
+	                if(!populateTopLevelFeatures(feature, processedFeatures)){
+	                    success = false;//error found
+	                }
+	            }else{
+	                logger.info("Duplicate processing avoided: " + feature.getUniqueName());
+	            }
+	        }
+	        return success;
+	    }	    
+	    return true;//No errors found since no processing is done	    
 	}
 	
 	/**
 	 * To populate the cache with the top level context map
 	 * @param feature
+     * @param processedFeatures
+     *        The processed changes to avoid duplication of effort
+     * @return Boolean
+     *          Is processing a success
 	 */
-	private void populateTopLevelFeatures(Feature feature){
+	private boolean populateTopLevelFeatures(Feature feature, Set<Integer> processedFeatures){
+	    boolean success = false;
 		try{
+		    logger.debug("populateTopLevelFeatures, feature.getSeqLen:" 
+		            + feature.getSeqLen() + " !isNoContextMap()" + !isNoContextMap());
 			if (!isNoContextMap() && feature.getSeqLen() > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
+			    logger.debug("Trying to populate Top Level Feature ("
+			            + feature.getFeatureId()+")"+ feature.getUniqueName());
 				CacheDBHelper.populateContextMapCache(
             		feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
+				
+				//Add to the processd list
+				processedFeatures.add(new Integer(feature.getFeatureId()));
+			}else{
+			    logger.warn("Top level Feature ID" 
+			            +feature.getFeatureId() 
+			            +" not populated due to isNoContextMap= "
+			            + isNoContextMap()
+			            +" flag or feature.getSeqLen()= "
+			            +feature.getSeqLen()
+			            +" is less than" 
+			            + CacheDBHelper.MIN_CONTEXT_LENGTH_BASES);
 			}
+            success =true;
 		}catch(Exception e){
 		    e.printStackTrace();
 			logger.error("populateTopLevelFeatures: " + e.getMessage());
 		}
+		return success;
 	}
 
 	
 	/**
 	 * Find the Top Level Features with the uniquenames supplied
-	 * @param uniqueNames
+	 * @param featureIds
+	 *     Ids of the TopLevelFeatures, Transcripts, or Gaps
 	 * @return
 	 */
-	protected List<Feature> findTopLevelFeatures(List<Integer> featureIds){
+	protected List<Feature> findTopLevelFeatures(Collection<Integer> featureIds, Class clazz){
 		List<Feature> features = new ArrayList<Feature>(0);
+		Query q = null;
 		try{
-			Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
-			Query q = session.createQuery(
-					"select f " +
-					" from Feature f" +
-					" where f.featureId in (:featureIds)")
-			.setString("featureIds", concatNames(featureIds));			
-			features = q.list();			
+		    Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
+		    if(clazz==TopLevelFeature.class){
+		        q = session.createQuery(
+		                "select f " +
+		                " from Feature f" +
+		        " where f.featureId in (:featureIds)")
+		        .setParameterList("featureIds", featureIds);
+			}else if (clazz == Transcript.class){
+			    
+			}else if(clazz == Gap.class){
+			    
+			}
+			features = q.list();	
+			logger.debug("TopLevelFeature size: " + features.size() );
 		}catch(Exception e){
 		    e.printStackTrace();
 			logger.error("findTopLevelFeatures: " + e.getMessage());
@@ -203,70 +351,131 @@ public class CacheSynchroniser {
 	}
 	
 	/**
-	 * 
-	 * @param names
-	 * @return
+	 * Add new transcript DTOs to cache
+	 * @param changeSet
+	 * @param processedFeatures
+     *        The processed changes to avoid duplication of effort
+     * @return Boolean
+     *          Is processing a success
 	 */
-	private String concatNames(List<Integer> ids){
-		StringBuffer idConcat = new StringBuffer();
-		@SuppressWarnings("unchecked")
-		ListIterator iter = ids.listIterator();
-		while(iter.hasNext()){
-		    Integer id = (Integer)iter.next();
-		    idConcat.append(String.valueOf(id));
-		    if(iter.hasNext()){
-		        idConcat.append(", ");
-		    }
-		}
-		return idConcat.toString();
+	private boolean addNewTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){       
+        //Add new transcripts
+        Collection<Integer>transcripts = changeSet.newFeatureIds(Transcript.class);
+        boolean isAllTranscriptsAdded = updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, false);
+
+        //Add new transcripts as a result of new genes
+        Collection<Integer>genes = changeSet.newFeatureIds(Gene.class);
+        boolean isAllGenesAdded = updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, false);
+
+
+        //Add new transcripts as a result of the new polypeptides
+        Collection<Integer>polypeptides = changeSet.newFeatureIds(Polypeptide.class);
+        boolean isAllPolypeptidesAdded = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, false);
+        
+        //Is all toplevel features added
+        return isAllTranscriptsAdded && isAllGenesAdded && isAllPolypeptidesAdded;	    
 	}
+    
+    /**
+     * Change transcript DTOs in cache
+     * @param changeSet
+     * @param processedFeatures
+     *        The processed changes to avoid duplication of effort
+     * @return Boolean
+     *          Is processing a success
+     */
+    private boolean changeTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){       
+        //Add new transcripts
+        Collection<Integer>transcripts = changeSet.changedFeatureIds(Transcript.class);
+        boolean isAllTranscriptsChanged = updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, true);
+
+        //Add new transcripts as a result of new genes
+        Collection<Integer>genes = changeSet.changedFeatureIds(Gene.class);
+        boolean isAllGenesChanged = updateTranscriptDTO(genes, Transcript.class, processedFeatures, true);
+
+
+        //Add new transcripts as a result of the new polypeptides
+        Collection<Integer>polypeptides = changeSet.changedFeatureIds(Polypeptide.class);
+        boolean isAllPolypeptidesChanged = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, true);
+        
+        //Is all toplevel features added
+        return isAllTranscriptsChanged && isAllGenesChanged && isAllPolypeptidesChanged;        
+    }
 	
 	/**
 	 * Add new transcript
-	 * @param Integer
+	 * @param feature
+	 *     Transcript feature to be added, could be determined from a Transcript itself, a gene, or a polypeptide 
+	 * @param clazz
+	 * @param processedFeatures
+     *        The processed transcript to avoid duplication of effort
+	 * @param isChanged
+     *        This is false for new transcrits and true for changed transcripts
+	 * @return
 	 */
-	private void addNewTranscripts(List<Integer> featureId){
-		List<Transcript> transcripts = findTranscripts(featureId);
-		for(Transcript transcript: transcripts){
-            TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
-            dtoMap.put(transcript.getUniqueName(), dto);
-		}
-	}
-	
-	/**
-	 * Update transcript
-	 * @param featureId
-	 */
-	private void updateTranscripts(List<Integer> featureId){
-		List<Transcript> transcripts = findTranscripts(featureId);
-		for(Transcript transcript: transcripts){
-            TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
-            dtoMap.replace(transcript.getUniqueName(), dto);
-		}
+	private boolean updateTranscriptDTO(Collection<Integer> featureIds, Class clazz, Set<Integer> processedFeatures, boolean isChanged){
+	    boolean isUpdated = false;
+	    try{
+	        List<Transcript> transcripts = findTranscripts(featureIds, clazz);
+	        for(Transcript transcript: transcripts){
+	            TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
+	            if(!isChanged){
+	                dtoMap.put(new Integer(transcript.getFeatureId()), dto);   
+	                logger.info("Added transcript ("+transcript.getFeatureId()+"), " + transcript.getUniqueName());
+	            }else{
+	                dtoMap.replace(new Integer(transcript.getFeatureId()), dto);
+                    logger.info("Replaced transcript ("+transcript.getFeatureId()+"), " + transcript.getUniqueName());
+	            }
+	            //mark transcript as processed
+	            processedFeatures.add(new Integer(transcript.getFeatureId()));
+	        }
+	        isUpdated = true;
+	    }catch(Exception e){
+	        e.printStackTrace();
+	        logger.error("Error: " + e.getMessage());
+	    }
+	    return isUpdated;
 	}
 	
 	/**
 	 * Remove transcript
 	 * @param featureId
 	 */
-	private void removeTranscripts(List<Integer> featureId){
-		List<Transcript> transcripts = findTranscripts(featureId);
-		for(Transcript transcript: transcripts){
-            dtoMap.remove(transcript.getUniqueName());
-		}
+	private boolean removeTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){
+	    //changeSet.deletedFeatureIds(featureClass)
+	    //boolean success = false;
+	    //for(Integer featureId: featureIds){
+	    ////    dtoMap.remove(featureId);
+	    //}
+		return false;
 	}
 	
 	
-	protected List<Transcript> findTranscripts(List<Integer> featureId){
+	protected List<Transcript> findTranscripts(Collection<Integer> featureIds, Class clazz){
 		List<Transcript> transcripts = new ArrayList<Transcript>(0);
+		Query q = null;
 		try{
 			Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
-			Query q = session.createQuery(
+			if(clazz == Transcript.class ){
+			    q = session.createQuery(
 			        "select f " +
                     " from Feature f" +
                     " where f.featureId in (:featureIds)")
-            .setString("featureIds", concatNames(featureId));
-		
+            .setParameterList("featureIds", featureIds);
+			    
+			}else if(clazz == Gene.class){
+                q = session.createQuery(
+                        "select f " +
+                        " from Feature f" +
+                        " where f.featureId in (:featureIds)")
+                .setParameterList("featureIds", featureIds);
+			}else if(clazz == Polypeptide.class){
+                q = session.createQuery(
+                        "select f " +
+                        " from Feature f" +
+                        " where f.featureId in (:featureIds)")
+                .setParameterList("featureIds", featureIds);
+			}
 			transcripts = (List<Transcript>)q.list();
 		}catch(Exception e){
 		    e.printStackTrace();
