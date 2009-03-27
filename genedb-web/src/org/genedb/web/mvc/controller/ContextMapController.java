@@ -1,12 +1,13 @@
 package org.genedb.web.mvc.controller;
 
-import org.genedb.db.domain.luceneImpls.BasicGeneServiceImpl;
-import org.genedb.db.domain.services.BasicGeneService;
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.core.LuceneIndex;
 import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.web.mvc.model.BerkeleyMapFactory;
 
 import org.apache.log4j.Logger;
+import org.gmod.schema.feature.TopLevelFeature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,20 +40,29 @@ public class ContextMapController {
 //    private BlockingCache contextMapCache;
     private BerkeleyMapFactory bmf;
 
-    private BasicGeneService basicGeneService;
+    @Autowired
+    private SequenceDao sequenceDao;
 
 
     @PostConstruct
     private void init() {
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
-        basicGeneService = new BasicGeneServiceImpl(luceneIndex);
     }
 
     @RequestMapping(method=RequestMethod.GET)
     public void writeMapInfo(HttpServletRequest request, Writer out,
             HttpServletResponse response, String chromosome) throws IOException {
 
-        String text = bmf.getContextMapMap().get(chromosome);
+        TopLevelFeature tlf = sequenceDao.getFeatureByUniqueName(chromosome, TopLevelFeature.class);
+        if (tlf == null) {
+
+        }
+        if ( ! tlf.isTopLevelFeature()) {
+
+        }
+
+
+        String text = bmf.getContextMapMap().get(tlf.getFeatureId());
         if (text != null) {
             logger.trace("Cache hit for context map '"+chromosome+"' of '"+text+"'");
             cacheHit++;

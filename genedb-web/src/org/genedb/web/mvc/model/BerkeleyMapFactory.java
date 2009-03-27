@@ -23,9 +23,9 @@ public class BerkeleyMapFactory {
     private StoredClassCatalog javaCatalog;
     private Database dtoDb;
 
-    private StoredMap<String, TranscriptDTO> dtoMap;
+    private StoredMap<Integer, TranscriptDTO> dtoMap;
 
-    public StoredMap<String, TranscriptDTO> getDtoMap() {
+    public StoredMap<Integer, TranscriptDTO> getDtoMap() {
         openDb();
         return dtoMap;
     }
@@ -34,19 +34,19 @@ public class BerkeleyMapFactory {
 
     private boolean readOnly;
 
-    public StoredMap<String, String> getContextMapMap() {
+    public StoredMap<Integer, String> getContextMapMap() {
         openDb();
         return contextMapMap;
     }
 
-    public StoredMap<String, byte[]> getImageMap() {
+    public StoredMap<Integer, byte[]> getImageMap() {
         openDb();
         return imageMap;
     }
 
-    private StoredMap<String, byte[]> imageMap;
+    private StoredMap<Integer, byte[]> imageMap;
     private Database imageDb;
-    private StoredMap<String, String> contextMapMap;
+    private StoredMap<Integer, String> contextMapMap;
     private Database contextMapDb;
 
     private final static Logger logger = Logger.getLogger(BerkeleyMapFactory.class);
@@ -112,19 +112,21 @@ public class BerkeleyMapFactory {
 
         EntryBinding<String> stringBinding =
             new SerialBinding<String>(javaCatalog, String.class);
+        EntryBinding<Integer> integerBinding =
+            new SerialBinding<Integer>(javaCatalog, Integer.class);
         EntryBinding<TranscriptDTO> dtoValueBinding =
             new SerialBinding<TranscriptDTO>(javaCatalog, TranscriptDTO.class);
         EntryBinding<byte[]> byteArrayBinding =
             new SerialBinding<byte[]>(javaCatalog, byte[].class);
 
         dtoMap =
-            new StoredMap<String, TranscriptDTO>(dtoDb, stringBinding, dtoValueBinding, true);
+            new StoredMap<Integer, TranscriptDTO>(dtoDb, integerBinding, dtoValueBinding, true);
 
         contextMapMap =
-            new StoredMap<String, String>(contextMapDb, stringBinding, stringBinding, true);
+            new StoredMap<Integer, String>(contextMapDb, integerBinding, stringBinding, true);
 
         imageMap =
-            new StoredMap<String, byte[]>(imageDb, stringBinding, byteArrayBinding, true);
+            new StoredMap<Integer, byte[]>(imageDb, integerBinding, byteArrayBinding, true);
     }
 
 

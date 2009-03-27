@@ -100,7 +100,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
         String viewName = nlb.isDetailsOnly() ? geneDetailsView : geneView;
 
-        TranscriptDTO dto = bmf.getDtoMap().get(transcript.getUniqueName());
+        TranscriptDTO dto = bmf.getDtoMap().get(transcript.getFeatureId());
 
         if (dto == null) {
             cacheMiss++;
