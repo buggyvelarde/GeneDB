@@ -80,14 +80,15 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
 
         boolean finished = false;
         do {
+            logger.trace(String.format("Class '%s' can be represented by CV term %d", featureClass, typeId));
             if (!typeIdsByClass.containsKey(featureClass)) {
                 typeIdsByClass.put(featureClass, new HashSet<Integer>());
             }
             typeIdsByClass.get(featureClass).add(typeId);
 
             Class<?> superclass = featureClass.getSuperclass();
-            if (Feature.class.isAssignableFrom(superclass)) {
-                featureClass = mappedClass.asSubclass(Feature.class);
+            if (superclass != null && Feature.class.isAssignableFrom(superclass)) {
+                featureClass = superclass.asSubclass(Feature.class);
             } else {
                 finished = true;
             }
