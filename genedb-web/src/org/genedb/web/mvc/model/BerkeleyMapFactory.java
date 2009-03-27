@@ -39,13 +39,14 @@ public class BerkeleyMapFactory {
         return contextMapMap;
     }
 
-    public StoredMap<Integer, byte[]> getImageMap() {
+    public StoredMap<String, byte[]> getImageMap() {
         openDb();
         return imageMap;
     }
 
-    private StoredMap<Integer, byte[]> imageMap;
+    private StoredMap<String, byte[]> imageMap;
     private Database imageDb;
+
     private StoredMap<Integer, String> contextMapMap;
     private Database contextMapDb;
 
@@ -126,7 +127,7 @@ public class BerkeleyMapFactory {
             new StoredMap<Integer, String>(contextMapDb, integerBinding, stringBinding, true);
 
         imageMap =
-            new StoredMap<Integer, byte[]>(imageDb, integerBinding, byteArrayBinding, true);
+            new StoredMap<String, byte[]>(imageDb, stringBinding, byteArrayBinding, true);
     }
 
 
