@@ -78,7 +78,7 @@ import com.google.common.collect.Sets;
  *
  * @author rh11
  */
-public class PopulateLuceneIndices implements IndexUpdater{
+public class PopulateLuceneIndices implements IndexUpdater {
     private static Logger logger = Logger.getLogger(PopulateLuceneIndices.class);
 
     /**
@@ -246,16 +246,23 @@ public class PopulateLuceneIndices implements IndexUpdater{
 
         try {
             // Let's process deletes first
-            deleteFromIndex(changeSet.deletedTranscripts());
+
+            deleteFromIndex(changeSet.deletedFeatureIds(Transcript.class));
+            // Need to expand to include proteins, but not necesarily genes
+
+            deleteFromIndex(changeSet.deletedFeatureIds(Gap.class));
 
             // Now adds and updates
-            List<Integer> ids = changeSet.changedTranscripts();
-            ids.addAll(changeSet.newTranscripts());
+            Collection<Integer> ids = changeSet.changedFeatureIds(Transcript.class);
+            ids.addAll(changeSet.newFeatureIds(Transcript.class));
 
             FullTextSession session = newSession(BATCH_SIZE);
             Transaction transaction = session.beginTransaction();
 
             Set<Integer> featureIds = expandList(ids);
+
+            featureIds.addAll(changeSet.newFeatureIds(Gap.class));
+            featureIds.addAll(changeSet.changedFeatureIds(Gap.class));
 
             Set<Integer> failed = batchIndexFeatures(featureIds, session);
             transaction.commit();
@@ -279,7 +286,7 @@ public class PopulateLuceneIndices implements IndexUpdater{
      * @param ids the inital list of Transcript feature ids
      * @return a list of feature ids for the transcripts and their associated features
      */
-    private Set<Integer> expandList(List<Integer> ids) {
+    private Set<Integer> expandList(Collection<Integer> ids) {
         // Go through the list grabbing genes, proteins and UTRs
         Set<Integer> ret = Sets.newHashSet();
         for (Integer id : ids) {
@@ -322,7 +329,7 @@ public class PopulateLuceneIndices implements IndexUpdater{
      * @param ids the list of feature ids
      * @throws IOException
      */
-    private void deleteFromIndex(List<Integer> ids) throws IOException {
+    private void deleteFromIndex(Collection<Integer> ids) throws IOException {
         FullTextSession session = newSession(BATCH_SIZE);
         SearchFactory searchFactory = session.getSearchFactory();
         ReaderProvider rp = searchFactory.getReaderProvider();
