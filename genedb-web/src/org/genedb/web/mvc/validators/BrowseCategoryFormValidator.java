@@ -13,17 +13,17 @@ public class BrowseCategoryFormValidator implements Validator {
 
     public void validate(Object object, Errors errors) {
         BrowseCategoryBean bean = (BrowseCategoryBean) object;
-        
-        if(bean.getCategory() == null && bean.getOrganism() == null) {
+
+        if(bean.getCategory() == null && bean.getTaxons() == null) {
             errors.reject("no.params");
             return;
         }
-        
-        if(bean.getCategory() != null && bean.getOrganism() == null) {
+
+        if(bean.getCategory() != null && bean.getTaxons() == null) {
             errors.reject("show.form");
             return;
         }
-        
+
     }
 
 }
