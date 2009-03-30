@@ -28,19 +28,19 @@ import com.sleepycat.collections.StoredMap;
  *
  */
 public class CacheDBHelper {
-	private static final Logger logger = Logger.getLogger(CacheDBHelper.class);
+    private static final Logger logger = Logger.getLogger(CacheDBHelper.class);
 
-	private static final int TILE_WIDTH = 5000;
-	private static final int THUMBNAIL_WIDTH = 600;
+    private static final int TILE_WIDTH = 5000;
+    private static final int THUMBNAIL_WIDTH = 600;
 
     public static final int MIN_CONTEXT_LENGTH_BASES = 5000;
 
-	 /**
-	  * Find a Gene, using it's unique name
-	  * @param geneUniqueName
-	  * @param sessionFactory
-	  * @return
-	  */
+     /**
+      * Find a Gene, using it's unique name
+      * @param geneUniqueName
+      * @param sessionFactory
+      * @return
+      */
     public static AbstractGene findGene(String geneUniqueName, SessionFactory sessionFactory) {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
@@ -50,9 +50,9 @@ public class CacheDBHelper {
         .setParameter("geneUniqueName", geneUniqueName)
         .uniqueResult();
     }
-    
+
     /**
-     * 
+     *
      * @param feature
      * @param basicGeneService
      * @param renderedDiagramFactory
@@ -60,9 +60,9 @@ public class CacheDBHelper {
      * @param contextMapMap
      */
     public static void populateContextMapCache(
-    		Feature feature, BasicGeneService basicGeneService, 
-    		RenderedDiagramFactory renderedDiagramFactory, 
-    		DiagramCache diagramCache, StoredMap<Integer, String> contextMapMap) {
+            Feature feature, BasicGeneService basicGeneService,
+            RenderedDiagramFactory renderedDiagramFactory,
+            DiagramCache diagramCache, StoredMap<Integer, String> contextMapMap) {
 
         ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forChromosome(basicGeneService,
             feature.getOrganism().getCommonName(), feature.getUniqueName(), feature.getSeqLen());
@@ -74,7 +74,7 @@ public class CacheDBHelper {
 
         try {
             String metadata = contextMapMetadata(renderedChromosomeThumbnail, renderedContextMap, tiles, diagramCache);
-            contextMapMap.put(new Integer(feature.getFeatureId()), metadata);
+            contextMapMap.put(feature.getFeatureId(), metadata);
             logger.info("Stored contextMap for '"+feature.getUniqueName()+"' as '"+metadata+"'");
         } catch (IOException exp) {
             logger.error(exp);
@@ -82,7 +82,7 @@ public class CacheDBHelper {
     }
 
     /**
-     * 
+     *
      * @param chromosomeThumbnail
      * @param contextMap
      * @param tiles
