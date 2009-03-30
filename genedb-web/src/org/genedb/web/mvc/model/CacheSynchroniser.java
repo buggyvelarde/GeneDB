@@ -203,16 +203,25 @@ public class CacheSynchroniser {
         boolean isAllTopLevelUpdated = updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, true);
 
         //Update toplevelfeatures as a result of new transcripts
-        Collection<Integer>transcripts = changeSet.changedFeatureIds(Transcript.class);
+        Collection<Integer>transcripts = changeSet.newFeatureIds(Transcript.class);
+        boolean isAllTranscriptAdded = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, false);
+        
+        //Update toplevelfeatures as a result of changed transcripts
+        transcripts = changeSet.changedFeatureIds(Transcript.class);
         boolean isAllTranscriptUpdated = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, true);
 
-
         //Update toplevelfeatures as a result of the new gaps
-        Collection<Integer>gaps = changeSet.changedFeatureIds(Gap.class);
+        Collection<Integer>gaps = changeSet.newFeatureIds(Gap.class);
+        boolean isAllGapsAdded = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, false);
+
+        //Update toplevelfeatures as a result of the changed gaps
+        gaps = changeSet.changedFeatureIds(Gap.class);
         boolean isAllGapsUpdated = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, true);
         
         //Is all toplevel features added
-        return isAllTopLevelUpdated && isAllTranscriptUpdated && isAllGapsUpdated;
+        return isAllTopLevelUpdated 
+            && isAllTranscriptAdded && isAllTranscriptUpdated 
+            && isAllGapsAdded && isAllGapsUpdated;
     }
     
 
@@ -260,7 +269,7 @@ public class CacheSynchroniser {
 	            if(!processedFeatures.contains(new Integer(feature.getFeatureId()))){
                     //If updating the cache with a changed feature
                     if(isChanged){
-                        contextMapMap.remove(feature.getUniqueName());
+                        contextMapMap.remove(feature.getFeatureId());
                         logger.info("Updating feature id: "+ feature.getFeatureId() + " (" +feature.getUniqueName()+ ")");
                     }
                     
@@ -269,7 +278,12 @@ public class CacheSynchroniser {
 	                    success = false;//error found
 	                }
 	            }else{
-	                logger.info("Duplicate processing avoided: " + feature.getUniqueName());
+	                logger.info(
+	                        "Duplicate processing avoided for: " 
+	                        + feature.getFeatureId() 
+	                        +" (" 
+	                        + feature.getUniqueName()
+	                        +")");
 	            }
 	        }
 	        return success;
@@ -395,21 +409,30 @@ public class CacheSynchroniser {
      *          Is processing a success
      */
     private boolean changeTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){       
-        //Add new transcripts
+        //Update transcripts
         Collection<Integer>transcripts = changeSet.changedFeatureIds(Transcript.class);
         boolean isAllTranscriptsChanged = updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, true);
 
-        //Add new transcripts as a result of new genes
-        Collection<Integer>genes = changeSet.changedFeatureIds(Gene.class);
+        //Update transcripts as a result of new genes
+        Collection<Integer>genes = changeSet.newFeatureIds(Gene.class);
+        boolean isAllGenesAdded = updateTranscriptDTO(genes, Gene.class, processedFeatures, false);
+
+        //Update transcripts as a result of updated genes
+        genes = changeSet.changedFeatureIds(Gene.class);
         boolean isAllGenesChanged = updateTranscriptDTO(genes, Gene.class, processedFeatures, true);
 
+        //Update transcripts as a result of the new polypeptides
+        Collection<Integer>polypeptides = changeSet.newFeatureIds(Polypeptide.class);
+        boolean isAllPolypeptidesAdded = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, false);
 
-        //Add new transcripts as a result of the new polypeptides
-        Collection<Integer>polypeptides = changeSet.changedFeatureIds(Polypeptide.class);
+        //Update transcripts as a result of the new polypeptides
+        polypeptides = changeSet.changedFeatureIds(Polypeptide.class);
         boolean isAllPolypeptidesChanged = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, true);
         
         //Is all toplevel features added
-        return isAllTranscriptsChanged && isAllGenesChanged && isAllPolypeptidesChanged;        
+        return isAllTranscriptsChanged 
+            && isAllGenesAdded && isAllGenesChanged 
+            && isAllPolypeptidesAdded && isAllPolypeptidesChanged;        
     }
 	
 	/**
@@ -481,7 +504,15 @@ public class CacheSynchroniser {
                     " from Feature f" +
                     " where f.featureId in (:featureIds)")
                     .setParameterList("featureIds", featureIds);
-	            transcripts = (List<Transcript>)q.list();
+                @SuppressWarnings("unchecked")
+                List<Feature> features = q.list();
+                for(Feature feature: features){
+                    if (feature instanceof Transcript){
+                        transcripts.add((Transcript)feature);
+                    }else{
+                        logger.error("Error in query to find transcript, using Transcript Ids");
+                    }
+                }
 			    
 			}else if(clazz == Gene.class){
                 q = session.createQuery(
@@ -495,7 +526,7 @@ public class CacheSynchroniser {
                     if (feature instanceof AbstractGene){
                         transcripts.addAll(((AbstractGene)feature).getTranscripts());
                     }else{
-                        logger.error("Error in query to find transcript, using Gene");
+                        logger.error("Error in query to find transcript, using Gene Ids");
                     }
                 }
                 
@@ -511,7 +542,7 @@ public class CacheSynchroniser {
                     if(feature instanceof Polypeptide){
                         transcripts.add(((Polypeptide)feature).getTranscript());
                     }else{
-                        logger.error("Error in query to find transcript, using Polypeptides");
+                        logger.error("Error in query to find transcript, using Polypeptides Ids");
                     }
                 }
 			}
