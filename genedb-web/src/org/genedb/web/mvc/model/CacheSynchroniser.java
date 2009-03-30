@@ -69,7 +69,10 @@ public class CacheSynchroniser {
 			CacheSynchroniser cacheSynchroniser = ctx.getBean("cacheSynchroniser", CacheSynchroniser.class);
 
 			//Start synching
-			cacheSynchroniser.updateAllCaches();
+			if (!cacheSynchroniser.updateAllCaches()){
+	            System.err.println("Ran with errors:");
+	            System.exit(64);            
+			}
 		
 		}catch(Exception e){
 			e.printStackTrace();
@@ -138,7 +141,7 @@ public class CacheSynchroniser {
 	
 	/**
 	 * Add the top level features. 
-	 * Features to be added are determined by ToplevelFeatures, transcripts, and gaps just added.
+	 * Features to be added are determined by ToplevelFeatures added.
 	 * @param changeSet
      *        The ChangeSet to be updated in the cache
 	 * @param processedFeatures
@@ -148,19 +151,7 @@ public class CacheSynchroniser {
 	private boolean addNewTopLevelFeatures(ChangeSet changeSet, Set<Integer> processedFeatures){        
         //Add new top level features
 	    Collection<Integer>topLevelFeatures = changeSet.newFeatureIds(TopLevelFeature.class);
-	    boolean isAllTopLevelAdded = updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, false);
-
-	    //Add new toplevelfeatures as a result of new transcripts
-	    Collection<Integer>transcripts = changeSet.newFeatureIds(Transcript.class);
-	    boolean isAllTranscriptAdded = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, false);
-
-
-	    //Add new toplevelfeatures as a result of the new gaps
-	    Collection<Integer>gaps = changeSet.newFeatureIds(Gap.class);
-	    boolean isAllGapsAdded = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, false);
-	    
-	    //Is all toplevel features added
-	    return isAllTopLevelAdded && isAllTranscriptAdded && isAllGapsAdded;
+	    return updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, false);
 	}
     
     /**
@@ -175,28 +166,28 @@ public class CacheSynchroniser {
     private boolean changeTopLevelFeatures(ChangeSet changeSet, Set<Integer> processedFeatures){        
         //Update top level features
         Collection<Integer>topLevelFeatures = changeSet.changedFeatureIds(TopLevelFeature.class);
-        boolean isAllTopLevelUpdated = updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, true);
+        boolean isFindTopLevelUpdated = updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, true);
 
         //Update toplevelfeatures as a result of new transcripts
         Collection<Integer>transcripts = changeSet.newFeatureIds(Transcript.class);
-        boolean isAllTranscriptAdded = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, false);
+        boolean isFindTranscriptAdded = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, false);
         
         //Update toplevelfeatures as a result of changed transcripts
         transcripts = changeSet.changedFeatureIds(Transcript.class);
-        boolean isAllTranscriptUpdated = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, true);
+        boolean isFindTranscriptUpdated = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, true);
 
         //Update toplevelfeatures as a result of the new gaps
         Collection<Integer>gaps = changeSet.newFeatureIds(Gap.class);
-        boolean isAllGapsAdded = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, false);
+        boolean isFindGapsAdded = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, false);
 
         //Update toplevelfeatures as a result of the changed gaps
         gaps = changeSet.changedFeatureIds(Gap.class);
-        boolean isAllGapsUpdated = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, true);
+        boolean isFindGapsUpdated = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, true);
         
-        //Is all toplevel features added
-        return isAllTopLevelUpdated 
-            && isAllTranscriptAdded && isAllTranscriptUpdated 
-            && isAllGapsAdded && isAllGapsUpdated;
+        //Is Find toplevel features updated
+        return isFindTopLevelUpdated 
+            && isFindTranscriptAdded && isFindTranscriptUpdated 
+            && isFindGapsAdded && isFindGapsUpdated;
     }
     
 
@@ -362,16 +353,16 @@ public class CacheSynchroniser {
         Set<Integer> processedTranscripts = new HashSet<Integer>();
      
         //Add new transcripts
-        boolean isAllAdded = addNewTranscriptDTO(changeSet, processedTranscripts);
+        boolean isFindAnyAdded = addNewTranscriptDTO(changeSet, processedTranscripts);
      
         //Update changed transcripts
-        boolean isAllChanged = changeTranscriptDTO(changeSet, processedTranscripts);
+        boolean isFindAnyChanged = changeTranscriptDTO(changeSet, processedTranscripts);
      
         //Add new transcripts
-        boolean isAllDeleted = removeTranscriptDTO(changeSet, processedTranscripts);
+        boolean isFindAnyDeleted = removeTranscriptDTO(changeSet, processedTranscripts);
         
-        //Is all successful
-        return isAllAdded && isAllChanged && isAllDeleted;
+        //Is FindAny successful
+        return isFindAnyAdded && isFindAnyChanged && isFindAnyDeleted;
     }
 	
 	/**
@@ -385,19 +376,8 @@ public class CacheSynchroniser {
 	private boolean addNewTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){       
         //Add new transcripts
         Collection<Integer>transcripts = changeSet.newFeatureIds(Transcript.class);
-        boolean isAllTranscriptsAdded = updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, false);
+        return  updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, false);
 
-        //Add new transcripts as a result of new genes
-        Collection<Integer>genes = changeSet.newFeatureIds(Gene.class);
-        boolean isAllGenesAdded = updateTranscriptDTO(genes, Gene.class, processedFeatures, false);
-
-
-        //Add new transcripts as a result of the new polypeptides
-        Collection<Integer>polypeptides = changeSet.newFeatureIds(Polypeptide.class);
-        boolean isAllPolypeptidesAdded = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, false);
-        
-        //Is all toplevel features added
-        return isAllTranscriptsAdded && isAllGenesAdded && isAllPolypeptidesAdded;	    
 	}
     
     /**
@@ -411,28 +391,28 @@ public class CacheSynchroniser {
     private boolean changeTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){       
         //Update transcripts
         Collection<Integer>transcripts = changeSet.changedFeatureIds(Transcript.class);
-        boolean isAllTranscriptsChanged = updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, true);
+        boolean isFindAnyTranscriptsChanged = updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, true);
 
         //Update transcripts as a result of new genes
         Collection<Integer>genes = changeSet.newFeatureIds(Gene.class);
-        boolean isAllGenesAdded = updateTranscriptDTO(genes, Gene.class, processedFeatures, false);
+        boolean isFindAnyGenesAdded = updateTranscriptDTO(genes, Gene.class, processedFeatures, false);
 
         //Update transcripts as a result of updated genes
         genes = changeSet.changedFeatureIds(Gene.class);
-        boolean isAllGenesChanged = updateTranscriptDTO(genes, Gene.class, processedFeatures, true);
+        boolean isFindAnyGenesChanged = updateTranscriptDTO(genes, Gene.class, processedFeatures, true);
 
         //Update transcripts as a result of the new polypeptides
         Collection<Integer>polypeptides = changeSet.newFeatureIds(Polypeptide.class);
-        boolean isAllPolypeptidesAdded = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, false);
+        boolean isFindAnyPolypeptidesAdded = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, false);
 
         //Update transcripts as a result of the new polypeptides
         polypeptides = changeSet.changedFeatureIds(Polypeptide.class);
-        boolean isAllPolypeptidesChanged = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, true);
+        boolean isFindAnyPolypeptidesChanged = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, true);
         
-        //Is all toplevel features added
-        return isAllTranscriptsChanged 
-            && isAllGenesAdded && isAllGenesChanged 
-            && isAllPolypeptidesAdded && isAllPolypeptidesChanged;        
+        //Is FindAny toplevel features added
+        return isFindAnyTranscriptsChanged 
+            && isFindAnyGenesAdded && isFindAnyGenesChanged 
+            && isFindAnyPolypeptidesAdded && isFindAnyPolypeptidesChanged;        
     }
 	
 	/**
