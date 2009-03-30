@@ -1,11 +1,9 @@
 package org.genedb.web.mvc.model;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -18,6 +16,7 @@ import org.genedb.querying.core.LuceneIndexFactory;
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.gui.RenderedDiagramFactory;
 import org.genedb.web.mvc.controller.ModelBuilder;
+import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Polypeptide;
@@ -227,12 +226,11 @@ public class CacheSynchroniser {
         boolean isAllRemoved = false;
         try{
             //Remove top level features
-            Collection<Integer>topLevelFeatures = changeSet.deletedFeatureIds(TopLevelFeature.class);
+            Collection<Integer>topLevelFeatureIds = changeSet.deletedFeatureIds(TopLevelFeature.class);
 
-            //Get the top level features to add
-            List<Feature> features = findTopLevelFeatures(topLevelFeatures, TopLevelFeature.class);
-            for(Feature feature: features){
-                contextMapMap.remove(feature.getUniqueName());
+            //Get the top level features to remove
+            for(Integer featureId: topLevelFeatureIds){
+                contextMapMap.remove(featureId);
             }
             isAllRemoved =true;
         }catch(Exception e){
@@ -253,7 +251,7 @@ public class CacheSynchroniser {
      * @param Boolean isChanged
      *        isUpdate is false for new features and true for changed features
 	 */
-	private boolean updateTopLevelFeatures(Collection<Integer> featureIds, Class clazz, Set<Integer> processedFeatures, boolean isChanged){	
+	private boolean updateTopLevelFeatures(Collection<Integer> featureIds, Class<? extends Feature> clazz, Set<Integer> processedFeatures, boolean isChanged){	
 		//Get the top level features to add
 	    if(featureIds.size()>0){
 	        List<Feature> features = findTopLevelFeatures(featureIds, clazz);
@@ -292,6 +290,7 @@ public class CacheSynchroniser {
 		try{
 		    logger.debug("populateTopLevelFeatures, feature.getSeqLen:" 
 		            + feature.getSeqLen() + " !isNoContextMap()" + !isNoContextMap());
+		    
 			if (!isNoContextMap() && feature.getSeqLen() > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
 			    logger.debug("Trying to populate Top Level Feature ("
 			            + feature.getFeatureId()+")"+ feature.getUniqueName());
@@ -325,8 +324,8 @@ public class CacheSynchroniser {
 	 *     Ids of the TopLevelFeatures, Transcripts, or Gaps
 	 * @return
 	 */
-	protected List<Feature> findTopLevelFeatures(Collection<Integer> featureIds, Class clazz){
-		List<Feature> features = new ArrayList<Feature>(0);
+	protected List<Feature> findTopLevelFeatures(Collection<Integer> featureIds, Class<? extends Feature> clazz){        
+	    List<Feature> features = new ArrayList<Feature>(0);
 		Query q = null;
 		try{
 		    Session session = SessionFactoryUtils.getSession(sessionFactory, false);	
@@ -336,9 +335,20 @@ public class CacheSynchroniser {
 		                " from Feature f" +
 		        " where f.featureId in (:featureIds)")
 		        .setParameterList("featureIds", featureIds);
+		        
 			}else if (clazz == Transcript.class){
+                q = session.createQuery(
+                        "select fl.sourceFeature " +
+                        " from FeatureLoc fl " +
+                " where f.feature in (:featureIds)")
+                .setParameterList("featureIds", featureIds);
 			    
 			}else if(clazz == Gap.class){
+                q = session.createQuery(
+                        "select fl.sourceFeature " +
+                        " from FeatureLoc fl " +
+                " where f.feature in (:featureIds)")
+                .setParameterList("featureIds", featureIds);
 			    
 			}
 			features = q.list();	
@@ -365,7 +375,7 @@ public class CacheSynchroniser {
 
         //Add new transcripts as a result of new genes
         Collection<Integer>genes = changeSet.newFeatureIds(Gene.class);
-        boolean isAllGenesAdded = updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, false);
+        boolean isAllGenesAdded = updateTranscriptDTO(genes, Gene.class, processedFeatures, false);
 
 
         //Add new transcripts as a result of the new polypeptides
@@ -391,7 +401,7 @@ public class CacheSynchroniser {
 
         //Add new transcripts as a result of new genes
         Collection<Integer>genes = changeSet.changedFeatureIds(Gene.class);
-        boolean isAllGenesChanged = updateTranscriptDTO(genes, Transcript.class, processedFeatures, true);
+        boolean isAllGenesChanged = updateTranscriptDTO(genes, Gene.class, processedFeatures, true);
 
 
         //Add new transcripts as a result of the new polypeptides
@@ -413,7 +423,7 @@ public class CacheSynchroniser {
      *        This is false for new transcrits and true for changed transcripts
 	 * @return
 	 */
-	private boolean updateTranscriptDTO(Collection<Integer> featureIds, Class clazz, Set<Integer> processedFeatures, boolean isChanged){
+	private boolean updateTranscriptDTO(Collection<Integer> featureIds, Class<? extends Feature> clazz, Set<Integer> processedFeatures, boolean isChanged){
 	    boolean isUpdated = false;
 	    try{
 	        List<Transcript> transcripts = findTranscripts(featureIds, clazz);
@@ -442,16 +452,25 @@ public class CacheSynchroniser {
 	 * @param featureId
 	 */
 	private boolean removeTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){
-	    //changeSet.deletedFeatureIds(featureClass)
-	    //boolean success = false;
-	    //for(Integer featureId: featureIds){
-	    ////    dtoMap.remove(featureId);
-	    //}
-		return false;
+        boolean isAllRemoved = false;
+        try{
+            //Remove transcript features
+            Collection<Integer>transcriptFeatureIds = changeSet.deletedFeatureIds(Transcript.class);
+
+            //Get the top level features to remove
+            for(Integer featureId: transcriptFeatureIds){
+                dtoMap.remove(featureId);
+            }
+            isAllRemoved =true;
+        }catch(Exception e){
+            e.printStackTrace();
+            logger.error("Error:" + e.getMessage());
+        }
+        return isAllRemoved;
 	}
 	
 	
-	protected List<Transcript> findTranscripts(Collection<Integer> featureIds, Class clazz){
+	protected List<Transcript> findTranscripts(Collection<Integer> featureIds, Class<? extends Feature> clazz){
 		List<Transcript> transcripts = new ArrayList<Transcript>(0);
 		Query q = null;
 		try{
@@ -461,7 +480,8 @@ public class CacheSynchroniser {
 			        "select f " +
                     " from Feature f" +
                     " where f.featureId in (:featureIds)")
-            .setParameterList("featureIds", featureIds);
+                    .setParameterList("featureIds", featureIds);
+	            transcripts = (List<Transcript>)q.list();
 			    
 			}else if(clazz == Gene.class){
                 q = session.createQuery(
@@ -469,14 +489,32 @@ public class CacheSynchroniser {
                         " from Feature f" +
                         " where f.featureId in (:featureIds)")
                 .setParameterList("featureIds", featureIds);
+                @SuppressWarnings("unchecked")
+                List<Feature> features = q.list();
+                for(Feature feature: features){
+                    if (feature instanceof AbstractGene){
+                        transcripts.addAll(((AbstractGene)feature).getTranscripts());
+                    }else{
+                        logger.error("Error in query to find transcript, using Gene");
+                    }
+                }
+                
 			}else if(clazz == Polypeptide.class){
                 q = session.createQuery(
                         "select f " +
                         " from Feature f" +
                         " where f.featureId in (:featureIds)")
                 .setParameterList("featureIds", featureIds);
+                @SuppressWarnings("unchecked")
+                List<Feature> features = q.list();
+                for(Feature feature: features){
+                    if(feature instanceof Polypeptide){
+                        transcripts.add(((Polypeptide)feature).getTranscript());
+                    }else{
+                        logger.error("Error in query to find transcript, using Polypeptides");
+                    }
+                }
 			}
-			transcripts = (List<Transcript>)q.list();
 		}catch(Exception e){
 		    e.printStackTrace();
 			logger.error("findTranscripts: " + e.getMessage());
