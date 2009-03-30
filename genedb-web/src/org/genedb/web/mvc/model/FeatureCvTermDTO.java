@@ -15,14 +15,15 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 public class FeatureCvTermDTO implements Serializable {
-    
-	private static final long serialVersionUID = -2231825983085114418L;
-	private String typeName;
+
+    private static final long serialVersionUID = -2231825983085114418L;
+    private String typeName;
     private String typeAccession;
     private List<String> pubs;
     private String withFrom;
     private List<DbXRefDTO> dbXRefDtoList;
     private Multimap<String, String> props = Multimaps.newArrayListMultimap();
+    private int count;
 
     public FeatureCvTermDTO(FeatureCvTerm fct) {
 
@@ -73,6 +74,14 @@ public class FeatureCvTermDTO implements Serializable {
 
     public Map<String, Collection<String>> getProps() {
         return props.asMap();
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
 }
