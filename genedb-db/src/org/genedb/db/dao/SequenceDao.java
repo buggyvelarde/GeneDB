@@ -25,6 +25,7 @@ import org.gmod.schema.utils.CountedName;
 import org.gmod.schema.utils.GeneNameOrganism;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -334,6 +335,22 @@ public class SequenceDao extends BaseDao {
                 "select new CountedName(cvt.name, count(fct.feature.uniqueName))"
                         + " from CvTerm cvt, FeatureCvTerm fct"
                         + " where cvt=fct.cvTerm and cvt.cv=15 group by cvt.name");
+    }
+
+
+    /**
+     * Retrieve a count of how many times a given featureCvTerm appears in a
+     * given organism
+     *
+     * @return the count
+     */
+    public Integer getFeatureCvTermCountInOrganism(FeatureCvTerm fct, Organism o) {
+        Query query = createQuery(
+                "select count(fct.feature.uniqueName) from CvTerm cvt, FeatureCvTerm fct" +
+                " where :fct.feature.organism=:organism",
+                new String[]{"fct", "organism"},
+                new Object[]{fct, o});
+        return (Integer) query.uniqueResult();
     }
 
     /**
