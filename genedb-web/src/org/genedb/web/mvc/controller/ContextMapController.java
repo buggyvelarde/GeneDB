@@ -68,7 +68,6 @@ public class ContextMapController {
             cacheHit++;
         } else {
             logger.debug(String.format("The context maps for '%s' aren't cached and need to be generated", chromosome));
-            //text = contextMapCache.getKeys().toString();
             cacheMiss++;
         }
 
