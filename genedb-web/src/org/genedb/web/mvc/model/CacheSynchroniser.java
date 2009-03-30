@@ -135,31 +135,6 @@ public class CacheSynchroniser {
         //Is all successful
         return isAllAdded && isAllChanged && isAllDeleted;
 	}
-    
-    
-    /**
-     * Update the Transcript DTO for features such as the Genes, Transcripts and Polypeptides
-     * @param ChangeSet changeSet
-     *        The ChangeSet to be updated in the cache
-     * @return boolean 
-     *      Is update to DTO cache successful
-     */
-    private boolean updateTranscriptDTOCache(ChangeSet changeSet){
-        //A set of processed features to avoid duplication of effort
-        Set<Integer> processedTranscripts = new HashSet<Integer>();
-     
-        //Add new transcripts
-        boolean isAllAdded = addNewTranscriptDTO(changeSet, processedTranscripts);
-     
-        //Update changed transcripts
-        boolean isAllChanged = changeTranscriptDTO(changeSet, processedTranscripts);
-     
-        //Add new transcripts
-        boolean isAllDeleted = removeTranscriptDTO(changeSet, processedTranscripts);
-        
-        //Is all successful
-        return isAllAdded && isAllChanged && isAllDeleted;
-    }
 	
 	/**
 	 * Add the top level features. 
@@ -373,6 +348,31 @@ public class CacheSynchroniser {
 		}
         return features;		
 	}
+	    
+    
+    /**
+     * Update the Transcript DTO for features such as the Genes, Transcripts and Polypeptides
+     * @param ChangeSet changeSet
+     *        The ChangeSet to be updated in the cache
+     * @return boolean 
+     *      Is update to DTO cache successful
+     */
+    private boolean updateTranscriptDTOCache(ChangeSet changeSet){
+        //A set of processed features to avoid duplication of effort
+        Set<Integer> processedTranscripts = new HashSet<Integer>();
+     
+        //Add new transcripts
+        boolean isAllAdded = addNewTranscriptDTO(changeSet, processedTranscripts);
+     
+        //Update changed transcripts
+        boolean isAllChanged = changeTranscriptDTO(changeSet, processedTranscripts);
+     
+        //Add new transcripts
+        boolean isAllDeleted = removeTranscriptDTO(changeSet, processedTranscripts);
+        
+        //Is all successful
+        return isAllAdded && isAllChanged && isAllDeleted;
+    }
 	
 	/**
 	 * Add new transcript DTOs to cache
