@@ -43,8 +43,8 @@ public class PopulateCaches {
 
     private BerkeleyMapFactory bmf;
 
-    private StoredMap<String, TranscriptDTO> dtoMap;
-    private StoredMap<String, String> contextMapMap;
+    private StoredMap<Integer, TranscriptDTO> dtoMap;
+    private StoredMap<Integer, String> contextMapMap;
 
     private SessionFactory sessionFactory;
     private ModelBuilder modelBuilder;
@@ -123,7 +123,7 @@ public class PopulateCaches {
 
             if (!config.isNoContextMap() && feature.getSeqLen() > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
                 CacheDBHelper.populateContextMapCache(
-                		feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
+                        feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
             }
 
             @SuppressWarnings("unchecked")
@@ -146,7 +146,7 @@ public class PopulateCaches {
     }
 
     private void populateCacheForGene(String geneUniqueName) {
-    	//Get the Gene
+        //Get the Gene
         AbstractGene gene = CacheDBHelper.findGene(geneUniqueName, sessionFactory);
 
         if (gene == null) {
@@ -185,7 +185,7 @@ public class PopulateCaches {
     private void populateDtoCache(AbstractGene gene) {
         for (Transcript transcript : gene.getTranscripts()) {
             TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
-            dtoMap.put(transcript.getUniqueName(), dto);
+            dtoMap.put(transcript.getFeatureId(), dto);
         }
     }
 
@@ -205,11 +205,11 @@ public class PopulateCaches {
         this.config = pca;
     }
 
-    public void setDtoMap(StoredMap<String, TranscriptDTO> dtoMap) {
+    public void setDtoMap(StoredMap<Integer, TranscriptDTO> dtoMap) {
         this.dtoMap = dtoMap;
     }
 
-    public void setContextMapMap(StoredMap<String, String> contextMapMap) {
+    public void setContextMapMap(StoredMap<Integer, String> contextMapMap) {
         this.contextMapMap = contextMapMap;
     }
 
