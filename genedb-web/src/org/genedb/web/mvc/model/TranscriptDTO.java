@@ -1,5 +1,6 @@
 package org.genedb.web.mvc.model;
 
+import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.domain.objects.DatabasePolypeptideRegion;
 import org.genedb.db.domain.objects.InterProHit;
 import org.genedb.db.domain.objects.PolypeptideRegionGroup;
@@ -28,11 +29,13 @@ import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.FeaturePub;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.FeatureSynonym;
+import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Synonym;
 import org.gmod.schema.utils.PeptideProperties;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -50,15 +53,18 @@ import com.google.common.collect.Maps;
 public class TranscriptDTO implements Serializable {
 
     private transient Logger logger = Logger.getLogger(TranscriptDTO.class);
-    
+
     private static final long serialVersionUID = 3878466785198622703L;
+
+    @Autowired
+    private transient SequenceDao sequenceDao;
 
     private String uniqueName;
     private String properName;
     private Map<String, List<String>> synonymsByTypes;
     private List<String> synonyms;
     private List<String> obsoleteNames;
-    private List<String> products;
+    private List<FeatureCvTermDTO> products;
     private String typeDescription;
     private String topLevelFeatureType;
     private String topLevelFeatureDisplayName;
@@ -264,7 +270,7 @@ public class TranscriptDTO implements Serializable {
             this.polypeptideProperties = polypeptide.calculateStats();
             populateFromFeatureProps(polypeptide);
 
-            this.products = polypeptide.getProducts();
+            products = populateFromFeatureCvTerms(polypeptide, "genedb_products");
             controlledCurations = populateFromFeatureCvTerms(polypeptide, "CC_");
             goBiologicalProcesses = populateFromFeatureCvTerms(polypeptide, "biological_process");
             goMolecularFunctions = populateFromFeatureCvTerms(polypeptide, "molecular_function");
@@ -394,9 +400,12 @@ public class TranscriptDTO implements Serializable {
     private List<FeatureCvTermDTO> populateFromFeatureCvTerms(Polypeptide polypeptide, String cvNamePrefix) {
         Assert.notNull(polypeptide);
 
+        Organism org = polypeptide.getOrganism();
         List<FeatureCvTermDTO> dtos = new ArrayList<FeatureCvTermDTO>();
         for (FeatureCvTerm featureCvTerm : polypeptide.getFeatureCvTermsFilteredByCvNameStartsWith(cvNamePrefix)) {
-           dtos.add(new FeatureCvTermDTO(featureCvTerm));
+            FeatureCvTermDTO fctd = new FeatureCvTermDTO(featureCvTerm);
+            fctd.setCount(sequenceDao.getFeatureCvTermCountInOrganism(featureCvTerm, org));
+            dtos.add(fctd);
         }
         if (dtos.size() > 0) {
             return dtos;
@@ -467,57 +476,57 @@ public class TranscriptDTO implements Serializable {
         Collection<FeatureSynonym> featureSynonyms = gene.getFeatureSynonyms();
         //Get the map of lists of synonyms
         synonymsByTypes = findFromSynonymsByType(featureSynonyms);
-    }    
+    }
 
 
     /**
-     * Create lists of synonyms, where each list grouped by the synonym type  
+     * Create lists of synonyms, where each list grouped by the synonym type
      * @param synonyms
      * @return
      */
     private Map<String, List<String>> findFromSynonymsByType(Collection<FeatureSynonym> synonyms) {
-    	HashMap<String, List<String>> synonymsByType = new HashMap<String, List<String>>();
+        HashMap<String, List<String>> synonymsByType = new HashMap<String, List<String>>();
         for (FeatureSynonym featSynonym : synonyms) {
             Synonym synonym = featSynonym.getSynonym();
             String typeName = formatSynonymTypeName(synonym.getType().getName());
             List<String> filtered = synonymsByType.get(typeName);
             if (filtered == null){
-            	filtered = new ArrayList<String>();
-            	synonymsByType.put(typeName, filtered);
+                filtered = new ArrayList<String>();
+                synonymsByType.put(typeName, filtered);
             }
             filtered.add(synonym.getName());
         }
-        
+
         if(synonymsByType.size()>0){
-        	return synonymsByType;
+            return synonymsByType;
         }
         return null;
     }
-    
+
     /**
-     * Re-format the synonym type name 
+     * Re-format the synonym type name
      * @param rawName
      * @return
      */
     private String formatSynonymTypeName(String rawName){
-    	
-    	char formattedName[] = rawName.toCharArray();
-    	for(int i=0; i<formattedName.length; ++i){
-    		
-    		//Replace underscores with spaces
-    		if (formattedName[i]=='_'){
-    			formattedName[i] = ' ';
-    		
-    		//Replace first char lowercase to a uppercase char
-    		}else if(i==0 && Character.isLowerCase(formattedName[i])){
-    			formattedName[i] = Character.toUpperCase(formattedName[i]);
-    			
-    		//Replace any occurrence of a lowercase char preceeded a space with a upper case char
-    		}else if(i>0 && formattedName[i-1]==' ' && Character.isLowerCase(formattedName[i])){
-    			formattedName[i] = Character.toUpperCase(formattedName[i]); 
-    		}
-    	}
-    	return String.valueOf(formattedName).trim();
+
+        char formattedName[] = rawName.toCharArray();
+        for(int i=0; i<formattedName.length; ++i){
+
+            //Replace underscores with spaces
+            if (formattedName[i]=='_'){
+                formattedName[i] = ' ';
+
+            //Replace first char lowercase to a uppercase char
+            }else if(i==0 && Character.isLowerCase(formattedName[i])){
+                formattedName[i] = Character.toUpperCase(formattedName[i]);
+
+            //Replace any occurrence of a lowercase char preceeded a space with a upper case char
+            }else if(i>0 && formattedName[i-1]==' ' && Character.isLowerCase(formattedName[i])){
+                formattedName[i] = Character.toUpperCase(formattedName[i]);
+            }
+        }
+        return String.valueOf(formattedName).trim();
     }
 
 
@@ -545,7 +554,7 @@ public class TranscriptDTO implements Serializable {
 
 
 
-    public List<String> getProducts() {
+    public List<FeatureCvTermDTO> getProducts() {
         return listOrEmptyList(products);
     }
 
@@ -677,13 +686,13 @@ public class TranscriptDTO implements Serializable {
         return topLevelFeatureLength;
     }
 
-	public Map<String, List<String>> getSynonymsByTypes() {
-		return synonymsByTypes;
-	}
+    public Map<String, List<String>> getSynonymsByTypes() {
+        return synonymsByTypes;
+    }
 
-	public void setSynonymsByTypes(Map<String, List<String>> synonymsByTypes) {
-		this.synonymsByTypes = synonymsByTypes;
-	}
+    public void setSynonymsByTypes(Map<String, List<String>> synonymsByTypes) {
+        this.synonymsByTypes = synonymsByTypes;
+    }
 
 
 }
