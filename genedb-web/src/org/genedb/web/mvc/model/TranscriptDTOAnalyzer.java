@@ -34,7 +34,7 @@ public class TranscriptDTOAnalyzer {
 
     private TranscriptDTO lookUpFeature(String uniqueName) throws Exception {
         String lookupName = uniqueName;
-        StoredMap<String, TranscriptDTO> dtoMap = bmf.getDtoMap();
+        StoredMap<Integer, TranscriptDTO> dtoMap = bmf.getDtoMap();
         if (dtoMap.containsKey(lookupName)) {
             return dtoMap.get(lookupName);
         }
