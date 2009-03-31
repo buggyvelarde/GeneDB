@@ -70,13 +70,12 @@ public class CacheSynchroniser {
 
 			//Start synching
 			if (!cacheSynchroniser.updateAllCaches()){
-	            System.err.println("Ran with errors:");
+			    logger.error("Errors found:");
 	            System.exit(64);            
 			}
 		
 		}catch(Exception e){
-			e.printStackTrace();
-            System.err.println("Unable to run:");
+            logger.error(e);
             System.exit(64);			
 		}
 	}
@@ -167,27 +166,17 @@ public class CacheSynchroniser {
         //Update top level features
         Collection<Integer>topLevelFeatures = changeSet.changedFeatureIds(TopLevelFeature.class);
         boolean isFindTopLevelUpdated = updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, true);
-
-        //Update toplevelfeatures as a result of new transcripts
-        Collection<Integer>transcripts = changeSet.newFeatureIds(Transcript.class);
-        boolean isFindTranscriptAdded = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, false);
         
         //Update toplevelfeatures as a result of changed transcripts
-        transcripts = changeSet.changedFeatureIds(Transcript.class);
+        Collection<Integer>transcripts = changeSet.changedFeatureIds(Transcript.class);
         boolean isFindTranscriptUpdated = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, true);
 
-        //Update toplevelfeatures as a result of the new gaps
-        Collection<Integer>gaps = changeSet.newFeatureIds(Gap.class);
-        boolean isFindGapsAdded = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, false);
-
         //Update toplevelfeatures as a result of the changed gaps
-        gaps = changeSet.changedFeatureIds(Gap.class);
+        Collection<Integer>gaps = changeSet.changedFeatureIds(Gap.class);
         boolean isFindGapsUpdated = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, true);
         
         //Is Find toplevel features updated
-        return isFindTopLevelUpdated 
-            && isFindTranscriptAdded && isFindTranscriptUpdated 
-            && isFindGapsAdded && isFindGapsUpdated;
+        return isFindTopLevelUpdated && isFindTranscriptUpdated && isFindGapsUpdated;
     }
     
 
@@ -209,8 +198,7 @@ public class CacheSynchroniser {
             }
             isAllRemoved =true;
         }catch(Exception e){
-            e.printStackTrace();
-            logger.error("Error:" + e.getMessage());
+            logger.error(e);
         }
         return isAllRemoved;
     }
@@ -291,8 +279,7 @@ public class CacheSynchroniser {
 			}
             success =true;
 		}catch(Exception e){
-		    e.printStackTrace();
-			logger.error("populateTopLevelFeatures: " + e.getMessage());
+			logger.error(e);
 		}
 		return success;
 	}
@@ -334,8 +321,7 @@ public class CacheSynchroniser {
 			features = q.list();	
 			logger.debug("TopLevelFeature size: " + features.size() );
 		}catch(Exception e){
-		    e.printStackTrace();
-			logger.error("findTopLevelFeatures: " + e.getMessage());
+			logger.error(e);
 		}
         return features;		
 	}
@@ -444,8 +430,7 @@ public class CacheSynchroniser {
 	        }
 	        isUpdated = true;
 	    }catch(Exception e){
-	        e.printStackTrace();
-	        logger.error("Error: " + e.getMessage());
+	        logger.error(e);
 	    }
 	    return isUpdated;
 	}
@@ -466,8 +451,7 @@ public class CacheSynchroniser {
             }
             isAllRemoved =true;
         }catch(Exception e){
-            e.printStackTrace();
-            logger.error("Error:" + e.getMessage());
+            logger.error(e);
         }
         return isAllRemoved;
 	}
@@ -527,8 +511,7 @@ public class CacheSynchroniser {
                 }
 			}
 		}catch(Exception e){
-		    e.printStackTrace();
-			logger.error("findTranscripts: " + e.getMessage());
+			logger.error(e);
 		}
         return transcripts;		
 	}
