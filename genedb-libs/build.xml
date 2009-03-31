@@ -25,8 +25,8 @@
 
   <!-- Classpaths -->
   <path id="aspect.path">
-    <pathelement location="lib/com.springsource.org.aspectj.runtime-1.5.4.jar"/>
-    <pathelement location="lib/org.springframework.aspects-3.0.0.M1.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.runtime-1.5.4.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/org.springframework.aspects-3.0.0.M1.jar"/>
   </path>
 
 
@@ -34,7 +34,7 @@
 
   <target name="populate-lib-dir">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
-    <!-- 
+    <!--
     <setproxy proxyhost="wwwcache.sanger.ac.uk" proxyport="3128"/>
      -->
     <ivy:retrieve conf="default"/>
@@ -52,7 +52,7 @@
       <populate directory="Jogra"/>
       <populate directory="Medusa"/>
   </target>
-  
+
   <target name="clean-all">
       <echo message="Deleting ${lib-dir}/*.jar"/>
       <echo message="Deleting ${lib-dir}/license-*.txt"/>
@@ -152,7 +152,7 @@
       <javac srcdir="@{topdir}/test" includes="**/*.java" debug="true"
                  destdir="@{topdir}/${test-classes.dir}"
                  classpathref="@{classpathref}" />
-   
+
       <junit printsummary="on"
         fork="false"
         haltonfailure="false"
@@ -187,7 +187,7 @@
       <iajc
         verbose="false" nowarn="true"
         inpath="@{from-directory}"
-        aspectpathref="aspect.path"
+        aspectpathref="@{classpathref}"
         classpathRef ="@{classpathref}"
         destdir="@{to-directory}" />
     </sequential>
