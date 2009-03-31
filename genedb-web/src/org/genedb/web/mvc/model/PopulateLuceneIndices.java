@@ -493,8 +493,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
             return;
         }
 
-        if (! iga.isUserName()) {
-            iga.setUserName(System.getenv("USER"));
+        String user = System.getenv("USER");
+        if ( iga.isUserName()) {
+            user = iga.getUserName();
         }
 
         String password;
@@ -505,7 +506,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
 
         PopulateLuceneIndices indexer = new PopulateLuceneIndices(iga.getHost(), iga.getPort(),
-                iga.getUserName(), iga.getDbName(), password, iga.getIndexDirectory());
+                user, iga.getDbName(), password, iga.getIndexDirectory());
 
         if (iga.isOrganism()) {
             indexer.setOrganism(iga.getOrganism());
@@ -547,21 +548,17 @@ public class PopulateLuceneIndices implements IndexUpdater {
         /* Db connection info */
 
         @Option(shortName="h", longName="host", description="Host for db server", defaultValue="localhost")
-        void setHost(String host);
         String getHost();
 
         @Option(shortName="p", longName="port", description="Port number of db server", defaultValue="5432")
-        void setPort(Integer port);
-        Integer getPort();
+        int getPort();
 
 
         @Option(shortName="U", longName="userName", description="User to log in as")
-        void setUserName(String userName);
         String getUserName();
         boolean isUserName();
 
         @Option(shortName="P", longName="password", description="")
-        void setPassword(String password);
         String getPassword();
         boolean isPassword();
 
