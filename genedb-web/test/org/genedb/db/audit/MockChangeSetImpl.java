@@ -52,6 +52,32 @@ public class MockChangeSetImpl implements ChangeSet {
         // Do nothing
     }
 
-    // TODO Add setters
+    public Map<Class<? extends Feature>, List<Integer>> getChangedMap() {
+        return changedMap;
+    }
+
+    public void setChangedMap(
+            Map<Class<? extends Feature>, List<Integer>> changedMap) {
+        this.changedMap = changedMap;
+    }
+
+    public Map<Class<? extends Feature>, List<Integer>> getDeletedMap() {
+        return deletedMap;
+    }
+
+    public void setDeletedMap(
+            Map<Class<? extends Feature>, List<Integer>> deletedMap) {
+        this.deletedMap = deletedMap;
+    }
+
+    public Map<Class<? extends Feature>, List<Integer>> getNewMap() {
+        return newMap;
+    }
+
+    public void setNewMap(Map<Class<? extends Feature>, List<Integer>> newMap) {
+        this.newMap = newMap;
+    }
+
+
 
 }

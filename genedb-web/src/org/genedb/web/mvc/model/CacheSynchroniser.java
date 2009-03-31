@@ -456,7 +456,12 @@ public class CacheSynchroniser {
         return isAllRemoved;
 	}
 	
-	
+	/**
+	 * Run the HQL to retrieve the relevant records
+	 * @param featureIds
+	 * @param clazz
+	 * @return
+	 */
 	protected List<Transcript> findTranscripts(Collection<Integer> featureIds, Class<? extends Feature> clazz){
 		List<Transcript> transcripts = new ArrayList<Transcript>(0);
 		Query q = null;

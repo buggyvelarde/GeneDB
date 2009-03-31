@@ -1,6 +1,7 @@
 package org.genedb.web.mvc.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.genedb.db.domain.test.MockBasicGeneService;
@@ -14,15 +15,15 @@ import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
-import org.gmod.schema.mapped.TestChromosome;
-import org.gmod.schema.mapped.TestTranscript;
+import org.gmod.schema.mapped.MockChromosome;
+import org.gmod.schema.mapped.MockTranscript;
 
 import com.sleepycat.collections.StoredMap;
 
 public class CacheSynchTestDelegate extends CacheSynchroniser {
     
     @Override
-    protected List<Feature> findTopLevelFeatures(List<Integer> featureIds){
+    protected List<Feature> findTopLevelFeatures(Collection<Integer> featureIds, Class<? extends Feature> clazz){
         List<Feature> features = new ArrayList<Feature>();
         for(Integer featureId : featureIds){
             Feature feature = createTopLevelFeature(featureId);
@@ -33,11 +34,11 @@ public class CacheSynchTestDelegate extends CacheSynchroniser {
     }
     
     @Override
-    protected List<Transcript> findTranscripts(List<Integer> featureIds){
+    protected List<Transcript> findTranscripts(Collection<Integer> featureIds, Class<? extends Feature> clazz){
         List<Transcript> transcripts = new ArrayList<Transcript>();
         for(Integer featureId : featureIds){
             String uniqueName = String.valueOf(featureId);
-            Transcript transcript = new TestTranscript(
+            Transcript transcript = new MockTranscript(
                     createOrganism(), uniqueName, true, false, null);
             transcript.setSeqLen(6000);
             
@@ -75,7 +76,7 @@ public class CacheSynchTestDelegate extends CacheSynchroniser {
     
     private Chromosome createTopLevelFeature(Integer featureId){
         String uniqueName = String.valueOf(featureId);
-        Chromosome chr = new TestChromosome(createOrganism(), uniqueName, true, false, null);
+        Chromosome chr = new MockChromosome(createOrganism(), uniqueName, true, false, null);
         ((Feature)chr).addCvTerm(createCvTerm());
         ((Feature)chr).addFeatureCvTerm(createFeatureCvTerm(chr));
         return chr;
@@ -91,11 +92,11 @@ public class CacheSynchTestDelegate extends CacheSynchroniser {
         return fct;
     }
     
-    public StoredMap<String, String> getContextMapMap(){
+    public StoredMap<Integer, String> getContextMapMap(){
         return contextMapMap;
     }
     
-    public StoredMap<String, TranscriptDTO> getDtoMap(){
+    public StoredMap<Integer, TranscriptDTO> getDtoMap(){
         return dtoMap;
     }
 }

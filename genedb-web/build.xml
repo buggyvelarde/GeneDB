@@ -211,6 +211,21 @@
   </target>
 
 
+    <target name="synchronise-caches" depends="check-deploy,iajc-web" description="Sychronise the TranscriptDTO and images with updated Features in RDBMS">
+      <java fork="true" classname="org.genedb.web.mvc.model.CacheSynchroniser">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+          <pathelement location="${imported.basedir.web}/ant-build/test-classes"/><!-- This is for temp use of the MockChangeSetImple class-->
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      </java>
+    </target>
+
+
     <target name="populate-caches" depends="check-deploy,iajc-web" description="Populate the Berkeley DB with TranscriptDTO and images">
       <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
         <classpath>

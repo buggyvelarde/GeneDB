@@ -9,10 +9,12 @@ import org.gmod.schema.mapped.FeatureCvTerm;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Pub;
 
-public class TestChromosome extends Chromosome {
-    public TestChromosome(Organism organism, String uniqueName, boolean analysis,
+public class MockChromosome extends Chromosome {
+    private String uniqueName;
+    public MockChromosome(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
+        this.uniqueName = uniqueName;
     }
     @Override
     protected Pub nullPub() {
@@ -23,5 +25,10 @@ public class TestChromosome extends Chromosome {
     public FeatureCvTerm addCvTerm(CvTerm cvTerm) {
         ((Feature)this).setType(cvTerm);
         return null;
+    }
+    
+    @Override
+    public int getFeatureId(){
+        return Integer.parseInt(uniqueName);
     }
 }

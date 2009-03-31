@@ -75,7 +75,7 @@ public class CacheDBHelper {
         try {
             String metadata = contextMapMetadata(renderedChromosomeThumbnail, renderedContextMap, tiles, diagramCache);
             contextMapMap.put(feature.getFeatureId(), metadata);
-            logger.info("Stored contextMap for '"+feature.getUniqueName()+"' as '"+metadata+"'");
+            logger.info("Stored contextMap for "+feature.getFeatureId()+" '"+feature.getUniqueName()+"' as '"+metadata+"'");
         } catch (IOException exp) {
             logger.error(exp);
         }

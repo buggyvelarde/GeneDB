@@ -8,7 +8,7 @@ import java.sql.SQLException;
  */
 public class MockChangeTrackerImpl implements ChangeTracker {
 
-    private MockChangeSetImpl changeSet;
+    private MockChangeSetImpl changeSet = new MockChangeSetImpl();
 
     public void setChangeSet(MockChangeSetImpl changeSet) {
         this.changeSet = changeSet;

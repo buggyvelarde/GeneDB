@@ -1,8 +1,14 @@
 package org.genedb.web.mvc.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.genedb.db.audit.MockChangeSetImpl;
+import org.gmod.schema.feature.Gap;
+import org.gmod.schema.feature.TopLevelFeature;
+import org.gmod.schema.feature.Transcript;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,111 +23,229 @@ public class CacheSynchroniserTest{
     @Autowired
     private CacheSynchroniser cacheSynchroniser;
     
-    /**
-     * For the purpose of testing, let the featureId Integer type be used by conversion to generate the uniqueName String type
-     */
-    private static Integer featureId;
     
-    @BeforeClass
-    public static void setup()throws Exception{        
-          Long id = new Long(System.currentTimeMillis());
-          featureId = id.intValue();
+    /**
+     * For the purpose of testing, let the featureId Integer type be used by conversion to generate the featureId and uniqueName String type
+     */
+    //private Integer featureId;
+    
+    @After
+    public void clearUpCaches()throws Exception{ 
+        MockChangeSetImpl changeSet = (MockChangeSetImpl)
+            cacheSynchroniser.getChangeTracker().changes(CacheSynchroniserTest.class.getName());
+        changeSet.getNewMap().clear();
+        changeSet.getChangedMap().clear();
+        changeSet.getDeletedMap().clear();
+        
+        ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().clear();
     }
     
     @Test
-    public void testTopLevelFeatureAdding()throws Exception{      
+    public void testTopLevelFeatureAdding()throws Exception{   
         
-        //Generate the unique name to be used for the Gene in test
-        MockChangeSetImpl changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes();     
-        changeSet.getNewTopLevelIds().add(featureId);        
+        //Set up the ChangeSet       
+        Integer featureId = 10;
+        MockChangeSetImpl changeSet = (MockChangeSetImpl)
+            cacheSynchroniser.getChangeTracker().changes(CacheSynchroniserTest.class.getName());
+        List<Integer> featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId);
+        changeSet.getNewMap().put(TopLevelFeature.class, featureIds);
 
         //Start synching
-        cacheSynchroniser.processRequest();
+        boolean noErrors = cacheSynchroniser.updateAllCaches();
         
-        //Find context map, using the generated gene unique name
-        String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(String.valueOf(featureId));
+        //Find context map, using the generated id
+        String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId);
         
         //Assert that context is added
         Assert.assertNotNull(context);
         
         //Assert that Gene unique name is found in context
-        Assert.assertTrue(context.indexOf(String.valueOf(featureId)) != -1);
+        String idStr = featureId.toString();
+        Assert.assertTrue(context.indexOf(idStr) != -1);
+        
+        //Assert the hidden errors were encountered
+        Assert.assertTrue(noErrors);
+    }
+    
+    @Test
+    public void testTopLevelFeatureChanging()throws Exception{   
+        
+      //Create changed top level feature
+        Integer featureId1 = 20;
+        MockChangeSetImpl changeSet = (MockChangeSetImpl)
+            cacheSynchroniser.getChangeTracker().changes(CacheSynchroniserTest.class.getName());
+        List<Integer> featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId1);
+        changeSet.getChangedMap().put(TopLevelFeature.class, featureIds);
+        
+        //Create changed transcript that causes a TopLevelFeature to be changed
+        Integer featureId2 = 30;
+        featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId2);
+        changeSet.getChangedMap().put(Transcript.class, featureIds);
+        
+        //Create changed gap that causes a TopLevelFeature to be changed
+        Integer featureId3 = 40;
+        featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId3);
+        changeSet.getChangedMap().put(Gap.class, featureIds);
+        
+        //This sshould not change since the featureId is 20 like featureId1
+        //****processing should be skipped*****
+        Integer featureId4 = 20;
+        featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId3);
+        changeSet.getChangedMap().get(Gap.class).add(featureId4);//adding
+
+        //Start synching
+        boolean noErrors = cacheSynchroniser.updateAllCaches();
+        
+        //Find context map, using the generated id
+        String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId1);        
+        //Assert that context is added
+        Assert.assertNotNull(context);
+        
+
+        
+        //Find context map, using the generated id
+        context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId2);        
+        //Assert that context is added
+        Assert.assertNotNull(context);
+        
+
+        
+        //Find context map, using the generated id
+        context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId3);        
+        //Assert that context is added
+        Assert.assertNotNull(context);
+        
+        //Assert that Gene unique name is found in context
+        String idStr = featureId1.toString();
+        Assert.assertTrue(context.indexOf(idStr) != -1);
+        
+        //Assert that size of cache is 3, this is because the 4th entry is a duplicate
+        Assert.assertEquals( 
+                ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().size(), 3);
+        
+        //Assert the hidden errors were encountered
+        Assert.assertTrue(noErrors);
     }
     
     
     @Test
     public void testTopLevelFeatureRemoving()throws Exception{ 
         
+        //Set up the ChangeSet         
+        Integer featureId = 100;
+        MockChangeSetImpl changeSet = (MockChangeSetImpl)
+            cacheSynchroniser.getChangeTracker().changes(CacheSynchroniserTest.class.getName());
+        List<Integer> featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId);
+        changeSet.getNewMap().put(TopLevelFeature.class, featureIds);
+
+        //Start synching
+        boolean noErrors = cacheSynchroniser.updateAllCaches();
+        
         //Find context map, using the generated gene unique name
-        String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(String.valueOf(featureId)); 
+        String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId); 
         
         //Assert that context exists
         Assert.assertNotNull(context);
         
         //Assert that Gene unique name is found in context
-        Assert.assertTrue(context.indexOf(String.valueOf(featureId)) != -1);  
+        Assert.assertTrue(context.indexOf(featureId) != -1);  
         
         //Generate the unique name to be used for the Gene in test
-        MockChangeSetImpl changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes();     
-        changeSet.getDeletedTopLevelIds().add(featureId);        
+        changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes(CacheSynchroniserTest.class.getName()); 
+        featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId); 
+        changeSet.getDeletedMap().put(TopLevelFeature.class, featureIds);       
 
         //Start synching
-        cacheSynchroniser.processRequest();
+        cacheSynchroniser.updateAllCaches();
         
         //Now, check again
-        context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(String.valueOf(featureId)); 
+        context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId); 
         
         //Assert that context is removed
         Assert.assertNull(context);
         
+        //Assert the hidden errors were encountered
+        Assert.assertTrue(noErrors);
     }
 
     
     @Test
     public void testTranscriptAdding()throws Exception{      
-        
+
+        //Set up the ChangeSet         
+        Integer featureId = 70;
         //Generate the unique name to be used for the Gene in test
-        MockChangeSetImpl changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes();     
-        changeSet.getNewTranscriptIds().add(featureId);        
+        MockChangeSetImpl changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes(CacheSynchroniserTest.class.getName());  
+        List<Integer> featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId);
+        changeSet.getNewMap().put(Transcript.class, featureIds);     
 
         //Start synching
-        cacheSynchroniser.processRequest();
+        boolean noErrors = cacheSynchroniser.updateAllCaches();
         
         //Find Transcript DTO, using the generated gene unique n  ame
-        TranscriptDTO dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(String.valueOf(featureId));
+        TranscriptDTO dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(featureId);
         
         //Assert that context is added
         Assert.assertNotNull(dto);
         
         //Assert that Gene unique name is found in context
-        Assert.assertTrue(dto.getUniqueName().equals(String.valueOf(featureId)));
+        Assert.assertEquals(dto.getUniqueName(), featureId.toString());
+        
+        //Assert the hidden errors were encountered
+        Assert.assertTrue(noErrors);
     }
     
     
     @Test
     public void testTranscriptRemoving()throws Exception{ 
         
+        //Set up the ChangeSet        
+        Integer featureId = 124;
+        
+        //Assert that no DTO
+        TranscriptDTO dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(featureId);
+        Assert.assertNull(dto);
+        
+        MockChangeSetImpl changeSet = (MockChangeSetImpl)
+            cacheSynchroniser.getChangeTracker().changes(CacheSynchroniserTest.class.getName());
+        List<Integer> featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId);
+        changeSet.getNewMap().put(Transcript.class, featureIds);
+        //Initialise DTO cache
+        boolean noErrors = cacheSynchroniser.updateAllCaches();
+        
         //Find Transcript DTO, using the generated gene unique name
-        TranscriptDTO dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(String.valueOf(featureId)); 
+        dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(featureId);    
+
         
         //Assert that DTO exists  
         Assert.assertNotNull(dto);
         
-        //Assert that Gene unique name is found in DTO
-        Assert.assertTrue(dto.getUniqueName().equals(String.valueOf(featureId)));
-        
         //Generate the unique name to be used for the Gene in test
-        MockChangeSetImpl changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes();     
-        changeSet.getDeletedTranscriptIds().add(featureId);        
+        changeSet = (MockChangeSetImpl)cacheSynchroniser.getChangeTracker().changes(CacheSynchroniserTest.class.getName());    
+        featureIds = new ArrayList<Integer>();
+        featureIds.add(featureId);   
+        changeSet.getDeletedMap().put(Transcript.class, featureIds);          
 
         //Start synching
-        cacheSynchroniser.processRequest();
+        noErrors = cacheSynchroniser.updateAllCaches();
         
         //Now, check again
-        dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(String.valueOf(featureId)); 
+        dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(featureId); 
         
         //Assert that DTO is removed
         Assert.assertNull(dto);
+        
+        //Assert the hidden errors were encountered
+        Assert.assertTrue(noErrors);
         
     }
 }
