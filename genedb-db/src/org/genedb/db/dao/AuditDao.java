@@ -1,34 +1,44 @@
 package org.genedb.db.dao;
 
-import org.gmod.schema.feature.Polypeptide;
-import org.gmod.schema.feature.ProductiveTranscript;
-import org.gmod.schema.feature.Transcript;
-
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import java.sql.Date;
+
+import javax.sql.DataSource;
 
 public class AuditDao {
 
     private static final Logger logger = Logger.getLogger(AuditDao.class);
 
-    public Date getLastChangeForTranscript(Transcript transcript) {
+    private SimpleJdbcTemplate simpleJdbcTemplate;
 
-        Date date = getLastChangeForFeature(transcript.getFeatureId());
-
-        if (transcript instanceof ProductiveTranscript) {
-            Polypeptide pep = ((ProductiveTranscript)transcript).getProtein();
-            Date proteinDate = getLastChangeForFeature(pep.getFeatureId());
-            if (proteinDate.after(date)) {
-                date = proteinDate;
-            }
-        }
-
-        return date;
+    public void setDataSource(DataSource dataSource) {
+        this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
     }
 
-    private Date getLastChangeForFeature(int featureId) {
-        return null; // FIXME
+
+    public Date getLastChangeForExistingFeature(int featureId) {
+
+        Date updated = simpleJdbcTemplate.queryForObject(
+                "select timelastmodified from audit.feature_updated where feature_id=:featureId",
+                Date.class,
+                featureId);
+
+        Date added = simpleJdbcTemplate.queryForObject(
+                "select timelastmodified from audit.feature_added where feature_id=:featureId",
+                Date.class,
+                featureId);
+
+        if (added != null) {
+            if (updated == null) {
+                return added;
+            }
+            return (added.after(updated)) ? added: updated;
+        }
+
+        return updated;
     }
 
 }
