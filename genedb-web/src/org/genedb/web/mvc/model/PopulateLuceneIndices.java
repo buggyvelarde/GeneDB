@@ -160,7 +160,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         ChadoAnnotationConfiguration cfg = new ChadoAnnotationConfiguration();
         cfg.setDataSource(getDataSource());
-        cfg.configure();
+
+        cfg.addPackage("org.gmod.schema.mapped");
+        cfg.addPackage("org.gmod.schema.feature");
 
         cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
@@ -177,6 +179,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
         cfg.setListener("post-insert", ft);
         cfg.setListener("post-update", ft);
         cfg.setListener("post-delete", ft);
+
+        cfg.configure();
 
         SessionFactory sessionFactory = cfg.buildSessionFactory();
         sessionFactoryByBatchSize.put(batchSize, sessionFactory);
