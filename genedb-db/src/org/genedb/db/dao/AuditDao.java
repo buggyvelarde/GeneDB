@@ -28,7 +28,7 @@ public class AuditDao {
     }
 
     private Date getLastChangeForFeature(int featureId) {
-        return null;
+        return null; // FIXME
     }
 
 }
