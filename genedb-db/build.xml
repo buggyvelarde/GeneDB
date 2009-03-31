@@ -34,7 +34,7 @@
 
     <!-- General building, cleaning, JARing type targets -->
 
-	<!-- An internal init target -->
+    <!-- An internal init target -->
     <target name="setup-db" depends="fulljar-util">
         <init-target project="db"/>
         <mkdir dir="${imported.basedir.db}/ant-build/test" />
@@ -240,7 +240,7 @@
     </target>
 
   <target name="check.db-lib-uptodate" depends="init-db" if="db.ivy-timestamp-exists">
-    <uptodate property="db.lib-uptodate" srcfile="ivy.xml" targetfile="lib/ivy.timestamp.txt" />
+    <uptodate property="db.lib-uptodate" srcfile="ivy.xml" targetfile="${imported.basedir.db}/lib/ivy.timestamp.txt" />
   </target>
 
 
