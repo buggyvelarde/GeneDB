@@ -551,8 +551,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
         String getHost();
 
         @Option(shortName="p", longName="port", description="Port number of db server", defaultValue="5432")
-        void setPort(int port);
-        int getPort();
+        void setPort(Integer port);
+        Integer getPort();
+
 
         @Option(shortName="U", longName="userName", description="User to log in as")
         void setUserName(String userName);
