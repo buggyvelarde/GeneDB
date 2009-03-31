@@ -84,6 +84,7 @@ public class TranscriptDTO implements Serializable {
     private List<DbXRefDTO> dbXRefDTOs;
     private int min;
     private int max;
+    private short strand;
     List<FeatureCvTermDTO> controlledCurations;
     List<FeatureCvTermDTO> goBiologicalProcesses;
     List<FeatureCvTermDTO> goMolecularFunctions;
@@ -450,7 +451,7 @@ public class TranscriptDTO implements Serializable {
             }
         }
 
-        this.location = transcript.getExonLocsTraditional();
+        this.location = String.format("%d - %d %s", min, max, (this.strand < 0) ? " (reverse strand)" : "" );
     }
 
 
@@ -459,6 +460,7 @@ public class TranscriptDTO implements Serializable {
         FeatureLoc top = gene.getRankZeroFeatureLoc();
         this.min = top.getFmin();
         this.max = top.getFmax();
+        this.strand = top.getStrand();
 
         Feature topLevelFeature = top.getSourceFeature();
         this.topLevelFeatureType = topLevelFeature.getType().getName();
