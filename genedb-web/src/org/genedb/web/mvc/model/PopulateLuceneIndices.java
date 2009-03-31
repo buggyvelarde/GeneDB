@@ -180,7 +180,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         cfg.setListener("post-update", ft);
         cfg.setListener("post-delete", ft);
 
-        cfg.configure();
+        //cfg.configure();
 
         SessionFactory sessionFactory = cfg.buildSessionFactory();
         sessionFactoryByBatchSize.put(batchSize, sessionFactory);
