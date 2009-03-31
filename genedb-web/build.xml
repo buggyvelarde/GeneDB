@@ -230,6 +230,15 @@
     </target>
 
 
+
+    <target name="LuceneIndex" depends="check-deploy,iajc-web">
+        <java fork="true" maxmemory="256m" failonerror="true" classpathref="web-classpath" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
+            <arg line="-o Pfalciparum -h ${dbhost} -p ${dbport} -U ${dbuser} -P ${dbpasswd} ${dbnam}"/>
+            <jvmarg line="-server" />
+        </java>
+    </target>
+
+
   <target name="init-web" description="Create full JAR file">
     <init-target project="web" />
   </target>
