@@ -68,8 +68,7 @@
         <tr>
             <td class="label">Location</td>
             <td class="value">
-                ${dto.topLevelFeatureType} ${dto.topLevelFeatureDisplayName},
-                locations ${dto.location}
+                ${dto.topLevelFeatureType} ${dto.topLevelFeatureDisplayName}; ${dto.location}
             </td>
         </tr>
         <c:if test="${!empty dto.dbXRefDTOs}">
