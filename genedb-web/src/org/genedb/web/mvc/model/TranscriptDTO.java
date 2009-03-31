@@ -1,5 +1,6 @@
 package org.genedb.web.mvc.model;
 
+import org.genedb.db.dao.AuditDao;
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.db.domain.objects.DatabasePolypeptideRegion;
 import org.genedb.db.domain.objects.InterProHit;
@@ -40,6 +41,7 @@ import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -58,6 +60,9 @@ public class TranscriptDTO implements Serializable {
 
     @Autowired
     private transient SequenceDao sequenceDao;
+
+    @Autowired
+    private transient AuditDao auditDao;
 
     private String uniqueName;
     private String properName;
@@ -93,6 +98,7 @@ public class TranscriptDTO implements Serializable {
     private String organismCommonName;
     private String organismHtmlShortName;
     private List<String> publications;
+    private long lastModified = Long.MIN_VALUE;
 
 
     public String getOrganismCommonName() {
@@ -104,12 +110,12 @@ public class TranscriptDTO implements Serializable {
     }
 
     private Map<String,Object> prepareAlgorithmData(Polypeptide polypeptide) {
-        Map<String,Object> algorithmData = new HashMap<String,Object>();
-        putIfNotEmpty(algorithmData, "SignalP", prepareSignalPData(polypeptide));
-        putIfNotEmpty(algorithmData, "DGPI", prepareDGPIData(polypeptide));
-        putIfNotEmpty(algorithmData, "PlasmoAP", preparePlasmoAPData(polypeptide));
-        putIfNotEmpty(algorithmData, "TMHMM", prepareTMHMMData(polypeptide));
-        return algorithmData;
+        Map<String,Object> aData = new HashMap<String,Object>();
+        putIfNotEmpty(aData, "SignalP", prepareSignalPData(polypeptide));
+        putIfNotEmpty(aData, "DGPI", prepareDGPIData(polypeptide));
+        putIfNotEmpty(aData, "PlasmoAP", preparePlasmoAPData(polypeptide));
+        putIfNotEmpty(aData, "TMHMM", prepareTMHMMData(polypeptide));
+        return aData;
     }
 
     private Map<String,Object> prepareSignalPData(Polypeptide polypeptide) {
@@ -264,6 +270,7 @@ public class TranscriptDTO implements Serializable {
         populateParentDetails(gene);
         populateMisc(transcript);
         populateOrganismDetails(transcript);
+        populateLastModified(transcript, polypeptide);
 
         if (polypeptide != null) {
             this.algorithmData = prepareAlgorithmData(polypeptide);
@@ -309,6 +316,24 @@ public class TranscriptDTO implements Serializable {
 
     }
 
+    private void populateLastModified(Transcript transcript, Polypeptide polypeptide) {
+            Date date = auditDao.getLastChangeForExistingFeature(transcript.getFeatureId());
+
+            if (polypeptide != null) {
+                Date polypeptideDate = auditDao.getLastChangeForExistingFeature(polypeptide.getFeatureId());
+                if (date == null && polypeptideDate == null) {
+                    return;
+                }
+                if (polypeptideDate != null && polypeptideDate.after(date)) {
+                    date = polypeptideDate;
+                }
+            }
+
+            if (date != null) {
+                lastModified = date.getTime();
+            }
+    }
+
     private void populateOrganismDetails(Transcript transcript) {
         this.organismCommonName = transcript.getOrganism().getCommonName();
         this.organismHtmlShortName = transcript.getOrganism().getHtmlShortName();
@@ -339,13 +364,13 @@ public class TranscriptDTO implements Serializable {
             }
         }
 
-        List<PolypeptideRegionGroup> domainInformation = new ArrayList<PolypeptideRegionGroup>(interProHitsByDbXRef.values());
+        List<PolypeptideRegionGroup> domainInfo = new ArrayList<PolypeptideRegionGroup>(interProHitsByDbXRef.values());
 
         if (!otherMatches.isEmpty()) {
-            domainInformation.add(otherMatches);
+            domainInfo.add(otherMatches);
         }
 
-        return domainInformation;
+        return domainInfo;
     }
 
     private void populateFromFeatureRelationships(Polypeptide polypeptide) {
@@ -484,9 +509,9 @@ public class TranscriptDTO implements Serializable {
      * @param synonyms
      * @return
      */
-    private Map<String, List<String>> findFromSynonymsByType(Collection<FeatureSynonym> synonyms) {
+    private Map<String, List<String>> findFromSynonymsByType(Collection<FeatureSynonym> synonymCollection) {
         HashMap<String, List<String>> synonymsByType = new HashMap<String, List<String>>();
-        for (FeatureSynonym featSynonym : synonyms) {
+        for (FeatureSynonym featSynonym : synonymCollection) {
             Synonym synonym = featSynonym.getSynonym();
             String typeName = formatSynonymTypeName(synonym.getType().getName());
             List<String> filtered = synonymsByType.get(typeName);
@@ -497,7 +522,7 @@ public class TranscriptDTO implements Serializable {
             filtered.add(synonym.getName());
         }
 
-        if(synonymsByType.size()>0){
+        if (synonymsByType.size() > 0 ) {
             return synonymsByType;
         }
         return null;
@@ -684,6 +709,10 @@ public class TranscriptDTO implements Serializable {
 
     public int getTopLevelFeatureLength() {
         return topLevelFeatureLength;
+    }
+
+    public long getLastModified() {
+        return lastModified;
     }
 
     public Map<String, List<String>> getSynonymsByTypes() {
