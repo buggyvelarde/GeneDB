@@ -65,7 +65,7 @@ public class CacheSynchroniserTest{
         Assert.assertTrue(context.indexOf(idStr) != -1);
         
         //Assert the hidden errors were encountered
-        Assert.assertTrue(noErrors);
+        Assert.assertTrue("Errors found during processing", noErrors);
     }
     
     @Test
@@ -129,7 +129,7 @@ public class CacheSynchroniserTest{
                 ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().size(), 3);
         
         //Assert the hidden errors were encountered
-        Assert.assertTrue(noErrors);
+        Assert.assertTrue("Errors found during processing", noErrors);
     }
     
     
@@ -172,7 +172,7 @@ public class CacheSynchroniserTest{
         Assert.assertNull(context);
         
         //Assert the hidden errors were encountered
-        Assert.assertTrue(noErrors);
+        Assert.assertTrue("Errors found during processing", noErrors);
     }
 
     
@@ -200,7 +200,7 @@ public class CacheSynchroniserTest{
         Assert.assertEquals(dto.getUniqueName(), featureId.toString());
         
         //Assert the hidden errors were encountered
-        Assert.assertTrue(noErrors);
+        Assert.assertTrue("Errors found during processing", noErrors);
     }
     
     
@@ -245,7 +245,7 @@ public class CacheSynchroniserTest{
         Assert.assertNull(dto);
         
         //Assert the hidden errors were encountered
-        Assert.assertTrue(noErrors);
+        Assert.assertTrue("Errors found during processing", noErrors);
         
     }
 }

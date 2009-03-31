@@ -57,16 +57,26 @@ public class CacheSynchroniser {
     protected StoredMap<Integer, String> contextMapMap;
     protected BasicGeneService basicGeneService;
     
+    private int addedTopLevelFeatureCount;
+    private int changedTopLevelFeatureCount;
+    private int removedTopLevelFeatureCount;
+    
+    private int addedTranscriptCount;
+    private int changedTranscriptCount;
+    private int removedTranscriptCount;
+    
+    
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+	    CacheSynchroniser cacheSynchroniser = null;
 		try{
 			//Get the sychroniser
 			ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
 					new String[] {"classpath:applicationContext.xml", "classpath:synchCaches.xml"});
 			ctx.refresh();
-			CacheSynchroniser cacheSynchroniser = ctx.getBean("cacheSynchroniser", CacheSynchroniser.class);
+			cacheSynchroniser = ctx.getBean("cacheSynchroniser", CacheSynchroniser.class);
 
 			//Start synching
 			if (!cacheSynchroniser.updateAllCaches()){
@@ -77,7 +87,23 @@ public class CacheSynchroniser {
 		}catch(Exception e){
             logger.error(e);
             System.exit(64);			
+		}finally{
+		    if (cacheSynchroniser!= null){
+		        cacheSynchroniser.printResults();
+		    }
 		}
+	}
+	
+	/**
+	 * Print update results
+	 */
+	private void printResults(){
+	    logger.info("Added Top Level Feature(s) :" + addedTopLevelFeatureCount);
+        logger.info("Changed Top Level Feature(s) :" + addedTopLevelFeatureCount);
+        logger.info("Removed Top Level Feature(s) :" + addedTopLevelFeatureCount);
+        logger.info("Added Transcript(s) :" + addedTranscriptCount);
+        logger.info("Changed Transcript(s) :" + addedTranscriptCount);
+        logger.info("Removed Transcript(s) :" + addedTranscriptCount);
 	}
 	
 	
@@ -109,6 +135,9 @@ public class CacheSynchroniser {
 	    if(isAllSuccessful){	
 	        changeSet.commit();
 	    }
+	    
+	    //Print operation
+	    printResults();
 	    
 	    return isAllSuccessful;
 	}	
@@ -195,6 +224,7 @@ public class CacheSynchroniser {
             //Get the top level features to remove
             for(Integer featureId: topLevelFeatureIds){
                 contextMapMap.remove(featureId);
+                ++removedTopLevelFeatureCount;
             }
             isAllRemoved =true;
         }catch(Exception e){
@@ -228,7 +258,7 @@ public class CacheSynchroniser {
                     }
                     
                     //(Re)add the toplevelfeature to cache
-	                if(!populateTopLevelFeatures(feature, processedFeatures)){
+	                if(!populateTopLevelFeatures(feature, processedFeatures, isChanged)){
 	                    success = false;//error found
 	                }
 	            }else{
@@ -250,10 +280,12 @@ public class CacheSynchroniser {
 	 * @param feature
      * @param processedFeatures
      *        The processed changes to avoid duplication of effort
+     * @param isChanged
+     *          Is this method call for a new feature or a changed feature
      * @return Boolean
      *          Is processing a success
 	 */
-	private boolean populateTopLevelFeatures(Feature feature, Set<Integer> processedFeatures){
+	private boolean populateTopLevelFeatures(Feature feature, Set<Integer> processedFeatures, boolean isChanged){
 	    boolean success = false;
 		try{
 		    logger.debug("populateTopLevelFeatures, feature.getSeqLen:" 
@@ -264,6 +296,13 @@ public class CacheSynchroniser {
 			            + feature.getFeatureId()+")"+ feature.getUniqueName());
 				CacheDBHelper.populateContextMapCache(
             		feature, basicGeneService, renderedDiagramFactory, diagramCache, contextMapMap);
+				
+				//Update count
+				if(isChanged){
+				    ++changedTopLevelFeatureCount;
+				}else{
+				    ++addedTopLevelFeatureCount;
+				}
 				
 				//Add to the processd list
 				processedFeatures.add(new Integer(feature.getFeatureId()));
@@ -415,19 +454,23 @@ public class CacheSynchroniser {
 	private boolean updateTranscriptDTO(Collection<Integer> featureIds, Class<? extends Feature> clazz, Set<Integer> processedFeatures, boolean isChanged){
 	    boolean isUpdated = false;
 	    try{
-	        List<Transcript> transcripts = findTranscripts(featureIds, clazz);
-	        for(Transcript transcript: transcripts){
-	            TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
-	            if(!isChanged){
-	                dtoMap.put(new Integer(transcript.getFeatureId()), dto);   
-	                logger.info("Added transcript ("+transcript.getFeatureId()+"), " + transcript.getUniqueName());
-	            }else{
-	                dtoMap.replace(new Integer(transcript.getFeatureId()), dto);
-                    logger.info("Replaced transcript ("+transcript.getFeatureId()+"), " + transcript.getUniqueName());
+	        if(featureIds!= null && featureIds.size()>0){
+	            List<Transcript> transcripts = findTranscripts(featureIds, clazz);
+	            for(Transcript transcript: transcripts){
+	                TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
+	                if(!isChanged){
+	                    dtoMap.put(new Integer(transcript.getFeatureId()), dto);  
+	                    ++addedTranscriptCount;
+	                    logger.info("Added transcript ("+transcript.getFeatureId()+"), " + transcript.getUniqueName());
+	                }else{
+	                    dtoMap.replace(new Integer(transcript.getFeatureId()), dto);
+	                    ++changedTranscriptCount;
+	                    logger.info("Replaced transcript ("+transcript.getFeatureId()+"), " + transcript.getUniqueName());
+	                }
+	                //mark transcript as processed
+	                processedFeatures.add(new Integer(transcript.getFeatureId()));
 	            }
-	            //mark transcript as processed
-	            processedFeatures.add(new Integer(transcript.getFeatureId()));
-	        }
+	        }  
 	        isUpdated = true;
 	    }catch(Exception e){
 	        logger.error(e);
@@ -448,6 +491,7 @@ public class CacheSynchroniser {
             //Get the top level features to remove
             for(Integer featureId: transcriptFeatureIds){
                 dtoMap.remove(featureId);
+                ++removedTranscriptCount;
             }
             isAllRemoved =true;
         }catch(Exception e){
