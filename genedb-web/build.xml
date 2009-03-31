@@ -239,7 +239,7 @@
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
             </classpath>
-            <arg line="-o Pfalciparum -h ${dbhost} -p ${dbport} -U ${dbuser} -P ${dbpasswd} ${dbname}"/>
+            <arg line="-o Pfalciparum -i /tmp -h ${dbhost} -p ${dbport} -U ${dbuser} -P ${dbpasswd} ${dbname}"/>
             <jvmarg line="-server" />
         </java>
     </target>
