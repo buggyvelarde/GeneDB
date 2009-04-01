@@ -460,7 +460,7 @@ public class TranscriptDTO implements Serializable {
         FeatureLoc top = gene.getRankZeroFeatureLoc();
         this.min = top.getFmin();
         this.max = top.getFmax();
-        this.strand = top.getStrand();
+        this.strand = top.getStrand()!=null?top.getStrand():0;
 
         Feature topLevelFeature = top.getSourceFeature();
         this.topLevelFeatureType = topLevelFeature.getType().getName();
