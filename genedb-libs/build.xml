@@ -191,7 +191,7 @@
         inpath="@{from-directory}"
         aspectpathref="@{classpathref}"
         classpathRef ="@{classpathref}"
-        destdir="@{to-directory}" maxmem="512M" fork="true">
+        destdir="@{to-directory}" maxmem="1024M" fork="true">
     	
       	 <forkclasspath refid="aspectj-tools-classpath"/>
       </iajc>
