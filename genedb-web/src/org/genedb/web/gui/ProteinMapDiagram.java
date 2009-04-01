@@ -19,6 +19,7 @@ public class ProteinMapDiagram extends TrackedDiagram {
     private String organism;
     private String polypeptideUniqueName;
     private String transcriptUniqueName;
+    private int transcriptFeatureId;
     private MembraneStructure membraneStructure;
 
     public ProteinMapDiagram(Polypeptide polypeptide, Transcript transcript,
@@ -27,6 +28,7 @@ public class ProteinMapDiagram extends TrackedDiagram {
         this.organism = polypeptide.getOrganism().getCommonName();
         this.polypeptideUniqueName = polypeptide.getUniqueName();
         this.transcriptUniqueName = transcript.getUniqueName();
+        this.transcriptFeatureId = transcript.getFeatureId();
         this.membraneStructure = polypeptide.getMembraneStructure();
 
         this.packSubfeatures = AllocatedCompoundFeature.Mode.STRATIFIED_LTR;
@@ -84,6 +86,11 @@ public class ProteinMapDiagram extends TrackedDiagram {
     String getTranscriptUniqueName() {
         return transcriptUniqueName;
     }
+
+    int getTranscriptFeatureId() {
+        return transcriptFeatureId;
+    }
+
     MembraneStructure getMembraneStructure() {
         return membraneStructure;
     }

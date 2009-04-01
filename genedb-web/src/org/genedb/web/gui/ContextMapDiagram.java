@@ -78,14 +78,17 @@ public class ContextMapDiagram extends TrackedDiagram {
     private static final Logger logger = Logger.getLogger(ContextMapDiagram.class);
 
     private String organism, chromosome;
+
+    private int chromosomeFeatureId;
     /**
      * Users should not call this constructor directly, but use one of the
      * static methods defined below.
      */
-    private ContextMapDiagram(String organism, String chromosome, int start, int end) {
+    private ContextMapDiagram(String organism, String chromosome, int chromosomeFeatureId, int start, int end) {
         super(start, end);
         this.organism = organism;
         this.chromosome = chromosome;
+        this.chromosomeFeatureId = chromosomeFeatureId;
     }
 
     /**
@@ -126,8 +129,9 @@ public class ContextMapDiagram extends TrackedDiagram {
 
         String organismName = gene.getOrganism();
         String chromosomeName = gene.getChromosomeName();
+        int chromosomeFeatureId = gene.getChromosome().getFeatureId();
 
-        return forRegion(basicGeneService, organismName, chromosomeName, start, end);
+        return forRegion(basicGeneService, organismName, chromosomeName, chromosomeFeatureId, start, end);
     }
 
     /**
@@ -143,8 +147,8 @@ public class ContextMapDiagram extends TrackedDiagram {
      * @return
      */
     public static ContextMapDiagram forRegion(BasicGeneService basicGeneService,
-            String organismName, String chromosomeName, int start, int end) {
-        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, start, end);
+            String organismName, String chromosomeName, int chromosomeFeatureId, int start, int end) {
+        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, chromosomeFeatureId, start, end);
 
         diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, +1, start, end), false);
         diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, -1, start, end), true);
@@ -156,8 +160,8 @@ public class ContextMapDiagram extends TrackedDiagram {
     }
 
     public static ContextMapDiagram forChromosome(BasicGeneService basicGeneService,
-            String organismName, String chromosomeName, int chromosomeLength) {
-        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, 0, chromosomeLength);
+            String organismName, String chromosomeName, int chromosomeFeatureId, int chromosomeLength) {
+        ContextMapDiagram diagram = new ContextMapDiagram(organismName, chromosomeName, chromosomeFeatureId, 0, chromosomeLength);
 
         diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, +1), false);
         diagram.allocateTracks(diagram.genes(basicGeneService, organismName, chromosomeName, -1), true);
@@ -184,6 +188,10 @@ public class ContextMapDiagram extends TrackedDiagram {
      */
     public String getChromosome() {
         return chromosome;
+    }
+
+    public int getChromosomeFeatureId() {
+        return chromosomeFeatureId;
     }
 
     private Set<BasicGene> genes(BasicGeneService basicGeneService, String organismName,

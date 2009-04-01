@@ -328,10 +328,10 @@ public class RenderedContextMap extends RenderedDiagram {
 
     @Override
     public String getKeyForTile(int index, int start, int width) {
-        return String.format("%s:%s:%s:%d:%09d-%09ds%.0f.%s",
-                getDiagram().getOrganism(),
+        return String.format("%s^^%s:%s:%d:%09d-%09ds%.0f.%s",
+                getDiagram().getChromosomeFeatureId(),
                 thumbNailMode ? "thumbnail": "context",
-                getDiagram().getChromosome(),
+                getDiagram().getOrganism(),
                 index,
                 start,
                 width,

@@ -128,7 +128,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             ret.setFeatureId(Integer.parseInt(doc.get("featureId")));
             ret.setUniqueName(geneUniqueName);
             ret.setName(doc.get("name"));
-            ret.setChromosome(new Chromosome(doc.get("chr"), Integer.parseInt(doc.get("chrlen"))));
+            ret.setChromosome(new Chromosome(doc.get("chr"), Integer.parseInt(doc.get("chrId")), Integer.parseInt(doc.get("chrlen"))));
             ret.setOrganism(doc.get("organism.commonName"));
             ret.setFmin(Integer.parseInt(doc.get("start")));
             ret.setFmax(Integer.parseInt(doc.get("stop")));

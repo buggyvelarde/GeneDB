@@ -2,18 +2,20 @@ package org.genedb.db.domain.objects;
 
 /**
  * Represents a chromosome.
- * 
+ *
  * @author rh11
  */
 public class Chromosome {
+    private int featureId;
     private String name;
     private int length;
-    
-    public Chromosome(String name, int length) {
+
+    public Chromosome(String name, int chromsomeFeatureId, int length) {
         this.length = length;
         this.name = name;
+        this.featureId = chromsomeFeatureId;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -26,5 +28,8 @@ public class Chromosome {
     }
     public void setLength(int length) {
         this.length = length;
+    }
+    public int getFeatureId() {
+        return featureId;
     }
 }

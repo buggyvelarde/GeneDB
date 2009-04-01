@@ -91,7 +91,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
 
         FeatureLoc loc = feat.getRankZeroFeatureLoc();
         Feature chromosomeFeature = loc.getSourceFeature();
-        Chromosome chromosome = new Chromosome(chromosomeFeature.getDisplayName(), chromosomeFeature.getSeqLen());
+        Chromosome chromosome = new Chromosome(chromosomeFeature.getDisplayName(), chromosomeFeature.getFeatureId(), chromosomeFeature.getSeqLen());
         ret.setChromosome(chromosome);
         ret.setStrand(loc.getStrand());
         ret.setFmin(loc.getFmin());

@@ -798,6 +798,16 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     }
 
     @Transient
+    @Field(name = "chrId", index=Index.UN_TOKENIZED, store = Store.YES)
+    int getChrId() {
+        FeatureLoc loc = getRankZeroFeatureLoc();
+        if (loc == null) {
+            return -1;
+        }
+        return loc.getSourceFeature().getFeatureId();
+    }
+
+    @Transient
     @Field(name = "chrlen", store = Store.YES)
     int getChrLen() {
         FeatureLoc loc = getRankZeroFeatureLoc();

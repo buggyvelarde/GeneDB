@@ -69,9 +69,7 @@ public class RenderedProteinMap extends RenderedDiagram {
         if (hasMembraneStructure) {
             return super.getHeight() + membraneStructureTrackHeight + membraneStructureTrackGap;
         }
-        else {
-            return super.getHeight();
-        }
+        return super.getHeight();
     }
 
     @Override
@@ -187,10 +185,10 @@ public class RenderedProteinMap extends RenderedDiagram {
 
     @Override
     public String getKeyForTile(int index, int start, int width) {
-        return String.format("%s:%s:%s:%d:%09d-%09ds%.0f.%s",
-                getDiagram().getOrganism(),
+        return String.format("%d^^%s:%s:%d:%09d-%09ds%.0f.%s",
+                getDiagram().getTranscriptFeatureId(),
                 thumbNailMode ? "thumbnailp": "protein",
-                getDiagram().getTranscriptUniqueName(),
+                getDiagram().getOrganism(),
                 index,
                 start,
                 width,
