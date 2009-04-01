@@ -31,7 +31,7 @@ public class ContextMapDiagramTest {
         mockBasicGeneService.setStrand(-1);
         mockBasicGeneService.addSimpleGene("isolated2", 90, 110, 2);
 
-        mockBasicGeneService.setChromosome(new Chromosome("chr3", 1000));
+        mockBasicGeneService.setChromosome(new Chromosome("chr3", 103, 1000));
         mockBasicGeneService.addSimpleGene("lhs", 20, 30, 3);
         mockBasicGeneService.addSimpleGene("rhs", 950, 990, 3);
 
@@ -46,7 +46,7 @@ public class ContextMapDiagramTest {
      * in a simple case.
      */
     @Test public void simpleRegion() {
-        ContextMapDiagram diagram = ContextMapDiagram.forRegion(simple(), "cat", "chr1", 0, 1000);
+        ContextMapDiagram diagram = ContextMapDiagram.forRegion(simple(), "cat", "chr1", 101, 0, 1000);
         assertNotNull(diagram);
         assertEquals(0, diagram.getStart());
         assertEquals(1000, diagram.getEnd());
@@ -218,7 +218,7 @@ public class ContextMapDiagramTest {
      * Test that track-allocation works correctly with some overlapping genes.
      */
     @Test public void overlappingTrackAllocation() {
-        ContextMapDiagram diagram = ContextMapDiagram.forRegion(simpleOverlaps(), "dog", "chr1", 0, 100);
+        ContextMapDiagram diagram = ContextMapDiagram.forRegion(simpleOverlaps(), "dog", "chr1", 101, 0, 100);
         String[][] expectedTracks = new String[][] {
                 new String[] {"one", "four"},
                 new String[] {"two", "five"},
@@ -241,14 +241,14 @@ public class ContextMapDiagramTest {
     }
 
     @Test public void altSimpleTrackAllocationPositive() {
-        ContextMapDiagram diagram = ContextMapDiagram.forRegion(altSimple(1), "dog", "chr1", 0, 100);
+        ContextMapDiagram diagram = ContextMapDiagram.forRegion(altSimple(1), "dog", "chr1", 101, 0, 100);
         assertEquals(0, diagram.numberOfNegativeTracks());
         assertEquals(2, diagram.numberOfPositiveTracks());
         assertEquals(2, diagram.numberOfTracks());
     }
 
     @Test public void altSimpleTrackAllocationNegative() {
-        ContextMapDiagram diagram = ContextMapDiagram.forRegion(altSimple(-1), "dog", "chr1", 0, 100);
+        ContextMapDiagram diagram = ContextMapDiagram.forRegion(altSimple(-1), "dog", "chr1", 101, 0, 100);
         assertEquals(2, diagram.numberOfNegativeTracks());
         assertEquals(0, diagram.numberOfPositiveTracks());
         assertEquals(2, diagram.numberOfTracks());
@@ -272,7 +272,7 @@ public class ContextMapDiagramTest {
      * Test that track-allocation works correctly in the presence of alternative splicing.
      */
     @Test public void altOverlapTrackAllocation() {
-        ContextMapDiagram diagram = ContextMapDiagram.forRegion(altOverlaps(), "dog", "chr1", 0, 100);
+        ContextMapDiagram diagram = ContextMapDiagram.forRegion(altOverlaps(), "dog", "chr1", 101, 0, 100);
         String[][] expectedTracks = new String[][] {
                 new String[] {"one/t1", "six"},
                 new String[] {"one/t2", "seven"},

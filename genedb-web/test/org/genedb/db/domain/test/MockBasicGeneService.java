@@ -37,6 +37,8 @@ class BasicGeneFactory {
      */
     private static int DEFAULT_CHR_LENGTH = 1000000;
 
+    private static int DEFAULT_CHR_ID = 101;
+
     /**
      * Sets the default organism, chromosome and strand for genes produced by this factory.
      *
@@ -49,7 +51,7 @@ class BasicGeneFactory {
 
         this.nextId = 1;
         this.organism = organism;
-        this.chromosome = new Chromosome(chromosome, DEFAULT_CHR_LENGTH);
+        this.chromosome = new Chromosome(chromosome, DEFAULT_CHR_ID, DEFAULT_CHR_LENGTH);
         this.strand = strand;
     }
 
@@ -147,7 +149,7 @@ class BasicGeneFactory {
      * @param chromosome The name of the new default chromosome
      */
     public void setChromosome(String chromosomeName) {
-        this.chromosome = new Chromosome(chromosomeName, DEFAULT_CHR_LENGTH);
+        this.chromosome = new Chromosome(chromosomeName, DEFAULT_CHR_ID, DEFAULT_CHR_LENGTH);
     }
     /**
      * Change the default strand for genes produced by this factory.

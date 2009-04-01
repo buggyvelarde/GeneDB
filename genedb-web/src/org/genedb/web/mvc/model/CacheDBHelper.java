@@ -65,7 +65,7 @@ public class CacheDBHelper {
             DiagramCache diagramCache, StoredMap<Integer, String> contextMapMap) {
 
         ContextMapDiagram chromosomeDiagram = ContextMapDiagram.forChromosome(basicGeneService,
-            feature.getOrganism().getCommonName(), feature.getUniqueName(), feature.getSeqLen());
+            feature.getOrganism().getCommonName(), feature.getUniqueName(), feature.getFeatureId(), feature.getSeqLen());
 
         RenderedContextMap renderedContextMap = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram);
         RenderedContextMap renderedChromosomeThumbnail = (RenderedContextMap) renderedDiagramFactory.getRenderedDiagram(chromosomeDiagram).asThumbnail(THUMBNAIL_WIDTH);
