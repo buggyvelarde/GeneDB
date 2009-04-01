@@ -14,12 +14,14 @@
 
   <property name="lib-dir" value="${imported.basedir.libs}/lib" />
   <property name="lib.dir" value="lib" />
+	
+  <path id="aspectj-tools-classpath">
+    <pathelement location="${imported.basedir.libs}/lib/aspectj/com.springsource.org.aspectj.tools-1.6.2.RELEASE.jar"/>
+  </path>
 
   <!-- Extra task definitions -->
   <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-    <classpath>
-      <pathelement location="${imported.basedir.libs}/lib/aspectj/com.springsource.org.aspectj.tools-1.6.2.RELEASE.jar"/>
-    </classpath>
+    <classpath refid="aspectj-tools-classpath"/>
   </taskdef>
 
 
@@ -189,7 +191,10 @@
         inpath="@{from-directory}"
         aspectpathref="@{classpathref}"
         classpathRef ="@{classpathref}"
-        destdir="@{to-directory}" />
+        destdir="@{to-directory}" maxmem="512M" fork="true">
+    	
+      	 <forkclasspath refid="aspectj-tools-classpath"/>
+      </iajc>
     </sequential>
   </macrodef>
 
