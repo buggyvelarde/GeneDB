@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -24,6 +25,7 @@ public class HibernateChangeTracker implements ChangeTracker {
     private ChadoSessionFactoryBean sessionFactoryBean;
 
     @Override
+    @Transactional
     public HibernateChangeSet changes(String key) throws SQLException {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
