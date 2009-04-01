@@ -40,7 +40,7 @@
         <property name="noContextMap"><value>true</value></property>
     </bean>
     
-    <bean id="changeTracker" class="org.genedb.db.audit.MockChangeTrackerImpl"/>
+    <bean id="changeTracker" class="org.genedb.db.audit.HibernateChangeTracker"/>
 
     <bean id="renderedDiagramFactory" class="org.genedb.web.gui.RenderedDiagramFactory">
         <property name="labelFont">

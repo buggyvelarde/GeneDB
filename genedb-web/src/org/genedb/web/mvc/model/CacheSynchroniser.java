@@ -58,6 +58,7 @@ public class CacheSynchroniser {
     protected BerkeleyMapFactory bmf;
     protected StoredMap<Integer, TranscriptDTO> dtoMap;
     protected StoredMap<Integer, String> contextMapMap;
+    protected StoredMap<String, byte[]> contextImageMap;
     protected BasicGeneService basicGeneService;
     
     private int addedTopLevelFeatureCount;
@@ -74,6 +75,7 @@ public class CacheSynchroniser {
 	 */
 	public static void main(String[] args) {
 	    CacheSynchroniser cacheSynchroniser = null;
+	    int exitStatus = 0;
 		try{
 			//Get the sychroniser
 			ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -88,26 +90,13 @@ public class CacheSynchroniser {
 			}
 		
 		}catch(Exception e){
-            logger.error(e);
-            System.exit(64);			
-		}finally{
-		    if (cacheSynchroniser!= null){
-		        cacheSynchroniser.printResults();
-		    }
+            logger.error("Internal error from cache synchronizer", e);
+            exitStatus = 64;
 		}
-	}
-	
-	/**
-	 * Print update results
-	 */
-	private void printResults(){
-	    logger.info(
-	            "\nAdded Top Level Feature(s) :" + addedTopLevelFeatureCount + 
-	            "\nChanged Top Level Feature(s) :" + addedTopLevelFeatureCount +
-	            "\nRemoved Top Level Feature(s) :" + addedTopLevelFeatureCount +
-	            "\nAdded Transcript(s) :" + addedTranscriptCount +
-                "\nChanged Transcript(s) :" + addedTranscriptCount +
-                "\nRemoved Transcript(s) :" + addedTranscriptCount);
+		if (cacheSynchroniser!= null){
+		    cacheSynchroniser.printResults();
+		}
+		System.exit(exitStatus);
 	}
 	
 	
@@ -229,15 +218,28 @@ public class CacheSynchroniser {
             //Remove top level features
             Collection<Integer>topLevelFeatureIds = changeSet.deletedFeatureIds(TopLevelFeature.class);
             logger.info("TopLevelFeatures ChangeSet.deletedFeatures: " + topLevelFeatureIds.size());
-
+            
             //Get the top level features to remove
             for(Integer featureId: topLevelFeatureIds){
+                
+                //Remove the image map
+                for(String key: contextImageMap.keySet()){
+                    int endIndex = key.indexOf("^^");
+                    if (endIndex!= -1){
+                        String featureIdStr = key.substring(0, endIndex);
+                        if (featureIdStr.equals(featureId.toString())){
+                            contextImageMap.remove(key);
+                        }
+                    }
+                }
+                
+                //remove the context map
                 contextMapMap.remove(featureId);
                 ++removedTopLevelFeatureCount;
             }
             isAllRemoved =true;
         }catch(Exception e){
-            logger.error(e);
+            logger.error("Error removing top-level features", e);
         }
         return isAllRemoved;
     }
@@ -327,7 +329,7 @@ public class CacheSynchroniser {
 			}
             success =true;
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("Error populating top-level features", e);
 		}
 		return success;
 	}
@@ -487,7 +489,7 @@ public class CacheSynchroniser {
 	        }  
 	        isUpdated = true;
 	    }catch(Exception e){
-	        logger.error(e);
+	        logger.error(e.getMessage(), e);
 	    }
 	    return isUpdated;
 	}
@@ -575,7 +577,7 @@ public class CacheSynchroniser {
                 }
 			}
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("Error finding the transcripts", e);
 		}
         return transcripts;		
 	}
@@ -583,10 +585,24 @@ public class CacheSynchroniser {
 	protected void init(){
         dtoMap = bmf.getDtoMap(); // TODO More nicely
         contextMapMap = bmf.getContextMapMap();
+        contextImageMap = bmf.getImageMap();
 
         LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         basicGeneService = new BasicGeneServiceImpl(luceneIndex);
 	}
+    
+    /**
+     * Print update results
+     */
+    private void printResults(){
+        logger.info(
+                "\nAdded Top Level Feature(s) :" + addedTopLevelFeatureCount + 
+                "\nChanged Top Level Feature(s) :" + addedTopLevelFeatureCount +
+                "\nRemoved Top Level Feature(s) :" + addedTopLevelFeatureCount +
+                "\nAdded Transcript(s) :" + addedTranscriptCount +
+                "\nChanged Transcript(s) :" + addedTranscriptCount +
+                "\nRemoved Transcript(s) :" + addedTranscriptCount);
+    }
 
 	public boolean isNoContextMap() {
 		return isNoContextMap;
