@@ -37,6 +37,7 @@ import org.gmod.schema.utils.PeptideProperties;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -52,6 +53,7 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+@Configurable
 public class TranscriptDTO implements Serializable {
 
     private transient Logger logger = Logger.getLogger(TranscriptDTO.class);
@@ -271,7 +273,7 @@ public class TranscriptDTO implements Serializable {
         populateParentDetails(gene);
         populateMisc(transcript);
         populateOrganismDetails(transcript);
-        populateLastModified(transcript, polypeptide);
+        //populateLastModified(transcript, polypeptide);
 
         if (polypeptide != null) {
             this.algorithmData = prepareAlgorithmData(polypeptide);
@@ -430,7 +432,7 @@ public class TranscriptDTO implements Serializable {
         List<FeatureCvTermDTO> dtos = new ArrayList<FeatureCvTermDTO>();
         for (FeatureCvTerm featureCvTerm : polypeptide.getFeatureCvTermsFilteredByCvNameStartsWith(cvNamePrefix)) {
             FeatureCvTermDTO fctd = new FeatureCvTermDTO(featureCvTerm);
-            fctd.setCount(sequenceDao.getFeatureCvTermCountInOrganism(featureCvTerm, org));
+//            fctd.setCount(sequenceDao.getFeatureCvTermCountInOrganism(featureCvTerm, org));
             dtos.add(fctd);
         }
         if (dtos.size() > 0) {

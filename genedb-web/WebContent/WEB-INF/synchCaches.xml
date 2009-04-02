@@ -37,7 +37,7 @@
         <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="renderedDiagramFactory" ref="renderedDiagramFactory" />
         <property name="changeTracker" ref="changeTracker" />
-        <property name="noContextMap"><value>true</value></property>
+        <property name="noContextMap"><value>false</value></property>
     </bean>
     
     <bean id="changeTracker" class="org.genedb.db.audit.HibernateChangeTracker"/>

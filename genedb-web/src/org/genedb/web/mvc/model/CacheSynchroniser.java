@@ -93,9 +93,6 @@ public class CacheSynchroniser {
             logger.error("Internal error from cache synchronizer", e);
             exitStatus = 64;
 		}
-		if (cacheSynchroniser!= null){
-		    cacheSynchroniser.printResults();
-		}
 		System.exit(exitStatus);
 	}
 	
@@ -236,6 +233,7 @@ public class CacheSynchroniser {
                 //remove the context map
                 contextMapMap.remove(featureId);
                 ++removedTopLevelFeatureCount;
+                logger.debug("Context map removed, Feature ID: " + featureId.toString());
             }
             isAllRemoved =true;
         }catch(Exception e){
@@ -269,7 +267,9 @@ public class CacheSynchroniser {
                     }
                     
                     //(Re)add the toplevelfeature to cache
+                    logger.debug("About to populate TPF");
 	                if(!populateTopLevelFeatures(feature, processedFeatures, isChanged)){
+	                    logger.debug("Unsuccessful trying to populate TPF");
 	                    success = false;//error found
 	                }
 	            }else{
@@ -300,7 +300,7 @@ public class CacheSynchroniser {
 	    boolean success = false;
 		try{
 		    logger.debug("populateTopLevelFeatures, feature.getSeqLen:" 
-		            + feature.getSeqLen() + " !isNoContextMap()" + !isNoContextMap());
+		            + feature.getSeqLen() + " isNoContextMap()" + isNoContextMap());
 		    
 			if (!isNoContextMap() && feature.getSeqLen() > CacheDBHelper.MIN_CONTEXT_LENGTH_BASES) {
 			    logger.debug("Trying to populate Top Level Feature ("
@@ -311,8 +311,10 @@ public class CacheSynchroniser {
 				//Update count
 				if(isChanged){
 				    ++changedTopLevelFeatureCount;
+				    logger.debug("TopLevelFeature changed: " + feature.getFeatureId() +", " + feature.getUniqueName());
 				}else{
 				    ++addedTopLevelFeatureCount;
+                    logger.debug("TopLevelFeature added: " + feature.getFeatureId() +", " + feature.getUniqueName());
 				}
 				
 				//Add to the processd list
@@ -371,7 +373,7 @@ public class CacheSynchroniser {
 			features = q.list();	
 			logger.debug("TopLevelFeature size: " + features.size() );
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("Error finding (by querying) top-level features", e);
 		}
         return features;		
 	}
@@ -509,6 +511,7 @@ public class CacheSynchroniser {
             for(Integer featureId: transcriptFeatureIds){
                 dtoMap.remove(featureId);
                 ++removedTranscriptCount;
+                logger.debug("Transcript removed: " + featureId.toString());
             }
             isAllRemoved =true;
         }catch(Exception e){
@@ -597,11 +600,12 @@ public class CacheSynchroniser {
     private void printResults(){
         logger.info(
                 "\nAdded Top Level Feature(s) :" + addedTopLevelFeatureCount + 
-                "\nChanged Top Level Feature(s) :" + addedTopLevelFeatureCount +
-                "\nRemoved Top Level Feature(s) :" + addedTopLevelFeatureCount +
+                "\nChanged Top Level Feature(s) :" + changedTopLevelFeatureCount +
+                "\nRemoved Top Level Feature(s) :" + removedTopLevelFeatureCount +
                 "\nAdded Transcript(s) :" + addedTranscriptCount +
-                "\nChanged Transcript(s) :" + addedTranscriptCount +
-                "\nRemoved Transcript(s) :" + addedTranscriptCount);
+                "\nChanged Transcript(s) :" + changedTranscriptCount +
+                "\nRemoved Transcript(s) :" + removedTranscriptCount+
+                "\n");
     }
 
 	public boolean isNoContextMap() {
