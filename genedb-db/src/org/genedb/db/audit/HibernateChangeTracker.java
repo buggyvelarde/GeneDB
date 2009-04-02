@@ -10,6 +10,7 @@ import org.hibernate.cfg.Configuration;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -29,15 +30,15 @@ public class HibernateChangeTracker implements ChangeTracker {
     public HibernateChangeSet changes(String key) throws SQLException {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
-        Integer checkpointAuditIdInteger = (Integer) session.createSQLQuery(
+        BigInteger checkpointAuditIdInteger = (BigInteger) session.createSQLQuery(
             "select audit_id from audit.checkpoint where key = :key"
         ).setString("key", key)
         .uniqueResult();
-        int checkpointAuditId = checkpointAuditIdInteger == null ? 0 : checkpointAuditIdInteger;
+        int checkpointAuditId = checkpointAuditIdInteger == null ? 0 : checkpointAuditIdInteger.intValue();
 
-        int currentAuditId = (Integer) session.createSQLQuery(
+        int currentAuditId = ((BigInteger) session.createSQLQuery(
             "select nextval('audit.audit_seq')"
-        ).uniqueResult();
+        ).uniqueResult()).intValue();
 
         HibernateChangeSet changeSet = new HibernateChangeSet(session, key, currentAuditId);
         Configuration configuration = sessionFactoryBean.getConfiguration();
