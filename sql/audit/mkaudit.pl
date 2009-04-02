@@ -77,9 +77,9 @@ print "Creating audit.sql\n";
 create_file("audit.sql", <<END);
 drop schema audit cascade;
 create schema audit;
-grant usage on schema audit to chado_rw_role;
+grant usage on schema audit to chado_rw_role, chado_ro_role;
 create sequence audit.audit_seq;
-grant usage on sequence audit.audit_seq to chado_rw_role;
+grant usage on sequence audit.audit_seq to chado_rw_role, chado_ro_role;
 
 create table audit.audit (
   audit_id   integer default nextval('audit.audit_seq' :: regclass) not null primary key
