@@ -37,6 +37,8 @@ my $audit = {
             feature_cvterm_pub
         feature_pub
         feature_dbxref
+        featureloc
+        feature_relationship
     )
 };
 
@@ -75,7 +77,9 @@ print "Creating audit.sql\n";
 create_file("audit.sql", <<END);
 drop schema audit cascade;
 create schema audit;
+grant usage on schema audit to chado_rw_role;
 create sequence audit.audit_seq;
+grant usage on sequence audit.audit_seq to chado_rw_role;
 
 create table audit.audit (
   audit_id   integer default nextval('audit.audit_seq' :: regclass) not null primary key
@@ -83,11 +87,15 @@ create table audit.audit (
 , username   character varying not null default user
 , time       timestamp without time zone not null default now()
 );
+grant select on audit.audit to chado_ro_role;
+grant select on audit.audit to chado_rw_role;
 
 create table audit.checkpoint (
   key      character varying not null primary key
 , audit_id integer not null
 );
+grant select on audit.checkpoint to chado_ro_role;
+grant select, insert, update on audit.checkpoint to chado_rw_role;
 
 END
 
@@ -132,8 +140,13 @@ END;
 create trigger ${table_name}_insert_tr before insert on audit.${table_name}
     for each statement execute procedure audit.audit_${table_name}_insert_proc();
 END
-    
-    return "$create_table_sql\n$create_trigger_sql";
+
+    my $grant_privs_sql = <<END;
+grant select on audit.${table_name} to chado_ro_role;
+grant select, insert on audit.${table_name} to chado_rw_role;
+grant execute on function audit.audit_${table_name}_insert_proc() to chado_rw_role;
+END
+    return "$create_table_sql\n$create_trigger_sql$grant_privs_sql";
 }
 
 sub audit_insert_sql {
@@ -160,6 +173,7 @@ END;
 \$\$ language plpgsql;
 create trigger ${table_name}_audit_insert_tr after insert on public.${table_name}
     for each row execute procedure audit.public_${table_name}_insert_proc();
+grant execute on function audit.public_${table_name}_insert_proc() to chado_rw_role;
 ENDSQL
     
     return $create_table_sql . $create_trigger_sql;
@@ -209,6 +223,7 @@ END;
 \$\$ language plpgsql;
 create trigger ${table_name}_audit_update_tr after update on public.${table_name}
     for each row execute procedure audit.public_${table_name}_update_proc();
+grant execute on function audit.public_${table_name}_update_proc() to chado_rw_role;
 ENDSQL
     
     return $create_table_sql . $create_trigger_sql;
@@ -238,6 +253,7 @@ END;
 \$\$ language plpgsql;
 create trigger ${table_name}_audit_delete_tr after delete on public.${table_name}
     for each row execute procedure audit.public_${table_name}_delete_proc();
+grant execute on function audit.public_${table_name}_delete_proc() to chado_rw_role;
 ENDSQL
     
     return $create_table_sql . $create_trigger_sql;
@@ -256,6 +272,8 @@ create table audit.${table_name}_$type (
     constraint ${table_name}_${type}_ck check (type = '$uc_type')
 $cols_sql) inherits (audit.${table_name});
 alter table audit.${table_name}_$type alter type set default '$uc_type';
+grant select on audit.${table_name}_$type to chado_ro_role;
+grant select, insert on audit.${table_name}_$type to chado_rw_role;
 
 END
 }
