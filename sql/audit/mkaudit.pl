@@ -94,8 +94,8 @@ create table audit.checkpoint (
   key      character varying not null primary key
 , audit_id integer not null
 );
-grant select on audit.checkpoint to chado_ro_role;
-grant select, insert, update on audit.checkpoint to chado_rw_role;
+grant select, insert, update on audit.checkpoint to chado_ro_role;
+grant all on audit.checkpoint to chado_rw_role;
 
 END
 
