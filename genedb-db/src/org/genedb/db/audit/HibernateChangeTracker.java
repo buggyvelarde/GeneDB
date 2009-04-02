@@ -36,16 +36,8 @@ public class HibernateChangeTracker implements ChangeTracker {
         int checkpointAuditId = checkpointAuditIdInteger == null ? 0 : checkpointAuditIdInteger;
 
         int currentAuditId = (Integer) session.createSQLQuery(
-            "select nextval('audit.audit_seq' :: regclass)"
+            "select nextval('audit.audit_seq')"
         ).uniqueResult();
-
-        List<?> list = session.createSQLQuery(
-            "select audit_id, feature_id, type, uniquename, type_id" +
-            " from audit.feature" +
-            " where audit_id > :checkpoint and audit_id < currval('audit.audit_seq' :: regclass)" +
-            " order by audit_id"
-        ).setInteger("checkpoint", checkpointAuditId)
-        .list();
 
         HibernateChangeSet changeSet = new HibernateChangeSet(session, key, currentAuditId);
         Configuration configuration = sessionFactoryBean.getConfiguration();
@@ -53,6 +45,32 @@ public class HibernateChangeTracker implements ChangeTracker {
             throw new RuntimeException();
         }
         changeSet.setChadoAnnotationConfiguration((ChadoAnnotationConfiguration) configuration);
+
+        processFeatureAuditRecords(checkpointAuditId, changeSet);
+        processFeatureRelationshipAuditRecords(checkpointAuditId, changeSet);
+        processFeatureLocAuditRecords(checkpointAuditId, changeSet);
+
+
+        return changeSet;
+    }
+
+    /**
+     * @param session
+     * @param checkpointAuditId
+     * @param changeSet
+     */
+    private void processFeatureAuditRecords(int checkpointAuditId,
+            HibernateChangeSet changeSet) {
+
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+
+        List<?> list = session.createSQLQuery(
+            "select audit_id, feature_id, type, uniquename, type_id" +
+            " from audit.feature" +
+            " where audit_id > :checkpoint and audit_id < currval('audit.audit_seq')" +
+            " order by audit_id"
+        ).setInteger("checkpoint", checkpointAuditId)
+        .list();
 
         for (Object o: list) {
             Object[] a = (Object[]) o;
@@ -63,8 +81,8 @@ public class HibernateChangeTracker implements ChangeTracker {
             String uniqueName = (String)  a[3];
             int    typeId     = (Integer) a[4];
 
-            logger.trace(String.format("%s of feature '%s' (ID=%d)",
-                type, uniqueName, featureId));
+            logger.trace(String.format("[%d] %s of feature '%s' (ID=%d)",
+                auditId, type, uniqueName, featureId));
 
             if (type.equals("INSERT")) {
                 changeSet.insertedFeature(auditId, featureId, typeId);
@@ -74,8 +92,80 @@ public class HibernateChangeTracker implements ChangeTracker {
                 changeSet.deletedFeature(auditId, featureId, typeId);
             }
         }
+    }
 
-        return changeSet;
+    private void processFeatureRelationshipAuditRecords(int checkpointAuditId,
+            HibernateChangeSet changeSet) {
+
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+
+        List<?> list = session.createSQLQuery(
+            "select audit.feature_relationship.audit_id" +
+            "     , audit.feature_relationship.type" +
+            "     , audit.feature_relationship.feature_relationship_id" +
+            "     , audit.feature_relationship.object_id" +
+            "     , public.feature.type_id" +
+            " from audit.feature_relationship" +
+            " join public.feature on public.feature.feature_id = audit.feature_relationship.object_id" +
+            " where audit_id > :checkpoint and audit_id < currval('audit.audit_seq')" +
+            " order by audit_id"
+        ).setInteger("checkpoint", checkpointAuditId)
+        .list();
+
+        for (Object o: list) {
+            Object[] a = (Object[]) o;
+
+            int    auditId            = (Integer) a[0];
+            String type               = (String)  a[1];
+            int featureRelationshipId = (Integer) a[2];
+            int    featureId          = (Integer) a[3];
+            int    typeId             = (Integer) a[4];
+
+            logger.trace(String.format("[%d] %s of feature_relationship ID=%d, " +
+                    "counts as update of object feature ID=%d (type ID=%d)",
+                auditId, type, featureRelationshipId, featureId, typeId));
+
+            if (type.equals("INSERT") || type.equals("DELETE")) {
+                changeSet.updatedFeature(auditId, featureId, typeId);
+            }
+        }
+    }
+
+    private void processFeatureLocAuditRecords(int checkpointAuditId,
+            HibernateChangeSet changeSet) {
+
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+
+        List<?> list = session.createSQLQuery(
+            "select audit.featureloc.audit_id" +
+            "     , audit.featureloc.type" +
+            "     , audit.featureloc.featureloc_id" +
+            "     , audit.featureloc.srcfeature_id" +
+            "     , public.feature.type_id" +
+            " from audit.featureloc" +
+            " join public.feature on public.feature.feature_id = audit.featureloc.srcfeature_id" +
+            " where audit_id > :checkpoint and audit_id < currval('audit.audit_seq')" +
+            " order by audit_id"
+        ).setInteger("checkpoint", checkpointAuditId)
+        .list();
+
+        for (Object o: list) {
+            Object[] a = (Object[]) o;
+
+            int    auditId      = (Integer) a[0];
+            String type         = (String)  a[1];
+            int    featureLocId = (Integer) a[2];
+            int    featureId    = (Integer) a[3];
+            int    typeId       = (Integer) a[4];
+
+            logger.trace(String.format("[%d] %s of featureloc ID=%d, " +
+                    "counts as update of source feature ID=%d (type ID=%d)",
+                auditId, type, featureLocId, featureId, typeId));
+
+            if (type.equals("INSERT") || type.equals("DELETE")) {
+                changeSet.updatedFeature(auditId, featureId, typeId);
+            }
+        }
     }
 
 }
