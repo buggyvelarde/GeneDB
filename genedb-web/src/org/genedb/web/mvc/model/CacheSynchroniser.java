@@ -359,14 +359,14 @@ public class CacheSynchroniser {
                 q = session.createQuery(
                         "select fl.sourceFeature " +
                         " from FeatureLoc fl " +
-                " where f.feature in (:featureIds)")
+                " where fl.feature.featureId in (:featureIds)")
                 .setParameterList("featureIds", featureIds);
 			    
 			}else if(clazz == Gap.class){
                 q = session.createQuery(
                         "select fl.sourceFeature " +
                         " from FeatureLoc fl " +
-                " where f.feature in (:featureIds)")
+                " where fl.feature.featureId in (:featureIds)")
                 .setParameterList("featureIds", featureIds);
 			    
 			}
