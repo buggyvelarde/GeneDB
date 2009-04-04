@@ -2,6 +2,7 @@ package org.genedb.web.mvc.controller;
 
 import org.genedb.web.gui.DiagramCache;
 import org.genedb.web.mvc.model.TranscriptDTO;
+import org.genedb.web.mvc.model.TranscriptDTOFactory;
 
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Polypeptide;
@@ -18,6 +19,8 @@ public class ModelBuilder {
     private static final Logger logger = Logger.getLogger(ModelBuilder.class);
 
     private DiagramCache diagramCache;
+
+    private TranscriptDTOFactory transcriptDTOFactory;
 
     /**
      * Populate a model object with the details of the specified feature.
@@ -75,14 +78,16 @@ public class ModelBuilder {
      * @return the populated model
      */
     public TranscriptDTO prepareTranscript(Transcript transcript) {
-
-        TranscriptDTO dto = new TranscriptDTO();
-        dto.populate(transcript, diagramCache);
+        TranscriptDTO dto = transcriptDTOFactory.make(transcript, diagramCache);
         return dto;
     }
 
 
     public void setDiagramCache(DiagramCache diagramCache) {
         this.diagramCache = diagramCache;
+    }
+
+    public void setTranscriptDTOFactory(TranscriptDTOFactory transcriptDTOFactory) {
+        this.transcriptDTOFactory = transcriptDTOFactory;
     }
 }
