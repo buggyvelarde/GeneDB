@@ -41,7 +41,7 @@
         <property name="phylogenyDao" ref="phylogenyDao" />
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="findPhylonodeWithOrganismFeatures">
-        	<value>true</value>
+            <value>true</value>
         </property>
     </bean>
 
@@ -51,10 +51,6 @@
 
     <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao">
         <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="auditDao" class="org.genedb.db.dao.AuditDao">
-        <property name="dataSource" ref="dataSource" />
     </bean>
 
     <bean id="cvDao" class="org.genedb.db.dao.CvDao">
