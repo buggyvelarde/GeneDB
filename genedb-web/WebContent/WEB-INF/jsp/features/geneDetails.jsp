@@ -59,8 +59,8 @@
                 <td class="label">Product</td>
                 <td class="value">
                     <c:forEach items="${dto.products}" var="product">
-                        <span>${product}</span>&nbsp;&nbsp;&nbsp;
-                        (<a href="<c:url value="/Query"><c:param name="q" value="controlledCuration" /><c:param name="taxons" value="${dto.organismCommonName}" /><c:param name="cvTermName" value="${product}" /><c:param name="cv" value="genedb_products" /></c:url>">Others</a>)<br>
+                        <span>${product.typeName}</span>&nbsp;&nbsp;&nbsp;
+                        (${product.count} <a href="<c:url value="/Query"><c:param name="q" value="controlledCuration" /><c:param name="taxons" value="${dto.organismCommonName}" /><c:param name="cvTermName" value="${product.typeName}" /><c:param name="cv" value="genedb_products" /></c:url>">Others</a>)<br>
                     </c:forEach>
                 </td>
             </tr>
