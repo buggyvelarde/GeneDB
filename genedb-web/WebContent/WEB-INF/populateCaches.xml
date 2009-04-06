@@ -41,7 +41,7 @@
     <bean id="renderedDiagramFactory" class="org.genedb.web.gui.RenderedDiagramFactory">
         <property name="labelFont">
             <bean class="org.genedb.util.FontFactoryBean">
-                <property name="source" value="file:///Users/art/Documents/workspace/f011004t.ttf" />
+                <property name="source" value="${diagram.fontFile}" />
                 <property name="style" value="1" />
                 <property name="size" value="12" />
             </bean>
