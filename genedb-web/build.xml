@@ -260,6 +260,22 @@
     </target>
 
 
+    <target name="update-indices-and-caches" depends="check-deploy,iajc-web" 
+    	description="Bring the Lucene indices and the Berkley DB up-to-date since the last run.">
+      <java fork="true" classname="org.genedb.web.mvc.model.PeriodicUpdater">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+          <pathelement location="${imported.basedir.web}/ant-build/test-classes"/><!-- This is for temp use of the MockChangeSetImple class-->
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      </java>
+    </target>
+
+
   <target name="init-web" description="Create full JAR file">
     <init-target project="web" />
   </target>
