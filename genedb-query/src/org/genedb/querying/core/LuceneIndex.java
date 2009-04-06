@@ -20,10 +20,10 @@ import org.springframework.util.StringUtils;
 public class LuceneIndex {
 
     public String getIndexName() {
-		return indexName;
-	}
+        return indexName;
+    }
 
-	private static final Logger logger = Logger.getLogger(LuceneIndex.class);
+    private static final Logger logger = Logger.getLogger(LuceneIndex.class);
 
     private IndexReader indexReader;
 
@@ -33,7 +33,7 @@ public class LuceneIndex {
     // Effectively disable the clause limit.
     // (Wildcard and range queries are expanded into many clauses.)
     public LuceneIndex() {
-    	BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
+        BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
     }
 
 
@@ -46,17 +46,17 @@ public class LuceneIndex {
      */
     @PostConstruct
     private void openIndex() {
-    	if ( ! (StringUtils.hasText(indexDirectoryName) && StringUtils.hasText(indexName)) ) {
-    		return;
-    	}
+        if ( ! (StringUtils.hasText(indexDirectoryName) && StringUtils.hasText(indexName)) ) {
+            return;
+        }
         String indexFilename = indexDirectoryName + File.separatorChar + indexName;
         logger.info(String.format("Opening Lucene index at '%s'", indexFilename));
         try {
-			indexReader = IndexReader.open(indexFilename);
-		} catch (IOException exp) {
-		    exp.printStackTrace();
-			throw new RuntimeException(String.format("Failed to open lucene index '%s'", indexFilename), exp);
-		}
+            indexReader = IndexReader.open(indexFilename);
+        } catch (IOException exp) {
+            exp.printStackTrace(System.err);
+            throw new RuntimeException(String.format("Failed to open lucene index '%s'", indexFilename), exp);
+        }
     }
 
     /**
@@ -118,14 +118,14 @@ public class LuceneIndex {
         }
     }
 
-	public void setIndexDirectoryName(String indexDirectoryName) {
-		this.indexDirectoryName = indexDirectoryName;
-		openIndex();
-	}
+    public void setIndexDirectoryName(String indexDirectoryName) {
+        this.indexDirectoryName = indexDirectoryName;
+        openIndex();
+    }
 
-	public void setIndexName(String indexName) {
-		this.indexName = indexName;
-		openIndex();
-	}
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+        openIndex();
+    }
 
 }
