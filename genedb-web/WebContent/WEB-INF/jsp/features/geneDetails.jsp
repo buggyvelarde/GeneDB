@@ -11,12 +11,11 @@
     <format:genePageSection id="generalInformation">
         <div class="heading">General Information</div>
         <table>
-        <c:if test="${organism == 'Pfalciparum'}">
-            <tr colspan="2">
-                <td class="value">See the <a href="http://www.genedb.org/genedb/Search?name=${dto.uniqueName}">original annotation for this gene</a> in 'classic' GeneDB</td>
-            </tr>
-         </c:if>
         <col style="width: 9em;">
+        <tr>
+            <td class="label">Last Modified</td>
+            <td class="value">${dto.lastModified}</td>
+        </tr>
         <c:if test="${!empty dto.properName && dto.properName != dto.uniqueName}">
             <tr>
                 <td class="label">Gene Name</td>
