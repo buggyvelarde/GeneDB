@@ -29,6 +29,9 @@ import org.hibernate.search.event.FullTextIndexEventListener;
 import org.hibernate.search.reader.ReaderProvider;
 import org.hibernate.search.store.DirectoryProvider;
 import org.postgresql.ds.PGSimpleDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.Cli;
@@ -508,6 +511,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
         return dbName;
     }
 
+    public void setSequenceDao(SequenceDao sequenceDao) {
+        this.sequenceDao = sequenceDao;
+    }
+
     public static String promptForPassword(String databaseUrl, String databaseUsername) {
         Console console = System.console();
         if (console == null) {
@@ -562,6 +569,14 @@ public class PopulateLuceneIndices implements IndexUpdater {
         if  (iga.isNumBatches()) {
             indexer.setNumBatches(iga.getNumBatches());
         }
+
+
+        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
+                new String[] {"classpath:applicationContext.xml"});
+        ctx.refresh();
+        SequenceDao sequenceDao = ctx.getBean("sequenceDao", SequenceDao.class);
+
+        indexer.setSequenceDao(sequenceDao);
 
         indexer.indexFeatures();
     }
