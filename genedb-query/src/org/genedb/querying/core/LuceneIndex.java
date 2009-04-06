@@ -54,6 +54,7 @@ public class LuceneIndex {
         try {
 			indexReader = IndexReader.open(indexFilename);
 		} catch (IOException exp) {
+		    exp.printStackTrace();
 			throw new RuntimeException(String.format("Failed to open lucene index '%s'", indexFilename), exp);
 		}
     }
