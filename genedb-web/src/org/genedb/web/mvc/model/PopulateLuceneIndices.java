@@ -240,7 +240,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
     }
 
-    public boolean indexFeatures(ChangeSet changeSet) {
+    public boolean updateAllCaches(ChangeSet changeSet) {
         // Ignore changes to top level feature
 
         try {
@@ -280,10 +280,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
             return false;
         }
         return true;
-    }
-
-    public void applyChanges() {
-        // TODO Move indices into place
     }
 
     /**
