@@ -109,6 +109,12 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private String organism;
     private int numBatches = -1;
 
+    private String databaseUsername;
+    private String databasePassword;
+    private String host;
+    private int port;
+    private String dbName;
+
 
     public PopulateLuceneIndices() {
         // Default constructor
@@ -133,6 +139,12 @@ public class PopulateLuceneIndices implements IndexUpdater {
         if (dataSource != null) {
             logger.warn("A new datasource is being created, although one is already defined");
         }
+
+        this.databaseUsername = userName;
+        this.databasePassword = password;
+        this.host = host;
+        this.port = port;
+        this.dbName = dbName;
 
         PGSimpleDataSource sds = new PGSimpleDataSource();
 
@@ -166,9 +178,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-        //cfg.setProperty("hibernate.connection.username", databaseUsername);
-        //cfg.setProperty("hibernate.connection.password", databasePassword);
-        //cfg.setProperty("hibernate.connection.url", databaseUrl);
+        cfg.setProperty("hibernate.connection.username", getDatabaseUsername());
+        cfg.setProperty("hibernate.connection.password", getDatabasePassword());
+        cfg.setProperty("hibernate.connection.url", getDatabaseUrl());
 
         cfg.setProperty("hibernate.search.default.directory_provider",
         "org.hibernate.search.store.FSDirectoryProvider");
@@ -460,9 +472,41 @@ public class PopulateLuceneIndices implements IndexUpdater {
         this.organism = organism;
     }
 
+    private String getDatabaseUrl() {
+        return "jdbc:postgresql://" + getHost() + ":" + getPort() + "/"+ getDbName();
+    }
+
 
     /* Static methods */
 
+
+    public String getDatabaseUsername() {
+        return databaseUsername;
+    }
+
+    public void setDatabaseUsername(String databaseUsername) {
+        this.databaseUsername = databaseUsername;
+    }
+
+    public String getDatabasePassword() {
+        return databasePassword;
+    }
+
+    public void setDatabasePassword(String databasePassword) {
+        this.databasePassword = databasePassword;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
 
     public static String promptForPassword(String databaseUrl, String databaseUsername) {
         Console console = System.console();
