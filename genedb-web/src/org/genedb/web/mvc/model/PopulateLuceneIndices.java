@@ -434,6 +434,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     public DataSource getDataSource() {
         if (dataSource == null) {
+            logger.error("Datasource hasn't been injected, or created from connection properties");
             throw new NullPointerException("Datasource hasn't been injected, or created from connection properties");
         }
         return dataSource;
