@@ -41,7 +41,7 @@ import com.sleepycat.collections.StoredMap;
  */
 @Repository
 @Transactional
-public class CacheSynchroniser {
+public class CacheSynchroniser implements IndexUpdater{
 	private static final Logger logger = Logger.getLogger(CacheSynchroniser.class);
     
     
@@ -82,11 +82,17 @@ public class CacheSynchroniser {
 					new String[] {"classpath:applicationContext.xml", "classpath:synchCaches.xml"});
 			ctx.refresh();
 			cacheSynchroniser = ctx.getBean("cacheSynchroniser", CacheSynchroniser.class);
+	        
+	        //Get the records to update
+			ChangeTracker changeTracker = cacheSynchroniser.getChangeTracker();
+	        ChangeSet changeSet =  changeTracker.changes(CacheSynchroniser.class.getName() );
 
 			//Start synching
-			if (!cacheSynchroniser.updateAllCaches()){
+			if (!cacheSynchroniser.updateAllCaches(changeSet)){
 			    logger.error("Errors found:");
 	            System.exit(64);            
+			}else{
+			    changeSet.commit();
 			}
 		
 		}catch(Exception e){
@@ -99,37 +105,28 @@ public class CacheSynchroniser {
 	
 	/**
 	 * Update the Context Map and Transcript DTO caches
+	 * @param ChangeSet
+	 *         The change set to be used for updating the cache
 	 * @return Boolean 
 	 *         Is updates to caches successful
 	 * @throws Exception
 	 */
 	@Transactional
-	boolean updateAllCaches()throws Exception{
+	public boolean updateAllCaches(ChangeSet changeSet){
 	    
         //Initialise
         init();
-        
-        //Get the records to update
-        ChangeSet changeSet =  changeTracker.changes(CacheSynchroniser.class.getName() );
 	    
         //Update the Contect Map Cache
 	    boolean isContextUpdated = updateContextMapCache(changeSet);
 	    
 	    //Update the Transcript DTO
 	    boolean isTransciptDTOUpdated = updateTranscriptDTOCache(changeSet);
-	        
-	    //Is all successful
-	    boolean isAllSuccessful = isContextUpdated && isTransciptDTOUpdated;
-	            
-        //Commit to update the cursor
-	    if(isAllSuccessful){
-	        changeSet.commit();
-	    }
 	    
 	    //Print operation
 	    printResults();
 	    
-	    return isAllSuccessful;
+	    return isContextUpdated && isTransciptDTOUpdated;
 	}	
 		
 	

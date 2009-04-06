@@ -30,16 +30,13 @@ public class PeriodicUpdater {
 
         boolean allOK = true;
         for (IndexUpdater indexUpdater : indexUpdaters) {
-            boolean result = indexUpdater.indexFeatures(changeSet);
+            boolean result = indexUpdater.updateAllCaches(changeSet);
             if (! result) {
                 allOK = false;
                 break;
             }
         }
         if (allOK) {
-            for (IndexUpdater indexUpdater : indexUpdaters) {
-                indexUpdater.applyChanges();
-            }
             // changeSet.commit();
         }
         return allOK;
@@ -52,6 +49,30 @@ public class PeriodicUpdater {
         PeriodicUpdater pu = ctx.getBean("periodicUpdater", PeriodicUpdater.class);
         boolean success = pu.processChangeSet();
         System.exit( success ? 0 : 1 );
+    }
+
+    public ChangeTracker getChangeTracker() {
+        return changeTracker;
+    }
+
+    public void setChangeTracker(ChangeTracker changeTracker) {
+        this.changeTracker = changeTracker;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public List<IndexUpdater> getIndexUpdaters() {
+        return indexUpdaters;
+    }
+
+    public void setIndexUpdaters(List<IndexUpdater> indexUpdaters) {
+        this.indexUpdaters = indexUpdaters;
     }
 
 }
