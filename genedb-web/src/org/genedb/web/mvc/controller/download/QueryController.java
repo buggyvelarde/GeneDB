@@ -154,11 +154,11 @@ public class QueryController {
             return "search/"+queryName;
         case 1:
             List<GeneSummary> gs = possiblyConvertList(results);
-            resultsKey = cacheResults(gs, query, queryName);
+            resultsKey = cacheResults(gs, query, queryName, session.getId());
             return "redirect:/NamedFeature?name=" + gs.get(0).getSystematicId();
         default:
             List<GeneSummary> gs2 = possiblyConvertList(results);
-            resultsKey = cacheResults(gs2, query, queryName);
+            resultsKey = cacheResults(gs2, query, queryName, session.getId());
             model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.debug("Found results for query - redirecting to Results controller");
@@ -182,8 +182,8 @@ public class QueryController {
     }
 
 
-    private String cacheResults(List<GeneSummary> gs, Query q, String queryName) {
-        String key = Integer.toString(System.identityHashCode(gs)); // CHECKME
+    private String cacheResults(List<GeneSummary> gs, Query q, String queryName, String sessionId) {
+        String key = sessionId + Integer.toString(System.identityHashCode(gs)); // CHECKME
         StoredMap<String, ResultEntry> map = resultsCacheFactory.getResultsCacheMap();
         ResultEntry re = new ResultEntry();
         re.numOfResults = gs.size();
