@@ -220,7 +220,7 @@
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
           <pathelement location="${imported.basedir.web}/ant-build/test-classes"/><!-- This is for temp use of the MockChangeSetImple class-->
         </classpath>
-        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-Xmx1024m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       </java>
     </target>
@@ -239,7 +239,7 @@
         <!-- In the comments below, the long args should be a double dash, but that confuses XML comments -->
         <!-- <arg line="-o Pfalciparum -debugCount 20 -globalFileRoot /tmp"/> -->
         <!-- <arg line="-globalFileRoot /nfs/pathdata/jira/ci-deployment/webapps/gi/tmp"/> -->
-        <!-- <arg line="-o Pfalciparum"/> -->
+        <arg line="-o Pfalciparum"/>
         <!-- <arg line="-ncm" /> -->
       </java>
     </target>
@@ -270,7 +270,7 @@
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
           <pathelement location="${imported.basedir.web}/ant-build/test-classes"/><!-- This is for temp use of the MockChangeSetImple class-->
         </classpath>
-        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-Xmx1024m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       </java>
     </target>

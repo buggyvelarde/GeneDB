@@ -52,7 +52,7 @@ public class CacheSynchroniserTest{
         changeSet.getNewMap().put(TopLevelFeature.class, featureIds);
 
         //Start synching
-        boolean noErrors = cacheSynchroniser.updateAllCaches();
+        boolean noErrors = cacheSynchroniser.updateAllCaches(changeSet);
         
         //Find context map, using the generated id
         String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId);
@@ -99,7 +99,7 @@ public class CacheSynchroniserTest{
         changeSet.getChangedMap().get(Gap.class).add(featureId4);//adding
 
         //Start synching
-        boolean noErrors = cacheSynchroniser.updateAllCaches();
+        boolean noErrors = cacheSynchroniser.updateAllCaches(changeSet);
         
         //Find context map, using the generated id
         String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId1);        
@@ -145,7 +145,7 @@ public class CacheSynchroniserTest{
         changeSet.getNewMap().put(TopLevelFeature.class, featureIds);
 
         //Start synching
-        boolean noErrors = cacheSynchroniser.updateAllCaches();
+        boolean noErrors = cacheSynchroniser.updateAllCaches(changeSet);
         
         //Find context map, using the generated gene unique name
         String context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId); 
@@ -163,7 +163,7 @@ public class CacheSynchroniserTest{
         changeSet.getDeletedMap().put(TopLevelFeature.class, featureIds);       
 
         //Start synching
-        cacheSynchroniser.updateAllCaches();
+        cacheSynchroniser.updateAllCaches(changeSet);
         
         //Now, check again
         context = ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().get(featureId); 
@@ -188,7 +188,7 @@ public class CacheSynchroniserTest{
         changeSet.getNewMap().put(Transcript.class, featureIds);     
 
         //Start synching
-        boolean noErrors = cacheSynchroniser.updateAllCaches();
+        boolean noErrors = cacheSynchroniser.updateAllCaches(changeSet);
         
         //Find Transcript DTO, using the generated gene unique n  ame
         TranscriptDTO dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(featureId);
@@ -220,7 +220,7 @@ public class CacheSynchroniserTest{
         featureIds.add(featureId);
         changeSet.getNewMap().put(Transcript.class, featureIds);
         //Initialise DTO cache
-        boolean noErrors = cacheSynchroniser.updateAllCaches();
+        boolean noErrors = cacheSynchroniser.updateAllCaches(changeSet);
         
         //Find Transcript DTO, using the generated gene unique name
         dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(featureId);    
@@ -236,7 +236,7 @@ public class CacheSynchroniserTest{
         changeSet.getDeletedMap().put(Transcript.class, featureIds);          
 
         //Start synching
-        noErrors = cacheSynchroniser.updateAllCaches();
+        noErrors = cacheSynchroniser.updateAllCaches(changeSet);
         
         //Now, check again
         dto = ((CacheSynchTestDelegate)cacheSynchroniser).getDtoMap().get(featureId); 

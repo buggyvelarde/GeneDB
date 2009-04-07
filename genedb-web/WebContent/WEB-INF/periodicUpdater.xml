@@ -69,6 +69,9 @@
 
     <bean id="modelBuilder" class="org.genedb.web.mvc.controller.ModelBuilder">
         <property name="diagramCache" ref="diagramCache" />
+        <property name="transcriptDTOFactory" ref="transcriptDTOFactory" />
     </bean>
+
+    <bean id="transcriptDTOFactory" class="org.genedb.web.mvc.model.TranscriptDTOFactory" />
 
 </beans>

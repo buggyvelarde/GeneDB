@@ -174,4 +174,8 @@ public class BerkeleyMapFactory {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
+
+    public String getRootDirectory() {
+        return rootDirectory;
+    }
 }
