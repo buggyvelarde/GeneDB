@@ -6,6 +6,8 @@
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/genedb/formatting" %>
 
+
+<c:if test="${not empty resultsSize}">
     <div id="geneResultsPanel">
 
         <format:genePageSection  className="whiteBox">
@@ -30,3 +32,4 @@
             </display:table>
         </format:genePageSection>
     </div>
+</c:if>
