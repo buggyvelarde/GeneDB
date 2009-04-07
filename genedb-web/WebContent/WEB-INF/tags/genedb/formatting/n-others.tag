@@ -17,5 +17,5 @@
                         <c:param name="taxons" value="${taxons}" />
                         <c:param name="cvTermName" value="${cvTermName}" />
                         <c:param name="cv" value="genedb_products" />
-                        <c:param name="suppress" value="${suppress}" /></c:url>">${count} ${phrase}</a>)
+                        <c:param name="suppress" value="${suppress}" /></c:url>">${others} ${phrase}</a>)
 </c:if>
