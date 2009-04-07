@@ -50,5 +50,7 @@
         <property name="transcriptDTOFactory" ref="transcriptDTOFactory" />
     </bean>
 
-    <bean id="transcriptDTOFactory" class="org.genedb.web.mvc.model.TranscriptDTOFactory" />
+    <bean id="transcriptDTOFactory" class="org.genedb.web.mvc.model.TranscriptDTOFactory" />    
+    
+    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao"/>
 </beans>

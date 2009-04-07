@@ -66,6 +66,7 @@ public class CacheSynchTestDelegate extends CacheSynchroniser {
     protected void init(){
         dtoMap = bmf.getDtoMap(); // TODO More nicely
         contextMapMap = bmf.getContextMapMap();
+        contextImageMap = bmf.getImageMap();
         basicGeneService = new MockBasicGeneService("cat", "chr1", 1);
     }
     
