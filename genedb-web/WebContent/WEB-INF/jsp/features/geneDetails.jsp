@@ -57,7 +57,7 @@
                 <td class="value">
                     <c:forEach items="${dto.products}" var="product">
                         <span>${product.typeName}</span>&nbsp;&nbsp;&nbsp;
-                        <format:n-others count="${product.count}" cvTermName="${product.typeName}" taxons="${dto.organismCommonName}" cv="genedb_products" />
+                        <format:n-others count="${product.count}" cvTermName="${product.typeName}" taxons="${dto.organismCommonName}" cv="genedb_products" suppress="${dto.uniqueName}" />
                         <br>
                     </c:forEach>
                 </td>
