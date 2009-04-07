@@ -56,8 +56,8 @@
 
 
     <tag>
-        <name>dateCreation</name>
-        <tag-class>org.genedb.web.tags.misc.DateCreationTag</tag-class>
+        <name>displayDate</name>
+        <tag-class>org.genedb.web.tags.misc.DisplayDateTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>message</name>

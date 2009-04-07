@@ -11,14 +11,9 @@
     <%-- General Information --%>
     <format:genePageSection id="generalInformation">
         <div class="heading">General Information</div>
+        <div class="sideHeading"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></div>
         <table>
         <col style="width: 9em;">
-        <tr>
-            <td class="label">Last Modified</td>
-            <misc:dateCreation time="${dto.lastModified}" message="Last_Modified" />
-            **<c:out value="${latModified}" />**
-            <td class="value"><fmt:formatDate value="${lastModified}" type="both" /></td>
-        </tr>
         <c:if test="${!empty dto.properName && dto.properName != dto.uniqueName}">
             <tr>
                 <td class="label">Gene Name</td>
