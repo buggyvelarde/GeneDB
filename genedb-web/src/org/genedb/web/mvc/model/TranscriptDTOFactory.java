@@ -373,7 +373,7 @@ public class TranscriptDTOFactory {
         List<FeatureCvTermDTO> dtos = new ArrayList<FeatureCvTermDTO>();
         for (FeatureCvTerm featureCvTerm : polypeptide.getFeatureCvTermsFilteredByCvNameStartsWith(cvNamePrefix)) {
             FeatureCvTermDTO fctd = new FeatureCvTermDTO(featureCvTerm);
-            fctd.setCount(sequenceDao.getFeatureCvTermCountInOrganism(featureCvTerm, org));
+            fctd.setCount(sequenceDao.getFeatureCvTermCountInOrganism(featureCvTerm.getCvTerm().getName(), org));
             dtos.add(fctd);
         }
         if (dtos.size() > 0) {
