@@ -57,32 +57,32 @@ public class QueryController {
         return "redirect:/QueryList";
     }
 
+//    @RequestMapping(method = RequestMethod.GET , params= "q")
+//    public String setUpForm(
+//            @RequestParam(value="q") String queryName,
+//            ServletRequest request,
+//            HttpSession session,
+//            Model model) throws QueryException {
+//
+//        logger.debug("This is the setupform method");
+//
+//        if (!StringUtils.hasText(queryName)) {
+//            session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
+//            return "redirect:/QueryList";
+//        }
+//
+//        Query query = queryFactory.retrieveQuery(queryName);
+//        if (query == null) {
+//            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
+//            return "redirect:/QueryList";
+//        }
+//        model.addAttribute("query", query);
+//
+//        populateModelData(model, query);
+//        return "search/"+queryName;
+//    }
+
     @RequestMapping(method = RequestMethod.GET , params= "q")
-    public String setUpForm(
-            @RequestParam(value="q") String queryName,
-            ServletRequest request,
-            HttpSession session,
-            Model model) throws QueryException {
-
-        logger.debug("This is the setupform method");
-
-        if (!StringUtils.hasText(queryName)) {
-            session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
-            return "redirect:/QueryList";
-        }
-
-        Query query = queryFactory.retrieveQuery(queryName);
-        if (query == null) {
-            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
-            return "redirect:/QueryList";
-        }
-        model.addAttribute("query", query);
-
-        populateModelData(model, query);
-        return "search/"+queryName;
-    }
-
-    @RequestMapping(method = RequestMethod.POST , params= "q")
     public String processForm(
             @RequestParam(value="q") String queryName,
             ServletRequest request,
