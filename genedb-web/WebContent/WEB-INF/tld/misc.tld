@@ -53,4 +53,22 @@
         </attribute>
     </tag>
 
+
+
+    <tag>
+        <name>dateCreation</name>
+        <tag-class>org.genedb.web.tags.misc.DateCreationTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>varName</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>time</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+    </tag>
+
 </taglib>
