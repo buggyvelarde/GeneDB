@@ -85,6 +85,7 @@ public class QueryController {
     @RequestMapping(method = RequestMethod.GET , params= "q")
     public String processForm(
             @RequestParam(value="q") String queryName,
+            @RequestParam(value="suppress", required=false) String suppress,
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
@@ -138,14 +139,16 @@ public class QueryController {
             } // FIXME
         }
 
-        String resultsKey = null;
-        if (results.size() > 0) {
-//            Object firstItem =  results.get(0);
-//            if (! (firstItem instanceof GeneSummary)) {
-//                results = convertIdsToGeneSummaries(results);
-//            }
-
+        if (StringUtils.hasLength(suppress)) {
+            int index = results.indexOf(suppress);
+            if (index != -1) {
+                results.remove(index);
+            } else {
+                logger.warn("Trying to remove '" + suppress + "' from results (as a result of an n-others call but it isn't present");
+            }
         }
+
+        String resultsKey = null;
 
         switch (results.size()) {
         case 0:
