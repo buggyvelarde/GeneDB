@@ -5,9 +5,11 @@ import static javax.servlet.jsp.PageContext.PAGE_SCOPE;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.Date;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
@@ -17,17 +19,21 @@ public class DateCreationTag extends SimpleTagSupport {
 
     private int time;
 
-    private String varName;
+    private String message;
+
+
 
     @Override
     public void doTag() throws JspException, IOException {
 
+        if (time == 0) {
+            return;
+        }
 
         Date date = new Date(time);
         PageContext pc = (PageContext) getJspContext();
-        logger.error("Creating a new date from a value of '"+time+"'");
-
-        pc.setAttribute(varName, date, PAGE_SCOPE);
+        JspWriter out = pc.getOut();
+        out.println(message + " " + DateFormat.getDateInstance(DateFormat.MEDIUM).format(date));
     }
 
 
@@ -41,13 +47,13 @@ public class DateCreationTag extends SimpleTagSupport {
     }
 
 
-    public String getVarName() {
-        return varName;
+    public String getMessage() {
+        return message;
     }
 
 
-    public void setVarName(String varName) {
-        this.varName = varName;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
 }

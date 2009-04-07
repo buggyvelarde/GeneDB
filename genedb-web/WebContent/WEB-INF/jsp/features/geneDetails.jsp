@@ -15,7 +15,7 @@
         <col style="width: 9em;">
         <tr>
             <td class="label">Last Modified</td>
-            <misc:dateCreation time="${dto.lastModified}" varName="lastModified" />
+            <misc:dateCreation time="${dto.lastModified}" message="Last_Modified" />
             **<c:out value="${latModified}" />**
             <td class="value"><fmt:formatDate value="${lastModified}" type="both" /></td>
         </tr>
