@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:set var="primaryLoc" value="${gene.rankZeroFeatureLoc}" />
 <c:set var="chromosome" value="${primaryLoc.sourceFeature}" />
@@ -14,7 +15,7 @@
         <col style="width: 9em;">
         <tr>
             <td class="label">Last Modified</td>
-            <td class="value">${dto.lastModified}</td>
+            <td class="value"><fmt:formatDate value="${dto.lastModified}" type="date" /></td>
         </tr>
         <c:if test="${!empty dto.properName && dto.properName != dto.uniqueName}">
             <tr>
