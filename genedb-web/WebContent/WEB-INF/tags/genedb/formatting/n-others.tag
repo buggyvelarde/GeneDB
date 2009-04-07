@@ -6,11 +6,12 @@
 <%@ attribute name="taxons" required="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<c:set var="others" value="${count - 1}" />
 <c:set var="phrase" value="Other" />
-<c:if test="${count > 2}">
+<c:if test="${others > 2}">
   <c:set var="phrase" value="Others" />
 </c:if>
-<c:if test="${count >= 2}">
+<c:if test="${others >= 1}">
 (<a href="<c:url value="/Query"><c:param name="q" value="controlledCuration" />
                         <c:param name="taxons" value="${taxons}" />
                         <c:param name="cvTermName" value="${cvTermName}" />
