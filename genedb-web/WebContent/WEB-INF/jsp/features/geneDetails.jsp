@@ -16,6 +16,7 @@
         <tr>
             <td class="label">Last Modified</td>
             <misc:dateCreation time="${dto.lastModified}" varName="lastModified" />
+            **<c:out value="${latModified}" />**
             <td class="value"><fmt:formatDate value="${lastModified}" type="both" /></td>
         </tr>
         <c:if test="${!empty dto.properName && dto.properName != dto.uniqueName}">
