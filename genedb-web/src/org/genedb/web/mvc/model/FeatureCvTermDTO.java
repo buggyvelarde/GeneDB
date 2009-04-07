@@ -23,7 +23,7 @@ public class FeatureCvTermDTO implements Serializable {
     private String withFrom;
     private List<DbXRefDTO> dbXRefDtoList;
     private Multimap<String, String> props = Multimaps.newArrayListMultimap();
-    private int count;
+    private long count;
 
     public FeatureCvTermDTO(FeatureCvTerm fct) {
 
@@ -76,11 +76,11 @@ public class FeatureCvTermDTO implements Serializable {
         return props.asMap();
     }
 
-    public int getCount() {
+    public long getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(long count) {
         this.count = count;
     }
 
