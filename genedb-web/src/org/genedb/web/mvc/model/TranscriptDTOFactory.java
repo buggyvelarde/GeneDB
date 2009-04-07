@@ -396,7 +396,6 @@ public class TranscriptDTOFactory {
     }
 
 
-
     private void populateParentDetails(TranscriptDTO ret, AbstractGene gene) {
         FeatureLoc top = gene.getRankZeroFeatureLoc();
         ret.setMin(top.getFmin());

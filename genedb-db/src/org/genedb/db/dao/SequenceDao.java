@@ -346,7 +346,7 @@ public class SequenceDao extends BaseDao {
      */
     public Long getFeatureCvTermCountInOrganism(String name, Organism o) {
         Query query = createQuery(
-                "select count(fct.feature) from FeatureCvTerm fct, Feature f" +
+                "select count(f) from FeatureCvTerm fct, Feature f" +
                 " where f.organism=:organism and fct.feature = f and fct.cvTerm.name = :name",
                 new String[]{"name", "organism"},
                 new Object[]{name, o});
