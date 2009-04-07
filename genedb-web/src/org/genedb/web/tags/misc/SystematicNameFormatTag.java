@@ -12,31 +12,31 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
  */
 public class SystematicNameFormatTag extends SimpleTagSupport {
 
-	private String name;
-	
+    private String name;
+
     public String getName() {
-		return name;
-	}
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
+    @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
         String[] surfixes = {":pep", ":mRNA"};
-        name = removeSurfixes(name, surfixes);
+        name = removeSuffixes(name, surfixes);
         out.print(name);
     }
-	
-	private String removeSurfixes(String name, String surfixes[]){
-		for(int i=0; i<surfixes.length; ++i){
-			if (name.toLowerCase().endsWith(surfixes[i].toLowerCase())){
-				int removeIndex = name.toLowerCase().indexOf(surfixes[i].toLowerCase());
-				return name.substring(0, removeIndex);
-			}
-		}		
-		return name;
-	}
+
+    private String removeSuffixes(String name, String suffixes[]){
+        for(int i=0; i<suffixes.length; ++i){
+            if (name.toLowerCase().endsWith(suffixes[i].toLowerCase())){
+                int removeIndex = name.toLowerCase().indexOf(suffixes[i].toLowerCase());
+                return name.substring(0, removeIndex);
+            }
+        }
+        return name;
+    }
 }
