@@ -57,7 +57,8 @@
                 <td class="value">
                     <c:forEach items="${dto.products}" var="product">
                         <span>${product.typeName}</span>&nbsp;&nbsp;&nbsp;
-                        (${product.count} <a href="<c:url value="/Query"><c:param name="q" value="controlledCuration" /><c:param name="taxons" value="${dto.organismCommonName}" /><c:param name="cvTermName" value="${product.typeName}" /><c:param name="cv" value="genedb_products" /></c:url>">Others</a>)<br>
+                        <format:n-others count="${product.count}" cvTermName="${product.typeName}" taxons="${dto.organismCommonName}" cv="genedb_products" />
+                        <br>
                     </c:forEach>
                 </td>
             </tr>
