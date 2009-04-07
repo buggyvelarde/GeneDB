@@ -1,7 +1,5 @@
 package org.genedb.web.tags.misc;
 
-import static javax.servlet.jsp.PageContext.PAGE_SCOPE;
-
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -17,10 +15,9 @@ public class DateCreationTag extends SimpleTagSupport {
 
     private static final Logger logger = Logger.getLogger(DateCreationTag.class);
 
-    private int time;
+    private long time;
 
     private String message;
-
 
 
     @Override
@@ -36,13 +33,7 @@ public class DateCreationTag extends SimpleTagSupport {
         out.println(message + " " + DateFormat.getDateInstance(DateFormat.MEDIUM).format(date));
     }
 
-
-    public int getTime() {
-        return time;
-    }
-
-
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
