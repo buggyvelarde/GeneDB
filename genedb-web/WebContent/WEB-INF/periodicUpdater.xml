@@ -19,12 +19,21 @@
     <bean name="periodicUpdater" class="org.genedb.web.mvc.model.PeriodicUpdater">
         <property name="indexUpdaters">
             <util:list>
-                <!--ref bean="populateLuceneIndices" /-->
+                <ref bean="populateLuceneIndices" />
                 <ref bean="cacheSynchroniser" />
             </util:list>
         </property>
         <property name="changeTracker" ref="changeTracker" />
         <property name="clientName" value="NightlyUpdateProcess" />
+    </bean>
+
+    <bean name="populateLuceneIndices" class="org.genedb.web.mvc.model.PopulateLuceneIndices">
+        <property name="userName" value="${dbuser}" />
+        <property name="dbName" value="${dbname}" />
+        <property name="host" value="${dbhost}" />
+        <property name="password" value="${dbpassword}" />
+        <property name="port" value="${dbport}" />
+        <property name="sequenceDao" ref="sequenceDao" />
     </bean>
 
     <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
@@ -49,7 +58,7 @@
         <property name="changeTracker" ref="changeTracker" />
         <property name="noContextMap"><value>false</value></property>
     </bean>
-    
+
     <bean id="changeTracker" class="org.genedb.db.audit.HibernateChangeTracker"/>
 
     <bean id="renderedDiagramFactory" class="org.genedb.web.gui.RenderedDiagramFactory">
