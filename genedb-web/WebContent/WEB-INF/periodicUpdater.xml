@@ -33,6 +33,7 @@
         <property name="host" value="${dbhost}" />
         <property name="password" value="${dbpassword}" />
         <property name="port" value="${dbport}" />
+        <property name="indexBaseDirectory" value="${lucene.indexDirectory}" />
         <property name="sequenceDao" ref="sequenceDao" />
     </bean>
 

@@ -274,6 +274,25 @@
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       </java>
     </target>
+	
+
+
+    <target name="usage">
+        <echo message=""/>
+        <echo message="-----------------------------------"/>
+        <echo message=""/>
+        <echo message="Available targets are:"/>
+        <echo message=""/>
+        
+        <echo message=" -Ddeploy=${deploy} synchronise-caches   --> Update the Berkeley cache using the Change Set"/>
+        <echo message=" -Ddeploy=${deploy} populate-caches      --> Populate the entire Berkeley cache"/>
+        <echo message=" -Ddeploy=${deploy} LuceneIndex          --> Create entire Lucene Index"/>
+        <echo message=" -Ddeploy=${deploy} PeriodicUpdater      --> Update the Lucene Index and the Berkeley cache using the Change Set"/>
+        <echo message="-----------------------------------"/>
+        <echo message=" where ${deploy} is a property-file located in genedb-web directory"/>
+        <echo message=""/>
+    </target>
+
 
 
   <target name="init-web" description="Create full JAR file">

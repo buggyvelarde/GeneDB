@@ -644,4 +644,14 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     }
 
+
+
+    public String getIndexBaseDirectory() {
+        return indexBaseDirectory;
+    }
+
+    public void setIndexBaseDirectory(String indexBaseDirectory) {
+        this.indexBaseDirectory = indexBaseDirectory;
+    }
+
 }
