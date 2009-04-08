@@ -511,6 +511,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
         return dbName;
     }
 
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
