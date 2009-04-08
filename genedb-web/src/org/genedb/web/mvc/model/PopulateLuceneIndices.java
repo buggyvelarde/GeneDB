@@ -511,6 +511,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
         return port;
     }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public String getDbName() {
         return dbName;
     }
