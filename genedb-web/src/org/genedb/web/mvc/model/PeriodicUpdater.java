@@ -22,7 +22,7 @@ public class PeriodicUpdater {
 
     private ChangeTracker changeTracker;
 
-    private String clientName;
+    private String clientName = PeriodicUpdater.class.getCanonicalName();
 
     private boolean processChangeSet() throws SQLException {
 
