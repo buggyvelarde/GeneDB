@@ -112,8 +112,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private String organism;
     private int numBatches = -1;
 
-    private String databaseUsername;
-    private String databasePassword;
+    private String userName;
+    private String password;
     private String host;
     private int port;
     private String dbName;
@@ -143,8 +143,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
             logger.warn("A new datasource is being created, although one is already defined");
         }
 
-        this.databaseUsername = userName;
-        this.databasePassword = password;
+        this.userName = userName;
+        this.password = password;
         this.host = host;
         this.port = port;
         this.dbName = dbName;
@@ -181,8 +181,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-        cfg.setProperty("hibernate.connection.username", getDatabaseUsername());
-        cfg.setProperty("hibernate.connection.password", getDatabasePassword());
+        cfg.setProperty("hibernate.connection.username", getUserName());
+        cfg.setProperty("hibernate.connection.password", getPassword());
         cfg.setProperty("hibernate.connection.url", getDatabaseUrl());
 
         cfg.setProperty("hibernate.search.default.directory_provider",
@@ -483,20 +483,20 @@ public class PopulateLuceneIndices implements IndexUpdater {
     /* Static methods */
 
 
-    public String getDatabaseUsername() {
-        return databaseUsername;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setDatabaseUsername(String databaseUsername) {
-        this.databaseUsername = databaseUsername;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getDatabasePassword() {
-        return databasePassword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setDatabasePassword(String databasePassword) {
-        this.databasePassword = databasePassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getHost() {
