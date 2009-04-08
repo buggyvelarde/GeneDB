@@ -29,7 +29,6 @@ import org.hibernate.search.event.FullTextIndexEventListener;
 import org.hibernate.search.reader.ReaderProvider;
 import org.hibernate.search.store.DirectoryProvider;
 import org.postgresql.ds.PGSimpleDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -137,6 +136,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
         makeDataSource(host, port, userName, dbName, password);
     }
 
+
+    private void makeDataSource() {
+        makeDataSource(host, port, userName, dbName, password);
+    }
 
     private void makeDataSource(String host, int port, String userName, String dbName, String password) {
         if (dataSource != null) {
@@ -449,14 +452,11 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     public DataSource getDataSource() {
         if (dataSource == null) {
-            logger.error("Datasource hasn't been injected, or created from connection properties");
-            throw new NullPointerException("Datasource hasn't been injected, or created from connection properties");
+            makeDataSource();
+            //logger.error("Datasource hasn't been injected, or created from connection properties");
+            //throw new NullPointerException("Datasource hasn't been injected, or created from connection properties");
         }
         return dataSource;
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
     }
 
     public void setFailFast(boolean failFast) {
