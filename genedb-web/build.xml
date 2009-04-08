@@ -246,7 +246,24 @@
 
 
 
-    <target name="LuceneIndex" depends="check-deploy,iajc-web">
+    <target name="LuceneIndexAllOrgs" depends="check-deploy,iajc-web">
+        <java fork="true" failonerror="true" classname="org.genedb.web.mvc.model.GenerateBatchJobs">
+            <classpath>
+              <path refid="web-classpath"/>
+              <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+            </classpath>
+            <arg line="-Ddeploy=${deploy} Lucene"/>
+            <jvmarg line="-server" />
+        </java>
+
+    </target>
+
+
+
+
+    <target name="_LuceneIndex" depends="check-deploy">
         <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
               <path refid="web-classpath"/>
@@ -254,11 +271,10 @@
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
             </classpath>
-            <arg line="-o Pfalciparum -i /tmp -h ${dbhost} -p ${dbport} -U ${dbuser} -P ${dbpassword} ${dbname}"/>
+            <arg line="-o ${organism} -i ${dir} -h ${dbhost} -p ${dbport} -U ${dbuser} -P ${dbpassword} ${dbname}"/>
             <jvmarg line="-server" />
         </java>
     </target>
-
 
     <target name="PeriodicUpdater" depends="check-deploy,iajc-web"
         description="Bring the Lucene indices and the Berkley DB up-to-date since the last run.">
