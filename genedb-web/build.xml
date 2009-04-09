@@ -245,23 +245,19 @@
     </target>
 
 
-
-    <target name="LuceneIndexAllOrgs" depends="check-deploy,iajc-web">
-        <java fork="true" failonerror="true" classname="org.genedb.web.mvc.model.GenerateBatchJobs">
-            <classpath>
-              <path refid="web-classpath"/>
-              <pathelement location="${imported.basedir.web}/ant-build/classes"/>
-              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
-              <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
-            </classpath>
-            <arg line="-Ddeploy=${deploy} Lucene"/>
-            <jvmarg line="-server" />
-        </java>
-
+    <target name="_PopulateCaches" depends="check-deploy">
+      <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
+        <classpath>
+          <path refid="web-classpath"/>
+          <pathelement location="${imported.basedir.web}/ant-build/classes"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
+          <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
+        </classpath>
+        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+        <arg line="-o ${organism} -globalFileRoot ${dir}"/>
+      </java>
     </target>
-
-
-
 
     <target name="_LuceneIndex" depends="check-deploy">
         <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
