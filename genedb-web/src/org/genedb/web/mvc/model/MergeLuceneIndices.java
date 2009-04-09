@@ -29,7 +29,7 @@ public class MergeLuceneIndices {
         File[] dirs = source.listFiles();
         Directory[] directories = new Directory[dirs.length];
         for (int i = 0; i < dirs.length; i++) {
-            directories[i] = FSDirectory.getDirectory(dirs[i]);
+            directories[i] = FSDirectory.getDirectory(dirs[i].getAbsolutePath()+File.separatorChar+indexName);
         }
         destination.addIndexesNoOptimize(directories);
 
