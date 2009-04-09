@@ -15,11 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import common.Logger;
+
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class CacheSynchroniserTest{
+public class CacheSynchroniserTest extends AbstractUpdaterTest{
+    Logger logger = Logger.getLogger(CacheSynchroniserTest.class);
     @Autowired
     private CacheSynchroniser cacheSynchroniser;
     
@@ -31,13 +34,17 @@ public class CacheSynchroniserTest{
     
     @After
     public void clearUpCaches()throws Exception{ 
+        logger.info("Clearing cache");
         MockChangeSetImpl changeSet = (MockChangeSetImpl)
             cacheSynchroniser.getChangeTracker().changes(CacheSynchroniserTest.class.getName());
-        changeSet.getNewMap().clear();
-        changeSet.getChangedMap().clear();
-        changeSet.getDeletedMap().clear();
+        changeSet.clearAll();
         
+        //Clear cache
         ((CacheSynchTestDelegate)cacheSynchroniser).getContextMapMap().clear();
+        ((CacheSynchTestDelegate)cacheSynchroniser).getContextImageMap().clear();
+        
+        //Reset th elog info
+        ((CacheSynchTestDelegate)cacheSynchroniser).getChangeSetInfo().setLength(0);
     }
     
     @Test
@@ -163,6 +170,7 @@ public class CacheSynchroniserTest{
         changeSet.getDeletedMap().put(TopLevelFeature.class, featureIds);       
 
         //Start synching
+      //execute class under test
         cacheSynchroniser.updateAllCaches(changeSet);
         
         //Now, check again
@@ -188,6 +196,7 @@ public class CacheSynchroniserTest{
         changeSet.getNewMap().put(Transcript.class, featureIds);     
 
         //Start synching
+      //execute class under test
         boolean noErrors = cacheSynchroniser.updateAllCaches(changeSet);
         
         //Find Transcript DTO, using the generated gene unique n  ame
@@ -236,6 +245,7 @@ public class CacheSynchroniserTest{
         changeSet.getDeletedMap().put(Transcript.class, featureIds);          
 
         //Start synching
+      //execute class under test
         noErrors = cacheSynchroniser.updateAllCaches(changeSet);
         
         //Now, check again

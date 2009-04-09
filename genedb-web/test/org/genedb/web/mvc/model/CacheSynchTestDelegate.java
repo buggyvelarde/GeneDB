@@ -97,7 +97,15 @@ public class CacheSynchTestDelegate extends CacheSynchroniser {
         return contextMapMap;
     }
     
+    public StoredMap<String, byte[]> getContextImageMap(){
+        return contextImageMap;
+    }
+    
     public StoredMap<Integer, TranscriptDTO> getDtoMap(){
         return dtoMap;
+    }
+    
+    public StringBuffer getChangeSetInfo(){
+        return changeSetInfo;
     }
 }

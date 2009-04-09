@@ -116,6 +116,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private String host;
     private int port;
     private String dbName;
+    
+    private String hibernateDialect = "org.hibernate.dialect.PostgreSQLDialect";
+    private String hibernateDriverClass = "org.postgresql.Driver";
+    private String databaseUrl;
 
 
     public PopulateLuceneIndices() {
@@ -182,8 +186,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
         cfg.addPackage("org.gmod.schema.mapped");
         cfg.addPackage("org.gmod.schema.feature");
 
-        cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
+        cfg.setProperty("hibernate.dialect", getHibernateDialect());
+        cfg.setProperty("hibernate.connection.driver_class", getHibernateDriverClass());
         cfg.setProperty("hibernate.connection.username", getUserName());
         cfg.setProperty("hibernate.connection.password", getPassword());
         cfg.setProperty("hibernate.connection.url", getDatabaseUrl());
@@ -476,6 +480,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
     }
 
     private String getDatabaseUrl() {
+        if (databaseUrl!= null){
+            return databaseUrl;
+        }
         return "jdbc:postgresql://" + getHost() + ":" + getPort() + "/"+ getDbName();
     }
 
@@ -646,12 +653,36 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
 
 
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     public String getIndexBaseDirectory() {
         return indexBaseDirectory;
     }
 
     public void setIndexBaseDirectory(String indexBaseDirectory) {
         this.indexBaseDirectory = indexBaseDirectory;
+    }
+
+    public String getHibernateDialect() {
+        return hibernateDialect;
+    }
+
+    public void setHibernateDialect(String hibernateDialect) {
+        this.hibernateDialect = hibernateDialect;
+    }
+
+    public String getHibernateDriverClass() {
+        return hibernateDriverClass;
+    }
+
+    public void setHibernateDriverClass(String hibernateDriverClass) {
+        this.hibernateDriverClass = hibernateDriverClass;
+    }
+
+    public void setDatabaseUrl(String databaseUrl) {
+        this.databaseUrl = databaseUrl;
     }
 
 }

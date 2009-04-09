@@ -78,6 +78,10 @@ public class MockChangeSetImpl implements ChangeSet {
         this.newMap = newMap;
     }
 
-
+    public void clearAll(){
+        newMap.clear();
+        changedMap.clear();
+        deletedMap.clear();
+    }
 
 }

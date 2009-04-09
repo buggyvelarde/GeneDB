@@ -64,7 +64,7 @@ public class CacheSynchroniser implements IndexUpdater{
     
     private int topLevelErrorCount = 0;
     private int transcriptErrorCount = 0;
-    private StringBuffer changeSetInfo = new StringBuffer();
+    protected StringBuffer changeSetInfo = new StringBuffer();
     private int addedTopLevelFeatureCount;
     private int changedTopLevelFeatureCount;
     private int removedTopLevelFeatureCount;

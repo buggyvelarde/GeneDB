@@ -40,7 +40,7 @@
     </bean>
 
     <bean name="berkeleyReadWriteMapFactory" class="org.genedb.web.mvc.model.BerkeleyMapFactory">
-        <property name="rootDirectory" value="/tmp"/>
+        <property name="rootDirectory" value="/tmp/test"/>
     </bean>
 
     

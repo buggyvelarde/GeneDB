@@ -24,7 +24,7 @@ public class PeriodicUpdater {
 
     private String clientName = PeriodicUpdater.class.getCanonicalName();
 
-    private boolean processChangeSet() throws SQLException {
+    boolean processChangeSet() throws SQLException {
 
         ChangeSet changeSet = changeTracker.changes(clientName);
 
