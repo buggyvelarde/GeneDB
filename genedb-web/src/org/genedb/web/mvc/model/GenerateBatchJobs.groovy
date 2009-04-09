@@ -47,11 +47,11 @@ sql.eachRow("select distinct(o.common_name) from organism o, feature f where f.o
     println " ${org}"
     Process p = ["ssh", "pcs4", "bsub -q ${queueName} -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
     def sout = new StringBuffer()
-        def serr = new StringBuffer()
+    def serr = new StringBuffer()
     p.consumeProcessOutput(sout, serr)
     p.waitFor()
-    println "Output: ${sout}"
-    println "Error: ${serr}"
+    //println "Output: ${sout}"
+    //println "Error: ${serr}"
 }
 
 println ""
