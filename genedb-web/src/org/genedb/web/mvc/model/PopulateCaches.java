@@ -203,6 +203,9 @@ public class PopulateCaches {
 
     public void setConfig(PopulateCachesArgs pca) {
         this.config = pca;
+        if (pca.isGlobalFileRoot()) {
+            bmf.setRootDirectory(pca.getGlobalFileRoot());
+        }
     }
 
     public void setDtoMap(StoredMap<Integer, TranscriptDTO> dtoMap) {
