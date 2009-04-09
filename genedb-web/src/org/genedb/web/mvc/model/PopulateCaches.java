@@ -204,7 +204,10 @@ public class PopulateCaches {
     public void setConfig(PopulateCachesArgs pca) {
         this.config = pca;
         if (pca.isGlobalFileRoot()) {
+            logger.error("Setting global file root to '"+pca.getGlobalFileRoot()+"'");
             bmf.setRootDirectory(pca.getGlobalFileRoot());
+        } else {
+            logger.error("Not setting global file root");
         }
     }
 
