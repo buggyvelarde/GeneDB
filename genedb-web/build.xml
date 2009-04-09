@@ -253,7 +253,7 @@
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
         </classpath>
-        <jvmarg value="-Xmx512m"/>
+        <jvmarg value="-Xmx256m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
         <arg line="-o ${organism} --globalFileRoot ${dir}"/>
       </java>
