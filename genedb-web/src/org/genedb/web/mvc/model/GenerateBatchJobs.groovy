@@ -4,7 +4,7 @@ def boilerPlate = '''
 export JAVA_HOME=/software/pathogen/external/applications/java/java6
 export ANT_HOME=/software/pathogen/external/applications/ant/apache-ant
 export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:$PATH
-export DISPLAY=
+unset DISPLAY
 cd /nfs/pathdb/genedb/staging/cvs/genedb-ng/genedb-web
 '''
 
@@ -45,7 +45,7 @@ sql.eachRow("select distinct(o.common_name) from organism o, feature f where f.o
     script << antLine + '\n'
     "chmod 755 ${scriptName}".execute()
 
-    println " ${org}"
+    print "${org} "
     Process p = ["ssh", "pcs4", "bsub -q ${queueName} -o ${scriptName}.out -e ${scriptName}.err ${scriptName}"].execute()
     def sout = new StringBuffer()
     def serr = new StringBuffer()
