@@ -17,8 +17,8 @@ public class MergeLuceneIndices {
 
         MergeLuceneIndices mli = new MergeLuceneIndices();
 
-        mli.merge(args[0], "org.gmod.schema.Feature", args[1], true);
-        mli.merge(args[0], "org.gmod.schema.Organism", args[1], false);
+        mli.merge(args[0], "org.gmod.schema.mapped.Feature", args[1], true);
+        mli.merge(args[0], "org.gmod.schema.mapped.Organism", args[1], false);
     }
 
     private void merge(String destinationDir, String indexName, String sourceDir, boolean create) throws CorruptIndexException, LockObtainFailedException, IOException {
