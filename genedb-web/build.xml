@@ -255,7 +255,7 @@
         </classpath>
         <jvmarg value="-Xmx512m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-        <arg line="-o ${organism} -globalFileRoot ${dir}"/>
+        <arg line="-o ${organism} --globalFileRoot ${dir}"/>
       </java>
     </target>
 
