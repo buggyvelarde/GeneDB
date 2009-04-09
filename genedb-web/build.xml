@@ -268,7 +268,7 @@
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
             </classpath>
             <arg line="-o ${organism} -i ${dir} -h ${dbhost} -p ${dbport} -U ${dbuser} -P ${dbpassword} ${dbname}"/>
-            <jvmarg line="-server" />
+            <jvmarg line="-server -Djava.awt.headless=true" />
         </java>
     </target>
 
