@@ -17,12 +17,12 @@ public class MergeLuceneIndices {
 
         MergeLuceneIndices mli = new MergeLuceneIndices();
 
-        mli.merge(args[0], "org.gmod.schema.mapped.Feature", args[1], true);
-        mli.merge(args[0], "org.gmod.schema.mapped.Organism", args[1], false);
+        mli.merge(args[0], "org.gmod.schema.mapped.Feature", args[1]);
+        mli.merge(args[0], "org.gmod.schema.mapped.Organism", args[1]);
     }
 
-    private void merge(String destinationDir, String indexName, String sourceDir, boolean create) throws CorruptIndexException, LockObtainFailedException, IOException {
-        IndexWriter destination = new IndexWriter(destinationDir +File.separatorChar+indexName, new SimpleAnalyzer(), create);
+    private void merge(String destinationDir, String indexName, String sourceDir) throws CorruptIndexException, LockObtainFailedException, IOException {
+        IndexWriter destination = new IndexWriter(destinationDir +File.separatorChar+indexName, new SimpleAnalyzer(), true);
 
         File source = new File(sourceDir);
 
