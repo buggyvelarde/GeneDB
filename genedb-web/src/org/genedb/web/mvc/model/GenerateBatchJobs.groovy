@@ -32,6 +32,7 @@ sql.eachRow("select distinct(o.common_name) from organism o, feature f where f.o
 
     case "DTO":
         antLine="ant -Ddeploy=${args[1]} -Dorganism=${org} -Ddir=${baseDir}/output/${org} _PopulateCaches"
+        new File("${baseDir}/output/${org}").mkdir()
         break
 
     default:
