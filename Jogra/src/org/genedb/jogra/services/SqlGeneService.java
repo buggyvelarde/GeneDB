@@ -19,15 +19,15 @@ public class SqlGeneService implements GeneService {
 
     private JdbcTemplate jdbcTemplate;
     private SqlUpdate sqlUpdate;
-	private int transcriptId;
-	
-	@PostConstruct
-	@SuppressWarnings("unused")  // Init method
-	private void setUpConstants() {
-		String sql = "select cvterm_id from cvterm where name='mRNA'";
-		transcriptId = this.jdbcTemplate.queryForInt(sql);
-		System.err.println(transcriptId);
-	}
+    private int transcriptId;
+
+    @PostConstruct
+    @SuppressWarnings("unused")  // Init method
+    private void setUpConstants() {
+        String sql = "select cvterm_id from cvterm where name='mRNA'";
+        transcriptId = this.jdbcTemplate.queryForInt(sql);
+        System.err.println(transcriptId);
+    }
 
 
     public void setDataSource(DataSource dataSource) {
@@ -51,26 +51,25 @@ public class SqlGeneService implements GeneService {
         String sql = "select * from Feature where uniquename='" + name + "'";
         Map<String, Object> map =  this.jdbcTemplate.queryForMap(sql);
 
-      	ret.setUniqueName((String)map.get("uniquename"));
-      	ret.setName((String)map.get("name"));
-      	
-      	int featureId = ((Integer) map.get("feature_id")).intValue();
+          ret.setUniqueName((String)map.get("uniquename"));
+          ret.setName((String)map.get("name"));
+
+          int featureId = ((Integer) map.get("feature_id")).intValue();
 
         sql = "select * from FeatureLoc where feature_id='" + featureId + "'";
         List<Map<String, Object>> names =  this.jdbcTemplate.queryForList(sql);
-      	
+
         List<String> synonyms = Lists.newArrayList();
         for (Map<String, Object> map2 : names) {
-			synonyms.add((String)map.get("name"));
-		}
+            synonyms.add((String)map.get("name"));
+        }
         ret.setSynonyms(synonyms);
-        
+
         return ret;
     }
 
     //@Override
-    @SuppressWarnings("unchecked")
-	public List<String> findTranscriptNamesByPartialName(String search) {
+    public List<String> findTranscriptNamesByPartialName(String search) {
 
         String sql = "select uniquename from Feature where uniquename like '%"+search+"%' and type_id="+transcriptId+" order by uniquename";
 

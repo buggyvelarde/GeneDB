@@ -52,7 +52,7 @@ public class SqlProductService implements ProductService {
             " order by lower(cvterm.name), cvterm.name";
 
         RowMapper mapper = new RowMapper() {
-            public Product mapRow(ResultSet rs, @SuppressWarnings("unused") int rowNum) throws SQLException {
+            public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Product product = new Product(rs.getString("name"), rs.getInt("cvterm_id"));
                 return product;
             }
