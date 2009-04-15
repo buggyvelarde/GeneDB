@@ -253,7 +253,7 @@
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
           <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
         </classpath>
-        <jvmarg value="-Xmx256m"/>
+        <jvmarg value="-Xmx512m"/>
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
         <arg line="-o ${organism} --globalFileRoot ${dir}"/>
       </java>
@@ -385,7 +385,7 @@
         <echo message="-----------------------------------"/>
         <echo message=""/>
         <echo message="Available targets are:"/>
-        <echo message=""/>   
+        <echo message=""/>
         <echo message=" genedb-web-tests                        --> Run test-cases found in the genedb-web project"/>
         <echo message=" -Ddeploy=${deploy} synchronise-caches   --> Update the Berkeley cache using a Change Set"/>
         <echo message=" -Ddeploy=${deploy} populate-caches      --> Populate the entire Berkeley cache"/>
