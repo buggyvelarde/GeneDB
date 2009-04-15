@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp
         spec="1.0+"
-        codebase="http://www.sanger.ac.uk/Software/Artemis/v11/database">
+        codebase="http://www.sanger.ac.uk/Software/Artemis">
          <information>
            <title>Artemis :: Gene Builder</title>
            <vendor>Sanger Institute</vendor>
@@ -16,7 +16,7 @@
          </security>
          <resources>
            <j2se version="1.4+ 1.4.2" initial-heap-size="32m" max-heap-size="200m"/>
-             <jar href="sartemis.jar"/>
+             <jar href="sartemis_current.jar"/>
            <property name="com.apple.mrj.application.apple.menu.about.name" value="Artemis :: Gene Builder" />
            <property name="artemis.environment" value="UNIX" />
            <property name="j2ssh" value="" />
