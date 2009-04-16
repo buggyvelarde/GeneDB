@@ -41,6 +41,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -107,10 +108,11 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         if (dto == null) {
             cacheMiss++;
             logger.error(String.format("dto cache miss for '%s'. Looked for featureId of '%d'", feature.getUniqueName(), feature.getFeatureId()));
-            StoredIterator<Integer> it = (StoredIterator<Integer>) bmf.getDtoMap().keySet().iterator();
+            StoredIterator<Entry<Integer, TranscriptDTO>> it = (StoredIterator<Entry<Integer, TranscriptDTO>>) bmf.getDtoMap().entrySet().iterator();
             if (logger.isDebugEnabled()) {
                 while (it.hasNext()) {
-                    logger.debug(""+it.next());
+                    Entry<Integer, TranscriptDTO> entry = it.next();
+                    logger.debug(String.format("'%d'\t'%s'\t'%s'", entry.getKey(), entry.getValue().getUniqueName(), entry.getValue().getOrganismCommonName()));
                 }
             }
             it.close();
