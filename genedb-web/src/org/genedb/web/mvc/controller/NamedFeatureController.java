@@ -40,11 +40,13 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Maps;
+import com.sleepycat.collections.StoredIterator;
 
 /**
  * Looks up a feature by unique name
@@ -105,6 +107,13 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         if (dto == null) {
             cacheMiss++;
             logger.error(String.format("dto cache miss for '%s'. Looked for featureId of '%d'", feature.getUniqueName(), feature.getFeatureId()));
+            StoredIterator<Integer> it = (StoredIterator<Integer>) bmf.getDtoMap().keySet().iterator();
+            if (logger.isDebugEnabled()) {
+                while (it.hasNext()) {
+                    logger.debug(""+it.next());
+                }
+            }
+            it.close();
             throw new RuntimeException(String.format("Unable to find '%s' in cache", feature.getUniqueName()));
         }
 
