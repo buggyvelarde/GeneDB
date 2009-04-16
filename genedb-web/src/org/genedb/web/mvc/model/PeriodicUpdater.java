@@ -45,7 +45,6 @@ public class PeriodicUpdater {
     public static void main(String[] args) throws SQLException {
         ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
             new String[] {"classpath:applicationContext.xml", "classpath:periodicUpdater.xml"});
-        ctx.refresh();
         PeriodicUpdater pu = ctx.getBean("periodicUpdater", PeriodicUpdater.class);
         boolean success = pu.processChangeSet();
         System.exit( success ? 0 : 1 );

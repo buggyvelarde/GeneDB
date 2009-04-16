@@ -49,6 +49,8 @@
     <pathelement location="${imported.basedir.domain}/${test-classes.dir}"/>
     <pathelement location="${imported.basedir.web}/test"/>
     <pathelement location="${imported.basedir.web}/../genedb-domain/test"/>
+    <pathelement location="${imported.basedir.web}/../genedb-domain/test-lib/hsqldb.jar"/>
+    <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
   </path>
 
   <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.fulljar-db,genedb-util.fulljar-util" />
@@ -286,6 +288,28 @@
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       </java>
     </target>
+	
+	 <target name="test-periodic-updater" depends="check-deploy,iajc-web" description="Run tests">
+	    <javac srcdir="${imported.basedir.web}/test" includes="**/PeriodicUpdaterTest.java" debug="true"
+	 	                 destdir="${imported.basedir.web}/${test-classes.dir}"
+	 	                 classpathref="web-tests-classpath" />
+	        <junit printsummary="on"
+	            fork="true"
+	        	maxmemory="1024m"
+	            haltonfailure="false"
+	            failureproperty="tests.failed"
+	            showoutput="true">
+	            <classpath refid="web-tests-classpath"/>
+	            <formatter type="brief" usefile="false"/>
+	            
+	           <test name="org.genedb.web.mvc.model.PeriodicUpdaterTest"/>	            
+	        </junit>
+	        
+	        <fail if="tests.failed">
+	            tests.failed=${tests.failed}
+	           PeriodicUpdaterTest failed
+	        </fail>
+	    </target>
 
 
   <target name="init-web" description="Create full JAR file">

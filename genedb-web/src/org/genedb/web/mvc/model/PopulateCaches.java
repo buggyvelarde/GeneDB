@@ -79,7 +79,6 @@ public class PopulateCaches {
 
         ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
             new String[] {"classpath:applicationContext.xml", "classpath:populateCaches.xml"});
-        //ctx.refresh();
         PopulateCaches pc = ctx.getBean("populateCaches", PopulateCaches.class);
         pc.setConfig(pca);
         pc.fullCachePopulate();

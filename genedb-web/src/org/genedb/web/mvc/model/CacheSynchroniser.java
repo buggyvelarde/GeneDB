@@ -84,7 +84,6 @@ public class CacheSynchroniser implements IndexUpdater{
 			//Get the sychroniser
 			ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
 					new String[] {"classpath:applicationContext.xml", "classpath:synchCaches.xml"});
-			ctx.refresh();
 			cacheSynchroniser = ctx.getBean("cacheSynchroniser", CacheSynchroniser.class);
 	        
 	        //Get the records to update
@@ -122,6 +121,7 @@ public class CacheSynchroniser implements IndexUpdater{
 	 */
     @Transactional
 	public boolean updateAllCaches(ChangeSet changeSet){
+        logger.debug("Enter updateAllCaches->");
 	    
         //Initialise
         init();
@@ -135,6 +135,9 @@ public class CacheSynchroniser implements IndexUpdater{
 	    //Print operation
 	    printResults();
 	    
+
+        logger.debug("Exit updateAllCaches");
+	    
 	    return isContextUpdated && isTransciptDTOUpdated;
 	}	
 		
@@ -147,6 +150,8 @@ public class CacheSynchroniser implements IndexUpdater{
 	 *         Is update to context map cache successful
 	 */
 	private boolean updateContextMapCache(ChangeSet changeSet){
+        logger.debug("Enter updateContextMapCache->");
+        
         //A set of processed features to avoid duplication of effort
         Set<Integer> processedFeatures = new HashSet<Integer>();
         
@@ -158,6 +163,8 @@ public class CacheSynchroniser implements IndexUpdater{
         
         //Remove deleted top level features
         boolean isAllDeleted = removeTopLevelFeatures(changeSet, processedFeatures);
+        
+        logger.debug("Exit updateContextMapCache");        
         
         //Is all successful
         return isAllAdded && isAllChanged && isAllDeleted;
@@ -175,7 +182,7 @@ public class CacheSynchroniser implements IndexUpdater{
 	private boolean addNewTopLevelFeatures(ChangeSet changeSet, Set<Integer> processedFeatures){        
         //Add new top level features
 	    Collection<Integer>topLevelFeatures = changeSet.newFeatureIds(TopLevelFeature.class);
-        updateChangeSetLog("TopLevelFeatures ChangeSet.newFeatures: ", topLevelFeatures.size());
+        updateChangeSetLog("ChangeSet.newFeatures TopLevelFeatures: ", topLevelFeatures.size());
 	    return updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, false);
 	}
     
@@ -191,17 +198,17 @@ public class CacheSynchroniser implements IndexUpdater{
     private boolean changeTopLevelFeatures(ChangeSet changeSet, Set<Integer> processedFeatures){        
         //Update top level features
         Collection<Integer>topLevelFeatures = changeSet.changedFeatureIds(TopLevelFeature.class);
-        updateChangeSetLog("TopLevelFeatures ChangeSet.changedFeatures: ", topLevelFeatures.size());
+        updateChangeSetLog("ChangeSet.changedFeatures TopLevelFeatures: ", topLevelFeatures.size());
         boolean isFindTopLevelUpdated = updateTopLevelFeatures(topLevelFeatures, TopLevelFeature.class, processedFeatures, true);
         
         //Update toplevelfeatures as a result of changed transcripts
         Collection<Integer>transcripts = changeSet.changedFeatureIds(Transcript.class);
-        updateChangeSetLog("Transcript ChangeSet.changedFeatures: ", transcripts.size());
+        updateChangeSetLog("ChangeSet.changedFeatures  Transcript: ", transcripts.size());
         boolean isFindTranscriptUpdated = updateTopLevelFeatures(transcripts, Transcript.class, processedFeatures, true);
 
         //Update toplevelfeatures as a result of the changed gaps
         Collection<Integer>gaps = changeSet.changedFeatureIds(Gap.class);
-        updateChangeSetLog("Gaps ChangeSet.changedFeatures: ", gaps.size());
+        updateChangeSetLog("ChangeSet.changedFeatures Gaps: ", gaps.size());
         boolean isFindGapsUpdated = updateTopLevelFeatures(gaps, Gap.class, processedFeatures, true);
         
         //Is Find toplevel features updated
@@ -220,7 +227,7 @@ public class CacheSynchroniser implements IndexUpdater{
         try{
             //Remove top level features
             Collection<Integer>topLevelFeatureIds = changeSet.deletedFeatureIds(TopLevelFeature.class);
-            updateChangeSetLog("TopLevelFeatures ChangeSet.deletedFeatures: ", topLevelFeatureIds.size());
+            updateChangeSetLog("ChangeSet.deletedFeatures TopLevelFeatures: ", topLevelFeatureIds.size());
             
             //Get the top level features to remove
             for(Integer featureId: topLevelFeatureIds){
@@ -389,7 +396,12 @@ public class CacheSynchroniser implements IndexUpdater{
 	@SuppressWarnings("unchecked")
     private List<Feature> findFeatures(String queryStr, Collection<Integer> featureIds, int batchSize){     
         List<Feature> featureMasterList = new ArrayList<Feature>(0);
-        Iterator<Integer> iter = featureIds.iterator();
+        
+        //Needed to ensure the remove() does not loose the list items after method returns
+        List<Integer> tempFeatureIds = new ArrayList<Integer>();
+        tempFeatureIds.addAll(featureIds);
+        
+        Iterator<Integer> iter = tempFeatureIds.iterator();
         List<Integer> listParam = new ArrayList<Integer>();
         while(iter.hasNext()){
             listParam.add(iter.next());
@@ -422,6 +434,7 @@ public class CacheSynchroniser implements IndexUpdater{
      *      Is update to DTO cache successful
      */
     private boolean updateTranscriptDTOCache(ChangeSet changeSet){
+        logger.debug("Enter updateTranscriptDTOCache->");
         //A set of processed features to avoid duplication of effort
         Set<Integer> processedTranscripts = new HashSet<Integer>();
      
@@ -433,6 +446,8 @@ public class CacheSynchroniser implements IndexUpdater{
      
         //Add new transcripts
         boolean isFindAnyDeleted = removeTranscriptDTO(changeSet, processedTranscripts);
+
+        logger.debug("Exit updateTranscriptDTOCache");
         
         //Is FindAny successful
         return isFindAnyAdded && isFindAnyChanged && isFindAnyDeleted;
@@ -449,7 +464,7 @@ public class CacheSynchroniser implements IndexUpdater{
 	private boolean addNewTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){       
         //Add new transcripts
         Collection<Integer>transcripts = changeSet.newFeatureIds(Transcript.class);
-        updateChangeSetLog("Transcript ChangeSet.newFeatures: ", transcripts.size());
+        updateChangeSetLog("ChangeSet.newFeatures Transcript: ", transcripts.size());
         return  updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, false);
 
 	}
@@ -462,31 +477,35 @@ public class CacheSynchroniser implements IndexUpdater{
      * @return Boolean
      *          Is processing a success
      */
-    private boolean changeTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){       
+    private boolean changeTranscriptDTO(ChangeSet changeSet, Set<Integer> processedFeatures){ 
+        logger.debug("Enter changeTranscriptDTO->");
+        
         //Update transcripts
         Collection<Integer>transcripts = changeSet.changedFeatureIds(Transcript.class);
-        updateChangeSetLog("Transcript ChangeSet.changedFeatures: ", transcripts.size());
+        updateChangeSetLog("ChangeSet.changedFeatures Transcript: ", transcripts.size());
         boolean isFindAnyTranscriptsChanged = updateTranscriptDTO(transcripts, Transcript.class, processedFeatures, true);
 
         //Update transcripts as a result of new genes
         Collection<Integer>genes = changeSet.newFeatureIds(Gene.class);
-        updateChangeSetLog("Genes ChangeSet.newFeatures: ", genes.size());
+        updateChangeSetLog("ChangeSet.newFeatures Genes: ", genes.size());
         boolean isFindAnyGenesAdded = updateTranscriptDTO(genes, Gene.class, processedFeatures, false);
 
         //Update transcripts as a result of updated genes
         genes = changeSet.changedFeatureIds(Gene.class);
-        updateChangeSetLog("Genes ChangeSet.changedFeatures: ", genes.size());
+        updateChangeSetLog("ChangeSet.changedFeatures Genes: ", genes.size());
         boolean isFindAnyGenesChanged = updateTranscriptDTO(genes, Gene.class, processedFeatures, true);
 
         //Update transcripts as a result of the new polypeptides
         Collection<Integer>polypeptides = changeSet.newFeatureIds(Polypeptide.class);
-        updateChangeSetLog("Polypeptide ChangeSet.newFeatures: ", polypeptides.size());
+        updateChangeSetLog("ChangeSet.newFeatures Polypeptide: ", polypeptides.size());
         boolean isFindAnyPolypeptidesAdded = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, false);
 
         //Update transcripts as a result of the new polypeptides
         polypeptides = changeSet.changedFeatureIds(Polypeptide.class);
-        updateChangeSetLog("Polypeptides ChangeSet.changedFeatures: ", polypeptides.size());
+        updateChangeSetLog("ChangeSet.changedFeatures Polypeptide: ", polypeptides.size());
         boolean isFindAnyPolypeptidesChanged = updateTranscriptDTO(polypeptides, Polypeptide.class, processedFeatures, true);
+
+        logger.debug("Exit changeTranscriptDTO");
         
         //Is FindAny toplevel features added
         return isFindAnyTranscriptsChanged 
@@ -506,6 +525,7 @@ public class CacheSynchroniser implements IndexUpdater{
 	 * @return
 	 */
 	private boolean updateTranscriptDTO(Collection<Integer> featureIds, Class<? extends Feature> clazz, Set<Integer> processedFeatures, boolean isChanged){
+        logger.debug("Enter updateTranscriptDTO->");
 	    boolean isUpdated = false;
 	    try{
 	        if(featureIds!= null && featureIds.size()>0){
@@ -513,11 +533,11 @@ public class CacheSynchroniser implements IndexUpdater{
 	            for(Transcript transcript: transcripts){
 	                TranscriptDTO dto = modelBuilder.prepareTranscript(transcript);
 	                if(!isChanged){
-	                    dtoMap.put(new Integer(transcript.getFeatureId()), dto);  
+	                    dtoMap.put(transcript.getFeatureId(), dto);  
 	                    ++addedTranscriptCount;
 	                    logger.info("Added transcript ("+transcript.getFeatureId()+"), " + transcript.getUniqueName());
 	                }else{
-	                    dtoMap.replace(new Integer(transcript.getFeatureId()), dto);
+	                    dtoMap.put(transcript.getFeatureId(), dto);//don't use replace, use put, safer.
 	                    ++changedTranscriptCount;
 	                    logger.info("Replaced transcript ("+transcript.getFeatureId()+"), " + transcript.getUniqueName());
 	                }
@@ -530,6 +550,7 @@ public class CacheSynchroniser implements IndexUpdater{
 	        ++transcriptErrorCount;
 	        logger.error("Update Transcript Error", e);
 	    }
+	    logger.debug("Exit updateTranscriptDTO");
 	    return isUpdated;
 	}
 	
@@ -542,7 +563,7 @@ public class CacheSynchroniser implements IndexUpdater{
         try{
             //Remove transcript features
             Collection<Integer>transcriptFeatureIds = changeSet.deletedFeatureIds(Transcript.class);
-            updateChangeSetLog("Transcript ChangeSet.deletedFeatures: ", transcriptFeatureIds.size());
+            updateChangeSetLog("ChangeSet.deletedFeatures Transcript: ", transcriptFeatureIds.size());
 
             //Get the top level features to remove
             for(Integer featureId: transcriptFeatureIds){
@@ -634,6 +655,7 @@ public class CacheSynchroniser implements IndexUpdater{
     }
     
     private void updateChangeSetLog(String message, int size){
+        logger.debug(message + " " + size);
         changeSetInfo.append("\n");
         changeSetInfo.append(message);
         changeSetInfo.append(" ");

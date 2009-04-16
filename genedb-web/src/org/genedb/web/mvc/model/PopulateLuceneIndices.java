@@ -312,24 +312,22 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @throws IOException
      */
     private void deleteFromIndex(Collection<Integer> ids) throws IOException {
-        //FullTextSession session = newSession(BATCH_SIZE);
-        //SearchFactory searchFactory = session.getSearchFactory();
-        //ReaderProvider rp = searchFactory.getReaderProvider();
-        //DirectoryProvider[] directoryProviders = searchFactory.getDirectoryProviders(Feature.class);
-        //if (directoryProviders ==  null || directoryProviders.length != 1) {
-        //    throw new RuntimeException("Unable to open a directory provider");
-        //}
-        //IndexReader reader = rp.openReader(directoryProviders[0]);
-
-        IndexReader reader = IndexReader.open(indexBaseDirectory + File.separatorChar +  "org.gmod.schema.mapped.Feature");
-
+        FullTextSession session = newSession(BATCH_SIZE);
+        SearchFactory searchFactory = session.getSearchFactory();
+        ReaderProvider rp = searchFactory.getReaderProvider();
+        DirectoryProvider[] directoryProviders = searchFactory.getDirectoryProviders(Feature.class);
+        if (directoryProviders ==  null || directoryProviders.length != 1) {
+            throw new RuntimeException("Unable to open a directory provider");
+        }
+        IndexReader reader = rp.openReader(directoryProviders[0]);
+        
         for (Integer id : ids) {
             reader.deleteDocuments(new Term("featureId", Integer.toString(id)));
         }
 
         reader.close();
-        //rp.closeReader(reader);
-        //session.close();
+        rp.closeReader(reader);
+        session.close();
     }
 
 
@@ -595,7 +593,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"classpath:applicationContext.xml"});
-        ctx.refresh();
         SequenceDao sequenceDao = ctx.getBean("sequenceDao", SequenceDao.class);
 
         indexer.setSequenceDao(sequenceDao);
