@@ -108,14 +108,15 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
         if (dto == null) {
             cacheMiss++;
             logger.error(String.format("dto cache miss for '%s'. Looked for featureId of '%d'", feature.getUniqueName(), feature.getFeatureId()));
-            StoredIterator<Entry<Integer, TranscriptDTO>> it = (StoredIterator<Entry<Integer, TranscriptDTO>>) bmf.getDtoMap().entrySet().iterator();
+            Iterator<Entry<Integer, TranscriptDTO>> it = bmf.getDtoMap().entrySet().iterator();
+            logger.error(it.getClass().getName());
             if (logger.isDebugEnabled()) {
                 while (it.hasNext()) {
                     Entry<Integer, TranscriptDTO> entry = it.next();
                     logger.debug(String.format("'%d'\t'%s'\t'%s'", entry.getKey(), entry.getValue().getUniqueName(), entry.getValue().getOrganismCommonName()));
                 }
             }
-            it.close();
+            //it.close();
             throw new RuntimeException(String.format("Unable to find '%s' in cache", feature.getUniqueName()));
         }
 
