@@ -104,7 +104,7 @@ public class NamedFeatureController extends TaxonNodeBindingFormController {
 
         if (dto == null) {
             cacheMiss++;
-            logger.error("dto cache miss for '"+feature.getUniqueName());
+            logger.error(String.format("dto cache miss for '%s'. Looked for featureId of '%d'", feature.getUniqueName(), feature.getFeatureId()));
             throw new RuntimeException(String.format("Unable to find '%s' in cache", feature.getUniqueName()));
         }
 
