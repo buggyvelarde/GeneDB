@@ -90,6 +90,11 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             try {
                 transcript.setComponents(parseLocs(doc.get("locs")));
             }
+            catch (NullPointerException e) {
+                logger.error(String.format("Failed to parse locs for transcript '%s' due to null",
+                    doc.get("uniqueName")));
+                 transcript.setComponents(NO_EXONS);
+            }
             catch (Exception e) {
                 logger.error(String.format("Failed to parse locs for transcript '%s'",
                     doc.get("uniqueName")), e);
@@ -180,7 +185,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             if (loc.charAt(numberStart) == '(') {
                 if (!loc.endsWith(")")) {
                     throw new IllegalArgumentException(String.
-                        format("Exon location '%s' starts with '(' but does not end with ')'; from string '%s'", loc, locs));
+                            format("Exon location '%s' starts with '(' but does not end with ')'; from string '%s'", loc, locs));
                 }
                 numberStart++;
                 numberEnd--;
@@ -198,6 +203,7 @@ public class BasicGeneServiceImpl implements BasicGeneService {
                 components.add(new UTR(componentStart, componentStop));
             }
         }
+
         return components;
     }
 
