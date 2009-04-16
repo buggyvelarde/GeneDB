@@ -1,5 +1,5 @@
 package org.genedb.web.mvc.controller;
 
 public enum SequenceType {
-    // Deliberately empty
+    UNSPLICED, SPLICED, PROTEIN;
 }
