@@ -269,10 +269,17 @@
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF"/>
               <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
             </classpath>
-            <arg line="-o ${organism} -i ${dir} -h ${dbhost} -p ${dbport} -U ${dbuser} -P ${dbpassword} ${dbname}"/>
+            <arg line="-o ${organism} -i ${dir} ${dbname}"/>
             <jvmarg line="-server -Djava.awt.headless=true" />
         </java>
     </target>
+
+    <target name="LuceneIndex" depends="check-deploy,iajc-web">
+           <java fork="true" maxmemory="256m" failonerror="true" classpathref="web-classpath" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
+            <arg line="-o Pfalcipam -i /tmp ${dbname}"/>
+            <jvmarg line="-server" />
+           </java>
+     </target>
 
     <target name="PeriodicUpdater" depends="check-deploy,iajc-web"
         description="Bring the Lucene indices and the Berkley DB up-to-date since the last run.">
@@ -288,28 +295,28 @@
         <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       </java>
     </target>
-	
-	 <target name="test-periodic-updater" depends="check-deploy,iajc-web" description="Run tests">
-	    <javac srcdir="${imported.basedir.web}/test" includes="**/PeriodicUpdaterTest.java" debug="true"
-	 	                 destdir="${imported.basedir.web}/${test-classes.dir}"
-	 	                 classpathref="web-tests-classpath" />
-	        <junit printsummary="on"
-	            fork="true"
-	        	maxmemory="1024m"
-	            haltonfailure="false"
-	            failureproperty="tests.failed"
-	            showoutput="true">
-	            <classpath refid="web-tests-classpath"/>
-	            <formatter type="brief" usefile="false"/>
-	            
-	           <test name="org.genedb.web.mvc.model.PeriodicUpdaterTest"/>	            
-	        </junit>
-	        
-	        <fail if="tests.failed">
-	            tests.failed=${tests.failed}
-	           PeriodicUpdaterTest failed
-	        </fail>
-	    </target>
+
+     <target name="test-periodic-updater" depends="check-deploy,iajc-web" description="Run tests">
+        <javac srcdir="${imported.basedir.web}/test" includes="**/PeriodicUpdaterTest.java" debug="true"
+                          destdir="${imported.basedir.web}/${test-classes.dir}"
+                          classpathref="web-tests-classpath" />
+            <junit printsummary="on"
+                fork="true"
+                maxmemory="1024m"
+                haltonfailure="false"
+                failureproperty="tests.failed"
+                showoutput="true">
+                <classpath refid="web-tests-classpath"/>
+                <formatter type="brief" usefile="false"/>
+
+               <test name="org.genedb.web.mvc.model.PeriodicUpdaterTest"/>
+            </junit>
+
+            <fail if="tests.failed">
+                tests.failed=${tests.failed}
+               PeriodicUpdaterTest failed
+            </fail>
+        </target>
 
 
   <target name="init-web" description="Create full JAR file">
