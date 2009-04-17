@@ -176,13 +176,15 @@ public class PopulateLuceneIndices implements IndexUpdater {
      */
     private FullTextSession newSession(SessionFactory sessionFactory) {
         if (sessionMap.containsKey(sessionFactory)) {
-            return sessionMap.get(sessionFactory);
+            FullTextSession session = sessionMap.get(sessionFactory);
+            logger.info(String.format(" From cache. The value of session is '%s' and it is '%s'", session, session.isConnected()));
+            return session;
         }
         FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
         sessionMap.put(sessionFactory, session);
-        logger.info(String.format("B. The value of session is '%s' and it is '%s'", session, session.isConnected()));
+        logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         return session;
     }
 
@@ -210,7 +212,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
     public void indexFeatures(Class<? extends Feature> featureClass) {
         FullTextSession session = newSession(plainBatchSessionFactory);
         //Transaction transaction = session.beginTransaction();
-        logger.info(String.format("B. The value of session is '%s' and it is '%s'", session, session.isConnected()));
+        logger.info(String.format("A. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         Set<Integer> failed = batchIndexFeatures(featureClass, session);
         //transaction.commit();
         session.close();
