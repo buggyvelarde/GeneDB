@@ -55,6 +55,7 @@ public class CacheSynchroniser implements IndexUpdater{
     
     private ChangeTracker changeTracker;    
     private boolean isNoContextMap;
+    private boolean isNoPrintResult;
     
     protected BerkeleyMapFactory bmf;
     protected StoredMap<Integer, TranscriptDTO> dtoMap;
@@ -133,7 +134,9 @@ public class CacheSynchroniser implements IndexUpdater{
 	    boolean isTransciptDTOUpdated = updateTranscriptDTOCache(changeSet);
 	    
 	    //Print operation
-	    printResults();
+	    if (!isNoPrintResult){
+	        printResults();
+	    }
 	    
 
         logger.debug("Exit updateAllCaches");
@@ -733,6 +736,14 @@ public class CacheSynchroniser implements IndexUpdater{
 
     public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
         this.luceneIndexFactory = luceneIndexFactory;
+    }
+
+    public boolean isNoPrintResult() {
+        return isNoPrintResult;
+    }
+
+    public void setNoPrintResult(boolean isNoPrintResult) {
+        this.isNoPrintResult = isNoPrintResult;
     }
 
 }
