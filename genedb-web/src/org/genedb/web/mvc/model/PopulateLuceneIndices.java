@@ -218,7 +218,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         logger.info(String.format("A. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         Set<Integer> failed = batchIndexFeatures(featureClass, session);
         //transaction.commit();
-        session.close();
+        //session.close();
 
         if (failed.size() > 0) {
             reindexFailedFeatures(failed);
@@ -345,6 +345,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
             }
             i++;
         }
+        logger.info(String.format("C. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         return failedToLoad;
     }
 
