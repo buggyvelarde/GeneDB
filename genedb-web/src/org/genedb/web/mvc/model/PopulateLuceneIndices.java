@@ -586,7 +586,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"classpath:applicationContext.xml"});
-        PopulateLuceneIndices indexer = ctx.getBean("", PopulateLuceneIndices.class);
+        PopulateLuceneIndices indexer = ctx.getBean("populateLuceneIndices", PopulateLuceneIndices.class);
 
         if (iga.isOrganism()) {
             indexer.setOrganism(iga.getOrganism());
@@ -682,6 +682,15 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     public void setDatabaseUrl(String databaseUrl) {
         this.databaseUrl = databaseUrl;
+    }
+
+    public void setPlainBatchSessionFactory(SessionFactory plainBatchSessionFactory) {
+        this.plainBatchSessionFactory = plainBatchSessionFactory;
+    }
+
+    public void setPlainIndividualSessionFactory(
+            SessionFactory plainIndividualSessionFactory) {
+        this.plainIndividualSessionFactory = plainIndividualSessionFactory;
     }
 
 }
