@@ -28,13 +28,20 @@
     </bean>
 
     <bean name="populateLuceneIndices" class="org.genedb.web.mvc.model.PopulateLuceneIndices">
-        <property name="userName" value="${dbuser}" />
+        <!-- <property name="userName" value="${dbuser}" />
         <property name="dbName" value="${dbname}" />
         <property name="host" value="${dbhost}" />
         <property name="password" value="${dbpassword}" />
-        <property name="port" value="${dbport}" />
+        <property name="port" value="${dbport}" /> -->
         <property name="indexBaseDirectory" value="${lucene.indexDirectory}" />
         <property name="sequenceDao" ref="sequenceDao" />
+        <property name="plainSessionFactory" ref="chadoSessionFactoryBean" />
+    </bean>
+
+    <bean name="plainSessionFactory" class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.gmod.schema.mapped,org.gmod.schema.feature" />
+        <property name="batchSize" value="10" />
     </bean>
 
     <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
