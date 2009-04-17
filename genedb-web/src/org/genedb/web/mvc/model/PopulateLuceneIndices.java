@@ -285,7 +285,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
             reader.deleteDocuments(new Term("featureId", Integer.toString(id)));
         }
 
-        reader.close();
         rp.closeReader(reader);
         session.close();
     }
@@ -501,14 +500,12 @@ public class PopulateLuceneIndices implements IndexUpdater {
         boolean isFailFast();
 
         /* What exactly to index */
-
         @Option(shortName="o", description="Only index this organism")
         String getOrganism();
         void setOrganism(String organism);
         boolean isOrganism();
 
         /* Index location */
-
         @Option(shortName="i", longName="index", description="Directory where the indices are stored")
         String getIndexDirectory();
 
@@ -550,8 +547,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         this.plainBatchSessionFactory = plainBatchSessionFactory;
     }
 
-    public void setPlainIndividualSessionFactory(
-            SessionFactory plainIndividualSessionFactory) {
+    public void setPlainIndividualSessionFactory(SessionFactory plainIndividualSessionFactory) {
         this.plainIndividualSessionFactory = plainIndividualSessionFactory;
     }
 
