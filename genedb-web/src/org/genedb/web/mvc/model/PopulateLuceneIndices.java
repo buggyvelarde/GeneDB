@@ -52,6 +52,7 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 
@@ -106,21 +107,25 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     private SequenceDao sequenceDao;
 
-    private Map<Integer,SessionFactory> sessionFactoryByBatchSize = new HashMap<Integer,SessionFactory>();
+    private SessionFactory plainBatchSessionFactory;
+    private SessionFactory plainIndividualSessionFactory;
+
 
     private String indexBaseDirectory;
     private String organism;
     private int numBatches = -1;
 
-    private String userName;
-    private String password;
-    private String host;
-    private int port;
-    private String dbName;
+//    private String userName;
+//    private String password;
+//    private String host;
+//    private int port;
+//    private String dbName;
 
     private String hibernateDialect = "org.hibernate.dialect.PostgreSQLDialect";
     private String hibernateDriverClass = "org.postgresql.Driver";
     private String databaseUrl;
+
+    private Map<SessionFactory, FullTextSession> sessionMap = Maps.newHashMap();
 
 
     public PopulateLuceneIndices() {
@@ -135,38 +140,38 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param databasePassword
      * @param indexBaseDirectory
      */
-    private PopulateLuceneIndices(String host, int port, String userName, String dbName, String password,
-            String indexBaseDirectory) {
-        this.indexBaseDirectory = indexBaseDirectory;
-        makeDataSource(host, port, userName, dbName, password);
-    }
-
-
-    private void makeDataSource() {
-        makeDataSource(host, port, userName, dbName, password);
-    }
-
-    private void makeDataSource(String host, int port, String userName, String dbName, String password) {
-        if (dataSource != null) {
-            logger.warn("A new datasource is being created, although one is already defined");
-        }
-
-        this.userName = userName;
-        this.password = password;
-        this.host = host;
-        this.port = port;
-        this.dbName = dbName;
-
-        PGSimpleDataSource sds = new PGSimpleDataSource();
-
-        sds.setServerName(host);
-        sds.setPortNumber(port);
-        sds.setDatabaseName(dbName);
-        sds.setUser(userName);
-        sds.setPassword(password);
-
-        this.dataSource = sds;
-    }
+//    private PopulateLuceneIndices(String host, int port, String userName, String dbName, String password,
+//            String indexBaseDirectory) {
+//        this.indexBaseDirectory = indexBaseDirectory;
+//        makeDataSource(host, port, userName, dbName, password);
+//    }
+//
+//
+//    private void makeDataSource() {
+//        makeDataSource(host, port, userName, dbName, password);
+//    }
+//
+//    private void makeDataSource(String host, int port, String userName, String dbName, String password) {
+//        if (dataSource != null) {
+//            logger.warn("A new datasource is being created, although one is already defined");
+//        }
+//
+//        this.userName = userName;
+//        this.password = password;
+//        this.host = host;
+//        this.port = port;
+//        this.dbName = dbName;
+//
+//        PGSimpleDataSource sds = new PGSimpleDataSource();
+//
+//        sds.setServerName(host);
+//        sds.setPortNumber(port);
+//        sds.setDatabaseName(dbName);
+//        sds.setUser(userName);
+//        sds.setPassword(password);
+//
+//        this.dataSource = sds;
+//    }
 
 
     /**
@@ -176,39 +181,38 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param batchSize
      * @return
      */
-    private SessionFactory getSessionFactory(Integer batchSize) {
-        if (sessionFactoryByBatchSize.containsKey(batchSize)) {
-            return sessionFactoryByBatchSize.get(batchSize);
-        }
-
-        ChadoAnnotationConfiguration cfg = new ChadoAnnotationConfiguration();
-        cfg.setDataSource(getDataSource());
-
-        cfg.addPackage("org.gmod.schema.mapped");
-        cfg.addPackage("org.gmod.schema.feature");
-
-        cfg.setProperty("hibernate.dialect", getHibernateDialect());
-        cfg.setProperty("hibernate.connection.driver_class", getHibernateDriverClass());
-        cfg.setProperty("hibernate.connection.username", getUserName());
-        cfg.setProperty("hibernate.connection.password", getPassword());
-        cfg.setProperty("hibernate.connection.url", getDatabaseUrl());
-
-        cfg.setProperty("hibernate.search.default.directory_provider",
-        "org.hibernate.search.store.FSDirectoryProvider");
-        cfg.setProperty("hibernate.search.worker.batch_size", String.valueOf(batchSize));
-        cfg.setProperty("hibernate.search.default.indexBase", indexBaseDirectory);
-
-        FullTextIndexEventListener ft = new FullTextIndexEventListener();
-        cfg.setListener("post-insert", ft);
-        cfg.setListener("post-update", ft);
-        cfg.setListener("post-delete", ft);
-
-        //cfg.configure();
-
-        SessionFactory sessionFactory = cfg.buildSessionFactory();
-        sessionFactoryByBatchSize.put(batchSize, sessionFactory);
-        return sessionFactory;
-    }
+//    private SessionFactory getSessionFactory(Integer batchSize) {
+//        if (sessionFactoryByBatchSize.containsKey(batchSize)) {
+//            return sessionFactoryByBatchSize.get(batchSize);
+//        }
+//
+//        ChadoAnnotationConfiguration cfg = new ChadoAnnotationConfiguration();
+//        cfg.setDataSource(getDataSource());
+//
+//        cfg.addPackage("org.gmod.schema.mapped");
+//        cfg.addPackage("org.gmod.schema.feature");
+//
+//        cfg.setProperty("hibernate.dialect", getHibernateDialect());
+//        cfg.setProperty("hibernate.connection.driver_class", getHibernateDriverClass());
+//        cfg.setProperty("hibernate.connection.username", getUserName());
+//        cfg.setProperty("hibernate.connection.password", getPassword());
+//        cfg.setProperty("hibernate.connection.url", getDatabaseUrl());
+//
+//        cfg.setProperty("hibernate.search.default.directory_provider",
+//        "org.hibernate.search.store.FSDirectoryProvider");
+//        cfg.setProperty("hibernate.search.worker.batch_size", String.valueOf(batchSize));
+//        cfg.setProperty("hibernate.search.default.indexBase", indexBaseDirectory);
+//
+//        FullTextIndexEventListener ft = new FullTextIndexEventListener();
+//        cfg.setListener("post-insert", ft);
+//        cfg.setListener("post-update", ft);
+//        cfg.setListener("post-delete", ft);
+//
+//        //cfg.configure();
+//        SessionFactory sessionFactory = cfg.buildSessionFactory();
+//        sessionFactoryByBatchSize.put(batchSize, sessionFactory);
+//        return sessionFactory;
+//    }
 
     /**
      * Create a new session, configured with the supplied batch size.
@@ -216,17 +220,20 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param batchSize
      * @return
      */
-    private FullTextSession newSession(Integer batchSize) {
-        SessionFactory sessionFactory = getSessionFactory(batchSize);
+    private FullTextSession newSession(SessionFactory sessionFactory) {
+        if (sessionMap .containsKey(sessionFactory)) {
+            return sessionMap.get(sessionFactory);
+        }
         FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
+        sessionMap.put(sessionFactory, session);
         return session;
     }
 
 
     public void indexFeatures(List<Integer> featureIds) {
-        FullTextSession session = newSession(BATCH_SIZE);
+        FullTextSession session = newSession(plainBatchSessionFactory);
         Transaction transaction = session.beginTransaction();
         Set<Integer> failed = batchIndexFeatures(featureIds, session);
         transaction.commit();
@@ -246,7 +253,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param numBatches
      */
     public void indexFeatures(Class<? extends Feature> featureClass) {
-        FullTextSession session = newSession(BATCH_SIZE);
+        FullTextSession session = newSession(plainBatchSessionFactory);
         Transaction transaction = session.beginTransaction();
         Set<Integer> failed = batchIndexFeatures(featureClass, session);
         transaction.commit();
@@ -275,7 +282,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
             deletedIds.addAll(changeSet.deletedFeatureIds(Gap.class));
             deleteFromIndex(deletedIds);
 
-
             // Now adds and updates
             Set<Integer> alteredIds = Sets.newHashSet();
             alteredIds.addAll(changeSet.newFeatureIds(Gene.class));
@@ -287,7 +293,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
             alteredIds.addAll(changeSet.newFeatureIds(Gap.class));
             alteredIds.addAll(changeSet.changedFeatureIds(Gap.class));
 
-            FullTextSession session = newSession(BATCH_SIZE);
+            FullTextSession session = newSession(plainBatchSessionFactory);
             Transaction transaction = session.beginTransaction();
 
             Set<Integer> failed = batchIndexFeatures(alteredIds, session);
@@ -312,7 +318,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @throws IOException
      */
     private void deleteFromIndex(Collection<Integer> ids) throws IOException {
-        FullTextSession session = newSession(BATCH_SIZE);
+        FullTextSession session = newSession(plainBatchSessionFactory);
         SearchFactory searchFactory = session.getSearchFactory();
         ReaderProvider rp = searchFactory.getReaderProvider();
         DirectoryProvider[] directoryProviders = searchFactory.getDirectoryProviders(Feature.class);
@@ -320,7 +326,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
             throw new RuntimeException("Unable to open a directory provider");
         }
         IndexReader reader = rp.openReader(directoryProviders[0]);
-        
+
         for (Integer id : ids) {
             reader.deleteDocuments(new Term("featureId", Integer.toString(id)));
         }
@@ -430,7 +436,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      */
     private void reindexFailedFeatures(Set<Integer> failed) {
         logger.info("Attempting to reindex failed features");
-        FullTextSession session = newSession(1);
+        FullTextSession session = newSession(plainIndividualSessionFactory);
         Transaction transaction = session.beginTransaction();
         for (int featureId : failed) {
             logger.debug(String.format("Attempting to index feature %d", featureId));
@@ -455,14 +461,14 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     /* Accessors */
 
-    public DataSource getDataSource() {
-        if (dataSource == null) {
-            makeDataSource();
-            //logger.error("Datasource hasn't been injected, or created from connection properties");
-            //throw new NullPointerException("Datasource hasn't been injected, or created from connection properties");
-        }
-        return dataSource;
-    }
+//    public DataSource getDataSource() {
+//        if (dataSource == null) {
+//            makeDataSource();
+//            //logger.error("Datasource hasn't been injected, or created from connection properties");
+//            //throw new NullPointerException("Datasource hasn't been injected, or created from connection properties");
+//        }
+//        return dataSource;
+//    }
 
     public void setFailFast(boolean failFast) {
         this.failFast = failFast;
@@ -480,56 +486,56 @@ public class PopulateLuceneIndices implements IndexUpdater {
         this.organism = organism;
     }
 
-    private String getDatabaseUrl() {
-        if (databaseUrl!= null){
-            return databaseUrl;
-        }
-        return "jdbc:postgresql://" + getHost() + ":" + getPort() + "/"+ getDbName();
-    }
+//    private String getDatabaseUrl() {
+//        if (databaseUrl!= null){
+//            return databaseUrl;
+//        }
+//        return "jdbc:postgresql://" + getHost() + ":" + getPort() + "/"+ getDbName();
+//    }
 
 
     /* Static methods */
 
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getDbName() {
-        return dbName;
-    }
-
-    public void setDbName(String dbName) {
-        this.dbName = dbName;
-    }
+//    public String getUserName() {
+//        return userName;
+//    }
+//
+//    public void setUserName(String userName) {
+//        this.userName = userName;
+//    }
+//
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
+//
+//    public String getHost() {
+//        return host;
+//    }
+//
+//    public void setHost(String host) {
+//        this.host = host;
+//    }
+//
+//    public int getPort() {
+//        return port;
+//    }
+//
+//    public void setPort(int port) {
+//        this.port = port;
+//    }
+//
+//    public String getDbName() {
+//        return dbName;
+//    }
+//
+//    public void setDbName(String dbName) {
+//        this.dbName = dbName;
+//    }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
@@ -565,20 +571,22 @@ public class PopulateLuceneIndices implements IndexUpdater {
             return;
         }
 
-        String user = System.getenv("USER");
-        if ( iga.isUserName()) {
-            user = iga.getUserName();
-        }
+//        String user = System.getenv("USER");
+//        if ( iga.isUserName()) {
+//            user = iga.getUserName();
+//        }
+//
+//        String password;
+//        if ( ! iga.isPassword()) {
+//            password = promptForPassword(iga.getDbName(), iga.getUserName());
+//        } else {
+//            password = iga.getPassword();
+//        }
 
-        String password;
-        if ( ! iga.isPassword()) {
-            password = promptForPassword(iga.getDbName(), iga.getUserName());
-        } else {
-            password = iga.getPassword();
-        }
 
-        PopulateLuceneIndices indexer = new PopulateLuceneIndices(iga.getHost(), iga.getPort(),
-                user, iga.getDbName(), password, iga.getIndexDirectory());
+        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
+                new String[] {"classpath:applicationContext.xml"});
+        PopulateLuceneIndices indexer = ctx.getBean("", PopulateLuceneIndices.class);
 
         if (iga.isOrganism()) {
             indexer.setOrganism(iga.getOrganism());
@@ -589,13 +597,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
         if  (iga.isNumBatches()) {
             indexer.setNumBatches(iga.getNumBatches());
         }
-
-
-        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] {"classpath:applicationContext.xml"});
-        SequenceDao sequenceDao = ctx.getBean("sequenceDao", SequenceDao.class);
-
-        indexer.setSequenceDao(sequenceDao);
 
         indexer.indexFeatures();
     }
@@ -626,23 +627,23 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         /* Db connection info */
 
-        @Option(shortName="h", longName="host", description="Host for db server", defaultValue="localhost")
-        String getHost();
-
-        @Option(shortName="p", longName="port", description="Port number of db server", defaultValue="5432")
-        int getPort();
-
-
-        @Option(shortName="U", longName="userName", description="User to log in as")
-        String getUserName();
-        boolean isUserName();
-
-        @Option(shortName="P", longName="password", description="")
-        String getPassword();
-        boolean isPassword();
-
-        @Unparsed
-        String getDbName();
+//        @Option(shortName="h", longName="host", description="Host for db server", defaultValue="localhost")
+//        String getHost();
+//
+//        @Option(shortName="p", longName="port", description="Port number of db server", defaultValue="5432")
+//        int getPort();
+//
+//
+//        @Option(shortName="U", longName="userName", description="User to log in as")
+//        String getUserName();
+//        boolean isUserName();
+//
+//        @Option(shortName="P", longName="password", description="")
+//        String getPassword();
+//        boolean isPassword();
+//
+//        @Unparsed
+//        String getDbName();
 
         /* Index location */
 
@@ -650,8 +651,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
         String getIndexDirectory();
 
     }
-
-
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
