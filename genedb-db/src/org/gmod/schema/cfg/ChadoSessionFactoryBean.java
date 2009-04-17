@@ -64,8 +64,10 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
             if (properties != null) {
                 chadoCfg.setProperties(properties);
             }
-            for (Map.Entry<String, Object> entry : listeners.entrySet()) {
-                chadoCfg.setListener(entry.getKey(), entry.getValue());
+            if (listeners != null) {
+                for (Map.Entry<String, Object> entry : listeners.entrySet()) {
+                    chadoCfg.setListener(entry.getKey(), entry.getValue());
+                }
             }
         }
         return cfg;
