@@ -191,9 +191,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     public void indexFeatures(List<Integer> featureIds) {
         FullTextSession session = newSession(plainBatchSessionFactory);
-        Transaction transaction = session.beginTransaction();
+        //Transaction transaction = session.beginTransaction();
         Set<Integer> failed = batchIndexFeatures(featureIds, session);
-        transaction.commit();
+        //transaction.commit();
         session.close();
 
         if (failed.size() > 0) {
@@ -252,10 +252,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
             alteredIds.addAll(changeSet.changedFeatureIds(Gap.class));
 
             FullTextSession session = newSession(plainBatchSessionFactory);
-            Transaction transaction = session.beginTransaction();
+            //Transaction transaction = session.beginTransaction();
 
             Set<Integer> failed = batchIndexFeatures(alteredIds, session);
-            transaction.commit();
+            //transaction.commit();
             session.close();
 
             if (failed.size() > 0) {
@@ -310,6 +310,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private Set<Integer> batchIndexFeatures(Collection<Integer> featureIds,
             FullTextSession session) {
 
+        logger.info(String.format("C. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         Set<Integer> failedToLoad = new HashSet<Integer>();
 
         int thisBatchCount = 0;
@@ -383,6 +384,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
 
         results.close();
+        logger.info(String.format("B2. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         return batchIndexFeatures(featureIds, session);
     }
 
