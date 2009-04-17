@@ -5,6 +5,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean;
 
+import java.util.Properties;
+
 /**
  * Extends {@link org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean} with
  * some useful extra features:
@@ -26,6 +28,8 @@ import org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBea
  */
 public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
     //private static final Logger logger = Logger.getLogger(AnnotationSessionFactoryBean.class);
+
+    private Properties properties;
 
     public ChadoSessionFactoryBean() {
         setConfigurationClass(ChadoAnnotationConfiguration.class);
@@ -52,6 +56,9 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
             ChadoAnnotationConfiguration chadoCfg = (ChadoAnnotationConfiguration) cfg;
             chadoCfg.setDataSource(getDataSource());
             chadoCfg.setClassLoader(beanClassLoader);
+            if (properties != null) {
+                chadoCfg.setProperties(properties);
+            }
         }
         return cfg;
     }
@@ -67,6 +74,10 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
             filteringSessionFactory.addFilter(filterName);
         }
         return filteringSessionFactory;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 
 }
