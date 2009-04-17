@@ -177,7 +177,10 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private FullTextSession newSession(SessionFactory sessionFactory) {
         if (sessionMap.containsKey(sessionFactory)) {
             FullTextSession session = sessionMap.get(sessionFactory);
-            logger.info(String.format(" From cache. The value of session is '%s' and it is '%s'", session, session.isConnected()));
+            //logger.info(String.format(" From cache. The value of session is '%s' and it is '%s'", session, session.isConnected()));
+            if (!session.isConnected()) {
+                throw new RuntimeException("Closed connection retrieved from cache");
+            }
             return session;
         }
         FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
