@@ -182,6 +182,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
         sessionMap.put(sessionFactory, session);
+        logger.info(String.format("B. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         return session;
     }
 
@@ -209,6 +210,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
     public void indexFeatures(Class<? extends Feature> featureClass) {
         FullTextSession session = newSession(plainBatchSessionFactory);
         //Transaction transaction = session.beginTransaction();
+        logger.info(String.format("B. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         Set<Integer> failed = batchIndexFeatures(featureClass, session);
         //transaction.commit();
         session.close();
@@ -356,6 +358,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
             FullTextSession session) {
 
+        logger.info(String.format("B. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         Criteria criteria = session.createCriteria(featureClass);
         criteria.add(Restrictions.eq("obsolete", Boolean.FALSE)); // Do not index obsolete features
         if (organism != null) {
