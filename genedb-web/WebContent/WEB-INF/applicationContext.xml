@@ -143,6 +143,8 @@
         <property name="properties">
             <props>
                 <prop key="hibernate.search.worker.batch_size" >10</prop>
+                <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+                <prop key="hibernate.search.default.indexBase">/tmp</prop>
             </props>
         </property>
     </bean>
@@ -153,6 +155,8 @@
         <property name="properties">
             <props>
                 <prop key="hibernate.search.worker.batch_size" >1</prop>
+                <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+                <prop key="hibernate.search.default.indexBase">/tmp</prop>
             </props>
         </property>
     </bean>

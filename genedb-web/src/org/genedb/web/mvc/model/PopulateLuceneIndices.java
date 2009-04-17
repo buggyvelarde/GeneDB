@@ -175,14 +175,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @return
      */
     private FullTextSession newSession(SessionFactory sessionFactory) {
-        if (sessionMap.containsKey(sessionFactory)) {
-            FullTextSession session = sessionMap.get(sessionFactory);
-            //logger.info(String.format(" From cache. The value of session is '%s' and it is '%s'", session, session.isConnected()));
-            if (!session.isConnected()) {
-                throw new RuntimeException("Closed connection retrieved from cache");
-            }
-            return session;
-        }
         FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
@@ -218,7 +210,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         logger.info(String.format("A. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         Set<Integer> failed = batchIndexFeatures(featureClass, session);
         //transaction.commit();
-        //session.close();
+        session.close();
 
         if (failed.size() > 0) {
             reindexFailedFeatures(failed);
