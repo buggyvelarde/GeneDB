@@ -5,6 +5,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -30,6 +33,8 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
     //private static final Logger logger = Logger.getLogger(AnnotationSessionFactoryBean.class);
 
     private Properties properties;
+
+    private Map<String, Object> listeners;
 
     public ChadoSessionFactoryBean() {
         setConfigurationClass(ChadoAnnotationConfiguration.class);
@@ -59,6 +64,9 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
             if (properties != null) {
                 chadoCfg.setProperties(properties);
             }
+            for (Map.Entry<String, Object> entry : listeners.entrySet()) {
+                chadoCfg.setListener(entry.getKey(), entry.getValue());
+            }
         }
         return cfg;
     }
@@ -78,6 +86,10 @@ public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
 
     public void setProperties(Properties properties) {
         this.properties = properties;
+    }
+
+    public void setListeners(Map<String, Object> listeners) {
+        this.listeners = listeners;
     }
 
 }
