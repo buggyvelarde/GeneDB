@@ -31,6 +31,7 @@ import org.hibernate.search.store.DirectoryProvider;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.Cli;
@@ -115,12 +116,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
     private String organism;
     private int numBatches = -1;
 
-//    private String userName;
-//    private String password;
-//    private String host;
-//    private int port;
-//    private String dbName;
-
     private String hibernateDialect = "org.hibernate.dialect.PostgreSQLDialect";
     private String hibernateDriverClass = "org.postgresql.Driver";
     private String databaseUrl;
@@ -131,47 +126,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
     public PopulateLuceneIndices() {
         // Default constructor
     }
-
-    /**
-     * Create a new instance configured with the specified database connection details.
-     *
-     * @param databaseUrl
-     * @param databaseUsername
-     * @param databasePassword
-     * @param indexBaseDirectory
-     */
-//    private PopulateLuceneIndices(String host, int port, String userName, String dbName, String password,
-//            String indexBaseDirectory) {
-//        this.indexBaseDirectory = indexBaseDirectory;
-//        makeDataSource(host, port, userName, dbName, password);
-//    }
-//
-//
-//    private void makeDataSource() {
-//        makeDataSource(host, port, userName, dbName, password);
-//    }
-//
-//    private void makeDataSource(String host, int port, String userName, String dbName, String password) {
-//        if (dataSource != null) {
-//            logger.warn("A new datasource is being created, although one is already defined");
-//        }
-//
-//        this.userName = userName;
-//        this.password = password;
-//        this.host = host;
-//        this.port = port;
-//        this.dbName = dbName;
-//
-//        PGSimpleDataSource sds = new PGSimpleDataSource();
-//
-//        sds.setServerName(host);
-//        sds.setPortNumber(port);
-//        sds.setDatabaseName(dbName);
-//        sds.setUser(userName);
-//        sds.setPassword(password);
-//
-//        this.dataSource = sds;
-//    }
 
 
     /**
@@ -215,13 +169,13 @@ public class PopulateLuceneIndices implements IndexUpdater {
 //    }
 
     /**
-     * Create a new session, configured with the supplied batch size.
+     * Create a new FullTextSession, configured with the supplied sessionFactory.
      *
      * @param batchSize
      * @return
      */
     private FullTextSession newSession(SessionFactory sessionFactory) {
-        if (sessionMap .containsKey(sessionFactory)) {
+        if (sessionMap.containsKey(sessionFactory)) {
             return sessionMap.get(sessionFactory);
         }
         FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
@@ -254,9 +208,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
      */
     public void indexFeatures(Class<? extends Feature> featureClass) {
         FullTextSession session = newSession(plainBatchSessionFactory);
-        Transaction transaction = session.beginTransaction();
+        //Transaction transaction = session.beginTransaction();
         Set<Integer> failed = batchIndexFeatures(featureClass, session);
-        transaction.commit();
+        //transaction.commit();
         session.close();
 
         if (failed.size() > 0) {
@@ -399,6 +353,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param session
      * @return a set of featureIds of the features that failed to be indexed
      */
+    @Transactional
     private Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
             FullTextSession session) {
 
@@ -461,15 +416,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     /* Accessors */
 
-//    public DataSource getDataSource() {
-//        if (dataSource == null) {
-//            makeDataSource();
-//            //logger.error("Datasource hasn't been injected, or created from connection properties");
-//            //throw new NullPointerException("Datasource hasn't been injected, or created from connection properties");
-//        }
-//        return dataSource;
-//    }
-
     public void setFailFast(boolean failFast) {
         this.failFast = failFast;
     }
@@ -486,56 +432,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
         this.organism = organism;
     }
 
-//    private String getDatabaseUrl() {
-//        if (databaseUrl!= null){
-//            return databaseUrl;
-//        }
-//        return "jdbc:postgresql://" + getHost() + ":" + getPort() + "/"+ getDbName();
-//    }
-
-
-    /* Static methods */
-
-
-//    public String getUserName() {
-//        return userName;
-//    }
-//
-//    public void setUserName(String userName) {
-//        this.userName = userName;
-//    }
-//
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//
-//    public String getHost() {
-//        return host;
-//    }
-//
-//    public void setHost(String host) {
-//        this.host = host;
-//    }
-//
-//    public int getPort() {
-//        return port;
-//    }
-//
-//    public void setPort(int port) {
-//        this.port = port;
-//    }
-//
-//    public String getDbName() {
-//        return dbName;
-//    }
-//
-//    public void setDbName(String dbName) {
-//        this.dbName = dbName;
-//    }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
@@ -570,19 +466,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
             exp.printStackTrace();
             return;
         }
-
-//        String user = System.getenv("USER");
-//        if ( iga.isUserName()) {
-//            user = iga.getUserName();
-//        }
-//
-//        String password;
-//        if ( ! iga.isPassword()) {
-//            password = promptForPassword(iga.getDbName(), iga.getUserName());
-//        } else {
-//            password = iga.getPassword();
-//        }
-
 
         ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(
                 new String[] {"classpath:applicationContext.xml"});
@@ -623,27 +506,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
         String getOrganism();
         void setOrganism(String organism);
         boolean isOrganism();
-
-
-        /* Db connection info */
-
-//        @Option(shortName="h", longName="host", description="Host for db server", defaultValue="localhost")
-//        String getHost();
-//
-//        @Option(shortName="p", longName="port", description="Port number of db server", defaultValue="5432")
-//        int getPort();
-//
-//
-//        @Option(shortName="U", longName="userName", description="User to log in as")
-//        String getUserName();
-//        boolean isUserName();
-//
-//        @Option(shortName="P", longName="password", description="")
-//        String getPassword();
-//        boolean isPassword();
-//
-//        @Unparsed
-//        String getDbName();
 
         /* Index location */
 
