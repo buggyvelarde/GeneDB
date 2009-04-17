@@ -306,6 +306,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param session
      * @return a set of featureIds of the features that failed to be indexed
      */
+    @Transactional
     private Set<Integer> batchIndexFeatures(Collection<Integer> featureIds,
             FullTextSession session) {
 
