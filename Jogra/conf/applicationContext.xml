@@ -24,7 +24,7 @@
   </bean>
 
   <bean name="geneService" class="org.genedb.jogra.services.SqlGeneService">
-  	<property name="dataSource" ref="dataSource" />
+      <property name="dataSource" ref="dataSource" />
   </bean>
 
   <bean name="geneEditor" class="org.genedb.jogra.plugins.GeneEditor">
@@ -45,9 +45,9 @@
 <!--        <property name="url" value="jdbc:postgresql://pathdbsrv1b:10103/productrat" />-->
 <!--        <property name="username" value="pathdb" />-->
 <!--        <property name="password" value="Pyrate_1" />-->
-	        <property name="url" value="jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot" />
-	        <property name="username" value="genedb_ro" />
-	        <property name="password" value="genedb_ro" />
+            <property name="url" value="jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens" />
+            <property name="username" value="genedb" />
+            <property name="password" value="genedb" />
     </bean>
 
   <bean name="geneList" class="org.genedb.jogra.plugins.GeneList" />
