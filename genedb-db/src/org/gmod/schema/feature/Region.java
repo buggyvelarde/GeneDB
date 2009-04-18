@@ -98,10 +98,10 @@ public class Region extends Feature implements Comparable<Region> {
         loadLoc();
         if (strand == -1) {
             return "(" + fmin + ".." + fmax + ")";
-        } else {
-            return fmin + ".." + fmax;
         }
+        return fmin + ".." + fmax;
     }
+
     /**
      * Get the component location as a string, in traditional coordinates (i.e. inclusive base coordinates with the origin at 1).
      *

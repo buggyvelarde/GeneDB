@@ -177,17 +177,15 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
     private String description(FeatureType featureType) {
         if ("".equals(featureType.accession())) {
             return String.format("term '%s' in CV '%s'", featureType.term(), featureType.cv());
-        } else {
-            return String.format("accession number '%s' in CV '%s'", featureType.accession(), featureType.cv());
         }
+        return String.format("accession number '%s' in CV '%s'", featureType.accession(), featureType.cv());
     }
 
     private Integer getCvTermIdForFeatureType(FeatureType featureType) throws ChadoAnnotationException {
         if ("".equals(featureType.accession())) {
             return getCvTermIdForTermFeatureType(featureType);
-        } else {
-            return getCvTermIdForAccessionFeatureType(featureType);
         }
+        return getCvTermIdForAccessionFeatureType(featureType);
     }
 
     private Integer getCvTermIdForTermFeatureType(FeatureType featureType) throws ChadoAnnotationException {
