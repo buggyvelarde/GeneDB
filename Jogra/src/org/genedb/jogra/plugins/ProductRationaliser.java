@@ -62,16 +62,26 @@ import skt.swing.search.IncrementalSearchKeyListener;
 import skt.swing.search.ListFindAction;
 
 
+/**
+ * A plug-in which curators can use to display a list of products, in order to merge them. eg
+ * To identify 3 products which mean the same thing, but are expressed or spelt differently
+ * and then change all uses to a single product.
+ *
+ */
 public class ProductRationaliser implements JograPlugin {
 
     private static final String WINDOW_TITLE = "Product Rationaliser";
     private static final String A_LONG_STRING = "This is the maximum product width we show";
-    private ProductService productService;
-    JList fromList;
-    JList toList;
-    JCheckBox filterBox;
-    JLabel productCountLabel;
 
+    private ProductService productService;
+    private JList fromList;
+    private JList toList;
+    private JCheckBox filterBox;
+    private JLabel productCountLabel;
+
+    /**
+     * Fetch the product list from the database and set that as the model for both lists.
+     */
     private void initModels() {
         List<Product> products = productService.getProductList(filterBox.isSelected());
         Product[] productArray = new Product[products.size()];
@@ -87,8 +97,12 @@ public class ProductRationaliser implements JograPlugin {
     }
 
 
+    /**
+     * Return a new, initialised JFrame which is the main interface.
+     *
+     * @return the main interface
+     */
     public JFrame getMainPanel() {
-
         fromList = new JList();
         toList = new JList();
         filterBox = new JCheckBox("Only products annotated to genes", true);
@@ -233,20 +247,16 @@ public class ProductRationaliser implements JograPlugin {
         return WINDOW_TITLE;
     }
 
-    public int getOrder() {
-        return 7;
-    }
-
     public boolean isSingletonByDefault() {
         return true;
     }
 
     public boolean isUnsaved() {
-        // TODO Auto-generated method stub
+        // TODO
         return false;
     }
 
-    private JFrame makeWindow() {
+    JFrame makeWindow() {
         System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "'  x");
         JFrame lookup = Jogra.findNamedWindow(WINDOW_TITLE);
         if (lookup == null) {
@@ -259,6 +269,12 @@ public class ProductRationaliser implements JograPlugin {
         this.productService = productService;
     }
 
+
+    /**
+     * An action wrapping code which identifies the closest match in the right hand column
+     * to the selected value in the left hand column. Closest is defined by the smallest
+     * Levenshtein value.
+     */
     class FindClosestMatchAction extends AbstractAction implements ListSelectionListener {
 
         public FindClosestMatchAction() {
@@ -320,6 +336,10 @@ public class ProductRationaliser implements JograPlugin {
     }
 
 
+    /**
+     * Action which wraps the actual synchronize action in the ProductService. It
+     * passes the selected values in both columns and then refreshes the model.
+     */
     class RationaliserAction extends AbstractAction implements ListSelectionListener {
 
         public RationaliserAction() {
@@ -357,6 +377,11 @@ public class ProductRationaliser implements JograPlugin {
 
     }
 
+
+    /**
+     * Action which will set the position in the target list to the same position
+     *  as the selection in the source list.
+     */
     public class SyncAction extends AbstractAction {
 
         private JList sourceList;

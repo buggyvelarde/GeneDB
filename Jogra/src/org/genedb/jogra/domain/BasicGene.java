@@ -32,14 +32,15 @@ public class BasicGene {
             BasicGene other = (BasicGene) obj;
             return (this.uniqueName.equals(other.uniqueName));
         }
-        else
-            return false;
+        return false;
     }
 
     /**
      * Create a new, empty, BasicGene.
      */
-    public BasicGene() { }
+    public BasicGene() {
+        // Default constructor
+    }
     /**
      * Copy an existing BasicGene.
      *
@@ -65,10 +66,10 @@ public class BasicGene {
      * @return the display name
      */
     public String getDisplayName() {
-        if (name != null)
+        if (name != null) {
             return name;
-        else
-            return uniqueName;
+        }
+        return uniqueName;
     }
 
     public String getUniqueName() {

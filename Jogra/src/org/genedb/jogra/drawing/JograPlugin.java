@@ -23,14 +23,12 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import org.springframework.core.Ordered;
-
 /**
  * Core application interface. Define the entry and manipulation points of a component
  * that want to be used by Jogra.
  *
  */
-public interface JograPlugin extends Ordered {
+public interface JograPlugin {
 
     /**
      * Supply a JPanel which is displayed in the main Jogra application panel,
