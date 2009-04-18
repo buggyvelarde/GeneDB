@@ -262,7 +262,7 @@ public class ProductRationaliser implements JograPlugin {
     class FindClosestMatchAction extends AbstractAction implements ListSelectionListener {
 
         public FindClosestMatchAction() {
-            putValue(AbstractAction.NAME, "Find possible fix");
+            putValue(Action.NAME, "Find possible fix");
             fromList.addListSelectionListener(this);
             enableBasedOnSelection();
         }
@@ -323,7 +323,7 @@ public class ProductRationaliser implements JograPlugin {
     class RationaliserAction extends AbstractAction implements ListSelectionListener {
 
         public RationaliserAction() {
-            putValue(AbstractAction.NAME, "Rationalise Products");
+            putValue(Action.NAME, "Rationalise Products");
             fromList.addListSelectionListener(this);
             toList.addListSelectionListener(this);
             enableBasedOnSelection();
