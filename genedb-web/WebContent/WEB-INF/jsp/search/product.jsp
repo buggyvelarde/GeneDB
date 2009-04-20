@@ -22,9 +22,9 @@
                         <br><font color="red"><form:errors path="taxons" /></font>
                     </td>
                     <td width=180>
-                        <b>Minimum Length:</b>
-                        <br><form:input id="product" path="product"/>
-                        <br><font color="red"><form:errors path="product" /></font>
+                        <b>Product:</b>
+                        <br><form:input id="search" path="search"/>
+                        <br><font color="red"><form:errors path="search" /></font>
                     </td>
                     <td>
                         <br><input type="submit" value="Submit" />
