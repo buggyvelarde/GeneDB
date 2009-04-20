@@ -55,7 +55,7 @@ public abstract class LuceneQuery implements Query {
     @Autowired
     private LuceneIndexFactory luceneIndexFactory;
 
-    private LuceneIndex luceneIndex;
+    private transient LuceneIndex luceneIndex;
 
     protected String name;
 
