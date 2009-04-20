@@ -139,7 +139,7 @@
         <format:genePageSection id="controlCur">
             <div class="heading">Controlled Curation</div>
             <table width="100%" class="go-section">
-                <format:featureCvTerm-section featureCvTerms="${dto.controlledCurations}" organism="${organism}" cvName="controlled_curation"/>
+                <format:featureCvTerm-section featureCvTerms="${dto.controlledCurations}" organism="${dto.organismCommonName}" cvName="controlled_curation"/>
             </table>
         </format:genePageSection>
     </c:if>
