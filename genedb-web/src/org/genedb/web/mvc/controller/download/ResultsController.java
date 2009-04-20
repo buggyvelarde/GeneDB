@@ -76,6 +76,7 @@ public class ResultsController {
 
         if (!resultsCacheFactory.getResultsCacheMap().containsKey(key)) {
             session.setAttribute(WebConstants.FLASH_MSG, "Unable to retrieve results for this key");
+            logger.error("Unable to retrieve results for key '"+key+"'");
             return "redirect:/QueryList";
         }
 

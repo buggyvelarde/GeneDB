@@ -164,7 +164,7 @@ public class QueryController {
             resultsKey = cacheResults(gs2, query, queryName, session.getId());
             model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
-            logger.debug("Found results for query - redirecting to Results controller");
+            logger.debug("Found results for query (Size: '"+gs2.size()+"' key: '"+resultsKey+"')- redirecting to Results controller");
             return "redirect:/Results";
         }
     }
