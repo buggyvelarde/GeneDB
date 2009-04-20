@@ -53,7 +53,7 @@ public abstract class LuceneQuery implements Query {
     private int order;
 
     @Autowired
-    private LuceneIndexFactory luceneIndexFactory;
+    private transient LuceneIndexFactory luceneIndexFactory;
 
     private transient LuceneIndex luceneIndex;
 
