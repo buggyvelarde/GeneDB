@@ -83,6 +83,8 @@ public class ResultsController {
         ResultEntry resultEntry = resultsCacheFactory.getResultsCacheMap().get(key);
         List<GeneSummary> results = resultEntry.results;
 
+        logger.info("The number of results retrived from cache is '"+results.size()+"'");
+
         boolean truncated = false;
 
         if (end >= results.size()) {
@@ -114,6 +116,8 @@ public class ResultsController {
 //                resultsCacheFactory.getResultsCacheMap().put(key, results);
             }
 
+        } else {
+            possiblyExpanded = subset;
         }
 
         model.addAttribute("results", possiblyExpanded);
