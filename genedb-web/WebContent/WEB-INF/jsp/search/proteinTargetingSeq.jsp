@@ -7,7 +7,7 @@
 </format:headerRound>
 <div id="geneDetails">
     <format:genePageSection id="nameSearch" className="whiteBox">
-        <form:form commandName="query" action="Query" method="post">
+        <form:form commandName="query" action="Query" method="GET">
         <input type="hidden" name="q" value="proteinTargetingSeq" />
             <table>
                 <tr>
