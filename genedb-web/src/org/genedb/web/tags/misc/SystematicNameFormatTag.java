@@ -6,7 +6,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 /**
- * Tag to Re-format the systematic name to remove the :pep or :mRNA surfix if found in the Systematic Name
+ * Tag to Re-format the systematic name to remove the :pep or :mRNA suffix if found in the Systematic Name
  * @author LOke
  *
  */
@@ -25,8 +25,8 @@ public class SystematicNameFormatTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
-        String[] surfixes = {":pep", ":mRNA"};
-        name = removeSuffixes(name, surfixes);
+        String[] suffixes = {":pep", ":mRNA", ":pseudogenic_transcript"};
+        name = removeSuffixes(name, suffixes);
         out.print(name);
     }
 

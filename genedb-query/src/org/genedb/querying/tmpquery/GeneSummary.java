@@ -38,6 +38,7 @@ public class GeneSummary implements Comparable<GeneSummary>, Serializable {
     public void setSystematicId(String systematicId) {
         String munged = removeSuffix(systematicId, ":pep");
         munged = removeSuffix(munged, ":mRNA");
+        munged = removeSuffix(munged, ":pseudogenic_transcript");
         this.systematicId = munged;
     }
 
