@@ -137,6 +137,7 @@
         <property name="plainIndividualSessionFactory" ref="plainIndividualSessionFactory" />
     </bean>
 
+<!--
     <bean name="plainBatchSessionFactory" class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="packagesToScan" value="org.gmod.schema.mapped,org.gmod.schema.feature" />
@@ -174,6 +175,7 @@
             </map>
         </property>
     </bean>
+-->
 
     <bean name="fullTextIndexEventListener" class="org.hibernate.search.event.FullTextIndexEventListener" />
 
