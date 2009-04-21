@@ -29,6 +29,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,6 +100,7 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
     protected transient SequenceDao sequenceDao;
 
     @Autowired
+    @Qualifier("sessionFactory")
     protected transient SessionFactory sessionFactory;
 
     @GenericGenerator(name = "generator", strategy = "seqhilo", parameters = {
