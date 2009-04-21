@@ -337,7 +337,12 @@ public class Polypeptide extends Region {
             SymbolTokenization proteinTokenization;
             try {
                 proteinTokenization = ProteinTools.getTAlphabet().getTokenization("token");
-                SymbolList residuesSymbolList = new SimpleSymbolList(proteinTokenization, getResidues());
+                String residues = getResidues();
+                if (residues.endsWith("*")) {
+                    // Trim final if present. There may still be internal stop codons
+                    residues = residues.substring(0, residues.length()-1);
+                }
+                SymbolList residuesSymbolList = new SimpleSymbolList(proteinTokenization, residues);
                 calculateMass(residuesSymbolList);
             } catch (BioException exp) {
                 logger.error("Failed to calculate mass", exp);
