@@ -103,6 +103,7 @@ public class OrthologsController extends AbstractController {
             viewName = genePage;
             break;
         default:
+            model.put("resultsSize", orthologs.size());
             model.put("results", orthologs);
         }
         return new ModelAndView(viewName, model);
