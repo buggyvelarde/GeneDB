@@ -179,7 +179,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
         sessionMap.put(sessionFactory, session);
-        logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session, session.isConnected()));
+        logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session.hashCode(), session.isConnected()));
         return session;
     }
 
@@ -314,7 +314,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         int i = 0;
         for (Integer featureId : featureIds) {
-            Feature feature = sequenceDao.getFeatureById(featureId);
+            Feature feature = (Feature)session.load(Feature.class, featureId);
             thisBatch.add(featureId);
 
             boolean failed = false;
