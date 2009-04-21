@@ -356,7 +356,7 @@
     <bean id="OrthologsController"
         class="org.genedb.web.mvc.controller.OrthologsController">
         <property name="sequenceDao" ref="sequenceDao" />
-        <property name="listResultsView" value="list/features" />
+        <property name="listResultsView" value="list/results2" />
         <property name="genePage" value="redirect:NamedFeature" />
     </bean>
 
