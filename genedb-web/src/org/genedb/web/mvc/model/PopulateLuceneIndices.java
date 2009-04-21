@@ -223,6 +223,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
     }
 
+    @Transactional
     public boolean updateAllCaches(ChangeSet changeSet) {
         // Ignore changes to top level feature
 
@@ -313,7 +314,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         int i = 0;
         for (Integer featureId : featureIds) {
-            Feature feature = sequenceDao.getFeatureById(i);
+            Feature feature = sequenceDao.getFeatureById(featureId);
             thisBatch.add(featureId);
 
             boolean failed = false;
