@@ -134,6 +134,7 @@
         </format:genePageSection>
     </c:if>
 
+
     <%-- Controlled Curation Section --%>
     <c:if test="${fn:length(dto.controlledCurations) > 0}">
         <format:genePageSection id="controlCur">
