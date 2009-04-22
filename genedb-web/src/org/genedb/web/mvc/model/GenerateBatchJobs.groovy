@@ -14,13 +14,25 @@ String baseDir = "/nfs/pathdb/genedb/staging/bulk/${args[0]}"
 new File("${baseDir}/scripts").mkdirs()
 new File("${baseDir}/output").mkdir()
 
+List<String> orgs = new ArrayList<String>()
 
-def sql = Sql.newInstance("jdbc:postgresql://pathdbsrv1-dmz:5432/staging", "genedb_ro",
-                                  "genedb_ro", "org.postgresql.Driver")
+if (args > 3) {
+    orgs = args[2].split(":")
 
-sql.eachRow("select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'") { row ->
+} else {
 
-    def org = row.common_name
+    def sql = Sql.newInstance("jdbc:postgresql://pathdbsrv1-dmz:5432/staging", "genedb_ro",
+                                      "genedb_ro", "org.postgresql.Driver")
+
+    sql.eachRow("select distinct(o.common_name) from organism o, feature f where f.organism_id = o.organism_id and o.common_name != 'dummy'") { row ->
+        def org = row.common_name
+        orgs.add(org)
+    }
+
+}
+
+for (org in orgs) {
+
     def antLine
 
     switch (this.args[0]) {
