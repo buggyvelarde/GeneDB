@@ -94,8 +94,11 @@ public class OrthologsController extends BaseCachingController {
         default:
             List<GeneSummary> gs = possiblyConvertList(orthologs);
             String resultsKey = cacheResults(gs, null, null, session.getId());
-            model.addAttribute("resultsSize", orthologs.size());
-            model.addAttribute("results", orthologs);
+
+            model.addAttribute("key", resultsKey);
+//            model.addAttribute("taxonNodeName", taxonName);
+            logger.debug("Found results for query (Size: '"+gs.size()+"' key: '"+resultsKey+"')- redirecting to Results controller");
+            model.addAttribute("resultsSize", gs.size());
         }
         return viewName;
     }
