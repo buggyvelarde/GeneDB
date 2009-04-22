@@ -164,7 +164,7 @@
                                         <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinMass&taxons=${taxonNodeName}&newSearch=true" title="Protein mass Search">By Molecular Mass</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Num Transmembrane Domains --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinNumTM&taxons=${taxonNodeName}&newSearch=true" title="Protein num TM Search">By No. TM domains</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>Query?q=proteinNumTM&taxons=${taxonNodeName}&newSearch=true" title="Protein num TM Search">By No. TM domains</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Motif Search --%>
                                         <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>MotifSearch&taxons=${taxonNodeName}&newSearch=true" title="Motif Search">Motif Search</a>
