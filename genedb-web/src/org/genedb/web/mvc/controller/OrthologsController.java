@@ -1,11 +1,25 @@
 package org.genedb.web.mvc.controller;
 
 import org.genedb.db.dao.SequenceDao;
+import org.genedb.querying.core.QueryException;
+import org.genedb.querying.tmpquery.GeneSummary;
+import org.genedb.web.mvc.controller.download.BaseCachingController;
+import org.genedb.web.mvc.controller.download.QueryController;
 
+import org.apache.log4j.Logger;
+import org.gmod.schema.feature.Polypeptide;
+import org.gmod.schema.feature.ProductiveTranscript;
+import org.gmod.schema.feature.ProteinMatch;
+import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -15,16 +29,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Returns all features (orthologs) that belong to a particular cluster
  *
  * @author Chinmay Patel (cp2)
  */
+@Controller
+@RequestMapping("/Orthologs")
+public class OrthologsController extends BaseCachingController {
 
-public class OrthologsController extends AbstractController {
+    private static final Logger logger = Logger.getLogger(OrthologsController.class);
 
     private static final String NO_VALUE_SUPPLIED = "_NO_VALUE_SUPPLIED";
 
@@ -44,68 +63,51 @@ public class OrthologsController extends AbstractController {
         this.sequenceDao = sequenceDao;
     }
 
-    @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    @RequestMapping(method = RequestMethod.GET , params= "cluster")
+    public String processForm(
+            @RequestParam(value="cluster") String clusterName,
+            @RequestParam(value="suppress", required=false) String suppress,
+            ServletRequest request,
+            HttpSession session,
+            Model model) throws QueryException {
 
-        String clusterName = ServletRequestUtils.getStringParameter(request, "cluster",
-            NO_VALUE_SUPPLIED);
-        String type = "protein_match";
         String viewName = listResultsView;
-        Map<String, Object> model = null;
-        List<Feature> orthologs = null;
 
-        if (clusterName.equals(NO_VALUE_SUPPLIED)) {
-            // TODO redirect it to an error page
-        }
-        Feature cluster = sequenceDao.getFeatureByUniqueName(clusterName, type);
+        Feature cluster = sequenceDao.getFeatureByUniqueName(clusterName, ProteinMatch.class);
+
+        List<Feature> orthologs = new ArrayList<Feature>();
+
         Collection<FeatureRelationship> relations = cluster.getFeatureRelationshipsForObjectId();
-        orthologs = new ArrayList<Feature>();
-        /*
-         * The below code gets Gene names from the corresponding polypeptides
-         * this isn't the right approach and needs to be changed so that
-         * something like polypeptide.getGene() can be used either
-         */
         for (FeatureRelationship featureRel : relations) {
-            Feature protein = featureRel.getSubjectFeature();
-            Feature mRNA = null;
-            Collection<FeatureRelationship> frs = protein.getFeatureRelationshipsForSubjectId();
-            if (frs != null) {
-                for (FeatureRelationship fr : frs) {
-                    if (fr.getType().getName().equals("derives_from")) {
-                        mRNA = fr.getObjectFeature();
-                        break;
-                    }
-                }
-                if (mRNA != null) {
-                    Feature gene = null;
-                    Collection<FeatureRelationship> frs2 = mRNA
-                            .getFeatureRelationshipsForSubjectId();
-                    for (FeatureRelationship fr : frs2) {
-                        if (fr.getType().getName().equals("part_of")) {
-                            gene = fr.getObjectFeature();
-                            break;
-                        }
-                    }
-                    if (gene != null)
-                        orthologs.add(gene);
-                }
+            Feature f = featureRel.getSubjectFeature();
+
+            if (! (f instanceof Polypeptide)) {
+                logger.error(String.format("Didn't get a polypeptide when I expected one - got '%s'", f.getClass().toString()));
+                continue;
             }
+
+            Polypeptide protein = (Polypeptide) f;
+            orthologs.add(protein.getTranscript());
         }
-        model = new HashMap<String, Object>();
+
+
+
 
         switch (orthologs.size()) {
         case 0:
             // TODO return to an error page displaying proper message
         case 1:
             String gene = orthologs.get(0).getUniqueName();
-            model.put("name", gene);
+            model.addAttribute("name", gene);
             viewName = genePage;
             break;
         default:
-            model.put("resultsSize", orthologs.size());
-            model.put("results", orthologs);
+            List<GeneSummary> gs = possiblyConvertList(orthologs);
+            String resultsKey = cacheResults(gs, null, null, session.getId());
+            model.addAttribute("resultsSize", orthologs.size());
+            model.addAttribute("results", orthologs);
         }
-        return new ModelAndView(viewName, model);
+        return viewName;
     }
+
 }
