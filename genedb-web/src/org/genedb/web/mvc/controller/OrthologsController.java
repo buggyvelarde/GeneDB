@@ -4,35 +4,25 @@ import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.tmpquery.GeneSummary;
 import org.genedb.web.mvc.controller.download.BaseCachingController;
-import org.genedb.web.mvc.controller.download.QueryController;
 
 import org.apache.log4j.Logger;
 import org.gmod.schema.feature.Polypeptide;
-import org.gmod.schema.feature.ProductiveTranscript;
 import org.gmod.schema.feature.ProteinMatch;
-import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.google.common.collect.Lists;
 
 /**
  * Returns all features (orthologs) that belong to a particular cluster
@@ -75,7 +65,7 @@ public class OrthologsController extends BaseCachingController {
 
         Feature cluster = sequenceDao.getFeatureByUniqueName(clusterName, ProteinMatch.class);
 
-        List<Feature> orthologs = new ArrayList<Feature>();
+        List<String> orthologs = Lists.newArrayList();
 
         Collection<FeatureRelationship> relations = cluster.getFeatureRelationshipsForObjectId();
         for (FeatureRelationship featureRel : relations) {
@@ -87,7 +77,7 @@ public class OrthologsController extends BaseCachingController {
             }
 
             Polypeptide protein = (Polypeptide) f;
-            orthologs.add(protein.getTranscript());
+            orthologs.add(protein.getTranscript().getUniqueName());
         }
 
 
@@ -97,7 +87,7 @@ public class OrthologsController extends BaseCachingController {
         case 0:
             // TODO return to an error page displaying proper message
         case 1:
-            String gene = orthologs.get(0).getUniqueName();
+            String gene = orthologs.get(0);
             model.addAttribute("name", gene);
             viewName = genePage;
             break;
