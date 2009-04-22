@@ -311,7 +311,7 @@
         <format:genePageSection id="orthologs">
             <div class="heading">Orthologues and Paralogues</div>
             <c:forEach items="${dto.clusterIds}" var="clusterId">
-                <span>${clusterId} <a href="<c:url value="/"/>Orthologs?cluster=${clusterId}">Look up others in cluster</a></span><br>
+                <span>${clusterId} <a href="<c:url value="/Orthologs"><c:param name="cluster" value="${clusterId}" /></c:url>">Look up others in cluster</a></span><br>
             </c:forEach>
             <c:forEach items="${dto.orthologueNames}" var="orthologueName">
                 <span><a href="<c:url value="/"/>NamedFeature?name=${orthologueName}">${orthologueName}</a></span><br>
