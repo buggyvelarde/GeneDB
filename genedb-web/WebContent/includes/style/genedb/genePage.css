@@ -408,7 +408,17 @@ div.value {
     font-weight: bold;
     color: blue;
     padding-bottom: 1ex;
+    float: left;
  }
+ .sideHeading {
+     clear: none;
+     float: right;
+     color: #666;
+     margin-right: 3px;
+ }
+.inner table {
+    clear: both;
+}
 
 .domainTable {width: 90%;}
 .domainTitleFirst {padding-top: 0px;}
