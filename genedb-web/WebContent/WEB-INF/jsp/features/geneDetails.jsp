@@ -61,12 +61,14 @@
                                 <c:if test="${!st.first}"> | </c:if>
                                     ${qualifier}
                         </c:forEach></span>
-                        <span><c:forEach items="${product.props.evidence}" var="evidence">${evidence}</c:forEach>&nbsp;</span>
-                        <span><c:forEach items="${product.pubs}" var="pub">(${pub.uniqueName})</c:forEach></span>
-                        <span><c:forEach items="${product.dbXRefDtoList}" var="fctdbx"><a href="${fctdbx.urlPrefix}${fctdbx.accession}">${fctdbx.dbName}:${fctdbx.accession}</a> </c:forEach></span>
-                        <c:if test="${product.withFrom != 'null'}">
-                           <db:dbXRefLink dbXRef="${product.withFrom}"/>
-                        </c:if>
+                        <span class="evidence">
+                            <span><c:forEach items="${product.props.evidence}" var="evidence">${evidence}</c:forEach>&nbsp;</span>
+                            <span><c:forEach items="${product.pubs}" var="pub">(${pub.uniqueName})</c:forEach></span>
+                            <span><c:forEach items="${product.dbXRefDtoList}" var="fctdbx"><a href="${fctdbx.urlPrefix}${fctdbx.accession}">${fctdbx.dbName}:${fctdbx.accession}</a> </c:forEach></span>
+                            <c:if test="${product.withFrom != 'null'}">
+                               <db:dbXRefLink dbXRef="${product.withFrom}"/>
+                            </c:if>
+                        </span>
                         <format:n-others count="${product.count}" cvTermName="${product.typeName}" taxons="${dto.organismCommonName}" cv="genedb_products" suppress="${dto.uniqueName}" />
                         <br>
                     </c:forEach>
