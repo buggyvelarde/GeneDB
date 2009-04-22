@@ -303,7 +303,7 @@
     </target>
 
      <target name="test-periodic-updater" depends="check-deploy,iajc-web" description="Run tests">
-        <javac srcdir="${imported.basedir.web}/test" includes="**/PeriodicUpdaterTest.java" debug="true"
+        <javac srcdir="${imported.basedir.web}/test" includes="**/*ChangeSetTest.java" debug="true"
                           destdir="${imported.basedir.web}/${test-classes.dir}"
                           classpathref="web-tests-classpath" />
             <junit printsummary="on"
@@ -315,7 +315,12 @@
                 <classpath refid="web-tests-classpath"/>
                 <formatter type="brief" usefile="false"/>
 
-               <test name="org.genedb.web.mvc.model.PeriodicUpdaterTest"/>
+                <batchtest>
+                    <fileset dir="${imported.basedir.web}/${test-classes.dir}">
+                        <include name="**/*ChangeSetTest.*"/>
+                    </fileset>
+                </batchtest>
+
             </junit>
 
             <fail if="tests.failed">

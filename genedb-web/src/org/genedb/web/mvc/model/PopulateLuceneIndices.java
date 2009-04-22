@@ -283,8 +283,9 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         for (Integer id : ids) {
             reader.deleteDocuments(new Term("featureId", Integer.toString(id)));
+            logger.debug("Feature ID: " + id + " deleted");
         }
-
+        reader.close();
         rp.closeReader(reader);
         session.close();
     }

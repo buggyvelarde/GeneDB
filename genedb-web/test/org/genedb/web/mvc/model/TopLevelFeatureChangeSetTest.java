@@ -1,30 +1,18 @@
 package org.genedb.web.mvc.model;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.lucene.analysis.SimpleAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermDocs;
 import org.genedb.db.audit.MockChangeSetImpl;
-import org.gmod.schema.feature.Gap;
-import org.gmod.schema.feature.Gene;
-import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.TopLevelFeature;
-import org.gmod.schema.feature.Transcript;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 
 
 /**
@@ -33,18 +21,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
-public class PeriodicUpdaterTest extends AbstractUpdaterTest{
+@ContextConfiguration(locations={"classpath:/org/genedb/web/mvc/model/PeriodicUpdaterTest-context.xml"})
+public class TopLevelFeatureChangeSetTest extends AbstractUpdaterTest{
 
 
     @Autowired
     PeriodicUpdater periodicUpdater;
+
     
     /**
      * Test the adding, replacement and removal of a ToplevelFeature
      * @throws Exception
      */
-    //@Test
+    @Test
     public void testTopLevelFeatureChangeSet()throws Exception{
         Integer newTopLevelFeature = 1;//Pf3D7_01
         Integer changedTopLevelFeature = 886;//Pf3D7_02
@@ -105,50 +94,5 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
         //Assert No severe errors found
         Assert.assertTrue(noErrors);
     }
-    
-    /**
-     * A changed Gap triggers a TopLevelFeature to be replaced
-     * @throws Exception
-     */
-    //@Test
-    public void testGapChangeSet()throws Exception{
-        //Gap feature ID 17620's Unique name is 'gap116670-116769:corrected'
-        //The corresponding TopLevelFeature for this is 15901(Pf3D7_07)
-        Integer changedGap = 17620;
-        
-        //Clear all the caches
-        CacheSynchroniser cacheSynchroniser = (CacheSynchroniser)periodicUpdater.getIndexUpdaters().get(1);
-        cacheSynchroniser.getBmf().getDtoMap().clear();
-        cacheSynchroniser.getBmf().getContextMapMap().clear();
-        
-        //prevent excessive log printing
-        cacheSynchroniser.setNoPrintResult(true);
-        
-        //Get the changeset
-        MockChangeSetImpl changeSet = 
-            (MockChangeSetImpl)periodicUpdater.getChangeTracker().changes(PeriodicUpdaterTest.class.getName());
-        
-        //Change  Gap feature in change set
-        List<Integer> changedFeatureIds = new ArrayList<Integer>();
-        changeSet.getChangedMap().put(Gap.class, changedFeatureIds); 
-        changedFeatureIds.add(changedGap);
-        
-        
 
-        
-        
-        /****************************
-         * Execute class under test 
-         ****************************/
-        boolean noErrors = periodicUpdater.processChangeSet();
-        
-        //ContextMap with featureID 15901 is not null
-        String contextMap = cacheSynchroniser.getBmf().getContextMapMap().get(15901);
-        Assert.assertNotNull(contextMap);
-        Assert.assertTrue(contextMap.contains("Pf3D7_07"));
-        
-        //Assert No severe errors found
-        Assert.assertTrue(noErrors);
-        
-    }
 }

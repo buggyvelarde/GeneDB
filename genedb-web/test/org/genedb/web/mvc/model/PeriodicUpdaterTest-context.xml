@@ -25,6 +25,10 @@
 
     <bean id="generalDao" class="org.genedb.db.dao.GeneralDao">
         <property name="sessionFactory" ref="sessionFactory" />
+    </bean> 
+    
+    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao">
+        <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
     <bean name="periodicUpdater" class="org.genedb.web.mvc.model.PeriodicUpdater">
@@ -38,19 +42,56 @@
         <property name="clientName" value="NightlyUpdateProcess" />
     </bean>
     
+    
+    
     <bean name="populateLuceneIndices" class="org.genedb.web.mvc.model.PopulateLuceneIndices">
-        <property name="userName" value="sa" />
-        <property name="dbName" value="" />
-        <property name="host" value="localhost" />
-        <property name="password" value="" />
-        <property name="port" value="${dbport}" />
         <property name="indexBaseDirectory" value="test/data/lucene" />
         <property name="sequenceDao" ref="sequenceDao" />
-        <property name="hibernateDialect" value="org.hibernate.dialect.HSQLDialect" />
-        <property name="hibernateDriverClass" value="org.hsqldb.jdbcDriver" />
-        <property name="dataSource" ref="dataSource"/>
-        <property name="databaseUrl" value="jdbc:hsqldb:file:test/data/hsqldb/pfalciparum" />        
+        <property name="plainBatchSessionFactory" ref="sessionFactory" />
+        <!--property name="plainIndividualSessionFactory" ref="plainIndividualSessionFactory" /-->
     </bean>
+
+
+    <bean name="sessionFactory" class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.gmod.schema.mapped,org.gmod.schema.feature" />
+        <property name="properties">
+            <props>
+                <prop key="hibernate.search.worker.batch_size" >10</prop>
+                <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+                <prop key="hibernate.search.default.indexBase">test/data/lucene</prop>
+            </props>
+        </property>
+        <property name="listeners">
+            <map>
+                <entry key="post-insert" value-ref="fullTextIndexEventListener" />
+                <entry key="post-update" value-ref="fullTextIndexEventListener" />
+                <entry key="post-delete" value-ref="fullTextIndexEventListener" />
+            </map>
+        </property>
+    </bean>
+
+    <bean name="plainIndividualSessionFactory" class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.gmod.schema.mapped,org.gmod.schema.feature" />
+        <property name="properties">
+            <props>
+                <prop key="hibernate.search.worker.batch_size" >1</prop>
+                <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+                <prop key="hibernate.search.default.indexBase">test/data/lucene</prop>
+            </props>
+        </property>
+        <property name="listeners">
+            <map>
+                <entry key="post-insert" value-ref="fullTextIndexEventListener" />
+                <entry key="post-update" value-ref="fullTextIndexEventListener" />
+                <entry key="post-delete" value-ref="fullTextIndexEventListener" />
+            </map>
+        </property>
+    </bean>
+
+    <bean name="fullTextIndexEventListener" class="org.hibernate.search.event.FullTextIndexEventListener" />
+    
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
@@ -108,17 +149,12 @@
 
     <bean id="transcriptDTOFactory" class="org.genedb.web.mvc.model.TranscriptDTOFactory" /> 
     
-    
-
-    <bean id="sequenceDao" class="org.genedb.db.dao.SequenceDao">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
          <property name="sessionFactory" ref="sessionFactory" />
      </bean>
 
-    <bean id="sessionFactory"
+    <!--bean id="sessionFactory"
         class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="hibernateProperties" ref="hibernateProperties" />
@@ -128,7 +164,7 @@
                 <value>org.gmod.schema.feature</value>
             </list>
         </property>
-    </bean>
+    </bean-->
 
     <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
