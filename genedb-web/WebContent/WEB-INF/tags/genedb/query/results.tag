@@ -12,10 +12,10 @@
 
         <format:genePageSection  className="whiteBox">
             <display:table name="results"  id="row" pagesize="30" requestURI="/Results" class="simple" sort="external" cellspacing="0" cellpadding="4" partialList="true" size="${resultsSize}">
-                   <display:column title="Systematic ids">
+                   <display:column title="Systematic ids" style="width: 74px;">
                     <a href="<c:url value="/ResultsNavigator"/>?index=${row_rowNum-1}&resultsLength=${fn:length(results)-1}&key=${key}"><c:out value="${row.systematicId}"/></a>
                    </display:column>
-                <display:column title="Organism">
+                <display:column title="Organism" style="width: 74px;">
                     <i>${row.taxonDisplayName}</i>
                    </display:column>
                    <display:column title="Product">
