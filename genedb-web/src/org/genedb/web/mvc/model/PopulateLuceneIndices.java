@@ -104,12 +104,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     private boolean failFast = false;
 
-    private DataSource dataSource;
-
-    private SequenceDao sequenceDao;
-
-    private SessionFactory plainBatchSessionFactory;
-    private SessionFactory plainIndividualSessionFactory;
+    private ConfigurableGeneDBSessionFactoryBean configurableGeneDBSessionFactoryBean;
 
 
     private String indexBaseDirectory;
@@ -118,7 +113,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     private String hibernateDialect = "org.hibernate.dialect.PostgreSQLDialect";
     private String hibernateDriverClass = "org.postgresql.Driver";
-    private String databaseUrl;
 
     private Map<SessionFactory, FullTextSession> sessionMap = Maps.newHashMap();
 
@@ -174,18 +168,18 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param batchSize
      * @return
      */
-    private FullTextSession newSession(SessionFactory sessionFactory) {
+    private FullTextSession newSession(int batchSize) {
+        SessionFactory sessionFactory = configurableGeneDBSessionFactoryBean.createFullTextSessionFactory(indexBaseDirectory, batchSize);
         FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
-        sessionMap.put(sessionFactory, session);
         logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         return session;
     }
 
 
     public void indexFeatures(List<Integer> featureIds) {
-        FullTextSession session = newSession(plainBatchSessionFactory);
+        FullTextSession session = newSession(10);
         //Transaction transaction = session.beginTransaction();
         Set<Integer> failed = batchIndexFeatures(featureIds, session);
         //transaction.commit();
@@ -205,7 +199,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @param numBatches
      */
     public void indexFeatures(Class<? extends Feature> featureClass) {
-        FullTextSession session = newSession(plainBatchSessionFactory);
+        FullTextSession session = newSession(10);
         //Transaction transaction = session.beginTransaction();
         logger.info(String.format("A. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         Set<Integer> failed = batchIndexFeatures(featureClass, session);
@@ -246,7 +240,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
             alteredIds.addAll(changeSet.newFeatureIds(Gap.class));
             alteredIds.addAll(changeSet.changedFeatureIds(Gap.class));
 
-            FullTextSession session = newSession(plainBatchSessionFactory);
+            FullTextSession session = newSession(10);
             //Transaction transaction = session.beginTransaction();
 
             Set<Integer> failed = batchIndexFeatures(alteredIds, session);
@@ -271,7 +265,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @throws IOException
      */
     private void deleteFromIndex(Collection<Integer> ids) throws IOException {
-        FullTextSession session = newSession(plainBatchSessionFactory);
+        FullTextSession session = newSession(10);
         SearchFactory searchFactory = session.getSearchFactory();
         ReaderProvider rp = searchFactory.getReaderProvider();
         DirectoryProvider[] directoryProviders = searchFactory.getDirectoryProviders(Feature.class);
@@ -313,7 +307,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         int i = 0;
         for (Integer featureId : featureIds) {
-            Feature feature = sequenceDao.getFeatureById(i);
+            Feature feature = (Feature) session.load(Feature.class, featureId);
             thisBatch.add(featureId);
 
             boolean failed = false;
@@ -394,7 +388,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
      */
     private void reindexFailedFeatures(Set<Integer> failed) {
         logger.info("Attempting to reindex failed features");
-        FullTextSession session = newSession(plainIndividualSessionFactory);
+        FullTextSession session = newSession(1);
         Transaction transaction = session.beginTransaction();
         for (int featureId : failed) {
             logger.debug(String.format("Attempting to index feature %d", featureId));
@@ -435,10 +429,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
         this.organism = organism;
     }
 
-
-    public void setSequenceDao(SequenceDao sequenceDao) {
-        this.sequenceDao = sequenceDao;
-    }
 
     public static String promptForPassword(String databaseUrl, String databaseUsername) {
         Console console = System.console();
@@ -517,9 +507,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     public String getIndexBaseDirectory() {
         return indexBaseDirectory;
@@ -545,16 +532,5 @@ public class PopulateLuceneIndices implements IndexUpdater {
         this.hibernateDriverClass = hibernateDriverClass;
     }
 
-    public void setDatabaseUrl(String databaseUrl) {
-        this.databaseUrl = databaseUrl;
-    }
-
-    public void setPlainBatchSessionFactory(SessionFactory plainBatchSessionFactory) {
-        this.plainBatchSessionFactory = plainBatchSessionFactory;
-    }
-
-    public void setPlainIndividualSessionFactory(SessionFactory plainIndividualSessionFactory) {
-        this.plainIndividualSessionFactory = plainIndividualSessionFactory;
-    }
 
 }
