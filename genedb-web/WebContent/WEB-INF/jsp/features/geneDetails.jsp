@@ -314,7 +314,7 @@
                 <span>${clusterId} <a href="<c:url value="/Orthologs"><c:param name="cluster" value="${clusterId}" /></c:url>">Look up others in cluster</a></span><br>
             </c:forEach>
             <c:forEach items="${dto.orthologueNames}" var="orthologueName">
-                <span><a href="<c:url value="/NamedFeature"/><c:param name="name" value="${orthologueName}" /></c:url>">${orthologueName}</a></span><br>
+                <span><a href="<c:url value="/NamedFeature"><c:param name="name" value="${orthologueName}" /></c:url>">${orthologueName}</a></span><br>
             </c:forEach>
         </format:genePageSection>
     </c:if>
