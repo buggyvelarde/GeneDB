@@ -28,7 +28,7 @@ public class ConfigurableGeneDBSessionFactoryBean {
     }
 
 
-    public SessionFactory createFullTextSessionFactory(String indexDir, int batchSize) {
+    public SessionFactory createFullTextSessionFactory(String indexDir, int batchSize) throws Exception {
         ChadoSessionFactoryBean csfb = new ChadoSessionFactoryBean();
         csfb.setDataSource(dataSource);
         csfb.setPackagesToScan(packagesToScan);
@@ -37,6 +37,8 @@ public class ConfigurableGeneDBSessionFactoryBean {
         customised.put("hibernate.search.worker.batch_size", batchSize);
         customised.put("hibernate.search.default.indexBase", indexDir);
         csfb.setProperties(customised);
+
+        csfb.afterPropertiesSet();
 
         return (SessionFactory) csfb.getObject();
     }

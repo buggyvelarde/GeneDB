@@ -175,9 +175,17 @@ public class PopulateLuceneIndices implements IndexUpdater {
      *
      * @param batchSize
      * @return
+     * @throws Exception
      */
     private FullTextSession newSession(int batchSize) {
-        SessionFactory sessionFactory = configurableGeneDBSessionFactoryBean.createFullTextSessionFactory(indexBaseDirectory, batchSize);
+        SessionFactory sessionFactory = null;
+        try {
+            sessionFactory = configurableGeneDBSessionFactoryBean.createFullTextSessionFactory(indexBaseDirectory, batchSize);
+        } catch (Exception exp) {
+            exp.printStackTrace();
+            System.exit(65);
+        }
+        logger.info("sessionFactory is "+sessionFactory);
         FullTextSession session = Search.createFullTextSession(sessionFactory.openSession());
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
