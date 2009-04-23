@@ -10,7 +10,7 @@
 
         <st:flashMessage />
 
-        <form:form commandName="query" action="Query">
+        <form:form commandName="query" action="Query" method="GET">
         <input type="hidden" name="q" value="allNameProduct" />
             <table>
                 <tr>
