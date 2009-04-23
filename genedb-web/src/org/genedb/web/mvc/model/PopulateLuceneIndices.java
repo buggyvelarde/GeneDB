@@ -484,6 +484,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
             indexer.setNumBatches(iga.getNumBatches());
         }
 
+        indexer.setIndexBaseDirectory(iga.getIndexDirectory());
+
         indexer.indexFeatures();
     }
 
