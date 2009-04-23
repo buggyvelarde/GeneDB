@@ -179,7 +179,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         session.setFlushMode(FlushMode.MANUAL);
         session.setCacheMode(CacheMode.IGNORE);
         sessionMap.put(sessionFactory, session);
-        logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session.hashCode(), session.isConnected()));
+        logger.info(String.format("Just made. The value of session is '%s' and it is '%s'", session, session.isConnected()));
         return session;
     }
 
@@ -223,7 +223,6 @@ public class PopulateLuceneIndices implements IndexUpdater {
         }
     }
 
-    @Transactional
     public boolean updateAllCaches(ChangeSet changeSet) {
         // Ignore changes to top level feature
 
@@ -283,9 +282,8 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         for (Integer id : ids) {
             reader.deleteDocuments(new Term("featureId", Integer.toString(id)));
-            logger.debug("Feature ID: " + id + " deleted");
         }
-        reader.close();
+
         rp.closeReader(reader);
         session.close();
     }
@@ -315,7 +313,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
         int i = 0;
         for (Integer featureId : featureIds) {
-            Feature feature = (Feature)session.load(Feature.class, featureId);
+            Feature feature = sequenceDao.getFeatureById(i);
             thisBatch.add(featureId);
 
             boolean failed = false;
