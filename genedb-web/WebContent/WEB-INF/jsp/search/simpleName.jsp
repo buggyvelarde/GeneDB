@@ -30,7 +30,7 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td colspan=3><font color="red"><form:errors  /></td>
+                    <td colspan=3><font color="red"><form:errors /></td>
                     <td></td>
                 </tr>
             </table>
