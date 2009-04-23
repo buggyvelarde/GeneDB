@@ -106,6 +106,14 @@ public class PopulateLuceneIndices implements IndexUpdater {
 
     private ConfigurableGeneDBSessionFactoryBean configurableGeneDBSessionFactoryBean;
 
+    public ConfigurableGeneDBSessionFactoryBean getConfigurableGeneDBSessionFactoryBean() {
+        return configurableGeneDBSessionFactoryBean;
+    }
+
+    public void setConfigurableGeneDBSessionFactoryBean(
+            ConfigurableGeneDBSessionFactoryBean configurableGeneDBSessionFactoryBean) {
+        this.configurableGeneDBSessionFactoryBean = configurableGeneDBSessionFactoryBean;
+    }
 
     private String indexBaseDirectory;
     private String organism;
