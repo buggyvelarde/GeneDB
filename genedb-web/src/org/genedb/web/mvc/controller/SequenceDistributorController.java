@@ -45,7 +45,6 @@ public class SequenceDistributorController {
     private static final Logger logger = Logger.getLogger(SequenceDistributorController.class);
 
     private SequenceDao sequenceDao;
-    private String geneSequenceView;
 
     @RequestMapping(method=RequestMethod.GET)
     public String process(
@@ -78,6 +77,9 @@ public class SequenceDistributorController {
                 Polypeptide pp = ((ProductiveTranscript) transcript).getProtein();
                 if (pp != null) {
                     sequence = pp.getResidues();
+                    if (sequence.endsWith("*")) {
+                        sequence = sequence.substring(0, sequence.length()-1);
+                    }
                     nucleotide = false;
                 }
             }
@@ -93,7 +95,11 @@ public class SequenceDistributorController {
             url = "redirect:/wibble";
             break;
         case NCBI_BLAST:
-            url = "redirect:/wibble";
+            if (nucleotide) {
+                url = "redirect:http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&LINK_LOC=blasthome";
+            } else {
+                url = "redirect:http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?PAGE_TYPE=BlastSearch&PAGE=MegaBlast&PROGRAM=blastn&DATABASE=nr&BLAST_PROGRAMS=megaBlast";
+            }
             break;
         }
 
@@ -103,10 +109,6 @@ public class SequenceDistributorController {
 
     public void setSequenceDao(SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
-    }
-
-    public void setGeneSequenceView(String geneSequenceView) {
-        this.geneSequenceView = geneSequenceView;
     }
 
     private ModelBuilder modelBuilder;

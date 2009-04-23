@@ -14,6 +14,7 @@
 </format:headerRound>
 
     <c:if test="${!empty protein}">
+    <a href="">Send to GeneDB omniBLAST</a>    <a href="">Send to GeneDB BLAST</a>    <a href="">Send to BLAST at NCBI</a>
     <format:genePageSection id="proteinSequence">
         <div class="heading">Protein</div>
         <misc:format-sequence sequence="${protein}"/>
@@ -21,6 +22,7 @@
     </c:if>
 
     <c:if test="${!empty spliced && fn:length(coords) > 1}">
+    <a href="">Send to GeneDB omniBLAST</a>    <a href="">Send to GeneDB BLAST</a>    <a href="">Send to BLAST at NCBI</a>
     <format:genePageSection id="splicedSequence">
         <div class="heading">Spliced</div>
         <misc:format-sequence sequence="${spliced}"/>
@@ -28,6 +30,7 @@
     </c:if>
 
     <c:if test="${!empty unspliced}">
+    <a href="">Send to GeneDB omniBLAST</a>    <a href="">Send to GeneDB BLAST</a>    <a href="">Send to BLAST at NCBI</a>
     <format:genePageSection id="unsplicedSequence">
         <div class="heading">Unspliced</div>
         <misc:format-sequence sequence="${unspliced}" includeSpaces="true" />
