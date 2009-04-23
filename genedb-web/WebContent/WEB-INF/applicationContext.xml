@@ -146,8 +146,6 @@
         </property> -->
     </bean>
 
--->
-
     <bean name="fullTextIndexEventListener" class="org.hibernate.search.event.FullTextIndexEventListener" />
 
 </beans>
