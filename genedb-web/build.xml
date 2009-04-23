@@ -27,7 +27,7 @@
         <include name="*.jar"/>
       </fileset>
 
-      <pathelement location="${lib-dir}/misc/displaytag-1.1.jar"/>
+      <pathelement location="${lib-dir}/misc/displaytag-1.2.jar"/>
       <pathelement location="${lib-dir}/json/ezmorph-1.0.4.jar"/>
       <pathelement location="${lib-dir}/db/je-3.3.75.jar"/>
       <pathelement location="${lib-dir}/misc/jewelcli-0.53.jar"/>
