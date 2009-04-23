@@ -34,7 +34,7 @@ public class ConfigurableGeneDBSessionFactoryBean {
         csfb.setPackagesToScan(packagesToScan);
 
         Properties customised = new Properties(properties);
-        customised.put("hibernate.search.worker.batch_size", batchSize);
+        customised.put("hibernate.search.worker.batch_size", Integer.toString(batchSize));
         customised.put("hibernate.search.default.indexBase", indexDir);
         csfb.setProperties(customised);
 
