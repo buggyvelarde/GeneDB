@@ -124,6 +124,7 @@ public class ResultsController {
         model.addAttribute("resultsSize", results.size());
         model.addAttribute("key", key);
         model.addAttribute("query", resultEntry.query);
+        model.addAttribute("firstResultIndex", start);
         populateModelData(model, resultEntry.query);
         return "search/"+resultEntry.queryName;
     }
