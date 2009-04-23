@@ -15,7 +15,7 @@
                    <display:column title="Systematic ids" style="width: 74px;">
                     <a href="<c:url value="/ResultsNavigator"/>?index=${row_rowNum-1}&resultsLength=${fn:length(results)-1}&key=${key}"><c:out value="${row.systematicId}"/></a>
                    </display:column>
-                <display:column title="Organism" style="width: 74px;">
+                <display:column title="Organism" style="width: 120px;">
                     <i>${row.taxonDisplayName}</i>
                    </display:column>
                    <display:column title="Product">
