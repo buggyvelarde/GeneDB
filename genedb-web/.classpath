@@ -397,11 +397,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/genedb-libs/lib/misc/displaytag-1.1.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/com.springsource.org.aspectj.runtime-1.5.4.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -490,13 +485,33 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="/genedb-db/bin"/>
+	<classpathentry kind="lib" path="/genedb-db/bin">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.validator-3.0.0.GA.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/org.springframework.test-3.0.0.M1.jar"/>
-	<classpathentry kind="lib" path="lib/com.springsource.org.testng-sources-5.8.0.jar"/>
+	<classpathentry kind="lib" path="/genedb-query/bin">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-util/bin">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/genedb-domain/bin">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/com.springsource.org.codehaus.groovy-1.5.7.jar"/>
+	<classpathentry kind="lib" path="/genedb-libs/lib/misc/displaytag-1.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
