@@ -68,21 +68,11 @@
     </bean>
     
     
-    <!--bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <property name="url" value="jdbc:hsqldb:file:test/data/hsqldb/Pfalciparum;readonly=true"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
-    </bean-->
-    
-
-
-    <!-- DataSource Property -->
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url"><value>jdbc:postgresql://${dbhost}:${dbport}/${dbname}</value></property>
-        <property name="username"><value>${dbuser}</value></property>
-        <property name="password"><value>${dbpassword}</value></property>
     </bean>
     
     
