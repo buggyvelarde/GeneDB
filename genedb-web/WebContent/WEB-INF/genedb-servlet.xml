@@ -75,7 +75,7 @@
 
 
     <bean name="resultsCacheFactory" class="org.genedb.web.mvc.model.ResultsCacheFactory">
-        <property name="rootDirectory" value="/tmp/results"/>
+        <property name="rootDirectory" value="${resultsCacheDirectory}"/>
         <property name="readOnly" value="false" />
     </bean>
 
@@ -275,6 +275,12 @@
         <property name="modelBuilder" ref="modelBuilder"/>
         <property name="sequenceDao" ref="sequenceDao"/>
         <property name="geneSequenceView" value="features/geneSequence"/>
+    </bean>
+    
+    
+    <bean id="SequenceDistributorController"
+        class="org.genedb.web.mvc.controller.SequenceDistributorController">
+        <!-- Anything to inject? -->
     </bean>
 
     <bean name="historyManagerFactory"
