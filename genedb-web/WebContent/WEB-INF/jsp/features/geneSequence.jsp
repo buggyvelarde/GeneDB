@@ -15,7 +15,7 @@
 
     <c:if test="${!empty protein}">
     <format:genePageSection id="proteinSequence">
-        <div class="heading">Protein</div>
+        <div class="heading">Protein</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="/SequenceDistributor&destination=omniBlast&name=${gene.uniqueName}&type=Protein">Send to GeneDB omniBLAST</a>
         <a href="/SequenceDistributor&destination=Blast&name=${gene.uniqueName}&type=Protein">Send to GeneDB BLAST</a>
         <a href="/SequenceDistributor&destination=NCBI&name=${gene.uniqueName}&type=Protein">Send to BLAST at NCBI</a>
@@ -25,7 +25,7 @@
 
     <c:if test="${!empty spliced && fn:length(coords) > 1}">
     <format:genePageSection id="splicedSequence">
-        <div class="heading">Spliced</div>
+        <div class="heading">Spliced</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="/SequenceDistributor&destination=omniBlast&name=${gene.uniqueName}&type=Spliced">Send to GeneDB omniBLAST</a>
         <a href="/SequenceDistributor&destination=Blast&name=${gene.uniqueName}&type=Spliced">Send to GeneDB BLAST</a>
         <a href="/SequenceDistributor&destination=NCBI&name=${gene.uniqueName}&type=Spliced">Send to BLAST at NCBI</a>
@@ -36,7 +36,7 @@
 
     <c:if test="${!empty unspliced}">
     <format:genePageSection id="unsplicedSequence">
-        <div class="heading">Unspliced</div>
+        <div class="heading">Unspliced</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="/SequenceDistributor&destination=omniBlast&name=${gene.uniqueName}&type=Unspliced">Send to GeneDB omniBLAST</a>
         <a href="/SequenceDistributor&destination=Blast&name=${gene.uniqueName}&type=Unspliced">Send to GeneDB BLAST</a>
         <a href="/SequenceDistributor&destination=NCBI&name=${gene.uniqueName}&type=Unspliced">Send to BLAST at NCBI</a>
