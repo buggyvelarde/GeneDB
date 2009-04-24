@@ -4,6 +4,7 @@ import org.gmod.schema.mapped.Feature;
 import org.gmod.schema.mapped.FeatureRelationship;
 import org.gmod.schema.mapped.Organism;
 
+import org.apache.log4j.Logger;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
@@ -22,6 +23,7 @@ import javax.persistence.Transient;
  */
 @Entity
 public abstract class ProductiveTranscript extends Transcript {
+    private static final Logger logger = Logger.getLogger(ProductiveTranscript.class);
 
     ProductiveTranscript() {
         // empty
@@ -76,8 +78,10 @@ public abstract class ProductiveTranscript extends Transcript {
     protected final Polypeptide getProteinWithoutComplaining() {
         for (FeatureRelationship relation : getFeatureRelationshipsForObjectId()) {
             Feature feature = relation.getSubjectFeature();
-            if (feature instanceof Polypeptide) {
-                return (Polypeptide) feature;
+            if (feature instanceof Polypeptide) { 
+                return (Polypeptide) feature;                
+            } else {                
+                logger.trace(String.format("Ignoring %s of class %s", feature, feature.getClass().getName()));
             }
         }
         return null;
