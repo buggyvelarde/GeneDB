@@ -73,6 +73,7 @@ public class FeatureSequenceController {
         Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
         Map<String, Object> model = Maps.newHashMap();
 
+        model.put("uniqueName", transcript.getUniqueName());
         model.put("unspliced", transcript.getGene().getResidues());
 
         List<Pair<Integer, Integer>> coords;
