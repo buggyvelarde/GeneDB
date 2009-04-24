@@ -15,32 +15,31 @@
 
     <c:if test="${!empty protein}">
     <format:genePageSection id="proteinSequence">
-        <div class="heading">Protein</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="<c:url value="/SequenceDistributor" />&destination=omniBlast&name=${uniqueName}&type=Protein">Send to GeneDB omniBLAST</a>
-        <a href="<c:url value="/SequenceDistributor" />&destination=Blast&name=${uniqueName}&type=Protein">Send to GeneDB BLAST</a>
-        <a href="<c:url value="/SequenceDistributor" />&destination=NCBI&name=${uniqueName}&type=Protein">Send to BLAST at NCBI</a>
-        <misc:format-sequence sequence="${protein}"/>
+        <div class="heading">Protein</div>
+        <br><a href="<c:url value="/SequenceDistributor" />&destination=OMNIBLAST&name=${uniqueName}&type=PROTEIN">Send to GeneDB omniBLAST</a>
+        <a href="<c:url value="/SequenceDistributor" />&destination=BLAST&name=${uniqueName}&type=PROTEIN">Send to GeneDB BLAST</a>
+        <a href="<c:url value="/SequenceDistributor" />&destination=NCBI_BLAST&name=${uniqueName}&type=PROTEIN">Send to BLAST at NCBI</a>
+        <br><misc:format-sequence sequence="${protein}"/>
     </format:genePageSection>
     </c:if>
 
     <c:if test="${!empty spliced && fn:length(coords) > 1}">
     <format:genePageSection id="splicedSequence">
-        <div class="heading">Spliced</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="<c:url value="/SequenceDistributor" />&destination=omniBlast&name=${uniqueName}&type=Spliced">Send to GeneDB omniBLAST</a>
-        <a href="<c:url value="/SequenceDistributor" />&destination=Blast&name=${uniqueName}&type=Spliced">Send to GeneDB BLAST</a>
-        <a href="<c:url value="/SequenceDistributor" />&destination=NCBI&name=${uniqueName}&type=Spliced">Send to BLAST at NCBI</a>
-        <a href="">Send to GeneDB omniBLAST</a>    <a href="">Send to GeneDB BLAST</a>    <a href="">Send to BLAST at NCBI</a>
-        <misc:format-sequence sequence="${spliced}"/>
+        <div class="heading">Spliced</div>
+        <br><a href="<c:url value="/SequenceDistributor" />&destination=OMNIBLAST&name=${uniqueName}&type=SPLICED">Send to GeneDB omniBLAST</a>
+        <a href="<c:url value="/SequenceDistributor" />&destination=BLAST&name=${uniqueName}&type=SPLICED">Send to GeneDB BLAST</a>
+        <a href="<c:url value="/SequenceDistributor" />&destination=NCBI_BLAST&name=${uniqueName}&type=SPLICED">Send to BLAST at NCBI</a>
+        <br><misc:format-sequence sequence="${spliced}"/>
     </format:genePageSection>
     </c:if>
 
     <c:if test="${!empty unspliced}">
     <format:genePageSection id="unsplicedSequence">
-        <div class="heading">Unspliced</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="<c:url value="/SequenceDistributor" />&destination=omniBlast&name=${uniqueName}&type=Unspliced">Send to GeneDB omniBLAST</a>
-        <a href="<c:url value="/SequenceDistributor" />&destination=Blast&name=${uniqueName}&type=Unspliced">Send to GeneDB BLAST</a>
-        <a href="<c:url value="/SequenceDistributor" />&destination=NCBI&name=${uniqueName}&type=Unspliced">Send to BLAST at NCBI</a>
-        <misc:format-sequence sequence="${unspliced}" includeSpaces="true" />
+        <div class="heading">Unspliced</div>
+        <br><a href="<c:url value="/SequenceDistributor" />&destination=OMNIBLAST&name=${uniqueName}&type=UNSPLICED">Send to GeneDB omniBLAST</a>
+        <a href="<c:url value="/SequenceDistributor" />&destination=BLAST&name=${uniqueName}&type=UNSPLICED">Send to GeneDB BLAST</a>
+        <a href="<c:url value="/SequenceDistributor" />&destination=NCBI_BLAST&name=${uniqueName}&type=UNSPLICED">Send to BLAST at NCBI</a>
+        <br><misc:format-sequence sequence="${unspliced}" includeSpaces="true" />
     </format:genePageSection>
     </c:if>
 
