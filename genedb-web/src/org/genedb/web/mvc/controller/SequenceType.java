@@ -1,12 +1,13 @@
 package org.genedb.web.mvc.controller;
 
 public enum SequenceType {
-    UNSPLICED("Unspliced"), SPLICED("Spliced"), PROTEIN("Protein");
+    UNSPLICED, SPLICED, PROTEIN;
+//    Unspliced("Unspliced"), Spliced("Spliced"), Protein("Protein");
 
-    String type;
-
-    private SequenceType(String type) {
-        this.type = type;
-    }
+//    String type;
+//
+//    private SequenceType(String type) {
+//        this.type = type;
+//    }
 
 }

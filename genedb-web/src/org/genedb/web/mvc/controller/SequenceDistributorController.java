@@ -62,7 +62,7 @@ public class SequenceDistributorController {
         }
         Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
 
-        String sequence;
+        String sequence = null;
         boolean nucleotide = true;
 
         SequenceType st = SequenceType.valueOf(sequenceType);
@@ -88,19 +88,20 @@ public class SequenceDistributorController {
 
         String url = null;
 
+
         SequenceDestination sd = SequenceDestination.valueOf(destination);
         switch (sd) {
         case BLAST:
-            url = "redirect:http://test.genedb.org/blast/submitblast/s_pombe";
+            url = "redirect:http://test.genedb.org/blast/submitblast/s_pombe&sequence="+sequence;
             break;
         case OMNIBLAST:
-            url = "redirect:http://test.genedb.org/blast/submitblast/s_pombe/omniblast";
+            url = "redirect:http://test.genedb.org/blast/submitblast/s_pombe/omniblast&sequence="+sequence;
             break;
         case NCBI_BLAST:
             if (nucleotide) {
-                url = "redirect:http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&LINK_LOC=blasthome";
+                url = "redirect:http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&LINK_LOC=blasthome&sequence="+sequence;
             } else {
-                url = "redirect:http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?PAGE_TYPE=BlastSearch&PAGE=MegaBlast&PROGRAM=blastn&DATABASE=nr&BLAST_PROGRAMS=megaBlast";
+                url = "redirect:http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?PAGE_TYPE=BlastSearch&PAGE=MegaBlast&PROGRAM=blastn&DATABASE=nr&BLAST_PROGRAMS=megaBlast&sequence="+sequence;
             }
             break;
         }
