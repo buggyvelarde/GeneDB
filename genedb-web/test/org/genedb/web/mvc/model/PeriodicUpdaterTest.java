@@ -21,6 +21,7 @@ import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,44 +42,13 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
     @Autowired
     PeriodicUpdater periodicUpdater;
     
-    
-    @Test
-    public void testTest() throws Exception{
-        
-        Integer changedPep = 614;//PFA0005w:pep
-        Integer changedGeneId = 610;//PFA0005w
-        String indexFilename = "test/data/lucene" + File.separatorChar + "org.gmod.schema.mapped.Feature";
-        
-        //Ensure those features that ought to be deleted by the Class Under Test are present in the Index
-        IndexWriter destination = new IndexWriter(indexFilename, new SimpleAnalyzer());
-        try{
-            destination.deleteDocuments(new Term("featureId", Integer.toString(changedPep)));
-            destination.deleteDocuments(new Term("featureId", Integer.toString(changedGeneId)));
-        }finally{
-            destination.close();            
-        }
-        
-        //Get the changeset
-        MockChangeSetImpl changeSet = 
-            (MockChangeSetImpl)periodicUpdater.getChangeTracker().changes(PeriodicUpdaterTest.class.getName());
-        
-        //Change Polypeptide feature
-        List<Integer> changedPolyPeps = new ArrayList<Integer>();
-        changeSet.getChangedMap().put(Polypeptide.class, changedPolyPeps); 
-        changedPolyPeps.add(changedPep);
-        
-        //Changed Gene feature to change set
-        List<Integer> changedGeneIds = new ArrayList<Integer>();
-        changeSet.getChangedMap().put(Gene.class, changedGeneIds); 
-        changedGeneIds.add(changedGeneId);
-        
-        /****************************
-         * Execute class under test 
-         ****************************/
-        boolean noErrors = periodicUpdater.processChangeSet();
+    @Before
+    public void purgeIndex(){
+        IndexSynchroniser indexSynchroniser = (IndexSynchroniser)periodicUpdater.getIndexUpdaters().get(0);
+        indexSynchroniser.purgeAll();
     }
     
-    //@Test
+    @Test
     public void testLuceneIndexPopulation()throws Exception{
         
         Integer newPolyPep = 810;//PFA0010c:pep
@@ -95,22 +65,8 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
         String indexFilename = "test/data/lucene" + File.separatorChar + "org.gmod.schema.mapped.Feature";
         
         //Ensure those features that ought to be deleted by the Class Under Test are present in the Index
-        IndexWriter destination = new IndexWriter(indexFilename, new SimpleAnalyzer());
-        try{
-            destination.deleteDocuments(new Term("featureId", Integer.toString(newPolyPep)));
-            //destination.deleteDocuments(new Term("featureId", Integer.toString(changedPep)));
-            destination.deleteDocuments(new Term("featureId", Integer.toString(newGeneId)));
-            destination.deleteDocuments(new Term("featureId", Integer.toString(changedGeneId)));
-            destination.deleteDocuments(new Term("featureId", Integer.toString(newTranscriptId)));
-            destination.deleteDocuments(new Term("featureId", Integer.toString(changedTranscriptId)));
-            
-            Document doc = new Document();
-            Fieldable field = new Field("featureId", Integer.toString(deletedTranscriptId), Field.Store.YES, Field.Index.UN_TOKENIZED);
-            doc.add(field);
-            destination.addDocument(doc);            
-        }finally{
-            destination.close();            
-        }
+        IndexSynchroniser indexSynchroniser = (IndexSynchroniser)periodicUpdater.getIndexUpdaters().get(0);
+        indexSynchroniser.indexSingle(deletedTranscriptId);
         
         //Get the changeset
         MockChangeSetImpl changeSet = 
@@ -331,5 +287,133 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
         //Assert No severe errors found
         Assert.assertTrue(noErrors);
         
+    }
+
+    
+    /**
+     * 1.Start by clearing all the caches
+     * 2.Initialise the ChangeSet with the polypeptide Ids to be used with various tests
+     * @throws Exception
+     */
+    //@Test
+    public void testPolypeptideChangeSet()throws Exception{
+        Integer newPolyPep = 810;//PFA0010c:pep
+        Integer changedPep = 614;//PFA0005w:pep
+        
+        //Clear all the caches
+        CacheSynchroniser cacheSynchroniser = (CacheSynchroniser)periodicUpdater.getIndexUpdaters().get(1);
+        cacheSynchroniser.getBmf().getDtoMap().clear();
+        cacheSynchroniser.getBmf().getContextMapMap().clear();
+        
+        //prevent excessive log printing
+        cacheSynchroniser.setNoPrintResult(true);
+        
+        //Get the changeset
+        MockChangeSetImpl changeSet = 
+            (MockChangeSetImpl)periodicUpdater.getChangeTracker().changes(PeriodicUpdaterTest.class.getName());
+        
+        //Add new Gene feature to change set
+        List<Integer> newFeatureIds = new ArrayList<Integer>();
+        changeSet.getNewMap().put(Polypeptide.class, newFeatureIds); 
+        newFeatureIds.add(newPolyPep);
+        
+        //Change Gene feature
+        List<Integer> changedFeatureIds = new ArrayList<Integer>();
+        changeSet.getChangedMap().put(Polypeptide.class, changedFeatureIds); 
+        changedFeatureIds.add(changedPep);
+
+        
+        
+        /****************************
+         * Execute class under test 
+         ****************************/
+        boolean noErrors = periodicUpdater.processChangeSet();
+        
+        //Assert Transcript DTO with featureID 807 is not null
+        //ID 807(PFA0010c:mRNA) is a transcript of Polypeptide 810(PFA0010c:pep)
+        TranscriptDTO transcriptDTO = cacheSynchroniser.getBmf().getDtoMap().get(807);
+        Assert.assertNotNull(transcriptDTO);
+        Assert.assertEquals("PFA0010c:mRNA", transcriptDTO.getUniqueName());
+        
+        //Assert Transcript DTO with featureID 611 is not null
+        //ID 611(PFA0005w:mRNA) is a transcript of Polypeptide 614(PFA0005w:pep)
+        transcriptDTO = cacheSynchroniser.getBmf().getDtoMap().get(611);
+        Assert.assertNotNull(transcriptDTO);
+        Assert.assertEquals("PFA0005w:mRNA", transcriptDTO.getUniqueName());
+        
+        //Assert No severe errors found
+        Assert.assertTrue(noErrors);
+    }
+
+    
+    /**
+     * 1.Start by clearing all the caches
+     * 2.Initialise the ChangeSet with the transcript Ids to be used with various tests
+     * @throws Exception
+     */
+    //@Test
+    public void testTranscriptChangeSet()throws Exception{
+        Integer newTranscriptId = 7;//PFA0315w:mRNA
+        Integer changedTranscriptId = 14;//PFA0380w:mRNA
+        Integer deletedTranscriptId = 19;//PFA0440w:mRNA
+        
+        //Clear all the caches
+        CacheSynchroniser cacheSynchroniser = (CacheSynchroniser)periodicUpdater.getIndexUpdaters().get(1);
+        cacheSynchroniser.getBmf().getDtoMap().clear();
+        cacheSynchroniser.getBmf().getContextMapMap().clear();
+        
+        //prevent excessive log printing
+        cacheSynchroniser.setNoPrintResult(true);
+        
+        //Get the changeset
+        MockChangeSetImpl changeSet = 
+            (MockChangeSetImpl)periodicUpdater.getChangeTracker().changes(PeriodicUpdaterTest.class.getName());
+        
+        //Add new Transcript feature to change set
+        List<Integer> newFeatureIds = new ArrayList<Integer>();
+        changeSet.getNewMap().put(Transcript.class, newFeatureIds); 
+        newFeatureIds.add(newTranscriptId);
+        
+        //Change  transcript feature in change set
+        List<Integer> changedFeatureIds = new ArrayList<Integer>();
+        changeSet.getChangedMap().put(Transcript.class, changedFeatureIds); 
+        changedFeatureIds.add(changedTranscriptId);
+        
+        //Delete  transcript feature from change set
+        cacheSynchroniser.getBmf().getDtoMap().put(19, new TranscriptDTO());
+        List<Integer> deletedFeatureIds = new ArrayList<Integer>();
+        changeSet.getDeletedMap().put(Transcript.class, deletedFeatureIds); 
+        deletedFeatureIds.add(deletedTranscriptId);
+        
+        
+
+        
+        
+        /****************************
+         * Execute class under test 
+         ****************************/
+        boolean noErrors = periodicUpdater.processChangeSet();
+        
+        //Transcript DTO with featureID 7 is not null
+        TranscriptDTO transcriptDTO = cacheSynchroniser.getBmf().getDtoMap().get(newTranscriptId);
+        Assert.assertNotNull(transcriptDTO);
+        Assert.assertEquals("PFA0315w:mRNA", transcriptDTO.getUniqueName());
+        
+        //The changed transcript also updates/inserts it's corresponding 
+        //TopLevelFeature, in the case the ID is 1
+        String contextMap = cacheSynchroniser.getBmf().getContextMapMap().get(1);
+        Assert.assertNotNull(contextMap);
+        
+        //Assert Transcript DTO with featureID 14 is not null
+        transcriptDTO = cacheSynchroniser.getBmf().getDtoMap().get(changedTranscriptId);
+        Assert.assertNotNull(transcriptDTO);
+        Assert.assertEquals("PFA0380w:mRNA", transcriptDTO.getUniqueName());
+        
+        //Assert Transcript DTO with featureID 19 IS null
+        transcriptDTO = cacheSynchroniser.getBmf().getDtoMap().get(deletedTranscriptId);
+        Assert.assertNull(transcriptDTO);
+        
+        //Assert No severe errors found
+        Assert.assertTrue(noErrors);
     }
 }
