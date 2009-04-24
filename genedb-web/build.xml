@@ -302,32 +302,27 @@
       </java>
     </target>
 
-     <target name="test-periodic-updater" depends="check-deploy,iajc-web" description="Run tests">
-        <javac srcdir="${imported.basedir.web}/test" includes="**/*ChangeSetTest.java" debug="true"
-                          destdir="${imported.basedir.web}/${test-classes.dir}"
-                          classpathref="web-tests-classpath" />
-            <junit printsummary="on"
-                fork="true"
-                maxmemory="1024m"
-                haltonfailure="false"
-                failureproperty="tests.failed"
-                showoutput="true">
-                <classpath refid="web-tests-classpath"/>
-                <formatter type="brief" usefile="false"/>
+    <target name="test-periodic-updater" depends="check-deploy,iajc-web" description="Run tests">
+       <javac srcdir="${imported.basedir.web}/test" includes="**/PeriodicUpdaterTest.java" debug="true"
+                         destdir="${imported.basedir.web}/${test-classes.dir}"
+                         classpathref="web-tests-classpath" />
+           <junit printsummary="on"
+               fork="true"
+               maxmemory="1024m"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+               <classpath refid="web-tests-classpath"/>
+               <formatter type="brief" usefile="false"/>
 
-                <batchtest>
-                    <fileset dir="${imported.basedir.web}/${test-classes.dir}">
-                        <include name="**/*ChangeSetTest.*"/>
-                    </fileset>
-                </batchtest>
+              <test name="org.genedb.web.mvc.model.PeriodicUpdaterTest"/>
+           </junit>
 
-            </junit>
-
-            <fail if="tests.failed">
-                tests.failed=${tests.failed}
-               PeriodicUpdaterTest failed
-            </fail>
-        </target>
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+              PeriodicUpdaterTest failed
+           </fail>
+       </target>
 
 
   <target name="init-web" description="Create full JAR file">
