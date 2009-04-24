@@ -63,6 +63,15 @@ public class ResultsCacheFactory {
         });
 
         logger.debug("Opening environment in: " + rootDirectory);
+        File rootDirectoryFile = new File(rootDirectory);
+        if (!rootDirectoryFile.exists()) {
+            rootDirectoryFile.mkdirs();
+        } else {
+            File lock = new File(rootDirectoryFile, "je.lck");
+            if (lock.exists()) {
+                lock.delete();
+            }
+        }
         logger.debug("Read-only status: " + readOnly);
 
         EnvironmentConfig envConfig = new EnvironmentConfig();
@@ -71,7 +80,7 @@ public class ResultsCacheFactory {
         envConfig.setReadOnly(readOnly);
 
         try {
-            env = new Environment(new File(rootDirectory), envConfig);
+            env = new Environment(rootDirectoryFile, envConfig);
         } catch (EnvironmentLockedException e) {
             throw new RuntimeException("Unable to open Berkeley databases", e);
         } catch (DatabaseException e) {

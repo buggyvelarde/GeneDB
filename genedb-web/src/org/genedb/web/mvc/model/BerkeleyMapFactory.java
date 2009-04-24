@@ -78,6 +78,15 @@ public class BerkeleyMapFactory {
         });
 
         logger.debug("Opening environment in: " + rootDirectory);
+        File rootDirectoryFile = new File(rootDirectory);
+        if (!rootDirectoryFile.exists()) {
+            rootDirectoryFile.mkdirs();
+        } else {
+            File lock = new File(rootDirectoryFile, "je.lck");
+            if (lock.exists()) {
+                lock.delete();
+            }
+        }
         logger.debug("Read-only status: " + readOnly);
 
         EnvironmentConfig envConfig = new EnvironmentConfig();
