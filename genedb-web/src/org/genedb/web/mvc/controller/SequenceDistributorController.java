@@ -86,16 +86,18 @@ public class SequenceDistributorController {
             }
         }
 
-        String url = null;
+        sequence = splitSequenceIntoLines(sequence);
 
+        String url = null;
+        String dbName = "GeneDB_" + transcript.getOrganism().getCommonName();
 
         SequenceDestination sd = SequenceDestination.valueOf(destination);
         switch (sd) {
         case BLAST:
-            url = "redirect:http://test.genedb.org/blast/submitblast/s_pombe?sequence="+sequence;
+            url = String.format("redirect:http://test.genedb.org/blast/submitblast/%s?sequence=%s", dbName, sequence);
             break;
         case OMNIBLAST:
-            url = "redirect:http://test.genedb.org/blast/submitblast/s_pombe/omniblast?sequence="+sequence;
+            url = String.format("redirect:http://test.genedb.org/blast/submitblast/%s/omni?sequence=%s", dbName, sequence);
             break;
         case NCBI_BLAST:
             if (nucleotide) {
@@ -108,6 +110,12 @@ public class SequenceDistributorController {
 
        return url;
 
+    }
+
+    private String splitSequenceIntoLines(String sequence) {
+
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
