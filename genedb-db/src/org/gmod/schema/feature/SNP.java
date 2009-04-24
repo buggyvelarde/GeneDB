@@ -8,14 +8,14 @@ import java.sql.Timestamp;
 import javax.persistence.Entity;
 
 @Entity
-@FeatureType(cv="sequence", accession="0000667")
-public class Insertion extends SequenceAlteration {
+@FeatureType(cv="sequence", accession="0000694")
+public class SNP extends SequenceAlteration {
 
-    Insertion() {
+    SNP() {
         // empty
     }
 
-    public Insertion(Organism organism, String uniqueName, boolean analysis,
+    public SNP(Organism organism, String uniqueName, boolean analysis,
             boolean obsolete, Timestamp dateAccessioned) {
         super(organism, uniqueName, analysis, obsolete, dateAccessioned);
     }
