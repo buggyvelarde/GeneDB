@@ -49,8 +49,8 @@ public class SequenceDistributorController {
     @RequestMapping(method=RequestMethod.GET)
     public String process(
             @RequestParam(value="name") String uniqueName,
-            @RequestParam(value="destination") SequenceDestination destination,
-            @RequestParam(value="type") SequenceType sequenceType
+            @RequestParam(value="destination") String destination,
+            @RequestParam(value="type") String sequenceType
     ) {
 
         Feature feature = sequenceDao.getFeatureByUniqueName(uniqueName, Feature.class);
@@ -65,7 +65,8 @@ public class SequenceDistributorController {
         String sequence;
         boolean nucleotide = true;
 
-        switch (sequenceType) {
+        SequenceType st = SequenceType.valueOf(sequenceType);
+        switch (st) {
         case UNSPLICED:
             sequence = transcript.getGene().getResidues();
             break;
@@ -87,7 +88,8 @@ public class SequenceDistributorController {
 
         String url = null;
 
-        switch (destination) {
+        SequenceDestination sd = SequenceDestination.valueOf(destination);
+        switch (sd) {
         case BLAST:
             url = "redirect:http://test.genedb.org/blast/submitblast/s_pombe";
             break;
