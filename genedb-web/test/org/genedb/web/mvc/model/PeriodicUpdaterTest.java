@@ -18,6 +18,7 @@ import org.genedb.db.audit.MockChangeSetImpl;
 import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Gene;
+import org.gmod.schema.feature.MRNA;
 import org.gmod.schema.feature.Polypeptide;
 import org.gmod.schema.feature.TopLevelFeature;
 import org.gmod.schema.feature.Transcript;
@@ -104,7 +105,7 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
         
         //Deleted  transcript feature to change set
         List<Integer> deletedTranscriptIds = new ArrayList<Integer>();
-        changeSet.getDeletedMap().put(Transcript.class, deletedTranscriptIds); 
+        changeSet.getDeletedMap().put(MRNA.class, deletedTranscriptIds); 
         deletedTranscriptIds.add(deletedTranscriptId);
         
         
