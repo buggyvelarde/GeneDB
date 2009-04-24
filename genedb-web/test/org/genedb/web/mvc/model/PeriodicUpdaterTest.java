@@ -42,7 +42,7 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
     PeriodicUpdater periodicUpdater;
     
     
-    //@Test
+    @Test
     public void testTest() throws Exception{
         
         Integer changedPep = 614;//PFA0005w:pep
@@ -78,7 +78,7 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
         boolean noErrors = periodicUpdater.processChangeSet();
     }
     
-    @Test
+    //@Test
     public void testLuceneIndexPopulation()throws Exception{
         
         Integer newPolyPep = 810;//PFA0010c:pep
