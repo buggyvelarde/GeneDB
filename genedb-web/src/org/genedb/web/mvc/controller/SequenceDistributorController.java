@@ -89,10 +89,10 @@ public class SequenceDistributorController {
 
         switch (destination) {
         case BLAST:
-            url = "redirect:/wibble";
+            url = "redirect:http://test.genedb.org/blast/submitblast/s_pombe";
             break;
         case OMNIBLAST:
-            url = "redirect:/wibble";
+            url = "redirect:http://test.genedb.org/blast/submitblast/s_pombe/omniblast";
             break;
         case NCBI_BLAST:
             if (nucleotide) {
