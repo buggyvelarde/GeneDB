@@ -38,7 +38,7 @@ public class ResultsNavigatorController {
             return ret;
         }
 
-        int checkedIndex = index;
+        int checkedIndex = index - 1;
 
         if (index < 0) {
             checkedIndex = 0;
