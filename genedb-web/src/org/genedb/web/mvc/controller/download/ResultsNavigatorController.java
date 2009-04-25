@@ -51,7 +51,7 @@ public class ResultsNavigatorController {
         ret.addObject("index", checkedIndex);
         ret.addObject("key", key);
         ret.addObject("resultsLength", results.size());
-        String uniqueName = results.get(index).getSystematicId();
+        String uniqueName = results.get(checkedIndex).getSystematicId();
         ret.setViewName("redirect:/NamedFeature?name="+uniqueName);
         return ret;
     }
