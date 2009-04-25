@@ -48,7 +48,7 @@ public class ResultsNavigatorController {
             checkedIndex = results.size() - 1;
         }
 
-        ret.addObject("index", checkedIndex);
+        ret.addObject("index", checkedIndex+1);
         ret.addObject("key", key);
         ret.addObject("resultsLength", results.size());
         String uniqueName = results.get(checkedIndex).getSystematicId();
