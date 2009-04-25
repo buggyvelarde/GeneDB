@@ -6,7 +6,5 @@
     <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
 
-<p>The results should be here:</p>
 <br><query:results />
-<p>Did you enjoy them?></p>
 <format:footer />

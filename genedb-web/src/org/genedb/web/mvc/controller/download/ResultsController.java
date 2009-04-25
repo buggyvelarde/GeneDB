@@ -123,10 +123,14 @@ public class ResultsController {
         model.addAttribute("results", possiblyExpanded);
         model.addAttribute("resultsSize", results.size());
         model.addAttribute("key", key);
-        model.addAttribute("query", resultEntry.query);
         model.addAttribute("firstResultIndex", start);
-        populateModelData(model, resultEntry.query);
-        return "search/"+resultEntry.queryName;
+
+        if (resultEntry.query != null) {
+            model.addAttribute("query", resultEntry.query);
+            populateModelData(model, resultEntry.query);
+            return "search/"+resultEntry.queryName;
+        }
+        return "list/results2";
     }
 
     private List<GeneSummary> possiblyExpandResults(List<GeneSummary> results) throws QueryException {

@@ -99,6 +99,8 @@ public class OrthologsController extends BaseCachingController {
 //            model.addAttribute("taxonNodeName", taxonName);
             logger.debug("Found results for query (Size: '"+gs.size()+"' key: '"+resultsKey+"')- redirecting to Results controller");
             model.addAttribute("resultsSize", gs.size());
+            //viewName = "list/results2";
+            return "redirect:/Results";
         }
         return viewName;
     }
