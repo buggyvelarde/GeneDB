@@ -16,6 +16,6 @@
 (<a href="<c:url value="/Query"><c:param name="q" value="controlledCuration" />
                         <c:param name="taxons" value="${taxons}" />
                         <c:param name="cvTermName" value="${cvTermName}" />
-                        <c:param name="cv" value="genedb_products" />
+                        <c:param name="cv" value="cv" />
                         <c:param name="suppress" value="${suppress}" /></c:url>">${others} ${phrase}</a>)
 </c:if>
