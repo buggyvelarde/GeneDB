@@ -53,6 +53,7 @@ public class ResultsController {
     @RequestMapping(method = {RequestMethod.GET} , params= "key")
     public String setUpForm(
             @RequestParam(value="key") String key,
+            @RequestParam(value="taxonNodeName", required=false) String taxonNodeName,
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
@@ -124,6 +125,10 @@ public class ResultsController {
         model.addAttribute("resultsSize", results.size());
         model.addAttribute("key", key);
         model.addAttribute("firstResultIndex", start);
+        if (taxonNodeName != null) {
+            model.addAttribute("taxonNodeName", taxonNodeName);
+        }
+
 
         if (resultEntry.query != null) {
             model.addAttribute("query", resultEntry.query);
