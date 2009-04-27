@@ -94,6 +94,14 @@
               </td>
           </tr>
       </c:if>
+      <c:if test="${dto.organismCommonName='Lmajor' || dto.organismCommonName='Linfantum' || dto.organismCommonName='Lbraziliensis' || dto.organismCommonName='Tbruceibrucei927'}">
+       <tr>
+            <td class="label">TriTrypDB</td>
+            <td class="value">
+                <a href="http://tritrypdb.org/tritrypdb/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=TriTrypDB&source_id="+${dto.uniqueName}>${dto.uniqueName}</a>
+            </td>
+        </tr>
+        </c:if>
         </table>
     </format:genePageSection>
 
