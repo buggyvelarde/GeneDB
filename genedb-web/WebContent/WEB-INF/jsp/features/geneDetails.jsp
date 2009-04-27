@@ -94,7 +94,7 @@
               </td>
           </tr>
       </c:if>
-      <c:if test="${dto.organismCommonName='Lmajor' || dto.organismCommonName='Linfantum' || dto.organismCommonName='Lbraziliensis' || dto.organismCommonName='Tbruceibrucei927'}">
+      <c:if test="${dto.organismCommonName=='Lmajor' || dto.organismCommonName=='Linfantum' || dto.organismCommonName=='Lbraziliensis' || dto.organismCommonName=='Tbruceibrucei927'}">
        <tr>
             <td class="label">TriTrypDB</td>
             <td class="value">
