@@ -161,7 +161,7 @@
                                         <a class="yuimenuitemlabel" href="<c:url value="/Query?q=proteinLength&taxons=${taxonNodeName}&newSearch=true"/>" title="Protein Length Search">By Protein Length</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Molecular Mass --%>
-                                        <a class="yuimenuitemlabel" href="<c:url value="/"/>Query?q=proteinMass&taxons=${taxonNodeName}&newSearch=true" title="Protein mass Search">By Molecular Mass</a>
+                                        <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>Query?q=proteinMass&taxons=${taxonNodeName}&newSearch=true" title="Protein mass Search">By Molecular Mass</a>
                                     </li>
                                     <li class="yuimenuitem"> <%-- Proteins By Num Transmembrane Domains --%>
                                         <a class="yuimenuitemlabel-disabled" href="<c:url value="/"/>Query?q=proteinNumTM&taxons=${taxonNodeName}&newSearch=true" title="Protein num TM Search">By No. TM domains</a>
