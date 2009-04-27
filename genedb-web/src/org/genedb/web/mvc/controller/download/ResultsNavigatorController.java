@@ -23,8 +23,10 @@ public class ResultsNavigatorController {
     @RequestMapping(method = RequestMethod.GET )
     public ModelAndView navigate(
             @RequestParam(value="index") int index,
-            @RequestParam(value="key") String key,
-            @RequestParam(value="taxonNodeName", required=false) String taxonNodeName) {
+            @RequestParam(value="key") String key//,
+            //@RequestParam(value="taxonNodeName", required=false) String taxonNodeName
+            ) {
+
 
         ModelAndView ret = new ModelAndView();
 
@@ -52,9 +54,9 @@ public class ResultsNavigatorController {
         ret.addObject("index", checkedIndex+1);
         ret.addObject("key", key);
         ret.addObject("resultsLength", results.size());
-        if (taxonNodeName != null) {
-            ret.addObject("taxonNodeName", taxonNodeName);
-        }
+//        if (taxonNodeName != null) {
+//            ret.addObject("taxonNodeName", taxonNodeName);
+//        }
         String uniqueName = results.get(checkedIndex).getSystematicId();
         ret.setViewName("redirect:/NamedFeature?name="+uniqueName);
         return ret;
