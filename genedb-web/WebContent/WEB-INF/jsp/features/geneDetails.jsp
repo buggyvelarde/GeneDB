@@ -98,7 +98,7 @@
        <tr>
             <td class="label">TriTrypDB</td>
             <td class="value">
-                <a href="http://tritrypdb.org/tritrypdb/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=TriTrypDB&source_id="+${dto.uniqueName}>${dto.uniqueName}</a>
+                <a href="http://tritrypdb.org/tritrypdb/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=TriTrypDB&source_id=<misc:formatSystematicName name="${dto.uniqueName}"/>"><misc:formatSystematicName name="${dto.uniqueName}"/></a>
             </td>
         </tr>
         </c:if>
