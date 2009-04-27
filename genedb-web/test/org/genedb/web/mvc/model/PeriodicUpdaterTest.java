@@ -105,7 +105,7 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
         
         //Deleted  transcript feature to change set
         List<Integer> deletedTranscriptIds = new ArrayList<Integer>();
-        changeSet.getDeletedMap().put(MRNA.class, deletedTranscriptIds); 
+        changeSet.getDeletedMap().put(Transcript.class, deletedTranscriptIds); 
         deletedTranscriptIds.add(deletedTranscriptId);
         
         
@@ -182,7 +182,7 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
      * Test the adding, replacement and removal of a ToplevelFeature
      * @throws Exception
      */
-    //@Test
+    @Test
     public void testTopLevelFeatureChangeSet()throws Exception{
         Integer newTopLevelFeature = 1;//Pf3D7_01
         Integer changedTopLevelFeature = 886;//Pf3D7_02
@@ -248,7 +248,7 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
      * A changed Gap triggers a TopLevelFeature to be replaced
      * @throws Exception
      */
-    //@Test
+    @Test
     public void testGapChangeSet()throws Exception{
         //Gap feature ID 17620's Unique name is 'gap116670-116769:corrected'
         //The corresponding TopLevelFeature for this is 15901(Pf3D7_07)
@@ -296,7 +296,7 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
      * 2.Initialise the ChangeSet with the polypeptide Ids to be used with various tests
      * @throws Exception
      */
-    //@Test
+    @Test
     public void testPolypeptideChangeSet()throws Exception{
         Integer newPolyPep = 810;//PFA0010c:pep
         Integer changedPep = 614;//PFA0005w:pep
@@ -352,7 +352,7 @@ public class PeriodicUpdaterTest extends AbstractUpdaterTest{
      * 2.Initialise the ChangeSet with the transcript Ids to be used with various tests
      * @throws Exception
      */
-    //@Test
+    @Test
     public void testTranscriptChangeSet()throws Exception{
         Integer newTranscriptId = 7;//PFA0315w:mRNA
         Integer changedTranscriptId = 14;//PFA0380w:mRNA
