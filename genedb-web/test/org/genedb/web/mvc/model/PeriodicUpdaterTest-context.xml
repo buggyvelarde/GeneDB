@@ -35,8 +35,7 @@
         <property name="indexUpdaters">
             <util:list>
                 <ref bean="indexSynchroniser" />
-                <!--ref bean="populateLuceneIndices" /-->
-                <!--ref bean="cacheSynchroniser" /-->
+                <ref bean="cacheSynchroniser" />
             </util:list>
         </property>
         <property name="changeTracker" ref="changeTracker" />
