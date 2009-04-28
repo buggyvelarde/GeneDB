@@ -35,13 +35,29 @@
         <property name="indexUpdaters">
             <util:list>
                 <ref bean="indexSynchroniser" />
-                <ref bean="cacheSynchroniser" />
+                <!--ref bean="populateLuceneIndices" /-->
+                <!--ref bean="cacheSynchroniser" /-->
             </util:list>
         </property>
         <property name="changeTracker" ref="changeTracker" />
         <property name="clientName" value="NightlyUpdateProcess" />
     </bean>
-    
+
+    <!--bean name="populateLuceneIndices" class="org.genedb.web.mvc.model.PopulateLuceneIndices">
+        <property name="indexBaseDirectory" value="test/data/lucene" />
+        <property name="configurableGeneDBSessionFactoryBean" ref="configurableGeneDBSessionFactoryBean" />
+    </bean>
+
+
+    <bean name="configurableGeneDBSessionFactoryBean" class="org.genedb.web.mvc.model.ConfigurableGeneDBSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.gmod.schema.mapped,org.gmod.schema.feature" />
+        <property name="properties">
+            <props>
+                <prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+            </props>
+        </property>
+    </bean-->
     
     
     <bean name="indexSynchroniser" class="org.genedb.web.mvc.model.IndexSynchroniser">

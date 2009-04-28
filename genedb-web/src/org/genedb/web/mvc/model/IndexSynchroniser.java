@@ -88,19 +88,48 @@ public class IndexSynchroniser implements IndexUpdater{
         alteredIds.addAll(changeSet.newFeatureIds(Gap.class));
         alteredIds.addAll(changeSet.changedFeatureIds(Gap.class));
 
+        Set<Integer> failedIds = Sets.newHashSet();
+        Set<Integer> batchIds = Sets.newHashSet();
+        Set<Integer> unflushedIds = Sets.newHashSet();
+        
         int index = 0;
+        //First attempt to index
         for (Integer featureId : alteredIds) {
             index++;
-            
-            logger.debug("featureID " + featureId + " being loaded");
-            Feature feature = (Feature)session.load(Feature.class, featureId);            
-            session.index(feature);            
-            logger.debug("--featureID: " + featureId + " indexed...");
+            try{
+                logger.debug("featureID " + featureId + " being loaded");
+                batchIds.add(featureId);
+                Feature feature = (Feature)session.load(Feature.class, featureId);            
+                session.index(feature);            
+                logger.debug("--featureID: " + featureId + " indexed...");
+            }catch(Exception e){
+                logger.error(String.format("Error found in first attempt with feature ID: %s", featureId), e);
+                index = 0;
+                failedIds.add(featureId);
+                unflushedIds.addAll(batchIds);
+                session.clear();
+            }
             
             if (index % BATCH_SIZE == 0){
+                batchIds.clear();
                 session.clear();
             }
         } 
+        
+        //Second attempt to index non-defective features
+        index=0;
+        for(Integer featureId : unflushedIds){
+            if(!failedIds.contains(featureId)){
+                index++;
+                Feature feature = (Feature)session.load(Feature.class, featureId);            
+                session.index(feature);            
+            }
+            
+            if (index % BATCH_SIZE == 0){
+                batchIds.clear();
+                session.clear();
+            }
+        }
         
         logger.debug("Exiting indexFeatures");
     }
