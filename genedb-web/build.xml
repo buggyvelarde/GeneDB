@@ -21,6 +21,9 @@
 
   <!-- Paths -->
   <path id="web-deploy-classpath">
+  	<!--Used to test with hibernate search 3.1
+    <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/lib/hibernate-core.jar"/>
+    <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/lib/hibernate-search.jar"/>-->
       <pathelement location="${in-lib-dir}/artemis.jar" />
 
       <fileset dir="${imported.basedir.web}/lib">
@@ -321,6 +324,28 @@
            <fail if="tests.failed">
                tests.failed=${tests.failed}
               PeriodicUpdaterTest failed
+           </fail>
+       </target>
+
+    <target name="test-index-synchroniser" depends="check-deploy,iajc-web" description="Run tests">
+       <javac srcdir="${imported.basedir.web}/test" includes="**/IndexSynchroniserTest.java" debug="true"
+                         destdir="${imported.basedir.web}/${test-classes.dir}"
+                         classpathref="web-tests-classpath" />
+           <junit printsummary="on"
+               fork="true"
+               maxmemory="1024m"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+               <classpath refid="web-tests-classpath"/>
+               <formatter type="brief" usefile="false"/>
+
+              <test name="org.genedb.web.mvc.model.IndexSynchroniserTest"/>
+           </junit>
+
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+           	IndexSynchroniserTest failed
            </fail>
        </target>
 
