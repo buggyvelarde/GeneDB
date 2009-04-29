@@ -326,8 +326,23 @@
               PeriodicUpdaterTest failed
            </fail>
        </target>
+    
+    <target name="check-updater-db-exists">    
+       <available property="periodic-updater-db-exists" file="${imported.basedir.web}/test/data/hsqldb/pfalciparum.data"/>
+    </target>
+    
+    <target name="init-periodic-updater-db" depends="check-updater-db-exists" unless="periodic-updater-db-exists">
+       <antcall target="make-pfalciparum-database-if-necessary"/>
+       <antcall target="copy-pfalciparum-database-to-web-test-dir"/>
+    </target>
+    
+    <target name="copy-pfalciparum-database-to-web-test-dir">    
+       <copy todir="${imported.basedir.web}/test/data/hsqldb">
+           <fileset dir="${imported.basedir.db}/test-data/hsqldb" />    
+       </copy>
+    </target>
 
-    <target name="test-index-synchroniser" depends="check-deploy,iajc-web" description="Run tests">
+    <target name="test-index-synchroniser" depends="init-periodic-updater-db,check-deploy,iajc-web" description="Run tests" >
        <javac srcdir="${imported.basedir.web}/test" includes="**/IndexSynchroniserTest.java" debug="true"
                          destdir="${imported.basedir.web}/${test-classes.dir}"
                          classpathref="web-tests-classpath" />
@@ -348,6 +363,29 @@
            	IndexSynchroniserTest failed
            </fail>
        </target>
+
+    <target name="test-cache-synchroniser" depends="check-deploy,iajc-web" description="Run tests" >
+       <javac srcdir="${imported.basedir.web}/test" includes="**/CacheSynchroniserTest.java" debug="true"
+                         destdir="${imported.basedir.web}/${test-classes.dir}"
+                         classpathref="web-tests-classpath" />
+           <junit printsummary="on"
+               fork="true"
+               maxmemory="1024m"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+               <classpath refid="web-tests-classpath"/>
+               <formatter type="brief" usefile="false"/>
+
+              <test name="org.genedb.web.mvc.model.CacheSynchroniserTest"/>
+           </junit>
+
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+            CacheSynchroniserTest failed
+           </fail>
+       </target>
+
 
 
   <target name="init-web" description="Create full JAR file">
