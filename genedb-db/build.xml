@@ -162,8 +162,8 @@
     <!-- Test database set-up below here -->
 
     <target name="prompt-for-password" depends="fulljar-util" unless="source.password">
-        <fail message="The attribute source.url must be supplied" unless="source.url"/>
-        <fail message="The attribute source.username must be supplied" unless="source.username"/>
+        <fail message="The attribute source.url must be supplied. e.g.-Dsource.url=jdbc:postgresql://dbserver:5432/pathogens" unless="source.url"/>
+        <fail message="The attribute source.username must be supplied. e.g. -Dsource.username=fred" unless="source.username"/>
 
         <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${genedb-util.jar}" />
         <password name="source.password" prompt="Password for ${source.username}@${source.url}" />
