@@ -112,10 +112,23 @@ public class SequenceDistributorController {
 
     }
 
+    private int LINE_LENGTH = 60;
+
     private String splitSequenceIntoLines(String sequence) {
 
-        // TODO Auto-generated method stub
-        return null;
+    	StringBuilder ret = new StringBuilder();
+    	String remaining = sequence;
+
+    	while (remaining.length() > LINE_LENGTH) {
+    		ret.append(remaining.substring(0, LINE_LENGTH));
+    		ret.append("0x0a");
+    		remaining = remaining.substring(LINE_LENGTH);
+    	}
+    	if (remaining.length() != 0) {
+    		ret.append(remaining);
+    	}
+
+    	return ret.toString();
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
