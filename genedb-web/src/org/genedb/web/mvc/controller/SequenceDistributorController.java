@@ -94,10 +94,10 @@ public class SequenceDistributorController {
         SequenceDestination sd = SequenceDestination.valueOf(destination);
         switch (sd) {
         case BLAST:
-            url = String.format("redirect:http://test.genedb.org/blast/submitblast/%s?sequence=%s", dbName, sequence);
+            url = String.format("redirect:http://beta.genedb.org/blast/submitblast/%s?sequence=%s", dbName, sequence);
             break;
         case OMNIBLAST:
-            url = String.format("redirect:http://test.genedb.org/blast/submitblast/%s/omni?sequence=%s", dbName, sequence);
+            url = String.format("redirect:http://beta.genedb.org/blast/submitblast/%s/omni?sequence=%s", dbName, sequence);
             break;
         case NCBI_BLAST:
             if (nucleotide) {
@@ -112,7 +112,7 @@ public class SequenceDistributorController {
 
     }
 
-    private int LINE_LENGTH = 60;
+    private int LINE_LENGTH = 40;
 
     private String splitSequenceIntoLines(String sequence) {
 
