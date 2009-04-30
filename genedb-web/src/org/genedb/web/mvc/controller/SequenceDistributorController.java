@@ -121,7 +121,7 @@ public class SequenceDistributorController {
 
     	while (remaining.length() > LINE_LENGTH) {
     		ret.append(remaining.substring(0, LINE_LENGTH));
-    		ret.append("0x0a");
+    		ret.append("%0A");
     		remaining = remaining.substring(LINE_LENGTH);
     	}
     	if (remaining.length() != 0) {
