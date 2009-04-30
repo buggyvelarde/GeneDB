@@ -26,7 +26,7 @@ import java.util.Set;
  *
  */
 public class BuildTestDatabase {
-    private static final String SCHEMA = "public";
+    //private static final String SCHEMA = "public";
     private static final Logger logger = Logger.getLogger(org.genedb.db.test.tools.BuildTestDatabase.class);
 
     /**
@@ -40,12 +40,26 @@ public class BuildTestDatabase {
      * @throws ClassNotFoundException
      */
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        if (args.length != 4 && args.length != 5) {
-            throw new IllegalArgumentException("Usage: java BuildTestDatabase [--only-schema] <source URL> <username> <password> <target name> [<organism ID>]");
+        if (args.length != 4 && args.length != 5 && args.length != 6) {
+            throw new IllegalArgumentException(
+                    "Usage: java BuildTestDatabase [--only-schema] [--include-audit-schema] <source URL> <username> <password> <target name> [<organism ID>]");
         }
 
         boolean onlySchema = args[0].equals("--only-schema");
         int argBase = onlySchema ? 1 : 0;
+        
+        boolean includeAuditSchema = false;
+        if ((!onlySchema && args[0].equals("--include-audit-schema") 
+                || (onlySchema && args[1].equals("--include-audit-schema")))){
+            includeAuditSchema = true;
+            ++argBase;
+        }
+        
+        if (onlySchema && includeAuditSchema && args.length < 5){
+            throw new IllegalArgumentException(
+            "Please specify a password and target name/n" +
+            "Usage: java BuildTestDatabase [--only-schema] [--include-audit-schema] <source URL> <username> <password> <target name> [<organism ID>]");            
+        }
 
         String sourceUrl = args[argBase + 0];
         String sourceUsername = args[argBase + 1];
@@ -53,8 +67,12 @@ public class BuildTestDatabase {
         String targetDatabaseName = args[argBase + 3];
 
         int organismId = -1;
-        if (!onlySchema && args.length > 4) {
-            organismId = Integer.parseInt(args[4]);
+        if (!onlySchema) {
+            if (!includeAuditSchema && args.length > 4){
+                organismId = Integer.parseInt(args[4]);
+            }else if(includeAuditSchema && args.length>5){
+                organismId = Integer.parseInt(args[5]);                
+            }
         }
 
         URL url = BuildTestDatabase.class.getResource("/log4j.test.properties");
@@ -72,8 +90,12 @@ public class BuildTestDatabase {
 
         BuildTestDatabase buildTestDatabase = new BuildTestDatabase(source, target, organismId);
         buildTestDatabase.copySchema(true); //!onlySchema);
+        if(includeAuditSchema){
+            buildTestDatabase.createSchema("audit");
+            buildTestDatabase.copySchema("audit", true);
+        }
         if (!onlySchema) {
-            buildTestDatabase.copyData();
+            buildTestDatabase.copyPublicSchemaData();
         }
         target.createStatement().execute("shutdown");
         target.close();
@@ -93,7 +115,7 @@ public class BuildTestDatabase {
         }
     }
 
-    private void copyData() throws SQLException {
+    private void copyPublicSchemaData() throws SQLException {
         for (String tableName: "cv cvterm db organism".split("\\s+")) {
             copyTableData(tableName, null);
         }
@@ -159,10 +181,14 @@ public class BuildTestDatabase {
     }
 
     private void copyTableData(String tableName, String condition) throws SQLException {
-        copyTableData(tableName, condition, true);
+        copyTableData("public", tableName, condition);
     }
 
-    private void copyTableData(String tableName, String condition, boolean batch) throws SQLException {
+    private void copyTableData(String schema, String tableName, String condition) throws SQLException {
+        copyTableData(schema, tableName, condition, true);
+    }
+
+    private void copyTableData(String schema, String tableName, String condition, boolean batch) throws SQLException {
         logger.info(String.format("Copying contents of table '%s' (%s)", tableName, condition));
 
         String selectStatement = "select * from \""+tableName+"\"";
@@ -176,7 +202,7 @@ public class BuildTestDatabase {
         int numberOfColumns = rsMeta.getColumnCount();
         String[] columnNames = getColumnNames(rsMeta);
 
-        String insertStatement = insertStatement(tableName, rsMeta);
+        String insertStatement = insertStatement(schema, tableName, rsMeta);
         logger.trace(String.format("Preparing insert (%d cols): %s", numberOfColumns, insertStatement));
         PreparedStatement targetSt = target.prepareStatement(insertStatement);
         int numberOfRows = 0;
@@ -243,7 +269,7 @@ public class BuildTestDatabase {
         }
     }
 
-    private String insertStatement (String tableName, ResultSetMetaData rsMeta) throws SQLException {
+    private String insertStatement (String schema, String tableName, ResultSetMetaData rsMeta) throws SQLException {
         StringBuilder columns = new StringBuilder();
         StringBuilder placeholders = new StringBuilder();
 
@@ -257,8 +283,8 @@ public class BuildTestDatabase {
             placeholders.append('?');
         }
 
-        return String.format("insert into %s (%s) values (%s)",
-            tableName, columns, placeholders);
+        return String.format("insert into %s.%s (%s) values (%s)",
+            schema, tableName, columns, placeholders);
     }
 
     private String[] getColumnNames(ResultSetMetaData rsMeta) throws SQLException {
@@ -269,19 +295,33 @@ public class BuildTestDatabase {
         }
         return columnNames;
     }
+    
+    
+    private void createSchema(String schema)throws SQLException{
+        Statement st = target.createStatement();
+        String createStatement = String.format("create schema %s authorization dba", schema);
+        logger.trace(createStatement);
+        st.execute(createStatement);
+        st.close();
+        logger.debug(String.format("Schema %s successfully created", schema));
+    }
 
     private void copySchema(boolean createCached) throws SQLException {
+        copySchema("public", createCached);
+    }
+
+    private void copySchema(String schema, boolean createCached) throws SQLException {
         Set<String> tableNames = new HashSet<String>();
-        ResultSet tables = sourceMeta.getTables(null, SCHEMA, null, new String[] {"TABLE", "SEQUENCE"});
+        ResultSet tables = sourceMeta.getTables(null, schema, null, new String[] {"TABLE", "SEQUENCE"});
         while (tables.next()) {
             String tableName = tables.getString("TABLE_NAME");
             String tableType = tables.getString("TABLE_TYPE");
 
             if (tableType.equals("TABLE")) {
                 tableNames.add(tableName);
-                createTable(tableName, createCached);
+                createTable(schema, tableName, createCached);
             } else if (tableType.equals("SEQUENCE")) {
-                createSequence(tableName);
+                createSequence(schema, tableName);
             } else {
                 throw new RuntimeException(
                     String.format("Encountered table '%s' of unrecognised type '%s'", tableName, tableType));
@@ -290,29 +330,29 @@ public class BuildTestDatabase {
         tables.close();
 
         for (String tableName: tableNames) {
-            createForeignKeys(tableName);
-            createIndices(tableName);
-            createCheckConstraints(tableName);
+            createForeignKeys(schema, tableName);
+            createIndices(schema, tableName);
+            createCheckConstraints(schema, tableName);
         }
     }
 
-    private void createTable(String tableName, boolean createCached)
+    private void createTable(String schema, String tableName, boolean createCached)
             throws SQLException {
-        logger.info(String.format("Creating table \"%s\"", tableName));
+        logger.info(String.format("Creating table \"%s\" in schema \"%s\"", tableName, schema));
         Statement st = target.createStatement();
-        st.execute(String.format("drop table %s if exists cascade", tableName));
+        st.execute(String.format("drop table %s.%s if exists cascade", schema, tableName));
         st.close();
 
         st = target.createStatement();
-        String createStatement = createStatementForTable(tableName, createCached);
+        String createStatement = createStatementForTable(schema, tableName, createCached);
         logger.trace(createStatement);
         st.execute(createStatement);
         st.close();
     }
 
-    private void createSequence(String sequenceName) throws SQLException {
-        int nextval = getNextVal(sequenceName);
-        logger.info(String.format("Creating sequence '%s' with starting value %d", sequenceName, nextval));
+    private void createSequence(String schema, String sequenceName) throws SQLException {
+        int nextval = getNextVal(String.format("%s.%s", schema, sequenceName));
+        logger.info(String.format("Creating sequence '%s.%s' with starting value %d", schema, sequenceName, nextval));
         Statement statement = target.createStatement();
         statement.execute(String.format("create sequence %s start with %d", sequenceName, nextval));
         statement.close();
@@ -330,8 +370,8 @@ public class BuildTestDatabase {
         }
     }
 
-    private void createForeignKeys(String tableName) throws SQLException {
-        ResultSet rs = sourceMeta.getImportedKeys(null, SCHEMA, tableName);
+    private void createForeignKeys(String schema, String tableName) throws SQLException {
+        ResultSet rs = sourceMeta.getImportedKeys(null, schema, tableName);
         String currentConstraint = null;
         String targetTable = null;
         StringBuilder sourceColumns = null;
@@ -367,9 +407,9 @@ public class BuildTestDatabase {
 
                     logger.info(String.format("Adding foreign key %s -> %s", tableName, targetTable));
                     if (currentConstraint == null) {
-                        addConstraint(tableName, constraintText);
+                        addConstraint(schema, tableName, constraintText);
                     } else {
-                        addConstraint(tableName,
+                        addConstraint(schema, tableName,
                             String.format("constraint \"%s\" %s", currentConstraint, constraintText));
                     }
                 }
@@ -388,11 +428,11 @@ public class BuildTestDatabase {
         rs.close();
     }
 
-    private void createIndices(String tableName) throws SQLException {
+    private void createIndices(String schema, String tableName) throws SQLException {
         String indexName = null;
         StringBuilder columns = null;
 
-        ResultSet rs = sourceMeta.getIndexInfo(null, SCHEMA, tableName, false, false);
+        ResultSet rs = sourceMeta.getIndexInfo(null, schema, tableName, false, false);
         while (rs.next()) {
             short indexType = rs.getShort("TYPE");
             if (indexType == DatabaseMetaData.tableIndexStatistic) {
@@ -449,15 +489,19 @@ public class BuildTestDatabase {
             +" and pg_namespace.nspname = ?"
             +" and pg_class.relname = ?";
 
-    private void createCheckConstraints(String tableName) throws SQLException {
+    private void createCheckConstraints(String schema, String tableName) throws SQLException {
         PreparedStatement st = source.prepareStatement(CHECK_CONSTRAINTS_SQL);
-        st.setString(1, SCHEMA);
+        st.setString(1, schema);
         st.setString(2, tableName);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
             String constraintName = rs.getString("constraint_name");
             String condition = rs.getString("condition");
-            addConstraint(tableName,
+            
+            //re-format the condition
+            condition = condition.replace("::text", "");
+            
+            addConstraint(schema, tableName,
                 String.format("constraint \"%s\" check (%s)", constraintName, condition));
         }
         st.close();
@@ -476,20 +520,20 @@ public class BuildTestDatabase {
         }
     }
 
-    private void addConstraint(String tableName, String constraint) throws SQLException {
+    private void addConstraint(String schema, String tableName, String constraint) throws SQLException {
         logger.trace(constraint);
         Statement st = target.createStatement();
-        st.executeUpdate(String.format("alter table %s add %s", tableName, constraint));
+        st.executeUpdate(String.format("alter table %s.%s add %s", schema, tableName, constraint));
         st.close();
     }
 
-    private String createStatementForTable(String tableName, boolean createCached) throws SQLException {
+    private String createStatementForTable(String schema, String tableName, boolean createCached) throws SQLException {
         StringBuilder sb = new StringBuilder();
 
         String create = createCached ? "create cached table " : "create table ";
-        sb.append(create + tableName + " (\n");
+        sb.append(create + schema + "." + tableName + " (\n");
 
-        ResultSet columns = sourceMeta.getColumns(null, SCHEMA, tableName, null);
+        ResultSet columns = sourceMeta.getColumns(null, schema, tableName, null);
         boolean first = true;
         while (columns.next()) {
             String columnName = columns.getString("COLUMN_NAME");
@@ -509,7 +553,7 @@ public class BuildTestDatabase {
         }
 
         if (!tablesWithIdentityColumn.contains(tableName)) {
-            String primaryKey = primaryKeyForTable(tableName);
+            String primaryKey = primaryKeyForTable(schema, tableName);
             if (primaryKey != null) {
                 sb.append(", ");
                 sb.append(primaryKey);
@@ -521,10 +565,10 @@ public class BuildTestDatabase {
         return sb.toString();
     }
 
-    private String primaryKeyForTable(String tableName) throws SQLException {
+    private String primaryKeyForTable(String schema, String tableName) throws SQLException {
         StringBuilder columns = new StringBuilder();
 
-        ResultSet rs = sourceMeta.getPrimaryKeys(null, SCHEMA, tableName);
+        ResultSet rs = sourceMeta.getPrimaryKeys(null, schema, tableName);
         String keyName = null;
         while (rs.next()) {
             String columnName = rs.getString("COLUMN_NAME");
@@ -570,16 +614,19 @@ public class BuildTestDatabase {
      * Maps PostgreSQL default values to the equivalent HSQLDB function.
      */
     private static Map<String,String> defaultValueMap = new HashMap<String,String>() {{
+        put("\"current_user\"()", "current_user");
         put("now()", "now");
         put("''::text", "''");
         put("''::character varying", "''");
+        put("'DELETE'::character varying", "'DELETE'");
+        put("'INSERT'::character varying", "'INSERT'");
+        put("'UPDATE'::character varying", "'UPDATE'");
     }};
 
     private Set<String> tablesWithIdentityColumn = new HashSet<String>();
 
     private String columnDefinition(String tableName, String columnName, String columnType,
             int columnSize, boolean notNull, String defaultValue) {
-
         if (typeNameMap.containsKey(columnType)) {
             columnType = typeNameMap.get(columnType);
         }
