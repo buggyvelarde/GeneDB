@@ -34,13 +34,11 @@ import javax.sql.DataSource;
  * <li> Adds support for the {@link FeatureType} annotation.
  * <li> Extends the behaviour of {@link #addPackage} to add all annotated classes in the package.
  * </ul>
- * If you use this directly, you must set the data source. From Spring, use {@link ChadoSessionFactoryBean}
+ * If you use this directly, you must set the data source. (In that case you may
+ * also want to use the <code>InjectedDataSourceConnectionProvider</code>; see
+ * {@link ChadoAnnotationSettingsFactory} for more information.)
+ * From Spring, use {@link ChadoSessionFactoryBean}
  * instead, which defaults to this configuration and automatically sets the data source.
- * <p>
- * The class {@link org.genedb.hibernate.search.IndexChado}, from the HibernateSearch
- * module, uses this class directly. It may serve as an example of how it can be used.
- * (Not that there's any magic to it: just use it in place of the ordinary Hibernate
- * <code>Configuration</code> class, and remember to set the data source.)
  *
  * @author rh11
  */
@@ -48,8 +46,14 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
     private static final Logger logger = Logger.getLogger(ChadoAnnotationConfiguration.class);
 
     private DataSource dataSource;
+
+    public ChadoAnnotationConfiguration() {
+        super(new ChadoAnnotationSettingsFactory());
+    }
+
     public ChadoAnnotationConfiguration setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+        ((ChadoAnnotationSettingsFactory) settingsFactory).setDataSource(dataSource);
         return this;
     }
 
