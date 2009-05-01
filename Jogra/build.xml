@@ -16,6 +16,9 @@
 		<fileset dir="${imported.basedir.libs}/lib/gui">
 			<include name="*.jar" />
 		</fileset>
+		<fileset dir="${imported.basedir.libs}/lib/biojava">
+			<include name="biojava-1.6.jar" />
+		</fileset>
 		<pathelement
 			location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar" />
 		<pathelement location="${genedb-db.jar}" />
@@ -68,6 +71,7 @@
 	</target>
 
 	<target name="run-Jogra" depends="fulljar-Jogra">
-		<java fork="true" jar="${Jogra.jar}" />
+		<echo message="${Jogra-classpath}" />
+		<java fork="true" jar="${Jogra.jar}" classpathref="Jogra-classpath" />
 	</target>
 </project>

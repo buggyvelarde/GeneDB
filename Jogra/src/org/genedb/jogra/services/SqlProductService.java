@@ -1,3 +1,7 @@
+/**
+ * Class to handle the SQL needed to retrieve list of products and rationalise names
+ */
+
 package org.genedb.jogra.services;
 
 import java.sql.ResultSet;
@@ -21,8 +25,7 @@ public class SqlProductService implements ProductService {
 
     private JdbcTemplate jdbcTemplate;
     private SqlUpdate sqlUpdate;
-
-
+   
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
 
@@ -36,11 +39,11 @@ public class SqlProductService implements ProductService {
 
 
     }
-
+    
     @Override
     public List<Product> getProductList(boolean restrictToGeneLinked) {
-
-        String sql =
+        /* Initial SQL query to retrieve all products */
+        /*String sql =
             "select distinct" +
             "    lower(cvterm.name) as lc_name" +
             "  , cvterm.name" +
@@ -48,8 +51,19 @@ public class SqlProductService implements ProductService {
             " from feature_cvterm" +
             " join cvterm using (cvterm_id)" +
             " join cv using (cv_id)" +
-            " where cv.name='genedb_products'" +
-            " order by lower(cvterm.name), cvterm.name";
+            " where cv.name='genedb_products'" + 
+            " order by lower(cvterm.name), cvterm.name"; */
+        
+       /* Second SQL query to retrieve products pertaining to selected organism or class of organisms */
+        String sql2 = 
+            "select distinct lower(cvt.name), cvt.name, cvt.cvterm_id " +
+            "from feature_cvterm fcvt, cvterm cvt, cv cv, organism o, feature f " +
+            "where fcvt.cvterm_id = cvt.cvterm_id " +
+            "and cvt.cv_id = cv.cv_id " +
+            "and cv.name='genedb_products' " +
+            "and fcvt.feature_id = f.feature_id " +
+            "and f.organism_id=o.organism_id " +
+            "and o.common_name='Tbruceibrucei927'";
 
         RowMapper mapper = new RowMapper() {
             public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -59,7 +73,7 @@ public class SqlProductService implements ProductService {
         };
 
         @SuppressWarnings("unchecked")
-        List<Product> products = jdbcTemplate.query(sql, mapper);
+        List<Product> products = jdbcTemplate.query(sql2, mapper);
         return products;
     }
 

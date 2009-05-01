@@ -8,5 +8,10 @@
       <dependency org="org.junit" name="com.springsource.org.junit" rev="4.5.0" />
       <dependency org="org.apache.log4j" name="com.springsource.org.apache.log4j" rev="1.2.15" />
       <dependency org="com.google.collect" name="com.springsource.com.google.common.collect" rev="0.8.0.20080820" />
+
+	<!-- See comment in genedb-web for why this is here -->
+	<dependency org="org.objectweb.asm" name="com.springsource.org.objectweb.asm.commons" rev="2.2.3" conf="default->*" />
+
+
     </dependencies>
 </ivy-module>

@@ -63,6 +63,10 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     private Timer timer = new Timer();
 
     private MessageService messageService;
+    
+    
+
+    private String chosenOrganism;
 
     // private TestService testService;
 
@@ -290,13 +294,10 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     }
 
     public static Jogra instantiate() throws IOException {
-        //final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
-          //      new String[] { "classpath:applicationContext.xml", "classpath:domain-client-applicationContext.xml" });
-        final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] { "classpath:/applicationContext.xml" });
+        //Instantiating a bean using the XML configuration file
+        final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] { "classpath:/applicationContext.xml" });
         final Jogra application = ctx.getBean("application", Jogra.class);
         ctx.registerShutdownHook();
-
         return application;
     }
 
@@ -361,5 +362,13 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
             newArgs.add(args[i]);
         }
         jp.process(newArgs);
+    }
+    
+    public String getChosenOrganism() {
+        return chosenOrganism;
+    }
+
+    public void setChosenOrganism(String user_selection) {
+        this.chosenOrganism = user_selection;
     }
 }

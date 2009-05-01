@@ -34,10 +34,11 @@
 
   <bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
     <property name="productService" ref="productService" />
+    <property name="jogra" ref="application" />
   </bean>
 
   <bean name="productService" class="org.genedb.jogra.services.SqlProductService">
-     <property name="dataSource" ref="dataSource" />
+     <property name="dataSource" ref="dataSource" /> 
   </bean>
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
@@ -45,12 +46,15 @@
 <!--        <property name="url" value="jdbc:postgresql://pathdbsrv1b:10103/productrat" />-->
 <!--        <property name="username" value="pathdb" />-->
 <!--        <property name="password" value="Pyrate_1" />-->
-            <property name="url" value="jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens" />
-            <property name="username" value="genedb" />
-            <property name="password" value="genedb" />
+            <!--   property name="url" value="jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens" / -->
+            <property name="url" value="jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev" />
+            <property name="username" value="nds@sanger.ac.uk" />
+            <property name="password" value="stneots2009" />
     </bean>
 
   <bean name="geneList" class="org.genedb.jogra.plugins.GeneList" />
+ 
+ 
 
   <bean name="integrityChecker" class="org.genedb.jogra.plugins.RunIntegrityCheck" />
 
@@ -61,10 +65,68 @@
 -->
 
   <bean name="organismEditor" class="org.genedb.jogra.plugins.OrganismEditor" />
+  
+  <!-- Plugin to view the organism tree structure  -->
+  
+  <bean name="organismTree" class="org.genedb.jogra.plugins.OrganismTree" >
+  <property name="taxonNodeManager" ref="taxonNodeManager" />
+  <property name="jogra" ref="application" />
+  </bean>
+  
+  
+  <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
+        <property name="phylogenyDao" ref="phylogenyDao" />
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="findPhylonodeWithOrganismFeatures"> <value>true</value></property>
+    </bean>
+    
+    
+     <bean id="phylogenyDao" class="org.genedb.db.dao.PhylogenyDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+         <property name="sessionFactory" ref="sessionFactory" />
+     </bean>
+    
+    <bean id="sessionFactory" class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="hibernateProperties" ref="hibernateProperties" />
+        <property name="annotatedPackages">
+            <list>
+                <value>org.gmod.schema.mapped</value>
+                <value>org.gmod.schema.feature</value>
+            </list>
+        </property>
+<!--         <property name="defaultFilters">
+            <list><value>excludeObsoleteFeatures</value></list>
+        </property> -->
+    </bean>
+    
+    
+
+    <!-- Database Property -->
+    <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="properties">
+        <props>
+            <prop key="hibernate.hbm2dll.auto">validate</prop>
+            <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+            <prop key="hibernate.bytecode.provider">javassist</prop>
+        </props>
+     </property>
+    </bean>
+  
+   
+
+  
+ 
+  
 
 <!--
   <bean name="organismManager" class="org.genedb.db.domain.objects.ExtendedOrganismManager"/>
 -->
+
+<!-- List of plugins for Jogra -->
 
    <bean id="application" class="org.genedb.jogra.drawing.Jogra">
      <property name="jograBusiness" ref="jograBusiness" />
@@ -74,9 +136,10 @@
           <ref bean="geneEditor" />
          <ref bean="geneList" />
          <ref bean="cvEditor" />
-         <!-- <ref bean="organismTree" /> -->
+         <ref bean="organismTree" />
          <ref bean="organismEditor" />
          <ref bean="productRationaliser" />
+         
         <!-- <ref bean="integrityChecker" /> -->
        </list>
      </property>

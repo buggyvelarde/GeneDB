@@ -49,6 +49,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.bushe.swing.event.EventBus;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import org.genedb.jogra.domain.GeneDBMessage;
 import org.genedb.jogra.domain.Product;
 import org.genedb.jogra.drawing.Jogra;
@@ -78,12 +81,15 @@ public class ProductRationaliser implements JograPlugin {
     private JList toList;
     private JCheckBox filterBox;
     private JLabel productCountLabel;
+    private String userSelection; //Organism name selected by user
+    private JLabel selectedOrganism = new JLabel("Viewing: All"); //Label showing user's selection. Default: View all
+    private Jogra jogra; //Jogra object in this context
 
     /**
      * Fetch the product list from the database and set that as the model for both lists.
      */
     private void initModels() {
-        List<Product> products = productService.getProductList(filterBox.isSelected());
+        List<Product> products = productService.getProductList(filterBox.isSelected()); //Change to get products relating to selected organism only
         Product[] productArray = new Product[products.size()];
         //System.err.println("The number of products is '"+products.size()+"'");
         int i=0;
@@ -107,7 +113,13 @@ public class ProductRationaliser implements JograPlugin {
         toList = new JList();
         filterBox = new JCheckBox("Only products annotated to genes", true);
         productCountLabel = new JLabel("No. of products");
-
+        //Trying to get the organism from the Jogra object 
+        try{
+            userSelection = jogra.getChosenOrganism(); //Getting user's selection from Jogra object
+            selectedOrganism = new JLabel("Viewing: " + userSelection);
+        }catch(Exception e){
+            System.err.println("Error fetching information from Jogra object: " + e);
+        }
         fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         fromList.setPrototypeCellValue(A_LONG_STRING);
         ListFindAction findAction = new ListFindAction(true);
@@ -139,8 +151,8 @@ public class ProductRationaliser implements JograPlugin {
         ret.setLayout(new BorderLayout());
 
 
-        Box center = Box.createHorizontalBox();
-        center.add(Box.createHorizontalStrut(5));
+        Box center = Box.createHorizontalBox(); //A box that displays contents from left to right
+        center.add(Box.createHorizontalStrut(5)); //Invisible fixed-width component
         Box leftPane = Box.createVerticalBox();
         leftPane.add(new JLabel("From"));
         leftPane.add(new JScrollPane(fromList));
@@ -165,8 +177,9 @@ public class ProductRationaliser implements JograPlugin {
             }
         });
         localButtons.add(filterBox);
-        localButtons.add(Box.createHorizontalStrut(10));
+        localButtons.add(Box.createHorizontalStrut(30));
         localButtons.add(productCountLabel);
+        localButtons.add(selectedOrganism);
 //        JButton syncLeftToRight = new JButton(">>");
 //        localButtons.add(syncLeftToRight);
 //        localButtons.add(Box.createHorizontalStrut(5));
@@ -211,6 +224,9 @@ public class ProductRationaliser implements JograPlugin {
 
         return ret;
     }
+    /**
+     * Supply a JPanel which will be displayed in the main Jogra window
+     */
 
     public JPanel getMainWindowPlugin() {
         final JPanel ret = new JPanel();
@@ -258,10 +274,11 @@ public class ProductRationaliser implements JograPlugin {
 
     JFrame makeWindow() {
         System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "'  x");
-        JFrame lookup = Jogra.findNamedWindow(WINDOW_TITLE);
+       /* JFrame lookup = Jogra.findNamedWindow(WINDOW_TITLE);
         if (lookup == null) {
-            lookup = getMainPanel();
-        }
+            lookup = getMainPanel(); 
+        } */
+        JFrame lookup = getMainPanel(); //Always getting a new frame since it has to pick up variable organism (correct later: NDS)
         return lookup;
     }
 
@@ -643,6 +660,11 @@ public class ProductRationaliser implements JograPlugin {
     public void process(List<String> newArgs) {
         // TODO Auto-generated method stub
 
+    }
+    
+    @Override
+    public void setJogra(Jogra jogra) {
+        this.jogra = jogra;
     }
 
 
