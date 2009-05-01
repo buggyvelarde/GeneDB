@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.dialect.Dialect;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,15 +39,16 @@ public class HibernateChangeTracker implements ChangeTracker {
         .uniqueResult();
         int checkpointAuditId = checkpointAuditIdInteger == null ? 0 : checkpointAuditIdInteger.intValue();
 
-        currentAuditId = ((BigInteger) session.createSQLQuery(
-            "select nextval('audit.audit_seq')"
-        ).uniqueResult()).intValue();
-
-        HibernateChangeSet changeSet = new HibernateChangeSet(session, key, currentAuditId);
         Configuration configuration = sessionFactoryBean.getConfiguration();
         if (!(configuration instanceof ChadoAnnotationConfiguration)) {
             throw new RuntimeException();
         }
+
+        currentAuditId = ((BigInteger) session.createSQLQuery(
+            Dialect.getDialect(configuration.getProperties()).getSequenceNextValString("audit.audit_seq")
+        ).uniqueResult()).intValue();
+
+        HibernateChangeSet changeSet = new HibernateChangeSet(session, key, currentAuditId);
         changeSet.setChadoAnnotationConfiguration((ChadoAnnotationConfiguration) configuration);
 
         processFeatureAuditRecords(checkpointAuditId, changeSet);
