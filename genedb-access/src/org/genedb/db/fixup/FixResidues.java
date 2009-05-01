@@ -471,7 +471,7 @@ public class FixResidues {
         }
     }
 
-    private void fixTranscript(String topLevelSequence, int strand, Transcript transcript) throws SQLException, TranslationException {
+    private void fixTranscript(String topLevelSequence, int strand, Transcript transcript) throws SQLException {
         StringBuilder cdsBuilder = new StringBuilder();
         for (Exon exon: transcript.exons) {
             debug("\tExon %s (%d-%d)", exon.uniqueName, exon.fmin, exon.fmax);
@@ -519,7 +519,11 @@ public class FixResidues {
             int polypeptideId = rs.getInt("feature_id");
             String polypeptideName = rs.getString("uniquename");
             debug("Polypeptide '%s'", polypeptideName);
-            fixPolypeptide(transcript, polypeptideId);
+            try {
+                fixPolypeptide(transcript, polypeptideId);
+            } catch (TranslationException e) {
+                logger.error(String.format("Failed to create translation for polypeptide '%s'", polypeptideName), e);
+            }
         }
         finally {
             try {
