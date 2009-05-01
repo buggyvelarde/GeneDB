@@ -112,7 +112,7 @@ public class Load {
     }
 
     private static FilenameFilter doesNotEndWithTilde = new FilenameFilter() {
-        public boolean accept(@SuppressWarnings("unused") File dir, String name) {
+        public boolean accept(File dir, String name) {
             return !name.endsWith("~");
         }
     };
