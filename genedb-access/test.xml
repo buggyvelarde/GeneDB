@@ -39,36 +39,20 @@
             <test name="org.genedb.db.loading.EmblLocationTest"/>
         </junit>
     </target>
-    <target name="check-properties">
-        <fail message="The property 'dbhost' is not set. Usually you should set the property 'load' to refer to a property file"
-            unless="dbhost"/>
-        <fail message="The property 'dbport' is not set. Usually you should set the property 'load' to refer to a property file"
-            unless="dbport"/>
-        <fail message="The property 'dbname' is not set. Usually you should set the property 'load' to refer to a property file"
-            unless="dbname"/>
-        <fail message="The property 'dbuser' is not set. Usually you should set the property 'load' to refer to a property file"
-            unless="dbuser"/>
-    </target>
-    <target name="copy-skeleton-database" depends="check-properties">
-        <antcall target="genedb-db.make-skeleton-database-if-necessary">
-            <param name="source.url"      value="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"/>
-            <param name="source.username" value="${dbuser}"/>
-        </antcall>
 
+    <target name="copy-skeleton-database" depends="genedb-db.does-skeleton-database-exist">
+        <fail unless="db.skeleton.exists" message="The skeleton test database does not exist in genedb-db" />
         <copy todir="${imported.basedir.access}/test/data" overwrite="true">
-            <fileset dir="${imported.basedir.access}/../genedb-db/test-data/hsqldb" includes="skeleton.*"/>
+            <fileset dir="${imported.basedir.db}/test-data/hsqldb" includes="skeleton.*"/>
         </copy>
     </target>
-    <target name="copy-pfalciparum-database" depends="check-properties">
-        <antcall target="genedb-db.make-pfalciparum-database-if-necessary">
-            <param name="source.url"      value="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"/>
-            <param name="source.username" value="${dbuser}"/>
-        </antcall>
-
+    <target name="copy-pfalciparum-database" depends="genedb-db.does-pfalciparum-database-exist">
+        <fail unless="db.pfalciparum.exists" message="The P. falciparum test database does not exist in genedb-db" />
         <copy todir="${imported.basedir.access}/test/data" overwrite="true">
-            <fileset dir="${imported.basedir.access}/../genedb-db/test-data/hsqldb" includes="pfalciparum.*"/>
+            <fileset dir="${imported.basedir.db}/test-data/hsqldb" includes="pfalciparum.*"/>
         </copy>
     </target>
+    
     <target name="embl-test" depends="compile-tests">
         <antcall target="run-specific-embl-test"><param name="subtest" value="Berghei"/></antcall>
         <antcall target="run-specific-embl-test"><param name="subtest" value="Mansoni"/></antcall>
