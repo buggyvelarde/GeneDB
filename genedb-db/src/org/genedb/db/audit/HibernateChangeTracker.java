@@ -25,6 +25,8 @@ public class HibernateChangeTracker implements ChangeTracker {
     @Resource(name="&sessionFactory")
     private ChadoSessionFactoryBean sessionFactoryBean;
 
+    private int currentAuditId;
+
     @Override
     @Transactional
     public HibernateChangeSet changes(String key) throws SQLException {
@@ -36,7 +38,7 @@ public class HibernateChangeTracker implements ChangeTracker {
         .uniqueResult();
         int checkpointAuditId = checkpointAuditIdInteger == null ? 0 : checkpointAuditIdInteger.intValue();
 
-        int currentAuditId = ((BigInteger) session.createSQLQuery(
+        currentAuditId = ((BigInteger) session.createSQLQuery(
             "select nextval('audit.audit_seq')"
         ).uniqueResult()).intValue();
 
@@ -68,9 +70,10 @@ public class HibernateChangeTracker implements ChangeTracker {
         List<?> list = session.createSQLQuery(
             "select audit_id, feature_id, type, uniquename, type_id" +
             " from audit.feature" +
-            " where audit_id > :checkpoint and audit_id < currval('audit.audit_seq')" +
+            " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
         ).setInteger("checkpoint", checkpointAuditId)
+        .setInteger("currentAuditId", currentAuditId)
         .list();
 
         for (Object o: list) {
