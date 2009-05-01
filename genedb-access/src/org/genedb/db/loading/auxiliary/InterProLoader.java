@@ -45,7 +45,7 @@ public class InterProLoader extends Loader {
     private KeyType keyType = KeyType.GENE;
 
     @Override
-    protected boolean processOption(@SuppressWarnings("unused") String optionName, String optionValue) {
+    protected boolean processOption(String optionName, String optionValue) {
         if (optionValue == null)
             return false;
         if (optionValue.equals("gene")) {
@@ -131,12 +131,16 @@ public class InterProLoader extends Loader {
             }
 
             String domainUniqueName;
+            String accessionNumber = acc.getId();
+            if (accessionNumber == null) {
+                accessionNumber = row.nativeAcc;
+            }
             if (n == 0) {
                 domainUniqueName = String.format("%s:InterPro:%s",
-                    polypeptide.getUniqueName(), acc);
+                    polypeptide.getUniqueName(), accessionNumber);
             } else {
                 domainUniqueName = String.format("%s:InterPro:%s:%d",
-                    polypeptide.getUniqueName(), acc, n);
+                    polypeptide.getUniqueName(), accessionNumber, n);
             }
 
             PolypeptideDomain polypeptideDomain = sequenceDao.createPolypeptideDomain(
