@@ -149,9 +149,10 @@ public class HibernateChangeTracker implements ChangeTracker {
             "     , public.feature.type_id" +
             " from audit.featureloc" +
             " join public.feature on public.feature.feature_id = audit.featureloc.srcfeature_id" +
-            " where audit_id > :checkpoint and audit_id < currval('audit.audit_seq')" +
+            " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
         ).setInteger("checkpoint", checkpointAuditId)
+        .setInteger("currentAuditId", currentAuditId)
         .list();
 
         for (Object o: list) {
