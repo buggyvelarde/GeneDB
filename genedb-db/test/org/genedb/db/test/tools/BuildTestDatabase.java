@@ -354,7 +354,7 @@ public class BuildTestDatabase {
         int nextval = getNextVal(String.format("%s.%s", schema, sequenceName));
         logger.info(String.format("Creating sequence '%s.%s' with starting value %d", schema, sequenceName, nextval));
         Statement statement = target.createStatement();
-        statement.execute(String.format("create sequence %s start with %d", sequenceName, nextval));
+        statement.execute(String.format("create sequence %s.%s start with %d", schema, sequenceName, nextval));
         statement.close();
     }
 
