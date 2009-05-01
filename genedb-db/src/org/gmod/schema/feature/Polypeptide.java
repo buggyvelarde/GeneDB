@@ -153,6 +153,14 @@ public class Polypeptide extends Region {
     }
 
     /**
+     * Get the (predicted) domains of this polypeptide.
+     * @return a sorted set of domains
+     */
+    public SortedSet<PolypeptideDomain> getDomains() {
+        return getRegions(PolypeptideDomain.class);
+    }
+
+    /**
      * Get the (predicted) MembraneStructure of this protein.
      * @return the (predicted) MembraneStructure of this protein, or <code>null</code>
      * if there is none.
