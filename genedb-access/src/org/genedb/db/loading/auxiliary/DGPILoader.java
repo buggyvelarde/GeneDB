@@ -159,6 +159,9 @@ class DGPIResult {
                     if (isAnchoredMatcher.matches())
                         ret.anchored = true;
                     break;
+                case NONE:
+                    /* Nothing need be done */
+                    break;
                 }
             }
         }
