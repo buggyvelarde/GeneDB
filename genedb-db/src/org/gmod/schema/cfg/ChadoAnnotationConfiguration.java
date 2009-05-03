@@ -49,6 +49,49 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
 
     public ChadoAnnotationConfiguration() {
         super(new ChadoAnnotationSettingsFactory());
+
+        /*
+         * Why use ChadoAnnotationSettingsFactory here?
+         *
+         * That's a good question; I'm glad you asked.
+         *
+         * The ChadoAnnotationConfiguration needs access to the database, so it can
+         * look up the CV terms that are referenced in the @FeatureType annotation,
+         * and set the discriminator value to the appropriate term ID.
+         *
+         * If you use Hibernate via Spring, then Spring will use its
+         * LocalDatasourceConnectionProvider to provide database connections to Hibernate
+         * from the DataSource supplied to the SessionFactoryBean; the ChadoSessionFactoryBean
+         * additionally passes this DataSource object to the ChadoAnnotationConfiguration.
+         *
+         * The problem comes if you use ChadoAnnotationConfiguration not from Spring.
+         * You need to supply a DataSource to the ChadoAnnotationConfiguration, but Hibernate
+         * cannot use this DataSource to obtain its connections. (There is
+         * a DataSourceConnectionProvider, but that requires the DataSource to be
+         * registered with JNDI.)
+         *
+         * The natural solution is to define a new ConnectionProvider class which uses
+         * a DataSource to provide connections (but doesn't rely on getting that object
+         * from JNDI) and then to arrange for the ChadoAnnotationConfiguration to make
+         * its DataSource available to this ConnectionProvider. The only way I can see
+         * to do that is to define yet another class, this time extending SettingsFactory,
+         * which the ChadoAnnotationConfiguration can use as its settings factory. This
+         * SettingsFactory can then override the createConnectionProvider method and pass
+         * the DataSource to the ConnectionProvider that it creates.
+         *
+         * Fortuitously it turns out that there is already a suitable ConnectionProvider
+         * defined in the Hibernate EJB3 code,
+         * org.hibernate.ejb.connection.InjectedDataSourceConnectionProvider, so I've used
+         * that rather than reimplement it. The new SettingsFactory is, unsurprisingly,
+         * ChadoAnnotationSettingsFactory.
+         *
+         * In fact we don't even attempt to influence the choice of ConnectionProvider,
+         * because Spring (for example) still needs to be free to make its own choices.
+         * The ChadoAnnotationSettingsFactory simply checks which connection provider is
+         * being used, and injects the DataSource only if it finds an
+         * InjectedDataSourceConnectionProvider.
+         */
+
     }
 
     public ChadoAnnotationConfiguration setDataSource(DataSource dataSource) {
