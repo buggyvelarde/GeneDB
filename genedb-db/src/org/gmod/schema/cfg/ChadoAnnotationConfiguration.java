@@ -53,8 +53,6 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
         /*
          * Why use ChadoAnnotationSettingsFactory here?
          *
-         * That's a good question; I'm glad you asked.
-         *
          * The ChadoAnnotationConfiguration needs access to the database, so it can
          * look up the CV terms that are referenced in the @FeatureType annotation,
          * and set the discriminator value to the appropriate term ID.
