@@ -72,15 +72,15 @@ public class ChadoAnnotationConfiguration extends AnnotationConfiguration {
          * a DataSource to provide connections (but doesn't rely on getting that object
          * from JNDI) and then to arrange for the ChadoAnnotationConfiguration to make
          * its DataSource available to this ConnectionProvider. The only way I can see
-         * to do that is to define yet another class, this time extending SettingsFactory,
-         * which the ChadoAnnotationConfiguration can use as its settings factory. This
+         * to do the second part is to define yet another class, this time extending
+         * SettingsFactory, which the ChadoAnnotationConfiguration uses. This
          * SettingsFactory can then override the createConnectionProvider method and pass
          * the DataSource to the ConnectionProvider that it creates.
          *
          * Fortuitously it turns out that there is already a suitable ConnectionProvider
          * defined in the Hibernate EJB3 code,
          * org.hibernate.ejb.connection.InjectedDataSourceConnectionProvider, so I've used
-         * that rather than reimplement it. The new SettingsFactory is, unsurprisingly,
+         * that rather than reimplement it. The new SettingsFactory is, obviously,
          * ChadoAnnotationSettingsFactory.
          *
          * In fact we don't even attempt to influence the choice of ConnectionProvider,
