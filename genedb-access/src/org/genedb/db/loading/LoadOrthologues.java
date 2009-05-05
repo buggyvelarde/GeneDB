@@ -322,9 +322,9 @@ class OrthologuesLoader {
         Transcript transcript;
 
         if (geneNames) {
-            AbstractGene gene = sequenceDao.getFeatureByUniqueName(uniqueName, AbstractGene.class);
+            AbstractGene gene = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(uniqueName, organism, AbstractGene.class);
             if (gene == null) {
-                String errorMessage = String.format("Could not find gene '%s'", uniqueName);
+                String errorMessage = String.format("Could not find gene '%s' in organism '%s'", uniqueName, organism);
                 if (notFoundNotFatal) {
                     logger.error(errorMessage);
                     return null;
@@ -342,31 +342,20 @@ class OrthologuesLoader {
             }
             transcript = transcripts.iterator().next();
         } else {
-            transcript = sequenceDao.getFeatureByUniqueName(uniqueName, Transcript.class);
+            transcript = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(uniqueName, organism, Transcript.class);
             if (transcript == null) {
-                Polypeptide polypeptide = sequenceDao.getFeatureByUniqueName(uniqueName, Polypeptide.class);
+                Polypeptide polypeptide = sequenceDao.getFeatureByUniqueNameAndOrganismCommonName(uniqueName, organism, Polypeptide.class);
                 if (polypeptide != null) {
-                    if (!polypeptide.getOrganism().getCommonName().equals(organism)) {
-                        String errorMessage = String.format("The feature '%s' does not belong to organism '%s'",
-                            polypeptide.getUniqueName(), organism);
-                        throw new DataError(file, lineNumber, errorMessage);
-                    }
                     return polypeptide;
                 }
 
-                String errorMessage = String.format("Could not find transcript feature '%s'", uniqueName);
+                String errorMessage = String.format("Could not find transcript feature '%s' in organism '%s'", uniqueName, organism);
                 if (notFoundNotFatal) {
                     logger.error(errorMessage);
                     return null;
                 }
                 throw new DataError(file, lineNumber, errorMessage);
             }
-        }
-
-        if (!transcript.getOrganism().getCommonName().equals(organism)) {
-            throw new DataError(file, lineNumber,
-                String.format("The feature '%s' does not belong to organism '%s'",
-                    transcript.getUniqueName(), organism));
         }
 
         if (!(transcript instanceof ProductiveTranscript)) {

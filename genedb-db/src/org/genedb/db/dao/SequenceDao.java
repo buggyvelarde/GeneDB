@@ -102,6 +102,41 @@ public class SequenceDao extends BaseDao {
     }
 
     /**
+     * Get the feature with the specified unique name and type, from the
+     * specified organism.
+     * If there is no such feature, logs a message at level <code>INFO</code>
+     * and returns <code>null</code>.
+     *
+     * @param <T>
+     * @param uniqueName the unique name of the feature
+     * @param organismCommonName the common name of the organism
+     * @param featureClass the type of feature, e.g. <code>Polypeptide.class</code>
+     * @return the feature, or <code>null</code> if there isn't such a feature
+     * @throws RuntimeException if there is more than one feature with the
+     *          specified unique name and type
+     */
+    public <T extends Feature> T getFeatureByUniqueNameAndOrganismCommonName(String uniqueName, String organismCommonName, Class<T> featureClass) {
+        @SuppressWarnings("unchecked")
+        List<T> features = getSession().createQuery(
+            "from "+featureClass.getName()+" where uniqueName=:uniqueName and organism.commonName = :organism")
+            .setString("uniqueName", uniqueName)
+            .setString("organism", organismCommonName)
+            .list();
+
+        if (features.size() == 0) {
+            logger.info(String.format("Hibernate found no feature of type '%s' with uniqueName '%s' in organism '%s'",
+                featureClass.getSimpleName(), uniqueName, organismCommonName));
+            return null;
+        }
+        if (features.size() > 1) {
+            throw new RuntimeException(String.format("Found more than one feature of type '%s' with uniqueName '%s' in organism '%s'",
+                featureClass.getSimpleName(), uniqueName, organismCommonName));
+        }
+
+        return features.get(0);
+    }
+
+    /**
      * Return a list of features whose uniqueName matches the given pattern.
      *
      * @param namePattern an SQL/HQL pattern
