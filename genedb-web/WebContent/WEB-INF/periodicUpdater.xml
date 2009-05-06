@@ -52,16 +52,6 @@
     </bean>
 
 
-    <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="properties">
-            <props>
-                <prop key="hibernate.hbm2dll.auto">validate</prop>
-                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
-                <prop key="hibernate.bytecode.provider">javassist</prop>
-            </props>
-        </property>
-    </bean>
-
     <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
     <bean id="propertyConfigurer2" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
