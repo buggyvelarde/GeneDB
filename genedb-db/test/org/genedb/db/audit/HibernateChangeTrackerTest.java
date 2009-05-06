@@ -56,7 +56,7 @@ public class HibernateChangeTrackerTest {
 
     @BeforeClass
     public static void configureLogging() {
-        String logFile = "/log4j.changeTracker.test.properties";
+        String logFile = "/log4j.test.properties";
         URL url = HibernateChangeTrackerTest.class.getResource(logFile);
         if (url == null) {
             throw new RuntimeException("Could not find classpath resource " + logFile);

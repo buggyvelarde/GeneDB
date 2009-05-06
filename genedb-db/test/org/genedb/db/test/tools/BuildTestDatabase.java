@@ -40,26 +40,13 @@ public class BuildTestDatabase {
      * @throws ClassNotFoundException
      */
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        if (args.length != 4 && args.length != 5 && args.length != 6) {
+        if (args.length != 4 && args.length != 5) {
             throw new IllegalArgumentException(
-                    "Usage: java BuildTestDatabase [--only-schema] [--include-audit-schema] <source URL> <username> <password> <target name> [<organism ID>]");
+                    "Usage: java BuildTestDatabase [--only-schema] <source URL> <username> <password> <target name> [<organism ID>]");
         }
 
         boolean onlySchema = args[0].equals("--only-schema");
-        int argBase = onlySchema ? 1 : 0;
-        
-        boolean includeAuditSchema = false;
-        if ((!onlySchema && args[0].equals("--include-audit-schema") 
-                || (onlySchema && args[1].equals("--include-audit-schema")))){
-            includeAuditSchema = true;
-            ++argBase;
-        }
-        
-        if (onlySchema && includeAuditSchema && args.length < 5){
-            throw new IllegalArgumentException(
-            "Please specify a password and target name/n" +
-            "Usage: java BuildTestDatabase [--only-schema] [--include-audit-schema] <source URL> <username> <password> <target name> [<organism ID>]");            
-        }
+        int argBase = onlySchema ? 1 : 0;        
 
         String sourceUrl = args[argBase + 0];
         String sourceUsername = args[argBase + 1];
@@ -67,12 +54,8 @@ public class BuildTestDatabase {
         String targetDatabaseName = args[argBase + 3];
 
         int organismId = -1;
-        if (!onlySchema) {
-            if (!includeAuditSchema && args.length > 4){
-                organismId = Integer.parseInt(args[4]);
-            }else if(includeAuditSchema && args.length>5){
-                organismId = Integer.parseInt(args[5]);                
-            }
+        if (!onlySchema && args.length > 4) {
+            organismId = Integer.parseInt(args[4]);
         }
 
         URL url = BuildTestDatabase.class.getResource("/log4j.test.properties");
@@ -90,10 +73,11 @@ public class BuildTestDatabase {
 
         BuildTestDatabase buildTestDatabase = new BuildTestDatabase(source, target, organismId);
         buildTestDatabase.copySchema(true); //!onlySchema);
-        if(includeAuditSchema){
-            buildTestDatabase.createSchema("audit");
-            buildTestDatabase.copySchema("audit", true);
-        }
+        
+        //Build the Audit schema
+        buildTestDatabase.createSchema("audit");
+        buildTestDatabase.copySchema("audit", true);
+        
         if (!onlySchema) {
             buildTestDatabase.copyPublicSchemaData();
         }
