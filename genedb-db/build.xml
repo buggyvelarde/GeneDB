@@ -29,6 +29,18 @@
         <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
     </path>
 
+    <path id="unit-tests-classpath">
+    	<pathelement location="${imported.basedir.db}/${test-classes.dir}"/>
+        <pathelement location="${imported.basedir.db}/${classes.dir}"/>
+        <path refid="db-classpath"/>
+        <pathelement location="${imported.basedir.db}/${classes.dir}"/>
+        <pathelement location="${imported.basedir.db}/test"/>
+        <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar"/>
+    	 <fileset dir="${imported.basedir.db}/../genedb-domain/lib">
+    	     <include name="*.jar"/>
+    	 </fileset>
+    </path>
+
 
     <!-- Targets -->
 
@@ -267,4 +279,34 @@
     <clean-target project="db" />
   </target>
 
+
+    <target name="test-changetracker" depends="compile-db" description="Run tests" >
+       <copy file="${imported.basedir.db}/ant-build/test/log4j.changeTracker.test.properties" todir="${imported.basedir.db}/ant-build/test-classes"/>
+    	<antcall target="build-time-weave">
+    		   <param name="directory" value="${imported.basedir.db}/ant-build/classes"/>
+    	</antcall>
+    	<javac srcdir="${imported.basedir.db}/test" 
+    		includes="**/HibernateChangeTrackerTest.java" 
+    		debug="true"
+            destdir="${imported.basedir.db}/${test-classes.dir}"
+            classpathref="unit-tests-classpath" />
+    	<antcall target="build-time-weave">
+    	    <param name="directory" value="${imported.basedir.db}/ant-build/test-classes"/>
+    	</antcall>
+    	<junit printsummary="on"
+    		   fork="true"
+    	       maxmemory="1024m"
+    	       haltonfailure="false"
+    	       failureproperty="tests.failed"
+    	       showoutput="true">
+    	       <classpath refid="unit-tests-classpath"/>
+    		          <formatter type="brief" usefile="false"/>
+    	              <test name="org.genedb.db.audit.HibernateChangeTrackerTest"/>
+    	           </junit>
+
+           <fail if="tests.failed">
+               tests.failed=${tests.failed}
+            HibernateChangeTrackerTest failed
+           </fail>
+       </target>
 </project>

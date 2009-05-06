@@ -63,7 +63,7 @@
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.annotations-sources-3.3.0.ga.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.ejb-3.3.1.ga.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.ejb-sources-3.3.1.ga.jar"/>
-	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate-3.2.6.ga.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate-3.2.6.ga.jar" sourcepath="lib/com.springsource.org.hibernate-sources-3.2.6.ga.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate-sources-3.2.6.ga.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.jboss.util-2.0.4.GA.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.jboss.util-sources-2.0.4.GA.jar"/>
@@ -108,5 +108,8 @@
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.search-sources-3.0.1.GA.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.aspects-3.0.0.M1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.aspects-sources-3.0.0.M1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.validator-3.0.0.GA.jar"/>
+	<classpathentry kind="lib" path="/genedb-domain/lib/org.springframework.test-3.0.0.M1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

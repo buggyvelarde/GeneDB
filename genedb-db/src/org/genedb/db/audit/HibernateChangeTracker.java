@@ -4,6 +4,7 @@ import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.cfg.ChadoSessionFactoryBean;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -38,13 +39,14 @@ public class HibernateChangeTracker implements ChangeTracker {
         ).setString("key", key)
         .uniqueResult();
         int checkpointAuditId = checkpointAuditIdInteger == null ? 0 : checkpointAuditIdInteger.intValue();
+        logger.debug("CheckPointAuditId: " + checkpointAuditId);
 
         Configuration configuration = sessionFactoryBean.getConfiguration();
         if (!(configuration instanceof ChadoAnnotationConfiguration)) {
             throw new RuntimeException();
         }
 
-        currentAuditId = ((BigInteger) session.createSQLQuery(
+        currentAuditId = ((Integer) session.createSQLQuery(
             Dialect.getDialect(configuration.getProperties()).getSequenceNextValString("audit.audit_seq")
         ).uniqueResult()).intValue();
 
@@ -74,10 +76,16 @@ public class HibernateChangeTracker implements ChangeTracker {
             " from audit.feature" +
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
-        ).setInteger("checkpoint", checkpointAuditId)
+        ).addScalar("audit_id", Hibernate.INTEGER)
+        .addScalar("feature_id", Hibernate.INTEGER)
+        .addScalar("type", Hibernate.STRING)
+        .addScalar("uniquename", Hibernate.STRING)
+        .addScalar("type_id", Hibernate.INTEGER)
+        .setInteger("checkpoint", checkpointAuditId)
         .setInteger("currentAuditId", currentAuditId)
         .list();
 
+        logger.trace("Feature Audit Records List size: " + list.size());
         for (Object o: list) {
             Object[] a = (Object[]) o;
 
@@ -106,13 +114,13 @@ public class HibernateChangeTracker implements ChangeTracker {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
         List<?> list = session.createSQLQuery(
-            "select audit.feature_relationship.audit_id" +
-            "     , audit.feature_relationship.type" +
-            "     , audit.feature_relationship.feature_relationship_id" +
-            "     , audit.feature_relationship.object_id" +
-            "     , public.feature.type_id" +
+            "select feature_relationship.audit_id" +
+            "     , feature_relationship.type" +
+            "     , feature_relationship.feature_relationship_id" +
+            "     , feature_relationship.object_id" +
+            "     , feature.type_id" +
             " from audit.feature_relationship" +
-            " join public.feature on public.feature.feature_id = audit.feature_relationship.object_id" +
+            " join public.feature on feature.feature_id = feature_relationship.object_id" +
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
         ).setInteger("checkpoint", checkpointAuditId)
@@ -144,13 +152,13 @@ public class HibernateChangeTracker implements ChangeTracker {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
         List<?> list = session.createSQLQuery(
-            "select audit.featureloc.audit_id" +
-            "     , audit.featureloc.type" +
-            "     , audit.featureloc.featureloc_id" +
-            "     , audit.featureloc.srcfeature_id" +
-            "     , public.feature.type_id" +
+            "select featureloc.audit_id" +
+            "     , featureloc.type" +
+            "     , featureloc.featureloc_id" +
+            "     , featureloc.srcfeature_id" +
+            "     , feature.type_id" +
             " from audit.featureloc" +
-            " join public.feature on public.feature.feature_id = audit.featureloc.srcfeature_id" +
+            " join public.feature on feature.feature_id = featureloc.srcfeature_id" +
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
         ).setInteger("checkpoint", checkpointAuditId)
@@ -175,5 +183,9 @@ public class HibernateChangeTracker implements ChangeTracker {
             }
         }
     }
+    
 
+    public int getCurrentAuditId() {
+        return currentAuditId;
+    }
 }
