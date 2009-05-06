@@ -18,9 +18,9 @@ public class HibernateChangeSet implements ChangeSet {
 
     private Session session;
     private String key;
-    private int ceilingAuditId;
+    private long ceilingAuditId;
 
-    public HibernateChangeSet(Session session, String key, int ceilingAuditId) {
+    public HibernateChangeSet(Session session, String key, long ceilingAuditId) {
         this.session = session;
         this.ceilingAuditId = ceilingAuditId;
         this.key = key;
@@ -95,7 +95,7 @@ public class HibernateChangeSet implements ChangeSet {
     public void commit() throws SQLException {
         int n = session.createSQLQuery(
             "update audit.checkpoint set audit_id = :ceiling where key = :key"
-        ).setInteger("ceiling", ceilingAuditId)
+        ).setLong("ceiling", ceilingAuditId)
         .setString("key", key)
         .executeUpdate();
 
@@ -103,7 +103,7 @@ public class HibernateChangeSet implements ChangeSet {
             logger.info(String.format("No existing audit.checkpoint record for key '%s'", key));
             session.createSQLQuery(
                 "insert into audit.checkpoint (key, audit_id) values (:key, :ceiling)"
-            ).setInteger("ceiling", ceilingAuditId)
+            ).setLong("ceiling", ceilingAuditId)
             .setString("key", key)
             .executeUpdate();
         }

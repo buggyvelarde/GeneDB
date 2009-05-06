@@ -27,7 +27,7 @@ public class HibernateChangeTracker implements ChangeTracker {
     @Resource(name="&sessionFactory")
     private ChadoSessionFactoryBean sessionFactoryBean;
 
-    private int currentAuditId;
+    private long currentAuditId;
 
     @Override
     @Transactional
@@ -39,16 +39,16 @@ public class HibernateChangeTracker implements ChangeTracker {
         ).setString("key", key)
         .uniqueResult();
         int checkpointAuditId = checkpointAuditIdInteger == null ? 0 : checkpointAuditIdInteger.intValue();
-        logger.debug("CheckPointAuditId: " + checkpointAuditId);
+        logger.debug("CheckPointAuditId: '" + checkpointAuditId + "'");
 
         Configuration configuration = sessionFactoryBean.getConfiguration();
         if (!(configuration instanceof ChadoAnnotationConfiguration)) {
             throw new RuntimeException();
         }
 
-        currentAuditId = ((Integer) session.createSQLQuery(
+        currentAuditId = ((BigInteger) session.createSQLQuery(
             Dialect.getDialect(configuration.getProperties()).getSequenceNextValString("audit.audit_seq")
-        ).uniqueResult()).intValue();
+        ).uniqueResult()).longValue();
 
         HibernateChangeSet changeSet = new HibernateChangeSet(session, key, currentAuditId);
         changeSet.setChadoAnnotationConfiguration((ChadoAnnotationConfiguration) configuration);
@@ -82,7 +82,7 @@ public class HibernateChangeTracker implements ChangeTracker {
         .addScalar("uniquename", Hibernate.STRING)
         .addScalar("type_id", Hibernate.INTEGER)
         .setInteger("checkpoint", checkpointAuditId)
-        .setInteger("currentAuditId", currentAuditId)
+        .setLong("currentAuditId", currentAuditId)
         .list();
 
         logger.trace("Feature Audit Records List size: " + list.size());
@@ -124,7 +124,7 @@ public class HibernateChangeTracker implements ChangeTracker {
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
         ).setInteger("checkpoint", checkpointAuditId)
-        .setInteger("currentAuditId", currentAuditId)
+        .setLong("currentAuditId", currentAuditId)
         .list();
 
         for (Object o: list) {
@@ -162,7 +162,7 @@ public class HibernateChangeTracker implements ChangeTracker {
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
         ).setInteger("checkpoint", checkpointAuditId)
-        .setInteger("currentAuditId", currentAuditId)
+        .setLong("currentAuditId", currentAuditId)
         .list();
 
         for (Object o: list) {
@@ -183,9 +183,9 @@ public class HibernateChangeTracker implements ChangeTracker {
             }
         }
     }
-    
 
-    public int getCurrentAuditId() {
+
+    public long getCurrentAuditId() {
         return currentAuditId;
     }
 }
