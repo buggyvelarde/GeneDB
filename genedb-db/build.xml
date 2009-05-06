@@ -230,20 +230,6 @@
             <arg value="27"/>
         </java>
     </target>
-	
-    <target name="make-pfalciparum-with-audit-database" depends="prompt-for-password,fulljar-util,make-test-jar">
-        <java fork="true" dir="${imported.basedir.db}" output="make-pfalciparum-database.log"
-                maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
-            <classpath refid="build-test-database-classpath"/>
-            <jvmarg line="-server" />
-            <arg value="--include-audit-schema"/>
-            <arg value="${source.url}"/>
-            <arg value="${source.username}"/>
-            <arg value="${source.password}"/>
-            <arg value="pfalciparum"/>
-            <arg value="27"/>
-        </java>
-    </target>
 
 
     <target name="delete-databases">
