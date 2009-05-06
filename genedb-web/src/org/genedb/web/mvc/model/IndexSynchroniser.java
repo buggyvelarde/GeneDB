@@ -1,18 +1,7 @@
 package org.genedb.web.mvc.model;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.TermQuery;
 import org.genedb.db.audit.ChangeSet;
+
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.MRNA;
@@ -25,6 +14,15 @@ import org.gmod.schema.feature.SnRNA;
 import org.gmod.schema.feature.TRNA;
 import org.gmod.schema.feature.Transcript;
 import org.gmod.schema.mapped.Feature;
+
+import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TermQuery;
 import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -38,13 +36,17 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.common.collect.Sets;
 
 @Repository
 @Transactional
 public class IndexSynchroniser implements IndexUpdater{
     private static final Logger logger = Logger.getLogger(IndexSynchroniser.class);
-    
+
     private static final int BATCH_SIZE = 1000;//must match BATCH_SIZE in config
 
     private SessionFactory sessionFactory;
@@ -52,24 +54,24 @@ public class IndexSynchroniser implements IndexUpdater{
     @Transactional
     public boolean updateAllCaches(ChangeSet changeSet) {
         logger.debug("Starting updateAllCaches");
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);    
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
         FullTextSession fullTextSession = Search.createFullTextSession(session);
 
         //Delete deleted features
         Set failedDeletes = deleteFeatures(fullTextSession, changeSet);
-        
+
         //prevent unncecesary flush
         fullTextSession.setFlushMode(FlushMode.MANUAL);
-        
+
         //disable 2nd-level cache ops
         fullTextSession.setCacheMode(CacheMode.IGNORE);
-        
+
         //Index altered features
         indexFeatures(fullTextSession, changeSet);
-        
+
         return true;
     }
-    
+
     /**
      * Index features in batches
      * @param session
@@ -77,7 +79,7 @@ public class IndexSynchroniser implements IndexUpdater{
      */
     private void indexFeatures(FullTextSession session, ChangeSet changeSet){
         logger.debug("Starting indexFeatures");
-        
+
         Set<Integer> alteredIds = Sets.newHashSet();
         alteredIds.addAll(changeSet.newFeatureIds(Gene.class));
         alteredIds.addAll(changeSet.changedFeatureIds(Gene.class));
@@ -91,7 +93,7 @@ public class IndexSynchroniser implements IndexUpdater{
         Set<Integer> failedIds = Sets.newHashSet();
         Set<Integer> batchIds = Sets.newHashSet();
         Set<Integer> unflushedIds = Sets.newHashSet();
-        
+
         int index = 0;
         //First attempt to index
         for (Integer featureId : alteredIds) {
@@ -99,8 +101,8 @@ public class IndexSynchroniser implements IndexUpdater{
             try{
                 logger.debug("featureID " + featureId + " being loaded");
                 batchIds.add(featureId);
-                Feature feature = (Feature)session.load(Feature.class, featureId);            
-                session.index(feature);            
+                Feature feature = (Feature)session.get(Feature.class, featureId);
+                session.index(feature);
                 logger.debug("--featureID: " + featureId + " indexed...");
             }catch(Exception e){
                 logger.error(String.format("Error found in first attempt with feature ID: %s", featureId), e);
@@ -109,31 +111,31 @@ public class IndexSynchroniser implements IndexUpdater{
                 unflushedIds.addAll(batchIds);
                 session.clear();
             }
-            
-            if (index % BATCH_SIZE == 0){
-                batchIds.clear();
-                session.clear();
-            }
-        } 
-        
-        //Second attempt to index non-defective features
-        index=0;
-        for(Integer featureId : unflushedIds){
-            if(!failedIds.contains(featureId)){
-                index++;
-                Feature feature = (Feature)session.load(Feature.class, featureId);            
-                session.index(feature);            
-            }
-            
+
             if (index % BATCH_SIZE == 0){
                 batchIds.clear();
                 session.clear();
             }
         }
-        
+
+        //Second attempt to index non-defective features
+        index=0;
+        for(Integer featureId : unflushedIds){
+            if(!failedIds.contains(featureId)){
+                index++;
+                Feature feature = (Feature)session.get(Feature.class, featureId);
+                session.index(feature);
+            }
+
+            if (index % BATCH_SIZE == 0){
+                batchIds.clear();
+                session.clear();
+            }
+        }
+
         logger.debug("Exiting indexFeatures");
     }
-    
+
     /**
      * Delete Features
      * @param session
@@ -141,15 +143,15 @@ public class IndexSynchroniser implements IndexUpdater{
      * @return
      */
     private Set<Integer> deleteFeatures(FullTextSession session, ChangeSet changeSet){
-        logger.debug("Starting deleteFeatures");        
+        logger.debug("Starting deleteFeatures");
         Set<Integer> failedDeletes = new HashSet<Integer>();
-        
+
         Set<Integer> deletedIds = Sets.newHashSet();
         deletedIds.addAll(changeSet.deletedFeatureIds(Gene.class));
         deletedIds.addAll(changeSet.deletedFeatureIds(Transcript.class));
         deletedIds.addAll(changeSet.deletedFeatureIds(Polypeptide.class));
         deletedIds.addAll(changeSet.deletedFeatureIds(Gap.class));
-        
+
         IndexSearcher indexSearcher = createIndexSearcher(session);
         try{
             for(Integer featureId : deletedIds){
@@ -174,7 +176,7 @@ public class IndexSynchroniser implements IndexUpdater{
         }
         return failedDeletes;
     }
-    
+
     /**
      * Delete a feature
      * @param session
@@ -182,13 +184,13 @@ public class IndexSynchroniser implements IndexUpdater{
      * @param featureId
      * @throws Exception
      */
-    private void deleteFeature(FullTextSession session, IndexSearcher indexSearcher, Integer featureId)throws Exception{       
-        logger.debug(String.format("Starting deleteFeature(session, indexSearcher, %s)", featureId)); 
+    private void deleteFeature(FullTextSession session, IndexSearcher indexSearcher, Integer featureId)throws Exception{
+        logger.debug(String.format("Starting deleteFeature(session, indexSearcher, %s)", featureId));
         Class<? extends Feature> entityType = findFeatureSubclass(indexSearcher, featureId);
         session.purge(entityType, featureId);
         logger.debug(String.format("Deleted ID %s of entity type %s", featureId, entityType.getName()));
     }
-    
+
     /**
      * Create the IndexSearcher
      * @param session
@@ -205,9 +207,9 @@ public class IndexSynchroniser implements IndexUpdater{
         logger.debug("Ending createIndexSearcher");
         return indexSearcher;
     }
-    
+
     /**
-     * 
+     *
      * @param indexSearcher
      * @param featureId
      * @return
@@ -223,14 +225,14 @@ public class IndexSynchroniser implements IndexUpdater{
         logger.debug(String.format("Class name: %s for ID %s", className, featureId));
         return (Class<? extends Feature>) Class.forName(className);
     }
-    
+
     /*
      * This is useful for JUnit testing
      */
     @Transactional
     public void purgeAll(){
         logger.debug("Starting purgeAll");
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);    
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
         FullTextSession fullTextSession = Search.createFullTextSession(session);
         fullTextSession.purgeAll(Gap.class);
         fullTextSession.purgeAll(Gene.class);
@@ -245,20 +247,20 @@ public class IndexSynchroniser implements IndexUpdater{
         fullTextSession.purgeAll(PseudogenicTranscript.class);
         fullTextSession.getSearchFactory().optimize();
         logger.debug("Ended purgeAll");
-    }    
+    }
 
-    
+
     /*
      * This is useful for JUnit testing
      */
     @Transactional
     public void indexSingle(Integer featureId){
         logger.debug("Starting indexSingle");
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);    
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
         FullTextSession fullTextSession = Search.createFullTextSession(session);
-        Feature feature = (Feature)fullTextSession.load(Feature.class, featureId);
+        Feature feature = (Feature)fullTextSession.get(Feature.class, featureId);
         fullTextSession.index(feature);
-        logger.debug("Ended indexSingle");        
+        logger.debug("Ended indexSingle");
     }
 
     public SessionFactory getSessionFactory() {
