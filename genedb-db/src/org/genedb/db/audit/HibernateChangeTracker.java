@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -71,7 +72,7 @@ public class HibernateChangeTracker implements ChangeTracker {
 
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
-        List<?> list = session.createSQLQuery(
+        Iterator<?> it = session.createSQLQuery(
             "select audit_id, feature_id, type, uniquename, type_id" +
             " from audit.feature" +
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
@@ -83,11 +84,10 @@ public class HibernateChangeTracker implements ChangeTracker {
         .addScalar("type_id", Hibernate.INTEGER)
         .setInteger("checkpoint", checkpointAuditId)
         .setLong("currentAuditId", currentAuditId)
-        .list();
+        .iterate();
 
-        logger.trace("Feature Audit Records List size: " + list.size());
-        for (Object o: list) {
-            Object[] a = (Object[]) o;
+        while (it.hasNext()) {
+            Object[] a = (Object[]) it.next();
 
             int    auditId    = (Integer) a[0];
             int    featureId  = (Integer) a[1];
