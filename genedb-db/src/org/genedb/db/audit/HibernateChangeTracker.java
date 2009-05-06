@@ -96,7 +96,8 @@ public class HibernateChangeTracker implements ChangeTracker {
 
         ScrollableResults sr = sqlQuery.scroll(ScrollMode.FORWARD_ONLY);
 
-        boolean more = sr.first();
+        //boolean more = sr.first();
+        boolean more = true;
         while (more) {
 
             int    auditId    = sr.getInteger(0);
