@@ -26,8 +26,8 @@
         <property name="changeTracker" ref="changeTracker" />
         <property name="clientName" value="NightlyUpdateProcess" />
     </bean>
-    
-    
+
+
     <bean name="indexSynchroniser" class="org.genedb.web.mvc.model.IndexSynchroniser">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
@@ -50,7 +50,7 @@
             </list>
         </property>
     </bean>
-    
+
 
     <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
@@ -90,7 +90,7 @@
     <bean id="renderedDiagramFactory" class="org.genedb.web.gui.RenderedDiagramFactory">
         <property name="labelFont">
             <bean class="org.genedb.util.FontFactoryBean">
-                <property name="source" value="file://${diagram.fontFile}" />
+                <property name="source" value="{diagram.fontFile}" />
                 <property name="style" value="1" />
                 <property name="size" value="12" />
             </bean>
