@@ -124,7 +124,7 @@ public class HibernateChangeTracker implements ChangeTracker {
 
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
-        List<?> list = session.createSQLQuery(
+        SQLQuery sqlQuery = (SQLQuery) session.createSQLQuery(
             "select feature_relationship.audit_id" +
             "     , feature_relationship.type" +
             "     , feature_relationship.feature_relationship_id" +
@@ -135,17 +135,24 @@ public class HibernateChangeTracker implements ChangeTracker {
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
         ).setInteger("checkpoint", checkpointAuditId)
-        .setLong("currentAuditId", currentAuditId)
-        .list();
+        .setLong("currentAuditId", currentAuditId);
 
-        for (Object o: list) {
-            Object[] a = (Object[]) o;
+        sqlQuery.setReadOnly(true);
+        sqlQuery.setCacheMode(CacheMode.IGNORE);
+        sqlQuery.setCacheable(false);
+        sqlQuery.setFetchSize(1000);
 
-            int    auditId            = (Integer) a[0];
-            String type               = (String)  a[1];
-            int featureRelationshipId = (Integer) a[2];
-            int    featureId          = (Integer) a[3];
-            int    typeId             = (Integer) a[4];
+
+        ScrollableResults sr = sqlQuery.scroll(ScrollMode.FORWARD_ONLY);
+
+        boolean more = sr.next();
+        while (more) {
+
+            int    auditId    = sr.getInteger(0);
+            int    featureId  = sr.getInteger(3);
+            String type       = sr.getString(1);
+            int featureRelationshipId = sr.getInteger(2);
+            int    typeId     = sr.getInteger(4);
 
             logger.trace(String.format("[%d] %s of feature_relationship ID=%d, " +
                     "counts as update of object feature ID=%d (type ID=%d)",
@@ -154,6 +161,7 @@ public class HibernateChangeTracker implements ChangeTracker {
             if (type.equals("INSERT") || type.equals("DELETE")) {
                 changeSet.updatedFeature(auditId, featureId, typeId);
             }
+            more = sr.next();
         }
     }
 
@@ -162,7 +170,7 @@ public class HibernateChangeTracker implements ChangeTracker {
 
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
-        List<?> list = session.createSQLQuery(
+        SQLQuery sqlQuery = (SQLQuery) session.createSQLQuery(
             "select featureloc.audit_id" +
             "     , featureloc.type" +
             "     , featureloc.featureloc_id" +
@@ -173,17 +181,24 @@ public class HibernateChangeTracker implements ChangeTracker {
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
         ).setInteger("checkpoint", checkpointAuditId)
-        .setLong("currentAuditId", currentAuditId)
-        .list();
+        .setLong("currentAuditId", currentAuditId);
 
-        for (Object o: list) {
-            Object[] a = (Object[]) o;
+        sqlQuery.setReadOnly(true);
+        sqlQuery.setCacheMode(CacheMode.IGNORE);
+        sqlQuery.setCacheable(false);
+        sqlQuery.setFetchSize(1000);
 
-            int    auditId      = (Integer) a[0];
-            String type         = (String)  a[1];
-            int    featureLocId = (Integer) a[2];
-            int    featureId    = (Integer) a[3];
-            int    typeId       = (Integer) a[4];
+
+        ScrollableResults sr = sqlQuery.scroll(ScrollMode.FORWARD_ONLY);
+
+        boolean more = sr.next();
+        while (more) {
+
+            int    auditId      = sr.getInteger(0);
+            String type         = sr.getString(1);
+            int    featureLocId = sr.getInteger(2);
+            int    featureId    = sr.getInteger(3);
+            int    typeId       = sr.getInteger(4);
 
             logger.trace(String.format("[%d] %s of featureloc ID=%d, " +
                     "counts as update of source feature ID=%d (type ID=%d)",
@@ -192,6 +207,7 @@ public class HibernateChangeTracker implements ChangeTracker {
             if (type.equals("INSERT") || type.equals("DELETE")) {
                 changeSet.updatedFeature(auditId, featureId, typeId);
             }
+            more = sr.next();
         }
     }
 
