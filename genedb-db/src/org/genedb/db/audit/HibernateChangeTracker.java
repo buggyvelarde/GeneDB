@@ -3,6 +3,7 @@ package org.genedb.db.audit;
 import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.cfg.ChadoSessionFactoryBean;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.CacheMode;
 import org.hibernate.Hibernate;
@@ -134,7 +135,12 @@ public class HibernateChangeTracker implements ChangeTracker {
             " join public.feature on feature.feature_id = feature_relationship.object_id" +
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
-        ).setInteger("checkpoint", checkpointAuditId)
+        ).addScalar("audit_id", Hibernate.INTEGER)
+        .addScalar("type", Hibernate.STRING)
+        .addScalar("feature_relationship_id", Hibernate.INTEGER)
+        .addScalar("object_id", Hibernate.INTEGER)
+        .addScalar("type_id", Hibernate.INTEGER)
+        .setInteger("checkpoint", checkpointAuditId)
         .setLong("currentAuditId", currentAuditId);
 
         sqlQuery.setReadOnly(true);
@@ -147,12 +153,11 @@ public class HibernateChangeTracker implements ChangeTracker {
 
         boolean more = sr.next();
         while (more) {
-
-            int    auditId    = sr.getInteger(0);
-            int    featureId  = sr.getInteger(3);
-            String type       = sr.getString(1);
+            int auditId    = sr.getInteger(0);
+            String type  = sr.getString(1);
             int featureRelationshipId = sr.getInteger(2);
-            int    typeId     = sr.getInteger(4);
+            int featureId  = sr.getInteger(3);
+            int typeId     = sr.getInteger(4);
 
             logger.trace(String.format("[%d] %s of feature_relationship ID=%d, " +
                     "counts as update of object feature ID=%d (type ID=%d)",
@@ -180,7 +185,12 @@ public class HibernateChangeTracker implements ChangeTracker {
             " join public.feature on feature.feature_id = featureloc.srcfeature_id" +
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
             " order by audit_id"
-        ).setInteger("checkpoint", checkpointAuditId)
+        ).addScalar("audit_id", Hibernate.INTEGER)
+        .addScalar("type", Hibernate.STRING)
+        .addScalar("featureloc_id", Hibernate.INTEGER)
+        .addScalar("srcfeature_id", Hibernate.INTEGER)
+        .addScalar("type_id", Hibernate.INTEGER)
+        .setInteger("checkpoint", checkpointAuditId)
         .setLong("currentAuditId", currentAuditId);
 
         sqlQuery.setReadOnly(true);
