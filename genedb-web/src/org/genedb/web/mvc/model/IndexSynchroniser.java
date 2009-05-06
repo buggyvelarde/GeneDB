@@ -47,7 +47,7 @@ import com.google.common.collect.Sets;
 public class IndexSynchroniser implements IndexUpdater{
     private static final Logger logger = Logger.getLogger(IndexSynchroniser.class);
 
-    private static final int BATCH_SIZE = 1000;//must match BATCH_SIZE in config
+    private static final int BATCH_SIZE = 10;//must match BATCH_SIZE in config
 
     private SessionFactory sessionFactory;
 
