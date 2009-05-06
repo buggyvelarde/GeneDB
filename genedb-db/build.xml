@@ -130,10 +130,11 @@
 
     <target name="run-tests" depends="make-test-jar,make-pfalciparum-database-if-necessary">
       <junit printsummary="yes" haltonfailure="yes" fork="true">
-        <jvmarg value="-Xmx256m"/>
+        <jvmarg value="-Xmx512m"/>
         <jvmarg value="-classic"/>
         <classpath>
             <path refid="db-classpath"/>
+        	<path refid="unit-tests-classpath"/>
             <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar"/>
             <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-springless.jar"/>
             <pathelement location="${imported.basedir.db}/../genedb-libs/lib/biojava/biojava-1.6.jar"/>
