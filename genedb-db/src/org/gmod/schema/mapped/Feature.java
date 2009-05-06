@@ -65,6 +65,30 @@ import javax.persistence.Transient;
 
 @Configurable
 @Entity
+/*
+ * We have wondered whether to add the annotation
+ *
+ *   @Proxy(lazy=false)
+ *
+ * here. This would prevent proxy objects being created for Feature
+ * entities - though not for subclasses. For example, if we had that
+ * annotation then session.load(Feature.class, featureId) would return
+ * a proper Feature object of the appropriate class, rather than a
+ * proxy subclass of Feature. This would allow instanceof checks to
+ * work as expected.
+ *
+ * The danger is that we might be implicitly relying on proxy creation
+ * without realising it, and that this change might cause unanticipated
+ * problems. Instead we have made a couple of other changes that will
+ * alleviate problems in practice: using session.get rather than session.load
+ * in genedb-web's IndexSynchroniser; and adding explicit checks for
+ * proxies to the getSubjectFeature and getObjectFeature methods of
+ * FeatureRelationship.
+ *
+ * This decision should be kept under review.
+ *
+ * -rh11, 2009-05-06
+ */
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type_id")
 @Table(name = "feature")

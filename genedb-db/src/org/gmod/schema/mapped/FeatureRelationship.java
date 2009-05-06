@@ -6,6 +6,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 import org.gmod.schema.utils.propinterface.PropertyI;
 
 import org.hibernate.annotations.Filter;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -108,7 +109,23 @@ public class FeatureRelationship implements Serializable,PropertyI {
         return this.featureRelationshipId;
     }
 
+    /*
+     * The getSubjectFeature and getObjectFeature methods contain explicit
+     * checks for Hibernate proxies, because it is very common that the caller
+     * needs to check the type of such a feature and downcast, which will not
+     * work with a proxy.
+     *
+     * Under most circumstances we will not have proxies here in any case,
+     * because the subject and object features are declared to be eagerly
+     * loaded. It can still happen though, if there is already a proxy for
+     * the feature present in the Hibernate session.
+     */
+
     public Feature getSubjectFeature() {
+        if (subjectFeature instanceof HibernateProxy) {
+            HibernateProxy proxyObject = (HibernateProxy) subjectFeature;
+            return (Feature) proxyObject.getHibernateLazyInitializer().getImplementation();
+        }
         return this.subjectFeature;
     }
 
@@ -117,6 +134,10 @@ public class FeatureRelationship implements Serializable,PropertyI {
     }
 
     public Feature getObjectFeature() {
+        if (objectFeature instanceof HibernateProxy) {
+            HibernateProxy proxyObject = (HibernateProxy) objectFeature;
+            return (Feature) proxyObject.getHibernateLazyInitializer().getImplementation();
+        }
         return this.objectFeature;
     }
 
@@ -164,5 +185,4 @@ public class FeatureRelationship implements Serializable,PropertyI {
         this.featureRelationshipPubs.add(new FeatureRelationshipPub(this, pub));
     }
 }
-
 
