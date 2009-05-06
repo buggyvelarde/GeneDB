@@ -5,6 +5,7 @@ import org.gmod.schema.cfg.ChadoSessionFactoryBean;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -72,7 +73,7 @@ public class HibernateChangeTracker implements ChangeTracker {
 
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
-        Iterator<?> it = session.createSQLQuery(
+        ScrollableResults sr = session.createSQLQuery(
             "select audit_id, feature_id, type, uniquename, type_id" +
             " from audit.feature" +
             " where audit_id > :checkpoint and audit_id < :currentAuditId" +
@@ -84,16 +85,16 @@ public class HibernateChangeTracker implements ChangeTracker {
         .addScalar("type_id", Hibernate.INTEGER)
         .setInteger("checkpoint", checkpointAuditId)
         .setLong("currentAuditId", currentAuditId)
-        .iterate();
+        .scroll();
 
-        while (it.hasNext()) {
-            Object[] a = (Object[]) it.next();
+        boolean done = sr.first();
+        while (!done) {
 
-            int    auditId    = (Integer) a[0];
-            int    featureId  = (Integer) a[1];
-            String type       = (String)  a[2];
-            String uniqueName = (String)  a[3];
-            int    typeId     = (Integer) a[4];
+            int    auditId    = sr.getInteger(0);
+            int    featureId  = sr.getInteger(1);
+            String type       = sr.getString(2);
+            String uniqueName = sr.getString(3);
+            int    typeId     = sr.getInteger(4);
 
             logger.trace(String.format("[%d] %s of feature '%s' (ID=%d)",
                 auditId, type, uniqueName, featureId));
@@ -105,6 +106,7 @@ public class HibernateChangeTracker implements ChangeTracker {
             } else if (type.equals("DELETE")) {
                 changeSet.deletedFeature(auditId, featureId, typeId);
             }
+            done = sr.next();
         }
     }
 
