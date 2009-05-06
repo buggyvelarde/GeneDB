@@ -4,7 +4,10 @@ import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.cfg.ChadoSessionFactoryBean;
 
 import org.apache.log4j.Logger;
+import org.hibernate.CacheMode;
 import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -73,22 +76,28 @@ public class HibernateChangeTracker implements ChangeTracker {
 
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
-        ScrollableResults sr = session.createSQLQuery(
-            "select audit_id, feature_id, type, uniquename, type_id" +
-            " from audit.feature" +
-            " where audit_id > :checkpoint and audit_id < :currentAuditId" +
-            " order by audit_id"
-        ).addScalar("audit_id", Hibernate.INTEGER)
-        .addScalar("feature_id", Hibernate.INTEGER)
-        .addScalar("type", Hibernate.STRING)
-        .addScalar("uniquename", Hibernate.STRING)
-        .addScalar("type_id", Hibernate.INTEGER)
-        .setInteger("checkpoint", checkpointAuditId)
-        .setLong("currentAuditId", currentAuditId)
-        .scroll();
+        SQLQuery sqlQuery = (SQLQuery) session.createSQLQuery(
+                "select audit_id, feature_id, type, uniquename, type_id" +
+                " from audit.feature" +
+                " where audit_id > :checkpoint and audit_id < :currentAuditId" +
+                " order by audit_id"
+            ).addScalar("audit_id", Hibernate.INTEGER)
+            .addScalar("feature_id", Hibernate.INTEGER)
+            .addScalar("type", Hibernate.STRING)
+            .addScalar("uniquename", Hibernate.STRING)
+            .addScalar("type_id", Hibernate.INTEGER)
+            .setInteger("checkpoint", checkpointAuditId)
+            .setLong("currentAuditId", currentAuditId);
+        sqlQuery.setReadOnly(true);
+        sqlQuery.setCacheMode(CacheMode.IGNORE);
+        sqlQuery.setCacheable(false);
+        sqlQuery.setFetchSize(1000);
 
-        boolean done = sr.first();
-        while (!done) {
+
+        ScrollableResults sr = sqlQuery.scroll(ScrollMode.FORWARD_ONLY);
+
+        boolean more = sr.first();
+        while (more) {
 
             int    auditId    = sr.getInteger(0);
             int    featureId  = sr.getInteger(1);
@@ -106,7 +115,7 @@ public class HibernateChangeTracker implements ChangeTracker {
             } else if (type.equals("DELETE")) {
                 changeSet.deletedFeature(auditId, featureId, typeId);
             }
-            done = sr.next();
+            more = sr.next();
         }
     }
 
