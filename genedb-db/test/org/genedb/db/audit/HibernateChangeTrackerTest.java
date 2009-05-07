@@ -11,7 +11,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,7 +21,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
 import java.net.URL;
 import java.util.Collection;
 
@@ -32,16 +30,16 @@ import junit.framework.Assert;
  *
  * @author lo2@sangerinstitute
  *
-        // newTopLevelFeature = 1;//Pf3D7_01
-        // changedTopLevelFeature = 886;//Pf3D7_02
-        // deletedTopLevelFeature = 9493;//Pf3D7_03
-        // newPolyPep = 810;//PFA0010c:pep
-        // changedPep = 614;//PFA0005w:pep
-        // newGeneId = 2;//PFA0170c
-        // changedGeneId = 610;//PFA0005w
-        // newTranscriptId = 7;//PFA0315w:mRNA
-        // changedTranscriptId = 14;//PFA0380w:mRNA
-        // deletedTranscriptId = 19;//PFA0440w:mRNA
+ *       // newTopLevelFeature = 1;//Pf3D7_01
+ *       // changedTopLevelFeature = 886;//Pf3D7_02
+ *       // deletedTopLevelFeature = 9493;//Pf3D7_03
+ *       // newPolyPep = 810;//PFA0010c:pep
+ *       // changedPep = 614;//PFA0005w:pep
+ *       // newGeneId = 2;//PFA0170c
+ *       // changedGeneId = 610;//PFA0005w
+ *       // newTranscriptId = 7;//PFA0315w:mRNA
+ *       // changedTranscriptId = 14;//PFA0380w:mRNA
+ *       // deletedTranscriptId = 19;//PFA0440w:mRNA
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -70,8 +68,19 @@ public class HibernateChangeTrackerTest {
 
     @Before
     @Transactional
-    public void populateDB(){
-        logger.debug("Starting populateDB...");
+    public void truncateAuditDB(){
+        logger.debug("Starting trauncateAuditDB...");
+        executeDML("delete from audit.checkpoint");
+        executeDML("delete from audit.feature");
+
+        //shutDownTestDB();
+        logger.debug("Ended truncateAuditDB\n");
+    }
+    
+    @Test
+    @Transactional
+    public void testChangeSetFeatures()throws Exception{
+        logger.debug("Starting testChangeSetFeatures...");
 
         String insertFeatureStm =
             "insert into audit.feature " +
@@ -82,12 +91,6 @@ public class HibernateChangeTrackerTest {
             "   from public.feature f" +
             "   where f.feature_id in (1, 810, 2, 7, 14)";
         executeDML(insertFeatureStm);
-    }
-
-    @Test
-    @Transactional
-    public void testChangeSetFeatures()throws Exception{
-        logger.debug("Starting testChangeSetFeatures...");
 
         //Add Features with Update Types
         String updateFeatureStm =
@@ -147,6 +150,16 @@ public class HibernateChangeTrackerTest {
     public void testChangeSetFilter()throws Exception{
         logger.debug("Starting testChangeSetFilter...");
 
+        String insertFeatureStm =
+            "insert into audit.feature " +
+            " (audit_id, type, username, time, feature_id, uniquename, type_id, organism_id, is_obsolete, " +
+            " is_analysis, timelastmodified)" +
+            "   select next value for audit.audit_seq, 'INSERT', 'theusername', Now(), " +
+            "   f.feature_id, f.uniquename, f.type_id, f.organism_id, f.is_obsolete, f.is_analysis, f.timelastmodified" +
+            "   from public.feature f" +
+            "   where f.feature_id in (1, 810, 2, 7, 14)";
+        executeDML(insertFeatureStm);
+
         //add a Delete Type feature that has already been added as a Insert Type feature
         String deleteFeatureStm =
             "insert into audit.feature " +
@@ -181,6 +194,16 @@ public class HibernateChangeTrackerTest {
     public void testChangeSetCommit() throws Exception{
         logger.debug("Starting testChangeSetCommit...");
 
+        String insertFeatureStm =
+            "insert into audit.feature " +
+            " (audit_id, type, username, time, feature_id, uniquename, type_id, organism_id, is_obsolete, " +
+            " is_analysis, timelastmodified)" +
+            "   select next value for audit.audit_seq, 'INSERT', 'theusername', Now(), " +
+            "   f.feature_id, f.uniquename, f.type_id, f.organism_id, f.is_obsolete, f.is_analysis, f.timelastmodified" +
+            "   from public.feature f" +
+            "   where f.feature_id in (1, 810, 2, 7, 14)";
+        executeDML(insertFeatureStm);
+
         //Execute class under test
         String currentUser = HibernateChangeTrackerTest.class.getName();
         ChangeSet changeSet = changeTracker.changes(currentUser);
@@ -193,7 +216,7 @@ public class HibernateChangeTrackerTest {
         changeSet.commit();
 
         //Get the latest checkpoint of the current user
-        BigInteger finalCheckPoint = (BigInteger)executeSingleResultQuery(
+        Number finalCheckPoint = (Number)executeSingleResultQuery(
                 "select audit_id from audit.checkpoint where key = :key", "key", currentUser);
         logger.debug("Final CheckPoint: " + finalCheckPoint);
 
@@ -201,17 +224,6 @@ public class HibernateChangeTrackerTest {
         Assert.assertEquals(currentSequenceId, finalCheckPoint.longValue());
 
         logger.debug("Ended testChangeSetCommit");
-    }
-
-    @After
-    @Transactional
-    public void truncateAuditDB(){
-        logger.debug("Starting trauncateAuditDB...");
-        executeDML("delete from audit.checkpoint");
-        executeDML("delete from audit.feature");
-
-        //shutDownTestDB();
-        logger.debug("Ended truncateAuditDB");
     }
 
 

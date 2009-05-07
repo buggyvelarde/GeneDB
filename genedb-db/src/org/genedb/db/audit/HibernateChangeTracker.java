@@ -51,10 +51,12 @@ public class HibernateChangeTracker implements ChangeTracker {
         if (!(configuration instanceof ChadoAnnotationConfiguration)) {
             throw new RuntimeException();
         }
-
-        currentAuditId = ((BigInteger) session.createSQLQuery(
+        
+        currentAuditId =  ((Number)session.createSQLQuery(
             Dialect.getDialect(configuration.getProperties()).getSequenceNextValString("audit.audit_seq")
         ).uniqueResult()).longValue();
+        logger.debug("Current Audit ID: " + currentAuditId);
+
 
         HibernateChangeSet changeSet = new HibernateChangeSet(session, key, currentAuditId);
         changeSet.setChadoAnnotationConfiguration((ChadoAnnotationConfiguration) configuration);
