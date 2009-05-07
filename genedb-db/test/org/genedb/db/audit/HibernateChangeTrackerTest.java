@@ -79,6 +79,69 @@ public class HibernateChangeTrackerTest {
     
     @Test
     @Transactional
+    public void testAuditLogAfterRetrievingChangeSet()throws Exception{
+        logger.debug("Starting testAuditLogAfterRetrievingChangeSet...");
+
+        //Execute class under test before inserting records
+        String currentUser = HibernateChangeTrackerTest.class.getName();
+        ChangeSet changeSet = changeTracker.changes(currentUser);
+
+        //Get the new features changeSet and assert no records
+        Collection<Integer> inserts = changeSet.newFeatureIds(TopLevelFeature.class);
+        inserts.addAll(changeSet.newFeatureIds(Transcript.class));
+        inserts.addAll(changeSet.newFeatureIds(Gene.class));
+        inserts.addAll(changeSet.newFeatureIds(Polypeptide.class));
+        Assert.assertFalse(inserts.contains(1));
+        Assert.assertFalse(inserts.contains(810));
+        Assert.assertFalse(inserts.contains(2));
+        Assert.assertFalse(inserts.contains(7));
+        Assert.assertFalse(inserts.contains(14));
+
+        //Insert new audit records after retrieving changeset
+        String insertFeatureStm =
+            "insert into audit.feature " +
+            " (audit_id, type, username, time, feature_id, uniquename, type_id, organism_id, is_obsolete, " +
+            " is_analysis, timelastmodified)" +
+            "   select next value for audit.audit_seq, 'INSERT', 'theusername', Now(), " +
+            "   f.feature_id, f.uniquename, f.type_id, f.organism_id, f.is_obsolete, f.is_analysis, f.timelastmodified" +
+            "   from public.feature f" +
+            "   where f.feature_id in (1, 810, 2, 7, 14)";
+        executeDML(insertFeatureStm);
+
+        //Get the new features changeSet, still, assert no records in current change set
+        inserts = changeSet.newFeatureIds(TopLevelFeature.class);
+        inserts.addAll(changeSet.newFeatureIds(Transcript.class));
+        inserts.addAll(changeSet.newFeatureIds(Gene.class));
+        inserts.addAll(changeSet.newFeatureIds(Polypeptide.class));
+        Assert.assertEquals(0, inserts.size());
+        
+        //Now re-access the change set
+        ChangeSet newChangeSet = changeTracker.changes(currentUser);
+
+        //Get the new features changeSet, now assert the Inserts in the up-to-date changeset
+        inserts = newChangeSet.newFeatureIds(TopLevelFeature.class);
+        inserts.addAll(newChangeSet.newFeatureIds(Transcript.class));
+        inserts.addAll(newChangeSet.newFeatureIds(Gene.class));
+        inserts.addAll(newChangeSet.newFeatureIds(Polypeptide.class));
+        Assert.assertTrue(inserts.contains(1));
+        Assert.assertTrue(inserts.contains(7));
+        Assert.assertTrue(inserts.contains(2));
+        Assert.assertTrue(inserts.contains(14));
+        Assert.assertTrue(inserts.contains(810));
+        Assert.assertEquals(5, inserts.size());
+
+        // The old 
+        inserts = changeSet.newFeatureIds(TopLevelFeature.class);
+        inserts.addAll(changeSet.newFeatureIds(Transcript.class));
+        inserts.addAll(changeSet.newFeatureIds(Gene.class));
+        inserts.addAll(changeSet.newFeatureIds(Polypeptide.class));
+        Assert.assertEquals(0, inserts.size());
+        
+        logger.debug("End testAuditLogAfterRetrievingChangeSet");
+    }
+    
+    @Test
+    @Transactional
     public void testChangeSetFeatures()throws Exception{
         logger.debug("Starting testChangeSetFeatures...");
 
@@ -208,20 +271,27 @@ public class HibernateChangeTrackerTest {
         String currentUser = HibernateChangeTrackerTest.class.getName();
         ChangeSet changeSet = changeTracker.changes(currentUser);
 
-        //Get the ID of newest/max(Feature_Id) record of the audit
-        long currentSequenceId = changeTracker.getCurrentAuditId();
-        logger.debug("currentSequenceId: " + currentSequenceId);
-
+        //Get the new features changeSet
+        Collection<Integer> inserts = changeSet.newFeatureIds(TopLevelFeature.class);
+        inserts.addAll(changeSet.newFeatureIds(Transcript.class));
+        inserts.addAll(changeSet.newFeatureIds(Gene.class));
+        inserts.addAll(changeSet.newFeatureIds(Polypeptide.class));
+        Assert.assertTrue(inserts.contains(1));
+        Assert.assertTrue(inserts.contains(7));
+        Assert.assertTrue(inserts.contains(2));
+        Assert.assertTrue(inserts.contains(810));
+        Assert.assertTrue(inserts.contains(14));
+        
         //This should update the final checkpoint
         changeSet.commit();
+        
 
-        //Get the latest checkpoint of the current user
-        Number finalCheckPoint = (Number)executeSingleResultQuery(
-                "select audit_id from audit.checkpoint where key = :key", "key", currentUser);
-        logger.debug("Final CheckPoint: " + finalCheckPoint);
-
-        //Assert current user's checkpoint is the ID of last record
-        Assert.assertEquals(currentSequenceId, finalCheckPoint.longValue());
+        changeSet = changeTracker.changes(currentUser);
+        inserts = changeSet.newFeatureIds(TopLevelFeature.class);
+        inserts.addAll(changeSet.newFeatureIds(Transcript.class));
+        inserts.addAll(changeSet.newFeatureIds(Gene.class));
+        inserts.addAll(changeSet.newFeatureIds(Polypeptide.class));
+        Assert.assertEquals(0, inserts.size());
 
         logger.debug("Ended testChangeSetCommit");
     }
@@ -234,25 +304,5 @@ public class HibernateChangeTrackerTest {
         int updateCount = query.executeUpdate();
         logger.debug("Executed on rows...#" + updateCount);
         logger.debug("Ended executeDML.");
-    }
-
-
-    private Object executeSingleResultQuery(String queryStr, String paramName, String paramValue){
-        logger.debug("Starting executeQuery...");
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
-        Query query = session.createSQLQuery(queryStr).setString(paramName, paramValue);
-        Object obj = query.uniqueResult();
-        logger.debug("Ended executeQuery.");
-        return obj;
-    }
-    /**
-     * Required to close the HSQL DB properly
-     */
-    private void shutDownTestDB(){
-        logger.debug("Starting shutDownDB...");
-        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
-        Query query = session.createSQLQuery("shutdown");
-        query.executeUpdate();
-        logger.debug("Ended shutDownDB.");
     }
 }

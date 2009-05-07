@@ -16,7 +16,6 @@ import org.hibernate.dialect.Dialect;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
 import java.sql.SQLException;
 
 import javax.annotation.Resource;
@@ -30,18 +29,16 @@ public class HibernateChangeTracker implements ChangeTracker {
     @Resource(name="&sessionFactory")
     private ChadoSessionFactoryBean sessionFactoryBean;
 
-    private long currentAuditId;
-
     @Override
     @Transactional
     public HibernateChangeSet changes(String key) throws SQLException {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
-        BigInteger checkpointAuditIdInteger = (BigInteger) session.createSQLQuery(
+        Number checkpointAuditIdInteger = (Number) session.createSQLQuery(
             "select audit_id from audit.checkpoint where key = :key"
         ).setString("key", key)
         .uniqueResult();
-        int checkpointAuditId = checkpointAuditIdInteger == null ? 0 : checkpointAuditIdInteger.intValue();
+        long checkpointAuditId = checkpointAuditIdInteger == null ? 0 : checkpointAuditIdInteger.longValue();
         logger.debug("CheckPointAuditId: '" + checkpointAuditId + "'");
 
         Configuration configuration = sessionFactoryBean.getConfiguration();
@@ -49,7 +46,7 @@ public class HibernateChangeTracker implements ChangeTracker {
             throw new RuntimeException();
         }
         
-        currentAuditId =  ((Number)session.createSQLQuery(
+        long currentAuditId =  ((Number)session.createSQLQuery(
             Dialect.getDialect(configuration.getProperties()).getSequenceNextValString("audit.audit_seq")
         ).uniqueResult()).longValue();
         logger.debug("Current Audit ID: " + currentAuditId);
@@ -58,9 +55,9 @@ public class HibernateChangeTracker implements ChangeTracker {
         HibernateChangeSet changeSet = new HibernateChangeSet(session, key, currentAuditId);
         changeSet.setChadoAnnotationConfiguration((ChadoAnnotationConfiguration) configuration);
 
-        processFeatureAuditRecords(checkpointAuditId, changeSet);
-        processFeatureRelationshipAuditRecords(checkpointAuditId, changeSet);
-        processFeatureLocAuditRecords(checkpointAuditId, changeSet);
+        processFeatureAuditRecords(checkpointAuditId, currentAuditId, changeSet);
+        processFeatureRelationshipAuditRecords(checkpointAuditId, currentAuditId, changeSet);
+        processFeatureLocAuditRecords(checkpointAuditId, currentAuditId, changeSet);
 
 
         return changeSet;
@@ -71,7 +68,7 @@ public class HibernateChangeTracker implements ChangeTracker {
      * @param checkpointAuditId
      * @param changeSet
      */
-    private void processFeatureAuditRecords(int checkpointAuditId,
+    private void processFeatureAuditRecords(long checkpointAuditId, long currentAuditId,
             HibernateChangeSet changeSet) {
 
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
@@ -86,7 +83,7 @@ public class HibernateChangeTracker implements ChangeTracker {
             .addScalar("type", Hibernate.STRING)
             .addScalar("uniquename", Hibernate.STRING)
             .addScalar("type_id", Hibernate.INTEGER)
-            .setInteger("checkpoint", checkpointAuditId)
+            .setLong("checkpoint", checkpointAuditId)
             .setLong("currentAuditId", currentAuditId);
         sqlQuery.setReadOnly(true);
         sqlQuery.setCacheMode(CacheMode.IGNORE);
@@ -119,7 +116,7 @@ public class HibernateChangeTracker implements ChangeTracker {
         }
     }
 
-    private void processFeatureRelationshipAuditRecords(int checkpointAuditId,
+    private void processFeatureRelationshipAuditRecords(long checkpointAuditId, long currentAuditId,
             HibernateChangeSet changeSet) {
 
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
@@ -139,7 +136,7 @@ public class HibernateChangeTracker implements ChangeTracker {
         .addScalar("feature_relationship_id", Hibernate.INTEGER)
         .addScalar("object_id", Hibernate.INTEGER)
         .addScalar("type_id", Hibernate.INTEGER)
-        .setInteger("checkpoint", checkpointAuditId)
+        .setLong("checkpoint", checkpointAuditId)
         .setLong("currentAuditId", currentAuditId);
 
         sqlQuery.setReadOnly(true);
@@ -169,7 +166,7 @@ public class HibernateChangeTracker implements ChangeTracker {
         }
     }
 
-    private void processFeatureLocAuditRecords(int checkpointAuditId,
+    private void processFeatureLocAuditRecords(long checkpointAuditId, long currentAuditId,
             HibernateChangeSet changeSet) {
 
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
@@ -189,7 +186,7 @@ public class HibernateChangeTracker implements ChangeTracker {
         .addScalar("featureloc_id", Hibernate.INTEGER)
         .addScalar("srcfeature_id", Hibernate.INTEGER)
         .addScalar("type_id", Hibernate.INTEGER)
-        .setInteger("checkpoint", checkpointAuditId)
+        .setLong("checkpoint", checkpointAuditId)
         .setLong("currentAuditId", currentAuditId);
 
         sqlQuery.setReadOnly(true);
@@ -218,10 +215,5 @@ public class HibernateChangeTracker implements ChangeTracker {
             }
             more = sr.next();
         }
-    }
-
-
-    public long getCurrentAuditId() {
-        return currentAuditId;
     }
 }
