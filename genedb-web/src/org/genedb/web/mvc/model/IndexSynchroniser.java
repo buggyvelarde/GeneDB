@@ -2,6 +2,7 @@ package org.genedb.web.mvc.model;
 
 import org.genedb.db.audit.ChangeSet;
 
+import org.gmod.schema.feature.AbstractGene;
 import org.gmod.schema.feature.Gap;
 import org.gmod.schema.feature.Gene;
 import org.gmod.schema.feature.MRNA;
@@ -81,8 +82,8 @@ public class IndexSynchroniser implements IndexUpdater{
         logger.debug("Starting indexFeatures");
 
         Set<Integer> alteredIds = Sets.newHashSet();
-        alteredIds.addAll(changeSet.newFeatureIds(Gene.class));
-        alteredIds.addAll(changeSet.changedFeatureIds(Gene.class));
+        alteredIds.addAll(changeSet.newFeatureIds(AbstractGene.class));
+        alteredIds.addAll(changeSet.changedFeatureIds(AbstractGene.class));
         alteredIds.addAll(changeSet.newFeatureIds(Transcript.class));
         alteredIds.addAll(changeSet.changedFeatureIds(Transcript.class));
         alteredIds.addAll(changeSet.newFeatureIds(Polypeptide.class));
@@ -142,7 +143,7 @@ public class IndexSynchroniser implements IndexUpdater{
      * @param changeSet
      * @return
      */
-    private Set<Integer> deleteFeatures(FullTextSession session, ChangeSet changeSet){
+    private Set<Integer> deleteFeatures(FullTextSession session, ChangeSet changeSet) {
         logger.debug("Starting deleteFeatures");
         Set<Integer> failedDeletes = new HashSet<Integer>();
 
@@ -153,24 +154,24 @@ public class IndexSynchroniser implements IndexUpdater{
         deletedIds.addAll(changeSet.deletedFeatureIds(Gap.class));
 
         IndexSearcher indexSearcher = createIndexSearcher(session);
-        try{
-            for(Integer featureId : deletedIds){
-                try{
+        try {
+            for (Integer featureId : deletedIds) {
+                try {
                     deleteFeature(session, indexSearcher, featureId);
-                }catch(Exception e){
-                    logger.error(String.format("Failed to delete %s", featureId), e);
+                } catch (Exception exp) {
+                    logger.error(String.format("Failed to delete %s", featureId), exp);
                     failedDeletes.add(featureId);
                 }
             }
-            if (failedDeletes.size()>0){
+            if (failedDeletes.size()>0) {
                 logger.debug(String.format("Ended deleteFeatures with %s features undeleted due to failures", failedDeletes.size()));
-            }else{
+            } else {
                 logger.debug("Ended deleteFeatures with no errors");
             }
-        }finally{
-            try{
+        } finally {
+            try {
                 indexSearcher.close();
-            }catch(IOException io){
+            } catch (IOException io) {
                 logger.error("Failed to close the Index Searcher", io);
             }
         }
