@@ -3,7 +3,6 @@ package org.genedb.db.audit;
 import org.gmod.schema.cfg.ChadoAnnotationConfiguration;
 import org.gmod.schema.cfg.ChadoSessionFactoryBean;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.CacheMode;
 import org.hibernate.Hibernate;
@@ -19,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.annotation.Resource;
 
