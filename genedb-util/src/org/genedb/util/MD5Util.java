@@ -17,6 +17,18 @@ public class MD5Util {
         return new BigInteger(1, md.digest()).toString(16);
     }
 
+
+    public static String getMD5(byte[] bytes) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            // Should never happen
+        }
+        md.update(bytes, 0, bytes.length);
+        return new BigInteger(1, md.digest()).toString(16);
+    }
+
     public static String getPathBasedOnMD5(String in, char seperator) {
 
         String md5 = getMD5(in);
