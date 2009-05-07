@@ -20,6 +20,10 @@ import java.util.Map;
  * if the optional arguments are omitted, it just prints a textual representation of the phylotree to standard output. Otherwise it
  * inserts the new node, then prints the resulting tree.
  *
+ * You can run it as follows (on one line for ease of copypasta):
+ *
+ * java -classpath ../genedb-libs/lib/db/postgresql-8.3-603.jdbc4.jar:ant-build/dist/genedb-access.jar org.genedb.db.adhoc.InsertPhylonode jdbc:postgresql://localhost:5432/pathogens
+ *
  * @author rh11
  *
  */
