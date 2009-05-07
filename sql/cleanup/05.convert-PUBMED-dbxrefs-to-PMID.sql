@@ -1,8 +1,10 @@
+begin;
+
 update dbxref
-set db_id = (select db_id from db where name = 'PUBMED')
+set db_id = (select db_id from db where name = 'PMID')
 from db
 where dbxref.db_id = db.db_id
-and db.name = 'PMID'
+and db.name = 'PUBMED'
 ;
 
 create temporary table pmid_pubmed as
@@ -16,40 +18,40 @@ create temporary table pmid_pubmed as
 ;
 
 update feature_cvterm
-    set pub_id = (select pubmed_pub_id from pmid_pubmed where pmid_pub_id = feature_cvterm.pub_id)
-    where pub_id in (select pmid_pub_id from pmid_pubmed)
+    set pub_id = (select pmid_pub_id from pmid_pubmed where pubmed_pub_id = feature_cvterm.pub_id)
+    where pub_id in (select pubmed_pub_id from pmid_pubmed)
 ;
 
 update feature_pub
-    set pub_id = (select pubmed_pub_id from pmid_pubmed where pmid_pub_id = feature_pub.pub_id)
-    where pub_id in (select pmid_pub_id from pmid_pubmed)
+    set pub_id = (select pmid_pub_id from pmid_pubmed where pubmed_pub_id = feature_pub.pub_id)
+    where pub_id in (select pubmed_pub_id from pmid_pubmed)
 ;
 
 delete from pub
-    where pub_id in (select pmid_pub_id from pmid_pubmed);
+    where pub_id in (select pubmed_pub_id from pmid_pubmed);
 
 
 update pub
-set uniquename = 'PUBMED:' || substr(uniquename, 6)
-where uniquename like 'PMID:%'
+set uniquename = 'PMID:' || substr(uniquename, 6)
+where uniquename like 'PUBMED:%'
 ;
 
-create temporary table pubmed_accession as
+create temporary table pmid_accession as
     select coalesce(pub_id, nextval('pub_pub_id_seq'::regclass)) as pub_id
          , (pub_id is null) as pub_is_new
          , accession
     from dbxref join db using (db_id)
-    left join pub on pub.uniquename = 'PUBMED:' || accession
-    where db.name = 'PUBMED'
+    left join pub on pub.uniquename = 'PMID:' || accession
+    where db.name = 'PMID'
 ;
 
 insert into pub (pub_id, uniquename, type_id) (
-    select pub_id, 'PUBMED:' || accession, cvterm.cvterm_id
-    from pubmed_accession
+    select pub_id, 'PMID:' || accession, cvterm.cvterm_id
+    from pmid_accession
         , cvterm join cv using (cv_id)
         where cv.name = 'genedb_literature'
           and cvterm.name = 'unfetched'
-          and pubmed_accession.pub_is_new
+          and pmid_accession.pub_is_new
 )
 ;
   
@@ -62,8 +64,8 @@ create temporary table feature_dbxref_for_pub as
     from feature_dbxref
     join dbxref using (dbxref_id)
     join db using (db_id)
-    join pubmed_accession using (accession)
-    where db.name = 'PUBMED'
+    join pmid_accession using (accession)
+    where db.name = 'PMID'
 ;
 
 delete from feature_dbxref
@@ -96,3 +98,5 @@ delete from feature_pub where exists (
 insert into feature_pub (feature_id, pub_id)
     (select feature_id, pub_id from feature_dbxref_for_pub)
 ;
+
+commit;
