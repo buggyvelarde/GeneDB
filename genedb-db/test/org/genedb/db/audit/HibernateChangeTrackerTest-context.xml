@@ -52,7 +52,7 @@
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-        <property name="url" value="jdbc:hsqldb:file:test-data/hsqldb/Pfalciparum"/>
+        <property name="url" value="jdbc:hsqldb:file:test-data/hsqldb/pfalciparum"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
     </bean>
