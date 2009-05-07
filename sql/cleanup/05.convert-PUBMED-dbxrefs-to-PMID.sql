@@ -13,7 +13,7 @@ create temporary table pmid_pubmed as
     from pub pmid
        , pub pubmed
     where pmid.uniquename like 'PMID:%'
-    and pubmed.uniquename like 'PUBMED:%'
+    and pubmed.uniquename ilike 'PUBMED:%'
     and substr(pmid.uniquename, 6) = substr(pubmed.uniquename, 8)
 ;
 
@@ -33,7 +33,7 @@ delete from pub
 
 update pub
 set uniquename = 'PMID:' || substr(uniquename, 6)
-where uniquename like 'PUBMED:%'
+where uniquename ilike 'PUBMED:%'
 ;
 
 create temporary table pmid_accession as
@@ -75,28 +75,24 @@ delete from feature_dbxref
     )
 ;
 
-delete from pub_dbxref where exists (
-    select 8
-    from feature_dbxref_for_pub
-    where pub_id  = pub_dbxref.pub_id
-    and dbxref_id = pub_dbxref.dbxref_id
-    )
-;
-
 insert into pub_dbxref (pub_id, dbxref_id)
-    (select distinct pub_id, dbxref_id from feature_dbxref_for_pub)
-;
-
-delete from feature_pub where exists (
-    select 8
-    from feature_dbxref_for_pub
-    where pub_id  = feature_pub.pub_id
-    and feature_id = feature_pub.feature_id
-    )
+    (select distinct pub_id, dbxref_id from feature_dbxref_for_pub
+        where not exists (
+            select 8
+            from pub_dbxref
+            where pub_dbxref.pub_id = feature_dbxref_for_pub.pub_id
+            and pub_dbxref.dbxref_id = feature_dbxref_for_pub.dbxref_id
+    ))
 ;
 
 insert into feature_pub (feature_id, pub_id)
-    (select feature_id, pub_id from feature_dbxref_for_pub)
+    (select feature_id, pub_id from feature_dbxref_for_pub
+        where not exists (
+            select 8
+            from feature_pub
+            where feature_pub.feature_id = feature_dbxref_for_pub.feature_id
+            and feature_pub.pub_id = feature_dbxref_for_pub.pub_id
+    ))
 ;
 
 commit;
