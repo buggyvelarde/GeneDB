@@ -204,8 +204,34 @@ public class HibernateChangeTrackerTest {
         deletes.addAll(changeSet.deletedFeatureIds(Transcript.class));
         Assert.assertTrue(deletes.contains(19));
         Assert.assertTrue(deletes.contains(9493));
+        
+        logger.debug("Ending testChangeSetFeatures...");
 
+    }
 
+    @Test
+    @Transactional
+    public void testChangeSetFeatureRelationship() throws Exception{
+        logger.debug("Starting testChangeSetFeatureRelationship...");
+
+        String insertFeatureRelationshipStm =
+            "insert into audit.feature_relationship " +
+            " (audit_id, type, username, time, feature_relationship_id, subject_id, type_id, object_id, rank)" +
+            "   select next value for audit.audit_seq, 'INSERT', 'theusername', Now(), " +
+            "   fr.feature_relationship_id, fr.subject_id, fr.type_id, fr.object_id, 0" +
+            "   from public.feature_relationship fr" +
+            "   where fr.object_id = 14";
+        executeDML(insertFeatureRelationshipStm);
+
+        //Execute class under test
+        String currentUser = HibernateChangeTrackerTest.class.getName();
+        ChangeSet changeSet = changeTracker.changes(currentUser);
+
+        //Get the new features changeSet
+        Collection<Integer> changes = changeSet.changedFeatureIds(Transcript.class);
+        Assert.assertTrue(changes.contains(14));
+        Assert.assertEquals(1, changes.size());
+        logger.debug("Ended testChangeSetFeatureRelationship");
     }
 
     @Test
