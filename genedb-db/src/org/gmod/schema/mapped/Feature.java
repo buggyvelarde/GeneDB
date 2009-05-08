@@ -1034,11 +1034,18 @@ public abstract class Feature implements java.io.Serializable, HasPubsAndDbXRefs
 
 
     public FeatureCvTerm addCvTerm(String cvName, String cvTermName) {
-        return addCvTerm(cvName, cvTermName, true);
+        return addCvTerm(cvName, cvTermName, null);
+    }
+
+    public FeatureCvTerm addCvTerm(String cvName, String cvTermName, String dbName) {
+        return addCvTerm(cvName, cvTermName, dbName, true);
     }
     public FeatureCvTerm addCvTerm(String cvName, String cvTermName, boolean createIfNotFound) {
+        return addCvTerm(cvName, cvTermName, null, createIfNotFound);
+    }
+    public FeatureCvTerm addCvTerm(String cvName, String cvTermName, String dbName, boolean createIfNotFound) {
         if (createIfNotFound) {
-            return addCvTerm(cvDao.findOrCreateCvTermByNameAndCvName(cvTermName, cvName));
+            return addCvTerm(cvDao.findOrCreateCvTermByNameAndCvName(cvTermName, cvName, dbName));
         } else {
             CvTerm cvTerm = cvDao.getCvTermByNameAndCvName(cvTermName, cvName);
             if (cvTerm == null) {
