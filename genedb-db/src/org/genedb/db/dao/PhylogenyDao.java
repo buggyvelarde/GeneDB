@@ -3,7 +3,6 @@ package org.genedb.db.dao;
 import org.gmod.schema.mapped.CvTerm;
 import org.gmod.schema.mapped.Organism;
 import org.gmod.schema.mapped.Phylonode;
-import org.gmod.schema.mapped.PhylonodeOrganism;
 import org.gmod.schema.mapped.Phylotree;
 
 import org.hibernate.Query;
