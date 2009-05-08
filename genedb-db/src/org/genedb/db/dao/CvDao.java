@@ -297,6 +297,38 @@ public class CvDao extends BaseDao {
      * @return the created or looked-up CvTerm
      */
     public CvTerm findOrCreateCvTermByNameAndCvName(String cvTermName, String cvName) {
+        return findOrCreateCvTermByNameAndCvName(cvTermName, cvName, nullDb());
+    }
+
+    /**
+     * Take a cv and cvterm and look it up, or create it if it doesn't exist
+     *
+     * @param cv name of the cv, which must already exist
+     * @param cvTerm the cvTerm to find/create; case-insensitive, but the supplied
+     *                  case will be used if the term is created
+     * @param db the name of the database to use for the associated DbXRef, if a new term is created
+     * @return the created or looked-up CvTerm
+     */
+    public CvTerm findOrCreateCvTermByNameAndCvName(String cvTermName, String cvName, String dbName) {
+        Db db;
+        if (dbName == null) {
+            db = nullDb();
+        } else {
+            db = generalDao.getDbByName(dbName);
+        }
+        return findOrCreateCvTermByNameAndCvName(cvTermName, cvName, db);
+    }
+
+    /**
+     * Take a cv and cvterm and look it up, or create it if it doesn't exist
+     *
+     * @param cv name of the cv, which must already exist
+     * @param cvTerm the cvTerm to find/create; case-insensitive, but the supplied
+     *                  case will be used if the term is created
+     * @param db the database to use for the associated DbXRef, if a new term is created
+     * @return the created or looked-up CvTerm
+     */
+    public CvTerm findOrCreateCvTermByNameAndCvName(String cvTermName, String cvName, Db db) {
         String cvTermNameTruncatedForCvTerm = cvTermName;
         if (cvTermName.length() > CVTERM_MAX_LENGTH) {
             logger.warn(String.format("CV Term name is longer than %d characters: %s\n" +
@@ -307,6 +339,8 @@ public class CvDao extends BaseDao {
         }
         CvTerm cvTerm = this.getCvTermByNameAndCvName(cvTermNameTruncatedForCvTerm, cvName, false);
         if (cvTerm == null) {
+            logger.trace(String.format("CV term '%s:%s' not found; creating with dbxref in DB '%s'",
+                cvName, cvTermNameTruncatedForCvTerm, db == null ? null : db.getName()));
             String cvTermNameTruncatedForDbXRef = cvTermName;
             if (cvTermName.length() > DBXREF_ACCESSION_MAX_LENGTH) {
                 logger.warn(String.format("CV Term name is longer than %d characters: %s\n" +
@@ -316,7 +350,6 @@ public class CvDao extends BaseDao {
                 cvTermNameTruncatedForDbXRef = cvTermName.substring(0, DBXREF_ACCESSION_MAX_LENGTH);
             }
 
-            Db db = nullDb();
             DbXRef dbXRef = new DbXRef(db, cvTermNameTruncatedForDbXRef, cvTermName);
             persist(dbXRef);
             CvTerm cvterm = new CvTerm(this.getCvByName(cvName), dbXRef, cvTermNameTruncatedForCvTerm, cvTermName);

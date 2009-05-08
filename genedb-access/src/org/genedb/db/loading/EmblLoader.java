@@ -951,12 +951,12 @@ class EmblLoader {
             return rank;
         }
 
-        protected void processCvTermQualifier(String qualifierName, String cvName, boolean createTerms)
+        protected void processCvTermQualifier(String qualifierName, String cvName, String dbName, boolean createTerms)
                 throws DataError {
-            processCvTermQualifier(qualifierName, cvName, createTerms, qualifierParsers.get(qualifierName));
+            processCvTermQualifier(qualifierName, cvName, dbName, createTerms, qualifierParsers.get(qualifierName));
         }
 
-        protected void processCvTermQualifier(String qualifierName, String cvName,
+        protected void processCvTermQualifier(String qualifierName, String cvName, String dbName,
                 boolean createTerms, TermParser termParser)
                 throws DataError {
 
@@ -964,17 +964,17 @@ class EmblLoader {
             for (String term: feature.getQualifierValues(qualifierName)) {
                 if (termParser != null) {
                     for (String normalisedTerm: termParser.parse(term)) {
-                        processNormalisedCvTermQualifier(qualifierName, cvName, createTerms, terms, term,
+                        processNormalisedCvTermQualifier(qualifierName, cvName, dbName, createTerms, terms, term,
                             normalisedTerm);
                     }
                 } else {
-                    processNormalisedCvTermQualifier(qualifierName, cvName, createTerms, terms, term, term);
+                    processNormalisedCvTermQualifier(qualifierName, cvName, dbName, createTerms, terms, term, term);
                 }
             }
         }
 
         private void processNormalisedCvTermQualifier(String qualifierName, String cvName,
-                boolean createTerms, Set<String> terms, String term, String normalisedTerm)
+                String dbName, boolean createTerms, Set<String> terms, String term, String normalisedTerm)
                 throws DataError {
             String lcNormalisedTerm = normalisedTerm.toLowerCase();
             if (terms.contains(lcNormalisedTerm)) {
@@ -986,7 +986,7 @@ class EmblLoader {
                 terms.add(lcNormalisedTerm);
             }
 
-            FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cvName, normalisedTerm, createTerms);
+            FeatureCvTerm featureCvTerm = focalFeature.addCvTerm(cvName, normalisedTerm, dbName, createTerms);
             if (featureCvTerm == null) {
                 throw new DataError(
                     String.format("Failed to find term '%s' in CV '%s'", normalisedTerm, cvName));
@@ -1418,7 +1418,7 @@ class EmblLoader {
             logger.trace(String.format("Adding publication id '%s' to %s",
                 accession, target.toString()));
             Pub pub = objectManager.getPub(String.format("PMID:%s", accession), "unfetched");
-            pub.addDbXRef(dbXRef, true);
+            session.persist(pub.addDbXRef(dbXRef, true));
             target.addPub(pub);
         }
 
@@ -1476,8 +1476,8 @@ class EmblLoader {
 
             addColourToExons();
 
-            processCvTermQualifier("class", "RILEY", false, normaliseRileyNumber);
-            processCvTermQualifier("product", "genedb_products", true);
+            processCvTermQualifier("class", "RILEY", "RILEY", false, normaliseRileyNumber);
+            processCvTermQualifier("product", "genedb_products", "PRODUCT", true);
 
             String label = feature.getQualifierValue("label");
             if (label != null) {
@@ -1722,7 +1722,7 @@ class EmblLoader {
                 processPropertyQualifier("anticodon", "feature_property", "anticodon", true);
             }
             processPropertyQualifier("colour", "genedb_misc", "colour", true);
-            processCvTermQualifier("product", "genedb_products", true);
+            processCvTermQualifier("product", "genedb_products", "PRODUCT", true);
             addColourToExons();
 
             String label = feature.getQualifierValue("label");

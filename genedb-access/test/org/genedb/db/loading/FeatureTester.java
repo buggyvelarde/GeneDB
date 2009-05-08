@@ -1,11 +1,6 @@
 package org.genedb.db.loading;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.gmod.schema.feature.AbstractExon;
 import org.gmod.schema.feature.AbstractGene;
@@ -26,6 +21,7 @@ import org.gmod.schema.mapped.FeatureDbXRef;
 import org.gmod.schema.mapped.FeatureLoc;
 import org.gmod.schema.mapped.FeatureProp;
 import org.gmod.schema.mapped.Pub;
+import org.gmod.schema.mapped.PubDbXRef;
 import org.gmod.schema.mapped.Synonym;
 
 import org.apache.log4j.Logger;
@@ -225,24 +221,35 @@ public class FeatureTester {
             return ourClass.cast(this);
         }
         public T cvterms(String cvName, String... terms) {
+            return cvtermsCheckingDb(cvName, null, terms);
+        }
+        public T cvtermsCheckingDb(String cvName, String dbName, String... terms) {
             Set<String> expectedTerms = new HashSet<String>();
             Collections.addAll(expectedTerms, terms);
 
-            assertEquals(expectedTerms, getTermNames(cvName));
+            assertEquals(expectedTerms, getTermNames(cvName, dbName));
             return ourClass.cast(this);
         }
-        private Set<String> getTermNames(String cvName) {
+        private Set<String> getTermNames(String cvName, String dbName) {
             Set<String> termNames = new HashSet<String>();
-            for (CvTerm cvTerm: getTerms(cvName)) {
+            for (CvTerm cvTerm: getTerms(cvName, dbName)) {
                 termNames.add(cvTerm.getName());
             }
             return termNames;
         }
         public Set<CvTerm> getTerms(String cvName) {
+            return getTerms(cvName, null);
+        }
+        public Set<CvTerm> getTerms(String cvName, String dbName) {
             Set<CvTerm> foundTerms = new HashSet<CvTerm>();
             for (FeatureCvTerm featureCvTerm: feature.getFeatureCvTerms()) {
                 CvTerm cvTerm = featureCvTerm.getCvTerm();
                 if (cvTerm.getCv().getName().equals(cvName)) {
+                    if (dbName != null) {
+                        logger.trace(String.format("Term '%s' has dbxref '%s'",
+                            cvTerm, cvTerm.getDbXRef()));
+                        assertEquals(dbName, cvTerm.getDbXRef().getDb().getName());
+                    }
                     foundTerms.add(cvTerm);
                 }
             }
@@ -259,7 +266,19 @@ public class FeatureTester {
         private Set<String> getPubUniqueNames() {
             Set<String> pubUniqueNames = new HashSet<String>();
             for (Pub pub: feature.getPubs()) {
-                pubUniqueNames.add(pub.getUniqueName());
+                String pubUniqueName = pub.getUniqueName();
+                if (pubUniqueName.startsWith("PMID:")) {
+                    String accession = pubUniqueName.substring(5);
+                    Collection<PubDbXRef> pubDbXRefs = pub.getPubDbXRefs();
+                    assertEquals(1, pubDbXRefs.size());
+                    PubDbXRef pubDbXRef = pubDbXRefs.iterator().next();
+                    DbXRef dbXRef = pubDbXRef.getDbXRef();
+                    assertNotNull(dbXRef);
+                    assertEquals("PMID", dbXRef.getDb().getName());
+                    assertEquals(accession, dbXRef.getAccession());
+                }
+
+                pubUniqueNames.add(pubUniqueName);
             }
             return pubUniqueNames;
         }

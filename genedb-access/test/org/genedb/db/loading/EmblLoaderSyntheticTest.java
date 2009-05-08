@@ -1,6 +1,6 @@
 package org.genedb.db.loading;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.genedb.db.loading.FeatureTester.GeneTester;
 import org.genedb.db.loading.FeatureTester.GenericTester;
@@ -173,7 +173,7 @@ public class EmblLoaderSyntheticTest {
     public void s2products() {
         PolypeptideTester s2_2 = tester.geneTester("s2").transcript("s2_2:mRNA").polypeptide("s2_2:pep");
 
-        s2_2.cvterms("genedb_products", "product 1", "product 2", "product 3");
+        s2_2.cvtermsCheckingDb("genedb_products", "PRODUCT", "product 1", "product 2", "product 3");
     }
 
     @Test
@@ -233,7 +233,7 @@ public class EmblLoaderSyntheticTest {
     public void s4_GO() {
         PolypeptideTester s4 = tester.geneTester("s4").transcript("s4:mRNA").polypeptide("s4:pep");
 
-
+        // TODO test GO term loading
     }
 
     @Test
