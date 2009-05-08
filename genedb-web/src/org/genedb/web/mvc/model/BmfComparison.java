@@ -2,8 +2,14 @@ package org.genedb.web.mvc.model;
 
 import org.genedb.util.MD5Util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
+
+import javassist.bytecode.ByteArray;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -21,7 +27,7 @@ public class BmfComparison {
     Map<String, String> imageMapOrig = Maps.newHashMap();
 
 
-    public BmfComparison(String newDirName, String oldDirName) {
+    public BmfComparison(String newDirName, String oldDirName) throws IOException {
 
         BerkeleyMapFactory bmfNew = new BerkeleyMapFactory();
         bmfNew.setRootDirectory(newDirName);
@@ -37,23 +43,28 @@ public class BmfComparison {
     private void populateMaps(BerkeleyMapFactory bmf,
             Map<Integer, String> transcriptMap,
             Map<Integer, String> contextmapMap,
-            Map<String, String> imageMap) {
+            Map<String, String> imageMap) throws IOException {
 
-        populateMap3(transcriptMap, bmf.getDtoMap());
-        populateMap(contextmapMap, bmf.getContextMapMap());
-        populateMap2(imageMap, bmf.getImageMap());
+        populateMapTranscriptDTO(transcriptMap, bmf.getDtoMap());
+        populateMapString(contextmapMap, bmf.getContextMapMap());
+        populateMapByteArray(imageMap, bmf.getImageMap());
     }
 
-    private void populateMap3(Map<Integer, String> map,
-            StoredMap<Integer, TranscriptDTO> dtoMap) {
+    private void populateMapTranscriptDTO(Map<Integer, String> map,
+            StoredMap<Integer, TranscriptDTO> dtoMap) throws IOException {
 
         for (Map.Entry<Integer, TranscriptDTO> entry : dtoMap.entrySet()) {
-            String md5 = MD5Util.getMD5("" + entry.getValue().getLastModified());
+            TranscriptDTO dto = entry.getValue();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            ObjectOutput out = new ObjectOutputStream(buffer);
+            out.writeObject(dto);
+            out.close();
+            String md5 = MD5Util.getMD5(buffer.toByteArray());
             map.put(entry.getKey(), md5);
         }
     }
 
-    private void populateMap2(Map<String, String> map, StoredMap<String, byte[]> bmfMap) {
+    private void populateMapByteArray(Map<String, String> map, StoredMap<String, byte[]> bmfMap) {
         for (Map.Entry<String, byte[]> entry : bmfMap.entrySet()) {
             String md5 = MD5Util.getMD5(entry.getValue());
             map.put(entry.getKey(), md5);
@@ -61,17 +72,13 @@ public class BmfComparison {
     }
 
 
-    private void populateMap(Map<Integer, String> map, StoredMap<Integer, String> bmfMap) {
+    private void populateMapString(Map<Integer, String> map, StoredMap<Integer, String> bmfMap) {
         for (Map.Entry<Integer, String> entry : bmfMap.entrySet()) {
             String md5 = MD5Util.getMD5(entry.getValue());
             map.put(entry.getKey(), md5);
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        BmfComparison tdc = new BmfComparison(args[0], args[1]);
-        tdc.compare();
-    }
 
 
     private void compare() throws Exception {
@@ -119,7 +126,10 @@ public class BmfComparison {
         }
     }
 
-
+    public static void main(String[] args) throws Exception {
+        BmfComparison tdc = new BmfComparison(args[0], args[1]);
+        tdc.compare();
+    }
 
 
 }
