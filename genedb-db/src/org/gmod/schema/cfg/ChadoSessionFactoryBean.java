@@ -28,8 +28,6 @@ import java.util.Properties;
  * @author rh11
  */
 public class ChadoSessionFactoryBean extends AnnotationSessionFactoryBean {
-    //private static final Logger logger = Logger.getLogger(AnnotationSessionFactoryBean.class);
-
     private Properties properties;
 
     private Map<String, Object> listeners;
