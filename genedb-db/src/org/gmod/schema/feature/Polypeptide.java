@@ -346,6 +346,10 @@ public class Polypeptide extends Region {
             try {
                 proteinTokenization = ProteinTools.getTAlphabet().getTokenization("token");
                 String residues = getResidues();
+                if (residues == null || residues.length()==0) {
+                    logger.warn(String.format("Failed to calculate mass as no residues for '%s'", getUniqueName()));
+                    return -1;
+                }
                 if (residues.endsWith("*")) {
                     // Trim final if present. There may still be internal stop codons
                     residues = residues.substring(0, residues.length()-1);
@@ -355,7 +359,6 @@ public class Polypeptide extends Region {
             } catch (BioException exp) {
                 logger.error("Failed to calculate mass", exp);
             }
-;
         }
         return mass;
     }
