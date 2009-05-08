@@ -236,6 +236,33 @@ public class HibernateChangeTrackerTest {
 
     @Test
     @Transactional
+    public void testChangeSetFeatureLoc() throws Exception{
+        logger.debug("Starting testChangeSetFeatureLoc...");
+
+        String insertFeatureRelationshipStm =
+            "insert into audit.featureloc " +
+            " (audit_id, type, username, time, feature_id, featureloc_id, is_fmin_partial, rank, is_fmax_partial, locgroup, srcfeature_id)" +
+            "   select next value for audit.audit_seq, 'INSERT', 'theusername', Now(), " +
+            "   fl.feature_id, fl.featureloc_id, false, 0, false, 0, fl.srcfeature_id" +
+            "   from public.featureloc fl" +
+            "   where fl.srcfeature_id = 1";
+        executeDML(insertFeatureRelationshipStm);
+
+        //Execute class under test
+        String currentUser = HibernateChangeTrackerTest.class.getName();
+        ChangeSet changeSet = changeTracker.changes(currentUser);
+
+        //Get the new features changeSet
+        Collection<Integer> changes = changeSet.changedFeatureIds(TopLevelFeature.class);
+        logger.debug("Changes: " + changes.size());
+        Assert.assertTrue(changes.contains(1));
+        Assert.assertEquals(1, changes.size());
+        
+        logger.debug("Ended testChangeSetFeatureLoc");
+    }
+
+    @Test
+    @Transactional
     public void testChangeSetFilter()throws Exception{
         logger.debug("Starting testChangeSetFilter...");
 
@@ -328,7 +355,7 @@ public class HibernateChangeTrackerTest {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
         Query query = session.createSQLQuery(queryStr);
         int updateCount = query.executeUpdate();
-        logger.debug("Executed on rows...#" + updateCount);
+        logger.debug("Executed " + updateCount + " rows");
         logger.debug("Ended executeDML.");
     }
 }
