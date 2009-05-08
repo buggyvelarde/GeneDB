@@ -479,6 +479,17 @@
         <arg line="/nfs/pathdb/genedb/staging/bulk/Lucene/destination /nfs/pathdb/genedb/staging/bulk/Lucene/output"/>
       </java>
     </target>
+	
+
+    <target name="compare-lucene-indices" >
+        <compile-target project="web"/>
+        <java fork="true" dir="${imported.basedir.db}"
+                maxmemory="1024m" failonerror="true" classname="org.genedb.web.mvc.model.LuceneIndicesComparison">
+            <classpath refid="web-tests-classpath"/>
+            <arg value="/Users/sangerinstitute/Documents/workspace/pathdata/genedb/snapshot/lucene"/>
+            <arg value="/Users/sangerinstitute/Downloads/lucene"/>
+        </java>
+    </target>
 
     <target name="usage">
         <echo message=""/>

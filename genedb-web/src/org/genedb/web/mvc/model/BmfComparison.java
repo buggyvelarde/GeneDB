@@ -112,9 +112,9 @@ public class BmfComparison {
 
         System.out.println("\n\n\n"+label);
         displayLabels("Newly added ids", newIds);
-        displayLabels("Removed ids", newIds);
-        displayLabels("Changed ids", newIds);
-        displayLabels("Unchanged ids", newIds);
+        displayLabels("Removed ids", missingIds);
+        displayLabels("Changed ids", changedIds);
+        displayLabels("Unchanged ids", sameIds);
     }
 
     private <T> void displayLabels(String string, List<T> ids) {
