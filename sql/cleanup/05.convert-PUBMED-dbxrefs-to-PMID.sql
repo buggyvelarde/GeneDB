@@ -7,7 +7,7 @@ where dbxref.db_id = db.db_id
 and db.name = 'PUBMED'
 ;
 
-create temporary table pmid_pubmed as
+create temporary table pmid_pubmed on commit drop as
     select pmid.pub_id   as pmid_pub_id
          , pubmed.pub_id as pubmed_pub_id
     from pub pmid
@@ -36,7 +36,7 @@ set uniquename = 'PMID:' || substr(uniquename, 6)
 where uniquename ilike 'PUBMED:%'
 ;
 
-create temporary table pmid_accession as
+create temporary table pmid_accession on commit drop as
     select coalesce(pub_id, nextval('pub_pub_id_seq'::regclass)) as pub_id
          , (pub_id is null) as pub_is_new
          , accession
@@ -55,7 +55,7 @@ insert into pub (pub_id, uniquename, type_id) (
 )
 ;
   
-create temporary table feature_dbxref_for_pub as
+create temporary table feature_dbxref_for_pub on commit drop as
     select pub_id
          , feature_dbxref_id
          , feature_id
