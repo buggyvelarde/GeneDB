@@ -3,6 +3,7 @@ package org.genedb.web.mvc.model;
 import org.genedb.db.audit.ChangeSet;
 import org.genedb.db.audit.ChangeTracker;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -18,6 +19,8 @@ import java.util.List;
  */
 public class PeriodicUpdater {
 
+    private Logger logger = Logger.getLogger(PeriodicUpdater.class);
+
     private List<IndexUpdater> indexUpdaters;
 
     private ChangeTracker changeTracker;
@@ -26,10 +29,15 @@ public class PeriodicUpdater {
 
     boolean processChangeSet() throws SQLException {
 
+        logger.warn("About to fetch changeset");
+
         ChangeSet changeSet = changeTracker.changes(clientName);
+
+        logger.warn("Changeset has been fetched");
 
         boolean allOK = true;
         for (IndexUpdater indexUpdater : indexUpdaters) {
+            logger.warn(String.format("About to run indexer '%s'", indexUpdater));
             boolean result = indexUpdater.updateAllCaches(changeSet);
             if (! result) {
                 allOK = false;
@@ -37,6 +45,7 @@ public class PeriodicUpdater {
             }
         }
         if (allOK) {
+            logger.debug("Would normally call commit at this stage");
             // changeSet.commit();
         }
         return allOK;
