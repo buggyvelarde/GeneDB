@@ -1,7 +1,6 @@
 package org.genedb.db.dao;
 
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import java.sql.Date;
