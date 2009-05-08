@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
 
-import javassist.bytecode.ByteArray;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.sleepycat.collections.StoredMap;
