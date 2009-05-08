@@ -125,11 +125,13 @@ public class IndexSynchroniser implements IndexUpdater{
             if(!failedIds.contains(featureId)){
                 index++;
                 Feature feature = (Feature)session.get(Feature.class, featureId);
+                logger.debug(String.format("About to try and index unflushed id %s", featureId));
                 session.index(feature);
+                logger.debug(String.format("Indexed unflushed id %s", featureId));
             }
 
             if (index % BATCH_SIZE == 0){
-                batchIds.clear();
+                batchIds.clear();  // TODO needed ?
                 session.clear();
             }
         }
