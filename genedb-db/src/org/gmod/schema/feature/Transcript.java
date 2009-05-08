@@ -40,11 +40,6 @@ public class Transcript extends Region {
     }
 
     static <T extends Transcript> T construct(Class<T> transcriptClass, Organism organism,
-            String uniqueName) {
-        return construct(transcriptClass, organism, uniqueName, null);
-    }
-
-    static <T extends Transcript> T construct(Class<T> transcriptClass, Organism organism,
             String uniqueName, String name) {
         try {
             return transcriptClass.getDeclaredConstructor(Organism.class, String.class, String.class)
