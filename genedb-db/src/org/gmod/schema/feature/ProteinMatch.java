@@ -143,10 +143,11 @@ public class ProteinMatch extends Match {
     /**
      * Add an orthologue link from the specified polypeptide to this cluster.
      * @param source the source polypeptide
+     * @return the new FeatureRelationship relating the polypeptide to this cluster
      */
-    public void addOrthologue(Polypeptide source) {
+    public FeatureRelationship addOrthologue(Polypeptide source) {
         thisIsACluster();
-        this.addFeatureRelationship(source, "sequence", "orthologous_to");
+        return this.addFeatureRelationship(source, "sequence", "orthologous_to");
     }
 
     /**
