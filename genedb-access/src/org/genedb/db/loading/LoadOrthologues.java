@@ -51,6 +51,7 @@ import java.util.Map;
  * <p>
  * Details of the analysis should be specified as properties:
  * <dl>
+ * <dt><code>load.dataset</code></dt><dd>The name of the orthologue dataset being loaded, e.g. "Plasmodium" (Required)</dd>
  * <dt><code>load.analysis.program</code></dt><dd>The program used to perform the analysis (Required)</dd>
  * <dt><code>load.analysis.programVersion</code></dt><dd>The version of the program that was used (Defaults to "unknown")</dd>
  * <dt><code>load.analysis.algorithm</code></dt><dd>The name of the algorithm (Optional)</dd>
@@ -73,6 +74,8 @@ public class LoadOrthologues extends FileProcessor {
         String analysisProgramVersion = getPropertyWithDefault("load.analysis.programVersion", null);
         String analysisAlgorithm = getPropertyWithDefault("load.analysis.algorithm", null);
 
+        String datasetName = getRequiredProperty("load.dataset");
+
         boolean geneNames = hasProperty("load.orthologues.geneNames");
         boolean notFoundNotFatal = hasProperty("load.orthologues.notFoundNotFatal");
 
@@ -87,18 +90,19 @@ public class LoadOrthologues extends FileProcessor {
             analysisProgramVersion = "unknown";
         }
 
-        LoadOrthologues loadOrthologues = new LoadOrthologues();
+        LoadOrthologues loadOrthologues = new LoadOrthologues(datasetName);
         loadOrthologues.setAnalysisProperties(analysisProgram, analysisProgramVersion, analysisAlgorithm);
         loadOrthologues.setGeneNames(geneNames);
         loadOrthologues.setNotFoundNotFatal(notFoundNotFatal);
         loadOrthologues.processFileOrDirectory(inputDirectory, fileNamePattern);
     }
 
-    private OrthologuesLoader loader;
-    private LoadOrthologues() {
+    private final OrthologuesLoader loader;
+    private LoadOrthologues(String datasetName) {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml"});
 
         this.loader = applicationContext.getBean("orthologuesLoader", OrthologuesLoader.class);
+        loader.setDatasetName(datasetName);
     }
 
     private void setAnalysisProperties(String analysisProgram, String analysisProgramVersion, String analysisAlgorithm) {
@@ -219,6 +223,8 @@ class OrthologuesLoader {
     private boolean geneNames = false;
     private boolean notFoundNotFatal = false;
 
+    private String datasetName;
+
     public void setAnalysisProperties(String analysisProgram, String analysisProgramVersion, String analysisAlgorithm) {
         if (analysisProgram == null) {
             return;
@@ -228,6 +234,10 @@ class OrthologuesLoader {
         analysis.setProgram(analysisProgram);
         analysis.setProgramVersion(analysisProgramVersion);
         analysis.setAlgorithm(analysisAlgorithm);
+    }
+
+    public void setDatasetName(String datasetName) {
+        this.datasetName = datasetName;
     }
 
     /**
@@ -249,12 +259,13 @@ class OrthologuesLoader {
     public void load(OrthologueFile orthologueFile) throws DataError {
 
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+        dummyOrganism = organismDao.getOrganismByCommonName("dummy");
 
         if (analysis != null) {
             persistAnalysis();
         }
 
-        Map<String,Collection<Polypeptide>> clustersByName = new HashMap<String,Collection<Polypeptide>>();
+        Map<String,Collection<Integer>> clustersByName = new HashMap<String,Collection<Integer>>();
 
         int numberOfLines = orthologueFile.numberOfLines();
         for (OrthologueFile.Line line: orthologueFile.lines()) {
@@ -283,7 +294,7 @@ class OrthologuesLoader {
     }
 
     private void processLine(File file, OrthologueFile.Line line,
-            Map<String, Collection<Polypeptide>> clustersByName) throws DataError
+            Map<String, Collection<Integer>> clustersByName) throws DataError
     {
         Polypeptide source = getPolypeptide(line.getSourceOrganism(), line.getSourceFeature(),
             file, line.lineNumber);
@@ -296,9 +307,9 @@ class OrthologuesLoader {
         if (targetOrganismName.equalsIgnoreCase("cluster")) {
             String cluster = line.getTargetFeature();
             if (!clustersByName.containsKey(cluster)) {
-                clustersByName.put(cluster, new ArrayList<Polypeptide>());
+                clustersByName.put(cluster, new ArrayList<Integer>());
             }
-            clustersByName.get(cluster).add(source);
+            clustersByName.get(cluster).add(source.getFeatureId());
         } else {
             // Unclustered
             Polypeptide target = getPolypeptide(line.getTargetOrganism(), line.getTargetFeature(),
@@ -309,12 +320,24 @@ class OrthologuesLoader {
         }
     }
 
-    private void loadClusters(Map<String, Collection<Polypeptide>> clustersByName) {
-        for (Map.Entry<String, Collection<Polypeptide>> entry: clustersByName.entrySet()) {
-            String clusterName = entry.getKey();
-            Collection<Polypeptide> transcripts = entry.getValue();
+    private void loadClusters(Map<String, Collection<Integer>> clustersByName) {
+        Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+        int n = 0;
 
-            loadCluster(clusterName, transcripts, null);
+        for (Map.Entry<String, Collection<Integer>> entry: clustersByName.entrySet()) {
+            String clusterName = entry.getKey();
+            Collection<Integer> polypeptideIds = entry.getValue();
+
+            loadCluster(clusterName, polypeptideIds, null);
+
+            if (++n % BATCH_SIZE == 0) {
+                /* If we don't clear the session regularly,
+                 * it becomes impossibly slow after a while.
+                 */
+                logger.trace("Flushing and clearing session");
+                session.flush();
+                //session.clear();
+            }
         }
     }
 
@@ -379,9 +402,9 @@ class OrthologuesLoader {
             // Since this is an algorithmically-derived orthologue, we add it as a cluster
             String clusterName = String.format("cluster %s -> %s",
                 sourcePolypeptide.getUniqueName(), targetPolypeptide.getUniqueName());
-            List<Polypeptide> polypeptides = new ArrayList<Polypeptide>(2);
-            Collections.addAll(polypeptides, sourcePolypeptide, targetPolypeptide);
-            loadCluster(clusterName, polypeptides, identity);
+            List<Integer> polypeptideIds = new ArrayList<Integer>(2);
+            Collections.addAll(polypeptideIds, sourcePolypeptide.getFeatureId(), targetPolypeptide.getFeatureId());
+            loadCluster(clusterName, polypeptideIds, identity);
         } else {
             // Manually-curated orthologue. Add a simple orthologous_to relationship in both directions.
             Session session = SessionFactoryUtils.getSession(sessionFactory, false);
@@ -390,19 +413,23 @@ class OrthologuesLoader {
         }
     }
 
-    private void loadCluster(String clusterName, Collection<Polypeptide> polypeptides, Double identity) {
+    private void loadCluster(String clusterName, Collection<Integer> polypeptideIds, Double identity) {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
 
-        logger.trace(String.format("Loading orthologue cluster '%s'", clusterName));
-        ProteinMatch clusterFeature = new ProteinMatch(dummyOrganism, clusterName, true, false);
+        String clusterUniqueName = String.format("%s:%s", datasetName, clusterName);
+
+        logger.trace(String.format("Loading orthologue cluster '%s' as '%s'", clusterName, clusterUniqueName));
+        ProteinMatch clusterFeature = new ProteinMatch(dummyOrganism, clusterUniqueName, true, false);
         AnalysisFeature analysisFeature = clusterFeature.createAnalysisFeature(analysis);
         analysisFeature.setIdentity(identity);
 
-        for (Polypeptide polypeptide: polypeptides) {
-            clusterFeature.addOrthologue(polypeptide);
-        }
-
         session.persist(clusterFeature);
+
+        for (int polypeptideId: polypeptideIds) {
+            session.persist(
+                clusterFeature.addOrthologue(
+                    (Polypeptide) session.get(Polypeptide.class, polypeptideId)));
+        }
     }
 
     /* Spring setters */
@@ -416,10 +443,6 @@ class OrthologuesLoader {
 
     public void setOrganismDao(OrganismDao organismDao) {
         this.organismDao = organismDao;
-    }
-
-    public void afterPropertiesSet() {
-        dummyOrganism = organismDao.getOrganismByCommonName("dummy");
     }
 }
 
