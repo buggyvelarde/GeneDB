@@ -16,7 +16,7 @@ new File("${baseDir}/output").mkdir()
 
 List<String> orgs = new ArrayList<String>()
 
-if (args > 3) {
+if (args.length > 3) {
     orgs = args[2].split(":")
 
 } else {
@@ -28,7 +28,7 @@ if (args > 3) {
         def org = row.common_name
         orgs.add(org)
     }
-
+    sql.close()
 }
 
 for (org in orgs) {
@@ -69,4 +69,4 @@ for (org in orgs) {
 }
 
 println ""
-sql.close()
+
