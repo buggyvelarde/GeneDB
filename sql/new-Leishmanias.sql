@@ -12,7 +12,7 @@ insert into organism (
 );
 
 insert into newprops
-    values ('translationTable', '11'),
+    values ('translationTable', '1'),
            ('curatorName', 'Christiane Hertz-Fowler'),
            ('curatorEmail', 'chf@sanger.ac.uk'),
            ('htmlFullName', '<i>Leishmania donovani</i>'),
@@ -48,7 +48,7 @@ insert into organism (
 );
 
 insert into newprops
-    values ('translationTable', '11'),
+    values ('translationTable', '1'),
            ('curatorName', 'Christiane Hertz-Fowler'),
            ('curatorEmail', 'chf@sanger.ac.uk'),
            ('htmlFullName', '<i>Leishmania mexicana</i>'),
