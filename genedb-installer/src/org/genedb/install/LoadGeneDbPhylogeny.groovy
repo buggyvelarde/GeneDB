@@ -44,7 +44,7 @@ class LoadGeneDbPhylogeny {
 
     LoadGeneDbPhylogeny() {
         db = Sql.newInstance(
-            'jdbc:postgresql://pathdbsrv1a.internal.sanger.ac.uk:10301/chado',
+            'jdbc:postgresql://pgsrv1.internal.sanger.ac.uk/pathogens',
             'chado',
             'chado',
             'org.postgresql.Driver')
@@ -419,7 +419,7 @@ class LoadGeneDbPhylogeny {
                     </organism>
                     <organism name="Linfantum">
                         <property name="taxonId" value="5671" />
-                        <property name="fullName" value="Leishmania infantum JPCM5 " />
+                        <property name="fullName" value="Leishmania infantum JPCM5" />
                         <property name="nickname" value="linfantum" />
                         <property name="translationTable" value="1"/>
                         <property name="mitochondrialTranslationTable" value="4"/>
@@ -428,6 +428,30 @@ class LoadGeneDbPhylogeny {
                         <property name="htmlShortName" value="&lt;i&gt;L. infantum&lt;/i&gt; JPCM5"/>
                         <property name="shortName" value="L. infantum JPCM5" />
                         <property name="curatorName" value="" />
+                    </organism>
+                    <organism name="Ldonovani">
+                        <property name="taxonId" value="5661" />
+                        <property name="fullName" value="Leishmania donovani" />
+                        <property name="nickname" value="ldonovani" />
+                        <property name="translationTable" value="1"/>
+                        <property name="mitochondrialTranslationTable" value="4"/>
+                        <property name="curatorEmail" value="chf@sanger.ac.uk"/>
+                        <property name="htmlFullName" value="&lt;i&gt;Leishmania donovani&lt;/i&gt;"/>
+                        <property name="htmlShortName" value="&lt;i&gt;L. donovani&lt;/i&gt;"/>
+                        <property name="shortName" value="L. donovani" />
+                        <property name="curatorName" value="Christiane Hertz-Fowler" />
+                    </organism>
+                    <organism name="Lmexicana">
+                        <property name="taxonId" value="5665" />
+                        <property name="fullName" value="Leishmania mexicana" />
+                        <property name="nickname" value="lmexicana" />
+                        <property name="translationTable" value="1"/>
+                        <property name="mitochondrialTranslationTable" value="4"/>
+                        <property name="curatorEmail" value="chf@sanger.ac.uk"/>
+                        <property name="htmlFullName" value="&lt;i&gt;Leishmania mexicana&lt;/i&gt;"/>
+                        <property name="htmlShortName" value="&lt;i&gt;L. mexicana&lt;/i&gt;"/>
+                        <property name="shortName" value="L. mexicana" />
+                        <property name="curatorName" value="Christiane Hertz-Fowler" />
                     </organism>
                 </node>
                 <node name="Trypanosoma" app_www_homePage="true">
@@ -1009,6 +1033,16 @@ class LoadGeneDbPhylogeny {
                     <property name="htmlShortName" value="<i>S. aureus</i> EMRSA15"/>
                     <property name="shortName" value="S. aureus MRSA15" />
                     <property name="curatorName" value="mh3" />
+                </organism>
+                <organism name="Saureus_TW20">
+                    <property name="fullName" value="Staphylococcus aureus (TW20)" />
+                    <property name="nickname" value="Saureus_TW20" />
+                    <property name="translationTable" value="11"/>
+                    <property name="curatorEmail" value="mh3@sanger.ac.uk"/>
+                    <property name="htmlFullName" value="<i>Staphylococcus aureus</i> TW20"/>
+                    <property name="htmlShortName" value="<i>S. aureus</i> TW20"/>
+                    <property name="shortName" value="S. aureus TW20" />
+                    <property name="curatorName" value="Matt Holden" />
                 </organism>
             </node>
             <organism name="Smaltophilia">
