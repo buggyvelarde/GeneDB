@@ -135,7 +135,7 @@
             <syspropertyset>
                 <propertyref builtin="commandline"/>
             </syspropertyset>
-            <jvmarg line="-Xmx256M"/>
+            <jvmarg line="-Xmx512M"/>
         </java>
     </target>
 
