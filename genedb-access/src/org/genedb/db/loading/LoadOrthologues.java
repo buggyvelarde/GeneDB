@@ -336,7 +336,7 @@ class OrthologuesLoader {
                  */
                 logger.trace("Flushing and clearing session");
                 session.flush();
-                //session.clear();
+                session.clear();
             }
         }
     }
