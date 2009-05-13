@@ -50,7 +50,6 @@
       <populate directory="genedb-query"/>
       <populate directory="genedb-util" />
       <populate directory="genedb-web"/>
-      <populate directory="HibernateSearch"/>
       <populate directory="Jogra"/>
       <populate directory="Medusa"/>
   </target>
