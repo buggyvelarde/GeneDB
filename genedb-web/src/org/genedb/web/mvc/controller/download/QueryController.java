@@ -41,8 +41,6 @@ public class QueryController {
 
     private static final Logger logger = Logger.getLogger(QueryController.class);
 
-    private static final String RESULTS_ATTR = "results";
-
     @Autowired
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
 
@@ -94,15 +92,12 @@ public class QueryController {
 
         logger.debug("Validator found no errors");
         List results = query.getResults();
-
-        //Get the current taxon name
-        String taxonName = findTaxonName(query);
-
+        
         //Suppress item in results
         suppressResultItem(suppress, results);
 
         //Dispatch request to appropriate view
-        return findDestination(queryName, query, taxonName, model, results, session);
+        return findDestinationView(queryName, query, model, results, session);
     }
 
     
@@ -116,7 +111,11 @@ public class QueryController {
      * @param session
      * @return
      */
-    private String findDestination(String queryName, Query query, String taxonName, Model model, List results, HttpSession session){
+    private String findDestinationView(
+            String queryName, Query query, Model model, List results, HttpSession session){
+
+        //Get the current taxon name
+        String taxonName = findTaxonName(query);
         String resultsKey = null;
         
         switch (results.size()) {
