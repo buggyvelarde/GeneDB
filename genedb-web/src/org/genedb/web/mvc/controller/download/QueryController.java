@@ -57,31 +57,6 @@ public class QueryController {
         return "redirect:/QueryList";
     }
 
-//    @RequestMapping(method = RequestMethod.GET , params= "q")
-//    public String setUpForm(
-//            @RequestParam(value="q") String queryName,
-//            ServletRequest request,
-//            HttpSession session,
-//            Model model) throws QueryException {
-//
-//        logger.debug("This is the setupform method");
-//
-//        if (!StringUtils.hasText(queryName)) {
-//            session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
-//            return "redirect:/QueryList";
-//        }
-//
-//        Query query = queryFactory.retrieveQuery(queryName);
-//        if (query == null) {
-//            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
-//            return "redirect:/QueryList";
-//        }
-//        model.addAttribute("query", query);
-//
-//        populateModelData(model, query);
-//        return "search/"+queryName;
-//    }
-
     @RequestMapping(method = RequestMethod.GET , params= "q")
     public String processForm(
             @RequestParam(value="q") String queryName,
@@ -89,39 +64,28 @@ public class QueryController {
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-
-        if (!StringUtils.hasText(queryName)) {
-               session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
+        
+        //Find query for request
+        Query query = findQueryType(queryName, session);
+        if (query==null){
             return "redirect:/QueryList";
         }
 
-        Query query = queryFactory.retrieveQuery(queryName);
-        if (query == null) {
-            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
-            return "redirect:/QueryList";
-        }
-
+        //Initialise model data somehow
         model.addAttribute("query", query);
         logger.debug("The number of parameters is '" + request.getParameterMap().keySet().size() + "'");
         populateModelData(model, query);
 
-
-        // Attempt to fill in form
-        ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
-        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
-
-        binder.bind(request);
-
-        Errors errors = binder.getBindingResult();
+        //Initialise query form
+        Errors errors = initialiseQueryForm(query, request);        
         if (errors.hasErrors()) {
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
             logger.debug("Returning due to binding error");
             return "search/"+queryName;
         }
 
+        //Validate initialised form
         query.validate(query, errors);
-
         if (errors.hasErrors()) {
             logger.debug("Validator found errors");
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
@@ -131,34 +95,41 @@ public class QueryController {
         logger.debug("Validator found no errors");
         List results = query.getResults();
 
-        String taxonName = null;
-        if (query instanceof TaxonQuery) {
-            TaxonNode[] nodes = ((TaxonQuery) query).getTaxons();
-            if (nodes != null && nodes.length > 0) {
-                taxonName = nodes[0].getLabel();
-            } // FIXME
-        }
+        //Get the current taxon name
+        String taxonName = findTaxonName(query);
 
-        if (StringUtils.hasLength(suppress)) {
-            int index = results.indexOf(suppress);
-            if (index != -1) {
-                results.remove(index);
-            } else {
-                logger.warn("Trying to remove '" + suppress + "' from results (as a result of an n-others call but it isn't present");
-            }
-        }
+        //Suppress item in results
+        suppressResultItem(suppress, results);
 
+        //Dispatch request to appropriate view
+        return findDestination(queryName, query, taxonName, model, results, session);
+    }
+
+    
+    /**
+     * Work out the correct view destination
+     * @param queryName
+     * @param query
+     * @param taxonName
+     * @param model
+     * @param results
+     * @param session
+     * @return
+     */
+    private String findDestination(String queryName, Query query, String taxonName, Model model, List results, HttpSession session){
         String resultsKey = null;
-
+        
         switch (results.size()) {
         case 0:
             logger.debug("No results found for query");
             model.addAttribute("taxonNodeName", taxonName);
             return "search/"+queryName;
+            
         case 1:
             List<GeneSummary> gs = possiblyConvertList(results);
             resultsKey = cacheResults(gs, query, queryName, session.getId());
             return "redirect:/NamedFeature?name=" + gs.get(0).getSystematicId();
+            
         default:
             List<GeneSummary> gs2 = possiblyConvertList(results);
             resultsKey = cacheResults(gs2, query, queryName, session.getId());
@@ -168,8 +139,7 @@ public class QueryController {
             return "redirect:/Results";
         }
     }
-
-
+    
     private List<GeneSummary> possiblyConvertList(List results) {
         List<GeneSummary> gs;
         Object firstItem =  results.get(0);
@@ -202,6 +172,57 @@ public class QueryController {
         Map<String, Object> modelData = query.prepareModelData();
         for (Map.Entry<String, Object> entry : modelData.entrySet()) {
             model.addAttribute(entry.getKey(), entry.getValue());
+        }
+    }
+    
+    protected Query findQueryType(String queryName, HttpSession session){
+        if (!StringUtils.hasText(queryName)) {
+               session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
+        }
+        Query query = queryFactory.retrieveQuery(queryName);
+        if (query == null) {
+            session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
+        }
+        return query;
+    }
+    
+    protected Errors initialiseQueryForm(Query query, ServletRequest request){
+        // Attempt to fill in form
+        ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
+        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
+
+        binder.bind(request);
+
+        return binder.getBindingResult();        
+    }
+    
+    protected String findTaxonName(Query query){
+        String taxonName = null;
+        if (query instanceof TaxonQuery) {
+            TaxonNode[] nodes = ((TaxonQuery) query).getTaxons();
+            if (nodes != null && nodes.length > 0) {
+                taxonName = nodes[0].getLabel();
+            } // FIXME
+        }
+        return taxonName;
+    }
+    
+    /**
+     * Remove an item in the result list
+     * @param suppress
+     * @param results
+     */
+    @SuppressWarnings("unchecked")
+    protected void suppressResultItem(String suppress, List results){
+
+        if (StringUtils.hasLength(suppress)) {
+            int index = results.indexOf(suppress);
+            if (index != -1) {
+                results.remove(index);
+            } else {
+                logger.warn("Trying to remove '" + suppress + "' from results (as a result of an n-others call but it isn't present");
+            }
         }
     }
 
