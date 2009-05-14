@@ -32,7 +32,7 @@ public class TaxonNode implements Serializable {
     private List<TaxonNode> children = new ArrayList<TaxonNode>();
     private boolean webLinkable = false;
     private boolean organism = false;
-    private boolean hasOrganismFeature = false;
+    private boolean populated = false;
     private Map<String, Map<String, Object>> appDetails = new HashMap<String, Map<String, Object>>();
     private Map<TaxonNameType, String> names = new HashMap<TaxonNameType, String>(7);
 
@@ -54,35 +54,27 @@ public class TaxonNode implements Serializable {
                 // System.err.println("Found organism for '"+shortName+"'");
                 // TODO What organism props do we want?
 
-                this.taxonId = getOrganismProperty(org, "taxonId");
+                this.taxonId = org.getPropertyValue("genedb_misc", "taxonId");
                 // String curatorName = getOrganismProperty(org, "curatorName");
                 // String curatorEmail = getOrganismProperty(org,
                 // "curatorEmail");
                 // String nickname = getOrganismProperty(org, "nickname");
                 // String curatorName = getOrganismProperty(org, "curatorName");
-                names.put(TaxonNameType.HTML_SHORT, getOrganismProperty(org, "htmlShortName"));
-                names.put(TaxonNameType.HTML_FULL, getOrganismProperty(org, "htmlFullName"));
+                names.put(TaxonNameType.HTML_SHORT, org.getPropertyValue("genedb_misc", "htmlShortName"));
+                names.put(TaxonNameType.HTML_FULL, org.getPropertyValue("genedb_misc", "htmlFullName"));
                 // int translationTable =
                 // Integer.parseInt(getOrganismProperty(org,
                 // "translationTable"));
                 // int mitochondrialTranslationTable =
                 // Integer.parseInt(getOrganismProperty(org,
                 // "mitochondrialTranslationTable"));
+                populated = org.isPopulated();
                 String fullName = org.getGenus() + ' ' + org.getSpecies();
                 names.put(TaxonNameType.FULL, fullName);
 
             }
         }
 
-    }
-
-    private String getOrganismProperty(Organism org, String key) {
-        for (OrganismProp prop : org.getOrganismProps()) {
-            if (prop.getType().getName().equals(key)) {
-                return prop.getValue();
-            }
-        }
-        return null;
     }
 
     public boolean isRoot() {
@@ -179,11 +171,11 @@ public class TaxonNode implements Serializable {
             getTaxonId(), getName(TaxonNameType.FULL), getLabel(), organism);
     }
 
-    public boolean hasOrganismFeature() {
-        return hasOrganismFeature;
+    public boolean isPopulated() {
+        return populated;
     }
 
-    public void setHasOrganismFeature(boolean hasOrganismFeature) {
-        this.hasOrganismFeature = hasOrganismFeature;
-    }
+//    public void setHasOrganismFeature(boolean hasOrganismFeature) {
+//        this.hasOrganismFeature = hasOrganismFeature;
+//    }
 }

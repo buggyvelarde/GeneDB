@@ -184,7 +184,7 @@ public class Organism implements Serializable {
      * @return the value of the property, or null if there is no such property.
      */
     @Transient
-    private String getPropertyValue(String cvName, String cvTermName) {
+    public String getPropertyValue(String cvName, String cvTermName) {
         for (OrganismProp organismProp: getOrganismProps()) {
             CvTerm propType = organismProp.getType();
             if (propType.getName().equals(cvTermName) && propType.getCv().getName().equals(cvName)) {
