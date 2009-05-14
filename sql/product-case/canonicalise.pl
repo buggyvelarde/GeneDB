@@ -51,4 +51,7 @@ delete from cvterm
 SQL
 }
 
-END { print "commit;\n" }
+END {
+    print "create unique index cvterm_idx_genedb1 on cvterm (lower(name), cv_id, is_obsolete);\n";
+    print "commit;\n";
+}
