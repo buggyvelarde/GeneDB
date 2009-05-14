@@ -304,6 +304,7 @@ class LoadGeneDbCv {
             <term name="app_www_homePage" description="Style of homepage wanted, if any" />
             <term name="htmlShortName" description="The short name in HTML format" />
             <term name="htmlFullName" description="The full name in HTML format" />
+            <term name="populated" description="This property is set on organisms that are populated with data"/>
         </term>
 
         <term name="artemis_specific" description="cvterm for various *_file qualifiers for artemis ">

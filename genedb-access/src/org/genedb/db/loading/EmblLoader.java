@@ -301,6 +301,12 @@ class EmblLoader {
             topLevelFeature.markAsTopLevelFeature();
             topLevelFeature.setResidues(emblFile.getSequence());
             session.persist(topLevelFeature);
+
+            organism = (Organism) session.merge(organism);
+            if (!organism.isPopulated()) {
+                logger.info(String.format("Marking organism '%s' as populated", organism));
+                session.persist(organism.addProperty("genedb_misc", "populated"));
+            }
         } else {
             topLevelFeature = (TopLevelFeature) session.merge(topLevelFeature);
         }

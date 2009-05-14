@@ -81,6 +81,14 @@ public class EmblLoaderSyntheticTest {
     }
 
     @Test
+    public void rileyClass() {
+        tester.geneTester("Tc00.1047053511907.50")
+        .transcript("Tc00.1047053511907.50:mRNA")
+        .polypeptide("Tc00.1047053511907.50:pep")
+        .cvtermsCheckingDb("RILEY", "RILEY", "4.1.6");
+    }
+
+    @Test
     public void s1GeneLocs() {
         tester.geneTester("s1")
             .loc(0, 0, -1, 3, 87)
@@ -234,6 +242,9 @@ public class EmblLoaderSyntheticTest {
         PolypeptideTester s4 = tester.geneTester("s4").transcript("s4:mRNA").polypeptide("s4:pep");
 
         // TODO test GO term loading
+        Collection<CvTerm> process  = s4.getTerms("biological_process", "GO");
+        Collection<CvTerm> function = s4.getTerms("molecular_function", "GO");
+        Collection<CvTerm> component = s4.getTerms("molecular_function", "GO");
     }
 
     @Test

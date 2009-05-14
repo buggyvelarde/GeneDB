@@ -2,6 +2,7 @@ package org.gmod.schema.mapped;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import org.genedb.db.dao.CvDao;
 
 import org.apache.log4j.Logger;
 import org.hibernate.search.annotations.DocumentId;
@@ -9,6 +10,8 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -26,11 +29,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+@Configurable
 @Entity
 @Table(name = "organism")
 @Indexed
 public class Organism implements Serializable {
     private static final Logger logger = Logger.getLogger(Organism.class);
+
+    @Autowired
+    private transient CvDao cvDao;
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "organism")
     private Collection<PhylonodeOrganism> phylonodeOrganisms;
@@ -189,9 +196,48 @@ public class Organism implements Serializable {
         return null;
     }
 
+    /**
+     * Does this organism have a property of the specified type?.
+     *
+     * @param cvName the name of the controlled vocabulary from which the property name is drawn
+     * @param cvTermName the property name
+     * @return <code>true</code> if there is such a property, or <code>false</code> if not.
+     */
+    @Transient
+    private boolean hasProperty(String cvName, String cvTermName) {
+        for (OrganismProp organismProp: getOrganismProps()) {
+            CvTerm propType = organismProp.getType();
+            if (propType.getName().equals(cvTermName) && propType.getCv().getName().equals(cvName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public OrganismProp addProperty(String cvName, String cvTermName) {
+        return addProperty(cvName, cvTermName, null, 0);
+    }
+
+    public OrganismProp addProperty(String cvName, String cvTermName, String value, int rank) {
+        CvTerm type = cvDao.getCvTermByNameAndCvName(cvTermName, cvName);
+        if (type == null) {
+            throw new RuntimeException(String.format("Failed to find CV term '%s:%s'", cvName, cvTermName));
+        }
+        OrganismProp organismProp = new OrganismProp(this, type, value, rank);
+        this.organismProps.add(organismProp);
+        return organismProp;
+    }
+
+
+
     @Transient
     public String getHtmlShortName() {
         return getPropertyValue("genedb_misc", "htmlShortName");
+    }
+
+    @Transient
+    public boolean isPopulated() {
+        return hasProperty("genedb_misc", "populated");
     }
 
     public Collection<PhylonodeOrganism> getPhylonodeOrganisms() {
@@ -233,6 +279,11 @@ public class Organism implements Serializable {
         } else if (!species.equals(other.species))
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s (ID=%d)", genus, species, organismId);
     }
 
 }

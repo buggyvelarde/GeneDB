@@ -158,6 +158,7 @@
         <instrument verbose="false">
             <fileset dir="${directory}">
                 <include name="org/gmod/schema/mapped/Feature.class"/>
+                <include name="org/gmod/schema/mapped/Organism.class"/>
                 <include name="org/gmod/schema/feature/*.class"/>
             </fileset>
         </instrument>
