@@ -5,6 +5,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 import org.genedb.db.dao.CvDao;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Proxy;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -33,6 +34,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "organism")
 @Indexed
+@Proxy(lazy=false)
 public class Organism implements Serializable {
     private static final Logger logger = Logger.getLogger(Organism.class);
 
