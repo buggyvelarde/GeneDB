@@ -5,6 +5,8 @@ where transcript.type_id in (
     , 339 /*rRNA*/
     , 340 /*tRNA*/
     , 361 /*snRNA*/
+    , 362 /*snoRNA*/
+    , 743 /*ncRNA*/
     , 761 /*transcript*/
 )
 and 1 <> (
