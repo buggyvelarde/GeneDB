@@ -1,11 +1,14 @@
 delete from featureloc
 using feature
+join cvterm feature_type on feature.type_id = feature_type.cvterm_id
+join cv on feature_type.cv_id = cv.cv_id
 where featureloc.feature_id = feature.feature_id
 and featureloc.srcfeature_id is null
-and feature.type_id in (
-    1158 /*membrane_structure*/
-  , 1160 /*cytoplasm_location*/
-  , 1161 /*non_cytoplasm_location*/
-  , 1164 /*transmembrane*/
-  , 504  /*polypeptide_domain*/
+and cv.name = 'sequence'
+and feature_type.name in (
+    'membrane_structure'
+  , 'cytoplasm_location'
+  , 'non_cytoplasm_location'
+  , 'transmembrane'
+  , 'polypeptide_domain'
 );
