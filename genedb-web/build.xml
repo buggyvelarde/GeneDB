@@ -141,6 +141,7 @@
     <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
     <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
     <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
+      <env key="BUILD_ID" value="dontKillMe" />
       <arg value="ci-web" />
       <arg value="start" />
     </exec>
