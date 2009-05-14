@@ -134,15 +134,15 @@ public class TaxonNodeManager implements InitializingBean {
         if (childNodes.size() > 0) {
             for (TaxonNode childNode :  childNodes) {
                 if (initPhylonodeWithOrganismFeatures(childNode)) {
-                    node.setHasOrganismFeature(true);
+                    //node.setHasOrganismFeature(true);
                 }
             }
         } else {
             if (phylogenyDao.isPhylonodeWithOrganismFeature(node.getPhylonode())) {
-                node.setHasOrganismFeature(true);
+                //node.setHasOrganismFeature(true);
             }
         }
-        return node.hasOrganismFeature();
+        return true;//node.hasOrganismFeature();
     }
 
     boolean validateTaxons(List<String> taxons, List<String> problems) {
