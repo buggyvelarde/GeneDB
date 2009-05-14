@@ -5,7 +5,6 @@ create or replace function refs(
         c integer;
         t integer := 0;
         r record;
-        s record;
         plural_s varchar(1) := '';
     begin
         for r in (
