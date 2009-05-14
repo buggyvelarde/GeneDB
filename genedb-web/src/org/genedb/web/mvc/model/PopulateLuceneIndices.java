@@ -218,7 +218,7 @@ public class PopulateLuceneIndices implements IndexUpdater {
         FullTextSession session = newSession(10);
         //Transaction transaction = session.beginTransaction();
         logger.info(String.format("A. The value of session is '%s' and it is '%s'", session, session.isConnected()));
-        Set<Integer> failed = batchIndexFeatures(featureClass, session);
+        Set<Integer> failed = batchIndexFeatures(featureClass, -1, session);
         //transaction.commit();
         session.close();
 
@@ -365,12 +365,13 @@ public class PopulateLuceneIndices implements IndexUpdater {
      * @return a set of featureIds of the features that failed to be indexed
      */
     @Transactional
-    private Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
-            FullTextSession session) {
 
-        logger.info(String.format("B. The value of session is '%s' and it is '%s'", session, session.isConnected()));
+    private Set<Integer> batchIndexFeatures(Class<? extends Feature> featureClass,
+            int numBatches, FullTextSession session) {
+
+        Set<Integer> failedToLoad = new HashSet<Integer>();
         Criteria criteria = session.createCriteria(featureClass);
-        criteria.add(Restrictions.eq("obsolete", Boolean.FALSE)); // Do not index obsolete features
+        criteria.add(Restrictions.eq("obsolete", false)); // Do not index obsolete features
         if (organism != null) {
             criteria.createCriteria("organism")
             .add( Restrictions.eq("commonName", organism));
@@ -382,17 +383,37 @@ public class PopulateLuceneIndices implements IndexUpdater {
         ScrollableResults results = criteria.scroll(ScrollMode.FORWARD_ONLY);
 
         logger.info(String.format("Indexing %s", featureClass));
-        List<Integer> featureIds = Lists.newArrayList();
+        int thisBatchCount = 0;
+        Set<Integer> thisBatch = new HashSet<Integer>();
 
         for (int i = 1; results.next(); i++) {
             Feature feature = (Feature) results.get(0);
-            featureIds.add(feature.getFeatureId());
-        }
+            thisBatch.add(feature.getFeatureId());
 
+            boolean failed = false;
+            try {
+                logger.debug(String.format("Indexing '%s' (%s)", feature.getUniqueName(),
+                    feature.getClass()));
+                session.index(feature);
+            } catch (Exception e) {
+                logger.error("Batch failed", e);
+                failed = true;
+            }
+
+            if (failed || ++thisBatchCount == BATCH_SIZE) {
+                logger.info(String.format("Indexed %d of %s", i, featureClass));
+                session.clear();
+                thisBatchCount = 0;
+                if (failed) {
+                    failedToLoad.addAll(thisBatch);
+                }
+                thisBatch = new HashSet<Integer>();
+            }
+        }
         results.close();
-        logger.info(String.format("B2. The value of session is '%s' and it is '%s'", session, session.isConnected()));
-        return batchIndexFeatures(featureIds, session);
+        return failedToLoad;
     }
+
 
     /**
      * Attempt to index the provided features individually
