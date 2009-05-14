@@ -133,18 +133,18 @@
 
 
   <target name="restart-ci-web">
-    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
+    <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="false">
       <arg value="ci-web" />
-      <arg value="shutdown" />
+      <arg value="stop" />
     </exec>
     <sleep seconds="5" />
     <delete dir="/nfs/pathdb/genedb/ci-web/logs" failonerror="false"/>
     <mkdir dir="/nfs/pathdb/genedb/ci-web/logs" />
     <exec executable="/nfs/pathdb/bin/genedb-web-control" failifexecutionfails="true" failonerror="true">
       <arg value="ci-web" />
-      <arg value="startup" />
+      <arg value="start" />
     </exec>
-    <sleep seconds="30" />
+    <sleep minutes="3" />
   </target>
 
   <target name="check-deploy">
@@ -326,19 +326,19 @@
               PeriodicUpdaterTest failed
            </fail>
        </target>
-    
-    <target name="check-updater-db-exists">    
+
+    <target name="check-updater-db-exists">
        <available property="periodic-updater-db-exists" file="${imported.basedir.web}/test/data/hsqldb/pfalciparum.data"/>
     </target>
-    
+
     <target name="init-periodic-updater-db" depends="check-updater-db-exists" unless="periodic-updater-db-exists">
        <antcall target="make-pfalciparum-database-if-necessary"/>
        <antcall target="copy-pfalciparum-database-to-web-test-dir"/>
     </target>
-    
-    <target name="copy-pfalciparum-database-to-web-test-dir">    
+
+    <target name="copy-pfalciparum-database-to-web-test-dir">
        <copy todir="${imported.basedir.web}/test/data/hsqldb">
-           <fileset dir="${imported.basedir.db}/test-data/hsqldb" />    
+           <fileset dir="${imported.basedir.db}/test-data/hsqldb" />
        </copy>
     </target>
 
@@ -479,7 +479,7 @@
         <arg line="/nfs/pathdb/genedb/staging/bulk/Lucene/destination /nfs/pathdb/genedb/staging/bulk/Lucene/output"/>
       </java>
     </target>
-	
+
 
     <target name="compare-lucene-indices" >
         <compile-target project="web"/>
