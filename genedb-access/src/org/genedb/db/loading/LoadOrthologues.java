@@ -399,8 +399,11 @@ class OrthologuesLoader {
 
     private void addOrthologue(Polypeptide sourcePolypeptide, Polypeptide targetPolypeptide, Double identity) {
         if (this.analysis != null) {
+            if (datasetName == null) {
+                throw new NullPointerException("The datasetName is null - did you call setDatasetName?");
+            }
             // Since this is an algorithmically-derived orthologue, we add it as a cluster
-            String clusterName = String.format("cluster %s -> %s",
+            String clusterName = String.format("%s: %s -> %s", datasetName,
                 sourcePolypeptide.getUniqueName(), targetPolypeptide.getUniqueName());
             List<Integer> polypeptideIds = new ArrayList<Integer>(2);
             Collections.addAll(polypeptideIds, sourcePolypeptide.getFeatureId(), targetPolypeptide.getFeatureId());
@@ -415,6 +418,10 @@ class OrthologuesLoader {
 
     private void loadCluster(String clusterName, Collection<Integer> polypeptideIds, Double identity) {
         Session session = SessionFactoryUtils.getSession(sessionFactory, false);
+
+        if (datasetName == null) {
+            throw new NullPointerException("The datasetName is null - did you call setDatasetName?");
+        }
 
         String clusterUniqueName = String.format("%s:%s", datasetName, clusterName);
 

@@ -39,6 +39,8 @@ public class OrthologueLoaderClusteredTest {
     private static final String programVersion = "1.4";
     private static final String algorithm = "(default parameters)";
 
+    private static final String DATASET_NAME = "test";
+
     @BeforeClass
     public static void setup() throws IOException, ParsingException {
         applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml", "Test.xml"});
@@ -58,6 +60,7 @@ public class OrthologueLoaderClusteredTest {
         OrthologuesLoader loader = applicationContext.getBean("orthologuesLoader", OrthologuesLoader.class);
 
         loader.setAnalysisProperties(program, programVersion, algorithm);
+        loader.setDatasetName(DATASET_NAME);
         File file = new File(filename);
         Reader reader = new FileReader(file);
         try {
@@ -99,7 +102,7 @@ public class OrthologueLoaderClusteredTest {
     }
 
     private void cluster(String clusterName, String... polypeptideUniqueNames) {
-        tester.orthologueGroup(clusterName, program, programVersion, algorithm, null, polypeptideUniqueNames);
+        tester.orthologueGroup(DATASET_NAME, clusterName, program, programVersion, algorithm, null, polypeptideUniqueNames);
     }
 
     @Transactional @Test

@@ -38,6 +38,8 @@ public class OrthologueLoaderImplicitClusterTest {
     private static final String programVersion = "3.4t26";
     private static final String algorithm = "Reciprocal best match";
 
+    private static final String DATASET_NAME = "test";
+
     @BeforeClass
     public static void setup() throws IOException, ParsingException {
         applicationContext = new ClassPathXmlApplicationContext(new String[] {"Load.xml", "Test.xml"});
@@ -67,6 +69,7 @@ public class OrthologueLoaderImplicitClusterTest {
             OrthologueFile orthologueFile = new OrthologueFile(file, reader);
 
             loader.setAnalysisProperties(program, programVersion, algorithm);
+            loader.setDatasetName(DATASET_NAME);
             loader.setGeneNames(geneNames);
             loader.load(orthologueFile);
         } finally {

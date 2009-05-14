@@ -1,8 +1,6 @@
 package org.genedb.db.loading;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.genedb.db.dao.SequenceDao;
 
@@ -33,18 +31,18 @@ public class OrthologueTester {
     @Resource(name="sequenceDao")
     private SequenceDao sequenceDao;
 
-    public void orthologueGroup(String clusterName, String... polypeptideUniqueNames) {
-        orthologueGroup(clusterName, null, null, null, null, polypeptideUniqueNames);
+    public void orthologueGroup(String datasetName, String clusterName, String... polypeptideUniqueNames) {
+        orthologueGroup(datasetName, clusterName, null, null, null, null, polypeptideUniqueNames);
     }
 
     public void orthologueGroup(String program, String programVersion,
             String algorithm, Double identity,
             String... polypeptideUniqueNames) {
-        orthologueGroup(null, program, programVersion, algorithm, identity,
+        orthologueGroup(null, null, program, programVersion, algorithm, identity,
             polypeptideUniqueNames);
     }
 
-    public void orthologueGroup(String clusterName,
+    public void orthologueGroup(String datasetName, String clusterName,
             String program, String programVersion,
             String algorithm, Double identity,
             String... polypeptideUniqueNames) {
@@ -77,7 +75,7 @@ public class OrthologueTester {
 
         ProteinMatch cluster = clusters.iterator().next();
         if (clusterName != null) {
-            assertEquals(clusterName, cluster.getUniqueName());
+            assertEquals(String.format("%s:%s", datasetName, clusterName), cluster.getUniqueName());
         }
         AnalysisFeature analysisFeature = cluster.getAnalysisFeature();
         if (analysisFeature == null) {
