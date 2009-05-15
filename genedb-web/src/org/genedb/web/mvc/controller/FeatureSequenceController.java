@@ -37,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,6 +91,14 @@ public class FeatureSequenceController {
         //Transcript - from UTR to UTR inclusive, without introns
         model.put("transcript", transcript.getResidues()); // formerly spliced
         //CDS - exons
+        SortedSet<AbstractExon> exons = transcript.getExons();
+        StringBuilder sb = new StringBuilder();
+        for (AbstractExon exon : exons) {
+        	String seq = exon.getPrimarySourceFeature().getResidues(exon.getFmin(), exon.getFmax());
+			sb.append(seq);
+		}
+        model.put("cds", sb.toString());
+
         //model.put("cds", getSequence(transcript, GeneSection.START_CODON, 0, GeneSection.STOP_CODON, 0, true, false));
 
 
