@@ -117,7 +117,7 @@ public class TaxonNodeManager implements InitializingBean {
         if (root == null){
             throw new RuntimeException("No taxon with \"Root\" has label exists");
         }else{
-        	List<TaxonNode> children = root.getChildren();
+        	List<TaxonNode> children = root.getAllChildren();
         	for (TaxonNode child : children) {
 				if (!child.isOrganism()) {
 					continue;

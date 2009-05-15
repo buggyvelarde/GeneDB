@@ -149,7 +149,7 @@ public class TaxonNode implements Serializable {
         return organism;
     }
 
-    private List<TaxonNode> getAllChildren() {
+    public List<TaxonNode> getAllChildren() {
         List<TaxonNode> ret = new ArrayList<TaxonNode>();
 
         List<TaxonNode> immediateChildren = getChildren();
