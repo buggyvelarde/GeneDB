@@ -1,9 +1,9 @@
 #!/bin/bash -xv
 
-set NIGHTLY=/nfs/pathdb/genedb/nightly
-set SAFETY=${NIGHTLY}/backup
-set INVESTIGATION=${NIGHTLY}/failed
-
+NIGHTLY=/nfs/pathdb/genedb/nightly
+SAFETY=${NIGHTLY}/backup
+INVESTIGATION=${NIGHTLY}/failed
+CVS=`basename $0`/../..
 
 mkdir $SAFETY
 rm -fr $SAFETY/*
