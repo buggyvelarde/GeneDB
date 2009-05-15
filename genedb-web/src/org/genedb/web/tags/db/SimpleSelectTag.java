@@ -97,7 +97,7 @@ public class SimpleSelectTag extends AbstractHomepageTag {
             }
         });
         for (TaxonNode child : children) {
-            if(child.hasOrganismFeature()){
+            if(child.isPopulated()){
                 displayImmediateChildren(
                         child, out, indent+1, indentSpaces + "&nbsp;&nbsp;&nbsp;", previouslySelectedTaxons);
             }
