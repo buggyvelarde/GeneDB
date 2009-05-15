@@ -39,7 +39,7 @@ public class ResultsCacheFactory {
 
     private boolean allowCreate = false;
 
-    private final static Logger logger = Logger.getLogger(ResultsCacheFactory.class);
+	private final static Logger logger = Logger.getLogger(ResultsCacheFactory.class);
 
     private final String CLASS_CATALOG = "java_class_catalog";
 
@@ -147,4 +147,8 @@ public class ResultsCacheFactory {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
+
+    public void setAllowCreate(boolean allowCreate) {
+		this.allowCreate = allowCreate;
+	}
 }
