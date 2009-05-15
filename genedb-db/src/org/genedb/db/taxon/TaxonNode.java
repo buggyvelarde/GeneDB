@@ -11,6 +11,8 @@ import org.gmod.schema.mapped.OrganismProp;
 import org.gmod.schema.mapped.Phylonode;
 import org.gmod.schema.mapped.PhylonodeOrganism;
 
+import org.apache.log4j.Logger;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +27,8 @@ import java.util.Map;
  *
  */
 public class TaxonNode implements Serializable {
+
+	private Logger logger = Logger.getLogger(TaxonNode.class);
 
     private String taxonId;
     transient private TaxonNode parent;
@@ -181,8 +185,12 @@ public class TaxonNode implements Serializable {
 	}
 
 	public void setChildrenPopulated(boolean childrenPopulated) {
+		logger.error("I'm called : "+toString());
 		if (childrenPopulated && !this.childrenPopulated && getParent() != null) {
+			logger.error("Trying to call on parent");
 			getParent().setChildrenPopulated(true);
+		} else {
+			logger.error("Not calling on parent");
 		}
 		this.childrenPopulated = childrenPopulated;
 	}
