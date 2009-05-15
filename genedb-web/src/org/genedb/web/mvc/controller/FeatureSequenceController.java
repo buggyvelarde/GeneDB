@@ -74,17 +74,26 @@ public class FeatureSequenceController {
         Map<String, Object> model = Maps.newHashMap();
 
         model.put("uniqueName", transcript.getUniqueName());
+        model.put("coords", transcript.getExons());
+        
+        
+        // ---------------------------------------------
         model.put("unspliced", transcript.getGene().getResidues());
 
         List<Pair<Integer, Integer>> coords;
         for (AbstractExon exon : transcript.getExons()) {
             exon.getFeatureLocs();
         }
+        
+        // geneSequence - from UTR to UTR inclusive, with introns
+        model.put("gene_sequence", transcript.getGene().getResidues()); // formerly unspliced
+        //Transcript - from UTR to UTR inclusive, without introns 
+        model.put("transcript", transcript.getResidues()); // formerly spliced
+        //CDS - exons
+        model.put("cds", getSequence(transcript, GeneSection.START_CODON, 0, GeneSection.STOP_CODON, 0, true, false));
 
-        model.put("coords", transcript.getExons());
 
-        model.put("spliced", transcript.getResidues());
-
+        // -----------------------------------------------
         if (transcript instanceof ProductiveTranscript) {
             Polypeptide pp = ((ProductiveTranscript) transcript).getProtein();
             if (pp != null) {

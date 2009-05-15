@@ -63,15 +63,25 @@ public class SequenceDistributorController {
         Transcript transcript = modelBuilder.findTranscriptForFeature(feature);
 
         String sequence = null;
+        String sequence2 = null;
         boolean nucleotide = true;
 
         SequenceType st = SequenceType.valueOf(sequenceType);
         switch (st) {
-        case UNSPLICED:
+        case GENE_SEQUENCE:
             sequence = transcript.getGene().getResidues();
+            sequence2 = getSequence(transcript, GeneSection.TRANSCRIPTIONAL_START, 0, GeneSection.POLY_A, 0, true, true);
+            compareSequences(sequence, sequence2);
             break;
-        case SPLICED:
+        case TRANSCRIPT:
             sequence = transcript.getResidues();
+            sequence2 = getSequence(transcript, GeneSection.TRANSCRIPTIONAL_START, 0, GeneSection.POLY_A, 0, true, false);
+            compareSequences(sequence, sequence2);
+            break;
+        case CDS:
+            sequence = transcript.getResidues();
+            sequence2 = getSequence(transcript, GeneSection.START_CODON, 0, GeneSection.STOP_CODON, 0, true, false);
+            compareSequences(sequence, sequence2);
             break;
         case PROTEIN:
             if (transcript instanceof ProductiveTranscript) {
@@ -85,6 +95,8 @@ public class SequenceDistributorController {
                 }
             }
         }
+        
+        //String sequence = sequenceDao.fetchSequence(transcript, start, end, introns);
 
         sequence = splitSequenceIntoLines(sequence);
 
@@ -112,7 +124,27 @@ public class SequenceDistributorController {
 
     }
 
-    private int LINE_LENGTH = 40;
+    private String getSequence(Transcript transcript, GeneSection start, int length1, GeneSection end,
+			int length2, boolean exons, boolean introns) {
+    	Feature topLevelFeature = transcript.getPrimarySourceFeature();
+    	int min = transcript.getFmin() - length1;
+    	min = (min < 0) ? 0 : min;
+    	int max = transcript.getFmax() + length2;
+    	max = (max < topLevelFeature.getSeqLen()) ? topLevelFeature.getSeqLen() : max;
+    	String seq = topLevelFeature.getResidues(min, max);
+    	return seq;
+	}
+
+	private void compareSequences(String sequence, String sequence2) {
+    	if (sequence.equals(sequence2)) {
+    		logger.error("Sequences match");
+    	} else {
+    		logger.error("Sequences differ");
+    	}
+		
+	}
+
+	private int LINE_LENGTH = 40;
 
     private String splitSequenceIntoLines(String sequence) {
 
