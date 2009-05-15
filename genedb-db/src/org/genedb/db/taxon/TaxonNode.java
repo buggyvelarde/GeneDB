@@ -33,6 +33,7 @@ public class TaxonNode implements Serializable {
     private boolean webLinkable = false;
     private boolean organism = false;
     private boolean populated = false;
+    private boolean childrenPopulated = false;
     private Map<String, Map<String, Object>> appDetails = new HashMap<String, Map<String, Object>>();
     private Map<TaxonNameType, String> names = new HashMap<TaxonNameType, String>(7);
 
@@ -174,6 +175,17 @@ public class TaxonNode implements Serializable {
     public boolean isPopulated() {
         return populated;
     }
+
+	public boolean isChildrenPopulated() {
+		return childrenPopulated;
+	}
+
+	public void setChildrenPopulated(boolean childrenPopulated) {
+		if (childrenPopulated && !this.childrenPopulated && getParent() != null) {
+			getParent().setChildrenPopulated(true);
+		}
+		this.childrenPopulated = childrenPopulated;
+	}
 
 //    public void setHasOrganismFeature(boolean hasOrganismFeature) {
 //        this.hasOrganismFeature = hasOrganismFeature;

@@ -24,14 +24,10 @@ import org.genedb.db.dao.PhylogenyDao;
 
 import org.gmod.schema.mapped.Phylonode;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +41,7 @@ import java.util.Set;
 public class TaxonNodeManager implements InitializingBean {
 
     private PhylogenyDao phylogenyDao;
-    private SessionFactory sessionFactory;
+    //private SessionFactory sessionFactory;
 
     private boolean isFindPhylonodeWithOrganismFeatures=true;
 
@@ -117,12 +113,21 @@ public class TaxonNodeManager implements InitializingBean {
      * Initialise taxons with organism features with boolean flag
      */
     private void findPhylonodeWithOrganismFeatures(){
-        TaxonNode node = getTaxonNodeForLabel("Root");
-        if (node == null){
+        TaxonNode root = getTaxonNodeForLabel("Root");
+        if (root == null){
             throw new RuntimeException("No taxon with \"Root\" has label exists");
         }else{
-            System.out.println("Filtering the taxons....");
-            initPhylonodeWithOrganismFeatures(node);
+        	List<TaxonNode> children = root.getChildren();
+        	for (TaxonNode child : children) {
+				if (!child.isOrganism()) {
+					continue;
+				}
+				if (child.isPopulated()) {
+					child.setChildrenPopulated(true);
+				}
+			}
+            //System.out.println("Filtering the taxons....");
+            //initPhylonodeWithOrganismFeatures(node);
         }
     }
 
@@ -131,21 +136,21 @@ public class TaxonNodeManager implements InitializingBean {
      * @param node
      * @return
      */
-    private boolean initPhylonodeWithOrganismFeatures(TaxonNode node){
-        List<TaxonNode> childNodes = node.getChildren();
-        if (childNodes.size() > 0) {
-            for (TaxonNode childNode :  childNodes) {
-                if (initPhylonodeWithOrganismFeatures(childNode)) {
-                    //node.setHasOrganismFeature(true);
-                }
-            }
-        } else {
-            if (phylogenyDao.isPhylonodeWithOrganismFeature(node.getPhylonode())) {
-                //node.setHasOrganismFeature(true);
-            }
-        }
-        return true;//node.hasOrganismFeature();
-    }
+//    private boolean initPhylonodeWithOrganismFeatures(TaxonNode node){
+//        List<TaxonNode> childNodes = node.getChildren();
+//        if (childNodes.size() > 0) {
+//            for (TaxonNode childNode :  childNodes) {
+//                if (initPhylonodeWithOrganismFeatures(childNode)) {
+//                    //node.setHasOrganismFeature(true);
+//                }
+//            }
+//        } else {
+//            if (phylogenyDao.isPhylonodeWithOrganismFeature(node.getPhylonode())) {
+//                //node.setHasOrganismFeature(true);
+//            }
+//        }
+//        return true;//node.hasOrganismFeature();
+//    }
 
     boolean validateTaxons(List<String> taxons, List<String> problems) {
         boolean problem = false;
