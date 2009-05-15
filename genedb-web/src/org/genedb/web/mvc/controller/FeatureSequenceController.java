@@ -75,8 +75,8 @@ public class FeatureSequenceController {
 
         model.put("uniqueName", transcript.getUniqueName());
         model.put("coords", transcript.getExons());
-        
-        
+
+
         // ---------------------------------------------
         model.put("unspliced", transcript.getGene().getResidues());
 
@@ -84,13 +84,13 @@ public class FeatureSequenceController {
         for (AbstractExon exon : transcript.getExons()) {
             exon.getFeatureLocs();
         }
-        
+
         // geneSequence - from UTR to UTR inclusive, with introns
         model.put("gene_sequence", transcript.getGene().getResidues()); // formerly unspliced
-        //Transcript - from UTR to UTR inclusive, without introns 
+        //Transcript - from UTR to UTR inclusive, without introns
         model.put("transcript", transcript.getResidues()); // formerly spliced
         //CDS - exons
-        model.put("cds", getSequence(transcript, GeneSection.START_CODON, 0, GeneSection.STOP_CODON, 0, true, false));
+        //model.put("cds", getSequence(transcript, GeneSection.START_CODON, 0, GeneSection.STOP_CODON, 0, true, false));
 
 
         // -----------------------------------------------
