@@ -37,6 +37,8 @@ public class ResultsCacheFactory {
 
     private boolean readOnly;
 
+    private boolean allowCreate = false;
+
     private final static Logger logger = Logger.getLogger(ResultsCacheFactory.class);
 
     private final String CLASS_CATALOG = "java_class_catalog";
@@ -76,7 +78,7 @@ public class ResultsCacheFactory {
 
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setTransactional(true);
-        envConfig.setAllowCreate(!readOnly);
+        envConfig.setAllowCreate(allowCreate);
         envConfig.setReadOnly(readOnly);
 
         try {

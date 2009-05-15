@@ -78,6 +78,7 @@
     <bean name="resultsCacheFactory" class="org.genedb.web.mvc.model.ResultsCacheFactory">
         <property name="rootDirectory" value="${resultsCacheDirectory}"/>
         <property name="readOnly" value="false" />
+        <property name="allowCreate" value="true" />
     </bean>
 
     <bean name="diagramCache" class="org.genedb.web.gui.BdbDiagramCache">
@@ -290,9 +291,6 @@
         class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
 
     <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
-
-    <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController" />
-    
 
     <bean name="ResultsController" class="org.genedb.web.mvc.controller.download.ResultsController" />
 
