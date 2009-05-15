@@ -30,6 +30,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
@@ -53,9 +54,10 @@ public class TaxonNodeManager implements InitializingBean {
     private Map<String, TaxonNode> fullNameTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> nickNameTaxonNodeMap = new HashMap<String, TaxonNode>();
 
+    @Transactional
     public void afterPropertiesSet() throws Exception {
-        Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
-        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
+        //Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+        //TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
         try {
         //System.err.println("Session is '"+session+"'");
         Set<TaxonNode> nodes = new HashSet<TaxonNode>();
@@ -104,10 +106,10 @@ public class TaxonNodeManager implements InitializingBean {
         }
 
         }
-        finally {
-              TransactionSynchronizationManager.unbindResource(sessionFactory);
-              SessionFactoryUtils.closeSession(session);
-            }
+        //finally {
+        //      TransactionSynchronizationManager.unbindResource(sessionFactory);
+        //      SessionFactoryUtils.closeSession(session);
+        //    }
 
     }
 
