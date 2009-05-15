@@ -58,7 +58,7 @@ public class TaxonNodeManager implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         //Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
         //TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-        try {
+//        try {
         //System.err.println("Session is '"+session+"'");
         Set<TaxonNode> nodes = new HashSet<TaxonNode>();
         List<Phylonode> phylonodes = phylogenyDao.getAllPhylonodes();
@@ -105,7 +105,7 @@ public class TaxonNodeManager implements InitializingBean {
             findPhylonodeWithOrganismFeatures();
         }
 
-        }
+  //      }
         //finally {
         //      TransactionSynchronizationManager.unbindResource(sessionFactory);
         //      SessionFactoryUtils.closeSession(session);
