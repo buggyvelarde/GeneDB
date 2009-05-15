@@ -30,7 +30,7 @@ done
 
 # Run incremental updates
 cd ${CVS}/genedb_web/
-ant -Ddeploy=nightly incremental_update
+#ant -Ddeploy=nightly incremental_update
 
 if [$? -eq 1 ]; then
   #Failure
@@ -53,7 +53,7 @@ Extract the sequence ids from the copy, and update the production db
 echo "Nightly update completed - attempting to deploy web server"
 
 #Deploy the nightly web server into position
-ant -Ddeploy=nightly final_deploy
+#ant -Ddeploy=nightly final_deploy
 
 
 
