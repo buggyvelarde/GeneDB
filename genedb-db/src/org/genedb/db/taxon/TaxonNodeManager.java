@@ -41,7 +41,7 @@ import java.util.Set;
 public class TaxonNodeManager implements InitializingBean {
 
     private PhylogenyDao phylogenyDao;
-    //private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     private boolean isFindPhylonodeWithOrganismFeatures=true;
 
