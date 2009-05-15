@@ -8,9 +8,6 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.google.common.collect.Lists;
-import com.sleepycat.collections.StoredMap;
-
 import org.apache.log4j.Logger;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
@@ -18,9 +15,7 @@ import org.genedb.querying.core.Query;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryFactory;
 import org.genedb.querying.tmpquery.GeneSummary;
-import org.genedb.querying.tmpquery.TaxonQuery;
 import org.genedb.web.mvc.controller.WebConstants;
-import org.genedb.web.mvc.model.ResultsCacheFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -37,15 +32,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/Query")
-public class QueryController {
+public class QueryController extends AbstractGeneDBFormController{
 
     private static final Logger logger = Logger.getLogger(QueryController.class);
-
-    @Autowired
-    private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
-
-    @Autowired
-    private ResultsCacheFactory resultsCacheFactory;
 
     @Autowired
     private QueryFactory queryFactory;
@@ -138,33 +127,6 @@ public class QueryController {
             return "redirect:/Results";
         }
     }
-    
-    private List<GeneSummary> possiblyConvertList(List results) {
-        List<GeneSummary> gs;
-        Object firstItem =  results.get(0);
-        if (firstItem instanceof GeneSummary) {
-            gs = results;
-        } else {
-            gs = Lists.newArrayListWithExpectedSize(results.size());
-            for (Object o  : results) {
-                gs.add(new GeneSummary((String) o));
-            }
-        }
-        return gs;
-    }
-
-
-    private String cacheResults(List<GeneSummary> gs, Query q, String queryName, String sessionId) {
-        String key = sessionId + Integer.toString(System.identityHashCode(gs)); // CHECKME
-        StoredMap<String, ResultEntry> map = resultsCacheFactory.getResultsCacheMap();
-        ResultEntry re = new ResultEntry();
-        re.numOfResults = gs.size();
-        re.query = q;
-        re.results = gs;
-        re.queryName = queryName;
-        map.put(key, re);
-        return key;
-    }
 
 
     private void populateModelData(Model model, Query query) {
@@ -183,28 +145,6 @@ public class QueryController {
             session.setAttribute(WebConstants.FLASH_MSG, String.format("Unable to find query called '%s'", queryName));
         }
         return query;
-    }
-    
-    protected Errors initialiseQueryForm(Query query, ServletRequest request){
-        // Attempt to fill in form
-        ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy/MM/dd"), false, 10));
-        binder.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
-
-        binder.bind(request);
-
-        return binder.getBindingResult();        
-    }
-    
-    protected String findTaxonName(Query query){
-        String taxonName = null;
-        if (query instanceof TaxonQuery) {
-            TaxonNode[] nodes = ((TaxonQuery) query).getTaxons();
-            if (nodes != null && nodes.length > 0) {
-                taxonName = nodes[0].getLabel();
-            } // FIXME
-        }
-        return taxonName;
     }
     
     /**

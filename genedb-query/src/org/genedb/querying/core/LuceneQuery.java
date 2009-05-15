@@ -136,7 +136,7 @@ public abstract class LuceneQuery implements Query {
     }
 
 
-    private Hits lookupInLucene() {
+    protected Hits lookupInLucene() {
 
         List<org.apache.lucene.search.Query> queries = new ArrayList<org.apache.lucene.search.Query>();
         getQueryTerms(queries);

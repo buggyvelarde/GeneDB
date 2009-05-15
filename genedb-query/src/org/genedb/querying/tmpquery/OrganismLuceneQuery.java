@@ -29,7 +29,7 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
     }
 
     @Autowired
-    private transient TaxonNodeManager taxonNodeManager;
+    protected transient TaxonNodeManager taxonNodeManager;
 
     @QueryParam(
             order=3,

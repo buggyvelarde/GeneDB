@@ -56,6 +56,7 @@
     <bean name="pfamQuery" class="org.genedb.querying.tmpquery.PfamQuery" scope="prototype" />
     <bean name="curationQuery" class="org.genedb.querying.tmpquery.CurationQuery" scope="prototype" />
     <bean name="idsToGeneSummaryQuery" class="org.genedb.querying.tmpquery.IdsToGeneSummaryQuery" scope="prototype" />
+    <bean name="quickSearchQuery" class="org.genedb.querying.tmpquery.QuickSearchQuery" scope="prototype" />
 
     <bean name="queryFactory" class="org.genedb.querying.core.QueryFactory" />
 
@@ -289,6 +290,9 @@
         class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
 
     <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
+
+    <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController" />
+    
 
     <bean name="ResultsController" class="org.genedb.web.mvc.controller.download.ResultsController" />
 
