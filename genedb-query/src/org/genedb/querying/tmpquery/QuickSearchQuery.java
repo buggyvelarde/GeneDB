@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -19,6 +20,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.genedb.querying.core.QueryException;
+import org.genedb.querying.core.QueryParam;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
@@ -32,6 +34,24 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     private transient Logger logger  = Logger.getLogger(QuickSearchQuery.class);
 
     private String searchText;
+
+    @QueryParam(
+            order=1,
+            title="Search gene products?"
+    )
+    private boolean product;
+
+    @QueryParam(
+            order=1,
+            title="Search gene names and synonyms?"
+    )
+    private boolean allNames;
+
+    @QueryParam(
+            order=1,
+            title="Include pseudogenes"
+    )
+    private boolean pseudogenes;
 
     @Override
     protected String getluceneIndexName() {
@@ -87,12 +107,13 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         
         QuickSearchQueryResults quickSearchQueryResults = new QuickSearchQueryResults();        
         List<GeneSummary> geneSummaries = quickSearchQueryResults.getResults();
-        HashMap<String, Integer> taxonGroup = quickSearchQueryResults.getTaxonGroup();
+        TreeMap<String, Integer> taxonGroup = quickSearchQueryResults.getTaxonGroup();
+        TreeMap<String, Integer> tempTaxonGroup = new TreeMap<String, Integer>();
         try {
             //taxn name
-            List<String> taxonNames = null;
+            List<String> currentTaxonNames = null;
             if (taxons!= null && taxons.length>0){
-                taxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
+                currentTaxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
             }
             
             Hits hits = lookupInLucene();
@@ -102,26 +123,37 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
             while (it.hasNext()) {
                 Hit hit = it.next();
                 Document document = hit.getDocument();
-
+                 
+                //Get the current taxon name from document
                 String taxonName = document.get("organism.commonName");
-                if (taxonNames!= null && !taxonNames.contains(taxonName)){
-                    Integer currentTaxonHitCount = taxonGroup.get(taxonName);
-                    if (currentTaxonHitCount==null){
-                        taxonGroup.put(taxonName, 1);
-                    }else{                        
-                        taxonGroup.put(taxonName, ++currentTaxonHitCount);
-                    }
-                    continue;
-                }
                 
-                logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
-                GeneSummary gs = convertDocumentToReturnType(document);
-                geneSummaries.add(gs);
+                boolean isNoTaxonMatch = currentTaxonNames!= null && !currentTaxonNames.contains(taxonName);
+                
+                if(taxons==null ){
+                    //Categorise the taxons into size of hits
+                    populateTaxonGroup(taxonGroup, taxonName);
+                    
+                    populateGeneSummaries(geneSummaries, document);
+                    
+                }else if (isNoTaxonMatch){
+                    populateTaxonGroup(tempTaxonGroup, taxonName);
+                    
+                }else{ 
+                    populateGeneSummaries(geneSummaries, document);
+                    
+                    //Categrise the taxons into size of hits
+                    populateTaxonGroup(taxonGroup, taxonName);            
+                }
 
             }
             Collections.sort(geneSummaries);
             
-            if(taxonNames==null && geneSummaries.size() > 0){
+            //If no matches are found for current taxon, display all other taxons with a match 
+            if (geneSummaries.size() == 0 && taxonGroup.size()==0 && tempTaxonGroup.size()>0){
+                taxonGroup.putAll(tempTaxonGroup);
+            }
+            
+            if(currentTaxonNames==null && geneSummaries.size() > 0){
                 quickSearchQueryResults.setQuickResultType(QuickResultType.ALL_ORGANISMS_IN_ALL_TAXONS);   
                 
             }else if(geneSummaries.size() == 1){
@@ -141,11 +173,30 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         }
         return quickSearchQueryResults;
     }
+    
+    /**
+     * Categrise the taxons into size of hits
+     * @param taxonGroup
+     * @param taxonName
+     */
+    private void populateTaxonGroup(TreeMap<String, Integer> taxonGroup, String taxonName){
+        Integer currentTaxonHitCount = taxonGroup.get(taxonName);
+        if (currentTaxonHitCount==null){
+            taxonGroup.put(taxonName, 1);
+        }else{                        
+            taxonGroup.put(taxonName, ++currentTaxonHitCount);
+        }
+    }
+    
+    private void populateGeneSummaries(List<GeneSummary> geneSummaries, Document document){        
+        logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+        GeneSummary gs = convertDocumentToReturnType(document);
+        geneSummaries.add(gs);        
+    }
 
     @Override
     public Map<String, Object> prepareModelData() {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.emptyMap();
     }
 
     @Override
@@ -162,7 +213,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     
     public class QuickSearchQueryResults{
         private List<GeneSummary> results = new ArrayList<GeneSummary>();
-        private HashMap<String, Integer> taxonGroup = new HashMap<String, Integer>();
+        private TreeMap<String, Integer> taxonGroup = new TreeMap<String, Integer>();
         private QuickResultType quickResultType;
         private String singleResultInTaxonGeneId;
         
@@ -179,17 +230,17 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         public void setResults(List<GeneSummary> results) {
             this.results = results;
         }
-        public HashMap<String, Integer> getTaxonGroup() {
-            return taxonGroup;
-        }
-        public void setTaxonGroup(HashMap<String, Integer> taxonGroup) {
-            this.taxonGroup = taxonGroup;
-        }
         public String getSingleResultInTaxonGeneId() {
             return singleResultInTaxonGeneId;
         }
         public void setSingleResultInTaxonGeneId(String singleResultInTaxonGeneId) {
             this.singleResultInTaxonGeneId = singleResultInTaxonGeneId;
+        }
+        public TreeMap<String, Integer> getTaxonGroup() {
+            return taxonGroup;
+        }
+        public void setTaxonGroup(TreeMap<String, Integer> taxonGroup) {
+            this.taxonGroup = taxonGroup;
         }
     }
     
@@ -206,6 +257,30 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
     public void setSearchText(String searchText) {
         this.searchText = searchText;
+    }
+
+    public boolean isProduct() {
+        return product;
+    }
+
+    public void setProduct(boolean product) {
+        this.product = product;
+    }
+
+    public boolean isAllNames() {
+        return allNames;
+    }
+
+    public void setAllNames(boolean allNames) {
+        this.allNames = allNames;
+    }
+
+    public boolean isPseudogenes() {
+        return pseudogenes;
+    }
+
+    public void setPseudogenes(boolean pseudogenes) {
+        this.pseudogenes = pseudogenes;
     }
 
 }

@@ -191,6 +191,13 @@ div#geneResultsPanel {
     min-width: 37em;
 }
 
+div#geneTaxonsPanel {
+    margin-left: 25px;
+    margin-right: auto;
+    width: 90%;
+    min-width: 10em;
+}
+
 div.row {
     clear: both;
     position: relative;

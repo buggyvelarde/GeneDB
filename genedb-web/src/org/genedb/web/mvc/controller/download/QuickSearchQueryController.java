@@ -33,18 +33,28 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController{
     private QueryFactory queryFactory;
 
     
-    @RequestMapping(method = RequestMethod.GET , params= "searchText")
+    @RequestMapping(method = RequestMethod.GET )
     public String processForm(
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
+        
         String queryName = "quickSearch";        
         QuickSearchQuery query = (QuickSearchQuery)queryFactory.retrieveQuery(queryName);
 
         //Initialise query form
+
+        //Initialise model data somehow
+        model.addAttribute("query", query);
+        logger.debug("The number of parameters is '" + request.getParameterMap().keySet().size() + "'");
         initialiseQueryForm(query, request);        
         
-        QuickSearchQueryResults quickSearchQueryResults = query.getQuickSearchQueryResults();        
+        QuickSearchQueryResults quickSearchQueryResults = query.getQuickSearchQueryResults();   
+        
+        //AddTaxonGroupToSession
+        session.setAttribute(
+                "taxonGroup", quickSearchQueryResults.getTaxonGroup());
+        
         return findDestinationView(queryName, query, model, quickSearchQueryResults, session);
     }
     
@@ -91,6 +101,18 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController{
             
          default:   
              return "";
+        }
+    }
+    
+    /**
+     * 
+     * @param quickSearchQueryResults
+     * @param session
+     */
+    private void addTaxonGroupToSession(QuickSearchQueryResults quickSearchQueryResults, HttpSession session){
+        if (quickSearchQueryResults.getTaxonGroup()!= null && quickSearchQueryResults.getTaxonGroup().size()>0){
+            session.setAttribute(
+                    "taxonGroup", quickSearchQueryResults.getTaxonGroup());
         }
     }
 }

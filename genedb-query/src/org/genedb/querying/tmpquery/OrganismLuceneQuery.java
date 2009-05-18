@@ -19,6 +19,10 @@ import java.util.List;
 
 public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQuery {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1581819678507010911L;
     protected static final TermQuery isCurrentQuery = new TermQuery(new Term("obsolete", "false"));
     protected static final TermQuery geneQuery = new TermQuery(new Term("type.name","gene"));
     protected static final TermQuery pseudogeneQuery = new TermQuery(new Term("type.name","pseudogene"));
@@ -35,7 +39,7 @@ public abstract class OrganismLuceneQuery extends LuceneQuery implements TaxonQu
             order=3,
             title="Organism restriction"
     )
-    protected TaxonNode[] taxons;
+    protected transient TaxonNode[] taxons;
 
 
     /* (non-Javadoc)
