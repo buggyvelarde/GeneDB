@@ -577,6 +577,18 @@ class LoadGeneDbPhylogeny {
                         <property name="shortName" value="" />
                         <property name="curatorName" value="" />
                     </organism>
+                    <organism name="Ncaninum">
+                        <property name="taxonId" value="29176" />
+                        <property name="fullName" value="Neospora caninum" />
+                        <property name="nickname" value="Ncaninum" />
+                        <property name="translationTable" value="1"/>
+                        <property name="mitochondrialTranslationTable" value="4"/>
+                        <property name="curatorEmail" value="ar11@sanger.ac.uk"/>
+                        <property name="htmlFullName" value="<i>Neospora caninum</i>"/>
+                        <property name="htmlShortName" value="<i>N. caninum</i>"/>
+                        <property name="shortName" value="N. caninum" />
+                        <property name="curatorName" value="Adam Reid" />
+                    </organism>
                     <node name="Plasmodium" app_www_homePage="true">
                         <organism name="Pfalciparum">
                             <property name="taxonId" value="5833" />
