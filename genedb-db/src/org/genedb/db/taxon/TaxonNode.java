@@ -169,6 +169,24 @@ public class TaxonNode implements Serializable {
         });
         return ret;
     }
+    
+    /* Slightly modified method (from above) that returns a list of all children names within single quotes (ready for SQL queries)
+     * Didn't want to change above method incase it disrupted other classes */
+    public List<String> getAllChildrenNamesInSQLFormat() {
+        List<TaxonNode> allChildren = getAllChildren();
+        List<String> names = new ArrayList<String>();
+
+        for (TaxonNode child : allChildren) {
+            if (child.isOrganism()) {
+                names.add("'"+child.getLabel()+"'");
+            }
+        }
+        if (isOrganism()) {
+            names.add("'"+getLabel()+"'");
+        }
+        return names;
+    }
+
 
     @Override
     public String toString() {
