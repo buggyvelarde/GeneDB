@@ -138,6 +138,46 @@
             <jvmarg line="-Xmx512M"/>
         </java>
     </target>
+    
+    <target name="delete-orthologues" depends="fulljar-access">
+    
+       <fail message="The properties load.dataset and load.analysis.algorithm must be specified">
+        <condition>
+          <not>
+            <and>
+                <isset property="load.dataset"/>
+                <isset property="load.analysis.algorithm"/>
+            </and>
+          </not>
+        </condition>
+       </fail>
+    
+       <sql driver="org.postgresql.Driver"
+           url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
+           userid="${dbuser}" password="${dbpassword}">
+
+           <classpath>
+              <pathelement location="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar"/>
+           </classpath>
+
+            select feature.uniquename
+            from feature
+            join analysisfeature using (feature_id)
+            join analysis using (analysis_id)
+            join organism using (organism_id)
+            where organism.common_name = 'dummy'
+            and feature.type_id = (
+              select cvterm_id
+              from cvterm join cv using (cv_id)
+              where cv.name = 'sequence' and cvterm.name = 'protein_match'
+            )
+            and feature.uniquename like '${load.dataset}:%'
+            and analysis.algorithm = '${load.analysis.algorithm}'
+            ;
+        </sql>
+    </target>
+    
+    <target name="reload-orthologues" depends="delete-orthologues,load-orthologues"/>
 
     <target name="load-vulgar" depends="fulljar-access">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadVulgar">
