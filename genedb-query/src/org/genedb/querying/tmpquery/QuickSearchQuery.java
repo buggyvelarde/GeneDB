@@ -66,10 +66,16 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
         BooleanQuery bq = new BooleanQuery();
-        bq.add(new WildcardQuery(new Term("allNames", searchText.toLowerCase())), Occur.SHOULD);
-        bq.add(new WildcardQuery(new Term("product", searchText.toLowerCase())), Occur.SHOULD);
+        if (allNames) {
+            bq.add(new WildcardQuery(new Term("allNames", searchText.toLowerCase())), Occur.SHOULD);
+        }
+        if (product) {
+            bq.add(new WildcardQuery(new Term("product", searchText.toLowerCase())), Occur.SHOULD);
+        }
         queries.add(bq);
-        queries.add(geneOrPseudogeneQuery);
+        if (pseudogenes) {
+            queries.add(geneOrPseudogeneQuery);
+        }
         queries.add(isCurrentQuery);        
     }
 

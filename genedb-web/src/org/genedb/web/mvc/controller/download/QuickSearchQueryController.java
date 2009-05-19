@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 
  * @author larry@sangerinstitute
@@ -33,8 +34,8 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController{
     private QueryFactory queryFactory;
 
     
-    @RequestMapping(method = RequestMethod.GET )
-    public String processForm(
+    @RequestMapping(method = RequestMethod.GET, params="q=quickSearchQuery")
+    public String processRequest(
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
@@ -56,6 +57,24 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController{
                 "taxonGroup", quickSearchQueryResults.getTaxonGroup());
         
         return findDestinationView(queryName, query, model, quickSearchQueryResults, session);
+    }
+    
+
+    @RequestMapping(method = RequestMethod.GET, params="q=none")
+    public String displayTaxonGroup(
+            ServletRequest request,
+            @RequestParam("searchText") String searchText, 
+            @RequestParam("pseudogenes") String pseudogenes, 
+            @RequestParam("allNames") String allNames, 
+            @RequestParam("product") String product,
+            Model model){
+        
+            model.addAttribute("searchText", searchText);
+            model.addAttribute("pseudogenes", pseudogenes);
+            model.addAttribute("allNames", allNames);
+            model.addAttribute("product", product);            
+            String view = "search/quickSearchTaxons";
+            return view;
     }
     
     /**

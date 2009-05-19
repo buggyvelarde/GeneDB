@@ -12,3 +12,6 @@
 <%@ taglib prefix="misc" uri="misc" %>
 
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
+
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
