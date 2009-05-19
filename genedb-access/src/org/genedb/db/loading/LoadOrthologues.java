@@ -57,6 +57,15 @@ import java.util.Map;
  * <dt><code>load.analysis.algorithm</code></dt><dd>The name of the algorithm (Optional)</dd>
  * </dl>
  * If no analysis program is specified, it is assumed that the file contains manually curated orthologues.
+ * <p>
+ * There are also a couple of properties that control the behaviour of the loader:
+ * <dl>
+ * <dt><code>load.orthologues.notFoundNotFatal</code></dt><dd>If this property is set, it is not a fatal error if a gene mentioned
+ *           in the input file does not exist. This can be useful when gene models have been deleted or renamed since the orthologue
+ *           data were generated.</dd>
+ * <dt><code>load.orthologues.geneNames</code></dt><dd>Treat the names in the input file as gene names, rather than polypeptide
+ *           or transcript names.</dd>
+ * </dl>
  *
  * @author rh11
  *
