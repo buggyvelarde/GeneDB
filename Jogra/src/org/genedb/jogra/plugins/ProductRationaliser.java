@@ -19,7 +19,26 @@
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeManager;
+import org.genedb.jogra.domain.GeneDBMessage;
+import org.genedb.jogra.domain.Product;
+import org.genedb.jogra.drawing.Jogra;
+import org.genedb.jogra.drawing.JograPlugin;
+import org.genedb.jogra.drawing.OpenWindowEvent;
+import org.genedb.jogra.services.MethodResult;
+import org.genedb.jogra.services.ProductService;
+
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+import org.springframework.util.StringUtils;
+
+import skt.swing.SwingUtil;
+import skt.swing.search.IncrementalSearchKeyListener;
+import skt.swing.search.ListFindAction;
+
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,12 +53,13 @@ import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.InputMap;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
@@ -47,22 +67,6 @@ import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import org.bushe.swing.event.EventBus;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import org.genedb.jogra.domain.GeneDBMessage;
-import org.genedb.jogra.domain.Product;
-import org.genedb.jogra.drawing.Jogra;
-import org.genedb.jogra.drawing.JograPlugin;
-import org.genedb.jogra.drawing.OpenWindowEvent;
-import org.genedb.jogra.services.MethodResult;
-import org.genedb.jogra.services.ProductService;
-
-import skt.swing.SwingUtil;
-import skt.swing.search.IncrementalSearchKeyListener;
-import skt.swing.search.ListFindAction;
 
 
 /**
@@ -75,23 +79,47 @@ public class ProductRationaliser implements JograPlugin {
 
     private static final String WINDOW_TITLE = "Product Rationaliser";
     private static final String A_LONG_STRING = "This is the maximum product width we show";
+    private static final Logger logger = Logger.getLogger(ProductRationaliser.class);
 
     private ProductService productService;
+    private TaxonNodeManager taxonNodeManager; //Added in order to get corresponding taxonNodes
     private JList fromList;
     private JList toList;
-    private JCheckBox filterBox;
+    private JTextField textField;
     private JLabel productCountLabel;
-    private String userSelection; //Organism name selected by user
-    private JLabel selectedOrganism = new JLabel("Viewing: All"); //Label showing user's selection. Default: View all
-    private Jogra jogra; //Jogra object in this context
+    private List<String> userSelection; //Organisms or class of organisms selected by user
+    private TaxonNode taxonNode = null;
+    private List<TaxonNode> taxonList = new ArrayList<TaxonNode>();
+    private JLabel scopeLabel = new JLabel("Scope: All organisms"); //Label showing user's selection. Default: View all
+    private Jogra jogra; //Jogra object in this application context
+    
+   /* Essential setter method */
+    public void setTaxonNodeManager(TaxonNodeManager taxonNodeManager) {
+        this.taxonNodeManager = taxonNodeManager;
+    }
 
     /**
      * Fetch the product list from the database and set that as the model for both lists.
      */
     private void initModels() {
-        List<Product> products = productService.getProductList(filterBox.isSelected()); //Change to get products relating to selected organism only
+        System.out.println("PR: Inside initModels method");
+        userSelection = jogra.getChosenOrganism();  
+        taxonList.clear();
+        System.out.println("PR: Getting selection from Jogra " + userSelection);
+        if(userSelection!=null && userSelection.size()!=0){ //&& !userSelection.equalsIgnoreCase("root")){
+           scopeLabel.setText("Scope: " + StringUtils.collectionToCommaDelimitedString(userSelection)); //Else, label will continue to have 'Scope: All organisms'
+           for(String s: userSelection){
+               taxonList.add(taxonNodeManager.getTaxonNodeForLabel(s));
+           }
+        }else{ //If there are no selections, get all products
+            taxonList.add(taxonNodeManager.getTaxonNodeForLabel("Root"));
+        }
+      
+        
+        logger.info("Taxons resulting from user selection (or lack of a user selection) is: " + taxonList.toString());
+        List<Product> products = productService.getProductList(taxonList); 
         Product[] productArray = new Product[products.size()];
-        //System.err.println("The number of products is '"+products.size()+"'");
+      
         int i=0;
         for (Product product : products) {
             productArray[i] = product;
@@ -111,16 +139,25 @@ public class ProductRationaliser implements JograPlugin {
     public JFrame getMainPanel() {
         fromList = new JList();
         toList = new JList();
-        filterBox = new JCheckBox("Only products annotated to genes", true);
+        //filterBox = new JCheckBox("Only products annotated to genes", true);
         productCountLabel = new JLabel("No. of products");
-        //Trying to get the organism from the Jogra object 
-        try{
-            userSelection = jogra.getChosenOrganism(); //Getting user's selection from Jogra object
-            selectedOrganism = new JLabel("Viewing: " + userSelection);
+        textField = new JTextField(20);
+        textField.setBackground(Color.LIGHT_GRAY);
+        textField.setForeground(Color.BLUE);
+        //textField.setPreferredSize(new Dimension(50,35));
+        
+        //Retrieving the user's chosen organism name (if any) from the Jogra object 
+        //TO DO: Also make this listen to events in Organism Tree so that as the user selects different organisms, the rationaliser can react accordingly
+      /*  try{
+            userSelection = jogra.getChosenOrganism();  
+            System.out.println("PR: Getting selection from Jogra " + userSelection);
+            if(userSelection!=null && !userSelection.equals("")){ //&& !userSelection.equalsIgnoreCase("root")){
+                scopeLabel.setText("Scope: " + userSelection); //Else, label will continue to have 'Scope: All'
+            }
         }catch(Exception e){
-            System.err.println("Error fetching information from Jogra object: " + e);
-        }
-        fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            logger.debug("Error fetching information from Jogra object: " + e);
+        } */
+        fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); //Allow multiple products to be selected 
         fromList.setPrototypeCellValue(A_LONG_STRING);
         ListFindAction findAction = new ListFindAction(true);
         SyncAction fromSync = new SyncAction(fromList, toList, KeyStroke.getKeyStroke("RIGHT"));
@@ -131,7 +168,7 @@ public class ProductRationaliser implements JograPlugin {
         });
         fromList.addKeyListener(new IncrementalSearchKeyListener(findAction));
 
-        toList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        toList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //Single product selection in TO list
         toList.setPrototypeCellValue(A_LONG_STRING);
         SyncAction toSync = new SyncAction(toList, fromList, KeyStroke.getKeyStroke("LEFT"));
         SwingUtil.installActions(toList, new Action[]{
@@ -139,6 +176,18 @@ public class ProductRationaliser implements JograPlugin {
                 findAction,
                 new ListFindAction(false)
             });
+        
+        toList.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent arg0) {
+                logger.info("Inside valueChanged method in toList listener. Setting textfield with chosen product name for user to edit.");
+                textField.setText(((Product)toList.getSelectedValue()).toString());
+            }
+            
+        });
+        
+        
         toList.addKeyListener(new IncrementalSearchKeyListener(findAction));
         //InputMap map = toList.getInputMap(JComponent.WHEN_FOCUSED);
         // List keystrokes in the component and in all parent input maps
@@ -165,27 +214,28 @@ public class ProductRationaliser implements JograPlugin {
         center.add(Box.createHorizontalStrut(5));
 
         ret.add(center, BorderLayout.CENTER);
-
-
         Box buttons = Box.createVerticalBox();
 
         Box localButtons = Box.createHorizontalBox();
-//        localButtons.add(Box.createHorizontalGlue());
-        filterBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                initModels();
-            }
-        });
-        localButtons.add(filterBox);
-        localButtons.add(Box.createHorizontalStrut(30));
+
+        //localButtons.add(filterBox);
+        localButtons.add(Box.createHorizontalStrut(5));
         localButtons.add(productCountLabel);
-        localButtons.add(selectedOrganism);
+        localButtons.add(Box.createHorizontalStrut(5));
+        localButtons.add(scopeLabel);
+        localButtons.add(Box.createHorizontalStrut(10));
 //        JButton syncLeftToRight = new JButton(">>");
 //        localButtons.add(syncLeftToRight);
 //        localButtons.add(Box.createHorizontalStrut(5));
 //        JButton syncRightToLeft = new JButton("<<");
 //        localButtons.add(syncRightToLeft);
-        localButtons.add(Box.createHorizontalGlue());
+//        localButtons.add(Box.createHorizontalGlue());
+        /* Label & textfield*/
+        JLabel label = new JLabel("Add");
+        //label.setLabelFor(textField);
+        localButtons.add(label);
+        localButtons.add(textField);
+      
         buttons.add(localButtons);
 
         Box actionButtons = Box.createHorizontalBox();
@@ -368,15 +418,27 @@ public class ProductRationaliser implements JograPlugin {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Product to = (Product) toList.getSelectedValue();
-            Object[] from = fromList.getSelectedValues();
+            Product to = (Product) toList.getSelectedValue(); //Product (from list) to be rationalised into
+            String text = textField.getText(); //Corrected name (if provided)
+            Object[] from = fromList.getSelectedValues(); // Products to be merged into above product
             List<Product> old = new ArrayList<Product>();
             for (Object o : from) {
-                old.add((Product)o);
+                old.add((Product)o); //old contains products that will be merged/removed
             }
-            MethodResult result = productService.rationaliseProduct(to, old);
-            // TODO Check results
-            initModels();
+            MethodResult result = productService.rationaliseProduct(to, old, text);
+            
+            
+            // If rationalising did not work, then display pop-up message with information
+            if(result.isSuccessful()){
+                JOptionPane.showMessageDialog(null,result.getSuccessMsg());
+                initModels(); //If rationalised, refresh views
+            }else{
+                //JOptionPane.showMessageDialog(getMainPanel(), result.getErrorMsg()); //If not, then display error and then refresh view
+                //initModels();
+                logger.debug("Cannot rationalise");
+                
+            }
+           
         }
 
         @Override

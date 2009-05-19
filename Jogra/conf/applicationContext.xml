@@ -18,6 +18,7 @@
 
 
     <context:annotation-config/>
+  <bean id="conf" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
 
 
   <bean name="cvEditor" class="org.genedb.jogra.plugins.CvEditor">
@@ -34,6 +35,7 @@
 
   <bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
     <property name="productService" ref="productService" />
+     <property name="taxonNodeManager" ref="taxonNodeManager" />
     <property name="jogra" ref="application" />
   </bean>
 
@@ -43,13 +45,14 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-<!--        <property name="url" value="jdbc:postgresql://pathdbsrv1b:10103/productrat" />-->
-<!--        <property name="username" value="pathdb" />-->
-<!--        <property name="password" value="Pyrate_1" />-->
-            <!--   property name="url" value="jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens" / -->
-            <property name="url" value="jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev" />
-            <property name="username" value="nds@sanger.ac.uk" />
-            <property name="password" value="stneots2009" />
+<!--        <property name="url" value="jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens" /> -->
+<!--        <property name="url" value="jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev" /> -->
+<!--        Local copy to test. Change later [NDS] -->
+            <property name="url" value="jdbc:postgresql://localhost:5432/nds" /> 
+            <property name="username" value="${Jogra.username}"/>
+            <property name="password" value="${Jogra.password}" /> 
+            <!--  property name="username" value='nds'/>
+            <property name="password" value='sanger09' /-->
     </bean>
 
   <bean name="geneList" class="org.genedb.jogra.plugins.GeneList" />

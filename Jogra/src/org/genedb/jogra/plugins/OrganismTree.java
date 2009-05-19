@@ -1,66 +1,53 @@
-/**
- * ORGANISM TREE PLUG-IN FOR JOGRA
+/*
+ * ORGANISM TREE PLUG-IN FOR JOGRA (April 2009)
  * This plug-in displays a Jtree with the hierarchy of organisms and allows the user to select an organism or a class of organisms.
  * This information is then used to restrict the products in the rationaliser (i.e. only products pertaining to selected organism(s) will be displayed.
  * This selection can potentially be transferred to other Jogra plugins in the future.
+ * 
+ * 19.5.2009: Added capability to receive multiple organism selections from user
  * 
  * @author nds
  */
 
 package org.genedb.jogra.plugins;
 
+import org.genedb.db.taxon.TaxonNode;
+import org.genedb.db.taxon.TaxonNodeManager;
+import org.genedb.jogra.drawing.Jogra;
+import org.genedb.jogra.drawing.JograPlugin;
+import org.genedb.jogra.services.NamedVector;
+
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTree;
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingEvent;
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingListener;
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingModel;
+
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.ExecutionException;
 
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
-import it.cnr.imaa.essi.lablib.gui.checkboxtree.*;
-
-import org.bushe.swing.event.EventBus;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import org.genedb.jogra.domain.GeneDBMessage;
-import org.genedb.jogra.drawing.Jogra;
-import org.genedb.jogra.drawing.JograPlugin;
-import org.genedb.jogra.drawing.OpenWindowEvent;
-import org.genedb.jogra.services.NamedVector;
-import org.genedb.jogra.services.CheckBoxNode;
-import org.genedb.jogra.services.CheckBoxNodeEditor;
-import org.genedb.jogra.services.CheckBoxNodeRenderer;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import org.genedb.db.taxon.TaxonNode;
-import org.genedb.db.taxon.TaxonNodeManager;
-import org.genedb.db.taxon.TaxonNodeArrayPropertyEditor;
+import javax.swing.tree.TreePath;
 
 public class OrganismTree implements JograPlugin {
     private TaxonNodeManager taxonNodeManager; 
-    private String userSelection = new String(); //Stores the user's selected organism name
+    private List<String> userSelection = new ArrayList<String>(); //Stores the user's selected organism name
     private Jogra jogra;
+    
+    private static final Logger logger = Logger.getLogger(OrganismTree.class);
     
     public void setTaxonNodeManager(TaxonNodeManager taxonNodeManager) {
         this.taxonNodeManager = taxonNodeManager;
@@ -87,7 +74,7 @@ public class OrganismTree implements JograPlugin {
                         }
                     }.execute();     
                 }catch(Exception e){ //handle exceptions better later
-                    System.err.println(e);
+                    logger.debug(e);
                 }
              }
         };
@@ -105,34 +92,48 @@ public class OrganismTree implements JograPlugin {
         final JFrame frame = new JFrame("Hierarchy of organisms currently on database");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         final JButton button = new JButton("Select an organism");   //Create button to confirm user selection. Disabled at first
+       
+        //TaxonNodeManager created and initialised at start up. Create JTree
+        TaxonNode taxonNode = taxonNodeManager.getTaxonNodeForLabel("Root");
+        Vector orgTree = getOrganismTree(taxonNode);
+        JTree tree = new JTree(orgTree);
+        final CheckboxTree checkboxTree = new CheckboxTree(tree.getModel()); //checkboxnode constructor takes a tree model
+        checkboxTree.getCheckingModel().setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE_PRESERVING_CHECK); //Check if this can be both SINGLE & PROPOGATE
+        checkboxTree.addTreeCheckingListener(new TreeCheckingListener() {
+            public void valueChanged(TreeCheckingEvent e) {
+                if(e.isCheckedPath()){
+                    //logger.info("User selected:  " + (e.getPath().getLastPathComponent()));
+                    button.setText("Continue"); // with " + (e.getPath().getLastPathComponent()));
+                    //userSelection = (e.getPath().getLastPathComponent()).toString();
+                    button.setEnabled(true);
+          
+                }
+            }
+        });
+        
         button.setEnabled(false);
         ActionListener actionListener = new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent){
+                System.out.println("Inside actionPerformed. ");
                 try{
+                    userSelection.clear();
+                    TreePath tp[] = checkboxTree.getCheckingRoots();
+                    System.out.println("tp size " + tp.length);
+                    for(TreePath p: tp){
+                        userSelection.add(p.getLastPathComponent().toString());
+                    }
                     frame.setVisible(false); //Make frame disappear
                     //frame.dispose(); //Or should frame be disposed??
                     jogra.setChosenOrganism(userSelection); //Tell Jogra about the user's selection
+                    EventBus.publish("selection", userSelection);
+                    System.out.println("ORGANISM TREE: Published " + userSelection.toString());
                 }catch(Exception e){ //handle exceptions better
-                    System.err.println(e);
+                    logger.debug(e);
+                    e.printStackTrace();
                 }
              }
         };
         button.addActionListener(actionListener);
-        //TaxonNodeManager created and initialised at start up. Create JTree
-        TaxonNode taxonNode = taxonNodeManager.getTaxonNodeForLabel("Root");
-        Vector orgTree = getOrganismTree(taxonNode,"");
-        JTree tree = new JTree(orgTree);
-        CheckboxTree checkboxTree = new CheckboxTree(tree.getModel()); //checkboxnode constructor takes a tree model
-        checkboxTree.addTreeCheckingListener(new TreeCheckingListener() {
-            public void valueChanged(TreeCheckingEvent e) {
-                if(e.isCheckedPath()){
-                    System.out.println("User selected:  " + (e.getPath().getLastPathComponent()));
-                    button.setText("Continue with " + (e.getPath().getLastPathComponent()));
-                    userSelection = (e.getPath().getLastPathComponent()).toString();
-                    button.setEnabled(true);
-                }
-            }
-        });
         //Place Jtree in scrollable pane to enable scrolling
         JScrollPane scrollPane = new JScrollPane(checkboxTree);
         frame.add(scrollPane, BorderLayout.CENTER); 
@@ -148,12 +149,16 @@ public class OrganismTree implements JograPlugin {
      *
      * @return Vector containing organism hierarchy
      */
-    private Vector getOrganismTree(TaxonNode taxonNode, String indent){
-        System.out.println(indent + taxonNode.getLabel());
+
+    private Vector getOrganismTree(TaxonNode taxonNode){
         List<TaxonNode> childrenList = taxonNode.getChildren();
         Vector childrenVector = new Vector();
         for(TaxonNode child : childrenList){
-            childrenVector.add(getOrganismTree(child, indent.concat("  ")));
+           if(child.isLeaf()){
+               childrenVector.add(child.getLabel());
+           }else{
+               childrenVector.add(getOrganismTree(child));
+           }
         }
         return new NamedVector(taxonNode.getLabel(), childrenVector);
     }

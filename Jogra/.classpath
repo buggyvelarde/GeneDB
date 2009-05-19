@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="conf"/>
 	<classpathentry kind="lib" path="lib/lablib-checkboxtree-3.0.2.jar"/>
+	<classpathentry kind="lib" path="/Users/nds/Documents/workspace/Test/lib/EventBus-1.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/gui/beansbinding-1.2.1.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/gui/EventBus-1.1.jar"/>
