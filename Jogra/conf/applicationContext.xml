@@ -15,9 +15,12 @@
 <!--     <bean id="loginForm" class="org.genedb.jogra.drawing.JograLogin">
         <property name="name" value="jogra.jpg" />
     </bean> -->
+        <context:annotation-config/>
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+    <tx:annotation-driven mode="aspectj"/>
 
 
-    <context:annotation-config/>
+
   <bean id="conf" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
 
 
@@ -79,7 +82,7 @@
   
   <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
-        <property name="sessionFactory" ref="sessionFactory" />
+        <!-- property name="sessionFactory" ref="sessionFactory" /-->
         <property name="findPhylonodeWithOrganismFeatures"> <value>true</value></property>
     </bean>
     
@@ -115,6 +118,7 @@
             <prop key="hibernate.hbm2dll.auto">validate</prop>
             <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
             <prop key="hibernate.bytecode.provider">javassist</prop>
+            <prop key="current_session_context_class">thread</prop>
         </props>
      </property>
     </bean>
