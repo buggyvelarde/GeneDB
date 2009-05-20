@@ -814,6 +814,17 @@ class LoadGeneDbPhylogeny {
                 <property name="shortName" value="" />
                 <property name="curatorName" value="" />
             </organism>
+            <organism name="Scoelicolor">
+                <property name="taxonId" value="1902" />
+                <property name="fullName" value="Streptomyces coelicolor" />
+                <property name="nickname" value="Scoelicolor" />
+                <property name="translationTable" value="11"/>
+                <property name="curatorEmail" value="mh3@sanger.ac.uk"/>
+                <property name="htmlFullName" value="<i>Streptomyces coelicolor</i>"/>
+                <property name="htmlShortName" value="<i>S. coelicolor</i>'"/>
+                <property name="shortName" value="S. coelicolor" />
+                <property name="curatorName" value="Matt Holden" />
+            </organism>
             <node name="Bordetella">
                 <organism name="Bavium_197N">
                     <property name="taxonId" value="360910" />
@@ -1000,6 +1011,17 @@ class LoadGeneDbPhylogeny {
                     <property name="htmlShortName" value=""/>
                     <property name="shortName" value="" />
                     <property name="curatorName" value="" />
+                </organism>
+                <organism name="Styphi">
+                    <property name="taxonId" value="90370" />
+                    <property name="fullName" value="Salmonella enterica subsp. enterica serovar Typhi" />
+                    <property name="newOrg" value="true" />
+                    <property name="translationTable" value="11"/>
+                    <property name="curatorEmail" value="nrt"/>
+                    <property name="htmlFullName" value="<i>Salmonella enterica</i> subsp. enterica serovar Typhi'"/>
+                    <property name="htmlShortName" value="<i>S. Typhi</i>'"/>
+                    <property name="shortName" value="S. Typhi" />
+                    <property name="curatorName" value="Nick Thomson" />
                 </organism>
             </node>
             <organism name="Smarcescens">
