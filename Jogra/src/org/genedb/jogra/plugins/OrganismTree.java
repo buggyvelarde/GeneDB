@@ -102,11 +102,8 @@ public class OrganismTree implements JograPlugin {
         checkboxTree.addTreeCheckingListener(new TreeCheckingListener() {
             public void valueChanged(TreeCheckingEvent e) {
                 if(e.isCheckedPath()){
-                    //logger.info("User selected:  " + (e.getPath().getLastPathComponent()));
-                    button.setText("Continue"); // with " + (e.getPath().getLastPathComponent()));
-                    //userSelection = (e.getPath().getLastPathComponent()).toString();
+                    button.setText("Continue"); 
                     button.setEnabled(true);
-          
                 }
             }
         });
@@ -114,19 +111,19 @@ public class OrganismTree implements JograPlugin {
         button.setEnabled(false);
         ActionListener actionListener = new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent){
-                System.out.println("Inside actionPerformed. ");
+              
                 try{
                     userSelection.clear();
                     TreePath tp[] = checkboxTree.getCheckingRoots();
-                    System.out.println("tp size " + tp.length);
+                   
                     for(TreePath p: tp){
                         userSelection.add(p.getLastPathComponent().toString());
                     }
                     frame.setVisible(false); //Make frame disappear
                     //frame.dispose(); //Or should frame be disposed??
                     jogra.setChosenOrganism(userSelection); //Tell Jogra about the user's selection
-                    EventBus.publish("selection", userSelection);
-                    System.out.println("ORGANISM TREE: Published " + userSelection.toString());
+                    EventBus.publish("selection", userSelection); //EventBus publish mechanism here needs to be tested later
+                    logger.info("ORGANISM TREE: User selected " + userSelection.toString());
                 }catch(Exception e){ //handle exceptions better
                     logger.debug(e);
                     e.printStackTrace();
