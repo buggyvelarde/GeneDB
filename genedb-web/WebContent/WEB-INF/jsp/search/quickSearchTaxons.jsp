@@ -17,7 +17,7 @@
 			 	<td>
 			 	   <a  href="${pageContext.request.contextPath}/QuickSearchQuery?q=quickSearchQuery&taxons=${map.key}&searchText=${param.searchText}&allNames=${param.allNames}&pseudogenes=${param.pseudogenes}&product=${param.product}"
 			 	       target="_parent">
-					   <small>${map.key}(${map.value})</small>
+					   <small>${map.key}&nbsp;(${map.value})</small>
 				    </a>
 				</td>
 			 </tr>

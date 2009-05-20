@@ -17,7 +17,7 @@
 			    <st:flashMessage />
 				<table border=0 width="100%">
 					<tr>
-						<td>
+						<td width="50%">
 						  <form:form commandName="query" action="QuickSearchQuery"
 							method="GET">
 							<input type="hidden" name="q" value="quickSearchQuery" />
@@ -55,35 +55,47 @@
 						</form:form>
 						</td>
 						
-						<td valign="center" align="left">
+						<td valign="center" align="left" width="50%">
+						<br>
 						<table border=0>
-						<tr>
-						<td>
-						<c:choose>
-						  <c:when test="${empty resultsSize && fn:length(taxonGroup)>0}">
-						      No Exact match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b>.<br>However, the following ${fn:length(taxonGroup)} organisms below have matches.
-						   </c:when>
-                          <c:when test="${not empty resultsSize && fn:length(taxonGroup)==1}">
-                              All ${resultsSize} matches for <b>${query.searchText}</b>, found in organism <b>${taxonNodeName}</b>.
-                           </c:when>
-                          <c:when test="${not empty resultsSize && fn:length(taxonGroup)>1}">
-                              ${resultsSize} matches found in ${fn:length(taxonGroup)} organisms.
-                           </c:when>
-						</c:choose>
-						</td>
-						</tr>
+    						<tr>
+	           					<td>
+				            		<c:choose>
+                                        <c:when test="${empty resultsSize && fn:length(taxonGroup)==0 }">
+                                            No Exact match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b> or in other organisms.
+                                        </c:when>
+						                <c:when test="${empty resultsSize && fn:length(taxonGroup)>0}">
+						                      No Exact match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b>, <br>however the following ${fn:length(taxonGroup)} organisms below have matches.
+						                </c:when>
+                                        <c:when test="${not empty resultsSize && fn:length(taxonGroup)==1}">
+                                            All ${resultsSize} matches for <b>${query.searchText}</b>, found in organism <b>${taxonNodeName}</b>.
+                                        </c:when>
+                                        <c:when test="${not empty resultsSize && fn:length(taxonGroup)>1}">
+                                            ${resultsSize} matches found in ${fn:length(taxonGroup)} organisms.
+                                        </c:when>
+						             </c:choose>
+						         </td>
+						     </tr>
 						
-						<c:if test="${fn:length(taxonGroup)>1}">
-						  <tr>
-						  <td>
-						  <iframe
-                                 src="${pageContext.request.contextPath}/QuickSearchQuery?q=none&searchText=${query.searchText}&pseudogenes=${query.pseudogenes}&allNames=${query.allNames}&product=${query.product}"
-                                 frameborder="1"
-                                 width="70%" height="90" align="left">
-                               </iframe>
-                         </c:if>
-                         </td>
-                         </tr>
+						      <c:if test="${fn:length(taxonGroup)>1}">
+						          <tr>
+						              <td>
+						                      <iframe
+                                                src="${pageContext.request.contextPath}/QuickSearchQuery?q=none&searchText=${query.searchText}&pseudogenes=${query.pseudogenes}&allNames=${query.allNames}&product=${query.product}"
+                                                frameborder="1"
+                                                width="70%" height="90" align="left">
+                                            </iframe>
+                                        </td>
+                                    </tr>
+                              </c:if>
+                        
+                              <c:if test="${empty resultsSize && !fn:contains(query.searchText, '*')}">
+                                  <tr>
+                                      <td>
+                                        Select <a href="${pageContext.request.contextPath}/QuickSearchQuery?q=quickSearchQuery&taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">*${query.searchText}*</a> to repeat search with wildcards.
+                                      </td>
+                                  </tr>
+                              </c:if>
 						</table>
 						</td>
 					</tr>

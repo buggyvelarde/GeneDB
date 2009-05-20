@@ -3,6 +3,7 @@ package org.genedb.querying.tmpquery;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -65,18 +67,40 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
-        BooleanQuery bq = new BooleanQuery();
-        if (allNames) {
-            bq.add(new WildcardQuery(new Term("allNames", searchText.toLowerCase())), Occur.SHOULD);
+        String tokens[] = searchText.trim().split("\\s"); 
+        if (tokens!= null && tokens.length>1){
+            BooleanQuery bq = new BooleanQuery();
+            if (allNames){
+                PhraseQuery pq = new PhraseQuery();
+                for(String token: tokens){
+                    pq.add(new Term("allNames", token));
+                }
+                bq.add(pq, Occur.SHOULD);
+            }
+            if (product){
+                PhraseQuery pq = new PhraseQuery();
+                for(String token: tokens){
+                    pq.add(new Term("product", token));
+                }
+                bq.add(pq, Occur.SHOULD);
+            }
+            queries.add(bq);
+            
+        }else{            
+            BooleanQuery bq = new BooleanQuery();
+            if (allNames) {
+                bq.add(new WildcardQuery(new Term("allNames", tokens[0].toLowerCase())), Occur.SHOULD);
+            }
+            if (product) {
+                bq.add(new WildcardQuery(new Term("product", tokens[0].toLowerCase())), Occur.SHOULD);
+            }
+            queries.add(bq);
         }
-        if (product) {
-            bq.add(new WildcardQuery(new Term("product", searchText.toLowerCase())), Occur.SHOULD);
-        }
-        queries.add(bq);
+        
         if (pseudogenes) {
             queries.add(geneOrPseudogeneQuery);
         }
-        queries.add(isCurrentQuery);        
+        //queries.add(isCurrentQuery);        
     }
 
 
@@ -255,6 +279,16 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         NO_EXACT_MATCH_IN_CURRENT_TAXON,
         SINGLE_RESULT_IN_CURRENT_TAXON,
         MULTIPLE_RESULTS_IN_CURRENT_TAXON        
+    }
+    
+    private class TaxonomicDistanceOrderer implements Comparator{
+
+        @Override
+        public int compare(Object txName1, Object txName2) {
+            
+            return 0;
+        }
+        
     }
 
     public String getSearchText() {
