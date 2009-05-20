@@ -437,11 +437,11 @@ public class TranscriptDTOFactory {
     private void populateNames(TranscriptDTO ret, Transcript transcript, AbstractGene gene) {
         String uniqueName = transcript.getUniqueName();
         ret.setUniqueName(uniqueName);
-        ret.setGeneName(gene.getDisplayName()); // FIXME check this
+        ret.setGeneName(gene.getName());
         if (transcript.getName() != null && !transcript.getName().equals(uniqueName)) {
             ret.setProperName(transcript.getName());
         }
-        Collection<FeatureSynonym> featureSynonyms = gene.getFeatureSynonyms();
+        Collection<FeatureSynonym> featureSynonyms = transcript.getFeatureSynonyms();
         //Get the map of lists of synonyms
         ret.setSynonymsByTypes(findFromSynonymsByType(featureSynonyms));
     }
