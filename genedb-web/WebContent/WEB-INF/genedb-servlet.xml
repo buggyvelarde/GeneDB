@@ -293,7 +293,7 @@
     <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
     
     <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController" />
-    
+
     <bean name="ResultsController" class="org.genedb.web.mvc.controller.download.ResultsController" />
 
     <bean name="ResultsNavigatorController" class="org.genedb.web.mvc.controller.download.ResultsNavigatorController" />
