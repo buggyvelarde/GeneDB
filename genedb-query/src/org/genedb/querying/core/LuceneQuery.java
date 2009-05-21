@@ -48,7 +48,7 @@ import javax.annotation.PostConstruct;
 @Configurable
 public abstract class LuceneQuery implements Query {
 
-    private static final Logger logger = Logger.getLogger(LuceneQuery.class);
+    private static transient final Logger logger = Logger.getLogger(LuceneQuery.class);
 
     private int order;
 
@@ -126,15 +126,14 @@ public abstract class LuceneQuery implements Query {
     private Hits lookupInLucene(List<org.apache.lucene.search.Query> queries) {
 
         Hits hits = null;
-        if(queries.size()>1){
+        if (queries.size() > 1) {
             BooleanQuery booleanQuery = new BooleanQuery();
             for (org.apache.lucene.search.Query query : queries) {
                 booleanQuery.add(new BooleanClause(query, Occur.MUST));
             }
-
             logger.error(String.format("Lucene query is '%s'", booleanQuery.toString()));
             hits = luceneIndex.search(booleanQuery);
-        }else{
+        } else {
             logger.error(String.format("Lucene query is '%s'", queries.get(0).toString()));
             hits = luceneIndex.search(queries.get(0));
         }
