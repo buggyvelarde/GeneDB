@@ -14,10 +14,10 @@
         <div class="sideHeading"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></div>
         <table>
         <col style="width: 9em;">
-        <c:if test="${!empty dto.properName && dto.properName != dto.uniqueName}">
+        <c:if test="${!empty dto.geneName}">
             <tr>
                 <td class="label">Gene Name</td>
-                <td class="value">${dto.properName}</td>
+                <td class="value">${dto.geneName}</td>
             </tr>
          </c:if>
          <tr>
@@ -45,7 +45,7 @@
                 <tr>
                     <td class="label">${type.key}</td>
                     <td class="value">
-                        <format:list-string list="${type.value}"/>
+                        <misc:listItems collection="${type.value}"/>
                     </td>
                 </tr>
             </c:forEach>
@@ -134,7 +134,7 @@
                 <div class="comment">${comment}</div>
             </c:forEach>
             <c:if test="${fn:length(dto.publications) > 0}">
-                <p>Key information on this gene is available from
+                <br><p>Key information on this gene is available from
                 <c:forEach items="${dto.publications}" var="publication" varStatus="vs">
                     <c:if test="${!vs.first}">, </c:if>
                     <db:dbXRefLink dbXRef="${publication}" />
