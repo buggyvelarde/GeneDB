@@ -7,6 +7,13 @@
 <c:set var="organism" value="${gene.organism.commonName}" />
 
 
+      <c:if test="${dto.organismCommonName=='Pchabaudi'}">
+       <p>&nbsp;<p>The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences
+       (i.e. 8X assembly and updated annotation) of <i>P. chabaudi</i> AS in a peer-reviewed journal as soon as possible.
+       Permission of the principal investigator should be obtained before publishing analyses of the sequence/open
+       reading frames/genes on a chromosome or genome scale.<p>&nbsp;</p>
+        </c:if>
+
 <div id="firstRow" class="row">
     <%-- General Information --%>
     <format:genePageSection id="generalInformation">
@@ -14,7 +21,7 @@
         <div class="sideHeading"><misc:displayDate time="${dto.lastModified}" message="Last Modified" /></div>
         <table>
         <col style="width: 9em;">
-        <c:if test="${!empty dto.geneName}">
+        <c:if test="${!empty dto.geneName && dto.geneName != dto.uniqueName}">
             <tr>
                 <td class="label">Gene Name</td>
                 <td class="value">${dto.geneName}</td>
