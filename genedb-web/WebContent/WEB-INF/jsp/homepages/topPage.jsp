@@ -48,8 +48,8 @@
       <li><i>Trypanasoma brucei brucei 427</i> <a href="<c:url value="/NamedFeature?name=Tb427.BES40.22"/>">Tb427.BES40.22</a></li>
       <li><i>Trypanasoma brucei brucei 927</i> <a href="<c:url value="/NamedFeature?name=Tb927.1.700"/>">Tb927.1.700</a></li>
       <li><i>Trypanasoma brucei gambiense</i> <a href="<c:url value="/NamedFeature?name=Tbgamb.1311"/>">Tbgamb.1311</a></li>
-      <li><i>Trypanasoma congolense</i> <a href="<c:url value="/NamedFeature?name=TcIL3000.1.120"/>">TcIL3000.1.120</a></li>
-      <li><i>Trypanasoma cruzi</i> <a href="<c:url value="/NamedFeature?name=TTc00.1047053508601.90"/>">Tc00.1047053508601.90</a></li>
+      <!-- <li><i>Trypanasoma congolense</i> <a href="<c:url value="/NamedFeature?name=TcIL3000.1.120"/>">TcIL3000.1.120</a></li>  -->
+      <li><i>Trypanasoma cruzi</i> <a href="<c:url value="/NamedFeature?name=Tc00.1047053508601.90"/>">Tc00.1047053508601.90</a></li>
       <li><i>Trypanasoma vivax</i> <a href="<c:url value="/NamedFeature?name=TvY486_0102140"/>">TvY486_0102140</a></li>
     </ul>
     </td>
