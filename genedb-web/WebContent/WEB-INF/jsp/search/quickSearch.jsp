@@ -88,10 +88,20 @@
 	           					<td aligh=left>
 				            		<c:choose>
                                         <c:when test="${empty resultsSize && fn:length(taxonGroup)==0 }">
-                                            No Exact match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b> or in other organisms.
+                                            No 
+                                            <c:choose>
+                                                <c:when test="${fn:contains(query.searchText, '*')}">Wildcard</c:when>
+                                                 <c:otherwise>Exact</c:otherwise>
+                                            </c:choose> 
+                                             match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b> or in other organisms.
                                         </c:when>
 						                <c:when test="${empty resultsSize && fn:length(taxonGroup)>0}">
-						                      No Exact match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b>, however the following ${fn:length(taxonGroup)} organisms have matches.
+						                      No
+						                      <c:choose>
+                                                <c:when test="${fn:contains(query.searchText, '*')}">Wildcard</c:when>
+                                                 <c:otherwise>Exact</c:otherwise>
+                                            </c:choose> 
+						                      match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b>, however the following ${fn:length(taxonGroup)} organisms have matches.
 						                </c:when>
                                         <c:when test="${not empty resultsSize && fn:length(taxonGroup)==1}">
                                             All ${resultsSize} matches for <b>${query.searchText}</b>, found in organism <b>${taxonNodeName}</b>.
