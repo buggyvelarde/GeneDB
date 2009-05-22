@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * Traditional mapping from internal colour numbers to real Color
- * 
+ *
  * @author kmr
  */
 public class ArtemisColours {
@@ -80,14 +80,14 @@ public class ArtemisColours {
 
         colNames[17] = "red 3";
         cols[17] = new Color(255, 191, 191);
-        
+
         //Colours for Automatic Annotation Pipeline
         colNames[101] = "violet";
         cols[101] = new Color(102, 51, 153);
-        
+
         colNames[102] = "purple";
         cols[102] = new Color(153, 102, 204);
-        
+
         colNames[103] = "cream";
         cols[103] = new Color(255, 248, 220);
     }
@@ -97,7 +97,7 @@ public class ArtemisColours {
     /**
      * Return the <code>Color</code> corresponding to the given status number.
      * If the index is null, returns the default colour.
-     * 
+     *
      * @param i the index to look up
      * @return the corresponding colour
      */
@@ -106,10 +106,10 @@ public class ArtemisColours {
             return getDefaultColour();
         return cols[i];
     }
-    
+
     /**
      * Return the <code>Color</code> used by default, if no explicit value is assigned
-     * 
+     *
      * @return the default colour
      */
     public static Color getDefaultColour() {
@@ -118,17 +118,17 @@ public class ArtemisColours {
 
     /**
      * Return the colour name corresponding to the given status number
-     * 
+     *
      * @param i the index to look up
      * @return the corresponding colour name
      */
     public static String getColourName(int i) {
         return colNames[i];
     }
-    
+
     /**
      * Return the name of the colour used by default, if no explicit value is assigned
-     * 
+     *
      * @return the name of the default colour
      */
     public static String getDefaultColourName() {
@@ -137,18 +137,18 @@ public class ArtemisColours {
 
     /**
      * Get the number of mappings
-     * 
+     *
      * @return the number of colour mappings
      */
     public static int getNumCols() {
         return numCols;
     }
-    
+
     private static Map<String,Color> colorsByName;
-    
+
     /**
      * Get the colour with the given name
-     * 
+     *
      * @param lookup The colour name (case-insensitive)
      * @return The corresponding <code>Color</code> object
      */
@@ -159,7 +159,7 @@ public class ArtemisColours {
                 if (cols[i] != null)
                     colorsByName.put(colNames[i].toLowerCase(), cols[i]);
         }
-        
+
         Color color = colorsByName.get(lookup.toLowerCase());
         if (color == null)
             return getDefaultColour();
@@ -172,10 +172,10 @@ public class ArtemisColours {
      * with a range of shades of black mixed into the background
      * colour, to represent anti-aliased black text on the given
      * background.
-     * 
+     *
      * This can be used to generate transparent PNGs that use an
      * indexed colour model.
-     * 
+     *
      * @param backgroundColor the background colour onto which
      *  text will be drawn. If null, assume a transparent background.
      *  If a <code>backgroundColor</code> is supplied it is assumed to
@@ -187,12 +187,12 @@ public class ArtemisColours {
         byte[] greens = new byte[256];
         byte[] blues = new byte[256];
         byte[] alphas = new byte[256];
-        
+
         int numColors = 0;
         for (Color col: cols)
             if (col != null)
                 numColors++;
-        
+
         int i;
         /*
          * Note: we're assuming in both cases that an opaque black
@@ -206,7 +206,7 @@ public class ArtemisColours {
         }
         else {
             reds[0] = greens[0] = blues[0] = alphas[0] = 0;
-            
+
             int red = backgroundColor.getRed();
             int green = backgroundColor.getGreen();
             int blue = backgroundColor.getBlue();
@@ -222,7 +222,7 @@ public class ArtemisColours {
         for (Color col: cols) {
             if (col == null)
                 continue;
-            
+
             reds[i]   = (byte) col.getRed();
             greens[i] = (byte) col.getGreen();
             blues[i]  = (byte) col.getBlue();
