@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.ServletRequest;
@@ -23,11 +21,18 @@ import org.apache.commons.lang.StringUtils;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeManager;
 
+/**
+ * 
+ * @author larry@sangerinstitute
+ * The Purpose of this class is to build a tree of taxonomy for the Quick Search Function
+ * 
+ */
 public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
 
     private String top = "Root"; // FIXME
     
     
+    @SuppressWarnings("unchecked")
     @Override
     public void doTag() throws JspException, IOException {
         PageContext pageContext = (PageContext)getJspContext();
@@ -61,7 +66,7 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
         QuickSearchTaxonNode quickSearchTaxonNode = new QuickSearchTaxonNode();
         
         //populate with taxons
-        populate(quickSearchTaxonNode, currentNode, taxonGroup);
+        buildTree(quickSearchTaxonNode, currentNode, taxonGroup);
         
         //sort in taxonomic order of closeness to the organism sought after 
         if (displayAllMatchingTaxonsWhenResultsEmpty){
@@ -76,8 +81,13 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
         out.write(htmlList);
     }
 
-    
-    public void populate(QuickSearchTaxonNode quickSearchTaxonNode, TaxonNode taxonNode, TreeMap<String, Integer> taxonGroup){
+    /**
+     * Build the taxon tree as is represented in the Taxon Manager
+     * @param quickSearchTaxonNode
+     * @param taxonNode
+     * @param taxonGroup
+     */
+    public void buildTree(QuickSearchTaxonNode quickSearchTaxonNode, TaxonNode taxonNode, TreeMap<String, Integer> taxonGroup){
         //populate label
         quickSearchTaxonNode.setLabel(taxonNode.getLabel());
         
@@ -87,15 +97,10 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
         
         //populate children
         for(TaxonNode childNode: taxonNode.getChildren()){
-            //if (childNode.getChildren().size()==0 && !taxonGroup.containsKey(childNode.getLabel())){
-              //  continue;
-            //}
-            if (childNode.isChildrenPopulated() ){
-                QuickSearchTaxonNode myChild = new QuickSearchTaxonNode();
-                quickSearchTaxonNode.getChildren().add(myChild);
-                myChild.setParent(quickSearchTaxonNode);
-                populate(myChild, childNode, taxonGroup);
-            }
+            QuickSearchTaxonNode myChild = new QuickSearchTaxonNode();
+            quickSearchTaxonNode.getChildren().add(myChild);
+            myChild.setParent(quickSearchTaxonNode);
+            buildTree(myChild, childNode, taxonGroup);
         }
         
         //Sort list
@@ -117,6 +122,7 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
      */
     private QuickSearchTaxonNode findCurrentQuickTaxonNode(
             String taxonNodeName, QuickSearchTaxonNode tree){
+        
         if(tree.getLabel().equals(taxonNodeName)){
             return tree;
         }
@@ -131,6 +137,7 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
     
     /**
      * Sort by re-arranging the sibling taxon nodes,by making each relevant node the first in line of siblings 
+     * because the left-most node always appear on top of tree display
      * @param currentTaxonNodeName
      * @param quickSearchTaxonNode
      */
