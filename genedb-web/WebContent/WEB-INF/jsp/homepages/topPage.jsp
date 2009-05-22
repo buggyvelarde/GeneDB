@@ -23,12 +23,11 @@
 <tr>
 <td width="50%"><h2><b>Apicomplexa</b></h2>
       <ul>
-      <li><i>Plasmodium falciparum</i> <a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
-        <li><i>Plasmodium berghei</i> <a href="<c:url value="/NamedFeature?name=PB000600.02.0"/>">PB000600.02.0</a></li>
+        <li><i>Plasmodium falciparum</i> <a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
         <li><i>Plasmodium chabaudi</i> <a href="<c:url value="/NamedFeature?name=PCAS_010190"/>">PCAS_010190</a></li>
         <li><i>Plasmodium knowlesi</i> <a href="<c:url value="/NamedFeature?name=PKH_010100"/>">PKH_010100</a></li>
         <li><i>Plasmodium vivax</i> <a href="<c:url value="/NamedFeature?name=PVX_087765"/>">PVX_087765</a></li>
-        <li><i>Plasmodium yoelii</i> <a href="<c:url value="/NamedFeature?name=PY00001"/>">PY00001</a></li>
+        <li><i>Plasmodium yoelii</i> <a href="<c:url value="/NamedFeature?name=PY03407"/>">PY03407</a></li>
     </ul>
     </td>
 <td width="50%"><h2><b>Bacteria</b></h2>
@@ -48,7 +47,9 @@
       <li><i>Leishmania major</i> <a href="<c:url value="/NamedFeature?name=LmjF31.1430"/>">LmjF31.1430</a></li>
       <li><i>Trypanasoma brucei brucei 427</i> <a href="<c:url value="/NamedFeature?name=Tb427.BES40.22"/>">Tb427.BES40.22</a></li>
       <li><i>Trypanasoma brucei brucei 927</i> <a href="<c:url value="/NamedFeature?name=Tb927.1.700"/>">Tb927.1.700</a></li>
+      <li><i>Trypanasoma brucei gambiense</i> <a href="<c:url value="/NamedFeature?name=Tbgamb.1311"/>">Tbgamb.1311</a></li>
       <li><i>Trypanasoma congolense</i> <a href="<c:url value="/NamedFeature?name=TcIL3000.1.120"/>">TcIL3000.1.120</a></li>
+      <li><i>Trypanasoma cruzi</i> <a href="<c:url value="/NamedFeature?name=TTc00.1047053508601.90"/>">Tc00.1047053508601.90</a></li>
       <li><i>Trypanasoma vivax</i> <a href="<c:url value="/NamedFeature?name=TvY486_0102140"/>">TvY486_0102140</a></li>
     </ul>
     </td>
