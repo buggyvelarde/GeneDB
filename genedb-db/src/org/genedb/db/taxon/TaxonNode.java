@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class TaxonNode implements Serializable {
 
-	private Logger logger = Logger.getLogger(TaxonNode.class);
+	private transient Logger logger = Logger.getLogger(TaxonNode.class);
 
     private String taxonId;
     transient private TaxonNode parent;
@@ -169,7 +169,7 @@ public class TaxonNode implements Serializable {
         });
         return ret;
     }
-    
+
     /* Slightly modified method (from above) that returns a list of all children names within single quotes (ready for SQL queries)
      * Didn't want to change above method incase it disrupted other classes */
     public List<String> getAllChildrenNamesInSQLFormat() {
