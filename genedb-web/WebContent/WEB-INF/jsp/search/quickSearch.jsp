@@ -17,7 +17,7 @@
 			    <st:flashMessage />
 				<table border=0 width="100%">
 					<tr>
-						<td width="50%">
+						<td width="30%">
 						  <form:form commandName="query" action="QuickSearchQuery"
 							method="GET">
 							<input type="hidden" name="q" value="quickSearchQuery" />
@@ -55,17 +55,43 @@
 						</form:form>
 						</td>
 						
-						<td valign="center" align="left" width="50%">
-						<br>
-						<table border=0>
+						<td valign="center" align="left" width="100%">
+						
+						<table border=0 width="100%">
     						<tr>
-	           					<td>
+    						
+                               <c:if test="${empty resultsSize && !fn:contains(query.searchText, '*')}">
+                                    <td>
+                                        Select <a href="${pageContext.request.contextPath}/QuickSearchQuery?q=quickSearchQuery&taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">*${query.searchText}*</a> to repeat search with wildcards.
+                                    </td>     
+                               </c:if>
+                               
+                              <c:if test="${fn:length(taxonGroup)>1}">
+                                      <td align=right>
+                                            
+                                            <iframe align=right
+                                                src="<c:url value="/QuickSearchQuery">
+                                                 <c:param name="q" value="none"/>
+                                                 <c:param name="taxons" value="${taxonNodeName}"/>
+                                                 <c:param name="hasresults" value="${not empty resultsSize}"/>
+                                                 <c:param name="searchText" value="${query.searchText}"/>
+                                                 <c:param name="pseudogenes" value="${query.pseudogenes}"/>
+                                                 <c:param name="allNames" value="${query.allNames}"/>
+                                                 <c:param name="product" value="${query.product}"/>
+                                            </c:url>"
+                                                frameborder="1"
+                                                width="300" height="140" align="left">
+                                            </iframe>
+                                            
+                                        </td>
+                              </c:if>
+	           					<td aligh=left>
 				            		<c:choose>
                                         <c:when test="${empty resultsSize && fn:length(taxonGroup)==0 }">
                                             No Exact match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b> or in other organisms.
                                         </c:when>
 						                <c:when test="${empty resultsSize && fn:length(taxonGroup)>0}">
-						                      No Exact match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b>, <br>however the following ${fn:length(taxonGroup)} organisms below have matches.
+						                      No Exact match found for <b>${query.searchText}</b> in <b>${taxonNodeName}</b>, however the following ${fn:length(taxonGroup)} organisms have matches.
 						                </c:when>
                                         <c:when test="${not empty resultsSize && fn:length(taxonGroup)==1}">
                                             All ${resultsSize} matches for <b>${query.searchText}</b>, found in organism <b>${taxonNodeName}</b>.
@@ -75,27 +101,9 @@
                                         </c:when>
 						             </c:choose>
 						         </td>
-						     </tr>
 						
-						      <c:if test="${fn:length(taxonGroup)>1}">
-						          <tr>
-						              <td>
-						                      <iframe
-                                                src="${pageContext.request.contextPath}/QuickSearchQuery?q=none&searchText=${query.searchText}&pseudogenes=${query.pseudogenes}&allNames=${query.allNames}&product=${query.product}"
-                                                frameborder="1"
-                                                width="70%" height="90" align="left">
-                                            </iframe>
-                                        </td>
-                                    </tr>
-                              </c:if>
-                        
-                              <c:if test="${empty resultsSize && !fn:contains(query.searchText, '*')}">
-                                  <tr>
-                                      <td>
-                                        Select <a href="${pageContext.request.contextPath}/QuickSearchQuery?q=quickSearchQuery&taxons=${taxonNodeName}&searchText=*${query.searchText}*&allNames=${query.allNames}&pseudogenes=${query.pseudogenes}&product=${query.product}">*${query.searchText}*</a> to repeat search with wildcards.
-                                      </td>
-                                  </tr>
-                              </c:if>
+                            </tr>
+                             
 						</table>
 						</td>
 					</tr>

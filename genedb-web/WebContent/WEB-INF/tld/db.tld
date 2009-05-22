@@ -100,6 +100,18 @@
 
 
  <tag>
+   <name>quicksearchtaxons</name>
+   <tag-class>org.genedb.web.tags.db.QuickSearchTaxonomicGraphTag</tag-class>
+   <body-content>empty</body-content>
+       <attribute>
+       <name>top</name>
+       <rtexprvalue>true</rtexprvalue>
+       <required>false</required>
+    </attribute>
+ </tag>
+
+
+ <tag>
    <name>simplehomepageselect</name>
    <tag-class>org.genedb.web.tags.db.HomepageSelectTag</tag-class>
    <body-content>empty</body-content>

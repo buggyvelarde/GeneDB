@@ -69,7 +69,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController{
             @RequestParam("product") String product,
             Model model){
         
-            model.addAttribute("searchText", searchText);
+            model.addAttribute("searchText", searchText.trim());
             model.addAttribute("pseudogenes", pseudogenes);
             model.addAttribute("allNames", allNames);
             model.addAttribute("product", product);            

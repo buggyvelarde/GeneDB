@@ -21,6 +21,7 @@ import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.genedb.db.taxon.TaxonNode;
 import org.genedb.querying.core.QueryException;
 import org.genedb.querying.core.QueryParam;
 import org.springframework.util.StringUtils;
@@ -281,17 +282,55 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         MULTIPLE_RESULTS_IN_CURRENT_TAXON        
     }
     
-    private class TaxonomicDistanceOrderer implements Comparator{
+    /**
+     * Used to compare 2 taxons by their taxonomic distance to one another
+     * @author larry@sangerinstitute
+     *
+     */
+    private class TaxonomicDistanceComparator implements Comparator{
 
         @Override
-        public int compare(Object txName1, Object txName2) {
+        public int compare(Object txNameObj1, Object txNameObj2) {
             
+            if (txNameObj1!= null && txNameObj2!= null){
+
+                String txName1 = txNameObj1.toString();
+                String txName2 = txNameObj2.toString();
+                
+                TaxonNode taxon1 = taxonNodeManager.getTaxonNodeForLabel(txName1);
+                TaxonNode taxon2 = taxonNodeManager.getTaxonNodeForLabel(txName2);
+                
+                int result = compare(taxon1, taxon2);
+                
+                if (result!= 0){
+                    return result;
+                    
+                }else{
+                    return txName1.compareTo(txName2);
+                }
+            }
+            return 0;
+        }
+        
+        private int compare(TaxonNode node1, TaxonNode node2){
+            TaxonNode parent = node1.getParent();
+            List<TaxonNode>siblings = parent.getChildren();
+            
+            //compare with siblings
+            for(TaxonNode sibling: siblings){
+                if (sibling.equals(node2)){
+                    return 0;
+                }
+            }
             return 0;
         }
         
     }
 
     public String getSearchText() {
+        if(StringUtils.hasLength(searchText)){
+            searchText = searchText.trim();
+        }
         return searchText;
     }
 
