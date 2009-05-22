@@ -23,12 +23,12 @@
 <tr>
 <td width="50%"><h2><b>Apicomplexa</b></h2>
       <ul>
-      <li><i>Plasmodium falciparum</i></li>
-        <li><i>Plasmodium berghei</i></li>
-        <li><i>Plasmodium chabaudi</i></li>
-        <li><i>Plasmodium knowlesi</i></li>
-        <li><i>Plasmodium vivax</i></li>
-        <li><i>Plasmodium yoelii</i></li>
+      <li><i>Plasmodium falciparum</i> <a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
+        <li><i>Plasmodium berghei</i> <a href="<c:url value="/NamedFeature?name=PB000600.02.0"/>">PB000600.02.0</a></li>
+        <li><i>Plasmodium chabaudi</i> <a href="<c:url value="/NamedFeature?name=PCAS_010190"/>">PCAS_010190</a></li>
+        <li><i>Plasmodium knowlesi</i> <a href="<c:url value="/NamedFeature?name=PKH_010100"/>">PKH_010100</a></li>
+        <li><i>Plasmodium vivax</i> <a href="<c:url value="/NamedFeature?name=PVX_087765"/>">PVX_087765</a></li>
+        <li><i>Plasmodium yoelii</i> <a href="<c:url value="/NamedFeature?name=PY00001"/>">PY00001</a></li>
     </ul>
     </td>
 <td width="50%"><h2><b>Bacteria</b></h2>
@@ -43,26 +43,21 @@
 <tr>
 <td width="50%"><h2><b>Kinetoplastida</b></h2>
     <ul>
-      <li><i>Leishmania braziliensis</i></li>
-      <li><i>Leishmania infantum</i></li>
-      <li><i>Leishmania major</i></li>
+      <li><i>Leishmania braziliensis</i> <a href="<c:url value="/NamedFeature?name=LbrM31_V2.1650"/>">LbrM31_V2.1650</a></li>
+      <li><i>Leishmania infantum</i> <a href="<c:url value="/NamedFeature?name=LinJ31_V3.1460"/>">LinJ31_V3.1460</a></li>
+      <li><i>Leishmania major</i> <a href="<c:url value="/NamedFeature?name=LmjF31.1430"/>">LmjF31.1430</a></li>
+      <li><i>Trypanasoma brucei brucei 427</i> <a href="<c:url value="/NamedFeature?name=Tb427.BES40.22"/>">Tb427.BES40.22</a></li>
+      <li><i>Trypanasoma brucei brucei 927</i> <a href="<c:url value="/NamedFeature?name=Tb927.1.700"/>">Tb927.1.700</a></li>
+      <li><i>Trypanasoma congolense</i> <a href="<c:url value="/NamedFeature?name=TcIL3000.1.120"/>">TcIL3000.1.120</a></li>
+      <li><i>Trypanasoma vivax</i> <a href="<c:url value="/NamedFeature?name=TvY486_0102140"/>">TvY486_0102140</a></li>
     </ul>
     </td>
-<td width="50%"><h2><!-- <b>Helminths</b>--></h2>
-      <!--  <ul>
-      <li><i>Schistosoma mansoni</i></li>
-    </ul>--></td>
+<td width="50%"><h2><b>Helminths</b></h2>
+      <ul>
+      <li><i>Schistosoma mansoni</i> <a href="<c:url value="/NamedFeature?name=Smp_000030.1:mRNA"/>">Smp_000030</a></li>
+    </ul></td>
 </tr>
-<tr>
-<td colspan="2">
-        <h3><b>Example Genes</b></h3>
-        <ul>
-        <li><i>Plasmodium falciparum</i> <a href="<c:url value="/NamedFeature?name=PF14_0641"/>">PF14_0641</a></li>
-        <li><i>Leishmania major</i> <a href="<c:url value="/NamedFeature?name=LmjF07.1060"/>">LmjF07.1060</a></li>
-        <li><i>Trypanasoma brucei</i> <a href="<c:url value="/NamedFeature?name=Tb927.1.710"/>">Tb927.1.710</a></li>
-        <!-- <li><i>Schistosoma mansoni</i> <a href="<c:url value="/NamedFeature?name=Smp_000030"/>">Smp_000030</a></li> -->
-      </ul>
-      </td>
+
 </table>
 
     </div>
