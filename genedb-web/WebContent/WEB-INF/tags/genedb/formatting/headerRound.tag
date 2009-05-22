@@ -89,13 +89,13 @@
         <td id="logo" valign="top" align="left" rowspan="2"><a href="<c:url value="/Homepage"/>"><img border="0" width="171" height="51" src="<c:url value="/includes/images/genedb-logo.gif"/>" alt="GeneDB"></img></a></td>
         <td id="name">${name}</td>
         <td id="search">
-        <form name="searchForm" action="<c:url value="/"/>QuickSearchQuery" method="GET">
+        <form name="searchForm" action="<c:url value="/"/>Query" method="GET">
           <input type="hidden" name="taxons" value="${taxonNodeName}">
+          <input type="hidden" name="q" value="allNameProduct"/>
           <input type="hidden" name="pseudogenes" value="true"/>
           <input type="hidden" name="product" value="true"/>
           <input type="hidden" name="allNames" value="true"/>
-          <input type="hidden" name="q" value="quickSearchQuery" />
-          <input id="query" name="searchText" value="" type="text" align="middle"/>
+          <input id="query" name="search" type="text" align="middle"/>
           <input id="submit" type="submit" value="Search" title="Search" align="middle" /><br>
         </form>
         <span align="top" style="font-size:0.65em;">
