@@ -71,4 +71,21 @@
         </attribute>
     </tag>
 
+
+
+    <tag>
+        <name>listItems</name>
+        <tag-class>org.genedb.web.tags.misc.ListItemsTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>seperator</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>collection</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+    </tag>
 </taglib>
