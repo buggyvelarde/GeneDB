@@ -97,9 +97,9 @@ public class TaxonNodeManager implements InitializingBean {
         //System.err.println("Session is '"+session+"'");
 
         //Initialise phylonodes with organism features
-        if (isFindPhylonodeWithOrganismFeatures){
+        //if (isFindPhylonodeWithOrganismFeatures){
             findPhylonodeWithOrganismFeatures();
-        }
+        //}
 
   //      }
         //finally {
