@@ -1,77 +1,77 @@
-<project name="Jogra" default="fulljar-Jogra" basedir=".">
+<project name="Jogra" default="Jogra-run" basedir=".">
 
-	<dirname property="imported.basedir.Jogra" file="${ant.file.Jogra}" />
+    <dirname property="imported.basedir.Jogra" file="${ant.file.Jogra}" />
 
-	<import file="../genedb-libs/build.xml" />
-	<import file="../genedb-db/build.xml" />
+    <import file="../genedb-libs/build.xml" />
+    <import file="../genedb-db/build.xml" />
 
-	<property name="Jogra.jar"
-		value="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar" />
-	<property name="version" value="0.5" />
+    <property name="Jogra.jar"
+        value="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar" />
+    <property name="version" value="0.5" />
 
-	<path id="Jogra-classpath">
-		<fileset dir="${imported.basedir.Jogra}/lib">
-			<include name="*.jar" />
-		</fileset>
-		<fileset dir="${imported.basedir.libs}/lib/gui">
-			<include name="*.jar" />
-		</fileset>
-		<fileset dir="${imported.basedir.libs}/lib/biojava">
-			<include name="biojava-1.6.jar" />
-		</fileset>
-		<pathelement
-			location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar" />
-		<pathelement location="${genedb-db.jar}" />
-	</path>
+    <path id="Jogra-classpath">
+        <fileset dir="${imported.basedir.Jogra}/lib">
+            <include name="*.jar" />
+        </fileset>
+        <pathelement location="${genedb-db.jar}" />
+    </path>
 
-	<target name="init-Jogra">
-		<init-target project="Jogra" />
-	</target>
+    <target name="Jogra-init">
+        <init-target project="Jogra" />
+    </target>
 
-	<target name="clean-Jogra">
-		<clean-target project="Jogra" />
-	</target>
+    <target name="Jogra-clean">
+        <clean-target project="Jogra" />
+    </target>
 
-	<target name="Jogra-populate-lib" depends="check.Jogra-lib-uptodate" unless="Jogra.lib-uptodate">
-		<populate directory="genedb-Jogra" />
-	</target>
+    <target name="Jogra-populate-lib" depends="check.Jogra-lib-uptodate" unless="Jogra.lib-uptodate">
+        <populate directory="genedb-Jogra" />
+        <copy todir="lib">
+            <fileset dir="${imported.basedir.libs}/lib">
+                <include name="db/postgresql-8.3-603.jdbc4.jar"/>
+                <include name="biojava/biojava-1.6.jar"/>
+                <!-- <include name="gui/*.jar"/> -->
+            </fileset>
+        </copy>
+    </target>
 
 
-	<target name="check.Jogra-lib-uptodate" depends="init-Jogra" if="Jogra.ivy-timestamp-exists">
-		<uptodate property="Jogra.lib-uptodate" srcfile="${imported.basedir.Jogra}/ivy.xml" targetfile="${imported.basedir.Jogra}/lib/ivy.timestamp.txt" />
-	</target>
+    <target name="check.Jogra-lib-uptodate" depends="Jogra-init" if="Jogra.ivy-timestamp-exists">
+        <uptodate property="Jogra.lib-uptodate" srcfile="${imported.basedir.Jogra}/ivy.xml" targetfile="${imported.basedir.Jogra}/lib/ivy.timestamp.txt" />
+    </target>
 
-	<target name="jogra-compile" depends="Jogra-populate-lib, genedb-db.fulljar-db">
-		<compile-target project="Jogra" />
-		<copy todir="${imported.basedir.Jogra}/${classes.dir}">
-			<fileset dir="${imported.basedir.Jogra}/conf" />
-		</copy>
-	</target>
+    <target name="Jogra-compile" depends="Jogra-populate-lib, genedb-db.fulljar-db">
+        <compile-target project="Jogra" />
+        <copy todir="${imported.basedir.Jogra}/${classes.dir}">
+            <fileset dir="${imported.basedir.Jogra}/conf" />
+        </copy>
+    </target>
 
-	<!-- create .jar -->
-	<target name="fulljar-Jogra" depends="jogra-compile"
-		description="Create an unsigned JAR">
-		<pathconvert property="classpath-for-manifest" pathsep=" "
-			refid="Jogra-classpath" />
-		<jar-target project="Jogra">
-			<manifest>
-				<attribute name="Implementation-Title" value="Jogra" />
-				<attribute name="Implementation-Version" value="${version}" />
-				<attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
-				<attribute name="Class-Path" value="${classpath-for-manifest}" />
-			</manifest>
-		</jar-target>
-	</target>
+    <!-- create .jar -->
+    <target name="Jogra-fulljar" depends="Jogra-compile"
+        description="Create an unsigned JAR">
+        <pathconvert property="classpath-for-manifest" pathsep=" "
+            refid="Jogra-classpath" />
+        <jar-target project="Jogra">
+            <manifest>
+                <attribute name="Implementation-Title" value="Jogra" />
+                <attribute name="Implementation-Version" value="${version}" />
+                <attribute name="Main-Class" value="org.genedb.jogra.drawing.Jogra" />
+                <attribute name="Class-Path" value="${classpath-for-manifest}" />
+            </manifest>
+        </jar-target>
+    </target>
 
-	<target name="signed-jar-Jogra" depends="fulljar-Jogra"
-		description="Create a signed JAR">
-		<signjar jar="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar"
-			signedjar="${imported.basedir.Jogra}/${dist-dir}/Jogra-signed.jar"
-			alias="Jogra" storepass="Jogra-pw" />
-	</target>
+    <target name="Jogra-signed-jar" depends="Jogra-fulljar"
+        description="Create a signed JAR">
+        <signjar jar="${imported.basedir.Jogra}/${dist.dir}/genedb-Jogra.jar"
+            signedjar="${imported.basedir.Jogra}/${dist-dir}/Jogra-signed.jar"
+            alias="Jogra" storepass="Jogra-pw" />
+    </target>
 
-	<target name="run-Jogra" depends="fulljar-Jogra">
-		<echo message="${Jogra-classpath}" />
-		<java fork="true" jar="${Jogra.jar}" classpathref="Jogra-classpath" />
-	</target>
+    <target name="Jogra-run" depends="Jogra-fulljar">
+        <echo message="${Jogra-classpath}" />
+        <java fork="true" jar="${Jogra.jar}" classpathref="Jogra-classpath" />
+    </target>
+
 </project>
