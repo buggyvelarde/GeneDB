@@ -63,13 +63,6 @@ public interface JograPlugin {
      * @param newArgs
      */
     void process(List<String> newArgs);
-    
-    
-    /**
-     * Pass the main class to all plugins to enable callbacks
-     * 
-     * @param jogra the main application wrapper
-     */
-    public void setJogra(Jogra jogra);
+
 
 }

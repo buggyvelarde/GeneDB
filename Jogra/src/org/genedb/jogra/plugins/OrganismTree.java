@@ -3,9 +3,9 @@
  * This plug-in displays a Jtree with the hierarchy of organisms and allows the user to select an organism or a class of organisms.
  * This information is then used to restrict the products in the rationaliser (i.e. only products pertaining to selected organism(s) will be displayed.
  * This selection can potentially be transferred to other Jogra plugins in the future.
- * 
+ *
  * 19.5.2009: Added capability to receive multiple organism selections from user
- * 
+ *
  * @author nds
  */
 
@@ -43,23 +43,23 @@ import javax.swing.WindowConstants;
 import javax.swing.tree.TreePath;
 
 public class OrganismTree implements JograPlugin {
-    private TaxonNodeManager taxonNodeManager; 
+    private TaxonNodeManager taxonNodeManager;
     private List<String> userSelection = new ArrayList<String>(); //Stores the user's selected organism name
     private Jogra jogra;
-    
+
     private static final Logger logger = Logger.getLogger(OrganismTree.class);
-    
+
     public void setTaxonNodeManager(TaxonNodeManager taxonNodeManager) {
         this.taxonNodeManager = taxonNodeManager;
     }
-  
+
     /**
      * Supply a JPanel which will be displayed in the main Jogra application panel,
      * used for launching a plug-in, or displaying status
      *
      * @return a JPanel, ready for displaying
      */
-    public JPanel getMainWindowPlugin(){ 
+    public JPanel getMainWindowPlugin(){
         final JPanel panel = new JPanel();
         final JLabel label = new JLabel("Restrict products by organism");
         final JButton button = new JButton("Load organism tree");
@@ -72,7 +72,7 @@ public class OrganismTree implements JograPlugin {
                         protected JFrame doInBackground() throws Exception {
                           return getMainPanel();
                         }
-                    }.execute();     
+                    }.execute();
                 }catch(Exception e){ //handle exceptions better later
                     logger.debug(e);
                 }
@@ -83,7 +83,7 @@ public class OrganismTree implements JograPlugin {
         panel.add(button);
         return panel;
     }
-    
+
     /**
      * Method that creates the JFrame object containing the tree of organisms
      * @return
@@ -92,7 +92,7 @@ public class OrganismTree implements JograPlugin {
         final JFrame frame = new JFrame("Hierarchy of organisms currently on database");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         final JButton button = new JButton("Select an organism");   //Create button to confirm user selection. Disabled at first
-       
+
         //TaxonNodeManager created and initialised at start up. Create JTree
         TaxonNode taxonNode = taxonNodeManager.getTaxonNodeForLabel("Root");
         Vector orgTree = getOrganismTree(taxonNode);
@@ -102,20 +102,20 @@ public class OrganismTree implements JograPlugin {
         checkboxTree.addTreeCheckingListener(new TreeCheckingListener() {
             public void valueChanged(TreeCheckingEvent e) {
                 if(e.isCheckedPath()){
-                    button.setText("Continue"); 
+                    button.setText("Continue");
                     button.setEnabled(true);
                 }
             }
         });
-        
+
         button.setEnabled(false);
         ActionListener actionListener = new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent){
-              
+
                 try{
                     userSelection.clear();
                     TreePath tp[] = checkboxTree.getCheckingRoots();
-                   
+
                     for(TreePath p: tp){
                         userSelection.add(p.getLastPathComponent().toString());
                     }
@@ -133,14 +133,14 @@ public class OrganismTree implements JograPlugin {
         button.addActionListener(actionListener);
         //Place Jtree in scrollable pane to enable scrolling
         JScrollPane scrollPane = new JScrollPane(checkboxTree);
-        frame.add(scrollPane, BorderLayout.CENTER); 
+        frame.add(scrollPane, BorderLayout.CENTER);
         frame.add(button, BorderLayout.PAGE_END);
         frame.setSize(500,500);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         return frame;
     }
-    
+
     /**
      * A recursive helper method to print indented organism hierarchy (for testing purposes) and return a vector
      *
@@ -193,13 +193,5 @@ public class OrganismTree implements JograPlugin {
     public void process(List<String> newArgs){
         //What is this meant to do?
     }
-
-    @Override
-    public void setJogra(Jogra jogra) {
-        this.jogra = jogra;
-    }
-    
-   
-    
 
 }

@@ -14,6 +14,7 @@
             <include name="*.jar" />
         </fileset>
         <pathelement location="${genedb-db.jar}" />
+        <pathelement location="${java.home}/lib/javaws.jar" />
     </path>
 
     <target name="Jogra-init">

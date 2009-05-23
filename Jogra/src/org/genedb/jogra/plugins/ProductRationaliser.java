@@ -92,7 +92,7 @@ public class ProductRationaliser implements JograPlugin {
     private List<TaxonNode> taxonList = new ArrayList<TaxonNode>();
     private JLabel scopeLabel = new JLabel("Scope: All organisms"); //Label showing user's selection. Default: View all
     private Jogra jogra; //Jogra object in this application context
-    
+
    /* Essential setter method */
     public void setTaxonNodeManager(TaxonNodeManager taxonNodeManager) {
         this.taxonNodeManager = taxonNodeManager;
@@ -103,7 +103,7 @@ public class ProductRationaliser implements JograPlugin {
      */
     private void initModels() {
         System.out.println("PR: Inside initModels method");
-        userSelection = jogra.getChosenOrganism();  
+        userSelection = jogra.getChosenOrganism();
         taxonList.clear();
         System.out.println("PR: Getting selection from Jogra " + userSelection);
         if(userSelection!=null && userSelection.size()!=0){ //&& !userSelection.equalsIgnoreCase("root")){
@@ -114,12 +114,12 @@ public class ProductRationaliser implements JograPlugin {
         }else{ //If there are no selections, get all products
             taxonList.add(taxonNodeManager.getTaxonNodeForLabel("Root"));
         }
-      
-        
+
+
         logger.info("Taxons resulting from user selection (or lack of a user selection) is: " + taxonList.toString());
-        List<Product> products = productService.getProductList(taxonList); 
+        List<Product> products = productService.getProductList(taxonList);
         Product[] productArray = new Product[products.size()];
-      
+
         int i=0;
         for (Product product : products) {
             productArray[i] = product;
@@ -145,11 +145,11 @@ public class ProductRationaliser implements JograPlugin {
         textField.setBackground(Color.LIGHT_GRAY);
         textField.setForeground(Color.BLUE);
         //textField.setPreferredSize(new Dimension(50,35));
-        
-        //Retrieving the user's chosen organism name (if any) from the Jogra object 
+
+        //Retrieving the user's chosen organism name (if any) from the Jogra object
         //TO DO: Also make this listen to events in Organism Tree so that as the user selects different organisms, the rationaliser can react accordingly
       /*  try{
-            userSelection = jogra.getChosenOrganism();  
+            userSelection = jogra.getChosenOrganism();
             System.out.println("PR: Getting selection from Jogra " + userSelection);
             if(userSelection!=null && !userSelection.equals("")){ //&& !userSelection.equalsIgnoreCase("root")){
                 scopeLabel.setText("Scope: " + userSelection); //Else, label will continue to have 'Scope: All'
@@ -157,7 +157,7 @@ public class ProductRationaliser implements JograPlugin {
         }catch(Exception e){
             logger.debug("Error fetching information from Jogra object: " + e);
         } */
-        fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); //Allow multiple products to be selected 
+        fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); //Allow multiple products to be selected
         fromList.setPrototypeCellValue(A_LONG_STRING);
         ListFindAction findAction = new ListFindAction(true);
         SyncAction fromSync = new SyncAction(fromList, toList, KeyStroke.getKeyStroke("RIGHT"));
@@ -176,7 +176,7 @@ public class ProductRationaliser implements JograPlugin {
                 findAction,
                 new ListFindAction(false)
             });
-        
+
         toList.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -184,10 +184,10 @@ public class ProductRationaliser implements JograPlugin {
                 logger.info("Inside valueChanged method in toList listener. Setting textfield with chosen product name for user to edit.");
                 textField.setText(((Product)toList.getSelectedValue()).toString());
             }
-            
+
         });
-        
-        
+
+
         toList.addKeyListener(new IncrementalSearchKeyListener(findAction));
         //InputMap map = toList.getInputMap(JComponent.WHEN_FOCUSED);
         // List keystrokes in the component and in all parent input maps
@@ -235,7 +235,7 @@ public class ProductRationaliser implements JograPlugin {
         //label.setLabelFor(textField);
         localButtons.add(label);
         localButtons.add(textField);
-      
+
         buttons.add(localButtons);
 
         Box actionButtons = Box.createHorizontalBox();
@@ -326,7 +326,7 @@ public class ProductRationaliser implements JograPlugin {
         System.err.println("Am I on EDT '" + EventQueue.isDispatchThread() + "'  x");
        /* JFrame lookup = Jogra.findNamedWindow(WINDOW_TITLE);
         if (lookup == null) {
-            lookup = getMainPanel(); 
+            lookup = getMainPanel();
         } */
         JFrame lookup = getMainPanel(); //Always getting a new frame since it has to pick up variable organism (correct later: NDS)
         return lookup;
@@ -426,8 +426,8 @@ public class ProductRationaliser implements JograPlugin {
                 old.add((Product)o); //old contains products that will be merged/removed
             }
             MethodResult result = productService.rationaliseProduct(to, old, text);
-            
-            
+
+
             // If rationalising did not work, then display pop-up message with information
             if(result.isSuccessful()){
                 JOptionPane.showMessageDialog(null,result.getSuccessMsg());
@@ -436,9 +436,9 @@ public class ProductRationaliser implements JograPlugin {
                 //JOptionPane.showMessageDialog(getMainPanel(), result.getErrorMsg()); //If not, then display error and then refresh view
                 //initModels();
                 logger.debug("Cannot rationalise");
-                
+
             }
-           
+
         }
 
         @Override
@@ -722,11 +722,6 @@ public class ProductRationaliser implements JograPlugin {
     public void process(List<String> newArgs) {
         // TODO Auto-generated method stub
 
-    }
-    
-    @Override
-    public void setJogra(Jogra jogra) {
-        this.jogra = jogra;
     }
 
 
