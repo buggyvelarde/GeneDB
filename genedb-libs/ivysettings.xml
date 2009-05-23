@@ -14,8 +14,8 @@
                 <ivy pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
                 <artifact pattern="http://repository.springsource.com/ivy/bundles/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
             </url>
-            <ibiblio name="public" m2compatible="true"/>
             <ibiblio name="java.net2" root="http://download.java.net/maven/2/" m2compatible="true"/>
+            <ibiblio name="public" m2compatible="true"/>
         </chain>
     </resolvers>
     <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
