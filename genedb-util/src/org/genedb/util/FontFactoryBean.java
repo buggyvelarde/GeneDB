@@ -17,7 +17,6 @@ public class FontFactoryBean implements FactoryBean<Font> {
     private Font font;
 
     private void makeFont() {
-//      properties.getProperty("diagram.fontFile");
         try {
             InputStream is = source.getInputStream();
 
@@ -52,7 +51,6 @@ public class FontFactoryBean implements FactoryBean<Font> {
     }
 
 
-
     @Override
     public Font getObject() throws Exception {
         makeFont();
@@ -61,7 +59,7 @@ public class FontFactoryBean implements FactoryBean<Font> {
 
 
     @Override
-    public Class<Font> getObjectType() {
+    public Class<? extends Font> getObjectType() {
         return Font.class;
     }
 
