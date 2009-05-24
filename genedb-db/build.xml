@@ -20,7 +20,6 @@
       <fileset dir="${imported.basedir.db}/lib">
         <include name="*.jar"/>
       </fileset>
-      <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
     </path>
 
     <path id="build-test-database-classpath">
@@ -245,7 +244,12 @@
 
     <target name="db-populate-lib" depends="check.db-lib-uptodate" unless="db.lib-uptodate">
       <populate directory="genedb-db" />
-      <copy file="${imported.basedir.libs}/lib/biojava/biojava-1.6.jar" todir="${imported.basedir.db}/lib" />
+      <copy todir="lib">
+            <fileset dir="${imported.basedir.libs}/lib/biojava">
+                <include name="biojava-1.6.jar"/>
+                <include name="bytecode-0.91.jar"/>
+            </fileset>
+      </copy>
       <touch file="lib/ivy.timestamp.txt" />
     </target>
 
@@ -272,8 +276,8 @@
        <antcall target="build-time-weave">
     		   <param name="directory" value="${imported.basedir.db}/ant-build/classes"/>
     	</antcall>
-    	<javac srcdir="${imported.basedir.db}/test" 
-    		includes="**/HibernateChangeTrackerTest.java" 
+    	<javac srcdir="${imported.basedir.db}/test"
+    		includes="**/HibernateChangeTrackerTest.java"
     		debug="true"
             destdir="${imported.basedir.db}/${test-classes.dir}"
             classpathref="unit-tests-classpath" />
