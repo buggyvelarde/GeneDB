@@ -4,7 +4,6 @@
 	<classpathentry kind="lib" path="conf"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/gui/beansbinding-1.2.1.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/gui/javaws.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/gui/myswing.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/gui/forms-1.1.0.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/db/postgresql-8.3-603.jdbc4.jar"/>
@@ -67,5 +66,6 @@
 	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.0.M3.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-0.9.7.jar"/>
 	<classpathentry kind="lib" path="lib/google-collect-snapshot-20080530.jar"/>
+	<classpathentry kind="lib" path="/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/lib/javaws.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -39,11 +39,10 @@
   <bean name="productRationaliser" class="org.genedb.jogra.plugins.ProductRationaliser">
     <property name="productService" ref="productService" />
      <property name="taxonNodeManager" ref="taxonNodeManager" />
-    <property name="jogra" ref="application" />
   </bean>
 
   <bean name="productService" class="org.genedb.jogra.services.SqlProductService">
-     <property name="dataSource" ref="dataSource" /> 
+     <property name="dataSource" ref="dataSource" />
   </bean>
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
@@ -51,16 +50,16 @@
 <!--        <property name="url" value="jdbc:postgresql://pgsrv1.internal.sanger.ac.uk:5432/pathogens" /> -->
 <!--        <property name="url" value="jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev" /> -->
 <!--        Local copy to test. Change later [NDS] -->
-            <property name="url" value="jdbc:postgresql://localhost:5432/nds" /> 
+            <property name="url" value="jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot" />
             <property name="username" value="${Jogra.username}"/>
-            <property name="password" value="${Jogra.password}" /> 
+            <property name="password" value="${Jogra.password}" />
             <!--  property name="username" value='nds'/>
             <property name="password" value='sanger09' /-->
     </bean>
 
   <bean name="geneList" class="org.genedb.jogra.plugins.GeneList" />
- 
- 
+
+
 
   <bean name="integrityChecker" class="org.genedb.jogra.plugins.RunIntegrityCheck" />
 
@@ -71,30 +70,29 @@
 -->
 
   <bean name="organismEditor" class="org.genedb.jogra.plugins.OrganismEditor" />
-  
+
   <!-- Plugin to view the organism tree structure  -->
-  
+
   <bean name="organismTree" class="org.genedb.jogra.plugins.OrganismTree" >
   <property name="taxonNodeManager" ref="taxonNodeManager" />
-  <property name="jogra" ref="application" />
   </bean>
-  
-  
+
+
   <bean id="taxonNodeManager" class="org.genedb.db.taxon.TaxonNodeManager">
         <property name="phylogenyDao" ref="phylogenyDao" />
-        <!-- property name="sessionFactory" ref="sessionFactory" /-->
+        <property name="sessionFactory" ref="sessionFactory" />
         <property name="findPhylonodeWithOrganismFeatures"> <value>true</value></property>
     </bean>
-    
-    
+
+
      <bean id="phylogenyDao" class="org.genedb.db.dao.PhylogenyDao">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
-    
+
      <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
          <property name="sessionFactory" ref="sessionFactory" />
      </bean>
-    
+
     <bean id="sessionFactory" class="org.gmod.schema.cfg.ChadoSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="hibernateProperties" ref="hibernateProperties" />
@@ -108,8 +106,8 @@
             <list><value>excludeObsoleteFeatures</value></list>
         </property> -->
     </bean>
-    
-    
+
+
 
     <!-- Database Property -->
     <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
@@ -122,12 +120,12 @@
         </props>
      </property>
     </bean>
-  
-   
 
-  
- 
-  
+
+
+
+
+
 
 <!--
   <bean name="organismManager" class="org.genedb.db.domain.objects.ExtendedOrganismManager"/>
@@ -146,7 +144,7 @@
          <ref bean="organismTree" />
          <ref bean="organismEditor" />
          <ref bean="productRationaliser" />
-         
+
         <!-- <ref bean="integrityChecker" /> -->
        </list>
      </property>

@@ -27,13 +27,12 @@
 
     <target name="Jogra-populate-lib" depends="check.Jogra-lib-uptodate" unless="Jogra.lib-uptodate">
         <populate directory="Jogra" />
-        <!--<copy todir="lib">
-            <fileset dir="${imported.basedir.libs}/lib">
-                <include name="db/postgresql-8.3-603.jdbc4.jar"/>
-                <include name="biojava/biojava-1.6.jar"/> -->
-                <!-- <include name="gui/*.jar"/> --><!--
+        <copy todir="lib">
+            <fileset dir="${imported.basedir.libs}/lib/biojava">
+                <include name="biojava-1.6.jar"/>
+                <include name="bytecode-0.91.jar"/>
             </fileset>
-        </copy> -->
+        </copy>
     </target>
 
 

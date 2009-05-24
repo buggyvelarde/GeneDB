@@ -33,9 +33,9 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.springframework.util.StringUtils;
 
-import skt.swing.SwingUtil;
-import skt.swing.search.IncrementalSearchKeyListener;
-import skt.swing.search.ListFindAction;
+//import skt.swing.SwingUtil;
+//import skt.swing.search.IncrementalSearchKeyListener;
+//import skt.swing.search.ListFindAction;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -159,23 +159,23 @@ public class ProductRationaliser implements JograPlugin {
         } */
         fromList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); //Allow multiple products to be selected
         fromList.setPrototypeCellValue(A_LONG_STRING);
-        ListFindAction findAction = new ListFindAction(true);
+        //ListFindAction findAction = new ListFindAction(true);
         SyncAction fromSync = new SyncAction(fromList, toList, KeyStroke.getKeyStroke("RIGHT"));
-        SwingUtil.installActions(fromList, new Action[]{
-            fromSync,
-            findAction,
-            new ListFindAction(false)
-        });
-        fromList.addKeyListener(new IncrementalSearchKeyListener(findAction));
+        //SwingUtil.installActions(fromList, new Action[]{
+        //    fromSync,
+        //    findAction,
+        //    new ListFindAction(false)
+        //});
+        //fromList.addKeyListener(new IncrementalSearchKeyListener(findAction));
 
         toList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //Single product selection in TO list
         toList.setPrototypeCellValue(A_LONG_STRING);
         SyncAction toSync = new SyncAction(toList, fromList, KeyStroke.getKeyStroke("LEFT"));
-        SwingUtil.installActions(toList, new Action[]{
-                toSync,
-                findAction,
-                new ListFindAction(false)
-            });
+        //SwingUtil.installActions(toList, new Action[]{
+        //        toSync,
+        //        findAction,
+        //        new ListFindAction(false)
+        //    });
 
         toList.addListSelectionListener(new ListSelectionListener() {
 
@@ -188,7 +188,7 @@ public class ProductRationaliser implements JograPlugin {
         });
 
 
-        toList.addKeyListener(new IncrementalSearchKeyListener(findAction));
+        //toList.addKeyListener(new IncrementalSearchKeyListener(findAction));
         //InputMap map = toList.getInputMap(JComponent.WHEN_FOCUSED);
         // List keystrokes in the component and in all parent input maps
         //list(map, map.allKeys());

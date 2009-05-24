@@ -1,6 +1,6 @@
 /*
- * JOGRA is an overarching application that has several plugins 'attached' to it. 
- * Jogra initialises the application context, and obtains and publishes the username and password to other plugins that may need it. 
+ * JOGRA is an overarching application that has several plugins 'attached' to it.
+ * Jogra initialises the application context, and obtains and publishes the username and password to other plugins that may need it.
  * 14.5.2009
  */
 
@@ -12,6 +12,7 @@ package org.genedb.jogra.drawing;
 import org.genedb.jogra.domain.GeneDBMessage;
 import org.genedb.jogra.services.DatabaseLogin;
 import org.genedb.jogra.services.MessageService;
+import org.genedb.jogra.services.DatabaseLogin.AbortException;
 
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
@@ -28,6 +29,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -66,7 +68,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     private static String username;
     private static String password;
 
-   
+
     public Jogra() {
         EventBus.subscribe(ApplicationClosingEvent.class, new EventSubscriber<GeneDBMessage>() {
             public void onEvent(final GeneDBMessage ese) {
@@ -77,7 +79,8 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (final Exception exp) {
-            exp.printStackTrace();
+            logger.info("Unable to set Nimbus L&F");
+            logger.debug("Unable to set Nimbus L&F", exp);
         }
 
         // EventBus.subscribe(ApplicationClosingEvent.class, new
@@ -99,7 +102,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
 //        	}
 //        };
 //        timer.scheduleAtFixedRate(fetchMessage, TIMER_DELAY, TIMER_DELAY);
-        
+
         EventBus.subscribeStrongly("selection", new EventTopicSubscriber<List<String>>() {
             public void onEvent(String topic, List<String> selection) {
               System.out.println("Selection is " + selection.toString() );
@@ -108,8 +111,8 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
                 System.out.println("JOGRA: Picked up " + selection.toString());
             }
 
-            
-        }); 
+
+        });
 
     }
 
@@ -127,7 +130,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
        Status status = JXLoginPane.showLoginDialog(null, loginPane);
        if (status != Status.SUCCEEDED) {
        	finalShutdown();
-        } 
+        }
         */
 
         try {
@@ -159,7 +162,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         mainFrame.setTitle("Jogra");
         mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         final JMenuBar menu = new JMenuBar();
-        
+
         final JMenu pluginMenu = new JMenu("Plugins");
         for (final String plugin : pluginMap.keySet()) {
             pluginMenu.add(new JMenuItem(plugin));
@@ -192,11 +195,11 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         }
 
     }
-    
-   
-    
-    
-    
+
+
+
+
+
     public void onEvent(final GeneDBMessage event) {
         if (event.getClass().isAssignableFrom(OpenWindowEvent.class)) {
             this.onEvent((OpenWindowEvent) event);
@@ -224,10 +227,10 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
             }
         });
     }
-    
-    
-    
-   
+
+
+
+
 
     private void restart() {
         // TODO Auto-generated method stub
@@ -289,15 +292,15 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         }
         return null;
     }
-    
-   
-    
+
+
+
     /* Instantiating the application/Jogra bean */
-    public static Jogra instantiate() throws IOException {     
+    public static Jogra instantiate(String userName, char[] password) throws IOException {
         PropertyPlaceholderConfigurer configurer = new PropertyPlaceholderConfigurer();
         Properties properties = new Properties();
-        properties.setProperty("Jogra.username", getUsername());
-        properties.setProperty("Jogra.password", getPassword());
+        properties.setProperty("Jogra.username", userName);
+        properties.setProperty("Jogra.password", new String(password));
         configurer.setProperties(properties);
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
@@ -307,15 +310,15 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         context.refresh();
         final Jogra application = (Jogra)context.getBean("application", Jogra.class);
         context.registerShutdownHook();
-        return application; 
-        
+        return application;
+
     }
 
     // public void setTestService(TestService testService) {
     // this.testService = testService;
-    // } 
+    // }
 
-    
+
     public void setPluginList(List<JograPlugin> pluginList) {
         this.pluginMap = new LinkedHashMap<String, JograPlugin>(pluginList.size());
         for (JograPlugin plugin : pluginList) {
@@ -345,7 +348,7 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
         }
         jp.process(newArgs);
     }
-    
+
     public List<String> getChosenOrganism() {
         return chosenOrganism;
     }
@@ -357,11 +360,11 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     @Override
     public void propertyChange(PropertyChangeEvent arg0) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     /* Getter and setter methods for username and password. */
-    
+
     public static String getUsername() {
         return username;
     }
@@ -377,23 +380,23 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     /* Main method that calls the DBLogin application and, if valid user, calls methods to display main Jogra frame */
     public static void main(final String[] args) throws Exception {
        /* final DatabaseLogin dblogin = new DatabaseLogin("jdbc:postgresql://localhost:5432/nds");
-        
+
         try{
             new SwingWorker<String, String>() {
-         
+
                 protected String doInBackground() throws Exception {
-                  
+
                   System.out.println("Inside doInBackground method");
                   dblogin.validateUser();
-                
+
                   return new String("");
                 }
-                
-         
+
+
                 protected void done(){
                     System.out.println("Inside done method");
                     try{
@@ -415,31 +418,38 @@ public class Jogra implements SingleInstanceListener, PropertyChangeListener, Ev
                         logger.debug(e);
                     }
                 }
-                
-            }.execute();     
+
+            }.execute();
         }catch(Exception e){ //handle exceptions better later
             System.out.println(e);
         } */
-        
-        
-        
-        
-       DatabaseLogin dblogin = new DatabaseLogin("jdbc:postgresql://localhost:5432/nds");
-        boolean validUser = dblogin.validateUser();
-        Jogra application = new Jogra();
-        if(validUser){
-            application.setUsername(dblogin.getUsername());
-            application.setPassword(dblogin.getPassword());
-            application = Jogra.instantiate();
-            application.testTransactions();
-            application.init();
-            application.makeMain();
-            application.showMain();
-            if (args.length > 0) {
-                application.newActivation(args);
-            }
-        } 
-       
+
+
+
+
+        DatabaseLogin dblogin = new DatabaseLogin();
+        dblogin.addInstance("pathogens", "jdbc:postgresql://pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot");
+        dblogin.addInstance("pathogens-test", "jdbc:postgresql://pgsrv2.internal.sanger.ac.uk:5432/pathdev");
+
+        try {
+            dblogin.validateUser();
+        } catch (SQLException exp) {
+            exp.printStackTrace();
+            System.exit(65);
+        } catch (AbortException exp) {
+            System.exit(65);
+        }
+
+
+        Jogra application = Jogra.instantiate(dblogin.getUsername(), dblogin.getPassword());
+        application.testTransactions();
+        application.init();
+        application.makeMain();
+        application.showMain();
+        if (args.length > 0) {
+            application.newActivation(args);
+        }
+
     }
 
 }
