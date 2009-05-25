@@ -1,6 +1,7 @@
 package org.genedb.querying.tmpquery;
 
 import org.genedb.querying.core.LuceneQuery;
+import org.genedb.querying.core.QueryException;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
@@ -14,6 +15,12 @@ import java.util.List;
 public class IdsToGeneSummaryQuery extends LuceneQuery {
 
     private List<String> ids;
+
+//    @Override
+//    protected <T> T convertDocumentToReturnType(Document document, Class<T> clazz) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     @Override
     protected GeneSummary convertDocumentToReturnType(Document document) {
@@ -60,5 +67,17 @@ public class IdsToGeneSummaryQuery extends LuceneQuery {
     public void setIds(List<String> ids) {
         this.ids = ids;
     }
+
+    @Override
+    public List getResults() throws QueryException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    //@Override
+//    public boolean supports(Class<?> arg0) {
+//        // TODO Auto-generated method stub
+//        return false;
+//    }
 
 }

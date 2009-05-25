@@ -7,6 +7,8 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -15,6 +17,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.TopDocs;
 import org.springframework.util.StringUtils;
 
 public class LuceneIndex {
@@ -69,7 +72,7 @@ public class LuceneIndex {
      * @param queryString The text of the query
      * @return The result of the search
      */
-    public Hits search(Analyzer analyzer, String defaultField, String queryString) {
+    public TopDocs search(Analyzer analyzer, String defaultField, String queryString) {
         Query query = null;
         QueryParser qp = new QueryParser(defaultField, analyzer);
 
@@ -92,7 +95,7 @@ public class LuceneIndex {
      * @param query The query
      * @return The result of the search
      */
-    public Hits search(Query query) {
+    public TopDocs search(Query query) {
         return search(query, null);
     }
 
@@ -103,14 +106,14 @@ public class LuceneIndex {
      * @param query The query
      * @return The result of the search
      */
-    public Hits search(Query query, Sort sort) {
+    public TopDocs search(Query query, Sort sort) {
         IndexSearcher searcher = new IndexSearcher(indexReader);
         logger.debug("searcher is -> " + searcher.toString());
         try {
             if (sort == null) {
-                return searcher.search(query);
+                return searcher.search(query, Integer.MAX_VALUE);
             } else {
-                return searcher.search(query, sort);
+                return searcher.search(query, null, Integer.MAX_VALUE, sort);
             }
         } catch (IOException e) {
             throw new RuntimeException(String.format("I/O error during Lucene query '%s'",
@@ -126,6 +129,11 @@ public class LuceneIndex {
     public void setIndexName(String indexName) {
         this.indexName = indexName;
         openIndex();
+    }
+
+
+    public Document getDocument(int docId) throws CorruptIndexException, IOException {
+        return indexReader.document(docId);
     }
 
 }

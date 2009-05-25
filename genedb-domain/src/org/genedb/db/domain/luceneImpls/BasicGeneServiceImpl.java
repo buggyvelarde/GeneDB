@@ -17,12 +17,12 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
-import org.apache.lucene.search.Hit;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.WildcardQuery;
 
 import java.io.IOException;
@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -237,16 +236,15 @@ public class BasicGeneServiceImpl implements BasicGeneService {
         //IndexSearcher searcher = new IndexSearcher(luceneIndex);
         logger.debug("Running Lucene query: "+query);
 
-        Hits hits = luceneIndex.search(query, sort);
+        TopDocs topDocs = luceneIndex.search(query, sort);
 
-        logger.debug(String.format("Query returned %d results", hits.length()));
+        logger.debug(String.format("Query returned %d results", topDocs.totalHits));
 
-        @SuppressWarnings("unchecked")
-        Iterator<Hit> it = hits.iterator();
-        while (it.hasNext()) {
+
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
             Document doc;
             try {
-                doc = it.next().getDocument();
+                doc = fetchDocument(scoreDoc.doc);
             } catch (CorruptIndexException e) {
                 throw new RuntimeException("Lucene index is corrupted!", e);
             } catch (IOException e) {
@@ -258,6 +256,10 @@ public class BasicGeneServiceImpl implements BasicGeneService {
             }
         }
         return ret;
+    }
+
+    protected Document fetchDocument(int docId) throws CorruptIndexException, IOException {
+        return luceneIndex.getDocument(docId);
     }
 
     private <T> T findUniqueWithQuery(Query query, DocumentConverter<T> converter) {

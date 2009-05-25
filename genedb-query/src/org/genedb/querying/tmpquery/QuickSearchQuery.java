@@ -19,6 +19,8 @@ import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.genedb.db.taxon.TaxonNode;
@@ -30,30 +32,21 @@ import org.springframework.validation.Errors;
 public class QuickSearchQuery extends OrganismLuceneQuery {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3007330180211992013L;
 
-    private transient Logger logger  = Logger.getLogger(QuickSearchQuery.class);
+    private transient Logger logger = Logger.getLogger(QuickSearchQuery.class);
 
     private String searchText;
 
-    @QueryParam(
-            order=1,
-            title="Search gene products?"
-    )
+    @QueryParam(order = 1, title = "Search gene products?")
     private boolean product;
 
-    @QueryParam(
-            order=1,
-            title="Search gene names and synonyms?"
-    )
+    @QueryParam(order = 2, title = "Search gene names and synonyms?")
     private boolean allNames;
 
-    @QueryParam(
-            order=1,
-            title="Include pseudogenes"
-    )
+    @QueryParam(order = 3, title = "Include pseudogenes")
     private boolean pseudogenes;
 
     @Override
@@ -63,31 +56,31 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
 
     @Override
     protected String[] getParamNames() {
-        return new String[] {"searchText", "product", "allNames", "pseudogenes"};
+        return new String[] { "searchText", "product", "allNames", "pseudogenes" };
     }
 
     @Override
     protected void getQueryTermsWithoutOrganisms(List<org.apache.lucene.search.Query> queries) {
-        String tokens[] = searchText.trim().split("\\s"); 
-        if (tokens!= null && tokens.length>1){
+        String tokens[] = searchText.trim().split("\\s");
+        if (tokens != null && tokens.length > 1) {
             BooleanQuery bq = new BooleanQuery();
-            if (allNames){
+            if (allNames) {
                 PhraseQuery pq = new PhraseQuery();
-                for(String token: tokens){
+                for (String token : tokens) {
                     pq.add(new Term("allNames", token));
                 }
                 bq.add(pq, Occur.SHOULD);
             }
-            if (product){
+            if (product) {
                 PhraseQuery pq = new PhraseQuery();
-                for(String token: tokens){
+                for (String token : tokens) {
                     pq.add(new Term("product", token));
                 }
                 bq.add(pq, Occur.SHOULD);
             }
             queries.add(bq);
-            
-        }else{            
+
+        } else {
             BooleanQuery bq = new BooleanQuery();
             if (allNames) {
                 bq.add(new WildcardQuery(new Term("allNames", tokens[0].toLowerCase())), Occur.SHOULD);
@@ -97,13 +90,12 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
             }
             queries.add(bq);
         }
-        
+
         if (pseudogenes) {
             queries.add(geneOrPseudogeneQuery);
         }
-        //queries.add(isCurrentQuery);        
+        // queries.add(isCurrentQuery);
     }
-
 
     @Override
     protected void getQueryTerms(List<Query> queries) {
@@ -121,82 +113,80 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public List getResults() throws QueryException {
-       throw new QueryException(
-               new Exception("Method Not Implemented"));
+        throw new QueryException(new Exception("Method Not Implemented"));
     }
 
     /**
-     * Get all the results for the quick query 
+     * Get all the results for the quick query
+     *
      * @return
      * @throws QueryException
      */
-    public QuickSearchQueryResults getQuickSearchQueryResults()throws QueryException{
-        
-        QuickSearchQueryResults quickSearchQueryResults = new QuickSearchQueryResults();        
+    public QuickSearchQueryResults getQuickSearchQueryResults() throws QueryException {
+
+        QuickSearchQueryResults quickSearchQueryResults = new QuickSearchQueryResults();
         List<GeneSummary> geneSummaries = quickSearchQueryResults.getResults();
         TreeMap<String, Integer> taxonGroup = quickSearchQueryResults.getTaxonGroup();
         TreeMap<String, Integer> tempTaxonGroup = new TreeMap<String, Integer>();
         try {
-            //taxn name
+            // taxn name
             List<String> currentTaxonNames = null;
-            if (taxons!= null && taxons.length>0){
+            if (taxons != null && taxons.length > 0) {
                 currentTaxonNames = taxonNodeManager.getNamesListForTaxons(taxons);
             }
-            
-            Hits hits = lookupInLucene();
 
-            @SuppressWarnings("unchecked")
-            Iterator<Hit> it = hits.iterator();
-            while (it.hasNext()) {
-                Hit hit = it.next();
-                Document document = hit.getDocument();
-                 
-                //Get the current taxon name from document
+            TopDocs topDocs = lookupInLucene();
+
+            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+                Document document = fetchDocument(scoreDoc.doc);
+
+                // Get the current taxon name from document
                 String taxonName = document.get("organism.commonName");
-                
-                boolean isNoTaxonMatch = currentTaxonNames!= null && !currentTaxonNames.contains(taxonName);
-                
-                if(taxons==null ){
-                    //Categorise the taxons into size of hits
+
+                boolean isNoTaxonMatch = currentTaxonNames != null && !currentTaxonNames.contains(taxonName);
+
+                if (taxons == null) {
+                    // Categorise the taxons into size of hits
                     populateTaxonGroup(taxonGroup, taxonName);
-                    
+
                     populateGeneSummaries(geneSummaries, document);
-                    
-                }else if (isNoTaxonMatch){
+
+                } else if (isNoTaxonMatch) {
                     populateTaxonGroup(tempTaxonGroup, taxonName);
-                    
-                }else{ 
+
+                } else {
                     populateGeneSummaries(geneSummaries, document);
-                    
-                    //Categrise the taxons into size of hits
-                    populateTaxonGroup(taxonGroup, taxonName);            
+
+                    // Categrise the taxons into size of hits
+                    populateTaxonGroup(taxonGroup, taxonName);
                 }
 
             }
             Collections.sort(geneSummaries);
-            
-            //If no matches are found for current taxon, display all other taxons with a match 
-            if (geneSummaries.size() == 0 && taxonGroup.size()==0 && tempTaxonGroup.size()>0){
+
+            // If no matches are found for current taxon, display all other
+            // taxons with a match
+            if (geneSummaries.size() == 0 && taxonGroup.size() == 0 && tempTaxonGroup.size() > 0) {
                 taxonGroup.putAll(tempTaxonGroup);
             }
-            
-            if(currentTaxonNames==null && geneSummaries.size() > 0){
-                quickSearchQueryResults.setQuickResultType(QuickResultType.ALL_ORGANISMS_IN_ALL_TAXONS);   
-                
-            }else if(geneSummaries.size() == 1){
+
+            if (currentTaxonNames == null && geneSummaries.size() > 0) {
+                quickSearchQueryResults.setQuickResultType(QuickResultType.ALL_ORGANISMS_IN_ALL_TAXONS);
+
+            } else if (geneSummaries.size() == 1) {
                 quickSearchQueryResults.setQuickResultType(QuickResultType.SINGLE_RESULT_IN_CURRENT_TAXON);
-                
-            }else if (geneSummaries.size() > 1){
+
+            } else if (geneSummaries.size() > 1) {
                 quickSearchQueryResults.setQuickResultType(QuickResultType.MULTIPLE_RESULTS_IN_CURRENT_TAXON);
-                
-            }else{
+
+            } else {
                 quickSearchQueryResults.setQuickResultType(QuickResultType.NO_EXACT_MATCH_IN_CURRENT_TAXON);
             }
-            
+
         } catch (CorruptIndexException exp) {
             throw new QueryException(exp);
         } catch (IOException exp) {
@@ -204,25 +194,26 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         }
         return quickSearchQueryResults;
     }
-    
+
     /**
      * Categrise the taxons into size of hits
+     *
      * @param taxonGroup
      * @param taxonName
      */
-    private void populateTaxonGroup(TreeMap<String, Integer> taxonGroup, String taxonName){
+    private void populateTaxonGroup(TreeMap<String, Integer> taxonGroup, String taxonName) {
         Integer currentTaxonHitCount = taxonGroup.get(taxonName);
-        if (currentTaxonHitCount==null){
+        if (currentTaxonHitCount == null) {
             taxonGroup.put(taxonName, 1);
-        }else{                        
+        } else {
             taxonGroup.put(taxonName, ++currentTaxonHitCount);
         }
     }
-    
-    private void populateGeneSummaries(List<GeneSummary> geneSummaries, Document document){        
+
+    private void populateGeneSummaries(List<GeneSummary> geneSummaries, Document document) {
         logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
         GeneSummary gs = convertDocumentToReturnType(document);
-        geneSummaries.add(gs);        
+        geneSummaries.add(gs);
     }
 
     @Override
@@ -241,94 +232,52 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
         // TODO Auto-generated method stub
 
     }
-    
-    public class QuickSearchQueryResults{
+
+    public class QuickSearchQueryResults {
         private List<GeneSummary> results = new ArrayList<GeneSummary>();
         private TreeMap<String, Integer> taxonGroup = new TreeMap<String, Integer>();
         private QuickResultType quickResultType;
         private String singleResultInTaxonGeneId;
-        
+
         public QuickResultType getQuickResultType() {
             return quickResultType;
         }
+
         public void setQuickResultType(QuickResultType quickResultType) {
             this.quickResultType = quickResultType;
         }
-        
+
         public List<GeneSummary> getResults() {
             return results;
         }
+
         public void setResults(List<GeneSummary> results) {
             this.results = results;
         }
+
         public String getSingleResultInTaxonGeneId() {
             return singleResultInTaxonGeneId;
         }
+
         public void setSingleResultInTaxonGeneId(String singleResultInTaxonGeneId) {
             this.singleResultInTaxonGeneId = singleResultInTaxonGeneId;
         }
+
         public TreeMap<String, Integer> getTaxonGroup() {
             return taxonGroup;
         }
+
         public void setTaxonGroup(TreeMap<String, Integer> taxonGroup) {
             this.taxonGroup = taxonGroup;
         }
     }
-    
-    public enum QuickResultType{
-        ALL_ORGANISMS_IN_ALL_TAXONS,
-        NO_EXACT_MATCH_IN_CURRENT_TAXON,
-        SINGLE_RESULT_IN_CURRENT_TAXON,
-        MULTIPLE_RESULTS_IN_CURRENT_TAXON        
-    }
-    
-    /**
-     * Used to compare 2 taxons by their taxonomic distance to one another
-     * @author larry@sangerinstitute
-     *
-     */
-    private class TaxonomicDistanceComparator implements Comparator{
 
-        @Override
-        public int compare(Object txNameObj1, Object txNameObj2) {
-            
-            if (txNameObj1!= null && txNameObj2!= null){
-
-                String txName1 = txNameObj1.toString();
-                String txName2 = txNameObj2.toString();
-                
-                TaxonNode taxon1 = taxonNodeManager.getTaxonNodeForLabel(txName1);
-                TaxonNode taxon2 = taxonNodeManager.getTaxonNodeForLabel(txName2);
-                
-                int result = compare(taxon1, taxon2);
-                
-                if (result!= 0){
-                    return result;
-                    
-                }else{
-                    return txName1.compareTo(txName2);
-                }
-            }
-            return 0;
-        }
-        
-        private int compare(TaxonNode node1, TaxonNode node2){
-            TaxonNode parent = node1.getParent();
-            List<TaxonNode>siblings = parent.getChildren();
-            
-            //compare with siblings
-            for(TaxonNode sibling: siblings){
-                if (sibling.equals(node2)){
-                    return 0;
-                }
-            }
-            return 0;
-        }
-        
+    public enum QuickResultType {
+        ALL_ORGANISMS_IN_ALL_TAXONS, NO_EXACT_MATCH_IN_CURRENT_TAXON, SINGLE_RESULT_IN_CURRENT_TAXON, MULTIPLE_RESULTS_IN_CURRENT_TAXON
     }
 
     public String getSearchText() {
-        if(StringUtils.hasLength(searchText)){
+        if (StringUtils.hasLength(searchText)) {
             searchText = searchText.trim();
         }
         return searchText;

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="genedb-access" default="fulljar-access" basedir=".">
+<project name="genedb-access" default="access-fulljar" basedir=".">
 
         <!-- If this file is imported into another build.xml, resolve filenames
              relative to here rather than the importing project. -->
@@ -29,17 +29,37 @@
   </path>
 
 
-  <target name="init-access">
+  <target name="access-init">
     <init-target project="access"/>
   </target>
 
-  <target name="compile-access" depends="init-access, genedb-db.fulljar-db">
+  <target name="access-compile" depends="access-init, access-populate-lib, genedb-db.db-fulljar">
       <compile-target project="access" />
       <iajc-target project="access" />
       <copy todir="${imported.basedir.access}/ant-build/classes" overwrite="true">
         <fileset dir="${imported.basedir.access}/resources" />
         <fileset dir="${imported.basedir.access}/conf" />
       </copy>
+  </target>
+
+
+    <target name="access-populate-lib" depends="check.access-lib-uptodate" unless="access.lib-uptodate">
+        <populate directory="genedb-access" />
+        <!-- <copy todir="lib">
+            <fileset dir="${imported.basedir.libs}/lib/biojava">
+                <include name="biojava-1.6.jar"/>
+                <include name="bytecode-0.91.jar"/>
+            </fileset>
+        </copy> -->
+    </target>
+
+    <target name="check.access-lib-uptodate" depends="access-init" if="access.ivy-timestamp-exists">
+        <uptodate property="access.lib-uptodate" srcfile="${imported.basedir.access}/ivy.xml" targetfile="${imported.basedir.access}/lib/ivy.timestamp.txt" />
+    </target>
+
+
+  <target name="access-clean">
+    <clean-target project="access" />
   </target>
 
   <target name="replace">
@@ -56,7 +76,7 @@
           overwrite="true" />
   </target>
 
-  <target name="fulljar-access" depends="replace,compile-access" description="Create JAR file">
+  <target name="access-fulljar" depends="replace,access-compile" description="Create JAR file">
     <jar-target project="access"/>
   </target>
 
@@ -75,12 +95,12 @@
         <fail message="The property 'dbuser' is not set. Usually you should set the property 'load' to refer to a property file"
             unless="dbuser"/>
     </target>
-    <target name="prompt-for-password" depends="fulljar-util,check-properties" unless="dbpassword">
+    <target name="prompt-for-password" depends="util-fulljar,check-properties" unless="dbpassword">
         <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.access}/../genedb-util/ant-build/dist/genedb-anttasks.jar" />
         <password name="dbpassword" prompt="Password for ${dbuser}@jdbc:postgresql://${dbhost}:${dbport}/${dbname}" />
     </target>
 
-    <target name="load-embl" depends="fulljar-access">
+    <target name="load-embl" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadEmbl">
             <sysproperty key="load.organismCommonName" value="${organism}"/>
             <sysproperty key="load.inputDirectory" value="${file}"/>
@@ -91,7 +111,7 @@
         </java>
     </target>
 
-    <target name="load-fasta" depends="fulljar-access">
+    <target name="load-fasta" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadFasta">
             <sysproperty key="load.organismCommonName" value="${organism}"/>
             <sysproperty key="load.inputDirectory" value="${file}"/>
@@ -102,7 +122,7 @@
         </java>
     </target>
 
-    <target name="delete-organism" depends="fulljar-access">
+    <target name="delete-organism" depends="access-fulljar">
        <sql driver="org.postgresql.Driver"
            url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
            userid="${dbuser}" password="${dbpassword}">
@@ -128,7 +148,7 @@
 
     <target name="reload-embl" depends="delete-organism,load-embl"/>
 
-    <target name="load-orthologues" depends="fulljar-access">
+    <target name="load-orthologues" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadOrthologues">
             <sysproperty key="load.organismCommonName" value="${organism}"/>
             <sysproperty key="load.inputDirectory" value="${file}"/>
@@ -138,9 +158,9 @@
             <jvmarg line="-Xmx512M"/>
         </java>
     </target>
-    
-    <target name="delete-orthologues" depends="fulljar-access">
-    
+
+    <target name="delete-orthologues" depends="access-fulljar">
+
        <fail message="The properties load.dataset and load.analysis.algorithm must be specified">
         <condition>
           <not>
@@ -151,7 +171,7 @@
           </not>
         </condition>
        </fail>
-    
+
        <sql driver="org.postgresql.Driver"
            url="jdbc:postgresql://${dbhost}:${dbport}/${dbname}"
            userid="${dbuser}" password="${dbpassword}">
@@ -176,10 +196,10 @@
             ;
         </sql>
     </target>
-    
+
     <target name="reload-orthologues" depends="delete-orthologues,load-orthologues"/>
 
-    <target name="load-vulgar" depends="fulljar-access">
+    <target name="load-vulgar" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.LoadVulgar">
             <sysproperty key="load.organismCommonName" value="${organism}"/>
             <sysproperty key="load.inputDirectory" value="${file}"/>
@@ -191,21 +211,21 @@
     </target>
 
     <target name="load-interpro" depends="load-interpro-polypeptide-ids, load-interpro-gene-ids"/>
-    <target name="load-interpro-polypeptide-ids" depends="fulljar-access" unless="load.interpro.gene-ids">
+    <target name="load-interpro-polypeptide-ids" depends="access-fulljar" unless="load.interpro.gene-ids">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="iploader --key-type=polypeptide ${file}"/>
            <jvmarg line="-server -Xmx256m"/>
         </java>
         <antcall target="delete-redundant-go"/>
     </target>
-    <target name="load-interpro-gene-ids" depends="fulljar-access" if="load.interpro.gene-ids">
+    <target name="load-interpro-gene-ids" depends="access-fulljar" if="load.interpro.gene-ids">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="iploader --key-type=gene ${file}"/>
            <jvmarg line="-server -Xmx256m"/>
         </java>
         <antcall target="delete-redundant-go"/>
     </target>
-    <target name="clear-interpro" depends="fulljar-access">
+    <target name="clear-interpro" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearInterPro">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -214,13 +234,13 @@
     <target name="reload-interpro" depends="clear-interpro,load-interpro"/>
 
 
-    <target name="load-tmhmm" depends="fulljar-access">
+    <target name="load-tmhmm" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="tmhmmloader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="clear-tmhmm" depends="fulljar-access">
+    <target name="clear-tmhmm" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearTMHMM">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -229,13 +249,13 @@
     <target name="reload-tmhmm" depends="clear-tmhmm,load-tmhmm" />
 
 
-    <target name="load-dgpi" depends="fulljar-access">
+    <target name="load-dgpi" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="dgpiloader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="clear-dgpi" depends="fulljar-access">
+    <target name="clear-dgpi" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearDGPI">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -244,13 +264,13 @@
     <target name="reload-dgpi" depends="clear-dgpi,load-dgpi" />
 
 
-    <target name="load-signalp" depends="fulljar-access">
+    <target name="load-signalp" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="signalploader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="clear-signalp" depends="fulljar-access">
+    <target name="clear-signalp" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearSignalP">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -259,13 +279,13 @@
     <target name="reload-signalp" depends="clear-signalp,load-signalp"/>
 
 
-    <target name="load-plasmoap" depends="fulljar-access">
+    <target name="load-plasmoap" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="plasmoaploader ${file}"/>
             <jvmarg line="-server -Xmx256m"/>
         </java>
     </target>
-    <target name="clear-plasmoap" depends="fulljar-access">
+    <target name="clear-plasmoap" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearPlasmoAP">
             <arg line="${organism}"/>
             <jvmarg line="-server -Xmx256m"/>
@@ -274,25 +294,25 @@
     <target name="reload-plasmoap" depends="clear-plasmoap,load-plasmoap"/>
 
 
-    <target name="delete-redundant-go" depends="fulljar-access">
+    <target name="delete-redundant-go" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.DeleteRedundantGOTerms"/>
     </target>
 
 
-    <target name="fix-residues-verbose" depends="fulljar-access" if="verbose">
+    <target name="fix-residues-verbose" depends="access-fulljar" if="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
             <arg line="${organism}"/>
         </java>
     </target>
-    <target name="fix-residues-nonverbose" depends="fulljar-access" unless="verbose">
+    <target name="fix-residues-nonverbose" depends="access-fulljar" unless="verbose">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg line="${organism}"/>
         </java>
     </target>
     <target name="fix-residues" depends="fix-residues-verbose, fix-residues-nonverbose" />
 
-    <target name="fix-residues-mansoni" depends="fulljar-access">
+    <target name="fix-residues-mansoni" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.fixup.FixResidues">
             <arg value="--verbose" />
             <arg value="--mark-fragments"/>
@@ -301,19 +321,19 @@
         </java>
     </target>
 
-    <target name="load-opi-references" depends="fulljar-access">
+    <target name="load-opi-references" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.Load">
             <arg line="opi-referencesloader"/>
         </java>
     </target>
 
-    <target name="clear-opi-references" depends="fulljar-access">
+    <target name="clear-opi-references" depends="access-fulljar">
         <java fork="true" failonerror="true" classpathref="exec-classpath" classname="org.genedb.db.loading.auxiliary.ClearOPIReferences"/>
     </target>
 
     <target name="reload-opi-references" depends="clear-opi-references,load-opi-references"/>
 
-    <!-- Note: does not force a recompile; use "ant fulljar-access adhoc-query" for that -->
+    <!-- Note: does not force a recompile; use "ant access-fulljar adhoc-query" for that -->
     <target name="adhoc-query" depends="adhoc-query-verbose, adhoc-query-nonverbose"/>
     <target name="adhoc-query-verbose" if="verbose">
         <java fork="true" classname="org.genedb.db.adhoc.Query" classpathref="exec-classpath">

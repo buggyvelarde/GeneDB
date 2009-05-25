@@ -22,12 +22,10 @@ package org.genedb.querying.core;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hit;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
@@ -39,7 +37,6 @@ import org.springframework.validation.Errors;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -75,20 +72,17 @@ public abstract class LuceneQuery implements Query {
         return QueryUtils.makeParseableDescription(name, getParamNames(), this);
     }
 
-    public List getResults() throws QueryException {
-        List names;
+    public <T extends Comparable<? super T>> List<T> getResults(Class<T> clazz) throws QueryException {
+        List<T> names = new ArrayList<T>();
         try {
-            Hits hits = lookupInLucene();
-            names = new ArrayList();
+            TopDocs topDocs = lookupInLucene();
 
-            @SuppressWarnings("unchecked")
-            Iterator<Hit> it = hits.iterator();
-            while (it.hasNext()) {
-                Hit hit = it.next();
-                Document document = hit.getDocument();
+            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+                Document document = fetchDocument(scoreDoc.doc);
                 logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
-                Object o = convertDocumentToReturnType(document);
-                names.add(o);
+                //T t = convertDocumentToReturnType(document, clazz);
+                Object t = convertDocumentToReturnType(document);
+                names.add((T)t);
             }
             Collections.sort(names);
             return names;
@@ -99,8 +93,29 @@ public abstract class LuceneQuery implements Query {
         }
     }
 
-    protected abstract Object convertDocumentToReturnType(Document document);
+    public List getResults() throws QueryException {
+        List names = new ArrayList();
+        try {
+            TopDocs topDocs = lookupInLucene();
 
+            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+                Document document = fetchDocument(scoreDoc.doc);
+                logger.debug(StringUtils.collectionToCommaDelimitedString(document.getFields()));
+                //T t = convertDocumentToReturnType(document, clazz);
+                Object t = convertDocumentToReturnType(document);
+                names.add(t);
+            }
+            Collections.sort(names);
+            return names;
+        } catch (CorruptIndexException exp) {
+            throw new QueryException(exp);
+        } catch (IOException exp) {
+            throw new QueryException(exp);
+        }
+    }
+
+//    protected abstract <T> T convertDocumentToReturnType(Document document, Class<T> clazz);
+    protected abstract Object convertDocumentToReturnType(Document document);
 
     protected abstract String[] getParamNames();
 
@@ -123,9 +138,9 @@ public abstract class LuceneQuery implements Query {
     }
 
 
-    private Hits lookupInLucene(List<org.apache.lucene.search.Query> queries) {
+    private TopDocs lookupInLucene(List<org.apache.lucene.search.Query> queries) {
 
-        Hits hits = null;
+        TopDocs hits = null;
         if (queries.size() > 1) {
             BooleanQuery booleanQuery = new BooleanQuery();
             for (org.apache.lucene.search.Query query : queries) {
@@ -141,7 +156,11 @@ public abstract class LuceneQuery implements Query {
     }
 
 
-    protected Hits lookupInLucene() {
+    protected Document fetchDocument(int docId) throws CorruptIndexException, IOException {
+        return luceneIndex.getDocument(docId);
+    }
+
+    protected TopDocs lookupInLucene() {
 
         List<org.apache.lucene.search.Query> queries = new ArrayList<org.apache.lucene.search.Query>();
         getQueryTerms(queries);

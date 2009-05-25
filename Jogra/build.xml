@@ -40,7 +40,7 @@
         <uptodate property="Jogra.lib-uptodate" srcfile="${imported.basedir.Jogra}/ivy.xml" targetfile="${imported.basedir.Jogra}/lib/ivy.timestamp.txt" />
     </target>
 
-    <target name="Jogra-compile" depends="Jogra-populate-lib, genedb-db.fulljar-db">
+    <target name="Jogra-compile" depends="Jogra-populate-lib, genedb-db.db-fulljar">
         <compile-target project="Jogra" />
         <copy todir="${imported.basedir.Jogra}/${classes.dir}">
             <fileset dir="${imported.basedir.Jogra}/conf" />

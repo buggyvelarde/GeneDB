@@ -8,7 +8,7 @@
         <path refid="exec-classpath"/>
     </path>
 
-    <target name="compile-tests" depends="fulljar-access">
+    <target name="compile-tests" depends="access-fulljar">
       <mkdir dir="${imported.basedir.access}/${build.dir}/test-classes"/>
       <javac srcdir="${imported.basedir.access}/test" destdir="${imported.basedir.access}/${build.dir}/test-classes" debug="true"
           classpathref="test-classpath"/>
@@ -22,7 +22,7 @@
       </copy>
     </target>
 
-    <target name="all-tests" depends="fulljar-access,compile-tests,
+    <target name="all-tests" depends="access-fulljar,compile-tests,
         file-test,location-test,embl-test,ortho-test,interpro-test"/>
     <target name="file-test" depends="compile-tests">
         <junit showoutput="yes" printsummary="yes" haltonfailure="yes" fork="true">
@@ -52,7 +52,7 @@
             <fileset dir="${imported.basedir.db}/test-data/hsqldb" includes="pfalciparum.*"/>
         </copy>
     </target>
-    
+
     <target name="embl-test" depends="compile-tests">
         <antcall target="run-specific-embl-test"><param name="subtest" value="Berghei"/></antcall>
         <antcall target="run-specific-embl-test"><param name="subtest" value="Mansoni"/></antcall>
@@ -63,7 +63,7 @@
          EVEN IF they have already been executed. Therefore we have an internal target
          run-specific-embl-test, with no dependencies, that we antcall; and an external
          target specific-embl-test that does have dependencies. -->
-    <target name="specific-embl-test" depends="fulljar-access,compile-tests,run-specific-embl-test"/>
+    <target name="specific-embl-test" depends="access-fulljar,compile-tests,run-specific-embl-test"/>
     <target name="run-specific-embl-test">
         <antcall target="copy-skeleton-database"/>
         <junit showoutput="no" printsummary="yes" haltonfailure="yes" fork="true" maxmemory="512M">
