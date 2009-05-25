@@ -409,7 +409,7 @@
     </target>
 
 
-    <target name="web-populate-db" depends="fulljar-db">
+    <target name="web-populate-db" depends="db-fulljar">
       <copy file="${genedb-db.jar}" todir="${imported.basedir.web}/lib" />
     </target>
 

@@ -56,7 +56,7 @@
      <tests-target project="query"/>
    </target>
 
-  <target name="query-populate-db" depends="fulljar-db">
+  <target name="query-populate-db" depends="db-fulljar">
     <copy file="${genedb-db.jar}" todir="${imported.basedir.query}/lib" />
   </target>
 
