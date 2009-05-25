@@ -71,12 +71,12 @@
   </target>
 
 
-  <target name="domain-populate-query" depends="fulljar-query">
+  <target name="domain-populate-query" depends="query-fulljar">
     <copy file="${genedb-query.jar}" todir="${imported.basedir.domain}/lib" />
   </target>
 
 
-  <target name="domain-populate-db" depends="fulljar-db">
+  <target name="domain-populate-db" depends="db-fulljar">
     <copy file="${genedb-db.jar}" todir="${imported.basedir.domain}/lib" />
   </target>
 
