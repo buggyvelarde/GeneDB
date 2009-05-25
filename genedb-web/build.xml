@@ -395,8 +395,13 @@
 
   <target name="web-populate-lib" depends="check.web-lib-uptodate" unless="web.lib-uptodate">
     <populate directory="genedb-web" />
-    <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.web}/lib" />
     <copy file="${lib-dir}/biojava/biojava-1.6.jar" todir="${imported.basedir.web}/lib" />
+    <copy todir="${imported.basedir.web}/lib">
+        <fileset dir="${imported.basedir.libs}/lib/biojava">
+            <include name="biojava-1.6.jar"/>
+            <include name="bytecode-0.91.jar"/>
+        </fileset>
+    </copy>
   </target>
 
     <target name="web-populate-util" depends="util-fulljar">
