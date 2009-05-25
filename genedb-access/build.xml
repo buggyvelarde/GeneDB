@@ -6,13 +6,13 @@
              relative to here rather than the importing project. -->
   <dirname property="imported.basedir.access" file="${ant.file.genedb-access}"/>
 
-  <import file="${imported.basedir.access}/test.xml"/>
+  <!-- <import file="${imported.basedir.access}/test.xml"/> -->
 
   <import file="${imported.basedir.access}/../genedb-libs/build.xml"/>
   <import file="${imported.basedir.access}/../genedb-db/build.xml"/>
   <import file="${imported.basedir.access}/../genedb-util/build.xml"/>
 
-  <property file="property-file.${load}" />
+  <property file="property-file.${config}" />
   <property name="lib-dir" value="${imported.basedir.libs}/lib/"/>
 
   <property name="genedb-access.jar"
@@ -22,18 +22,22 @@
       <fileset dir="${imported.basedir.access}/lib">
         <include name="*.jar"/>
       </fileset>
-      <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
-      <pathelement location="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar"/>
-      <pathelement location="${genedb-util.jar}"/>
-      <pathelement location="${genedb-db.jar}"/>
   </path>
+
+    <target name="access-populate-util" depends="util-fulljar">
+      <copy file="${genedb-util.jar}" todir="${imported.basedir.access}/lib" />
+    </target>
+
+    <target name="access-populate-db" depends="db-fulljar">
+      <copy file="${genedb-db.jar}" todir="${imported.basedir.access}/lib" />
+    </target>
 
 
   <target name="access-init">
     <init-target project="access"/>
   </target>
 
-  <target name="access-compile" depends="access-init, access-populate-lib, genedb-db.db-fulljar">
+  <target name="access-compile" depends="access-init, access-populate-lib, access-populate-util, access-populate-db">
       <compile-target project="access" />
       <iajc-target project="access" />
       <copy todir="${imported.basedir.access}/ant-build/classes" overwrite="true">
@@ -45,12 +49,12 @@
 
     <target name="access-populate-lib" depends="check.access-lib-uptodate" unless="access.lib-uptodate">
         <populate directory="genedb-access" />
-        <!-- <copy todir="lib">
+        <copy todir="lib">
             <fileset dir="${imported.basedir.libs}/lib/biojava">
                 <include name="biojava-1.6.jar"/>
                 <include name="bytecode-0.91.jar"/>
             </fileset>
-        </copy> -->
+        </copy>
     </target>
 
     <target name="check.access-lib-uptodate" depends="access-init" if="access.ivy-timestamp-exists">

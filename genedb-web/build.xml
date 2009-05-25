@@ -12,7 +12,7 @@
   <import file="${imported.basedir.web}/../genedb-util/build.xml"/>
 
   <!-- Paths/Properties you may have to change -->
-  <property file="property-file.${deploy}" />
+  <property file="property-file.${config}" />
 
   <property name="version" value="0.2"/>
   <property name="jar-build" value="ant-build/jar-build"/>
@@ -21,9 +21,6 @@
 
   <!-- Paths -->
   <path id="web-deploy-classpath">
-  	<!--Used to test with hibernate search 3.1
-    <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/lib/hibernate-core.jar"/>
-    <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/lib/hibernate-search.jar"/>-->
       <pathelement location="${in-lib-dir}/artemis.jar" />
 
       <fileset dir="${imported.basedir.web}/lib">
@@ -58,7 +55,7 @@
 
   <target name="make-other-projects" depends="genedb-domain.domain-fulljar,genedb-query.query-fulljar,genedb-db.db-fulljar,genedb-util.util-fulljar" />
 
-  <target name="make-all-and-deploy" depends="check-deploy, compile-web, final-deploy"/>
+  <target name="make-all-and-deploy" depends="check-config, compile-web, final-deploy"/>
 
   <target name="clean-web">
     <delete dir="${imported.basedir.web}/ant-build" quiet="true"/>
@@ -96,7 +93,7 @@
 
   <target name="deploy" depends="pre-deploy, application-deploy, post-deploy"/>
 
-  <target name="pre-deploy" depends="check-deploy, compile-web">
+  <target name="pre-deploy" depends="check-config, compile-web">
     <filter token="webAppRootKey" value="${webAppRootKey}" />
     <delete dir="${finaldest.webapps}.tmp" failonerror="false"/>
     <mkdir dir="${finaldest.webapps}.tmp"/>
@@ -148,11 +145,11 @@
     <sleep minutes="3" />
   </target>
 
-  <target name="check-deploy">
-    <fail message="The 'deploy' property must be set" unless="deploy"/>
-    <available file="${imported.basedir.web}/property-file.${deploy}" property="deploy-file-exists"/>
-    <fail message="The file ${imported.basedir.web}/property-file.${deploy} does not exist" unless="deploy-file-exists"/>
-    <copy file="${imported.basedir.web}/property-file.${deploy}" tofile="${imported.basedir.web}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
+  <target name="check-config">
+    <fail message="The 'config' property must be set" unless="config"/>
+    <available file="${imported.basedir.web}/property-file.${config}" property="config-file-exists"/>
+    <fail message="The file ${imported.basedir.web}/property-file.${config} does not exist" unless="config-file-exists"/>
+    <copy file="${imported.basedir.web}/property-file.${config}" tofile="${imported.basedir.web}/WebContent/WEB-INF/classes/project.properties" overwrite="true" />
   </target>
 
 
@@ -217,7 +214,7 @@
   </target>
 
 
-    <target name="synchronise-caches" depends="check-deploy,iajc-web" description="Sychronise the TranscriptDTO and images with updated Features in RDBMS">
+    <target name="synchronise-caches" depends="check-config, iajc-web" description="Sychronise the TranscriptDTO and images with updated Features in RDBMS">
       <java fork="true" classname="org.genedb.web.mvc.model.CacheSynchroniser">
         <classpath>
           <path refid="web-classpath"/>
@@ -232,7 +229,7 @@
     </target>
 
 
-    <target name="populate-caches" depends="check-deploy,iajc-web" description="Populate the Berkeley DB with TranscriptDTO and images">
+    <target name="populate-caches" depends="check-config, iajc-web" description="Populate the Berkeley DB with TranscriptDTO and images">
       <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
         <classpath>
           <path refid="web-classpath"/>
@@ -251,7 +248,7 @@
     </target>
 
 
-    <target name="_PopulateCaches" depends="check-deploy">
+    <target name="_PopulateCaches" depends="check-config">
       <java fork="true" classname="org.genedb.web.mvc.model.PopulateCaches">
         <classpath>
           <path refid="web-classpath"/>
@@ -265,7 +262,7 @@
       </java>
     </target>
 
-    <target name="_LuceneIndex" depends="check-deploy">
+    <target name="_LuceneIndex" depends="check-config">
         <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
               <path refid="web-classpath"/>
@@ -278,7 +275,7 @@
         </java>
     </target>
 
-    <target name="LuceneIndex" depends="check-deploy,iajc-web">
+    <target name="LuceneIndex" depends="check-config, iajc-web">
            <java fork="true" maxmemory="256m" failonerror="true" classname="org.genedb.web.mvc.model.PopulateLuceneIndices">
             <classpath>
               <path refid="web-classpath"/>
@@ -291,7 +288,7 @@
            </java>
      </target>
 
-    <target name="PeriodicUpdater" depends="check-deploy,iajc-web"
+    <target name="PeriodicUpdater" depends="check-config, iajc-web"
         description="Bring the Lucene indices and the Berkley DB up-to-date since the last run.">
       <java fork="true" classname="org.genedb.web.mvc.model.PeriodicUpdater">
         <classpath>
@@ -306,7 +303,7 @@
       </java>
     </target>
 
-    <target name="test-periodic-updater" depends="check-deploy,iajc-web" description="Run tests">
+    <target name="test-periodic-updater" depends="check-config, iajc-web" description="Run tests">
        <javac srcdir="${imported.basedir.web}/test" includes="**/PeriodicUpdaterTest.java" debug="true"
                          destdir="${imported.basedir.web}/${test-classes.dir}"
                          classpathref="web-tests-classpath" />
@@ -343,7 +340,7 @@
        </copy>
     </target>
 
-    <target name="test-index-synchroniser" depends="init-periodic-updater-db,check-deploy,iajc-web" description="Run tests" >
+    <target name="test-index-synchroniser" depends="init-periodic-updater-db, check-config, iajc-web" description="Run tests" >
        <javac srcdir="${imported.basedir.web}/test" includes="**/IndexSynchroniserTest.java" debug="true"
                          destdir="${imported.basedir.web}/${test-classes.dir}"
                          classpathref="web-tests-classpath" />
@@ -365,7 +362,7 @@
            </fail>
        </target>
 
-    <target name="test-cache-synchroniser" depends="check-deploy,iajc-web" description="Run tests" >
+    <target name="test-cache-synchroniser" depends="check-config, iajc-web" description="Run tests" >
        <javac srcdir="${imported.basedir.web}/test" includes="**/CacheSynchroniserTest.java" debug="true"
                          destdir="${imported.basedir.web}/${test-classes.dir}"
                          classpathref="web-tests-classpath" />
@@ -426,7 +423,7 @@
       <uptodate property="web.lib-uptodate" srcfile="ivy.xml" targetfile="lib/ivy.timestamp.txt" />
     </target>
 
-    <target name="martinHack" depends="check-deploy,compile-web">
+    <target name="martinHack" depends="check-config, compile-web">
       <java fork="true" classname="org.genedb.web.utils.MartinHack">
         <classpath>
           <path refid="web-classpath"/>
@@ -455,7 +452,7 @@
       </java>
     </target>
 
-    <target name="runMergeIndices" depends="check-deploy,compile-web">
+    <target name="runMergeIndices" depends="check-config, compile-web">
       <java fork="true" classname="org.genedb.web.mvc.model.MergeBerkeleyIndices">
         <classpath>
           <path refid="web-classpath"/>
@@ -470,7 +467,7 @@
     </target>
 
 
-    <target name="runMergeLuceneIndices" depends="check-deploy,compile-web">
+    <target name="runMergeLuceneIndices" depends="check-config, compile-web">
       <deltree dir="/nfs/pathdb/genedb/staging/bulk/Lucene/destination" />
       <mkdir dir="/nfs/pathdb/genedb/staging/bulk/Lucene/destination" />
       <java fork="true" classname="org.genedb.web.mvc.model.MergeLuceneIndices">

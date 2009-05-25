@@ -2,6 +2,11 @@
 
 <project name="genedb-access.test">
 
+	<!-- Re-use property name as used for main build file -->
+  <dirname property="imported.basedir.access" file="${ant.file.genedb-access.test}"/>
+
+      <import file="${imported.basedir.access}/build.xml"/>
+
     <path id="test-classpath">
         <pathelement location="${imported.basedir.access}/ant-build/test-classes"/>
         <pathelement location="${genedb-access.jar}"/>
