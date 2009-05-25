@@ -12,20 +12,18 @@
       <dependency org="it.cnr.imaa.essi" name="lablib-checkboxtree" rev="3.0.2" />
       <dependency org="org.apache.log4j" name="com.springsource.org.apache.log4j" rev="1.2.15" />
       <dependency org="postgresql" name="postgresql" rev="8.3-603.jdbc4" />
+      <dependency org="org.apache.commons"  name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" />
 
 
       <dependency org="org.hibernate" name="hibernate-search" rev="3.1.0.GA" transitive="false" />
       <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.4.2" />
       <dependency org="org.apache.lucene" name="lucene-core" rev="2.4.0" />
 
-      <dependency org="org.apache.commons"  name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" />
+
 
 
       <!--
       <dependency org="org.junit" name="com.springsource.org.junit" rev="4.5.0" /> -->
-
-	<!-- See comment in genedb-web for why this is here -->
-	<!-- <dependency org="org.objectweb.asm" name="com.springsource.org.objectweb.asm.commons" rev="2.2.3" conf="default->*" /> -->
 
 
     </dependencies>

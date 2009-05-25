@@ -56,7 +56,7 @@
     <pathelement location="${imported.basedir.web}/WebContent/WEB-INF/classes"/>
   </path>
 
-  <target name="make-other-projects" depends="genedb-domain.fulljar-domain,genedb-query.fulljar-query,genedb-db.fulljar-db,genedb-util.fulljar-util" />
+  <target name="make-other-projects" depends="genedb-domain.domain-fulljar,genedb-query.query-fulljar,genedb-db.db-fulljar,genedb-util.util-fulljar" />
 
   <target name="make-all-and-deploy" depends="check-deploy, compile-web, final-deploy"/>
 
@@ -399,12 +399,12 @@
     <copy file="${lib-dir}/biojava/biojava-1.6.jar" todir="${imported.basedir.web}/lib" />
   </target>
 
-    <target name="web-populate-util" depends="fulljar-util">
+    <target name="web-populate-util" depends="util-fulljar">
       <copy file="${genedb-util.jar}" todir="${imported.basedir.web}/lib" />
     </target>
 
 
-    <target name="web-populate-query" depends="fulljar-query">
+    <target name="web-populate-query" depends="query-fulljar">
       <copy file="${genedb-query.jar}" todir="${imported.basedir.web}/lib" />
     </target>
 
@@ -413,7 +413,7 @@
       <copy file="${genedb-db.jar}" todir="${imported.basedir.web}/lib" />
     </target>
 
-    <target name="web-populate-domain" depends="fulljar-domain">
+    <target name="web-populate-domain" depends="domain-fulljar">
       <copy file="${genedb-domain.jar}" todir="${imported.basedir.web}/lib" />
     </target>
 

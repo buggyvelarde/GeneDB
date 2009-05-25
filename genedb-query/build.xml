@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 
-<project name="genedb-query" default="fulljar-query" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="genedb-query" default="query-fulljar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <dirname property="imported.basedir.query" file="${ant.file.genedb-query}"/>
 
   <import file="${imported.basedir.query}/../genedb-libs/build.xml" />
   <import file="${imported.basedir.query}/../genedb-util/build.xml" />
-  <import file="${imported.basedir.query}/../genedb-db/build.xml" />	
+  <import file="${imported.basedir.query}/../genedb-db/build.xml" />
 
   <property name="genedb-query.jar"
       value="${imported.basedir.query}/${dist.dir}/genedb-query.jar"/>
@@ -18,20 +18,20 @@
       <include name="*.jar"/>
     </fileset>
   </path>
-	
+
   <path id="query-tests-classpath">
     <path refid="query-classpath"/>
   	<pathelement location="${imported.basedir.query}/test"/>
   	<pathelement location="${imported.basedir.query}/ant-build/classes"/>
     <pathelement location="${imported.basedir.query}/ant-build/test-classes"/>
-  </path>	
-	
+  </path>
+
 
   <target name="init-query" description="Create full JAR file">
     <init-target project="query" />
   </target>
 
-  <target name="fulljar-query" depends="compile-query, iajc-query,query-check-jar" unless="query.jar-uptodate">
+  <target name="query-fulljar" depends="query-compile, query-iajc,query-check-jar" unless="query.jar-uptodate">
     <jar-target project="query" />
   </target>
 
@@ -41,25 +41,25 @@
      </uptodate>
   </target>
 
-  <target name="iajc-query" depends="compile-query" unless="query.iajc-uptodate">
+  <target name="query-iajc" depends="query-compile" unless="query.iajc-uptodate">
     <iajc-target project="query" />
    </target>
 
-  <target name="compile-query" depends="query-populate-lib,query-populate-db">
+  <target name="query-compile" depends="query-populate-lib,query-populate-db">
     <compile-target project="query" />
     <uptodate property="query.iajc-uptodate" targetfile="${query.iajc-timestamp}">
       <srcfiles dir="${imported.basedir.query}/${classes.dir}" />
     </uptodate>
   </target>
-	
-   <target name="genedb-query-tests" depends="compile-query">
+
+   <target name="genedb-query-tests" depends="query-compile">
      <tests-target project="query"/>
    </target>
 
   <target name="query-populate-db" depends="fulljar-db">
     <copy file="${genedb-db.jar}" todir="${imported.basedir.query}/lib" />
   </target>
-	
+
   <target name="query-populate-lib" depends="check.query-lib-uptodate" unless="query.lib-uptodate">
     <populate directory="genedb-query" />
   </target>
@@ -67,5 +67,9 @@
   <target name="check.query-lib-uptodate" depends="init-query">
     <uptodate property="query.lib-uptodate" srcfile="${imported.basedir.query}/ivy.xml" targetfile="${query.ivy-timestamp}" />
   </target>
+
+	<target name="query-clean">
+		<clean-target project="query" />
+	</target>
 
 </project>

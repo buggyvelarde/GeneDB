@@ -2,19 +2,17 @@
     <info organisation="org.genedb" module="genedb-query"/>
     <dependencies>
 
-      <!--  At the time of writing, Spring core declares a dependency on hibernate.annotations.common
-            revision 3.3.0.GA (note the capitals!). This has the unfortunate and confusing effect that
-            ivy:retrieve will work correctly on a case-insensitive file system, but not a case sensitive
-            one. Thus we declare the dependendency explicitly here, with the correct revision.
-            (rh11, 2008-12-19) -->
-      <dependency org="org.hibernate" name="com.springsource.org.hibernate.annotations.common" rev="3.3.0.ga"/>
+      <!-- <dependency org="org.springframework" name="org.springframework.core" rev="3.0.0.M3" />
+      <dependency org="org.springframework" name="org.springframework.jdbc" rev="3.0.0.M3" /> -->
+      <dependency org="org.springframework" name="org.springframework.orm" rev="3.0.0.M3" />
+      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.M3" />
+      <dependency org="org.hibernate" name="com.springsource.org.hibernate.validator" rev="3.1.0.GA" />
+      <!-- <dependency org="org.hibernate" name="com.springsource.org.hibernate.search" rev="3.0.1.GA" />
 
-      <dependency org="org.springframework" name="org.springframework.core" rev="3.0.0.M1" />
-      <dependency org="org.springframework" name="org.springframework.jdbc" rev="3.0.0.M1" />
-      <dependency org="org.springframework" name="org.springframework.orm" rev="3.0.0.M1" />
-      <dependency org="org.hibernate" name="com.springsource.org.hibernate.search" rev="3.0.1.GA" />
-      <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.M1" />
       <dependency org="org.hibernate" name="com.springsource.org.hibernate.validator" rev="3.0.0.GA" conf="default->*" />
-      <dependency org="org.junit" name="com.springsource.org.junit" rev="4.5.0" conf="default->*" />
+      <dependency org="org.junit" name="com.springsource.org.junit" rev="4.5.0" conf="default->*" /> -->
+
+    <dependency org="org.apache.lucene" name="lucene-core" rev="2.4.0" />
+
     </dependencies>
 </ivy-module>

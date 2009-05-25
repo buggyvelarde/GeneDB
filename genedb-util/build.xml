@@ -1,7 +1,6 @@
 <project name="genedb-util" default="util-fulljar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
-  <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
 
   <import file="${imported.basedir.util}/../genedb-libs/build.xml" />
 
@@ -12,7 +11,6 @@
     <fileset dir="${imported.basedir.util}/lib">
       <include name="*.jar"/>
     </fileset>
-    <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
   </path>
 
   <path id="test-jars">
@@ -47,6 +45,12 @@
 
   <target name="util-populate-lib" depends="check.util-lib-uptodate" unless="util.lib-uptodate">
     <populate directory="genedb-util" />
+    <copy todir="${imported.basedir.util}/lib">
+        <fileset dir="${imported.basedir.libs}/lib/biojava">
+            <include name="biojava-1.6.jar"/>
+            <include name="bytecode-0.91.jar"/>
+        </fileset>
+    </copy>
   </target>
 
 

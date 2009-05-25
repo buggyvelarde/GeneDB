@@ -25,7 +25,6 @@
     <path id="build-test-database-classpath">
         <path refid="db-classpath"/>
         <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar"/>
-        <pathelement location="${imported.basedir.libs}/lib/db/postgresql-8.3-603.jdbc4.jar"/>
     </path>
 
     <path id="unit-tests-classpath">
@@ -61,7 +60,7 @@
         </uptodate>
     </target>
 
-    <target name="fulljar-db" depends="compile-db"
+    <target name="db-fulljar" depends="compile-db"
         unless="db.jar-uptodate"
         description="--> Prepare a JAR file with the chado/JDK1.5+ interface">
 
@@ -244,7 +243,7 @@
 
     <target name="db-populate-lib" depends="check.db-lib-uptodate" unless="db.lib-uptodate">
       <populate directory="genedb-db" />
-      <copy todir="lib">
+      <copy todir="${imported.basedir.db}/lib">
             <fileset dir="${imported.basedir.libs}/lib/biojava">
                 <include name="biojava-1.6.jar"/>
                 <include name="bytecode-0.91.jar"/>
