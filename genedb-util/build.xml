@@ -1,4 +1,4 @@
-<project name="genedb-util" default="fulljar-util" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="genedb-util" default="util-fulljar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <dirname property="imported.basedir.util" file="${ant.file.genedb-util}"/>
   <dirname property="imported.basedir.libs" file="${ant.file.genedb-libs}"/>
@@ -20,18 +20,18 @@
     <pathelement location="${imported.basedir.util}/ant-build/dist/genedb-util.jar"/>
   </path>
 
-  <target name="util-clean-build" >
+  <target name="util-clean" >
     <clean-target project="util"/>
   </target>
 
-  <target name="compile-tests" depends="fulljar-util">
+  <target name="compile-tests" depends="util-fulljar">
     <mkdir dir="${imported.basedir.util}/ant-build/test-classes"/>
     <javac srcdir="${imported.basedir.util}/test" destdir="${imported.basedir.util}/ant-build/test-classes" debug="on">
       <classpath refid="test-jars"/>
     </javac>
   </target>
 
-  <target name="run-tests" depends="fulljar-util, compile-tests">
+  <target name="run-tests" depends="util-fulljar, compile-tests">
     <junit printsummary="withOutAndErr" haltonfailure="yes" fork="true" showoutput="true">
       <classpath>
         <path refid="test-jars"/>
@@ -50,20 +50,20 @@
   </target>
 
 
-  <target name="check.util-lib-uptodate" depends="init-util" if="util.ivy-timestamp-exists">
+  <target name="check.util-lib-uptodate" depends="util-init" if="util.ivy-timestamp-exists">
     <uptodate property="util.lib-uptodate" srcfile="${imported.basedir.util}/ivy.xml" targetfile="${imported.basedir.util}/lib/ivy.timestamp.txt" />
   </target>
 
 
-  <target name="init-util" description="Create full JAR file">
+  <target name="util-init" description="Create full JAR file">
     <init-target project="util" />
   </target>
 
-  <target name="fulljar-util" depends="compile-util" description="Create full JAR file" unless="util.jar-uptodate">
+  <target name="util-fulljar" depends="util-compile" description="Create full JAR file" unless="util.jar-uptodate">
     <jar-target project="util" />
   </target>
 
-  <target name="compile-util" depends="util-populate-lib" description="Compile">
+  <target name="util-compile" depends="util-populate-lib" description="Compile">
     <compile-target project="util" />
     <uptodate property="util.jar-uptodate" targetfile="${imported.basedir.util}/ant-build/dist/genedb-util.jar">
       <srcfiles dir="${imported.basedir.util}/ant-build/classes" />

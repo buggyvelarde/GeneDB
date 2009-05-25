@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="/genedb-libs/lib/gui/beansbinding-1.2.1.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/gui/myswing.jar"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/gui/forms-1.1.0.jar"/>
-	<classpathentry kind="lib" path="/genedb-libs/lib/db/postgresql-8.3-603.jdbc4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-db"/>
 	<classpathentry kind="lib" path="lib/com.springsource.antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/com.springsource.antlr-sources-2.7.6.jar"/>

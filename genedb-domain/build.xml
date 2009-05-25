@@ -20,7 +20,7 @@
     </fileset>
     <pathelement location="${lib-dir}/biojava/biojava-1.6.jar"/>
   </path>
-  
+
   <path id="domain-tests-classpath">
     <path refid="domain-classpath"/>
     <pathelement location="${imported.basedir.domain}/${classes.dir}"/>
@@ -47,21 +47,26 @@
 
   <target name="domain-populate-lib" depends="check.domain-lib-uptodate" unless="domain.lib-uptodate">
     <populate directory="genedb-domain" />
-    <copy file="${lib-dir}/db/postgresql-8.3-603.jdbc4.jar" todir="${imported.basedir.domain}/lib" />
+    <copy todir="lib">
+        <fileset dir="${imported.basedir.libs}/lib/biojava">
+            <include name="biojava-1.6.jar"/>
+            <include name="bytecode-0.91.jar"/>
+        </fileset>
+    </copy>
   </target>
 
-  <target name="compile-domain" depends="domain-populate-lib, domain-populate-util, domain-populate-query, domain-populate-db" description="Compile">
+  <target name="domain-compile" depends="domain-populate-lib, domain-populate-util, domain-populate-query, domain-populate-db" description="Compile">
     <compile-target project="domain" />
     <uptodate property="domain.jar-uptodate" targetfile="${imported.basedir.domain}/ant-build/dist/genedb-domain.jar">
       <srcfiles dir="${imported.basedir.domain}/${classes.dir}" />
     </uptodate>
   </target>
 
-  <target name="fulljar-domain" depends="compile-domain" description="Create full JAR file" unless="domain.jar-uptodate">
+  <target name="domain-fulljar" depends="domain-compile" description="Create full JAR file" unless="domain.jar-uptodate">
     <jar-target project="domain" />
   </target>
 
-  <target name="domain-populate-util" depends="fulljar-util">
+  <target name="domain-populate-util" depends="util-fulljar">
     <copy file="${genedb-util.jar}" todir="${imported.basedir.domain}/lib" />
   </target>
 
@@ -74,15 +79,19 @@
   <target name="domain-populate-db" depends="fulljar-db">
     <copy file="${genedb-db.jar}" todir="${imported.basedir.domain}/lib" />
   </target>
-  
+
   <!--target name="compile-tests">
       <javac srcdir="${imported.basedir.domain}/test" includes="**/*.java"
                  destdir="${imported.basedir.domain}/${test-classes.dir}"
                  classpathref="domain-classpath" />
   </target-->
 
-  <target name="genedb-domain-tests" depends="compile-domain">
+  <target name="genedb-domain-tests" depends="domain-compile">
     <tests-target project="domain"/>
   </target>
-        
+
+  <target name="domain-clean">
+    <clean-target project="domain" />
+  </target>
+
 </project>

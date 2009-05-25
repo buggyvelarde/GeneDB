@@ -10,7 +10,6 @@
 			<attribute name="javadoc_location" value="http://hsqldb.org/doc/src/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-query"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genedb-util"/>
 	<classpathentry kind="lib" path="/genedb-libs/lib/db/postgresql-8.3-603.jdbc4.jar"/>
@@ -134,7 +133,6 @@
 	<classpathentry kind="lib" path="lib/org.springframework.web.portlet-sources-3.0.0.M1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.web.servlet-3.0.0.M1.jar" sourcepath="lib/org.springframework.web.servlet-sources-3.0.0.M1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.web.servlet-sources-3.0.0.M1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="lib/com.springsource.org.hibernate.validator-3.0.0.GA.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
