@@ -46,7 +46,7 @@
     <!-- General building, cleaning, JARing type targets -->
 
     <!-- An internal init target -->
-    <target name="setup-db" depends="fulljar-util">
+    <target name="setup-db" depends="util-fulljar">
         <init-target project="db"/>
         <mkdir dir="${imported.basedir.db}/ant-build/test" />
         <mkdir dir="${imported.basedir.db}/ant-build/test-classes" />
@@ -174,7 +174,7 @@
 
     <!-- Test database set-up below here -->
 
-    <target name="prompt-for-password" depends="fulljar-util" unless="source.password">
+    <target name="prompt-for-password" depends="util-fulljar" unless="source.password">
         <fail message="The attribute source.url must be supplied. e.g.-Dsource.url=jdbc:postgresql://dbserver:5432/pathogens" unless="source.url"/>
         <fail message="The attribute source.username must be supplied. e.g. -Dsource.username=fred" unless="source.username"/>
 
@@ -200,7 +200,7 @@
     <target name="does-skeleton-database-exist">
         <available property="db.skeleton.exists" file="${imported.basedir.db}/test-data/hsqldb/skeleton.data"/>
     </target>
-    <target name="make-skeleton-database" depends="prompt-for-password,fulljar-util,make-test-jar">
+    <target name="make-skeleton-database" depends="prompt-for-password,util-fulljar,make-test-jar">
         <java fork="true" dir="${imported.basedir.db}" output="make-skeleton-database.log"
                 maxmemory="256m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
@@ -218,7 +218,7 @@
     <target name="does-pfalciparum-database-exist">
         <available property="db.pfalciparum.exists" file="${imported.basedir.db}/test-data/hsqldb/pfalciparum.data"/>
     </target>
-    <target name="make-pfalciparum-database" depends="prompt-for-password,fulljar-util,make-test-jar">
+    <target name="make-pfalciparum-database" depends="prompt-for-password,util-fulljar,make-test-jar">
         <java fork="true" dir="${imported.basedir.db}" output="make-pfalciparum-database.log"
                 maxmemory="1024m" failonerror="true" classname="org.genedb.db.test.tools.BuildTestDatabase">
             <classpath refid="build-test-database-classpath"/>
@@ -254,7 +254,7 @@
     </target>
 
 
-    <target name="db-populate-util" depends="fulljar-util">
+    <target name="db-populate-util" depends="util-fulljar">
         <copy file="${imported.basedir.db}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.db}/lib" />
     </target>
 
