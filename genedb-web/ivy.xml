@@ -11,11 +11,15 @@
       <dependency org="org.springframework" name="org.springframework.orm" rev="3.0.0.M1" conf="default->*" />
       <dependency org="org.springframework" name="org.springframework.aspects" rev="3.0.0.M3" conf="default->*" />
       <dependency org="org.apache.commons"  name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" conf="default->*" />
-      <dependency org="org.hibernate" name="com.springsource.org.hibernate.search" rev="3.0.1.GA" conf="default->*" />
       <dependency org="org.hibernate" name="com.springsource.org.hibernate.validator" rev="3.0.0.GA" conf="default->*" />
       <dependency org="org.junit" name="com.springsource.org.junit" rev="4.5.0" conf="default->*" />
       <dependency org="com.google.collect" name="com.springsource.com.google.common.collect" rev="0.8.0.20080820" conf="default->*" />
       <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="default->*"/>
+
+
+      <dependency org="org.hibernate" name="hibernate-search" rev="3.1.0.GA" transitive="false" />
+      <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.4.2" />
+      <dependency org="org.apache.lucene" name="lucene-core" rev="2.4.0" />
 
       <!--  Used by test.deployment-build.xml  -->
       <dependency org="org.codehaus.groovy" name="com.springsource.org.codehaus.groovy" rev="1.5.7" conf="groovy->*" />
