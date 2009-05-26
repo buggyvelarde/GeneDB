@@ -135,7 +135,6 @@
         	<path refid="unit-tests-classpath"/>
             <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-test.jar"/>
             <pathelement location="${imported.basedir.db}/ant-build/dist/genedb-db-springless.jar"/>
-            <pathelement location="${imported.basedir.db}/../genedb-libs/lib/biojava/biojava-1.6.jar"/>
         </classpath>
         <sysproperty key="build.tests" value="${build.tests}"/>
         <formatter type="brief" usefile="false" />
@@ -261,7 +260,7 @@
     <uptodate property="db.lib-uptodate" srcfile="ivy.xml" targetfile="${imported.basedir.db}/lib/ivy.timestamp.txt" />
   </target>
 
-	
+
   <target name="init-db" description="Create full JAR file">
     <init-target project="db" />
   </target>
