@@ -218,7 +218,7 @@
     <sequential>
       <delete file="@{topdir}/${dist.dir}/@{jar}" />
       <jar jarfile="@{topdir}/${dist.dir}/@{jar}" basedir="@{topdir}/${classes.dir}"
-           excludes="**/*Test.class, project.properties, log4j.properties">
+           excludes="**/*Test.class">
         <extra-elements/>
       </jar>
     </sequential>
