@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,8 +44,9 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -88,6 +90,13 @@ public class DownloadFeaturesController {
     private HistoryManagerFactory historyManagerFactory;
     private String downloadView;
     private JsonView jsonView;
+    private LuceneIndex luceneIndex;
+
+    @PostConstruct
+    private void openLuceneIndex() {
+        luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
+    }
+
 
     @RequestMapping(method=RequestMethod.POST)
     public ModelAndView onSubmit(HttpServletRequest request,
@@ -110,7 +119,7 @@ public class DownloadFeaturesController {
 
         HistoryItem hItem = historyItems.get(historyItem);
         List<String> ids = hItem.getIds();
-        Hits hits = lookupInLucene(ids);
+        TopDocs topDocs = lookupInLucene(ids);
 
         OutputFormat format = db.getOutputFormat();
         SequenceType sequenceType = db.getSequenceType();
@@ -125,11 +134,11 @@ public class DownloadFeaturesController {
                     OutputStream outStream = response.getOutputStream();
                     response.setContentType("application/vnd.ms-excel");
                     response.setHeader("Content-Disposition", "attachment; filename=results.xls");
-                    createExcel(hits,file,columns, outStream);
+                    createExcel(topDocs,file,columns, outStream);
                     return null;
             case CSV:
             case TAB:
-                    String outString = createCsv(hits,file,columns,format);
+                    String outString = createCsv(topDocs,file,columns,format);
                     response.setContentType("application/x-download");
                     response.setHeader("Content-Disposition", "attachment; filename=results.txt");
                     Writer w = response.getWriter();
@@ -138,8 +147,8 @@ public class DownloadFeaturesController {
             case HTML:
                     Map<String,Object> model = new HashMap<String,Object>();
                     List<ResultHit> jHits = new ArrayList<ResultHit>();
-                    for(int i=0;i<hits.length();i++) {
-                        Document doc = hits.doc(i);
+                    for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+                        Document doc = fetchDocument(scoreDoc.doc);
                         ResultHit rh = new ResultHit();
                         for (String column : columns) {
                             if(column.equals("chr")) {
@@ -160,10 +169,10 @@ public class DownloadFeaturesController {
                     }
 
                     model.put("hits",jHits );
-                    model.put("hitsLength", hits.length());
+                    model.put("hitsLength", jHits.size());
                     return new ModelAndView(jsonView,model);
             case FASTA:
-                    output = createFasta(hits,file,columns,sequenceType);
+                    output = createFasta(topDocs,file,columns,sequenceType);
                     response.setContentType("application/x-download");
                     response.setHeader("Content-Disposition", "attachment");
                     response.setHeader("filename", output.getName());
@@ -171,30 +180,28 @@ public class DownloadFeaturesController {
         return null;
     }
 
-    private Hits lookupInLucene(List<String> ids) throws IOException {
+    private TopDocs lookupInLucene(List<String> ids) throws IOException {
         logger.debug(String.format("#~# luceneIndexFactory is '%s'", luceneIndexFactory));
-        LuceneIndex luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
         BooleanQuery bQuery = new BooleanQuery();
         for (String id : ids) {
             bQuery.add(new TermQuery(new Term("uniqueName",id)), Occur.SHOULD);
         }
         logger.debug(String.format("#~# luceneIndex is '%s'", luceneIndex));
-        Hits hits = luceneIndex.search(bQuery);
-        return hits;
+        return luceneIndex.search(bQuery);
     }
 
 
-    private File createFasta(Hits hits,String file,String[] columns, SequenceType sequenceType) {
+    private File createFasta(TopDocs topDocs,String file,String[] columns, SequenceType sequenceType) {
 
-        StringBuffer whole = new StringBuffer();
-        StringBuffer row = new StringBuffer();
+        StringBuilder whole = new StringBuilder();
+        StringBuilder row;
 
         //add data
-        for(int i=0;i<hits.length();i++) {
-            row = new StringBuffer();
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+            row = new StringBuilder();
             Document doc = null;
             try {
-                doc = hits.doc(i);
+                doc = fetchDocument(scoreDoc.doc);
             } catch (CorruptIndexException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -208,7 +215,7 @@ public class DownloadFeaturesController {
             row.deleteCharAt(row.length()-1);
 
             AbstractGene gene =  (AbstractGene)sequenceDao.getFeatureByUniqueName(doc.get("uniqueName"), Feature.class);
-            logger.info(String.format(" %d Gene %s Type %s",i,doc.get("uniqueName"),gene.getType().getName() ));
+            logger.info(String.format(" Gene %s Type %s",doc.get("uniqueName"),gene.getType().getName() ));
             String sequence = DownloadUtils.getSequence(gene, sequenceType);
             String entry;
             if(sequence != null) {
@@ -248,7 +255,7 @@ public class DownloadFeaturesController {
         throw new NotImplementedException("Missing code");
     }
 
-    private void createExcel(Hits hits,String file,String[] columns, OutputStream out) throws IOException {
+    private void createExcel(TopDocs topDocs,String file,String[] columns, OutputStream out) throws IOException {
         int rcount = 2;
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
@@ -278,11 +285,10 @@ public class DownloadFeaturesController {
         }
         rcount++;
 
-        //add data
-        for(int i=0;i<hits.length();i++) {
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
             Document doc = null;
             try {
-                doc = hits.doc(i);
+                doc = fetchDocument(scoreDoc.doc);
             } catch (CorruptIndexException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -332,10 +338,10 @@ public class DownloadFeaturesController {
     }
 
 
-    private String createCsv(Hits hits,String file,String[] columns,OutputFormat format) {
+    private String createCsv(TopDocs topDocs,String file,String[] columns,OutputFormat format) {
         String separator = ",";
         StringBuffer whole = new StringBuffer();
-        StringBuffer row = new StringBuffer();
+        StringBuilder row = new StringBuilder();
 
         if(format == OutputFormat.TAB) {
             separator = "\t";
@@ -363,11 +369,12 @@ public class DownloadFeaturesController {
         whole.append(row);
         whole.append("\n");
         //add data
-        for(int i=0;i<hits.length();i++) {
-            row = new StringBuffer();
+
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+            row = new StringBuilder();
             Document doc = null;
             try {
-                doc = hits.doc(i);
+                doc = fetchDocument(scoreDoc.doc);
             } catch (CorruptIndexException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -401,6 +408,10 @@ public class DownloadFeaturesController {
 //        }
 
         return whole.toString();
+    }
+
+    private Document fetchDocument(int docId) throws CorruptIndexException, IOException {
+        return luceneIndex.getDocument(docId);
     }
 
     public void setSequenceDao(SequenceDao sequenceDao) {
