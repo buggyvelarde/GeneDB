@@ -51,7 +51,7 @@ public class QueryController extends AbstractGeneDBFormController{
             ServletRequest request,
             HttpSession session,
             Model model) throws QueryException {
-        
+
         //Find query for request
         Query query = findQueryType(queryName, session);
         if (query==null){
@@ -64,7 +64,7 @@ public class QueryController extends AbstractGeneDBFormController{
         populateModelData(model, query);
 
         //Initialise query form
-        Errors errors = initialiseQueryForm(query, request);        
+        Errors errors = initialiseQueryForm(query, request);
         if (errors.hasErrors()) {
             model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "query", errors);
             logger.debug("Returning due to binding error");
@@ -81,7 +81,7 @@ public class QueryController extends AbstractGeneDBFormController{
 
         logger.debug("Validator found no errors");
         List results = query.getResults();
-        
+
         //Suppress item in results
         suppressResultItem(suppress, results);
 
@@ -89,7 +89,7 @@ public class QueryController extends AbstractGeneDBFormController{
         return findDestinationView(queryName, query, model, results, session);
     }
 
-    
+
     /**
      * Work out the correct view destination
      * @param queryName
@@ -106,18 +106,18 @@ public class QueryController extends AbstractGeneDBFormController{
         //Get the current taxon name
         String taxonName = findTaxonName(query);
         String resultsKey = null;
-        
+
         switch (results.size()) {
         case 0:
             logger.debug("No results found for query");
             model.addAttribute("taxonNodeName", taxonName);
             return "search/"+queryName;
-            
+
         case 1:
             List<GeneSummary> gs = possiblyConvertList(results);
             resultsKey = cacheResults(gs, query, queryName, session.getId());
             return "redirect:/NamedFeature?name=" + gs.get(0).getSystematicId();
-            
+
         default:
             List<GeneSummary> gs2 = possiblyConvertList(results);
             resultsKey = cacheResults(gs2, query, queryName, session.getId());
@@ -135,7 +135,7 @@ public class QueryController extends AbstractGeneDBFormController{
             model.addAttribute(entry.getKey(), entry.getValue());
         }
     }
-    
+
     protected Query findQueryType(String queryName, HttpSession session){
         if (!StringUtils.hasText(queryName)) {
                session.setAttribute(WebConstants.FLASH_MSG, "Unable to identify which query to use");
@@ -146,7 +146,7 @@ public class QueryController extends AbstractGeneDBFormController{
         }
         return query;
     }
-    
+
     /**
      * Remove an item in the result list
      * @param suppress
