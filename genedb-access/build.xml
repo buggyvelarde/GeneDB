@@ -18,6 +18,8 @@
   <property name="genedb-access.jar"
       value="${imported.basedir.access}/${dist.dir}/genedb-access.jar"/>
 
+  <property name="userMsg" value=" : the connection property is not set. Usually you should set the property 'config' to refer to a property file property-file.${config}" />
+
   <path id="access-classpath">
       <fileset dir="${imported.basedir.access}/lib">
         <include name="*.jar"/>
@@ -67,16 +69,16 @@
   </target>
 
   <target name="replace">
-      <fail message="The 'load' property must be set" unless="load"/>
-      <fail message="The file property-file.${load} does not exist">
+      <fail message="The 'load' property must be set" unless="config"/>
+      <fail message="The file property-file.${config} does not exist">
           <condition>
               <not>
-                  <available file="${imported.basedir.access}/property-file.${load}"/>
+                  <available file="${imported.basedir.access}/property-file.${config}"/>
               </not>
           </condition>
       </fail>
 
-      <copy file="${imported.basedir.access}/property-file.${load}" tofile="${imported.basedir.access}/resources/project.properties"
+      <copy file="${imported.basedir.access}/property-file.${config}" tofile="${imported.basedir.access}/resources/project.properties"
           overwrite="true" />
   </target>
 
@@ -90,14 +92,10 @@
     </path>
 
     <target name="check-properties">
-        <fail message="The property 'dbhost' is not set. Usually you should set the property 'load' to refer to a property file"
-            unless="dbhost"/>
-        <fail message="The property 'dbport' is not set. Usually you should set the property 'load' to refer to a property file"
-            unless="dbport"/>
-        <fail message="The property 'dbname' is not set. Usually you should set the property 'load' to refer to a property file"
-            unless="dbname"/>
-        <fail message="The property 'dbuser' is not set. Usually you should set the property 'load' to refer to a property file"
-            unless="dbuser"/>
+        <fail message="'dbhost' ${userMsg}" unless="dbhost"/>
+        <fail message="'dbport' ${userMsg}" unless="dbport"/>
+        <fail message="'dbname' ${userMsg}" unless="dbname"/>
+        <fail message="'dbuser' ${userMsg}" unless="dbuser"/>
     </target>
     <target name="prompt-for-password" depends="util-fulljar,check-properties" unless="dbpassword">
         <taskdef name="password" classname="org.genedb.anttasks.Password" classpath="${imported.basedir.access}/../genedb-util/ant-build/dist/genedb-anttasks.jar" />

@@ -16,10 +16,8 @@
   <property name="lib-dir" value="${imported.basedir.libs}/lib" />
   <property name="lib.dir" value="lib/" />
 
-  <!-- <property name="ivy.settings" value="${imported.basedir.libs}/ivysettings.xml" /> -->
-
   <path id="aspectj-tools-classpath">
-    <pathelement location="${imported.basedir.libs}/lib/aspectj/com.springsource.org.aspectj.tools-1.6.2.RELEASE.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/aspectj/com.springsource.org.aspectj.tools-1.6.3.RELEASE.jar"/>
   </path>
 
   <!-- Extra task definitions -->
@@ -30,17 +28,23 @@
 
   <!-- Classpaths -->
   <path id="aspect.path">
-    <pathelement location="${imported.basedir.libs}/lib/com.springsource.org.aspectj.runtime-1.5.4.jar"/>
-    <pathelement location="${imported.basedir.libs}/lib/org.springframework.aspects-3.0.0.M1.jar"/>
+    <pathelement location="${imported.basedir.libs}/lib/*.jar"/>
   </path>
 
+  <path id="aspectj-tools-classpath">
+    <pathelement location="${imported.basedir.libs}/lib/aspectj/com.springsource.org.aspectj.tools-1.6.3.RELEASE.jar"/>
+  </path>
 
   <!-- General targets -->
 
-  <target name="populate-lib-dir">
+  <target name="populate-lib-dir" depends="check.lib-lib-uptodate" unless="lib.lib-uptodate">
     <ivy:settings file="${imported.basedir.libs}/ivysettings.xml" />
     <ivy:retrieve conf="default"/>
   </target>
+
+    <target name="check.lib-lib-uptodate" depends="Jogra-init" if="lib.ivy-timestamp-exists">
+        <uptodate property="lib.lib-uptodate" srcfile="${imported.basedir.lib}/ivy.xml" targetfile="${imported.basedir.lib}/lib/ivy.timestamp.txt" />
+    </target>
 
   <target name="populate-lib-dirs">
       <antcall target="populate-lib-dir"/>
@@ -69,7 +73,6 @@
       <clean-target project="query" topdir="${imported.basedir.libs}/../genedb-query"/>
       <clean-target project="util" topdir="${imported.basedir.libs}/../genedb-util"/>
       <clean-target project="web" topdir="${imported.basedir.libs}/../genedb-web"/>
-      <clean-target project="HibernateSearch" topdir="${imported.basedir.libs}/../HibernateSearch"/>
       <clean-target project="Jogra" topdir="${imported.basedir.libs}/../Jogra"/>
       <clean-target project="Medusa" topdir="${imported.basedir.libs}/../Medusa"/>
   </target>
@@ -188,6 +191,7 @@
       <attribute name="to-directory" default="@{directory}"/>
       <attribute name="classpathref" default="@{project}-classpath"/>
     <sequential>
+      <antcall target="populate-lib-dir" />
       <iajc
         verbose="false" nowarn="true"
         inpath="@{from-directory}"
@@ -207,9 +211,8 @@
     <element name="extra-elements" optional="true" implicit="true"/>
     <sequential>
       <delete file="@{topdir}/${dist.dir}/@{jar}" />
-      <jar jarfile="@{topdir}/${dist.dir}/@{jar}"
-           basedir="@{topdir}/${classes.dir}"
-             excludes="**/*Test.class">
+      <jar jarfile="@{topdir}/${dist.dir}/@{jar}" basedir="@{topdir}/${classes.dir}"
+           excludes="**/*Test.class, project.properties, log4j.properties">
         <extra-elements/>
       </jar>
     </sequential>
