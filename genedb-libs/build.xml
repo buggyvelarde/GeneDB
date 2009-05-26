@@ -42,10 +42,15 @@
     <ivy:retrieve conf="default"/>
   </target>
 
-    <target name="check.lib-lib-uptodate" depends="Jogra-init" if="lib.ivy-timestamp-exists">
+    <target name="check.lib-lib-uptodate" depends="libs-init" if="lib.ivy-timestamp-exists">
         <uptodate property="lib.lib-uptodate" srcfile="${imported.basedir.lib}/ivy.xml" targetfile="${imported.basedir.lib}/lib/ivy.timestamp.txt" />
     </target>
 
+
+    <target name="libs-init">
+        <init-target project="genedb-libs" />
+    </target>
+	
   <target name="populate-lib-dirs">
       <antcall target="populate-lib-dir"/>
       <populate directory="genedb-access"/>
