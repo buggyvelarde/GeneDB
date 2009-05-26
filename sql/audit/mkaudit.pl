@@ -39,11 +39,13 @@ my $audit = {
         feature_dbxref
         featureloc
         feature_relationship
+        feature_synonym
         pub
             pub_dbxref
         dbxref
         cvterm
             cvterm_dbxref
+        synonym
     )
 };
 
