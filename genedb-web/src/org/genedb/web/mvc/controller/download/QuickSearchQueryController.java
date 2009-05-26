@@ -29,18 +29,18 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/QuickSearchQuery")
 public class QuickSearchQueryController extends AbstractGeneDBFormController {
 
+    public static final String QUERY_NAME = "quickSearch";
+
     Logger logger = Logger.getLogger(QuickSearchQueryController.class);
 
     @Autowired
     private QueryFactory queryFactory;
 
+
     @RequestMapping(method = RequestMethod.GET, params = "q=quickSearchQuery")
     public String processRequest(ServletRequest request, HttpSession session, Model model) throws QueryException {
 
-        String queryName = "quickSearch";
-        QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(queryName);
-
-        // Initialise query form
+        QuickSearchQuery query = (QuickSearchQuery) queryFactory.retrieveQuery(QUERY_NAME);
 
         // Initialise model data somehow
         model.addAttribute("query", query);
@@ -52,7 +52,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         // AddTaxonGroupToSession
         session.setAttribute("taxonGroup", quickSearchQueryResults.getTaxonGroup());
 
-        return findDestinationView(queryName, query, model, quickSearchQueryResults, session);
+        return findDestinationView(query, model, quickSearchQueryResults, session);
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "q=none")
@@ -77,7 +77,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
      * @param session
      * @return
      */
-    private String findDestinationView(String queryName, Query query, Model model,
+    private String findDestinationView(Query query, Model model,
             QuickSearchQueryResults quickSearchQueryResults, HttpSession session) {
         // Get the current taxon name
         String taxonName = findTaxonName(query);
@@ -86,16 +86,16 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
         case NO_EXACT_MATCH_IN_CURRENT_TAXON:
             logger.debug("No results found for query");
             model.addAttribute("taxonNodeName", taxonName);
-            return "search/" + queryName;
+            return "search/" + QUERY_NAME;
 
         case SINGLE_RESULT_IN_CURRENT_TAXON:
             List<GeneSummary> gs = quickSearchQueryResults.getResults();
-            cacheResults(gs, query, queryName, session.getId());
+            cacheResults(gs, query, QUERY_NAME, session.getId());
             return "redirect:/NamedFeature?name=" + gs.get(0).getSystematicId();
 
         case MULTIPLE_RESULTS_IN_CURRENT_TAXON:
             List<GeneSummary> gs2 = quickSearchQueryResults.getResults();
-            resultsKey = cacheResults(gs2, query, queryName, session.getId());
+            resultsKey = cacheResults(gs2, query, QUERY_NAME, session.getId());
             model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.debug("Found results for query (Size: '" + gs2.size() + "' key: '" + resultsKey
@@ -104,7 +104,7 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
 
         case ALL_ORGANISMS_IN_ALL_TAXONS:
             List<GeneSummary> gs3 = quickSearchQueryResults.getResults();
-            resultsKey = cacheResults(gs3, query, queryName, session.getId());
+            resultsKey = cacheResults(gs3, query, QUERY_NAME, session.getId());
             model.addAttribute("key", resultsKey);
             model.addAttribute("taxonNodeName", taxonName);
             logger.debug("Found results for query (Size: '" + gs3.size() + "' key: '" + resultsKey

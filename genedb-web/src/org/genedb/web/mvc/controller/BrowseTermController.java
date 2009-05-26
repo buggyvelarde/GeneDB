@@ -31,9 +31,12 @@ import net.sf.json.spring.web.servlet.view.JsonView;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
+
 import org.genedb.db.dao.SequenceDao;
 import org.genedb.querying.core.LuceneIndex;
 import org.genedb.querying.core.LuceneIndexFactory;
@@ -134,10 +137,11 @@ public class BrowseTermController {
             ids.add(feature.getGeneName());
 
             TermQuery query = new TermQuery(new Term("uniqueName", feature.getGeneName()));
-            Hits hits = luceneIndex.search(query);
+            TopDocs topDocs = luceneIndex.search(query);
 
-            if (hits.length() > 0) {
-                feature.setProduct(hits.doc(0).get("product"));
+            if (topDocs.totalHits > 0) {
+                Document document = luceneIndex.getDocument(topDocs.scoreDocs[0].doc);
+                feature.setProduct(document.get("product"));
             }
         }
 
