@@ -32,6 +32,9 @@
                 <include name="biojava-1.6.jar"/>
                 <include name="bytecode-0.91.jar"/>
             </fileset>
+            <fileset dir="${imported.basedir.libs}/lib/gui">
+                <include name="myswing.jar"/>
+            </fileset>
         </copy>
     </target>
 
