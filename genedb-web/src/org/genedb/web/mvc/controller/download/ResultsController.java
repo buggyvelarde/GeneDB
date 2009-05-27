@@ -92,30 +92,37 @@ public class ResultsController {
         ResultEntry resultEntry = resultsCacheFactory.getResultsCacheMap().get(key);
         List<GeneSummary> results = resultEntry.results;
 
-        logger.info("The number of results retrived from cache is '"+results.size()+"'");
+        logger.debug("The number of results retrived from cache is '"+results.size()+"'");
+        logger.debug("The end marker, before adjustment, is '"+end+"'");
 
         if (end >= results.size()) {
             end = results.size() - 1;
         }
+
 
         boolean justSome = true;
         List<GeneSummary> subset;
         if (start == 1 && end == results.size()-1) {
             subset = results;
             justSome = false;
+            logger.debug("The \"subset\" is all of the results!");
         } else {
             subset = results.subList(start, end);
+            logger.debug(String.format("The \"subset\" is from %d to %d of %d total results!", start, end, results.size()));
         }
 
         List<GeneSummary> possiblyExpanded = possiblyExpandResults(subset);
 
         if (possiblyExpanded == null) {
             possiblyExpanded = subset;
+            logger.debug("The subset is already expanded");
         } else {
             // Need to update cache
+            logger.debug("We've expanded the systematic ids");
             if (!justSome) {
                 resultEntry.results = possiblyExpanded;
                 resultsCacheFactory.getResultsCacheMap().put(key, resultEntry);
+                logger.debug("And stored the set back");
             }
         }
 
@@ -126,7 +133,6 @@ public class ResultsController {
         if (taxonNodeName != null) {
             model.addAttribute("taxonNodeName", taxonNodeName);
         }
-
 
         if (resultEntry.query != null) {
             model.addAttribute("query", resultEntry.query);
