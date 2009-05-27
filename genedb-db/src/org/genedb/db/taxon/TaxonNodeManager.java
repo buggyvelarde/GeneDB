@@ -24,10 +24,14 @@ import org.genedb.db.dao.PhylogenyDao;
 
 import org.gmod.schema.mapped.Phylonode;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,11 +54,11 @@ public class TaxonNodeManager implements InitializingBean {
     private Map<String, TaxonNode> fullNameTaxonNodeMap = new HashMap<String, TaxonNode>();
     private Map<String, TaxonNode> nickNameTaxonNodeMap = new HashMap<String, TaxonNode>();
 
-    @Transactional
+    //@Transactional
     public void afterPropertiesSet() throws Exception {
-        //Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
-        //TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-//        try {
+        Session session = SessionFactoryUtils.doGetSession(sessionFactory, true);
+        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
+        try {
         //System.err.println("Session is '"+session+"'");
         Set<TaxonNode> nodes = new HashSet<TaxonNode>();
         List<Phylonode> phylonodes = phylogenyDao.getAllPhylonodes();
@@ -101,11 +105,11 @@ public class TaxonNodeManager implements InitializingBean {
             findPhylonodeWithOrganismFeatures();
         //}
 
-  //      }
-        //finally {
-        //      TransactionSynchronizationManager.unbindResource(sessionFactory);
-        //      SessionFactoryUtils.closeSession(session);
-        //    }
+        }
+        finally {
+              TransactionSynchronizationManager.unbindResource(sessionFactory);
+              SessionFactoryUtils.closeSession(session);
+            }
 
     }
 
