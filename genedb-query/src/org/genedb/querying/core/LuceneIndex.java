@@ -1,10 +1,5 @@
 package org.genedb.querying.core;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.annotation.PostConstruct;
-
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -13,14 +8,31 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TopDocs;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.annotation.PostConstruct;
+
 public class LuceneIndex {
+
+    private static final int DEFAULT_MAX_RESULTS=20000;
+
+    private int maxResults = DEFAULT_MAX_RESULTS;
+
+
+    public void setMaxResults(int maxResults) {
+        if (maxResults <= 1 || maxResults > Integer.MAX_VALUE - 3) {
+            throw new IllegalArgumentException("The maximum number of results must be a positive integer less than " + (Integer.MAX_VALUE-3));
+        }
+        this.maxResults = maxResults;
+    }
+
 
     public String getIndexName() {
         return indexName;
@@ -99,6 +111,8 @@ public class LuceneIndex {
         return search(query, null);
     }
 
+
+
     /**
      * Perform a Lucene search using a prebuilt Query object.
      *
@@ -111,9 +125,9 @@ public class LuceneIndex {
         logger.debug("searcher is -> " + searcher.toString());
         try {
             if (sort == null) {
-                return searcher.search(query, Integer.MAX_VALUE);
+                return searcher.search(query, maxResults);
             } else {
-                return searcher.search(query, null, Integer.MAX_VALUE, sort);
+                return searcher.search(query, null, maxResults, sort);
             }
         } catch (IOException e) {
             throw new RuntimeException(String.format("I/O error during Lucene query '%s'",
