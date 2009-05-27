@@ -174,7 +174,7 @@ public class QuickSearchQuery extends OrganismLuceneQuery {
                 taxonGroup.putAll(tempTaxonGroup);
             }
 
-            if (currentTaxonNames == null && geneSummaries.size() > 0) {
+            if (currentTaxonNames == null && geneSummaries.size() > 1) {
                 quickSearchQueryResults.setQuickResultType(QuickResultType.ALL_ORGANISMS_IN_ALL_TAXONS);
 
             } else if (geneSummaries.size() == 1) {

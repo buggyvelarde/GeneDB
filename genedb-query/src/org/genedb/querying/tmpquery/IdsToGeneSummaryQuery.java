@@ -68,12 +68,6 @@ public class IdsToGeneSummaryQuery extends LuceneQuery {
         this.ids = ids;
     }
 
-    @Override
-    public List getResults() throws QueryException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     //@Override
 //    public boolean supports(Class<?> arg0) {
 //        // TODO Auto-generated method stub

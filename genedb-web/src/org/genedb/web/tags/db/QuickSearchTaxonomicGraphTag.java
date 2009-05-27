@@ -231,7 +231,7 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
         sb.append("\"");
         sb.append(" target=\"_parent\">");
         sb.append("<small>");
-        sb.append(quickSearchTaxonNode.getLabel());
+        sb.append(reformatLabel(quickSearchTaxonNode.getLabel()));
         sb.append("</small>");
         sb.append("</a>");
         sb.append("<small>");
@@ -239,6 +239,17 @@ public class QuickSearchTaxonomicGraphTag extends SimpleTagSupport {
         sb.append(quickSearchTaxonNode.getMatch());
         sb.append(")");
         sb.append("</small>");
+        return sb.toString();
+    }
+    
+    /**
+     * Re-format label with a dot after first character of the Organism name
+     * @param displayLabel
+     * @return
+     */
+    private String reformatLabel(String displayLabel){
+        StringBuffer sb = new StringBuffer(displayLabel);
+        sb.insert(1, ". ");
         return sb.toString();
     }
 

@@ -16,7 +16,7 @@
                     <a href="<c:url value="/ResultsNavigator"/>?index=${row_rowNum+firstResultIndex}&resultsLength=${fn:length(results)-1}&key=${key}"><c:out value="${row.systematicId}"/></a>
                    </display:column>
                 <display:column title="Organism" style="width: 150px;">
-                    <i>${row.taxonDisplayName}</i>
+                    <i><db:taxonname label="${row.taxonDisplayName}" taxonNameType="HTML_SHORT"/></i>
                    </display:column>
                    <display:column title="Product">
                     ${row.product}

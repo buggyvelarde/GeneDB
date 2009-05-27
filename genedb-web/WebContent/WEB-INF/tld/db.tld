@@ -112,6 +112,24 @@
 
 
  <tag>
+   <name>taxonname</name>
+   <tag-class>org.genedb.web.tags.db.TaxonNameTag</tag-class>
+   <body-content>empty</body-content>
+       <attribute>
+        <name>label</name>
+        <rtexprvalue>true</rtexprvalue>
+        <required>true</required>
+       </attribute>
+       <attribute>
+        <name>taxonNameType</name>
+        <rtexprvalue>false</rtexprvalue>
+        <required>true</required>
+       </attribute>
+ </tag>
+ 
+
+
+ <tag>
    <name>simplehomepageselect</name>
    <tag-class>org.genedb.web.tags.db.HomepageSelectTag</tag-class>
    <body-content>empty</body-content>
