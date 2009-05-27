@@ -94,39 +94,29 @@ public class ResultsController {
 
         logger.info("The number of results retrived from cache is '"+results.size()+"'");
 
-        boolean truncated = false;
-
         if (end >= results.size()) {
             end = results.size() - 1;
-            truncated = true;
         }
 
+        boolean justSome = true;
         List<GeneSummary> subset;
-        if (truncated) {
+        if (start == 1 && end == results.size()-1) {
             subset = results;
+            justSome = false;
         } else {
             subset = results.subList(start, end);
         }
 
         List<GeneSummary> possiblyExpanded = possiblyExpandResults(subset);
 
-        if (possiblyExpanded != null) {
-            // Need to update cache
-            if (truncated) {
-                resultEntry.results = possiblyExpanded;
-                 resultsCacheFactory.getResultsCacheMap().put(key, resultEntry);
-            } else {
-//                int index = start;
-//                for (GeneSummary geneSummary : possiblyExpanded) {
-//                    results.remove(index);
-//                    results.add(index, geneSummary);
-//                    index++;
-//                }
-//                resultsCacheFactory.getResultsCacheMap().put(key, results);
-            }
-
-        } else {
+        if (possiblyExpanded == null) {
             possiblyExpanded = subset;
+        } else {
+            // Need to update cache
+            if (!justSome) {
+                resultEntry.results = possiblyExpanded;
+                resultsCacheFactory.getResultsCacheMap().put(key, resultEntry);
+            }
         }
 
         model.addAttribute("results", possiblyExpanded);
