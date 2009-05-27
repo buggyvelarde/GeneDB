@@ -348,7 +348,6 @@
         </property>
     </bean> -->
 
-
 <!--
     <bean id="ContextMapController"
         class="org.genedb.web.mvc.controller.ContextMapController">
