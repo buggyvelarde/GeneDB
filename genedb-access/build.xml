@@ -69,7 +69,7 @@
   </target>
 
   <target name="replace">
-      <fail message="The 'load' property must be set" unless="config"/>
+      <fail message="The 'config' property must be set" unless="config"/>
       <fail message="The file property-file.${config} does not exist">
           <condition>
               <not>
