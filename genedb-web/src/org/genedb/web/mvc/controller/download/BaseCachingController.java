@@ -58,8 +58,12 @@ public class BaseCachingController {
 //    }
 
 
-    @Autowired
+    //@Autowired
     private ResultsCacheFactory resultsCacheFactory;
+
+    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
+        this.resultsCacheFactory = resultsCacheFactory;
+    }
 
 
     protected List<GeneSummary> possiblyConvertList(List results) {

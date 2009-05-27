@@ -22,8 +22,14 @@ public class QueryListController {
 
     private static final Logger logger = Logger.getLogger(QueryListController.class);
 
-    @Autowired
+    //@Autowired
     private QueryFactory queryFactory;
+
+
+
+    public void setQueryFactory(QueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
 
 
 

@@ -22,12 +22,21 @@ import com.sleepycat.collections.StoredMap;
 
 public class AbstractGeneDBFormController {
 
-    @Autowired
+    //@Autowired
     private ResultsCacheFactory resultsCacheFactory;
 
-    @Autowired
+    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
+        this.resultsCacheFactory = resultsCacheFactory;
+    }
+
+
+    public void setTaxonNodeArrayPropertyEditor(TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
+        this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
+    }
+
+    //@Autowired
     private TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor;
-    
+
     protected List<GeneSummary> possiblyConvertList(List results) {
         List<GeneSummary> gs;
         Object firstItem =  results.get(0);
@@ -54,7 +63,7 @@ public class AbstractGeneDBFormController {
         map.put(key, re);
         return key;
     }
-    
+
     protected String findTaxonName(Query query){
         String taxonName = null;
         if (query instanceof TaxonQuery) {
@@ -65,7 +74,7 @@ public class AbstractGeneDBFormController {
         }
         return taxonName;
     }
-    
+
     protected Errors initialiseQueryForm(Query query, ServletRequest request){
         // Attempt to fill in form
         ServletRequestDataBinder binder = new ServletRequestDataBinder(query);
@@ -74,7 +83,7 @@ public class AbstractGeneDBFormController {
 
         binder.bind(request);
 
-        return binder.getBindingResult();        
+        return binder.getBindingResult();
     }
 
 }

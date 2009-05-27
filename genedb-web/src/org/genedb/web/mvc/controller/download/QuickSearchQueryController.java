@@ -33,8 +33,12 @@ public class QuickSearchQueryController extends AbstractGeneDBFormController {
 
     Logger logger = Logger.getLogger(QuickSearchQueryController.class);
 
-    @Autowired
+    //@Autowired
     private QueryFactory queryFactory;
+
+    public void setQueryFactory(QueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
 
 
     @RequestMapping(method = RequestMethod.GET, params = "q=quickSearchQuery")

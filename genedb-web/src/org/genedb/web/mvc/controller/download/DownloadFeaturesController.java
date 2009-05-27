@@ -20,23 +20,19 @@
 package org.genedb.web.mvc.controller.download;
 
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.sf.json.spring.web.servlet.view.JsonView;
+
+import org.genedb.db.dao.SequenceDao;
+import org.genedb.querying.core.LuceneIndex;
+import org.genedb.querying.core.LuceneIndexFactory;
+import org.genedb.querying.history.HistoryItem;
+import org.genedb.querying.history.HistoryManager;
+import org.genedb.web.mvc.controller.HistoryManagerFactory;
+import org.genedb.web.mvc.controller.ResultHit;
+import org.genedb.web.utils.DownloadUtils;
+
+import org.gmod.schema.feature.AbstractGene;
+import org.gmod.schema.mapped.Feature;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
@@ -53,23 +49,28 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.genedb.db.dao.SequenceDao;
-import org.genedb.querying.core.LuceneIndex;
-import org.genedb.querying.core.LuceneIndexFactory;
-import org.genedb.querying.history.HistoryItem;
-import org.genedb.querying.history.HistoryManager;
-import org.genedb.web.mvc.controller.HistoryManagerFactory;
-import org.genedb.web.mvc.controller.ResultHit;
-import org.genedb.web.utils.DownloadUtils;
-
-import org.gmod.schema.feature.AbstractGene;
-import org.gmod.schema.mapped.Feature;
-
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 
@@ -92,7 +93,7 @@ public class DownloadFeaturesController {
     private JsonView jsonView;
     private LuceneIndex luceneIndex;
 
-    @PostConstruct
+    //@PostConstruct
     private void openLuceneIndex() {
         luceneIndex = luceneIndexFactory.getIndex("org.gmod.schema.mapped.Feature");
     }
@@ -434,6 +435,7 @@ public class DownloadFeaturesController {
 //        return luceneDao;
 //    }
 
+    //@Required
     public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
         this.luceneIndexFactory = luceneIndexFactory;
     }

@@ -36,8 +36,12 @@ public class QueryController extends AbstractGeneDBFormController{
 
     private static final Logger logger = Logger.getLogger(QueryController.class);
 
-    @Autowired
+    //@Autowired
     private QueryFactory queryFactory;
+
+    public void setQueryFactory(QueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public String setUpForm() {

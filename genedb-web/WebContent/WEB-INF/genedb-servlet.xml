@@ -14,7 +14,7 @@
 
   <!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
 
-    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.web.mvc.controller.analysis, org.genedb.web.mvc.controller, org.genedb.web.mvc.controller.download, org.genedb.querying.core, org.genedb.querying.tmpquery" />
+    <context:component-scan base-package="org.gmod.schema.mapped, org.genedb.querying.core, org.genedb.querying.tmpquery" />
     <context:spring-configured/>
     <context:mbean-export/>
 
@@ -131,8 +131,8 @@
 
     <bean id="freemarkerConfig"
         class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-        <property name="templateLoaderPath"
-            value="/WEB-INF/freemarker/" />
+        <!-- FIXME STS complains where is superclass -->
+        <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
     </bean>
 
     <bean id="viewResolver"
@@ -290,15 +290,31 @@
     <bean name="historyManagerFactory"
         class="org.genedb.web.mvc.controller.HttpSessionHistoryManagerFactory" />
 
-    <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController" />
-    
-    <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController" />
+    <bean name="QueryController" class="org.genedb.web.mvc.controller.download.QueryController">
+        <property name="queryFactory" ref="queryFactory" />
+        <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    </bean>
 
-    <bean name="ResultsController" class="org.genedb.web.mvc.controller.download.ResultsController" />
+    <bean name="QuickSearchQueryController" class="org.genedb.web.mvc.controller.download.QuickSearchQueryController">
+        <property name="queryFactory" ref="queryFactory" />
+        <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+        <property name="taxonNodeArrayPropertyEditor" ref="taxonNodeArrayPropertyEditor" />
+    </bean>
 
-    <bean name="ResultsNavigatorController" class="org.genedb.web.mvc.controller.download.ResultsNavigatorController" />
 
-    <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController" />
+    <bean name="ResultsController" class="org.genedb.web.mvc.controller.download.ResultsController">
+       <property name="queryFactory" ref="queryFactory" />
+       <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+    </bean>
+
+    <bean name="ResultsNavigatorController" class="org.genedb.web.mvc.controller.download.ResultsNavigatorController">
+            <property name="resultsCacheFactory" ref="resultsCacheFactory" />
+    </bean>
+
+    <bean name="QueryListController" class="org.genedb.web.mvc.controller.download.QueryListController">
+        <property name="queryFactory" ref="queryFactory" />
+    </bean>
 
     <bean id="ImageController" class="org.genedb.web.mvc.controller.ImageController">
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
@@ -321,18 +337,29 @@
     <bean id="namedFeatureValidator"
         class="org.genedb.web.mvc.validators.NamedFeatureFormValidator" />
 
+    <!--<bean name="luceneIndexFactory" class="org.genedb.querying.core.LuceneIndexFactory">
+        <property name="luceneIndexList">
+        <list>
+            <bean class="org.genedb.querying.core.LuceneIndex">
+                <property name="indexDirectoryName" value="${lucene.indexDirectory}" />
+                <property name="indexName" value="org.gmod.schema.mapped.Feature" />
+            </bean>
+        </list>
+        </property>
+    </bean> -->
 
+    <bean id="lifTest"
+        class="org.genedb.web.mvc.controller.LIFTest">
+        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
+    </bean>
+<!--
     <bean id="ContextMapController"
         class="org.genedb.web.mvc.controller.ContextMapController">
-        <!-- <property name="commandName" value="contextMap" />
-        <property name="commandClass"
-            value="org.genedb.web.mvc.controller.ContextMapController$Command" /> -->
         <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="view" ref="jsonView" />
-        <!-- <property name="cacheSeconds" value="86400" /> -->
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     </bean>
-
+-->
 <!--  	<bean id="AdvancedSearchController"
         class="org.genedb.web.mvc.controller.AdvancedSearchController">
         <property name="sessionForm" value="true" />
@@ -368,6 +395,7 @@
         <property name="sequenceDao" ref="sequenceDao" />
         <property name="listResultsView" value="list/results2" />
         <property name="genePage" value="redirect:NamedFeature" />
+        <property name="resultsCacheFactory" ref="resultsCacheFactory" />
     </bean>
 
     <bean id="BrowseCategoryController"

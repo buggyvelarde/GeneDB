@@ -39,10 +39,18 @@ public class ResultsController {
 
     public static final int DEFAULT_LENGTH = 30;
 
-    @Autowired
+    //@Autowired
     private ResultsCacheFactory resultsCacheFactory;
 
-    @Autowired
+    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
+        this.resultsCacheFactory = resultsCacheFactory;
+    }
+
+    public void setQueryFactory(QueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
+
+    //@Autowired
     private QueryFactory queryFactory;
 
     @RequestMapping(method = RequestMethod.GET)

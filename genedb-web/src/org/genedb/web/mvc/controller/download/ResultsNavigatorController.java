@@ -17,8 +17,12 @@ import java.util.List;
 @RequestMapping("/ResultsNavigator")
 public class ResultsNavigatorController {
 
-    @Autowired
+    //@Autowired
     private ResultsCacheFactory resultsCacheFactory;
+
+    public void setResultsCacheFactory(ResultsCacheFactory resultsCacheFactory) {
+        this.resultsCacheFactory = resultsCacheFactory;
+    }
 
     @RequestMapping(method = RequestMethod.GET )
     public ModelAndView navigate(

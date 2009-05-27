@@ -48,7 +48,7 @@ public class TaxonNodeBindingFormController {
         srdb.registerCustomEditor(TaxonNode[].class, taxonNodeArrayPropertyEditor);
     }
 
-    @Required
+    //@Required
     public void setTaxonNodeArrayPropertyEditor(
             TaxonNodeArrayPropertyEditor taxonNodeArrayPropertyEditor) {
         this.taxonNodeArrayPropertyEditor = taxonNodeArrayPropertyEditor;
