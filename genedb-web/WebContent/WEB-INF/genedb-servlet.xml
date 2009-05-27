@@ -348,10 +348,7 @@
         </property>
     </bean> -->
 
-    <bean id="lifTest"
-        class="org.genedb.web.mvc.controller.LIFTest">
-        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
-    </bean>
+
 <!--
     <bean id="ContextMapController"
         class="org.genedb.web.mvc.controller.ContextMapController">
