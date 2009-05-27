@@ -10,6 +10,7 @@
     <!-- Imports -->
     <import file="${imported.basedir.db}/../genedb-libs/build.xml" />
     <import file="${imported.basedir.db}/../genedb-util/build.xml"/>
+    <import file="${imported.basedir.db}/../genedb-domain/build.xml"/>
 
     <!-- Properties -->
     <property name="genedb-db.jar" value="${imported.basedir.db}/${dist.dir}/genedb-db.jar"/>
@@ -80,7 +81,7 @@
 
     </target>
 
-    <target name="make-springless-jar" depends="setup-db, db-populate-lib, db-populate-util">
+    <target name="make-springless-jar" depends="setup-db, db-populate-lib, db-populate-util, db-populate-domain">
         <javac srcdir="${imported.basedir.db}/src"
             classpathref="db-classpath"
             destdir="${imported.basedir.db}/${build.dir}/springless-classes"
@@ -251,6 +252,10 @@
       <touch file="lib/ivy.timestamp.txt" />
     </target>
 
+
+    <target name="db-populate-domain" depends="domain-fulljar">
+        <copy file="${imported.basedir.db}/../genedb-domain/ant-build/dist/genedb-domain.jar" todir="${imported.basedir.db}/lib" />
+    </target>
 
     <target name="db-populate-util" depends="util-fulljar">
         <copy file="${imported.basedir.db}/../genedb-util/ant-build/dist/genedb-util.jar" todir="${imported.basedir.db}/lib" />

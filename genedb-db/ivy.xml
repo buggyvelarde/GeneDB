@@ -6,6 +6,7 @@
       <dependency org="org.springframework" name="org.springframework.test" rev="3.0.0.M3" />
       <dependency org="postgresql" name="postgresql" rev="8.3-603.jdbc4" />
       <dependency org="org.hsqldb" name="com.springsource.org.hsqldb" rev="1.8.0.9" />
+      <dependency org="org.apache.commons"  name="com.springsource.org.apache.commons.dbcp" rev="1.2.2.osgi" />
 
       <dependency org="org.hibernate" name="hibernate-search" rev="3.1.0.GA" transitive="false" />
       <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.4.2" />

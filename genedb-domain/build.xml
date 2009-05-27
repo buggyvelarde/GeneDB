@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="genedb-domain" default="fulljar-domain" basedir=".">
+<project name="genedb-domain" default="domain-fulljar" basedir=".">
 
   <dirname property="imported.basedir.domain" file="${ant.file.genedb-domain}"/>
 
