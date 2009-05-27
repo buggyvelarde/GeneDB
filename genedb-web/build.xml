@@ -393,6 +393,9 @@
   <target name="web-populate-lib" depends="check.web-lib-uptodate" unless="web.lib-uptodate">
     <populate directory="genedb-web" />
   	<move file="${imported.basedir.web}/lib/com.springsource.javax.servlet-2.5.0.jar" todir="${imported.basedir.web}/lib-compiletime" />
+    <move file="${imported.basedir.web}/lib/com.springsource.javax.servlet.jsp-2.1.0.jar" todir="${imported.basedir.web}/lib-compiletime" />
+    <move file="${imported.basedir.web}/lib/com.springsource.javax.el-1.0.0.jar" todir="${imported.basedir.web}/lib-compiletime" />
+
     <copy file="${lib-dir}/biojava/biojava-1.6.jar" todir="${imported.basedir.web}/lib" />
     <copy todir="${imported.basedir.web}/lib">
         <fileset dir="${imported.basedir.libs}/lib/biojava">
