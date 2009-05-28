@@ -9,6 +9,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.apache.commons.lang.StringUtils;
 import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeManager;
@@ -42,7 +43,11 @@ public class TaxonNameTag extends SimpleTagSupport {
         // Get the writer
         JspWriter out = getJspContext().getOut();
         
-        out.write(otherName);
+        if (!StringUtils.isEmpty(otherName)){
+            out.write(otherName);
+        }else{
+            out.write(label);
+        }
     }
 
     public String getLabel() {
