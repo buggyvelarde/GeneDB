@@ -87,11 +87,11 @@ public class ContextMapController {
         out.write(text);
     }
 
-    public LuceneIndexFactory getLuceneDao() {
+    public LuceneIndexFactory getLuceneIndexFactory() {
         return luceneIndexFactory;
     }
 
-    @Required
+    //@Required
     public void setLuceneIndexFactory(LuceneIndexFactory luceneIndexFactory) {
         this.luceneIndexFactory = luceneIndexFactory;
     }
