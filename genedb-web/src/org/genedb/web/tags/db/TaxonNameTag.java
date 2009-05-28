@@ -10,6 +10,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.genedb.db.taxon.TaxonNameType;
 import org.genedb.db.taxon.TaxonNode;
 import org.genedb.db.taxon.TaxonNodeManager;
@@ -24,6 +25,8 @@ public class TaxonNameTag extends SimpleTagSupport {
     private String label;
     
     private String taxonNameType;
+
+    private static final Logger logger = Logger.getLogger(TaxonNameTag.class);
 
      @Override
     public void doTag() throws JspException, IOException {
@@ -47,6 +50,7 @@ public class TaxonNameTag extends SimpleTagSupport {
             out.write(otherName);
         }else{
             out.write(label);
+            logger.error(label + " lacks the " + taxonNameType + " name type needed to display the correct name");
         }
     }
 
