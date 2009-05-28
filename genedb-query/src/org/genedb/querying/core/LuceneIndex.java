@@ -21,7 +21,7 @@ import javax.annotation.PostConstruct;
 
 public class LuceneIndex {
 
-    private static final int DEFAULT_MAX_RESULTS=20000;
+    private static final int DEFAULT_MAX_RESULTS=Integer.MAX_VALUE-3;
 
     private int maxResults = DEFAULT_MAX_RESULTS;
 
