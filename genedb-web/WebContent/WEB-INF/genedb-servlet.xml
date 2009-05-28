@@ -348,14 +348,13 @@
         </property>
     </bean> -->
 
-<!--
     <bean id="ContextMapController"
         class="org.genedb.web.mvc.controller.ContextMapController">
         <property name="luceneIndexFactory" ref="luceneIndexFactory" />
         <property name="view" ref="jsonView" />
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     </bean>
--->
+
 <!--  	<bean id="AdvancedSearchController"
         class="org.genedb.web.mvc.controller.AdvancedSearchController">
         <property name="sessionForm" value="true" />
