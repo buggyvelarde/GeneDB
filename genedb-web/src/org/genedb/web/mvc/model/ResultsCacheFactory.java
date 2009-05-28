@@ -5,7 +5,6 @@ import org.genedb.web.mvc.controller.download.ResultEntry;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.util.List;
 
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.SerialBinding;
@@ -20,6 +19,12 @@ import com.sleepycat.je.EnvironmentLockedException;
 
 
 public class ResultsCacheFactory {
+
+    private boolean clearAll = true;
+
+    public void setClearAll(boolean clearAll) {
+        this.clearAll = clearAll;
+    }
 
     private Environment env;
 
@@ -69,10 +74,18 @@ public class ResultsCacheFactory {
         if (!rootDirectoryFile.exists()) {
             rootDirectoryFile.mkdirs();
         } else {
+            if (clearAll) {
+                for (File file : rootDirectoryFile.listFiles()) {
+                    if (! file.delete()) {
+                        throw new RuntimeException(String.format("Can't empty results cache, specifically '%s'", file.getAbsolutePath()));
+                    }
+                }
+            }
             File lock = new File(rootDirectoryFile, "je.lck");
             if (lock.exists()) {
                 lock.delete();
             }
+
         }
         logger.debug("Read-only status: " + readOnly);
 
