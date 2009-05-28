@@ -348,10 +348,7 @@
         </property>
     </bean> -->
 
-    <bean id="ContextMapController"
-        class="org.genedb.web.mvc.controller.ContextMapController">
-        <property name="luceneIndexFactory" ref="luceneIndexFactory" />
-        <property name="view" ref="jsonView" />
+    <bean id="ContextMapController" class="org.genedb.web.mvc.controller.ContextMapController">
         <property name="berkeleyMapFactory" ref="berkeleyReadOnlyMapFactory" />
     </bean>
 
