@@ -5,6 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/genedb/formatting" %>
+<%@ taglib prefix="db" uri="db" %>
 
 
 <c:if test="${not empty resultsSize}">
