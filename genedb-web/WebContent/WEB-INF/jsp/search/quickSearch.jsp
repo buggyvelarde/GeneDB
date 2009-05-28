@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/topinclude.jspf" %>
-<format:headerRound title="Protein Length Search">
+<format:headerRound title="Quick Search">
     <st:init />
     <link rel="stylesheet" type="text/css" href="<c:url value="/includes/style/genedb/genePage.css"/>" />
 </format:headerRound>
